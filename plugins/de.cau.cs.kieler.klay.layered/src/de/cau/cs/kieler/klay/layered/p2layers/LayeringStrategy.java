@@ -35,12 +35,13 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
      */
     LONGEST_PATH,
     /**
-     * Nodes are put into layers according to their relative position. The actual positions
-     * as given in the input diagram are considered here. This means that if the user moves
-     * a node, that movement is reflected in the layering of the graph.
+     * Nodes are put into layers according to their relative position. The actual positions as given
+     * in the input diagram are considered here. This means that if the user moves a node, that
+     * movement is reflected in the layering of the graph.
      */
     INTERACTIVE,
     /**
+<<<<<<< HEAD
      * Nodes are put into Layers according to the average out-degree and their rank.
      * Could be similar to LONGEST_PATH
      * Taken from " In Search for Efficient Heuristics for Minimum-Width Graph
@@ -48,9 +49,13 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
      * wrtten by Nikolas S. Nikolov, Alexandre Tarassov, and Jürgen Branke
 
      */
-    STRETCH_WIDTH;
+    STRETCH_WIDTH,
 
-    
+/** Implementation of the heuristic MinWidth for solving the NP-hard minimum-width layering
+     * problem with consideration of dummy nodes.
+     */
+    MIN_WIDTH;
+
     /**
      * {@inheritDoc}
      */
@@ -58,19 +63,25 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
         switch (this) {
         case NETWORK_SIMPLEX:
             return new NetworkSimplexLayerer();
-            
+
         case LONGEST_PATH:
             return new LongestPathLayerer();
-            
+
         case INTERACTIVE:
             return new InteractiveLayerer();
+
 
         case STRETCH_WIDTH:
             return new StretchWidth();
           
+
+        case MIN_WIDTH:
+            return new MinWidthLayerer();
+
+
         default:
-            throw new IllegalArgumentException(
-                    "No implementation is available for the layerer " + this.toString());
+            throw new IllegalArgumentException("No implementation is available for the layerer "
+                    + this.toString());
         }
     }
 
