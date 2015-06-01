@@ -28,6 +28,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * @author marc
@@ -98,9 +99,11 @@ public class StretchWidth implements ILayoutPhase {
         // end while
 
         progressMonitor.begin("StretchWidth", 1);
-        System.out.println("start");
         // set graph
         currentGraph = layeredGraph;
+        
+        maxWidth = currentGraph.getProperty(Properties.MAX_WIDTH_START);
+        System.out.println(maxWidth);
         // Layer currently worked on
         Layer currentLayer = new Layer(currentGraph);
         currentGraph.getLayers().add(currentLayer);
@@ -273,7 +276,7 @@ public class StretchWidth implements ILayoutPhase {
      */
     private Integer getOutDegree(final LNode node) {
         int i = 0;
-        for (LEdge edge : node.getOutgoingEdges()) {
+        for (@SuppressWarnings("unused") LEdge edge : node.getOutgoingEdges()) {
             i++;
         }
         return i;
@@ -288,7 +291,7 @@ public class StretchWidth implements ILayoutPhase {
      */
     private Integer getInDegree(final LNode node) {
         int i = 0;
-        for (LEdge edge : node.getIncomingEdges()) {
+        for (@SuppressWarnings("unused") LEdge edge : node.getIncomingEdges()) {
             i++;
         }
         return i;

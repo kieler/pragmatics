@@ -210,7 +210,17 @@ public final class Properties {
     public static final IProperty<Integer> UPPER_LAYER_ESTIMATION_SCALING_FACTOR = new Property<Integer>(
             "de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", 2, 1);
 
-
+    /**
+     * Defines the Start of maxWidth variable in den StretchWidth layerer,
+     * this variable is a multiplicator for the criteria, to move to the next
+     * layer while layering the graph.
+     * Since the algorithm increases maxWidth dynamically, if it fails to perform a layering, 
+     * this is a loose bound.
+     */
+    public static final IProperty<Integer> MAX_WIDTH_START = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.stretchWidthMaxWidthStart", 4, 0);
+    
+    
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
 
