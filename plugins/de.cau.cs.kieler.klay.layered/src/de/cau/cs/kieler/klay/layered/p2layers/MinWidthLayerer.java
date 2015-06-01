@@ -74,10 +74,10 @@ public final class MinWidthLayerer implements ILayoutPhase {
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
         return IntermediateProcessingConfiguration
-                .createEmpty()
-                .addBeforePhase1(
-                        IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
-                .addBeforePhase3(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
+                .createEmpty();
+//                .addBeforePhase1(
+//                        IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
+//                .addBeforePhase3(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
     }
 
     /**
@@ -180,6 +180,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // After the algorithm, there should be no nodes left to be put in a layer.
         notInserted.clear();
 
+        System.out.println(layeredGraph.getLayers());
         progressMonitor.done();
     }
 
