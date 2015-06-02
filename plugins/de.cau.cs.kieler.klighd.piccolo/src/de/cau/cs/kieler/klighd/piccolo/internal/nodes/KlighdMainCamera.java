@@ -14,16 +14,22 @@
 package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.util.Stack;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.PRoot;
+import edu.umd.cs.piccolo.util.PBounds;
 import edu.umd.cs.piccolo.util.PPaintContext;
+import edu.umd.cs.piccolo.util.PPickPath;
 
 /**
  * This specialized {@link PCamera} type describes the diagram root cameras.<br>
@@ -37,49 +43,46 @@ public class KlighdMainCamera extends PCamera {
 
     /**
      * Constructor.
+     *
+     * @param root
+     *            the {@link PRoot} to add <code>this</code> camera to, may be <code>null</code>
      */
-    public KlighdMainCamera() {
+    public KlighdMainCamera(final PRoot root) {
         super();
+
+        if (root != null) {
+            root.addChild(this);
+        }
     }
 
     /**
      * Getter.
      *
-     * @return the currently displayed {@link INode}
+     * @return the currently displayed {@link KNodeAbstractNode}
      */
-    public INode getDisplayedINode() {
-        return (INode) getDisplayedLayer();
-    }
-
-    /**
-     * Getter.
-     *
-     * @return the currently displayed {@link INode} casted to {@link PLayer}.
-     */
-    public PLayer getDisplayedLayer() {
+    public KNodeAbstractNode getDisplayedKNodeNode() {
         if (this.getLayersReference().isEmpty()) {
             return null;
         }
 
         final PLayer res = this.getLayer(0);
-        if (res instanceof INode) {
-            return res;
+        if (res instanceof KNodeAbstractNode) {
+            return (KNodeAbstractNode) res;
         } else {
             return null;
         }
     }
 
     /**
-     * Sets the {@link INode} to be displayed on the canvas if it is a {@link PLayer}; does nothing
-     * otherwise.
+     * Sets the {@link KNodeAbstractNode} to be displayed on the canvas if it is a {@link PLayer};
+     * does nothing otherwise.
      *
      * @param node
-     *            the {@link INode} to displayed
+     *            the {@link KNodeAbstractNode} to displayed
      */
-    public void setDisplayedNode(final INode node) {
-        if (node instanceof PLayer) {
-            this.setDisplayedNode((PLayer) node);
-        }
+    public void setDisplayedKNodeNode(final KNodeAbstractNode node) {
+        this.addLayer(0, node);
+
         if (node instanceof KNodeTopNode) {
             // this is only for initialization, has no effect later on
             ((KNodeTopNode) node).setDiagramMainCamera(this);
@@ -87,38 +90,17 @@ public class KlighdMainCamera extends PCamera {
     }
 
     /**
-     * Sets the {@link PLayer} to be displayed on the canvas.
-     *
-     * @param node the {@link PLayer} to displayed
-     */
-    private void setDisplayedNode(final PLayer node) {
-        this.addLayer(0, node);
-    }
-
-    /**
      * Re-targets <code>this</code> camera to the given <code>node</code> by detaching the currently
-     * displayed {@link PLayer}, if the <code>node</code> is a {@link PLayer}; does nothing otherwise.
+     * displayed {@link PLayer}, if the <code>node</code> is a {@link PLayer}; does nothing
+     * otherwise.
      *
      * @param node
-     *            the {@link INode} to be now displayed
+     *            the {@link KNodeAbstractNode} to be now displayed, must be contained in the
+     *            diagram's PNode figure tree!
      */
-    public void exchangeDisplayedNode(final INode node) {
-        if (node instanceof PLayer) {
-            exchangeDisplayedNode((PLayer) node);
-        }
-    }
+    public void exchangeDisplayedKNodeNode(final KNodeAbstractNode node) {
 
-    /**
-     * Detaches the currently configures displayed {@link PLayer} and re-target to the given
-     * <code>node</code>.
-     *
-     * @param node
-     *            the {@link PLayer} to be now displayed, must be contained in the diagram's PNode
-     *            figure tree!
-     */
-    public void exchangeDisplayedNode(final PLayer node) {
-
-        final PNode prevNode = this.getDisplayedLayer();
+        final KNodeAbstractNode prevNode = this.getDisplayedKNodeNode();
         if (prevNode == node) {
             return;
         }
@@ -162,8 +144,8 @@ public class KlighdMainCamera extends PCamera {
             t = NodeUtil.invert(NodeUtil.localToParent(prevNode.getParent(), node.getParent()));
 
         } else {
-            // In case c) first the closest common ancestor (inode) is determined
-            final INode commonAncestor = NodeUtil.getCommonAncestor((INode) prevNode, (INode) node);
+            // In case c) first the closest common ancestor (iKNodeNode) is determined
+            final IKNodeNode commonAncestor = NodeUtil.getCommonAncestor(prevNode, node);
 
             if (commonAncestor == null) {
                 // ... which should not happen because
@@ -176,7 +158,7 @@ public class KlighdMainCamera extends PCamera {
 
             } else {
                 // take the commonAncestor's child area node, ...
-                final PNode caChildArea = commonAncestor.getChildAreaNode();
+                final PNode caChildArea = ((KNodeAbstractNode) commonAncestor).getChildAreaNode();
 
                 // ... apply case b) between 'prevNode's parent (child area node) and
                 //  'commonAncestor's child area node, ...
@@ -195,13 +177,93 @@ public class KlighdMainCamera extends PCamera {
 
 
     /**
+     * A specialized {@link PPickPath}.
+     */
+    public static class KlighdPickPath extends PPickPath {
+
+        private double cameraZoomScale = 1d;
+        private final Stack<Double> cameraScales = new Stack<Double>();
+
+        /**
+         * Creates a pick pack originating from the provided camera and with the given screen pick
+         * bounds.
+         *
+         * @param camera
+         *            camera from which the pickpath originates
+         * @param aScreenPickBounds
+         *            bounds of pick area
+         */
+        public KlighdPickPath(final KlighdMainCamera camera, final PBounds aScreenPickBounds) {
+            super(camera, aScreenPickBounds);
+
+            // I shamelessly assume that scaleX == scaleY ;-)
+            this.cameraZoomScale = camera.getViewTransformReference().getScaleX();
+        }
+
+        /**
+         * Provides the current diagram zoom factor as determined by the active
+         * {@link KlighdMainCamera}'s view {@link java.awt.geom.AffineTransform transform}, adjusted
+         * by the picked parent {@link KNodeNode}'s scale settings.
+         *
+         * @return the current diagram zoom factor
+         */
+        public double getCameraZoomScale() {
+            return cameraZoomScale;
+        }
+
+        /**
+         * Saves the (adjusted) {@link #cameraZoomScale} and applies <code>scale</code> to the current
+         * value. Is intended to be called from
+         * {@link de.cau.cs.kieler.klighd.piccolo.internal.nodes.KChildAreaNode KChildAreaNode} only!
+         *
+         * @param scale
+         *            the scale factor to be applied to the current {@link #cameraZoomScale}
+         */
+        public void pushNodeScale(final double scale) {
+            this.cameraScales.push(cameraZoomScale);
+            this.cameraZoomScale *= scale;
+        }
+
+        /**
+         * Restores the previous logged (adjusted) camera zoom scale.<br>
+         * Is intended to be called from
+         * {@link de.cau.cs.kieler.klighd.piccolo.internal.nodes.KChildAreaNode KChildAreaNode} only!
+         */
+        public void popNodeScale() {
+            this.cameraZoomScale = cameraScales.pop();
+        }
+    }
+
+    /**
+     * {@inheritDoc}<br>
+     * <br>
+     * Had to copy this method from {@link PCamera} in order to inject the specialized
+     * {@link KlighdPickPath}.
+     */
+    @Override
+    public PPickPath pick(final double x, final double y, final double halo) {
+        final PBounds b = new PBounds(new Point2D.Double(x, y), -halo, -halo);
+        final PPickPath result = new KlighdPickPath(this, b);
+
+        fullPick(result);
+
+        // make sure this camera is pushed.
+        if (result.getNodeStackReference().size() == 0) {
+            result.pushNode(this);
+            result.pushTransform(getTransformReference(false));
+        }
+
+        return result;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void fullPaint(final PPaintContext paintContext) {
         try {
             // In case the following call fails the SWT components employed in
-            //  PSWCanvas#paintComponent(...) may end up in an inconsistent state.
+            //  PSWTCanvas#paintComponent(...) may end up in an inconsistent state.
             // Hence, this try catch block is added here in order to let (at least)
             //  this#fullPaint(...) return properly.
             super.fullPaint(paintContext);

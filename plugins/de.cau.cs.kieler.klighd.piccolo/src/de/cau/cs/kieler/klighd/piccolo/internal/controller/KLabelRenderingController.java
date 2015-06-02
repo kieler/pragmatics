@@ -15,11 +15,10 @@ package de.cau.cs.kieler.klighd.piccolo.internal.controller;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.List;
+import java.util.Iterator;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
-import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.krendering.KRendering;
@@ -44,27 +43,27 @@ public class KLabelRenderingController extends AbstractKGERenderingController<KL
      *            the Piccolo node representing a label
      */
     public KLabelRenderingController(final KLabelNode label) {
-        super(label.getGraphElement(), label);
+        super(label.getViewModelElement(), label);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected PNode internalUpdateRendering() {
+    protected PNodeController<?> internalUpdateRendering() {
         final KLabelNode repNode = getRepresentation();
 
         // evaluate the rendering data
         final KRendering currentRendering = getCurrentRendering();
 
-        final PNode renderingNode;
+        final PNodeController<?> renderingNodeController;
         if (currentRendering != null) {
-            renderingNode = handleLabelRendering(currentRendering, repNode);
+            renderingNodeController = handleLabelRendering(currentRendering, repNode);
         } else {
-            renderingNode = handleLabelRendering(createDefaultRendering(), repNode);
+            renderingNodeController = handleLabelRendering(createDefaultRendering(), repNode);
         }
 
-        return renderingNode;
+        return renderingNodeController;
     }
 
     /**
@@ -76,24 +75,26 @@ public class KLabelRenderingController extends AbstractKGERenderingController<KL
      *            the rendering
      * @param parent
      *            the parent Piccolo label node
-     * @return the Piccolo node representing the rendering
+     * @return the {@link PNodeController} managing the Piccolo2D node that represents
+     *         <code>rendering</code>
      */
-    private PNode handleLabelRendering(final KRendering rendering, final KLabelNode parent) {
-        // the rendering of a label has to contain exact one KText
+    private PNodeController<?> handleLabelRendering(final KRendering rendering,
+            final KLabelNode parent) {
+        // the rendering of a label has to contain exactly one KText
         //  that "inherits" the text from the KLabel itself
-        final List<KText> kTexts = Lists.newArrayList(
-                Iterators.filter(KRenderingUtil.selfAndAllChildren(rendering), KText.class));
-       
-        if (kTexts.size() != 1) {
+        final Iterator<KText> kTexts =
+                Iterators.filter(KRenderingUtil.selfAndAllChildren(rendering), KText.class);
+        
+        final KText kText = Iterators.getNext(kTexts, null); 
+        
+        if (kText == null || kTexts.hasNext()) {
             throw new RuntimeException("KLabel " + getGraphElement()
                     + " must (deeply) contain exactly 1 KText element.");
         }
         
         // create the rendering
-        final PNodeController<?> controller = (PNodeController<?>) createRendering(rendering,
-                parent, Bounds.of(parent.getBoundsReference()));
-        
-        final KText kText = kTexts.get(0); 
+        final PNodeController<?> controller =
+                createRendering(rendering, parent, Bounds.of(parent.getBoundsReference()));
         
         @SuppressWarnings("unchecked")
         final PNodeController<KlighdStyledText> textController = (PNodeController<KlighdStyledText>)
@@ -131,7 +132,7 @@ public class KLabelRenderingController extends AbstractKGERenderingController<KL
                     }
                 });
 
-        return controller.getNode();
+        return controller;
     }
 
     /**

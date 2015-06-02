@@ -17,11 +17,11 @@ import java.util.EnumSet;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 
 /**
  * Container for public property definitions. These are layout options that can be set on graph
@@ -36,18 +36,6 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 public final class Properties {
 
     /**
-     * Minimal spacing between objects.
-     */
-    public static final Property<Float> OBJ_SPACING = new Property<Float>(LayoutOptions.SPACING,
-            20.0f, 1.0f);
-
-    /**
-     * Minimal spacing between ports.
-     */
-    public static final Property<Float> PORT_SPACING = new Property<Float>(LayoutOptions.PORT_SPACING,
-            10.0f, 1.0f);
-    
-    /**
      * A pre-defined seed for pseudo-random number generators.
      * We redefine the property here to set its default value to 1.
      * 
@@ -58,33 +46,16 @@ public final class Properties {
     
     /**
      * The factor by which the in-layer spacing between objects differs from the inter-layer
-     * {@link Properties#OBJ_SPACING}.
+     * {@link InternalProperties#SPACING}.
      */
     public static final IProperty<Float> OBJ_SPACING_IN_LAYER_FACTOR = new Property<Float>(
             "de.cau.cs.kieler.klay.layered.inLayerSpacingFactor", 1.0f, 0f);
     
     /**
-     * Spacing to the border of the drawing.
-     */
-    public static final Property<Float> BORDER_SPACING = new Property<Float>(
-            LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
-
-    /**
      * Factor for minimal spacing between edges.
      */
     public static final Property<Float> EDGE_SPACING_FACTOR = new Property<Float>(
             "de.cau.cs.kieler.klay.layered.edgeSpacingFactor", 0.5f);
-
-    /**
-     * Priority of elements. controls how much single edges are emphasized.
-     */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
-
-    /**
-     * The aspect ratio for packing connected components.
-     */
-    public static final Property<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
 
     /**
      * Whether nodes shall be distributed during layer assignment.
@@ -219,7 +190,21 @@ public final class Properties {
      */
     public static final IProperty<Boolean> SAUSAGE_FOLDING = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.sausageFolding", false);    
-
+    
+    /**
+     * The spline-self-loop distribution method.
+     */
+    public static final IProperty<SelfLoopPlacement> SPLINE_SELF_LOOP_PLACEMENT =
+            new Property<SelfLoopPlacement>("de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement",
+                    SelfLoopPlacement.NORTH_STACKED);
+    
+    /**
+     * Specifies the compaction strategy when using the {@link BKNodePlacer}.
+     */
+    public static final IProperty<CompactionStrategy> COMPACTION_STRATEGY =
+            new Property<CompactionStrategy>(
+                    "de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy",
+                    CompactionStrategy.CLASSIC);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

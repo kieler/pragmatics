@@ -2,22 +2,22 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2011 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.klighd.ui.viewers;
 
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.klighd.IKlighdSelection;
 import de.cau.cs.kieler.klighd.IViewChangeListener;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.KlighdTreeSelection;
@@ -38,9 +39,9 @@ import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 /**
  * A viewer for string messages.
- * 
+ *
  * chsch: TODO class and its interaction with the framework must be reviewed!!
- * 
+ *
  * @author mri
  * @author chsch
  */
@@ -53,7 +54,7 @@ public class StringViewer implements IViewer {
 
     /**
      * Constructs a string viewer.
-     * 
+     *
      * @param parent
      *            the parent composite
      */
@@ -99,7 +100,7 @@ public class StringViewer implements IViewer {
         }
     }
 
-    
+
     // remaining methods of the IViewer interface
     //  their application is not reasonable for this viewer
 
@@ -109,7 +110,23 @@ public class StringViewer implements IViewer {
     public ContextViewer getContextViewer() {
         return null;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addViewChangeListener(final IViewChangeListener listener,
+            final ViewChangeType... eventTypes) {
+        // do nothing
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addViewChangeListener(final IViewChangeListener listener,
+            final EnumSet<ViewChangeType> eventTypes) {
+        // do nothing
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -117,7 +134,14 @@ public class StringViewer implements IViewer {
             final ViewChangeType... eventTypes) {
         // do nothing
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
+    public void removeViewChangeListener(final IViewChangeListener listener) {
+        // do nothing
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -131,42 +155,42 @@ public class StringViewer implements IViewer {
     public boolean isDisplayed(final Object semanticElement, final boolean checkParents) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean isDisplayed(final KGraphElement diagramElement, final boolean checkContainment) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean isVisible(final Object semanticElement, final boolean checkParents) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean isVisible(final KGraphElement diagramElement, final boolean checkContainment) {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public Iterator<KNode> getVisibleDiagramNodes() {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public Iterator<KGraphElement> getVisibleDiagramElements() {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -348,7 +372,7 @@ public class StringViewer implements IViewer {
     public void clip(final KNode diagramElement) {
         // do nothing
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -387,7 +411,7 @@ public class StringViewer implements IViewer {
     /**
      * {@inheritDoc}
      */
-    public ISelection getSelection() {
+    public IKlighdSelection getSelection() {
         return null;
     }
 
@@ -468,3 +492,4 @@ public class StringViewer implements IViewer {
         // do nothing
     }
 }
+

@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.graphviz.layouter;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -63,6 +64,16 @@ public class GraphvizTool {
     public static final int PROCESS_DEF_TIMEOUT = 20000;
     /** minimal timeout for waiting for Graphviz to give some output. */
     public static final int PROCESS_MIN_TIMEOUT = 200;
+    
+    /** different names for the Windows program files folder. */
+    private static final String[] PROGRAM_FILES_FOLDERS = {
+        "Program Files", "Program Files (x86)", "Programme", "Programme (x86)"
+    };
+    /**
+     * Default locations of the dot executable. Each entry ends with the path separator, so that the
+     * dot executable's file name can be directly appended.
+     */
+    private static final List<String> DEFAULT_LOCS = new ArrayList<String>();
 
     /** argument used to specify the command. */
     private static final String ARG_COMMAND = "-K";
@@ -70,11 +81,6 @@ public class GraphvizTool {
     private static final String ARG_NOWARNINGS = "-q";
     /** argument to invert the Y axis to conform with SWT. */
     private static final String ARG_INVERTYAXIS = "-y";
-    /**
-     * Default locations of the dot executable. Each entry ends with the path separator, so that the
-     * dot executable's file name can be directly appended.
-     */
-    private static final List<String> DEFAULT_LOCS = new ArrayList<String>();
 
     /** the process instance that is used for multiple layout runs. */
     private Process process;
@@ -95,20 +101,53 @@ public class GraphvizTool {
             
             for (int i = 0; i < envPaths.length; i++) {
                 if (envPaths[i].trim().length() > 0) {
-                    if (envPaths[i].endsWith(File.separator)) {
-                        DEFAULT_LOCS.add(envPaths[i]);
+                    String path; 
+                    if (envPaths[i].startsWith("\"") && envPaths[i].endsWith("\"")) {
+                        path = envPaths[i].substring(1, envPaths[i].length() - 1);
                     } else {
-                        DEFAULT_LOCS.add(envPaths[i] + File.separator);
+                        path = envPaths[i];
+                    }
+                    if (path.endsWith(File.separator)) {
+                        DEFAULT_LOCS.add(path);
+                    } else {
+                        DEFAULT_LOCS.add(path + File.separator);
                     }
                 }
             }
         }
         
-        // Fallback list of default locations for Unix-like environments
         if (File.separator.equals("/")) {
+            // Fallback list of default locations for Unix-like environments
             DEFAULT_LOCS.add("/opt/local/bin/");
             DEFAULT_LOCS.add("/usr/local/bin/");
             DEFAULT_LOCS.add("/usr/bin/");
+        } else if (File.separator.equals("\\")) {
+            // If we're on Windows, we try to find the default Graphviz installation directory in the
+            // program files folder
+            for (String programFilesName : PROGRAM_FILES_FOLDERS) {
+                File programFilesFolder = new File("C:\\" + programFilesName);
+                if (programFilesFolder.exists()
+                        && programFilesFolder.isDirectory()
+                        && programFilesFolder.canRead()) {
+                    
+                    // Find Graphviz directories
+                    File[] graphvizDirs = programFilesFolder.listFiles(new FileFilter() {
+                        public boolean accept(final File pathname) {
+                            return pathname.isDirectory()
+                                    && pathname.canRead()
+                                    && pathname.getName().toLowerCase().startsWith("graphviz");
+                        }
+                    });
+                    
+                    // Add each Graphviz directory
+                    if (graphvizDirs != null) {
+                        for (File graphvizDir : graphvizDirs) {
+                            DEFAULT_LOCS.add(
+                                    graphvizDir.toString() + File.separator + "bin" + File.separator);
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -197,12 +236,18 @@ public class GraphvizTool {
      * @return path to the dot executable, or {@code null} if the executable was not found
      */
     public static String getDotExecutable(final boolean promptUser) {
-        // load the graphviz path from the preferences, if any
-        IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-        String dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
-        File dotFile = new File(dotExecutable);
-        if (dotFile.exists() && dotFile.canExecute()) {
-            return dotExecutable;
+        String dotExecutable;
+        File dotFile;
+        
+        // Load the graphviz path from the preferences, if any. However, do this only if we're really
+        // running in an Eclipse context
+        if (EclipseRuntimeDetector.isEclipseRunning()) {
+            IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+            dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
+            dotFile = new File(dotExecutable);
+            if (dotFile.exists() && dotFile.canExecute()) {
+                return dotExecutable;
+            }
         }
         
         // look in a selection of default locations where it might be installed
@@ -222,9 +267,12 @@ public class GraphvizTool {
             }
         }
         
-        if (promptUser) {
+        // If we haven't found an executable yet, ask the user if so requested and if Eclipse is running
+        if (promptUser && EclipseRuntimeDetector.isEclipseRunning()) {
             if (handleExecPath()) {
                 // fetch the executable string again after the user has entered a new path
+                IPreferenceStore preferenceStore =
+                        GraphvizLayouterPlugin.getDefault().getPreferenceStore();
                 dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
                 dotFile = new File(dotExecutable);
                 if (dotFile.exists() && dotFile.canExecute()) {
@@ -506,11 +554,14 @@ public class GraphvizTool {
                 }
                 
                 // retrieve the current timeout value
-                IPreferenceStore preferenceStore =
-                        GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-                int timeout = preferenceStore.getInt(PREF_TIMEOUT);
-                if (timeout < PROCESS_MIN_TIMEOUT) {
-                    timeout = PROCESS_DEF_TIMEOUT;
+                int timeout = PROCESS_DEF_TIMEOUT;
+                if (EclipseRuntimeDetector.isEclipseRunning()) {
+                    IPreferenceStore preferenceStore =
+                            GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+                    int timeoutPreference = preferenceStore.getInt(PREF_TIMEOUT);
+                    if (timeoutPreference >= PROCESS_MIN_TIMEOUT) {
+                        timeout = timeoutPreference;
+                    }
                 }
                 
                 boolean interrupted = false;
@@ -534,7 +585,6 @@ public class GraphvizTool {
                 
             } while (watchdog != null);
         }
-        
     }
 
 }

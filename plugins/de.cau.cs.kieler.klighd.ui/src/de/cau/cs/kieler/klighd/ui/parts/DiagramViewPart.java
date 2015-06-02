@@ -178,7 +178,7 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
 
         // do an initial update of the view context
         viewContext.getLayoutRecorder().startRecording();
-        viewContext.update(model);
+        viewContext.update();
 
         // fill the options pane according to the the incorporated transformations
         this.updateOptions(false);
@@ -216,8 +216,15 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
      * {@inheritDoc}
      */
     public void resetLayoutConfig() {
+        resetLayoutConfig(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void resetLayoutConfig(final boolean doLayout) {
         if (this.sideBar != null) {
-            this.sideBar.resetLayoutOptionsToDefaults();
+            this.sideBar.resetLayoutOptionsToDefaults(doLayout);
         }
     }
 
@@ -285,12 +292,12 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
      */
     protected void addButtons() {
         final IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager();
-        toolBar.add(new Action("Refresh diagram", KlighdPlugin
-                .getImageDescriptor("icons/full/elcl16/refresh.gif")) {
+        toolBar.add(new Action("Refresh diagram",
+                KlighdPlugin.getImageDescriptor("icons/full/elcl16/refresh.gif")) {
 
             @Override
             public void run() {
-                DiagramViewManager.updateView(DiagramViewPart.this.getPartId());
+                LightDiagramServices.updateDiagram(DiagramViewPart.this.getViewContext(), false);
             }
         });
 
@@ -317,7 +324,7 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
 
             @Override
             public void run() {
-                sideBar.resetLayoutOptionsToDefaults();
+                sideBar.resetLayoutOptionsToDefaults(true);
             }
         };
         resetLayoutOptionsAction.setId(ACTION_ID_RESET_LAYOUT_OPTIONS);

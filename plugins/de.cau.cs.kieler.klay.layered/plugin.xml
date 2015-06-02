@@ -52,9 +52,6 @@
                option="de.cau.cs.kieler.noLayout">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.additionalPortSpace">
-         </knownOption>
-         <knownOption
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
@@ -71,7 +68,7 @@
                option="de.cau.cs.kieler.klay.layered.nodeLayering">
          </knownOption>
          <knownOption
-               default="POLYLINE"
+               default="ORTHOGONAL"
                option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
@@ -163,7 +160,29 @@
                option="de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.contentAlignment">
+         </knownOption>
+         <knownOption
+               default="JUSTIFIED"
+               option="de.cau.cs.kieler.portAlignment">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignment.north">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignment.south">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignment.west">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.portAlignment.east">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -299,7 +318,7 @@
          </dependency>
       </layoutOption>
       <layoutOption
-            advanced="true"
+            advanced="false"
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy"
             default="BRANDES_KOEPF"
@@ -386,11 +405,36 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.properties.SelfLoopPlacement"
+            default="NORTH_STACKED"
+            id="de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement"
+            name="Spline Self-Loop Placement"
+            type="enum">
+         <dependency
+               option="de.cau.cs.kieler.edgeRouting"
+               value="SPLINES">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.properties.ContentAlignment"
             description="Specifies how the content of compound nodes is to be aligned, e.g. top-left."
             id="de.cau.cs.kieler.klay.layered.contentAlignment"
             name="Content Alignment"
             type="enumset">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor$CompactionStrategy"
+            description="Specifies the compaction strategy when using the Brandes and Koepf node placer."
+            id="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy"
+            name="Compaction Strategy"
+            type="enum">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodePlace"
+               value="BRANDES_KOEPF">
+         </dependency>
       </layoutOption>
    </extension>
 </plugin>

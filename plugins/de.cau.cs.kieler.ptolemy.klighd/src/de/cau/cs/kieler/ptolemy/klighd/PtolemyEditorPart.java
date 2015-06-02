@@ -30,6 +30,7 @@ import de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart;
  * 
  * @author uru
  * @author cds
+ * @kieler.rating proposed yellow cds 2015-02-23
  */
 public class PtolemyEditorPart extends DiagramEditorPart {
 

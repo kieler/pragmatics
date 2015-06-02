@@ -13,11 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.p1cycles;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -28,7 +28,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Cycle breaker implementation that uses a greedy algorithm. Inspired by
@@ -73,9 +72,9 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
     /** mark for the nodes, inducing an ordering of the nodes. */
     private int[] mark;
     /** list of source nodes. */
-    private final LinkedList<LNode> sources = new LinkedList<LNode>();
+    private final LinkedList<LNode> sources = Lists.newLinkedList();
     /** list of sink nodes. */
-    private final LinkedList<LNode> sinks = new LinkedList<LNode>();
+    private final LinkedList<LNode> sinks = Lists.newLinkedList();
     
     /**
      * {@inheritDoc}
@@ -92,7 +91,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Greedy cycle removal", 1);
         
-        Collection<LNode> nodes = layeredGraph.getLayerlessNodes();
+        List<LNode> nodes = layeredGraph.getLayerlessNodes();
 
         // initialize values for the algorithm (sum of priorities of incoming edges and outgoing
         // edges per node, and the ordering calculated for each node)
@@ -114,7 +113,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
                         continue;
                     }
                     
-                    int priority = edge.getProperty(Properties.PRIORITY);
+                    int priority = edge.getProperty(InternalProperties.PRIORITY);
                     indeg[index] += priority > 0 ? priority + 1 : 1;
                 }
                 
@@ -124,7 +123,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
                         continue;
                     }
                     
-                    int priority = edge.getProperty(Properties.PRIORITY);
+                    int priority = edge.getProperty(InternalProperties.PRIORITY);
                     outdeg[index] += priority > 0 ? priority + 1 : 1;
                 }
             }
@@ -142,7 +141,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
         int nextRight = -1, nextLeft = 1;
 
         // assign marks to all nodes
-        List<LNode> maxNodes = new ArrayList<LNode>();
+        List<LNode> maxNodes = Lists.newArrayList();
         Random random = layeredGraph.getProperty(InternalProperties.RANDOM);
         
         while (unprocessedNodeCount > 0) {
@@ -248,7 +247,7 @@ public final class GreedyCycleBreaker implements ILayoutPhase {
                     continue;
                 }
                 
-                int priority = edge.getProperty(Properties.PRIORITY);
+                int priority = edge.getProperty(InternalProperties.PRIORITY);
                 if (priority < 0) {
                     priority = 0;
                 }

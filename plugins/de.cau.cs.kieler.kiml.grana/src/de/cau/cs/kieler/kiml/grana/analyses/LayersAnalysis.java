@@ -29,9 +29,11 @@ import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * An analysis for the number of horizontal and vertical layers. Also analyzes 
@@ -51,6 +53,16 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
  */
 public class LayersAnalysis implements IAnalysis {
 
+    /** Id of this analysis. */
+    public static final String ID = "de.cau.cs.kieler.kiml.grana.layers";
+    
+    // SUPPRESS CHECKSTYLE NEXT 6 Javadoc
+    public static final int INDEX_HORIZONTAL = 0;
+    public static final int INDEX_VERTICAL = 1;
+    public static final int INDEX_DUMMIES = 2;
+    public static final int INDEX_MAX_NODES_PER_LAYER = 3;
+    public static final int INDEX_MAX_NODES_PER_LAYER_DUMMIES = 4;
+    public static final int INDEX_EDGE_DENSITY = 5;
     
     // we store the determined layers in order for other 
     // analyses to access them
@@ -60,10 +72,12 @@ public class LayersAnalysis implements IAnalysis {
     
     /** a utility class to mark the start and end position of a layer. */
     public static final class Layer {
-        private float start;
-        private float end;
+        /** smalles coordinate of any node in the layer. */
+        public float start; // SUPPRESS CHECKSTYLE NEXT 6 VisibilityModifier
+        /** largest coordinate of any node in the layer. */
+        public float end;
         /** number of nodes in this layer. */
-        public List<KNode> nodes = Lists.newArrayList(); // SUPPRESS CHECKSTYLE NEXT 3 VisibilityModifier
+        public List<KNode> nodes = Lists.newArrayList(); 
         /** number of dummies for edges spanning this layer. */
         public int dummies = 0;
 
@@ -129,7 +143,14 @@ public class LayersAnalysis implements IAnalysis {
 
         progressMonitor.done();
         // SUPPRESS CHECKSTYLE NEXT 1 MagicNumber
-        return new Object[] { count[0], count[1], count[2], count[3] , count[4], count[5] };
+        return new Object[] { 
+                count[INDEX_HORIZONTAL], 
+                count[INDEX_VERTICAL], 
+                count[INDEX_DUMMIES],
+                count[INDEX_MAX_NODES_PER_LAYER],
+                count[INDEX_MAX_NODES_PER_LAYER_DUMMIES],
+                count[INDEX_EDGE_DENSITY]
+        };
     }
     
     /**
@@ -165,36 +186,56 @@ public class LayersAnalysis implements IAnalysis {
         // analyze the number of dummy nodes (only valid for a layer-based layout)
         int dummyCount = 0;
         Direction dir = parentNode.getData(KLayoutData.class).getProperty(LayoutOptions.DIRECTION);
+        
+        // collect the edges we want to check
+        final List<KEdge> edges = Lists.newArrayList();
+        for (KNode node : parentNode.getChildren()) {
+            edges.addAll(node.getOutgoingEdges());
+        }
+        // edges of the parent's external ports
+        for (KEdge e : parentNode.getOutgoingEdges()) {
+            if (KimlUtil.isDescendant(e.getTarget(), parentNode)) {
+                edges.add(e);
+            }
+        }
+
+        
         if (dir == Direction.LEFT || dir == Direction.RIGHT 
                 || dir == Direction.UNDEFINED) { // default direction is kindof left-to-right
-            for (KNode node : parentNode.getChildren()) {
-                for (KEdge e : node.getOutgoingEdges()) {
-                    KEdgeLayout el = e.getData(KEdgeLayout.class);
-                    // edges may be 'against' the main flow
-                    float start = Math.min(el.getSourcePoint().getX(), el.getTargetPoint().getX());
-                    float end = Math.max(el.getSourcePoint().getX(), el.getTargetPoint().getX());
+            for (KEdge e : edges) {
+                KEdgeLayout el = e.getData(KEdgeLayout.class);
+                // edges may be 'against' the main flow
+                float start = Math.min(el.getSourcePoint().getX(), el.getTargetPoint().getX());
+                float end = Math.max(el.getSourcePoint().getX(), el.getTargetPoint().getX());
+                // cope with inverted ports that might "start" within a layer
+                for (KPoint bend : el.getBendPoints()) {
+                    start = Math.min(start, bend.getX());
+                    end = Math.max(end, bend.getX());
+                }
 
-                    for (Layer layer : verticalLayers) {
-                        if (start < layer.start && end > layer.end) {
-                            dummyCount++;
-                            layer.dummies++;
-                        }
+                for (Layer layer : verticalLayers) {
+                    if (start < layer.start && end > layer.end) {
+                        dummyCount++;
+                        layer.dummies++;
                     }
                 }
             }
         } else {
-            for (KNode node : parentNode.getChildren()) {
-                for (KEdge e : node.getOutgoingEdges()) {
-                    KEdgeLayout el = e.getData(KEdgeLayout.class);
-                    // edges may be 'against' the main flow
-                    float start = Math.min(el.getSourcePoint().getY(), el.getTargetPoint().getY());
-                    float end = Math.max(el.getSourcePoint().getY(), el.getTargetPoint().getY());
+            for (KEdge e : edges) {
+                KEdgeLayout el = e.getData(KEdgeLayout.class);
+                // edges may be 'against' the main flow
+                float start = Math.min(el.getSourcePoint().getY(), el.getTargetPoint().getY());
+                float end = Math.max(el.getSourcePoint().getY(), el.getTargetPoint().getY());
+                // cope with inverted ports that might "start" within a layer
+                for (KPoint bend : el.getBendPoints()) {
+                    start = Math.min(start, bend.getY());
+                    end = Math.max(end, bend.getY());
+                }
 
-                    for (Layer layer : horizontalLayers) {
-                        if (start < layer.start && end > layer.end) {
-                            dummyCount++;
-                            layer.dummies++;
-                        }
+                for (Layer layer : horizontalLayers) {
+                    if (start < layer.start && end > layer.end) {
+                        dummyCount++;
+                        layer.dummies++;
                     }
                 }
             }
@@ -282,6 +323,9 @@ public class LayersAnalysis implements IAnalysis {
                     count[0] += childResult[0];
                     count[1] += childResult[1];
                     count[2] += childResult[2];
+                    count[3] = Math.max(childResult[3], count[3]);
+                    count[4] = Math.max(childResult[4], count[4]);
+                    count[5] = Math.max(childResult[5], count[5]);
                     // 3, 4, 5 do not make sense here
                 }
             }

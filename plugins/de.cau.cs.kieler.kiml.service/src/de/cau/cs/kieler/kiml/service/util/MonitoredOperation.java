@@ -91,6 +91,16 @@ public abstract class MonitoredOperation {
      */
     protected void postUIexec() {
     }
+
+    /**
+     * Factory method providing {@link IKielerProgressMonitor IKielerProgressMonitors}.
+     * May be overridden in order to contributed specialized implementations.
+     *
+     * @return a new {@link IKielerProgressMonitor} instance each time it is called
+     */
+    protected IKielerProgressMonitor createMonitor() {
+        return new CancelableProgressMonitor();
+    }
     
     /**
      * Run the operation. If the current thread is the UI thread, the actual operation
@@ -171,7 +181,7 @@ public abstract class MonitoredOperation {
 
         if (status.get() == null && !isCanceled) {
             // execute the actual operation without progress monitor
-            status.set(execute(new CancelableProgressMonitor()));
+            status.set(execute(createMonitor()));
         }
 
         if (status.get() != null && status.get().getSeverity() == IStatus.OK && !isCanceled) {
@@ -206,8 +216,9 @@ public abstract class MonitoredOperation {
                 synchronized (executorService) {
                     executorService.execute(new Runnable() {
                         public void run() {
-                            status.set(execute(new CancelableProgressMonitor()));
+                            status.set(execute(createMonitor()));
                             assert status.get() != null;
+                            display.wake();
                         }
                     });
                 }
@@ -245,7 +256,7 @@ public abstract class MonitoredOperation {
             
             if (status.get() == null && !isCanceled) {
                 // execute the actual operation without progress monitor
-                status.set(execute(new CancelableProgressMonitor()));
+                status.set(execute(createMonitor()));
                 
                 if (status.get().getSeverity() == IStatus.OK && !isCanceled) {
                     // execute UI code after the actual operation
@@ -305,7 +316,7 @@ public abstract class MonitoredOperation {
      * 
      * @param status a status
      */
-    private void handleStatus(final Maybe<IStatus> status) {
+    protected void handleStatus(final Maybe<IStatus> status) {
         if (status.get() != null) {
             int handlingStyle = StatusManager.NONE;
             switch (status.get().getSeverity()) {
@@ -585,12 +596,12 @@ public abstract class MonitoredOperation {
     /**
      * A progress monitor that can be canceled with the operation's {@link #cancel()} method.
      */
-    private class CancelableProgressMonitor extends BasicProgressMonitor {
+    protected class CancelableProgressMonitor extends BasicProgressMonitor {
         
         /**
          * Create a cancelable progress monitor.
          */
-        CancelableProgressMonitor() {
+        public CancelableProgressMonitor() {
             super(0, KimlServicePlugin.getDefault().getPreferenceStore()
                     .getBoolean(DiagramLayoutEngine.PREF_EXEC_TIME_MEASUREMENT));
         }

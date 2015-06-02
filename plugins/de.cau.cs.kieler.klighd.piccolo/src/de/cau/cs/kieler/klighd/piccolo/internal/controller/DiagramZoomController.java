@@ -46,10 +46,10 @@ public class DiagramZoomController {
 
     private final DiagramController diagramController;
 
-    private final Predicate<KGraphElement> visibilityFilter = new Predicate<KGraphElement>() {
+    private final Predicate<KGraphElement> isDisplayedFilter = new Predicate<KGraphElement>() {
 
         public boolean apply(final KGraphElement input) {
-            return diagramController.isVisible(input, false);
+            return diagramController.isDisplayed(input, false);
         }
     };
 
@@ -126,7 +126,7 @@ public class DiagramZoomController {
      *            time to animate in ms
      */
     private void zoomToActualSize(final int duration) {
-        final KNode displayedKNode = this.canvasCamera.getDisplayedINode().getGraphElement();
+        final KNode displayedKNode = this.canvasCamera.getDisplayedKNodeNode().getViewModelElement();
         final KShapeLayout nodeLayout = displayedKNode.getData(KShapeLayout.class);
 
         if (nodeLayout == null) {
@@ -150,7 +150,7 @@ public class DiagramZoomController {
      *            time to animate in ms
      */
     private void zoomToFit(final int duration) {
-        final KNode displayedKNode = this.canvasCamera.getDisplayedINode().getGraphElement();
+        final KNode displayedKNode = this.canvasCamera.getDisplayedKNodeNode().getViewModelElement();
         final KShapeLayout nodeLayout = displayedKNode.getData(KShapeLayout.class);
 
         if (nodeLayout == null) {
@@ -200,7 +200,7 @@ public class DiagramZoomController {
      *            diagram canvas area, see also {@link ZoomStyle#ZOOM_TO_FOCUS_OR_INCREASE_TO_FIT}
      */
     private void zoomToFocus(final KNode focus, final int duration, final boolean increaseToFit) {
-        final KNode displayedKNode = this.canvasCamera.getDisplayedINode().getGraphElement();
+        final KNode displayedKNode = this.canvasCamera.getDisplayedKNodeNode().getViewModelElement();
 
         // fetch bounds of the whole visible diagram
         final KShapeLayout nodeLayout = displayedKNode.getData(KShapeLayout.class);
@@ -221,8 +221,17 @@ public class DiagramZoomController {
 
         if (focus != displayedKNode) {
             KNode parent = focus.getParent();
+
             while (parent != null && parent != displayedKNode.getParent()) {
                 final KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
+                final double scale = parentLayout.getProperty(LayoutOptions.SCALE_FACTOR);
+
+                focusBounds.setSize(scale * focusBounds.width , scale * focusBounds.height);
+                focusBounds.setOrigin(scale * focusBounds.x, scale * focusBounds.y);
+
+                final KInsets insets = parentLayout.getInsets();
+                focusBounds.moveBy(insets.getLeft(), insets.getTop());
+
                 focusBounds.moveBy(parentLayout.getXpos(), parentLayout.getYpos());
                 parent = parent.getParent();
             }
@@ -263,7 +272,7 @@ public class DiagramZoomController {
      *            time to animate
      */
     public void zoomToLevel(final float newZoomLevel, final int duration) {
-        final KNode displayedKNode = this.canvasCamera.getDisplayedINode().getGraphElement();
+        final KNode displayedKNode = this.canvasCamera.getDisplayedKNodeNode().getViewModelElement();
         final KShapeLayout topNodeLayout = displayedKNode.getData(KShapeLayout.class);
 
         if (topNodeLayout == null) {
@@ -337,10 +346,10 @@ public class DiagramZoomController {
      * This method checks for ports and labels of the given <code>node</code> and increases the
      * given <code>nodeBounds</code> accordingly.<br>
      *
-     *
      * @param nodeBounds
-     *            the bounds of the {@link de.cau.cs.kieler.klighd.piccolo.internal.nodes.INode
-     *            INode} representing {@link KNode} <code>node</code>
+     *            the bounds of the
+     *            {@link de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeAbstractNode
+     *            KNodeAbstractNode} representing {@link KNode} <code>node</code>
      * @param node
      *            the {@link KNode} to be evaluated for ports and labels
      * @return the updated <code>nodeBounds</code> for convenience
@@ -359,7 +368,7 @@ public class DiagramZoomController {
         // incorporate only those contained ports & labels that are actually visible
         //  others may not have reasonable positions
         for (final KGraphElement element : Iterables.filter(
-                Iterables.concat(node.getPorts(), node.getLabels()), visibilityFilter)) {
+                Iterables.concat(node.getPorts(), node.getLabels()), isDisplayedFilter)) {
             final KShapeLayout pL = element.getData(KShapeLayout.class);
             float val;
 
@@ -369,7 +378,7 @@ public class DiagramZoomController {
             }
 
             val = pL.getYpos() * scale;
-            if (val  < minY) {
+            if (val < minY) {
                 minY = val;
             }
 

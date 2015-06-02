@@ -6,6 +6,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.GraphicsConfiguration;
@@ -16,6 +17,7 @@ import java.awt.TexturePaint;
 import java.awt.font.TextAttribute;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -35,7 +37,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,6 +44,11 @@ import java.util.Properties;
 import java.util.Stack;
 import java.util.zip.GZIPOutputStream;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Path;
+import org.eclipse.swt.graphics.PathData;
+import org.eclipse.swt.widgets.Display;
 import org.freehep.graphics2d.font.FontUtilities;
 import org.freehep.graphicsbase.util.UserProperties;
 import org.freehep.graphicsbase.util.Value;
@@ -56,6 +62,9 @@ import org.freehep.graphicsio.PageConstants;
 import org.freehep.graphicsio.svg.SVGFontTable;
 import org.freehep.util.io.Base64OutputStream;
 import org.freehep.util.io.WriterOutputStream;
+
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
@@ -73,7 +82,8 @@ import de.cau.cs.kieler.klighd.util.KlighdSemanticDiagramData;
  * 
  * - Added capabilities to add semantic information to the svg, ie key/value pairs within the 'klighd' namespace.
  * - Allow comments to be switched off.
- * - Corrected direction of color gradients. 
+ * - Corrected direction of color gradients.
+ * - Added support for multi-line text and proper font sizing. 
  * 
  * @author uru
  */
@@ -188,6 +198,13 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
     private KlighdSemanticDiagramData semanticData = null;
     
     private boolean writeComments = false;
+    
+    /** The display used to render diagrams, if available, otherwhise {@code null}. */
+    private Display display;
+    /** If a display exists, this {@link GC} is used to perform font size calculations. */  
+    private GC gc;
+    /** A mapping of awt fonts to swt fonts. The latter are used for font size calculations. */
+    private Map<Font, org.eclipse.swt.graphics.Font> awtSwtFontCache = Maps.newHashMap();
 
     /*
      * ================================================================================ |
@@ -225,6 +242,14 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
         this.filename = null;
 
         this.clipNumber = new Value().set(0);
+        
+        // Dont use #getDefault() as we do not want to 
+        //  create a display if none exists so far.
+        display = Display.getCurrent();
+        if (display != null && gc == null) {
+            // remember to dispose the gc later
+            gc = new GC(display);
+        }
     }
 
     protected SemanticSVGGraphics2D(SemanticSVGGraphics2D graphics, boolean doRestoreOnDispose) {
@@ -240,6 +265,25 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
         textures = graphics.textures;
         clipNumber = graphics.clipNumber;
         fontTable = graphics.fontTable;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() {
+        // dispose cached swt fonts
+        for (org.eclipse.swt.graphics.Font f : awtSwtFontCache.values()) {
+            f.dispose();
+        }
+        awtSwtFontCache.clear();
+        awtSwtFontCache = null;
+
+        // dispose the gc
+        gc.dispose();
+        gc = null;
+
+        super.dispose();
     }
 
     /*
@@ -318,6 +362,9 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
             os.println("     xmlns:xlink=\"http://www.w3.org/1999/xlink\"");
             os.println("     xmlns:ev=\"http://www.w3.org/2001/xml-events\"");
             os.println("     xmlns:klighd=\"http://de.cau.cs.kieler/klighd\"");
+            // KIPRA-1637: preserve multiple spaces when displaying an svg
+            //  this affects all <text> elements of the document
+            os.println("     xml:space=\"preserve\"");
         }
         os.println("     x=\"" + x + "px\"");
         os.println("     y=\"" + y + "px\"");
@@ -591,7 +638,7 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
         result.append(image.getWidth());
         result.append("\" " + "height=\"");
         result.append(image.getHeight());
-        result.append("\" " + attributes());
+        result.append("\" " + attributes(true));
         result.append(" xlink:href=\"");
 
         String writeAs = getProperty(WRITE_IMAGES_AS);
@@ -676,6 +723,47 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
                 .toString()))));
     }
 
+    /**
+     * Copied from {@link AbstractVectorGraphicsIO} to change the handling of text as shapes.
+     * 
+     * Draws the string at (x, y). If TEXT_AS_SHAPES is set
+     * {@link #drawGlyphVector(java.awt.font.GlyphVector, float, float)} is used, otherwise
+     * {@link #writeString(String, double, double)} for a more direct output of the string.
+     *
+     * @param string
+     * @param x
+     * @param y
+     */
+    public void drawString(String string, double x, double y) {
+        // something to draw?
+        if (string == null || string.equals("")) {
+            return;
+        }
+
+        // Draw strings as shapes?
+        // We reuse SWT's font size estimation here, as
+        //  KLighD uses it to determine the sizes of nodes etc.
+        if (isProperty(TEXT_AS_SHAPES)) {
+            Path path = new Path(display);
+            path.addString(string, (float) x, (float) y, getSWTFont());
+            path.close();
+
+            // convert to awt path
+            Path2D p2d = createAWTPath(path.getPathData());
+            path.dispose();
+
+            fill(p2d);
+
+        } else {
+            // write string directly
+            try {
+                writeString(string, x, y);
+            } catch (IOException e) {
+                handleException(e);
+            }
+        }
+    }
+
     /* 5.3. Strings */
     protected void writeString(String str, double x, double y)
             throws IOException {
@@ -727,22 +815,39 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
                             // style
                             + addFontHeightUnit(style(style))
                             // semantic data
-                            + attributes()
+                            + attributes(false)
                             // Coordinates
                             + " x=\"0\" y=\"0\">"
                             // text
                             + insertTSpan(str)
                             + "</text>")))));
+
+        resetSemanticData();
     }
 
     
     /**
-     * Parse the attributes string and add a unit to the font-size attribute. 
-     * @param attributes the text attributes
+     * Parse the attributes string and add a unit to the font-size attribute.
+     * 
+     * A font's size is specified in 'pt' which is a relative size where a height of 72pt
+     * corresponds to 1 inch. When a font is rendered on a screen however, these pts are converted
+     * to pixels and sizes of nodes and boxes are determined correspondingly. We thus use a px size
+     * if we are able to determine the device with wich the font was rendered (i.e. the device).
+     * 
+     * @param attributes
+     *            the text attributes
      * @return the text attributes with added font-size unit.
      */
     private String addFontHeightUnit(final String attributes) {
-        return attributes.replaceFirst("font-size=\"(\\d*)\"", "font-size=\"$1pt\"");
+        String fontWithUnit;
+        if (display != null) {
+            fontWithUnit =
+                    attributes.replaceFirst("font-size=\"(\\d*(\\.\\d*)?)\"", "font-size=\"$1px\"");
+        } else {
+            fontWithUnit =
+                    attributes.replaceFirst("font-size=\"(\\d*(\\.\\d*)?)\"", "font-size=\"$1pt\"");
+        }
+        return fontWithUnit;
     }
     
     /**
@@ -751,23 +856,88 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
      * @return the string enriched by TSpan elements.
      */
     private String insertTSpan(final String text) {
-        float size = this.getFontHeight();
-        String content = "";
-        //blanklines would normally be ignored so we somehow have 
-        //to count them and adjust the offset accordingly
-        int blanklinefactor = 1;
-        for (final String line : text.split("\\r?\\n|\\r")) {
-            if (!line.isEmpty()) {
-                content += "<tspan x=\"0\" dy=\"" + ((size * blanklinefactor) 
-                    + (0.5 * size)) + "\">" + line + "</tspan>" + KlighdPlugin.LINE_SEPARATOR;
-                blanklinefactor = 1;
-            } else {
-                blanklinefactor += 1;
+        
+        // empty string
+        if (Strings.isNullOrEmpty(text)) {
+            return "";
+        }
+
+        int i = 0;
+        final String[] lines = text.split("\\r?\\n|\\r");
+        final StringBuffer content = new StringBuffer();
+        if (display != null) {
+            // Translate font size in 'pt' to display 'px'
+            //  see #addFontHeightUnit javadoc for more information
+            // As opposed to the font metrics used below, the determined
+            //  size is a non-rounded decimal number 
+            float size = this.getFont().getSize2D() * ((float) display.getDPI().x) / 72;
+            
+            // Translate the font back to an swt font
+            //  KLighD used SWT to determine font sizes and as SWT and AWT font metrics
+            //  differ we have to use swt here
+            // Note that the font style constants in SWT and AWT are identical
+
+            gc.setFont(getSWTFont());
+            org.eclipse.swt.graphics.FontMetrics fm = gc.getFontMetrics();
+            
+            // FIXME 
+            // The following values are determined experimentally
+            //  as each of the browser/awt/swt seem to determine 
+            //  slightly different values ...
+            // fm.getLeading / 2 seems to be a good value at least under windows
+            
+            // to the 1st baseline 
+            double firstLineHeight = fm.getLeading() / 2d + fm.getAscent();
+            // actually we want to use fm.getHeight, however this seems to be too much
+            double lineHeight = size + fm.getLeading() / 2d; 
+            // use tspans to emulate multiline text
+            boolean first = true;
+            for (final String line : lines) {
+                content.append("<tspan x=\"0\" dy=\"");
+                content.append(first ? firstLineHeight : lineHeight);
+                content.append("\"");
+                content.append(tSpanAttributes(line, i++));
+                content.append(">");
+                content.append(line);
+                content.append("</tspan>" + KlighdPlugin.LINE_SEPARATOR);
+                first = false;
+            }
+            
+        } else {
+            // without a display just use the pt size as line height for multiline text
+
+            // use tspans to emulate multiline text
+            for (final String line : lines) {
+                content.append("<tspan x=\"0\" dy=\"");
+                content.append(getFont().getSize());
+                content.append("\"");
+                content.append(tSpanAttributes(line, i++));
+                content.append(">");
+                content.append(line);
+                content.append("</tspan>" + KlighdPlugin.LINE_SEPARATOR);
             }
         }
-        return content;
+
+        return content.toString();
     }
     
+
+    /**
+     * KLighD uses SWT to estimate font sizes, hence we do 
+     * the same when exporting svgs.
+     */
+    @Override
+    public FontMetrics getFontMetrics() {
+        // use swt functionality if a display is available
+        if (display != null) {
+            gc.setFont(getSWTFont());
+            return new PseudoAWTFontMetrics(getFont(), gc.getFontMetrics());
+        } else {
+            // fallback to the awt metrics
+            return super.getFontMetrics();
+        }
+    }
+
     /**
      * Gets the height of the current font.
      * @return The current font height.
@@ -838,7 +1008,11 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
         }
 
         Float size = (Float) attributes.get(TextAttribute.SIZE);
-        result.put("font-size", fixedPrecision(size.floatValue()));
+        if (display != null) {
+            result.put("font-size", fixedPrecision(size.floatValue() * display.getDPI().x / 72));
+        } else {
+            result.put("font-size", fixedPrecision(size.floatValue()));
+        }
 
         return result;
     }
@@ -1013,17 +1187,25 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
             Point2D p2 = paint.getPoint2();
             os.println("<defs>");
             os.print("  <linearGradient id=\"" + name + "\" ");
-            os.print("x1=\"" + fixedPrecision(p1.getX()) + "\" ");
-            os.print("y1=\"" + fixedPrecision(p1.getY()) + "\" ");
-            os.print("x2=\"" + fixedPrecision(p2.getX()) + "\" ");
-            os.print("y2=\"" + fixedPrecision(p2.getY()) + "\" ");
-            // added gradient rotation
+
+            // special treatment of klighd's gradients, to support rotations
             if (paint instanceof KlighdGradientPaint) {
-                os.print("gradientTransform=\"rotate(" + (((KlighdGradientPaint) paint).getRotation() - 45) + ")\" ");
+                // To make things easier and be able to reuse specified gradients, 
+                //  we let the gradient always fill the whole bounding box. Thus we do not 
+                //  need to specify explicit coordinates and can easily rotate 
+                //  the gradient
+                os.print("gradientUnits=\"objectBoundingBox\" ");
+                os.print("gradientTransform=\"rotate("
+                        + (((KlighdGradientPaint) paint).getRotation()) + ")\" ");
+            } else {
+                os.print("x1=\"" + fixedPrecision(p1.getX()) + "\" ");
+                os.print("y1=\"" + fixedPrecision(p1.getY()) + "\" ");
+                os.print("x2=\"" + fixedPrecision(p2.getX()) + "\" ");
+                os.print("y2=\"" + fixedPrecision(p2.getY()) + "\" ");
+                os.print("gradientUnits=\"userSpaceOnUse\" ");
+                os.print("spreadMethod=\""
+                        + ((paint.isCyclic()) ? "reflect" : "pad") + "\" ");
             }
-            os.print("gradientUnits=\"userSpaceOnUse\" ");
-            os.print("spreadMethod=\""
-                    + ((paint.isCyclic()) ? "reflect" : "pad") + "\" ");
             os.println(">");
             os.println("    <stop offset=\"0\" stop-color=\""
                     + hexColor(paint.getColor1()) + "\" " + "opacity-stop=\""
@@ -1291,40 +1473,74 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
         StringBuffer result = new StringBuffer();
 
         result.append("<path ");
-        result.append(attributes());
+        result.append(attributes(true));
         result.append(getPathContent(path));
         result.append("/>");
 
         return result.toString();
     }
-    
-    
-    private String attributes() {
-        StringBuffer sb = new StringBuffer(" ");
-        if (semanticData != null) {
-            Iterator<Entry<String, String>> it = semanticData.iterator();
-            while (it.hasNext()) {
-                Entry<String, String> e = it.next();
 
-                // special tags
-                if (e.getKey().equals(KlighdConstants.SEMANTIC_DATA_ID)) {
-                    sb.append("id" + "=\"" + e.getValue() + "\"");
-                } else if (e.getKey().equals(KlighdConstants.SEMANTIC_DATA_CLASS)) {
-                    sb.append("class" + "=\"" + e.getValue() + "\"");
-                } else {
-                    sb.append("klighd:" + e.getKey() + "=\"" + e.getValue() + "\"");
-                }
-                sb.append(" ");
+
+    public void addSemanticData(final KlighdSemanticDiagramData nextSemanticData) {
+        this.semanticData = nextSemanticData;
+    }
+
+    private String attributes(boolean resetSemData) {
+        if (semanticData == null) {
+            return "";
+        }
+
+        final StringBuffer sb = new StringBuffer(" ");
+
+        for (final Entry<String, String> e : semanticData) {
+
+            // special tags
+            if (e.getKey().equals(KlighdConstants.SEMANTIC_DATA_ID)) {
+                sb.append("id" + "=\"" + e.getValue() + "\"");
+
+            } else if (e.getKey().equals(KlighdConstants.SEMANTIC_DATA_CLASS)) {
+                sb.append("class" + "=\"" + e.getValue() + "\"");
+
+            } else {
+                sb.append("klighd:" + e.getKey() + "=\"" + e.getValue() + "\"");
             }
 
-            semanticData = null;
+            sb.append(" ");
+        }
+
+        if (resetSemData) {
+            resetSemanticData();
         }
         return sb.toString();
     }
-    
-    public void addSemanticData(KlighdSemanticDiagramData nextSemanticData) {
-        this.semanticData = nextSemanticData;
+
+    private String tSpanAttributes(final String textLine, final int noOfLine) {
+        if (semanticData == null) {
+            return "";
+        }
+
+        final StringBuffer sb = new StringBuffer(" ");
+
+        for (final Entry<String, String> e : semanticData.textLineIterable(textLine, noOfLine)) {
+
+            // special tags
+            if (e.getKey().equals(KlighdConstants.SEMANTIC_DATA_ID)) {
+                sb.append("id" + "=\"" + e.getValue() + "\"");
+
+            } else {
+                sb.append("klighd:" + e.getKey() + "=\"" + e.getValue() + "\"");
+            }
+
+            sb.append(" ");
+        }
+
+        return sb.toString();
     }
+
+    private void resetSemanticData() {
+        this.semanticData = null;
+    }
+
 
     //If no semantic data is set these groups are unnecessary clutter. This
     // stack keeps track of them and prevents printing of those that are not needed.
@@ -1333,7 +1549,7 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
         this.semanticData = nextSemanticData;
         if ((this.semanticData != null && this.semanticData.iterator().hasNext())) {
             os.write("<g ");
-            os.write(attributes());
+            os.write(attributes(true));
             os.write(" >\n");
             groupsStack.push(true);
         } else {
@@ -1401,6 +1617,76 @@ public class SemanticSVGGraphics2D extends AbstractVectorGraphicsIO {
         return result.toString();
     }
 
+    
+    /**
+     * Builds up a AWT {@link Path2D} according to a given SWT Geometry {@link PathData}.
+     * 
+     * @param pathData
+     *            provides the segments the new path shall contain.
+     *            the device to create the path on
+     * @return the desired {@link Path2D} object.
+     */
+    public static Path2D createAWTPath(final PathData pathData) {
+        final Path2D p2d = new Path2D.Double();
+        final float[] pts = pathData.points;
+
+        int i = 0;
+        for (byte type : pathData.types) {
+            switch (type) {
+            case SWT.PATH_MOVE_TO:
+                p2d.moveTo(pts[i++], pts[i++]);
+                break;
+            case SWT.PATH_LINE_TO:
+                p2d.lineTo(pts[i++], pts[i++]);
+                break;
+            case SWT.PATH_CLOSE:
+                p2d.closePath();
+                break;
+            case SWT.PATH_QUAD_TO:
+                p2d.quadTo(pts[i++], pts[i++], pts[i++], pts[i++]);
+                break;
+            case SWT.PATH_CUBIC_TO:
+                p2d.curveTo(pts[i++], pts[i++], pts[i++], pts[i++], pts[i++], pts[i++]);
+                break;
+            default:
+            }
+        }
+        return p2d;
+    }
+    
+    private org.eclipse.swt.graphics.Font getSWTFont() {
+        return getSWTFont(getFont());
+    }
+    
+    /**
+     * @param font
+     *            the awt font for which to assemble an swt font.
+     * @return either the corresponding swt font, or {@code null} if no dispaly exists.
+     */
+    private org.eclipse.swt.graphics.Font getSWTFont(final Font font) {
+        if (!awtSwtFontCache.containsKey(font) && display != null) {
+            // note that the style constants for swt and awt are equal
+            org.eclipse.swt.graphics.Font swtFont =
+                    new org.eclipse.swt.graphics.Font(display, getFont().getName(), getFont()
+                            .getSize(), getSWTFontStyle());
+            awtSwtFontCache.put(font, swtFont);
+        }
+        return awtSwtFontCache.get(font);
+    }
+    
+    private int getSWTFontStyle() {
+        switch (getFont().getStyle()) {
+        case Font.PLAIN:
+            return SWT.NORMAL;
+        case Font.BOLD:
+            return SWT.BOLD;
+        case Font.ITALIC:
+            return SWT.ITALIC;
+        }
+        // default
+        return SWT.NORMAL;
+    }
+    
     /**
      * for fixedPrecision(double d), SVG does not understand "1E-7"
      * we have to use ".0000007" instead

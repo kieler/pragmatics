@@ -14,8 +14,6 @@
 package de.cau.cs.kieler.klay.layered.p5edges;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +21,10 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.TreeSet;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
@@ -31,14 +32,14 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.DebugUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
- * Edge routing implementation that creates orthogonal bend points. Inspired by
+ * Edge routing implementation that creates orthogonal bend points. Inspired by:
  * <ul>
  *   <li>Georg Sander. Layout of directed hypergraphs with orthogonal hyperedges. In
  *     <i>Proceedings of the 11th International Symposium on Graph Drawing (GD '03)</i>,
@@ -54,7 +55,6 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * external ports, this changes: edges are routed from south to north and north to south,
  * respectively. To support these different requirements, the routing direction-related
  * code is factored out into {@link IRoutingDirectionStrategy routing strategies}.</p>
- * 
  * 
  * <p>When instantiating a new routing generator, the concrete directional strategy must be
  * specified. Once that is done, {@link #routeEdges(LGraph, List, int, List, double)}
@@ -78,20 +78,7 @@ public final class OrthogonalRoutingGenerator {
      * 
      * @author cds
      */
-    public interface IRoutingDirectionStrategy {
-        
-        /**
-         * Enumeration of available strategies.
-         */
-        public enum Strategy {
-            /** west to east routing strategy. */
-            WEST_TO_EAST,
-            /** north to south routing strategy. */
-            NORTH_TO_SOUTH,
-            /** south to north routing strategy. */
-            SOUTH_TO_NORTH;
-        }
-        
+    private interface IRoutingDirectionStrategy {
         /**
          * Returns the port's position on a hyper edge axis. In the west-to-east routing
          * case, this would be the port's exact y coordinate.
@@ -136,8 +123,7 @@ public final class OrthogonalRoutingGenerator {
      * 
      * @author cds
      */
-    public class WestToEastRoutingStrategy implements IRoutingDirectionStrategy {
-
+    private class WestToEastRoutingStrategy implements IRoutingDirectionStrategy {
         /**
          * {@inheritDoc}
          */
@@ -185,7 +171,6 @@ public final class OrthogonalRoutingGenerator {
                 }
             }
         }
-        
     }
     
     /**
@@ -193,8 +178,7 @@ public final class OrthogonalRoutingGenerator {
      * 
      * @author cds
      */
-    public class NorthToSouthRoutingStrategy implements IRoutingDirectionStrategy {
-
+    private class NorthToSouthRoutingStrategy implements IRoutingDirectionStrategy {
         /**
          * {@inheritDoc}
          */
@@ -242,7 +226,6 @@ public final class OrthogonalRoutingGenerator {
                 }
             }
         }
-        
     }
     
     /**
@@ -250,8 +233,7 @@ public final class OrthogonalRoutingGenerator {
      * 
      * @author cds
      */
-    public class SouthToNorthRoutingStrategy implements IRoutingDirectionStrategy {
-
+    private class SouthToNorthRoutingStrategy implements IRoutingDirectionStrategy {
         /**
          * {@inheritDoc}
          */
@@ -299,8 +281,20 @@ public final class OrthogonalRoutingGenerator {
                 }
             }
         }
-        
     }
+    
+    /**
+     * Enumeration of available routing directions.
+     */
+    public static enum RoutingDirection {
+        /** west to east routing direction. */
+        WEST_TO_EAST,
+        /** north to south routing direction. */
+        NORTH_TO_SOUTH,
+        /** south to north routing direction. */
+        SOUTH_TO_NORTH;
+    }
+    
     
     ///////////////////////////////////////////////////////////////////////////////
     // Hyper Node Graph Structures
@@ -310,7 +304,7 @@ public final class OrthogonalRoutingGenerator {
      */
     public class HyperNode implements Comparable<HyperNode> {
         /** ports represented by this hypernode. */
-        private List<LPort> ports = new LinkedList<LPort>();
+        private List<LPort> ports = Lists.newArrayList();
         /** mark value used for cycle breaking. */
         private int mark;
         /** the rank determines the horizontal distance to the preceding layer. */
@@ -320,15 +314,15 @@ public final class OrthogonalRoutingGenerator {
         /** vertical ending position of this hypernode. */
         private double end = Double.NaN;
         /** positions of line segments going to the preceding layer. */
-        private LinkedList<Double> sourcePosis = new LinkedList<Double>();
+        private LinkedList<Double> sourcePosis = Lists.newLinkedList();
         /** positions of line segments going to the next layer. */
-        private LinkedList<Double> targetPosis = new LinkedList<Double>();
+        private LinkedList<Double> targetPosis = Lists.newLinkedList();
         /** list of outgoing dependencies. */
-        private List<Dependency> outgoing = new LinkedList<Dependency>();
+        private List<Dependency> outgoing = Lists.newArrayList();
         /** sum of the weights of outgoing dependencies. */
         private int outweight;
         /** list of incoming dependencies. */
-        private List<Dependency> incoming = new LinkedList<Dependency>();
+        private List<Dependency> incoming = Lists.newArrayList();
         /** sum of the weights of incoming depencencies. */
         private int inweight;
         
@@ -338,7 +332,7 @@ public final class OrthogonalRoutingGenerator {
          * @param port a port
          * @param hyperNodeMap map of ports to existing hypernodes
          */
-        void addPortPosis(final LPort port, final Map<LPort, HyperNode> hyperNodeMap) {
+        void addPortPositions(final LPort port, final Map<LPort, HyperNode> hyperNodeMap) {
             hyperNodeMap.put(port, this);
             ports.add(port);
             double pos = routingStrategy.getPortPositionOnHyperNode(port);
@@ -367,7 +361,7 @@ public final class OrthogonalRoutingGenerator {
             // add connected ports
             for (LPort otherPort : port.getConnectedPorts()) {
                 if (!hyperNodeMap.containsKey(otherPort)) {
-                    addPortPosis(otherPort, hyperNodeMap);
+                    addPortPositions(otherPort, hyperNodeMap);
                 }
             }
         }
@@ -517,7 +511,7 @@ public final class OrthogonalRoutingGenerator {
     /** threshold at which conflicts of horizontal line segments are detected. */
     private final double conflictThreshold;
     /** set of already created junction points, to avoid multiple points at the same position. */
-    private final Set<KVector> createdJunctionPoints = new HashSet<KVector>();
+    private final Set<KVector> createdJunctionPoints = Sets.newHashSet();
     /** prefix of debug output files. */
     private final String debugPrefix;
     
@@ -528,14 +522,15 @@ public final class OrthogonalRoutingGenerator {
     /**
      * Constructs a new instance.
      * 
-     * @param strategy the routing strategy to use.
+     * @param direction the direction edges should point at.
      * @param edgeSpacing the space between edges.
      * @param debugPrefix prefix of debug output files, or {@code null} if no debug output should
      *                    be generated.
      */
-    public OrthogonalRoutingGenerator(final IRoutingDirectionStrategy.Strategy strategy,
-            final double edgeSpacing, final String debugPrefix) {
-        switch (strategy) {
+    public OrthogonalRoutingGenerator(final RoutingDirection direction, final double edgeSpacing,
+            final String debugPrefix) {
+        
+        switch (direction) {
         case WEST_TO_EAST:
             this.routingStrategy = new WestToEastRoutingStrategy();
             break;
@@ -570,8 +565,8 @@ public final class OrthogonalRoutingGenerator {
     public int routeEdges(final LGraph layeredGraph, final Iterable<LNode> sourceLayerNodes,
             final int sourceLayerIndex, final Iterable<LNode> targetLayerNodes, final double startPos) {
         
-        Map<LPort, HyperNode> portToHyperNodeMap = new HashMap<LPort, HyperNode>();
-        List<HyperNode> hyperNodes = new LinkedList<HyperNode>();
+        Map<LPort, HyperNode> portToHyperNodeMap = Maps.newHashMap();
+        List<HyperNode> hyperNodes = Lists.newArrayList();
         
         // create hypernodes for eastern output ports of the left layer and for western
         // output ports of the right layer
@@ -650,7 +645,7 @@ public final class OrthogonalRoutingGenerator {
                     if (hyperNode == null) {
                         hyperNode = new HyperNode();
                         hyperNodes.add(hyperNode);
-                        hyperNode.addPortPosis(port, portToHyperNodeMap);
+                        hyperNode.addPortPositions(port, portToHyperNodeMap);
                     }
                 }
             }
@@ -770,8 +765,8 @@ public final class OrthogonalRoutingGenerator {
      * @param random random number generator
      */
     private static void breakCycles(final List<HyperNode> nodes, final Random random) {
-        LinkedList<HyperNode> sources = new LinkedList<HyperNode>();
-        LinkedList<HyperNode> sinks = new LinkedList<HyperNode>();
+        LinkedList<HyperNode> sources = Lists.newLinkedList();
+        LinkedList<HyperNode> sinks = Lists.newLinkedList();
         
         // initialize values for the algorithm
         int nextMark = -1;
@@ -798,7 +793,7 @@ public final class OrthogonalRoutingGenerator {
         }
     
         // assign marks to all nodes, ignore dependencies of weight zero
-        Set<HyperNode> unprocessed = new TreeSet<HyperNode>(nodes);
+        Set<HyperNode> unprocessed = Sets.newTreeSet(nodes);
         int markBase = nodes.size();
         int nextRight = markBase - 1, nextLeft = markBase + 1;
         List<HyperNode> maxNodes = new ArrayList<HyperNode>();
@@ -879,8 +874,9 @@ public final class OrthogonalRoutingGenerator {
      * @param sources list of sources
      * @param sinks list of sinks
      */
-    private static void updateNeighbors(final HyperNode node, final LinkedList<HyperNode> sources,
-            final LinkedList<HyperNode> sinks) {
+    private static void updateNeighbors(final HyperNode node, final List<HyperNode> sources,
+            final List<HyperNode> sinks) {
+        
         // process following nodes
         for (Dependency dep : node.outgoing) {
             if (dep.target.mark < 0 && dep.weight > 0) {
@@ -915,8 +911,8 @@ public final class OrthogonalRoutingGenerator {
         // determine sources, targets, incoming count and outgoing count; targets are only
         // added to the list if they only connect westward ports (that is, if all their
         // horizontal segments point to the right)
-        List<HyperNode> sources = new LinkedList<HyperNode>();
-        List<HyperNode> rightwardTargets = new LinkedList<HyperNode>();
+        List<HyperNode> sources = Lists.newArrayList();
+        List<HyperNode> rightwardTargets = Lists.newArrayList();
         for (HyperNode node : nodes) {
             node.inweight = node.incoming.size();
             node.outweight = node.outgoing.size();

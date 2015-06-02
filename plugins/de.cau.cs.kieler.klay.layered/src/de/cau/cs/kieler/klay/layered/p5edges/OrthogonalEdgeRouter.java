@@ -216,13 +216,13 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         monitor.begin("Orthogonal edge routing", 1);
         
         // Retrieve some generic values
-        double nodeSpacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();
+        double nodeSpacing = layeredGraph.getProperty(InternalProperties.SPACING).doubleValue();
         double edgeSpacing = nodeSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         boolean debug = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
         
         // Prepare for iteration!
         OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
-                OrthogonalRoutingGenerator.IRoutingDirectionStrategy.Strategy.WEST_TO_EAST,
+                OrthogonalRoutingGenerator.RoutingDirection.WEST_TO_EAST,
                 edgeSpacing, debug ? "phase5" : null);
         float xpos = 0.0f;
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
@@ -252,22 +252,24 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
             slotsCount = routingGenerator.routeEdges(layeredGraph, leftLayerNodes, leftLayerIndex,
                     rightLayerNodes, leftLayer == null ? xpos : xpos + edgeSpacing);
             
-            boolean externalLeftLayer = leftLayer == null || Iterables.all(leftLayerNodes,
-                    PolylineEdgeRouter.PRED_EXTERNAL_PORT);
-            boolean externalRightLayer = rightLayer == null || Iterables.all(rightLayerNodes,
-                    PolylineEdgeRouter.PRED_EXTERNAL_PORT);
+            boolean isLeftLayerExternal = leftLayer == null || Iterables.all(leftLayerNodes,
+                    PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
+            boolean isRightLayerExternal = rightLayer == null || Iterables.all(rightLayerNodes,
+                    PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
+            
             if (slotsCount > 0) {
                 // The space between each pair of edge segments, and between nodes and edges
                 double increment = slotsCount * edgeSpacing;
                 if (rightLayer != null) {
                     increment += edgeSpacing;
                 }
+                
                 // If we are between two layers, make sure their minimal spacing is preserved
-                if (increment < nodeSpacing && !externalLeftLayer && !externalRightLayer) {
+                if (increment < nodeSpacing && !isLeftLayerExternal && !isRightLayerExternal) {
                     increment = nodeSpacing;
                 }
                 xpos += increment;
-            } else if (!externalLeftLayer && !externalRightLayer) {
+            } else if (!isLeftLayerExternal && !isRightLayerExternal) {
                 // If all edges are straight, use the usual spacing 
                 xpos += nodeSpacing;
             }

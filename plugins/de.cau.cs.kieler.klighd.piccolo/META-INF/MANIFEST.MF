@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Lightweight Diagrams Powered by Piccolo2D
 Bundle-SymbolicName: de.cau.cs.kieler.klighd.piccolo;singleton:=true
-Bundle-Version: 0.7.0.qualifier
+Bundle-Version: 0.7.1.qualifier
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
@@ -16,27 +16,22 @@ Export-Package: de.cau.cs.kieler.klighd.piccolo,
  de.cau.cs.kieler.klighd.piccolo.internal;
   x-friends:="de.cau.cs.kieler.klighd.piccolo.svg,
    de.cau.cs.kieler.klighd.piccolo.test,
-   de.cau.cs.kieler.klighdning,
    de.cau.cs.kieler.klighd.ui",
- de.cau.cs.kieler.klighd.piccolo.internal.activities;x-friends:="de.cau.cs.kieler.klighd.piccolo.svg,de.cau.cs.kieler.klighd.piccolo.test,de.cau.cs.kieler.klighdning",
+ de.cau.cs.kieler.klighd.piccolo.internal.activities;x-friends:="de.cau.cs.kieler.klighd.piccolo.svg,de.cau.cs.kieler.klighd.piccolo.test",
  de.cau.cs.kieler.klighd.piccolo.internal.controller;
   x-friends:="de.cau.cs.kieler.klighd.piccolo.svg,
    de.cau.cs.kieler.klighd.piccolo.test,
-   de.cau.cs.kieler.klighd.ui,
-   de.cau.cs.kieler.klighdning",
+   de.cau.cs.kieler.klighd.ui",
  de.cau.cs.kieler.klighd.piccolo.internal.events;
   x-friends:="de.cau.cs.kieler.klighd.piccolo.svg,
    de.cau.cs.kieler.klighd.piccolo.test,
-   de.cau.cs.kieler.klighd.ui,
-   de.cau.cs.kieler.klighdning",
+   de.cau.cs.kieler.klighd.ui",
  de.cau.cs.kieler.klighd.piccolo.internal.nodes;
   x-friends:="de.cau.cs.kieler.klighd.piccolo.svg,
    de.cau.cs.kieler.klighd.piccolo.test,
-   de.cau.cs.kieler.klighd.ui,
-   de.cau.cs.kieler.klighdning",
+   de.cau.cs.kieler.klighd.ui",
  de.cau.cs.kieler.klighd.piccolo.internal.util;
   x-friends:="de.cau.cs.kieler.klighd.piccolo.svg,
    de.cau.cs.kieler.klighd.piccolo.test,
-   de.cau.cs.kieler.klighdning,
    de.cau.cs.kieler.klighd.ui",
  de.cau.cs.kieler.klighd.piccolo.viewer

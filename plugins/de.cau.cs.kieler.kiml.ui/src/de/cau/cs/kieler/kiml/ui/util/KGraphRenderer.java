@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2012 by
+ * Copyright 2015 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -42,9 +42,10 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
- * Utility class that is able to render a KGraph instance.
+ * Utility class that is able to render a KGraph instance. This is primarily a debug tool.
  *
  * @author msp
+ * @author cds
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
@@ -71,7 +72,11 @@ public class KGraphRenderer {
     /** fill color for nodes. */
     private Color nodeFillColor;
     /** font used for node labels. */
-    private Font nodeFont;    
+    private Font nodeFont;
+    /** border color for labels. */
+    private Color labelBorderColor;
+    /** text color for labels. */
+    private Color labelTextColor;
     /** color used for ports. */
     private Color portColor;
     /** font used for port labels. */
@@ -108,16 +113,21 @@ public class KGraphRenderer {
         this.scale = thescale;
         this.baseOffset = thebaseOffset;
 
-        nodeBorderColor = new Color(display, 2, 15, 3);
-        nodeFillColor = new Color(display, 168, 220, 190);
         int nodeFontSize = Math.max((int) Math.round(NODE_FONT_SIZE * thescale), 2);
         nodeFont = new Font(display, "sans", nodeFontSize, SWT.NORMAL);
-        portColor = new Color(display, 2, 9, 40);
+        nodeBorderColor = new Color(display, 2, 15, 3);
+        nodeFillColor = new Color(display, 168, 220, 190);
+        
+        labelBorderColor = new Color(display, 63, 117, 67);
+        labelTextColor = new Color(display, 2, 15, 3);
+        
         int portFontSize = Math.max((int) Math.round(PORT_FONT_SIZE * thescale), 2);
         portFont = new Font(display, "sans", portFontSize, SWT.NORMAL);
-        edgeColor = new Color(display, 23, 36, 54);
+        portColor = new Color(display, 2, 9, 40);
+        
         int edgeFontSize = Math.max((int) Math.round(EDGE_FONT_SIZE * thescale), 2);
         edgeFont = new Font(display, "sans", edgeFontSize, SWT.NORMAL);
+        edgeColor = new Color(display, 23, 36, 54);
     }
 
     /**
@@ -128,6 +138,8 @@ public class KGraphRenderer {
         nodeBorderColor.dispose();
         nodeFillColor.dispose();
         nodeFont.dispose();
+        labelBorderColor.dispose();
+        labelTextColor.dispose();
         portColor.dispose();
         portFont.dispose();
         edgeColor.dispose();
@@ -238,7 +250,7 @@ public class KGraphRenderer {
         graphics.setAlpha(255);
         graphics.setFont(edgeFont);
         for (KEdge edge : edgeSet) {
-            renderEdge(parentNode, edge, graphics, area);
+            renderEdge(parentNode, edge, graphics, area, nodeAlpha);
         }
     }
     
@@ -297,12 +309,12 @@ public class KGraphRenderer {
             graphics.setFont(nodeFont);
             // render node labels
             for (KLabel label : child.getLabels()) {
-                renderLabel(label, graphics, area, childOffset);
+                renderLabel(label, graphics, area, childOffset, nodeAlpha);
             }
 
             // render ports
             for (KPort port : child.getPorts()) {
-                renderPort(port, graphics, area, childOffset);
+                renderPort(port, graphics, area, childOffset, nodeAlpha);
             }
 
             // store all incident edges to render them later
@@ -318,9 +330,11 @@ public class KGraphRenderer {
      * @param graphics the graphics context used to paint
      * @param area dirty area that needs painting
      * @param offset offset to be added to relative coordinates
+     * @param labelAlpha alpha value for labels
      */
     private void renderLabel(final KLabel label, final GC graphics, final Rectangle area,
-            final KVector offset) {
+            final KVector offset, final int labelAlpha) {
+        
         if (graphics.getFont().getFontData()[0].getHeight() >= MIN_FONT_HEIGHT) {
             PaintRectangle rect = boundsMap.get(label);
             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
@@ -329,10 +343,23 @@ public class KGraphRenderer {
                 boundsMap.put(label, rect);
             }
             if (!rect.painted && rect.intersects(area)) {
+                // render the border
+                graphics.setAlpha(labelAlpha);
+                graphics.setForeground(labelBorderColor);
+                graphics.drawRectangle(rect.x, rect.y, rect.width, rect.height);
+                
+                // render the text
                 String text = label.getText();
                 if (text != null && text.length() > 0) {
+                    graphics.setAlpha(255);
+                    graphics.setForeground(labelTextColor);
+                    
+                    Rectangle oldClip = graphics.getClipping();
+                    graphics.setClipping(rect.x, rect.y, rect.width, rect.height);
                     graphics.drawString(text, rect.x, rect.y, true);
+                    graphics.setClipping(oldClip);
                 }
+                
                 rect.painted = true;
             }
         }
@@ -345,9 +372,10 @@ public class KGraphRenderer {
      * @param graphics the graphics context used to paint
      * @param area dirty area that needs painting
      * @param offset offset to be added to relative coordinates
+     * @param labelAlpha alpha value for labels
      */
     private void renderPort(final KPort port, final GC graphics, final Rectangle area,
-            final KVector offset) {
+            final KVector offset, final int labelAlpha) {
         graphics.setForeground(portColor);
         graphics.setBackground(portColor);
         graphics.setFont(portFont);
@@ -366,7 +394,7 @@ public class KGraphRenderer {
         // paint port labels
         KVector portOffset = new KVector(rect.x, rect.y);
         for (KLabel label : port.getLabels()) {
-            renderLabel(label, graphics, area, portOffset);
+            renderLabel(label, graphics, area, portOffset, labelAlpha);
         }
     }
 
@@ -377,9 +405,10 @@ public class KGraphRenderer {
      * @param edge the edge to paint
      * @param graphics the graphics context used to paint
      * @param area dirty area that needs painting
+     * @param labelAlpha alpha value for labels
      */
     private void renderEdge(final KNode graph, final KEdge edge, final GC graphics,
-            final Rectangle area) {
+            final Rectangle area, final int labelAlpha) {
         if (!KimlUtil.isDescendant(edge.getSource(), graph)
                 || !KimlUtil.isDescendant(edge.getTarget(), graph)) {
             // the edge points to some node outside of the rendered subgraph
@@ -430,9 +459,18 @@ public class KGraphRenderer {
             rect.painted = true;
         }
         
+        // paint junction points
+        KVectorChain vc = edgeLayout.getProperty(LayoutOptions.JUNCTION_POINTS);
+        if (vc != null) {
+            for (KVector v : vc) {
+                KVector center = v.clone().scale(scale).add(offset).sub(2, 2);
+                graphics.fillOval((int) center.x, (int) center.y, 6, 6);
+            }
+        }
+        
         // paint the edge labels
         for (KLabel label : edge.getLabels()) {
-            renderLabel(label, graphics, area, offset);
+            renderLabel(label, graphics, area, offset, labelAlpha);
         }
     }
 

@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.debugview.widgets;
 import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.klay.debugview.Messages;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 
 /**
  * Generates an HTML page that explains the node labels and the color keys used for dummy nodes.

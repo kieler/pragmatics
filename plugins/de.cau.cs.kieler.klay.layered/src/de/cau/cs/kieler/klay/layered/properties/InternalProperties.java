@@ -26,8 +26,11 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.util.nodespacing.LabelSide;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.compound.CrossHierarchyEdge;
@@ -37,10 +40,12 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
+import de.cau.cs.kieler.klay.layered.p5edges.splines.ConnectedSelfLoopComponent;
+import de.cau.cs.kieler.klay.layered.p5edges.splines.LoopSide;
 
 /**
  * Container for property definitions for internal use of the algorithm. These properties should
- * not be accessed from outside.
+ * not be accessed from outside. The properties are 
  * 
  * @author msp
  * @author cds
@@ -58,14 +63,14 @@ public final class InternalProperties {
     /**
      * The intermediate processing configuration for an input graph.
      */
-    public static final IProperty<IntermediateProcessingConfiguration> CONFIGURATION
-            = new Property<IntermediateProcessingConfiguration>("processingConfiguration");
+    public static final IProperty<IntermediateProcessingConfiguration> CONFIGURATION =
+            new Property<IntermediateProcessingConfiguration>("processingConfiguration");
     
     /**
      * The list of layout processors executed for an input graph.
      */
-    public static final IProperty<List<ILayoutProcessor>> PROCESSORS
-            = new Property<List<ILayoutProcessor>>("processors");
+    public static final IProperty<List<ILayoutProcessor>> PROCESSORS =
+            new Property<List<ILayoutProcessor>>("processors");
     
     /**
      * Whether the original node an LNode was created from was a compound node or not. This might
@@ -92,19 +97,6 @@ public final class InternalProperties {
      * A nested LGraph has a reference to the LNode that contains it.
      */
     public static final IProperty<LNode> PARENT_LNODE = new Property<LNode>("parentLNode");
-    
-    /**
-     * Node type.
-     */
-    public static final IProperty<NodeType> NODE_TYPE = new Property<NodeType>("nodeType",
-            NodeType.NORMAL);
-
-    /**
-     * Offset of port position to the node border. An offset of 0 means that the port touches its
-     * parent node on the outside, positive offsets move the port away from the node, and negative
-     * offset move the port towards the inside.
-     */
-    public static final IProperty<Float> OFFSET = new Property<Float>(LayoutOptions.OFFSET, 0.0f);
 
     /**
      * The original bend points of an edge.
@@ -126,6 +118,18 @@ public final class InternalProperties {
      * cross-hierarchy edge a label originally belonged to.
      */
     public static final IProperty<LEdge> ORIGINAL_LABEL_EDGE = new Property<LEdge>("originalLabelEdge");
+    
+    /**
+     * Edge labels represented by an edge label dummy node.
+     */
+    public static final IProperty<List<LLabel>> REPRESENTED_LABELS =
+            new Property<List<LLabel>>("representedLabels");
+    
+    /**
+     * The side (of an edge) a label is placed on.
+     */
+    public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
+            "labelSide", LabelSide.UNKNOWN);
     
     /**
      * Flag for reversed edges.
@@ -171,8 +175,7 @@ public final class InternalProperties {
      * {@link de.cau.cs.kieler.klay.layered.intermediate.InLayerConstraintProcessor}.
      */
     public static final IProperty<InLayerConstraint> IN_LAYER_CONSTRAINT 
-           = new Property<InLayerConstraint>(
-            "inLayerConstraint", InLayerConstraint.NONE);
+           = new Property<InLayerConstraint>("inLayerConstraint", InLayerConstraint.NONE);
 
     /**
      * Indicates that a node {@code x} may only appear inside a layer before the node {@code y} the
@@ -313,11 +316,13 @@ public final class InternalProperties {
         
     /** 
      * Original labels of a big node. 
-     * */
+     */
     public static final IProperty<List<LLabel>> BIGNODES_ORIG_LABELS = new Property<List<LLabel>>(
             "de.cau.cs.kieler.klay.layered.bigNodeLabels", new ArrayList<LLabel>());
     
-    /** A post processing function that is called during big nodes post processing. */
+    /**
+     * A post processing function that is called during big nodes post processing.
+     */
     public static final IProperty<Function<Void, Void>> BIGNODES_POST_PROCESS =
             new Property<Function<Void, Void>>("de.cau.cs.kieler.klay.layered.postProcess", null);
 
@@ -333,6 +338,77 @@ public final class InternalProperties {
      * back to the origin.
      */
     public static final IProperty<KVector> TARGET_OFFSET = new Property<KVector>("targetOffset");
+    
+    /**
+     * Combined size of all edge labels of a spline self loop.
+     */
+    public static final IProperty<KVector> SPLINE_LABEL_SIZE = 
+            new Property<KVector>("splineLabelSize", new KVector());
+    
+    /**
+     * Determines the loop side of an edge.  
+     */
+    public static final IProperty<LoopSide> SPLINE_LOOPSIDE = new Property<LoopSide>("splineLoopSide", 
+            LoopSide.UNDEFINED);
+
+    /**
+     * A port with this property set will be handled from the SplineSelfLoopPre- and Postprocessor. 
+     */
+    public static final IProperty<List<ConnectedSelfLoopComponent>> SPLINE_SELFLOOP_COMPONENTS = 
+            new Property<List<ConnectedSelfLoopComponent>>("splineSelfLoopComponents", 
+                    new ArrayList<ConnectedSelfLoopComponent>());
+    
+    /**
+     * A node's property storing the margins of a node required for it's self loops.
+     */
+    public static final IProperty<Margins> SPLINE_SELF_LOOP_MARGINS = 
+            new Property<Margins>("splineSelfLoopMargins", new Margins());
+
+    
+    // /////////////////////////////////////////////////////////////////////////////
+    // OVERWRITTEN PROPERTIES
+    
+    /**
+     * Offset of port position to the node border. An offset of 0 means that the port touches its
+     * parent node on the outside, positive offsets move the port away from the node, and negative
+     * offset move the port towards the inside.
+     */
+    public static final IProperty<Float> OFFSET = new Property<Float>(LayoutOptions.OFFSET, 0.0f);
+
+    /**
+     * Minimal spacing between objects.
+     */
+    public static final Property<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
+            20.0f, 1.0f);
+
+    /**
+     * Minimal spacing between ports.
+     */
+    public static final Property<Float> PORT_SPACING = new Property<Float>(LayoutOptions.PORT_SPACING,
+            10.0f, 1.0f);
+
+    /**
+     * Spacing to the border of the drawing.
+     */
+    public static final Property<Float> BORDER_SPACING = new Property<Float>(
+            LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
+
+    /**
+     * Priority of elements. controls how much single edges are emphasized.
+     */
+    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
+
+    /**
+     * The aspect ratio for packing connected components.
+     */
+    public static final Property<Float> ASPECT_RATIO = new Property<Float>(
+            LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
+    
+    /**
+     * How to route edges.
+     */
+    public static final Property<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
+            LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
 
     
     // /////////////////////////////////////////////////////////////////////////////

@@ -193,14 +193,13 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         parent.put("properties", jsonProps)
         
         holder.properties.entrySet.forEach [ p |
-            jsonProps.put(p.key.id, "")    
-            // TODO
+            jsonProps.put(p.key.id, p.value.toString)    
         ]
     } 
     
 
     override transferLayout(TransformationData<KNode, JSONObject> data) {
-        throw new UnsupportedOperationException("TODO: auto-generated method stub")
+        throw new UnsupportedOperationException("Not yet implemented.")
     }
     
     private def transferShapeLayout(KShapeLayout layout, JSONObject jsonObj) {
@@ -214,7 +213,9 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         val insets = layout.insets
         if (insets != null) {
           var padding = jsonObj?.optJSONObject("padding")
-          if (padding == null) {
+          if (padding == null 
+              && (insets.left != 0 || insets.top != 0 
+                  || insets.right != 0 || insets.bottom != 0)) {
               padding = new JSONObject()
               jsonObj?.put("padding", padding)  
           }

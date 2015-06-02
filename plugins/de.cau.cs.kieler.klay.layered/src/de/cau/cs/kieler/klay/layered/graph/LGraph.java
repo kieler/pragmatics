@@ -14,12 +14,13 @@
 package de.cau.cs.kieler.klay.layered.graph;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
  * A layered graph has a set of layers that contain the nodes, as well as a
@@ -35,50 +36,44 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public final class LGraph extends LGraphElement implements Iterable<Layer> {
     
-    /** the serial version UID. */
+    /**
+     * The serial version UID.
+     */
     private static final long serialVersionUID = -8006835373897072852L;
     
-    /** the total size of the drawing, without offset. */
+    /**
+     * The total size of the drawing. The total size includes neither insets nor border spacing. If the
+     * actual size, including insets and border spacing, is required, this can be obtained by calling
+     * {@link #getActualSize()}.
+     */
     private final KVector size = new KVector();
-    /** the graph's insets. */
+    
+    /**
+     * The graph's effective insets. This already includes the insets set on the imported graph by the
+     * client, as well as any space required for inside node labels. These are the effective insets
+     * returned to the client if {@link de.cau.cs.kieler.kiml.options.SizeOptions#COMPUTE_INSETS
+     * SizeOptions.COMPUTE_INSETS}
+     * is active.
+     */
     private final LInsets insets = new LInsets(0, 0, 0, 0);
-    /** the offset to be added to all positions. */
+    
+    /**
+     * The offset that will be applied to all node positions. Adding the offset to the coordinates of
+     * child nodes results in child node coordinates that are relative to the node's client area (which
+     * does not include the insets around it).
+     */
     private final KVector offset = new KVector();
-    /** nodes that are not currently part of a layer. */
-    private final List<LNode> layerlessNodes = new LinkedList<LNode>();
-    /** the layers of the layered graph. */
-    private final List<Layer> layers = new LinkedList<Layer>();
-    /** the hash code counter used to determine hash codes for new elements. */
-    private final HashCodeCounter hashCodeCounter;
     
     /**
-     * Create a graph with a new hash code counter. This constructor should only be used when
-     * the content does not matter, e.g. when the graph remains empty.
+     * Nodes that are not currently part of a layer.
      */
-    public LGraph() {
-        super(new HashCodeCounter());
-        this.hashCodeCounter = new HashCodeCounter();
-    }
+    private final List<LNode> layerlessNodes = Lists.newArrayList();
     
     /**
-     * Create an LGraph with given hash code counter.
-     * 
-     * @param counter the counter used to find a unique but predictable hash code.
+     * The layers of the layered graph.
      */
-    public LGraph(final HashCodeCounter counter) {
-        super(counter);
-        this.hashCodeCounter = counter;
-    }
+    private final List<Layer> layers = Lists.newArrayList();
     
-    /**
-     * Create an LGraph and copy the hash code counter of an existing one.
-     * 
-     * @param originalGraph the graph from which to copy the hash code counter
-     */
-    public LGraph(final LGraph originalGraph) {
-        super(originalGraph.hashCodeCounter);
-        this.hashCodeCounter = originalGraph.hashCodeCounter;
-    }
     
     /**
      * {@inheritDoc}
@@ -93,15 +88,6 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
         return "G[layerless" + layerlessNodes.toString() + ", layers" + layers.toString() + "]";
     }
     
-    /**
-     * Returns the hash code counter for all graph elements, only visible by other package members.
-     * 
-     * @return the counter used to find a unique but predictable hash code.
-     */
-    HashCodeCounter hashCodeCounter() {
-        return hashCodeCounter;
-    }
-
     /**
      * Returns the size of the graph, that is the bounding box that covers the
      * whole drawing. The size does not include insets or anything. Modifying the
@@ -122,7 +108,7 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
      * @return the graph's size including borders.
      */
     public KVector getActualSize() {
-        float borderSpacing = getProperty(Properties.BORDER_SPACING);
+        float borderSpacing = getProperty(InternalProperties.BORDER_SPACING);
         return new KVector(
                 size.x + insets.left + insets.right + (2 * borderSpacing),
                 size.y + insets.top + insets.bottom + (2 * borderSpacing));

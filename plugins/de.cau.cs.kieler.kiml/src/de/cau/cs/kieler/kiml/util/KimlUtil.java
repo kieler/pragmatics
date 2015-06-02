@@ -20,14 +20,18 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.AbstractTreeIterator;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -60,9 +64,10 @@ import de.cau.cs.kieler.kiml.options.SizeOptions;
 /**
  * Utility methods for KGraphs and layout data.
  * 
+ * @author msp
+ * @author uru
  * @kieler.design proposed by msp
  * @kieler.rating 2009-12-11 proposed yellow msp
- * @author msp
  */
 public final class KimlUtil {
     
@@ -700,20 +705,53 @@ public final class KimlUtil {
     }
     
     /**
-     * Loads all {@link de.cau.cs.kieler.core.properties.IProperty} of KGraphData elements of a
-     * KGraph by deserializing {@link PersistentEntry} tuples.
-     * Values are parsed using layout option data obtained from the {@link LayoutMetaDataService}.
-     * Options that cannot be resolved immediately (e.g. because the extension points have not
-     * been read yet) are stored as {@link LayoutOptionProxy}.
+     * Loads all {@link de.cau.cs.kieler.core.properties.IProperty IProperty} of {@link KLayoutData}
+     * elements of a KGraph by deserializing {@link PersistentEntry} tuples. Values are parsed using
+     * layout option data obtained from the {@link LayoutMetaDataService}. Options that cannot be
+     * resolved immediately (e.g. because the extension points have not been read yet) are stored as
+     * {@link LayoutOptionProxy}.
      * 
-     * @param graph 
+     * @param graph
      *            the root element of the graph to load elements of.
      * @param knownProps
      *            a set of additional properties that are known, hence should be parsed properly
      */
     public static void loadDataElements(final KNode graph,
             final IProperty<?>... knownProps) {
-        
+        loadDataElements(graph, PREDICATE_IS_KLAYOUTDATA, knownProps);
+    }
+
+    /**
+     * A predicate returning true if the passed element is an instance 
+     * of {@link IPropertyHolder}.
+     */
+    public static final Predicate<EMapPropertyHolder> PREDICATE_IS_KLAYOUTDATA =
+            new Predicate<EMapPropertyHolder>() {
+                public boolean apply(final EMapPropertyHolder input) {
+                    return input instanceof KLayoutData;
+                }
+            };
+    
+    /**
+     * Loads all {@link de.cau.cs.kieler.core.properties.IProperty IProperty} of elements that pass
+     * the test performed by the {@code handledTypes} predicate of a KGraph by deserializing
+     * {@link PersistentEntry} tuples. Values are parsed using layout option data obtained from the
+     * {@link LayoutMetaDataService}. Options that cannot be resolved immediately (e.g. because the
+     * extension points have not been read yet) are stored as {@link LayoutOptionProxy}.
+     * 
+     * @param graph
+     *            the root element of the graph to load elements of.
+     * @param handledTypes
+     *            a predicate checking if we desire to load data elements for a certain subclass of
+     *            {@link EMapPropertyHolder}.
+     * @param knownProps
+     *            a set of additional properties that are known, hence should be parsed properly
+     * 
+     * @return the graph itself
+     */
+    public static KNode loadDataElements(final KNode graph,
+            final Predicate<EMapPropertyHolder> handledTypes, final IProperty<?>... knownProps) {
+
         Map<String, IProperty<?>> knowPropsMap = Maps.newHashMap();
         for (IProperty<?> p : knownProps) {
             knowPropsMap.put(p.getId(), p);
@@ -723,14 +761,17 @@ public final class KimlUtil {
         TreeIterator<EObject> iterator = graph.eAllContents();
         while (iterator.hasNext()) {
             EObject eObject = iterator.next();
-            if (eObject instanceof KLayoutData) {
-                final KLayoutData layoutData = (KLayoutData) eObject;
-                for (PersistentEntry persistentEntry : layoutData.getPersistentEntries()) {
-                    loadDataElement(dataService, layoutData, persistentEntry.getKey(),
+            if (eObject instanceof EMapPropertyHolder
+                    && handledTypes.apply((EMapPropertyHolder) eObject)) {
+                final EMapPropertyHolder holder = (EMapPropertyHolder) eObject;
+                for (PersistentEntry persistentEntry : holder.getPersistentEntries()) {
+                    loadDataElement(dataService, holder, persistentEntry.getKey(),
                             persistentEntry.getValue(), knowPropsMap);
                 }
             }
         }
+        
+        return graph;
     }
 
     /**
@@ -777,7 +818,8 @@ public final class KimlUtil {
      * @param value
      *            the desired option value
      * @param knownProps
-     *            a map with additional properties that are known, hence should be parsed properly
+     *            a map with additional properties that are known, hence should be parsed properly.
+     *            Only floats, integers, and boolean values can be parsed here.
      */
     public static void loadDataElement(final LayoutMetaDataService dataService,
             final IPropertyHolder propertyHolder, final String id, final String value,
@@ -980,5 +1022,106 @@ public final class KimlUtil {
         points[n - 1] = edgeLayout.getTargetPoint().createVector();
         return points;
     }
-    
+
+
+    /**
+     * Determines the {@link KEdge KEdges} that are (transitively) connected to the given
+     * {@code kedges} across hierarchy boundaries via common ports. See
+     * {@link #getConnectedEdges(KEdge)} for details.
+     *
+     * @see #getConnectedEdges(KEdge)
+     * @param kedges
+     *            an {@link Iterable} of {@link KEdge KEdges} that shall be checked
+     * @return an {@link Iterator} visiting the given {@code kedges} and all (transitively)
+     *         connected ones.
+     */
+    public static Iterator<KEdge> getConnectedEdges(final Iterable<KEdge> kedges) {
+        return Iterators.concat(
+                Iterators.transform(kedges.iterator(), new Function<KEdge, Iterator<KEdge>>() {
+
+            public Iterator<KEdge> apply(final KEdge kedge) {
+                return getConnectedEdges(kedge);
+            }
+        }));
+    }
+
+    /**
+     * Determines the {@link KEdge KEdges} that are (transitively) connected to {@code kedge} across
+     * hierarchy boundaries via common ports. Rational: Multiple {@link KEdge KEdges} that are
+     * pairwise connected by means of a {@link KPort} (target port of edge a == source port of edge
+     * b or vice versa) may form one logical connection. This kind splitting might be already
+     * present in the view model, or is performed by the layout algorithm for decomposing a nested
+     * layout input graph into flat sub graphs.
+     *
+     * @param kedge
+     *            the {@link KEdge} check for connected edges
+     * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
+     *         almost) breadth first search fashion
+     */
+    public static Iterator<KEdge> getConnectedEdges(final KEdge kedge) {
+        // get a singleton iterator offering 'kedge'
+        final Iterator<KEdge> kedgeIt = Iterators.singletonIterator(kedge);
+
+        // if 'kedge' has a source port,
+        //  create a bfs tree iterator visiting all source-sidewise connected edges
+        final Iterator<KEdge> sourceSideIt =
+                kedge.getSourcePort() == null ? null : new AbstractTreeIterator<KEdge>(kedge, false) {
+
+            private static final long serialVersionUID = 2096899476184317737L;
+
+            @Override
+            protected Iterator<? extends KEdge> getChildren(final Object object) {
+                final KPort sourcePort = ((KEdge) object).getSourcePort();
+
+                // for each object (kedge) visited by this iterator
+                //  return either an empty iterator if no source port is configured
+                //  or check all the edges connected to 'sourcePort'
+                //  and visit those satisfying the criterion stated above
+                // this criterion btw. prevents from visiting an edge twice, as
+                //  "sourcePort == input.getTargetPort()" implies "object != input"
+                return sourcePort == null ? Iterators.<KEdge>emptyIterator() : Iterators.filter(
+                        sourcePort.getEdges().iterator(), new Predicate<KEdge>() {
+
+                    public boolean apply(final KEdge input) {
+                        return sourcePort == input.getTargetPort();
+                    }
+                });
+            }
+        };
+
+        // if 'kedge' has a target port,
+        //  create a bfs tree iterator visiting all target-sidewise connected edges
+        final Iterator<KEdge> targetSideIt =
+                kedge.getTargetPort() == null ? null : new AbstractTreeIterator<KEdge>(kedge, false) {
+
+            private static final long serialVersionUID = -4290192971641462249L;
+
+            @Override
+            protected Iterator<? extends KEdge> getChildren(final Object object) {
+                final KPort targetPort = ((KEdge) object).getTargetPort();
+
+                // for each object (kedge) visited by this iterator
+                //  return either an empty iterator if no target port is configured
+                //  or check all the edges connected to 'targetPort'
+                //  and visit those satisfying the criterion stated above
+                // this criterion btw. prevents from visiting an edge twice, as
+                //  "targetPort == input.getSourcePort()" implies "object != input"
+                return targetPort == null ? Iterators.<KEdge>emptyIterator() : Iterators.filter(
+                        targetPort.getEdges().iterator(), new Predicate<KEdge>() {
+
+                    public boolean apply(final KEdge input) {
+                        return targetPort == input.getSourcePort();
+                    }
+                });
+            }
+        };
+
+        // concatenate the source-sidewise and target-sidewise iterators if present ...
+        final Iterator<KEdge> connectedEdges = sourceSideIt == null ? targetSideIt
+                : targetSideIt == null ? sourceSideIt : Iterators.concat(sourceSideIt, targetSideIt);
+
+        // ... and attach them to the input 'kedge' offering iterator, or return just the
+        //  input 'kedge' iterator in case no ports are configured for 'kedge'
+        return connectedEdges == null ? kedgeIt : Iterators.concat(kedgeIt, connectedEdges);
+    }
 }

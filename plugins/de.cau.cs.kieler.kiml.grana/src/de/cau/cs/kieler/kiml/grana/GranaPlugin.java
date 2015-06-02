@@ -55,7 +55,9 @@ public class GranaPlugin extends AbstractUIPlugin {
         plugin = this;
         
         // Register a listener for analysis after layout
-        DiagramLayoutEngine.INSTANCE.addListener(new DiagramLayoutEngine.IListener() {
+        DiagramLayoutEngine.INSTANCE.addLayoutTerminatedListener(
+                new DiagramLayoutEngine.ILayoutTerminatedListener() {
+
             public void layoutDone(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
                 if (VisualizationService.getInstance().findActiveMethod(true)) {
                     List<AnalysisData> analyses = GranaUtil.getLastAnalysesSelection();

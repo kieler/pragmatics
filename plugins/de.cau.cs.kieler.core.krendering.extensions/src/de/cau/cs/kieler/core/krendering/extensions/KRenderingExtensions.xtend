@@ -247,23 +247,77 @@ class KRenderingExtensions {
         ];
         return rendering;
     }
-    
+
+    /**
+     * Configures the action being registered in KLighD with <code>actionId</code> to be executed
+     * after a single (!) click on <code>rendering</code>. The action triggered with a delay if and
+     * only if no subsequent click occurs within the system wide double click time.
+     * 
+     * @extensionCategory actions       
+     */    
     def <T extends KRendering> T addSingleClickAction(T rendering, String actionId) {
         return rendering.addAction(Trigger::SINGLECLICK, actionId);
     }
 
+    /**
+     * Configures the action being registered in KLighD with <code>actionId</code> to be executed
+     * after a single (!) click on <code>rendering</code>. The action triggered with a delay if and
+     * only if no subsequent click occurs within the system wide double click time, and if the
+     * required modifier keys are pressed.
+     * 
+     * @extensionCategory actions       
+     */    
     def <T extends KRendering> T addSingleClickAction(T rendering, String actionId,
             boolean altPressed, boolean ctrlCmdPressed, boolean shiftPressed) {
         return rendering.addAction(Trigger::SINGLECLICK, actionId, altPressed, ctrlCmdPressed, shiftPressed);
     }
 
+    /**
+     * Configures the action being registered in KLighD with <code>actionId</code> to be executed
+     * after a double (or tripple, ...) click on <code>rendering</code>.
+     * 
+     * @extensionCategory actions       
+     */    
     def <T extends KRendering> T addDoubleClickAction(T rendering, String actionId) {
         return rendering.addAction(Trigger::DOUBLECLICK, actionId);
     }
 
+    /**
+     * Configures the action being registered in KLighD with <code>actionId</code> to be executed
+     * after a double (or tripple, ...) click on <code>rendering</code> if the required modifier
+     * keys are pressed.
+     * 
+     * @extensionCategory actions       
+     */    
     def <T extends KRendering> T addDoubleClickAction(T rendering, String actionId,
             boolean altPressed, boolean ctrlCmdPressed, boolean shiftPressed) {
         return rendering.addAction(Trigger::DOUBLECLICK, actionId, altPressed, ctrlCmdPressed, shiftPressed);
+    }
+
+    /**
+     * Configures the action being registered in KLighD with <code>actionId</code> to be executed
+     * after a single click on <code>rendering</code> regardless of whether more clicks follow
+     * within the system wide double click time. In contrast to #addSingleClickAction, there's
+     * no delay between the event receipt and the action execution.
+     * 
+     * @extensionCategory actions       
+     */    
+    def <T extends KRendering> T addSingleOrMultiClickAction(T rendering, String actionId) {
+        return rendering.addAction(Trigger::SINGLE_OR_MULTICLICK, actionId);
+    }
+
+    /**
+     * Configures the action being registered in KLighD with <code>actionId</code> to be executed
+     * after a single click on <code>rendering</code> regardless of whether more clicks follow
+     * within the system wide double click time, if the required modifier keys are pressed.
+     * In contrast to #addSingleClickAction, there's no delay between the event receipt and the
+     * action execution.
+     * 
+     * @extensionCategory actions       
+     */    
+    def <T extends KRendering> T addSingleOrMultiClickAction(T rendering, String actionId,
+            boolean altPressed, boolean ctrlCmdPressed, boolean shiftPressed) {
+        return rendering.addAction(Trigger::SINGLE_OR_MULTICLICK, actionId, altPressed, ctrlCmdPressed, shiftPressed);
     }
 
 
@@ -1002,15 +1056,27 @@ class KRenderingExtensions {
 //already defined styles first        
 
     val defaultShadowSize = 4;
-    
+
     def KShadow getShadow(KRendering rendering){
         return rendering.styles.filter(typeof(KShadow)).last?:null;
     }
-    
+
+    def <T extends KRendering> T setShadow(T rendering, Colors color) {
+        setShadow(rendering, createKColor.setColor(color))
+    }
+
+    def <T extends KRendering> T setShadow(T rendering, Colors color, float size) {
+        setShadow(rendering, createKColor.setColor(color), size)
+    }
+
+    def <T extends KRendering> T setShadow(T rendering, Colors color, float xOffset, float yOffset) {
+        setShadow(rendering, createKColor.setColor(color), xOffset, yOffset);
+    }
+
     def <T extends KRendering> T setShadow(T rendering, KColor color) {
         setShadow(rendering, color, defaultShadowSize)
     }
-    
+
     def <T extends KRendering> T setShadow(T rendering, KColor color, float size) {
         setShadow(rendering, color, size, size)
     }
@@ -1265,6 +1331,9 @@ class KRenderingExtensions {
         ];
     }
 
+
+    // AreaPlacementData configuration extensions
+
     def <T extends KRendering> T setAreaPlacementData(T rendering, KPosition topLeft, KPosition bottomRight){
         rendering.placementData = createKAreaPlacementData() => [
             it.setTopLeft(topLeft);
@@ -1320,66 +1389,21 @@ class KRenderingExtensions {
         );
     }
 
+
+    // GridPlacementData configuration extensions
+
     /**
      * Adds a grid placement to the rendering element with the specified spacing. 
-     *  
      */
-    def KGridPlacementData setGridPlacementData(KRendering rendering, float minCellWidth,
+    def <T extends KRendering> T setGridPlacementData(T rendering, float minCellWidth,
             float minCellHeight, KPosition topLeft, KPosition bottomRight) {
-        return createKGridPlacementData() => [
-            rendering.placementData = it;
+        rendering.placementData = createKGridPlacementData() => [
             it.setMinCellWidth(minCellWidth);
             it.setMinCellHeight(minCellHeight);
             it.setTopLeft(topLeft);
             it.setBottomRight(bottomRight);
         ];
-    }
-
-/**
-     * Adds a grid placement to the rendering element with the specified spacing. 
-     */
-    def KGridPlacementData setGridPlacementData(KRendering rendering, float minCellWidth,
-            float minCellHeight) {
-        return createKGridPlacementData() => [
-            rendering.placementData = it;
-            it.setMinCellWidth(minCellWidth);
-            it.setMinCellHeight(minCellHeight);
-        ];
-    }
-
-    def KGridPlacement from(KGridPlacement placement, KPosition topLeft) {
-        placement.topLeft = topLeft;
-        return placement;
-    }
-    
-    def KGridPlacement from(KGridPlacement placement, 
-                    PositionReferenceX px, float absoluteLR, float relativeLR,
-                    PositionReferenceY py, float absoluteTB, float relativeTB) {
-        placement.from(createKPosition(
-            px, absoluteLR, relativeLR, py, absoluteTB, relativeTB
-        ));
-        return placement;
-    }
-    
-    def KGridPlacement to(KGridPlacement placement, KPosition bottomRight) {
-        placement.bottomRight = bottomRight; 
-        return placement;
-    }
-    
-    def KGridPlacement to(KGridPlacement placement, 
-                    PositionReferenceX px, float absoluteLR, float relativeLR,
-                    PositionReferenceY py, float absoluteTB, float relativeTB) {
-        placement.to(createKPosition(
-            px, absoluteLR, relativeLR, py, absoluteTB, relativeTB
-        ));
-        return placement;
-    }
-    
-    def KGridPlacementData setSurroundingSpaceGrid(KRendering rendering, float abs, float rel) {
-        return rendering.setGridPlacementData(0f, 0f,
-            createKPosition(LEFT, abs, rel, TOP, abs, rel),
-            createKPosition(RIGHT, abs, rel, BOTTOM, abs, rel)
-        );
+        return rendering
     }
 
     /**
@@ -1397,6 +1421,73 @@ class KRenderingExtensions {
             rendering.placementData = it;
         ];
     }
+
+    /**
+     * Adds a grid placement to the rendering element with the specified spacing. 
+     */
+    def KGridPlacementData setGridPlacementData(KRendering rendering, float minCellWidth,
+            float minCellHeight) {
+        return createKGridPlacementData() => [
+            rendering.placementData = it;
+            it.setMinCellWidth(minCellWidth);
+            it.setMinCellHeight(minCellHeight);
+        ];
+    }
+
+    // since KGridPlacementData extends KAreaPlacementData,
+    //  the area based 'from(...) and 'to(...)' methods work here as well
+
+    def <T extends KRendering> T setSurroundingSpaceGrid(T rendering, float abs, float rel) {
+        return rendering.setGridPlacementData(0f, 0f,
+            createKPosition(LEFT, abs, rel, TOP, abs, rel),
+            createKPosition(RIGHT, abs, rel, BOTTOM, abs, rel)
+        );
+    }
+
+    def <T extends KRendering> T setSurroundingSpaceGrid(T rendering, float hAbs, float hRel, float vAbs, float vRel) {
+        return rendering.setGridPlacementData(0f, 0f,
+            createKPosition(LEFT, hAbs, hRel, TOP, vAbs, vRel),
+            createKPosition(RIGHT, hAbs, hRel, BOTTOM, vAbs, vRel)
+        );
+    }
+
+
+    // GridPlacement (!) configuration extensions
+
+    def KGridPlacement from(KGridPlacement placement, KPosition topLeft) {
+        placement.topLeft = topLeft;
+        return placement;
+    }
+    
+    def KGridPlacement from(KGridPlacement placement, 
+                    PositionReferenceX px, float absoluteLR, float relativeLR,
+                    PositionReferenceY py, float absoluteTB, float relativeTB) {
+        placement.from(createKPosition(
+            px, absoluteLR, relativeLR, py, absoluteTB, relativeTB
+        ));
+        return placement;
+    }
+    
+    def KContainerRendering to(KGridPlacement placement, KPosition bottomRight) {
+        placement.bottomRight = bottomRight; 
+
+        val cont = placement.eContainer;
+        return if (cont instanceof KContainerRendering) cont as KContainerRendering else null;
+    }
+    
+    def KContainerRendering to(KGridPlacement placement, 
+                    PositionReferenceX px, float absoluteLR, float relativeLR,
+                    PositionReferenceY py, float absoluteTB, float relativeTB) {
+        placement.to(createKPosition(
+            px, absoluteLR, relativeLR, py, absoluteTB, relativeTB
+        ));
+
+        val cont = placement.eContainer;
+        return if (cont instanceof KContainerRendering) cont as KContainerRendering else null;
+    }
+
+
+    // PointPlacementData configuration extensions
     
     def <T extends KRendering> T setLeftTopAlignedPointPlacementData(T rendering,
         float leftMargin, float topMargin, float rightMargin, float bottomMargin) {
