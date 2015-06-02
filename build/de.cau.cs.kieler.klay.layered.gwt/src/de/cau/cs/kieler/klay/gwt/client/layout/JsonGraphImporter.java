@@ -39,7 +39,6 @@ import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
-import de.cau.cs.kieler.klay.layered.graph.LGraphElement.HashCodeCounter;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
@@ -95,12 +94,6 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
     /** Holds for each compound node the {@link LGraph} created for a json node. */
     private Map<JSONObject, LGraph> jsonLGraphMap = Maps.newHashMap();
 
-    /**
-     * We will create multiple {@link LGraph} instances, hence we have to employ our own counter to
-     * ensure unique hash codes.
-     */
-    private HashCodeCounter hashCodeCounter = new HashCodeCounter();
-    
     /** Global options being applied to every compound graph. */
     private JSONObject globalOptions = null;
     
@@ -120,8 +113,6 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         labelJsonMap.clear();
         
         jsonLGraphMap.clear();
-        
-        hashCodeCounter = new HashCodeCounter();
     }
 
     /*---------------------------------------------------------------------------------
@@ -186,7 +177,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
     private LGraph transformNodes(final JSONObject jparent, final LNode parentNode) {
 
         // create a new graph instance
-        LGraph graph = new LGraph(hashCodeCounter);
+        LGraph graph = new LGraph();
         graph.setProperty(JSON_OBJECT, jparent);
         jsonLGraphMap.put(jparent, graph);
         
@@ -378,7 +369,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
             return;
         }
 
-        LPort port = new LPort(graph);
+        LPort port = new LPort();
         port.setProperty(InternalProperties.ORIGIN, jPort);
         port.setNode(node);
 
@@ -491,7 +482,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
 
         // create a new label
         String text = val.isString().stringValue();
-        LLabel label = new LLabel(graph, text);
+        LLabel label = new LLabel(text);
         label.setProperty(InternalProperties.ORIGIN, jLabel);
         labelJsonMap.put(label, jLabel);
 
@@ -667,7 +658,7 @@ public class JsonGraphImporter implements IGraphImporter<JSONObject> {
         }
         
         // create a layered edge
-        LEdge edge = new LEdge(graph);
+        LEdge edge = new LEdge();
         edge.setProperty(InternalProperties.ORIGIN, jEdge);
         
         // id and register

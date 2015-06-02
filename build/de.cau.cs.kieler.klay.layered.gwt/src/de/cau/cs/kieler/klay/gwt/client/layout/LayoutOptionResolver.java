@@ -29,7 +29,6 @@ import static de.cau.cs.kieler.kiml.options.LayoutOptions.FONT_SIZE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.HYPERNODE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.INTERACTIVE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.JUNCTION_POINTS;
-import static de.cau.cs.kieler.kiml.options.LayoutOptions.LABEL_SIDE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.LABEL_SPACING;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.LAYOUT_HIERARCHY;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.MARGINS;
@@ -38,6 +37,11 @@ import static de.cau.cs.kieler.kiml.options.LayoutOptions.MIN_WIDTH;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.NODE_LABEL_PLACEMENT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.NO_LAYOUT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.OFFSET;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_ALIGNMENT;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_ALIGNMENT_EAST;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_ALIGNMENT_NORTH;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_ALIGNMENT_SOUTH;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_ALIGNMENT_WEST;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_ANCHOR;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_CONSTRAINTS;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_INDEX;
@@ -49,8 +53,7 @@ import static de.cau.cs.kieler.kiml.options.LayoutOptions.SIZE_CONSTRAINT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.SIZE_OPTIONS;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.THICKNESS;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.ADD_UNNECESSARY_BENDPOINTS;
-import static de.cau.cs.kieler.klay.layered.properties.Properties.ASPECT_RATIO;
-import static de.cau.cs.kieler.klay.layered.properties.Properties.BORDER_SPACING;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.COMPACTION_STRATEGY;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CONTENT_ALIGNMENT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CROSS_MIN;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CYCLE_BREAKING;
@@ -67,14 +70,17 @@ import static de.cau.cs.kieler.klay.layered.properties.Properties.MERGE_EDGES;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.MERGE_HIERARCHICAL_EDGES;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_LAYERING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_PLACER;
-import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING_IN_LAYER_FACTOR;
-import static de.cau.cs.kieler.klay.layered.properties.Properties.PORT_SPACING;
-import static de.cau.cs.kieler.klay.layered.properties.Properties.PRIORITY;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.RANDOM_SEED;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.SAUSAGE_FOLDING;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.SPLINE_SELF_LOOP_PLACEMENT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.THOROUGHNESS;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.WIDE_NODES_ON_MULTIPLE_LAYERS;
+import static de.cau.cs.kieler.klay.layered.properties.InternalProperties.ASPECT_RATIO;
+import static de.cau.cs.kieler.klay.layered.properties.InternalProperties.BORDER_SPACING;
+import static de.cau.cs.kieler.klay.layered.properties.InternalProperties.PORT_SPACING;
+import static de.cau.cs.kieler.klay.layered.properties.InternalProperties.PRIORITY;
+import static de.cau.cs.kieler.klay.layered.properties.InternalProperties.SPACING;
 
 import java.util.EnumSet;
 import java.util.Map;
@@ -97,8 +103,8 @@ import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.EdgeType;
-import de.cau.cs.kieler.kiml.options.LabelSide;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
+import de.cau.cs.kieler.kiml.options.PortAlignment;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -110,11 +116,13 @@ import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 import de.cau.cs.kieler.klay.layered.properties.ContentAlignment;
 import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.InteractiveReferencePoint;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
+import de.cau.cs.kieler.klay.layered.properties.SelfLoopPlacement;
 import de.cau.cs.kieler.klay.layered.properties.WideNodesStrategy;
 
 /**
@@ -143,6 +151,7 @@ public final class LayoutOptionResolver {
             THOROUGHNESS
             );
     
+    @SuppressWarnings("deprecation")
     private static final Pair<Set<String>, Map<String, IProperty<?>>> BOOLEAN_TYPES = createTypesSet(
             ANIMATE,
             COMMENT_BOX,
@@ -172,7 +181,7 @@ public final class LayoutOptionResolver {
             // klay
             BORDER_SPACING,
             ASPECT_RATIO,
-            OBJ_SPACING,
+            SPACING,
             OBJ_SPACING_IN_LAYER_FACTOR,
             EDGE_SPACING_FACTOR,
             LINEAR_SEGMENTS_DEFLECTION_DAMPENING
@@ -185,10 +194,15 @@ public final class LayoutOptionResolver {
             EDGE_ROUTING,
             EDGE_LABEL_PLACEMENT,
             EDGE_TYPE,
-            LABEL_SIDE,
+            PORT_ALIGNMENT,
+            PORT_ALIGNMENT_EAST,
+            PORT_ALIGNMENT_NORTH,
+            PORT_ALIGNMENT_SOUTH,
+            PORT_ALIGNMENT_WEST,
             PORT_CONSTRAINTS,
             PORT_LABEL_PLACEMENT,
             // klay
+            COMPACTION_STRATEGY,
             CYCLE_BREAKING,
             NODE_LAYERING,
             EDGE_LABEL_SIDE_SELECTION,
@@ -196,6 +210,7 @@ public final class LayoutOptionResolver {
             NODE_PLACER,
             FIXED_ALIGNMENT,
             LAYER_CONSTRAINT,
+            SPLINE_SELF_LOOP_PLACEMENT,
             WIDE_NODES_ON_MULTIPLE_LAYERS,
             INTERACTIVE_REFERENCE_POINT
             );
@@ -359,12 +374,16 @@ public final class LayoutOptionResolver {
                     enumeration = Direction.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(EDGE_ROUTING, id)) {
                     enumeration = EdgeRouting.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(PORT_ALIGNMENT, id)
+                        || equalsIdOrSuffix(PORT_ALIGNMENT_EAST, id)
+                        || equalsIdOrSuffix(PORT_ALIGNMENT_NORTH, id)
+                        || equalsIdOrSuffix(PORT_ALIGNMENT_SOUTH, id)
+                        || equalsIdOrSuffix(PORT_ALIGNMENT_WEST, id)) {
+                    enumeration = PortAlignment.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(PORT_CONSTRAINTS, id)) {
                     enumeration = PortConstraints.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(PORT_LABEL_PLACEMENT, id)) {
                     enumeration = PortLabelPlacement.valueOf(enumValue);
-                } else if (equalsIdOrSuffix(LABEL_SIDE, id)) {
-                    enumeration = LabelSide.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(EDGE_TYPE, id)) {
                     enumeration = EdgeType.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(EDGE_LABEL_PLACEMENT, id)) {
@@ -376,6 +395,8 @@ public final class LayoutOptionResolver {
                     enumeration = LayeringStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(EDGE_LABEL_SIDE_SELECTION, id)) {
                     enumeration = EdgeLabelSideSelection.valueOf(enumValue);   
+                } else if (equalsIdOrSuffix(COMPACTION_STRATEGY, id)) {
+                    enumeration = CompactionStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(CROSS_MIN, id)) {
                     enumeration = CrossingMinimizationStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(NODE_PLACER, id)) {
@@ -384,6 +405,8 @@ public final class LayoutOptionResolver {
                     enumeration = FixedAlignment.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(LAYER_CONSTRAINT, id)) {
                     enumeration = LayerConstraint.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(SPLINE_SELF_LOOP_PLACEMENT, id)) {
+                    enumeration = SelfLoopPlacement.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(WIDE_NODES_ON_MULTIPLE_LAYERS, id)) {
                     enumeration = WideNodesStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(INTERACTIVE_REFERENCE_POINT, id)) {
