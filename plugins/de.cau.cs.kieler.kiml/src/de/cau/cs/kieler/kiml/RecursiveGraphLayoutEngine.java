@@ -13,11 +13,18 @@
  */
 package de.cau.cs.kieler.kiml;
 
+
+import java.util.Collections;
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -58,29 +65,49 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
      * @param layoutNode the node with children to be laid out
      * @param progressMonitor monitor used to keep track of progress
      */
-    private void layoutRecursively(final KNode layoutNode,
+    private List<KEdge> layoutRecursively(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor) {
         
         if (progressMonitor.isCanceled()) {
-            return;
+            return Collections.emptyList();
         }
         
         KShapeLayout layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
         
-        if (isCompoundNode(layoutNode) && !layoutNodeShapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+        // Check if the node should be laid out at all
+        if (layoutNodeShapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+            return Collections.emptyList();
+        }
+        
+        // Find out whether some kind of hierarchy is involved
+        boolean hasChildren = !layoutNode.getChildren().isEmpty();
+        boolean hasInsideSelfLoops = hasInsideSelfLoops(layoutNode);
+        
+        if (hasChildren || hasInsideSelfLoops) {
             // this node has children and is thus a compound node;
             // fetch the layout algorithm that should be used to compute a layout for its content
             LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
-            boolean algorithmSupportsHierarchy = algorithmData.getFeatureSupport(GraphFeature.COMPOUND)
+            boolean supportsHierarchy = algorithmData.getFeatureSupport(GraphFeature.COMPOUND)
                     > LayoutAlgorithmData.MIN_PRIORITY;
-            boolean algorithmSupportsClusters = algorithmData.getFeatureSupport(GraphFeature.CLUSTERS)
+            boolean supportsClusters = algorithmData.getFeatureSupport(GraphFeature.CLUSTERS)
                     > LayoutAlgorithmData.MIN_PRIORITY;
+            // TODO Replace this by a proper graph feature inquiry
+            boolean supportsInsideSelfLoops = true;
+            
+            // If the node contains inside self loops, but no regular children and if the layout
+            // algorithm doesn't actually support inside self loops, we cancel
+            if (hasInsideSelfLoops && !hasChildren && !supportsInsideSelfLoops) {
+                return Collections.emptyList();
+            }
+            
+            // We collect inside self loops of children and post-process them later
+            List<KEdge> collectedInsideSelfLoops = Lists.newArrayList();
             
             // if the layout provider supports hierarchy, it is expected to layout the node's compound
             // node children as well
             int nodeCount;
             if (layoutNodeShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)
-                    && (algorithmSupportsHierarchy || algorithmSupportsClusters)) {
+                    && (supportsHierarchy || supportsClusters)) {
                 
                 // the layout algorithm will compute a layout for all levels of hierarchy under the
                 // current one
@@ -89,7 +116,14 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 // layout each compound node contained in this node separately
                 nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
-                    layoutRecursively(child, progressMonitor);
+                    List<KEdge> insideSelfLoops = layoutRecursively(child, progressMonitor);
+                    collectedInsideSelfLoops.addAll(insideSelfLoops);
+                    
+                    // Mark the edge as NO_LAYOUT so that the upper level's layout algorithm
+                    // won't dare touch it
+                    for (KEdge edge : insideSelfLoops) {
+                        edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
+                    }
                     
                     // apply the LayoutOptions.SCALE_FACTOR if present
                     KimlUtil.applyConfiguredNodeScaling(child);
@@ -97,7 +131,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             }
 
             if (progressMonitor.isCanceled()) {
-                return;
+                return Collections.emptyList();
             }
 
             // get an instance of the layout provider
@@ -111,19 +145,31 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 layoutProvider.dispose();
                 throw exception;
             }
+            
+            // Post-process the inner self loops we collected
+            postProcessInsideSelfLoops(collectedInsideSelfLoops);
+            
+            // Return our own inside self loops to be processed later
+            if (hasInsideSelfLoops && supportsInsideSelfLoops) {
+                List<KEdge> ownInsideSelfLoops = Lists.newArrayListWithCapacity(
+                        layoutNode.getOutgoingEdges().size());
+                
+                for (final KEdge edge : layoutNode.getOutgoingEdges()) {
+                    if (edge.getTarget() == layoutNode) {
+                        final KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                        if (edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
+                            ownInsideSelfLoops.add(edge);
+                        }
+                    }
+                }
+                
+                return ownInsideSelfLoops;
+            } else {
+                return Collections.emptyList();
+            }
+        } else {
+            return Collections.emptyList();
         }
-    }
-    
-    /**
-     * Checks if the given node is a compound node and thus requires a layout run. A node is regarded as
-     * a compound node if it has children or if it has self loops that should be routed on its inside
-     * instead of around it.
-     * 
-     * @param node the node to check.
-     * @return {@code true} if the node is a compound node, {@code false} otherwise.
-     */
-    private boolean isCompoundNode(final KNode node) {
-        return !node.getChildren().isEmpty() || hasInsideSelfLoops(node);
     }
     
     /**
@@ -187,6 +233,30 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             }
         }
         return count;
+    }
+    
+    private void postProcessInsideSelfLoops(final List<KEdge> insideSelfLoops) {
+        for (final KEdge selfLoop : insideSelfLoops) {
+            final KNode node = selfLoop.getSource();
+            final KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            final KEdgeLayout edgeLayout = selfLoop.getData(KEdgeLayout.class);
+            
+            final float xOffset = nodeLayout.getXpos();
+            final float yOffset = nodeLayout.getYpos();
+            
+            // Offset the edge coordinates by the node's position
+            applyOffset(edgeLayout.getSourcePoint(), xOffset, yOffset);
+            applyOffset(edgeLayout.getTargetPoint(), xOffset, yOffset);
+            
+            for (final KPoint bend : edgeLayout.getBendPoints()) {
+                applyOffset(bend, xOffset, yOffset);
+            }
+        }
+    }
+    
+    private void applyOffset(final KPoint point, final float xOffset, final float yOffset) {
+        point.setX(point.getX() + xOffset);
+        point.setY(point.getY() + yOffset);
     }
 
 }
