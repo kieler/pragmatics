@@ -20,6 +20,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -56,25 +57,42 @@ public class OneDCompactor implements ILayoutProcessor {
     private List<Pair<LGraphElement, Rectangle2D.Double>> boxes =
             new ArrayList<Pair<LGraphElement, Rectangle2D.Double>>();
 
-    private JTabbedPane tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+    private JTabbedPane tabpane;
 
-    private JFrame frm = new JFrame("Debug View");
+    private JFrame frm;
+    
+    private String firstConnectedComponent = null;
+    
+    private List<String> connectedComponents = new ArrayList<String>();
     
     private List<Pair<LGraph, DebugFrame>> panels = new ArrayList<Pair<LGraph,DebugFrame>>();
 
-    public OneDCompactor() {
-
-        frm.setSize(1200, 700);
-
-        frm.add(tabpane);
-
-        frm.setVisible(true);
-    }
 
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
+    	
+    	//redraw debug view
+    	if (firstConnectedComponent == null || firstConnectedComponent.equals(layeredGraph.toString())) { //FIXME compare
+    		
+    		if (frm != null) {
+    			frm.dispose();
+    		}
+    		
+    		firstConnectedComponent = layeredGraph.toString();
+    		
+    		tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+    		
+    		frm = new JFrame("Debug View");
+
+            frm.setSize(1200, 700);
+
+            frm.add(tabpane);
+
+            frm.setVisible(true);
+    	}
+    	
 
         progressMonitor.begin("1 D compacting", 1);
 
@@ -196,7 +214,7 @@ public class OneDCompactor implements ILayoutProcessor {
         
         // removing already drawn graphs do be redrawn
         for (Pair<LGraph, OneDCompactor.DebugFrame> panel : panels) {
-            if (panel.getFirst() == layeredGraph) {
+            if (panel.getFirst() == layeredGraph) { //FIXME doesn't work this way
                 tabpane.remove(panel.getSecond());
                 //remove panel
             }
@@ -205,8 +223,9 @@ public class OneDCompactor implements ILayoutProcessor {
         
         DebugFrame dFrame = new DebugFrame(width, height, layeredGraph, regularNodes,
                 longEdgeNodes, vertEdgeSeg);
+        
         panels.add(new Pair<LGraph, OneDCompactor.DebugFrame>(layeredGraph, dFrame));
-        tabpane.addTab("graph", dFrame);
+        tabpane.addTab("graph component", dFrame);
 
     }
 
@@ -223,6 +242,9 @@ public class OneDCompactor implements ILayoutProcessor {
                 final List<Rectangle> vertEdgeSeg) {
 
             // super("Debug Frame");
+        	
+        	this.setBackground(Color.white);
+        	this.setOpaque(true);
 
             this.regularNodes = regularNodes;
             this.longEdgeNodes = longEdgeNodes;
@@ -246,8 +268,10 @@ public class OneDCompactor implements ILayoutProcessor {
         private static final long serialVersionUID = 1L;
 
         public void paintComponent(Graphics g) {
+        	
+        	super.paintComponent(g);
 
-            g.setColor(Color.PINK);
+            g.setColor(Color.decode("#008800"));
             for (Rectangle rectangle : regularNodes) {
                 g.drawRect(rectangle.x + BORDER_SPACING, rectangle.y + BORDER_SPACING,
                         rectangle.width + OBJECT_SPACING, rectangle.height + OBJECT_SPACING);
