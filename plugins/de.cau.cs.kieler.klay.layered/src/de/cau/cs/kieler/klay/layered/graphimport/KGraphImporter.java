@@ -690,14 +690,12 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         KInsets kInsets = parentLayout.getInsets();
         final EnumSet<SizeOptions> sizeOptions = parentLayout.getProperty(LayoutOptions.SIZE_OPTIONS);
         if (sizeOptions.contains(SizeOptions.APPLY_ADDITIONAL_INSETS)) {
-
             offset.x += lInsets.left - kInsets.getLeft();
             offset.y += lInsets.top - kInsets.getTop();
         }
         
         // Set node insets, if requested
         if (sizeOptions.contains(SizeOptions.COMPUTE_INSETS)) {
-            // Apply insets
             kInsets.setBottom((float) lInsets.bottom);
             kInsets.setTop((float) lInsets.top);
             kInsets.setLeft((float) lInsets.left);
@@ -720,7 +718,8 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 nodeLayout.setYpos((float) (lnode.getPosition().y + offset.y));
                 
                 // Set the node size, if necessary
-                if (!nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT).isEmpty()) {
+                if (!nodeLayout.getProperty(LayoutOptions.SIZE_CONSTRAINT).isEmpty()
+                        || lnode.getProperty(InternalProperties.NESTED_LGRAPH) != null) {
                     nodeLayout.setWidth((float) lnode.getSize().x);
                     nodeLayout.setHeight((float) lnode.getSize().y);
                 }

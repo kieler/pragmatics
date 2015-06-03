@@ -493,11 +493,11 @@ public final class KlayLayered {
         // graph.getActualSize() working properly
         lgraph.setProperty(InternalProperties.BORDER_SPACING, 0f);
         
+        KVector calculatedSize = lgraph.getActualSize();
+        KVector adjustedSize = new KVector(calculatedSize);
+        
         // calculate the new size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            // remember the graph's old size (including border spacing and insets)
-            KVector oldSize = lgraph.getActualSize();
-            
             float minWidth = lgraph.getProperty(LayoutOptions.MIN_WIDTH);
             float minHeight = lgraph.getProperty(LayoutOptions.MIN_HEIGHT);
             
@@ -513,38 +513,35 @@ public final class KlayLayered {
             }
             
             // apply new size including border spacing
-            double newWidth = Math.max(oldSize.x, minWidth);
-            double newHeight = Math.max(oldSize.y, minHeight);
-            LInsets insets = lgraph.getInsets();
-            lgraph.getSize().x = newWidth - insets.left - insets.right;
-            lgraph.getSize().y = newHeight - insets.top - insets.bottom;
+            adjustedSize.x = Math.max(calculatedSize.x, minWidth);
+            adjustedSize.y = Math.max(calculatedSize.y, minHeight);
             
             // obey to specified alignment constraints
             Set<ContentAlignment> contentAlignment =
                     lgraph.getProperty(Properties.CONTENT_ALIGNMENT);
 
             // horizontal alignment
-            if (minWidth > oldSize.x) {
+            if (adjustedSize.x > calculatedSize.x) {
                 if (contentAlignment.contains(ContentAlignment.H_CENTER)) {
-                    lgraph.getOffset().x += (minWidth - oldSize.x) / 2f;
+                    lgraph.getOffset().x += (adjustedSize.x - calculatedSize.x) / 2f;
                 } else if (contentAlignment.contains(ContentAlignment.H_RIGHT)) {
-                    lgraph.getOffset().x += minWidth - oldSize.x;
+                    lgraph.getOffset().x += adjustedSize.x - calculatedSize.x;
                 }
             }
 
             // vertical alignment
-            if (minHeight > oldSize.y) {
+            if (adjustedSize.y > calculatedSize.y) {
                 if (contentAlignment.contains(ContentAlignment.V_CENTER)) {
-                    lgraph.getOffset().y += (minHeight - oldSize.y) / 2f;
+                    lgraph.getOffset().y += (adjustedSize.y - calculatedSize.y) / 2f;
                 } else if (contentAlignment.contains(ContentAlignment.V_BOTTOM)) {
-                    lgraph.getOffset().y += minHeight - oldSize.y;
+                    lgraph.getOffset().y += adjustedSize.y - calculatedSize.y;
                 }
             }
             
             // correct the position of eastern and southern hierarchical ports, if necessary
             if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
                     GraphProperties.EXTERNAL_PORTS)
-                    && (newWidth > oldSize.x || newHeight > oldSize.y)) {
+                    && (adjustedSize.x > calculatedSize.x || adjustedSize.y > calculatedSize.y)) {
                 
                 // iterate over the graph's nodes, looking for eastern / southern external ports
                 // (at this point, the graph's nodes are not divided into layers anymore)
@@ -554,14 +551,19 @@ public final class KlayLayered {
                         // check which side the external port is on
                         PortSide extPortSide = node.getProperty(InternalProperties.EXT_PORT_SIDE);
                         if (extPortSide == PortSide.EAST) {
-                            node.getPosition().x += newWidth - oldSize.x;
+                            node.getPosition().x += adjustedSize.x - calculatedSize.x;
                         } else  if (extPortSide == PortSide.SOUTH) {
-                            node.getPosition().y += newHeight - oldSize.y;
+                            node.getPosition().y += adjustedSize.y - calculatedSize.y;
                         }
                     }
                 }
             }
         }
+        
+        // Actually apply the new size
+        LInsets insets = lgraph.getInsets();
+        lgraph.getSize().x = adjustedSize.x - insets.left - insets.right;
+        lgraph.getSize().y = adjustedSize.y - insets.top - insets.bottom;
     }
     
     /**
