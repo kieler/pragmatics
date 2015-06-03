@@ -59,11 +59,17 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     }
 
     /**
-     * Recursive function to enable layout of hierarchy. The leafs are laid out
-     * first to use their layout information in the levels above.
+     * Recursive function to enable layout of hierarchy. The leafs are laid out first to use their
+     * layout information in the levels above.
+     * 
+     * <p>This method returns self loops routed inside the given layout node. Those will have
+     * coordinates relative to the node's top left corner, which is incorrect. Once the node's
+     * final coordinates in its container are determined, any inside self loops will have to be offset
+     * by the node's position.</p>
      * 
      * @param layoutNode the node with children to be laid out
      * @param progressMonitor monitor used to keep track of progress
+     * @return list of self loops routed inside the node.
      */
     private List<KEdge> layoutRecursively(final KNode layoutNode,
             final IKielerProgressMonitor progressMonitor) {
@@ -72,36 +78,37 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             return Collections.emptyList();
         }
         
-        KShapeLayout layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
+        final KShapeLayout layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
         
         // Check if the node should be laid out at all
         if (layoutNodeShapeLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
             return Collections.emptyList();
         }
         
-        // Find out whether some kind of hierarchy is involved
-        boolean hasChildren = !layoutNode.getChildren().isEmpty();
-        boolean hasInsideSelfLoops = hasInsideSelfLoops(layoutNode);
+        // We have to process the node if it has children...
+        final boolean hasChildren = !layoutNode.getChildren().isEmpty();
+        
+        // ...or if inside self loop processing is enabled and it actually has inside self loops
+        final List<KEdge> insideSelfLoops = gatherInsideSelfLoops(layoutNode);
+        final boolean hasInsideSelfLoops = !insideSelfLoops.isEmpty();
         
         if (hasChildren || hasInsideSelfLoops) {
             // this node has children and is thus a compound node;
             // fetch the layout algorithm that should be used to compute a layout for its content
-            LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
-            boolean supportsHierarchy = algorithmData.getFeatureSupport(GraphFeature.COMPOUND)
-                    > LayoutAlgorithmData.MIN_PRIORITY;
-            boolean supportsClusters = algorithmData.getFeatureSupport(GraphFeature.CLUSTERS)
-                    > LayoutAlgorithmData.MIN_PRIORITY;
-            // TODO Replace this by a proper graph feature inquiry
-            boolean supportsInsideSelfLoops = true;
+            final LayoutAlgorithmData algorithmData = getAlgorithm(layoutNode);
+            final boolean supportsHierarchy = algorithmData.supportsFeature(GraphFeature.COMPOUND);
+            final boolean supportsClusters = algorithmData.supportsFeature(GraphFeature.CLUSTERS);
+            final boolean supportsInsideSelfLoops = algorithmData.supportsFeature(
+                    GraphFeature.INSIDE_SELF_LOOPS);
             
             // If the node contains inside self loops, but no regular children and if the layout
             // algorithm doesn't actually support inside self loops, we cancel
-            if (hasInsideSelfLoops && !hasChildren && !supportsInsideSelfLoops) {
+            if (!hasChildren && hasInsideSelfLoops && !supportsInsideSelfLoops) {
                 return Collections.emptyList();
             }
             
             // We collect inside self loops of children and post-process them later
-            List<KEdge> collectedInsideSelfLoops = Lists.newArrayList();
+            List<KEdge> childrenInsideSelfLoops = Lists.newArrayList();
             
             // if the layout provider supports hierarchy, it is expected to layout the node's compound
             // node children as well
@@ -116,14 +123,7 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 // layout each compound node contained in this node separately
                 nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
-                    List<KEdge> insideSelfLoops = layoutRecursively(child, progressMonitor);
-                    collectedInsideSelfLoops.addAll(insideSelfLoops);
-                    
-                    // Mark the edge as NO_LAYOUT so that the upper level's layout algorithm
-                    // won't dare touch it
-                    for (KEdge edge : insideSelfLoops) {
-                        edge.getData(KEdgeLayout.class).setProperty(LayoutOptions.NO_LAYOUT, true);
-                    }
+                    childrenInsideSelfLoops.addAll(layoutRecursively(child, progressMonitor));
                     
                     // apply the LayoutOptions.SCALE_FACTOR if present
                     KimlUtil.applyConfiguredNodeScaling(child);
@@ -132,6 +132,13 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
 
             if (progressMonitor.isCanceled()) {
                 return Collections.emptyList();
+            }
+            
+            // Before running layout on our node, we need to exclude any inside self loops of children
+            // from being laid out again
+            for (final KEdge selfLoop : childrenInsideSelfLoops) {
+                KEdgeLayout edgeLayout = selfLoop.getData(KEdgeLayout.class);
+                edgeLayout.setProperty(LayoutOptions.NO_LAYOUT, true);
             }
 
             // get an instance of the layout provider
@@ -147,48 +154,17 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
             }
             
             // Post-process the inner self loops we collected
-            postProcessInsideSelfLoops(collectedInsideSelfLoops);
+            postProcessInsideSelfLoops(childrenInsideSelfLoops);
             
             // Return our own inside self loops to be processed later
             if (hasInsideSelfLoops && supportsInsideSelfLoops) {
-                List<KEdge> ownInsideSelfLoops = Lists.newArrayListWithCapacity(
-                        layoutNode.getOutgoingEdges().size());
-                
-                for (final KEdge edge : layoutNode.getOutgoingEdges()) {
-                    if (edge.getTarget() == layoutNode) {
-                        final KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                        if (edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
-                            ownInsideSelfLoops.add(edge);
-                        }
-                    }
-                }
-                
-                return ownInsideSelfLoops;
+                return insideSelfLoops;
             } else {
                 return Collections.emptyList();
             }
         } else {
             return Collections.emptyList();
         }
-    }
-    
-    /**
-     * Checks if the given node has any self loops that should be routed inside the node.
-     * 
-     * @param node the node to check.
-     * @return {@code true} if the node has such self loops, {@code false} otherwise.
-     */
-    private boolean hasInsideSelfLoops(final KNode node) {
-        for (KEdge edge : node.getOutgoingEdges()) {
-            if (edge.getTarget() == node) {
-                final KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                if (edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
-                    return true;
-                }
-            }
-        }
-        
-        return false;
     }
 
     /**
@@ -235,6 +211,51 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         return count;
     }
     
+    
+    ////////////////////////////////////////////////////////////////////////////////////////
+    // Inside Self Loops
+    
+    /**
+     * Returns a list of self loops of the given node that should be routed inside that node instead
+     * of around it. For the node to even be considered for inside self loop processing, its
+     * {@link LayoutOptions#SELF_LOOP_INSIDE} property must be set to {@code true}. The returned
+     * list will then consist of those of its outgoing edges that are self loops and that have that
+     * property set to {@code true} as well.
+     * 
+     * @param node
+     *            the node whose inside self loops to return.
+     * @return possibly empty list of inside self loops.
+     */
+    private List<KEdge> gatherInsideSelfLoops(final KNode node) {
+        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        
+        if (nodeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
+            List<KEdge> insideSelfLoops = Lists.newArrayListWithCapacity(node.getOutgoingEdges().size());
+            
+            for (KEdge edge : node.getOutgoingEdges()) {
+                if (edge.getTarget() == node) {
+                    final KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                    if (edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
+                        insideSelfLoops.add(edge);
+                    }
+                }
+            }
+            
+            return insideSelfLoops;
+        } else {
+            return Collections.emptyList();
+        }
+    }
+    
+    /**
+     * Post-processes self loops routed inside by offsetting their coordinates by the coordinates of
+     * their parent node. The post processing is necessary since the self loop coordinates are
+     * relative to their parent node's upper left corner since, at that point, the parent node's
+     * final coordinates are not determined yet.
+     * 
+     * @param insideSelfLoops
+     *            list of inside self loops to post-process.
+     */
     private void postProcessInsideSelfLoops(final List<KEdge> insideSelfLoops) {
         for (final KEdge selfLoop : insideSelfLoops) {
             final KNode node = selfLoop.getSource();
@@ -254,6 +275,16 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
         }
     }
     
+    /**
+     * Offsets a point by the given amount.
+     * 
+     * @param point
+     *            point to offset.
+     * @param xOffset
+     *            horizontal offset.
+     * @param yOffset
+     *            vertical offset.
+     */
     private void applyOffset(final KPoint point, final float xOffset, final float yOffset) {
         point.setX(point.getX() + xOffset);
         point.setY(point.getY() + yOffset);

@@ -24,6 +24,9 @@
                priority="-2">
          </supportedFeature>
          <supportedFeature
+               feature="INSIDE_SELF_LOOPS">
+         </supportedFeature>
+         <supportedFeature
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
