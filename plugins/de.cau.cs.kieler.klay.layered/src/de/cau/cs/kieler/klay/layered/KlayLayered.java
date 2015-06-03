@@ -515,46 +515,65 @@ public final class KlayLayered {
             // apply new size including border spacing
             adjustedSize.x = Math.max(calculatedSize.x, minWidth);
             adjustedSize.y = Math.max(calculatedSize.y, minHeight);
-            
-            // obey to specified alignment constraints
-            Set<ContentAlignment> contentAlignment =
-                    lgraph.getProperty(Properties.CONTENT_ALIGNMENT);
+        }
+        
+        resizeGraphNoReallyIMeanIt(lgraph, calculatedSize, adjustedSize);
+    }
 
-            // horizontal alignment
-            if (adjustedSize.x > calculatedSize.x) {
-                if (contentAlignment.contains(ContentAlignment.H_CENTER)) {
-                    lgraph.getOffset().x += (adjustedSize.x - calculatedSize.x) / 2f;
-                } else if (contentAlignment.contains(ContentAlignment.H_RIGHT)) {
-                    lgraph.getOffset().x += adjustedSize.x - calculatedSize.x;
-                }
-            }
 
-            // vertical alignment
-            if (adjustedSize.y > calculatedSize.y) {
-                if (contentAlignment.contains(ContentAlignment.V_CENTER)) {
-                    lgraph.getOffset().y += (adjustedSize.y - calculatedSize.y) / 2f;
-                } else if (contentAlignment.contains(ContentAlignment.V_BOTTOM)) {
-                    lgraph.getOffset().y += adjustedSize.y - calculatedSize.y;
-                }
+    /**
+     * Applies a new effective size to a graph that previously had an old size calculated by the
+     * layout algorithm. This method takes care of adjusting content alignments as well as external
+     * ports that would be misplaced if the new size is larger than the old one.
+     * 
+     * @param lgraph
+     *            the graph to apply the size to.
+     * @param oldSize
+     *            old size as calculated by the layout algorithm.
+     * @param newSize
+     *            new size that may be larger than the old one.
+     */
+    private void resizeGraphNoReallyIMeanIt(final LGraph lgraph, final KVector oldSize,
+            final KVector newSize) {
+        
+        // obey to specified alignment constraints
+        Set<ContentAlignment> contentAlignment =
+                lgraph.getProperty(Properties.CONTENT_ALIGNMENT);
+        
+        // horizontal alignment
+        if (newSize.x > oldSize.x) {
+            if (contentAlignment.contains(ContentAlignment.H_CENTER)) {
+                lgraph.getOffset().x += (newSize.x - oldSize.x) / 2f;
+            } else if (contentAlignment.contains(ContentAlignment.H_RIGHT)) {
+                lgraph.getOffset().x += newSize.x - oldSize.x;
             }
+        }
+        
+        // vertical alignment
+        if (newSize.y > oldSize.y) {
+            if (contentAlignment.contains(ContentAlignment.V_CENTER)) {
+                lgraph.getOffset().y += (newSize.y - oldSize.y) / 2f;
+            } else if (contentAlignment.contains(ContentAlignment.V_BOTTOM)) {
+                lgraph.getOffset().y += newSize.y - oldSize.y;
+            }
+        }
+        
+        // correct the position of eastern and southern hierarchical ports, if necessary
+        if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
+                GraphProperties.EXTERNAL_PORTS)
+                && (newSize.x > oldSize.x || newSize.y > oldSize.y)) {
             
-            // correct the position of eastern and southern hierarchical ports, if necessary
-            if (lgraph.getProperty(InternalProperties.GRAPH_PROPERTIES).contains(
-                    GraphProperties.EXTERNAL_PORTS)
-                    && (adjustedSize.x > calculatedSize.x || adjustedSize.y > calculatedSize.y)) {
-                
-                // iterate over the graph's nodes, looking for eastern / southern external ports
-                // (at this point, the graph's nodes are not divided into layers anymore)
-                for (LNode node : lgraph.getLayerlessNodes()) {
-                    // we're only looking for external port dummies
-                    if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
-                        // check which side the external port is on
-                        PortSide extPortSide = node.getProperty(InternalProperties.EXT_PORT_SIDE);
-                        if (extPortSide == PortSide.EAST) {
-                            node.getPosition().x += adjustedSize.x - calculatedSize.x;
-                        } else  if (extPortSide == PortSide.SOUTH) {
-                            node.getPosition().y += adjustedSize.y - calculatedSize.y;
-                        }
+            // iterate over the graph's nodes, looking for eastern / southern external ports
+            // (at this point, the graph's nodes are not divided into layers anymore)
+            for (LNode node : lgraph.getLayerlessNodes()) {
+                // we're only looking for external port dummies
+                if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+                    // check which side the external port is on
+                    PortSide extPortSide = node.getProperty(InternalProperties.EXT_PORT_SIDE);
+                    if (extPortSide == PortSide.EAST) {
+                        node.getPosition().x += newSize.x - oldSize.x;
+                    } else  if (extPortSide == PortSide.SOUTH) {
+                        node.getPosition().y += newSize.y - oldSize.y;
                     }
                 }
             }
@@ -562,8 +581,8 @@ public final class KlayLayered {
         
         // Actually apply the new size
         LInsets insets = lgraph.getInsets();
-        lgraph.getSize().x = adjustedSize.x - insets.left - insets.right;
-        lgraph.getSize().y = adjustedSize.y - insets.top - insets.bottom;
+        lgraph.getSize().x = newSize.x - insets.left - insets.right;
+        lgraph.getSize().y = newSize.y - insets.top - insets.bottom;
     }
     
     /**
