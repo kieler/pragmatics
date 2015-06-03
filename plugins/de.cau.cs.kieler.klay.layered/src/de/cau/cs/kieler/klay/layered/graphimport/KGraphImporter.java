@@ -737,8 +737,12 @@ public class KGraphImporter implements IGraphImporter<KNode> {
                 }
                 
                 // Set node label positions, if they were not fixed
-                if (!lnode.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
-                    for (LLabel llabel : lnode.getLabels()) {
+                // (that is at least one of the node or the label has a node label placement set)
+                final boolean nodeHasLabelPlacement =
+                        !lnode.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty();
+                for (LLabel llabel : lnode.getLabels()) {
+                    if (nodeHasLabelPlacement
+                            || !llabel.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
                         KLabel klabel = (KLabel) llabel.getProperty(InternalProperties.ORIGIN);
                         KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
                         klabelLayout.applyVector(llabel.getPosition());
