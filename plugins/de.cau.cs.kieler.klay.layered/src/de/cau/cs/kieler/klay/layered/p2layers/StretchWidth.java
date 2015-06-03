@@ -46,8 +46,9 @@ public class StretchWidth implements ILayoutPhase {
     private int maxWidth = 0;
     // the Graph the layering is done for
     private LGraph currentGraph;
-    // average out-degree
-    private int avOut;
+    // outDegree with determines the bounding with widthUp and maxWidth
+    // can be choosen in soruce code: a)average out-degree b) max out-degree
+    private double outDegreeCriteria;
     // sorted list of layerless nodes
     private List<LNode> sortedLayerlessNodes;
     // Set of nodes placed in the current layer
@@ -101,14 +102,22 @@ public class StretchWidth implements ILayoutPhase {
         progressMonitor.begin("StretchWidth", 1);
         // set graph
         currentGraph = layeredGraph;
-        
+        // reset variables
+        widthCurrent = 0;
+        widthUp = 0;
         maxWidth = currentGraph.getProperty(Properties.MAX_WIDTH_START);
-        System.out.println(maxWidth);
         // Layer currently worked on
         Layer currentLayer = new Layer(currentGraph);
+        // should next layer
+        boolean up;
         currentGraph.getLayers().add(currentLayer);
         // compute average out-degree
-        computeAverageDegree();
+        // computeAverageDegree();
+        // compute max out-degree as border criteria
+        computeMaxDegree();
+
+        // scaling the outdegree cirteria fo testing purposes
+        outDegreeCriteria = outDegreeCriteria / 10;
         // sort the nodes at beginning, since the rank will not change
         computeSortedNodes();
         // copy the sorted layerless nodes so we don't overwrite it for the reset case
@@ -123,17 +132,19 @@ public class StretchWidth implements ILayoutPhase {
             // compute u\z
             diff = new HashSet<LNode>(u);
             diff.removeAll(z);
-            if (selectedNode == null || (conditionGoUp() && !diff.isEmpty())) {
+            up = conditionGoUp();
+            if (selectedNode == null || (up && !diff.isEmpty())) {
                 /* go to the next layer */
                 currentLayer = new Layer(currentGraph);
                 currentGraph.getLayers().add(currentLayer);
                 // union of z and u in z
                 z.addAll(u);
                 // change width
+                // widthCurrent = 0;
                 widthCurrent = widthUp;
                 widthUp = 0;
             } else {
-                if (conditionGoUp()) {
+                if (up) {
                     /* reset layering */
                     // clear the placed layers
                     currentGraph.getLayers().clear();
@@ -170,13 +181,11 @@ public class StretchWidth implements ILayoutPhase {
 
         // layering done, delete original layerlessNodes
         layeredGraph.getLayerlessNodes().clear();
-        //
+        System.out.println("maxWidth am ende:" + maxWidth);
+        System.out.println(outDegreeCriteria);
         // Algorithm is Bottom-Up -> reverse Layers
         java.util.Collections.reverse(layeredGraph.getLayers());
-        
-        //reset variables
-        widthCurrent = 0;
-        widthUp = 0;
+
         progressMonitor.done();
     }
 
@@ -186,7 +195,7 @@ public class StretchWidth implements ILayoutPhase {
      * @return
      */
     private Boolean conditionGoUp() {
-        return widthCurrent > maxWidth || (widthUp > maxWidth * avOut);
+        return widthCurrent > maxWidth || (widthUp > (maxWidth * outDegreeCriteria));
     }
 
     /**
@@ -280,7 +289,8 @@ public class StretchWidth implements ILayoutPhase {
      */
     private Integer getOutDegree(final LNode node) {
         int i = 0;
-        for (@SuppressWarnings("unused") LEdge edge : node.getOutgoingEdges()) {
+        for (@SuppressWarnings("unused")
+        LEdge edge : node.getOutgoingEdges()) {
             i++;
         }
         return i;
@@ -295,7 +305,8 @@ public class StretchWidth implements ILayoutPhase {
      */
     private Integer getInDegree(final LNode node) {
         int i = 0;
-        for (@SuppressWarnings("unused") LEdge edge : node.getIncomingEdges()) {
+        for (@SuppressWarnings("unused")
+        LEdge edge : node.getIncomingEdges()) {
             i++;
         }
         return i;
@@ -307,12 +318,36 @@ public class StretchWidth implements ILayoutPhase {
     private void computeAverageDegree() {
         int nodes = 0;
         int edges = 0;
+        double avOut = 1;
         for (LNode node : currentGraph.getLayerlessNodes()) {
             nodes++;
             edges += getOutDegree(node);
 
         }
-        avOut = edges / nodes;
+        avOut = edges / (double) nodes;
+
+        // if this variable is zero, than every node will be placed in a new layer
+        if (avOut == 0) {
+            avOut = 1;
+        }
+        outDegreeCriteria = avOut;
+    }
+
+    /**
+     * adapted function for testing different criteria max outgoing edges instead of avg was
+     * described in the text in the paper.
+     */
+    private void computeMaxDegree() {
+        int max = 0;
+        int outDegree = 0;
+        for (LNode node : currentGraph.getLayerlessNodes()) {
+            outDegree = getOutDegree(node);
+            if (max < outDegree) {
+                max = outDegree;
+            }
+
+        }
+        outDegreeCriteria = max;
 
     }
 
