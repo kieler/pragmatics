@@ -1127,6 +1127,30 @@ public final class KimlUtil {
     }
     
     /**
+     * Recursively configures default values for all child elements of the passed graph. This
+     * includes node, ports, and edges.
+     * 
+     * Note that it is <b>not</b> checked whether the defaults flag is set on the graph.
+     * 
+     * @param graph
+     *            the graph to configure.
+     */
+    public static void configureDefaultsRecursively(final KNode graph) {
+
+        Iterator<KGraphElement> kgeIt =
+                Iterators.filter(graph.eAllContents(), KGraphElement.class);
+        while (kgeIt.hasNext()) {
+            KGraphElement kge = kgeIt.next();
+            if (kge instanceof KNode) {
+                configureWithDefaultValues((KNode) kge);
+            } else if (kge instanceof KPort) {
+                configureWithDefaultValues((KPort) kge);
+            } else if (kge instanceof KEdge) {
+                configureWithDefaultValues((KEdge) kge);
+            }
+        }
+    }
+    /**
      * Adds some default values to the passed node. This includes a reasonable size, a label based
      * on the node's {@link KIdentifier} and a inside center node label placement.
      * 
