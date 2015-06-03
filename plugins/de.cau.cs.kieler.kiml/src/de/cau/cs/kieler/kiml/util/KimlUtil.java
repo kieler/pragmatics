@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
@@ -55,7 +56,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
@@ -1121,5 +1124,90 @@ public final class KimlUtil {
         // ... and attach them to the input 'kedge' offering iterator, or return just the
         //  input 'kedge' iterator in case no ports are configured for 'kedge'
         return connectedEdges == null ? kedgeIt : Iterators.concat(kedgeIt, connectedEdges);
+    }
+    
+    /**
+     * Adds some default values to the passed node. This includes a reasonable size, a label based
+     * on the node's {@link KIdentifier} and a inside center node label placement.
+     * 
+     * Such default values are useful for fast test case generation.
+     * 
+     * @param node
+     *            a node of a graph
+     */
+    public static void configureWithDefaultValues(final KNode node) {
+       
+        // Make sure the node has a size if the size constraints are fixed
+        KShapeLayout sl = node.getData(KShapeLayout.class);
+        if (sl != null) {
+            Set<SizeConstraint> sc = sl.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+            
+            if (sc.equals(SizeConstraint.fixed()) && sl.getWidth() == 0f && sl.getHeight() == 0f) {
+                sl.setWidth(DEFAULT_MIN_WIDTH * 2 * 2);
+                sl.setHeight(DEFAULT_MIN_HEIGHT * 2 * 2);
+            }
+        } 
+        
+        // label
+        ensureLabel(node);
+        if (sl != null) {
+            Set<NodeLabelPlacement> nlp = sl.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+            if (nlp.equals(NodeLabelPlacement.fixed())) {
+                sl.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT, NodeLabelPlacement.insideCenter());
+            }
+        }
+        
+    }
+    
+    /**
+     * Adds some default values to the passed port. This includes a reasonable size 
+     * and a label based on the port's {@link KIdentifier}.
+     * 
+     * Such default values are useful for fast test case generation.
+     * 
+     * @param port
+     *            a port of a node of a graph
+     */
+    public static void configureWithDefaultValues(final KPort port) {
+
+        KShapeLayout sl = port.getData(KShapeLayout.class);
+        if (sl != null && sl.getWidth() == 0f && sl.getHeight() == 0f) {
+            sl.setWidth(DEFAULT_MIN_WIDTH / 2 / 2);
+            sl.setHeight(DEFAULT_MIN_HEIGHT / 2 / 2);
+        }
+        
+        ensureLabel(port);
+    }
+    
+    /**
+     * Configures the {@link EdgeLabelPlacement} of the passed edge to be center of the edge.
+     * 
+     * @param edge
+     *            an edge of a graph
+     */
+    public static void configureWithDefaultValues(final KEdge edge) {
+
+        KLayoutData ld = edge.getData(KLayoutData.class);
+        if (ld != null) {
+            EdgeLabelPlacement elp = ld.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+            if (elp == EdgeLabelPlacement.UNDEFINED) {
+                ld.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.CENTER);
+            }
+        }
+    }
+    
+    /**
+     * If the element does not already own a label, a label is created based on the element's
+     * {@link KIdentifier} (if it exists, that is).
+     */
+    private static void ensureLabel(final KLabeledGraphElement klge) {
+        if (klge.getLabels().isEmpty()) {
+
+            KIdentifier id = klge.getData(KIdentifier.class);
+            if (id != null && !Strings.isNullOrEmpty(id.getId())) {
+                KLabel label = createInitializedLabel(klge);
+                label.setText(id.getId());
+            }
+        }
     }
 }
