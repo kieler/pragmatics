@@ -21,6 +21,7 @@ import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 
 /**
  * Container for public property definitions. These are layout options that can be set on graph
@@ -196,7 +197,14 @@ public final class Properties {
     public static final IProperty<SelfLoopPlacement> SPLINE_SELF_LOOP_PLACEMENT =
             new Property<SelfLoopPlacement>("de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement",
                     SelfLoopPlacement.NORTH_STACKED);
-
+    
+    /**
+     * Specifies the compaction strategy when using the {@link BKNodePlacer}.
+     */
+    public static final IProperty<CompactionStrategy> COMPACTION_STRATEGY =
+            new Property<CompactionStrategy>(
+                    "de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy",
+                    CompactionStrategy.CLASSIC);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
