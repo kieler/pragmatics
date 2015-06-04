@@ -37,23 +37,32 @@ public class GranaParser extends AbstractContentAssistParser {
 			nameMappings = new HashMap<AbstractElement, String>() {
 				private static final long serialVersionUID = 1L;
 				{
+					put(grammarAccess.getGranaAccess().getAlternatives_2_1(), "rule__Grana__Alternatives_2_1");
 					put(grammarAccess.getResourceAccess().getAlternatives(), "rule__Resource__Alternatives");
+					put(grammarAccess.getOutputAccess().getAlternatives(), "rule__Output__Alternatives");
 					put(grammarAccess.getPropertyValueAccess().getAlternatives(), "rule__PropertyValue__Alternatives");
 					put(grammarAccess.getFloatAccess().getAlternatives(), "rule__Float__Alternatives");
 					put(grammarAccess.getGranaAccess().getGroup(), "rule__Grana__Group__0");
 					put(grammarAccess.getGranaAccess().getGroup_0(), "rule__Grana__Group_0__0");
+					put(grammarAccess.getGranaAccess().getGroup_1(), "rule__Grana__Group_1__0");
+					put(grammarAccess.getGranaAccess().getGroup_2(), "rule__Grana__Group_2__0");
 					put(grammarAccess.getJobAccess().getGroup(), "rule__Job__Group__0");
 					put(grammarAccess.getResourceReferenceAccess().getGroup(), "rule__ResourceReference__Group__0");
 					put(grammarAccess.getGlobalResourceRefAccess().getGroup(), "rule__GlobalResourceRef__Group__0");
 					put(grammarAccess.getLocalResourceAccess().getGroup(), "rule__LocalResource__Group__0");
 					put(grammarAccess.getLocalResourceAccess().getGroup_1(), "rule__LocalResource__Group_1__0");
+					put(grammarAccess.getGlobalOutputRefAccess().getGroup(), "rule__GlobalOutputRef__Group__0");
+					put(grammarAccess.getOutputReferenceAccess().getGroup(), "rule__OutputReference__Group__0");
 					put(grammarAccess.getKIdentifierAccess().getGroup(), "rule__KIdentifier__Group__0");
 					put(grammarAccess.getKIdentifierAccess().getGroup_3(), "rule__KIdentifier__Group_3__0");
 					put(grammarAccess.getPersistentEntryAccess().getGroup(), "rule__PersistentEntry__Group__0");
 					put(grammarAccess.getQualifiedIDAccess().getGroup(), "rule__QualifiedID__Group__0");
 					put(grammarAccess.getQualifiedIDAccess().getGroup_1(), "rule__QualifiedID__Group_1__0");
 					put(grammarAccess.getGranaAccess().getGlobalResourcesAssignment_0_1(), "rule__Grana__GlobalResourcesAssignment_0_1");
-					put(grammarAccess.getGranaAccess().getJobsAssignment_1(), "rule__Grana__JobsAssignment_1");
+					put(grammarAccess.getGranaAccess().getGloobalOutputsAssignment_1_1(), "rule__Grana__GloobalOutputsAssignment_1_1");
+					put(grammarAccess.getGranaAccess().getExecuteAllAssignment_2_1_0(), "rule__Grana__ExecuteAllAssignment_2_1_0");
+					put(grammarAccess.getGranaAccess().getExecuteAssignment_2_1_1(), "rule__Grana__ExecuteAssignment_2_1_1");
+					put(grammarAccess.getGranaAccess().getJobsAssignment_3(), "rule__Grana__JobsAssignment_3");
 					put(grammarAccess.getJobAccess().getNameAssignment_2(), "rule__Job__NameAssignment_2");
 					put(grammarAccess.getJobAccess().getLayoutBeforeAnalysisAssignment_3(), "rule__Job__LayoutBeforeAnalysisAssignment_3");
 					put(grammarAccess.getJobAccess().getMeasureExecutionTimeAssignment_4(), "rule__Job__MeasureExecutionTimeAssignment_4");
@@ -66,6 +75,10 @@ public class GranaParser extends AbstractContentAssistParser {
 					put(grammarAccess.getGlobalResourceRefAccess().getResourcesAssignment_1(), "rule__GlobalResourceRef__ResourcesAssignment_1");
 					put(grammarAccess.getLocalResourceAccess().getPathAssignment_0(), "rule__LocalResource__PathAssignment_0");
 					put(grammarAccess.getLocalResourceAccess().getFilterAssignment_1_1(), "rule__LocalResource__FilterAssignment_1_1");
+					put(grammarAccess.getGlobalOutputRefAccess().getNameAssignment_0(), "rule__GlobalOutputRef__NameAssignment_0");
+					put(grammarAccess.getGlobalOutputRefAccess().getOutputAssignment_1(), "rule__GlobalOutputRef__OutputAssignment_1");
+					put(grammarAccess.getOutputReferenceAccess().getOutputRefAssignment_1(), "rule__OutputReference__OutputRefAssignment_1");
+					put(grammarAccess.getLocalOutputAccess().getPathAssignment(), "rule__LocalOutput__PathAssignment");
 					put(grammarAccess.getAnalysisAccess().getNameAssignment(), "rule__Analysis__NameAssignment");
 					put(grammarAccess.getKIdentifierAccess().getIdAssignment_1(), "rule__KIdentifier__IdAssignment_1");
 					put(grammarAccess.getKIdentifierAccess().getPersistentEntriesAssignment_3_0(), "rule__KIdentifier__PersistentEntriesAssignment_3_0");
