@@ -25,6 +25,8 @@ import java.util.Map.Entry;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -397,9 +399,13 @@ public final class JsonDebugUtil {
                 + indent2 + "\"target\": \"n" + edge.getTarget().getNode().hashCode() + "\",\n"
                 + indent2 + "\"sourcePort\": \"p" + edge.getSource().hashCode() + "\",\n"
                 + indent2 + "\"targetPort\": \"p" + edge.getTarget().hashCode() + "\",\n"
-                + indent2 + "\"sourcePoint\": \"" + edge.getSource().getAbsoluteAnchor() + "\",\n"
-                + indent2 + "\"targetPoint\": \"" + edge.getTarget().getAbsoluteAnchor() + "\",\n"
-                + indent2 + "\"bendPoints\": \"" + edge.getBendPoints().toString() + "\",\n");
+                + indent2 + "\"sourcePoint\": { \"x\": " + edge.getSource().getAbsoluteAnchor().x
+                        + ", \"y\": " + edge.getSource().getAbsoluteAnchor().y + " },\n"
+                + indent2 + "\"targetPoint\": { \"x\": " + edge.getTarget().getAbsoluteAnchor().x
+                        + ", \"y\": " + edge.getTarget().getAbsoluteAnchor().y + " },\n");
+//                + indent2 + "\"bendPoints\": \"" + edge.getBendPoints().toString() + "\",\n");
+            writeBendPoints(writer, edge.getBendPoints(), indentation + 2);
+            writer.write(",\n");
             writeProperties(writer, edge.getAllProperties(), indentation + 2);
             writer.write("\n" + indent1 + "}");
             if (edgesIterator.hasNext()) {
@@ -409,6 +415,34 @@ public final class JsonDebugUtil {
         writer.write("\n" + indent0 + "]");
     }
 
+    /**
+     * Writes the given bendpoints as JSON formatted string to the given writer.
+     * 
+     * @param writer
+     *            the writer to write to.
+     * @param bendPoints
+     *            the bendpoints to write.
+     * @param indentation
+     *            the indentation level to use.
+     * @throws IOException
+     *             if anything goes wrong with the writer.
+     */
+    private static void writeBendPoints(final Writer writer, final KVectorChain bendPoints,
+            final int indentation) throws IOException {
+        
+        String indent0 = Strings.repeat(INDENT, indentation);
+        String indent1 = Strings.repeat(INDENT, indentation + 1);
+        writer.write(indent0 + "\"bendPoints\": [");
+        Iterator<KVector> pointsIterator = bendPoints.iterator();
+        while (pointsIterator.hasNext()) {
+            KVector point = pointsIterator.next();
+            writer.write("\n" + indent1 + "{ \"x\": " + point.x + ", \"y\": " + point.y + "}");
+            if (pointsIterator.hasNext()) {
+                writer.write(",");
+            }
+        }
+        writer.write("\n" + indent0 + "]");
+    }
 
     /**
      * Writes the given ports as JSON formatted string to the given writer.
