@@ -255,6 +255,7 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
     override complete_LocalOutput(EObject model, RuleCall ruleCall, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
         super.complete_LocalOutput(model, ruleCall, context, acceptor)
         
+        
         // remove quotes
         val stripped = context.prefix.replaceAll("^\"|\"$", "");
         // if string is empty suggest either the root of the workspace or the root of file system
@@ -329,9 +330,9 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
         
         // extract a valid path (or at least what we think might be a valid path)
         val sepIndex = stripped.lastIndexOf("/") 
-        val prefix = stripped.substring(0, sepIndex)
-        val container = wsRoot.findMember(prefix)
+        val prefix = if (sepIndex != -1 && stripped.length > 0) stripped.substring(0, sepIndex + 1) else "/" 
         
+        val container = wsRoot.findMember(prefix)
         if (container != null && container instanceof IContainer) {
             for (member : (container as IContainer).members) {
                 if (acceptFiles || member instanceof IContainer) {
@@ -339,7 +340,7 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
                     if (isValidProposal(suggestion, stripped, context)) {
                         val displayString = new StyledString(suggestion)
 
-                        var quotedSuggestion = "\"" + FS_PREFIX + suggestion
+                        var quotedSuggestion = "\"" + suggestion
                         var priority =  0
                         if (member instanceof IContainer) {
                             quotedSuggestion = quotedSuggestion + "/"
