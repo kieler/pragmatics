@@ -14,10 +14,13 @@
 package de.cau.cs.kieler.klay.debugview.views;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -33,6 +36,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -50,14 +54,21 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.DragDropScrollHandler;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.debugview.KlayDebugViewPlugin;
 import de.cau.cs.kieler.klay.debugview.Messages;
 import de.cau.cs.kieler.klay.debugview.provider.FileTableContentProvider;
 import de.cau.cs.kieler.klay.debugview.provider.FileTableLabelProvider;
 import de.cau.cs.kieler.klay.debugview.widgets.ImageCanvas;
 import de.cau.cs.kieler.klay.debugview.widgets.LegendPage;
+import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
+import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 // CHECKSTYLEOFF MagicNumber
 
@@ -67,7 +78,7 @@ import de.cau.cs.kieler.klay.debugview.widgets.LegendPage;
  * 
  * @author cds
  */
-public class DebugView extends ViewPart {
+public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
     
     /**
      * Compares {@code File}s.
@@ -138,7 +149,11 @@ public class DebugView extends ViewPart {
     private SashForm sashForm = null;
     private Table fileTable = null;
     private TableViewer fileTableViewer = null;
+    private Composite diagramComposite = null;
+    private StackLayout diagramStackLayout;
     private ImageCanvas imageCanvas = null;
+    private Composite klighdComposite = null;
+    private ViewContext viewContext = null;
     private Browser colorKeyBrowser = null;
     private Composite statusBar = null;
     private Label statusBarLabel = null;
@@ -159,6 +174,9 @@ public class DebugView extends ViewPart {
      * The current zoom factor.
      */
     private int zoomPercentage = ZOOM_DEFAULT;
+
+    private FileTableContentProvider fileTableContentProvider;
+
     
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -248,7 +266,7 @@ public class DebugView extends ViewPart {
             
             // We're only removing .dot and .png files
             String fileName = file.getName();
-            if (fileName.endsWith(".dot") || fileName.endsWith(".png")) { //$NON-NLS-1$ //$NON-NLS-2$
+            if (fileName.endsWith(".dot") || fileName.endsWith(".png") || fileName.endsWith(".json")) {
                 file.delete();
             }
         }
@@ -266,33 +284,51 @@ public class DebugView extends ViewPart {
      * @param modelFile the selected model file or {@code null}.
      */
     private void updateImage(final File modelFile) {
-        File imageFile = null;
-        
         // If there is a model file, try to create and load the associated image
         // (the model file can be null if the user just deleted all files)
         if (modelFile != null) {
-            String path = modelFile.getPath();
-            imageFile = new File(path.substring(0, path.length() - 3) + "png"); //$NON-NLS-1$
-            
-            // Check if the image file already exists
-            if (!imageFile.exists()) {
-                if (!createImage(modelFile, imageFile)) {
-                    // If this doesn't work, set image file to null
+            if (modelFile.getName().endsWith(".dot")) {
+                File imageFile = null;
+
+                String path = modelFile.getPath();
+                imageFile = new File(path.substring(0, path.length() - 3) + "png"); //$NON-NLS-1$
+
+                // Check if the image file already exists
+                if (!imageFile.exists()) {
+                    if (!createImage(modelFile, imageFile)) {
+                        // If this doesn't work, set image file to null
+                        openErrorDialog(Messages.DebugWindow_Error_ImageCreationFailed);
+                        imageFile = null;
+                    }
+                }
+
+                // Check if the image file exists
+                if (imageFile == null) {
+                    // Reset
+                    imageCanvas.clear();
+                    statusBarLabel.setText(currentPath);
+                } else {
+                    // Load new image
+                    imageCanvas.loadImage(imageFile);
+                    statusBarLabel.setText(modelFile.getPath());
+                }
+                if (diagramStackLayout.topControl != imageCanvas) {
+                    diagramStackLayout.topControl = imageCanvas;
+                    diagramComposite.layout(true, true);
+                }
+            } else {
+                try {
+                     KNode[] kgraph = GraphFormatsService.getInstance()
+                             .loadKGraph(new FileInputStream(modelFile), "json");
+                    viewContext.update(kgraph[0]);
+                } catch (Exception e) {
                     openErrorDialog(Messages.DebugWindow_Error_ImageCreationFailed);
-                    imageFile = null;
+                }
+                if (diagramStackLayout.topControl != klighdComposite) {
+                    diagramStackLayout.topControl = klighdComposite;
+                    diagramComposite.layout(true, true);
                 }
             }
-        }
-        
-        // Check if the image file exists
-        if (imageFile == null) {
-            // Reset
-            imageCanvas.clear();
-            statusBarLabel.setText(currentPath);
-        } else {
-            // Load new image
-            imageCanvas.loadImage(imageFile);
-            statusBarLabel.setText(modelFile.getPath());
         }
     }
     
@@ -364,42 +400,7 @@ public class DebugView extends ViewPart {
                 IStatus.ERROR);
         dialog.open();
     }
-    
 
-    ///////////////////////////////////////////////////////////////////////////////
-    // Dialog Settings
-    
-    /* Basing the settings on the memento mechanism didn't work right out of the box. Since I don't
-     * have the time to solve that properly, I just decided to not care and not use mementos. Take
-     * that, Eclipse!
-     */
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    public void init(final IViewSite site, final IMemento memento) throws PartInitException {
-//        setPath(memento.getString(SETT_PATH));
-//        
-//        Integer zoom = memento.getInteger(SETT_ZOOM);
-//        if (zoom != null) {
-//            changeZoom(zoom);
-//        }
-//        
-//        Boolean colorKey = memento.getBoolean(SETT_COLOR_KEY);
-//        setColorKeyVisible(colorKey == null ? true : colorKey);
-//    }
-//
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    public void saveState(final IMemento memento) {
-//        memento.putString(SETT_PATH, currentPath);
-//        memento.putInteger(SETT_ZOOM, zoomPercentage);
-//        memento.putBoolean(SETT_COLOR_KEY, colorKeyBrowser.isVisible());
-//    }
-    
     /**
      * Saves the current settings.
      */
@@ -471,7 +472,8 @@ public class DebugView extends ViewPart {
         
         // Table Viewer
         fileTableViewer = new TableViewer(fileTable);
-        fileTableViewer.setContentProvider(new FileTableContentProvider());
+        fileTableContentProvider = new FileTableContentProvider();
+        fileTableViewer.setContentProvider(fileTableContentProvider);
         fileTableViewer.setComparator(new FileViewerComparator());
         
         TableViewerColumn nameColumn = new TableViewerColumn(fileTableViewer, SWT.LEFT);
@@ -493,9 +495,21 @@ public class DebugView extends ViewPart {
         fileTable.setSortColumn(createdColumn.getColumn());
         fileTable.setSortDirection(SWT.UP);
         
-        // Image Canvas
-        imageCanvas = new ImageCanvas(sashForm);
+        // Image Composite
+        diagramComposite = new Composite(sashForm, SWT.NONE);
+        diagramStackLayout = new StackLayout();
+        diagramComposite.setLayout(diagramStackLayout);
+        
+        imageCanvas = new ImageCanvas(diagramComposite);
         new DragDropScrollHandler(imageCanvas, true);
+        
+        klighdComposite = new Composite(diagramComposite, SWT.NONE);
+        klighdComposite.setLayout(new FillLayout());
+        viewContext = new ViewContext(this, KimlUtil.createInitializedNode());
+        viewContext.configure();
+        ContextViewer viewer = new ContextViewer(klighdComposite);
+        viewer.setModel(viewContext);
+        viewContext.update();
         
         // Browser
         colorKeyBrowser = new Browser(sashForm, SWT.BORDER);
@@ -521,7 +535,7 @@ public class DebugView extends ViewPart {
      * @param parent the parent composite.
      */
     private void setupToolBar(final Composite parent) {
-        IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+        final IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         toolBarManager.add(new Separator(TOOLBAR_GROUP_FOLDER_ACTIONS));
         toolBarManager.add(new Separator(TOOLBAR_GROUP_HELP_ACTIONS));
         
@@ -535,6 +549,36 @@ public class DebugView extends ViewPart {
         toolBarManager.appendToGroup(TOOLBAR_GROUP_FOLDER_ACTIONS, emptyFolderAction);
         toggleLegendAction = new ToggleLegendPaneAction(this);
         toolBarManager.appendToGroup(TOOLBAR_GROUP_HELP_ACTIONS, toggleLegendAction);
+        
+        final IMenuManager menu = getViewSite().getActionBars().getMenuManager();
+        Action jsonAction;
+        Action dotAction = new Action("Show .dot files", Action.AS_RADIO_BUTTON) {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void run() {
+                fileTableContentProvider.setFileExtension(".dot");
+                refreshFileList();
+            }
+            
+        };
+        jsonAction = new Action("Show .json files", Action.AS_RADIO_BUTTON) {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void run() {
+                fileTableContentProvider.setFileExtension(".json");
+                refreshFileList();
+            }
+            
+        };
+        menu.add(dotAction);
+        menu.add(jsonAction);
+        dotAction.setChecked(true);
     }
     
     /**
@@ -655,5 +699,26 @@ public class DebugView extends ViewPart {
         toggleLegendAction.setChecked(visible);
         colorKeyBrowser.setVisible(visible);
         sashForm.layout(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getPartId() {
+        return getViewSite().getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IViewer getViewer() {
+        return viewContext == null ? null : viewContext.getViewer();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ViewContext getViewContext() {
+        return viewContext;
     }
 }
