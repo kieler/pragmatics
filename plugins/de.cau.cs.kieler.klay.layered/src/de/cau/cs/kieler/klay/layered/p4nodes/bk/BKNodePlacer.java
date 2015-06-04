@@ -165,16 +165,6 @@ public final class BKNodePlacer implements ILayoutPhase {
         // following processes. 
         ni = NeighborhoodInformation.buildFor(layeredGraph);
 
-        // Initialize four layouts which result from the two possible directions respectively.
-        BKAlignedLayout rightdown =
-                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.RIGHT);
-        BKAlignedLayout rightup =
-                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.RIGHT);
-        BKAlignedLayout leftdown =
-                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.LEFT);
-        BKAlignedLayout leftup =
-                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.LEFT);
-
         // Regard possible other layout options.
         debugMode = layeredGraph.getProperty(Properties.DEBUG_MODE);
         produceBalancedLayout =
@@ -184,22 +174,40 @@ public final class BKNodePlacer implements ILayoutPhase {
         // one run is required.
         markConflicts(layeredGraph);
 
+        // Initialize four layouts which result from the two possible directions respectively.
+        BKAlignedLayout rightdown = null, rightup = null, leftdown = null, leftup = null;
         // SUPPRESS CHECKSTYLE NEXT MagicNumber
         List<BKAlignedLayout> layouts = Lists.newArrayListWithCapacity(4);
         switch (layeredGraph.getProperty(Properties.FIXED_ALIGNMENT)) {
             case LEFTDOWN:
+                leftdown =
+                      new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.LEFT);
                 layouts.add(leftdown);
                 break;
             case LEFTUP:
+                leftup = 
+                      new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.LEFT);
                 layouts.add(leftup);
                 break;
             case RIGHTDOWN:
+                rightdown = 
+                      new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.RIGHT);
                 layouts.add(rightdown);
                 break;
             case RIGHTUP:
+                rightup = 
+                      new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.RIGHT);
                 layouts.add(rightup); 
                 break;
             default:
+                leftdown = 
+                   new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.LEFT);
+                leftup = 
+                   new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.LEFT);
+                rightdown = 
+                   new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.RIGHT);
+                rightup = 
+                   new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.RIGHT);
                 layouts.add(rightdown);
                 layouts.add(rightup);
                 layouts.add(leftdown);
@@ -227,10 +235,9 @@ public final class BKNodePlacer implements ILayoutPhase {
 
         // Debug output
         if (debugMode) {
-            System.out.println("rightdown size is " + rightdown.layoutSize());
-            System.out.println("rightup size is " + rightup.layoutSize());
-            System.out.println("leftdown size is " + leftdown.layoutSize());
-            System.out.println("leftup size is " + leftup.layoutSize());
+            for (BKAlignedLayout bal : layouts) {
+                System.out.println(bal + " size is " + bal.layoutSize());
+            }
         }
 
         // Choose a layout from the four calculated layouts. Layouts that contain errors are skipped.
