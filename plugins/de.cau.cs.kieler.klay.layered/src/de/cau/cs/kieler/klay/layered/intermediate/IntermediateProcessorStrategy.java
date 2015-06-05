@@ -43,7 +43,7 @@ public enum IntermediateProcessorStrategy {
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
-    /** Creates connected compontents for the SplineSelfLoopPre- and postprocessor. */
+    /** Creates connected components for the SplineSelfLoopPre- and postprocessor. */
     SPLINE_SELF_LOOP_PREPROCESSOR,
     
     // Before Phase 2
@@ -56,7 +56,7 @@ public enum IntermediateProcessorStrategy {
     // Before Phase 3
     
 
-    /** Node-promotion for prettier graphs. */
+    /** Node-promotion for prettier graphs, especially algorithms like longest-path are prettified. */
     NODE_PROMOTION,
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,

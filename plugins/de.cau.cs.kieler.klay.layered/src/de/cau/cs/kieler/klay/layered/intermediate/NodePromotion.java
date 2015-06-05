@@ -54,18 +54,18 @@ public class NodePromotion implements ILayoutProcessor {
 
         progressMonitor.begin("Node-promotion heuristic", 1);
 
+
         precalculateAndSetInformation(layeredGraph);
 
         int promotions;
-        //
+
         int[] layeringBackUp = layers.clone();
 
-        // determineNodesWithInEdges(layeredGraph);
         do {
             promotions = 0;
             // Start promotion for all nodes with incoming edges.
-            for (LNode nodeWithE : nodesWithInEdges) {
-                if (promoteNode(nodeWithE, layeredGraph) < 0) {
+            for (LNode node : nodesWithInEdges) {
+                if (promoteNode(node) < 0) {
                     promotions++;
                     layeringBackUp = layers.clone();
                 } else {
@@ -76,45 +76,19 @@ public class NodePromotion implements ILayoutProcessor {
 
         setNewLayering(layeredGraph);
 
+        
         progressMonitor.done();
 
     }
 
-    /**
-     * @param layeredGraph
-     */
-    private void setNewLayering(LGraph layeredGraph) {
-
-        int max = layers[0];
-        for (int in : layers) {
-            if (in > max) {
-                max = in;
-            }
-        }
-
-        List<Layer> layLay = Lists.newArrayList();
-        for (int i = 0; i <= max; i++) {
-            Layer laLaLayer = new Layer(layeredGraph);
-            laLaLayer.id = max - i;
-            layLay.add(laLaLayer);
-        }
-
-        for (LNode node : nodes) {
-            node.setLayer(layLay.get(max - layers[node.id]));
-        }
-
-        layeredGraph.getLayers().clear();
-        layeredGraph.getLayers().addAll(layLay);
-
-    }
-
+    
     /**
      * Helper method for doing stuff.
      * 
      * @param layeredGraph
      */
     private void precalculateAndSetInformation(final LGraph layeredGraph) {
-
+        
         // Set IDs for all layers and nodes.
         // Layer IDs are reversed for easier handling in the heuristic.
         int layerID = layeredGraph.getLayers().size() - 1;
@@ -127,13 +101,13 @@ public class NodePromotion implements ILayoutProcessor {
                 nodeID++;
             }
         }
-
+        
         // fill layers-array with position information of nodes
         layers = new int[nodeID];
         degreeDiff = new int[nodeID];
         nodes = Lists.newArrayList();
         nodesWithInEdges = Lists.newArrayList();
-
+        
         int inDegree;
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
@@ -146,16 +120,51 @@ public class NodePromotion implements ILayoutProcessor {
                 nodes.add(node);
             }
         }
+        
+    }
+    
+    
+    /**
+     * Helper method for setting the calculated and potentially improved layering after
+     * the node-promotion-heuristic is finished.
+     * 
+     * @param layeredGraph
+     */
+    private void setNewLayering(final LGraph layeredGraph) {
+
+        // Determine required amount of layers.
+        int maxLayerCnt = layers[0];
+        for (int in : layers) {
+            if (in > maxLayerCnt) {
+                maxLayerCnt = in;
+            }
+        }
+
+        List<Layer> layList = Lists.newArrayList();
+        for (int i = 0; i <= maxLayerCnt; i++) {
+            Layer laLaLayer = new Layer(layeredGraph);
+            laLaLayer.id = maxLayerCnt - i;
+            layList.add(laLaLayer);
+        }
+
+        for (LNode node : nodes) {
+            node.setLayer(layList.get(maxLayerCnt - layers[node.id]));
+        }
+
+        layeredGraph.getLayers().clear();
+        layeredGraph.getLayers().addAll(layList);
 
     }
 
     /**
-     * Node-promotion heuristic for doing stuff.
+     * Node-promotion heuristic of the paper. Works on an array of integers which represent the
+     * nodes and their position on the layers to avoid difficulties while creating and deleting
+     * new layers over the course of the discarded promotions.
      * 
-     * @param node
-     * @return
+     * @param node that shall be promoted.
+     * @return 
      */
-    private int promoteNode(final LNode node, final LGraph layeredGraph) {
+    private int promoteNode(final LNode node) {
 
         int dummydiff = 0;
         // Calculate layernumber for promoted node.
@@ -164,7 +173,7 @@ public class NodePromotion implements ILayoutProcessor {
         for (LEdge edge : node.getIncomingEdges()) {
             LNode masterNode = edge.getSource().getNode();
             if (layers[masterNode.id] == nodeNewLayerPos) {
-                dummydiff = dummydiff + promoteNode(masterNode, layeredGraph);
+                dummydiff = dummydiff + promoteNode(masterNode);
             }
         }
 
@@ -175,7 +184,7 @@ public class NodePromotion implements ILayoutProcessor {
     }
 
     /**
-     * Method for determining the size of a given Iterable.
+     * Method for determining the size of a given Iterable of LEdges.
      * 
      * @param incomingEdges
      * @return count of edges
