@@ -31,6 +31,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -1062,6 +1063,7 @@ public final class KimlUtil {
     public static Iterator<KEdge> getConnectedEdges(final KEdge kedge) {
         // get a singleton iterator offering 'kedge'
         final Iterator<KEdge> kedgeIt = Iterators.singletonIterator(kedge);
+        final Set<KPort> visited = Sets.newHashSet();
 
         // if 'kedge' has a source port,
         //  create a bfs tree iterator visiting all source-sidewise connected edges
@@ -1074,14 +1076,20 @@ public final class KimlUtil {
             protected Iterator<? extends KEdge> getChildren(final Object object) {
                 final KPort sourcePort = ((KEdge) object).getSourcePort();
 
-                // for each object (kedge) visited by this iterator
-                //  return either an empty iterator if no source port is configured
-                //  or check all the edges connected to 'sourcePort'
-                //  and visit those satisfying the criterion stated above
-                // this criterion btw. prevents from visiting an edge twice, as
-                //  "sourcePort == input.getTargetPort()" implies "object != input"
-                return sourcePort == null ? Iterators.<KEdge>emptyIterator() : Iterators.filter(
-                        sourcePort.getEdges().iterator(), new Predicate<KEdge>() {
+                if (sourcePort == null || visited.contains(sourcePort)) {
+                    // return an empty iterator if no source port is configured
+                    //  or if the source port has been visited already, in order
+                    //  to break infinite loops
+                    return Iterators.<KEdge>emptyIterator();
+                }
+
+                visited.add(sourcePort);
+
+                // for each object (kedge) visited by this iterator check all the edges connected to
+                //  'sourcePort' and visit those edges satisfying the criterion stated above
+                // this criterion btw. prevents from visiting 'object' immediately again,
+                //  as "sourcePort == input.getTargetPort()" implies "object != input"
+                return Iterators.filter(sourcePort.getEdges().iterator(), new Predicate<KEdge>() {
 
                     public boolean apply(final KEdge input) {
                         return sourcePort == input.getTargetPort();
@@ -1101,14 +1109,20 @@ public final class KimlUtil {
             protected Iterator<? extends KEdge> getChildren(final Object object) {
                 final KPort targetPort = ((KEdge) object).getTargetPort();
 
-                // for each object (kedge) visited by this iterator
-                //  return either an empty iterator if no target port is configured
-                //  or check all the edges connected to 'targetPort'
-                //  and visit those satisfying the criterion stated above
-                // this criterion btw. prevents from visiting an edge twice, as
-                //  "targetPort == input.getSourcePort()" implies "object != input"
-                return targetPort == null ? Iterators.<KEdge>emptyIterator() : Iterators.filter(
-                        targetPort.getEdges().iterator(), new Predicate<KEdge>() {
+                if (targetPort == null || visited.contains(targetPort)) {
+                    // return an empty iterator if no target port is configured
+                    //  or if the target port has been visited already, in order
+                    //  to break infinite loops
+                    return Iterators.<KEdge>emptyIterator();
+                }
+
+                visited.add(targetPort);
+
+                // for each object (kedge) visited by this iterator check all the edges connected to
+                //  'targetPort' and visit those edges satisfying the criterion stated above
+                // this criterion btw. prevents from visiting 'object' immediately again,
+                //  as "targetPort == input.getSourcePort()" implies "object != input"
+                return Iterators.filter(targetPort.getEdges().iterator(), new Predicate<KEdge>() {
 
                     public boolean apply(final KEdge input) {
                         return targetPort == input.getSourcePort();
