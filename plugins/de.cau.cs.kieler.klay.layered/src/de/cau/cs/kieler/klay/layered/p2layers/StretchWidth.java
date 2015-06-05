@@ -117,7 +117,12 @@ public class StretchWidth implements ILayoutPhase {
         computeMaxDegree();
 
         // scaling the outdegree cirteria fo testing purposes
-        outDegreeCriteria = outDegreeCriteria / 10;
+        // outDegreeCriteria = outDegreeCriteria / 30;
+        // works between 0 and 1 (1 = longest path? / 0 = one node per layer except for layers with
+        // nodes without incoming edges)
+        // 0= widthUp > maxWidth * 0 -> only false for the first node and once every remaining node
+        // has no incoming edges
+        outDegreeCriteria = 0;
         // sort the nodes at beginning, since the rank will not change
         computeSortedNodes();
         // copy the sorted layerless nodes so we don't overwrite it for the reset case
