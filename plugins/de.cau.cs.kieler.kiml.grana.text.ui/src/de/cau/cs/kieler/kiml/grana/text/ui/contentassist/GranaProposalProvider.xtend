@@ -225,7 +225,7 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
     val FS_PREFIX = "file://"
     val SUG_WORKSPACEROOT = "\"/"
     val DSP_WORKSPACE_ROOT = new StyledString("Workspace Root")
-    val SUG_FILESYSTEM = "\"" + FS_PREFIX + "/"
+    val SUG_FILESYSTEM = "\"" + FS_PREFIX
     val DSP_FILESYSTEM = new StyledString("Filesystem")
             
     override completeLocalResource_Path(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
