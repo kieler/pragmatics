@@ -1096,37 +1096,40 @@ public final class KimlUtil {
 
             @Override
             protected Iterator<? extends KGraphElement> getChildren(final Object object) {
-                final KPort sourcePort = ((KEdge) object).getSourcePort();
-
-                if (sourcePort == null || visited.contains(sourcePort)) {
-                    // return an empty iterator if no source port is configured
-                    //  or if the source port has been visited already, in order
-                    //  to break infinite loops
+                if (object instanceof KEdge) {
+                    final KPort sourcePort = ((KEdge) object).getSourcePort();
+    
+                    if (sourcePort == null || visited.contains(sourcePort)) {
+                        // return an empty iterator if no source port is configured
+                        //  or if the source port has been visited already, in order
+                        //  to break infinite loops
+                        return Iterators.<KGraphElement>emptyIterator();
+                    }
+    
+                    visited.add(sourcePort);
+    
+                    // for each object (kedge) visited by this iterator check all the edges connected to
+                    //  'sourcePort' and visit those edges satisfying the criterion stated above
+                    // this criterion btw. prevents from visiting 'object' immediately again,
+                    //  as "sourcePort == input.getTargetPort()" implies "object != input"
+                    Iterator<KEdge> resultEdges =
+                            Iterators.filter(sourcePort.getEdges().iterator(), new Predicate<KEdge>() {
+                        public boolean apply(final KEdge input) {
+                            return sourcePort == input.getTargetPort();
+                        }
+                    });
+                    
+                    // If the port should be added to the selection, add it to the result set
+                    if (addPorts) {
+                        Iterator<KGraphElement> sourcePortIterator =
+                                Iterators.singletonIterator((KGraphElement) sourcePort);
+                        return Iterators.concat(sourcePortIterator, resultEdges);
+                    } else {
+                        return resultEdges;
+                    }
+                } else {
                     return Iterators.<KGraphElement>emptyIterator();
                 }
-
-                visited.add(sourcePort);
-
-                // for each object (kedge) visited by this iterator check all the edges connected to
-                //  'sourcePort' and visit those edges satisfying the criterion stated above
-                // this criterion btw. prevents from visiting 'object' immediately again,
-                //  as "sourcePort == input.getTargetPort()" implies "object != input"
-                Iterator<KEdge> resultEdges =
-                        Iterators.filter(sourcePort.getEdges().iterator(), new Predicate<KEdge>() {
-                    public boolean apply(final KEdge input) {
-                        return sourcePort == input.getTargetPort();
-                    }
-                });
-                
-                // If the port should be added to the selection, add it to the result set
-                if (addPorts) {
-                    Iterator<KGraphElement> sourcePortIterator =
-                            Iterators.singletonIterator((KGraphElement) sourcePort);
-                    return Iterators.concat(sourcePortIterator, resultEdges);
-                } else {
-                    return resultEdges;
-                }
-                
             }
         };
 
@@ -1141,38 +1144,41 @@ public final class KimlUtil {
 
             @Override
             protected Iterator<? extends KGraphElement> getChildren(final Object object) {
-                final KPort targetPort = ((KEdge) object).getTargetPort();
-
-                if (targetPort == null || visited.contains(targetPort)) {
-                    // return an empty iterator if no target port is configured
-                    //  or if the target port has been visited already, in order
-                    //  to break infinite loops
+                if (object instanceof KEdge) {
+                    final KPort targetPort = ((KEdge) object).getTargetPort();
+    
+                    if (targetPort == null || visited.contains(targetPort)) {
+                        // return an empty iterator if no target port is configured
+                        //  or if the target port has been visited already, in order
+                        //  to break infinite loops
+                        return Iterators.<KGraphElement>emptyIterator();
+                    }
+    
+                    visited.add(targetPort);
+    
+                    // for each object (kedge) visited by this iterator check all the edges connected to
+                    //  'targetPort' and visit those edges satisfying the criterion stated above
+                    // this criterion btw. prevents from visiting 'object' immediately again,
+                    //  as "targetPort == input.getSourcePort()" implies "object != input"
+                    Iterator<KEdge> resultEdges =
+                            Iterators.filter(targetPort.getEdges().iterator(), new Predicate<KEdge>() {
+    
+                        public boolean apply(final KEdge input) {
+                            return targetPort == input.getSourcePort();
+                        }
+                    });
+                                    
+                    // If the port should be added to the selection, add it to the result set
+                    if (addPorts) {
+                        Iterator<KGraphElement> sourcePortIterator =
+                                Iterators.singletonIterator((KGraphElement) targetPort);
+                        return Iterators.concat(sourcePortIterator, resultEdges);
+                    } else {
+                        return resultEdges;
+                    }
+                } else {
                     return Iterators.<KGraphElement>emptyIterator();
                 }
-
-                visited.add(targetPort);
-
-                // for each object (kedge) visited by this iterator check all the edges connected to
-                //  'targetPort' and visit those edges satisfying the criterion stated above
-                // this criterion btw. prevents from visiting 'object' immediately again,
-                //  as "targetPort == input.getSourcePort()" implies "object != input"
-                Iterator<KEdge> resultEdges =
-                        Iterators.filter(targetPort.getEdges().iterator(), new Predicate<KEdge>() {
-
-                    public boolean apply(final KEdge input) {
-                        return targetPort == input.getSourcePort();
-                    }
-                });
-                                
-                // If the port should be added to the selection, add it to the result set
-                if (addPorts) {
-                    Iterator<KGraphElement> sourcePortIterator =
-                            Iterators.singletonIterator((KGraphElement) targetPort);
-                    return Iterators.concat(sourcePortIterator, resultEdges);
-                } else {
-                    return resultEdges;
-                }
-                
             }
         };
 
