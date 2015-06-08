@@ -468,7 +468,7 @@
             id="de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale"
             lowerBound="0"
             name="Stretch Width Scale of the upperLayer Factor"
-            type="int">
+            type="float">
       </layoutOption>
       <layoutOption
             advanced="true"
