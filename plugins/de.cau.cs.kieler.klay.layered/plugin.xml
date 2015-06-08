@@ -182,7 +182,7 @@
                option="de.cau.cs.kieler.portAlignment.east">
          </knownOption>
          <knownOption
-               option="de.cau.cs.kieler.klay.layered.stretchWidthMaxWidthStart">
+               option="de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale">
           </knownOption>    
          <knownOption
                option="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy">
@@ -459,9 +459,9 @@
             advanced="true"
             appliesTo="parents"
             default="1"
-            id="de.cau.cs.kieler.klay.layered.stretchWidthMaxWidthStart"
+            id="de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale"
             lowerBound="0"
-            name="StretchWidth_MaxWidth_Start"
+            name="Stretch Width Scale of the upperLayer Factor"
             type="int">
       </layoutOption>
       <layoutOption
