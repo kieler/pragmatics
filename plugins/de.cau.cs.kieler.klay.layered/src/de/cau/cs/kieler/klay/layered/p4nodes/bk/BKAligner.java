@@ -11,25 +11,24 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.p4nodes;
+package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
-import static de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.allLowerNeighbors;
-import static de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.allUpperNeighbors;
-import static de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.getBlocks;
-import static de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.getEdge;
+import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.getBlocks;
+import static de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer.getEdge;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.BKAlignedLayout;
-import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.HDirection;
-import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.VDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.HDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
 
 /**
  * For documentation see {@link BKNodePlacer}.
@@ -41,12 +40,16 @@ public class BKAligner {
     
     /** The graph to process. */
     private LGraph layeredGraph;
+    /** Information about a node's neighbors and index within its layer. */
+    private NeighborhoodInformation ni;
     
     /**
      * @param layeredGraph the graph to handle.
+     * @param ni the precalculated neighbor information
      */
-    public BKAligner(final LGraph layeredGraph) {
+    public BKAligner(final LGraph layeredGraph, final NeighborhoodInformation ni) {
         this.layeredGraph = layeredGraph;
+        this.ni = ni;
     }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +65,7 @@ public class BKAligner {
      * @param bal One of the four layouts which shall be used in this step 
      * @param markedEdges List with all edges that were marked as type 1 conflicts
      */
-    public void verticalAlignment(final BKAlignedLayout bal, final List<LEdge> markedEdges) {
+    public void verticalAlignment(final BKAlignedLayout bal, final Set<LEdge> markedEdges) {
         // Initialize root and align maps
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode v : layer.getNodes()) {
@@ -98,11 +101,11 @@ public class BKAligner {
             // m denotes the position of a neighbor in the neighbor list of a node.
             // CHECKSTYLEOFF Local Variable Names
             for (LNode v_i_k : nodes) {
-                List<LNode> neighbors = null;
+                List<Pair<LNode, LEdge>> neighbors = null;
                 if (bal.hdir == HDirection.LEFT) {
-                    neighbors = allLowerNeighbors(v_i_k);
+                    neighbors = ni.rightNeighbors.get(v_i_k.id);
                 } else {
-                    neighbors = allUpperNeighbors(v_i_k);
+                    neighbors = ni.leftNeighbors.get(v_i_k.id);
                 }
 
                 if (neighbors.size() > 0) {
@@ -117,16 +120,18 @@ public class BKAligner {
                         // Check, whether v_i_k can be added to a block of its upper/lower neighbor(s)
                         for (int m = high; m >= low; m--) {
                             if (bal.align.get(v_i_k).equals(v_i_k)) {
-                                LNode u_m = neighbors.get(m);
+                                Pair<LNode, LEdge> u_m_pair = neighbors.get(m);
+                                LNode u_m = u_m_pair.getFirst();
                                 
                                 // Again, getEdge won't return null because the neighbor relationship
                                 // ensures that at least one edge exists
-                                if (!markedEdges.contains(getEdge(u_m, v_i_k)) && r > u_m.getIndex()) {
+                                if (!markedEdges.contains(u_m_pair.getSecond()) 
+                                        && r > ni.nodeIndex[u_m.id]) {
                                     bal.align.put(u_m, v_i_k);
                                     bal.root.put(v_i_k, bal.root.get(u_m));
                                     bal.align.put(v_i_k, bal.root.get(v_i_k));
                                     
-                                    r = u_m.getIndex();
+                                    r = ni.nodeIndex[u_m.id];
                                 }
                             }
                         }
@@ -134,20 +139,23 @@ public class BKAligner {
                         // Check, whether vik can be added to a block of its upper/lower neighbor(s)
                         for (int m = low; m <= high; m++) {
                             if (bal.align.get(v_i_k).equals(v_i_k)) {
-                                LNode um = neighbors.get(m);
-                                if (!markedEdges.contains(getEdge(um, v_i_k)) && r < um.getIndex()) {
+                                Pair<LNode, LEdge> um_pair = neighbors.get(m);
+                                LNode um = um_pair.getFirst();
+                                
+                                if (!markedEdges.contains(um_pair.getSecond()) 
+                                        && r < ni.nodeIndex[um.id]) {
                                     bal.align.put(um, v_i_k);
                                     bal.root.put(v_i_k, bal.root.get(um));
                                     bal.align.put(v_i_k, bal.root.get(v_i_k));
                                     
-                                    r = um.getIndex();
+                                    r = ni.nodeIndex[um.id];
                                 }
                             }
                         }
                     }
                 }
             }
-            // CHECKSTYLEOFF Local Variable Names
+            // CHECKSTYLEON Local Variable Names
         }
     }
 

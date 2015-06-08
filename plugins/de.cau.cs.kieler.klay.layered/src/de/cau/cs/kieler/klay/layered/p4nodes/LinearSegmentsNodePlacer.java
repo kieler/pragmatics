@@ -571,7 +571,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 float spacing = smallSpacing;
                 if (nodeCount[layerIndex] > 0) {
                     if (recentNodeType[layerIndex] == NodeType.NORMAL
-                            && nodeType == NodeType.NORMAL) {
+                            || nodeType == NodeType.NORMAL) {
 
                         spacing = normalSpacing;
                     } else if (recentNodeType[layerIndex] == NodeType.EXTERNAL_PORT
@@ -811,7 +811,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                     // Calculate how much space is allowed between the nodes
                     double spacing = smallSpacing;
                     if (node1Type == NodeType.NORMAL
-                            && node2Type == NodeType.NORMAL) {
+                            || node2Type == NodeType.NORMAL) {
                         
                         spacing = normalSpacing;
                     } else if (node1Type == NodeType.EXTERNAL_PORT
@@ -876,7 +876,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 if (index > 0) {
                     LNode neighbor = node.getLayer().getNodes().get(index - 1);
                     boolean isNeighborNormal = neighbor.getNodeType() == NodeType.NORMAL;
-                    float spacing = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
+                    float spacing = isNodeNormal || isNeighborNormal ? normalSpacing : smallSpacing;
                     roomAbove = node.getPosition().y - node.getMargin().top
                             - (neighbor.getPosition().y + neighbor.getSize().y
                                     + neighbor.getMargin().bottom + spacing);
@@ -890,7 +890,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 if (index < node.getLayer().getNodes().size() - 1) {
                     LNode neighbor = node.getLayer().getNodes().get(index + 1);
                     boolean isNeighborNormal = neighbor.getNodeType() == NodeType.NORMAL;
-                    float spacing = isNodeNormal && isNeighborNormal ? normalSpacing : smallSpacing;
+                    float spacing = isNodeNormal || isNeighborNormal ? normalSpacing : smallSpacing;
                     roomBelow = neighbor.getPosition().y - neighbor.getMargin().top
                             - (node.getPosition().y + node.getSize().y
                                     + node.getMargin().bottom + spacing);

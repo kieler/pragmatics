@@ -183,6 +183,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.stretchWidthMaxWidthStart">
+          </knownOption>    
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -469,6 +472,15 @@
             id="de.cau.cs.kieler.klay.layered.nodePromotion"
             name="Node Promotion"
             type="boolean">
+            class="de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor$CompactionStrategy"
+            description="Specifies the compaction strategy when using the Brandes and Koepf node placer."
+            id="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy"
+            name="Compaction Strategy"
+            type="enum">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodePlace"
+               value="BRANDES_KOEPF">
+         </dependency>
       </layoutOption>
    </extension>
 </plugin>

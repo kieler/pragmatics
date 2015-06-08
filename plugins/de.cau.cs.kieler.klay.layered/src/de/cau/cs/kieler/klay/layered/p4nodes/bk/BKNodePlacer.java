@@ -11,12 +11,9 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.p4nodes;
+package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +24,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -35,6 +33,9 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.HDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -96,10 +97,10 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *  
  * <p>======================= END =======================</p>
  * 
- * <p>The action of the last step depends on a layout option. If "Less Edge Bends" is set to true, one
- * of the four calculated layouts is selected and applied, choosing the layout which uses the least
- * space. If it is false, a balanced layout is chosen by calculating a median layout of all four
- * layouts.</p>
+ * <p>The action of the last step depends on a layout option. If "fixedAlignment" is not set to 
+ * BALANCED, one of the four calculated layouts is selected and applied, choosing the layout which 
+ * uses the least space. If it is false, a balanced layout is chosen by calculating a median layout 
+ * of all four layouts.</p>
  * 
  * <p>In rare cases, it is possible that one or more layouts is not correct, e.g. having nodes which
  * overlap each other or violating the layer ordering constraint. If the algorithm detects that, the
@@ -114,6 +115,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  *     <dd>The size of each layer is set according to the area occupied by its nodes</dd>
  *     <dd>The height of the graph is set to the maximal layer height</dd>
  * </dl>
+ * 
  * 
  * @author jjc
  * @author uru
@@ -141,31 +143,38 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
     }
     
+    private LGraph lGraph;
     /** List of edges involved in type 1 conflicts (see above). */
-    private final List<LEdge> markedEdges = Lists.newArrayList();
+    private final Set<LEdge> markedEdges = Sets.newHashSet();
+    /**  Precalculated information on nodes' neighborhoods etc. */
+    private NeighborhoodInformation ni;
 
     /** Flag which switches debug output of the algorithm on or off. */
     private boolean debugMode = false;
     /** Whether to produce a balanced layout or not. */
     private boolean produceBalancedLayout = false;
-
+    
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Brandes & Koepf node placement", 1);
 
-        // Determine overall node count for an optimal initialization of maps.
-        int nodeCount = 0;
-        for (Layer layer : layeredGraph) {
-            nodeCount += layer.getNodes().size();
-        }
+        this.lGraph = layeredGraph;
+        
+        // Precalculate some information that we require during the 
+        // following processes. 
+        ni = NeighborhoodInformation.buildFor(layeredGraph);
 
         // Initialize four layouts which result from the two possible directions respectively.
-        BKAlignedLayout rightdown = new BKAlignedLayout(nodeCount, VDirection.DOWN, HDirection.RIGHT);
-        BKAlignedLayout rightup = new BKAlignedLayout(nodeCount, VDirection.UP, HDirection.RIGHT);
-        BKAlignedLayout leftdown = new BKAlignedLayout(nodeCount, VDirection.DOWN, HDirection.LEFT);
-        BKAlignedLayout leftup = new BKAlignedLayout(nodeCount, VDirection.UP, HDirection.LEFT);
+        BKAlignedLayout rightdown =
+                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.RIGHT);
+        BKAlignedLayout rightup =
+                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.RIGHT);
+        BKAlignedLayout leftdown =
+                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.LEFT);
+        BKAlignedLayout leftup =
+                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.LEFT);
 
         // Regard possible other layout options.
         debugMode = layeredGraph.getProperty(Properties.DEBUG_MODE);
@@ -198,7 +207,7 @@ public final class BKNodePlacer implements ILayoutPhase {
                 layouts.add(leftup); 
         }
         
-        BKAligner aligner = new BKAligner(layeredGraph);
+        BKAligner aligner = new BKAligner(layeredGraph, ni);
         for (BKAlignedLayout bal : layouts) {
             // Phase which determines the nodes' memberships in blocks. This happens in four different
             // ways, either from processing the nodes from the first layer to the last or vice versa.
@@ -210,11 +219,19 @@ public final class BKNodePlacer implements ILayoutPhase {
             aligner.insideBlockShift(bal);
         }
 
-        BKCompacter compacter = new BKCompacter(layeredGraph);
+        ICompactor compacter = new BKCompactor(layeredGraph, ni);
         for (BKAlignedLayout bal : layouts) {
             // This phase determines the y coordinates of the blocks and thus the vertical coordinates
             // of all nodes.
             compacter.horizontalCompaction(bal);
+        }
+
+        if (layeredGraph.getProperty(Properties.COMPACTION_STRATEGY) 
+                == CompactionStrategy.IMPROVE_STRAIGHTNESS_POSTPROCESS) {
+            BKStraightener straightener = new BKStraightener(layeredGraph);
+            for (BKAlignedLayout bal : layouts) {
+                straightener.improveStraightness(bal);
+            }
         }
 
         // Debug output
@@ -229,20 +246,20 @@ public final class BKNodePlacer implements ILayoutPhase {
         // The layout with the smallest size is selected. If more than one smallest layout exists,
         // the first one of the competing layouts is selected.
         BKAlignedLayout chosenLayout = null;
-        BKAlignedLayout balanced = new BKAlignedLayout(nodeCount, null, null);
 
         // If layout options chose to use the balanced layout, it is calculated and added here.
         // If it is broken for any reason, one of the four other layouts is selected by the
         // given criteria.
         if (produceBalancedLayout) {
-            balanced = createBalancedLayout(layouts, nodeCount);
-            chosenLayout = balanced;
-        }
+            BKAlignedLayout balanced = createBalancedLayout(layouts, ni.nodeCount);
+            if (checkOrderConstraint(layeredGraph, balanced)) {
+                chosenLayout = balanced;
+            }
+        } 
         
-        // Since it is possible that the balanced layout violates ordering constraints, this cannot
-        // simply be an else case to the previous if statement
-        if (!produceBalancedLayout || !checkOrderConstraint(layeredGraph, balanced)) {
-            chosenLayout = null;
+        // Either if no balanced layout is requested, or, if the balanced layout
+        // violates order constraints, pick the one with the smallest height
+        if (chosenLayout == null) {
             for (BKAlignedLayout bal : layouts) {
                 if (checkOrderConstraint(layeredGraph, bal)) {
                     if (chosenLayout == null || chosenLayout.layoutSize() > bal.layoutSize()) {
@@ -251,11 +268,11 @@ public final class BKNodePlacer implements ILayoutPhase {
                 }
             }
         }
-        
+             
         // If no layout is correct (which should never happen but is not strictly impossible),
-        // the lefttop layout is chosen by default.
+        // the RIGHTDOWN layout is chosen by default.
         if (chosenLayout == null) {
-            chosenLayout = layouts.get(0); // there hast to be at least one layout in the list
+            chosenLayout = layouts.get(0); // there has to be at least one layout in the list
         }
         
         // Apply calculated positions to nodes.
@@ -338,21 +355,21 @@ public final class BKNodePlacer implements ILayoutPhase {
                 if (l_1 == ((layerSize[i + 1]) - 1) || incidentToInnerSegment(v_l_i, i + 1, i)) {
                     int k_1 = layerSize[i] - 1;
                     if (incidentToInnerSegment(v_l_i, i + 1, i)) {
-                        k_1 = allUpperNeighbors(v_l_i).get(0).getIndex();
+                        k_1 = ni.nodeIndex[ni.leftNeighbors.get(v_l_i.id).get(0).getFirst().id];
                     }
                     
                     while (l <= l_1) {
                         LNode v_l = currentLayer.getNodes().get(l);
                         
                         if (!incidentToInnerSegment(v_l, i + 1, i)) {
-                            for (LNode upperNeighbor : allUpperNeighbors(v_l)) {
-                                int k = upperNeighbor.getIndex();
+                            for (Pair<LNode, LEdge> upperNeighbor : ni.leftNeighbors.get(v_l.id)) {
+                                int k = ni.nodeIndex[upperNeighbor.getFirst().id];
                                 
                                 if (k < k_0 || k > k_1) {
                                     // Marked edge can't return null here, because the upper neighbor
                                     // relationship between v_l and upperNeighbor enforces the existence
                                     // of at least one edge between the two nodes
-                                    markedEdges.add(getEdge(upperNeighbor, v_l));
+                                    markedEdges.add(upperNeighbor.getSecond());
                                 }
                             }
                         }
@@ -377,6 +394,8 @@ public final class BKNodePlacer implements ILayoutPhase {
      * lowest y-coordinate placement, is used as a starting point. Then, the median position of each of
      * the four layouts is used to determine the final position.</p>
      * 
+     * <p>During this process, a node's inner shift value is regarded.</p>
+     * 
      * @param layouts The four calculated layouts
      * @param nodeCount The number of nodes in the graph
      * @return A balanced layout, the median of the four layouts
@@ -385,7 +404,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             final int nodeCount) {
         
         final int noOfLayouts = layouts.size();
-        BKAlignedLayout balanced = new BKAlignedLayout(nodeCount, null, null);
+        BKAlignedLayout balanced = new BKAlignedLayout(lGraph, nodeCount, null, null);
         double[] width = new double[noOfLayouts];
         double[] min = new double[noOfLayouts];
         double[] max = new double[noOfLayouts];
@@ -398,20 +417,18 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
         
         for (int i = 0; i < noOfLayouts; i++) {
-            BKAlignedLayout current = layouts.get(i);
-            for (double y : current.y.values()) {
-                if (min[i] > y) {
-                    min[i] = y;
-                }
-                
-                if (max[i] < y) {
-                    max[i] = y;
-                }
-            }
-            
-            width[i] = max[i] - min[i];
+            BKAlignedLayout bal = layouts.get(i);
+            width[i] = bal.layoutSize();
             if (width[minWidthLayout] > width[i]) {
                 minWidthLayout = i;
+            }
+            
+            for (Layer l : lGraph) {
+                for (LNode n : l) {
+                    double nodePosY = bal.y.get(n) + bal.innerShift.get(n);
+                    min[i] = Math.min(min[i], nodePosY);
+                    max[i] = Math.max(max[i], nodePosY + n.getSize().y);
+                }
             }
         }
 
@@ -429,13 +446,18 @@ public final class BKNodePlacer implements ILayoutPhase {
         double[] calculatedYs = new double[noOfLayouts];
         for (LNode node : layouts.get(0).y.keySet()) {
             for (int i = 0; i < noOfLayouts; i++) {
-                calculatedYs[i] = layouts.get(i).y.get(node) + shift[i];
+                // it's important to include the innerShift here!
+                calculatedYs[i] =
+                        layouts.get(i).y.get(node) + layouts.get(i).innerShift.get(node) + shift[i];
             }
-            
+           
             Arrays.sort(calculatedYs);
             balanced.y.put(node, (calculatedYs[1] + calculatedYs[2]) / 2.0);
-            balanced.innerShift.put(node,
-                    layouts.get(minWidthLayout).innerShift.get(node));
+            // since we include the inner shift in the calculation of a balanced y 
+            // coordinate we don't need it any more
+            // note that after this step no further processing of the graph that 
+            // would include the inner shift is possible
+            balanced.innerShift.put(node, 0d);
         }
 
         return balanced;
@@ -462,9 +484,9 @@ public final class BKNodePlacer implements ILayoutPhase {
                 LNode source = edge.getSource().getNode();
                 if ((source.getNodeType() == NodeType.BIG_NODE
                         || source.getProperty(InternalProperties.BIG_NODE_INITIAL))
-                        && edge.getSource().getNode().getLayer().getIndex() == layer2
-                        && node.getLayer().getIndex() == layer1) {
-
+                        && ni.layerIndex[edge.getSource().getNode().getLayer().id] == layer2
+                        && ni.layerIndex[node.getLayer().id] == layer1) {
+                        
                     return true;
                 }
             }
@@ -474,10 +496,9 @@ public final class BKNodePlacer implements ILayoutPhase {
             for (LEdge edge : node.getIncomingEdges()) {
                 NodeType sourceNodeType = edge.getSource().getNode().getNodeType();
                 
-                // TODO Using layer indices here is not a good idea in terms of performance
                 if (sourceNodeType == NodeType.LONG_EDGE
-                        && edge.getSource().getNode().getLayer().getIndex() == layer2
-                        && node.getLayer().getIndex() == layer1) {
+                        && ni.layerIndex[edge.getSource().getNode().getLayer().id] == layer2
+                        && ni.layerIndex[node.getLayer().id] == layer1) {
                     
                     return true;
                 }
@@ -485,64 +506,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
         return false;
     }
-
-    /**
-     * Gives all upper neighbors of a given node. An upper neighbor is a node in a previous layer that
-     * has an edge pointing to the given node.
-     * 
-     * @param node The node which might have neighbors
-     * @return A list containing all upper neighbors
-     */
-    static List<LNode> allUpperNeighbors(final LNode node) {
-        List<LNode> result = Lists.newArrayList();
-        int maxPriority = 0;
-        
-        for (LEdge edge : node.getIncomingEdges()) {
-            if (edge.getProperty(InternalProperties.PRIORITY) > maxPriority) {
-                maxPriority = edge.getProperty(InternalProperties.PRIORITY);
-            }
-        }
-        
-        for (LEdge edge : node.getIncomingEdges()) {
-            if (node.getLayer() != edge.getSource().getNode().getLayer()
-                    && edge.getProperty(InternalProperties.PRIORITY) == maxPriority) {
-                result.add(edge.getSource().getNode());
-            }
-        }
-        
-        Collections.sort(result, NeighborComparator.INSTANCE);
-        return result;
-    }
-
-    /**
-     * Give all lower neighbors of a given node. A lower neighbor is a node in a following layer that
-     * has an edge coming from the given node.
-     * 
-     * @param node The node which might have neighbors
-     * @return A list containing all lower neighbors
-     */
-    static List<LNode> allLowerNeighbors(final LNode node) {
-        List<LNode> result = Lists.newArrayList();
-        int maxPriority = 0;
-        
-        for (LEdge edge : node.getOutgoingEdges()) {
-            if (edge.getProperty(InternalProperties.PRIORITY) > maxPriority) {
-                maxPriority = edge.getProperty(InternalProperties.PRIORITY);
-            }
-        }
-        
-        for (LEdge edge : node.getOutgoingEdges()) {
-            if (node.getLayer() != edge.getTarget().getNode().getLayer()
-                    && edge.getProperty(InternalProperties.PRIORITY) == maxPriority) {
-                
-                result.add(edge.getTarget().getNode());
-            }
-        }
-        
-        Collections.sort(result, NeighborComparator.INSTANCE);
-        return result;
-    }
-
+  
     /**
      * Find an edge between two given nodes.
      * 
@@ -671,157 +635,5 @@ public final class BKNodePlacer implements ILayoutPhase {
         }
         
         return feasible;
-    }
-    
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Class BKAlignedLayout
-
-    /**
-     * Class which holds all information about a layout in one of the four direction
-     * combinations.
-     */
-    public static final class BKAlignedLayout {
-        
-        // Allow the fields of this container to be accessed from package siblings.
-        // SUPPRESS CHECKSTYLE NEXT 24 VisibilityModifier
-        /** The root node of each node in a block. */
-        Map<LNode, LNode> root;
-        /** The size of a block. */
-        Map<LNode, Double> blockSize;
-        /** The next node in a block, or the first if the current node is the last, forming a ring. */
-        Map<LNode, LNode> align;
-        /** The value by which a node must be shifted to stay straight inside a block. */
-        Map<LNode, Double> innerShift;
-        /** The root node of a class, mapped from block root nodes to class root nodes. */
-        Map<LNode, LNode> sink;
-        /** The value by which a block must be shifted for a more compact placement. */
-        Map<LNode, Double> shift;
-        /** The y-coordinate of every node, forming the final layout. */
-        Map<LNode, Double> y;
-        /** The vertical direction of the current layout. */
-        VDirection vdir;
-        /** The horizontal direction of the current layout. */
-        HDirection hdir;
-
-        /**
-         * Basic constructor for a layout.
-         * 
-         * @param nodeCount
-         *            number of nodes in this layout
-         * @param vdir
-         *            vertical traversal direction of the algorithm
-         * @param hdir
-         *            horizontal traversal direction of the algorithm
-         */
-        public BKAlignedLayout(final int nodeCount, final VDirection vdir, final HDirection hdir) {
-            root = Maps.newLinkedHashMap();
-            blockSize = Maps.newHashMapWithExpectedSize(nodeCount);
-            align = Maps.newHashMapWithExpectedSize(nodeCount);
-            innerShift = Maps.newHashMapWithExpectedSize(nodeCount);
-            sink = Maps.newHashMapWithExpectedSize(nodeCount);
-            shift = Maps.newHashMapWithExpectedSize(nodeCount);
-            y = Maps.newHashMapWithExpectedSize(nodeCount);
-            this.vdir = vdir;
-            this.hdir = hdir;
-        }
-
-        /**
-         * Calculate the layout size for comparison.
-         * 
-         * @return The size of the layout
-         */
-        public double layoutSize() {
-            double min = Double.POSITIVE_INFINITY;
-            double max = Double.NEGATIVE_INFINITY;
-            // Prior to KIPRA-1426 the size of the layout was determined  
-            // only based on y coordinates, neglecting any block sizes.
-            // We now determine the maximal extend of the layout based on
-            // the minimum y coordinate of any node and the maximum
-            // y coordinate _plus_ the size of any block.
-            for (LNode n : y.keySet()) {
-                double yMin = y.get(n);
-                double yMax = yMin + blockSize.get(root.get(n));
-                min = Math.min(min, yMin);
-                max = Math.max(max, yMax);
-            }
-            return max - min;
-        }
-
-        @Override
-        public String toString() {
-            String result = "";
-            if (hdir == HDirection.RIGHT) {
-                result += "RIGHT";
-            } else if (hdir == HDirection.LEFT) {
-                result += "LEFT";
-            }
-            if (vdir == VDirection.DOWN) {
-                result += "DOWN";
-            } else if (vdir == VDirection.UP) {
-                result += "UP";
-            } else {
-                result += "BALANCED";
-            }
-            return result;
-        }
-    }
-    
-
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Class NeighborComparator
-
-    /**
-     * Comparator which determines the order of nodes in a layer.
-     */
-    public static final class NeighborComparator implements Comparator<LNode>, Serializable {
-        /** The serial version UID. */
-        private static final long serialVersionUID = 7540379553811800233L;
-        /** Singleton instance. */
-        public static final NeighborComparator INSTANCE = new NeighborComparator();
-        
-        /**
-         * Private constructor. Singleton.
-         */
-        private NeighborComparator() {
-            
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public int compare(final LNode o1, final LNode o2) {
-            int result = 0;
-            if (o1.getIndex() < o2.getIndex()) {
-                result = -1;
-            } else if (o1.getIndex() > o2.getIndex()) {
-                result = 1;
-            }
-            return result;
-        }
-    }
-    
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    // Enumerations
-    
-    /**
-     * Vertical direction enumeration.
-     */
-    public static enum VDirection {
-        /** Iteration direction top-down. */
-        DOWN, 
-        /** Iteration direction bottom-up. */
-        UP;
-    }
-
-    /**
-     * Horizontal direction enumeration.
-     */
-    public static enum HDirection {
-        /** Iterating from right to left. */
-        RIGHT, 
-        /** Iterating from left to right. */
-        LEFT;
     }
 }

@@ -23,6 +23,7 @@ import static java.util.Collections.singleton;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +50,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KRendering;
 import de.cau.cs.kieler.core.krendering.KRenderingPackage;
 import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.klighd.IKlighdSelection;
 import de.cau.cs.kieler.klighd.IViewChangeListener;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.KlighdTreeSelection;
@@ -260,6 +262,22 @@ public class ContextViewer implements IViewer, ILayoutRecorder, ISelectionProvid
      */
     public void addViewChangeListener(final IViewChangeListener listener,
             final ViewChangeType... eventTypes) {
+        if (currentViewer != null) {
+            if (listener != null) {
+                currentViewer.addViewChangeListener(listener, eventTypes);
+            }
+        } else {
+            throw new RuntimeException("KLighD: Registering the "
+                    + listener.getClass().getCanonicalName()
+                    + " is not possible, since the actual diagram viewer is not initialized yet.");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addViewChangeListener(final IViewChangeListener listener,
+            final EnumSet<ViewChangeType> eventTypes) {
         if (currentViewer != null) {
             if (listener != null) {
                 currentViewer.addViewChangeListener(listener, eventTypes);
@@ -900,7 +918,7 @@ public class ContextViewer implements IViewer, ILayoutRecorder, ISelectionProvid
     private KlighdTreeSelection diagramSelection = KlighdTreeSelection.EMPTY;
 
     /** alternative generic selection, required for providing next selections by KLighD's UI parts. */
-    private ISelection selection = diagramSelection;
+    private IKlighdSelection selection = diagramSelection;
 
     /** the selection listeners registered on this view. */
     private Set<ISelectionChangedListener> selectionListeners = Sets.newLinkedHashSet();
@@ -914,7 +932,7 @@ public class ContextViewer implements IViewer, ILayoutRecorder, ISelectionProvid
      * @param theSelection
      *            the selection to be broadcasted
      */
-    void notifySelectionListeners(final ISelection theSelection) {
+    void notifySelectionListeners(final IKlighdSelection theSelection) {
         // method is package protected as it is called in AbstractViewer, too
 
         synchronized (selectionListeners) {
@@ -964,7 +982,7 @@ public class ContextViewer implements IViewer, ILayoutRecorder, ISelectionProvid
     /**
      * {@inheritDoc}
      */
-    public ISelection getSelection() {
+    public IKlighdSelection getSelection() {
         return this.selection;
     }
 
