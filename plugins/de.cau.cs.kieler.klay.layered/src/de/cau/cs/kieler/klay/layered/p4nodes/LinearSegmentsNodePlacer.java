@@ -23,9 +23,9 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.klay.layered.DebugUtil;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
-import de.cau.cs.kieler.klay.layered.JsonDebugUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -454,7 +454,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
         // Write debug output graph
         if (layeredGraph.getProperty(LayoutOptions.DEBUG_MODE)) {
-            JsonDebugUtil.writeDebugGraph(layeredGraph, segmentList, outgoingList);
+            DebugUtil.writeDebugGraph(layeredGraph, segmentList, outgoingList);
         }
     }
 

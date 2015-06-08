@@ -62,16 +62,18 @@ public final class JsonDebugUtil {
 
 
     /**
-     * Output a representation of the given graph in JSON format to the given writer.
+     * Output a representation of the given graph in JSON format.
      * 
      * @param lgraph
      *            the layered graph
      * @param slotIndex
      *            the slot before whose execution the graph is written.
+     * @param name
+     *            the name the slot before whose execution the graph is written.
      */
-    public static void writeDebugGraph(final LGraph lgraph, final int slotIndex) {
+    public static void writeDebugGraph(final LGraph lgraph, final int slotIndex, final String name) {
         try {
-            Writer writer = createWriter(lgraph, slotIndex);
+            Writer writer = createWriter(lgraph, slotIndex, name);
             
             List<LEdge> edges = Lists.newLinkedList();
             
@@ -257,9 +259,77 @@ public final class JsonDebugUtil {
      *             if anything goes wrong with the writer.
      */
     private static void beginGraph(final Writer writer, final LGraph lgraph) throws IOException {
-        writer.write("{\n" + INDENT + "\"id\": \"root\",\n");
+        KVectorChain graphSize = calculateGraphSize(lgraph);
+        writer.write("{\n"
+                + INDENT + "\"id\": \"root\",\n"
+                + INDENT + "\"x\": " + graphSize.getFirst().x + ",\n"
+                + INDENT + "\"y\": " + graphSize.getFirst().y + ",\n"
+                + INDENT + "\"width\": " + graphSize.getLast().x + ",\n"
+                + INDENT + "\"height\": " + graphSize.getLast().y + ",\n");
         writeProperties(writer, lgraph.getAllProperties(), 1);
         writer.write(",\n" + INDENT + "\"children\": [");
+    }
+
+
+    /**
+     * Calculate the overall size of the given graph. Returns a {@link KVectorChain} with two
+     * elements where the first one represents the minimal coordinates used by any node, edge or
+     * port contained in the graph and the second one represents the maximal coordinates.
+     * 
+     * @param lgraph
+     *            the graph to calculate the size for.
+     * @return a {@link KVectorChain} with two elements, the minimal and the maximal coordinates.
+     */
+    private static KVectorChain calculateGraphSize(final LGraph lgraph) {
+        KVector min = new KVector();
+        KVector max = new KVector();
+        for (LNode node : lgraph.getLayerlessNodes()) {
+            calculateMinMaxPositions(min, max, node);
+        }
+        for (Layer layer : lgraph) {
+            for (LNode node : layer) {
+                calculateMinMaxPositions(min, max, node);
+            }
+        }
+        max.x -= min.x;
+        max.y -= min.y;
+        return new KVectorChain(min, max);
+    }
+
+
+    /**
+     * Inspects the given node, its outgoing edges and its ports for minimal and maximal coordinates
+     * and adjusts the given vectors {@code min} and {@code max} if necessary.
+     * 
+     * @param min
+     *            the minimal coordinates used by the graph.
+     * @param max
+     *            the maximal coordinates used by the graph.
+     * @param node
+     *            the current node to inspect.
+     */
+    private static void calculateMinMaxPositions(final KVector min, final KVector max,
+            final LNode node) {
+        min.x = Math.min(min.x, node.getPosition().x - node.getMargin().left);
+        max.x = Math.max(max.x, node.getPosition().x + node.getSize().x +  node.getMargin().right);
+        min.y = Math.min(min.y, node.getPosition().y - node.getMargin().top);
+        max.y = Math.max(max.y, node.getPosition().y + node.getSize().y + node.getMargin().bottom);
+        for (LPort port : node.getPorts()) {
+            min.x = Math.min(min.x, node.getPosition().x + port.getPosition().x - port.getMargin().left);
+            max.x = Math.max(max.x, node.getPosition().x + port.getPosition().x + port.getSize().x
+                    + port.getMargin().right);
+            min.y = Math.min(min.y, node.getPosition().y + port.getPosition().y - port.getMargin().top);
+            max.y = Math.max(max.y, node.getPosition().y + port.getPosition().y + port.getSize().y
+                    + port.getMargin().bottom);
+        }
+        for (LEdge edge : node.getOutgoingEdges()) {
+            for (KVector bendpoint : edge.getBendPoints()) {
+                min.x = Math.min(min.x, bendpoint.x);
+                max.x = Math.max(max.x, bendpoint.x);
+                min.y = Math.min(min.y, bendpoint.y);
+                max.y = Math.max(max.y, bendpoint.y);
+            }
+        }
     }
 
 
@@ -611,16 +681,20 @@ public final class JsonDebugUtil {
      *            the graph to be written.
      * @param slotIndex
      *            the slot before whose execution the graph is written.
+     * @param name
+     *            the name the slot before whose execution the graph is written.
      * @return file writer.
      * @throws IOException
      *             if anything goes wrong.
      */
-    private static Writer createWriter(final LGraph graph, final int slotIndex) throws IOException {
+    private static Writer createWriter(final LGraph graph, final int slotIndex, final String name)
+            throws IOException {
+
         String path = getDebugOutputPath();
         new File(path).mkdirs();
 
         String debugFileName = getDebugOutputFileBaseName(graph) + "fulldebug-slot"
-                        + String.format("%1$02d", slotIndex);
+                        + String.format("%1$02d", slotIndex) + "-" + name;
         return new FileWriter(new File(path + File.separator + debugFileName + ".json"));
     }
     

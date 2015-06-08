@@ -30,6 +30,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.layered.DebugUtil;
 import de.cau.cs.kieler.klay.layered.JsonDebugUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -588,7 +589,7 @@ public final class OrthogonalRoutingGenerator {
         
         // write the full dependency graph to an output file
         if (debugPrefix != null) {
-            JsonDebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0
+            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0
                     : sourceLayerIndex + 1, hyperNodes, debugPrefix, "full");
         }
         
