@@ -16,6 +16,8 @@ package de.cau.cs.kieler.klay.debugview.views;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -37,18 +39,17 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -67,7 +68,10 @@ import de.cau.cs.kieler.klay.debugview.widgets.ImageCanvas;
 import de.cau.cs.kieler.klay.debugview.widgets.LegendPage;
 import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.KlighdConstants;
+import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 // CHECKSTYLEOFF MagicNumber
@@ -77,6 +81,7 @@ import de.cau.cs.kieler.klighd.viewers.ContextViewer;
  * produced by Klay Layered.
  * 
  * @author cds
+ * @author csp
  */
 public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
     
@@ -157,14 +162,17 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
     private Browser colorKeyBrowser = null;
     private Composite statusBar = null;
     private Label statusBarLabel = null;
+    private Button statusBarZoomToFitBtn;
+    private Button statusBarZoomOriginalBtn;
     private Scale statusBarZoomScale = null;
-    private Image statusBarZoomLabelContextImage = null;
     private CLabel statusBarZoomLabel = null;
-    private Menu statusBarZoomMenu = null;
-    private MenuItem statusBarZoomOriginalItem = null;
-    private MenuItem statusBarZoomToFitItem = null;
-    
+
     // VARIABLES
+    /**
+     * The set of resources to be disposed when the view is closed.
+     */
+    private final List<Resource> resources = new LinkedList<Resource>();
+    
     /**
      * The currently displayed path.
      */
@@ -176,6 +184,8 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
     private int zoomPercentage = ZOOM_DEFAULT;
 
     private FileTableContentProvider fileTableContentProvider;
+
+
 
     
 
@@ -287,7 +297,7 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
         // If there is a model file, try to create and load the associated image
         // (the model file can be null if the user just deleted all files)
         if (modelFile != null) {
-            if (modelFile.getName().endsWith(".dot")) {
+            if (modelFile.getName().endsWith(".dot")) { //$NON-NLS-1$
                 File imageFile = null;
 
                 String path = modelFile.getPath();
@@ -312,24 +322,48 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
                     imageCanvas.loadImage(imageFile);
                     statusBarLabel.setText(modelFile.getPath());
                 }
-                if (diagramStackLayout.topControl != imageCanvas) {
-                    diagramStackLayout.topControl = imageCanvas;
-                    diagramComposite.layout(true, true);
-                }
+                activateDotView();
             } else {
                 try {
                      KNode[] kgraph = GraphFormatsService.getInstance()
-                             .loadKGraph(new FileInputStream(modelFile), "json");
+                             .loadKGraph(new FileInputStream(modelFile), "json"); //$NON-NLS-1$
                     viewContext.update(kgraph[0]);
+                    viewContext.getViewer().zoom(ZoomStyle.ZOOM_TO_FIT,
+                            KlighdConstants.DEFAULT_ANIMATION_TIME);
                 } catch (Exception e) {
                     openErrorDialog(Messages.DebugWindow_Error_ImageCreationFailed);
                 }
-                if (diagramStackLayout.topControl != klighdComposite) {
-                    diagramStackLayout.topControl = klighdComposite;
-                    diagramComposite.layout(true, true);
-                }
+                activateKlighdView();
             }
         }
+    }
+
+    /**
+     * 
+     */
+    private void activateKlighdView() {
+        if (diagramStackLayout.topControl != klighdComposite) {
+            statusBarZoomLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+            statusBarZoomScale.setEnabled(false);
+            diagramStackLayout.topControl = klighdComposite;
+            diagramComposite.layout(true, true);
+        }
+    }
+
+    /**
+     * 
+     */
+    private void activateDotView() {
+        if (diagramStackLayout.topControl != imageCanvas) {
+            statusBarZoomLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+            statusBarZoomScale.setEnabled(true);
+            diagramStackLayout.topControl = imageCanvas;
+            diagramComposite.layout(true, true);
+        }
+    }
+    
+    private boolean isKlighdViewActive() {
+        return diagramStackLayout.topControl == klighdComposite;
     }
     
     /**
@@ -552,26 +586,26 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
         
         final IMenuManager menu = getViewSite().getActionBars().getMenuManager();
         Action jsonAction;
-        Action dotAction = new Action("Show .dot files", Action.AS_RADIO_BUTTON) {
+        Action dotAction = new Action(Messages.DebugWindow_ShowDotFiles, Action.AS_RADIO_BUTTON) {
 
             /**
              * {@inheritDoc}
              */
             @Override
             public void run() {
-                fileTableContentProvider.setFileExtension(".dot");
+                fileTableContentProvider.setFileExtension(".dot"); //$NON-NLS-1$
                 refreshFileList();
             }
             
         };
-        jsonAction = new Action("Show .json files", Action.AS_RADIO_BUTTON) {
+        jsonAction = new Action(Messages.DebugWindow_ShowJsonFiles, Action.AS_RADIO_BUTTON) {
 
             /**
              * {@inheritDoc}
              */
             @Override
             public void run() {
-                fileTableContentProvider.setFileExtension(".json");
+                fileTableContentProvider.setFileExtension(".json"); //$NON-NLS-1$
                 refreshFileList();
             }
             
@@ -596,7 +630,7 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
         statusBar = new Composite(parent, SWT.NULL);
         statusBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        GridLayout gl = new GridLayout(4, false);
+        GridLayout gl = new GridLayout(6, false);
         gl.marginHeight = 0;
         gl.marginWidth = 0;
         statusBar.setLayout(gl);
@@ -605,24 +639,25 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
         statusBarLabel = new Label(statusBar, SWT.NULL);
         statusBarLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         
-        // Status Bar Zoom Label
-        statusBarZoomLabel = new CLabel(statusBar, SWT.NULL);
-        statusBarZoomLabelContextImage = KlayDebugViewPlugin.loadImage("contextMenu.gif"); //$NON-NLS-1$
-        statusBarZoomLabel.setImage(statusBarZoomLabelContextImage);
-        
-        gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-        statusBarZoomLabel.setLayoutData(gd);
-        
-        // Status Bar Zoom Menu
-        statusBarZoomMenu = new Menu(statusBarZoomLabel);
-        
         // Status Bar Zoom Original Item
-        statusBarZoomOriginalItem = new MenuItem(statusBarZoomMenu, SWT.PUSH);
-        statusBarZoomOriginalItem.setText(Messages.DebugWindow_ZoomMenu_OriginalSize);
+        statusBarZoomOriginalBtn = new Button(statusBar, SWT.PUSH);
+        final Image zoomToOriginalImage =
+                KlighdPlugin.getImageDescriptor("icons/kieler-zoomtoone.gif").createImage();
+        resources.add(zoomToOriginalImage);
+        statusBarZoomOriginalBtn.setImage(zoomToOriginalImage);
+        statusBarZoomOriginalBtn.setToolTipText(Messages.DebugWindow_ZoomMenu_OriginalSize);
         
         // Status Bar Zoom To Fit Item
-        statusBarZoomToFitItem = new MenuItem(statusBarZoomMenu, SWT.PUSH);
-        statusBarZoomToFitItem.setText(Messages.DebugWindow_ZoomMenu_ZoomToFit);
+        statusBarZoomToFitBtn = new Button(statusBar, SWT.PUSH);
+        final Image zoomToFitImage =
+                KlighdPlugin.getImageDescriptor("icons/kieler-zoomtofit.gif").createImage();
+        resources.add(zoomToFitImage);
+        statusBarZoomToFitBtn.setImage(zoomToFitImage);
+        statusBarZoomToFitBtn.setToolTipText(Messages.DebugWindow_ZoomMenu_ZoomToFit);
+        
+        // Status Bar Zoom Label
+        statusBarZoomLabel = new CLabel(statusBar, SWT.NULL);
+        statusBarZoomLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
         
         // Status Bar Zoom Scale
         statusBarZoomScale = new Scale(statusBar, SWT.HORIZONTAL);
@@ -635,25 +670,26 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
         gd.widthHint = 100;
         statusBarZoomScale.setLayoutData(gd);
         
-        // Event Listeners
-        statusBarZoomLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseDown(final MouseEvent e) {
-                statusBarZoomMenu.setLocation(statusBarZoomLabel.toDisplay(e.x, e.y));
-                statusBarZoomMenu.setVisible(true);
+        statusBarZoomOriginalBtn.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                if (isKlighdViewActive()) {
+                    viewContext.getViewer().zoom(ZoomStyle.ZOOM_TO_ACTUAL_SIZE,
+                            KlighdConstants.DEFAULT_ANIMATION_TIME);
+                } else {
+                    changeZoom(100);
+                }
             }
         });
         
-        statusBarZoomOriginalItem.addSelectionListener(new SelectionAdapter() {
+        statusBarZoomToFitBtn.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                changeZoom(100);
-            }
-        });
-        
-        statusBarZoomToFitItem.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(final SelectionEvent e) {
-                imageCanvas.zoomToFit();
-                changeZoom((int) (imageCanvas.getZoom() * HUNDRED_PERCENT));
+                if (isKlighdViewActive()) {
+                    viewContext.getViewer().zoom(ZoomStyle.ZOOM_TO_FIT,
+                            KlighdConstants.DEFAULT_ANIMATION_TIME);
+                } else {
+                    imageCanvas.zoomToFit();
+                    changeZoom((int) (imageCanvas.getZoom() * HUNDRED_PERCENT));
+                }
             }
         });
         
@@ -672,8 +708,8 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
         
         saveDialogSettings();
         
-        if (statusBarZoomLabelContextImage != null && !statusBarZoomLabelContextImage.isDisposed()) {
-            statusBarZoomLabelContextImage.dispose();
+        for (Resource resource : resources) {
+            resource.dispose();
         }
     }
     
