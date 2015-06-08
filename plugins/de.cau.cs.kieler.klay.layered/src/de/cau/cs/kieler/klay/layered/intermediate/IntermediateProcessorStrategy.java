@@ -113,10 +113,7 @@ public enum IntermediateProcessorStrategy {
     /** Merges dummy nodes originating from big nodes. */
     BIG_NODES_POSTPROCESSOR,
     
-    // After Phase 5
-    
-    /** TODO */
-    ONE_D_COMPACTOR,
+    // After Phase 5   
     /** Reinserts and places comment boxes that have been removed before. */
     COMMENT_POSTPROCESSOR,
     /** Moves hypernodes horizontally for better placement. */
@@ -125,6 +122,8 @@ public enum IntermediateProcessorStrategy {
     HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
     LONG_EDGE_JOINER,
+    /** TODO */
+    ONE_D_COMPACTOR,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
     NORTH_SOUTH_PORT_POSTPROCESSOR,
     /** Removes dummy nodes which were introduced for center labels. */
@@ -242,7 +241,7 @@ public enum IntermediateProcessorStrategy {
             return new NorthSouthPortPreprocessor();
             
         case ONE_D_COMPACTOR:
-            return new OneDCompactor();
+            return new OneDimensionalCompactor();
         
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();

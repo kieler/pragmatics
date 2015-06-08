@@ -76,25 +76,25 @@ public class OneDCompactor implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
 
         // redraw debug view
-        if (firstConnectedComponent == null
-                || firstConnectedComponent.equals(layeredGraph.toString())) { // FIXME compare
-
-            if (frm != null) {
-                frm.dispose();
-            }
-
-            firstConnectedComponent = layeredGraph.toString();
-
-            tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
-
-            frm = new JFrame("Debug View");
-
-            frm.setSize(1200, 700);
-
-            frm.add(tabpane);
-
-            frm.setVisible(true);
-        }
+//        if (firstConnectedComponent == null
+//                || firstConnectedComponent.equals(layeredGraph.toString())) { // FIXME compare
+//
+//            if (frm != null) {
+//                frm.dispose();
+//            }
+//
+//            firstConnectedComponent = layeredGraph.toString();
+//
+//            tabpane = new JTabbedPane(JTabbedPane.TOP, JTabbedPane.SCROLL_TAB_LAYOUT);
+//
+//            frm = new JFrame("Debug View");
+//
+//            frm.setSize(1200, 700);
+//
+//            frm.add(tabpane);
+//
+//            frm.setVisible(true);
+//        }
 
         progressMonitor.begin("1 D compacting", 1);
         // +++++++++++++++++++
@@ -141,8 +141,8 @@ public class OneDCompactor implements ILayoutProcessor {
             }
         }
 
-        drawDebugView(boxes, (int) Math.round(layeredGraph.getSize().x),
-                (int) Math.round(layeredGraph.getSize().y), layeredGraph);
+//        drawDebugView(boxes, (int) Math.round(layeredGraph.getSize().x),
+//                (int) Math.round(layeredGraph.getSize().y), layeredGraph);
 
         // resize boxes to include spacing
         double objSpacing = layeredGraph.getProperty(InternalProperties.SPACING);
@@ -247,8 +247,8 @@ public class OneDCompactor implements ILayoutProcessor {
             }
         }
         
-        drawDebugView(boxes, (int) Math.round(layeredGraph.getSize().x),
-                (int) Math.round(layeredGraph.getSize().y), layeredGraph);
+//        drawDebugView(boxes, (int) Math.round(layeredGraph.getSize().x),
+//                (int) Math.round(layeredGraph.getSize().y), layeredGraph);
 
         progressMonitor.done();
 
