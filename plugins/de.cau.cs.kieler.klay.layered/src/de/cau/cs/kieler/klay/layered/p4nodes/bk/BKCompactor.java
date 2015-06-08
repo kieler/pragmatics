@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.p4nodes;
+package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
 import java.util.List;
 
@@ -21,19 +21,24 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.BKAlignedLayout;
-import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.HDirection;
-import de.cau.cs.kieler.klay.layered.p4nodes.BKNodePlacer.VDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.HDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ThresholdStrategy.NullThresholdStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ThresholdStrategy.SimpleThresholdStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * For documentation see {@link BKNodePlacer}.
  * 
+ * As opposed to the default {@link BKCompactor} this version
+ * trades maximal compactness with straight edges. In other words,
+ * where possible it favors additional straight edges over compactness. 
+ * 
  * @author jjc
  * @author uru
  */
-public class BKCompacter {
+public class BKCompactor implements ICompactor {
     
     /** The graph to process. */
     private LGraph layeredGraph;
@@ -43,18 +48,32 @@ public class BKCompacter {
     private float smallSpacing;
     /** Spacing between external ports, determined by layout options. */
     private float externalPortSpacing;
+    /** Specific {@link ThresholdStrategy} to be used for execution. */
+    private ThresholdStrategy threshStrategy;
+    /** Information about a node's neighbors and index within its layer. */
+    private NeighborhoodInformation ni; 
     
     /**
      * @param layeredGraph the graph to handle.
+     * @param ni precalculated information about a node's neighbors.
      */
-    public BKCompacter(final LGraph layeredGraph) {
+    public BKCompactor(final LGraph layeredGraph, final NeighborhoodInformation ni) {
         this.layeredGraph = layeredGraph;
+        this.ni = ni;
         // Initialize spacing value from layout options.
         normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING) 
                 * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         externalPortSpacing = layeredGraph.getProperty(InternalProperties.PORT_SPACING);
-
+        
+        // configure the requested threshold strategy
+        if (layeredGraph.getProperty(Properties.COMPACTION_STRATEGY) 
+                == CompactionStrategy.IMPROVE_STRAIGHTNESS) {
+            threshStrategy = new SimpleThresholdStrategy();
+        } else {
+            // mimics the original compaction strategy without additional straightening
+            threshStrategy = new NullThresholdStrategy();
+        }
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -86,6 +105,9 @@ public class BKCompacter {
             layers = Lists.reverse(layers);
         }
 
+        // init threshold strategy
+        threshStrategy.init(bal);
+        
         for (Layer layer : layers) {
             // As with layers, we need a reversed iterator for blocks for different directions
             List<LNode> nodes = layer.getNodes();
@@ -100,7 +122,7 @@ public class BKCompacter {
                 }
             }
         }
-
+        
         // Try to compact blocks by shifting them towards each other if there is space between them.
         // It's important to traverse top-bottom or bottom-top here too
         // This is where 'classes' are compacted?!
@@ -122,12 +144,11 @@ public class BKCompacter {
                 }
             }
         }
+        
+        // all blocks were placed, shift latecomers
+        threshStrategy.postProcess();
+        
     }
-    
-    /* Note: The following methods diverts from the convention of naming variables as they were named in
-     *       the original paper for better code readability. (Since this is one of the most intricate
-     *       pieces of code in the algorithm.) The original variable names are mentioned in comments.
-     */
 
     /**
      * Blocks are placed based on their root node. This is done by going through all layers the block
@@ -137,12 +158,12 @@ public class BKCompacter {
      * @param root The root node of the block (usually called {@code v})
      * @param bal One of the four layouts which shall be used in this step
      */
-    private void placeBlock(final LNode root, final BKAlignedLayout bal) {
+    // SUPPRESS CHECKSTYLE NEXT 1 MethodLength
+    private void placeBlock(final LNode root, final BKAlignedLayout bal) { 
         // Skip if the block was already placed
         if (bal.y.containsKey(root)) {
             return;
         }
-        
         // Initial placement
         // As opposed to the original algorithm we cannot rely on the fact that 
         //  0.0 as initial block position is always feasible. This is due to 
@@ -156,11 +177,13 @@ public class BKCompacter {
         // Iterate through block and determine, where the block can be placed (until we arrive at the
         // block's root node again)
         LNode currentNode = root;
+        double thresh =
+                bal.vdir == VDirection.DOWN ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
         do {
-            int currentIndexInLayer = currentNode.getIndex();
+            int currentIndexInLayer = ni.nodeIndex[currentNode.id];
             int currentLayerSize = currentNode.getLayer().getNodes().size();
             NodeType currentNodeType = currentNode.getNodeType();
-            
+
             // If the node is the top or bottom node of its layer, it can be placed safely since it is
             // the first to be placed in its layer. If it's not, we'll have to check its neighbours
             if ((bal.vdir == VDirection.DOWN && currentIndexInLayer > 0)
@@ -182,6 +205,11 @@ public class BKCompacter {
                 // Ensure the neighbor was already placed
                 placeBlock(neighborRoot, bal);
                 
+                // calculate threshold value for additional straight edges
+                // this call has to be _after_ place block, otherwise the 
+                // order of the elements in the postprocessing queue is wrong 
+                thresh = threshStrategy.calculateThreshold(thresh, root, currentNode);
+                
                 // Note that the two nodes and their blocks form a unit called class in the original
                 // algorithm. These are combinations of blocks which play a role in the final compaction
                 if (bal.sink.get(root).equals(root)) {
@@ -193,21 +221,11 @@ public class BKCompacter {
                     // They are part of the same class
                     
                     // The minimal spacing between the two nodes depends on their node type
-                    double spacing = smallSpacing;
-                    if (currentNodeType == NodeType.EXTERNAL_PORT
-                            && neighborNodeType == NodeType.EXTERNAL_PORT) {
-                        
-                        spacing = externalPortSpacing;
-                    } else if (currentNodeType == NodeType.NORMAL
-                            || neighborNodeType == NodeType.NORMAL) {
-                        
-                        // as soon as either of the two involved nodes is a regular node, 
-                        // use normal spacing
-                        spacing = normalSpacing;
-                    }
+                    double spacing = getSpacing(currentNodeType, neighborNodeType);
                     
                     // Determine the block's final position
                     if (bal.vdir == VDirection.UP) {
+                        
                         double currentBlockPosition = bal.y.get(root);
                         double newPosition = bal.y.get(neighborRoot)
                                 + bal.innerShift.get(neighbor)
@@ -219,11 +237,14 @@ public class BKCompacter {
 
                         if (isInitialAssignment) {
                             isInitialAssignment = false;
-                            bal.y.put(root, newPosition);
+                            bal.y.put(root, Math.min(newPosition, thresh));
                         } else {
-                            bal.y.put(root, Math.min(currentBlockPosition, newPosition));
+                            bal.y.put(root, Math.min(currentBlockPosition, 
+                                                     Math.min(newPosition, thresh)));
                         }
-                    } else {
+                        
+                    } else { // DOWN
+                        
                         double currentBlockPosition = bal.y.get(root);
                         double newPosition = bal.y.get(neighborRoot)
                                 + bal.innerShift.get(neighbor)
@@ -235,13 +256,15 @@ public class BKCompacter {
                         
                         if (isInitialAssignment) {
                             isInitialAssignment = false;
-                            bal.y.put(root, newPosition);
+                            bal.y.put(root, Math.max(newPosition, thresh));
                         } else {
-                            bal.y.put(root, Math.max(currentBlockPosition, newPosition));
+                            bal.y.put(root, Math.max(currentBlockPosition, 
+                                                     Math.max(newPosition, thresh)));
                         }
                     }
-                } else {
-
+                    
+                } else { // CLASSES
+                    
                     // They are not part of the same class. Compute how the two classes can be compacted
                     // later. Hence we determine a minimal required space between the two classes 
                     // relative two the two class sinks.
@@ -255,22 +278,23 @@ public class BKCompacter {
                                 bal.y.get(root)
                                 + bal.innerShift.get(currentNode)
                                 + currentNode.getSize().y
-                                + currentNode.getMargin().top
+                                + currentNode.getMargin().bottom
                                 + spacing
-                                - bal.y.get(neighborRoot)
-                                - bal.innerShift.get(neighbor)
-                                - neighbor.getMargin().top;
+                                - (bal.y.get(neighborRoot)
+                                   + bal.innerShift.get(neighbor)
+                                   - neighbor.getMargin().top
+                                   );
                         
                         bal.shift.put(bal.sink.get(neighborRoot),
                                 Math.max(bal.shift.get(bal.sink.get(neighborRoot)), requiredSpace));
-                    } else {
+                    } else { // DOWN
                         //  possible setup:
                         //  neighborRoot --> neighbor 
                         //  root         --> currentNode
                         double requiredSpace =
                                 bal.y.get(root) 
                                 + bal.innerShift.get(currentNode)
-                                + currentNode.getMargin().top
+                                - currentNode.getMargin().top
                                 - bal.y.get(neighborRoot)
                                 - bal.innerShift.get(neighbor)
                                 - neighbor.getSize().y
@@ -281,11 +305,31 @@ public class BKCompacter {
                                 Math.min(bal.shift.get(bal.sink.get(neighborRoot)), requiredSpace));
                     }
                 }
+            } else {
+                thresh = threshStrategy.calculateThreshold(thresh, root, currentNode);
             }
             
             // Get the next node in the block
             currentNode = bal.align.get(currentNode);
         } while (currentNode != root);
+        
+        threshStrategy.finishBlock(root);
+    }
+
+    private double getSpacing(final NodeType currentNodeType, final NodeType neighborNodeType) {
+        double spacing = smallSpacing;
+        if (currentNodeType == NodeType.EXTERNAL_PORT
+                && neighborNodeType == NodeType.EXTERNAL_PORT) {
+            
+            spacing = externalPortSpacing;
+        } else if (currentNodeType == NodeType.NORMAL
+                || neighborNodeType == NodeType.NORMAL) {
+            
+            // as soon as either of the two involved nodes is a regular node, 
+            // use normal spacing
+            spacing = normalSpacing;
+        }
+        return spacing;
     }
     
 }

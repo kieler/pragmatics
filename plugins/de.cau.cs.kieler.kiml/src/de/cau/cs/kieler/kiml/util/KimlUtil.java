@@ -20,9 +20,11 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.AbstractTreeIterator;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
@@ -1018,5 +1020,106 @@ public final class KimlUtil {
         points[n - 1] = edgeLayout.getTargetPoint().createVector();
         return points;
     }
-    
+
+
+    /**
+     * Determines the {@link KEdge KEdges} that are (transitively) connected to the given
+     * {@code kedges} across hierarchy boundaries via common ports. See
+     * {@link #getConnectedEdges(KEdge)} for details.
+     *
+     * @see #getConnectedEdges(KEdge)
+     * @param kedges
+     *            an {@link Iterable} of {@link KEdge KEdges} that shall be checked
+     * @return an {@link Iterator} visiting the given {@code kedges} and all (transitively)
+     *         connected ones.
+     */
+    public static Iterator<KEdge> getConnectedEdges(final Iterable<KEdge> kedges) {
+        return Iterators.concat(
+                Iterators.transform(kedges.iterator(), new Function<KEdge, Iterator<KEdge>>() {
+
+            public Iterator<KEdge> apply(final KEdge kedge) {
+                return getConnectedEdges(kedge);
+            }
+        }));
+    }
+
+    /**
+     * Determines the {@link KEdge KEdges} that are (transitively) connected to {@code kedge} across
+     * hierarchy boundaries via common ports. Rational: Multiple {@link KEdge KEdges} that are
+     * pairwise connected by means of a {@link KPort} (target port of edge a == source port of edge
+     * b or vice versa) may form one logical connection. This kind splitting might be already
+     * present in the view model, or is performed by the layout algorithm for decomposing a nested
+     * layout input graph into flat sub graphs.
+     *
+     * @param kedge
+     *            the {@link KEdge} check for connected edges
+     * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
+     *         almost) breadth first search fashion
+     */
+    public static Iterator<KEdge> getConnectedEdges(final KEdge kedge) {
+        // get a singleton iterator offering 'kedge'
+        final Iterator<KEdge> kedgeIt = Iterators.singletonIterator(kedge);
+
+        // if 'kedge' has a source port,
+        //  create a bfs tree iterator visiting all source-sidewise connected edges
+        final Iterator<KEdge> sourceSideIt =
+                kedge.getSourcePort() == null ? null : new AbstractTreeIterator<KEdge>(kedge, false) {
+
+            private static final long serialVersionUID = 2096899476184317737L;
+
+            @Override
+            protected Iterator<? extends KEdge> getChildren(final Object object) {
+                final KPort sourcePort = ((KEdge) object).getSourcePort();
+
+                // for each object (kedge) visited by this iterator
+                //  return either an empty iterator if no source port is configured
+                //  or check all the edges connected to 'sourcePort'
+                //  and visit those satisfying the criterion stated above
+                // this criterion btw. prevents from visiting an edge twice, as
+                //  "sourcePort == input.getTargetPort()" implies "object != input"
+                return sourcePort == null ? Iterators.<KEdge>emptyIterator() : Iterators.filter(
+                        sourcePort.getEdges().iterator(), new Predicate<KEdge>() {
+
+                    public boolean apply(final KEdge input) {
+                        return sourcePort == input.getTargetPort();
+                    }
+                });
+            }
+        };
+
+        // if 'kedge' has a target port,
+        //  create a bfs tree iterator visiting all target-sidewise connected edges
+        final Iterator<KEdge> targetSideIt =
+                kedge.getTargetPort() == null ? null : new AbstractTreeIterator<KEdge>(kedge, false) {
+
+            private static final long serialVersionUID = -4290192971641462249L;
+
+            @Override
+            protected Iterator<? extends KEdge> getChildren(final Object object) {
+                final KPort targetPort = ((KEdge) object).getTargetPort();
+
+                // for each object (kedge) visited by this iterator
+                //  return either an empty iterator if no target port is configured
+                //  or check all the edges connected to 'targetPort'
+                //  and visit those satisfying the criterion stated above
+                // this criterion btw. prevents from visiting an edge twice, as
+                //  "targetPort == input.getSourcePort()" implies "object != input"
+                return targetPort == null ? Iterators.<KEdge>emptyIterator() : Iterators.filter(
+                        targetPort.getEdges().iterator(), new Predicate<KEdge>() {
+
+                    public boolean apply(final KEdge input) {
+                        return targetPort == input.getSourcePort();
+                    }
+                });
+            }
+        };
+
+        // concatenate the source-sidewise and target-sidewise iterators if present ...
+        final Iterator<KEdge> connectedEdges = sourceSideIt == null ? targetSideIt
+                : targetSideIt == null ? sourceSideIt : Iterators.concat(sourceSideIt, targetSideIt);
+
+        // ... and attach them to the input 'kedge' offering iterator, or return just the
+        //  input 'kedge' iterator in case no ports are configured for 'kedge'
+        return connectedEdges == null ? kedgeIt : Iterators.concat(kedgeIt, connectedEdges);
+    }
 }

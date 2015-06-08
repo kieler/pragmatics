@@ -21,6 +21,7 @@ import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 
 /**
  * Container for public property definitions. These are layout options that can be set on graph
@@ -33,11 +34,20 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
  * @kieler.rating proposed yellow by msp
  */
 public final class Properties {
+
+    
+    /** 
+     * Property to enable or disable node-promotion.
+     */
+    public static final IProperty<Boolean> NODE_PROMOTION = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.nodePromotion", false);
+
     /**
-     * Property to switch one dimensional compaction postprocessing on or off.
+     * Property to switch one dimensional compaction post-processing on or off.
      */
     public static final IProperty<Boolean> ONE_DIMENSIONAL_COMPACTION = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.oneDimensionalCompaction", true);
+
 
     /**
      * A pre-defined seed for pseudo-random number generators.
@@ -225,7 +235,14 @@ public final class Properties {
     public static final IProperty<Integer> MAX_WIDTH_START = new Property<Integer>(
             "de.cau.cs.kieler.klay.layered.stretchWidthMaxWidthStart", 1, 0);
     
-    
+    /**
+     * Specifies the compaction strategy when using the {@link BKNodePlacer}.
+     */
+    public static final IProperty<CompactionStrategy> COMPACTION_STRATEGY =
+            new Property<CompactionStrategy>(
+                    "de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy",
+                    CompactionStrategy.CLASSIC);
+
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
 
