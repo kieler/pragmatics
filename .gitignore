@@ -6,4 +6,3 @@ bin/
 xtend-gen/
 target/
 *.pdf
-*MinWidth*
