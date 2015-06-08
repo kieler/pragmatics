@@ -35,7 +35,6 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.HDirection;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
-import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -166,16 +165,6 @@ public final class BKNodePlacer implements ILayoutPhase {
         // following processes. 
         ni = NeighborhoodInformation.buildFor(layeredGraph);
 
-        // Initialize four layouts which result from the two possible directions respectively.
-        BKAlignedLayout rightdown =
-                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.RIGHT);
-        BKAlignedLayout rightup =
-                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.RIGHT);
-        BKAlignedLayout leftdown =
-                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.LEFT);
-        BKAlignedLayout leftup =
-                new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.LEFT);
-
         // Regard possible other layout options.
         debugMode = layeredGraph.getProperty(Properties.DEBUG_MODE);
         produceBalancedLayout =
@@ -185,22 +174,40 @@ public final class BKNodePlacer implements ILayoutPhase {
         // one run is required.
         markConflicts(layeredGraph);
 
+        // Initialize four layouts which result from the two possible directions respectively.
+        BKAlignedLayout rightdown = null, rightup = null, leftdown = null, leftup = null;
         // SUPPRESS CHECKSTYLE NEXT MagicNumber
         List<BKAlignedLayout> layouts = Lists.newArrayListWithCapacity(4);
         switch (layeredGraph.getProperty(Properties.FIXED_ALIGNMENT)) {
             case LEFTDOWN:
+                leftdown =
+                      new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.LEFT);
                 layouts.add(leftdown);
                 break;
             case LEFTUP:
+                leftup = 
+                      new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.LEFT);
                 layouts.add(leftup);
                 break;
             case RIGHTDOWN:
+                rightdown = 
+                      new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.RIGHT);
                 layouts.add(rightdown);
                 break;
             case RIGHTUP:
+                rightup = 
+                      new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.RIGHT);
                 layouts.add(rightup); 
                 break;
             default:
+                leftdown = 
+                   new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.LEFT);
+                leftup = 
+                   new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.LEFT);
+                rightdown = 
+                   new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.DOWN, HDirection.RIGHT);
+                rightup = 
+                   new BKAlignedLayout(layeredGraph, ni.nodeCount, VDirection.UP, HDirection.RIGHT);
                 layouts.add(rightdown);
                 layouts.add(rightup);
                 layouts.add(leftdown);
@@ -226,20 +233,11 @@ public final class BKNodePlacer implements ILayoutPhase {
             compacter.horizontalCompaction(bal);
         }
 
-        if (layeredGraph.getProperty(Properties.COMPACTION_STRATEGY) 
-                == CompactionStrategy.IMPROVE_STRAIGHTNESS_POSTPROCESS) {
-            BKStraightener straightener = new BKStraightener(layeredGraph);
-            for (BKAlignedLayout bal : layouts) {
-                straightener.improveStraightness(bal);
-            }
-        }
-
         // Debug output
         if (debugMode) {
-            System.out.println("rightdown size is " + rightdown.layoutSize());
-            System.out.println("rightup size is " + rightup.layoutSize());
-            System.out.println("leftdown size is " + leftdown.layoutSize());
-            System.out.println("leftup size is " + leftup.layoutSize());
+            for (BKAlignedLayout bal : layouts) {
+                System.out.println(bal + " size is " + bal.layoutSize());
+            }
         }
 
         // Choose a layout from the four calculated layouts. Layouts that contain errors are skipped.
@@ -278,7 +276,7 @@ public final class BKNodePlacer implements ILayoutPhase {
         // Apply calculated positions to nodes.
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
-                node.getPosition().y = chosenLayout.y.get(node) + chosenLayout.innerShift.get(node);
+                node.getPosition().y = chosenLayout.y[node.id] + chosenLayout.innerShift[node.id];
             }
         }
 
@@ -289,8 +287,14 @@ public final class BKNodePlacer implements ILayoutPhase {
             System.out.println("Classes: " + getClasses(chosenLayout));
             System.out.println("Marked edges: " + markedEdges);
         }
-
+        
+        // cleanup
+        for (BKAlignedLayout bal : layouts) {
+            bal.cleanup();
+        }
+        ni.cleanup();
         markedEdges.clear();
+        
         monitor.done();
     }
     
@@ -425,7 +429,7 @@ public final class BKNodePlacer implements ILayoutPhase {
             
             for (Layer l : lGraph) {
                 for (LNode n : l) {
-                    double nodePosY = bal.y.get(n) + bal.innerShift.get(n);
+                    double nodePosY = bal.y[n.id] + bal.innerShift[n.id];
                     min[i] = Math.min(min[i], nodePosY);
                     max[i] = Math.max(max[i], nodePosY + n.getSize().y);
                 }
@@ -444,20 +448,22 @@ public final class BKNodePlacer implements ILayoutPhase {
 
         // Calculated y-coordinates for a balanced placement
         double[] calculatedYs = new double[noOfLayouts];
-        for (LNode node : layouts.get(0).y.keySet()) {
-            for (int i = 0; i < noOfLayouts; i++) {
-                // it's important to include the innerShift here!
-                calculatedYs[i] =
-                        layouts.get(i).y.get(node) + layouts.get(i).innerShift.get(node) + shift[i];
+        for (Layer layer : lGraph.getLayers()) {
+            for (LNode node : layer.getNodes()) {
+                for (int i = 0; i < noOfLayouts; i++) {
+                    // it's important to include the innerShift here!
+                    calculatedYs[i] =
+                            layouts.get(i).y[node.id] + layouts.get(i).innerShift[node.id] + shift[i];
+                }
+               
+                Arrays.sort(calculatedYs);
+                balanced.y[node.id] = (calculatedYs[1] + calculatedYs[2]) / 2.0;
+                // since we include the inner shift in the calculation of a balanced y 
+                // coordinate we don't need it any more
+                // note that after this step no further processing of the graph that 
+                // would include the inner shift is possible
+                balanced.innerShift[node.id] = 0d;
             }
-           
-            Arrays.sort(calculatedYs);
-            balanced.y.put(node, (calculatedYs[1] + calculatedYs[2]) / 2.0);
-            // since we include the inner shift in the calculation of a balanced y 
-            // coordinate we don't need it any more
-            // note that after this step no further processing of the graph that 
-            // would include the inner shift is possible
-            balanced.innerShift.put(node, 0d);
         }
 
         return balanced;
@@ -533,16 +539,18 @@ public final class BKNodePlacer implements ILayoutPhase {
     static Map<LNode, List<LNode>> getBlocks(final BKAlignedLayout bal) {
         Map<LNode, List<LNode>> blocks = Maps.newLinkedHashMap();
         
-        for (LNode node : bal.root.keySet()) {
-            LNode root = bal.root.get(node);
-            List<LNode> blockContents = blocks.get(root);
-            
-            if (blockContents == null) {
-                blockContents = Lists.newArrayList();
-                blocks.put(root, blockContents);
+        for (Layer layer : bal.layeredGraph.getLayers()) {
+            for (LNode node : layer.getNodes()) {
+                LNode root = bal.root[node.id];
+                List<LNode> blockContents = blocks.get(root);
+                
+                if (blockContents == null) {
+                    blockContents = Lists.newArrayList();
+                    blocks.put(root, blockContents);
+                }
+                
+                blockContents.add(node);
             }
-            
-            blockContents.add(node);
         }
         
         return blocks;
@@ -558,9 +566,9 @@ public final class BKNodePlacer implements ILayoutPhase {
         Map<LNode, List<LNode>> classes = Maps.newLinkedHashMap();
         
         // We need to enumerate all block roots
-        Set<LNode> roots = Sets.newLinkedHashSet(bal.root.values());
+        Set<LNode> roots = Sets.newLinkedHashSet(Arrays.asList(bal.root));
         for (LNode root : roots) {
-            LNode sink = bal.sink.get(root);
+            LNode sink = bal.sink[root.id];
             List<LNode> classContents = classes.get(sink);
             
             if (classContents == null) {
@@ -583,10 +591,6 @@ public final class BKNodePlacer implements ILayoutPhase {
      * @return {@code true} if the order is preserved and no nodes overlap, {@code false} otherwise.
      */
     private boolean checkOrderConstraint(final LGraph layeredGraph, final BKAlignedLayout bal) {
-        // Check if the layout contains Y coordinate information
-        if (bal.y.isEmpty()) {
-            return false;
-        }
         
         // Flag indicating whether the layout is feasible or not
         boolean feasible = true;
@@ -603,15 +607,15 @@ public final class BKNodePlacer implements ILayoutPhase {
             for (LNode node : layer.getNodes()) {
                 // For the layout to be correct, both the node's top border and its bottom border must
                 // be beyond the current position in the layer
-                double top = bal.y.get(node) + bal.innerShift.get(node) - node.getMargin().top;
-                double bottom = bal.y.get(node) + bal.innerShift.get(node) + node.getSize().y
+                double top = bal.y[node.id] + bal.innerShift[node.id] - node.getMargin().top;
+                double bottom = bal.y[node.id] + bal.innerShift[node.id] + node.getSize().y
                         + node.getMargin().bottom;
                 
                 if (top > pos && bottom > pos) {
                     previous = node;
                     
                     // Update the position inside the layer
-                    pos = bal.y.get(node) + bal.innerShift.get(node) + node.getSize().y
+                    pos = bal.y[node.id] + bal.innerShift[node.id] + node.getSize().y
                             + node.getMargin().bottom;
                 } else {
                     // We've found an overlap

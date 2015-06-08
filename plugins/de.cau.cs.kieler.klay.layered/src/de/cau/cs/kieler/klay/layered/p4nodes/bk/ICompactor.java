@@ -39,7 +39,5 @@ public interface ICompactor {
         CLASSIC,
         /** An integrated method trying to increase the number of straight edges. */
         IMPROVE_STRAIGHTNESS,
-        /** A postprocessing method trying to increse the number of straight edges. */
-        IMPROVE_STRAIGHTNESS_POSTPROCESS
     }
 }

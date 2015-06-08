@@ -24,15 +24,28 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cGlobalResourcesKeyword_0_0 = (Keyword)cGroup_0.eContents().get(0);
 		private final Assignment cGlobalResourcesAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
 		private final RuleCall cGlobalResourcesGlobalResourceRefParserRuleCall_0_1_0 = (RuleCall)cGlobalResourcesAssignment_0_1.eContents().get(0);
-		private final Assignment cJobsAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cJobsJobParserRuleCall_1_0 = (RuleCall)cJobsAssignment_1.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Keyword cGlobalOutputsKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cGloobalOutputsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cGloobalOutputsGlobalOutputRefParserRuleCall_1_1_0 = (RuleCall)cGloobalOutputsAssignment_1_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cExecuteKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Alternatives cAlternatives_2_1 = (Alternatives)cGroup_2.eContents().get(1);
+		private final Assignment cExecuteAllAssignment_2_1_0 = (Assignment)cAlternatives_2_1.eContents().get(0);
+		private final Keyword cExecuteAllAllKeyword_2_1_0_0 = (Keyword)cExecuteAllAssignment_2_1_0.eContents().get(0);
+		private final Assignment cExecuteAssignment_2_1_1 = (Assignment)cAlternatives_2_1.eContents().get(1);
+		private final CrossReference cExecuteJobCrossReference_2_1_1_0 = (CrossReference)cExecuteAssignment_2_1_1.eContents().get(0);
+		private final RuleCall cExecuteJobIDTerminalRuleCall_2_1_1_0_1 = (RuleCall)cExecuteJobCrossReference_2_1_1_0.eContents().get(1);
+		private final Assignment cJobsAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cJobsJobParserRuleCall_3_0 = (RuleCall)cJobsAssignment_3.eContents().get(0);
 		
 		//Grana:
-		//
-		//	("globalResources" globalResources+=GlobalResourceRef*)? jobs+=Job+;
+		//	("globalResources" globalResources+=GlobalResourceRef*)? ("globalOutputs" gloobalOutputs+=GlobalOutputRef*)?
+		//	("execute" (executeAll?="all" | execute+=[Job]+)) jobs+=Job+;
 		public ParserRule getRule() { return rule; }
 
-		//("globalResources" globalResources+=GlobalResourceRef*)? jobs+=Job+
+		//("globalResources" globalResources+=GlobalResourceRef*)? ("globalOutputs" gloobalOutputs+=GlobalOutputRef*)? ("execute"
+		//(executeAll?="all" | execute+=[Job]+)) jobs+=Job+
 		public Group getGroup() { return cGroup; }
 
 		//("globalResources" globalResources+=GlobalResourceRef*)?
@@ -47,11 +60,47 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//GlobalResourceRef
 		public RuleCall getGlobalResourcesGlobalResourceRefParserRuleCall_0_1_0() { return cGlobalResourcesGlobalResourceRefParserRuleCall_0_1_0; }
 
+		//("globalOutputs" gloobalOutputs+=GlobalOutputRef*)?
+		public Group getGroup_1() { return cGroup_1; }
+
+		//"globalOutputs"
+		public Keyword getGlobalOutputsKeyword_1_0() { return cGlobalOutputsKeyword_1_0; }
+
+		//gloobalOutputs+=GlobalOutputRef*
+		public Assignment getGloobalOutputsAssignment_1_1() { return cGloobalOutputsAssignment_1_1; }
+
+		//GlobalOutputRef
+		public RuleCall getGloobalOutputsGlobalOutputRefParserRuleCall_1_1_0() { return cGloobalOutputsGlobalOutputRefParserRuleCall_1_1_0; }
+
+		//"execute" (executeAll?="all" | execute+=[Job]+)
+		public Group getGroup_2() { return cGroup_2; }
+
+		//"execute"
+		public Keyword getExecuteKeyword_2_0() { return cExecuteKeyword_2_0; }
+
+		//executeAll?="all" | execute+=[Job]+
+		public Alternatives getAlternatives_2_1() { return cAlternatives_2_1; }
+
+		//executeAll?="all"
+		public Assignment getExecuteAllAssignment_2_1_0() { return cExecuteAllAssignment_2_1_0; }
+
+		//"all"
+		public Keyword getExecuteAllAllKeyword_2_1_0_0() { return cExecuteAllAllKeyword_2_1_0_0; }
+
+		//execute+=[Job]+
+		public Assignment getExecuteAssignment_2_1_1() { return cExecuteAssignment_2_1_1; }
+
+		//[Job]
+		public CrossReference getExecuteJobCrossReference_2_1_1_0() { return cExecuteJobCrossReference_2_1_1_0; }
+
+		//ID
+		public RuleCall getExecuteJobIDTerminalRuleCall_2_1_1_0_1() { return cExecuteJobIDTerminalRuleCall_2_1_1_0_1; }
+
 		//jobs+=Job+
-		public Assignment getJobsAssignment_1() { return cJobsAssignment_1; }
+		public Assignment getJobsAssignment_3() { return cJobsAssignment_3; }
 
 		//Job
-		public RuleCall getJobsJobParserRuleCall_1_0() { return cJobsJobParserRuleCall_1_0; }
+		public RuleCall getJobsJobParserRuleCall_3_0() { return cJobsJobParserRuleCall_3_0; }
 	}
 
 	public class JobElements extends AbstractParserRuleElementFinder {
@@ -76,22 +125,17 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cAnalysesAnalysisParserRuleCall_10_0 = (RuleCall)cAnalysesAssignment_10.eContents().get(0);
 		private final Keyword cOutputKeyword_11 = (Keyword)cGroup.eContents().get(11);
 		private final Assignment cOutputAssignment_12 = (Assignment)cGroup.eContents().get(12);
-		private final RuleCall cOutputSTRINGTerminalRuleCall_12_0 = (RuleCall)cOutputAssignment_12.eContents().get(0);
+		private final RuleCall cOutputOutputParserRuleCall_12_0 = (RuleCall)cOutputAssignment_12.eContents().get(0);
 		
 		//Job:
-		//
-		//	{Job} "job" name=ID? layoutBeforeAnalysis?="layoutBeforeAnalysis"? measureExecutionTime?="measureExecutionTime"?
-		//
-		//	"resources" resources+=Resource* "layoutoptions" layoutOptions+=KIdentifier "analyses" analyses+=Analysis* "output"
-		//
-		//	output=STRING;
+		//	{Job} "job" name=ID layoutBeforeAnalysis?="layoutBeforeAnalysis"? measureExecutionTime?="measureExecutionTime"?
+		//	"resources" resources+=Resource* "layoutoptions" layoutOptions+=KIdentifier* "analyses" analyses+=Analysis* "output"
+		//	output=Output;
 		public ParserRule getRule() { return rule; }
 
-		//{Job} "job" name=ID? layoutBeforeAnalysis?="layoutBeforeAnalysis"? measureExecutionTime?="measureExecutionTime"?
-		//
-		//"resources" resources+=Resource* "layoutoptions" layoutOptions+=KIdentifier "analyses" analyses+=Analysis* "output"
-		//
-		//output=STRING
+		//{Job} "job" name=ID layoutBeforeAnalysis?="layoutBeforeAnalysis"? measureExecutionTime?="measureExecutionTime"?
+		//"resources" resources+=Resource* "layoutoptions" layoutOptions+=KIdentifier* "analyses" analyses+=Analysis* "output"
+		//output=Output
 		public Group getGroup() { return cGroup; }
 
 		//{Job}
@@ -100,7 +144,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//"job"
 		public Keyword getJobKeyword_1() { return cJobKeyword_1; }
 
-		//name=ID?
+		//name=ID
 		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
 
 		//ID
@@ -130,7 +174,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//"layoutoptions"
 		public Keyword getLayoutoptionsKeyword_7() { return cLayoutoptionsKeyword_7; }
 
-		//layoutOptions+=KIdentifier
+		//layoutOptions+=KIdentifier*
 		public Assignment getLayoutOptionsAssignment_8() { return cLayoutOptionsAssignment_8; }
 
 		//KIdentifier
@@ -148,11 +192,11 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//"output"
 		public Keyword getOutputKeyword_11() { return cOutputKeyword_11; }
 
-		//output=STRING
+		//output=Output
 		public Assignment getOutputAssignment_12() { return cOutputAssignment_12; }
 
-		//STRING
-		public RuleCall getOutputSTRINGTerminalRuleCall_12_0() { return cOutputSTRINGTerminalRuleCall_12_0; }
+		//Output
+		public RuleCall getOutputOutputParserRuleCall_12_0() { return cOutputOutputParserRuleCall_12_0; }
 	}
 
 	public class ResourceElements extends AbstractParserRuleElementFinder {
@@ -161,8 +205,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cResourceReferenceParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cLocalResourceParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
-		//Resource:
-		//
+		/// *
+		// * ---- Resources ---- 
+		// * / Resource:
 		//	ResourceReference | LocalResource;
 		public ParserRule getRule() { return rule; }
 
@@ -185,7 +230,6 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cResourceRefsGlobalResourceRefIDTerminalRuleCall_1_0_1 = (RuleCall)cResourceRefsGlobalResourceRefCrossReference_1_0.eContents().get(1);
 		
 		//ResourceReference:
-		//
 		//	"ref" resourceRefs+=[GlobalResourceRef]+;
 		public ParserRule getRule() { return rule; }
 
@@ -214,7 +258,6 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cResourcesLocalResourceParserRuleCall_1_0 = (RuleCall)cResourcesAssignment_1.eContents().get(0);
 		
 		//GlobalResourceRef:
-		//
 		//	name=ID resources+=LocalResource;
 		public ParserRule getRule() { return rule; }
 
@@ -245,7 +288,6 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cFilterSTRINGTerminalRuleCall_1_1_0 = (RuleCall)cFilterAssignment_1_1.eContents().get(0);
 		
 		//LocalResource:
-		//
 		//	path=STRING ("filter" filter=STRING);
 		public ParserRule getRule() { return rule; }
 
@@ -271,13 +313,106 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getFilterSTRINGTerminalRuleCall_1_1_0() { return cFilterSTRINGTerminalRuleCall_1_1_0; }
 	}
 
+	public class OutputElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Output");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final RuleCall cOutputReferenceParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
+		private final RuleCall cLocalOutputParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		
+		/// *
+		// * ---- Output ---- 
+		// * / Output:
+		//	OutputReference | LocalOutput;
+		public ParserRule getRule() { return rule; }
+
+		//OutputReference | LocalOutput
+		public Alternatives getAlternatives() { return cAlternatives; }
+
+		//OutputReference
+		public RuleCall getOutputReferenceParserRuleCall_0() { return cOutputReferenceParserRuleCall_0; }
+
+		//LocalOutput
+		public RuleCall getLocalOutputParserRuleCall_1() { return cLocalOutputParserRuleCall_1; }
+	}
+
+	public class GlobalOutputRefElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "GlobalOutputRef");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cNameAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cNameIDTerminalRuleCall_0_0 = (RuleCall)cNameAssignment_0.eContents().get(0);
+		private final Assignment cOutputAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cOutputLocalOutputParserRuleCall_1_0 = (RuleCall)cOutputAssignment_1.eContents().get(0);
+		
+		//GlobalOutputRef:
+		//	name=ID output=LocalOutput;
+		public ParserRule getRule() { return rule; }
+
+		//name=ID output=LocalOutput
+		public Group getGroup() { return cGroup; }
+
+		//name=ID
+		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
+
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_0_0() { return cNameIDTerminalRuleCall_0_0; }
+
+		//output=LocalOutput
+		public Assignment getOutputAssignment_1() { return cOutputAssignment_1; }
+
+		//LocalOutput
+		public RuleCall getOutputLocalOutputParserRuleCall_1_0() { return cOutputLocalOutputParserRuleCall_1_0; }
+	}
+
+	public class OutputReferenceElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "OutputReference");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cRefKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cOutputRefAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final CrossReference cOutputRefGlobalOutputRefCrossReference_1_0 = (CrossReference)cOutputRefAssignment_1.eContents().get(0);
+		private final RuleCall cOutputRefGlobalOutputRefIDTerminalRuleCall_1_0_1 = (RuleCall)cOutputRefGlobalOutputRefCrossReference_1_0.eContents().get(1);
+		
+		//OutputReference:
+		//	"ref" outputRef=[GlobalOutputRef];
+		public ParserRule getRule() { return rule; }
+
+		//"ref" outputRef=[GlobalOutputRef]
+		public Group getGroup() { return cGroup; }
+
+		//"ref"
+		public Keyword getRefKeyword_0() { return cRefKeyword_0; }
+
+		//outputRef=[GlobalOutputRef]
+		public Assignment getOutputRefAssignment_1() { return cOutputRefAssignment_1; }
+
+		//[GlobalOutputRef]
+		public CrossReference getOutputRefGlobalOutputRefCrossReference_1_0() { return cOutputRefGlobalOutputRefCrossReference_1_0; }
+
+		//ID
+		public RuleCall getOutputRefGlobalOutputRefIDTerminalRuleCall_1_0_1() { return cOutputRefGlobalOutputRefIDTerminalRuleCall_1_0_1; }
+	}
+
+	public class LocalOutputElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "LocalOutput");
+		private final Assignment cPathAssignment = (Assignment)rule.eContents().get(1);
+		private final RuleCall cPathSTRINGTerminalRuleCall_0 = (RuleCall)cPathAssignment.eContents().get(0);
+		
+		//LocalOutput:
+		//	path=STRING;
+		public ParserRule getRule() { return rule; }
+
+		//path=STRING
+		public Assignment getPathAssignment() { return cPathAssignment; }
+
+		//STRING
+		public RuleCall getPathSTRINGTerminalRuleCall_0() { return cPathSTRINGTerminalRuleCall_0; }
+	}
+
 	public class AnalysisElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Analysis");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
 		private final RuleCall cNameQualifiedIDParserRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
 		
 		//Analysis:
-		//
 		//	name=QualifiedID;
 		public ParserRule getRule() { return rule; }
 
@@ -303,7 +438,6 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightCurlyBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		
 		//KIdentifier:
-		//
 		//	{KIdentifier} id=ID "{" (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)? "}";
 		public ParserRule getRule() { return rule; }
 
@@ -351,7 +485,6 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValuePropertyValueParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
 		
 		//PersistentEntry:
-		//
 		//	key=QualifiedID ":" value=PropertyValue;
 		public ParserRule getRule() { return rule; }
 
@@ -383,7 +516,6 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cIDTerminalRuleCall_1_1 = (RuleCall)cGroup_1.eContents().get(1);
 		
 		//QualifiedID returns ecore::EString:
-		//
 		//	ID ("." ID)*;
 		public ParserRule getRule() { return rule; }
 
@@ -412,7 +544,6 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cQualifiedIDParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
 		
 		//PropertyValue returns ecore::EString:
-		//
 		//	BOOLEAN | STRING | Float | QualifiedID;
 		public ParserRule getRule() { return rule; }
 
@@ -439,7 +570,6 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNATURALTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
 		//Float returns ecore::EFloat:
-		//
 		//	TFLOAT | NATURAL;
 		public ParserRule getRule() { return rule; }
 
@@ -454,32 +584,60 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	
-	private GranaElements pGrana;
-	private JobElements pJob;
-	private ResourceElements pResource;
-	private ResourceReferenceElements pResourceReference;
-	private GlobalResourceRefElements pGlobalResourceRef;
-	private LocalResourceElements pLocalResource;
-	private AnalysisElements pAnalysis;
-	private KIdentifierElements pKIdentifier;
-	private PersistentEntryElements pPersistentEntry;
-	private QualifiedIDElements pQualifiedID;
-	private PropertyValueElements pPropertyValue;
-	private FloatElements pFloat;
-	private TerminalRule tTFLOAT;
-	private TerminalRule tNATURAL;
-	private TerminalRule tBOOLEAN;
-	private TerminalRule tSTRING;
-	private TerminalRule tID;
-	private TerminalRule tML_COMMENT;
-	private TerminalRule tSL_COMMENT;
-	private TerminalRule tWS;
+	private final GranaElements pGrana;
+	private final JobElements pJob;
+	private final ResourceElements pResource;
+	private final ResourceReferenceElements pResourceReference;
+	private final GlobalResourceRefElements pGlobalResourceRef;
+	private final LocalResourceElements pLocalResource;
+	private final OutputElements pOutput;
+	private final GlobalOutputRefElements pGlobalOutputRef;
+	private final OutputReferenceElements pOutputReference;
+	private final LocalOutputElements pLocalOutput;
+	private final AnalysisElements pAnalysis;
+	private final KIdentifierElements pKIdentifier;
+	private final PersistentEntryElements pPersistentEntry;
+	private final QualifiedIDElements pQualifiedID;
+	private final PropertyValueElements pPropertyValue;
+	private final FloatElements pFloat;
+	private final TerminalRule tTFLOAT;
+	private final TerminalRule tNATURAL;
+	private final TerminalRule tBOOLEAN;
+	private final TerminalRule tSTRING;
+	private final TerminalRule tID;
+	private final TerminalRule tML_COMMENT;
+	private final TerminalRule tSL_COMMENT;
+	private final TerminalRule tWS;
 	
 	private final Grammar grammar;
 
 	@Inject
 	public GranaGrammarAccess(GrammarProvider grammarProvider) {
 		this.grammar = internalFindGrammar(grammarProvider);
+		this.pGrana = new GranaElements();
+		this.pJob = new JobElements();
+		this.pResource = new ResourceElements();
+		this.pResourceReference = new ResourceReferenceElements();
+		this.pGlobalResourceRef = new GlobalResourceRefElements();
+		this.pLocalResource = new LocalResourceElements();
+		this.pOutput = new OutputElements();
+		this.pGlobalOutputRef = new GlobalOutputRefElements();
+		this.pOutputReference = new OutputReferenceElements();
+		this.pLocalOutput = new LocalOutputElements();
+		this.pAnalysis = new AnalysisElements();
+		this.pKIdentifier = new KIdentifierElements();
+		this.pPersistentEntry = new PersistentEntryElements();
+		this.pQualifiedID = new QualifiedIDElements();
+		this.pPropertyValue = new PropertyValueElements();
+		this.pFloat = new FloatElements();
+		this.tTFLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "TFLOAT");
+		this.tNATURAL = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "NATURAL");
+		this.tBOOLEAN = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "BOOLEAN");
+		this.tSTRING = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "STRING");
+		this.tID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "ID");
+		this.tML_COMMENT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "ML_COMMENT");
+		this.tSL_COMMENT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "SL_COMMENT");
+		this.tWS = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "WS");
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -506,10 +664,10 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//Grana:
-	//
-	//	("globalResources" globalResources+=GlobalResourceRef*)? jobs+=Job+;
+	//	("globalResources" globalResources+=GlobalResourceRef*)? ("globalOutputs" gloobalOutputs+=GlobalOutputRef*)?
+	//	("execute" (executeAll?="all" | execute+=[Job]+)) jobs+=Job+;
 	public GranaElements getGranaAccess() {
-		return (pGrana != null) ? pGrana : (pGrana = new GranaElements());
+		return pGrana;
 	}
 	
 	public ParserRule getGranaRule() {
@@ -517,25 +675,23 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Job:
-	//
-	//	{Job} "job" name=ID? layoutBeforeAnalysis?="layoutBeforeAnalysis"? measureExecutionTime?="measureExecutionTime"?
-	//
-	//	"resources" resources+=Resource* "layoutoptions" layoutOptions+=KIdentifier "analyses" analyses+=Analysis* "output"
-	//
-	//	output=STRING;
+	//	{Job} "job" name=ID layoutBeforeAnalysis?="layoutBeforeAnalysis"? measureExecutionTime?="measureExecutionTime"?
+	//	"resources" resources+=Resource* "layoutoptions" layoutOptions+=KIdentifier* "analyses" analyses+=Analysis* "output"
+	//	output=Output;
 	public JobElements getJobAccess() {
-		return (pJob != null) ? pJob : (pJob = new JobElements());
+		return pJob;
 	}
 	
 	public ParserRule getJobRule() {
 		return getJobAccess().getRule();
 	}
 
-	//Resource:
-	//
+	/// *
+	// * ---- Resources ---- 
+	// * / Resource:
 	//	ResourceReference | LocalResource;
 	public ResourceElements getResourceAccess() {
-		return (pResource != null) ? pResource : (pResource = new ResourceElements());
+		return pResource;
 	}
 	
 	public ParserRule getResourceRule() {
@@ -543,10 +699,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//ResourceReference:
-	//
 	//	"ref" resourceRefs+=[GlobalResourceRef]+;
 	public ResourceReferenceElements getResourceReferenceAccess() {
-		return (pResourceReference != null) ? pResourceReference : (pResourceReference = new ResourceReferenceElements());
+		return pResourceReference;
 	}
 	
 	public ParserRule getResourceReferenceRule() {
@@ -554,10 +709,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//GlobalResourceRef:
-	//
 	//	name=ID resources+=LocalResource;
 	public GlobalResourceRefElements getGlobalResourceRefAccess() {
-		return (pGlobalResourceRef != null) ? pGlobalResourceRef : (pGlobalResourceRef = new GlobalResourceRefElements());
+		return pGlobalResourceRef;
 	}
 	
 	public ParserRule getGlobalResourceRefRule() {
@@ -565,21 +719,61 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//LocalResource:
-	//
 	//	path=STRING ("filter" filter=STRING);
 	public LocalResourceElements getLocalResourceAccess() {
-		return (pLocalResource != null) ? pLocalResource : (pLocalResource = new LocalResourceElements());
+		return pLocalResource;
 	}
 	
 	public ParserRule getLocalResourceRule() {
 		return getLocalResourceAccess().getRule();
 	}
 
+	/// *
+	// * ---- Output ---- 
+	// * / Output:
+	//	OutputReference | LocalOutput;
+	public OutputElements getOutputAccess() {
+		return pOutput;
+	}
+	
+	public ParserRule getOutputRule() {
+		return getOutputAccess().getRule();
+	}
+
+	//GlobalOutputRef:
+	//	name=ID output=LocalOutput;
+	public GlobalOutputRefElements getGlobalOutputRefAccess() {
+		return pGlobalOutputRef;
+	}
+	
+	public ParserRule getGlobalOutputRefRule() {
+		return getGlobalOutputRefAccess().getRule();
+	}
+
+	//OutputReference:
+	//	"ref" outputRef=[GlobalOutputRef];
+	public OutputReferenceElements getOutputReferenceAccess() {
+		return pOutputReference;
+	}
+	
+	public ParserRule getOutputReferenceRule() {
+		return getOutputReferenceAccess().getRule();
+	}
+
+	//LocalOutput:
+	//	path=STRING;
+	public LocalOutputElements getLocalOutputAccess() {
+		return pLocalOutput;
+	}
+	
+	public ParserRule getLocalOutputRule() {
+		return getLocalOutputAccess().getRule();
+	}
+
 	//Analysis:
-	//
 	//	name=QualifiedID;
 	public AnalysisElements getAnalysisAccess() {
-		return (pAnalysis != null) ? pAnalysis : (pAnalysis = new AnalysisElements());
+		return pAnalysis;
 	}
 	
 	public ParserRule getAnalysisRule() {
@@ -587,10 +781,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//KIdentifier:
-	//
 	//	{KIdentifier} id=ID "{" (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)? "}";
 	public KIdentifierElements getKIdentifierAccess() {
-		return (pKIdentifier != null) ? pKIdentifier : (pKIdentifier = new KIdentifierElements());
+		return pKIdentifier;
 	}
 	
 	public ParserRule getKIdentifierRule() {
@@ -598,10 +791,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//PersistentEntry:
-	//
 	//	key=QualifiedID ":" value=PropertyValue;
 	public PersistentEntryElements getPersistentEntryAccess() {
-		return (pPersistentEntry != null) ? pPersistentEntry : (pPersistentEntry = new PersistentEntryElements());
+		return pPersistentEntry;
 	}
 	
 	public ParserRule getPersistentEntryRule() {
@@ -609,10 +801,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//QualifiedID returns ecore::EString:
-	//
 	//	ID ("." ID)*;
 	public QualifiedIDElements getQualifiedIDAccess() {
-		return (pQualifiedID != null) ? pQualifiedID : (pQualifiedID = new QualifiedIDElements());
+		return pQualifiedID;
 	}
 	
 	public ParserRule getQualifiedIDRule() {
@@ -620,10 +811,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//PropertyValue returns ecore::EString:
-	//
 	//	BOOLEAN | STRING | Float | QualifiedID;
 	public PropertyValueElements getPropertyValueAccess() {
-		return (pPropertyValue != null) ? pPropertyValue : (pPropertyValue = new PropertyValueElements());
+		return pPropertyValue;
 	}
 	
 	public ParserRule getPropertyValueRule() {
@@ -631,10 +821,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Float returns ecore::EFloat:
-	//
 	//	TFLOAT | NATURAL;
 	public FloatElements getFloatAccess() {
-		return (pFloat != null) ? pFloat : (pFloat = new FloatElements());
+		return pFloat;
 	}
 	
 	public ParserRule getFloatRule() {
@@ -642,62 +831,52 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	/// * Terminals * / terminal TFLOAT returns ecore::EFloat:
-	//
 	//	("+" | "-") ("0".."9"+ ("." "0".."9"*)? (("e" | "E") ("+" | "-")? "0".."9"+)? | "." "0".."9"+ (("e" | "E") ("+" |
-	//
 	//	"-")? "0".."9"+)?) | "0".."9"+ "." "0".."9"* (("e" | "E") ("+" | "-")? "0".."9"+)? | "." "0".."9"+ (("e" | "E") ("+"
-	//
 	//	| "-")? "0".."9"+)? | "0".."9"+ ("e" | "E") ("+" | "-")? "0".."9"+;
 	public TerminalRule getTFLOATRule() {
-		return (tTFLOAT != null) ? tTFLOAT : (tTFLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "TFLOAT"));
+		return tTFLOAT;
 	} 
 
 	//terminal NATURAL returns ecore::EInt:
-	//
 	//	"0".."9"+;
 	public TerminalRule getNATURALRule() {
-		return (tNATURAL != null) ? tNATURAL : (tNATURAL = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "NATURAL"));
+		return tNATURAL;
 	} 
 
 	//terminal BOOLEAN returns ecore::EBoolean:
-	//
 	//	"true" | "false";
 	public TerminalRule getBOOLEANRule() {
-		return (tBOOLEAN != null) ? tBOOLEAN : (tBOOLEAN = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "BOOLEAN"));
+		return tBOOLEAN;
 	} 
 
 	//terminal STRING: // chsch: added '\'' alternative! 
-	//
 	//	"\"" ("\\" ("b" | "t" | "n" | "f" | "r" | "u" | "\"" | "\'" | "\\") | !("\\" | "\""))* "\"";
 	public TerminalRule getSTRINGRule() {
-		return (tSTRING != null) ? tSTRING : (tSTRING = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "STRING"));
+		return tSTRING;
 	} 
 
 	//terminal ID: // chsch: the optional leading '^' is the implicit keyword escape character
-	//
 	//	"^"? ("a".."z" | "A".."Z" | "_") ("a".."z" | "A".."Z" | "_" | "0".."9")*;
 	public TerminalRule getIDRule() {
-		return (tID != null) ? tID : (tID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "ID"));
+		return tID;
 	} 
 
 	//terminal ML_COMMENT:
-	//
 	//	"/ *"->"* /";
 	public TerminalRule getML_COMMENTRule() {
-		return (tML_COMMENT != null) ? tML_COMMENT : (tML_COMMENT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "ML_COMMENT"));
+		return tML_COMMENT;
 	} 
 
 	//terminal SL_COMMENT:
-	//
 	//	"//" !("\n" | "\r")* ("\r"? "\n")?;
 	public TerminalRule getSL_COMMENTRule() {
-		return (tSL_COMMENT != null) ? tSL_COMMENT : (tSL_COMMENT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "SL_COMMENT"));
+		return tSL_COMMENT;
 	} 
 
 	//terminal WS:
-	//
 	//	(" " | "\t" | "\r" | "\n")+;
 	public TerminalRule getWSRule() {
-		return (tWS != null) ? tWS : (tWS = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "WS"));
+		return tWS;
 	} 
 }

@@ -165,7 +165,7 @@ public abstract class ThresholdStrategy {
             
             // Remember that for blocks with a single node both flags can be true
             boolean isRoot = blockRoot.equals(currentNode);
-            boolean isLast = bal.align.get(currentNode).equals(blockRoot);
+            boolean isLast = bal.align[currentNode.id].equals(blockRoot);
             
             if (!(isRoot || isLast)) {
                 return oldThresh;
@@ -232,7 +232,7 @@ public abstract class ThresholdStrategy {
                 hasEdges = true;
                 
                 // if the other node does not have a position yet, ignore this edge
-                if (blockFinished.contains(bal.root.get(getOther(e, currentNode)))) {
+                if (blockFinished.contains(bal.root[getOther(e, currentNode).id])) {
                     return Pair.of(e, true);
                 }
             }
@@ -268,13 +268,13 @@ public abstract class ThresholdStrategy {
                     LPort rootPort = bal.hdir == HDirection.RIGHT ? right : left;
                     LPort otherPort = bal.hdir == HDirection.RIGHT ? left : right;
         
-                    LNode otherRoot = bal.root.get(otherPort.getNode());
-                    threshold = bal.y.get(otherRoot) 
-                                      + bal.innerShift.get(otherPort.getNode())
+                    LNode otherRoot = bal.root[otherPort.getNode().id];
+                    threshold = bal.y[otherRoot.id] 
+                                      + bal.innerShift[otherPort.getNode().id]
                                       + otherPort.getPosition().y 
                                       + otherPort.getAnchor().y
                                       // root node
-                                      - bal.innerShift.get(rootPort.getNode()) 
+                                      - bal.innerShift[rootPort.getNode().id] 
                                       - rootPort.getPosition().y
                                       - rootPort.getAnchor().y;
                 } else {
@@ -283,12 +283,12 @@ public abstract class ThresholdStrategy {
                     LPort rootPort = bal.hdir == HDirection.LEFT ? right : left;
                     LPort otherPort = bal.hdir == HDirection.LEFT ? left : right;
     
-                    threshold = bal.y.get(bal.root.get(otherPort.getNode()))
-                            + bal.innerShift.get(otherPort.getNode())
+                    threshold = bal.y[bal.root[otherPort.getNode().id].id]
+                            + bal.innerShift[otherPort.getNode().id]
                             + otherPort.getPosition().y
                             + otherPort.getAnchor().y
                             // root node
-                            - bal.innerShift.get(rootPort.getNode())
+                            - bal.innerShift[rootPort.getNode().id]
                             - rootPort.getPosition().y
                             - rootPort.getAnchor().y;
                 }
@@ -322,20 +322,16 @@ public abstract class ThresholdStrategy {
                 double delta = bal.calculateDelta(fix, block);
     
                 if (delta > 0 && delta < THRESHOLD) {
-                    
                     // target y larger than source y --> shift upwards?
-                    if (bal.checkSpaceAbove(block.getNode(), delta)) {
-                        bal.shiftBlock(block.getNode(), -delta);
-                    }
+                    double availableSpace = bal.checkSpaceAbove(block.getNode(), delta);
+                    bal.shiftBlock(block.getNode(), -availableSpace);
+                    
                 } else if (delta < 0 && -delta < THRESHOLD) {
                     
                     // direction is up, we possibly shifted some blocks too far upward 
                     // for an edge to be straight, so check if we can shift down again
-                    
-                    // target y smaller than source y --> shift down?
-                    if (bal.checkSpaceBelow(block.getNode(), -delta)) {
-                        bal.shiftBlock(block.getNode(), -delta);
-                    }
+                    double availableSpace = bal.checkSpaceBelow(block.getNode(), -delta);
+                    bal.shiftBlock(block.getNode(), availableSpace);
                 }
                 
             }
@@ -370,7 +366,7 @@ public abstract class ThresholdStrategy {
 
             // Remember that for blocks with a single node both flags can be true
             boolean isRoot = root.equals(currentNode);
-            boolean isLast = bal.align.get(currentNode).equals(root);
+            boolean isLast = bal.align[currentNode.id].equals(root);
 
             if (!(isRoot || isLast)) {
                 return t;
@@ -437,18 +433,18 @@ public abstract class ThresholdStrategy {
                 }
 
                 // if the other node does not have a position yet, ignore this edge
-                if (!blockFinished.contains(bal.root.get(otherPort.getNode()))) {
+                if (!blockFinished.contains(bal.root[otherPort.getNode().id])) {
                     continue;
                 }
 
-                LNode otherRoot = bal.root.get(otherPort.getNode());
+                LNode otherRoot = bal.root[otherPort.getNode().id];
 
                 double otherPos =
-                        bal.y.get(otherRoot) + bal.innerShift.get(otherPort.getNode())
+                        bal.y[otherRoot.id] + bal.innerShift[otherPort.getNode().id]
                                 + otherPort.getPosition().y + otherPort.getAnchor().y;
 
                 double rootPos =
-                        suggestion + bal.innerShift.get(rootPort.getNode())
+                        suggestion + bal.innerShift[rootPort.getNode().id]
                                 + rootPort.getPosition().y + rootPort.getAnchor().y;
 
                 double curDistance = Math.abs(otherPos - rootPos);
@@ -509,12 +505,12 @@ public abstract class ThresholdStrategy {
                     LPort rootPort = bal.hdir == HDirection.RIGHT ? right : left;
                     LPort otherPort = bal.hdir == HDirection.RIGHT ? left : right;
 
-                    LNode otherRoot = bal.root.get(otherPort.getNode());
+                    LNode otherRoot = bal.root[otherPort.getNode().id];
                     threshold =
-                            bal.y.get(otherRoot) + bal.innerShift.get(otherPort.getNode())
+                            bal.y[otherRoot.id] + bal.innerShift[otherPort.getNode().id]
                                     + otherPort.getPosition().y + otherPort.getAnchor().y
                                     // root node
-                                    - bal.innerShift.get(rootPort.getNode())
+                                    - bal.innerShift[rootPort.getNode().id]
                                     - rootPort.getPosition().y - rootPort.getAnchor().y;
                 } else {
 
@@ -523,11 +519,11 @@ public abstract class ThresholdStrategy {
                     LPort otherPort = bal.hdir == HDirection.LEFT ? left : right;
 
                     threshold =
-                            bal.y.get(bal.root.get(otherPort.getNode()))
-                                    + bal.innerShift.get(otherPort.getNode())
+                            bal.y[bal.root[otherPort.getNode().id].id]
+                                    + bal.innerShift[otherPort.getNode().id]
                                     + otherPort.getPosition().y + otherPort.getAnchor().y
                                     // root node
-                                    - bal.innerShift.get(rootPort.getNode())
+                                    - bal.innerShift[rootPort.getNode().id]
                                     - rootPort.getPosition().y - rootPort.getAnchor().y;
                 }
                 return threshold;
@@ -549,12 +545,12 @@ public abstract class ThresholdStrategy {
                 // why ... elaborate
                 Pair<LEdge, Boolean> pick =
                         pickEdge(bal, pair.getFirst(), pair.getSecond(),
-                                bal.y.get(pair.getFirst()), true);
+                                bal.y[pair.getFirst().id], true);
 
                 if (pick.getFirst() == null) {
                     pick =
                             pickEdge(bal, pair.getFirst(), pair.getSecond(),
-                                    bal.y.get(pair.getFirst()), false);
+                                    bal.y[pair.getFirst().id], false);
                 }
 
                 if (!pick.getSecond()) {
@@ -577,7 +573,7 @@ public abstract class ThresholdStrategy {
                 if (delta > 0 && delta < THRESHOLD) {
 
                     // target y larger than source y --> shift upwards?
-                    if (bal.checkSpaceAbove(block.getNode(), delta)) {
+                    if (bal.checkSpaceAbove(block.getNode(), delta) == delta) {
                         bal.shiftBlock(block.getNode(), -delta);
                     }
                 } else if (delta < 0 && -delta < THRESHOLD) {
@@ -586,7 +582,7 @@ public abstract class ThresholdStrategy {
                     // for an edge to be straight, so check if we can shift down again
 
                     // target y smaller than source y --> shift down?
-                    if (bal.checkSpaceBelow(block.getNode(), -delta)) {
+                    if (bal.checkSpaceBelow(block.getNode(), -delta) == delta) {
                         bal.shiftBlock(block.getNode(), -delta);
                     }
                 }

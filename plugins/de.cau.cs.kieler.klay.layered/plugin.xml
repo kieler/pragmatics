@@ -24,6 +24,9 @@
                priority="-2">
          </supportedFeature>
          <supportedFeature
+               feature="INSIDE_SELF_LOOPS">
+         </supportedFeature>
+         <supportedFeature
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
@@ -106,6 +109,9 @@
          <knownOption
                default="1.6"
                option="de.cau.cs.kieler.aspectRatio">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.selfLoopInside">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.sizeConstraint">

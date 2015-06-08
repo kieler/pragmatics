@@ -61,6 +61,17 @@ public final class NeighborhoodInformation {
     }
     
     /**
+     * Release allocated resources.
+     */
+    public void cleanup() {
+        layerIndex = null;
+        nodeIndex = null;
+        leftNeighbors.clear();
+        rightNeighbors.clear();
+        neighborComparator = null;
+    }
+    
+    /**
      * Creates and properly initializes the neighborhood information required by the
      * {@link BKNodePlacer}. This includes:
      * <ul>

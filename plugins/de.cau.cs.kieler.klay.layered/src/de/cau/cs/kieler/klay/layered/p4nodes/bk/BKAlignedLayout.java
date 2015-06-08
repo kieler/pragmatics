@@ -13,10 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
-import java.util.Map;
-
-import com.google.common.collect.Maps;
-
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
@@ -36,29 +32,27 @@ public final class BKAlignedLayout {
     
     // Allow the fields of this container to be accessed from package siblings.
     // SUPPRESS CHECKSTYLE NEXT 24 VisibilityModifier
-    // TODO one should use arrays indexed by LNode#id to improve performance
     /** The root node of each node in a block. */
-    Map<LNode, LNode> root;
+    LNode[] root;
     /** The size of a block. */
-    Map<LNode, Double> blockSize;
+    Double[] blockSize;
     /** The next node in a block, or the first if the current node is the last, forming a ring. */
-    Map<LNode, LNode> align;
+    LNode[] align;
     /** The value by which a node must be shifted to stay straight inside a block. */
-    Map<LNode, Double> innerShift;
+    Double[] innerShift;
     /** The root node of a class, mapped from block root nodes to class root nodes. */
-    Map<LNode, LNode> sink;
+    LNode[] sink;
     /** The value by which a block must be shifted for a more compact placement. */
-    Map<LNode, Double> shift;
+    Double[] shift;
     /** The y-coordinate of every node, forming the final layout. */
-    Map<LNode, Double> y;
+    Double[] y;
     /** The vertical direction of the current layout. */
     VDirection vdir;
     /** The horizontal direction of the current layout. */
     HDirection hdir;
 
     /** The graph to process. */
-    @SuppressWarnings("unused")
-    private LGraph layeredGraph;
+    LGraph layeredGraph;
     /** Basic spacing between nodes, determined by layout options. */
     private float normalSpacing;
     /** Spacing between dummy nodes, determined by layout options. */
@@ -88,17 +82,30 @@ public final class BKAlignedLayout {
         smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
         externalPortSpacing = layeredGraph.getProperty(InternalProperties.PORT_SPACING);
         
-        root = Maps.newLinkedHashMap();
-        blockSize = Maps.newHashMapWithExpectedSize(nodeCount);
-        align = Maps.newHashMapWithExpectedSize(nodeCount);
-        innerShift = Maps.newHashMapWithExpectedSize(nodeCount);
-        sink = Maps.newHashMapWithExpectedSize(nodeCount);
-        shift = Maps.newHashMapWithExpectedSize(nodeCount);
-        y = Maps.newHashMapWithExpectedSize(nodeCount);
+        root = new LNode[nodeCount];
+        blockSize = new Double[nodeCount];
+        align = new LNode[nodeCount];
+        innerShift = new Double[nodeCount];
+        sink = new LNode[nodeCount];
+        shift = new Double[nodeCount];
+        y = new Double[nodeCount];
         this.vdir = vdir;
         this.hdir = hdir;
     }
 
+    /**
+     * Explicitly release any allocated resources.
+     */
+    public void cleanup() {
+        root = null;
+        blockSize = null;
+        align = null;
+        innerShift = null;
+        sink = null;
+        shift = null;
+        y = null;
+    }
+    
     /**
      * Calculate the layout size for comparison.
      * 
@@ -112,11 +119,13 @@ public final class BKAlignedLayout {
         // We now determine the maximal extend of the layout based on
         // the minimum y coordinate of any node and the maximum
         // y coordinate _plus_ the size of any block.
-        for (LNode n : y.keySet()) {
-            double yMin = y.get(n);
-            double yMax = yMin + blockSize.get(root.get(n));
-            min = Math.min(min, yMin);
-            max = Math.max(max, yMax);
+        for (Layer layer : layeredGraph.getLayers()) {
+            for (LNode n : layer.getNodes()) {
+                double yMin = y[n.id];
+                double yMax = yMin + blockSize[root[n.id].id];
+                min = Math.min(min, yMin);
+                max = Math.max(max, yMax);
+            }
         }
         return max - min;
     }
@@ -133,9 +142,9 @@ public final class BKAlignedLayout {
      *         straighten the edge.
      */
     public double calculateDelta(final LPort src, final LPort tgt) {
-        double srcPos = y.get(src.getNode()) + innerShift.get(src.getNode()) 
+        double srcPos = y[src.getNode().id] + innerShift[src.getNode().id] 
                 + src.getPosition().y + src.getAnchor().y;
-        double tgtPos = y.get(tgt.getNode()) + innerShift.get(tgt.getNode()) 
+        double tgtPos = y[tgt.getNode().id] + innerShift[tgt.getNode().id] 
                 + tgt.getPosition().y + tgt.getAnchor().y;
         return tgtPos - srcPos;
     }
@@ -152,9 +161,9 @@ public final class BKAlignedLayout {
     public void shiftBlock(final LNode rootNode, final double delta) {
         LNode current = rootNode;
         do {
-            double newPos = y.get(current) + delta;
-            y.put(current, newPos);
-            current = align.get(current);
+            double newPos = y[current.id] + delta;
+            y[current.id] = newPos;
+            current = align[current.id];
         } while (current != rootNode);
     }
     
@@ -166,31 +175,32 @@ public final class BKAlignedLayout {
      *            root node of a block
      * @param delta
      *            a positive value
-     * @return true if there is space.
+     * @return A value smaller or equal to {@code delta} indicating the maximal distance the
+     *         block can be moved upward.
      */
-    public boolean checkSpaceAbove(final LNode blockRoot, final double delta) {
-       
+    public double checkSpaceAbove(final LNode blockRoot, final double delta) {
+        
+        double availableSpace = delta;
         final LNode rootNode = blockRoot;
         // iterate through the block
         LNode current = rootNode;
         do {
-            current = align.get(current);
+            current = align[current.id];
             // get minimum possible position of the current node
             double minYCurrent = getMinY(current);
 
             LNode neighbor = getUpperNeighbor(current, current.getIndex()); // FIXME getindex SLOW
             if (neighbor != null) {
                 double maxYNeighbor = getMaxY(neighbor);
-
-                // can we shift the current node by delta upwards?
-                if (!(minYCurrent - delta - getSpacing(current, neighbor) >= maxYNeighbor)) {
-                    return false;
-                }
+                // minimal position at which the current block node could validly be placed
+                availableSpace =
+                        Math.min(availableSpace,
+                                minYCurrent - (maxYNeighbor + getSpacing(current, neighbor)));
             }
             // until we wrap around
         } while (rootNode != current);
 
-        return true;
+        return availableSpace;
     }
     
     /**
@@ -201,32 +211,34 @@ public final class BKAlignedLayout {
      *            root node of a block
      * @param delta
      *            a positive value
-     * @return true if there is space.
+     * @return A value smaller or equal to {@code delta} indicating the maximal distance the
+     *         block can be moved upward.
      */
-    public boolean checkSpaceBelow(final LNode blockRoot, final double delta) {
+    public double checkSpaceBelow(final LNode blockRoot, final double delta) {
 
+        double availableSpace = delta;
         final LNode rootNode = blockRoot;
         // iterate through the block
         LNode current = rootNode;
         do {
-            current = align.get(current);
+            current = align[current.id];
             // get maximum possible position of the current node
             double maxYCurrent = getMaxY(current);
 
             // get the lower neighbor and check its position allows shifting
-            LNode neighbour = getLowerNeighbor(current, current.getIndex()); // FIXME getindex SLOW
-            if (neighbour != null) {
-                double minYNeighbor = getMinY(neighbour);
+            LNode neighbor = getLowerNeighbor(current, current.getIndex()); // FIXME getindex SLOW
+            if (neighbor != null) {
+                double minYNeighbor = getMinY(neighbor);
 
-                // can we shift the current node by delta downwards?
-                if (!(maxYCurrent + delta + getSpacing(current, neighbour) <= minYNeighbor)) {
-                    return false;
-                }
+                // minimal position at which the current block node could validly be placed
+                availableSpace =
+                        Math.min(availableSpace,
+                                minYNeighbor - (maxYCurrent + getSpacing(current, neighbor)));
             }
             // until we wrap around
         } while (rootNode != current);
 
-        return true;
+        return availableSpace;
     }
     
     /**
@@ -237,7 +249,7 @@ public final class BKAlignedLayout {
         float spacing;
         if (n1.getNodeType() == NodeType.EXTERNAL_PORT || n2.getNodeType() == NodeType.EXTERNAL_PORT) {
             spacing = externalPortSpacing;
-        } else if (n1.getNodeType() != NodeType.NORMAL || n2.getNodeType() != NodeType.NORMAL) {
+        } else if (n1.getNodeType() != NodeType.NORMAL && n2.getNodeType() != NodeType.NORMAL) {
            spacing = smallSpacing; 
         } else {
             spacing = normalSpacing;
@@ -256,9 +268,9 @@ public final class BKAlignedLayout {
     public double getMinY(final LNode n) {
 
         // node size + margins + inside shift etc
-        LNode rootNode = root.get(n);
-        return y.get(rootNode)
-            + innerShift.get(n)
+        LNode rootNode = root[n.id];
+        return y[rootNode.id]
+            + innerShift[n.id]
             - n.getMargin().top;
     }
     
@@ -274,9 +286,9 @@ public final class BKAlignedLayout {
     public double getMaxY(final LNode n) {
         
         // node size + margins + inside shift etc
-        LNode rootNode = root.get(n);
-        return y.get(rootNode)
-            + innerShift.get(n)
+        LNode rootNode = root[n.id];
+        return y[rootNode.id]
+            + innerShift[n.id]
             + n.getSize().y
             + n.getMargin().bottom;
     }

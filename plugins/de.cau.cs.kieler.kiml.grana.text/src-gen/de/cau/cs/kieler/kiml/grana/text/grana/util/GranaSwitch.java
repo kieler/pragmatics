@@ -116,6 +116,36 @@ public class GranaSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GranaPackage.OUTPUT:
+      {
+        Output output = (Output)theEObject;
+        T result = caseOutput(output);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.GLOBAL_OUTPUT_REF:
+      {
+        GlobalOutputRef globalOutputRef = (GlobalOutputRef)theEObject;
+        T result = caseGlobalOutputRef(globalOutputRef);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.OUTPUT_REFERENCE:
+      {
+        OutputReference outputReference = (OutputReference)theEObject;
+        T result = caseOutputReference(outputReference);
+        if (result == null) result = caseOutput(outputReference);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.LOCAL_OUTPUT:
+      {
+        LocalOutput localOutput = (LocalOutput)theEObject;
+        T result = caseLocalOutput(localOutput);
+        if (result == null) result = caseOutput(localOutput);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GranaPackage.ANALYSIS:
       {
         Analysis analysis = (Analysis)theEObject;
@@ -219,6 +249,70 @@ public class GranaSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseLocalResource(LocalResource object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Output</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Output</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseOutput(Output object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Global Output Ref</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Global Output Ref</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseGlobalOutputRef(GlobalOutputRef object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Output Reference</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Output Reference</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseOutputReference(OutputReference object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Local Output</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Local Output</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLocalOutput(LocalOutput object)
   {
     return null;
   }

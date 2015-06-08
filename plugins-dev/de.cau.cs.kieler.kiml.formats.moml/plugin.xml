@@ -4,9 +4,9 @@
    <extension
          point="de.cau.cs.kieler.kiml.formats.graphFormats">
       <handler
-            class="de.cau.cs.kieler.kiml.format.moml.MomlFormatHandler"
+            class="de.cau.cs.kieler.kiml.formats.moml.MomlFormatHandler"
             extensions="moml"
-            id="de.cau.cs.kieler.kiml.format.moml"
+            id="de.cau.cs.kieler.kiml.formats.moml"
             name="MoML">
       </handler>
    </extension>
