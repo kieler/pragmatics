@@ -159,29 +159,29 @@ public interface Job extends EObject
   EList<Analysis> getAnalyses();
 
   /**
-   * Returns the value of the '<em><b>Output</b></em>' attribute.
+   * Returns the value of the '<em><b>Output</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Output</em>' attribute isn't clear,
+   * If the meaning of the '<em>Output</em>' containment reference isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Output</em>' attribute.
-   * @see #setOutput(String)
+   * @return the value of the '<em>Output</em>' containment reference.
+   * @see #setOutput(Output)
    * @see de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage#getJob_Output()
-   * @model
+   * @model containment="true"
    * @generated
    */
-  String getOutput();
+  Output getOutput();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getOutput <em>Output</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getOutput <em>Output</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Output</em>' attribute.
+   * @param value the new value of the '<em>Output</em>' containment reference.
    * @see #getOutput()
    * @generated
    */
-  void setOutput(String value);
+  void setOutput(Output value);
 
 } // Job
