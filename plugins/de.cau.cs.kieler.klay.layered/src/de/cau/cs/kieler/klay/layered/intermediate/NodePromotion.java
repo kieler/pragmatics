@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
 /**
- * Approch of implementing the node-promotion heuristic of Nikola S. Nikolov and Alexandre Tarassov.
+ * Approach of implementing the node-promotion heuristic of Nikola S. Nikolov and Alexandre Tarassov.
  * Goal is to achieve a layering with less dummy nodes. For this purpose the original graph nodes
  * are promoted recursively and the promotion is applied, if and only if this reduces the determined
  * count of dummy nodes.
@@ -54,7 +54,6 @@ public class NodePromotion implements ILayoutProcessor {
 
         progressMonitor.begin("Node-promotion heuristic", 1);
 
-
         precalculateAndSetInformation(layeredGraph);
 
         int promotions;
@@ -76,19 +75,19 @@ public class NodePromotion implements ILayoutProcessor {
 
         setNewLayering(layeredGraph);
 
-        
         progressMonitor.done();
 
     }
 
-    
     /**
-     * Helper method for doing stuff.
+     * Helper method for calculating needed information for the heuristic. 
+     * Sets ID's for layers and nodes to grant an easier access. 
+     * Also calculates the difference for each node between its incoming and outgoing edges.
      * 
      * @param layeredGraph
      */
     private void precalculateAndSetInformation(final LGraph layeredGraph) {
-        
+
         // Set IDs for all layers and nodes.
         // Layer IDs are reversed for easier handling in the heuristic.
         int layerID = layeredGraph.getLayers().size() - 1;
@@ -101,13 +100,13 @@ public class NodePromotion implements ILayoutProcessor {
                 nodeID++;
             }
         }
-        
-        // fill layers-array with position information of nodes
+
         layers = new int[nodeID];
         degreeDiff = new int[nodeID];
         nodes = Lists.newArrayList();
         nodesWithInEdges = Lists.newArrayList();
-        
+
+        // Calculate difference and determine all nodes with incoming edges.
         int inDegree;
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
@@ -120,13 +119,12 @@ public class NodePromotion implements ILayoutProcessor {
                 nodes.add(node);
             }
         }
-        
+
     }
-    
-    
+
     /**
-     * Helper method for setting the calculated and potentially improved layering after
-     * the node-promotion-heuristic is finished.
+     * Helper method for setting the calculated and potentially improved layering after the
+     * node-promotion-heuristic is finished.
      * 
      * @param layeredGraph
      */
@@ -157,12 +155,13 @@ public class NodePromotion implements ILayoutProcessor {
     }
 
     /**
-     * Node-promotion heuristic of the paper. Works on an array of integers which represent the
-     * nodes and their position on the layers to avoid difficulties while creating and deleting
-     * new layers over the course of the discarded promotions.
+     * Node-promotion heuristic of the paper. Works on an array of integers which represents the
+     * nodes and their position on the layers to avoid difficulties while creating and deleting new
+     * layers over the course of the discarded promotions.
      * 
-     * @param node that shall be promoted.
-     * @return 
+     * @param node
+     *            that shall be promoted.
+     * @return
      */
     private int promoteNode(final LNode node) {
 
@@ -170,6 +169,8 @@ public class NodePromotion implements ILayoutProcessor {
         // Calculate layernumber for promoted node.
         int nodeNewLayerPos = layers[node.id] + 1;
 
+        // Set new layering of the node by promoting preceding nodes in the above neighboring layer
+        // recursively and calculating the difference of dummy nodes.
         for (LEdge edge : node.getIncomingEdges()) {
             LNode masterNode = edge.getSource().getNode();
             if (layers[masterNode.id] == nodeNewLayerPos) {

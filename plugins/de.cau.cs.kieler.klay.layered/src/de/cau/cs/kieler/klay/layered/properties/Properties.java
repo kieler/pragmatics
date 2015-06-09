@@ -45,7 +45,7 @@ public final class Properties {
      * Property to switch one dimensional compaction post-processing on or off.
      */
     public static final IProperty<Boolean> ONE_DIMENSIONAL_COMPACTION = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.oneDimensionalCompaction", true);
+            "de.cau.cs.kieler.klay.layered.oneDimensionalCompaction", false);
 
 
     /**
