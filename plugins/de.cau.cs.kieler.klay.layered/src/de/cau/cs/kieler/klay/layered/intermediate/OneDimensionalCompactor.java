@@ -51,10 +51,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                 layeredGraph.getProperty(InternalProperties.SPACING)
                         * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
-        // a list might be better since cnode contains lgraphelement
-        // TODO why map??
-        HashMap<LGraphElement, CNode> nodes =
-                new HashMap<LGraphElement, OneDimensionalCompactor.CNode>();
+        List<CNode> nodes = new ArrayList<CNode>();
 
         // collecting positions of graph elements
         for (Layer layer : layeredGraph) {
@@ -63,11 +60,12 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                 // sometimes are 1 high.
                 if (node.getNodeType().equals(NodeType.NORMAL)) {
                     // hitbox including object spacing
+                	// FIXME half obj + half edgespacing != edgespacing between node and edge
                     Rectangle r =
                             new Rectangle(node.getPosition().x - objSpacing / 2,
                                     node.getPosition().y - objSpacing / 2, node.getSize().x
                                             + objSpacing, node.getSize().y + objSpacing);
-                    nodes.put(node, new CNode(node, r));
+                    nodes.add(new CNode(node, r));
                 }
 
                 // add vertical edge segments
@@ -94,7 +92,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                                 new Rectangle(x - edgeSpacing / 2, y - edgeSpacing / 2,
                                         0 + edgeSpacing, h + edgeSpacing);
 
-                        nodes.put(edge, new CNode(edge, rEdge));
+                        nodes.add(new CNode(edge, rEdge));
                     }
                 }
             }
@@ -102,11 +100,11 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
         // infer constraints from node intersections
         // TODO consider a list for the constraint graph
-        for (CNode node1 : nodes.values()) {
-            for (CNode node2 : nodes.values()) {
+        for (CNode node1 : nodes) {
+            for (CNode node2 : nodes) {
                 // add constraint if node2 is to the right of node1 and could collide in x direction
-                // TODO consider some wiggleroom between adjacent nodes?
-                if (node2.hitbox.x > node1.hitbox.x + node1.hitbox.width
+                // consider some wiggleroom between adjacent nodes .. weird
+                if (node2.hitbox.x + 5.01 >= node1.hitbox.x + node1.hitbox.width
                         && node2.hitbox.y + node2.hitbox.height >= node1.hitbox.y
                         && node2.hitbox.y <= node1.hitbox.y + node1.hitbox.height) {
                     node1.incoming.add(node2);
@@ -118,7 +116,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         // calculate node positions
         // starting with nodes with outDegree == 0
         Queue<CNode> startNodes = new LinkedList<CNode>();
-        for (CNode node : nodes.values()) {
+        for (CNode node : nodes) {
             if (node.outDegree == 0) {
                 startNodes.add(node);
             }
@@ -140,7 +138,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         }
 
         // position nodes
-        for (CNode node : nodes.values()) {
+        for (CNode node : nodes) {
 
             if (node.elem.getClass() == LNode.class) {
                 LNode n = (LNode) node.elem;
@@ -152,8 +150,14 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                 Iterator<KVector> bends = e.getBendPoints().iterator();
                 KVector bend1 = bends.next();
                 KVector bend2 = bends.next();
-                bend1.x = node.startX - edgeSpacing / 2;
-                bend2.x = bend1.x;
+                double x = node.startX - edgeSpacing / 2;
+                if (bend1.x > x) {
+                	bend1.x = bend2.x = x;
+                } else if (bends.hasNext()) {
+                	bend1 = bends.next();
+                    bend2 = bends.next();
+                    bend1.x = bend2.x = x;
+                }
             }
         }
 
