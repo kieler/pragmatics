@@ -38,6 +38,8 @@ import org.eclipse.core.runtime.Path
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
 import java.io.IOException
+import de.cau.cs.kieler.kiml.grana.text.grana.OutputReference
+import de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput
 
 /**
  * Utility class to convert textually specified grana executions to 
@@ -60,80 +62,98 @@ final class GranaTextToBatchJob {
         val results = Lists.<BatchResult>newLinkedList
         
         // execute for every job
-        for (job : grana.jobs) {
+        for (job : grana.jobs
+                        // ignore deactivated jobs
+                        .filter[ grana.executeAll || grana.execute.contains(it) ]
+                        .filter[ !it.name.startsWith("_")]) {
             
-            // ignore deactivated jobs
-            if (!job.name.startsWith("_")) {
-                
-                // collect requested analyses
-                val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
-                val batch = new Batch(analyses)
+            // collect requested analyses
+            val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
+            val batch = new Batch(analyses)
+
+            // resolve references to resources
+            val resources =  job.resources.map[ r |
+                switch r {
+                    ResourceReference: (r as ResourceReference).resourceRefs.map[it.resources].flatten
+                    default: #[(r as LocalResource)]
+                }
+            ].flatten
+            
+            // collect all model files within the specified resources            
+            for (resource : resources) {
+                val filter = if (!resource.filter.nullOrEmpty)
+                    Pattern.compile(resource.filter) else null
+
+                try {
+                    // first we try to interpret the path as workspace relative
+                    val p = wsRoot.projects.findFirst[p|resource.path.contains(p.name)]
+                    if (p == null) 
+                        throw new IllegalArgumentException("Could not find resource " + resource.path)
+                    val wsloc = p.findMember(resource.path.replace(p.name, ""))
     
-                // resolve possible references
-                val resources =  job.resources.map[ r |
-                    switch r {
-                        ResourceReference: (r as ResourceReference).resourceRefs.map[it.resources].flatten
-                        default: #[(r as LocalResource)]
-                    }
-                ].flatten
-                
-                // collect all model files within the specified resources            
-                for (resource : resources) {
-                    val filter = if (!resource.filter.nullOrEmpty)
-                        Pattern.compile(resource.filter) else null
-    
-                    try {
-                        // first we try to interpret the path as workspace relative
-                        val p = wsRoot.projects.findFirst[p|resource.path.contains(p.name)]
-                        if (p == null) 
-                            throw new IllegalArgumentException("Could not find resource " + resource.path)
-                        val wsloc = p.findMember(resource.path.replace(p.name, ""))
-        
-                        // add all files to the batch job
-                        for (file : (wsloc as IContainer).members) {
-                            if (filter == null || filter.matcher(file.name).matches) {
-                                addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
-                            }
+                    // add all files to the batch job
+                    for (file : (wsloc as IContainer).members) {
+                        if (filter == null || filter.matcher(file.name).matches) {
+                            addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
                         }
-                    } catch (Exception e) {
-                    	
-                    	val fileURI = URI.createURI(resource.path, true)
-                    	val dir = new File(fileURI.toFileString)
-						if (dir == null || !dir.exists) {
-							throw new IllegalArgumentException("Could not find resource location: '" 
-								+ resource.path + "'")
-						}                    	
-                    	
-                        for (file : dir.listFiles) {
-                            if (filter == null || filter.matcher(file.name).matches) {
-                                addBatchJob(batch, job, new Path(file.absolutePath))
-                            }
-                        }                    
                     }
-                }
-
-                // execute the analyses
-                val result = batch.execute(pm.subTask(1))
-                if (pm.canceled) {
-                    return #[]
-                }
-
-                results += result
-
-    			try {
-	                // write results (of successful analyses)
-	                var OutputStream os
-                    val fileURI = URI.createURI(job.output, true)
-                    val uriConv = new ExtensibleURIConverterImpl
-                    os = uriConv.createOutputStream(fileURI)
-	                val serializer = new CSVResultSerializer
-	                serializer.serialize(os, result, pm.subTask(1))
-	                os.close
-                } catch (IOException e) {
-                	throw new IllegalArgumentException("Could not store results to file '" 
-                		+ job.output + "'")
+                } catch (Exception e) {
+                	
+                	val fileURI = URI.createURI(resource.path, true)
+                	val dir = new File(fileURI.toFileString)
+					if (dir == null || !dir.exists) {
+						throw new IllegalArgumentException("Could not find resource location: '" 
+							+ resource.path + "'")
+					}                    	
+                	
+                    for (file : dir.listFiles) {
+                        if (filter == null || filter.matcher(file.name).matches) {
+                            addBatchJob(batch, job, new Path(file.absolutePath))
+                        }
+                    }                    
                 }
             }
+            
+            // resolve output file
+            val outputPath = switch job.output {
+                OutputReference: (job.output as OutputReference).outputRef.output.path
+                default: (job.output as LocalOutput).path
+            }
+                
+            try {
+                // write results (of successful analyses)
+                var OutputStream os
+                val fileURI = URI.createURI(outputPath, true)
+                val uriConv = new ExtensibleURIConverterImpl
+                os = uriConv.createOutputStream(fileURI)
+                os.write(0)
+                os.close
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Could not store results to file '" 
+                    + outputPath + "'")
+            }
+
+            // everything should be fine ... execute the analyses!
+            val result = batch.execute(pm.subTask(1))
+            if (pm.canceled) {
+                return #[]
+            }
+
+           try {
+                // write results (of successful analyses)
+                var OutputStream os
+                val fileURI = URI.createURI(outputPath, true)
+                val uriConv = new ExtensibleURIConverterImpl
+                os = uriConv.createOutputStream(fileURI)
+                val serializer = new CSVResultSerializer
+                serializer.serialize(os, result, pm.subTask(1))
+                os.close
+            } catch (IOException e) {
+                throw new IllegalArgumentException("Could not store results to file '" 
+                    + outputPath + "'")
+            }
+
+            results += result
         }
         
         return results

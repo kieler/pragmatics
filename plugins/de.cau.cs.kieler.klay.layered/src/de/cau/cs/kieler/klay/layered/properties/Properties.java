@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -17,16 +17,16 @@ import java.util.EnumSet;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 
 /**
  * Container for public property definitions. These are layout options that can be set on graph
  * elements before the algorithm is invoked.
- * 
+ *
  * @author msp
  * @author cds
  * @author uru
@@ -36,21 +36,9 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 public final class Properties {
 
     /**
-     * Minimal spacing between objects.
-     */
-    public static final Property<Float> OBJ_SPACING = new Property<Float>(LayoutOptions.SPACING,
-            20.0f, 1.0f);
-
-    /**
-     * Minimal spacing between ports.
-     */
-    public static final Property<Float> PORT_SPACING = new Property<Float>(
-            LayoutOptions.PORT_SPACING, 10.0f, 1.0f);
-
-    /**
-     * A pre-defined seed for pseudo-random number generators. We redefine the property here to set
-     * its default value to 1.
-     * 
+     * A pre-defined seed for pseudo-random number generators.
+     * We redefine the property here to set its default value to 1.
+     *
      * @see LayoutOptions#RANDOM_SEED
      */
     public static final IProperty<Integer> RANDOM_SEED = new Property<Integer>(
@@ -58,16 +46,10 @@ public final class Properties {
 
     /**
      * The factor by which the in-layer spacing between objects differs from the inter-layer
-     * {@link Properties#OBJ_SPACING}.
+     * {@link InternalProperties#SPACING}.
      */
     public static final IProperty<Float> OBJ_SPACING_IN_LAYER_FACTOR = new Property<Float>(
             "de.cau.cs.kieler.klay.layered.inLayerSpacingFactor", 1.0f, 0f);
-
-    /**
-     * Spacing to the border of the drawing.
-     */
-    public static final Property<Float> BORDER_SPACING = new Property<Float>(
-            LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
 
     /**
      * Factor for minimal spacing between edges.
@@ -76,20 +58,8 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.edgeSpacingFactor", 0.5f);
 
     /**
-     * Priority of elements. controls how much single edges are emphasized.
-     */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
-            0);
-
-    /**
-     * The aspect ratio for packing connected components.
-     */
-    public static final Property<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
-
-    /**
      * Whether nodes shall be distributed during layer assignment.
-     * 
+     *
      * @deprecated use the {@link #WIDE_NODES_ON_MULTIPLE_LAYERS} property instead.
      */
     @Deprecated
@@ -230,8 +200,8 @@ public final class Properties {
      * Handles large sausages.
      */
     public static final IProperty<Boolean> SAUSAGE_FOLDING = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.sausageFolding", false);    
-    
+            "de.cau.cs.kieler.klay.layered.sausageFolding", false);
+
     /**
      * The spline-self-loop distribution method.
      */
@@ -239,6 +209,13 @@ public final class Properties {
             new Property<SelfLoopPlacement>("de.cau.cs.kieler.klay.layered.splines.selfLoopPlacement",
                     SelfLoopPlacement.NORTH_STACKED);
 
+    /**
+     * Specifies the compaction strategy when using the {@link BKNodePlacer}.
+     */
+    public static final IProperty<CompactionStrategy> COMPACTION_STRATEGY =
+            new Property<CompactionStrategy>(
+                    "de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy",
+                    CompactionStrategy.CLASSIC);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

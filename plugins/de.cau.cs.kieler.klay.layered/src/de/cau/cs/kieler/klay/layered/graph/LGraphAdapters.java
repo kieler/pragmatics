@@ -33,7 +33,6 @@ import de.cau.cs.kieler.kiml.util.nodespacing.LabelSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Provides implementations of the {@link de.cau.cs.kieler.kiml.util.adapters.GraphAdapters
@@ -123,7 +122,7 @@ public final class LGraphAdapters {
             // handle some special cases
             if (prop.equals(LayoutOptions.SPACING)) {
                 // cast is ok, as both properties are Floats
-                return (P) element.getProperty(Properties.OBJ_SPACING);
+                return (P) element.getProperty(InternalProperties.SPACING);
             } else if (prop.equals(LayoutOptions.OFFSET)) {
                 return (P) element.getProperty(InternalProperties.OFFSET);
             }

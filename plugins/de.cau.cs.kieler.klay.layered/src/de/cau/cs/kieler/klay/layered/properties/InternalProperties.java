@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -26,6 +26,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.LabelSide;
@@ -43,9 +44,9 @@ import de.cau.cs.kieler.klay.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import de.cau.cs.kieler.klay.layered.p5edges.splines.LoopSide;
 
 /**
- * Container for property definitions for internal use of the algorithm. These properties should not
- * be accessed from outside.
- * 
+ * Container for property definitions for internal use of the algorithm. These properties should
+ * not be accessed from outside.
+ *
  * @author msp
  * @author cds
  * @author uru
@@ -99,13 +100,6 @@ public final class InternalProperties {
     public static final IProperty<LNode> PARENT_LNODE = new Property<LNode>("parentLNode");
 
     /**
-     * Offset of port position to the node border. An offset of 0 means that the port touches its
-     * parent node on the outside, positive offsets move the port away from the node, and negative
-     * offset move the port towards the inside.
-     */
-    public static final IProperty<Float> OFFSET = new Property<Float>(LayoutOptions.OFFSET, 0.0f);
-
-    /**
      * The original bend points of an edge.
      */
     public static final IProperty<KVectorChain> ORIGINAL_BENDPOINTS = new Property<KVectorChain>(
@@ -132,13 +126,13 @@ public final class InternalProperties {
      */
     public static final IProperty<List<LLabel>> REPRESENTED_LABELS =
             new Property<List<LLabel>>("representedLabels");
-    
+
     /**
      * The side (of an edge) a label is placed on.
      */
     public static final IProperty<LabelSide> LABEL_SIDE = new Property<LabelSide>(
             "labelSide", LabelSide.UNKNOWN);
-    
+
     /**
      * Flag for reversed edges.
      */
@@ -182,8 +176,8 @@ public final class InternalProperties {
      * constraint. If they don't, however, they must include a dependency on
      * {@link de.cau.cs.kieler.klay.layered.intermediate.InLayerConstraintProcessor}.
      */
-    public static final IProperty<InLayerConstraint> IN_LAYER_CONSTRAINT =
-            new Property<InLayerConstraint>("inLayerConstraint", InLayerConstraint.NONE);
+    public static final IProperty<InLayerConstraint> IN_LAYER_CONSTRAINT
+           = new Property<InLayerConstraint>("inLayerConstraint", InLayerConstraint.NONE);
 
     /**
      * Indicates that a node {@code x} may only appear inside a layer before the node {@code y} the
@@ -327,11 +321,13 @@ public final class InternalProperties {
 
     /**
      * Original labels of a big node.
-     * */
+     */
     public static final IProperty<List<LLabel>> BIGNODES_ORIG_LABELS = new Property<List<LLabel>>(
             "de.cau.cs.kieler.klay.layered.bigNodeLabels", new ArrayList<LLabel>());
 
-    /** A post processing function that is called during big nodes post processing. */
+    /**
+     * A post processing function that is called during big nodes post processing.
+     */
     public static final IProperty<Function<Void, Void>> BIGNODES_POST_PROCESS =
             new Property<Function<Void, Void>>("de.cau.cs.kieler.klay.layered.postProcess", null);
 
@@ -347,17 +343,17 @@ public final class InternalProperties {
      * the origin.
      */
     public static final IProperty<KVector> TARGET_OFFSET = new Property<KVector>("targetOffset");
-    
+
     /**
      * Combined size of all edge labels of a spline self loop.
      */
-    public static final IProperty<KVector> SPLINE_LABEL_SIZE = 
+    public static final IProperty<KVector> SPLINE_LABEL_SIZE =
             new Property<KVector>("splineLabelSize", new KVector());
-    
+
     /**
-     * Determines the loop side of an edge.  
+     * Determines the loop side of an edge.
      */
-    public static final IProperty<LoopSide> SPLINE_LOOPSIDE = new Property<LoopSide>("splineLoopSide", 
+    public static final IProperty<LoopSide> SPLINE_LOOPSIDE = new Property<LoopSide>("splineLoopSide",
             LoopSide.UNDEFINED);
 
     /**
@@ -378,6 +374,52 @@ public final class InternalProperties {
      */
     public static final IProperty<List<LPort>> CONNECTED_NORTH_SOUTH_PORT_DUMMIES =
             new Property<List<LPort>>("connectedNorthSouthPorts", new ArrayList<LPort>());
+
+    // /////////////////////////////////////////////////////////////////////////////
+    // OVERWRITTEN PROPERTIES
+
+    /**
+     * Offset of port position to the node border. An offset of 0 means that the port touches its
+     * parent node on the outside, positive offsets move the port away from the node, and negative
+     * offset move the port towards the inside.
+     */
+    public static final IProperty<Float> OFFSET = new Property<Float>(LayoutOptions.OFFSET, 0.0f);
+
+    /**
+     * Minimal spacing between objects.
+     */
+    public static final Property<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
+            20.0f, 1.0f);
+
+    /**
+     * Minimal spacing between ports.
+     */
+    public static final Property<Float> PORT_SPACING = new Property<Float>(LayoutOptions.PORT_SPACING,
+            10.0f, 1.0f);
+
+    /**
+     * Spacing to the border of the drawing.
+     */
+    public static final Property<Float> BORDER_SPACING = new Property<Float>(
+            LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
+
+    /**
+     * Priority of elements. controls how much single edges are emphasized.
+     */
+    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
+
+    /**
+     * The aspect ratio for packing connected components.
+     */
+    public static final Property<Float> ASPECT_RATIO = new Property<Float>(
+            LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
+
+    /**
+     * How to route edges.
+     */
+    public static final Property<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
+            LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
+
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

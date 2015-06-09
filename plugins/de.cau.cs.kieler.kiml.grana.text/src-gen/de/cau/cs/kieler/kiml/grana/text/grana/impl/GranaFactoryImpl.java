@@ -70,6 +70,10 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
       case GranaPackage.RESOURCE_REFERENCE: return createResourceReference();
       case GranaPackage.GLOBAL_RESOURCE_REF: return createGlobalResourceRef();
       case GranaPackage.LOCAL_RESOURCE: return createLocalResource();
+      case GranaPackage.OUTPUT: return createOutput();
+      case GranaPackage.GLOBAL_OUTPUT_REF: return createGlobalOutputRef();
+      case GranaPackage.OUTPUT_REFERENCE: return createOutputReference();
+      case GranaPackage.LOCAL_OUTPUT: return createLocalOutput();
       case GranaPackage.ANALYSIS: return createAnalysis();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -140,6 +144,50 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
   {
     LocalResourceImpl localResource = new LocalResourceImpl();
     return localResource;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Output createOutput()
+  {
+    OutputImpl output = new OutputImpl();
+    return output;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public GlobalOutputRef createGlobalOutputRef()
+  {
+    GlobalOutputRefImpl globalOutputRef = new GlobalOutputRefImpl();
+    return globalOutputRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public OutputReference createOutputReference()
+  {
+    OutputReferenceImpl outputReference = new OutputReferenceImpl();
+    return outputReference;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public LocalOutput createLocalOutput()
+  {
+    LocalOutputImpl localOutput = new LocalOutputImpl();
+    return localOutput;
   }
 
   /**

@@ -23,6 +23,7 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -89,9 +90,9 @@ public final class LNode extends LShape {
     /** the node's node type. */
     private NodeType nodeType = NodeType.NORMAL;
     /** the ports of the node. */
-    private final List<LPort> ports = Lists.newArrayList();
+    private final List<LPort> ports = Lists.newArrayListWithCapacity(6);
     /** this node's labels. */
-    private final List<LLabel> labels = Lists.newArrayList();
+    private final List<LLabel> labels = Lists.newArrayListWithCapacity(2);
     /** the margin area around this node. */
     private final LInsets margin = new LInsets();
     /** the insets inside this node, usually reserved for port and label placement. */
@@ -452,7 +453,7 @@ public final class LNode extends LShape {
         LGraph thegraph = getGraph();
         
         LInsets graphInsets = thegraph.getInsets();
-        float borderSpacing = thegraph.getProperty(Properties.BORDER_SPACING);
+        float borderSpacing = thegraph.getProperty(InternalProperties.BORDER_SPACING);
         KVector offset = thegraph.getOffset();
         KVector pos = getPosition();
         

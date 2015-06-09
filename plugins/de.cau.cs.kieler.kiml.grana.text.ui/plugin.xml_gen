@@ -250,7 +250,9 @@
    <extension
          point="org.eclipse.xtext.builder.participant">
       <participant
-            class="de.cau.cs.kieler.kiml.grana.text.ui.GranaExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant">
+            class="de.cau.cs.kieler.kiml.grana.text.ui.GranaExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
+            fileExtensions="grana"
+            >
       </participant>
    </extension>
    <extension

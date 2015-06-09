@@ -20,7 +20,7 @@ import java.util.ListIterator;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
  * A layered graph has a set of layers that contain the nodes, as well as a
@@ -108,7 +108,7 @@ public final class LGraph extends LGraphElement implements Iterable<Layer> {
      * @return the graph's size including borders.
      */
     public KVector getActualSize() {
-        float borderSpacing = getProperty(Properties.BORDER_SPACING);
+        float borderSpacing = getProperty(InternalProperties.BORDER_SPACING);
         return new KVector(
                 size.x + insets.left + insets.right + (2 * borderSpacing),
                 size.y + insets.top + insets.bottom + (2 * borderSpacing));
