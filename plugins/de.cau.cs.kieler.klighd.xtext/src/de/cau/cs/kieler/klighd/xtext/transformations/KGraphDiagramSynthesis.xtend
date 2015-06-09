@@ -124,9 +124,13 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         return ImmutableList::of(
             // example to specify external layout option (in this case one of klay layered)
             // remember to add the following import in the head of this class
-            //specifyLayoutOption("de.cau.cs.kieler.klay.layered.nodeLayering", ImmutableList.of("STRETCH_WIDTH", "MIN_WIDTH", "LONGEST_PATH")),
+            specifyLayoutOption("de.cau.cs.kieler.klay.layered.nodeLayering", null),
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale", ImmutableList.of(0f, 1f)),
-        specifyLayoutOption("de.cau.cs.kieler.klay.layered.nodePromotion", ImmutableList.of(true, false))
+            specifyLayoutOption("de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth", ImmutableList.of(0, 100)),
+            specifyLayoutOption("de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", ImmutableList.of(1f, 2f)),
+            specifyLayoutOption("de.cau.cs.kieler.klay.layered.nodePromotion",null),
+            specifyLayoutOption("de.cau.cs.kieler.klay.layered.oneDimensionalCompaction",null)
+       
         // These values are annoying :)
         //specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
         //  ImmutableList::copyOf(PortConstraints::values)),
