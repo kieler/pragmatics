@@ -237,7 +237,7 @@
       <layoutOption
       		appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.properties.GreedySwitchType"
-            default="OFF"
+            default="TWO_SIDED"
             description="Greedy Switch strategy for crossing minimization."
             id="de.cau.cs.kieler.klay.layered.greedySwitch"
             name="Greedy Switch Crossing Minimization"
