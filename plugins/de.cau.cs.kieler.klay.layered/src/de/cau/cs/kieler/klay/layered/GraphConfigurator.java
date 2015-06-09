@@ -287,7 +287,7 @@ final class GraphConfigurator {
             configuration
                 .addBeforePhase3(IntermediateProcessorStrategy.NODE_PROMOTION);
         }
-        
+
         // Additional prettification only if orthogonal edge routing is applied
         if (lgraph.getProperty(Properties.ONE_DIMENSIONAL_COMPACTION) && lgraph.getProperty(InternalProperties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
             configuration

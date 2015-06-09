@@ -20,14 +20,18 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.AbstractTreeIterator;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
 import de.cau.cs.kieler.core.kgraph.KEdge;
@@ -53,7 +57,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
@@ -1018,5 +1024,228 @@ public final class KimlUtil {
         points[n - 1] = edgeLayout.getTargetPoint().createVector();
         return points;
     }
+
+
+    /**
+     * Determines the {@link KEdge KEdges} that are (transitively) connected to the given
+     * {@code kedges} across hierarchy boundaries via common ports. See
+     * {@link #getConnectedEdges(KEdge)} for details.
+     *
+     * @see #getConnectedEdges(KEdge)
+     * @param kedges
+     *            an {@link Iterable} of {@link KEdge KEdges} that shall be checked
+     * @return an {@link Iterator} visiting the given {@code kedges} and all (transitively)
+     *         connected ones.
+     */
+    public static Iterator<KEdge> getConnectedEdges(final Iterable<KEdge> kedges) {
+        return Iterators.concat(
+                Iterators.transform(kedges.iterator(), new Function<KEdge, Iterator<KEdge>>() {
+
+            public Iterator<KEdge> apply(final KEdge kedge) {
+                return getConnectedEdges(kedge);
+            }
+        }));
+    }
+
+    /**
+     * Determines the {@link KEdge KEdges} that are (transitively) connected to {@code kedge} across
+     * hierarchy boundaries via common ports. Rational: Multiple {@link KEdge KEdges} that are
+     * pairwise connected by means of a {@link KPort} (target port of edge a == source port of edge
+     * b or vice versa) may form one logical connection. This kind splitting might be already
+     * present in the view model, or is performed by the layout algorithm for decomposing a nested
+     * layout input graph into flat sub graphs.
+     *
+     * @param kedge
+     *            the {@link KEdge} check for connected edges
+     * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
+     *         almost) breadth first search fashion
+     */
+    public static Iterator<KEdge> getConnectedEdges(final KEdge kedge) {
+        // get a singleton iterator offering 'kedge'
+        final Iterator<KEdge> kedgeIt = Iterators.singletonIterator(kedge);
+        final Set<KPort> visited = Sets.newHashSet();
+
+        // if 'kedge' has a source port,
+        //  create a bfs tree iterator visiting all source-sidewise connected edges
+        final Iterator<KEdge> sourceSideIt =
+                kedge.getSourcePort() == null ? null : new AbstractTreeIterator<KEdge>(kedge, false) {
+
+            private static final long serialVersionUID = 2096899476184317737L;
+
+            @Override
+            protected Iterator<? extends KEdge> getChildren(final Object object) {
+                final KPort sourcePort = ((KEdge) object).getSourcePort();
+
+                if (sourcePort == null || visited.contains(sourcePort)) {
+                    // return an empty iterator if no source port is configured
+                    //  or if the source port has been visited already, in order
+                    //  to break infinite loops
+                    return Iterators.<KEdge>emptyIterator();
+                }
+
+                visited.add(sourcePort);
+
+                // for each object (kedge) visited by this iterator check all the edges connected to
+                //  'sourcePort' and visit those edges satisfying the criterion stated above
+                // this criterion btw. prevents from visiting 'object' immediately again,
+                //  as "sourcePort == input.getTargetPort()" implies "object != input"
+                return Iterators.filter(sourcePort.getEdges().iterator(), new Predicate<KEdge>() {
+
+                    public boolean apply(final KEdge input) {
+                        return sourcePort == input.getTargetPort();
+                    }
+                });
+            }
+        };
+
+        // if 'kedge' has a target port,
+        //  create a bfs tree iterator visiting all target-sidewise connected edges
+        final Iterator<KEdge> targetSideIt =
+                kedge.getTargetPort() == null ? null : new AbstractTreeIterator<KEdge>(kedge, false) {
+
+            private static final long serialVersionUID = -4290192971641462249L;
+
+            @Override
+            protected Iterator<? extends KEdge> getChildren(final Object object) {
+                final KPort targetPort = ((KEdge) object).getTargetPort();
+
+                if (targetPort == null || visited.contains(targetPort)) {
+                    // return an empty iterator if no target port is configured
+                    //  or if the target port has been visited already, in order
+                    //  to break infinite loops
+                    return Iterators.<KEdge>emptyIterator();
+                }
+
+                visited.add(targetPort);
+
+                // for each object (kedge) visited by this iterator check all the edges connected to
+                //  'targetPort' and visit those edges satisfying the criterion stated above
+                // this criterion btw. prevents from visiting 'object' immediately again,
+                //  as "targetPort == input.getSourcePort()" implies "object != input"
+                return Iterators.filter(targetPort.getEdges().iterator(), new Predicate<KEdge>() {
+
+                    public boolean apply(final KEdge input) {
+                        return targetPort == input.getSourcePort();
+                    }
+                });
+            }
+        };
+
+        // concatenate the source-sidewise and target-sidewise iterators if present ...
+        final Iterator<KEdge> connectedEdges = sourceSideIt == null ? targetSideIt
+                : targetSideIt == null ? sourceSideIt : Iterators.concat(sourceSideIt, targetSideIt);
+
+        // ... and attach them to the input 'kedge' offering iterator, or return just the
+        //  input 'kedge' iterator in case no ports are configured for 'kedge'
+        return connectedEdges == null ? kedgeIt : Iterators.concat(kedgeIt, connectedEdges);
+    }
     
+    /**
+     * Recursively configures default values for all child elements of the passed graph. This
+     * includes node, ports, and edges.
+     * 
+     * Note that it is <b>not</b> checked whether the defaults flag is set on the graph.
+     * 
+     * @param graph
+     *            the graph to configure.
+     */
+    public static void configureDefaultsRecursively(final KNode graph) {
+
+        Iterator<KGraphElement> kgeIt =
+                Iterators.filter(graph.eAllContents(), KGraphElement.class);
+        while (kgeIt.hasNext()) {
+            KGraphElement kge = kgeIt.next();
+            if (kge instanceof KNode) {
+                configureWithDefaultValues((KNode) kge);
+            } else if (kge instanceof KPort) {
+                configureWithDefaultValues((KPort) kge);
+            } else if (kge instanceof KEdge) {
+                configureWithDefaultValues((KEdge) kge);
+            }
+        }
+    }
+    /**
+     * Adds some default values to the passed node. This includes a reasonable size, a label based
+     * on the node's {@link KIdentifier} and a inside center node label placement.
+     * 
+     * Such default values are useful for fast test case generation.
+     * 
+     * @param node
+     *            a node of a graph
+     */
+    public static void configureWithDefaultValues(final KNode node) {
+       
+        // Make sure the node has a size if the size constraints are fixed
+        KShapeLayout sl = node.getData(KShapeLayout.class);
+        if (sl != null) {
+            Set<SizeConstraint> sc = sl.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+            
+            if (sc.equals(SizeConstraint.fixed()) && sl.getWidth() == 0f && sl.getHeight() == 0f) {
+                sl.setWidth(DEFAULT_MIN_WIDTH * 2 * 2);
+                sl.setHeight(DEFAULT_MIN_HEIGHT * 2 * 2);
+            }
+        } 
+        
+        // label
+        ensureLabel(node);
+        if (sl != null) {
+            Set<NodeLabelPlacement> nlp = sl.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+            if (nlp.equals(NodeLabelPlacement.fixed())) {
+                sl.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT, NodeLabelPlacement.insideCenter());
+            }
+        }
+        
+    }
+    
+    /**
+     * Adds some default values to the passed port. This includes a reasonable size 
+     * and a label based on the port's {@link KIdentifier}.
+     * 
+     * Such default values are useful for fast test case generation.
+     * 
+     * @param port
+     *            a port of a node of a graph
+     */
+    public static void configureWithDefaultValues(final KPort port) {
+
+        KShapeLayout sl = port.getData(KShapeLayout.class);
+        if (sl != null && sl.getWidth() == 0f && sl.getHeight() == 0f) {
+            sl.setWidth(DEFAULT_MIN_WIDTH / 2 / 2);
+            sl.setHeight(DEFAULT_MIN_HEIGHT / 2 / 2);
+        }
+        
+        ensureLabel(port);
+    }
+    
+    /**
+     * Configures the {@link EdgeLabelPlacement} of the passed edge to be center of the edge.
+     * 
+     * @param edge
+     *            an edge of a graph
+     */
+    public static void configureWithDefaultValues(final KEdge edge) {
+
+        KLayoutData ld = edge.getData(KLayoutData.class);
+        if (ld != null) {
+            EdgeLabelPlacement elp = ld.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+            if (elp == EdgeLabelPlacement.UNDEFINED) {
+                ld.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.CENTER);
+            }
+        }
+    }
+    
+    /**
+     * If the element does not already own a label, a label is created based on the element's
+     * {@link KIdentifier} (if it exists, that is).
+     */
+    private static void ensureLabel(final KLabeledGraphElement klge) {
+        if (klge.getLabels().isEmpty()) {
+
+            KIdentifier id = klge.getData(KIdentifier.class);
+            if (id != null && !Strings.isNullOrEmpty(id.getId())) {
+                KLabel label = createInitializedLabel(klge);
+                label.setText(id.getId());
+            }
+        }
+    }
 }

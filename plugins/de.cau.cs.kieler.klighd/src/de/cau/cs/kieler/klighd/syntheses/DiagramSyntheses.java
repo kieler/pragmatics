@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.syntheses;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -40,6 +41,7 @@ import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.KTopPosition;
 import de.cau.cs.kieler.core.krendering.LineStyle;
 import de.cau.cs.kieler.core.properties.IProperty;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
@@ -47,6 +49,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import de.cau.cs.kieler.klighd.util.KlighdSemanticDiagramData;
 
 /**
  * Collection of KGraph/KRendering view model configuration methods.
@@ -67,7 +70,7 @@ public final class DiagramSyntheses {
      * Convenience method for defining layout options for {@link KGraphElement KGraphElements}. A
      * list of typically configured options is given in {@link DiagramLayoutOptions}.
      *
-     * @param <R>
+     * @param <S>
      *            the concrete type of <code>element</code>
      * @param <T>
      *            the property value type
@@ -80,7 +83,7 @@ public final class DiagramSyntheses {
      *            the option value
      * @return <code>element</code> allowing to perform multiple operations on it in one statement
      */
-    public static <R extends KGraphElement, T> R setLayoutOption(final R element,
+    public static <S extends KGraphElement, T> S setLayoutOption(final S element,
             final IProperty<T> option, final T value) {
         element.getData(KLayoutData.class).setProperty(option, value);
         return element;
@@ -91,7 +94,7 @@ public final class DiagramSyntheses {
      * on ids and string representations of property values. A list of typically configured options
      * is given in {@link DiagramLayoutOptions}.
      *
-     * @param <R>
+     * @param <S>
      *            the concrete type of <code>element</code>
      * @param element
      *            the element to set the layout option on
@@ -103,7 +106,7 @@ public final class DiagramSyntheses {
      *            well as any non-string property.
      * @return <code>element</code> allowing to perform multiple operations on it in one statement
      */
-    public static <R extends KGraphElement> R setLayoutOption(final R element,
+    public static <S extends KGraphElement> S setLayoutOption(final S element,
             final String optionId, final Object value) {
         final LayoutOptionData option = LayoutMetaDataService.getInstance().getOptionData(optionId);
         if (option != null) {
@@ -115,7 +118,7 @@ public final class DiagramSyntheses {
         }
         return element;
     }
-
+    
     /**
      * Convenience method for defining multiple layout options for {@link KGraphElement
      * KGraphElements}. A list of typically configured options is given in
@@ -125,7 +128,7 @@ public final class DiagramSyntheses {
      * ImmutableMap.&lt;IProperty&lt;?&gt;, Object&gt;of(option, value, option, value, ...)}, for
      * example.
      *
-     * @param <R>
+     * @param <S>
      *            the concrete type of <code>element</code>
      * @param element
      *            the element to set the layout option on
@@ -135,7 +138,7 @@ public final class DiagramSyntheses {
      *            corresponding option values.
      * @return <code>element</code> allowing to perform multiple operations on it in one statement
      */
-    public static <R extends KGraphElement> R setLayoutOptions(final R element,
+    public static <S extends KGraphElement> S setLayoutOptions(final S element,
             final Map<IProperty<?>, ?> optionValueMap) {
         final KLayoutData sl = element.getData(KLayoutData.class);
         if (sl != null && optionValueMap != null) {
@@ -148,7 +151,51 @@ public final class DiagramSyntheses {
         return element;
     }
 
+    /**
+     * Convenient function to assemble a pair of layout option and allowed values. This method
+     * should be used in conjunction with
+     * {@link AbstractDiagramSynthesis#specifyLayoutOption(IProperty, List)}. The type of the
+     * elements within the 'values' parameter depends on the type of the specified property. For
+     * instance, for an IProperty<Integer> one might pass a List<Integer> of size 2 to specify the
+     * lower and upper bound for the values.
+     *
+     * @param prop
+     *            the desired property.
+     * @param values
+     *            the allowed values.
+     * @return a pair with the property and the possible values.
+     */
+    public static Pair<IProperty<?>, List<?>> specifyLayoutOption(final IProperty<?> prop,
+            final List<?> values) {
+        return Pair.<IProperty<? extends Object>, List<? extends Object>>of(prop, values);
+    }
 
+    /**
+     * Convenient function to assemble a pair of layout option and allowed values. This method
+     * should be used in conjunction with
+     * {@link AbstractDiagramSynthesis#specifyLayoutOption(IProperty, List)}. The type of the
+     * elements within the 'values' parameter depends on the type of the specified property. For
+     * instance, for an IProperty<Integer> one might pass a List<Integer> of size 2 to specify the
+     * lower and upper bound for the values.
+     *
+     * @param layoutOptionId
+     *            the desired layout option's id.
+     * @param values
+     *            the allowed values.
+     * @return a pair with the property and the possible values.
+     */
+    public static Pair<IProperty<?>, List<?>> specifyLayoutOption(final String layoutOptionId, 
+            final List<?> values) {
+        final LayoutOptionData option =
+                LayoutMetaDataService.getInstance().getOptionData(layoutOptionId);
+        if (option != null) {
+            return specifyLayoutOption(option, values);
+        }
+        throw new IllegalArgumentException("Could not resolve the layout option '" + layoutOptionId 
+                + "' using KIML's layout option service. "
+                + "Make sure the layout option exists and is properly registered with KIML.");
+    }
+    
     /**
      * Convenience method for defining collapse/expand state dependent layout options for
      * {@link KNode KNodes}. A list of typically configured options is given in
@@ -211,14 +258,16 @@ public final class DiagramSyntheses {
      * KRenderings} only that are directly attached to {@link KNode KNodes}. For other
      * {@link KRendering KRenderings} this configuration has no effect.
      *
-     * @param rendering
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
+     * @param krendering
      *            the {@link KRendering} to be configured
      * @return <code>rendering</code> for convenience
      */
-    public static KRendering setAsCollapsedView(final KRendering rendering) {
-        rendering.getProperties().removeKey(KlighdProperties.EXPANDED_RENDERING);
-        rendering.setProperty(KlighdProperties.COLLAPSED_RENDERING, true);
-        return rendering;
+    public static <T extends KRendering> T setAsCollapsedView(final T krendering) {
+        krendering.getProperties().removeKey(KlighdProperties.EXPANDED_RENDERING);
+        krendering.setProperty(KlighdProperties.COLLAPSED_RENDERING, true);
+        return krendering;
     }
 
     /**
@@ -227,27 +276,31 @@ public final class DiagramSyntheses {
      * only that are directly attached to {@link KNode KNodes}. For other {@link KRendering
      * KRenderings} this configuration has no effect.
      *
-     * @param rendering
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
+     * @param krendering
      *            the {@link KRendering} to be configured
      * @return <code>rendering</code> for convenience
      */
-    public static KRendering setAsExpandedView(final KRendering rendering) {
-        rendering.getProperties().removeKey(KlighdProperties.COLLAPSED_RENDERING);
-        rendering.setProperty(KlighdProperties.EXPANDED_RENDERING, true);
-        return rendering;
+    public static <T extends KRendering> T setAsExpandedView(final T krendering) {
+        krendering.getProperties().removeKey(KlighdProperties.COLLAPSED_RENDERING);
+        krendering.setProperty(KlighdProperties.EXPANDED_RENDERING, true);
+        return krendering;
     }
 
     /**
      * Configures the provided {@link KGraphElement} to be visible only if the diagram zoom scale is
      * strictly less then the given <code>upperBounds</code>.
      *
+     * @param <S>
+     *            the concrete type of <code>kgraphElement</code>
      * @param kgraphElement
      *            the {@link KGraphElement} to be configured
      * @param upperBound
      *            the desired upper bound
      * @return <code>kgraphElement</code> for convenience
      */
-    public static KGraphElement setUpperVisibilityScaleBound(final KGraphElement kgraphElement,
+    public static <S extends KGraphElement> S setUpperVisibilityScaleBound(final S kgraphElement,
             final Number upperBound) {
         kgraphElement.getData(KLayoutData.class).setProperty(
                 KlighdProperties.VISIBILITY_SCALE_UPPER_BOUND, upperBound);
@@ -258,13 +311,15 @@ public final class DiagramSyntheses {
      * Configures the provided {@link KGraphElement} to be visible only if the diagram zoom scale is
      * higher or equal then the given <code>lowerBound</code>.
      *
+     * @param <S>
+     *            the concrete type of <code>kgraphElement</code>
      * @param kgraphElement
      *            the {@link KGraphElement} to be configured
      * @param lowerBound
      *            the desired lower bound
      * @return <code>kgraphElement</code> for convenience
      */
-    public static KGraphElement setLowerVisibilityScaleBound(final KGraphElement kgraphElement,
+    public static <S extends KGraphElement> S setLowerVisibilityScaleBound(final S kgraphElement,
             final Number lowerBound) {
         kgraphElement.getData(KLayoutData.class).setProperty(
                 KlighdProperties.VISIBILITY_SCALE_LOWER_BOUND, lowerBound);
@@ -275,32 +330,36 @@ public final class DiagramSyntheses {
      * Configures the provided {@link KRendering} to be visible only if the diagram zoom scale is
      * strictly less then the given <code>upperBounds</code>.
      *
-     * @param rendering
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
+     * @param krendering
      *            the {@link KRendering} to be configured
      * @param upperBound
      *            the desired upper bound
      * @return <code>rendering</code> for convenience
      */
-    public static KRendering setUpperVisibilityScaleBound(final KRendering rendering,
+    public static <T extends KRendering> T setUpperVisibilityScaleBound(final T krendering,
             final Number upperBound) {
-        rendering.setProperty(KlighdProperties.VISIBILITY_SCALE_UPPER_BOUND, upperBound);
-        return rendering;
+        krendering.setProperty(KlighdProperties.VISIBILITY_SCALE_UPPER_BOUND, upperBound);
+        return krendering;
     }
 
     /**
      * Configures the provided {@link KRendering} to be visible only if the diagram zoom scale is
      * higher or equal then the given <code>lowerBound</code>.
      *
-     * @param rendering
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
+     * @param krendering
      *            the {@link KRendering} to be configured
      * @param lowerBound
      *            the desired lower bound
      * @return <code>rendering</code> for convenience
      */
-    public static KRendering setLowerVisibilityScaleBound(final KRendering rendering,
+    public static <T extends KRendering> T setLowerVisibilityScaleBound(final T krendering,
             final Number lowerBound) {
-        rendering.setProperty(KlighdProperties.VISIBILITY_SCALE_LOWER_BOUND, lowerBound);
-        return rendering;
+        krendering.setProperty(KlighdProperties.VISIBILITY_SCALE_LOWER_BOUND, lowerBound);
+        return krendering;
     }
 
     /**
@@ -308,13 +367,15 @@ public final class DiagramSyntheses {
      * strictly less then the level causing <code>kgraphElement</code> to be drawn with absolute
      * <em>height</em> of <code>upperBound</code>.
      *
+     * @param <S>
+     *            the concrete type of <code>kgraphElement</code>
      * @param kgraphElement
      *            the {@link KGraphElement} to be configured
      * @param upperBound
      *            the desired upper (absolute) height bound
      * @return <code>kgraphElement</code> for convenience
      */
-    public static KGraphElement setUpperVisibilityHeightBound(final KGraphElement kgraphElement,
+    public static <S extends KGraphElement> S setUpperVisibilityHeightBound(final S kgraphElement,
             final Number upperBound) {
         kgraphElement.getData(KLayoutData.class).setProperty(
                 KlighdProperties.VISIBILITY_HEIGHT_UPPER_BOUND, upperBound);
@@ -326,13 +387,15 @@ public final class DiagramSyntheses {
      * higher or equal to the level causing <code>kgraphElement</code> to be drawn with absolute
      * <em>height</em> of <code>lowerBound</code>.
      *
+     * @param <S>
+     *            the concrete type of <code>kgraphElement</code>
      * @param kgraphElement
      *            the {@link KGraphElement} to be configured
      * @param lowerBound
      *            the desired lower (absolute) height bound
      * @return <code>kgraphElement</code> for convenience
      */
-    public static KGraphElement setLowerVisibilityHeightBound(final KGraphElement kgraphElement,
+    public static <S extends KGraphElement> S setLowerVisibilityHeightBound(final S kgraphElement,
             final Number lowerBound) {
         kgraphElement.getData(KLayoutData.class).setProperty(
                 KlighdProperties.VISIBILITY_HEIGHT_LOWER_BOUND, lowerBound);
@@ -341,16 +404,18 @@ public final class DiagramSyntheses {
 
     /**
      * Configures the provided {@link KRendering} to be visible only if the diagram zoom scale is
-     * strictly less then the level causing <code>kgraphElement</code> to be drawn with absolute
+     * strictly less then the level causing <code>krendering</code> to be drawn with absolute
      * <em>height</em> of <code>upperBound</code>.
      *
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
      * @param krendering
      *            the {@link KRendering} to be configured
      * @param upperBound
      *            the desired upper (absolute) height bound
      * @return <code>krendering</code> for convenience
      */
-    public static KRendering setUpperVisibilityHeightBound(final KRendering krendering,
+    public static <T extends KRendering> T setUpperVisibilityHeightBound(final T krendering,
             final Number upperBound) {
         krendering.setProperty(KlighdProperties.VISIBILITY_HEIGHT_UPPER_BOUND, upperBound);
         return krendering;
@@ -358,16 +423,18 @@ public final class DiagramSyntheses {
 
     /**
      * Configures the provided {@link KRendering} to be visible only if the diagram zoom scale is
-     * higher or equal to the level causing <code>kgraphElement</code> to be drawn with absolute
+     * higher or equal to the level causing <code>krendering</code> to be drawn with absolute
      * <em>height</em> of <code>lowerBound</code>.
      *
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
      * @param krendering
      *            the {@link KRendering} to be configured
      * @param lowerBound
      *            the desired lower (absolute) height bound
      * @return <code>krendering</code> for convenience
      */
-    public static KRendering setLowerVisibilityHeightBound(final KRendering krendering,
+    public static <T extends KRendering> T setLowerVisibilityHeightBound(final T krendering,
             final Number lowerBound) {
         krendering.setProperty(KlighdProperties.VISIBILITY_HEIGHT_LOWER_BOUND, lowerBound);
         return krendering;
@@ -375,16 +442,18 @@ public final class DiagramSyntheses {
 
     /**
      * Configures the provided {@link KGraphElement} to be visible only if the diagram zoom scale is
-     * strictly less then the level causing <code>krendering</code> to be drawn with absolute
+     * strictly less then the level causing <code>kgraphElement</code> to be drawn with absolute
      * <em>width</em> of <code>upperBound</code>.
      *
+     * @param <S>
+     *            the concrete type of <code>kgraphElement</code>
      * @param kgraphElement
      *            the {@link KGraphElement} to be configured
      * @param upperBound
      *            the desired upper (absolute) width bound
      * @return <code>kgraphElement</code> for convenience
      */
-    public static KGraphElement setUpperVisibilityWidthBound(final KGraphElement kgraphElement,
+    public static <S extends KGraphElement> S setUpperVisibilityWidthBound(final S kgraphElement,
             final Number upperBound) {
         kgraphElement.getData(KLayoutData.class).setProperty(
                 KlighdProperties.VISIBILITY_WIDTH_UPPER_BOUND, upperBound);
@@ -393,16 +462,18 @@ public final class DiagramSyntheses {
 
     /**
      * Configures the provided {@link KGraphElement} to be visible only if the diagram zoom scale is
-     * higher or equal to the level causing <code>krendering</code> to be drawn with absolute
+     * higher or equal to the level causing <code>kgraphElement</code> to be drawn with absolute
      * <em>width</em> of <code>lowerBound</code>.
      *
+     * @param <S>
+     *            the concrete type of <code>kgraphElement</code>
      * @param kgraphElement
      *            the {@link KGraphElement} to be configured
      * @param lowerBound
      *            the desired lower (absolute) width bound
      * @return <code>kgraphElement</code> for convenience
      */
-    public static KGraphElement setLowerVisibilityWidthBound(final KGraphElement kgraphElement,
+    public static <S extends KGraphElement> S setLowerVisibilityWidthBound(final S kgraphElement,
             final Number lowerBound) {
         kgraphElement.getData(KLayoutData.class).setProperty(
                 KlighdProperties.VISIBILITY_WIDTH_LOWER_BOUND, lowerBound);
@@ -414,13 +485,15 @@ public final class DiagramSyntheses {
      * strictly less then the level causing <code>krendering</code> to be drawn with absolute
      * <em>width</em> of <code>upperBound</code>.
      *
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
      * @param krendering
      *            the {@link KRendering} to be configured
      * @param upperBound
      *            the desired upper (absolute) height bound
      * @return <code>krendering</code> for convenience
      */
-    public static KRendering setUpperVisibilityWidthBound(final KRendering krendering,
+    public static <T extends KRendering> T setUpperVisibilityWidthBound(final T krendering,
             final Number upperBound) {
         krendering.setProperty(KlighdProperties.VISIBILITY_WIDTH_UPPER_BOUND, upperBound);
         return krendering;
@@ -431,13 +504,15 @@ public final class DiagramSyntheses {
      * higher or equal to the level causing <code>krendering</code> to be drawn with absolute
      * <em>width</em> of <code>lowerBound</code>.
      *
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
      * @param krendering
      *            the {@link KRendering} to be configured
      * @param lowerBound
      *            the desired lower (absolute) height bound
      * @return <code>krendering</code> for convenience
      */
-    public static KRendering setLowerVisibilityWidthBound(final KRendering krendering,
+    public static <T extends KRendering> T setLowerVisibilityWidthBound(final T krendering,
             final Number lowerBound) {
         krendering.setProperty(KlighdProperties.VISIBILITY_WIDTH_LOWER_BOUND, lowerBound);
         return krendering;
@@ -448,6 +523,8 @@ public final class DiagramSyntheses {
      * visibility expressions to its children. In other words: if set to <code>true</code>
      * drawing the whole figure (sub) tree is skipped, instead of solely the figure itself.
      *
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
      * @param krendering
      *            the {@link KRendering} to be configured
      * @param propagateToChildren
@@ -455,7 +532,7 @@ public final class DiagramSyntheses {
      *            <code>false</code> otherwise.
      * @return <code>krendering</code> for convenience
      */
-    public static KRendering setPropagateVisibilityBoundsToChildren(final KRendering krendering,
+    public static <T extends KRendering> T setPropagateVisibilityBoundsToChildren(final T krendering,
             final boolean propagateToChildren) {
         krendering.setProperty(
                 KlighdProperties.VISIBILITY_PROPAGATE_TO_CHILDREN, propagateToChildren);
@@ -467,62 +544,72 @@ public final class DiagramSyntheses {
      * visibility expressions to its children. In other words: if set drawing the whole figure (sub)
      * tree is skipped, instead of solely the figure itself.
      *
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
      * @param krendering
      *            the {@link KRendering} to be configured
      * @return <code>krendering</code> for convenience
      */
-    public static KRendering propagateVisibilityBoundsToChildren(final KRendering krendering) {
+    public static <T extends KRendering> T propagateVisibilityBoundsToChildren(final T krendering) {
         return setPropagateVisibilityBoundsToChildren(krendering, true);
     }
 
     /**
      * Configures the provided {@link KRendering} to be excluded from the outline diagram view.
      *
-     * @param rendering
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
+     * @param krendering
      *            the {@link KRendering} to be configured
      * @return <code>rendering</code> for convenience
      */
-    public static KRendering excludedFromOutline(final KRendering rendering) {
-        rendering.setProperty(KlighdProperties.OUTLINE_INVISIBLE, true);
-        return rendering;
+    public static <T extends KRendering> T excludedFromOutline(final T krendering) {
+        krendering.setProperty(KlighdProperties.OUTLINE_INVISIBLE, true);
+        return krendering;
     }
 
     /**
      * Configures the provided {@link KRendering} to be excluded from exported diagram images.
      *
-     * @param rendering
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
+     * @param krendering
      *            the {@link KRendering} to be configured
      * @return <code>rendering</code> for convenience
      */
-    public static KRendering excludedFromExportedImages(final KRendering rendering) {
-        rendering.setProperty(KlighdProperties.EXPORTED_IMAGE_INVISIBLE, true);
-        return rendering;
+    public static <T extends KRendering> T excludedFromExportedImages(final T krendering) {
+        krendering.setProperty(KlighdProperties.EXPORTED_IMAGE_INVISIBLE, true);
+        return krendering;
     }
 
     /**
      * Configures the provided {@link KRendering} to be excluded from diagram printouts.
      *
-     * @param rendering
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
+     * @param krendering
      *            the {@link KRendering} to be configured
      * @return <code>rendering</code> for convenience
      */
-    public static KRendering excludedFromPrintouts(final KRendering rendering) {
-        rendering.setProperty(KlighdProperties.PRINTOUT_INVISIBLE, true);
-        return rendering;
+    public static <T extends KRendering> T excludedFromPrintouts(final T krendering) {
+        krendering.setProperty(KlighdProperties.PRINTOUT_INVISIBLE, true);
+        return krendering;
     }
 
     /**
      * Configures the provided {@link KRendering} to be excluded from exported diagram images and
      * printouts.
      *
-     * @param rendering
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
+     * @param krendering
      *            the {@link KRendering} to be configured
      * @return <code>rendering</code> for convenience
      */
-    public static KRendering excludedFromExportedImagesAndPrintouts(final KRendering rendering) {
-        rendering.setProperty(KlighdProperties.EXPORTED_IMAGE_INVISIBLE, true);
-        rendering.setProperty(KlighdProperties.PRINTOUT_INVISIBLE, true);
-        return rendering;
+    public static <T extends KRendering> T excludedFromExportedImagesAndPrintouts(final T krendering) {
+        krendering.setProperty(KlighdProperties.EXPORTED_IMAGE_INVISIBLE, true);
+        krendering.setProperty(KlighdProperties.PRINTOUT_INVISIBLE, true);
+        return krendering;
     }
 
     /**
@@ -554,13 +641,13 @@ public final class DiagramSyntheses {
     /**
      * Configures the provided {@link KGraphElement} to be initially hidden from the diagram.<br>
      *
-     * @param <T>
+     * @param <S>
      *            the concrete type of the {@link KGraphElement} to be configured
      * @param kge
      *            the {@link KGraphElement} to be configured
      * @return <code>kge</code> for convenience
      */
-    public static <T extends KGraphElement> T initiallyHide(final T kge) {
+    public static <S extends KGraphElement> S initiallyHide(final S kge) {
         kge.getData(KLayoutData.class).setProperty(KlighdProperties.SHOW, false);
         return kge;
     }
@@ -570,13 +657,13 @@ public final class DiagramSyntheses {
      * Note that this is the default configuration, so calling this method is not required in common
      * case.
      *
-     * @param <T>
+     * @param <S>
      *            the concrete type of the {@link KGraphElement} to be configured
      * @param kge
      *            the {@link KGraphElement} to be configured
      * @return <code>kge</code> for convenience
      */
-    public static <T extends KGraphElement> T initiallyShow(final T kge) {
+    public static <S extends KGraphElement> S initiallyShow(final S kge) {
         kge.getData(KLayoutData.class).setProperty(KlighdProperties.SHOW, true);
         return kge;
     }
@@ -644,13 +731,14 @@ public final class DiagramSyntheses {
      * Deactivates the selectability of given {@link KGraphElement}.<br>
      * If done the {@link KGraphElement} can't be selected anymore, other event handling like
      * associated action evaluation will not be affected.
-     *
-     * @param <T> the concrete type of <code>kge</code>
+     * 
+     * @param <S>
+     *            the concrete type of <code>kge</code>
      * @param kge
      *            the {@link KGraphElement} to configure
      * @return the <code>kge</code> for convenience
      */
-    public static <T extends KGraphElement> T suppressSelectability(final T kge) {
+    public static <S extends KGraphElement> S suppressSelectability(final S kge) {
         kge.getData(KLayoutData.class).setProperty(KlighdProperties.NOT_SELECTABLE, true);
         return kge;
     }
@@ -669,13 +757,48 @@ public final class DiagramSyntheses {
         return kText;
     }
 
+    /**
+     * Configures {@link KlighdSemanticDiagramData semantic data} on the provided {@link KGraphElement}.
+     *
+     * @param <S>
+     *            the concrete type of <code>kge</code>
+     * @param kge
+     *            the {@link KGraphElement} to be configured
+     * @param data
+     *            the {@link KlighdSemanticDiagramData} record to be evaluated while exporting
+     *            vector graphic images
+     * @return <code>kge</code> for convenience
+     */
+    public static <S extends KGraphElement> S setSemanticData(final S kge,
+            final KlighdSemanticDiagramData data) {
+        kge.getData(KLayoutData.class).setProperty(KlighdProperties.SEMANTIC_DATA, data);
+        return kge;
+    }
+
+    /**
+     * Configures {@link KlighdSemanticDiagramData semantic data} on the provided {@link KRendering}.
+     *
+     * @param <T>
+     *            the concrete type of <code>krendering</code>
+     * @param krendering
+     *            the {@link KRendering} to be configured
+     * @param data
+     *            the {@link KlighdSemanticDiagramData} record to be evaluated while exporting
+     *            vector graphic images
+     * @return <code>krendering</code> for convenience
+     */
+    public static <T extends KRendering> T setSemanticData(final T krendering,
+            final KlighdSemanticDiagramData data) {
+        krendering.setProperty(KlighdProperties.SEMANTIC_DATA, data);
+        return krendering;
+    }    
 
     /**
      * Configures a tooltip on the provided {@link KGraphElement KGraphElement}. This method has no
      * effect if another tooltip is defined on the root {@link KRendering} attached attached to this
      * {@link KGraphElement} (except of blowing up the view model :-P).
      *
-     * @param <T>
+     * @param <S>
      *            the concrete type of {@code kge}
      * @param kge
      *            the {@link KGraphElement} to be configured
@@ -683,7 +806,7 @@ public final class DiagramSyntheses {
      *            the tooltip text to be shown while hovering over the corresponding diagram figure
      * @return <code>kge</code> for convenience
      */
-    public static <T extends KGraphElement> T setTooltip(final T kge, final String tooltip) {
+    public static <S extends KGraphElement> S setTooltip(final S kge, final String tooltip) {
         kge.getData(KLayoutData.class).setProperty(KlighdProperties.TOOLTIP, tooltip);
         return kge;
     }
@@ -695,16 +818,16 @@ public final class DiagramSyntheses {
      * KRenderings} (except of blowing up the view model :-P).
      *
      * @param <T>
-     *            the concrete type of {@code rendering}
-     * @param rendering
+     *            the concrete type of <code>krendering</code>
+     * @param krendering
      *            the {@link KRendering} to be configured
      * @param tooltip
      *            the tooltip text to be shown while hovering over the corresponding diagram figure
      * @return <code>rendering</code> for convenience
      */
-    public static <T extends KRendering> T setTooltip(final T rendering, final String tooltip) {
-        rendering.setProperty(KlighdProperties.TOOLTIP, tooltip);
-        return rendering;
+    public static <T extends KRendering> T setTooltip(final T krendering, final String tooltip) {
+        krendering.setProperty(KlighdProperties.TOOLTIP, tooltip);
+        return krendering;
     }
 
 

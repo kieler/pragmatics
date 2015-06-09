@@ -71,7 +71,7 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
 
 
         case STRETCH_WIDTH:
-            return new StretchWidth();
+            return new StretchWidthLayerer();
           
 
         case MIN_WIDTH:

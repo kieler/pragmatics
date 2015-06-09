@@ -5,6 +5,11 @@
   <eClassifiers xsi:type="ecore:EClass" name="Grana">
     <eStructuralFeatures xsi:type="ecore:EReference" name="globalResources" upperBound="-1"
         eType="#//GlobalResourceRef" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="gloobalOutputs" upperBound="-1"
+        eType="#//GlobalOutputRef" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="executeAll" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="execute" unique="false"
+        upperBound="-1" eType="#//Job"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="jobs" upperBound="-1" eType="#//Job"
         containment="true"/>
   </eClassifiers>
@@ -15,11 +20,12 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="resources" upperBound="-1"
         eType="#//Resource" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="layoutOptions" upperBound="-1"
-        eType="ecore:EClass ../../../../../../../../../de.cau.cs.kieler.kiml/model/klayoutdata.ecore#//KIdentifier"
+        eType="ecore:EClass platform:/resource/de.cau.cs.kieler.kiml/model/klayoutdata.ecore#//KIdentifier"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="analyses" upperBound="-1"
         eType="#//Analysis" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="output" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="output" eType="#//Output"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Resource"/>
   <eClassifiers xsi:type="ecore:EClass" name="ResourceReference" eSuperTypes="#//Resource">
@@ -34,6 +40,18 @@
   <eClassifiers xsi:type="ecore:EClass" name="LocalResource" eSuperTypes="#//Resource">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="filter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Output"/>
+  <eClassifiers xsi:type="ecore:EClass" name="GlobalOutputRef">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="output" eType="#//LocalOutput"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OutputReference" eSuperTypes="#//Output">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outputRef" eType="#//GlobalOutputRef"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LocalOutput" eSuperTypes="#//Output">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Analysis">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
