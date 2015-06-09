@@ -37,6 +37,7 @@ import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine.ILayoutCancelationIndicator;
 import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
 import de.cau.cs.kieler.klighd.internal.ILayoutConfigProvider;
 import de.cau.cs.kieler.klighd.internal.ILayoutRecorder;
@@ -59,6 +60,181 @@ public final class LightDiagramServices {
     private LightDiagramServices() {
         // do nothing
     }
+
+
+    /**
+     * Updates the diagram represented by the given {@link ViewContext}.<br>
+     * <br>
+     * The <code>viewContext</code>'s current input model is re-evaluated.
+     *
+     * @param viewContext
+     *            the {@link ViewContext} of the diagram to be updated
+     * @return <code>true</code> if update could be performed successfully, <code>false</code>
+     *         otherwise
+     */
+    public static boolean updateDiagram(final ViewContext viewContext) {
+        return updateDiagram(viewContext, null, null, null);
+    }
+
+    /**
+     * Updates the diagram represented by the given {@link ViewContext}.<br>
+     * <br>
+     * The <code>viewContext</code>'s current input model is re-evaluated.
+     *
+     * @param viewContext
+     *            the {@link ViewContext} of the diagram to be updated
+     * @param animate
+     *            layout with or without animation
+     * @return <code>true</code> if update could be performed successfully, <code>false</code>
+     *         otherwise
+     */
+    public static boolean updateDiagram(final ViewContext viewContext, final boolean animate) {
+        return updateDiagram(viewContext, null, null, animate);
+    }
+
+    /**
+     * Updates the diagram represented by the given {@link ViewContext}.<br>
+     * <br>
+     * The <code>viewContext</code>'s current input model replaced by <code>model</code>.
+     *
+     * @param viewContext
+     *            the {@link ViewContext} of the diagram to be updated
+     * @param model
+     *            the new model, if <code>null</code> the current input model is taken
+     * @return <code>true</code> if update could be performed successfully, <code>false</code>
+     *         otherwise
+     */
+    public static boolean updateDiagram(final ViewContext viewContext, final Object model) {
+        return updateDiagram(viewContext, model, null, null);
+    }
+
+    /**
+     * Updates the diagram represented by the given {@link ViewContext}.<br>
+     * <br>
+     * The <code>viewContext</code>'s current input model is re-evaluated.
+     *
+     * @param viewContext
+     *            the {@link ViewContext} of the diagram to be updated
+     * @param properties
+     *            an {@link IPropertyHolder} that may influence the diagram update, e.g. via the
+     *            {@link KlighdSynthesisProperties#REQUESTED_UPDATE_STRATEGY} property configuration
+     * @return <code>true</code> if update could be performed successfully, <code>false</code>
+     *         otherwise
+     */
+    public static boolean updateDiagram(final ViewContext viewContext,
+            final IPropertyHolder properties) {
+        return updateDiagram(viewContext, null, properties, null);
+    }
+
+    /**
+     * Updates the diagram represented by the given {@link ViewContext}.<br>
+     * <br>
+     * The <code>viewContext</code>'s current input model replaced by <code>model</code>.
+     *
+     * @param viewContext
+     *            the {@link ViewContext} of the diagram to be updated
+     * @param model
+     *            the new model, if <code>null</code> the current input model is taken
+     * @param animate
+     *            layout with or without animation
+     * @return <code>true</code> if update could be performed successfully, <code>false</code>
+     *         otherwise
+     */
+    public static boolean updateDiagram(final ViewContext viewContext, final Object model,
+            final boolean animate) {
+        return updateDiagram(viewContext, model, null, animate);
+    }
+
+    /**
+     * Updates the diagram represented by the given {@link ViewContext}.<br>
+     * <br>
+     * The <code>viewContext</code>'s current input model replaced by <code>model</code>.
+     *
+     * @param viewContext
+     *            the {@link ViewContext} of the diagram to be updated
+     * @param model
+     *            the new model, if <code>null</code> the current input model is taken
+     * @param properties
+     *            an {@link IPropertyHolder} that may influence the diagram update, e.g. via the
+     *            {@link KlighdSynthesisProperties#REQUESTED_UPDATE_STRATEGY} property configuration
+     * @return <code>true</code> if update could be performed successfully, <code>false</code>
+     *         otherwise
+     */
+    public static boolean updateDiagram(final ViewContext viewContext, final Object model,
+            final IPropertyHolder properties) {
+        return updateDiagram(viewContext, model, properties, null);
+    }
+
+    /**
+     * Updates the diagram represented by the given {@link ViewContext}.<br>
+     * <br>
+     * The <code>viewContext</code>'s current input model is re-evaluated.
+     *
+     * @param viewContext
+     *            the {@link ViewContext} of the diagram to be updated
+     * @param properties
+     *            an {@link IPropertyHolder} that may influence the diagram update, e.g. via the
+     *            {@link KlighdSynthesisProperties#REQUESTED_UPDATE_STRATEGY} property configuration
+     * @param animate
+     *            layout with or without animation
+     * @return <code>true</code> if update could be performed successfully, <code>false</code>
+     *         otherwise
+     */
+    public static boolean updateDiagram(final ViewContext viewContext,
+            final IPropertyHolder properties, final boolean animate) {
+        return updateDiagram(viewContext, null, properties, animate);
+    }
+
+    /**
+     * Updates the diagram represented by the given {@link ViewContext}.<br>
+     * <br>
+     * The <code>viewContext</code>'s current input model replaced by <code>model</code>.
+     *
+     * @param viewContext
+     *            the {@link ViewContext} of the diagram to be updated
+     * @param model
+     *            the new model, if <code>null</code> the current input model is taken
+     * @param properties
+     *            an {@link IPropertyHolder} that may influence the diagram update, e.g. via the
+     *            {@link KlighdSynthesisProperties#REQUESTED_UPDATE_STRATEGY} property configuration
+     * @param animate
+     *            layout with or without animation
+     * @return <code>true</code> if update could be performed successfully, <code>false</code>
+     *         otherwise
+     */
+    public static boolean updateDiagram(final ViewContext viewContext, final Object model,
+            final IPropertyHolder properties, final Boolean animate) {
+
+        final Object currentInputModel = viewContext.getInputModel();
+        if (model == null && currentInputModel == null) {
+            return false;
+        }
+
+        // update the view context and viewer
+        final Object theModel = (model != null ? model : currentInputModel);
+
+        viewContext.getLayoutRecorder().startRecording();
+
+        // update the view context
+        final boolean successful = viewContext.update(theModel, properties);
+
+        // in case the view update didn't work properly
+        //  consider this as a failure according to the method doc!
+        if (!successful) {
+            return false;
+        }
+
+        final IDiagramWorkbenchPart diagramWP = viewContext.getDiagramWorkbenchPart();
+
+        if (diagramWP != null) {
+            diagramWP.getSite().getPage().bringToTop(diagramWP);
+        }
+
+        layoutDiagram(null, null, viewContext, animate, null, null, null);
+
+        return true;
+    }
+
 
     /**
      * Performs the automatic layout on the diagram represented by the given view context.<br>
@@ -546,14 +722,18 @@ public final class LightDiagramServices {
 
             final Object diagramPart = recorder != null ? recorder : theViewContext;
 
+            final ILayoutCancelationIndicator cancelationIndicator = thePart != null
+                    ? new DispositionAwareCancelationHandle(thePart) : null;
+
             if (additionalConfigs.isEmpty()) {
-                DiagramLayoutEngine.INSTANCE.layout(thePart, diagramPart, extendedOptions);
+                DiagramLayoutEngine.INSTANCE.layout(thePart, diagramPart, cancelationIndicator,
+                        extendedOptions);
 
             } else {
                 final List<ILayoutConfig> configs = Lists.<ILayoutConfig>newArrayList(extendedOptions);
                 configs.addAll(additionalConfigs);
 
-                DiagramLayoutEngine.INSTANCE.layout(thePart, diagramPart,
+                DiagramLayoutEngine.INSTANCE.layout(thePart, diagramPart, cancelationIndicator,
                         Iterables.toArray(configs, ILayoutConfig.class));
             }
 
@@ -598,6 +778,42 @@ public final class LightDiagramServices {
         return Pair.of(thePart, theViewContext);
     }
 
+    /**
+     * An implementation of {@link ILayoutCancelationIndicator} checking the provided
+     * {@link IDiagramWorkbenchPart} for disposition. Is handed over to the
+     * {@link DiagramLayoutEngine} in order to let it cancel layout runs if the corresponding
+     * {@link IDiagramWorkbenchPart} has been closed in the meantime.
+     *
+     * @author chsch
+     */
+    private static final class DispositionAwareCancelationHandle implements ILayoutCancelationIndicator {
+
+        private final IDiagramWorkbenchPart workbenchPart;
+
+        /**
+         * Constructor.
+         *
+         * @param wb
+         *            the {@link IDiagramWorkbenchPart} to test for disposition
+         */
+        private DispositionAwareCancelationHandle(final IDiagramWorkbenchPart wb) {
+            workbenchPart = wb;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean isCanceled() {
+            // by convention (I would like to say 'by definition' but there's no definition)
+            //  the employed viewer is only reset to 'null' during IDiagramWorkbenchPart.dispose()
+            return workbenchPart.getViewer() == null;
+        }
+    }
+
+
+    /* ---------------------------------------- */
+    /*     diagram zooming API                  */
+    /* ---------------------------------------- */
 
     /**
      * Performs zoom on the diagram represented by the given {@link ViewContext} based on the

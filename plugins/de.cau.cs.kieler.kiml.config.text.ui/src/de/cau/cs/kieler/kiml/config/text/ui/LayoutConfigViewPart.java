@@ -252,7 +252,9 @@ public class LayoutConfigViewPart extends ViewPart {
                 } else {
                     StatusManager.getManager().handle(
                             new Status(IStatus.INFO, "de.cau.cs.kieler.kiml.config.text.ui",
-                                    "No editor available to apply layout to."), StatusManager.SHOW);
+                                    "No editor available to apply layout to.\n"
+                                    + "Assure that you focused an editor before "
+                                    + "pressing the layout button."), StatusManager.SHOW);
                 }
             }
         };
@@ -294,7 +296,7 @@ public class LayoutConfigViewPart extends ViewPart {
                 }
             }
         };
-        menu.add(saveTemplate);
+//        menu.add(saveTemplate);
        
         IAction loadTemplate = new Action("Load ..") {
             @Override
@@ -346,10 +348,10 @@ public class LayoutConfigViewPart extends ViewPart {
                 
             }
         };
-        menu.add(loadTemplate);
+//        menu.add(loadTemplate);
         
         
-        final IAction newViewAction = new Action("Open New View") {
+        final IAction newViewAction = new Action("Open Another View") {
             @Override
             public void run() {
                 IWorkbenchPage page = LayoutConfigViewPart.this.getSite().getPage();
@@ -378,7 +380,7 @@ public class LayoutConfigViewPart extends ViewPart {
                     partialEditor.updateModel("", pair.getValue(), "");                    
                 }
             };
-            menu.add(defaultTemp);
+//            menu.add(defaultTemp);
         }
     }
 

@@ -24,9 +24,11 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKNodeNode;
@@ -61,12 +63,15 @@ public class KlighdSelectionEventHandler extends KlighdBasicInputEventHandler {
         this.diagramViewer = theDiagramViewer;
         this.multiSelection =
                 viewer.getViewContext().getProperty(KlighdSynthesisProperties.MULTI_SELECTION);
+        this.selectPorts =
+                viewer.getViewContext().getProperty(KlighdSynthesisProperties.ADD_PORTS_TO_SELECTION);
     }
 
     private final IViewer viewer;
     private final PiccoloViewer diagramViewer;
     private final boolean multiSelection;
     private Point2D point = null;
+    private boolean selectPorts;
 
     /**
      * {@inheritDoc}
@@ -245,11 +250,13 @@ public class KlighdSelectionEventHandler extends KlighdBasicInputEventHandler {
                     selectedElements = Sets.newHashSet();
                 }
 
-                // add the currently found edge to set of elements to be selected, ...
-                selectedElements.add(viewModelElement);
-
+                // add the currently found edge and its connected ones
+                // to the set of elements to be selected,
+                // adding ports if selected by KlighdProperty...
+                Iterators.addAll(selectedElements,
+                        KimlUtil.getConnectedEdges((KEdge) viewModelElement, selectPorts));
                 // ... start a new "pick" run ('nextPickedNode' takes care
-                //  about ignoring the previously found ones), ...
+                // about ignoring the previously found ones), ...
                 pickPath.nextPickedNode();
 
                 // ... and evaluate the updated pick path by starting the loop again

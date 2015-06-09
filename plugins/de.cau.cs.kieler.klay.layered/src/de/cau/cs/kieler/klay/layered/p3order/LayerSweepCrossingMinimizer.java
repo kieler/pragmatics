@@ -69,12 +69,13 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase3(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
-            .addBeforePhase4(IntermediateProcessorStrategy.PORT_DISTRIBUTER)
-            .addBeforePhase4(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
-            .addAfterPhase5(IntermediateProcessorStrategy.LONG_EDGE_JOINER);
-    
+            IntermediateProcessingConfiguration.createEmpty()
+                    .addBeforePhase3(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
+                    .addBeforePhase4(IntermediateProcessorStrategy.PORT_DISTRIBUTER)
+                    .addBeforePhase4(IntermediateProcessorStrategy.GREEDY_SWITCH)
+                    .addBeforePhase4(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
+                    .addAfterPhase5(IntermediateProcessorStrategy.LONG_EDGE_JOINER);
+
     /**
      * {@inheritDoc}
      */
@@ -117,6 +118,11 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
      */
     private HyperedgeCrossingsCounter hyperedgeCrossingsCounter;
     /**
+     * Both of the two previous crossing counters use the same 
+     * code to count in-layer crossings.
+     */
+    private AbstractCrossingsCounter inlayerCrossingsCounter;
+    /**
      * Whether the layers contain hyperedges or not.
      */
     private boolean[] hasHyperedgesEast;
@@ -151,8 +157,6 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
         // Iterate through the layers, initializing port and node IDs, collecting
         // the nodes into the current sweep and building the layout unit map
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
-        boolean allLayersHaveHyperedges = true;
-        boolean noLayerHasHyperedges = true;
         while (layerIter.hasNext()) {
             Layer layer = layerIter.next();
 
@@ -210,37 +214,36 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     hasNorthSouthPorts[layerIndex] = true;
                 }
             }
-            if (hasHyperedges(layerIndex)) {
-                noLayerHasHyperedges = false;
-            } else {
-                allLayersHaveHyperedges = false;
-            }
         }
-
+        
+        // Check whether every (or no) combination of layers, considering both
+        //  forward and backward sweeps, involves hyperedges
+        // If neither is the case, we need a counting algorithm for both 
+        //  hyperedges and straightline edges
+        boolean allLayerCombinationsHaveHyperedges = true;
+        boolean noLayerCombinationHasHyperedges = true;
+        for (int i = 0; i < hasHyperedgesWest.length - 1; i++) {
+            boolean b = hasHyperedgesEast[i] || hasHyperedgesWest[i + 1];
+            allLayerCombinationsHaveHyperedges &= b;
+            noLayerCombinationHasHyperedges &= !b;
+        }
+        
         // Initialize the port positions and ranks arrays
         portRanks = new float[portCount];
         int[] portPos = new int[portCount];
         
         // Create the crossings counter modules
-        if (!allLayersHaveHyperedges) {
+        if (!allLayerCombinationsHaveHyperedges) {
             normalCrossingsCounter = new BarthJuengerMutzelCrossingsCounter(inLayerEdgeCount,
                     hasNorthSouthPorts, portPos);
+            inlayerCrossingsCounter = normalCrossingsCounter;
         }
-        if (!noLayerHasHyperedges) {
+        
+        if (!noLayerCombinationHasHyperedges) {
             hyperedgeCrossingsCounter = new HyperedgeCrossingsCounter(inLayerEdgeCount,
                     hasNorthSouthPorts, portPos);
+            inlayerCrossingsCounter = hyperedgeCrossingsCounter;
         }
-    }
-    
-    /**
-     * Checks whether the given layer has any connected hyper edges.
-     * 
-     * @param layerIndex
-     *            the layer to check for hyperedges.
-     * @return true if the given layer has any hyperedges from the left or to the right side.
-     */
-    private boolean hasHyperedges(final int layerIndex) {
-        return hasHyperedgesEast[layerIndex] || hasHyperedgesWest[layerIndex];
     }
 
     /**
@@ -320,13 +323,8 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 prevSweepCrossings = curSweepCrossings;
                 curSweepCrossings = 0;
                 
-                if (hasHyperedges(fixedLayerIndex)) {
-                    curSweepCrossings += 
-                            hyperedgeCrossingsCounter.countCrossings(fixedLayer, fixedLayerIndex);
-                } else {
-                    curSweepCrossings += 
-                            normalCrossingsCounter.countCrossings(fixedLayer, fixedLayerIndex);
-                }
+                // count in-layer crossings
+                curSweepCrossings += inlayerCrossingsCounter.countCrossings(fixedLayer, fixedLayerIndex);
                 
                 if (forward) {
                     // Perform a forward sweep
@@ -335,17 +333,19 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.OUTPUT);
                         minimizeCrossings(freeLayer, crossminHeuristic, true, !firstSweep, false);
+
+                        // in-layer crossings
+                        curSweepCrossings +=
+                                inlayerCrossingsCounter.countCrossings(freeLayer, layerIndex);
+                        // between-layers crossings
                         if (hasHyperedgesWest[layerIndex] || hasHyperedgesEast[layerIndex - 1]) {
                             curSweepCrossings += 
                                     hyperedgeCrossingsCounter.countCrossings(fixedLayer, freeLayer);
-                            curSweepCrossings += 
-                                    hyperedgeCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         } else {
                             curSweepCrossings += 
                                     normalCrossingsCounter.countCrossings(fixedLayer, freeLayer);
-                            curSweepCrossings += 
-                                    normalCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         }
+                        
 
                         fixedLayer = freeLayer;
                     }
@@ -357,16 +357,17 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
                         portDistributor.calculatePortRanks(fixedLayer, PortType.INPUT);
                         minimizeCrossings(freeLayer, crossminHeuristic, false, !firstSweep, false);
+
+                        // in-layer crossings
+                        curSweepCrossings +=
+                                inlayerCrossingsCounter.countCrossings(freeLayer, layerIndex);
+                        // between-layers crossings
                         if (hasHyperedgesEast[layerIndex] || hasHyperedgesWest[layerIndex + 1]) {
                             curSweepCrossings += 
                                     hyperedgeCrossingsCounter.countCrossings(freeLayer, fixedLayer);
-                            curSweepCrossings += 
-                                    hyperedgeCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         } else {
                             curSweepCrossings += 
                                     normalCrossingsCounter.countCrossings(freeLayer, fixedLayer);
-                            curSweepCrossings += 
-                                    normalCrossingsCounter.countCrossings(freeLayer, layerIndex);
                         }
 
                         fixedLayer = freeLayer;

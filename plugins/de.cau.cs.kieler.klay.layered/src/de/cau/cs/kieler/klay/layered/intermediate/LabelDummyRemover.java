@@ -75,7 +75,8 @@ public final class LabelDummyRemover implements ILayoutProcessor {
                     double ypos = node.getPosition().y;
                     
                     if (node.getProperty(InternalProperties.LABEL_SIDE) == LabelSide.BELOW) {
-                        ypos += originEdge.getProperty(LayoutOptions.THICKNESS);
+                        ypos += originEdge.getProperty(LayoutOptions.THICKNESS)
+                                + labelSpacing;
                     }
                     
                     for (LLabel label : node.getProperty(InternalProperties.REPRESENTED_LABELS)) {
