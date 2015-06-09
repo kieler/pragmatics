@@ -19,7 +19,6 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * Counts the number of crossings between two given layers or all layers in a graph.
  *
  * @author alan
- *
  */
 public final class AllCrossingsCounter {
     private final LNode[][] layeredGraph;
@@ -78,6 +77,7 @@ public final class AllCrossingsCounter {
 
     private int countBetweenLayerCrossingsInOrder(final LNode[] easternLayer,
             final LNode[] westernLayer) {
+        
         if (isALayerEmpty(easternLayer, westernLayer)) {
             return 0;
         }

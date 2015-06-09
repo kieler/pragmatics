@@ -28,7 +28,6 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  * Utility class for iterating over ports in any direction.
  * 
  * @author alan
- *
  */
 final class PortIterable implements Iterable<LPort> {
     private final PortSide side;

@@ -30,7 +30,6 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * and long edge dummies.
  * 
  * @author alan
- *
  */
 public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
 
@@ -112,6 +111,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     private void countCrossingsOfTwoNorthSouthDummies(final LNode furtherFromNormalNode,
             final LNode closerToNormalNode, final PortSide furtherNodePortSide,
             final PortSide closerNodePortSide) {
+        
         if (furtherNodePortSide == PortSide.EAST && closerNodePortSide == PortSide.EAST) {
             if (originPortPositionOf(furtherFromNormalNode) > originPortPositionOf(closerToNormalNode)) {
                 upperLowerCrossings = 1;
@@ -139,6 +139,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
 
     private void processIfNorthSouthLongEdgeDummyCrossing(final LNode upperNode,
             final LNode lowerNode) {
+        
         if (isNorthSouth(upperNode) && isLongEdgeDummy(lowerNode)) {
             if (isNorthOfNormalNode(upperNode)) {
                 upperLowerCrossings = 1;
@@ -156,6 +157,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
 
     private void processIfNormalNodeWithNSPortsAndLongEdgeDummy(final LNode upperNode,
             final LNode lowerNode) {
+        
         if (isNormal(upperNode) && isLongEdgeDummy(lowerNode)) {
             upperLowerCrossings =
                     numberOfDummyEdgeCrossingsWithNSEdgesOnSide(upperNode, PortSide.SOUTH);

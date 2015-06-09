@@ -41,7 +41,6 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  * </ul>
  * 
  * @author msp
- *
  */
 public class BetweenLayerHyperedgeAllCrossingsCounter extends
         BetweenLayerEdgeAllCrossingsCounter {

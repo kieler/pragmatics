@@ -27,7 +27,6 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  * Counts crossings between in-layer edges incident to two nodes.
  * 
  * @author alan
- *
  */
 class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
 

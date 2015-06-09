@@ -22,7 +22,6 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
- * 
  * This class decides whether two neighboring nodes should be switched. There are two variants:
  * <ul>
  * <li>OneSided – The traditional risky way: The decider checks if a switch would reduce crossings
@@ -51,6 +50,7 @@ class SwitchDecider {
      */
     SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
             final CrossingMatrixFiller crossingMatrixFiller) {
+        
         this.crossingMatrixFiller = crossingMatrixFiller;
         if (freeLayerIndex >= graph.length) {
             throw new IndexOutOfBoundsException(
@@ -71,6 +71,7 @@ class SwitchDecider {
      */
     public final boolean doesSwitchReduceCrossings(final int upperNodeIndex,
             final int lowerNodeIndex) {
+        
         if (constraintsPreventSwitch(upperNodeIndex, lowerNodeIndex)) {
             return false;
         }
@@ -174,17 +175,16 @@ class SwitchDecider {
     }
 
 
-
     /**
-         * The side on which to count crossings for the one-sided SwitchDecider.
-         * 
-         * @author alan
-         *
-         */
-        protected enum CrossingCountSide {
-            /** Consider crossings to the west of the free layer. */
-            WEST,
-            /** Consider crossings to the east of the free layer. */
-            EAST
-        }
+     * The side on which to count crossings for the one-sided SwitchDecider.
+     * 
+     * @author alan
+     *
+     */
+    protected enum CrossingCountSide {
+        /** Consider crossings to the west of the free layer. */
+        WEST,
+        /** Consider crossings to the east of the free layer. */
+        EAST
+    }
 }

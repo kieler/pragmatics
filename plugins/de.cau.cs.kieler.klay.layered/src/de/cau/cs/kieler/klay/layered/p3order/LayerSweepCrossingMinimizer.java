@@ -238,6 +238,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     hasNorthSouthPorts, portPos);
             inlayerCrossingsCounter = normalCrossingsCounter;
         }
+        
         if (!noLayerCombinationHasHyperedges) {
             hyperedgeCrossingsCounter = new HyperedgeCrossingsCounter(inLayerEdgeCount,
                     hasNorthSouthPorts, portPos);

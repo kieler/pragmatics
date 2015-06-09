@@ -31,7 +31,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * their positions ("switching" them) the number of crossings is reduced. If it is, switch them, if
  * it is not, don't. This principle is continued throughout the graph for all nodes in each layer.
  * </p>
+ * <p>
  * Configuration depends on the {@link GreedySwitchType} set on the graph:
+ * </p>
  * <ul>
  * <li>isOneSided: fixes the order of one layer and changes the order in a neighboring layer using
  * the number of crossings to this neighboring layer. To prevent increasing the number of crosses,
@@ -298,7 +300,6 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     }
 
     private void initialize(final LGraph graph) {
-
         layeredGraph = graph;
         int layerCount = graph.getLayers().size();
         bestNodeOrder = new LNode[layerCount][];

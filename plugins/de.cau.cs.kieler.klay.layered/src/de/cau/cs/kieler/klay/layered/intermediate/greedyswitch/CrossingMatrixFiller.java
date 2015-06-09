@@ -22,7 +22,6 @@ import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
  * each free layer. For each layer the node.id fields MUST be set from 0 to layer.getSize() - 1!
  * 
  * @author alan
- *
  */
 class CrossingMatrixFiller {
     private final boolean[][] isCrossingMatrixFilled;
@@ -36,6 +35,7 @@ class CrossingMatrixFiller {
      */
     public CrossingMatrixFiller(final GreedySwitchType greedyType, final LNode[][] graph,
             final int freeLayerIndex, final CrossingCountSide direction) {
+        
         this.direction = direction;
         oneSided = greedyType.isOneSided();
 

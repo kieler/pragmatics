@@ -30,7 +30,6 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  * Calculates the number of crossings for edges incident to two nodes.
  *
  * @author alan
- *
  */
 class BetweenLayerEdgeTwoNodeCrossingsCounter {
     private int upperLowerCrossings;
@@ -177,6 +176,7 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
      */
     private AdjacencyList getAdjacencyFor(final LNode node, final PortSide side,
             final Map<LNode, AdjacencyList> adjacencies) {
+        
         if (adjacencies.isEmpty()) {
             for (LNode n : currentNodeOrder[freeLayerIndex]) {
                 adjacencies.put(n, new AdjacencyList(n, side));

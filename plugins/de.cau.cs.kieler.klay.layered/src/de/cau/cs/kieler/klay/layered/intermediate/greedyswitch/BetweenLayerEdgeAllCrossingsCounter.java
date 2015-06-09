@@ -19,10 +19,9 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 /**
  * Abstract super class for counting all between-layer edge crossings. Subclasses must implement
  * {@link #countCrossings(LNode[], LNode[])} which counts crossings between two layers. They can use
- * the port.id fields and the portPos array.
+ * the {@code port.id} fields and the {@code portPos} array (accessible through {@link #getPortPos()}.
  * 
  * @author alan
- *
  */
 abstract class BetweenLayerEdgeAllCrossingsCounter {
 

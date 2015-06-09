@@ -31,7 +31,6 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * and long-edge dummies.
  * 
  * @author alan
- *
  */
 class NorthSouthEdgeAllCrossingsCounter {
 
@@ -85,9 +84,8 @@ class NorthSouthEdgeAllCrossingsCounter {
     }
 
     /**
-     * Counts all crossings caused by the ordering of north/south ports and between north/south
-     * edges and long-edge dummies. Assume the following layout:
-     * 
+     * <p>Counts all crossings caused by the ordering of north/south ports and between north/south
+     * edges and long-edge dummies. Assume the following layout:</p>
      * <pre>
      *       *---*
      *       |
@@ -98,8 +96,7 @@ class NorthSouthEdgeAllCrossingsCounter {
      *  |_____|
      * </pre>
      * 
-     * This can be viewed as a matrix:
-     * 
+     * <p>This can be viewed as a matrix:</p>
      * <pre>
      *   0 1 2 
      * 0  |  *
@@ -107,9 +104,9 @@ class NorthSouthEdgeAllCrossingsCounter {
      * 2 x
      * </pre>
      * 
-     * Thereby node the eastern edge of node x causes crossings with north/south edges of all nodes
+     * <p>Thereby node the eastern edge of node x causes crossings with north/south edges of all nodes
      * which are to the right and above it. For western edges this is the same to the left and
-     * below.
+     * below.</p>
      * 
      * @return number of crossings
      */
