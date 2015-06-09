@@ -50,6 +50,11 @@ public final class KlighdConstants {
     public static final RGB BLACK = new RGB(0, 0, 0);
 
     /**
+     * Constant definition of the grey {@link RGB} color constant.
+     */
+    public static final RGB GREY = new RGB(128, 128, 128);
+
+    /**
      * Constant definition of the red {@link RGB} color constant.
      */
     public static final RGB BLUE = new RGB(0, 0, 255);
@@ -80,6 +85,24 @@ public final class KlighdConstants {
      * @see #ALPHA_FULL_OPAQUE
      */
     public static final int ALPHA_FULL_TRANSPARENT = 0;
+
+    /**
+     * Constant definition of the <i>half opaque</i> SWT alpha value.
+     *
+     * @see #ALPHA_FULL_TRANSPARENT
+     * @see #ALPHA_QUARTER_OPAQUE
+     * @see #ALPHA_FULL_OPAQUE
+     */
+    public static final int ALPHA_HALF_OPAQUE = 127;
+
+    /**
+     * Constant definition of the <i>quarter opaque</i> SWT alpha value.
+     *
+     * @see #ALPHA_FULL_TRANSPARENT
+     * @see #ALPHA_HALF_OPAQUE
+     * @see #ALPHA_FULL_OPAQUE
+     */
+    public static final int ALPHA_QUARTER_OPAQUE = 63;
 
     /**
      * Constant definition of the <i>full opaque</i> SWT alpha value.

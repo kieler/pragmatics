@@ -131,6 +131,7 @@ public final class InteractiveLayerer implements ILayoutPhase {
             firstSpan.end = currentSpans.get(0).start;
             firstSpan.nodes.addAll(dummysFirstSep);
             currentSpans.add(0, firstSpan);
+            dummysFirstSep.clear();
         }
         
         // all dummy nodes with last_property add to last span
@@ -140,6 +141,7 @@ public final class InteractiveLayerer implements ILayoutPhase {
             lastSpan.end = lastSpan.start + 5000;
             lastSpan.nodes.addAll(dummysLastSep);
             currentSpans.add(lastSpan);
+            dummysLastSep.clear();
         }
         // create real layers from the layer spans
         List<Layer> layers = layeredGraph.getLayers();

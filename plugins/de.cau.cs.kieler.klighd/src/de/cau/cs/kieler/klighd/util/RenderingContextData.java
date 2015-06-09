@@ -97,6 +97,14 @@ public class RenderingContextData extends KGraphDataImpl {
     }
 
     /**
+     *
+     * @return <code>true</code> if a KNode was dragged, false else
+     */
+    public boolean isDragged() {
+        return this.getProperty(KlighdInternalProperties.DRAGGED);
+    }
+
+    /**
      * Removes the (first) {@link RenderingContextData} instance from its container if any exists.
      *
      * @param element

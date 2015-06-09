@@ -82,6 +82,11 @@ public final class KlighdInternalProperties {
      */
     public static final IProperty<Boolean> SELECTED = new Property<Boolean>("klighd.selected", false);
 
+    /**
+     * Property indicating whether the given node was moved by interactive drag or not.
+     */
+    public static final IProperty<Boolean> DRAGGED = new Property<Boolean>("klighd.dragged", false);
+
     /** the viewer visualizing the graph. */
     public static final IProperty<IViewer> VIEWER = new Property<IViewer>(
             "klighd.layout.viewer");
