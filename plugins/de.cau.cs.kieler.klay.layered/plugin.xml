@@ -465,7 +465,7 @@
             advanced="true"
             appliesTo="parents"
             default="0.5"
-            description="Influecnes the weigth of the  width-estimation of the 
+            description="Influecnes the weigth of the width-estimation of the 
             next Layer. 1 resuts in the longest-path-layerer and 0 is similar 
             to the one-node-layerer"
             id="de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale"
