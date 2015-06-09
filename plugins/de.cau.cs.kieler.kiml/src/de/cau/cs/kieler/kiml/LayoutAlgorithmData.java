@@ -163,6 +163,17 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     }
     
     /**
+     * Checks if the given diagram type is supported at all. This is equivalent to checking whether
+     * {@link #getDiagramSupport(String)} returns something greater than {@link #MIN_PRIORITY}.
+     * 
+     * @param diagramType the diagram type to check.
+     * @return {@code true} if the algorithm supports the given diagram type.
+     */
+    public boolean supportsFeature(final String diagramType) {
+        return getDiagramSupport(diagramType) > MIN_PRIORITY;
+    }
+    
+    /**
      * Sets support for the given graph feature. If the priority is less or equal to
      * {@link #MIN_PRIORITY}, the feature is treated as not supported.
      * 
@@ -194,6 +205,17 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
             return result;
         }
         return MIN_PRIORITY;
+    }
+    
+    /**
+     * Checks if the given graph feature is supported at all. This is equivalent to checking whether
+     * {@link #getFeatureSupport(GraphFeature)} returns something greater than {@link #MIN_PRIORITY}.
+     * 
+     * @param graphFeature the graph feature to check.
+     * @return {@code true} if the algorithm supports the given feature.
+     */
+    public boolean supportsFeature(final GraphFeature graphFeature) {
+        return getFeatureSupport(graphFeature) > MIN_PRIORITY;
     }
 
     /**

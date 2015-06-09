@@ -76,13 +76,40 @@ public interface GranaPackage extends EPackage
   int GRANA__GLOBAL_RESOURCES = 0;
 
   /**
+   * The feature id for the '<em><b>Gloobal Outputs</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GRANA__GLOOBAL_OUTPUTS = 1;
+
+  /**
+   * The feature id for the '<em><b>Execute All</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GRANA__EXECUTE_ALL = 2;
+
+  /**
+   * The feature id for the '<em><b>Execute</b></em>' reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GRANA__EXECUTE = 3;
+
+  /**
    * The feature id for the '<em><b>Jobs</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int GRANA__JOBS = 1;
+  int GRANA__JOBS = 4;
 
   /**
    * The number of structural features of the '<em>Grana</em>' class.
@@ -91,7 +118,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int GRANA_FEATURE_COUNT = 2;
+  int GRANA_FEATURE_COUNT = 5;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl <em>Job</em>}' class.
@@ -158,7 +185,7 @@ public interface GranaPackage extends EPackage
   int JOB__ANALYSES = 5;
 
   /**
-   * The feature id for the '<em><b>Output</b></em>' attribute.
+   * The feature id for the '<em><b>Output</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -297,6 +324,118 @@ public interface GranaPackage extends EPackage
   int LOCAL_RESOURCE_FEATURE_COUNT = RESOURCE_FEATURE_COUNT + 2;
 
   /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.OutputImpl <em>Output</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.OutputImpl
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getOutput()
+   * @generated
+   */
+  int OUTPUT = 6;
+
+  /**
+   * The number of structural features of the '<em>Output</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OUTPUT_FEATURE_COUNT = 0;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GlobalOutputRefImpl <em>Global Output Ref</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GlobalOutputRefImpl
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getGlobalOutputRef()
+   * @generated
+   */
+  int GLOBAL_OUTPUT_REF = 7;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GLOBAL_OUTPUT_REF__NAME = 0;
+
+  /**
+   * The feature id for the '<em><b>Output</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GLOBAL_OUTPUT_REF__OUTPUT = 1;
+
+  /**
+   * The number of structural features of the '<em>Global Output Ref</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GLOBAL_OUTPUT_REF_FEATURE_COUNT = 2;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.OutputReferenceImpl <em>Output Reference</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.OutputReferenceImpl
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getOutputReference()
+   * @generated
+   */
+  int OUTPUT_REFERENCE = 8;
+
+  /**
+   * The feature id for the '<em><b>Output Ref</b></em>' reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OUTPUT_REFERENCE__OUTPUT_REF = OUTPUT_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Output Reference</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OUTPUT_REFERENCE_FEATURE_COUNT = OUTPUT_FEATURE_COUNT + 1;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.LocalOutputImpl <em>Local Output</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.LocalOutputImpl
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getLocalOutput()
+   * @generated
+   */
+  int LOCAL_OUTPUT = 9;
+
+  /**
+   * The feature id for the '<em><b>Path</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LOCAL_OUTPUT__PATH = OUTPUT_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Local Output</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LOCAL_OUTPUT_FEATURE_COUNT = OUTPUT_FEATURE_COUNT + 1;
+
+  /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.AnalysisImpl <em>Analysis</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -304,7 +443,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getAnalysis()
    * @generated
    */
-  int ANALYSIS = 6;
+  int ANALYSIS = 10;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -345,6 +484,39 @@ public interface GranaPackage extends EPackage
    * @generated
    */
   EReference getGrana_GlobalResources();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#getGloobalOutputs <em>Gloobal Outputs</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Gloobal Outputs</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.Grana#getGloobalOutputs()
+   * @see #getGrana()
+   * @generated
+   */
+  EReference getGrana_GloobalOutputs();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#isExecuteAll <em>Execute All</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Execute All</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.Grana#isExecuteAll()
+   * @see #getGrana()
+   * @generated
+   */
+  EAttribute getGrana_ExecuteAll();
+
+  /**
+   * Returns the meta object for the reference list '{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#getExecute <em>Execute</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the reference list '<em>Execute</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.Grana#getExecute()
+   * @see #getGrana()
+   * @generated
+   */
+  EReference getGrana_Execute();
 
   /**
    * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#getJobs <em>Jobs</em>}'.
@@ -434,15 +606,15 @@ public interface GranaPackage extends EPackage
   EReference getJob_Analyses();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getOutput <em>Output</em>}'.
+   * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getOutput <em>Output</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Output</em>'.
+   * @return the meta object for the containment reference '<em>Output</em>'.
    * @see de.cau.cs.kieler.kiml.grana.text.grana.Job#getOutput()
    * @see #getJob()
    * @generated
    */
-  EAttribute getJob_Output();
+  EReference getJob_Output();
 
   /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.Resource <em>Resource</em>}'.
@@ -540,6 +712,90 @@ public interface GranaPackage extends EPackage
   EAttribute getLocalResource_Filter();
 
   /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.Output <em>Output</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Output</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.Output
+   * @generated
+   */
+  EClass getOutput();
+
+  /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef <em>Global Output Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Global Output Ref</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef
+   * @generated
+   */
+  EClass getGlobalOutputRef();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef#getName()
+   * @see #getGlobalOutputRef()
+   * @generated
+   */
+  EAttribute getGlobalOutputRef_Name();
+
+  /**
+   * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef#getOutput <em>Output</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Output</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef#getOutput()
+   * @see #getGlobalOutputRef()
+   * @generated
+   */
+  EReference getGlobalOutputRef_Output();
+
+  /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.OutputReference <em>Output Reference</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Output Reference</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.OutputReference
+   * @generated
+   */
+  EClass getOutputReference();
+
+  /**
+   * Returns the meta object for the reference '{@link de.cau.cs.kieler.kiml.grana.text.grana.OutputReference#getOutputRef <em>Output Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the reference '<em>Output Ref</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.OutputReference#getOutputRef()
+   * @see #getOutputReference()
+   * @generated
+   */
+  EReference getOutputReference_OutputRef();
+
+  /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput <em>Local Output</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Local Output</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput
+   * @generated
+   */
+  EClass getLocalOutput();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput#getPath <em>Path</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Path</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput#getPath()
+   * @see #getLocalOutput()
+   * @generated
+   */
+  EAttribute getLocalOutput_Path();
+
+  /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.Analysis <em>Analysis</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -600,6 +856,30 @@ public interface GranaPackage extends EPackage
      * @generated
      */
     EReference GRANA__GLOBAL_RESOURCES = eINSTANCE.getGrana_GlobalResources();
+
+    /**
+     * The meta object literal for the '<em><b>Gloobal Outputs</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference GRANA__GLOOBAL_OUTPUTS = eINSTANCE.getGrana_GloobalOutputs();
+
+    /**
+     * The meta object literal for the '<em><b>Execute All</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GRANA__EXECUTE_ALL = eINSTANCE.getGrana_ExecuteAll();
+
+    /**
+     * The meta object literal for the '<em><b>Execute</b></em>' reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference GRANA__EXECUTE = eINSTANCE.getGrana_Execute();
 
     /**
      * The meta object literal for the '<em><b>Jobs</b></em>' containment reference list feature.
@@ -668,12 +948,12 @@ public interface GranaPackage extends EPackage
     EReference JOB__ANALYSES = eINSTANCE.getJob_Analyses();
 
     /**
-     * The meta object literal for the '<em><b>Output</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Output</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute JOB__OUTPUT = eINSTANCE.getJob_Output();
+    EReference JOB__OUTPUT = eINSTANCE.getJob_Output();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.ResourceImpl <em>Resource</em>}' class.
@@ -754,6 +1034,78 @@ public interface GranaPackage extends EPackage
      * @generated
      */
     EAttribute LOCAL_RESOURCE__FILTER = eINSTANCE.getLocalResource_Filter();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.OutputImpl <em>Output</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.OutputImpl
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getOutput()
+     * @generated
+     */
+    EClass OUTPUT = eINSTANCE.getOutput();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GlobalOutputRefImpl <em>Global Output Ref</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GlobalOutputRefImpl
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getGlobalOutputRef()
+     * @generated
+     */
+    EClass GLOBAL_OUTPUT_REF = eINSTANCE.getGlobalOutputRef();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GLOBAL_OUTPUT_REF__NAME = eINSTANCE.getGlobalOutputRef_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Output</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference GLOBAL_OUTPUT_REF__OUTPUT = eINSTANCE.getGlobalOutputRef_Output();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.OutputReferenceImpl <em>Output Reference</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.OutputReferenceImpl
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getOutputReference()
+     * @generated
+     */
+    EClass OUTPUT_REFERENCE = eINSTANCE.getOutputReference();
+
+    /**
+     * The meta object literal for the '<em><b>Output Ref</b></em>' reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OUTPUT_REFERENCE__OUTPUT_REF = eINSTANCE.getOutputReference_OutputRef();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.LocalOutputImpl <em>Local Output</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.LocalOutputImpl
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getLocalOutput()
+     * @generated
+     */
+    EClass LOCAL_OUTPUT = eINSTANCE.getLocalOutput();
+
+    /**
+     * The meta object literal for the '<em><b>Path</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LOCAL_OUTPUT__PATH = eINSTANCE.getLocalOutput_Path();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.AnalysisImpl <em>Analysis</em>}' class.

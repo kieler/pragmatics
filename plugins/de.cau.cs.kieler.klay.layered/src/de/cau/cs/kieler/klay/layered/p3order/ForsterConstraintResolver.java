@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 public final class ForsterConstraintResolver implements IConstraintResolver {
 
     /** the layout units for handling dummy nodes for north / south ports. */
-    private Multimap<LNode, LNode> layoutUnits;
+    private final Multimap<LNode, LNode> layoutUnits;
     
     /**
      * Constructs a Forster constraint resolver.
@@ -137,7 +137,7 @@ public final class ForsterConstraintResolver implements IConstraintResolver {
         List<NodeGroup> activeNodeGroups = null;
 
         // Iterate through the constrained vertices
-        float lastValue = Short.MIN_VALUE;
+        double lastValue = Short.MIN_VALUE;
         for (NodeGroup nodeGroup : nodeGroups) {
             assert nodeGroup.barycenter != null && nodeGroup.barycenter >= lastValue;
             lastValue = nodeGroup.barycenter;
