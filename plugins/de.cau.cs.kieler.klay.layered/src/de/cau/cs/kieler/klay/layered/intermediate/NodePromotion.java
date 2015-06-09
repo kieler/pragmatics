@@ -13,8 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -149,9 +151,17 @@ public class NodePromotion implements ILayoutProcessor {
             node.setLayer(layList.get(maxLayerCnt - layers[node.id]));
         }
 
+        Iterator<Layer> variable = layList.iterator();
+        while (variable.hasNext()) {
+            Layer irgendwas = variable.next();
+            if (irgendwas.getNodes().isEmpty()) {
+                variable.remove();
+            }
+        }
         layeredGraph.getLayers().clear();
         layeredGraph.getLayers().addAll(layList);
 
+        
     }
 
     /**
