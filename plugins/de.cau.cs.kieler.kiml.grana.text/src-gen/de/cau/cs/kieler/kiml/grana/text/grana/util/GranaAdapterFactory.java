@@ -105,6 +105,26 @@ public class GranaAdapterFactory extends AdapterFactoryImpl
         return createLocalResourceAdapter();
       }
       @Override
+      public Adapter caseOutput(Output object)
+      {
+        return createOutputAdapter();
+      }
+      @Override
+      public Adapter caseGlobalOutputRef(GlobalOutputRef object)
+      {
+        return createGlobalOutputRefAdapter();
+      }
+      @Override
+      public Adapter caseOutputReference(OutputReference object)
+      {
+        return createOutputReferenceAdapter();
+      }
+      @Override
+      public Adapter caseLocalOutput(LocalOutput object)
+      {
+        return createLocalOutputAdapter();
+      }
+      @Override
       public Adapter caseAnalysis(Analysis object)
       {
         return createAnalysisAdapter();
@@ -217,6 +237,66 @@ public class GranaAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createLocalResourceAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.Output <em>Output</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.Output
+   * @generated
+   */
+  public Adapter createOutputAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef <em>Global Output Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef
+   * @generated
+   */
+  public Adapter createGlobalOutputRefAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.OutputReference <em>Output Reference</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.OutputReference
+   * @generated
+   */
+  public Adapter createOutputReferenceAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput <em>Local Output</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput
+   * @generated
+   */
+  public Adapter createLocalOutputAdapter()
   {
     return null;
   }

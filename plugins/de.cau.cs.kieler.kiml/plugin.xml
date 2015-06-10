@@ -644,6 +644,16 @@
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="nodes,edges"
+           default="false"
+           description="Whether a self-loop is routed around or inside its node."
+           id="de.cau.cs.kieler.selfLoopInside"
+           name="Route Self Loop Inside"
+           type="boolean"
+           variance="0">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
            appliesTo="edges"
            default="1"
            description="The thickness of an edge."

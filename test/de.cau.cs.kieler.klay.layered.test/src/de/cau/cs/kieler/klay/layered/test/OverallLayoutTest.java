@@ -1,5 +1,5 @@
 /*
- * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+yy * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.test;
 
-import static org.junit.Assert.*; // SUPPRESS CHECKSTYLE AvoidStarImport
+import static org.junit.Assert.assertTrue; // SUPPRESS CHECKSTYLE AvoidStarImport
 
 import java.util.LinkedList;
 import java.util.List;
@@ -41,7 +41,7 @@ import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
  * @author msp
  */
 public class OverallLayoutTest {
-    
+
     /**
      * Create a simple test graph. The graph has at least two nodes and an edge, the nodes have
      * predefined sizes with fixed size constraint, but neither nodes nor edges have predefined
@@ -52,32 +52,31 @@ public class OverallLayoutTest {
     private static KNode createSimpleGraph() {
         KNode parentNode = KimlUtil.createInitializedNode();
         // CHECKSTYLEOFF MagicNumber
-        
+
         KNode node1 = KimlUtil.createInitializedNode();
         node1.setParent(parentNode);
         node1.getData(KShapeLayout.class).setWidth(30);
         node1.getData(KShapeLayout.class).setHeight(30);
         node1.getData(KShapeLayout.class).setProperty(LayoutOptions.SIZE_CONSTRAINT,
                 SizeConstraint.fixed());
-        
+
         KNode node2 = KimlUtil.createInitializedNode();
         node2.setParent(parentNode);
         node2.getData(KShapeLayout.class).setWidth(30);
         node2.getData(KShapeLayout.class).setHeight(30);
         node2.getData(KShapeLayout.class).setProperty(LayoutOptions.SIZE_CONSTRAINT,
                 SizeConstraint.fixed());
-        
+
         KEdge edge1 = KimlUtil.createInitializedEdge();
         edge1.setSource(node1);
         edge1.setTarget(node2);
-        
+
         return parentNode;
     }
-    
-    
+
     private KNode simpleGraph;
     private IKielerProgressMonitor simpleMonitor;
-    
+
     /**
      * Set up the test class.
      */
@@ -94,7 +93,7 @@ public class OverallLayoutTest {
 
     /**
      * Tests if the coordinates of the graph's nodes are positive. Doesn't work for hierarchical
-     * graphs. 
+     * graphs.
      */
     @Test
     public void testNodeCoordinates() {
@@ -104,7 +103,7 @@ public class OverallLayoutTest {
             assertTrue(nodeLayout.getYpos() > 0);
         }
     }
-    
+
     /**
      * Tests if the source and target coordinates of all edges are > 0. Doesn't work for
      * hierarchical graphs.
@@ -121,7 +120,7 @@ public class OverallLayoutTest {
             }
         }
     }
-    
+
     /**
      * Tests if the graph size is positive.
      */
@@ -131,43 +130,43 @@ public class OverallLayoutTest {
         assertTrue(parentLayout.getWidth() > 0);
         assertTrue(parentLayout.getHeight() > 0);
     }
-    
+
     /**
-     * Tests if the edge routing produced perfectly orthogonal edges. This test only makes sense
-     * if the orthogonal edge router is used.
+     * Tests if the edge routing produced perfectly orthogonal edges. This test only makes sense if
+     * the orthogonal edge router is used.
      */
     @Test
     public void testEdgeOrthogonality() {
         LinkedList<KNode> nodes = Lists.newLinkedList();
         nodes.add(simpleGraph);
-        
+
         while (!nodes.isEmpty()) {
             KNode currentNode = nodes.removeFirst();
-            
+
             // Add all of the node's children to be processed later
             nodes.addAll(currentNode.getChildren());
-            
+
             // Iterate over the edges
             for (KEdge edge : currentNode.getOutgoingEdges()) {
                 KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                 int numberOfBendPoints = edgeLayout.getBendPoints().size() + 2;
-                
+
                 // Assemble the list of bend points, including source and target point
                 List<KPoint> bendPoints = Lists.newArrayListWithCapacity(numberOfBendPoints);
                 bendPoints.add(edgeLayout.getSourcePoint());
                 bendPoints.addAll(edgeLayout.getBendPoints());
                 bendPoints.add(edgeLayout.getTargetPoint());
-                
+
                 // Iterate over the edge's bend points, remembering the previous one to compare the
                 // current one to
                 KPoint prevBendPoint = bendPoints.get(0);
                 for (int i = 1; i < numberOfBendPoints; i++) {
                     KPoint currBendPoint = bendPoints.get(i);
-                    
+
                     // Either x or y coordinates of the last two bend points must match
                     assertTrue(prevBendPoint.getX() == currBendPoint.getX()
                             || prevBendPoint.getY() == currBendPoint.getY());
-                    
+
                     prevBendPoint = currBendPoint;
                 }
             }

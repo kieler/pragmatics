@@ -69,12 +69,13 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
 
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
-        IntermediateProcessingConfiguration.createEmpty()
-            .addBeforePhase3(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
-            .addBeforePhase4(IntermediateProcessorStrategy.PORT_DISTRIBUTER)
-            .addBeforePhase4(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
-            .addAfterPhase5(IntermediateProcessorStrategy.LONG_EDGE_JOINER);
-    
+            IntermediateProcessingConfiguration.createEmpty()
+                    .addBeforePhase3(IntermediateProcessorStrategy.LONG_EDGE_SPLITTER)
+                    .addBeforePhase4(IntermediateProcessorStrategy.PORT_DISTRIBUTER)
+                    .addBeforePhase4(IntermediateProcessorStrategy.GREEDY_SWITCH)
+                    .addBeforePhase4(IntermediateProcessorStrategy.IN_LAYER_CONSTRAINT_PROCESSOR)
+                    .addAfterPhase5(IntermediateProcessorStrategy.LONG_EDGE_JOINER);
+
     /**
      * {@inheritDoc}
      */
@@ -237,6 +238,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                     hasNorthSouthPorts, portPos);
             inlayerCrossingsCounter = normalCrossingsCounter;
         }
+        
         if (!noLayerCombinationHasHyperedges) {
             hyperedgeCrossingsCounter = new HyperedgeCrossingsCounter(inLayerEdgeCount,
                     hasNorthSouthPorts, portPos);
