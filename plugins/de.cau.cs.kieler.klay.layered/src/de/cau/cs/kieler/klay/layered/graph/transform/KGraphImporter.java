@@ -69,7 +69,7 @@ class KGraphImporter {
     
 
     /////////////////////////////////////////////////////////////
-    // Graphs
+    // Import Entry Points
 
     /**
      * Imports the given graph.
@@ -122,15 +122,15 @@ class KGraphImporter {
         // children must have already been transformed)
         for (KNode child : kgraph.getChildren()) {
             // Is inside self loop processing enabled for this node?
-            KShapeLayout shapeLayout = child.getData(KShapeLayout.class);
-            boolean enableInsideSelfLoops = shapeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+            KShapeLayout childLayout = child.getData(KShapeLayout.class);
+            boolean enableInsideSelfLoops = childLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
             
             for (KEdge kedge : child.getOutgoingEdges()) {
                 // Find out basic information about the edge
-                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                boolean isToBeLaidOut = !edgeLayout.getProperty(LayoutOptions.NO_LAYOUT);
+                KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
+                boolean isToBeLaidOut = !kedgeLayout.getProperty(LayoutOptions.NO_LAYOUT);
                 boolean isInsideSelfLoop = enableInsideSelfLoops && kedge.getTarget() == child
-                        && edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+                        && kedgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
                 boolean connectsToGraph = kedge.getTarget() == kgraph;
                 boolean connectsToSibling = kedge.getTarget().getParent() == kgraph;
                 
@@ -148,10 +148,10 @@ class KGraphImporter {
         boolean enableInsideSelfLoops = shapeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
         
         for (KEdge kedge : kgraph.getOutgoingEdges()) {
-            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-            boolean isToBeLaidOut = !edgeLayout.getProperty(LayoutOptions.NO_LAYOUT);
+            KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
+            boolean isToBeLaidOut = !kedgeLayout.getProperty(LayoutOptions.NO_LAYOUT);
             boolean isInsideSelfLoop = enableInsideSelfLoops && kedge.getTarget() == kgraph
-                    && edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+                    && kedgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
             boolean connectsToChild = kedge.getTarget().getParent() == kgraph;
             
             if (isToBeLaidOut && (connectsToChild || isInsideSelfLoop)) {
@@ -173,55 +173,109 @@ class KGraphImporter {
 
         // Transform the node's children
         knodeQueue.addAll(kgraph.getChildren());
-        do {
-            final KNode knode = knodeQueue.poll();
-            final KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
+        while (!knodeQueue.isEmpty()) {
+            KNode knode = knodeQueue.poll();
+            KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
             
-            final boolean isToBeLaidOut = !knodeLayout.getProperty(LayoutOptions.NO_LAYOUT);
-            
-            if (isToBeLaidOut) {
+            // Check if the current node is to be laid out in the first place
+            boolean isNodeToBeLaidOut = !knodeLayout.getProperty(LayoutOptions.NO_LAYOUT);
+            if (isNodeToBeLaidOut) {
+                // Transform da node!!!
                 LGraph parentLGraph = lgraph;
-                final LNode parentLNode = (LNode) nodeAndPortMap.get(knode.getParent());
+                LNode parentLNode = (LNode) nodeAndPortMap.get(knode.getParent());
                 if (parentLNode != null) {
                     parentLGraph = parentLNode.getProperty(InternalProperties.NESTED_LGRAPH);
                 }
                 LNode lnode = transformNode(knode, parentLGraph);
                 
-                if (!knode.getChildren().isEmpty()) {
-                    final LGraph nestedGraph = createLGraph(knode);
+                // Check if there has to be an LGraph for this node (which is the case if it has
+                // children or inside self-loops)
+                boolean hasChildren = !knode.getChildren().isEmpty();
+                boolean hasInsideSelfLoops = hasInsideSelfLoops(knode);
+                
+                if (hasChildren || hasInsideSelfLoops) {
+                    LGraph nestedGraph = createLGraph(knode);
                     lnode.setProperty(InternalProperties.NESTED_LGRAPH, nestedGraph);
                     nestedGraph.setProperty(InternalProperties.PARENT_LNODE, lnode);
                     knodeQueue.addAll(knode.getChildren());
                 }
             }
-        } while (!knodeQueue.isEmpty());
+        }
 
         // Transform the edges
         knodeQueue.add(kgraph);
-        do {
-            final KNode knode = knodeQueue.poll();
-            for (KEdge kedge : knode.getOutgoingEdges()) {
-                final KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
-                final boolean isToBeLaidOut = !kedgeLayout.getProperty(LayoutOptions.NO_LAYOUT);
-                
-                if (isToBeLaidOut) {
-                    KNode parentKNode = knode;
-                    if (!KimlUtil.isDescendant(kedge.getTarget(), knode)) {
-                        parentKNode = knode.getParent();
-                    }
+        while (!knodeQueue.isEmpty()) {
+            KNode knode = knodeQueue.poll();
+            KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
+            
+            boolean enableInsideSelfLoops = knodeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+
+            // Check if the current node is to be laid out in the first place
+            boolean isNodeToBeLaidOut = !knodeLayout.getProperty(LayoutOptions.NO_LAYOUT);
+            if (isNodeToBeLaidOut) {
+                for (KEdge kedge : knode.getOutgoingEdges()) {
+                    KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
                     
-                    LGraph parentLGraph = lgraph;
-                    final LNode parentLNode = (LNode) nodeAndPortMap.get(parentKNode);
-                    if (parentLNode != null) {
-                        parentLGraph = parentLNode.getProperty(InternalProperties.NESTED_LGRAPH);
+                    // Check if the current edge is to be laid out
+                    boolean isEdgeToBeLaidOut = !kedgeLayout.getProperty(LayoutOptions.NO_LAYOUT);
+                    if (isEdgeToBeLaidOut) {
+                        // Check if this edge is an inside self-loop
+                        boolean isInsideSelfLoop = enableInsideSelfLoops
+                                && kedge.getSource() == kedge.getTarget()
+                                && kedgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+                        
+                        // Find the graph the edge will be placed in. Basically, if the edge is an inside
+                        // self loop or connects to a descendant of this node, the edge will be placed in
+                        // the graph that represents the node's insides. Otherwise, it will be placed in
+                        // the graph that represents the node's parent.
+                        KNode parentKGraph = knode;
+                        if (!KimlUtil.isDescendant(kedge.getTarget(), knode) && !isInsideSelfLoop) {
+                            parentKGraph = knode.getParent();
+                        }
+                        
+                        LGraph parentLGraph = lgraph;
+                        LNode parentLNode = (LNode) nodeAndPortMap.get(parentKGraph);
+                        if (parentLNode != null) {
+                            parentLGraph = parentLNode.getProperty(InternalProperties.NESTED_LGRAPH);
+                        }
+                        
+                        // Transform the edge, finally...
+                        transformEdge(kedge, parentLGraph);
                     }
-                    transformEdge(kedge, parentLGraph);
                 }
+                
+                knodeQueue.addAll(knode.getChildren());
             }
-            knodeQueue.addAll(knode.getChildren());
-        } while (!knodeQueue.isEmpty());
+        }
     }
     
+    /**
+     * Checks if the given node has any inside self loops.
+     * 
+     * @param knode the node to check for inside self loops.
+     * @return {@code true} if the node has inside self loops, {@code false} otherwise.
+     */
+    private boolean hasInsideSelfLoops(final KNode knode) {
+        KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+        
+        if (nodeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
+            for (KEdge edge : knode.getOutgoingEdges()) {
+                if (edge.getTarget() == knode) {
+                    final KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                    if (edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+    
+
+    /////////////////////////////////////////////////////////////
+    // Graph Transformation
+
     /**
      * Create an LGraph from the given KNode.
      * 
@@ -263,7 +317,7 @@ class KGraphImporter {
     
     
     /////////////////////////////////////////////////////////////
-    // External Ports
+    // External Port Transformation
     
     /**
      * Checks if external ports processing should be active. This is the case if the parent node has
@@ -445,7 +499,7 @@ class KGraphImporter {
     
     
     /////////////////////////////////////////////////////////////
-    // Nodes
+    // Node Transformation
 
     /**
      * Transforms the given node and its contained ports.
@@ -524,7 +578,7 @@ class KGraphImporter {
     
     
     /////////////////////////////////////////////////////////////
-    // Ports
+    // Port Transformation
     
     /**
      * Transforms the given port. The port will not be added to any node, but will be registered in
@@ -616,7 +670,7 @@ class KGraphImporter {
     
     
     /////////////////////////////////////////////////////////////
-    // Edges
+    // Edge Transformation
 
     /**
      * Transforms the given edge.
@@ -768,7 +822,7 @@ class KGraphImporter {
     
     
     /////////////////////////////////////////////////////////////
-    // Labels
+    // Label Transformation
 
     /**
      * Transform the given {@code KLabel} into an {@code LLabel}.

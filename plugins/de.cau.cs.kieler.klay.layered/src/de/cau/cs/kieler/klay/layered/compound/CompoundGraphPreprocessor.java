@@ -87,54 +87,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 public class CompoundGraphPreprocessor implements ILayoutProcessor {
     
     ////////////////////////////////////////////////////////////////////////////////////////////
-    // Class ExternalPort
-
-    /**
-     * An internal representation for external ports. This class is used to pass information
-     * gathered on one hierarchy level to the containing hierarchy level. Instances are created
-     * whenever a cross-hierarchy edge crosses the hierarchy bounds of a parent node; the instance
-     * represents the split point of the edge.
-     */
-    private static class ExternalPort {
-        /** the list of original edges for which the port is created. */
-        private List<LEdge> origEdges = Lists.newArrayList();
-        /** the new edge by which the original edge is replaced. */
-        private LEdge newEdge;
-        /** the dummy node used by the algorithm as representative for the external port. */
-        private LNode dummyNode;
-        /** the dummy port used by the algorithm as representative for the external port. */
-        private LPort dummyPort;
-        /** the flow direction: input or output. */
-        private PortType type = PortType.UNDEFINED;
-        /**
-         * whether the external port will be exported to the outside or not. (it will not be exported
-         * if the port was introduced for connections from an inside node to its parent)
-         */
-        private boolean exported;
-        
-        /**
-         * Create an external port.
-         * 
-         * @param origEdge the original edge for which the port is created
-         * @param newEdge the new edge by which the original edge is replaced
-         * @param dummyNode the dummy node used by the algorithm as representative for the external port
-         * @param portType the flow direction: input or output
-         * @param exported whether the external port is to be exported by its parent.
-         */
-        ExternalPort(final LEdge origEdge, final LEdge newEdge, final LNode dummyNode,
-                final LPort dummyPort, final PortType portType, final boolean exported) {
-            
-            this.origEdges.add(origEdge);
-            this.newEdge = newEdge;
-            this.dummyNode = dummyNode;
-            this.dummyPort = dummyPort;
-            this.type = portType;
-            this.exported = exported;
-        }
-    }
-    
-    
-    ////////////////////////////////////////////////////////////////////////////////////////////
     // Variables
     
     /** map of original edges to generated cross-hierarchy edges. */
@@ -174,9 +126,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
      * @param parentNode the parent node of the graph, or {@code null} if it is on top-level
      * @return the external ports created to split edges that cross the boundary of the parent node
      */
-    private List<ExternalPort> transformHierarchyEdges(final LGraph graph,
-            final LNode parentNode) {
-        
+    private List<ExternalPort> transformHierarchyEdges(final LGraph graph, final LNode parentNode) {
         // process all children and recurse down to gather their external ports
         List<ExternalPort> containedExternalPorts = Lists.newArrayList();
         
@@ -186,6 +136,9 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                 // recursively process the child graph
                 List<ExternalPort> childPorts = transformHierarchyEdges(nestedGraph, node);
                 containedExternalPorts.addAll(childPorts);
+                
+                // process inside self loops
+                processInsideSelfLoops(nestedGraph, node);
                 
                 // make sure that all hierarchical ports have had dummy nodes created for them (some
                 // will already have been created, but perhaps not all)
@@ -545,6 +498,69 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////
+    // Inside Self Loop Processing
+    
+    private void processInsideSelfLoops(final LGraph nestedGraph, final LNode node) {
+        // Check if inside self loops are enabled for the node
+        if (!node.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
+            return;
+        }
+        
+        // Iterate over the edges and look for an inside self loop
+        for (LPort lport : node.getPorts()) {
+            // Avoid ConcurrentModificationExceptions
+            LEdge[] outEdges = lport.getOutgoingEdges().toArray(
+                    new LEdge[lport.getOutgoingEdges().size()]);
+            
+            for (LEdge outEdge : outEdges) {
+                boolean isSelfLoop = outEdge.getTarget().getNode() == node;
+                boolean isInsideSelfLoop = isSelfLoop
+                        && outEdge.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+                
+                if (isInsideSelfLoop) {
+                    // Check if the ports have already been transformed into external port dummies
+                    LPort sourcePort = outEdge.getSource();
+                    LNode sourceExtPortDummy = dummyNodeMap.get(sourcePort);
+                    if (sourceExtPortDummy == null) {
+                        sourceExtPortDummy = LGraphUtil.createExternalPortDummy(sourcePort,
+                                PortConstraints.FREE, sourcePort.getSide(), sourcePort.getNetFlow(),
+                                null, null, sourcePort.getSize(),
+                                nestedGraph.getProperty(LayoutOptions.DIRECTION), nestedGraph);
+                        sourceExtPortDummy.setProperty(InternalProperties.ORIGIN, sourcePort);
+                        dummyNodeMap.put(sourcePort, sourceExtPortDummy);
+                        nestedGraph.getLayerlessNodes().add(sourceExtPortDummy);
+                    }
+                    
+                    LPort targetPort = outEdge.getTarget();
+                    LNode targetExtPortDummy = dummyNodeMap.get(targetPort);
+                    if (targetExtPortDummy == null) {
+                        targetExtPortDummy = LGraphUtil.createExternalPortDummy(targetPort,
+                                PortConstraints.FREE, targetPort.getSide(), targetPort.getNetFlow(),
+                                null, null, targetPort.getSize(),
+                                nestedGraph.getProperty(LayoutOptions.DIRECTION), nestedGraph);
+                        targetExtPortDummy.setProperty(InternalProperties.ORIGIN, targetPort);
+                        dummyNodeMap.put(targetPort, targetExtPortDummy);
+                        nestedGraph.getLayerlessNodes().add(targetExtPortDummy);
+                    }
+                    
+                    // Create a new dummy edge
+                    LEdge dummyEdge = createDummyEdge(nestedGraph, outEdge);
+                    dummyEdge.setSource(sourceExtPortDummy.getPorts().get(0));
+                    dummyEdge.setTarget(targetExtPortDummy.getPorts().get(0));
+                    
+                    // Remember the new edge
+                    crossHierarchyMap.put(outEdge,
+                            new CrossHierarchyEdge(dummyEdge, nestedGraph, PortType.OUTPUT));
+                    
+                    nestedGraph.getProperty(InternalProperties.GRAPH_PROPERTIES).add(
+                            GraphProperties.EXTERNAL_PORTS);
+                }
+            }
+        }
+    }
+
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
     // General Hierarchical Edge Segment Processing
     
     /**
@@ -766,6 +782,54 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         dummyNode.setProperty(InternalProperties.ORIGIN, port);
         dummyNodeMap.put(port, dummyNode);
         return port;
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // Class ExternalPort
+
+    /**
+     * An internal representation for external ports. This class is used to pass information
+     * gathered on one hierarchy level to the containing hierarchy level. Instances are created
+     * whenever a cross-hierarchy edge crosses the hierarchy bounds of a parent node; the instance
+     * represents the split point of the edge.
+     */
+    private static class ExternalPort {
+        /** the list of original edges for which the port is created. */
+        private List<LEdge> origEdges = Lists.newArrayList();
+        /** the new edge by which the original edge is replaced. */
+        private LEdge newEdge;
+        /** the dummy node used by the algorithm as representative for the external port. */
+        private LNode dummyNode;
+        /** the dummy port used by the algorithm as representative for the external port. */
+        private LPort dummyPort;
+        /** the flow direction: input or output. */
+        private PortType type = PortType.UNDEFINED;
+        /**
+         * whether the external port will be exported to the outside or not. (it will not be exported
+         * if the port was introduced for connections from an inside node to its parent)
+         */
+        private boolean exported;
+        
+        /**
+         * Create an external port.
+         * 
+         * @param origEdge the original edge for which the port is created
+         * @param newEdge the new edge by which the original edge is replaced
+         * @param dummyNode the dummy node used by the algorithm as representative for the external port
+         * @param portType the flow direction: input or output
+         * @param exported whether the external port is to be exported by its parent.
+         */
+        ExternalPort(final LEdge origEdge, final LEdge newEdge, final LNode dummyNode,
+                final LPort dummyPort, final PortType portType, final boolean exported) {
+            
+            this.origEdges.add(origEdge);
+            this.newEdge = newEdge;
+            this.dummyNode = dummyNode;
+            this.dummyPort = dummyPort;
+            this.type = portType;
+            this.exported = exported;
+        }
     }
 
 }
