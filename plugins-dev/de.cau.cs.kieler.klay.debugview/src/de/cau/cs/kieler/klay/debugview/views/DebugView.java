@@ -185,6 +185,8 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
 
     private FileTableContentProvider fileTableContentProvider;
 
+    private boolean colorKeyBrowserVisible;
+
 
 
     
@@ -443,7 +445,7 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
         
         dialogSettings.put(SETT_PATH, currentPath);
         dialogSettings.put(SETT_ZOOM, zoomPercentage);
-        dialogSettings.put(SETT_COLOR_KEY, colorKeyBrowser.isVisible());
+        dialogSettings.put(SETT_COLOR_KEY, colorKeyBrowserVisible);
     }
     
     /**
@@ -732,6 +734,7 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
      *                otherwise.
      */
     void setColorKeyVisible(final boolean visible) {
+        colorKeyBrowserVisible = visible;
         toggleLegendAction.setChecked(visible);
         colorKeyBrowser.setVisible(visible);
         sashForm.layout(true);
