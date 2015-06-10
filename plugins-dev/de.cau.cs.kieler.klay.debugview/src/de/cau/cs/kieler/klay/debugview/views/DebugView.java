@@ -357,7 +357,8 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
      */
     private void activateDotView() {
         if (diagramStackLayout.topControl != imageCanvas) {
-            statusBarZoomLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+            statusBarZoomLabel.setForeground(
+                    Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
             statusBarZoomScale.setEnabled(true);
             diagramStackLayout.topControl = imageCanvas;
             diagramComposite.layout(true, true);
@@ -720,7 +721,7 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
      */
     @Override
     public void setFocus() {
-        imageCanvas.setFocus();
+        fileTable.setFocus();
     }
     
 
