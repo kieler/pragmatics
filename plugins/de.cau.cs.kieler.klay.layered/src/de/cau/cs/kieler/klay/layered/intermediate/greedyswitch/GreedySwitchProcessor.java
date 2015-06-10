@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
-import java.util.Arrays;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -123,7 +122,12 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
     private LNode[][] copyNodeOrder() {
         LNode[][] order = new LNode[bestNodeOrder.length][];
         for (int i = 0; i < order.length; i++) {
-            order[i] = Arrays.copyOf(bestNodeOrder[i], bestNodeOrder[i].length);
+            // gwt 2.6 does not support Arrays.copyOf, thus we do it
+            // the old school way
+            int length = bestNodeOrder[i].length;
+            LNode[] copy = new LNode[length];
+            System.arraycopy(bestNodeOrder[i], 0, copy[i], 0, length);
+            order[i] = copy;
         }
         return order;
     }
