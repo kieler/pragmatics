@@ -388,7 +388,7 @@ class BetweenLayerEdgeTwoNodeCrossingsCounter {
             }
 
             public int compareTo(final Adjacency o) {
-                return Integer.compare(position, o.position);
+                return (position < o.position) ? -1 : ((position == o.position) ? 0 : 1);
             }
 
             @Override

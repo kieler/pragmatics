@@ -105,6 +105,10 @@ final class PortIterable implements Iterable<LPort> {
             public LPort next() {
                 return listIterator.previous();
             }
+            
+            public void remove() {
+                throw new UnsupportedOperationException();
+            }
         };
         return iterator;
     }
