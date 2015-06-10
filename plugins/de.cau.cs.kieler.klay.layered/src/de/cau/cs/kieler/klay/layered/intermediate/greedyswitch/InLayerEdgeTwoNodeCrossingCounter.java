@@ -150,7 +150,7 @@ class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
         }
 
         public int compareTo(final ComparableEdgeAndPort o) {
-            return Integer.compare(portPosition, o.portPosition);
+            return (portPosition < o.portPosition) ? -1 : ((portPosition == o.portPosition) ? 0 : 1);
         }
 
         @Override
