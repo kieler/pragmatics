@@ -183,8 +183,14 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
      */
     private int zoomPercentage = ZOOM_DEFAULT;
 
+    /**
+     * The used content provider for the file table.
+     */
     private FileTableContentProvider fileTableContentProvider;
 
+    /**
+     * Whether the color key browser is currently visible or not.
+     */
     private boolean colorKeyBrowserVisible;
 
 
@@ -341,7 +347,8 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
     }
 
     /**
-     * 
+     * Brings the KlighD view to the top of the stack layout.
+     * (de-) activates the corresponding controls.
      */
     private void activateKlighdView() {
         if (diagramStackLayout.topControl != klighdComposite) {
@@ -353,7 +360,8 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
     }
 
     /**
-     * 
+     * Brings the dot view to the top of the stack layout.
+     * (de-) activates the corresponding controls.
      */
     private void activateDotView() {
         if (diagramStackLayout.topControl != imageCanvas) {
