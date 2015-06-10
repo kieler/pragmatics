@@ -75,12 +75,12 @@ class GranaFormatter extends AbstractDeclarativeFormatter {
        c.setLinewrap().after(localOutputRule)
        c.setLinewrap().after(outputReferenceRule)
        
-       c.setLinewrap(1, 1, 2).after(jobAccess.nameAssignment_2)
-       c.setLinewrap().after(jobAccess.layoutBeforeAnalysisLayoutBeforeAnalysisKeyword_3_0)
-       c.setLinewrap().after(jobAccess.measureExecutionTimeMeasureExecutionTimeKeyword_4_0)
-       c.setLinewrap(1, 1, 2).after(jobAccess.resourcesKeyword_5)
-       c.setLinewrap(1, 1, 2).after(jobAccess.layoutoptionsKeyword_7)
-       c.setLinewrap(1, 1, 2).after(jobAccess.analysesKeyword_9)
+       c.setLinewrap(1, 1, 2).after(regularJobAccess.nameAssignment_1)
+       c.setLinewrap().after(regularJobAccess.layoutBeforeAnalysisLayoutBeforeAnalysisKeyword_2_0)
+       c.setLinewrap().after(regularJobAccess.measureExecutionTimeMeasureExecutionTimeKeyword_3_0)
+       c.setLinewrap(1, 1, 2).after(regularJobAccess.resourcesKeyword_4)
+       c.setLinewrap(1, 1, 2).after(regularJobAccess.layoutoptionsKeyword_6)
+       c.setLinewrap(1, 1, 2).after(regularJobAccess.analysesKeyword_8)
        c.setLinewrap().after(analysisRule)
        
        c.setLinewrap.after(granaAccess.globalResourcesKeyword_0_0)   
@@ -98,17 +98,17 @@ class GranaFormatter extends AbstractDeclarativeFormatter {
        // indentation increments 
        c.setIndentationIncrement.after(granaAccess.globalResourcesKeyword_0_0)
        c.setIndentationIncrement.after(granaAccess.globalOutputsKeyword_1_0)
-       c.setIndentationIncrement.after(jobAccess.nameAssignment_2)
-       c.setIndentationIncrement.after(jobAccess.resourcesKeyword_5)
-       c.setIndentationIncrement.after(jobAccess.analysesKeyword_9)
-       c.setIndentationIncrement.after(jobAccess.layoutoptionsKeyword_7)
+       c.setIndentationIncrement.after(regularJobAccess.nameAssignment_1)
+       c.setIndentationIncrement.after(regularJobAccess.resourcesKeyword_4)
+       c.setIndentationIncrement.after(regularJobAccess.analysesKeyword_8)
+       c.setIndentationIncrement.after(regularJobAccess.layoutoptionsKeyword_6)
        
        // indentation decrements
        c.setIndentationDecrement.before(granaAccess.globalOutputsKeyword_1_0)
        c.setIndentationDecrement.before(granaAccess.executeKeyword_2_0)
-       c.setIndentationDecrement.before(jobAccess.layoutoptionsKeyword_7)
-       c.setIndentationDecrement.before(jobAccess.analysesKeyword_9)
-       c.setIndentationDecrement.before(jobAccess.outputKeyword_11)
+       c.setIndentationDecrement.before(regularJobAccess.layoutoptionsKeyword_6)
+       c.setIndentationDecrement.before(regularJobAccess.analysesKeyword_8)
+       c.setIndentationDecrement.before(regularJobAccess.outputKeyword_10)
        c.setIndentationDecrement.after(outputRule)
 	}
 }

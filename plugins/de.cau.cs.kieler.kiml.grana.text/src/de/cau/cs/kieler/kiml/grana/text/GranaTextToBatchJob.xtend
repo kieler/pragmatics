@@ -18,8 +18,10 @@ import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig
 import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer
 import de.cau.cs.kieler.kiml.grana.AnalysisService
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana
-import de.cau.cs.kieler.kiml.grana.text.grana.Job
+import de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput
 import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource
+import de.cau.cs.kieler.kiml.grana.text.grana.OutputReference
+import de.cau.cs.kieler.kiml.grana.text.grana.RegularJob
 import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference
 import de.cau.cs.kieler.kiml.grana.ui.batch.Batch
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJob
@@ -28,6 +30,7 @@ import de.cau.cs.kieler.kiml.grana.ui.batch.CSVResultSerializer
 import de.cau.cs.kieler.kiml.grana.ui.batch.FileKGraphProvider
 import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter
 import java.io.File
+import java.io.IOException
 import java.io.OutputStream
 import java.util.regex.Pattern
 import org.eclipse.core.resources.IContainer
@@ -37,9 +40,6 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
-import java.io.IOException
-import de.cau.cs.kieler.kiml.grana.text.grana.OutputReference
-import de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput
 
 /**
  * Utility class to convert textually specified grana executions to 
@@ -65,7 +65,8 @@ final class GranaTextToBatchJob {
         for (job : grana.jobs
                         // ignore deactivated jobs
                         .filter[ grana.executeAll || grana.execute.contains(it) ]
-                        .filter[ !it.name.startsWith("_")]) {
+                        .filter[ !it.name.startsWith("_")]
+                        .filter(typeof(RegularJob))) {
             
             // collect requested analyses
             val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
@@ -159,7 +160,7 @@ final class GranaTextToBatchJob {
         return results
     }
     
-    private static def addBatchJob(Batch batch, Job job, IPath path) {
+    private static def addBatchJob(Batch batch, RegularJob job, IPath path) {
         val provider = new FileKGraphProvider
         provider.setLayoutBeforeAnalysis(job.layoutBeforeAnalysis)
         provider.setExecutionTimeAnalysis(job.measureExecutionTime)
