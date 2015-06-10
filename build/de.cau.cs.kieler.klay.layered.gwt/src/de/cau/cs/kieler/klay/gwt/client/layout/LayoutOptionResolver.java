@@ -48,6 +48,7 @@ import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_INDEX;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_LABEL_PLACEMENT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_SIDE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.POSITION;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.SELF_LOOP_INSIDE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.SEPARATE_CC;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.SIZE_CONSTRAINT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.SIZE_OPTIONS;
@@ -63,6 +64,7 @@ import static de.cau.cs.kieler.klay.layered.properties.Properties.EDGE_LABEL_SID
 import static de.cau.cs.kieler.klay.layered.properties.Properties.EDGE_SPACING_FACTOR;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.FEEDBACK_EDGES;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.FIXED_ALIGNMENT;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.GREEDY_SWITCH_TYPE;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.INTERACTIVE_REFERENCE_POINT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.LAYER_CONSTRAINT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.LINEAR_SEGMENTS_DEFLECTION_DAMPENING;
@@ -120,6 +122,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 import de.cau.cs.kieler.klay.layered.properties.ContentAlignment;
 import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection;
 import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
+import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 import de.cau.cs.kieler.klay.layered.properties.InteractiveReferencePoint;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.SelfLoopPlacement;
@@ -159,6 +162,7 @@ public final class LayoutOptionResolver {
             EXPAND_NODES,
             INTERACTIVE,
             LAYOUT_HIERARCHY,
+            SELF_LOOP_INSIDE,
             SEPARATE_CC,
             HYPERNODE,
             // klay
@@ -209,6 +213,7 @@ public final class LayoutOptionResolver {
             CROSS_MIN,
             NODE_PLACER,
             FIXED_ALIGNMENT,
+            GREEDY_SWITCH_TYPE,
             LAYER_CONSTRAINT,
             SPLINE_SELF_LOOP_PLACEMENT,
             WIDE_NODES_ON_MULTIPLE_LAYERS,
@@ -403,6 +408,8 @@ public final class LayoutOptionResolver {
                     enumeration = NodePlacementStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(FIXED_ALIGNMENT, id)) {
                     enumeration = FixedAlignment.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(GREEDY_SWITCH_TYPE, id)) {
+                    enumeration = GreedySwitchType.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(LAYER_CONSTRAINT, id)) {
                     enumeration = LayerConstraint.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(SPLINE_SELF_LOOP_PLACEMENT, id)) {
