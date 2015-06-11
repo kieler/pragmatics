@@ -30,7 +30,7 @@ public class Batch {
     /** the analyses. */
     private List<AnalysisData> analyses;
     /** the batch jobs. */
-    private List<BatchJob<?>> batchJobs = new LinkedList<BatchJob<?>>();
+    private List<IBatchJob<?>> batchJobs = new LinkedList<IBatchJob<?>>();
 
     /**
      * Constructs a Batch.
@@ -48,7 +48,7 @@ public class Batch {
      * @param batchJob
      *            the batch job
      */
-    public void appendJob(final BatchJob<?> batchJob) {
+    public void appendJob(final IBatchJob<?> batchJob) {
         batchJobs.add(batchJob);
     }
 
@@ -62,7 +62,7 @@ public class Batch {
     public BatchResult execute(final IKielerProgressMonitor monitor) {
         monitor.begin("Executing analysis batch", batchJobs.size());
         BatchResult batchResult = new BatchResult(analyses);
-        for (BatchJob<?> batchJob : batchJobs) {
+        for (IBatchJob<?> batchJob : batchJobs) {
             if (monitor.isCanceled()) {
                 return null;
             }

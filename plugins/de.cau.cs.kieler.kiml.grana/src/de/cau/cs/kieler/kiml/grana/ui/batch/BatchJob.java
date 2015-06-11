@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
  * @kieler.ignore (excluded from review process)
  * @param <T> the type of the parameter
  */
-public class BatchJob<T> {
+public class BatchJob<T> implements IBatchJob<T> {
 
     /** the parameter for this batch job. */
     private T parameter;
@@ -78,16 +78,7 @@ public class BatchJob<T> {
     private static final int WORK_ANALYSIS = 2;
 
     /**
-     * Executes the job which consists of retrieving a KGraph instance through the KGraph provider
-     * and performing the given analyses on it.
-     * 
-     * @param analyses
-     *            the analyses
-     * @param monitor
-     *            the progress monitor
-     * @return the job result
-     * @throws Exception
-     *             any kind of exception
+     * {@inheritDoc}
      */
     public BatchJobResult<T> execute(final List<AnalysisData> analyses,
             final IKielerProgressMonitor monitor) throws Exception {

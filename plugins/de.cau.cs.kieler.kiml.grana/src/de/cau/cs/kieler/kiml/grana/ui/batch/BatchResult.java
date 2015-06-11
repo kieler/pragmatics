@@ -43,8 +43,8 @@ public class BatchResult {
     private List<BatchJobResult<?>> results =
             new LinkedList<BatchJobResult<?>>();
     /** the failed jobs. */
-    private List<Pair<BatchJob<?>, Throwable>> failedJobs =
-            new LinkedList<Pair<BatchJob<?>, Throwable>>();
+    private List<Pair<IBatchJob<?>, Throwable>> failedJobs =
+            new LinkedList<Pair<IBatchJob<?>, Throwable>>();
 
     /**
      * Constructs an AnalysisBatchResult.
@@ -97,7 +97,7 @@ public class BatchResult {
      * 
      * @return a list of pairs of failed jobs and exceptions
      */
-    public List<Pair<BatchJob<?>, Throwable>> getFailedJobs() {
+    public List<Pair<IBatchJob<?>, Throwable>> getFailedJobs() {
         return failedJobs;
     }
 
@@ -109,7 +109,7 @@ public class BatchResult {
      * @param e
      *            the exception
      */
-    public void appendFailedJob(final BatchJob<?> batchJob, final Throwable e) {
-        failedJobs.add(new Pair<BatchJob<?>, Throwable>(batchJob, e));
+    public void appendFailedJob(final IBatchJob<?> batchJob, final Throwable e) {
+        failedJobs.add(new Pair<IBatchJob<?>, Throwable>(batchJob, e));
     }
 }
