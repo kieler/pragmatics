@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.util.Pair;
@@ -31,31 +32,43 @@ import de.cau.cs.kieler.kiml.grana.AnalysisData;
  */
 public class BatchResult {
 
+    private Batch batch;
+    
     /** the analysis which have been performed in the batch run. */
     private List<AnalysisData> analyses =
             new LinkedList<AnalysisData>();
+    
     /**
      * List of phases that occurred during the execution time analysis. Note that not the phases of
      * different layout runs for different graphs may differ.
      */
     private Set<String> executionTimePhases = Sets.newHashSet();
     /** the results of the individual jobs. */
-    private List<BatchJobResult<?>> results =
-            new LinkedList<BatchJobResult<?>>();
+    private List<BatchJobResult<?>> results = Lists.newLinkedList();
     /** the failed jobs. */
-    private List<Pair<IBatchJob<?>, Throwable>> failedJobs =
-            new LinkedList<Pair<IBatchJob<?>, Throwable>>();
+    private List<Pair<IBatchJob<?>, Throwable>> failedJobs = Lists.newLinkedList();
 
+    
     /**
      * Constructs an AnalysisBatchResult.
      * 
+     * @param batch
+     *            the batch execution this result originates from
      * @param theAnalyses
      *            the analyses performed in the batch run
      */
-    public BatchResult(final List<AnalysisData> theAnalyses) {
-        analyses = theAnalyses;
+    public BatchResult(final Batch batch, final List<AnalysisData> theAnalyses) {
+        this.batch = batch;
+        this.analyses = theAnalyses;
     }
 
+    /**
+     * @return the batch execution this result originates from
+     */
+    public Batch getBatch() {
+        return batch;
+    }
+    
     /**
      * Returns the analyses which have been performed in the batch run.
      * 

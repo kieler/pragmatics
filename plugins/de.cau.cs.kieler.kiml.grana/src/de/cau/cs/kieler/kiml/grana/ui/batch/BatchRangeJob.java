@@ -1,0 +1,127 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2014 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+package de.cau.cs.kieler.kiml.grana.ui.batch;
+
+import java.util.List;
+import java.util.SortedMap;
+
+import com.google.common.collect.Maps;
+
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
+import de.cau.cs.kieler.kiml.grana.AnalysisContext;
+import de.cau.cs.kieler.kiml.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.AnalysisService;
+import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
+
+/**
+ * The class which represents an analysis batch job.
+ * 
+ * @author mri
+ * @author uru
+ * @kieler.ignore (excluded from review process)
+ * @param <T> the type of the parameter
+ */
+public class BatchRangeJob<T> implements IBatchJob<T> {
+
+    /** the parameter for this batch job. */
+    private T parameter;
+    /** the KGraph provider for this batch run. */
+    private IKGraphProvider<T> kgraphProvider;
+    
+    private Batch batch;
+    
+    /**
+     * Constructs an AnalysisBatchJob.
+     * 
+     * @param batch
+     *            the surrounding batch instance
+     * @param param
+     *            the parameter
+     * @param provider
+     *            the KGraph provider
+     */
+    public BatchRangeJob(final Batch batch, final T param, final IKGraphProvider<T> provider) {
+        this.batch = batch;
+        parameter = param;
+        kgraphProvider = provider;
+    }
+
+    /**
+     * Returns the parameter of the job.
+     * 
+     * @return the parameter
+     */
+    public T getParameter() {
+        return parameter;
+    }
+
+    private static final int WORK = 3;
+    private static final int WORK_KGRAPH = 1;
+    private static final int WORK_ANALYSIS = 2;
+
+    /**
+     * Executes the job which consists of retrieving a KGraph instance through the KGraph provider
+     * and performing the given analyses on it.
+     * 
+     * @param analyses
+     *            the analyses
+     * @param monitor
+     *            the progress monitor
+     * @return the job result
+     * @throws Exception
+     *             any kind of exception
+     */
+    public BatchJobResult<T> execute(final List<AnalysisData> analyses,
+            final IKielerProgressMonitor monitor) throws Exception {
+        monitor.begin("Executing analysis batch job: " + parameter, WORK);
+
+        // execute regular analyses as requested ...
+        KNode graph = kgraphProvider.getKGraph(parameter, monitor.subTask(WORK_KGRAPH));
+        AnalysisContext context = AnalysisService.getInstance().analyze(graph, analyses,
+                monitor.subTask(WORK_ANALYSIS));
+        
+        SortedMap<String, Object> rangeResults = Maps.newTreeMap();
+        // now layout with the range or whatever it is layout option
+        VolatileLayoutConfig vlc = new VolatileLayoutConfig();
+        for (Number n : batch.getRangeValues()) {
+            Object value = batch.getRangeOption().parseValue(n.toString());
+            if (value == null) {
+                throw new IllegalArgumentException("Value " + n
+                        + " is not valid for layout option " + batch.getRangeOption());
+            }
+            vlc.setValue(batch.getRangeOption(), value);
+
+            DiagramLayoutEngine.INSTANCE.layout(null, graph, vlc);
+
+            AnalysisContext tmp = new AnalysisContext();
+            AnalysisService.getInstance().analyze(graph, batch.getRangeAnalysis(),
+                    monitor.subTask(1), tmp);
+
+            Object result = tmp.getResult(batch.getRangeAnalysis().getId());
+            
+            rangeResults.put(n.toString(), result);
+        }
+
+        // exectime not supported for range jobs
+
+        BatchJobResult<T> batchJobResult = new BatchJobResult<T>(this, context.getResults(), null);
+        batchJobResult.setRangeResults(rangeResults);
+        monitor.done();
+
+        return batchJobResult;
+    }
+
+}

@@ -18,6 +18,7 @@ import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.collect.Lists;
 
@@ -60,6 +61,15 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                 writer.write(";" + analysis.getName());
             }
         }
+        
+        // possibly write range analysis headers
+        Batch batch = batchResult.getBatch();
+        if (batch.getRangeAnalysis() != null) {
+            for (Number n : batch.getRangeValues()) {
+                writer.write(";" + n);
+            }
+        }
+        
         // headers for execution time
         List<String> executionTimePhases = Lists.newArrayList(batchResult.getExecutionTimePhases());
         // sort them lexicographically 
@@ -81,6 +91,21 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                                 VISUALIZATION_TYPE, result);
                 String s = visualization.get(analysis, result);
                 writer.write(";" + s);
+            }
+            
+            // possibly append range batch results
+            if (jobResult.getJob() instanceof BatchRangeJob<?>) {
+                for (Entry<String, Object> entry : jobResult.getRangeResults().entrySet()) {
+                    Object result = entry.getValue();
+                    if (entry.getValue() instanceof Object[]) {
+                        result = ((Object[]) result)[batch.getRangeAnalysisComponent()];
+                    }
+                    Visualization visualization =
+                            VisualizationService.getInstance().getVisualization("text",
+                                    entry.getValue());
+                    String text = visualization.get(batch.getRangeAnalysis(), result);
+                    writer.write(";" + text);
+                }
             }
             
             // execution time results

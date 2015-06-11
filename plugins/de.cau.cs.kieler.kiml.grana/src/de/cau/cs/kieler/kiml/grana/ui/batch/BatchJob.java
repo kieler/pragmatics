@@ -51,20 +51,6 @@ public class BatchJob<T> implements IBatchJob<T> {
     }
 
     /**
-     * The alternative constructor for an AnalysisBatchJob using a KGraph instance instead of a
-     * KGraph provider.
-     * 
-     * @param param
-     *            the parameter
-     * @param graph
-     *            the KGraph instance
-     */
-    public BatchJob(final T param, final KNode graph) {
-        parameter = param;
-        kgraphProvider = new StaticProvider(graph);
-    }
-
-    /**
      * Returns the parameter of the job.
      * 
      * @return the parameter
@@ -92,33 +78,5 @@ public class BatchJob<T> implements IBatchJob<T> {
                 new BatchJobResult<T>(this, context.getResults(), execResults);
         monitor.done();
         return batchJobResult;
-    }
-
-    /**
-     * A KGraph provider which returns a given KGraph instance.
-     * 
-     * @author mri
-     */
-    private class StaticProvider implements IKGraphProvider<T> {
-
-        /** the static kgraph instance. */
-        private KNode graph;
-
-        /**
-         * The constructor for the StaticProvider.
-         * 
-         * @param parent
-         *            the parent node of the KGraph instance
-         */
-        public StaticProvider(final KNode parent) {
-            graph = parent;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public KNode getKGraph(final T param, final IKielerProgressMonitor monitor) {
-            return graph;
-        }
     }
 }

@@ -15,8 +15,10 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedSet;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 
 /**
@@ -31,7 +33,13 @@ public class Batch {
     private List<AnalysisData> analyses;
     /** the batch jobs. */
     private List<IBatchJob<?>> batchJobs = new LinkedList<IBatchJob<?>>();
-
+    
+    
+    private AnalysisData rangeAnalysis;
+    private Integer rangeAnalysisComponent;
+    private LayoutOptionData rangeOption;
+    private SortedSet<? extends Number> rangeValues;
+    
     /**
      * Constructs a Batch.
      * 
@@ -51,6 +59,64 @@ public class Batch {
     public void appendJob(final IBatchJob<?> batchJob) {
         batchJobs.add(batchJob);
     }
+    
+    /**
+     * @return the rangeAnalysis
+     */
+    public AnalysisData getRangeAnalysis() {
+        return rangeAnalysis;
+    }
+
+    /**
+     * @param rangeAnalysis the rangeAnalysis to set
+     */
+    public void setRangeAnalysis(final AnalysisData rangeAnalysis) {
+        this.rangeAnalysis = rangeAnalysis;
+    }
+
+    /**
+     * @return the rangeAnalysisComponent
+     */
+    public Integer getRangeAnalysisComponent() {
+        return rangeAnalysisComponent;
+    }
+
+    /**
+     * @param rangeAnalysisComponent the rangeAnalysisComponent to set
+     */
+    public void setRangeAnalysisComponent(final Integer rangeAnalysisComponent) {
+        this.rangeAnalysisComponent = rangeAnalysisComponent;
+    }
+
+    /**
+     * @return the rangeOption
+     */
+    public LayoutOptionData getRangeOption() {
+        return rangeOption;
+    }
+
+    /**
+     * @param rangeOption the rangeOption to set
+     */
+    public void setRangeOption(final LayoutOptionData rangeOption) {
+        this.rangeOption = rangeOption;
+    }
+
+    
+    
+    /**
+     * @return the rangeValues
+     */
+    public SortedSet<? extends Number> getRangeValues() {
+        return rangeValues;
+    }
+
+    /**
+     * @param rangeValues the rangeValues to set
+     */
+    public void setRangeValues(final SortedSet<? extends Number> rangeValues) {
+        this.rangeValues = rangeValues;
+    }
 
     /**
      * Executes the batch which consists of the execution of all batch jobs.
@@ -61,7 +127,7 @@ public class Batch {
      */
     public BatchResult execute(final IKielerProgressMonitor monitor) {
         monitor.begin("Executing analysis batch", batchJobs.size());
-        BatchResult batchResult = new BatchResult(analyses);
+        BatchResult batchResult = new BatchResult(this, analyses);
         for (IBatchJob<?> batchJob : batchJobs) {
             if (monitor.isCanceled()) {
                 return null;
