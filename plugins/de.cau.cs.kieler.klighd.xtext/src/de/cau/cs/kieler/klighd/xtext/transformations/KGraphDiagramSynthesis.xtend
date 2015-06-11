@@ -130,6 +130,12 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     override getDisplayedLayoutOptions() {
         return ImmutableList::of(
+            // example to specify external layout option (in this case one of klay layered)
+            // remember to add the following import in the head of this class
+            //   import static de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
+            
+            // specifyLayoutOption("de.cau.cs.kieler.klay.layered.edgeSpacingFactor", ImmutableList.of(0f,1f))
+            
             // These values are annoying :)
             //specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
             //  ImmutableList::copyOf(PortConstraints::values)),

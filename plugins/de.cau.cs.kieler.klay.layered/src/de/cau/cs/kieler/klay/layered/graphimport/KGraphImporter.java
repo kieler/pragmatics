@@ -71,10 +71,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class KGraphImporter implements IGraphImporter<KNode> {
 
-    /** Spacing around labels. */
-    private double labelSpacing;
-    
-    
     ///////////////////////////////////////////////////////////////////////////////////////////////////
     // TRANSFORMATION KGraph -> LGraph
     
@@ -87,11 +83,10 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      */
     public LGraph importGraph(final KNode kgraph) {
         // Keep a map between KGraph nodes / ports and LGraph nodes / ports
-        Map<KGraphElement, LGraphElement> elemMap = Maps.newHashMap();
+        final Map<KGraphElement, LGraphElement> elemMap = Maps.newHashMap();
         
         // Create the layered graph
-        LGraph topLevelGraph = createLGraph(kgraph);
-        labelSpacing = topLevelGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
+        final LGraph topLevelGraph = createLGraph(kgraph);
         
         // Transform the external ports
         Set<GraphProperties> graphProperties = topLevelGraph.getProperty(
@@ -140,15 +135,14 @@ public class KGraphImporter implements IGraphImporter<KNode> {
             
             for (KEdge kedge : child.getOutgoingEdges()) {
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+                boolean isToBeLaidOut = !edgeLayout.getProperty(LayoutOptions.NO_LAYOUT);
                 boolean isInsideSelfLoop = enableInsideSelfLoops && kedge.getTarget() == child
                         && edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
                 boolean isHierarchyEdge = kedge.getTarget() == kgraph;
                 boolean isRegularEdge = kedge.getTarget().getParent() == kgraph;
                 
                 // Exclude edges that pass hierarchy bounds
-                if (!edgeLayout.getProperty(LayoutOptions.NO_LAYOUT) && !isInsideSelfLoop
-                        && (isHierarchyEdge || isRegularEdge)) {
-                    
+                if (isToBeLaidOut && !isInsideSelfLoop && (isHierarchyEdge || isRegularEdge)) {
                     transformEdge(kedge, lgraph, elemMap);
                 }
             }
@@ -161,13 +155,12 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         
         for (KEdge kedge : kgraph.getOutgoingEdges()) {
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
+            boolean isToBeLaidOut = !edgeLayout.getProperty(LayoutOptions.NO_LAYOUT);
             boolean isHierarchicalEdge = kedge.getTarget().getParent() == kgraph;
             boolean isInsideSelfLoop = enableInsideSelfLoops && kedge.getTarget() == kgraph
                     && edgeLayout.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
             
-            if (!edgeLayout.getProperty(LayoutOptions.NO_LAYOUT)
-                    && (isHierarchicalEdge || isInsideSelfLoop)) {
-                
+            if (isToBeLaidOut && (isHierarchicalEdge || isInsideSelfLoop)) {
                 transformEdge(kedge, lgraph, elemMap);
             }
         }
@@ -186,22 +179,26 @@ public class KGraphImporter implements IGraphImporter<KNode> {
     private void importHierarchicalGraph(final KNode kgraph, final LGraph lgraph,
             final Map<KGraphElement, LGraphElement> elemMap) {
         
-        Queue<KNode> knodeQueue = Lists.newLinkedList();
+        final Queue<KNode> knodeQueue = Lists.newLinkedList();
 
         // Transform the node's children
         knodeQueue.addAll(kgraph.getChildren());
         do {
-            KNode knode = knodeQueue.poll();
-            if (!knode.getData(KShapeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
-                LGraph parentGraph = lgraph;
-                LNode parentLNode = (LNode) elemMap.get(knode.getParent());
+            final KNode knode = knodeQueue.poll();
+            final KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
+            
+            final boolean isToBeLaidOut = !knodeLayout.getProperty(LayoutOptions.NO_LAYOUT);
+            
+            if (isToBeLaidOut) {
+                LGraph parentLGraph = lgraph;
+                final LNode parentLNode = (LNode) elemMap.get(knode.getParent());
                 if (parentLNode != null) {
-                    parentGraph = parentLNode.getProperty(InternalProperties.NESTED_LGRAPH);
+                    parentLGraph = parentLNode.getProperty(InternalProperties.NESTED_LGRAPH);
                 }
-                LNode lnode = transformNode(knode, parentGraph, elemMap);
+                LNode lnode = transformNode(knode, parentLGraph, elemMap);
                 
                 if (!knode.getChildren().isEmpty()) {
-                    LGraph nestedGraph = createLGraph(knode);
+                    final LGraph nestedGraph = createLGraph(knode);
                     lnode.setProperty(InternalProperties.NESTED_LGRAPH, nestedGraph);
                     nestedGraph.setProperty(InternalProperties.PARENT_LNODE, lnode);
                     knodeQueue.addAll(knode.getChildren());
@@ -212,19 +209,23 @@ public class KGraphImporter implements IGraphImporter<KNode> {
         // Transform the edges
         knodeQueue.add(kgraph);
         do {
-            KNode knode = knodeQueue.poll();
+            final KNode knode = knodeQueue.poll();
             for (KEdge kedge : knode.getOutgoingEdges()) {
-                if (!kedge.getData(KEdgeLayout.class).getProperty(LayoutOptions.NO_LAYOUT)) {
+                final KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
+                final boolean isToBeLaidOut = !kedgeLayout.getProperty(LayoutOptions.NO_LAYOUT);
+                
+                if (isToBeLaidOut) {
                     KNode parentKNode = knode;
                     if (!KimlUtil.isDescendant(kedge.getTarget(), knode)) {
                         parentKNode = knode.getParent();
                     }
-                    LGraph parentGraph = lgraph;
-                    LNode parentLNode = (LNode) elemMap.get(parentKNode);
+                    
+                    LGraph parentLGraph = lgraph;
+                    final LNode parentLNode = (LNode) elemMap.get(parentKNode);
                     if (parentLNode != null) {
-                        parentGraph = parentLNode.getProperty(InternalProperties.NESTED_LGRAPH);
+                        parentLGraph = parentLNode.getProperty(InternalProperties.NESTED_LGRAPH);
                     }
-                    transformEdge(kedge, parentGraph, elemMap);
+                    transformEdge(kedge, parentLGraph, elemMap);
                 }
             }
             knodeQueue.addAll(knode.getChildren());
@@ -238,33 +239,34 @@ public class KGraphImporter implements IGraphImporter<KNode> {
      * @return a new LGraph instance
      */
     private LGraph createLGraph(final KNode parentKNode) {
-        LGraph layeredGraph = new LGraph();
+        LGraph lgraph = new LGraph();
         
         // Copy the properties of the KGraph to the layered graph
         KShapeLayout parentLayout = parentKNode.getData(KShapeLayout.class);
-        layeredGraph.copyProperties(parentLayout);
-        if (layeredGraph.getProperty(LayoutOptions.DIRECTION) == Direction.UNDEFINED) {
-            layeredGraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(layeredGraph));
+        lgraph.copyProperties(parentLayout);
+        if (lgraph.getProperty(LayoutOptions.DIRECTION) == Direction.UNDEFINED) {
+            lgraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
         }
         
-        layeredGraph.setProperty(InternalProperties.ORIGIN, parentKNode);
+        lgraph.setProperty(InternalProperties.ORIGIN, parentKNode);
 
         // Initialize the graph properties discovered during the transformations
-        layeredGraph.setProperty(InternalProperties.GRAPH_PROPERTIES,
+        lgraph.setProperty(InternalProperties.GRAPH_PROPERTIES,
                 EnumSet.noneOf(GraphProperties.class));
         
         // Adjust the insets to respect inside labels.
+        double labelSpacing = lgraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
         Insets insets = LabelSpaceCalculation.calculateRequiredNodeLabelSpace(
                 KGraphAdapters.adaptSingleNode(parentKNode), labelSpacing);
         
         // Copy the insets to the layered graph
-        LInsets linsets = layeredGraph.getInsets();
+        LInsets linsets = lgraph.getInsets();
         linsets.left = insets.left;
         linsets.right = insets.right;
         linsets.top = insets.top;
         linsets.bottom = insets.bottom;
         
-        return layeredGraph;
+        return lgraph;
     }
     
     
