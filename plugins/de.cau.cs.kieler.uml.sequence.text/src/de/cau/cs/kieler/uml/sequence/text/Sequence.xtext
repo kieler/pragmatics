@@ -1,0 +1,78 @@
+grammar de.cau.cs.kieler.uml.sequence.text.Sequence with org.eclipse.xtext.common.Terminals
+
+generate sequence "http://www.cau.de/cs/kieler/uml/sequence/text/Sequence"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+SequenceDiagram returns SequenceDiagram:
+    {SequenceDiagram}
+    'sequenceDiagram' DiagramName=STRING ('{' locals+=LocalVariable* '}')?
+    lifelines+=Lifeline*
+    interactions+=Interaction*;
+
+LocalVariable returns LocalVariable:
+    ('Char' name=ID |
+    'Boolean' name=ID |
+    'Integer' name=ID | 
+    'Float' name=ID);
+
+Lifeline returns Lifeline:
+    'lifeline' caption=STRING 'as' name=ID;
+    
+Interaction returns Interaction:
+    TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineEndBlock | OneLifelineNote 
+    | Destroy | Refinement;  //OneLifelineInteraction;
+    
+TwoLifelineMessage returns TwoLifelineMessage:
+    sourceLifeline=[Lifeline|ID]  
+    transitionType=TransitionType
+    caption=STRING 
+    'to' 
+    targetLifeline=[Lifeline|ID] 
+    (startBlockLeft?='sourceStartBlock' | endBlockLeft?='sourceEndBlock' (endBlockLeftCount = INT_GREATER_ZERO)?)?
+    (startBlockRight?='targetStartBlock' | endBlockRight?='targetEndBlock' (endBlockRightCount = INT_GREATER_ZERO)?)?
+    ('sourceNote' sourceNote = STRING)?
+    ('targetNote' targetNote = STRING)?;
+        
+OneLifelineMessage returns OneLifelineMessage:    
+    Lifeline=[Lifeline|ID]  
+    transitionType=TransitionType
+    ('lost' | 'found')
+    caption=STRING
+    (startBlock?='startBlock' | endBlock?='endBlock' (endBlockCount = INT_GREATER_ZERO)?)?
+    ('note' note = STRING)?;
+    
+OneLifelineEndBlock returns OneLifelineEndBlock:
+    Lifeline=[Lifeline|ID]
+    endBlock?='endBlock' (endBlockCount = INT_GREATER_ZERO)?;
+
+OneLifelineNote returns OneLifelineNote:
+    Lifeline=[Lifeline|ID]
+    'note' note = STRING;
+    
+Destroy returns Destroy:
+    Lifeline=[Lifeline|ID]
+    destroy?='destroy';
+    
+Fragment returns Fragment:
+    'fragment' 
+    name=STRING
+    fragmentContents+=FragmentContent (fragmentContents+=FragmentContent)*;
+    
+FragmentContent returns FragmentContent:
+    '{'
+    ('label' label=STRING)?
+    interactions+=Interaction (interactions+=Interaction)*
+    '}';
+    
+Refinement returns Refinement:
+    'refinement'
+    '{'
+    'lifelines' lifelines+=[Lifeline|ID] (',' lifelines+=[Lifeline|ID])*
+    'label' label=STRING
+    '}';
+    
+terminal INT_GREATER_ZERO returns ecore::EInt:
+    '1'..'9' ('0'..'9')*;
+
+enum TransitionType:
+    async = 'async' | create = 'create' | response = 'response' | sync = 'sync';
