@@ -195,14 +195,14 @@ class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCro
         }
         array[insx] = n;
     }
-    
+
     private static int binarySearch(final int[] array, final int start, final int end, final int n) {
         int currentStart = start;
         int currentEnd = end - 1;
 
         while (currentStart <= currentEnd) {
             int index = (currentStart + currentEnd) / 2;
-            
+
             if (array[index] == n) {
                 return index;
             } else if (array[index] < n) {
@@ -211,7 +211,7 @@ class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCro
                 currentEnd = index - 1;
             }
         }
-        
-        return -1;
+
+        return -currentStart - 1;
     }
 }
