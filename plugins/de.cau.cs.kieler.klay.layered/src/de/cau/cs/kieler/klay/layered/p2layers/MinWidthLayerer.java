@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.p2layers;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -108,7 +109,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
         for (LNode node : notInserted) {
             node.id = countEdgesExceptSelfLoops(node.getOutgoingEdges());
         }
-        notInserted.sort(new MaxOutgoingEdgesComparator());
+        
+        Collections.sort(notInserted, new MaxOutgoingEdgesComparator());
 
         // This naive implementation uses sets, just like in the papers pseudocode. We use a
         // LinkedHashSet for the set of al real nodes of the graph in order to maintain the ordering
