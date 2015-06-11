@@ -14,17 +14,22 @@
 package de.cau.cs.kieler.kiml.grana.text
 
 import com.google.common.collect.Lists
+import com.google.common.collect.Range
 import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig
 import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer
 import de.cau.cs.kieler.kiml.grana.AnalysisService
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana
+import de.cau.cs.kieler.kiml.grana.text.grana.IntRangeRange
+import de.cau.cs.kieler.kiml.grana.text.grana.Job
 import de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput
 import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource
 import de.cau.cs.kieler.kiml.grana.text.grana.OutputReference
+import de.cau.cs.kieler.kiml.grana.text.grana.RangeJob
 import de.cau.cs.kieler.kiml.grana.text.grana.RegularJob
 import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference
 import de.cau.cs.kieler.kiml.grana.ui.batch.Batch
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJob
+import de.cau.cs.kieler.kiml.grana.ui.batch.BatchRangeJob
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchResult
 import de.cau.cs.kieler.kiml.grana.ui.batch.CSVResultSerializer
 import de.cau.cs.kieler.kiml.grana.ui.batch.FileKGraphProvider
@@ -40,10 +45,18 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
+import com.google.common.collect.ContiguousSet
+import com.google.common.collect.DiscreteDomain
+import de.cau.cs.kieler.kiml.grana.text.grana.IntRangeValues
+import de.cau.cs.kieler.kiml.grana.text.grana.FloatRange
+import de.cau.cs.kieler.kiml.LayoutMetaDataService
 
 /**
  * Utility class to convert textually specified grana executions to 
  * {@link BatchJob}s and execute them.
+ * 
+ * Note that there is a slight difference between grana 'Jobs' and grana.text 'Jobs'.
+ * To be precise, a grana.text 'Job' corresponds to a grana 'Batch'. 
  * 
  * @author uru
  * @kieler.ignore (excluded from review process)
@@ -61,16 +74,41 @@ final class GranaTextToBatchJob {
 
         val results = Lists.<BatchResult>newLinkedList
         
-        // execute for every job
+        // execute for every job by creating a batch
         for (job : grana.jobs
                         // ignore deactivated jobs
                         .filter[ grana.executeAll || grana.execute.contains(it) ]
-                        .filter[ !it.name.startsWith("_")]
-                        .filter(typeof(RegularJob))) {
+                        .filter[ !it.name.startsWith("_")]) {
             
             // collect requested analyses
             val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
             val batch = new Batch(analyses)
+
+            // further configure the batch              
+            switch (job) {
+                RangeJob: {
+                    val rangeAnalysis = AnalysisService.instance.getAnalysis(job.rangeAnalysis.name)
+                    if (rangeAnalysis == null) {
+                        throw new IllegalArgumentException("Invalid range analysis: " + job.rangeAnalysis.name);
+                    }
+                    batch.rangeAnalysis = rangeAnalysis
+                    batch.rangeAnalysisComponent = job.rangeAnalysisComponent
+                    
+                    val layOpt = LayoutMetaDataService.getInstance.getOptionDataBySuffix(job.rangeOption)
+                    if (layOpt == null) {
+                        throw new IllegalArgumentException("Invalid layout option: " + job.rangeOption);
+                    }
+                    batch.rangeOption = layOpt
+                    
+                    val v = job.rangeValues
+                    val vals = switch (v) {
+                      IntRangeRange: ContiguousSet.create(Range.closed(v.start, v.end), DiscreteDomain.integers)
+                      IntRangeValues: ContiguousSet.copyOf(v.values)
+                      FloatRange: ContiguousSet.copyOf(v.values)                  
+                    }
+                    batch.rangeValues = vals
+                }
+            }
 
             // resolve references to resources
             val resources =  job.resources.map[ r |
@@ -95,6 +133,7 @@ final class GranaTextToBatchJob {
                     // add all files to the batch job
                     for (file : (wsloc as IContainer).members) {
                         if (filter == null || filter.matcher(file.name).matches) {
+                            // add the job
                             addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
                         }
                     }
@@ -160,10 +199,23 @@ final class GranaTextToBatchJob {
         return results
     }
     
-    private static def addBatchJob(Batch batch, RegularJob job, IPath path) {
+    /**
+     * @param batch 
+     *          grana's current batch instance
+     * @param job 
+     *          grana.text's Job corresponding to the batch
+     * @param path
+     *          the path of a test case (corresponding to a grana Job) 
+     */
+    private static def addBatchJob(Batch batch, Job job, IPath path) {
         val provider = new FileKGraphProvider
-        provider.setLayoutBeforeAnalysis(job.layoutBeforeAnalysis)
-        provider.setExecutionTimeAnalysis(job.measureExecutionTime)
+        
+        switch (job) {
+            RegularJob: {
+                provider.setLayoutBeforeAnalysis(job.layoutBeforeAnalysis)
+                provider.setExecutionTimeAnalysis(job.measureExecutionTime)
+            }
+        }
     
         // set the layout options
         val clc = new CompoundLayoutConfig
@@ -173,7 +225,10 @@ final class GranaTextToBatchJob {
         provider.setLayoutConfigurator(clc)
         
         // the batch executer expects a workspace relative path
-        val batchJob = new BatchJob<IPath>(path, provider)
-        batch.appendJob(batchJob)
+        val batchJob = switch (job) {
+            RegularJob: new BatchJob<IPath>(path, provider)
+            RangeJob: new BatchRangeJob<IPath>(batch, path, provider)
+        }
+        batch.appendJob(batchJob) 
     }
 }
