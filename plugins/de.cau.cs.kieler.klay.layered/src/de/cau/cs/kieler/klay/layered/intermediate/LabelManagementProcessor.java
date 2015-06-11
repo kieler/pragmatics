@@ -23,9 +23,9 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * Invokes a potentially registered label manager on center edge label dummy nodes.
@@ -92,7 +92,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         
         // Apply the maximum width to all label dummy nodes
         for (LNode labelDummy : layer) {
-            if (labelDummy.getProperty(InternalProperties.NODE_TYPE) == NodeType.LABEL) {
+            if (labelDummy.getNodeType() == NodeType.LABEL) {
                 LEdge edge = labelDummy.getConnectedEdges().iterator().next();
                 double edgeThickness = edge.getProperty(LayoutOptions.THICKNESS).doubleValue();
                 
@@ -134,7 +134,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         double maxWidth = 0.0;
         
         for (LNode node : layer) {
-            if (node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL) {
+            if (node.getNodeType() == NodeType.NORMAL) {
                 maxWidth = Math.max(maxWidth, node.getSize().x);
             }
         }

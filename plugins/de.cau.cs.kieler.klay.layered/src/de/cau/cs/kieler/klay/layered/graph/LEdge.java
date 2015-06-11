@@ -44,7 +44,7 @@ public final class LEdge extends LGraphElement {
     /** the target port. */
     private LPort target;
     /** labels assigned to this edge. */
-    private final List<LLabel> labels = Lists.newArrayList();
+    private final List<LLabel> labels = Lists.newArrayListWithCapacity(3);
     
     /**
      * {@inheritDoc}

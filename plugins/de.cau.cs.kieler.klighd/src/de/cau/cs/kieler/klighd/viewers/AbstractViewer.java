@@ -14,14 +14,17 @@
 package de.cau.cs.kieler.klighd.viewers;
 
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.viewers.ISelection;
 
+import com.google.common.base.Predicates;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -30,6 +33,7 @@ import com.google.common.collect.SetMultimap;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.klighd.IKlighdSelection;
 import de.cau.cs.kieler.klighd.IViewChangeListener;
 import de.cau.cs.kieler.klighd.IViewChangeListener.ViewChange;
 import de.cau.cs.kieler.klighd.IViewer;
@@ -92,15 +96,47 @@ public abstract class AbstractViewer implements IViewer {
             return;
         }
 
+        final Iterable<ViewChangeType> types = eventTypes != null && eventTypes.length != 0
+                ? Arrays.asList(eventTypes) : ViewChangeType.all();
+
+        // check for null entries and throw an exception as prescribed by the method doc
+        if (Iterables.any(types, Predicates.isNull())) {
+            final String msg = "KLighD viewer: found 'null' value in provided list of "
+                    + "'ViewChangeType's during registration of an 'IViewChangeListener'";
+            throw new IllegalArgumentException(msg);
+        }
+
+        addViewChangeListener(listener, types);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addViewChangeListener(final IViewChangeListener listener,
+            final EnumSet<ViewChangeType> eventTypes) {
+        if (listener == null) {
+            return;
+        }
+
+        final Iterable<ViewChangeType> types = eventTypes != null && !eventTypes.isEmpty()
+                ? eventTypes : ViewChangeType.all();
+
+        addViewChangeListener(listener, types);
+    }
+
+    private void addViewChangeListener(final IViewChangeListener listener,
+            final Iterable<ViewChangeType> eventTypes) {
+
         if (viewChangeListeners == null) {
+            // Don't change the employed collection to a type violating the characteristic
+            //  "Adding a new key-value pair equal to an existing key-value pair has no effect."
+            //  implemented by HashMultiMap.
+            // It is guaranteed in the API and clients rely on that!
             viewChangeListeners = HashMultimap.create();
             notificationSuppressions = Maps.newHashMap();
         }
 
-        final ViewChangeType[] types =
-                eventTypes != null && eventTypes.length != 0 ? eventTypes : ViewChangeType.values();
-
-        for (final ViewChangeType t : types) {
+        for (final ViewChangeType t : eventTypes) {
             viewChangeListeners.put(t, listener);
         }
 
@@ -156,7 +192,7 @@ public abstract class AbstractViewer implements IViewer {
         if (viewChangeListenersView == null) {
             viewChangeListenersView = Multimaps.unmodifiableSetMultimap(this.viewChangeListeners);
         }
-        return viewChangeListeners;
+        return viewChangeListenersView;
     }
 
     /**
@@ -267,9 +303,9 @@ public abstract class AbstractViewer implements IViewer {
      * charge of broadcasting it into the platform and the registered selection listeners.
      *
      * @param selection
-     *            the new {@link ISelection}
+     *            the new {@link IKlighdSelection}
      */
-    protected void updateSelection(final ISelection selection) {
+    protected void updateSelection(final IKlighdSelection selection) {
         this.getContextViewer().notifySelectionListeners(selection);
     }
 
@@ -420,7 +456,7 @@ public abstract class AbstractViewer implements IViewer {
     /**
      * {@inheritDoc}
      */
-    public ISelection getSelection() {
+    public IKlighdSelection getSelection() {
         return getContextViewer().getSelection();
     }
 

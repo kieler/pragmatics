@@ -5,6 +5,7 @@ package de.cau.cs.kieler.kiml.grana.text.grana.impl;
 import de.cau.cs.kieler.kiml.grana.text.grana.Analysis;
 import de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage;
 import de.cau.cs.kieler.kiml.grana.text.grana.Job;
+import de.cau.cs.kieler.kiml.grana.text.grana.Output;
 import de.cau.cs.kieler.kiml.grana.text.grana.Resource;
 
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
@@ -137,24 +138,14 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
   protected EList<Analysis> analyses;
 
   /**
-   * The default value of the '{@link #getOutput() <em>Output</em>}' attribute.
+   * The cached value of the '{@link #getOutput() <em>Output</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getOutput()
    * @generated
    * @ordered
    */
-  protected static final String OUTPUT_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getOutput() <em>Output</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getOutput()
-   * @generated
-   * @ordered
-   */
-  protected String output = OUTPUT_EDEFAULT;
+  protected Output output;
 
   /**
    * <!-- begin-user-doc -->
@@ -293,7 +284,7 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getOutput()
+  public Output getOutput()
   {
     return output;
   }
@@ -303,12 +294,37 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setOutput(String newOutput)
+  public NotificationChain basicSetOutput(Output newOutput, NotificationChain msgs)
   {
-    String oldOutput = output;
+    Output oldOutput = output;
     output = newOutput;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GranaPackage.JOB__OUTPUT, oldOutput, output));
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GranaPackage.JOB__OUTPUT, oldOutput, newOutput);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOutput(Output newOutput)
+  {
+    if (newOutput != output)
+    {
+      NotificationChain msgs = null;
+      if (output != null)
+        msgs = ((InternalEObject)output).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GranaPackage.JOB__OUTPUT, null, msgs);
+      if (newOutput != null)
+        msgs = ((InternalEObject)newOutput).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GranaPackage.JOB__OUTPUT, null, msgs);
+      msgs = basicSetOutput(newOutput, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GranaPackage.JOB__OUTPUT, newOutput, newOutput));
   }
 
   /**
@@ -327,6 +343,8 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
         return ((InternalEList<?>)getLayoutOptions()).basicRemove(otherEnd, msgs);
       case GranaPackage.JOB__ANALYSES:
         return ((InternalEList<?>)getAnalyses()).basicRemove(otherEnd, msgs);
+      case GranaPackage.JOB__OUTPUT:
+        return basicSetOutput(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -392,7 +410,7 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
         getAnalyses().addAll((Collection<? extends Analysis>)newValue);
         return;
       case GranaPackage.JOB__OUTPUT:
-        setOutput((String)newValue);
+        setOutput((Output)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -427,7 +445,7 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
         getAnalyses().clear();
         return;
       case GranaPackage.JOB__OUTPUT:
-        setOutput(OUTPUT_EDEFAULT);
+        setOutput((Output)null);
         return;
     }
     super.eUnset(featureID);
@@ -456,7 +474,7 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
       case GranaPackage.JOB__ANALYSES:
         return analyses != null && !analyses.isEmpty();
       case GranaPackage.JOB__OUTPUT:
-        return OUTPUT_EDEFAULT == null ? output != null : !OUTPUT_EDEFAULT.equals(output);
+        return output != null;
     }
     return super.eIsSet(featureID);
   }
@@ -478,8 +496,6 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
     result.append(layoutBeforeAnalysis);
     result.append(", measureExecutionTime: ");
     result.append(measureExecutionTime);
-    result.append(", output: ");
-    result.append(output);
     result.append(')');
     return result.toString();
   }

@@ -11,15 +11,14 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-/**
- *
- */
 package de.cau.cs.kieler.klighd.piccolo.internal.util;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import org.eclipse.emf.common.util.AbstractTreeIterator;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -36,6 +35,7 @@ import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IInternalKGraphElementNode
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.PRoot;
 import edu.umd.cs.piccolo.activities.PActivity;
 import edu.umd.cs.piccolo.activities.PActivity.PActivityDelegate;
 import edu.umd.cs.piccolo.util.PAffineTransform;
@@ -229,10 +229,15 @@ public final class NodeUtil {
      *
      * @param node
      *            the node
+     * @param root
+     *            the diagram's {@link PRoot} in order to avoid traversing to the root for each node
+     *            (see usage of this method)
      * @param activity
      *            the primary activity
      */
-    public static void schedulePrimaryActivity(final PNode node, final PActivity activity) {
+    public static void schedulePrimaryActivity(final PNode node, final PRoot root,
+            final PActivity activity) {
+
         final Object attribute = node.getAttribute(ACTIVITY_KEY);
         if (attribute instanceof PActivity) {
             final PActivity oldActivity = (PActivity) attribute;
@@ -252,7 +257,7 @@ public final class NodeUtil {
                 node.addAttribute(ACTIVITY_KEY, null);
             }
         });
-        node.addActivity(activity);
+        root.addActivity(activity);
     }
 
     /**
@@ -535,19 +540,20 @@ public final class NodeUtil {
         }
 
         // now apply the big artillery ...
-        // build lists containing the parents for both 'node0' and 'node1',
-        //  create reverse views on theses lists, and iterators traversing theses views
-        final Iterator<IKNodeNode> node0parents =
-                Lists.reverse(Lists.newArrayList(parentINodeIterator(node0))).listIterator();
-        final Iterator<IKNodeNode> node1parents =
-                Lists.reverse(Lists.newArrayList(parentINodeIterator(node1))).listIterator();
+        // build lists containing the parents for both 'node0' and 'node1'
+        //  and create iterators starting with the (assumed) common root of 'node0' and 'node1'
+        final List<IKNodeNode> node0parents = Lists.newArrayList(parentINodeIterator(node0));
+        final ListIterator<IKNodeNode> node0parentIt = node0parents.listIterator(node0parents.size());
+
+        final List<IKNodeNode> node1parents = Lists.newArrayList(parentINodeIterator(node1));
+        final ListIterator<IKNodeNode> node1parentIt = node1parents.listIterator(node1parents.size());
 
         IKNodeNode result = null;
 
         // now simultaneously traverse the elements ...
-        while (node0parents.hasNext() && node1parents.hasNext()) {
-            final IKNodeNode inode0 = node0parents.next();
-            final IKNodeNode inode1 = node1parents.next();
+        while (node0parentIt.hasPrevious() && node1parentIt.hasPrevious()) {
+            final IKNodeNode inode0 = node0parentIt.previous();
+            final IKNodeNode inode1 = node1parentIt.previous();
 
             if (inode0 == inode1) {
                 // ... keep the last element found in both lists, ...

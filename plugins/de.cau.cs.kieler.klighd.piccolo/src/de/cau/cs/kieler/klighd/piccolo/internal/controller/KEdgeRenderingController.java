@@ -38,10 +38,13 @@ import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KCustomConnectionFigureNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KEdgeNode;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdDisposingLayer;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdPath;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.NodeDisposeListener;
 import edu.umd.cs.piccolo.PCamera;
 import edu.umd.cs.piccolo.PLayer;
 import edu.umd.cs.piccolo.PNode;
+import edu.umd.cs.piccolo.util.PPickPath;
 
 /**
  * An {@link AbstractKGERenderingController} for {@link KEdge KEdges} generating the rendering
@@ -76,7 +79,7 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
      * {@inheritDoc}
      */
     @Override
-    protected PNode internalUpdateRendering() {
+    protected PNodeController<?> internalUpdateRendering() {
         final KEdgeNode repNode = getRepresentation();
 
         // evaluate the rendering data
@@ -86,7 +89,7 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
             return handleEdgeRendering(createDefaultRendering(), repNode);
         }
 
-        final PNode renderingNode;
+        final PNodeController<?> renderingNodeController;
 
         // the rendering of an edge has to be a KPolyline or a sub type of KPolyline except KPolygon,
         //  or a KCustomRendering providing a KCustomConnectionFigureNode
@@ -94,14 +97,14 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
         case KRenderingPackage.KPOLYLINE:
         case KRenderingPackage.KROUNDED_BENDS_POLYLINE:
         case KRenderingPackage.KSPLINE:
-            renderingNode = handleEdgeRendering((KPolyline) currentRendering, repNode);
+            renderingNodeController = handleEdgeRendering((KPolyline) currentRendering, repNode);
             break;
 
         case KRenderingPackage.KCUSTOM_RENDERING:
             final KCustomRendering customRendering = (KCustomRendering) currentRendering;
             if (customRendering.getFigureObject()  == null
                     || customRendering.getFigureObject() instanceof KCustomConnectionFigureNode) {
-                renderingNode = handleEdgeRendering(customRendering, repNode);
+                renderingNodeController = handleEdgeRendering(customRendering, repNode);
                 break;
             } else {
                 // FIXME why is the status manager used here, while below a runtime exception is thrown?
@@ -123,8 +126,8 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
             if (renderingRef.getRendering() == null) {
                 return handleEdgeRendering(createDefaultRendering(), repNode);
             } else if (renderingRef.getRendering() instanceof KPolyline) {
-                renderingNode = handleEdgeRendering((KPolyline) renderingRef.getRendering(),
-                        repNode);
+                renderingNodeController =
+                        handleEdgeRendering((KPolyline) renderingRef.getRendering(), repNode);
             } else {
                 throw new RuntimeException("KLighD: llegal KRendering is attached to graph edge.");
             }
@@ -137,7 +140,7 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
                     + ", must be a KPolyline, KRoundedBendsPolyline, KSpline, or KCustomRendering!");
         }
 
-        return renderingNode;
+        return renderingNodeController;
     }
 
     /**
@@ -149,9 +152,10 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
      *            the rendering
      * @param parent
      *            the parent Piccolo2D edge node
-     * @return the Piccolo2D node representing the rendering
+     * @return the {@link PNodeController} managing the Piccolo2D node that represents
+     *         <code>rendering</code>
      */
-    private PNode handleEdgeRendering(final KPolyline rendering, final KEdgeNode parent) {
+    private PNodeController<?> handleEdgeRendering(final KPolyline rendering, final KEdgeNode parent) {
         // create the rendering
         @SuppressWarnings("unchecked")
         final PNodeController<KlighdPath> controller = (PNodeController<KlighdPath>) createRendering(
@@ -192,7 +196,7 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
 
         if (jpR == null) {
             // if there is no junction point rendering determined, we're done!
-            return controller.getNode();
+            return controller;
         }
 
 
@@ -206,14 +210,14 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
         // As explained in the class doc, the representation of multiple junction points is realized
         //  by means of cameras. Since those support only PLayers as 'viewed' figures, create one
         //  serving as container for the junction point figure:
-        final PLayer junctionParent = new PLayer();
+        final PLayer junctionParent = new KlighdDisposingLayer();
 
         // Create the junction point figure the usual way
         final PNode junctionFigure = handleAreaAndPointPlacementRendering(jpR, propagatedStyles,
-                junctionParent);
+                junctionParent).getNode();
 
         // Create a layer accommodating the concrete camera instances ...
-        final PLayer displayedJunctions = new PLayer();
+        final PLayer displayedJunctions = new KlighdDisposingLayer();
 
         // ... and add it to the edge's rendering figure (I think it could be also added to the
         //  parent 'edgeNode', but this is cleaner regarding the replacement/deletion of the current
@@ -232,7 +236,15 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
                     }
                 });
 
-        return controller.getNode();
+        parent.addPropertyChangeListener(NodeDisposeListener.DISPOSE, new PropertyChangeListener() {
+
+            public void propertyChange(final PropertyChangeEvent evt) {
+                junctionParent.firePropertyChange(NodeDisposeListener.DISPOSE_CODE,
+                        evt.getPropertyName(), evt.getOldValue(), evt.getNewValue());
+            }
+        });
+
+        return controller;
     }
 
     /**
@@ -270,8 +282,14 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
         for (int i = 0; i < missingJuncts; i++) {
             final PCamera cam = new JunctionPointCamera();
 
-            // set the camera non-pickable as the junction points can be panned locally :-)
-            cam.setPickable(false);
+            // set the camera pickable as junction points shall be selectable
+            // keep in mind: this might enable local panning of the junctionFigure ('s parent layer)!
+
+            // this however is avoided by the specialized 'KlighdInputEvent' that offers
+            //  the diagram top camera (usually the employed 'KlighdMainCamera') to the employed
+            //  event handlers by default, rather than the inner helper cameras ("bottom camera").
+            // see 'KlighdInputManager' for details
+            cam.setPickable(true);
 
             // add the layer to be shown by the camera
             cam.addLayer(junctionParent);
@@ -303,10 +321,40 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
      *
      * @author chsch
      */
-    private static class JunctionPointCamera extends PCamera {
+    public static final class JunctionPointCamera extends PCamera {
 
         private static final long serialVersionUID = -1724430297849001050L;
 
+        private JunctionPointCamera() {
+        }
+
+        /**
+         * {@inheritDoc}<br>
+         * <br>
+         * This specialization enables the selectability of junction points, i.e. the diverging or
+         * converging edges. See
+         * {@link de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdSelectionEventHandler
+         * #performSelection(edu.umd.cs.piccolo.event.PInputEvent)
+         * KlighdSelectionEventHandler#performSelection(PInputEvent)} for details.
+         */
+        @Override
+        public boolean fullPick(final PPickPath pickPath) {
+            if (fullIntersects(pickPath.getPickBounds())) {
+                pickPath.pushNode(this);
+                pickPath.pushTransform(getTransformReference(true));
+
+                final boolean thisPickable = getPickable() && pickPath.acceptsNode(this);
+
+                if (thisPickable) {
+                    return true;
+                }
+
+                pickPath.popTransform(getTransformReference(true));
+                pickPath.popNode(this);
+            }
+
+            return false;
+        }
     }
 
 
@@ -319,9 +367,11 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
      *            the rendering
      * @param parent
      *            the parent Piccolo2D edge node
-     * @return the Piccolo2D node representing the rendering
+     * @return the {@link PNodeController} managing the Piccolo2D node that represents
+     *         <code>rendering</code>
      */
-    private PNode handleEdgeRendering(final KCustomRendering rendering, final KEdgeNode parent) {
+    private PNodeController<?> handleEdgeRendering(final KCustomRendering rendering,
+            final KEdgeNode parent) {
 
         // create the rendering
         @SuppressWarnings("unchecked")
@@ -344,7 +394,7 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
                     }
                 });
 
-        return controller.getNode();
+        return controller;
     }
 
     /**
@@ -362,7 +412,7 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
      * {@inheritDoc}
      */
     @Override
-    protected void bringToFront() {
+    protected void moveToFront() {
         this.getRepresentation().moveToFront();
     }
 }

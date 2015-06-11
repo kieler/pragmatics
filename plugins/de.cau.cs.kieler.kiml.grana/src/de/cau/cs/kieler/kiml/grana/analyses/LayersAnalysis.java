@@ -323,6 +323,9 @@ public class LayersAnalysis implements IAnalysis {
                     count[0] += childResult[0];
                     count[1] += childResult[1];
                     count[2] += childResult[2];
+                    count[3] = Math.max(childResult[3], count[3]);
+                    count[4] = Math.max(childResult[4], count[4]);
+                    count[5] = Math.max(childResult[5], count[5]);
                     // 3, 4, 5 do not make sense here
                 }
             }

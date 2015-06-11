@@ -77,6 +77,42 @@ public interface GranaFactory extends EFactory
   LocalResource createLocalResource();
 
   /**
+   * Returns a new object of class '<em>Output</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Output</em>'.
+   * @generated
+   */
+  Output createOutput();
+
+  /**
+   * Returns a new object of class '<em>Global Output Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Global Output Ref</em>'.
+   * @generated
+   */
+  GlobalOutputRef createGlobalOutputRef();
+
+  /**
+   * Returns a new object of class '<em>Output Reference</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Output Reference</em>'.
+   * @generated
+   */
+  OutputReference createOutputReference();
+
+  /**
+   * Returns a new object of class '<em>Local Output</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Local Output</em>'.
+   * @generated
+   */
+  LocalOutput createLocalOutput();
+
+  /**
    * Returns a new object of class '<em>Analysis</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

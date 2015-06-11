@@ -58,6 +58,10 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
     public static final IProperty<Boolean> MULTI_SELECTION = new Property<Boolean>(
             "klighd.multiSelection", true);
 
+    /** property denoting the option to select connected ports when selecting edges. */
+    public static final IProperty<Boolean> ADD_PORTS_TO_SELECTION = new Property<Boolean>(
+            "klighd.addPortsToSelection", false);
+
     /** property denoting pre-definition of diagram {@link SynthesisOption} values. */
     public static final IProperty<Map<SynthesisOption, Object>> SYNTHESIS_OPTION_CONFIG =
             new Property<Map<SynthesisOption, Object>>("klighd.synthesisOptionConfig");
@@ -72,6 +76,11 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
      * {@link de.cau.cs.kieler.core.kgraph.KLabel KLabels}. */
     public static final IProperty<Boolean> SUPPRESS_SIZE_ESTIMATION = new Property<Boolean>(
             "klighd.suppressSizeEstimation", false);
+
+    /** property denoting whether to suppress edge adjustment or not. */
+    public static final IProperty<Boolean> SUPPRESS_EDGE_ADJUSTMENT = new Property<Boolean>(
+            "klighd.suppressEdgeAdjustment", false);
+
     /**
      * Defines the possible diagram side bar initialization options.
      */
@@ -294,6 +303,16 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
     }
 
     /**
+     * Configures the diagram viewer's support for selecting ports when selecting connected edges.
+     *
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public KlighdSynthesisProperties activatePortSelection() {
+        this.setProperty(ADD_PORTS_TO_SELECTION, true);
+        return this;
+    }
+
+    /**
      * Configures the diagram viewer's support for automatically computing the minimal size of
      * diagram nodes (especially non-compound ones) and .
      *
@@ -304,6 +323,15 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
         return this;
     }
 
+    /**
+     * Configures whether the edge adjustment should be calculated or not.
+     * 
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public KlighdSynthesisProperties suppressEdgeAdjustment() {
+        this.setProperty(SUPPRESS_EDGE_ADJUSTMENT, false);
+        return this;
+    }
 
     /**
      * Configures diagram {@link SynthesisOption} values beyond the default value definitions.

@@ -22,13 +22,13 @@ import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * Splits the long edges of the layered graph to obtain a proper layering. For each edge that
@@ -96,8 +96,8 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
                             
                             // Create dummy node
                             LNode dummyNode = new LNode(layeredGraph);
+                            dummyNode.setNodeType(NodeType.LONG_EDGE);
                             dummyNode.setProperty(InternalProperties.ORIGIN, edge);
-                            dummyNode.setProperty(InternalProperties.NODE_TYPE, NodeType.LONG_EDGE);
                             dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                                     PortConstraints.FIXED_POS);
                             dummyNode.setLayer(nextLayer);
@@ -174,7 +174,7 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
     private static void setDummyProperties(final LNode dummy, final LEdge inEdge, final LEdge outEdge) {
         LNode inEdgeSourceNode = inEdge.getSource().getNode();
         
-        if (inEdgeSourceNode.getProperty(InternalProperties.NODE_TYPE) == NodeType.LONG_EDGE) {
+        if (inEdgeSourceNode.getNodeType() == NodeType.LONG_EDGE) {
             // The incoming edge originates from a long edge dummy node, so we can
             // just copy its properties
             dummy.setProperty(InternalProperties.LONG_EDGE_SOURCE,

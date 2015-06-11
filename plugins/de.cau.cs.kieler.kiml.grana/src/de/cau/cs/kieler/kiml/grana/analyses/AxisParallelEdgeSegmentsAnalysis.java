@@ -66,7 +66,7 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
     private static final IProperty<String> ALGORITHM = new Property<String>(
             "de.cau.cs.kieler.algorithm");
     private static final IProperty<Object> SIMPLE_NODE_PLACE = new Property<Object>(
-            "de.cau.cs.kieler.klay.layered.nodePlace");
+            "de.cau.cs.kieler.klay.layered.nodePlace", "");
 
     private static final Set<Direction> LEFT_TO_RIGHT = ImmutableSet.of(Direction.UNDEFINED,
             Direction.LEFT, Direction.RIGHT);
@@ -117,6 +117,12 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
             if (e instanceof KEdge) {
                 KEdge kedge = (KEdge) e;
                 
+                // currently no self-loop support
+                if (kedge.getSource() == kedge.getTarget()) {
+                    throw new IllegalStateException("Self-loops are not supported by the "
+                            + this.getClass().getSimpleName());
+                }
+                
                 // get the direction of the edge's parent node
                 KNode parent = kedge.getSource().getParent();
                 if (kedge.getTarget().getParent() != kedge.getSource().getParent()) {
@@ -125,7 +131,6 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
                         parent = kedge.getSource();
                     }
                 }
-                
                 KLayoutData parentLayout = parent.getData(KLayoutData.class);
                 Direction direction = parentLayout.getProperty(LayoutOptions.DIRECTION);
                 

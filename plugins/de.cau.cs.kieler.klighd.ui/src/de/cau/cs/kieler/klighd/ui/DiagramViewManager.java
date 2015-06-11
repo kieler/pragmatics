@@ -190,51 +190,25 @@ public final class DiagramViewManager implements IPartListener {
             final Object model, final IPropertyHolder properties) {
 
         // get the view
-        final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        final IWorkbenchPage page = window.getActivePage();
-        ViewContext viewContext = getInstance().idContextMapping.get(id);
+        final IDiagramWorkbenchPart diagramView = getDiagramWorkbenchPart(id);
+        if (diagramView == null) {
+            return null;
 
-        IDiagramWorkbenchPart diagramView = getView(id);
+        } else if (name != null && diagramView instanceof DiagramViewPart) {
+            // set/update the view name
+            ((DiagramViewPart) diagramView).setName(name);
+        } 
 
-        if (diagramView != null) {
-            // set the view name
-            if (name != null) {
-                ((DiagramViewPart) diagramView).setName(name);
-            }
-        } else {
-            diagramView = getEditor(id);
-            if (diagramView == null) {
-                return null;
-            }
-        }
+        final ViewContext viewContext = diagramView.getViewContext();
 
-        // 'diagramView' is supposed to be non-null here
         if (viewContext == null) {
-            viewContext = diagramView.getViewer().getViewContext();
-            if (viewContext == null) {
-                return null;
-            }
+            return null;
         }
 
         // update the view context
-        final Object currentInputModel = viewContext.getInputModel();
-        if (model != null || currentInputModel != null) {
-            page.bringToTop(diagramView);
-            // update the view context and viewer
-            final Object theModel = (model != null ? model : currentInputModel);
-
-            viewContext.getLayoutRecorder().startRecording();
-            final boolean successful = viewContext.update(theModel, properties);
-
-            // in case the view update didn't work properly
-            //  consider this as a failure according to the method doc!
-            if (!successful) {
-                return null;
-            }
-
-            LightDiagramServices.layoutDiagram(viewContext);
+        if (!LightDiagramServices.updateDiagram(viewContext)) {
+            return null;
         }
-
 
         // trigger the update status
         KlighdPlugin.getTrigger().triggerStatus(IKlighdTrigger.Status.UPDATE, viewContext);
@@ -269,54 +243,45 @@ public final class DiagramViewManager implements IPartListener {
      * @return the view with the identifier or null on failure
      */
     public static IDiagramWorkbenchPart updateView(final ViewContext viewContext, final Object model) {
-        // update the view context
-
-        final IDiagramWorkbenchPart diagramView = viewContext.getDiagramWorkbenchPart();
-        final IWorkbenchPage page;
-
-        if (diagramView instanceof DiagramViewPart) {
-            page = diagramView.getSite().getPage();
-        } else if (diagramView instanceof DiagramEditorPart) {
-            page = diagramView.getSite().getPage();
-        } else {
-            return null;
-        }
-
-        final Object currentInputModel = viewContext.getInputModel();
-        if (model != null || currentInputModel != null) {
-            page.bringToTop(diagramView);
-
-            // update the view context and viewer
-            final Object theModel = (model != null ? model : currentInputModel);
-
-            viewContext.getLayoutRecorder().startRecording();
-            final boolean successful = viewContext.update(theModel);
-
-            // in case the view update didn't work properly
-            //  consider this as a failure according to the method doc!
-            if (!successful) {
-                return null;
-            }
-
-            LightDiagramServices.layoutDiagram(viewContext);
-        }
-        return diagramView;
+        boolean res = LightDiagramServices.updateDiagram(viewContext, model);
+        return res ? viewContext.getDiagramWorkbenchPart() : null;
     }
 
     /**
-     * Creates a {@link DiagramViewPart} showing the desired diagram of <code>model</code>.
-     * That diagram view will have with the given name and model under the specified identifier. <br>
-     *
+     * Creates a {@link DiagramViewPart} showing the desired diagram of <code>model</code>. The
+     * diagram view will exhibit the given name and can be addressed via the specified id.
+     * 
      * @param id
-     *            the diagram identifier (can be null for the default view)
+     *            the diagram identifier (can be <code>null</code> for the default view)
      * @param name
-     *            the name (can be null if the view should be created with the default name)
+     *            the name, may be <code>null</code> if the view should be created with the default
+     *            name
      * @param model
-     *            the model (can be null if the view should be created without an initial model)
+     *            the model, may be <code>null</code> if the view should be created without an
+     *            initial model
+     * @return the view with the identifier (newly created or reused if it exists already), or
+     *         <code>null</code> on failure
+     */
+    public static DiagramViewPart createView(final String id, final String name, final Object model) {
+        return createView(id, name, model, null);
+    }
+
+    /**
+     * Creates a {@link DiagramViewPart} showing the desired diagram of <code>model</code>. The
+     * diagram view will exhibit the given name and can be addressed via the specified id.
+     * 
+     * @param id
+     *            the diagram identifier (can be <code>null</code> for the default view)
+     * @param name
+     *            the name, may be <code>null</code> if the view should be created with the default
+     *            name
+     * @param model
+     *            the model, may be <code>null</code> if the view should be created without an
+     *            initial model
      * @param properties
      *            the property holder containing properties configurations or <code>null</code>
-     * @return the view with the identifier (newly created or reused if it exists already) or null
-     *         on failure
+     * @return the view with the identifier (newly created or reused if it exists already), or
+     *         <code>null</code> on failure
      */
     public static DiagramViewPart createView(final String id, final String name, final Object model,
             final IPropertyHolder properties) {
@@ -371,7 +336,9 @@ public final class DiagramViewManager implements IPartListener {
             getInstance().unregisterView(diagramView);
         }
 
-        return initializeView(diagramView, model, name, properties);
+        diagramView.initialize(model, name, properties);
+
+        return diagramView;
     }
 
     /**

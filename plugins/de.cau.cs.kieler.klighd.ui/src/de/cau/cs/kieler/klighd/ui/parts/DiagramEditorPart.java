@@ -262,7 +262,7 @@ public class DiagramEditorPart extends EditorPart implements
             viewer.setModel(viewContext);
 
             // do an initial update of the view context
-            viewContext.update(model);
+            viewContext.update();
 
             if (requiresInitialLayout(viewContext)) {
                 // In order to avoid flickering we set the viewer's control
@@ -349,7 +349,7 @@ public class DiagramEditorPart extends EditorPart implements
         final KNode viewModel = viewContext.getViewModel();
         final KShapeLayout diagramLayout = viewModel.getData(KShapeLayout.class);
 
-        return diagramLayout.getWidth() == 0 && diagramLayout.getHeight() == 0;
+        return diagramLayout.getWidth() == 0 && diagramLayout.getHeight() == 0; 
     }
 
     /**
@@ -373,8 +373,15 @@ public class DiagramEditorPart extends EditorPart implements
      * {@inheritDoc}
      */
     public void resetLayoutConfig() {
+        resetLayoutConfig(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void resetLayoutConfig(final boolean doLayout) {
         if (this.sideBar != null) {
-            this.sideBar.resetLayoutOptionsToDefaults();
+            this.sideBar.resetLayoutOptionsToDefaults(doLayout);
         }
     }
 

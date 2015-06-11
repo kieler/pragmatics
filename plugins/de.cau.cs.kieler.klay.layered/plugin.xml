@@ -24,6 +24,9 @@
                priority="-2">
          </supportedFeature>
          <supportedFeature
+               feature="INSIDE_SELF_LOOPS">
+         </supportedFeature>
+         <supportedFeature
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
@@ -68,7 +71,7 @@
                option="de.cau.cs.kieler.klay.layered.nodeLayering">
          </knownOption>
          <knownOption
-               default="POLYLINE"
+               default="ORTHOGONAL"
                option="de.cau.cs.kieler.edgeRouting">
          </knownOption>
          <knownOption
@@ -108,6 +111,9 @@
                option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.selfLoopInside">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
@@ -125,6 +131,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.crossMin">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.greedySwitch">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.mergeEdges">
@@ -181,6 +190,9 @@
          <knownOption
                option="de.cau.cs.kieler.portAlignment.east">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -228,6 +240,16 @@
             description="Strategy for crossing minimization."
             id="de.cau.cs.kieler.klay.layered.crossMin"
             name="Crossing Minimization"
+            type="enum"
+            variance="0">
+      </layoutOption>
+      <layoutOption
+      		appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.properties.GreedySwitchType"
+            default="TWO_SIDED"
+            description="Greedy Switch strategy for crossing minimization."
+            id="de.cau.cs.kieler.klay.layered.greedySwitch"
+            name="Greedy Switch Crossing Minimization"
             type="enum"
             variance="0">
       </layoutOption>
@@ -419,6 +441,19 @@
             id="de.cau.cs.kieler.klay.layered.contentAlignment"
             name="Content Alignment"
             type="enumset">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor$CompactionStrategy"
+            description="Specifies the compaction strategy when using the Brandes and Koepf node placer."
+            id="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy"
+            name="Compaction Strategy"
+            type="enum">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodePlace"
+               value="BRANDES_KOEPF">
+         </dependency>
       </layoutOption>
    </extension>
 </plugin>

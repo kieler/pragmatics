@@ -26,6 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
@@ -50,8 +51,9 @@ public final class InteractiveLayerer implements ILayoutPhase {
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
-        
-        return null;
+
+        return IntermediateProcessingConfiguration.createEmpty().addBeforePhase3(
+                IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
     }
     
     /** Utility class for marking horizontal regions that are already covered by some nodes. */

@@ -2,17 +2,23 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2015 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.klighd.piccolo.internal.nodes;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import org.eclipse.emf.ecore.EObject;
+
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.klighd.piccolo.KlighdNode;
@@ -32,9 +38,9 @@ import edu.umd.cs.piccolo.util.PPickPath;
  * {@link de.cau.cs.kieler.core.krendering.KRendering KRendering} element, contributing semantic
  * model data into drawn (vector graphic) images, and determining the visibility the pseudo figure
  * wrt. the diagram zoom scale while drawing the diagram.
- * 
+ *
  * @author chsch
- * 
+ *
  * @param <T>
  *            the concrete type of the {@link KGraphElement}
  */
@@ -43,22 +49,88 @@ public abstract class KGraphElementNode<T extends KGraphElement> extends KlighdN
 
     private static final long serialVersionUID = -5577703758022742813L;
 
+    /**
+     * Initializes the visibility settings of <code>kgeNode</code> and returns it, if
+     * <code>kgeNode</code> is non-<code>null</code>. Otherwise, if <code>kgeNode</code> is
+     * <code>null</code> and visibility settings are configured in <code>layoutData</code>, a new
+     * instance of {@link KlighdNode} is created and initialized with those visibility settings.<br>
+     * If no visibility settings are configured in <code>layoutData</code> <code>null</code> is
+     * returned, anyway.
+     *
+     * @param layoutData
+     *            the {@link KLayoutData} to be assessed for visibility settings, should not be
+     *            <code>null</code>
+     * @param kgeNode
+     *            the {@link KGraphElementNode} to be configured with <code>layoutData</code>'s
+     *            visibility settings, maybe <code>null</code>
+     * @return <code>null</code> if <code>layoutData</code> is <code>null</code> or if
+     *         <code>layoutData</code> contains no visibility settings,<br>
+     *         <code>kgeNode</code> if it is unequal to <code>null</code> and
+     *         <code>layoutData</code> contains visibility settings,<br>
+     *         or a new instance of {@link KlighdNode}, if <code>kgeNode</code> is <code>null</code>
+     *         but <code>layoutData</code> contains visibility settings (in case a delegate
+     *         {@link KlighdNode} is required like for {@link KNodeNode KNodeNodes})
+     */
+    protected static KlighdNode evaluateVisibilityDefinitions(
+            final KLayoutData layoutData, final KGraphElementNode<?> kgeNode) {
+
+        if (layoutData == null) {
+            return null;
+        }
+
+        final boolean evaluate = containsVisibilitySettings(layoutData);
+
+        if (!evaluate) {
+            return null;
+
+        } else if (kgeNode != null) {
+            kgeNode.setScaleAndSizeBasedVisibilityBounds(layoutData);
+            return kgeNode;
+
+        } else {
+            return new KlighdNode() {
+                private static final long serialVersionUID = 1L;
+
+                /* Constructor */ {
+                    this.setScaleAndSizeBasedVisibilityBounds(layoutData);
+                }
+
+                public EObject getViewModelElement() {
+                    return null;
+                }
+
+                public boolean isSelectable() {
+                    return false;
+                }
+            };
+        }
+    }
+
     private T graphElement;
 
     /**
      * Constructs a corresponding Piccolo2D node representing the given {@link KGraphElement}.
-     * 
+     *
      * @param element
      *            the {@link KGraphElement}
      */
     public KGraphElementNode(final T element) {
         this.graphElement = element;
 
-        final KLayoutData layoutData = element.getData(KLayoutData.class);
-        if (layoutData != null) {
-            setVisibilityBounds(
-                    layoutData.getProperty(KlighdProperties.VISIBILITY_SCALE_LOWER_BOUND).floatValue(),
-                    layoutData.getProperty(KlighdProperties.VISIBILITY_SCALE_UPPER_BOUND).floatValue());
+        final boolean visibilitySettingsDefined =
+                evaluateVisibilityDefinitions(element.getData(KLayoutData.class), this) != null;
+
+        final boolean isEdge = element instanceof KEdge;
+        final KGraphElementNode<?> thisNode = this;
+
+        if (visibilitySettingsDefined) {
+            this.addPropertyChangeListener(PROPERTY_BOUNDS_FINISHED, new PropertyChangeListener() {
+                public void propertyChange(final PropertyChangeEvent evt) {
+                    updateScaleBasedVisibilityBounds(isEdge
+                        ? ((KEdgeNode) thisNode).getPathBoundsReference()
+                        : thisNode.getBoundsReference());
+                }
+            });
         }
     }
 
@@ -72,7 +144,6 @@ public abstract class KGraphElementNode<T extends KGraphElement> extends KlighdN
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean isSelectable() {
         return KlighdProperties.isSelectable(getViewModelElement());
     }
@@ -140,7 +211,7 @@ public abstract class KGraphElementNode<T extends KGraphElement> extends KlighdN
                     .getProperty(KlighdProperties.SEMANTIC_DATA);
             kpc.getKlighdGraphics().startGroup(sd);
         }
-       
+
         super.paint(paintContext);
     }
 

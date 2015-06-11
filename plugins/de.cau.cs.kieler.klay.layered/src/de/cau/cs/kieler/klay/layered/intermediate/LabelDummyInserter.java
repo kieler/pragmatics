@@ -30,9 +30,9 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
 
 /**
  * Processor that inserts dummy nodes into edges that have center labels to reserve space for them.
@@ -86,13 +86,15 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         
                         // Create dummy node
                         LNode dummyNode = new LNode(layeredGraph);
+                        dummyNode.setNodeType(NodeType.LABEL);
+                        
                         dummyNode.setProperty(InternalProperties.ORIGIN, edge);
                         dummyNode.setProperty(InternalProperties.REPRESENTED_LABELS, representedLabels);
-                        dummyNode.setProperty(InternalProperties.NODE_TYPE, NodeType.LABEL);
                         dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                                 PortConstraints.FIXED_POS);
                         dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE, edge.getSource());
                         dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET, edge.getTarget());
+                        
                         newDummyNodes.add(dummyNode);
                         
                         // Actually split the edge

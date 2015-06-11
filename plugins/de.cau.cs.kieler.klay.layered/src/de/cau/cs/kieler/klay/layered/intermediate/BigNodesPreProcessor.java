@@ -27,10 +27,9 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.NodeType;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Nodes that exceed a certain width are considered <emph>Big Nodes</emph>. Currently either a
@@ -98,7 +97,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         }
 
         // the object spacing in the drawn graph
-        spacing = layeredGraph.getProperty(Properties.OBJ_SPACING).doubleValue();
+        spacing = layeredGraph.getProperty(InternalProperties.SPACING).doubleValue();
         direction = layeredGraph.getProperty(LayoutOptions.DIRECTION);
         // the ID for the most recently created dummy node
         dummyID = nodes.size();
@@ -107,8 +106,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         double minWidth = Float.MAX_VALUE;
         for (LNode node : nodes) {
             // ignore all dummy nodes
-            if ((node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL)
-                    && (node.getSize().x < minWidth)) {
+            if ((node.getNodeType() == NodeType.NORMAL) && (node.getSize().x < minWidth)) {
                 minWidth = node.getSize().x;
             }
         }
@@ -120,8 +118,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         List<BigNode> bigNodes = Lists.newArrayList();
         double threshold = (minWidth + spacing);
         for (LNode node : nodes) {
-            if ((node.getProperty(InternalProperties.NODE_TYPE) == NodeType.NORMAL)
-                    && (node.getSize().x > threshold)) {
+            if ((node.getNodeType() == NodeType.NORMAL) && (node.getSize().x > threshold)) {
                 // when splitting, consider that we can use the spacing area
                 // we try to find a node width that considers the spacing
                 // for every dummy node to be created despite the last one
@@ -284,7 +281,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         private LNode introduceDummyNode(final LNode src, final double width) {
             // create new dummy node
             LNode dummy = new LNode(layeredGraph);
-            dummy.setProperty(InternalProperties.NODE_TYPE, NodeType.BIG_NODE);
+            dummy.setNodeType(NodeType.BIG_NODE);
             
             // copy some properties
             dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS,
