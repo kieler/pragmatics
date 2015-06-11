@@ -24,6 +24,9 @@
                priority="-2">
          </supportedFeature>
          <supportedFeature
+               feature="INSIDE_SELF_LOOPS">
+         </supportedFeature>
+         <supportedFeature
                feature="MULTI_EDGES">
          </supportedFeature>
          <supportedFeature
@@ -108,6 +111,9 @@
                option="de.cau.cs.kieler.aspectRatio">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.selfLoopInside">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.sizeConstraint">
          </knownOption>
          <knownOption
@@ -180,6 +186,12 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.portAlignment.east">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale">
+          </knownOption>    
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -421,6 +433,15 @@
             type="enumset">
       </layoutOption>
       <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="true"
+            description="whether additional compaction of the layout should be applied"
+            id="de.cau.cs.kieler.klay.layered.oneDimensionalCompaction"
+            name="One Dimensional Compaction"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
             advanced="false"
             appliesTo="parents"
             default="4"
@@ -439,6 +460,37 @@
             lowerBound="1"
             name="Upper Layer Estimation Scaling Factor [MinWidth Layerer]"
             type="int">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.5"
+            description="Influecnes the weigth of the width-estimation of the 
+            next Layer. 1 resuts in the longest-path-layerer and 0 is similar 
+            to the one-node-layerer"
+            id="de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale"
+            lowerBound="0"
+            name="Stretch Width Scale"
+            type="float"
+            upperBound="1">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Reduces amount of dummy nodes after layering phase."
+            id="de.cau.cs.kieler.klay.layered.nodePromotion"
+            name="Node Promotion"
+            type="boolean">
+            class="de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor$CompactionStrategy"
+            description="Specifies the compaction strategy when using the Brandes and Koepf node placer."
+            id="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy"
+            name="Compaction Strategy"
+            type="enum">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodePlace"
+               value="BRANDES_KOEPF">
+         </dependency>
       </layoutOption>
    </extension>
 </plugin>

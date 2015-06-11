@@ -43,7 +43,7 @@ public enum IntermediateProcessorStrategy {
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
-    /** Creates connected compontents for the SplineSelfLoopPre- and postprocessor. */
+    /** Creates connected components for the SplineSelfLoopPre- and postprocessor. */
     SPLINE_SELF_LOOP_PREPROCESSOR,
     
     // Before Phase 2
@@ -55,6 +55,9 @@ public enum IntermediateProcessorStrategy {
     
     // Before Phase 3
     
+
+    /** Node-promotion for prettier graphs, especially algorithms like longest-path are prettified. */
+    NODE_PROMOTION,
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
     /** Handles northern and southern hierarchical ports. */
@@ -76,7 +79,7 @@ public enum IntermediateProcessorStrategy {
     /** Orders the port lists of nodes with fixed port order. */
     PORT_LIST_SORTER,
     /** Inserts dummy nodes to take care of northern and southern ports. */
-    NORTH_SOUTH_PORT_PREPROCESSOR,
+    NORTH_SOUTH_PORT_PREPROCESSOR, 
    
     
     // Before Phase 4
@@ -113,8 +116,7 @@ public enum IntermediateProcessorStrategy {
     /** Merges dummy nodes originating from big nodes. */
     BIG_NODES_POSTPROCESSOR,
     
-    // After Phase 5
-    
+    // After Phase 5   
     /** Reinserts and places comment boxes that have been removed before. */
     COMMENT_POSTPROCESSOR,
     /** Moves hypernodes horizontally for better placement. */
@@ -123,6 +125,8 @@ public enum IntermediateProcessorStrategy {
     HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
     LONG_EDGE_JOINER,
+    /** TODO */
+    ONE_D_COMPACTOR,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
     NORTH_SOUTH_PORT_POSTPROCESSOR,
     /** Removes dummy nodes which were introduced for center labels. */
@@ -213,6 +217,9 @@ public enum IntermediateProcessorStrategy {
             
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();
+            
+        case NODE_PROMOTION:
+            return new NodePromotion();
         
         case LAYER_CONSTRAINT_PROCESSOR:
             return new LayerConstraintProcessor();
@@ -238,6 +245,9 @@ public enum IntermediateProcessorStrategy {
         
         case NORTH_SOUTH_PORT_PREPROCESSOR:
             return new NorthSouthPortPreprocessor();
+            
+        case ONE_D_COMPACTOR:
+            return new OneDimensionalCompactor();
         
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();

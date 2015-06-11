@@ -41,7 +41,16 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
      */
     INTERACTIVE,
     /**
-     * Implementation of the heuristic MinWidth for solving the NP-hard minimum-width layering
+     * Nodes are put into Layers according to the average out-degree and their rank.
+     * Could be similar to LONGEST_PATH
+     * Taken from " In Search for Efficient Heuristics for Minimum-Width Graph
+     * Layering with Consideration of Dummy Nodes"
+     * wrtten by Nikolas S. Nikolov, Alexandre Tarassov, and Jürgen Branke
+
+     */
+    STRETCH_WIDTH,
+
+/** Implementation of the heuristic MinWidth for solving the NP-hard minimum-width layering
      * problem with consideration of dummy nodes.
      */
     MIN_WIDTH;
@@ -60,8 +69,14 @@ public enum LayeringStrategy implements ILayoutPhaseFactory {
         case INTERACTIVE:
             return new InteractiveLayerer();
 
+
+        case STRETCH_WIDTH:
+            return new StretchWidthLayerer();
+          
+
         case MIN_WIDTH:
             return new MinWidthLayerer();
+
 
         default:
             throw new IllegalArgumentException("No implementation is available for the layerer "

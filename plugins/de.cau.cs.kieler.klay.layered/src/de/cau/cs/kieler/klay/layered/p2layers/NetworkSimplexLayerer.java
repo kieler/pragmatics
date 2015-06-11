@@ -223,12 +223,12 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
                 || graph.getProperty(Properties.WIDE_NODES_ON_MULTIPLE_LAYERS) 
                         == WideNodesStrategy.AGGRESSIVE) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_AGGRESSIVE);
-            wideNodesStrategy = WideNodesStrategy.AGGRESSIVE;
+            wideNodesStrategy = WideNodesStrategy.AGGRESSIVE;;
             
         } else if (graph.getProperty(Properties.WIDE_NODES_ON_MULTIPLE_LAYERS) 
                         == WideNodesStrategy.CAREFUL) {
             strategy.addAll(BIG_NODES_PROCESSING_ADDITIONS_CAREFUL);
-            wideNodesStrategy = WideNodesStrategy.CAREFUL;
+            wideNodesStrategy = WideNodesStrategy.CAREFUL;;
         }
 
         return strategy;
