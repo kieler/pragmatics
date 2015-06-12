@@ -23,13 +23,17 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  * 
  * @author alan
  */
-abstract class BetweenLayerEdgeAllCrossingsCounter {
+public abstract class BetweenLayerEdgeAllCrossingsCounter {
 
     /**
      * Port position array used for counting the number of edge crossings.
      */
     private int[] portPos;
 
+    /**
+     * @param graph
+     *            a graph
+     */
     public BetweenLayerEdgeAllCrossingsCounter(final LNode[][] graph) {
         initialize(graph);
     }

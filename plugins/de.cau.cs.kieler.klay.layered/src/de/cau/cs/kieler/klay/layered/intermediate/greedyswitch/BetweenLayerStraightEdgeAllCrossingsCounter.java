@@ -32,8 +32,12 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  * 
  * @author msp
  */
-class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCrossingsCounter {
+public class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCrossingsCounter {
 
+    /**
+     * @param nodeOrder
+     *            a node order.
+     */
     public BetweenLayerStraightEdgeAllCrossingsCounter(final LNode[][] nodeOrder) {
         super(nodeOrder);
     }

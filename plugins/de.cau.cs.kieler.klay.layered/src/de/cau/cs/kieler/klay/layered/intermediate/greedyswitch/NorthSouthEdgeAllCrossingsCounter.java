@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * 
  * @author alan
  */
-class NorthSouthEdgeAllCrossingsCounter {
+public class NorthSouthEdgeAllCrossingsCounter {
 
     private final Map<LNode, Integer> nodePositions;
     private final Map<LPort, Integer> portPositions;

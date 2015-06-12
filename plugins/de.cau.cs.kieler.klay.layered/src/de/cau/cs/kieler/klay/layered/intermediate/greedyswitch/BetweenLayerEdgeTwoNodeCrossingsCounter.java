@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  *
  * @author alan
  */
-class BetweenLayerEdgeTwoNodeCrossingsCounter {
+public class BetweenLayerEdgeTwoNodeCrossingsCounter {
     private int upperLowerCrossings;
     private int lowerUpperCrossings;
     private AdjacencyList upperAdjacencies;
