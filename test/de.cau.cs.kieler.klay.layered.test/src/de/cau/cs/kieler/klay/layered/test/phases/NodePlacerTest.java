@@ -187,8 +187,12 @@ public class NodePlacerTest extends AbstractLayeredProcessorTest {
         
     }
 
-    private static final double EPSILON = 0.000001;
-    
+    /**
+     * A precision value for double comparisons. Note that the {@link LinearSegmentsNodePlacer} uses
+     * a similar value for overlap detection, which can, if chosen too large, cause tests to fail.
+     */
+    private static final double EPSILON = 0.0001;
+
     private static final Function<KNode, KNode> CONFIG_COMPACTION_STRAT_CLASSIC =
             new Function<KNode, KNode>() {
                 public KNode apply(final KNode input) {
