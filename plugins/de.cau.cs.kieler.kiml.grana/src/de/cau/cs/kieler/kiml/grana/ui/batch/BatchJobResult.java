@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.grana.ui.batch;
 
+import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 
 /**
  * The class that contains the results of a batch job.
@@ -32,8 +32,9 @@ public class BatchJobResult<T> {
     private Map<String, Object> results;
     /** results of the execution time analysis. */
     private Map<String, Double> execTimeResults;
-    /** the results of a range analysis. */
-    private SortedMap<String, Object> rangeResults;
+    /** the results of a range analysis, properly ordered according to
+     *  they execution sequence. */
+    private List<Object> rangeResults;
     
     /**
      * Constructs an AnalysisBatchJobResult using the AnalysisBatchJob and the
@@ -92,15 +93,15 @@ public class BatchJobResult<T> {
     /**
      * @return the rangeResults
      */
-    public SortedMap<String, Object> getRangeResults() {
+    public List<Object> getRangeResults() {
         return rangeResults;
     }
 
     /**
      * @param rangeResults
-     *            the rangeResults to set
+     *            the rangeResults, properly ordered according to they execution sequence.
      */
-    public void setRangeResults(final SortedMap<String, Object> rangeResults) {
+    public void setRangeResults(final List<Object> rangeResults) {
         this.rangeResults = rangeResults;
     }
 }

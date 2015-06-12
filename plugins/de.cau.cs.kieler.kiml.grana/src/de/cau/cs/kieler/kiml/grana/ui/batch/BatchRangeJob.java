@@ -14,9 +14,8 @@
 package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.util.List;
-import java.util.SortedMap;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -40,7 +39,7 @@ public class BatchRangeJob<T> implements IBatchJob<T> {
     private T parameter;
     /** the KGraph provider for this batch run. */
     private IKGraphProvider<T> kgraphProvider;
-    
+    /** the containing batch for reference. */
     private Batch batch;
     
     /**
@@ -93,7 +92,7 @@ public class BatchRangeJob<T> implements IBatchJob<T> {
         AnalysisContext context = AnalysisService.getInstance().analyze(graph, analyses,
                 monitor.subTask(WORK_ANALYSIS));
         
-        SortedMap<String, Object> rangeResults = Maps.newTreeMap();
+        List<Object> rangeResults = Lists.newArrayList();
         // now layout with the range or whatever it is layout option
         VolatileLayoutConfig vlc = new VolatileLayoutConfig();
         for (Number n : batch.getRangeValues()) {
@@ -112,7 +111,7 @@ public class BatchRangeJob<T> implements IBatchJob<T> {
 
             Object result = tmp.getResult(batch.getRangeAnalysis().getId());
             
-            rangeResults.put(n.toString(), result);
+            rangeResults.add(result);
         }
 
         // exectime not supported for range jobs
