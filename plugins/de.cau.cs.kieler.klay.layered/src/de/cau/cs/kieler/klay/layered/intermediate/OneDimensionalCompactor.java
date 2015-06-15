@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,11 +26,14 @@ import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+
+// FIXME what to do if graph gets wider after compaction; also doesn't fit the frame
 
 /**
  * @author dag
@@ -59,12 +61,10 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                 // add all nodes of type NORMAL because dummy nodes shouldn't have any size but
                 // sometimes are 1 high.
                 if (node.getNodeType().equals(NodeType.NORMAL)) {
-                    // hitbox including object spacing
-                	// FIXME half obj + half edgespacing != edgespacing between node and edge
+                    // hitbox excluding object spacing
                     Rectangle r =
-                            new Rectangle(node.getPosition().x - objSpacing / 2,
-                                    node.getPosition().y - objSpacing / 2, node.getSize().x
-                                            + objSpacing, node.getSize().y + objSpacing);
+                            new Rectangle(node.getPosition().x, node.getPosition().y,
+                                    node.getSize().x, node.getSize().y);
                     nodes.add(new CNode(node, r));
                 }
 
@@ -73,7 +73,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
                     Iterator<KVector> bends = edge.getBendPoints().iterator();
                     while (bends.hasNext()) {
-
+                        // infer vertical segments from order of bendpoints TODO consider x position
                         KVector bend1 = bends.next();
                         KVector bend2 = bends.next();
                         double x, y, h;
@@ -86,27 +86,46 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                             y = bend2.y;
                             h = bend1.y - y;
                         }
-                        // TODO wie fisch ich die später wieder raus, und wie kommen mehrere
-                        // segmente von gleicher kante in die map?
-                        Rectangle rEdge =
-                                new Rectangle(x - edgeSpacing / 2, y - edgeSpacing / 2,
-                                        0 + edgeSpacing, h + edgeSpacing);
 
-                        nodes.add(new CNode(edge, rEdge));
+                        Rectangle rEdge = new Rectangle(x, y, 0, h);
+                        CNode cn = new CNode(edge, rEdge);
+                        cn.bend1 = bend1;
+                        cn.bend2 = bend2;
+                        nodes.add(cn);
                     }
                 }
             }
         }
 
         // infer constraints from node intersections
-        // TODO consider a list for the constraint graph
         for (CNode node1 : nodes) {
             for (CNode node2 : nodes) {
+
+                // set spacing in the following conditions
+                double spacing = edgeSpacing;
+
+                // get margins //TODO spacing = max(objSpacing, margin) ??
+                LInsets margin1 = new LInsets(0, 0, 0, 0);
+                if (node1.elem.getClass() == LNode.class) {
+                    margin1 = ((LNode) node1.elem).getMargin();
+                    spacing = objSpacing;
+                }
+                LInsets margin2 = new LInsets(0, 0, 0, 0);
+                if (node2.elem.getClass() == LNode.class) {
+                    margin2 = ((LNode) node2.elem).getMargin();
+                    spacing = objSpacing;
+                }
+
                 // add constraint if node2 is to the right of node1 and could collide in x direction
-                // consider some wiggleroom between adjacent nodes .. weird
-                if (node2.hitbox.x + 5.01 >= node1.hitbox.x + node1.hitbox.width
-                        && node2.hitbox.y + node2.hitbox.height >= node1.hitbox.y
-                        && node2.hitbox.y <= node1.hitbox.y + node1.hitbox.height) {
+                if (node1 != node2
+                        && node2.hitbox.x > node1.hitbox.x // not >= neither Comp.gt to avoid
+                                                           // simultaneous constraints
+                                                           // a->b and b->a
+                        && Comp.gt(node2.hitbox.y + node2.hitbox.height + margin2.bottom + spacing,
+                                node1.hitbox.y - margin1.top)
+                        && Comp.lt(node2.hitbox.y - margin2.top, node1.hitbox.y + node1.hitbox.height
+                                + margin1.bottom + spacing)) {
+                    System.out.println("Adding Constraint " + node1.elem + " -> " + node2.elem);
                     node1.incoming.add(node2);
                     node2.outDegree++;
                 }
@@ -119,17 +138,40 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         for (CNode node : nodes) {
             if (node.outDegree == 0) {
                 startNodes.add(node);
+                if (node.elem.getClass() == LNode.class) {
+                    node.startX = ((LNode) node.elem).getPosition().x;
+                } else { // is LEdge
+                    node.startX = node.bend1.x;
+                }
             }
         }
 
-        // TODO longest-path-like stuff
+        // deriving leftmost positions from constraints
         while (!startNodes.isEmpty()) {
 
             CNode node = startNodes.poll();
+            System.out.println("Working on  " + node.elem);
             for (CNode inc : node.incoming) {
+                // TODO differentiate node edge
+                // but first try just margins like before
+                // set spacing in the following conditions
+                double spacing = edgeSpacing;
+                LInsets margin1 = new LInsets(0, 0, 0, 0);
+                if (node.elem.getClass() == LNode.class) {
+                    margin1 = ((LNode) node.elem).getMargin();
+                    spacing = objSpacing;
+                }
+                LInsets margin2 = new LInsets(0, 0, 0, 0);
+                if (inc.elem.getClass() == LNode.class) {
+                    margin2 = ((LNode) inc.elem).getMargin();
+                    spacing = objSpacing;
+                }
 
-                inc.startX = Math.max(inc.startX, node.startX + node.hitbox.width);
+                inc.startX =
+                        Math.max(inc.startX, node.startX + node.hitbox.width + margin1.right
+                                + margin2.left + spacing);
                 inc.outDegree--;
+                System.out.println("\t" + inc.elem + "  " + inc.startX);
 
                 if (inc.outDegree == 0) {
                     startNodes.add(inc);
@@ -142,22 +184,11 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
             if (node.elem.getClass() == LNode.class) {
                 LNode n = (LNode) node.elem;
-                n.getPosition().x = node.startX - objSpacing / 2;
-                
+                n.getPosition().x = node.startX;
+
             } else if (node.elem.getClass() == LEdge.class) { // TODO can't be anything else
-                LEdge e = (LEdge) node.elem;
-                // TODO which bendpoint?
-                Iterator<KVector> bends = e.getBendPoints().iterator();
-                KVector bend1 = bends.next();
-                KVector bend2 = bends.next();
-                double x = node.startX - edgeSpacing / 2;
-                if (bend1.x > x) {
-                	bend1.x = bend2.x = x;
-                } else if (bends.hasNext()) {
-                	bend1 = bends.next();
-                    bend2 = bends.next();
-                    bend1.x = bend2.x = x;
-                }
+                node.bend1.x = node.startX;
+                node.bend2.x = node.startX;
             }
         }
 
@@ -173,9 +204,11 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
         private LGraphElement elem;
         private Rectangle hitbox;
+        // specifies particular vertical edge segment
+        private KVector bend1, bend2;
         private List<CNode> incoming = new ArrayList<CNode>();
         private int outDegree = 0;
-        private double startX = 0;
+        private double startX = Double.NEGATIVE_INFINITY;
 
         /**
          * @param elem
@@ -186,6 +219,35 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
             this.hitbox = hitbox;
         }
 
+    }
+    
+    /**
+     * 
+     * @author dag
+     *
+     */
+    private static final class Comp {
+        
+        private static final double TOLERANCE = 0.0001;
+        
+        private static boolean eq(final double d1, final double d2) {
+            return Math.abs(d1 - d2) <= TOLERANCE;
+        }
+        
+        private static boolean gt(final double d1, final double d2) {
+            return d1 - d2 > TOLERANCE;
+        }
+        
+        private static boolean lt(final double d1, final double d2) {
+            return d2 - d1 > TOLERANCE;
+        }
+        private static boolean ge(final double d1, final double d2) {
+            return d1 - d2 >= -TOLERANCE;
+        }
+        
+        private static boolean le(final double d1, final double d2) {
+            return d2 - d1 >= -TOLERANCE;
+        }
     }
 
 }
