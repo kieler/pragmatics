@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
-import java.util.Arrays;
 import java.util.ListIterator;
 
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -33,8 +32,12 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  * 
  * @author msp
  */
-class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCrossingsCounter {
+public class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCrossingsCounter {
 
+    /**
+     * @param nodeOrder
+     *            a node order.
+     */
     public BetweenLayerStraightEdgeAllCrossingsCounter(final LNode[][] nodeOrder) {
         super(nodeOrder);
     }
@@ -187,7 +190,7 @@ class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCro
      *            the number to insert
      */
     private static void insert(final int[] array, final int start, final int end, final int n) {
-        int insx = Arrays.binarySearch(array, start, end, n);
+        int insx = binarySearch(array, start, end, n);
         if (insx < 0) {
             insx = -insx - 1;
         }
@@ -195,5 +198,24 @@ class BetweenLayerStraightEdgeAllCrossingsCounter extends BetweenLayerEdgeAllCro
             array[j + 1] = array[j];
         }
         array[insx] = n;
+    }
+
+    private static int binarySearch(final int[] array, final int start, final int end, final int n) {
+        int currentStart = start;
+        int currentEnd = end - 1;
+
+        while (currentStart <= currentEnd) {
+            int index = (currentStart + currentEnd) / 2;
+
+            if (array[index] == n) {
+                return index;
+            } else if (array[index] < n) {
+                currentStart = index + 1;
+            } else {
+                currentEnd = index - 1;
+            }
+        }
+
+        return -currentStart - 1;
     }
 }

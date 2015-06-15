@@ -409,9 +409,10 @@ public final class KlayLayered {
             // before each slot execution
 
             System.out.println("KLay Layered uses the following " + algorithm.size() + " modules:");
-            for (int i = 0; i < algorithm.size(); i++) {
-                System.out.println("   Slot " + String.format("%1$02d", i) + ": "
-                        + algorithm.get(i).getClass().getName());
+            int i = 0;
+            for (ILayoutProcessor processor : algorithm) {
+                System.out.println("   Slot " + String.format("%1$02d", i++) + ": "
+                        + processor.getClass().getName());
             }
 
             // Invoke each layout processor
@@ -421,13 +422,13 @@ public final class KlayLayered {
                     return;
                 }
                 // Graph debug output
-                DebugUtil.writeDebugGraph(lgraph, slotIndex++);
+                DebugUtil.writeDebugGraph(lgraph, slotIndex++, processor.getClass().getSimpleName());
 
                 processor.process(lgraph, monitor.subTask(monitorProgress));
             }
 
             // Graph debug output
-            DebugUtil.writeDebugGraph(lgraph, slotIndex++);
+            DebugUtil.writeDebugGraph(lgraph, slotIndex, "finished");
         } else {
             // Invoke each layout processor
             for (ILayoutProcessor processor : algorithm) {
