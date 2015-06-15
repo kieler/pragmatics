@@ -152,6 +152,7 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
         // Create a dummy edge
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(edge);
+        dummyEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(oldEdgeTarget);
         
