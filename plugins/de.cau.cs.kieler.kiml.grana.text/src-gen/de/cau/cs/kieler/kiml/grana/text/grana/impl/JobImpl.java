@@ -34,8 +34,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#getName <em>Name</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#isLayoutBeforeAnalysis <em>Layout Before Analysis</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#isMeasureExecutionTime <em>Measure Execution Time</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#getResources <em>Resources</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#getLayoutOptions <em>Layout Options</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#getAnalyses <em>Analyses</em>}</li>
@@ -66,46 +64,6 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
    * @ordered
    */
   protected String name = NAME_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isLayoutBeforeAnalysis() <em>Layout Before Analysis</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isLayoutBeforeAnalysis()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean LAYOUT_BEFORE_ANALYSIS_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isLayoutBeforeAnalysis() <em>Layout Before Analysis</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isLayoutBeforeAnalysis()
-   * @generated
-   * @ordered
-   */
-  protected boolean layoutBeforeAnalysis = LAYOUT_BEFORE_ANALYSIS_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isMeasureExecutionTime() <em>Measure Execution Time</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isMeasureExecutionTime()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean MEASURE_EXECUTION_TIME_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isMeasureExecutionTime() <em>Measure Execution Time</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isMeasureExecutionTime()
-   * @generated
-   * @ordered
-   */
-  protected boolean measureExecutionTime = MEASURE_EXECUTION_TIME_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getResources() <em>Resources</em>}' containment reference list.
@@ -189,52 +147,6 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
     name = newName;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, GranaPackage.JOB__NAME, oldName, name));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public boolean isLayoutBeforeAnalysis()
-  {
-    return layoutBeforeAnalysis;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setLayoutBeforeAnalysis(boolean newLayoutBeforeAnalysis)
-  {
-    boolean oldLayoutBeforeAnalysis = layoutBeforeAnalysis;
-    layoutBeforeAnalysis = newLayoutBeforeAnalysis;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GranaPackage.JOB__LAYOUT_BEFORE_ANALYSIS, oldLayoutBeforeAnalysis, layoutBeforeAnalysis));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public boolean isMeasureExecutionTime()
-  {
-    return measureExecutionTime;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setMeasureExecutionTime(boolean newMeasureExecutionTime)
-  {
-    boolean oldMeasureExecutionTime = measureExecutionTime;
-    measureExecutionTime = newMeasureExecutionTime;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GranaPackage.JOB__MEASURE_EXECUTION_TIME, oldMeasureExecutionTime, measureExecutionTime));
   }
 
   /**
@@ -361,10 +273,6 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
     {
       case GranaPackage.JOB__NAME:
         return getName();
-      case GranaPackage.JOB__LAYOUT_BEFORE_ANALYSIS:
-        return isLayoutBeforeAnalysis();
-      case GranaPackage.JOB__MEASURE_EXECUTION_TIME:
-        return isMeasureExecutionTime();
       case GranaPackage.JOB__RESOURCES:
         return getResources();
       case GranaPackage.JOB__LAYOUT_OPTIONS:
@@ -390,12 +298,6 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
     {
       case GranaPackage.JOB__NAME:
         setName((String)newValue);
-        return;
-      case GranaPackage.JOB__LAYOUT_BEFORE_ANALYSIS:
-        setLayoutBeforeAnalysis((Boolean)newValue);
-        return;
-      case GranaPackage.JOB__MEASURE_EXECUTION_TIME:
-        setMeasureExecutionTime((Boolean)newValue);
         return;
       case GranaPackage.JOB__RESOURCES:
         getResources().clear();
@@ -429,12 +331,6 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
       case GranaPackage.JOB__NAME:
         setName(NAME_EDEFAULT);
         return;
-      case GranaPackage.JOB__LAYOUT_BEFORE_ANALYSIS:
-        setLayoutBeforeAnalysis(LAYOUT_BEFORE_ANALYSIS_EDEFAULT);
-        return;
-      case GranaPackage.JOB__MEASURE_EXECUTION_TIME:
-        setMeasureExecutionTime(MEASURE_EXECUTION_TIME_EDEFAULT);
-        return;
       case GranaPackage.JOB__RESOURCES:
         getResources().clear();
         return;
@@ -463,10 +359,6 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
     {
       case GranaPackage.JOB__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case GranaPackage.JOB__LAYOUT_BEFORE_ANALYSIS:
-        return layoutBeforeAnalysis != LAYOUT_BEFORE_ANALYSIS_EDEFAULT;
-      case GranaPackage.JOB__MEASURE_EXECUTION_TIME:
-        return measureExecutionTime != MEASURE_EXECUTION_TIME_EDEFAULT;
       case GranaPackage.JOB__RESOURCES:
         return resources != null && !resources.isEmpty();
       case GranaPackage.JOB__LAYOUT_OPTIONS:
@@ -492,10 +384,6 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (name: ");
     result.append(name);
-    result.append(", layoutBeforeAnalysis: ");
-    result.append(layoutBeforeAnalysis);
-    result.append(", measureExecutionTime: ");
-    result.append(measureExecutionTime);
     result.append(')');
     return result.toString();
   }
