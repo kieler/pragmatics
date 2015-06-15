@@ -36,7 +36,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 public class NodePromotion implements ILayoutProcessor {
 
     /* Holds all nodes of the graph that have incoming edges. */
-    private List<LNode> nodesWithInEdges;
+    private List<LNode> nodesWithIncomingEdges;
 
     /* Stores all nodes of the graph. */
     private List<LNode> nodes;
@@ -63,7 +63,7 @@ public class NodePromotion implements ILayoutProcessor {
         do {
             promotions = 0;
             // Start promotion for all nodes with incoming edges.
-            for (LNode node : nodesWithInEdges) {
+            for (LNode node : nodesWithIncomingEdges) {
                 if (promoteNode(node) < 0) {
                     promotions++;
                     layeringBackUp = layers.clone();
@@ -104,7 +104,7 @@ public class NodePromotion implements ILayoutProcessor {
         layers = new int[nodeID];
         degreeDiff = new int[nodeID];
         nodes = Lists.newArrayList();
-        nodesWithInEdges = Lists.newArrayList();
+        nodesWithIncomingEdges = Lists.newArrayList();
 
         // Calculate difference and determine all nodes with incoming edges.
         int inDegree;
@@ -114,7 +114,7 @@ public class NodePromotion implements ILayoutProcessor {
                 inDegree = countEdges(node.getIncomingEdges());
                 degreeDiff[node.id] = countEdges(node.getOutgoingEdges()) - inDegree;
                 if (inDegree > 0) {
-                    nodesWithInEdges.add(node);
+                    nodesWithIncomingEdges.add(node);
                 }
                 nodes.add(node);
             }
