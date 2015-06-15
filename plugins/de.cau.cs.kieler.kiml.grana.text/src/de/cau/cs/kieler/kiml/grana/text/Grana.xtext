@@ -16,7 +16,11 @@ Grana:
     (jobs+=Job)+
 ;
 
-Job: {Job}
+Job:
+    RegularJob | RangeJob
+;
+
+RegularJob:
     'job' (name=ID)
     
     (layoutBeforeAnalysis ?= 'layoutBeforeAnalysis')?
@@ -24,18 +28,60 @@ Job: {Job}
     (measureExecutionTime ?= 'measureExecutionTime')?
     
     'resources'
-        (resources+=Resource)*
+        (resources+=Resource)+
     
     'layoutoptions'
-        (layoutOptions+=KIdentifier)*
+        (layoutOptions+=KIdentifier)+
         
     'analyses'
-        (analyses+=Analysis)*
+        (analyses+=Analysis)+
         
     'output'
         output=Output
 ;
 
+RangeJob:
+    'rangejob' name=ID
+    
+    'resources' (resources+=Resource)+
+    
+    'layoutoptions'
+        (layoutOptions+=KIdentifier)+
+    
+    'analyses'
+        (analyses+=Analysis)+
+    
+    'rangeoption'
+        rangeOption=QualifiedID
+        rangeValues=Range
+            
+    'rangeanalysis'
+        rangeAnalysis=Analysis
+        ('component' rangeAnalysisComponent=NATURAL)?
+    
+    'output'
+        output=Output
+;
+
+Range:
+    FloatRange | IntRange
+;
+
+FloatRange:
+    'floatvalues' values+=Float (',' values+=Float)*
+;
+
+IntRange:
+    IntRangeRange | IntRangeValues
+;
+
+IntRangeValues:
+    'intvalues' values+=NATURAL (',' values+=NATURAL)
+;
+
+IntRangeRange:
+    'intrange' start=NATURAL 'to' end=NATURAL   
+;
 /*
  * ---- Resources ---- 
  */

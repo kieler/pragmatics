@@ -241,7 +241,7 @@ public final class LNode extends LShape {
      *            the node's new node type.
      */
     public void setNodeType(final NodeType type) {
-        this.nodeType = type;
+        nodeType = type;
     }
 
     /**
@@ -284,8 +284,7 @@ public final class LNode extends LShape {
     /**
      * Returns an iterable for all ports of given side.
      * 
-     * @param side
-     *            a port side
+     * @param side a port side
      * @return an iterable for the ports of given side
      */
     public Iterable<LPort> getPorts(final PortSide side) {
@@ -306,10 +305,8 @@ public final class LNode extends LShape {
     /**
      * Returns an iterable for all ports of a given type and side.
      * 
-     * @param portType
-     *            a port type.
-     * @param side
-     *            a port side.
+     * @param portType a port type.
+     * @param side a port side.
      * @return an iterable for the ports of the given type and side.
      */
     public Iterable<LPort> getPorts(final PortType portType, final PortSide side) {

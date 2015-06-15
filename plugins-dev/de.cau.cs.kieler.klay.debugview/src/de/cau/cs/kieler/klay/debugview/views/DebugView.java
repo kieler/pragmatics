@@ -14,10 +14,15 @@
 package de.cau.cs.kieler.klay.debugview.views;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -33,31 +38,41 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Resource;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.ui.util.DragDropScrollHandler;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
+import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.debugview.KlayDebugViewPlugin;
 import de.cau.cs.kieler.klay.debugview.Messages;
 import de.cau.cs.kieler.klay.debugview.provider.FileTableContentProvider;
 import de.cau.cs.kieler.klay.debugview.provider.FileTableLabelProvider;
 import de.cau.cs.kieler.klay.debugview.widgets.ImageCanvas;
 import de.cau.cs.kieler.klay.debugview.widgets.LegendPage;
+import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
+import de.cau.cs.kieler.klighd.IViewer;
+import de.cau.cs.kieler.klighd.KlighdConstants;
+import de.cau.cs.kieler.klighd.KlighdPlugin;
+import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.ZoomStyle;
+import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
 // CHECKSTYLEOFF MagicNumber
 
@@ -66,8 +81,9 @@ import de.cau.cs.kieler.klay.debugview.widgets.LegendPage;
  * produced by Klay Layered.
  * 
  * @author cds
+ * @author csp
  */
-public class DebugView extends ViewPart {
+public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
     
     /**
      * Compares {@code File}s.
@@ -138,18 +154,25 @@ public class DebugView extends ViewPart {
     private SashForm sashForm = null;
     private Table fileTable = null;
     private TableViewer fileTableViewer = null;
+    private Composite diagramComposite = null;
+    private StackLayout diagramStackLayout;
     private ImageCanvas imageCanvas = null;
+    private Composite klighdComposite = null;
+    private ViewContext viewContext = null;
     private Browser colorKeyBrowser = null;
     private Composite statusBar = null;
     private Label statusBarLabel = null;
+    private Button statusBarZoomToFitBtn;
+    private Button statusBarZoomOriginalBtn;
     private Scale statusBarZoomScale = null;
-    private Image statusBarZoomLabelContextImage = null;
     private CLabel statusBarZoomLabel = null;
-    private Menu statusBarZoomMenu = null;
-    private MenuItem statusBarZoomOriginalItem = null;
-    private MenuItem statusBarZoomToFitItem = null;
-    
+
     // VARIABLES
+    /**
+     * The set of resources to be disposed when the view is closed.
+     */
+    private final List<Resource> resources = new LinkedList<Resource>();
+    
     /**
      * The currently displayed path.
      */
@@ -159,6 +182,19 @@ public class DebugView extends ViewPart {
      * The current zoom factor.
      */
     private int zoomPercentage = ZOOM_DEFAULT;
+
+    /**
+     * The used content provider for the file table.
+     */
+    private FileTableContentProvider fileTableContentProvider;
+
+    /**
+     * Whether the color key browser is currently visible or not.
+     */
+    private boolean colorKeyBrowserVisible;
+
+
+
     
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -248,7 +284,7 @@ public class DebugView extends ViewPart {
             
             // We're only removing .dot and .png files
             String fileName = file.getName();
-            if (fileName.endsWith(".dot") || fileName.endsWith(".png")) { //$NON-NLS-1$ //$NON-NLS-2$
+            if (fileName.endsWith(".dot") || fileName.endsWith(".png") || fileName.endsWith(".json")) {
                 file.delete();
             }
         }
@@ -266,34 +302,79 @@ public class DebugView extends ViewPart {
      * @param modelFile the selected model file or {@code null}.
      */
     private void updateImage(final File modelFile) {
-        File imageFile = null;
-        
         // If there is a model file, try to create and load the associated image
         // (the model file can be null if the user just deleted all files)
         if (modelFile != null) {
-            String path = modelFile.getPath();
-            imageFile = new File(path.substring(0, path.length() - 3) + "png"); //$NON-NLS-1$
-            
-            // Check if the image file already exists
-            if (!imageFile.exists()) {
-                if (!createImage(modelFile, imageFile)) {
-                    // If this doesn't work, set image file to null
-                    openErrorDialog(Messages.DebugWindow_Error_ImageCreationFailed);
-                    imageFile = null;
+            if (modelFile.getName().endsWith(".dot")) { //$NON-NLS-1$
+                File imageFile = null;
+
+                String path = modelFile.getPath();
+                imageFile = new File(path.substring(0, path.length() - 3) + "png"); //$NON-NLS-1$
+
+                // Check if the image file already exists
+                if (!imageFile.exists()) {
+                    if (!createImage(modelFile, imageFile)) {
+                        // If this doesn't work, set image file to null
+                        openErrorDialog(Messages.DebugWindow_Error_ImageCreationFailed);
+                        imageFile = null;
+                    }
                 }
+
+                // Check if the image file exists
+                if (imageFile == null) {
+                    // Reset
+                    imageCanvas.clear();
+                    statusBarLabel.setText(currentPath);
+                } else {
+                    // Load new image
+                    imageCanvas.loadImage(imageFile);
+                    statusBarLabel.setText(modelFile.getPath());
+                }
+                activateDotView();
+            } else {
+                try {
+                     KNode[] kgraph = GraphFormatsService.getInstance()
+                             .loadKGraph(new FileInputStream(modelFile), "json"); //$NON-NLS-1$
+                    viewContext.update(kgraph[0]);
+                    viewContext.getViewer().zoom(ZoomStyle.ZOOM_TO_FIT,
+                            KlighdConstants.DEFAULT_ANIMATION_TIME);
+                } catch (Exception e) {
+                    openErrorDialog(Messages.DebugWindow_Error_ImageCreationFailed);
+                }
+                activateKlighdView();
             }
         }
-        
-        // Check if the image file exists
-        if (imageFile == null) {
-            // Reset
-            imageCanvas.clear();
-            statusBarLabel.setText(currentPath);
-        } else {
-            // Load new image
-            imageCanvas.loadImage(imageFile);
-            statusBarLabel.setText(modelFile.getPath());
+    }
+
+    /**
+     * Brings the KlighD view to the top of the stack layout.
+     * (de-) activates the corresponding controls.
+     */
+    private void activateKlighdView() {
+        if (diagramStackLayout.topControl != klighdComposite) {
+            statusBarZoomLabel.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
+            statusBarZoomScale.setEnabled(false);
+            diagramStackLayout.topControl = klighdComposite;
+            diagramComposite.layout(true, true);
         }
+    }
+
+    /**
+     * Brings the dot view to the top of the stack layout.
+     * (de-) activates the corresponding controls.
+     */
+    private void activateDotView() {
+        if (diagramStackLayout.topControl != imageCanvas) {
+            statusBarZoomLabel.setForeground(
+                    Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
+            statusBarZoomScale.setEnabled(true);
+            diagramStackLayout.topControl = imageCanvas;
+            diagramComposite.layout(true, true);
+        }
+    }
+    
+    private boolean isKlighdViewActive() {
+        return diagramStackLayout.topControl == klighdComposite;
     }
     
     /**
@@ -364,42 +445,7 @@ public class DebugView extends ViewPart {
                 IStatus.ERROR);
         dialog.open();
     }
-    
 
-    ///////////////////////////////////////////////////////////////////////////////
-    // Dialog Settings
-    
-    /* Basing the settings on the memento mechanism didn't work right out of the box. Since I don't
-     * have the time to solve that properly, I just decided to not care and not use mementos. Take
-     * that, Eclipse!
-     */
-
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    public void init(final IViewSite site, final IMemento memento) throws PartInitException {
-//        setPath(memento.getString(SETT_PATH));
-//        
-//        Integer zoom = memento.getInteger(SETT_ZOOM);
-//        if (zoom != null) {
-//            changeZoom(zoom);
-//        }
-//        
-//        Boolean colorKey = memento.getBoolean(SETT_COLOR_KEY);
-//        setColorKeyVisible(colorKey == null ? true : colorKey);
-//    }
-//
-//    /**
-//     * {@inheritDoc}
-//     */
-//    @Override
-//    public void saveState(final IMemento memento) {
-//        memento.putString(SETT_PATH, currentPath);
-//        memento.putInteger(SETT_ZOOM, zoomPercentage);
-//        memento.putBoolean(SETT_COLOR_KEY, colorKeyBrowser.isVisible());
-//    }
-    
     /**
      * Saves the current settings.
      */
@@ -408,7 +454,7 @@ public class DebugView extends ViewPart {
         
         dialogSettings.put(SETT_PATH, currentPath);
         dialogSettings.put(SETT_ZOOM, zoomPercentage);
-        dialogSettings.put(SETT_COLOR_KEY, colorKeyBrowser.isVisible());
+        dialogSettings.put(SETT_COLOR_KEY, colorKeyBrowserVisible);
     }
     
     /**
@@ -471,7 +517,8 @@ public class DebugView extends ViewPart {
         
         // Table Viewer
         fileTableViewer = new TableViewer(fileTable);
-        fileTableViewer.setContentProvider(new FileTableContentProvider());
+        fileTableContentProvider = new FileTableContentProvider();
+        fileTableViewer.setContentProvider(fileTableContentProvider);
         fileTableViewer.setComparator(new FileViewerComparator());
         
         TableViewerColumn nameColumn = new TableViewerColumn(fileTableViewer, SWT.LEFT);
@@ -493,9 +540,21 @@ public class DebugView extends ViewPart {
         fileTable.setSortColumn(createdColumn.getColumn());
         fileTable.setSortDirection(SWT.UP);
         
-        // Image Canvas
-        imageCanvas = new ImageCanvas(sashForm);
+        // Image Composite
+        diagramComposite = new Composite(sashForm, SWT.NONE);
+        diagramStackLayout = new StackLayout();
+        diagramComposite.setLayout(diagramStackLayout);
+        
+        imageCanvas = new ImageCanvas(diagramComposite);
         new DragDropScrollHandler(imageCanvas, true);
+        
+        klighdComposite = new Composite(diagramComposite, SWT.NONE);
+        klighdComposite.setLayout(new FillLayout());
+        viewContext = new ViewContext(this, KimlUtil.createInitializedNode());
+        viewContext.configure();
+        ContextViewer viewer = new ContextViewer(klighdComposite);
+        viewer.setModel(viewContext);
+        viewContext.update();
         
         // Browser
         colorKeyBrowser = new Browser(sashForm, SWT.BORDER);
@@ -521,7 +580,7 @@ public class DebugView extends ViewPart {
      * @param parent the parent composite.
      */
     private void setupToolBar(final Composite parent) {
-        IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
+        final IToolBarManager toolBarManager = getViewSite().getActionBars().getToolBarManager();
         toolBarManager.add(new Separator(TOOLBAR_GROUP_FOLDER_ACTIONS));
         toolBarManager.add(new Separator(TOOLBAR_GROUP_HELP_ACTIONS));
         
@@ -535,6 +594,36 @@ public class DebugView extends ViewPart {
         toolBarManager.appendToGroup(TOOLBAR_GROUP_FOLDER_ACTIONS, emptyFolderAction);
         toggleLegendAction = new ToggleLegendPaneAction(this);
         toolBarManager.appendToGroup(TOOLBAR_GROUP_HELP_ACTIONS, toggleLegendAction);
+        
+        final IMenuManager menu = getViewSite().getActionBars().getMenuManager();
+        Action jsonAction;
+        Action dotAction = new Action(Messages.DebugWindow_ShowDotFiles, Action.AS_RADIO_BUTTON) {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void run() {
+                fileTableContentProvider.setFileExtension(".dot"); //$NON-NLS-1$
+                refreshFileList();
+            }
+            
+        };
+        jsonAction = new Action(Messages.DebugWindow_ShowJsonFiles, Action.AS_RADIO_BUTTON) {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void run() {
+                fileTableContentProvider.setFileExtension(".json"); //$NON-NLS-1$
+                refreshFileList();
+            }
+            
+        };
+        menu.add(dotAction);
+        menu.add(jsonAction);
+        dotAction.setChecked(true);
     }
     
     /**
@@ -552,7 +641,7 @@ public class DebugView extends ViewPart {
         statusBar = new Composite(parent, SWT.NULL);
         statusBar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        GridLayout gl = new GridLayout(4, false);
+        GridLayout gl = new GridLayout(6, false);
         gl.marginHeight = 0;
         gl.marginWidth = 0;
         statusBar.setLayout(gl);
@@ -561,24 +650,25 @@ public class DebugView extends ViewPart {
         statusBarLabel = new Label(statusBar, SWT.NULL);
         statusBarLabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
         
-        // Status Bar Zoom Label
-        statusBarZoomLabel = new CLabel(statusBar, SWT.NULL);
-        statusBarZoomLabelContextImage = KlayDebugViewPlugin.loadImage("contextMenu.gif"); //$NON-NLS-1$
-        statusBarZoomLabel.setImage(statusBarZoomLabelContextImage);
-        
-        gd = new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
-        statusBarZoomLabel.setLayoutData(gd);
-        
-        // Status Bar Zoom Menu
-        statusBarZoomMenu = new Menu(statusBarZoomLabel);
-        
         // Status Bar Zoom Original Item
-        statusBarZoomOriginalItem = new MenuItem(statusBarZoomMenu, SWT.PUSH);
-        statusBarZoomOriginalItem.setText(Messages.DebugWindow_ZoomMenu_OriginalSize);
+        statusBarZoomOriginalBtn = new Button(statusBar, SWT.PUSH);
+        final Image zoomToOriginalImage =
+                KlighdPlugin.getImageDescriptor("icons/kieler-zoomtoone.gif").createImage();
+        resources.add(zoomToOriginalImage);
+        statusBarZoomOriginalBtn.setImage(zoomToOriginalImage);
+        statusBarZoomOriginalBtn.setToolTipText(Messages.DebugWindow_ZoomMenu_OriginalSize);
         
         // Status Bar Zoom To Fit Item
-        statusBarZoomToFitItem = new MenuItem(statusBarZoomMenu, SWT.PUSH);
-        statusBarZoomToFitItem.setText(Messages.DebugWindow_ZoomMenu_ZoomToFit);
+        statusBarZoomToFitBtn = new Button(statusBar, SWT.PUSH);
+        final Image zoomToFitImage =
+                KlighdPlugin.getImageDescriptor("icons/kieler-zoomtofit.gif").createImage();
+        resources.add(zoomToFitImage);
+        statusBarZoomToFitBtn.setImage(zoomToFitImage);
+        statusBarZoomToFitBtn.setToolTipText(Messages.DebugWindow_ZoomMenu_ZoomToFit);
+        
+        // Status Bar Zoom Label
+        statusBarZoomLabel = new CLabel(statusBar, SWT.NULL);
+        statusBarZoomLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.CENTER, false, false));
         
         // Status Bar Zoom Scale
         statusBarZoomScale = new Scale(statusBar, SWT.HORIZONTAL);
@@ -591,25 +681,26 @@ public class DebugView extends ViewPart {
         gd.widthHint = 100;
         statusBarZoomScale.setLayoutData(gd);
         
-        // Event Listeners
-        statusBarZoomLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseDown(final MouseEvent e) {
-                statusBarZoomMenu.setLocation(statusBarZoomLabel.toDisplay(e.x, e.y));
-                statusBarZoomMenu.setVisible(true);
+        statusBarZoomOriginalBtn.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(final SelectionEvent e) {
+                if (isKlighdViewActive()) {
+                    viewContext.getViewer().zoom(ZoomStyle.ZOOM_TO_ACTUAL_SIZE,
+                            KlighdConstants.DEFAULT_ANIMATION_TIME);
+                } else {
+                    changeZoom(100);
+                }
             }
         });
         
-        statusBarZoomOriginalItem.addSelectionListener(new SelectionAdapter() {
+        statusBarZoomToFitBtn.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent e) {
-                changeZoom(100);
-            }
-        });
-        
-        statusBarZoomToFitItem.addSelectionListener(new SelectionAdapter() {
-            public void widgetSelected(final SelectionEvent e) {
-                imageCanvas.zoomToFit();
-                changeZoom((int) (imageCanvas.getZoom() * HUNDRED_PERCENT));
+                if (isKlighdViewActive()) {
+                    viewContext.getViewer().zoom(ZoomStyle.ZOOM_TO_FIT,
+                            KlighdConstants.DEFAULT_ANIMATION_TIME);
+                } else {
+                    imageCanvas.zoomToFit();
+                    changeZoom((int) (imageCanvas.getZoom() * HUNDRED_PERCENT));
+                }
             }
         });
         
@@ -628,8 +719,8 @@ public class DebugView extends ViewPart {
         
         saveDialogSettings();
         
-        if (statusBarZoomLabelContextImage != null && !statusBarZoomLabelContextImage.isDisposed()) {
-            statusBarZoomLabelContextImage.dispose();
+        for (Resource resource : resources) {
+            resource.dispose();
         }
     }
     
@@ -638,7 +729,7 @@ public class DebugView extends ViewPart {
      */
     @Override
     public void setFocus() {
-        imageCanvas.setFocus();
+        fileTable.setFocus();
     }
     
 
@@ -652,8 +743,30 @@ public class DebugView extends ViewPart {
      *                otherwise.
      */
     void setColorKeyVisible(final boolean visible) {
+        colorKeyBrowserVisible = visible;
         toggleLegendAction.setChecked(visible);
         colorKeyBrowser.setVisible(visible);
         sashForm.layout(true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getPartId() {
+        return getViewSite().getId();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public IViewer getViewer() {
+        return viewContext == null ? null : viewContext.getViewer();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public ViewContext getViewContext() {
+        return viewContext;
     }
 }

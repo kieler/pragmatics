@@ -31,6 +31,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.DebugUtil;
+import de.cau.cs.kieler.klay.layered.JsonDebugUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -588,8 +589,8 @@ public final class OrthogonalRoutingGenerator {
         
         // write the full dependency graph to an output file
         if (debugPrefix != null) {
-            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
-                    hyperNodes, debugPrefix, "full");
+            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0
+                    : sourceLayerIndex + 1, hyperNodes, debugPrefix, "full");
         }
         
         // break cycles
@@ -597,8 +598,8 @@ public final class OrthogonalRoutingGenerator {
 
         // write the acyclic dependency graph to an output file
         if (debugPrefix != null) {
-            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
-                    hyperNodes, debugPrefix, "acyclic");
+            JsonDebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0
+                    : sourceLayerIndex + 1, hyperNodes, debugPrefix, "acyclic");
         }
         
         // assign ranks to the hypernodes

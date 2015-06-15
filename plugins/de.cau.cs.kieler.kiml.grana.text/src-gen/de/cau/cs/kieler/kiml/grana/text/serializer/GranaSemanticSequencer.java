@@ -5,14 +5,18 @@ import com.google.inject.Provider;
 import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.kiml.grana.text.grana.Analysis;
+import de.cau.cs.kieler.kiml.grana.text.grana.FloatRange;
 import de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef;
 import de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef;
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana;
 import de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage;
-import de.cau.cs.kieler.kiml.grana.text.grana.Job;
+import de.cau.cs.kieler.kiml.grana.text.grana.IntRangeRange;
+import de.cau.cs.kieler.kiml.grana.text.grana.IntRangeValues;
 import de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput;
 import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource;
 import de.cau.cs.kieler.kiml.grana.text.grana.OutputReference;
+import de.cau.cs.kieler.kiml.grana.text.grana.RangeJob;
+import de.cau.cs.kieler.kiml.grana.text.grana.RegularJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference;
 import de.cau.cs.kieler.kiml.grana.text.services.GranaGrammarAccess;
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
@@ -43,6 +47,13 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 					return; 
 				}
 				else break;
+			case GranaPackage.FLOAT_RANGE:
+				if(context == grammarAccess.getFloatRangeRule() ||
+				   context == grammarAccess.getRangeRule()) {
+					sequence_FloatRange(context, (FloatRange) semanticObject); 
+					return; 
+				}
+				else break;
 			case GranaPackage.GLOBAL_OUTPUT_REF:
 				if(context == grammarAccess.getGlobalOutputRefRule()) {
 					sequence_GlobalOutputRef(context, (GlobalOutputRef) semanticObject); 
@@ -61,9 +72,19 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 					return; 
 				}
 				else break;
-			case GranaPackage.JOB:
-				if(context == grammarAccess.getJobRule()) {
-					sequence_Job(context, (Job) semanticObject); 
+			case GranaPackage.INT_RANGE_RANGE:
+				if(context == grammarAccess.getIntRangeRule() ||
+				   context == grammarAccess.getIntRangeRangeRule() ||
+				   context == grammarAccess.getRangeRule()) {
+					sequence_IntRangeRange(context, (IntRangeRange) semanticObject); 
+					return; 
+				}
+				else break;
+			case GranaPackage.INT_RANGE_VALUES:
+				if(context == grammarAccess.getIntRangeRule() ||
+				   context == grammarAccess.getIntRangeValuesRule() ||
+				   context == grammarAccess.getRangeRule()) {
+					sequence_IntRangeValues(context, (IntRangeValues) semanticObject); 
 					return; 
 				}
 				else break;
@@ -85,6 +106,20 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 				if(context == grammarAccess.getOutputRule() ||
 				   context == grammarAccess.getOutputReferenceRule()) {
 					sequence_OutputReference(context, (OutputReference) semanticObject); 
+					return; 
+				}
+				else break;
+			case GranaPackage.RANGE_JOB:
+				if(context == grammarAccess.getJobRule() ||
+				   context == grammarAccess.getRangeJobRule()) {
+					sequence_RangeJob(context, (RangeJob) semanticObject); 
+					return; 
+				}
+				else break;
+			case GranaPackage.REGULAR_JOB:
+				if(context == grammarAccess.getJobRule() ||
+				   context == grammarAccess.getRegularJobRule()) {
+					sequence_RegularJob(context, (RegularJob) semanticObject); 
 					return; 
 				}
 				else break;
@@ -133,6 +168,15 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	
 	/**
 	 * Constraint:
+	 *     (values+=Float values+=Float*)
+	 */
+	protected void sequence_FloatRange(EObject context, FloatRange semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (name=ID output=LocalOutput)
 	 */
 	protected void sequence_GlobalOutputRef(EObject context, GlobalOutputRef semanticObject) {
@@ -170,17 +214,28 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	
 	/**
 	 * Constraint:
-	 *     (
-	 *         name=ID 
-	 *         layoutBeforeAnalysis?='layoutBeforeAnalysis'? 
-	 *         measureExecutionTime?='measureExecutionTime'? 
-	 *         resources+=Resource* 
-	 *         layoutOptions+=KIdentifier* 
-	 *         analyses+=Analysis* 
-	 *         output=Output
-	 *     )
+	 *     (start=NATURAL end=NATURAL)
 	 */
-	protected void sequence_Job(EObject context, Job semanticObject) {
+	protected void sequence_IntRangeRange(EObject context, IntRangeRange semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, GranaPackage.Literals.INT_RANGE_RANGE__START) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GranaPackage.Literals.INT_RANGE_RANGE__START));
+			if(transientValues.isValueTransient(semanticObject, GranaPackage.Literals.INT_RANGE_RANGE__END) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GranaPackage.Literals.INT_RANGE_RANGE__END));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getIntRangeRangeAccess().getStartNATURALTerminalRuleCall_1_0(), semanticObject.getStart());
+		feeder.accept(grammarAccess.getIntRangeRangeAccess().getEndNATURALTerminalRuleCall_3_0(), semanticObject.getEnd());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (values+=NATURAL values+=NATURAL)
+	 */
+	protected void sequence_IntRangeValues(EObject context, IntRangeValues semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -261,6 +316,42 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 		feeder.accept(grammarAccess.getPersistentEntryAccess().getKeyQualifiedIDParserRuleCall_0_0(), semanticObject.getKey());
 		feeder.accept(grammarAccess.getPersistentEntryAccess().getValuePropertyValueParserRuleCall_2_0(), semanticObject.getValue());
 		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (
+	 *         name=ID 
+	 *         resources+=Resource+ 
+	 *         layoutOptions+=KIdentifier+ 
+	 *         analyses+=Analysis+ 
+	 *         rangeOption=QualifiedID 
+	 *         rangeValues=Range 
+	 *         rangeAnalysis=Analysis 
+	 *         rangeAnalysisComponent=NATURAL? 
+	 *         output=Output
+	 *     )
+	 */
+	protected void sequence_RangeJob(EObject context, RangeJob semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (
+	 *         name=ID 
+	 *         layoutBeforeAnalysis?='layoutBeforeAnalysis'? 
+	 *         measureExecutionTime?='measureExecutionTime'? 
+	 *         resources+=Resource+ 
+	 *         layoutOptions+=KIdentifier+ 
+	 *         analyses+=Analysis+ 
+	 *         output=Output
+	 *     )
+	 */
+	protected void sequence_RegularJob(EObject context, RegularJob semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	

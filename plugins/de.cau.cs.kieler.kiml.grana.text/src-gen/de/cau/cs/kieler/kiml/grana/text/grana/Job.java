@@ -17,8 +17,6 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getName <em>Name</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#isLayoutBeforeAnalysis <em>Layout Before Analysis</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#isMeasureExecutionTime <em>Measure Execution Time</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getResources <em>Resources</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getLayoutOptions <em>Layout Options</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getAnalyses <em>Analyses</em>}</li>
@@ -57,58 +55,6 @@ public interface Job extends EObject
    * @generated
    */
   void setName(String value);
-
-  /**
-   * Returns the value of the '<em><b>Layout Before Analysis</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Layout Before Analysis</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Layout Before Analysis</em>' attribute.
-   * @see #setLayoutBeforeAnalysis(boolean)
-   * @see de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage#getJob_LayoutBeforeAnalysis()
-   * @model
-   * @generated
-   */
-  boolean isLayoutBeforeAnalysis();
-
-  /**
-   * Sets the value of the '{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#isLayoutBeforeAnalysis <em>Layout Before Analysis</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Layout Before Analysis</em>' attribute.
-   * @see #isLayoutBeforeAnalysis()
-   * @generated
-   */
-  void setLayoutBeforeAnalysis(boolean value);
-
-  /**
-   * Returns the value of the '<em><b>Measure Execution Time</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Measure Execution Time</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Measure Execution Time</em>' attribute.
-   * @see #setMeasureExecutionTime(boolean)
-   * @see de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage#getJob_MeasureExecutionTime()
-   * @model
-   * @generated
-   */
-  boolean isMeasureExecutionTime();
-
-  /**
-   * Sets the value of the '{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#isMeasureExecutionTime <em>Measure Execution Time</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Measure Execution Time</em>' attribute.
-   * @see #isMeasureExecutionTime()
-   * @generated
-   */
-  void setMeasureExecutionTime(boolean value);
 
   /**
    * Returns the value of the '<em><b>Resources</b></em>' containment reference list.

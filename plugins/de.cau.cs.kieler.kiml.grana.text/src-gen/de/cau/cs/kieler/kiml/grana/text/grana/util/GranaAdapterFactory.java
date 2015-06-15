@@ -85,6 +85,41 @@ public class GranaAdapterFactory extends AdapterFactoryImpl
         return createJobAdapter();
       }
       @Override
+      public Adapter caseRegularJob(RegularJob object)
+      {
+        return createRegularJobAdapter();
+      }
+      @Override
+      public Adapter caseRangeJob(RangeJob object)
+      {
+        return createRangeJobAdapter();
+      }
+      @Override
+      public Adapter caseRange(Range object)
+      {
+        return createRangeAdapter();
+      }
+      @Override
+      public Adapter caseFloatRange(FloatRange object)
+      {
+        return createFloatRangeAdapter();
+      }
+      @Override
+      public Adapter caseIntRange(IntRange object)
+      {
+        return createIntRangeAdapter();
+      }
+      @Override
+      public Adapter caseIntRangeValues(IntRangeValues object)
+      {
+        return createIntRangeValuesAdapter();
+      }
+      @Override
+      public Adapter caseIntRangeRange(IntRangeRange object)
+      {
+        return createIntRangeRangeAdapter();
+      }
+      @Override
       public Adapter caseResource(Resource object)
       {
         return createResourceAdapter();
@@ -177,6 +212,111 @@ public class GranaAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createJobAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.RegularJob <em>Regular Job</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.RegularJob
+   * @generated
+   */
+  public Adapter createRegularJobAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.RangeJob <em>Range Job</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.RangeJob
+   * @generated
+   */
+  public Adapter createRangeJobAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.Range <em>Range</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.Range
+   * @generated
+   */
+  public Adapter createRangeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.FloatRange <em>Float Range</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.FloatRange
+   * @generated
+   */
+  public Adapter createFloatRangeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.IntRange <em>Int Range</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.IntRange
+   * @generated
+   */
+  public Adapter createIntRangeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.IntRangeValues <em>Int Range Values</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.IntRangeValues
+   * @generated
+   */
+  public Adapter createIntRangeValuesAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.IntRangeRange <em>Int Range Range</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.IntRangeRange
+   * @generated
+   */
+  public Adapter createIntRangeRangeAdapter()
   {
     return null;
   }
