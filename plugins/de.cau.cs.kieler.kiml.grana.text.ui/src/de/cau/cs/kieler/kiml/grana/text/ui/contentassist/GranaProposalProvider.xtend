@@ -62,7 +62,14 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
      * Proposals for layout option keys.
      */
     override completePersistentEntry_Key(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-        
+        handleLayoutOptionProposal(model, assignment, context, acceptor)
+    }
+    
+    override completeRangeJob_RangeOption(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+        handleLayoutOptionProposal(model, assignment, context, acceptor)
+    }
+    
+    private def handleLayoutOptionProposal(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
         // create and register the completion proposal for every element in the list
         for (optionData : LayoutMetaDataService.instance.optionData) {
             val displayString = new StyledString(optionData.toString(),

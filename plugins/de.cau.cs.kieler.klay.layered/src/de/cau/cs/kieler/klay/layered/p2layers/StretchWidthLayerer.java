@@ -13,9 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.p2layers;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -60,9 +62,9 @@ public class StretchWidthLayerer implements ILayoutPhase {
     // sorted list of layerless nodes
     private List<LNode> sortedLayerlessNodes;
     // Set of nodes placed in the current layer
-    private HashSet<LNode> u = new HashSet<LNode>();
+    private Set<LNode> u = new HashSet<LNode>();
     // Set of nodes in all layers except the current
-    private HashSet<LNode> z = new HashSet<LNode>();
+    private Set<LNode> z = new HashSet<LNode>();
     // list of (later sorted) layerless nodes to be used in one layering approach
     private List<LNode> tempLayerlessNodes;
 
@@ -105,7 +107,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
         tempLayerlessNodes = Lists.newArrayList(sortedLayerlessNodes);
         LNode selectedNode;
         // variable to compute the difference of u and z
-        HashSet<LNode> diff;
+        Set<LNode> diff;
 
         while (!tempLayerlessNodes.isEmpty()) {
             // select a node to be placed
@@ -160,7 +162,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
         // layering done, delete original layerlessNodes
         layeredGraph.getLayerlessNodes().clear();
         // Algorithm is Bottom-Up -> reverse Layers
-        java.util.Collections.reverse(layeredGraph.getLayers());
+        Collections.reverse(layeredGraph.getLayers());
 
         progressMonitor.done();
     }
@@ -182,7 +184,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
      * @return node to be placed in the current layer
      */
     private LNode selectNode() {
-        HashSet<LNode> accSucc = Sets.newHashSet();
+        Set<LNode> accSucc = Sets.newHashSet();
         for (LNode node : tempLayerlessNodes) {
             for (LEdge edge : node.getOutgoingEdges()) {
                 accSucc.add(edge.getTarget().getNode());
@@ -211,7 +213,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
             nodesWithRank.add(new Pair<LNode, Integer>(node, getRank(node)));
         }
         // sorting the Pair after its value
-        java.util.Collections.sort(nodesWithRank, new Comparator<Pair<LNode, Integer>>() {
+        Collections.sort(nodesWithRank, new Comparator<Pair<LNode, Integer>>() {
             // TODO maybe implement the comparator in the Pair-class
             public int compare(final Pair<LNode, Integer> o1, final Pair<LNode, Integer> o2) {
                 // descending sort

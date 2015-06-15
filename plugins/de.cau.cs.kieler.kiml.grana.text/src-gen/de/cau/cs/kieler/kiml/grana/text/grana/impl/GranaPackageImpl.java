@@ -3,16 +3,23 @@
 package de.cau.cs.kieler.kiml.grana.text.grana.impl;
 
 import de.cau.cs.kieler.kiml.grana.text.grana.Analysis;
+import de.cau.cs.kieler.kiml.grana.text.grana.FloatRange;
 import de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef;
 import de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef;
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana;
 import de.cau.cs.kieler.kiml.grana.text.grana.GranaFactory;
 import de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage;
+import de.cau.cs.kieler.kiml.grana.text.grana.IntRange;
+import de.cau.cs.kieler.kiml.grana.text.grana.IntRangeRange;
+import de.cau.cs.kieler.kiml.grana.text.grana.IntRangeValues;
 import de.cau.cs.kieler.kiml.grana.text.grana.Job;
 import de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput;
 import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource;
 import de.cau.cs.kieler.kiml.grana.text.grana.Output;
 import de.cau.cs.kieler.kiml.grana.text.grana.OutputReference;
+import de.cau.cs.kieler.kiml.grana.text.grana.Range;
+import de.cau.cs.kieler.kiml.grana.text.grana.RangeJob;
+import de.cau.cs.kieler.kiml.grana.text.grana.RegularJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.Resource;
 import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference;
 
@@ -46,6 +53,55 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * @generated
    */
   private EClass jobEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass regularJobEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass rangeJobEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass rangeEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass floatRangeEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass intRangeEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass intRangeValuesEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass intRangeRangeEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -261,29 +317,9 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getJob_LayoutBeforeAnalysis()
-  {
-    return (EAttribute)jobEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getJob_MeasureExecutionTime()
-  {
-    return (EAttribute)jobEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getJob_Resources()
   {
-    return (EReference)jobEClass.getEStructuralFeatures().get(3);
+    return (EReference)jobEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -293,7 +329,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    */
   public EReference getJob_LayoutOptions()
   {
-    return (EReference)jobEClass.getEStructuralFeatures().get(4);
+    return (EReference)jobEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -303,7 +339,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    */
   public EReference getJob_Analyses()
   {
-    return (EReference)jobEClass.getEStructuralFeatures().get(5);
+    return (EReference)jobEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -313,7 +349,177 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    */
   public EReference getJob_Output()
   {
-    return (EReference)jobEClass.getEStructuralFeatures().get(6);
+    return (EReference)jobEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getRegularJob()
+  {
+    return regularJobEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRegularJob_LayoutBeforeAnalysis()
+  {
+    return (EAttribute)regularJobEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRegularJob_MeasureExecutionTime()
+  {
+    return (EAttribute)regularJobEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getRangeJob()
+  {
+    return rangeJobEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRangeJob_RangeOption()
+  {
+    return (EAttribute)rangeJobEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getRangeJob_RangeValues()
+  {
+    return (EReference)rangeJobEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getRangeJob_RangeAnalysis()
+  {
+    return (EReference)rangeJobEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getRangeJob_RangeAnalysisComponent()
+  {
+    return (EAttribute)rangeJobEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getRange()
+  {
+    return rangeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getFloatRange()
+  {
+    return floatRangeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getFloatRange_Values()
+  {
+    return (EAttribute)floatRangeEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getIntRange()
+  {
+    return intRangeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getIntRangeValues()
+  {
+    return intRangeValuesEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getIntRangeValues_Values()
+  {
+    return (EAttribute)intRangeValuesEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getIntRangeRange()
+  {
+    return intRangeRangeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getIntRangeRange_Start()
+  {
+    return (EAttribute)intRangeRangeEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getIntRangeRange_End()
+  {
+    return (EAttribute)intRangeRangeEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -545,12 +751,34 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
 
     jobEClass = createEClass(JOB);
     createEAttribute(jobEClass, JOB__NAME);
-    createEAttribute(jobEClass, JOB__LAYOUT_BEFORE_ANALYSIS);
-    createEAttribute(jobEClass, JOB__MEASURE_EXECUTION_TIME);
     createEReference(jobEClass, JOB__RESOURCES);
     createEReference(jobEClass, JOB__LAYOUT_OPTIONS);
     createEReference(jobEClass, JOB__ANALYSES);
     createEReference(jobEClass, JOB__OUTPUT);
+
+    regularJobEClass = createEClass(REGULAR_JOB);
+    createEAttribute(regularJobEClass, REGULAR_JOB__LAYOUT_BEFORE_ANALYSIS);
+    createEAttribute(regularJobEClass, REGULAR_JOB__MEASURE_EXECUTION_TIME);
+
+    rangeJobEClass = createEClass(RANGE_JOB);
+    createEAttribute(rangeJobEClass, RANGE_JOB__RANGE_OPTION);
+    createEReference(rangeJobEClass, RANGE_JOB__RANGE_VALUES);
+    createEReference(rangeJobEClass, RANGE_JOB__RANGE_ANALYSIS);
+    createEAttribute(rangeJobEClass, RANGE_JOB__RANGE_ANALYSIS_COMPONENT);
+
+    rangeEClass = createEClass(RANGE);
+
+    floatRangeEClass = createEClass(FLOAT_RANGE);
+    createEAttribute(floatRangeEClass, FLOAT_RANGE__VALUES);
+
+    intRangeEClass = createEClass(INT_RANGE);
+
+    intRangeValuesEClass = createEClass(INT_RANGE_VALUES);
+    createEAttribute(intRangeValuesEClass, INT_RANGE_VALUES__VALUES);
+
+    intRangeRangeEClass = createEClass(INT_RANGE_RANGE);
+    createEAttribute(intRangeRangeEClass, INT_RANGE_RANGE__START);
+    createEAttribute(intRangeRangeEClass, INT_RANGE_RANGE__END);
 
     resourceEClass = createEClass(RESOURCE);
 
@@ -613,6 +841,12 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
+    regularJobEClass.getESuperTypes().add(this.getJob());
+    rangeJobEClass.getESuperTypes().add(this.getJob());
+    floatRangeEClass.getESuperTypes().add(this.getRange());
+    intRangeEClass.getESuperTypes().add(this.getRange());
+    intRangeValuesEClass.getESuperTypes().add(this.getIntRange());
+    intRangeRangeEClass.getESuperTypes().add(this.getIntRange());
     resourceReferenceEClass.getESuperTypes().add(this.getResource());
     localResourceEClass.getESuperTypes().add(this.getResource());
     outputReferenceEClass.getESuperTypes().add(this.getOutput());
@@ -628,12 +862,34 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
 
     initEClass(jobEClass, Job.class, "Job", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getJob_Name(), ecorePackage.getEString(), "name", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getJob_LayoutBeforeAnalysis(), ecorePackage.getEBoolean(), "layoutBeforeAnalysis", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getJob_MeasureExecutionTime(), ecorePackage.getEBoolean(), "measureExecutionTime", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_Resources(), this.getResource(), null, "resources", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_LayoutOptions(), theKLayoutDataPackage.getKIdentifier(), null, "layoutOptions", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_Analyses(), this.getAnalysis(), null, "analyses", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_Output(), this.getOutput(), null, "output", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(regularJobEClass, RegularJob.class, "RegularJob", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getRegularJob_LayoutBeforeAnalysis(), ecorePackage.getEBoolean(), "layoutBeforeAnalysis", null, 0, 1, RegularJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getRegularJob_MeasureExecutionTime(), ecorePackage.getEBoolean(), "measureExecutionTime", null, 0, 1, RegularJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(rangeJobEClass, RangeJob.class, "RangeJob", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getRangeJob_RangeOption(), ecorePackage.getEString(), "rangeOption", null, 0, 1, RangeJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getRangeJob_RangeValues(), this.getRange(), null, "rangeValues", null, 0, 1, RangeJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getRangeJob_RangeAnalysis(), this.getAnalysis(), null, "rangeAnalysis", null, 0, 1, RangeJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getRangeJob_RangeAnalysisComponent(), ecorePackage.getEInt(), "rangeAnalysisComponent", null, 0, 1, RangeJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(rangeEClass, Range.class, "Range", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(floatRangeEClass, FloatRange.class, "FloatRange", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getFloatRange_Values(), ecorePackage.getEFloat(), "values", null, 0, -1, FloatRange.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(intRangeEClass, IntRange.class, "IntRange", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(intRangeValuesEClass, IntRangeValues.class, "IntRangeValues", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIntRangeValues_Values(), ecorePackage.getEInt(), "values", null, 0, -1, IntRangeValues.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(intRangeRangeEClass, IntRangeRange.class, "IntRangeRange", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIntRangeRange_Start(), ecorePackage.getEInt(), "start", null, 0, 1, IntRangeRange.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getIntRangeRange_End(), ecorePackage.getEInt(), "end", null, 0, 1, IntRangeRange.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(resourceEClass, Resource.class, "Resource", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

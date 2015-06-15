@@ -60,6 +60,15 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                 writer.write(";" + analysis.getName());
             }
         }
+        
+        // possibly write range analysis headers
+        Batch batch = batchResult.getBatch();
+        if (batch.getRangeAnalysis() != null) {
+            for (Number n : batch.getRangeValues()) {
+                writer.write(";" + n);
+            }
+        }
+        
         // headers for execution time
         List<String> executionTimePhases = Lists.newArrayList(batchResult.getExecutionTimePhases());
         // sort them lexicographically 
@@ -83,6 +92,20 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                 writer.write(";" + s);
             }
             
+            // possibly append range batch results
+            if (jobResult.getJob() instanceof BatchRangeJob<?>) {
+                for (Object result : jobResult.getRangeResults()) {
+                    Object component = result;
+                    if (result instanceof Object[]) {
+                        component = ((Object[]) result)[batch.getRangeAnalysisComponent()];
+                    }
+                    Visualization visualization =
+                            VisualizationService.getInstance().getVisualization("text", result);
+                    String text = visualization.get(batch.getRangeAnalysis(), component);
+                    writer.write(";" + text);
+                }
+            }
+
             // execution time results
             Map<String, Double> execTimes = jobResult.getExecTimeResults();
             if (execTimes != null) {
