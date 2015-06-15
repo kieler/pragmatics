@@ -549,8 +549,7 @@ class KGraphImporter {
             KShapeLayout kportLayout = kport.getData(KShapeLayout.class);
             
             if (!kportLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
-                LPort lport = transformPort(kport, graphProperties, direction, portConstraints);
-                lport.setNode(lnode);
+                transformPort(kport, lnode, graphProperties, direction, portConstraints);
             }
         }
 
@@ -581,11 +580,13 @@ class KGraphImporter {
     // Port Transformation
     
     /**
-     * Transforms the given port. The port will not be added to any node, but will be registered in
-     * the {@code transformMap}.
+     * Transforms the given port. The new port will be added to the given node and will be
+     * registered with the {@code transformMap}.
      * 
      * @param kport
      *            the port to transform.
+     * @param parentLNode
+     *            the node the port should be added to.
      * @param graphProperties
      *            the graph properties of the graph the transformed port will be part of. The graph
      *            properties are modified depending on the port's properties.
@@ -595,8 +596,9 @@ class KGraphImporter {
      *            the port constraints of the port's node.
      * @return the transformed port.
      */
-    private LPort transformPort(final KPort kport, final Set<GraphProperties> graphProperties,
-            final Direction layoutDirection, final PortConstraints portConstraints) {
+    private LPort transformPort(final KPort kport, final LNode parentLNode,
+            final Set<GraphProperties> graphProperties, final Direction layoutDirection,
+            final PortConstraints portConstraints) {
         
         final KShapeLayout kportLayout = kport.getData(KShapeLayout.class);
 
@@ -605,6 +607,7 @@ class KGraphImporter {
         lport.copyProperties(kportLayout);
         lport.setSide(kportLayout.getProperty(LayoutOptions.PORT_SIDE));
         lport.setProperty(InternalProperties.ORIGIN, kport);
+        lport.setNode(parentLNode);
         
         KVector portSize = lport.getSize();
         portSize.x = kportLayout.getWidth();
