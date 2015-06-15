@@ -42,6 +42,8 @@ import de.cau.cs.kieler.kiml.service.LayoutMapping;
  * 
  * @author mri
  * @kieler.ignore (excluded from review process)
+ * 
+ * TODO is this class really unused?
  */
 public class EditorKGraphProvider implements IKGraphProvider<IPath> {
 

@@ -1129,11 +1129,13 @@ import de.cau.cs.kieler.core.math.KVectorChain;
             this.polarCoordinate = polarCoordinate;
         }
 
+        // GWTExcludeStart
         /**
          * {@inheritDoc}
          */
         public String toString() {
             return polarCoordinate + " " + SplinesMath.convertKVectorToString(cp);
         }
+        // GWTExcludeEnd
     }
 }

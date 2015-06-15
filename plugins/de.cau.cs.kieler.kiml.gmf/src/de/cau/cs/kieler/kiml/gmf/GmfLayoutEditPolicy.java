@@ -524,7 +524,9 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
         boolean isSC;
         Class<?> clazz = edgeFigure.getClass();
         do {
-            isSC = clazz.getCanonicalName().equals(SPLINE_CONNECTION);
+            String canonicalName = clazz.getCanonicalName();
+            // in some cases, eg anonymous classes, the canonical name may be null
+            isSC = canonicalName != null && canonicalName.equals(SPLINE_CONNECTION);
             clazz = clazz.getSuperclass();
         } while (!isSC && clazz != null);
         if (isSC) {

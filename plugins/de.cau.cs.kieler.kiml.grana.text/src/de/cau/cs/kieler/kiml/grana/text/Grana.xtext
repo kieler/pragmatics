@@ -9,30 +9,82 @@ import "http://kieler.cs.cau.de/KGraph"
 
 Grana:
     ('globalResources' (globalResources+=GlobalResourceRef)*)?
+    ('globalOutputs' (gloobalOutputs+=GlobalOutputRef)*)?
+    
+    ('execute' (executeAll ?= 'all' | (execute+=[Job | ID])+))
     
     (jobs+=Job)+
 ;
 
-Job: {Job}
-    'job' (name=ID)?
+Job:
+    RegularJob | RangeJob
+;
+
+RegularJob:
+    'job' (name=ID)
     
     (layoutBeforeAnalysis ?= 'layoutBeforeAnalysis')?
     
     (measureExecutionTime ?= 'measureExecutionTime')?
     
     'resources'
-        (resources+=Resource)*
+        (resources+=Resource)+
     
     'layoutoptions'
-        layoutOptions+=KIdentifier
+        (layoutOptions+=KIdentifier)+
         
     'analyses'
-        (analyses+=Analysis)*
+        (analyses+=Analysis)+
         
     'output'
-        output=STRING 
+        output=Output
 ;
 
+RangeJob:
+    'rangejob' name=ID
+    
+    'resources' (resources+=Resource)+
+    
+    'layoutoptions'
+        (layoutOptions+=KIdentifier)+
+    
+    'analyses'
+        (analyses+=Analysis)+
+    
+    'rangeoption'
+        rangeOption=QualifiedID
+        rangeValues=Range
+            
+    'rangeanalysis'
+        rangeAnalysis=Analysis
+        ('component' rangeAnalysisComponent=NATURAL)?
+    
+    'output'
+        output=Output
+;
+
+Range:
+    FloatRange | IntRange
+;
+
+FloatRange:
+    'floatvalues' values+=Float (',' values+=Float)*
+;
+
+IntRange:
+    IntRangeRange | IntRangeValues
+;
+
+IntRangeValues:
+    'intvalues' values+=NATURAL (',' values+=NATURAL)
+;
+
+IntRangeRange:
+    'intrange' start=NATURAL 'to' end=NATURAL   
+;
+/*
+ * ---- Resources ---- 
+ */
 Resource:
     ResourceReference | LocalResource
 ;
@@ -42,13 +94,30 @@ ResourceReference:
 ;
 
 GlobalResourceRef:
-    name=ID
-    (resources+=LocalResource)
+    name=ID (resources+=LocalResource)
 ;
 
 LocalResource:
+    path=STRING ('filter' filter=STRING)
+;
+
+/*
+ * ---- Output ---- 
+ */
+Output:
+    OutputReference | LocalOutput
+;
+
+GlobalOutputRef:
+    name=ID output=LocalOutput
+;
+
+OutputReference: 
+    'ref' outputRef=[GlobalOutputRef | ID]
+;
+
+LocalOutput:
     path=STRING
-    ('filter' filter=STRING)
 ;
 
 Analysis:
