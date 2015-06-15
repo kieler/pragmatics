@@ -9,6 +9,7 @@ import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage
 import de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage
+import java.util.ArrayList
 import java.util.HashMap
 import java.util.Map
 import org.eclipse.emf.ecore.EStructuralFeature
@@ -85,7 +86,8 @@ class SequenceValidator extends AbstractSequenceValidator {
             var temp = 0
             if (endBlockCount > 0) {
                 temp = map.get(l) - endBlockCount
-            } else {
+            }
+            if (endBlockCount == 0) {
                 temp = map.get(l) - 1
             }
             if (temp == 0) {
@@ -98,6 +100,18 @@ class SequenceValidator extends AbstractSequenceValidator {
             }
         } else {
             error("The number of blocks closed is higher than the number of created", feature)
+        }
+    }
+
+    @Check
+    def sameLifelineIdName(SequenceDiagram s) {
+        val life = new ArrayList();
+        for (lifeline : s.lifelines) {
+            if (life.contains(lifeline.name)) {
+                error("This Identifier is already used", SequencePackage.Literals.LIFELINE__NAME)
+            } else {
+                life.add(lifeline.name)
+            }
         }
     }
 

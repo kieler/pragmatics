@@ -20,7 +20,7 @@ Lifeline returns Lifeline:
     
 Interaction returns Interaction:
     TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineEndBlock | OneLifelineNote 
-    | Destroy | Refinement;  //OneLifelineInteraction;
+    | Destroy | Refinement;
     
 TwoLifelineMessage returns TwoLifelineMessage:
     sourceLifeline=[Lifeline|ID]  
@@ -72,7 +72,7 @@ Refinement returns Refinement:
     '}';
     
 terminal INT_GREATER_ZERO returns ecore::EInt:
-    '1'..'9' ('0'..'9')*;
+    '1'..'9' ('0'..'9')* | 'all';
 
 enum TransitionType:
     async = 'async' | create = 'create' | response = 'response' | sync = 'sync';

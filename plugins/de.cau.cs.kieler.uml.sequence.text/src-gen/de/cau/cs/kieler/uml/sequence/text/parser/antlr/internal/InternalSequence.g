@@ -1279,7 +1279,7 @@ ruleTransitionType returns [Enumerator current=null]
 
 
 
-RULE_INT_GREATER_ZERO : '1'..'9' ('0'..'9')*;
+RULE_INT_GREATER_ZERO : ('1'..'9' ('0'..'9')*|'all');
 
 RULE_ID : '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 

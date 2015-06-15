@@ -170,15 +170,13 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cNameAssignment_3 = (Assignment)cGroup.eContents().get(3);
 		private final RuleCall cNameIDTerminalRuleCall_3_0 = (RuleCall)cNameAssignment_3.eContents().get(0);
 		
-		//Lifeline: //{Lifeline}
+		//Lifeline:
 		//	"lifeline" caption=STRING "as" name=ID;
 		public ParserRule getRule() { return rule; }
 
-		////{Lifeline}
 		//"lifeline" caption=STRING "as" name=ID
 		public Group getGroup() { return cGroup; }
 
-		////{Lifeline}
 		//"lifeline"
 		public Keyword getLifelineKeyword_0() { return cLifelineKeyword_0; }
 
@@ -278,23 +276,19 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cTargetNoteAssignment_8_1 = (Assignment)cGroup_8.eContents().get(1);
 		private final RuleCall cTargetNoteSTRINGTerminalRuleCall_8_1_0 = (RuleCall)cTargetNoteAssignment_8_1.eContents().get(0);
 		
-		//TwoLifelineMessage: //{Message}
+		//TwoLifelineMessage:
 		//	sourceLifeline=[Lifeline] transitionType=TransitionType caption=STRING "to" targetLifeline=[Lifeline]
-		//	(startBlockLeft?="sourceStartBlock" //('invariant' invariant = STRING)?
-		//	| endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)? (startBlockRight?="targetStartBlock" //    (startBlockLeft?='sourceStartBlock' | endBlockLeft?='sourceEndBlock' (endBlockLeftCount = INT)?)?
-		//	| endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)? //    (startBlockRight?='targetStartBlock' | endBlockRight?='targetEndBlock' (endBlockRightCount = INT)?)?
+		//	(startBlockLeft?="sourceStartBlock" | endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)?
+		//	(startBlockRight?="targetStartBlock" | endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)?
 		//	("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?;
 		public ParserRule getRule() { return rule; }
 
-		////{Message}
 		//sourceLifeline=[Lifeline] transitionType=TransitionType caption=STRING "to" targetLifeline=[Lifeline]
-		//(startBlockLeft?="sourceStartBlock" //('invariant' invariant = STRING)?
-		//| endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)? (startBlockRight?="targetStartBlock" //    (startBlockLeft?='sourceStartBlock' | endBlockLeft?='sourceEndBlock' (endBlockLeftCount = INT)?)?
-		//| endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)? //    (startBlockRight?='targetStartBlock' | endBlockRight?='targetEndBlock' (endBlockRightCount = INT)?)?
+		//(startBlockLeft?="sourceStartBlock" | endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)?
+		//(startBlockRight?="targetStartBlock" | endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)?
 		//("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?
 		public Group getGroup() { return cGroup; }
 
-		////{Message}
 		//sourceLifeline=[Lifeline]
 		public Assignment getSourceLifelineAssignment_0() { return cSourceLifelineAssignment_0; }
 
@@ -328,8 +322,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getTargetLifelineLifelineIDTerminalRuleCall_4_0_1() { return cTargetLifelineLifelineIDTerminalRuleCall_4_0_1; }
 
-		//(startBlockLeft?="sourceStartBlock" //('invariant' invariant = STRING)?
-		//| endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)?
+		//(startBlockLeft?="sourceStartBlock" | endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)?
 		public Alternatives getAlternatives_5() { return cAlternatives_5; }
 
 		//startBlockLeft?="sourceStartBlock"
@@ -353,8 +346,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//INT_GREATER_ZERO
 		public RuleCall getEndBlockLeftCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0() { return cEndBlockLeftCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0; }
 
-		//(startBlockRight?="targetStartBlock" //    (startBlockLeft?='sourceStartBlock' | endBlockLeft?='sourceEndBlock' (endBlockLeftCount = INT)?)?
-		//| endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)?
+		//(startBlockRight?="targetStartBlock" | endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)?
 		public Alternatives getAlternatives_6() { return cAlternatives_6; }
 
 		//startBlockRight?="targetStartBlock"
@@ -430,14 +422,12 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNoteSTRINGTerminalRuleCall_5_1_0 = (RuleCall)cNoteAssignment_5_1.eContents().get(0);
 		
 		//OneLifelineMessage:
-		//	Lifeline=[Lifeline] transitionType=TransitionType ("lost" //    ('self' | 'lost' | 'found')
-		//	| "found") caption=STRING (startBlock?="startBlock" | endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? //    (startBlock?='startBlock' | endBlock?='endBlock' (endBlockCount = INT)?)?
-		//	("note" note=STRING)?;
+		//	Lifeline=[Lifeline] transitionType=TransitionType ("lost" | "found") caption=STRING (startBlock?="startBlock" |
+		//	endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
 		public ParserRule getRule() { return rule; }
 
-		//Lifeline=[Lifeline] transitionType=TransitionType ("lost" //    ('self' | 'lost' | 'found')
-		//| "found") caption=STRING (startBlock?="startBlock" | endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? //    (startBlock?='startBlock' | endBlock?='endBlock' (endBlockCount = INT)?)?
-		//("note" note=STRING)?
+		//Lifeline=[Lifeline] transitionType=TransitionType ("lost" | "found") caption=STRING (startBlock?="startBlock" |
+		//endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? ("note" note=STRING)?
 		public Group getGroup() { return cGroup; }
 
 		//Lifeline=[Lifeline]
@@ -455,8 +445,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//TransitionType
 		public RuleCall getTransitionTypeTransitionTypeEnumRuleCall_1_0() { return cTransitionTypeTransitionTypeEnumRuleCall_1_0; }
 
-		//"lost" //    ('self' | 'lost' | 'found')
-		//| "found"
+		//"lost" | "found"
 		public Alternatives getAlternatives_2() { return cAlternatives_2; }
 
 		//"lost"
@@ -558,7 +547,6 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cNoteAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cNoteSTRINGTerminalRuleCall_2_0 = (RuleCall)cNoteAssignment_2.eContents().get(0);
 		
-		////    endBlock?='endBlock' (endBlockCount = INT)?;
 		//OneLifelineNote:
 		//	Lifeline=[Lifeline] "note" note=STRING;
 		public ParserRule getRule() { return rule; }
@@ -914,7 +902,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		return getLocalVariableAccess().getRule();
 	}
 
-	//Lifeline: //{Lifeline}
+	//Lifeline:
 	//	"lifeline" caption=STRING "as" name=ID;
 	public LifelineElements getLifelineAccess() {
 		return pLifeline;
@@ -935,11 +923,10 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		return getInteractionAccess().getRule();
 	}
 
-	//TwoLifelineMessage: //{Message}
+	//TwoLifelineMessage:
 	//	sourceLifeline=[Lifeline] transitionType=TransitionType caption=STRING "to" targetLifeline=[Lifeline]
-	//	(startBlockLeft?="sourceStartBlock" //('invariant' invariant = STRING)?
-	//	| endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)? (startBlockRight?="targetStartBlock" //    (startBlockLeft?='sourceStartBlock' | endBlockLeft?='sourceEndBlock' (endBlockLeftCount = INT)?)?
-	//	| endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)? //    (startBlockRight?='targetStartBlock' | endBlockRight?='targetEndBlock' (endBlockRightCount = INT)?)?
+	//	(startBlockLeft?="sourceStartBlock" | endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)?
+	//	(startBlockRight?="targetStartBlock" | endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)?
 	//	("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?;
 	public TwoLifelineMessageElements getTwoLifelineMessageAccess() {
 		return pTwoLifelineMessage;
@@ -950,9 +937,8 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//OneLifelineMessage:
-	//	Lifeline=[Lifeline] transitionType=TransitionType ("lost" //    ('self' | 'lost' | 'found')
-	//	| "found") caption=STRING (startBlock?="startBlock" | endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? //    (startBlock?='startBlock' | endBlock?='endBlock' (endBlockCount = INT)?)?
-	//	("note" note=STRING)?;
+	//	Lifeline=[Lifeline] transitionType=TransitionType ("lost" | "found") caption=STRING (startBlock?="startBlock" |
+	//	endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
 	public OneLifelineMessageElements getOneLifelineMessageAccess() {
 		return pOneLifelineMessage;
 	}
@@ -971,7 +957,6 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		return getOneLifelineEndBlockAccess().getRule();
 	}
 
-	////    endBlock?='endBlock' (endBlockCount = INT)?;
 	//OneLifelineNote:
 	//	Lifeline=[Lifeline] "note" note=STRING;
 	public OneLifelineNoteElements getOneLifelineNoteAccess() {
@@ -1022,9 +1007,8 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		return getRefinementAccess().getRule();
 	}
 
-	////| 'all';
 	//terminal INT_GREATER_ZERO returns ecore::EInt:
-	//	"1".."9" "0".."9"*;
+	//	"1".."9" "0".."9"* | "all";
 	public TerminalRule getINT_GREATER_ZERORule() {
 		return tINT_GREATER_ZERO;
 	} 
