@@ -200,7 +200,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
      * @author dag
      *
      */
-    private class CNode {
+    private final class CNode {
 
         private LGraphElement elem;
         private Rectangle hitbox;
