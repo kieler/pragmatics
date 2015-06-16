@@ -16,12 +16,10 @@ package de.cau.cs.kieler.klay.layered.p2layers;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -49,13 +47,13 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
  * 
  * MinWidth takes two additional parameters, which can be configured as a property:
  * <ul>
- * <li>Upper Bound On Width {@link Properties#UPPER_BOUND_ON_WIDTH}(de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth) – Defines a
- * loose upper bound on the width of the MinWidth layerer. Defaults to 4, lower bound is 1.</li>
+ * <li>Upper Bound On Width {@link Properties#UPPER_BOUND_ON_WIDTH} – Defines a loose upper bound on
+ * the width of the MinWidth layerer. Defaults to 4, lower bound is 1.</li>
  * <li>Upper Layer Estimation Scaling Factor
- * (de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor) – Multiplied with Upper
- * Bound On Width for defining an upper bound on the width of layers which haven't been determined
- * yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates
- * for too high estimations. Defaults to 2, lower bound is 1.</li>
+ * {@link Properties#UPPER_LAYER_ESTIMATION_SCALING_FACTOR} – Multiplied with
+ * {@link Properties#UPPER_BOUND_ON_WIDTH} for defining an upper bound on the width of layers which
+ * haven't been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth
+ * algorithm. Compensates for too high estimations. Defaults to 2, lower bound is 1.</li>
  * </ul>
  * 
  * <dl>
@@ -86,6 +84,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("MinWidth layering", 1);
+        
         List<Layer> layers = layeredGraph.getLayers();
         List<LNode> notInserted = layeredGraph.getLayerlessNodes();
 
@@ -109,11 +108,12 @@ public final class MinWidthLayerer implements ILayoutPhase {
         for (LNode node : notInserted) {
             node.id = countEdgesExceptSelfLoops(node.getOutgoingEdges());
         }
-        
+
         Collections.sort(notInserted, new MaxOutgoingEdgesComparator());
 
         // This naive implementation uses sets, just like in the papers pseudocode. We use a
-        // LinkedHashSet for the set of all real nodes of the graph in order to maintain the ordering
+        // LinkedHashSet for the set of all real nodes of the graph in order to maintain the
+        // ordering
         // by maximum outdegree.
         Set<LNode> allNodes = Sets.newLinkedHashSet(notInserted);
 
@@ -121,8 +121,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // In the Paper the Set U contains all nodes, which have already been placed, and the set Z
         // contains all nodes already placed in layers which have been determined before the
         // currentLayer.
-        Set<LNode> alreadyPlacedNodes = new HashSet<LNode>();
-        Set<LNode> alreadyPlacedInOtherLayers = new HashSet<LNode>();
+        Set<LNode> alreadyPlacedNodes = Sets.newHashSet();
+        Set<LNode> alreadyPlacedInOtherLayers = Sets.newHashSet();
 
         // Set up the first layers
         Layer currentLayer = new Layer(layeredGraph);
@@ -134,9 +134,12 @@ public final class MinWidthLayerer implements ILayoutPhase {
         int widthUp = 0;
 
         // As long as not all nodes have been placed in a layer, do:
-        while (!alreadyPlacedNodes.equals(allNodes)) {// Think! expensive
+        // Testing the condition of the while loop is pretty expensive in the original paper,
+        // TODO: improve condition!
+        while (!alreadyPlacedNodes.equals(allNodes)) {
             // Creates a view of allNodes minus the alreadyPlacedNodes without modifying the given
             // sets.
+            // TODO: Computing the difference of to set might be too costly, too.
             Set<LNode> unplacedNodes = Sets.difference(allNodes, alreadyPlacedNodes);
 
             // If you can find a node, whose edges only point to nodes in the Set
@@ -186,20 +189,22 @@ public final class MinWidthLayerer implements ILayoutPhase {
     }
 
     /**
-     * Returns the first LNode in the given SetView, whose outgoing edges end only in nodes of the
-     * Set targets. Self-loops are ignored.
-     *n{@code nodes}s nodes nodes
+     * Returns the first {@link LNode} in the given Set, whose outgoing edges end only in nodes of
+     * the Set {@code targets}. Self-loops are ignored.
+     * 
      * @param nodes
-     *            SetView to choose LNode from
+     *            Set to choose {@link LNode} from
      * @param targets
      *            Set of {@link LNode}
-     * @return chosen LNode from nodes, whose outgoing edges all end in a node contained in targets
+     * @return chosen LNode from {@code nodes}, whose outgoing edges all end in a node contained in
+     *         {@code targets}
      * @throws NoElementLeftException
-     *             when no node satisfies the condition. // Whose for things? or of which
+     *             when no node satisfies the condition.
      */
+    // TODO: Replace Exception with null (according to mad and uru)
     private LNode selectNode(final Set<LNode> nodes, final Set<LNode> targets)
             throws NoElementLeftException {
-        
+
         Set<LNode> outNodes = new HashSet<LNode>();
 
         for (LNode node : nodes) {
@@ -216,15 +221,16 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 return node;
             }
         }
-        throw new NoElementLeftException();// TODO: return null
+        // TODO: return null
+        throw new NoElementLeftException();
     }
 
     /**
-     * Returns the number of LEdge edges in the given Iterable, but ignores self-loops.
+     * Returns the number of {@link LEdge} edges in the given Iterable, but ignores self-loops.
      * 
      * @param edges
      *            Iterable whose edges without self-loops are to be counted
-     * @return number of LEdge edges without self-loops
+     * @return number of {@link LEdge} edges without self-loops
      */
     private static int countEdgesExceptSelfLoops(final Iterable<LEdge> edges) {
         int i = 0;
@@ -240,7 +246,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
      * Checks whether an edge is a self-loop (i.e. source node == target node).
      * 
      * @param edge
-     *            LEdge to be tested
+     *            {@link LEdge} to be tested
      * @return true if edge is self-loop, false otherwise
      */
     private static boolean isSelfLoop(final LEdge edge) {
@@ -249,7 +255,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
     /**
      * Comparator for determining whether a LNode has more outgoing edges than another one. Requires
-     * the LNode property "id" to be set to the number of outgoing edges of the node.
+     * the LNode property {@link LNode#id} to be set to the number of outgoing edges of the node.
      * 
      * @author mic
      */
