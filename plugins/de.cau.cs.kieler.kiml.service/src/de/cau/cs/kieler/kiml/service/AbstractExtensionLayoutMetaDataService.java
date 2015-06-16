@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kwebs.server.layout;
+package de.cau.cs.kieler.kiml.service;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,12 +35,27 @@ import de.cau.cs.kieler.kiml.options.GraphFeature;
 
 /**
  * A layout data service that reads its content from the Eclipse extension registry.
+ * <p>
+ * <strong>NOTE:</strong></br>
+ * The only reason for this class being abstract is that it's identical with
+ * {@link de.cau.cs.kieler.kwebs.server.layout.AbstractExtensionLayoutMetaDataService
+ * AbstractExtensionLayoutMetaDataService}. All code used by both {@code kwebs.server} and
+ * {@code kiml.service} plugins resides in the abstract class while code which has e.g. additional
+ * dependencies is moved to corresponding subclasses. This prevents unresolvable plugin dependency
+ * chains.
+ * </p><p>
+ * <strong>IMPORTANT:</strong></br>
+ * When editing this class, make sure to copy all changes to
+ * {@link de.cau.cs.kieler.kwebs.server.layout.AbstractExtensionLayoutMetaDataService
+ * AbstractExtensionLayoutMetaDataService} to keep them both up-to-date.
+ * </p>
  *
  * @author msp
+ * @author csp
  * @kieler.design proposed by msp
  * @kieler.rating yellow 2012-10-10 review KI-25 by chsch, bdu
  */
-public abstract class ExtensionLayoutMetaDataService extends LayoutMetaDataService {
+abstract class AbstractExtensionLayoutMetaDataService extends LayoutMetaDataService {
     
     /** identifier of the extension point for layout providers. */
     protected static final String EXTP_ID_LAYOUT_PROVIDERS = "de.cau.cs.kieler.kiml.layoutProviders";
@@ -104,7 +119,7 @@ public abstract class ExtensionLayoutMetaDataService extends LayoutMetaDataServi
     /**
      * Load all registered extensions for the layout providers extension point.
      */
-    public ExtensionLayoutMetaDataService() {
+    public AbstractExtensionLayoutMetaDataService() {
         loadLayoutProviderExtensions();
     }
     
@@ -349,12 +364,16 @@ public abstract class ExtensionLayoutMetaDataService extends LayoutMetaDataServi
                         reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_FEATURE, null);
                     } else {
                         String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
+                        String description = child.getAttribute(ATTRIBUTE_DESCRIPTION);
                         try {
                             GraphFeature feature = GraphFeature.valueOf(featureString.toUpperCase());
                             if (priority == null || priority.length() == 0) {
                                 algoData.setFeatureSupport(feature, 0);
                             } else {
                                 algoData.setFeatureSupport(feature, Integer.parseInt(priority));
+                            }
+                            if (description != null && !"".equals(description)) {
+                                algoData.setSupportedFeatureDescription(feature, description);
                             }
                         } catch (IllegalArgumentException exception) {
                             reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_FEATURE, exception);
