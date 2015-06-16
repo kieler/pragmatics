@@ -18,7 +18,6 @@ import java.io.OutputStreamWriter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import com.google.common.collect.Lists;
 
@@ -95,19 +94,18 @@ public class CSVResultSerializer implements IBatchResultSerializer {
             
             // possibly append range batch results
             if (jobResult.getJob() instanceof BatchRangeJob<?>) {
-                for (Entry<String, Object> entry : jobResult.getRangeResults().entrySet()) {
-                    Object result = entry.getValue();
-                    if (entry.getValue() instanceof Object[]) {
-                        result = ((Object[]) result)[batch.getRangeAnalysisComponent()];
+                for (Object result : jobResult.getRangeResults()) {
+                    Object component = result;
+                    if (result instanceof Object[]) {
+                        component = ((Object[]) result)[batch.getRangeAnalysisComponent()];
                     }
                     Visualization visualization =
-                            VisualizationService.getInstance().getVisualization("text",
-                                    entry.getValue());
-                    String text = visualization.get(batch.getRangeAnalysis(), result);
+                            VisualizationService.getInstance().getVisualization("text", result);
+                    String text = visualization.get(batch.getRangeAnalysis(), component);
                     writer.write(";" + text);
                 }
             }
-            
+
             // execution time results
             Map<String, Double> execTimes = jobResult.getExecTimeResults();
             if (execTimes != null) {

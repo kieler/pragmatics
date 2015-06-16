@@ -775,8 +775,11 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         }
     }
     
-    /** factor for threshold within which node overlapping is detected. */
-    private static final double OVERLAP_DETECT = 0.01;
+    /**
+     * Factor for threshold within which node overlapping is detected. This factor should reflect
+     * the epsilon used in the {@link NodePlacerTest}.
+     */
+    private static final double OVERLAP_DETECT = 0.0001;
 
     /**
      * Merge regions by testing whether they would overlap after applying the deflection.

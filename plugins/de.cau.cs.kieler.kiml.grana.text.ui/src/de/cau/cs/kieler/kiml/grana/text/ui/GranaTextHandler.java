@@ -77,7 +77,7 @@ public class GranaTextHandler extends AbstractHandler {
                                 monitor.beginTask("Execute Batch Analysis", 1);
                                 try {
                                     Iterable<BatchResult> results =
-                                            new GranaTextToBatchJob().execute(grana, monitor);
+                                            GranaTextToBatchJob.execute(grana, monitor);
                                     displayProblems(results);
                                 } catch (Exception e) {
                                     IStatus status =

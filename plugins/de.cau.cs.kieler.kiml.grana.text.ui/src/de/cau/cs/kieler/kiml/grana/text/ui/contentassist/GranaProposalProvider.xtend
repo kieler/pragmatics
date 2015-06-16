@@ -31,6 +31,7 @@ import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.RuleCall
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
+import de.cau.cs.kieler.kiml.grana.text.grana.RangeJob
 
 /**
  * see http://www.eclipse.org/Xtext/documentation.html#contentAssist on how to customize content assistant
@@ -62,7 +63,14 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
      * Proposals for layout option keys.
      */
     override completePersistentEntry_Key(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-        
+        handleLayoutOptionProposal(model, assignment, context, acceptor)
+    }
+    
+    override completeRangeJob_RangeOption(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+        handleLayoutOptionProposal(model, assignment, context, acceptor)
+    }
+    
+    private def handleLayoutOptionProposal(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
         // create and register the completion proposal for every element in the list
         for (optionData : LayoutMetaDataService.instance.optionData) {
             val displayString = new StyledString(optionData.toString(),
@@ -355,5 +363,24 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
         }
     }
      
+    override completeRangeJob_RangeAnalysisComponent(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+        super.completeRangeJob_RangeAnalysisComponent(model, assignment, context, acceptor)
+        if (model instanceof RangeJob) {
+            val analysis = (model as RangeJob).rangeAnalysis
+            if (analysis != null) {
+                val analysisData = AnalysisService.getInstance.getAnalysis(analysis.name)
+                if (analysisData != null) {
+                    println(analysisData.components)
+                    var i = 0
+                    for (c : analysisData.components) {
+                        val suggestion = i + ""
+                        val displayString = new StyledString(i + " - " + c.first + " " + c.second)
+                        acceptor.accept(doCreateProposal(suggestion, displayString, null, priorityHelper.defaultPriority, context))
+                        i++
+                    }
+                }
+            }
+        }
+    }
     
 }

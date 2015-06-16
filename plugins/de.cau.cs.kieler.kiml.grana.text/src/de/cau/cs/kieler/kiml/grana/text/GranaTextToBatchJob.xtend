@@ -215,6 +215,10 @@ final class GranaTextToBatchJob {
                 provider.setLayoutBeforeAnalysis(job.layoutBeforeAnalysis)
                 provider.setExecutionTimeAnalysis(job.measureExecutionTime)
             }
+            RangeJob: {
+                provider.setLayoutBeforeAnalysis(true)
+                provider.setExecutionTimeAnalysis(false)
+            }
         }
     
         // set the layout options

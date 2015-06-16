@@ -44,7 +44,7 @@ public class UniqueEdgeBendsTest extends AbstractGranaTest {
         return analyses;
     }
     
-    final TestPath[] testPaths = { new TestPath("grana/bends", true, true, TestPath.Type.KGRAPH) };
+    final TestPath[] testPaths = { new TestPath("grana/bends/", false, true, TestPath.Type.KGRAPH) };
 
     @Override
     protected TestPath[] getBundleTestPath() {

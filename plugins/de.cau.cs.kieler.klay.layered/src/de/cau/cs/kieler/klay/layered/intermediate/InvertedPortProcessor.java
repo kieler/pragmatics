@@ -200,6 +200,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         // Connect the dummy with the original port
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(edge);
+        dummyEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(eastwardPort);
         
@@ -262,6 +263,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         // Connect the dummy with the original port
         LEdge dummyEdge = new LEdge();
         dummyEdge.copyProperties(edge);
+        dummyEdge.setProperty(LayoutOptions.JUNCTION_POINTS, null);
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(originalTarget);
         

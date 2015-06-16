@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
+package de.cau.cs.kieler.klay.layered.test.intermediate.greedyswitch;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -24,6 +24,7 @@ import org.junit.Test;
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.GreedySwitchProcessor;
 import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 

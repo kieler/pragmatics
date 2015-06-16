@@ -28,7 +28,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  * 
  * @author alan
  */
-class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
+public class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
 
     private final List<ComparableEdgeAndPort> relevantEdgesAndPorts;
     private int upperLowerCrossings;
@@ -53,7 +53,9 @@ class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
      * calculated values.
      * 
      * @param upper
+     *            the upper node
      * @param lower
+     *            the lower node
      */
     public void countCrossingsBetweenNodes(final LNode upper, final LNode lower) {
         upperNode = upper;
@@ -161,10 +163,17 @@ class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCounter {
 
     }
 
+    /**
+     * @return number of upper lower crossings.
+     */
     public int getUpperLowerCrossings() {
         return upperLowerCrossings;
     }
 
+    /**
+     * 
+     * @return number of lower upper crossings.
+     */
     public int getLowerUpperCrossings() {
         return lowerUpperCrossings;
     }

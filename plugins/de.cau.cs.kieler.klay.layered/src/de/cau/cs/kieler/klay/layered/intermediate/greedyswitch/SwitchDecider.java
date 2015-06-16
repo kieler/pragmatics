@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * 
  * @author alan
  */
-class SwitchDecider {
+public class SwitchDecider {
     private final LNode[] freeLayer;
     private final InLayerEdgeTwoNodeCrossingCounter inLayerCounter;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
@@ -45,10 +45,10 @@ class SwitchDecider {
      *            The freeLayer to switch in.
      * @param graph
      *            The graph as LNode[][]
-     * @throws SwitchDeciderException
-     *             on faulty input
+     * @param crossingMatrixFiller
+     *            the crossing matrix filler
      */
-    SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
+    public SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
             final CrossingMatrixFiller crossingMatrixFiller) {
         
         this.crossingMatrixFiller = crossingMatrixFiller;
@@ -62,6 +62,12 @@ class SwitchDecider {
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(freeLayer);
     }
 
+    /**
+     * @param upperNode
+     *            a node
+     * @param lowerNode
+     *            a node
+     */
     public final void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
         inLayerCounter.notifyOfSwitch(upperNode, lowerNode);
     }
@@ -181,7 +187,7 @@ class SwitchDecider {
      * @author alan
      *
      */
-    protected enum CrossingCountSide {
+    public enum CrossingCountSide {
         /** Consider crossings to the west of the free layer. */
         WEST,
         /** Consider crossings to the east of the free layer. */
