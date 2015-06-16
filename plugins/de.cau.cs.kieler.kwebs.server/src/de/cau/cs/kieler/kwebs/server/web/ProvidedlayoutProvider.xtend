@@ -26,6 +26,9 @@ import de.cau.cs.kieler.kwebs.server.servicedata.SupportedFormat
 import de.cau.cs.kieler.kwebs.server.servicedata.LayoutOption
 import de.cau.cs.kieler.kiml.LayoutOptionData
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService
+import de.cau.cs.kieler.kiml.options.GraphFeature
+import de.cau.cs.kieler.kiml.LayoutAlgorithmData
+import de.cau.cs.kieler.kiml.LayoutMetaDataService
 
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.
@@ -168,6 +171,11 @@ class ProvidedlayoutProvider
         }
         val List<KnownOption> options = algorithm.knownOptions.sortBy[it.option.name]
         
+        val List<GraphFeature> features = GraphFeature.values().sortBy[it.name]
+        
+        val LayoutAlgorithmData algorithmData =
+                LayoutMetaDataService.instance.getAlgorithmData(algorithm.id)
+        
         '''
         <div class="col-md-8 col-md-offset-2">
         <h3>«algorithm.category?.name» - «algorithm.name»</h3>
@@ -210,9 +218,44 @@ class ProvidedlayoutProvider
             </div>
         </p>
         «generateBackButton(processingExchange)»
+        <h3>Supported Graph Features</h3>
+        <p>
+            <div align='center'>
+                <table cellspacing='0' cellpadding='5' class='listing'>
+                    <thead><tr><th>Name</th><th>Description</th><th>Degree of Support</th></tr></thead>
+                    <tbody>
+                        «features.map(feature | {
+                            if (algorithmData.supportsFeature(feature)) {
+                            '''
+                            <tr class='«
+                                if (features.indexOf(feature) % 2 == 0) "even" else "odd"
+                            »' onclick='document.location.href="Providedlayout.html?feature=«
+                                feature.name
+                            »";'>
+                                <td>«feature.name»</td>
+                                <td>«feature.description»</td>
+                                <td>«algorithmData.getSupportedFeatureDescription(feature)»</td>
+                            </tr>
+                            '''
+                            } else {
+                            ''''''
+                            }
+                        }).join»
+                    </tbody>
+                </table>
+            </div>
+        </p>
+        «generateBackButton(processingExchange)»
         </div>
         '''
     }
+    
+    /** Path to the image which is shown when a preview image is not given by a plug in. */
+    private static String IMAGE_CHECK
+        = "/images/check.png"
+    /** Path to the image which is shown when a preview image is not given by a plug in. */
+    private static String IMAGE_CROSS
+        = "/images/cross.png"
 
     /**
      * Generates web page content giving an overview of the meta data.
@@ -223,10 +266,11 @@ class ProvidedlayoutProvider
         ResourceProcessingExchange processingExchange
     ) 
     {
-        val List<LayoutAlgorithm> algorithmns = serviceData.layoutAlgorithms.sortBy[
+        val List<LayoutAlgorithm> algorithms = serviceData.layoutAlgorithms.sortBy[
             '''«it.category?.name»/«it.type?.name»/«it.name»'''.toString
         ]
         val List<SupportedFormat> formats     = serviceData.supportedFormats
+        val List<GraphFeature> features = GraphFeature.values().sortBy[it.name]
         
         '''
         <div class="col-md-8 col-md-offset-2">
@@ -259,7 +303,7 @@ class ProvidedlayoutProvider
                 <table cellspacing='0' cellpadding='5' class='listing'>
                     <thead><tr><th>Name</th><th>Category</th><th>Type</th><th>Identifier</th><th>Version</th></tr></thead>
                     <tbody>
-                        «algorithmns.map(algorithm | {    
+                        «algorithms.map(algorithm | {    
                             var String category = algorithm.category?.name
                             var String type     = algorithm.type?.name
                             var String version  = algorithm.version
@@ -274,7 +318,7 @@ class ProvidedlayoutProvider
                             }
                             '''
                             <tr class='«
-                                if (algorithmns.indexOf(algorithm) % 2 == 0) "even" else "odd"
+                                if (algorithms.indexOf(algorithm) % 2 == 0) "even" else "odd"
                             »' onclick='document.location.href="Providedlayout.html?algorithm=«
                                 algorithm.id
                             »";'>
@@ -288,7 +332,7 @@ class ProvidedlayoutProvider
                     </tbody>
                 </table>
             </div>
-        </p>    
+        </p>
         <h3>Supported Formats</h3>
         <a id="formats"></a>
         <p>
@@ -314,7 +358,41 @@ class ProvidedlayoutProvider
                 </table>
             </div>
         </p>
-        </div>'''            
+        <h3>Supported Features</h3>
+        <a id="features"></a>
+        <p>
+            The following features could be supported by the layout algorithms:
+        </p>
+        <p>
+            <div align='center'>
+                <table cellspacing='0' cellpadding='5' class='listing'>
+                    <thead><tr><th>Algorithm</th>
+                        «features.map(feature | {
+                            '''<th>«feature.name»</th>'''
+                        }).join»</tr></thead>
+                    <tbody>
+                        «algorithms.map(algorithm | {
+                            val LayoutAlgorithmData algorithmData =
+                                    LayoutMetaDataService.instance.getAlgorithmData(algorithm.id)
+                            '''
+                            <tr class='«
+                                if (algorithms.indexOf(algorithm) % 2 == 0) "even" else "odd"
+                            »' onclick='document.location.href="Providedlayout.html?algorithm=«
+                                algorithm.id
+                            »";'><td>«algorithm.name»</td>
+                                «features.map(feature | {
+                                    '''
+                                    <td><img height="20" src="«if (algorithmData.supportsFeature(feature))
+                                            IMAGE_CHECK else IMAGE_CROSS»" /></td>
+                                    '''
+                                }).join»
+                            </tr>'''
+                        }).join»
+                    </tbody>
+                </table>
+            </div>
+        </p>
+        </div>'''
     }
 
     /**
