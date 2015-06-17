@@ -49,11 +49,12 @@ abstract class AbstractProvider
                     <head>
                         <title>KIELER Web Service For Layout</title>
                         <meta http-equiv='content-type' content='text/html; charset=utf-8'>
-                         <link href="styles/bootstrap-3.0.2.min.css" rel="stylesheet">
-                         <link href="styles/prettify.css" type="text/css" rel="stylesheet" />
-                         <script src="scripts/jquery-1.10.2.min.js"></script>
-                         <script src="scripts/bootstrap-3.0.2.min.js"></script>
-                         <script src="scripts/prettify.js"></script>
+                        <link href="styles/bootstrap-3.0.2.min.css" rel="stylesheet">
+                        <link href="styles/prettify.css" type="text/css" rel="stylesheet">
+                        <link href="styles/style.css" type="text/css" rel="stylesheet">
+                        <script src="scripts/jquery-1.10.2.min.js"></script>
+                        <script src="scripts/bootstrap-3.0.2.min.js"></script>
+                        <script src="scripts/prettify.js"></script>
                         «getHeaders(processingExchange)»
                         <style>
                             body {
@@ -129,6 +130,11 @@ abstract class AbstractProvider
                         </div>
                         «ENDIF»
                         
+                        <script src="/scripts/jquery.stickytableheaders.min.js"></script>
+                        <script>
+                            var offset = $('.navbar').height();
+                            $("html:not(.legacy) table").stickyTableHeaders({fixedOffset: offset});
+                        </script>
                     </body>
                 </html>
                 '''.toString.getBytes("UTF-8")

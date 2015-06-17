@@ -14,21 +14,23 @@
 
 package de.cau.cs.kieler.kwebs.server.web
 
-import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.kwebs.server.Application
-import de.cau.cs.kieler.kwebs.server.logging.Logger
-import de.cau.cs.kieler.kwebs.server.util.Resources
-import java.util.Map
-import java.util.Listimport de.cau.cs.kieler.kwebs.server.servicedata.ServiceData
-import de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm
-import de.cau.cs.kieler.kwebs.server.servicedata.KnownOption
-import de.cau.cs.kieler.kwebs.server.servicedata.SupportedFormat
-import de.cau.cs.kieler.kwebs.server.servicedata.LayoutOption
-import de.cau.cs.kieler.kiml.LayoutOptionData
-import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService
-import de.cau.cs.kieler.kiml.options.GraphFeature
+import com.google.common.base.Strings
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData
 import de.cau.cs.kieler.kiml.LayoutMetaDataService
+import de.cau.cs.kieler.kiml.LayoutOptionData
+import de.cau.cs.kieler.kiml.options.GraphFeature
+import de.cau.cs.kieler.kiml.options.LayoutOptions
+import de.cau.cs.kieler.kwebs.server.Application
+import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService
+import de.cau.cs.kieler.kwebs.server.logging.Logger
+import de.cau.cs.kieler.kwebs.server.servicedata.KnownOption
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm
+import de.cau.cs.kieler.kwebs.server.servicedata.LayoutOption
+import de.cau.cs.kieler.kwebs.server.servicedata.ServiceData
+import de.cau.cs.kieler.kwebs.server.servicedata.SupportedFormat
+import de.cau.cs.kieler.kwebs.server.util.Resources
+import java.util.List
+import java.util.Map
 
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.
@@ -106,6 +108,10 @@ class ProvidedlayoutProvider
                     font-size         : 8pt;
                     border-style     : none;
                     text-align         : left;
+                }
+                .imgPlaceholder {
+                    width: 20px;
+                    height: 20px;
                 }
             //-->
         </style>
@@ -189,17 +195,18 @@ class ProvidedlayoutProvider
                 <img src='/ProvidedLayout.html?previewimage=«algorithm.previewImagePath»'/>
             </div>
         </p>
-        <h3>Supported Layout Options</h3>
-        <p>
-            <div align='center'>
-                <table cellspacing='0' cellpadding='5' class='listing'>
+        <ul class="nav nav-tabs nav-justified">
+            <li class="active"><a data-toggle="tab" href="#options">Supported Layout Options</a></li>
+            <li><a data-toggle="tab" href="#features">Supported Graph Features</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="options" class="tab-pane active">
+                <table class='table table-striped table-hover'>
                     <thead><tr><th>Name</th><th>Type</th><th>Identifier</th><th>Default Value</th></tr></thead>
                     <tbody>
                         «options.map(option | {
                             '''
-                            <tr class='«
-                                if (options.indexOf(option) % 2 == 0) "even" else "odd"
-                            »' onclick='document.location.href="Providedlayout.html?option=«
+                            <tr onclick='document.location.href="Providedlayout.html?option=«
                                 option.option.id
                             »";'>
                                 <td>«option.option.name»</td>
@@ -216,20 +223,14 @@ class ProvidedlayoutProvider
                     </tbody>
                 </table>
             </div>
-        </p>
-        «generateBackButton(processingExchange)»
-        <h3>Supported Graph Features</h3>
-        <p>
-            <div align='center'>
-                <table cellspacing='0' cellpadding='5' class='listing'>
+            <div id="features" class="tab-pane">
+                <table class='table table-striped table-hover'>
                     <thead><tr><th>Name</th><th>Description</th><th>Degree of Support</th></tr></thead>
                     <tbody>
                         «features.map(feature | {
                             if (algorithmData.supportsFeature(feature)) {
                             '''
-                            <tr class='«
-                                if (features.indexOf(feature) % 2 == 0) "even" else "odd"
-                            »' onclick='document.location.href="Providedlayout.html?feature=«
+                            <tr onclick='document.location.href="Providedlayout.html?feature=«
                                 feature.name
                             »";'>
                                 <td>«feature.name»</td>
@@ -244,7 +245,7 @@ class ProvidedlayoutProvider
                     </tbody>
                 </table>
             </div>
-        </p>
+        </div>
         «generateBackButton(processingExchange)»
         </div>
         '''
@@ -286,21 +287,24 @@ class ProvidedlayoutProvider
         </p>
         <h3>Service Details</h3>
         <p>Currently running version: «serviceData.version»<br/></p>
-        <h3>Supported Algorithms</h3>
-        <a id="algorithms"></a>
-        <p>
-            The following option can be used to select a specific layout algorithm:
-        </p>
-        <div class="alert alert-info">
-            «generateForOption(processingExchange, LayoutOptions::ALGORITHM.id, true)»
-        </div>
-        <p>
-            The following layout algorithms are currently supported by this service. Click any 
-            algorithm to receive further information on it's supported layout options.
-        </p>
-        <p>
-            <div align='center'>
-                <table cellspacing='0' cellpadding='5' class='listing'>
+        <ul class="nav nav-tabs nav-justified">
+            <li class="active"><a data-toggle="tab" href="#algorithms">Supported Algorithms</a></li>
+            <li><a data-toggle="tab" href="#formats">Supported Formats</a></li>
+            <li><a data-toggle="tab" href="#features">Supported Features</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="algorithms" class="tab-pane active">
+                <p>
+                    The following option can be used to select a specific layout algorithm:
+                </p>
+                <div class="alert alert-info">
+                    «generateForOption(processingExchange, LayoutOptions::ALGORITHM.id, true)»
+                </div>
+                <p>
+                    The following layout algorithms are currently supported by this service. Click any 
+                    algorithm to receive further information on it's supported layout options.
+                </p>
+                <table class='table table-striped table-hover'>
                     <thead><tr><th>Name</th><th>Category</th><th>Type</th><th>Identifier</th><th>Version</th></tr></thead>
                     <tbody>
                         «algorithms.map(algorithm | {    
@@ -317,9 +321,7 @@ class ProvidedlayoutProvider
                                 version = "&nbsp;"
                             }
                             '''
-                            <tr class='«
-                                if (algorithms.indexOf(algorithm) % 2 == 0) "even" else "odd"
-                            »' onclick='document.location.href="Providedlayout.html?algorithm=«
+                            <tr onclick='document.location.href="Providedlayout.html?algorithm=«
                                 algorithm.id
                             »";'>
                                 <td>«algorithm.name»</td>
@@ -332,22 +334,16 @@ class ProvidedlayoutProvider
                     </tbody>
                 </table>
             </div>
-        </p>
-        <h3>Supported Formats</h3>
-        <a id="formats"></a>
-        <p>
-            The following formats can be used to transfer graphs to the layout service:
-        </p>
-        <p>
-            <div align='center'>
-                <table cellspacing='0' cellpadding='5' class='listing'>
+            <div id="formats" class="tab-pane">
+                <p>
+                    The following formats can be used to transfer graphs to the layout service:
+                </p>
+                <table class='table table-striped table-hover'>
                     <thead><tr><th>Name</th><th>Identifier</th></tr></thead>
                     <tbody>
                         «formats.map(format | {
                             '''
-                            <tr class='«
-                                if (formats.indexOf(format) % 2 == 0) "even" else "odd"
-                            »' onclick='document.location.href="Providedlayout.html?format=«
+                            <tr onclick='document.location.href="Providedlayout.html?format=«
                                 format.id
                             »";'>
                                 <td>«format.name»</td> 
@@ -357,41 +353,45 @@ class ProvidedlayoutProvider
                     </tbody>
                 </table>
             </div>
-        </p>
-        <h3>Supported Features</h3>
-        <a id="features"></a>
-        <p>
-            The following features could be supported by the layout algorithms:
-        </p>
-        <p>
-            <div align='center'>
-                <table cellspacing='0' cellpadding='5' class='listing'>
+            <div id="features" class="tab-pane">
+                <p>
+                    The following features could be supported by the layout algorithms:
+                </p>
+                <table class='table table-striped table-hover'>
                     <thead><tr><th>Algorithm</th>
                         «features.map(feature | {
-                            '''<th>«feature.name»</th>'''
+                            '''<th><span data-toggle="tooltip" title="«feature.description»">
+                                «feature.name»</span></th>'''
                         }).join»</tr></thead>
                     <tbody>
                         «algorithms.map(algorithm | {
                             val LayoutAlgorithmData algorithmData =
                                     LayoutMetaDataService.instance.getAlgorithmData(algorithm.id)
                             '''
-                            <tr class='«
-                                if (algorithms.indexOf(algorithm) % 2 == 0) "even" else "odd"
-                            »' onclick='document.location.href="Providedlayout.html?algorithm=«
+                            <tr onclick='document.location.href="Providedlayout.html?algorithm=«
                                 algorithm.id
                             »";'><td>«algorithm.name»</td>
                                 «features.map(feature | {
-                                    '''
-                                    <td><img height="20" src="«if (algorithmData.supportsFeature(feature))
-                                            IMAGE_CHECK else IMAGE_CROSS»" /></td>
-                                    '''
+                                    if (algorithmData.supportsFeature(feature)) {
+                                        '''<td><img height="20" src="«IMAGE_CHECK»"
+                                        «if (!Strings.isNullOrEmpty(algorithmData.getSupportedFeatureDescription(feature))) {
+                                            '''data-toggle="tooltip" title="«algorithmData.getSupportedFeatureDescription(feature)»"'''
+                                        } else {
+                                            ''''''
+                                        }»
+                                        /></td>'''
+                                    } else {
+                                        '''
+                                        <td><div class="imgPlaceholder"></div>
+                                        '''
+                                    }
                                 }).join»
                             </tr>'''
                         }).join»
                     </tbody>
                 </table>
             </div>
-        </p>
+        </div>
         </div>'''
     }
 
