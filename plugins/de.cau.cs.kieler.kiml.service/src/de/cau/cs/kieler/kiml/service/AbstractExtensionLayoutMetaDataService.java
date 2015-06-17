@@ -23,6 +23,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.osgi.framework.Bundle;
 
+import com.google.common.base.Strings;
+
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IFactory;
 import de.cau.cs.kieler.core.util.Pair;
@@ -336,7 +338,7 @@ abstract class AbstractExtensionLayoutMetaDataService extends LayoutMetaDataServ
             for (IConfigurationElement child : element.getChildren()) {
                 if (ELEMENT_KNOWN_OPTION.equals(child.getName())) {
                     String option = child.getAttribute(ATTRIBUTE_OPTION);
-                    if (option != null && option.length() > 0) {
+                    if (!Strings.isNullOrEmpty(option)) {
                         String defaultValue = child.getAttribute(ATTRIBUTE_DEFAULT);
                         knownOptions.add(new String[] { layouterId, option, defaultValue });
                     } else {
@@ -344,11 +346,11 @@ abstract class AbstractExtensionLayoutMetaDataService extends LayoutMetaDataServ
                     }
                 } else if (ELEMENT_SUPPORTED_DIAGRAM.equals(child.getName())) {
                     String type = child.getAttribute(ATTRIBUTE_TYPE);
-                    if (type == null || type.length() == 0) {
+                    if (Strings.isNullOrEmpty(type)) {
                         reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_TYPE, null);
                     } else {
                         String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
-                        if (priority == null || priority.length() == 0) {
+                        if (Strings.isNullOrEmpty(priority)) {
                             algoData.setDiagramSupport(type, 0);
                         }
                         try {
@@ -360,19 +362,19 @@ abstract class AbstractExtensionLayoutMetaDataService extends LayoutMetaDataServ
                     }
                 } else if (ELEMENT_SUPPORTED_FEATURE.equals(child.getName())) {
                     String featureString = child.getAttribute(ATTRIBUTE_FEATURE);
-                    if (featureString == null || featureString.length() == 0) {
+                    if (Strings.isNullOrEmpty(featureString)) {
                         reportError(EXTP_ID_LAYOUT_PROVIDERS, child, ATTRIBUTE_FEATURE, null);
                     } else {
                         String priority = child.getAttribute(ATTRIBUTE_PRIORITY);
                         String description = child.getAttribute(ATTRIBUTE_DESCRIPTION);
                         try {
                             GraphFeature feature = GraphFeature.valueOf(featureString.toUpperCase());
-                            if (priority == null || priority.length() == 0) {
+                            if (Strings.isNullOrEmpty(priority)) {
                                 algoData.setFeatureSupport(feature, 0);
                             } else {
                                 algoData.setFeatureSupport(feature, Integer.parseInt(priority));
                             }
-                            if (description != null && !"".equals(description)) {
+                            if (!Strings.isNullOrEmpty(description)) {
                                 algoData.setSupportedFeatureDescription(feature, description);
                             }
                         } catch (IllegalArgumentException exception) {
@@ -398,7 +400,7 @@ abstract class AbstractExtensionLayoutMetaDataService extends LayoutMetaDataServ
         LayoutOptionData optionData = new LayoutOptionData();
         // get option identifier
         String optionId = element.getAttribute(ATTRIBUTE_ID);
-        if (optionId == null || optionId.length() == 0) {
+        if (Strings.isNullOrEmpty(optionId)) {
             reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_ID, null);
             return;
         }
@@ -445,7 +447,7 @@ abstract class AbstractExtensionLayoutMetaDataService extends LayoutMetaDataServ
         for (IConfigurationElement childElement : element.getChildren()) {
             if (ELEMENT_DEPENDENCY.equals(childElement.getName())) {
                 String depId = childElement.getAttribute(ATTRIBUTE_OPTION);
-                if (depId == null || depId.length() == 0) {
+                if (Strings.isNullOrEmpty(depId)) {
                     reportError(EXTP_ID_LAYOUT_PROVIDERS, childElement, ATTRIBUTE_OPTION, null);
                 } else {
                     dependencies.add(new String[] { optionId, depId,
