@@ -12,7 +12,7 @@ package de.cau.cs.kieler.uml.sequence.text.sequence;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getLifeline <em>Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getTransitionType <em>Transition Type</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageType <em>Message Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getCaption <em>Caption</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartBlock <em>Start Block</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndBlock <em>End Block</em>}</li>
@@ -54,33 +54,33 @@ public interface OneLifelineMessage extends Interaction
   void setLifeline(Lifeline value);
 
   /**
-   * Returns the value of the '<em><b>Transition Type</b></em>' attribute.
-   * The literals are from the enumeration {@link de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType}.
+   * Returns the value of the '<em><b>Message Type</b></em>' attribute.
+   * The literals are from the enumeration {@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageType}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Transition Type</em>' attribute isn't clear,
+   * If the meaning of the '<em>Message Type</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Transition Type</em>' attribute.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType
-   * @see #setTransitionType(TransitionType)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_TransitionType()
+   * @return the value of the '<em>Message Type</em>' attribute.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
+   * @see #setMessageType(MessageType)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_MessageType()
    * @model
    * @generated
    */
-  TransitionType getTransitionType();
+  MessageType getMessageType();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getTransitionType <em>Transition Type</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageType <em>Message Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Transition Type</em>' attribute.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType
-   * @see #getTransitionType()
+   * @param value the new value of the '<em>Message Type</em>' attribute.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
+   * @see #getMessageType()
    * @generated
    */
-  void setTransitionType(TransitionType value);
+  void setMessageType(MessageType value);
 
   /**
    * Returns the value of the '<em><b>Caption</b></em>' attribute.

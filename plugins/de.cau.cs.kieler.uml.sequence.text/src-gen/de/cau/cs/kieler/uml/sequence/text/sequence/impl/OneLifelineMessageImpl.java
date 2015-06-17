@@ -3,9 +3,9 @@
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
+import de.cau.cs.kieler.uml.sequence.text.sequence.MessageType;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
-import de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getLifeline <em>Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getTransitionType <em>Transition Type</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getMessageType <em>Message Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getCaption <em>Caption</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#isStartBlock <em>Start Block</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#isEndBlock <em>End Block</em>}</li>
@@ -46,24 +46,24 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
   protected Lifeline lifeline;
 
   /**
-   * The default value of the '{@link #getTransitionType() <em>Transition Type</em>}' attribute.
+   * The default value of the '{@link #getMessageType() <em>Message Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getTransitionType()
+   * @see #getMessageType()
    * @generated
    * @ordered
    */
-  protected static final TransitionType TRANSITION_TYPE_EDEFAULT = TransitionType.ASYNC;
+  protected static final MessageType MESSAGE_TYPE_EDEFAULT = MessageType.ASYNC;
 
   /**
-   * The cached value of the '{@link #getTransitionType() <em>Transition Type</em>}' attribute.
+   * The cached value of the '{@link #getMessageType() <em>Message Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getTransitionType()
+   * @see #getMessageType()
    * @generated
    * @ordered
    */
-  protected TransitionType transitionType = TRANSITION_TYPE_EDEFAULT;
+  protected MessageType messageType = MESSAGE_TYPE_EDEFAULT;
 
   /**
    * The default value of the '{@link #getCaption() <em>Caption</em>}' attribute.
@@ -234,9 +234,9 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public TransitionType getTransitionType()
+  public MessageType getMessageType()
   {
-    return transitionType;
+    return messageType;
   }
 
   /**
@@ -244,12 +244,12 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setTransitionType(TransitionType newTransitionType)
+  public void setMessageType(MessageType newMessageType)
   {
-    TransitionType oldTransitionType = transitionType;
-    transitionType = newTransitionType == null ? TRANSITION_TYPE_EDEFAULT : newTransitionType;
+    MessageType oldMessageType = messageType;
+    messageType = newMessageType == null ? MESSAGE_TYPE_EDEFAULT : newMessageType;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__TRANSITION_TYPE, oldTransitionType, transitionType));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE, oldMessageType, messageType));
   }
 
   /**
@@ -380,8 +380,8 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
       case SequencePackage.ONE_LIFELINE_MESSAGE__LIFELINE:
         if (resolve) return getLifeline();
         return basicGetLifeline();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__TRANSITION_TYPE:
-        return getTransitionType();
+      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
+        return getMessageType();
       case SequencePackage.ONE_LIFELINE_MESSAGE__CAPTION:
         return getCaption();
       case SequencePackage.ONE_LIFELINE_MESSAGE__START_BLOCK:
@@ -409,8 +409,8 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
       case SequencePackage.ONE_LIFELINE_MESSAGE__LIFELINE:
         setLifeline((Lifeline)newValue);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__TRANSITION_TYPE:
-        setTransitionType((TransitionType)newValue);
+      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
+        setMessageType((MessageType)newValue);
         return;
       case SequencePackage.ONE_LIFELINE_MESSAGE__CAPTION:
         setCaption((String)newValue);
@@ -444,8 +444,8 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
       case SequencePackage.ONE_LIFELINE_MESSAGE__LIFELINE:
         setLifeline((Lifeline)null);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__TRANSITION_TYPE:
-        setTransitionType(TRANSITION_TYPE_EDEFAULT);
+      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
+        setMessageType(MESSAGE_TYPE_EDEFAULT);
         return;
       case SequencePackage.ONE_LIFELINE_MESSAGE__CAPTION:
         setCaption(CAPTION_EDEFAULT);
@@ -478,8 +478,8 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     {
       case SequencePackage.ONE_LIFELINE_MESSAGE__LIFELINE:
         return lifeline != null;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__TRANSITION_TYPE:
-        return transitionType != TRANSITION_TYPE_EDEFAULT;
+      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
+        return messageType != MESSAGE_TYPE_EDEFAULT;
       case SequencePackage.ONE_LIFELINE_MESSAGE__CAPTION:
         return CAPTION_EDEFAULT == null ? caption != null : !CAPTION_EDEFAULT.equals(caption);
       case SequencePackage.ONE_LIFELINE_MESSAGE__START_BLOCK:
@@ -505,8 +505,8 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (transitionType: ");
-    result.append(transitionType);
+    result.append(" (messageType: ");
+    result.append(messageType);
     result.append(", caption: ");
     result.append(caption);
     result.append(", startBlock: ");

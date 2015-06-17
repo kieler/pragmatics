@@ -12,7 +12,6 @@ package de.cau.cs.kieler.uml.sequence.text.sequence;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.Destroy#getLifeline <em>Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.Destroy#isDestroy <em>Destroy</em>}</li>
  * </ul>
  * </p>
  *
@@ -47,31 +46,5 @@ public interface Destroy extends Interaction
    * @generated
    */
   void setLifeline(Lifeline value);
-
-  /**
-   * Returns the value of the '<em><b>Destroy</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Destroy</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Destroy</em>' attribute.
-   * @see #setDestroy(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getDestroy_Destroy()
-   * @model
-   * @generated
-   */
-  boolean isDestroy();
-
-  /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Destroy#isDestroy <em>Destroy</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Destroy</em>' attribute.
-   * @see #isDestroy()
-   * @generated
-   */
-  void setDestroy(boolean value);
 
 } // Destroy

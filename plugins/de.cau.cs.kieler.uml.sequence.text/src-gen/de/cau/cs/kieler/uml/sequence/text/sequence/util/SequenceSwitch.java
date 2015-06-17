@@ -148,10 +148,10 @@ public class SequenceSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case SequencePackage.FRAGMENT_CONTENT:
+      case SequencePackage.SECTION:
       {
-        FragmentContent fragmentContent = (FragmentContent)theEObject;
-        T result = caseFragmentContent(fragmentContent);
+        Section section = (Section)theEObject;
+        T result = caseSection(section);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -328,17 +328,17 @@ public class SequenceSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Fragment Content</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Section</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Fragment Content</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Section</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseFragmentContent(FragmentContent object)
+  public T caseSection(Section object)
   {
     return null;
   }

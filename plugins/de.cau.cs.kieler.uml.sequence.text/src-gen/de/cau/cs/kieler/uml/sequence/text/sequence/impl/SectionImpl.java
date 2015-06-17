@@ -2,8 +2,8 @@
  */
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
-import de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Interaction;
+import de.cau.cs.kieler.uml.sequence.text.sequence.Section;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
 
 import java.util.Collection;
@@ -24,19 +24,19 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Fragment Content</b></em>'.
+ * An implementation of the model object '<em><b>Section</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentContentImpl#getLabel <em>Label</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentContentImpl#getInteractions <em>Interactions</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SectionImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SectionImpl#getInteractions <em>Interactions</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class FragmentContentImpl extends MinimalEObjectImpl.Container implements FragmentContent
+public class SectionImpl extends MinimalEObjectImpl.Container implements Section
 {
   /**
    * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
@@ -73,7 +73,7 @@ public class FragmentContentImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
-  protected FragmentContentImpl()
+  protected SectionImpl()
   {
     super();
   }
@@ -86,7 +86,7 @@ public class FragmentContentImpl extends MinimalEObjectImpl.Container implements
   @Override
   protected EClass eStaticClass()
   {
-    return SequencePackage.Literals.FRAGMENT_CONTENT;
+    return SequencePackage.Literals.SECTION;
   }
 
   /**
@@ -109,7 +109,7 @@ public class FragmentContentImpl extends MinimalEObjectImpl.Container implements
     String oldLabel = label;
     label = newLabel;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.FRAGMENT_CONTENT__LABEL, oldLabel, label));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.SECTION__LABEL, oldLabel, label));
   }
 
   /**
@@ -121,7 +121,7 @@ public class FragmentContentImpl extends MinimalEObjectImpl.Container implements
   {
     if (interactions == null)
     {
-      interactions = new EObjectContainmentEList<Interaction>(Interaction.class, this, SequencePackage.FRAGMENT_CONTENT__INTERACTIONS);
+      interactions = new EObjectContainmentEList<Interaction>(Interaction.class, this, SequencePackage.SECTION__INTERACTIONS);
     }
     return interactions;
   }
@@ -136,7 +136,7 @@ public class FragmentContentImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case SequencePackage.FRAGMENT_CONTENT__INTERACTIONS:
+      case SequencePackage.SECTION__INTERACTIONS:
         return ((InternalEList<?>)getInteractions()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
@@ -152,9 +152,9 @@ public class FragmentContentImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case SequencePackage.FRAGMENT_CONTENT__LABEL:
+      case SequencePackage.SECTION__LABEL:
         return getLabel();
-      case SequencePackage.FRAGMENT_CONTENT__INTERACTIONS:
+      case SequencePackage.SECTION__INTERACTIONS:
         return getInteractions();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -171,10 +171,10 @@ public class FragmentContentImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case SequencePackage.FRAGMENT_CONTENT__LABEL:
+      case SequencePackage.SECTION__LABEL:
         setLabel((String)newValue);
         return;
-      case SequencePackage.FRAGMENT_CONTENT__INTERACTIONS:
+      case SequencePackage.SECTION__INTERACTIONS:
         getInteractions().clear();
         getInteractions().addAll((Collection<? extends Interaction>)newValue);
         return;
@@ -192,10 +192,10 @@ public class FragmentContentImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case SequencePackage.FRAGMENT_CONTENT__LABEL:
+      case SequencePackage.SECTION__LABEL:
         setLabel(LABEL_EDEFAULT);
         return;
-      case SequencePackage.FRAGMENT_CONTENT__INTERACTIONS:
+      case SequencePackage.SECTION__INTERACTIONS:
         getInteractions().clear();
         return;
     }
@@ -212,9 +212,9 @@ public class FragmentContentImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case SequencePackage.FRAGMENT_CONTENT__LABEL:
+      case SequencePackage.SECTION__LABEL:
         return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
-      case SequencePackage.FRAGMENT_CONTENT__INTERACTIONS:
+      case SequencePackage.SECTION__INTERACTIONS:
         return interactions != null && !interactions.isEmpty();
     }
     return super.eIsSet(featureID);
@@ -237,4 +237,4 @@ public class FragmentContentImpl extends MinimalEObjectImpl.Container implements
     return result.toString();
   }
 
-} //FragmentContentImpl
+} //SectionImpl

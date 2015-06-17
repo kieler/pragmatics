@@ -25,8 +25,8 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.RefinementImpl#getLifelines <em>Lifelines</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.RefinementImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.RefinementImpl#getLifelines <em>Lifelines</em>}</li>
  * </ul>
  * </p>
  *
@@ -34,16 +34,6 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  */
 public class RefinementImpl extends InteractionImpl implements Refinement
 {
-  /**
-   * The cached value of the '{@link #getLifelines() <em>Lifelines</em>}' reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getLifelines()
-   * @generated
-   * @ordered
-   */
-  protected EList<Lifeline> lifelines;
-
   /**
    * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -65,6 +55,16 @@ public class RefinementImpl extends InteractionImpl implements Refinement
   protected String label = LABEL_EDEFAULT;
 
   /**
+   * The cached value of the '{@link #getLifelines() <em>Lifelines</em>}' reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLifelines()
+   * @generated
+   * @ordered
+   */
+  protected EList<Lifeline> lifelines;
+
+  /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -83,20 +83,6 @@ public class RefinementImpl extends InteractionImpl implements Refinement
   protected EClass eStaticClass()
   {
     return SequencePackage.Literals.REFINEMENT;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EList<Lifeline> getLifelines()
-  {
-    if (lifelines == null)
-    {
-      lifelines = new EObjectResolvingEList<Lifeline>(Lifeline.class, this, SequencePackage.REFINEMENT__LIFELINES);
-    }
-    return lifelines;
   }
 
   /**
@@ -127,15 +113,29 @@ public class RefinementImpl extends InteractionImpl implements Refinement
    * <!-- end-user-doc -->
    * @generated
    */
+  public EList<Lifeline> getLifelines()
+  {
+    if (lifelines == null)
+    {
+      lifelines = new EObjectResolvingEList<Lifeline>(Lifeline.class, this, SequencePackage.REFINEMENT__LIFELINES);
+    }
+    return lifelines;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
     switch (featureID)
     {
-      case SequencePackage.REFINEMENT__LIFELINES:
-        return getLifelines();
       case SequencePackage.REFINEMENT__LABEL:
         return getLabel();
+      case SequencePackage.REFINEMENT__LIFELINES:
+        return getLifelines();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -151,12 +151,12 @@ public class RefinementImpl extends InteractionImpl implements Refinement
   {
     switch (featureID)
     {
+      case SequencePackage.REFINEMENT__LABEL:
+        setLabel((String)newValue);
+        return;
       case SequencePackage.REFINEMENT__LIFELINES:
         getLifelines().clear();
         getLifelines().addAll((Collection<? extends Lifeline>)newValue);
-        return;
-      case SequencePackage.REFINEMENT__LABEL:
-        setLabel((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -172,11 +172,11 @@ public class RefinementImpl extends InteractionImpl implements Refinement
   {
     switch (featureID)
     {
-      case SequencePackage.REFINEMENT__LIFELINES:
-        getLifelines().clear();
-        return;
       case SequencePackage.REFINEMENT__LABEL:
         setLabel(LABEL_EDEFAULT);
+        return;
+      case SequencePackage.REFINEMENT__LIFELINES:
+        getLifelines().clear();
         return;
     }
     super.eUnset(featureID);
@@ -192,10 +192,10 @@ public class RefinementImpl extends InteractionImpl implements Refinement
   {
     switch (featureID)
     {
-      case SequencePackage.REFINEMENT__LIFELINES:
-        return lifelines != null && !lifelines.isEmpty();
       case SequencePackage.REFINEMENT__LABEL:
         return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+      case SequencePackage.REFINEMENT__LIFELINES:
+        return lifelines != null && !lifelines.isEmpty();
     }
     return super.eIsSet(featureID);
   }

@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.EList;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.Fragment#getName <em>Name</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.Fragment#getFragmentContents <em>Fragment Contents</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.Fragment#getSections <em>Sections</em>}</li>
  * </ul>
  * </p>
  *
@@ -50,19 +50,19 @@ public interface Fragment extends Interaction
   void setName(String value);
 
   /**
-   * Returns the value of the '<em><b>Fragment Contents</b></em>' containment reference list.
-   * The list contents are of type {@link de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent}.
+   * Returns the value of the '<em><b>Sections</b></em>' containment reference list.
+   * The list contents are of type {@link de.cau.cs.kieler.uml.sequence.text.sequence.Section}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Fragment Contents</em>' containment reference list isn't clear,
+   * If the meaning of the '<em>Sections</em>' containment reference list isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Fragment Contents</em>' containment reference list.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getFragment_FragmentContents()
+   * @return the value of the '<em>Sections</em>' containment reference list.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getFragment_Sections()
    * @model containment="true"
    * @generated
    */
-  EList<FragmentContent> getFragmentContents();
+  EList<Section> getSections();
 
 } // Fragment

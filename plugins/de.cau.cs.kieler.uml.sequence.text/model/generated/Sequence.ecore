@@ -3,7 +3,7 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sequence" nsURI="http://www.cau.de/cs/kieler/uml/sequence/text/Sequence"
     nsPrefix="sequence">
   <eClassifiers xsi:type="ecore:EClass" name="SequenceDiagram">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="DiagramName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="diagramName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="locals" upperBound="-1"
         eType="#//LocalVariable" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="lifelines" upperBound="-1"
@@ -12,6 +12,7 @@
         eType="#//Interaction" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LocalVariable">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//DataType"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Lifeline">
@@ -21,21 +22,21 @@
   <eClassifiers xsi:type="ecore:EClass" name="Interaction"/>
   <eClassifiers xsi:type="ecore:EClass" name="TwoLifelineMessage" eSuperTypes="#//Interaction">
     <eStructuralFeatures xsi:type="ecore:EReference" name="sourceLifeline" eType="#//Lifeline"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="transitionType" eType="#//TransitionType"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="caption" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageType" eType="#//MessageType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="targetLifeline" eType="#//Lifeline"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startBlockLeft" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endBlockLeft" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endBlockLeftCount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startBlockRight" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endBlockRight" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endBlockRightCount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceStartBlock" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceEndBlock" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceEndBlockCount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetStartBlock" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetEndBlock" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetEndBlockCount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceNote" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetNote" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OneLifelineMessage" eSuperTypes="#//Interaction">
     <eStructuralFeatures xsi:type="ecore:EReference" name="Lifeline" eType="#//Lifeline"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="transitionType" eType="#//TransitionType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageType" eType="#//MessageType"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="caption" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="startBlock" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="endBlock" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
@@ -44,7 +45,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OneLifelineEndBlock" eSuperTypes="#//Interaction">
     <eStructuralFeatures xsi:type="ecore:EReference" name="Lifeline" eType="#//Lifeline"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endBlock" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="endBlockCount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OneLifelineNote" eSuperTypes="#//Interaction">
@@ -53,27 +53,32 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Destroy" eSuperTypes="#//Interaction">
     <eStructuralFeatures xsi:type="ecore:EReference" name="Lifeline" eType="#//Lifeline"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="destroy" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Fragment" eSuperTypes="#//Interaction">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="fragmentContents" upperBound="-1"
-        eType="#//FragmentContent" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sections" upperBound="-1"
+        eType="#//Section" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="FragmentContent">
+  <eClassifiers xsi:type="ecore:EClass" name="Section">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="interactions" upperBound="-1"
         eType="#//Interaction" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Refinement" eSuperTypes="#//Interaction">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="lifelines" unique="false"
         upperBound="-1" eType="#//Lifeline"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="TransitionType">
+  <eClassifiers xsi:type="ecore:EEnum" name="MessageType">
     <eLiterals name="async" literal="async"/>
     <eLiterals name="create" value="1" literal="create"/>
     <eLiterals name="response" value="2" literal="response"/>
     <eLiterals name="sync" value="3" literal="sync"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="DataType">
+    <eLiterals name="char" literal="Char"/>
+    <eLiterals name="boolean" value="1" literal="Boolean"/>
+    <eLiterals name="integer" value="2" literal="Integer"/>
+    <eLiterals name="float" value="3" literal="Float"/>
   </eClassifiers>
 </ecore:EPackage>

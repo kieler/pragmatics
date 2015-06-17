@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyImpl#getLifeline <em>Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyImpl#isDestroy <em>Destroy</em>}</li>
  * </ul>
  * </p>
  *
@@ -38,26 +37,6 @@ public class DestroyImpl extends InteractionImpl implements Destroy
    * @ordered
    */
   protected Lifeline lifeline;
-
-  /**
-   * The default value of the '{@link #isDestroy() <em>Destroy</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isDestroy()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean DESTROY_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isDestroy() <em>Destroy</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isDestroy()
-   * @generated
-   * @ordered
-   */
-  protected boolean destroy = DESTROY_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -128,29 +107,6 @@ public class DestroyImpl extends InteractionImpl implements Destroy
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isDestroy()
-  {
-    return destroy;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setDestroy(boolean newDestroy)
-  {
-    boolean oldDestroy = destroy;
-    destroy = newDestroy;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.DESTROY__DESTROY, oldDestroy, destroy));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
@@ -159,8 +115,6 @@ public class DestroyImpl extends InteractionImpl implements Destroy
       case SequencePackage.DESTROY__LIFELINE:
         if (resolve) return getLifeline();
         return basicGetLifeline();
-      case SequencePackage.DESTROY__DESTROY:
-        return isDestroy();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -177,9 +131,6 @@ public class DestroyImpl extends InteractionImpl implements Destroy
     {
       case SequencePackage.DESTROY__LIFELINE:
         setLifeline((Lifeline)newValue);
-        return;
-      case SequencePackage.DESTROY__DESTROY:
-        setDestroy((Boolean)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -198,9 +149,6 @@ public class DestroyImpl extends InteractionImpl implements Destroy
       case SequencePackage.DESTROY__LIFELINE:
         setLifeline((Lifeline)null);
         return;
-      case SequencePackage.DESTROY__DESTROY:
-        setDestroy(DESTROY_EDEFAULT);
-        return;
     }
     super.eUnset(featureID);
   }
@@ -217,27 +165,8 @@ public class DestroyImpl extends InteractionImpl implements Destroy
     {
       case SequencePackage.DESTROY__LIFELINE:
         return lifeline != null;
-      case SequencePackage.DESTROY__DESTROY:
-        return destroy != DESTROY_EDEFAULT;
     }
     return super.eIsSet(featureID);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String toString()
-  {
-    if (eIsProxy()) return super.toString();
-
-    StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (destroy: ");
-    result.append(destroy);
-    result.append(')');
-    return result.toString();
   }
 
 } //DestroyImpl

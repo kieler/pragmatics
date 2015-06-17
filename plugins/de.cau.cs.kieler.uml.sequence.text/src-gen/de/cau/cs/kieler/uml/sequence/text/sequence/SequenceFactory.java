@@ -113,13 +113,13 @@ public interface SequenceFactory extends EFactory
   Fragment createFragment();
 
   /**
-   * Returns a new object of class '<em>Fragment Content</em>'.
+   * Returns a new object of class '<em>Section</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Fragment Content</em>'.
+   * @return a new object of class '<em>Section</em>'.
    * @generated
    */
-  FragmentContent createFragmentContent();
+  Section createSection();
 
   /**
    * Returns a new object of class '<em>Refinement</em>'.

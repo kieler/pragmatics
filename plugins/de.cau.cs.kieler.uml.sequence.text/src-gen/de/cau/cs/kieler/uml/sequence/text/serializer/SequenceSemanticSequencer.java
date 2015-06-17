@@ -4,13 +4,13 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Destroy;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment;
-import de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
 import de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement;
+import de.cau.cs.kieler.uml.sequence.text.sequence.Section;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage;
@@ -36,9 +36,9 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	public void createSequence(EObject context, EObject semanticObject) {
 		if(semanticObject.eClass().getEPackage() == SequencePackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
 			case SequencePackage.DESTROY:
-				if(context == grammarAccess.getDestroyRule() ||
+				if(context == grammarAccess.getDestroyLifelineEventRule() ||
 				   context == grammarAccess.getInteractionRule()) {
-					sequence_Destroy(context, (Destroy) semanticObject); 
+					sequence_DestroyLifelineEvent(context, (Destroy) semanticObject); 
 					return; 
 				}
 				else break;
@@ -46,12 +46,6 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				if(context == grammarAccess.getFragmentRule() ||
 				   context == grammarAccess.getInteractionRule()) {
 					sequence_Fragment(context, (Fragment) semanticObject); 
-					return; 
-				}
-				else break;
-			case SequencePackage.FRAGMENT_CONTENT:
-				if(context == grammarAccess.getFragmentContentRule()) {
-					sequence_FragmentContent(context, (FragmentContent) semanticObject); 
 					return; 
 				}
 				else break;
@@ -95,6 +89,12 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 					return; 
 				}
 				else break;
+			case SequencePackage.SECTION:
+				if(context == grammarAccess.getSectionRule()) {
+					sequence_Section(context, (Section) semanticObject); 
+					return; 
+				}
+				else break;
 			case SequencePackage.SEQUENCE_DIAGRAM:
 				if(context == grammarAccess.getSequenceDiagramRule()) {
 					sequence_SequenceDiagram(context, (SequenceDiagram) semanticObject); 
@@ -114,35 +114,23 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (Lifeline=[Lifeline|ID] destroy?='destroy')
+	 *     Lifeline=[Lifeline|ID]
 	 */
-	protected void sequence_Destroy(EObject context, Destroy semanticObject) {
+	protected void sequence_DestroyLifelineEvent(EObject context, Destroy semanticObject) {
 		if(errorAcceptor != null) {
 			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.DESTROY__LIFELINE) == ValueTransient.YES)
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.DESTROY__LIFELINE));
-			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.DESTROY__DESTROY) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.DESTROY__DESTROY));
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getDestroyAccess().getLifelineLifelineIDTerminalRuleCall_0_0_1(), semanticObject.getLifeline());
-		feeder.accept(grammarAccess.getDestroyAccess().getDestroyDestroyKeyword_1_0(), semanticObject.isDestroy());
+		feeder.accept(grammarAccess.getDestroyLifelineEventAccess().getLifelineLifelineIDTerminalRuleCall_0_0_1(), semanticObject.getLifeline());
 		feeder.finish();
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (label=STRING? interactions+=Interaction interactions+=Interaction*)
-	 */
-	protected void sequence_FragmentContent(EObject context, FragmentContent semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (name=STRING fragmentContents+=FragmentContent fragmentContents+=FragmentContent*)
+	 *     (name=STRING sections+=Section sections+=Section*)
 	 */
 	protected void sequence_Fragment(EObject context, Fragment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -170,16 +158,26 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (name=ID | name=ID | name=ID | name=ID)
+	 *     (type=DataType name=ID)
 	 */
 	protected void sequence_LocalVariable(EObject context, LocalVariable semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.LOCAL_VARIABLE__TYPE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.LOCAL_VARIABLE__TYPE));
+			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.LOCAL_VARIABLE__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.LOCAL_VARIABLE__NAME));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getLocalVariableAccess().getTypeDataTypeEnumRuleCall_0_0(), semanticObject.getType());
+		feeder.accept(grammarAccess.getLocalVariableAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
+		feeder.finish();
 	}
 	
 	
 	/**
 	 * Constraint:
-	 *     (Lifeline=[Lifeline|ID] endBlock?='endBlock' endBlockCount=INT_GREATER_ZERO?)
+	 *     (Lifeline=[Lifeline|ID] endBlockCount=INT_GREATER_ZERO?)
 	 */
 	protected void sequence_OneLifelineEndBlock(EObject context, OneLifelineEndBlock semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -190,7 +188,7 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 * Constraint:
 	 *     (
 	 *         Lifeline=[Lifeline|ID] 
-	 *         transitionType=TransitionType 
+	 *         messageType=MessageType 
 	 *         caption=STRING 
 	 *         (startBlock?='startBlock' | (endBlock?='endBlock' endBlockCount=INT_GREATER_ZERO?))? 
 	 *         note=STRING?
@@ -222,7 +220,7 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (lifelines+=[Lifeline|ID] lifelines+=[Lifeline|ID]* label=STRING)
+	 *     (label=STRING lifelines+=[Lifeline|ID] lifelines+=[Lifeline|ID]*)
 	 */
 	protected void sequence_Refinement(EObject context, Refinement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -231,7 +229,16 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (DiagramName=STRING locals+=LocalVariable* lifelines+=Lifeline* interactions+=Interaction*)
+	 *     (label=STRING? interactions+=Interaction interactions+=Interaction*)
+	 */
+	protected void sequence_Section(EObject context, Section semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (diagramName=STRING (locals+=LocalVariable locals+=LocalVariable*)? lifelines+=Lifeline* interactions+=Interaction*)
 	 */
 	protected void sequence_SequenceDiagram(EObject context, SequenceDiagram semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -242,11 +249,11 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 * Constraint:
 	 *     (
 	 *         sourceLifeline=[Lifeline|ID] 
-	 *         transitionType=TransitionType 
-	 *         caption=STRING 
+	 *         messageType=MessageType 
+	 *         message=STRING 
 	 *         targetLifeline=[Lifeline|ID] 
-	 *         (startBlockLeft?='sourceStartBlock' | (endBlockLeft?='sourceEndBlock' endBlockLeftCount=INT_GREATER_ZERO?))? 
-	 *         (startBlockRight?='targetStartBlock' | (endBlockRight?='targetEndBlock' endBlockRightCount=INT_GREATER_ZERO?))? 
+	 *         (sourceStartBlock?='sourceStartBlock' | (sourceEndBlock?='sourceEndBlock' sourceEndBlockCount=INT_GREATER_ZERO?))? 
+	 *         (targetStartBlock?='targetStartBlock' | (targetEndBlock?='targetEndBlock' targetEndBlockCount=INT_GREATER_ZERO?))? 
 	 *         sourceNote=STRING? 
 	 *         targetNote=STRING?
 	 *     )

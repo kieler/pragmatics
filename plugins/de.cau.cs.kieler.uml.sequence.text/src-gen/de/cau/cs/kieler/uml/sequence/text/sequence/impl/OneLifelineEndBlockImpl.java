@@ -21,7 +21,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineEndBlockImpl#getLifeline <em>Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineEndBlockImpl#isEndBlock <em>End Block</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineEndBlockImpl#getEndBlockCount <em>End Block Count</em>}</li>
  * </ul>
  * </p>
@@ -39,26 +38,6 @@ public class OneLifelineEndBlockImpl extends InteractionImpl implements OneLifel
    * @ordered
    */
   protected Lifeline lifeline;
-
-  /**
-   * The default value of the '{@link #isEndBlock() <em>End Block</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isEndBlock()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean END_BLOCK_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isEndBlock() <em>End Block</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isEndBlock()
-   * @generated
-   * @ordered
-   */
-  protected boolean endBlock = END_BLOCK_EDEFAULT;
 
   /**
    * The default value of the '{@link #getEndBlockCount() <em>End Block Count</em>}' attribute.
@@ -149,29 +128,6 @@ public class OneLifelineEndBlockImpl extends InteractionImpl implements OneLifel
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isEndBlock()
-  {
-    return endBlock;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setEndBlock(boolean newEndBlock)
-  {
-    boolean oldEndBlock = endBlock;
-    endBlock = newEndBlock;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_END_BLOCK__END_BLOCK, oldEndBlock, endBlock));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public int getEndBlockCount()
   {
     return endBlockCount;
@@ -203,8 +159,6 @@ public class OneLifelineEndBlockImpl extends InteractionImpl implements OneLifel
       case SequencePackage.ONE_LIFELINE_END_BLOCK__LIFELINE:
         if (resolve) return getLifeline();
         return basicGetLifeline();
-      case SequencePackage.ONE_LIFELINE_END_BLOCK__END_BLOCK:
-        return isEndBlock();
       case SequencePackage.ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT:
         return getEndBlockCount();
     }
@@ -223,9 +177,6 @@ public class OneLifelineEndBlockImpl extends InteractionImpl implements OneLifel
     {
       case SequencePackage.ONE_LIFELINE_END_BLOCK__LIFELINE:
         setLifeline((Lifeline)newValue);
-        return;
-      case SequencePackage.ONE_LIFELINE_END_BLOCK__END_BLOCK:
-        setEndBlock((Boolean)newValue);
         return;
       case SequencePackage.ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT:
         setEndBlockCount((Integer)newValue);
@@ -247,9 +198,6 @@ public class OneLifelineEndBlockImpl extends InteractionImpl implements OneLifel
       case SequencePackage.ONE_LIFELINE_END_BLOCK__LIFELINE:
         setLifeline((Lifeline)null);
         return;
-      case SequencePackage.ONE_LIFELINE_END_BLOCK__END_BLOCK:
-        setEndBlock(END_BLOCK_EDEFAULT);
-        return;
       case SequencePackage.ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT:
         setEndBlockCount(END_BLOCK_COUNT_EDEFAULT);
         return;
@@ -269,8 +217,6 @@ public class OneLifelineEndBlockImpl extends InteractionImpl implements OneLifel
     {
       case SequencePackage.ONE_LIFELINE_END_BLOCK__LIFELINE:
         return lifeline != null;
-      case SequencePackage.ONE_LIFELINE_END_BLOCK__END_BLOCK:
-        return endBlock != END_BLOCK_EDEFAULT;
       case SequencePackage.ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT:
         return endBlockCount != END_BLOCK_COUNT_EDEFAULT;
     }
@@ -288,9 +234,7 @@ public class OneLifelineEndBlockImpl extends InteractionImpl implements OneLifel
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (endBlock: ");
-    result.append(endBlock);
-    result.append(", endBlockCount: ");
+    result.append(" (endBlockCount: ");
     result.append(endBlockCount);
     result.append(')');
     return result.toString();

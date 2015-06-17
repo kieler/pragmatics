@@ -309,7 +309,7 @@ public class SequenceDiagramImpl extends MinimalEObjectImpl.Container implements
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (DiagramName: ");
+    result.append(" (diagramName: ");
     result.append(diagramName);
     result.append(')');
     return result.toString();

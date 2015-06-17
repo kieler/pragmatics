@@ -2,20 +2,21 @@
  */
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
+import de.cau.cs.kieler.uml.sequence.text.sequence.DataType;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Destroy;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment;
-import de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Interaction;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
 import de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable;
+import de.cau.cs.kieler.uml.sequence.text.sequence.MessageType;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement;
+import de.cau.cs.kieler.uml.sequence.text.sequence.Section;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceFactory;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
-import de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType;
 import de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -109,7 +110,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass fragmentContentEClass = null;
+  private EClass sectionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -123,7 +124,14 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EEnum transitionTypeEEnum = null;
+  private EEnum messageTypeEEnum = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EEnum dataTypeEEnum = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -253,9 +261,19 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getLocalVariable_Name()
+  public EAttribute getLocalVariable_Type()
   {
     return (EAttribute)localVariableEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getLocalVariable_Name()
+  {
+    return (EAttribute)localVariableEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -323,7 +341,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_TransitionType()
+  public EAttribute getTwoLifelineMessage_MessageType()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(1);
   }
@@ -333,7 +351,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_Caption()
+  public EAttribute getTwoLifelineMessage_Message()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(2);
   }
@@ -353,7 +371,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_StartBlockLeft()
+  public EAttribute getTwoLifelineMessage_SourceStartBlock()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(4);
   }
@@ -363,7 +381,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_EndBlockLeft()
+  public EAttribute getTwoLifelineMessage_SourceEndBlock()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(5);
   }
@@ -373,7 +391,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_EndBlockLeftCount()
+  public EAttribute getTwoLifelineMessage_SourceEndBlockCount()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(6);
   }
@@ -383,7 +401,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_StartBlockRight()
+  public EAttribute getTwoLifelineMessage_TargetStartBlock()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(7);
   }
@@ -393,7 +411,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_EndBlockRight()
+  public EAttribute getTwoLifelineMessage_TargetEndBlock()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(8);
   }
@@ -403,7 +421,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_EndBlockRightCount()
+  public EAttribute getTwoLifelineMessage_TargetEndBlockCount()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(9);
   }
@@ -453,7 +471,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineMessage_TransitionType()
+  public EAttribute getOneLifelineMessage_MessageType()
   {
     return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(1);
   }
@@ -533,19 +551,9 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineEndBlock_EndBlock()
-  {
-    return (EAttribute)oneLifelineEndBlockEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EAttribute getOneLifelineEndBlock_EndBlockCount()
   {
-    return (EAttribute)oneLifelineEndBlockEClass.getEStructuralFeatures().get(2);
+    return (EAttribute)oneLifelineEndBlockEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -603,16 +611,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getDestroy_Destroy()
-  {
-    return (EAttribute)destroyEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getFragment()
   {
     return fragmentEClass;
@@ -633,7 +631,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getFragment_FragmentContents()
+  public EReference getFragment_Sections()
   {
     return (EReference)fragmentEClass.getEStructuralFeatures().get(1);
   }
@@ -643,9 +641,9 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getFragmentContent()
+  public EClass getSection()
   {
-    return fragmentContentEClass;
+    return sectionEClass;
   }
 
   /**
@@ -653,9 +651,9 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getFragmentContent_Label()
+  public EAttribute getSection_Label()
   {
-    return (EAttribute)fragmentContentEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)sectionEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -663,9 +661,9 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getFragmentContent_Interactions()
+  public EReference getSection_Interactions()
   {
-    return (EReference)fragmentContentEClass.getEStructuralFeatures().get(1);
+    return (EReference)sectionEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -683,19 +681,9 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getRefinement_Lifelines()
-  {
-    return (EReference)refinementEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EAttribute getRefinement_Label()
   {
-    return (EAttribute)refinementEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)refinementEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -703,9 +691,29 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EEnum getTransitionType()
+  public EReference getRefinement_Lifelines()
   {
-    return transitionTypeEEnum;
+    return (EReference)refinementEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EEnum getMessageType()
+  {
+    return messageTypeEEnum;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EEnum getDataType()
+  {
+    return dataTypeEEnum;
   }
 
   /**
@@ -745,6 +753,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     createEReference(sequenceDiagramEClass, SEQUENCE_DIAGRAM__INTERACTIONS);
 
     localVariableEClass = createEClass(LOCAL_VARIABLE);
+    createEAttribute(localVariableEClass, LOCAL_VARIABLE__TYPE);
     createEAttribute(localVariableEClass, LOCAL_VARIABLE__NAME);
 
     lifelineEClass = createEClass(LIFELINE);
@@ -755,21 +764,21 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
 
     twoLifelineMessageEClass = createEClass(TWO_LIFELINE_MESSAGE);
     createEReference(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__SOURCE_LIFELINE);
-    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__TRANSITION_TYPE);
-    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__CAPTION);
+    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__MESSAGE_TYPE);
+    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__MESSAGE);
     createEReference(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__TARGET_LIFELINE);
-    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__START_BLOCK_LEFT);
-    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT);
-    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT_COUNT);
-    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__START_BLOCK_RIGHT);
-    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT);
-    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT_COUNT);
+    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK);
+    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK);
+    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT);
+    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK);
+    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK);
+    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT);
     createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__SOURCE_NOTE);
     createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__TARGET_NOTE);
 
     oneLifelineMessageEClass = createEClass(ONE_LIFELINE_MESSAGE);
     createEReference(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__LIFELINE);
-    createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__TRANSITION_TYPE);
+    createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__MESSAGE_TYPE);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__CAPTION);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__START_BLOCK);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__END_BLOCK);
@@ -778,7 +787,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
 
     oneLifelineEndBlockEClass = createEClass(ONE_LIFELINE_END_BLOCK);
     createEReference(oneLifelineEndBlockEClass, ONE_LIFELINE_END_BLOCK__LIFELINE);
-    createEAttribute(oneLifelineEndBlockEClass, ONE_LIFELINE_END_BLOCK__END_BLOCK);
     createEAttribute(oneLifelineEndBlockEClass, ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT);
 
     oneLifelineNoteEClass = createEClass(ONE_LIFELINE_NOTE);
@@ -787,22 +795,22 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
 
     destroyEClass = createEClass(DESTROY);
     createEReference(destroyEClass, DESTROY__LIFELINE);
-    createEAttribute(destroyEClass, DESTROY__DESTROY);
 
     fragmentEClass = createEClass(FRAGMENT);
     createEAttribute(fragmentEClass, FRAGMENT__NAME);
-    createEReference(fragmentEClass, FRAGMENT__FRAGMENT_CONTENTS);
+    createEReference(fragmentEClass, FRAGMENT__SECTIONS);
 
-    fragmentContentEClass = createEClass(FRAGMENT_CONTENT);
-    createEAttribute(fragmentContentEClass, FRAGMENT_CONTENT__LABEL);
-    createEReference(fragmentContentEClass, FRAGMENT_CONTENT__INTERACTIONS);
+    sectionEClass = createEClass(SECTION);
+    createEAttribute(sectionEClass, SECTION__LABEL);
+    createEReference(sectionEClass, SECTION__INTERACTIONS);
 
     refinementEClass = createEClass(REFINEMENT);
-    createEReference(refinementEClass, REFINEMENT__LIFELINES);
     createEAttribute(refinementEClass, REFINEMENT__LABEL);
+    createEReference(refinementEClass, REFINEMENT__LIFELINES);
 
     // Create enums
-    transitionTypeEEnum = createEEnum(TRANSITION_TYPE);
+    messageTypeEEnum = createEEnum(MESSAGE_TYPE);
+    dataTypeEEnum = createEEnum(DATA_TYPE);
   }
 
   /**
@@ -844,12 +852,13 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
 
     // Initialize classes and features; add operations and parameters
     initEClass(sequenceDiagramEClass, SequenceDiagram.class, "SequenceDiagram", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getSequenceDiagram_DiagramName(), ecorePackage.getEString(), "DiagramName", null, 0, 1, SequenceDiagram.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSequenceDiagram_DiagramName(), ecorePackage.getEString(), "diagramName", null, 0, 1, SequenceDiagram.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSequenceDiagram_Locals(), this.getLocalVariable(), null, "locals", null, 0, -1, SequenceDiagram.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSequenceDiagram_Lifelines(), this.getLifeline(), null, "lifelines", null, 0, -1, SequenceDiagram.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSequenceDiagram_Interactions(), this.getInteraction(), null, "interactions", null, 0, -1, SequenceDiagram.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(localVariableEClass, LocalVariable.class, "LocalVariable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getLocalVariable_Type(), this.getDataType(), "type", null, 0, 1, LocalVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLocalVariable_Name(), ecorePackage.getEString(), "name", null, 0, 1, LocalVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(lifelineEClass, Lifeline.class, "Lifeline", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -860,21 +869,21 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
 
     initEClass(twoLifelineMessageEClass, TwoLifelineMessage.class, "TwoLifelineMessage", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getTwoLifelineMessage_SourceLifeline(), this.getLifeline(), null, "sourceLifeline", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTwoLifelineMessage_TransitionType(), this.getTransitionType(), "transitionType", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTwoLifelineMessage_Caption(), ecorePackage.getEString(), "caption", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTwoLifelineMessage_MessageType(), this.getMessageType(), "messageType", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTwoLifelineMessage_Message(), ecorePackage.getEString(), "message", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getTwoLifelineMessage_TargetLifeline(), this.getLifeline(), null, "targetLifeline", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTwoLifelineMessage_StartBlockLeft(), ecorePackage.getEBoolean(), "startBlockLeft", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTwoLifelineMessage_EndBlockLeft(), ecorePackage.getEBoolean(), "endBlockLeft", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTwoLifelineMessage_EndBlockLeftCount(), ecorePackage.getEInt(), "endBlockLeftCount", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTwoLifelineMessage_StartBlockRight(), ecorePackage.getEBoolean(), "startBlockRight", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTwoLifelineMessage_EndBlockRight(), ecorePackage.getEBoolean(), "endBlockRight", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTwoLifelineMessage_EndBlockRightCount(), ecorePackage.getEInt(), "endBlockRightCount", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTwoLifelineMessage_SourceStartBlock(), ecorePackage.getEBoolean(), "sourceStartBlock", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTwoLifelineMessage_SourceEndBlock(), ecorePackage.getEBoolean(), "sourceEndBlock", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTwoLifelineMessage_SourceEndBlockCount(), ecorePackage.getEInt(), "sourceEndBlockCount", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTwoLifelineMessage_TargetStartBlock(), ecorePackage.getEBoolean(), "targetStartBlock", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTwoLifelineMessage_TargetEndBlock(), ecorePackage.getEBoolean(), "targetEndBlock", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTwoLifelineMessage_TargetEndBlockCount(), ecorePackage.getEInt(), "targetEndBlockCount", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTwoLifelineMessage_SourceNote(), ecorePackage.getEString(), "sourceNote", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTwoLifelineMessage_TargetNote(), ecorePackage.getEString(), "targetNote", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(oneLifelineMessageEClass, OneLifelineMessage.class, "OneLifelineMessage", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getOneLifelineMessage_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getOneLifelineMessage_TransitionType(), this.getTransitionType(), "transitionType", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getOneLifelineMessage_MessageType(), this.getMessageType(), "messageType", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_Caption(), ecorePackage.getEString(), "caption", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_StartBlock(), ecorePackage.getEBoolean(), "startBlock", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_EndBlock(), ecorePackage.getEBoolean(), "endBlock", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -883,7 +892,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
 
     initEClass(oneLifelineEndBlockEClass, OneLifelineEndBlock.class, "OneLifelineEndBlock", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getOneLifelineEndBlock_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, OneLifelineEndBlock.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getOneLifelineEndBlock_EndBlock(), ecorePackage.getEBoolean(), "endBlock", null, 0, 1, OneLifelineEndBlock.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineEndBlock_EndBlockCount(), ecorePackage.getEInt(), "endBlockCount", null, 0, 1, OneLifelineEndBlock.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(oneLifelineNoteEClass, OneLifelineNote.class, "OneLifelineNote", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -892,26 +900,31 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
 
     initEClass(destroyEClass, Destroy.class, "Destroy", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getDestroy_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, Destroy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getDestroy_Destroy(), ecorePackage.getEBoolean(), "destroy", null, 0, 1, Destroy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(fragmentEClass, Fragment.class, "Fragment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getFragment_Name(), ecorePackage.getEString(), "name", null, 0, 1, Fragment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getFragment_FragmentContents(), this.getFragmentContent(), null, "fragmentContents", null, 0, -1, Fragment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getFragment_Sections(), this.getSection(), null, "sections", null, 0, -1, Fragment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(fragmentContentEClass, FragmentContent.class, "FragmentContent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getFragmentContent_Label(), ecorePackage.getEString(), "label", null, 0, 1, FragmentContent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getFragmentContent_Interactions(), this.getInteraction(), null, "interactions", null, 0, -1, FragmentContent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(sectionEClass, Section.class, "Section", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getSection_Label(), ecorePackage.getEString(), "label", null, 0, 1, Section.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSection_Interactions(), this.getInteraction(), null, "interactions", null, 0, -1, Section.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(refinementEClass, Refinement.class, "Refinement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getRefinement_Lifelines(), this.getLifeline(), null, "lifelines", null, 0, -1, Refinement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getRefinement_Label(), ecorePackage.getEString(), "label", null, 0, 1, Refinement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getRefinement_Lifelines(), this.getLifeline(), null, "lifelines", null, 0, -1, Refinement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Initialize enums and add enum literals
-    initEEnum(transitionTypeEEnum, TransitionType.class, "TransitionType");
-    addEEnumLiteral(transitionTypeEEnum, TransitionType.ASYNC);
-    addEEnumLiteral(transitionTypeEEnum, TransitionType.CREATE);
-    addEEnumLiteral(transitionTypeEEnum, TransitionType.RESPONSE);
-    addEEnumLiteral(transitionTypeEEnum, TransitionType.SYNC);
+    initEEnum(messageTypeEEnum, MessageType.class, "MessageType");
+    addEEnumLiteral(messageTypeEEnum, MessageType.ASYNC);
+    addEEnumLiteral(messageTypeEEnum, MessageType.CREATE);
+    addEEnumLiteral(messageTypeEEnum, MessageType.RESPONSE);
+    addEEnumLiteral(messageTypeEEnum, MessageType.SYNC);
+
+    initEEnum(dataTypeEEnum, DataType.class, "DataType");
+    addEEnumLiteral(dataTypeEEnum, DataType.CHAR);
+    addEEnumLiteral(dataTypeEEnum, DataType.BOOLEAN);
+    addEEnumLiteral(dataTypeEEnum, DataType.INTEGER);
+    addEEnumLiteral(dataTypeEEnum, DataType.FLOAT);
 
     // Create resource
     createResource(eNS_URI);

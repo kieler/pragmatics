@@ -125,9 +125,9 @@ public class SequenceAdapterFactory extends AdapterFactoryImpl
         return createFragmentAdapter();
       }
       @Override
-      public Adapter caseFragmentContent(FragmentContent object)
+      public Adapter caseSection(Section object)
       {
-        return createFragmentContentAdapter();
+        return createSectionAdapter();
       }
       @Override
       public Adapter caseRefinement(Refinement object)
@@ -307,16 +307,16 @@ public class SequenceAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent <em>Fragment Content</em>}'.
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Section <em>Section</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Section
    * @generated
    */
-  public Adapter createFragmentContentAdapter()
+  public Adapter createSectionAdapter()
   {
     return null;
   }

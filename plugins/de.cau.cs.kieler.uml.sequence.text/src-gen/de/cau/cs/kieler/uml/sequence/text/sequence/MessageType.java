@@ -10,14 +10,14 @@ import org.eclipse.emf.common.util.Enumerator;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Transition Type</b></em>',
+ * A representation of the literals of the enumeration '<em><b>Message Type</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTransitionType()
+ * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getMessageType()
  * @model
  * @generated
  */
-public enum TransitionType implements Enumerator
+public enum MessageType implements Enumerator
 {
   /**
    * The '<em><b>Async</b></em>' literal object.
@@ -120,13 +120,13 @@ public enum TransitionType implements Enumerator
   public static final int SYNC_VALUE = 3;
 
   /**
-   * An array of all the '<em><b>Transition Type</b></em>' enumerators.
+   * An array of all the '<em><b>Message Type</b></em>' enumerators.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private static final TransitionType[] VALUES_ARRAY =
-    new TransitionType[]
+  private static final MessageType[] VALUES_ARRAY =
+    new MessageType[]
     {
       ASYNC,
       CREATE,
@@ -135,24 +135,24 @@ public enum TransitionType implements Enumerator
     };
 
   /**
-   * A public read-only list of all the '<em><b>Transition Type</b></em>' enumerators.
+   * A public read-only list of all the '<em><b>Message Type</b></em>' enumerators.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  public static final List<TransitionType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+  public static final List<MessageType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
   /**
-   * Returns the '<em><b>Transition Type</b></em>' literal with the specified literal value.
+   * Returns the '<em><b>Message Type</b></em>' literal with the specified literal value.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  public static TransitionType get(String literal)
+  public static MessageType get(String literal)
   {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
-      TransitionType result = VALUES_ARRAY[i];
+      MessageType result = VALUES_ARRAY[i];
       if (result.toString().equals(literal))
       {
         return result;
@@ -162,16 +162,16 @@ public enum TransitionType implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Transition Type</b></em>' literal with the specified name.
+   * Returns the '<em><b>Message Type</b></em>' literal with the specified name.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  public static TransitionType getByName(String name)
+  public static MessageType getByName(String name)
   {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
-      TransitionType result = VALUES_ARRAY[i];
+      MessageType result = VALUES_ARRAY[i];
       if (result.getName().equals(name))
       {
         return result;
@@ -181,12 +181,12 @@ public enum TransitionType implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Transition Type</b></em>' literal with the specified integer value.
+   * Returns the '<em><b>Message Type</b></em>' literal with the specified integer value.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  public static TransitionType get(int value)
+  public static MessageType get(int value)
   {
     switch (value)
     {
@@ -225,7 +225,7 @@ public enum TransitionType implements Enumerator
    * <!-- end-user-doc -->
    * @generated
    */
-  private TransitionType(int value, String name, String literal)
+  private MessageType(int value, String name, String literal)
   {
     this.value = value;
     this.name = name;
@@ -274,4 +274,4 @@ public enum TransitionType implements Enumerator
     return literal;
   }
   
-} //TransitionType
+} //MessageType

@@ -3,7 +3,7 @@
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment;
-import de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent;
+import de.cau.cs.kieler.uml.sequence.text.sequence.Section;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
 
 import java.util.Collection;
@@ -29,7 +29,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentImpl#getName <em>Name</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentImpl#getFragmentContents <em>Fragment Contents</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentImpl#getSections <em>Sections</em>}</li>
  * </ul>
  * </p>
  *
@@ -58,14 +58,14 @@ public class FragmentImpl extends InteractionImpl implements Fragment
   protected String name = NAME_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getFragmentContents() <em>Fragment Contents</em>}' containment reference list.
+   * The cached value of the '{@link #getSections() <em>Sections</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getFragmentContents()
+   * @see #getSections()
    * @generated
    * @ordered
    */
-  protected EList<FragmentContent> fragmentContents;
+  protected EList<Section> sections;
 
   /**
    * <!-- begin-user-doc -->
@@ -116,13 +116,13 @@ public class FragmentImpl extends InteractionImpl implements Fragment
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<FragmentContent> getFragmentContents()
+  public EList<Section> getSections()
   {
-    if (fragmentContents == null)
+    if (sections == null)
     {
-      fragmentContents = new EObjectContainmentEList<FragmentContent>(FragmentContent.class, this, SequencePackage.FRAGMENT__FRAGMENT_CONTENTS);
+      sections = new EObjectContainmentEList<Section>(Section.class, this, SequencePackage.FRAGMENT__SECTIONS);
     }
-    return fragmentContents;
+    return sections;
   }
 
   /**
@@ -135,8 +135,8 @@ public class FragmentImpl extends InteractionImpl implements Fragment
   {
     switch (featureID)
     {
-      case SequencePackage.FRAGMENT__FRAGMENT_CONTENTS:
-        return ((InternalEList<?>)getFragmentContents()).basicRemove(otherEnd, msgs);
+      case SequencePackage.FRAGMENT__SECTIONS:
+        return ((InternalEList<?>)getSections()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -153,8 +153,8 @@ public class FragmentImpl extends InteractionImpl implements Fragment
     {
       case SequencePackage.FRAGMENT__NAME:
         return getName();
-      case SequencePackage.FRAGMENT__FRAGMENT_CONTENTS:
-        return getFragmentContents();
+      case SequencePackage.FRAGMENT__SECTIONS:
+        return getSections();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -173,9 +173,9 @@ public class FragmentImpl extends InteractionImpl implements Fragment
       case SequencePackage.FRAGMENT__NAME:
         setName((String)newValue);
         return;
-      case SequencePackage.FRAGMENT__FRAGMENT_CONTENTS:
-        getFragmentContents().clear();
-        getFragmentContents().addAll((Collection<? extends FragmentContent>)newValue);
+      case SequencePackage.FRAGMENT__SECTIONS:
+        getSections().clear();
+        getSections().addAll((Collection<? extends Section>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -194,8 +194,8 @@ public class FragmentImpl extends InteractionImpl implements Fragment
       case SequencePackage.FRAGMENT__NAME:
         setName(NAME_EDEFAULT);
         return;
-      case SequencePackage.FRAGMENT__FRAGMENT_CONTENTS:
-        getFragmentContents().clear();
+      case SequencePackage.FRAGMENT__SECTIONS:
+        getSections().clear();
         return;
     }
     super.eUnset(featureID);
@@ -213,8 +213,8 @@ public class FragmentImpl extends InteractionImpl implements Fragment
     {
       case SequencePackage.FRAGMENT__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case SequencePackage.FRAGMENT__FRAGMENT_CONTENTS:
-        return fragmentContents != null && !fragmentContents.isEmpty();
+      case SequencePackage.FRAGMENT__SECTIONS:
+        return sections != null && !sections.isEmpty();
     }
     return super.eIsSet(featureID);
   }

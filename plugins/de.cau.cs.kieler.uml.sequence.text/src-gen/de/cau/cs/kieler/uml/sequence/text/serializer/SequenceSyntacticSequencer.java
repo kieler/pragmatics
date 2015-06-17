@@ -9,7 +9,6 @@ import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.AbstractElementAlias;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.AlternativeAlias;
-import org.eclipse.xtext.serializer.analysis.GrammarAlias.GroupAlias;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.TokenAlias;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynNavigable;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynTransition;
@@ -20,13 +19,11 @@ public class SequenceSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected SequenceGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_OneLifelineMessage_FoundKeyword_2_1_or_LostKeyword_2_0;
-	protected AbstractElementAlias match_SequenceDiagram___LeftCurlyBracketKeyword_3_0_RightCurlyBracketKeyword_3_2__q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (SequenceGrammarAccess) access;
 		match_OneLifelineMessage_FoundKeyword_2_1_or_LostKeyword_2_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getOneLifelineMessageAccess().getFoundKeyword_2_1()), new TokenAlias(false, false, grammarAccess.getOneLifelineMessageAccess().getLostKeyword_2_0()));
-		match_SequenceDiagram___LeftCurlyBracketKeyword_3_0_RightCurlyBracketKeyword_3_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getSequenceDiagramAccess().getLeftCurlyBracketKeyword_3_0()), new TokenAlias(false, false, grammarAccess.getSequenceDiagramAccess().getRightCurlyBracketKeyword_3_2()));
 	}
 	
 	@Override
@@ -43,8 +40,6 @@ public class SequenceSyntacticSequencer extends AbstractSyntacticSequencer {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
 			if(match_OneLifelineMessage_FoundKeyword_2_1_or_LostKeyword_2_0.equals(syntax))
 				emit_OneLifelineMessage_FoundKeyword_2_1_or_LostKeyword_2_0(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if(match_SequenceDiagram___LeftCurlyBracketKeyword_3_0_RightCurlyBracketKeyword_3_2__q.equals(syntax))
-				emit_SequenceDiagram___LeftCurlyBracketKeyword_3_0_RightCurlyBracketKeyword_3_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}
 	}
@@ -54,14 +49,6 @@ public class SequenceSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     'lost' | 'found'
 	 */
 	protected void emit_OneLifelineMessage_FoundKeyword_2_1_or_LostKeyword_2_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * Syntax:
-	 *     ('{' '}')?
-	 */
-	protected void emit_SequenceDiagram___LeftCurlyBracketKeyword_3_0_RightCurlyBracketKeyword_3_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

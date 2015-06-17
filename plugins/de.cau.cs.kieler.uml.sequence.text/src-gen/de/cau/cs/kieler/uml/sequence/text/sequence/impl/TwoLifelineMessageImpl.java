@@ -3,8 +3,8 @@
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
+import de.cau.cs.kieler.uml.sequence.text.sequence.MessageType;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
-import de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType;
 import de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -22,15 +22,15 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getSourceLifeline <em>Source Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getTransitionType <em>Transition Type</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getCaption <em>Caption</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getMessageType <em>Message Type</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getMessage <em>Message</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getTargetLifeline <em>Target Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isStartBlockLeft <em>Start Block Left</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isEndBlockLeft <em>End Block Left</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getEndBlockLeftCount <em>End Block Left Count</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isStartBlockRight <em>Start Block Right</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isEndBlockRight <em>End Block Right</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getEndBlockRightCount <em>End Block Right Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isSourceStartBlock <em>Source Start Block</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isSourceEndBlock <em>Source End Block</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getSourceEndBlockCount <em>Source End Block Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isTargetStartBlock <em>Target Start Block</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isTargetEndBlock <em>Target End Block</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getTargetEndBlockCount <em>Target End Block Count</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getSourceNote <em>Source Note</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getTargetNote <em>Target Note</em>}</li>
  * </ul>
@@ -51,44 +51,44 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
   protected Lifeline sourceLifeline;
 
   /**
-   * The default value of the '{@link #getTransitionType() <em>Transition Type</em>}' attribute.
+   * The default value of the '{@link #getMessageType() <em>Message Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getTransitionType()
+   * @see #getMessageType()
    * @generated
    * @ordered
    */
-  protected static final TransitionType TRANSITION_TYPE_EDEFAULT = TransitionType.ASYNC;
+  protected static final MessageType MESSAGE_TYPE_EDEFAULT = MessageType.ASYNC;
 
   /**
-   * The cached value of the '{@link #getTransitionType() <em>Transition Type</em>}' attribute.
+   * The cached value of the '{@link #getMessageType() <em>Message Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getTransitionType()
+   * @see #getMessageType()
    * @generated
    * @ordered
    */
-  protected TransitionType transitionType = TRANSITION_TYPE_EDEFAULT;
+  protected MessageType messageType = MESSAGE_TYPE_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getCaption() <em>Caption</em>}' attribute.
+   * The default value of the '{@link #getMessage() <em>Message</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getCaption()
+   * @see #getMessage()
    * @generated
    * @ordered
    */
-  protected static final String CAPTION_EDEFAULT = null;
+  protected static final String MESSAGE_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getCaption() <em>Caption</em>}' attribute.
+   * The cached value of the '{@link #getMessage() <em>Message</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getCaption()
+   * @see #getMessage()
    * @generated
    * @ordered
    */
-  protected String caption = CAPTION_EDEFAULT;
+  protected String message = MESSAGE_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getTargetLifeline() <em>Target Lifeline</em>}' reference.
@@ -101,124 +101,124 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
   protected Lifeline targetLifeline;
 
   /**
-   * The default value of the '{@link #isStartBlockLeft() <em>Start Block Left</em>}' attribute.
+   * The default value of the '{@link #isSourceStartBlock() <em>Source Start Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isStartBlockLeft()
+   * @see #isSourceStartBlock()
    * @generated
    * @ordered
    */
-  protected static final boolean START_BLOCK_LEFT_EDEFAULT = false;
+  protected static final boolean SOURCE_START_BLOCK_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isStartBlockLeft() <em>Start Block Left</em>}' attribute.
+   * The cached value of the '{@link #isSourceStartBlock() <em>Source Start Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isStartBlockLeft()
+   * @see #isSourceStartBlock()
    * @generated
    * @ordered
    */
-  protected boolean startBlockLeft = START_BLOCK_LEFT_EDEFAULT;
+  protected boolean sourceStartBlock = SOURCE_START_BLOCK_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isEndBlockLeft() <em>End Block Left</em>}' attribute.
+   * The default value of the '{@link #isSourceEndBlock() <em>Source End Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isEndBlockLeft()
+   * @see #isSourceEndBlock()
    * @generated
    * @ordered
    */
-  protected static final boolean END_BLOCK_LEFT_EDEFAULT = false;
+  protected static final boolean SOURCE_END_BLOCK_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isEndBlockLeft() <em>End Block Left</em>}' attribute.
+   * The cached value of the '{@link #isSourceEndBlock() <em>Source End Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isEndBlockLeft()
+   * @see #isSourceEndBlock()
    * @generated
    * @ordered
    */
-  protected boolean endBlockLeft = END_BLOCK_LEFT_EDEFAULT;
+  protected boolean sourceEndBlock = SOURCE_END_BLOCK_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getEndBlockLeftCount() <em>End Block Left Count</em>}' attribute.
+   * The default value of the '{@link #getSourceEndBlockCount() <em>Source End Block Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getEndBlockLeftCount()
+   * @see #getSourceEndBlockCount()
    * @generated
    * @ordered
    */
-  protected static final int END_BLOCK_LEFT_COUNT_EDEFAULT = 0;
+  protected static final int SOURCE_END_BLOCK_COUNT_EDEFAULT = 0;
 
   /**
-   * The cached value of the '{@link #getEndBlockLeftCount() <em>End Block Left Count</em>}' attribute.
+   * The cached value of the '{@link #getSourceEndBlockCount() <em>Source End Block Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getEndBlockLeftCount()
+   * @see #getSourceEndBlockCount()
    * @generated
    * @ordered
    */
-  protected int endBlockLeftCount = END_BLOCK_LEFT_COUNT_EDEFAULT;
+  protected int sourceEndBlockCount = SOURCE_END_BLOCK_COUNT_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isStartBlockRight() <em>Start Block Right</em>}' attribute.
+   * The default value of the '{@link #isTargetStartBlock() <em>Target Start Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isStartBlockRight()
+   * @see #isTargetStartBlock()
    * @generated
    * @ordered
    */
-  protected static final boolean START_BLOCK_RIGHT_EDEFAULT = false;
+  protected static final boolean TARGET_START_BLOCK_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isStartBlockRight() <em>Start Block Right</em>}' attribute.
+   * The cached value of the '{@link #isTargetStartBlock() <em>Target Start Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isStartBlockRight()
+   * @see #isTargetStartBlock()
    * @generated
    * @ordered
    */
-  protected boolean startBlockRight = START_BLOCK_RIGHT_EDEFAULT;
+  protected boolean targetStartBlock = TARGET_START_BLOCK_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isEndBlockRight() <em>End Block Right</em>}' attribute.
+   * The default value of the '{@link #isTargetEndBlock() <em>Target End Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isEndBlockRight()
+   * @see #isTargetEndBlock()
    * @generated
    * @ordered
    */
-  protected static final boolean END_BLOCK_RIGHT_EDEFAULT = false;
+  protected static final boolean TARGET_END_BLOCK_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isEndBlockRight() <em>End Block Right</em>}' attribute.
+   * The cached value of the '{@link #isTargetEndBlock() <em>Target End Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isEndBlockRight()
+   * @see #isTargetEndBlock()
    * @generated
    * @ordered
    */
-  protected boolean endBlockRight = END_BLOCK_RIGHT_EDEFAULT;
+  protected boolean targetEndBlock = TARGET_END_BLOCK_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getEndBlockRightCount() <em>End Block Right Count</em>}' attribute.
+   * The default value of the '{@link #getTargetEndBlockCount() <em>Target End Block Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getEndBlockRightCount()
+   * @see #getTargetEndBlockCount()
    * @generated
    * @ordered
    */
-  protected static final int END_BLOCK_RIGHT_COUNT_EDEFAULT = 0;
+  protected static final int TARGET_END_BLOCK_COUNT_EDEFAULT = 0;
 
   /**
-   * The cached value of the '{@link #getEndBlockRightCount() <em>End Block Right Count</em>}' attribute.
+   * The cached value of the '{@link #getTargetEndBlockCount() <em>Target End Block Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getEndBlockRightCount()
+   * @see #getTargetEndBlockCount()
    * @generated
    * @ordered
    */
-  protected int endBlockRightCount = END_BLOCK_RIGHT_COUNT_EDEFAULT;
+  protected int targetEndBlockCount = TARGET_END_BLOCK_COUNT_EDEFAULT;
 
   /**
    * The default value of the '{@link #getSourceNote() <em>Source Note</em>}' attribute.
@@ -329,9 +329,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public TransitionType getTransitionType()
+  public MessageType getMessageType()
   {
-    return transitionType;
+    return messageType;
   }
 
   /**
@@ -339,12 +339,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setTransitionType(TransitionType newTransitionType)
+  public void setMessageType(MessageType newMessageType)
   {
-    TransitionType oldTransitionType = transitionType;
-    transitionType = newTransitionType == null ? TRANSITION_TYPE_EDEFAULT : newTransitionType;
+    MessageType oldMessageType = messageType;
+    messageType = newMessageType == null ? MESSAGE_TYPE_EDEFAULT : newMessageType;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__TRANSITION_TYPE, oldTransitionType, transitionType));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE_TYPE, oldMessageType, messageType));
   }
 
   /**
@@ -352,9 +352,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getCaption()
+  public String getMessage()
   {
-    return caption;
+    return message;
   }
 
   /**
@@ -362,12 +362,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setCaption(String newCaption)
+  public void setMessage(String newMessage)
   {
-    String oldCaption = caption;
-    caption = newCaption;
+    String oldMessage = message;
+    message = newMessage;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__CAPTION, oldCaption, caption));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE, oldMessage, message));
   }
 
   /**
@@ -418,9 +418,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isStartBlockLeft()
+  public boolean isSourceStartBlock()
   {
-    return startBlockLeft;
+    return sourceStartBlock;
   }
 
   /**
@@ -428,12 +428,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setStartBlockLeft(boolean newStartBlockLeft)
+  public void setSourceStartBlock(boolean newSourceStartBlock)
   {
-    boolean oldStartBlockLeft = startBlockLeft;
-    startBlockLeft = newStartBlockLeft;
+    boolean oldSourceStartBlock = sourceStartBlock;
+    sourceStartBlock = newSourceStartBlock;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__START_BLOCK_LEFT, oldStartBlockLeft, startBlockLeft));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK, oldSourceStartBlock, sourceStartBlock));
   }
 
   /**
@@ -441,9 +441,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isEndBlockLeft()
+  public boolean isSourceEndBlock()
   {
-    return endBlockLeft;
+    return sourceEndBlock;
   }
 
   /**
@@ -451,12 +451,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setEndBlockLeft(boolean newEndBlockLeft)
+  public void setSourceEndBlock(boolean newSourceEndBlock)
   {
-    boolean oldEndBlockLeft = endBlockLeft;
-    endBlockLeft = newEndBlockLeft;
+    boolean oldSourceEndBlock = sourceEndBlock;
+    sourceEndBlock = newSourceEndBlock;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT, oldEndBlockLeft, endBlockLeft));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK, oldSourceEndBlock, sourceEndBlock));
   }
 
   /**
@@ -464,9 +464,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public int getEndBlockLeftCount()
+  public int getSourceEndBlockCount()
   {
-    return endBlockLeftCount;
+    return sourceEndBlockCount;
   }
 
   /**
@@ -474,12 +474,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setEndBlockLeftCount(int newEndBlockLeftCount)
+  public void setSourceEndBlockCount(int newSourceEndBlockCount)
   {
-    int oldEndBlockLeftCount = endBlockLeftCount;
-    endBlockLeftCount = newEndBlockLeftCount;
+    int oldSourceEndBlockCount = sourceEndBlockCount;
+    sourceEndBlockCount = newSourceEndBlockCount;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT_COUNT, oldEndBlockLeftCount, endBlockLeftCount));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT, oldSourceEndBlockCount, sourceEndBlockCount));
   }
 
   /**
@@ -487,9 +487,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isStartBlockRight()
+  public boolean isTargetStartBlock()
   {
-    return startBlockRight;
+    return targetStartBlock;
   }
 
   /**
@@ -497,12 +497,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setStartBlockRight(boolean newStartBlockRight)
+  public void setTargetStartBlock(boolean newTargetStartBlock)
   {
-    boolean oldStartBlockRight = startBlockRight;
-    startBlockRight = newStartBlockRight;
+    boolean oldTargetStartBlock = targetStartBlock;
+    targetStartBlock = newTargetStartBlock;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__START_BLOCK_RIGHT, oldStartBlockRight, startBlockRight));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK, oldTargetStartBlock, targetStartBlock));
   }
 
   /**
@@ -510,9 +510,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isEndBlockRight()
+  public boolean isTargetEndBlock()
   {
-    return endBlockRight;
+    return targetEndBlock;
   }
 
   /**
@@ -520,12 +520,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setEndBlockRight(boolean newEndBlockRight)
+  public void setTargetEndBlock(boolean newTargetEndBlock)
   {
-    boolean oldEndBlockRight = endBlockRight;
-    endBlockRight = newEndBlockRight;
+    boolean oldTargetEndBlock = targetEndBlock;
+    targetEndBlock = newTargetEndBlock;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT, oldEndBlockRight, endBlockRight));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK, oldTargetEndBlock, targetEndBlock));
   }
 
   /**
@@ -533,9 +533,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public int getEndBlockRightCount()
+  public int getTargetEndBlockCount()
   {
-    return endBlockRightCount;
+    return targetEndBlockCount;
   }
 
   /**
@@ -543,12 +543,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setEndBlockRightCount(int newEndBlockRightCount)
+  public void setTargetEndBlockCount(int newTargetEndBlockCount)
   {
-    int oldEndBlockRightCount = endBlockRightCount;
-    endBlockRightCount = newEndBlockRightCount;
+    int oldTargetEndBlockCount = targetEndBlockCount;
+    targetEndBlockCount = newTargetEndBlockCount;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT_COUNT, oldEndBlockRightCount, endBlockRightCount));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT, oldTargetEndBlockCount, targetEndBlockCount));
   }
 
   /**
@@ -610,25 +610,25 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_LIFELINE:
         if (resolve) return getSourceLifeline();
         return basicGetSourceLifeline();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TRANSITION_TYPE:
-        return getTransitionType();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__CAPTION:
-        return getCaption();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE_TYPE:
+        return getMessageType();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE:
+        return getMessage();
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         if (resolve) return getTargetLifeline();
         return basicGetTargetLifeline();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__START_BLOCK_LEFT:
-        return isStartBlockLeft();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT:
-        return isEndBlockLeft();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT_COUNT:
-        return getEndBlockLeftCount();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__START_BLOCK_RIGHT:
-        return isStartBlockRight();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT:
-        return isEndBlockRight();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT_COUNT:
-        return getEndBlockRightCount();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK:
+        return isSourceStartBlock();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK:
+        return isSourceEndBlock();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT:
+        return getSourceEndBlockCount();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK:
+        return isTargetStartBlock();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK:
+        return isTargetEndBlock();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT:
+        return getTargetEndBlockCount();
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_NOTE:
         return getSourceNote();
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_NOTE:
@@ -650,32 +650,32 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_LIFELINE:
         setSourceLifeline((Lifeline)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TRANSITION_TYPE:
-        setTransitionType((TransitionType)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE_TYPE:
+        setMessageType((MessageType)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__CAPTION:
-        setCaption((String)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE:
+        setMessage((String)newValue);
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         setTargetLifeline((Lifeline)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__START_BLOCK_LEFT:
-        setStartBlockLeft((Boolean)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK:
+        setSourceStartBlock((Boolean)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT:
-        setEndBlockLeft((Boolean)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK:
+        setSourceEndBlock((Boolean)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT_COUNT:
-        setEndBlockLeftCount((Integer)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT:
+        setSourceEndBlockCount((Integer)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__START_BLOCK_RIGHT:
-        setStartBlockRight((Boolean)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK:
+        setTargetStartBlock((Boolean)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT:
-        setEndBlockRight((Boolean)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK:
+        setTargetEndBlock((Boolean)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT_COUNT:
-        setEndBlockRightCount((Integer)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT:
+        setTargetEndBlockCount((Integer)newValue);
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_NOTE:
         setSourceNote((String)newValue);
@@ -700,32 +700,32 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_LIFELINE:
         setSourceLifeline((Lifeline)null);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TRANSITION_TYPE:
-        setTransitionType(TRANSITION_TYPE_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE_TYPE:
+        setMessageType(MESSAGE_TYPE_EDEFAULT);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__CAPTION:
-        setCaption(CAPTION_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE:
+        setMessage(MESSAGE_EDEFAULT);
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         setTargetLifeline((Lifeline)null);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__START_BLOCK_LEFT:
-        setStartBlockLeft(START_BLOCK_LEFT_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK:
+        setSourceStartBlock(SOURCE_START_BLOCK_EDEFAULT);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT:
-        setEndBlockLeft(END_BLOCK_LEFT_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK:
+        setSourceEndBlock(SOURCE_END_BLOCK_EDEFAULT);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT_COUNT:
-        setEndBlockLeftCount(END_BLOCK_LEFT_COUNT_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT:
+        setSourceEndBlockCount(SOURCE_END_BLOCK_COUNT_EDEFAULT);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__START_BLOCK_RIGHT:
-        setStartBlockRight(START_BLOCK_RIGHT_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK:
+        setTargetStartBlock(TARGET_START_BLOCK_EDEFAULT);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT:
-        setEndBlockRight(END_BLOCK_RIGHT_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK:
+        setTargetEndBlock(TARGET_END_BLOCK_EDEFAULT);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT_COUNT:
-        setEndBlockRightCount(END_BLOCK_RIGHT_COUNT_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT:
+        setTargetEndBlockCount(TARGET_END_BLOCK_COUNT_EDEFAULT);
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_NOTE:
         setSourceNote(SOURCE_NOTE_EDEFAULT);
@@ -749,24 +749,24 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
     {
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_LIFELINE:
         return sourceLifeline != null;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TRANSITION_TYPE:
-        return transitionType != TRANSITION_TYPE_EDEFAULT;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__CAPTION:
-        return CAPTION_EDEFAULT == null ? caption != null : !CAPTION_EDEFAULT.equals(caption);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE_TYPE:
+        return messageType != MESSAGE_TYPE_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE:
+        return MESSAGE_EDEFAULT == null ? message != null : !MESSAGE_EDEFAULT.equals(message);
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         return targetLifeline != null;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__START_BLOCK_LEFT:
-        return startBlockLeft != START_BLOCK_LEFT_EDEFAULT;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT:
-        return endBlockLeft != END_BLOCK_LEFT_EDEFAULT;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT_COUNT:
-        return endBlockLeftCount != END_BLOCK_LEFT_COUNT_EDEFAULT;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__START_BLOCK_RIGHT:
-        return startBlockRight != START_BLOCK_RIGHT_EDEFAULT;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT:
-        return endBlockRight != END_BLOCK_RIGHT_EDEFAULT;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT_COUNT:
-        return endBlockRightCount != END_BLOCK_RIGHT_COUNT_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK:
+        return sourceStartBlock != SOURCE_START_BLOCK_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK:
+        return sourceEndBlock != SOURCE_END_BLOCK_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT:
+        return sourceEndBlockCount != SOURCE_END_BLOCK_COUNT_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK:
+        return targetStartBlock != TARGET_START_BLOCK_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK:
+        return targetEndBlock != TARGET_END_BLOCK_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT:
+        return targetEndBlockCount != TARGET_END_BLOCK_COUNT_EDEFAULT;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_NOTE:
         return SOURCE_NOTE_EDEFAULT == null ? sourceNote != null : !SOURCE_NOTE_EDEFAULT.equals(sourceNote);
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_NOTE:
@@ -786,22 +786,22 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (transitionType: ");
-    result.append(transitionType);
-    result.append(", caption: ");
-    result.append(caption);
-    result.append(", startBlockLeft: ");
-    result.append(startBlockLeft);
-    result.append(", endBlockLeft: ");
-    result.append(endBlockLeft);
-    result.append(", endBlockLeftCount: ");
-    result.append(endBlockLeftCount);
-    result.append(", startBlockRight: ");
-    result.append(startBlockRight);
-    result.append(", endBlockRight: ");
-    result.append(endBlockRight);
-    result.append(", endBlockRightCount: ");
-    result.append(endBlockRightCount);
+    result.append(" (messageType: ");
+    result.append(messageType);
+    result.append(", message: ");
+    result.append(message);
+    result.append(", sourceStartBlock: ");
+    result.append(sourceStartBlock);
+    result.append(", sourceEndBlock: ");
+    result.append(sourceEndBlock);
+    result.append(", sourceEndBlockCount: ");
+    result.append(sourceEndBlockCount);
+    result.append(", targetStartBlock: ");
+    result.append(targetStartBlock);
+    result.append(", targetEndBlock: ");
+    result.append(targetEndBlock);
+    result.append(", targetEndBlockCount: ");
+    result.append(targetEndBlockCount);
     result.append(", sourceNote: ");
     result.append(sourceNote);
     result.append(", targetNote: ");

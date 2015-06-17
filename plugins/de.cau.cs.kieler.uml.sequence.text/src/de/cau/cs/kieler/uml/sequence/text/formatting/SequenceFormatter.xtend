@@ -32,7 +32,6 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
             c.setLinewrap(1).after(bracket.first)
             c.setLinewrap(1).before(bracket.second)
         }
-
         for (note : findKeywords('sourceNote')) {
             c.setLinewrap(1).before(note)
             c.setIndentationIncrement.before(note)
@@ -49,12 +48,6 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
             c.setIndentationDecrement.after(note)
         }
         for (block : findKeywords('startBlock')) {
-            c.setLinewrap(1).before(block)
-            c.setIndentationIncrement.before(block)
-            c.setIndentationDecrement.after(block)
-            c.setLinewrap(1).after(block)
-        }
-        for (block : findKeywords('endBlock')) {
             c.setLinewrap(1).before(block)
             c.setIndentationIncrement.before(block)
             c.setIndentationDecrement.after(block)
@@ -88,12 +81,22 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
             c.setNoLinewrap().before(comma)
             c.setNoSpace().before(comma)
         }
+        for (label : findKeywords('label')) {
+            c.setLinewrap(1).before(label)
+            c.setIndentationIncrement.before(label)
+            c.setIndentationDecrement.after(label)
+        }
+        for (lifelines : findKeywords('lifelines')) {
+            c.setLinewrap(1).before(lifelines)
+            c.setIndentationIncrement.before(lifelines)
+            c.setIndentationDecrement.after(lifelines)
+        }
 
         // Formatting before every Rule
         c.setLinewrap().before(f.getLifelineRule);
         c.setLinewrap().before(f.getTwoLifelineMessageRule);
         c.setLinewrap().before(f.getOneLifelineMessageRule);
-        c.setLinewrap().before(f.getDestroyRule);
+        c.setLinewrap().before(f.destroyLifelineEventRule);
         c.setLinewrap().before(f.getOneLifelineNoteRule);
         c.setLinewrap().before(f.getTwoLifelineMessageRule);
         c.setLinewrap().before(f.getOneLifelineEndBlockRule);
@@ -105,10 +108,6 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
         c.setLinewrap(2).before(f.getSequenceDiagramAccess.lifelinesAssignment_4.eContents.get(0))
         c.setLinewrap(2).after(f.getSequenceDiagramAccess.lifelinesAssignment_4.eContents.last);
         
-        // Formatting after the lifeline declaration within the refinement statement
-        c.setLinewrap().after(f.getRefinementAccess.lifelinesAssignment_3.eContents.last);
-        c.setLinewrap().after(f.getRefinementAccess.lifelinesAssignment_4_1.eContents.last);
-
         // Formatting for comments
         c.setLinewrap(0, 1, 2).before(f.getSL_COMMENTRule)
         c.setLinewrap(0, 1, 2).before(f.getML_COMMENTRule)

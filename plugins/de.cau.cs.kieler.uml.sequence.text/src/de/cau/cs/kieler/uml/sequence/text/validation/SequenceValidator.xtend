@@ -23,9 +23,9 @@ import org.eclipse.xtext.validation.Check
 class SequenceValidator extends AbstractSequenceValidator {
 
     public static final EStructuralFeature END_LEFT = SequencePackage.Literals.
-        TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT_COUNT
+        TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT
     public static final EStructuralFeature END_RIGHT = SequencePackage.Literals.
-        TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT_COUNT
+        TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT
     public static final EStructuralFeature ONE_END = SequencePackage.Literals.ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT
     public static final EStructuralFeature END = SequencePackage.Literals.ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT
 
@@ -36,24 +36,24 @@ class SequenceValidator extends AbstractSequenceValidator {
             correctUsageOfBlocksOnMessage(interact, map);
         }
         if (map.size > 0) {
-            warning("Not all Blocks are closed", SequencePackage.Literals.TWO_LIFELINE_MESSAGE__START_BLOCK_LEFT)
-            warning("Not all Blocks are closed", SequencePackage.Literals.TWO_LIFELINE_MESSAGE__START_BLOCK_RIGHT)
+            warning("Not all Blocks are closed", SequencePackage.Literals.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK)
+            warning("Not all Blocks are closed", SequencePackage.Literals.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK)
             warning("Not all Blocks are closed", SequencePackage.Literals.ONE_LIFELINE_MESSAGE__START_BLOCK)
         }
     }
 
     private def dispatch correctUsageOfBlocksOnMessage(TwoLifelineMessage m, Map<Lifeline, Integer> map) {
-        if (m.startBlockLeft) {
+        if (m.sourceStartBlock) {
             startBlock(m.sourceLifeline, 1, map)
         }
-        if (m.startBlockRight) {
+        if (m.targetStartBlock) {
             startBlock(m.targetLifeline, 1, map)
         }
-        if (m.endBlockLeft) {
-            endBlock(m.sourceLifeline, m.endBlockLeftCount, map, END_LEFT)
+        if (m.sourceEndBlock) {
+            endBlock(m.sourceLifeline, m.sourceEndBlockCount, map, END_LEFT)
         }
-        if (m.endBlockRight) {
-            endBlock(m.targetLifeline, m.endBlockRightCount, map, END_RIGHT)
+        if (m.targetEndBlock) {
+            endBlock(m.targetLifeline, m.targetEndBlockCount, map, END_RIGHT)
         }
     }
 
@@ -67,9 +67,7 @@ class SequenceValidator extends AbstractSequenceValidator {
     }
 
     private def dispatch correctUsageOfBlocksOnMessage(OneLifelineEndBlock e, Map<Lifeline, Integer> map) {
-        if (e.endBlock) {
             endBlock(e.lifeline, e.endBlockCount, map, END)
-        }
     }
 
     def startBlock(Lifeline l, Integer add, Map<Lifeline, Integer> map) {
@@ -114,15 +112,4 @@ class SequenceValidator extends AbstractSequenceValidator {
             }
         }
     }
-
-//  public static val INVALID_NAME = 'invalidName'
-//
-//	@Check
-//	def checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.name.charAt(0))) {
-//			warning('Name should start with a capital', 
-//					MyDslPackage.Literals.GREETING__NAME,
-//					INVALID_NAME)
-//		}
-//	}
 }

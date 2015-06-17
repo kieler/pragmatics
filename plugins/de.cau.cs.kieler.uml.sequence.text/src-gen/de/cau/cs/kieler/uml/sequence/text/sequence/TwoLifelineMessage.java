@@ -12,15 +12,15 @@ package de.cau.cs.kieler.uml.sequence.text.sequence;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceLifeline <em>Source Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTransitionType <em>Transition Type</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getCaption <em>Caption</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessageType <em>Message Type</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessage <em>Message</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetLifeline <em>Target Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isStartBlockLeft <em>Start Block Left</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isEndBlockLeft <em>End Block Left</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getEndBlockLeftCount <em>End Block Left Count</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isStartBlockRight <em>Start Block Right</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isEndBlockRight <em>End Block Right</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getEndBlockRightCount <em>End Block Right Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartBlock <em>Source Start Block</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndBlock <em>Source End Block</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndBlockCount <em>Source End Block Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartBlock <em>Target Start Block</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndBlock <em>Target End Block</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndBlockCount <em>Target End Block Count</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceNote <em>Source Note</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetNote <em>Target Note</em>}</li>
  * </ul>
@@ -59,59 +59,59 @@ public interface TwoLifelineMessage extends Interaction
   void setSourceLifeline(Lifeline value);
 
   /**
-   * Returns the value of the '<em><b>Transition Type</b></em>' attribute.
-   * The literals are from the enumeration {@link de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType}.
+   * Returns the value of the '<em><b>Message Type</b></em>' attribute.
+   * The literals are from the enumeration {@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageType}.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Transition Type</em>' attribute isn't clear,
+   * If the meaning of the '<em>Message Type</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Transition Type</em>' attribute.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType
-   * @see #setTransitionType(TransitionType)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_TransitionType()
+   * @return the value of the '<em>Message Type</em>' attribute.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
+   * @see #setMessageType(MessageType)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_MessageType()
    * @model
    * @generated
    */
-  TransitionType getTransitionType();
+  MessageType getMessageType();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTransitionType <em>Transition Type</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessageType <em>Message Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Transition Type</em>' attribute.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType
-   * @see #getTransitionType()
+   * @param value the new value of the '<em>Message Type</em>' attribute.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
+   * @see #getMessageType()
    * @generated
    */
-  void setTransitionType(TransitionType value);
+  void setMessageType(MessageType value);
 
   /**
-   * Returns the value of the '<em><b>Caption</b></em>' attribute.
+   * Returns the value of the '<em><b>Message</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Caption</em>' attribute isn't clear,
+   * If the meaning of the '<em>Message</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Caption</em>' attribute.
-   * @see #setCaption(String)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_Caption()
+   * @return the value of the '<em>Message</em>' attribute.
+   * @see #setMessage(String)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_Message()
    * @model
    * @generated
    */
-  String getCaption();
+  String getMessage();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getCaption <em>Caption</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessage <em>Message</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Caption</em>' attribute.
-   * @see #getCaption()
+   * @param value the new value of the '<em>Message</em>' attribute.
+   * @see #getMessage()
    * @generated
    */
-  void setCaption(String value);
+  void setMessage(String value);
 
   /**
    * Returns the value of the '<em><b>Target Lifeline</b></em>' reference.
@@ -140,160 +140,160 @@ public interface TwoLifelineMessage extends Interaction
   void setTargetLifeline(Lifeline value);
 
   /**
-   * Returns the value of the '<em><b>Start Block Left</b></em>' attribute.
+   * Returns the value of the '<em><b>Source Start Block</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Start Block Left</em>' attribute isn't clear,
+   * If the meaning of the '<em>Source Start Block</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Start Block Left</em>' attribute.
-   * @see #setStartBlockLeft(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_StartBlockLeft()
+   * @return the value of the '<em>Source Start Block</em>' attribute.
+   * @see #setSourceStartBlock(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_SourceStartBlock()
    * @model
    * @generated
    */
-  boolean isStartBlockLeft();
+  boolean isSourceStartBlock();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isStartBlockLeft <em>Start Block Left</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartBlock <em>Source Start Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Start Block Left</em>' attribute.
-   * @see #isStartBlockLeft()
+   * @param value the new value of the '<em>Source Start Block</em>' attribute.
+   * @see #isSourceStartBlock()
    * @generated
    */
-  void setStartBlockLeft(boolean value);
+  void setSourceStartBlock(boolean value);
 
   /**
-   * Returns the value of the '<em><b>End Block Left</b></em>' attribute.
+   * Returns the value of the '<em><b>Source End Block</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>End Block Left</em>' attribute isn't clear,
+   * If the meaning of the '<em>Source End Block</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>End Block Left</em>' attribute.
-   * @see #setEndBlockLeft(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_EndBlockLeft()
+   * @return the value of the '<em>Source End Block</em>' attribute.
+   * @see #setSourceEndBlock(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_SourceEndBlock()
    * @model
    * @generated
    */
-  boolean isEndBlockLeft();
+  boolean isSourceEndBlock();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isEndBlockLeft <em>End Block Left</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndBlock <em>Source End Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>End Block Left</em>' attribute.
-   * @see #isEndBlockLeft()
+   * @param value the new value of the '<em>Source End Block</em>' attribute.
+   * @see #isSourceEndBlock()
    * @generated
    */
-  void setEndBlockLeft(boolean value);
+  void setSourceEndBlock(boolean value);
 
   /**
-   * Returns the value of the '<em><b>End Block Left Count</b></em>' attribute.
+   * Returns the value of the '<em><b>Source End Block Count</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>End Block Left Count</em>' attribute isn't clear,
+   * If the meaning of the '<em>Source End Block Count</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>End Block Left Count</em>' attribute.
-   * @see #setEndBlockLeftCount(int)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_EndBlockLeftCount()
+   * @return the value of the '<em>Source End Block Count</em>' attribute.
+   * @see #setSourceEndBlockCount(int)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_SourceEndBlockCount()
    * @model
    * @generated
    */
-  int getEndBlockLeftCount();
+  int getSourceEndBlockCount();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getEndBlockLeftCount <em>End Block Left Count</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndBlockCount <em>Source End Block Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>End Block Left Count</em>' attribute.
-   * @see #getEndBlockLeftCount()
+   * @param value the new value of the '<em>Source End Block Count</em>' attribute.
+   * @see #getSourceEndBlockCount()
    * @generated
    */
-  void setEndBlockLeftCount(int value);
+  void setSourceEndBlockCount(int value);
 
   /**
-   * Returns the value of the '<em><b>Start Block Right</b></em>' attribute.
+   * Returns the value of the '<em><b>Target Start Block</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Start Block Right</em>' attribute isn't clear,
+   * If the meaning of the '<em>Target Start Block</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Start Block Right</em>' attribute.
-   * @see #setStartBlockRight(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_StartBlockRight()
+   * @return the value of the '<em>Target Start Block</em>' attribute.
+   * @see #setTargetStartBlock(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_TargetStartBlock()
    * @model
    * @generated
    */
-  boolean isStartBlockRight();
+  boolean isTargetStartBlock();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isStartBlockRight <em>Start Block Right</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartBlock <em>Target Start Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Start Block Right</em>' attribute.
-   * @see #isStartBlockRight()
+   * @param value the new value of the '<em>Target Start Block</em>' attribute.
+   * @see #isTargetStartBlock()
    * @generated
    */
-  void setStartBlockRight(boolean value);
+  void setTargetStartBlock(boolean value);
 
   /**
-   * Returns the value of the '<em><b>End Block Right</b></em>' attribute.
+   * Returns the value of the '<em><b>Target End Block</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>End Block Right</em>' attribute isn't clear,
+   * If the meaning of the '<em>Target End Block</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>End Block Right</em>' attribute.
-   * @see #setEndBlockRight(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_EndBlockRight()
+   * @return the value of the '<em>Target End Block</em>' attribute.
+   * @see #setTargetEndBlock(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_TargetEndBlock()
    * @model
    * @generated
    */
-  boolean isEndBlockRight();
+  boolean isTargetEndBlock();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isEndBlockRight <em>End Block Right</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndBlock <em>Target End Block</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>End Block Right</em>' attribute.
-   * @see #isEndBlockRight()
+   * @param value the new value of the '<em>Target End Block</em>' attribute.
+   * @see #isTargetEndBlock()
    * @generated
    */
-  void setEndBlockRight(boolean value);
+  void setTargetEndBlock(boolean value);
 
   /**
-   * Returns the value of the '<em><b>End Block Right Count</b></em>' attribute.
+   * Returns the value of the '<em><b>Target End Block Count</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>End Block Right Count</em>' attribute isn't clear,
+   * If the meaning of the '<em>Target End Block Count</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>End Block Right Count</em>' attribute.
-   * @see #setEndBlockRightCount(int)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_EndBlockRightCount()
+   * @return the value of the '<em>Target End Block Count</em>' attribute.
+   * @see #setTargetEndBlockCount(int)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_TargetEndBlockCount()
    * @model
    * @generated
    */
-  int getEndBlockRightCount();
+  int getTargetEndBlockCount();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getEndBlockRightCount <em>End Block Right Count</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndBlockCount <em>Target End Block Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>End Block Right Count</em>' attribute.
-   * @see #getEndBlockRightCount()
+   * @param value the new value of the '<em>Target End Block Count</em>' attribute.
+   * @see #getTargetEndBlockCount()
    * @generated
    */
-  void setEndBlockRightCount(int value);
+  void setTargetEndBlockCount(int value);
 
   /**
    * Returns the value of the '<em><b>Source Note</b></em>' attribute.

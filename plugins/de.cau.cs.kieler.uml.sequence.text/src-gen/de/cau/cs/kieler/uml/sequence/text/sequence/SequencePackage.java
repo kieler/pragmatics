@@ -123,13 +123,22 @@ public interface SequencePackage extends EPackage
   int LOCAL_VARIABLE = 1;
 
   /**
+   * The feature id for the '<em><b>Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LOCAL_VARIABLE__TYPE = 0;
+
+  /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int LOCAL_VARIABLE__NAME = 0;
+  int LOCAL_VARIABLE__NAME = 1;
 
   /**
    * The number of structural features of the '<em>Local Variable</em>' class.
@@ -138,7 +147,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int LOCAL_VARIABLE_FEATURE_COUNT = 1;
+  int LOCAL_VARIABLE_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.LifelineImpl <em>Lifeline</em>}' class.
@@ -216,22 +225,22 @@ public interface SequencePackage extends EPackage
   int TWO_LIFELINE_MESSAGE__SOURCE_LIFELINE = INTERACTION_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>Transition Type</b></em>' attribute.
+   * The feature id for the '<em><b>Message Type</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__TRANSITION_TYPE = INTERACTION_FEATURE_COUNT + 1;
+  int TWO_LIFELINE_MESSAGE__MESSAGE_TYPE = INTERACTION_FEATURE_COUNT + 1;
 
   /**
-   * The feature id for the '<em><b>Caption</b></em>' attribute.
+   * The feature id for the '<em><b>Message</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__CAPTION = INTERACTION_FEATURE_COUNT + 2;
+  int TWO_LIFELINE_MESSAGE__MESSAGE = INTERACTION_FEATURE_COUNT + 2;
 
   /**
    * The feature id for the '<em><b>Target Lifeline</b></em>' reference.
@@ -243,58 +252,58 @@ public interface SequencePackage extends EPackage
   int TWO_LIFELINE_MESSAGE__TARGET_LIFELINE = INTERACTION_FEATURE_COUNT + 3;
 
   /**
-   * The feature id for the '<em><b>Start Block Left</b></em>' attribute.
+   * The feature id for the '<em><b>Source Start Block</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__START_BLOCK_LEFT = INTERACTION_FEATURE_COUNT + 4;
+  int TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK = INTERACTION_FEATURE_COUNT + 4;
 
   /**
-   * The feature id for the '<em><b>End Block Left</b></em>' attribute.
+   * The feature id for the '<em><b>Source End Block</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT = INTERACTION_FEATURE_COUNT + 5;
+  int TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK = INTERACTION_FEATURE_COUNT + 5;
 
   /**
-   * The feature id for the '<em><b>End Block Left Count</b></em>' attribute.
+   * The feature id for the '<em><b>Source End Block Count</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT_COUNT = INTERACTION_FEATURE_COUNT + 6;
+  int TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT = INTERACTION_FEATURE_COUNT + 6;
 
   /**
-   * The feature id for the '<em><b>Start Block Right</b></em>' attribute.
+   * The feature id for the '<em><b>Target Start Block</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__START_BLOCK_RIGHT = INTERACTION_FEATURE_COUNT + 7;
+  int TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK = INTERACTION_FEATURE_COUNT + 7;
 
   /**
-   * The feature id for the '<em><b>End Block Right</b></em>' attribute.
+   * The feature id for the '<em><b>Target End Block</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT = INTERACTION_FEATURE_COUNT + 8;
+  int TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK = INTERACTION_FEATURE_COUNT + 8;
 
   /**
-   * The feature id for the '<em><b>End Block Right Count</b></em>' attribute.
+   * The feature id for the '<em><b>Target End Block Count</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT_COUNT = INTERACTION_FEATURE_COUNT + 9;
+  int TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT = INTERACTION_FEATURE_COUNT + 9;
 
   /**
    * The feature id for the '<em><b>Source Note</b></em>' attribute.
@@ -343,13 +352,13 @@ public interface SequencePackage extends EPackage
   int ONE_LIFELINE_MESSAGE__LIFELINE = INTERACTION_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>Transition Type</b></em>' attribute.
+   * The feature id for the '<em><b>Message Type</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__TRANSITION_TYPE = INTERACTION_FEATURE_COUNT + 1;
+  int ONE_LIFELINE_MESSAGE__MESSAGE_TYPE = INTERACTION_FEATURE_COUNT + 1;
 
   /**
    * The feature id for the '<em><b>Caption</b></em>' attribute.
@@ -425,22 +434,13 @@ public interface SequencePackage extends EPackage
   int ONE_LIFELINE_END_BLOCK__LIFELINE = INTERACTION_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>End Block</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ONE_LIFELINE_END_BLOCK__END_BLOCK = INTERACTION_FEATURE_COUNT + 1;
-
-  /**
    * The feature id for the '<em><b>End Block Count</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT = INTERACTION_FEATURE_COUNT + 2;
+  int ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT = INTERACTION_FEATURE_COUNT + 1;
 
   /**
    * The number of structural features of the '<em>One Lifeline End Block</em>' class.
@@ -449,7 +449,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_END_BLOCK_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 3;
+  int ONE_LIFELINE_END_BLOCK_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 2;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineNoteImpl <em>One Lifeline Note</em>}' class.
@@ -508,22 +508,13 @@ public interface SequencePackage extends EPackage
   int DESTROY__LIFELINE = INTERACTION_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>Destroy</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DESTROY__DESTROY = INTERACTION_FEATURE_COUNT + 1;
-
-  /**
    * The number of structural features of the '<em>Destroy</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DESTROY_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 2;
+  int DESTROY_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentImpl <em>Fragment</em>}' class.
@@ -545,13 +536,13 @@ public interface SequencePackage extends EPackage
   int FRAGMENT__NAME = INTERACTION_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>Fragment Contents</b></em>' containment reference list.
+   * The feature id for the '<em><b>Sections</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int FRAGMENT__FRAGMENT_CONTENTS = INTERACTION_FEATURE_COUNT + 1;
+  int FRAGMENT__SECTIONS = INTERACTION_FEATURE_COUNT + 1;
 
   /**
    * The number of structural features of the '<em>Fragment</em>' class.
@@ -563,14 +554,14 @@ public interface SequencePackage extends EPackage
   int FRAGMENT_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 2;
 
   /**
-   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentContentImpl <em>Fragment Content</em>}' class.
+   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SectionImpl <em>Section</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentContentImpl
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getFragmentContent()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SectionImpl
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getSection()
    * @generated
    */
-  int FRAGMENT_CONTENT = 10;
+  int SECTION = 10;
 
   /**
    * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -579,7 +570,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int FRAGMENT_CONTENT__LABEL = 0;
+  int SECTION__LABEL = 0;
 
   /**
    * The feature id for the '<em><b>Interactions</b></em>' containment reference list.
@@ -588,16 +579,16 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int FRAGMENT_CONTENT__INTERACTIONS = 1;
+  int SECTION__INTERACTIONS = 1;
 
   /**
-   * The number of structural features of the '<em>Fragment Content</em>' class.
+   * The number of structural features of the '<em>Section</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int FRAGMENT_CONTENT_FEATURE_COUNT = 2;
+  int SECTION_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.RefinementImpl <em>Refinement</em>}' class.
@@ -610,22 +601,22 @@ public interface SequencePackage extends EPackage
   int REFINEMENT = 11;
 
   /**
-   * The feature id for the '<em><b>Lifelines</b></em>' reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int REFINEMENT__LIFELINES = INTERACTION_FEATURE_COUNT + 0;
-
-  /**
    * The feature id for the '<em><b>Label</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int REFINEMENT__LABEL = INTERACTION_FEATURE_COUNT + 1;
+  int REFINEMENT__LABEL = INTERACTION_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Lifelines</b></em>' reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int REFINEMENT__LIFELINES = INTERACTION_FEATURE_COUNT + 1;
 
   /**
    * The number of structural features of the '<em>Refinement</em>' class.
@@ -637,14 +628,24 @@ public interface SequencePackage extends EPackage
   int REFINEMENT_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 2;
 
   /**
-   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType <em>Transition Type</em>}' enum.
+   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageType <em>Message Type</em>}' enum.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getTransitionType()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageType()
    * @generated
    */
-  int TRANSITION_TYPE = 12;
+  int MESSAGE_TYPE = 12;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.DataType <em>Data Type</em>}' enum.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.DataType
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getDataType()
+   * @generated
+   */
+  int DATA_TYPE = 13;
 
 
   /**
@@ -710,6 +711,17 @@ public interface SequencePackage extends EPackage
    * @generated
    */
   EClass getLocalVariable();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable#getType <em>Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Type</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable#getType()
+   * @see #getLocalVariable()
+   * @generated
+   */
+  EAttribute getLocalVariable_Type();
 
   /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable#getName <em>Name</em>}'.
@@ -786,26 +798,26 @@ public interface SequencePackage extends EPackage
   EReference getTwoLifelineMessage_SourceLifeline();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTransitionType <em>Transition Type</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessageType <em>Message Type</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Transition Type</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTransitionType()
+   * @return the meta object for the attribute '<em>Message Type</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessageType()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_TransitionType();
+  EAttribute getTwoLifelineMessage_MessageType();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getCaption <em>Caption</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessage <em>Message</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Caption</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getCaption()
+   * @return the meta object for the attribute '<em>Message</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessage()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_Caption();
+  EAttribute getTwoLifelineMessage_Message();
 
   /**
    * Returns the meta object for the reference '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetLifeline <em>Target Lifeline</em>}'.
@@ -819,70 +831,70 @@ public interface SequencePackage extends EPackage
   EReference getTwoLifelineMessage_TargetLifeline();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isStartBlockLeft <em>Start Block Left</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartBlock <em>Source Start Block</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Start Block Left</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isStartBlockLeft()
+   * @return the meta object for the attribute '<em>Source Start Block</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartBlock()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_StartBlockLeft();
+  EAttribute getTwoLifelineMessage_SourceStartBlock();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isEndBlockLeft <em>End Block Left</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndBlock <em>Source End Block</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>End Block Left</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isEndBlockLeft()
+   * @return the meta object for the attribute '<em>Source End Block</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndBlock()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_EndBlockLeft();
+  EAttribute getTwoLifelineMessage_SourceEndBlock();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getEndBlockLeftCount <em>End Block Left Count</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndBlockCount <em>Source End Block Count</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>End Block Left Count</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getEndBlockLeftCount()
+   * @return the meta object for the attribute '<em>Source End Block Count</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndBlockCount()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_EndBlockLeftCount();
+  EAttribute getTwoLifelineMessage_SourceEndBlockCount();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isStartBlockRight <em>Start Block Right</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartBlock <em>Target Start Block</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Start Block Right</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isStartBlockRight()
+   * @return the meta object for the attribute '<em>Target Start Block</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartBlock()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_StartBlockRight();
+  EAttribute getTwoLifelineMessage_TargetStartBlock();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isEndBlockRight <em>End Block Right</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndBlock <em>Target End Block</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>End Block Right</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isEndBlockRight()
+   * @return the meta object for the attribute '<em>Target End Block</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndBlock()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_EndBlockRight();
+  EAttribute getTwoLifelineMessage_TargetEndBlock();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getEndBlockRightCount <em>End Block Right Count</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndBlockCount <em>Target End Block Count</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>End Block Right Count</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getEndBlockRightCount()
+   * @return the meta object for the attribute '<em>Target End Block Count</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndBlockCount()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_EndBlockRightCount();
+  EAttribute getTwoLifelineMessage_TargetEndBlockCount();
 
   /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceNote <em>Source Note</em>}'.
@@ -928,15 +940,15 @@ public interface SequencePackage extends EPackage
   EReference getOneLifelineMessage_Lifeline();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getTransitionType <em>Transition Type</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageType <em>Message Type</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Transition Type</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getTransitionType()
+   * @return the meta object for the attribute '<em>Message Type</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageType()
    * @see #getOneLifelineMessage()
    * @generated
    */
-  EAttribute getOneLifelineMessage_TransitionType();
+  EAttribute getOneLifelineMessage_MessageType();
 
   /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getCaption <em>Caption</em>}'.
@@ -1015,17 +1027,6 @@ public interface SequencePackage extends EPackage
   EReference getOneLifelineEndBlock_Lifeline();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock#isEndBlock <em>End Block</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>End Block</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock#isEndBlock()
-   * @see #getOneLifelineEndBlock()
-   * @generated
-   */
-  EAttribute getOneLifelineEndBlock_EndBlock();
-
-  /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock#getEndBlockCount <em>End Block Count</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1090,17 +1091,6 @@ public interface SequencePackage extends EPackage
   EReference getDestroy_Lifeline();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Destroy#isDestroy <em>Destroy</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Destroy</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Destroy#isDestroy()
-   * @see #getDestroy()
-   * @generated
-   */
-  EAttribute getDestroy_Destroy();
-
-  /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Fragment <em>Fragment</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1122,47 +1112,47 @@ public interface SequencePackage extends EPackage
   EAttribute getFragment_Name();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Fragment#getFragmentContents <em>Fragment Contents</em>}'.
+   * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Fragment#getSections <em>Sections</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Fragment Contents</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Fragment#getFragmentContents()
+   * @return the meta object for the containment reference list '<em>Sections</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Fragment#getSections()
    * @see #getFragment()
    * @generated
    */
-  EReference getFragment_FragmentContents();
+  EReference getFragment_Sections();
 
   /**
-   * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent <em>Fragment Content</em>}'.
+   * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Section <em>Section</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Fragment Content</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent
+   * @return the meta object for class '<em>Section</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Section
    * @generated
    */
-  EClass getFragmentContent();
+  EClass getSection();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent#getLabel <em>Label</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Section#getLabel <em>Label</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the attribute '<em>Label</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent#getLabel()
-   * @see #getFragmentContent()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Section#getLabel()
+   * @see #getSection()
    * @generated
    */
-  EAttribute getFragmentContent_Label();
+  EAttribute getSection_Label();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent#getInteractions <em>Interactions</em>}'.
+   * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Section#getInteractions <em>Interactions</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference list '<em>Interactions</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.FragmentContent#getInteractions()
-   * @see #getFragmentContent()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Section#getInteractions()
+   * @see #getSection()
    * @generated
    */
-  EReference getFragmentContent_Interactions();
+  EReference getSection_Interactions();
 
   /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Refinement <em>Refinement</em>}'.
@@ -1173,17 +1163,6 @@ public interface SequencePackage extends EPackage
    * @generated
    */
   EClass getRefinement();
-
-  /**
-   * Returns the meta object for the reference list '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Refinement#getLifelines <em>Lifelines</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference list '<em>Lifelines</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Refinement#getLifelines()
-   * @see #getRefinement()
-   * @generated
-   */
-  EReference getRefinement_Lifelines();
 
   /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Refinement#getLabel <em>Label</em>}'.
@@ -1197,14 +1176,35 @@ public interface SequencePackage extends EPackage
   EAttribute getRefinement_Label();
 
   /**
-   * Returns the meta object for enum '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType <em>Transition Type</em>}'.
+   * Returns the meta object for the reference list '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Refinement#getLifelines <em>Lifelines</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for enum '<em>Transition Type</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType
+   * @return the meta object for the reference list '<em>Lifelines</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Refinement#getLifelines()
+   * @see #getRefinement()
    * @generated
    */
-  EEnum getTransitionType();
+  EReference getRefinement_Lifelines();
+
+  /**
+   * Returns the meta object for enum '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageType <em>Message Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for enum '<em>Message Type</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
+   * @generated
+   */
+  EEnum getMessageType();
+
+  /**
+   * Returns the meta object for enum '{@link de.cau.cs.kieler.uml.sequence.text.sequence.DataType <em>Data Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for enum '<em>Data Type</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.DataType
+   * @generated
+   */
+  EEnum getDataType();
 
   /**
    * Returns the factory that creates the instances of the model.
@@ -1282,6 +1282,14 @@ public interface SequencePackage extends EPackage
     EClass LOCAL_VARIABLE = eINSTANCE.getLocalVariable();
 
     /**
+     * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LOCAL_VARIABLE__TYPE = eINSTANCE.getLocalVariable_Type();
+
+    /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1344,20 +1352,20 @@ public interface SequencePackage extends EPackage
     EReference TWO_LIFELINE_MESSAGE__SOURCE_LIFELINE = eINSTANCE.getTwoLifelineMessage_SourceLifeline();
 
     /**
-     * The meta object literal for the '<em><b>Transition Type</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Message Type</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__TRANSITION_TYPE = eINSTANCE.getTwoLifelineMessage_TransitionType();
+    EAttribute TWO_LIFELINE_MESSAGE__MESSAGE_TYPE = eINSTANCE.getTwoLifelineMessage_MessageType();
 
     /**
-     * The meta object literal for the '<em><b>Caption</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Message</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__CAPTION = eINSTANCE.getTwoLifelineMessage_Caption();
+    EAttribute TWO_LIFELINE_MESSAGE__MESSAGE = eINSTANCE.getTwoLifelineMessage_Message();
 
     /**
      * The meta object literal for the '<em><b>Target Lifeline</b></em>' reference feature.
@@ -1368,52 +1376,52 @@ public interface SequencePackage extends EPackage
     EReference TWO_LIFELINE_MESSAGE__TARGET_LIFELINE = eINSTANCE.getTwoLifelineMessage_TargetLifeline();
 
     /**
-     * The meta object literal for the '<em><b>Start Block Left</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Source Start Block</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__START_BLOCK_LEFT = eINSTANCE.getTwoLifelineMessage_StartBlockLeft();
+    EAttribute TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK = eINSTANCE.getTwoLifelineMessage_SourceStartBlock();
 
     /**
-     * The meta object literal for the '<em><b>End Block Left</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Source End Block</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT = eINSTANCE.getTwoLifelineMessage_EndBlockLeft();
+    EAttribute TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK = eINSTANCE.getTwoLifelineMessage_SourceEndBlock();
 
     /**
-     * The meta object literal for the '<em><b>End Block Left Count</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Source End Block Count</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__END_BLOCK_LEFT_COUNT = eINSTANCE.getTwoLifelineMessage_EndBlockLeftCount();
+    EAttribute TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT = eINSTANCE.getTwoLifelineMessage_SourceEndBlockCount();
 
     /**
-     * The meta object literal for the '<em><b>Start Block Right</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Target Start Block</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__START_BLOCK_RIGHT = eINSTANCE.getTwoLifelineMessage_StartBlockRight();
+    EAttribute TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK = eINSTANCE.getTwoLifelineMessage_TargetStartBlock();
 
     /**
-     * The meta object literal for the '<em><b>End Block Right</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Target End Block</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT = eINSTANCE.getTwoLifelineMessage_EndBlockRight();
+    EAttribute TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK = eINSTANCE.getTwoLifelineMessage_TargetEndBlock();
 
     /**
-     * The meta object literal for the '<em><b>End Block Right Count</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Target End Block Count</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__END_BLOCK_RIGHT_COUNT = eINSTANCE.getTwoLifelineMessage_EndBlockRightCount();
+    EAttribute TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT = eINSTANCE.getTwoLifelineMessage_TargetEndBlockCount();
 
     /**
      * The meta object literal for the '<em><b>Source Note</b></em>' attribute feature.
@@ -1450,12 +1458,12 @@ public interface SequencePackage extends EPackage
     EReference ONE_LIFELINE_MESSAGE__LIFELINE = eINSTANCE.getOneLifelineMessage_Lifeline();
 
     /**
-     * The meta object literal for the '<em><b>Transition Type</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Message Type</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute ONE_LIFELINE_MESSAGE__TRANSITION_TYPE = eINSTANCE.getOneLifelineMessage_TransitionType();
+    EAttribute ONE_LIFELINE_MESSAGE__MESSAGE_TYPE = eINSTANCE.getOneLifelineMessage_MessageType();
 
     /**
      * The meta object literal for the '<em><b>Caption</b></em>' attribute feature.
@@ -1516,14 +1524,6 @@ public interface SequencePackage extends EPackage
     EReference ONE_LIFELINE_END_BLOCK__LIFELINE = eINSTANCE.getOneLifelineEndBlock_Lifeline();
 
     /**
-     * The meta object literal for the '<em><b>End Block</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ONE_LIFELINE_END_BLOCK__END_BLOCK = eINSTANCE.getOneLifelineEndBlock_EndBlock();
-
-    /**
      * The meta object literal for the '<em><b>End Block Count</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1576,14 +1576,6 @@ public interface SequencePackage extends EPackage
     EReference DESTROY__LIFELINE = eINSTANCE.getDestroy_Lifeline();
 
     /**
-     * The meta object literal for the '<em><b>Destroy</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute DESTROY__DESTROY = eINSTANCE.getDestroy_Destroy();
-
-    /**
      * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentImpl <em>Fragment</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1602,22 +1594,22 @@ public interface SequencePackage extends EPackage
     EAttribute FRAGMENT__NAME = eINSTANCE.getFragment_Name();
 
     /**
-     * The meta object literal for the '<em><b>Fragment Contents</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Sections</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference FRAGMENT__FRAGMENT_CONTENTS = eINSTANCE.getFragment_FragmentContents();
+    EReference FRAGMENT__SECTIONS = eINSTANCE.getFragment_Sections();
 
     /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentContentImpl <em>Fragment Content</em>}' class.
+     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SectionImpl <em>Section</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentContentImpl
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getFragmentContent()
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SectionImpl
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getSection()
      * @generated
      */
-    EClass FRAGMENT_CONTENT = eINSTANCE.getFragmentContent();
+    EClass SECTION = eINSTANCE.getSection();
 
     /**
      * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
@@ -1625,7 +1617,7 @@ public interface SequencePackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute FRAGMENT_CONTENT__LABEL = eINSTANCE.getFragmentContent_Label();
+    EAttribute SECTION__LABEL = eINSTANCE.getSection_Label();
 
     /**
      * The meta object literal for the '<em><b>Interactions</b></em>' containment reference list feature.
@@ -1633,7 +1625,7 @@ public interface SequencePackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference FRAGMENT_CONTENT__INTERACTIONS = eINSTANCE.getFragmentContent_Interactions();
+    EReference SECTION__INTERACTIONS = eINSTANCE.getSection_Interactions();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.RefinementImpl <em>Refinement</em>}' class.
@@ -1646,14 +1638,6 @@ public interface SequencePackage extends EPackage
     EClass REFINEMENT = eINSTANCE.getRefinement();
 
     /**
-     * The meta object literal for the '<em><b>Lifelines</b></em>' reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference REFINEMENT__LIFELINES = eINSTANCE.getRefinement_Lifelines();
-
-    /**
      * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1662,14 +1646,32 @@ public interface SequencePackage extends EPackage
     EAttribute REFINEMENT__LABEL = eINSTANCE.getRefinement_Label();
 
     /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType <em>Transition Type</em>}' enum.
+     * The meta object literal for the '<em><b>Lifelines</b></em>' reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.TransitionType
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getTransitionType()
      * @generated
      */
-    EEnum TRANSITION_TYPE = eINSTANCE.getTransitionType();
+    EReference REFINEMENT__LIFELINES = eINSTANCE.getRefinement_Lifelines();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageType <em>Message Type</em>}' enum.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageType()
+     * @generated
+     */
+    EEnum MESSAGE_TYPE = eINSTANCE.getMessageType();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.DataType <em>Data Type</em>}' enum.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.DataType
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getDataType()
+     * @generated
+     */
+    EEnum DATA_TYPE = eINSTANCE.getDataType();
 
   }
 

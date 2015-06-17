@@ -29,19 +29,21 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cLeftCurlyBracketKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
 		private final Assignment cLocalsAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
 		private final RuleCall cLocalsLocalVariableParserRuleCall_3_1_0 = (RuleCall)cLocalsAssignment_3_1.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_3_2 = (Keyword)cGroup_3.eContents().get(2);
+		private final Assignment cLocalsAssignment_3_2 = (Assignment)cGroup_3.eContents().get(2);
+		private final RuleCall cLocalsLocalVariableParserRuleCall_3_2_0 = (RuleCall)cLocalsAssignment_3_2.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_3_3 = (Keyword)cGroup_3.eContents().get(3);
 		private final Assignment cLifelinesAssignment_4 = (Assignment)cGroup.eContents().get(4);
 		private final RuleCall cLifelinesLifelineParserRuleCall_4_0 = (RuleCall)cLifelinesAssignment_4.eContents().get(0);
 		private final Assignment cInteractionsAssignment_5 = (Assignment)cGroup.eContents().get(5);
 		private final RuleCall cInteractionsInteractionParserRuleCall_5_0 = (RuleCall)cInteractionsAssignment_5.eContents().get(0);
 		
 		//SequenceDiagram:
-		//	{SequenceDiagram} "sequenceDiagram" DiagramName=STRING ("{" locals+=LocalVariable* "}")? lifelines+=Lifeline*
-		//	interactions+=Interaction*;
+		//	{SequenceDiagram} "sequenceDiagram" diagramName=STRING ("{" locals+=LocalVariable locals+=LocalVariable* "}")?
+		//	lifelines+=Lifeline* interactions+=Interaction*;
 		public ParserRule getRule() { return rule; }
 
-		//{SequenceDiagram} "sequenceDiagram" DiagramName=STRING ("{" locals+=LocalVariable* "}")? lifelines+=Lifeline*
-		//interactions+=Interaction*
+		//{SequenceDiagram} "sequenceDiagram" diagramName=STRING ("{" locals+=LocalVariable locals+=LocalVariable* "}")?
+		//lifelines+=Lifeline* interactions+=Interaction*
 		public Group getGroup() { return cGroup; }
 
 		//{SequenceDiagram}
@@ -50,26 +52,32 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//"sequenceDiagram"
 		public Keyword getSequenceDiagramKeyword_1() { return cSequenceDiagramKeyword_1; }
 
-		//DiagramName=STRING
+		//diagramName=STRING
 		public Assignment getDiagramNameAssignment_2() { return cDiagramNameAssignment_2; }
 
 		//STRING
 		public RuleCall getDiagramNameSTRINGTerminalRuleCall_2_0() { return cDiagramNameSTRINGTerminalRuleCall_2_0; }
 
-		//("{" locals+=LocalVariable* "}")?
+		//("{" locals+=LocalVariable locals+=LocalVariable* "}")?
 		public Group getGroup_3() { return cGroup_3; }
 
 		//"{"
 		public Keyword getLeftCurlyBracketKeyword_3_0() { return cLeftCurlyBracketKeyword_3_0; }
 
-		//locals+=LocalVariable*
+		//locals+=LocalVariable
 		public Assignment getLocalsAssignment_3_1() { return cLocalsAssignment_3_1; }
 
 		//LocalVariable
 		public RuleCall getLocalsLocalVariableParserRuleCall_3_1_0() { return cLocalsLocalVariableParserRuleCall_3_1_0; }
 
+		//locals+=LocalVariable*
+		public Assignment getLocalsAssignment_3_2() { return cLocalsAssignment_3_2; }
+
+		//LocalVariable
+		public RuleCall getLocalsLocalVariableParserRuleCall_3_2_0() { return cLocalsLocalVariableParserRuleCall_3_2_0; }
+
 		//"}"
-		public Keyword getRightCurlyBracketKeyword_3_2() { return cRightCurlyBracketKeyword_3_2; }
+		public Keyword getRightCurlyBracketKeyword_3_3() { return cRightCurlyBracketKeyword_3_3; }
 
 		//lifelines+=Lifeline*
 		public Assignment getLifelinesAssignment_4() { return cLifelinesAssignment_4; }
@@ -86,78 +94,30 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 
 	public class LocalVariableElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "LocalVariable");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Keyword cCharKeyword_0_0 = (Keyword)cGroup_0.eContents().get(0);
-		private final Assignment cNameAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_0_1_0 = (RuleCall)cNameAssignment_0_1.eContents().get(0);
-		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Keyword cBooleanKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Assignment cNameAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_1_1_0 = (RuleCall)cNameAssignment_1_1.eContents().get(0);
-		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final Keyword cIntegerKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Assignment cNameAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_2_1_0 = (RuleCall)cNameAssignment_2_1.eContents().get(0);
-		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
-		private final Keyword cFloatKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
-		private final Assignment cNameAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
-		private final RuleCall cNameIDTerminalRuleCall_3_1_0 = (RuleCall)cNameAssignment_3_1.eContents().get(0);
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cTypeAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cTypeDataTypeEnumRuleCall_0_0 = (RuleCall)cTypeAssignment_0.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		
 		//LocalVariable:
-		//	"Char" name=ID | "Boolean" name=ID | "Integer" name=ID | "Float" name=ID;
+		//	type=DataType name=ID;
 		public ParserRule getRule() { return rule; }
 
-		//"Char" name=ID | "Boolean" name=ID | "Integer" name=ID | "Float" name=ID
-		public Alternatives getAlternatives() { return cAlternatives; }
+		//type=DataType name=ID
+		public Group getGroup() { return cGroup; }
 
-		//"Char" name=ID
-		public Group getGroup_0() { return cGroup_0; }
+		//type=DataType
+		public Assignment getTypeAssignment_0() { return cTypeAssignment_0; }
 
-		//"Char"
-		public Keyword getCharKeyword_0_0() { return cCharKeyword_0_0; }
-
-		//name=ID
-		public Assignment getNameAssignment_0_1() { return cNameAssignment_0_1; }
-
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_0_1_0() { return cNameIDTerminalRuleCall_0_1_0; }
-
-		//"Boolean" name=ID
-		public Group getGroup_1() { return cGroup_1; }
-
-		//"Boolean"
-		public Keyword getBooleanKeyword_1_0() { return cBooleanKeyword_1_0; }
+		//DataType
+		public RuleCall getTypeDataTypeEnumRuleCall_0_0() { return cTypeDataTypeEnumRuleCall_0_0; }
 
 		//name=ID
-		public Assignment getNameAssignment_1_1() { return cNameAssignment_1_1; }
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 
 		//ID
-		public RuleCall getNameIDTerminalRuleCall_1_1_0() { return cNameIDTerminalRuleCall_1_1_0; }
-
-		//"Integer" name=ID
-		public Group getGroup_2() { return cGroup_2; }
-
-		//"Integer"
-		public Keyword getIntegerKeyword_2_0() { return cIntegerKeyword_2_0; }
-
-		//name=ID
-		public Assignment getNameAssignment_2_1() { return cNameAssignment_2_1; }
-
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_2_1_0() { return cNameIDTerminalRuleCall_2_1_0; }
-
-		//"Float" name=ID
-		public Group getGroup_3() { return cGroup_3; }
-
-		//"Float"
-		public Keyword getFloatKeyword_3_0() { return cFloatKeyword_3_0; }
-
-		//name=ID
-		public Assignment getNameAssignment_3_1() { return cNameAssignment_3_1; }
-
-		//ID
-		public RuleCall getNameIDTerminalRuleCall_3_1_0() { return cNameIDTerminalRuleCall_3_1_0; }
+		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
 	}
 
 	public class LifelineElements extends AbstractParserRuleElementFinder {
@@ -204,15 +164,16 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cFragmentParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		private final RuleCall cOneLifelineEndBlockParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
 		private final RuleCall cOneLifelineNoteParserRuleCall_4 = (RuleCall)cAlternatives.eContents().get(4);
-		private final RuleCall cDestroyParserRuleCall_5 = (RuleCall)cAlternatives.eContents().get(5);
+		private final RuleCall cDestroyLifelineEventParserRuleCall_5 = (RuleCall)cAlternatives.eContents().get(5);
 		private final RuleCall cRefinementParserRuleCall_6 = (RuleCall)cAlternatives.eContents().get(6);
 		
-		////OneLifelineInteraction;
 		//Interaction:
-		//	TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineEndBlock | OneLifelineNote | Destroy | Refinement;
+		//	TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineEndBlock | OneLifelineNote | DestroyLifelineEvent |
+		//	Refinement;
 		public ParserRule getRule() { return rule; }
 
-		//TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineEndBlock | OneLifelineNote | Destroy | Refinement
+		//TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineEndBlock | OneLifelineNote | DestroyLifelineEvent |
+		//Refinement
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//TwoLifelineMessage
@@ -230,8 +191,8 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//OneLifelineNote
 		public RuleCall getOneLifelineNoteParserRuleCall_4() { return cOneLifelineNoteParserRuleCall_4; }
 
-		//Destroy
-		public RuleCall getDestroyParserRuleCall_5() { return cDestroyParserRuleCall_5; }
+		//DestroyLifelineEvent
+		public RuleCall getDestroyLifelineEventParserRuleCall_5() { return cDestroyLifelineEventParserRuleCall_5; }
 
 		//Refinement
 		public RuleCall getRefinementParserRuleCall_6() { return cRefinementParserRuleCall_6; }
@@ -243,30 +204,30 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cSourceLifelineAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final CrossReference cSourceLifelineLifelineCrossReference_0_0 = (CrossReference)cSourceLifelineAssignment_0.eContents().get(0);
 		private final RuleCall cSourceLifelineLifelineIDTerminalRuleCall_0_0_1 = (RuleCall)cSourceLifelineLifelineCrossReference_0_0.eContents().get(1);
-		private final Assignment cTransitionTypeAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cTransitionTypeTransitionTypeEnumRuleCall_1_0 = (RuleCall)cTransitionTypeAssignment_1.eContents().get(0);
-		private final Assignment cCaptionAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cCaptionSTRINGTerminalRuleCall_2_0 = (RuleCall)cCaptionAssignment_2.eContents().get(0);
+		private final Assignment cMessageTypeAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cMessageTypeMessageTypeEnumRuleCall_1_0 = (RuleCall)cMessageTypeAssignment_1.eContents().get(0);
+		private final Assignment cMessageAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cMessageSTRINGTerminalRuleCall_2_0 = (RuleCall)cMessageAssignment_2.eContents().get(0);
 		private final Keyword cToKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		private final Assignment cTargetLifelineAssignment_4 = (Assignment)cGroup.eContents().get(4);
 		private final CrossReference cTargetLifelineLifelineCrossReference_4_0 = (CrossReference)cTargetLifelineAssignment_4.eContents().get(0);
 		private final RuleCall cTargetLifelineLifelineIDTerminalRuleCall_4_0_1 = (RuleCall)cTargetLifelineLifelineCrossReference_4_0.eContents().get(1);
 		private final Alternatives cAlternatives_5 = (Alternatives)cGroup.eContents().get(5);
-		private final Assignment cStartBlockLeftAssignment_5_0 = (Assignment)cAlternatives_5.eContents().get(0);
-		private final Keyword cStartBlockLeftSourceStartBlockKeyword_5_0_0 = (Keyword)cStartBlockLeftAssignment_5_0.eContents().get(0);
+		private final Assignment cSourceStartBlockAssignment_5_0 = (Assignment)cAlternatives_5.eContents().get(0);
+		private final Keyword cSourceStartBlockSourceStartBlockKeyword_5_0_0 = (Keyword)cSourceStartBlockAssignment_5_0.eContents().get(0);
 		private final Group cGroup_5_1 = (Group)cAlternatives_5.eContents().get(1);
-		private final Assignment cEndBlockLeftAssignment_5_1_0 = (Assignment)cGroup_5_1.eContents().get(0);
-		private final Keyword cEndBlockLeftSourceEndBlockKeyword_5_1_0_0 = (Keyword)cEndBlockLeftAssignment_5_1_0.eContents().get(0);
-		private final Assignment cEndBlockLeftCountAssignment_5_1_1 = (Assignment)cGroup_5_1.eContents().get(1);
-		private final RuleCall cEndBlockLeftCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0 = (RuleCall)cEndBlockLeftCountAssignment_5_1_1.eContents().get(0);
+		private final Assignment cSourceEndBlockAssignment_5_1_0 = (Assignment)cGroup_5_1.eContents().get(0);
+		private final Keyword cSourceEndBlockSourceEndBlockKeyword_5_1_0_0 = (Keyword)cSourceEndBlockAssignment_5_1_0.eContents().get(0);
+		private final Assignment cSourceEndBlockCountAssignment_5_1_1 = (Assignment)cGroup_5_1.eContents().get(1);
+		private final RuleCall cSourceEndBlockCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0 = (RuleCall)cSourceEndBlockCountAssignment_5_1_1.eContents().get(0);
 		private final Alternatives cAlternatives_6 = (Alternatives)cGroup.eContents().get(6);
-		private final Assignment cStartBlockRightAssignment_6_0 = (Assignment)cAlternatives_6.eContents().get(0);
-		private final Keyword cStartBlockRightTargetStartBlockKeyword_6_0_0 = (Keyword)cStartBlockRightAssignment_6_0.eContents().get(0);
+		private final Assignment cTargetStartBlockAssignment_6_0 = (Assignment)cAlternatives_6.eContents().get(0);
+		private final Keyword cTargetStartBlockTargetStartBlockKeyword_6_0_0 = (Keyword)cTargetStartBlockAssignment_6_0.eContents().get(0);
 		private final Group cGroup_6_1 = (Group)cAlternatives_6.eContents().get(1);
-		private final Assignment cEndBlockRightAssignment_6_1_0 = (Assignment)cGroup_6_1.eContents().get(0);
-		private final Keyword cEndBlockRightTargetEndBlockKeyword_6_1_0_0 = (Keyword)cEndBlockRightAssignment_6_1_0.eContents().get(0);
-		private final Assignment cEndBlockRightCountAssignment_6_1_1 = (Assignment)cGroup_6_1.eContents().get(1);
-		private final RuleCall cEndBlockRightCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0 = (RuleCall)cEndBlockRightCountAssignment_6_1_1.eContents().get(0);
+		private final Assignment cTargetEndBlockAssignment_6_1_0 = (Assignment)cGroup_6_1.eContents().get(0);
+		private final Keyword cTargetEndBlockTargetEndBlockKeyword_6_1_0_0 = (Keyword)cTargetEndBlockAssignment_6_1_0.eContents().get(0);
+		private final Assignment cTargetEndBlockCountAssignment_6_1_1 = (Assignment)cGroup_6_1.eContents().get(1);
+		private final RuleCall cTargetEndBlockCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0 = (RuleCall)cTargetEndBlockCountAssignment_6_1_1.eContents().get(0);
 		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
 		private final Keyword cSourceNoteKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
 		private final Assignment cSourceNoteAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
@@ -277,15 +238,15 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cTargetNoteSTRINGTerminalRuleCall_8_1_0 = (RuleCall)cTargetNoteAssignment_8_1.eContents().get(0);
 		
 		//TwoLifelineMessage:
-		//	sourceLifeline=[Lifeline] transitionType=TransitionType caption=STRING "to" targetLifeline=[Lifeline]
-		//	(startBlockLeft?="sourceStartBlock" | endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)?
-		//	(startBlockRight?="targetStartBlock" | endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)?
+		//	sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
+		//	(sourceStartBlock?="sourceStartBlock" | sourceEndBlock?="sourceEndBlock" sourceEndBlockCount=INT_GREATER_ZERO?)?
+		//	(targetStartBlock?="targetStartBlock" | targetEndBlock?="targetEndBlock" targetEndBlockCount=INT_GREATER_ZERO?)?
 		//	("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?;
 		public ParserRule getRule() { return rule; }
 
-		//sourceLifeline=[Lifeline] transitionType=TransitionType caption=STRING "to" targetLifeline=[Lifeline]
-		//(startBlockLeft?="sourceStartBlock" | endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)?
-		//(startBlockRight?="targetStartBlock" | endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)?
+		//sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
+		//(sourceStartBlock?="sourceStartBlock" | sourceEndBlock?="sourceEndBlock" sourceEndBlockCount=INT_GREATER_ZERO?)?
+		//(targetStartBlock?="targetStartBlock" | targetEndBlock?="targetEndBlock" targetEndBlockCount=INT_GREATER_ZERO?)?
 		//("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?
 		public Group getGroup() { return cGroup; }
 
@@ -298,17 +259,17 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getSourceLifelineLifelineIDTerminalRuleCall_0_0_1() { return cSourceLifelineLifelineIDTerminalRuleCall_0_0_1; }
 
-		//transitionType=TransitionType
-		public Assignment getTransitionTypeAssignment_1() { return cTransitionTypeAssignment_1; }
+		//messageType=MessageType
+		public Assignment getMessageTypeAssignment_1() { return cMessageTypeAssignment_1; }
 
-		//TransitionType
-		public RuleCall getTransitionTypeTransitionTypeEnumRuleCall_1_0() { return cTransitionTypeTransitionTypeEnumRuleCall_1_0; }
+		//MessageType
+		public RuleCall getMessageTypeMessageTypeEnumRuleCall_1_0() { return cMessageTypeMessageTypeEnumRuleCall_1_0; }
 
-		//caption=STRING
-		public Assignment getCaptionAssignment_2() { return cCaptionAssignment_2; }
+		//message=STRING
+		public Assignment getMessageAssignment_2() { return cMessageAssignment_2; }
 
 		//STRING
-		public RuleCall getCaptionSTRINGTerminalRuleCall_2_0() { return cCaptionSTRINGTerminalRuleCall_2_0; }
+		public RuleCall getMessageSTRINGTerminalRuleCall_2_0() { return cMessageSTRINGTerminalRuleCall_2_0; }
 
 		//"to"
 		public Keyword getToKeyword_3() { return cToKeyword_3; }
@@ -322,53 +283,53 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getTargetLifelineLifelineIDTerminalRuleCall_4_0_1() { return cTargetLifelineLifelineIDTerminalRuleCall_4_0_1; }
 
-		//(startBlockLeft?="sourceStartBlock" | endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)?
+		//(sourceStartBlock?="sourceStartBlock" | sourceEndBlock?="sourceEndBlock" sourceEndBlockCount=INT_GREATER_ZERO?)?
 		public Alternatives getAlternatives_5() { return cAlternatives_5; }
 
-		//startBlockLeft?="sourceStartBlock"
-		public Assignment getStartBlockLeftAssignment_5_0() { return cStartBlockLeftAssignment_5_0; }
+		//sourceStartBlock?="sourceStartBlock"
+		public Assignment getSourceStartBlockAssignment_5_0() { return cSourceStartBlockAssignment_5_0; }
 
 		//"sourceStartBlock"
-		public Keyword getStartBlockLeftSourceStartBlockKeyword_5_0_0() { return cStartBlockLeftSourceStartBlockKeyword_5_0_0; }
+		public Keyword getSourceStartBlockSourceStartBlockKeyword_5_0_0() { return cSourceStartBlockSourceStartBlockKeyword_5_0_0; }
 
-		//endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?
+		//sourceEndBlock?="sourceEndBlock" sourceEndBlockCount=INT_GREATER_ZERO?
 		public Group getGroup_5_1() { return cGroup_5_1; }
 
-		//endBlockLeft?="sourceEndBlock"
-		public Assignment getEndBlockLeftAssignment_5_1_0() { return cEndBlockLeftAssignment_5_1_0; }
+		//sourceEndBlock?="sourceEndBlock"
+		public Assignment getSourceEndBlockAssignment_5_1_0() { return cSourceEndBlockAssignment_5_1_0; }
 
 		//"sourceEndBlock"
-		public Keyword getEndBlockLeftSourceEndBlockKeyword_5_1_0_0() { return cEndBlockLeftSourceEndBlockKeyword_5_1_0_0; }
+		public Keyword getSourceEndBlockSourceEndBlockKeyword_5_1_0_0() { return cSourceEndBlockSourceEndBlockKeyword_5_1_0_0; }
 
-		//endBlockLeftCount=INT_GREATER_ZERO?
-		public Assignment getEndBlockLeftCountAssignment_5_1_1() { return cEndBlockLeftCountAssignment_5_1_1; }
+		//sourceEndBlockCount=INT_GREATER_ZERO?
+		public Assignment getSourceEndBlockCountAssignment_5_1_1() { return cSourceEndBlockCountAssignment_5_1_1; }
 
 		//INT_GREATER_ZERO
-		public RuleCall getEndBlockLeftCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0() { return cEndBlockLeftCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0; }
+		public RuleCall getSourceEndBlockCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0() { return cSourceEndBlockCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0; }
 
-		//(startBlockRight?="targetStartBlock" | endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)?
+		//(targetStartBlock?="targetStartBlock" | targetEndBlock?="targetEndBlock" targetEndBlockCount=INT_GREATER_ZERO?)?
 		public Alternatives getAlternatives_6() { return cAlternatives_6; }
 
-		//startBlockRight?="targetStartBlock"
-		public Assignment getStartBlockRightAssignment_6_0() { return cStartBlockRightAssignment_6_0; }
+		//targetStartBlock?="targetStartBlock"
+		public Assignment getTargetStartBlockAssignment_6_0() { return cTargetStartBlockAssignment_6_0; }
 
 		//"targetStartBlock"
-		public Keyword getStartBlockRightTargetStartBlockKeyword_6_0_0() { return cStartBlockRightTargetStartBlockKeyword_6_0_0; }
+		public Keyword getTargetStartBlockTargetStartBlockKeyword_6_0_0() { return cTargetStartBlockTargetStartBlockKeyword_6_0_0; }
 
-		//endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?
+		//targetEndBlock?="targetEndBlock" targetEndBlockCount=INT_GREATER_ZERO?
 		public Group getGroup_6_1() { return cGroup_6_1; }
 
-		//endBlockRight?="targetEndBlock"
-		public Assignment getEndBlockRightAssignment_6_1_0() { return cEndBlockRightAssignment_6_1_0; }
+		//targetEndBlock?="targetEndBlock"
+		public Assignment getTargetEndBlockAssignment_6_1_0() { return cTargetEndBlockAssignment_6_1_0; }
 
 		//"targetEndBlock"
-		public Keyword getEndBlockRightTargetEndBlockKeyword_6_1_0_0() { return cEndBlockRightTargetEndBlockKeyword_6_1_0_0; }
+		public Keyword getTargetEndBlockTargetEndBlockKeyword_6_1_0_0() { return cTargetEndBlockTargetEndBlockKeyword_6_1_0_0; }
 
-		//endBlockRightCount=INT_GREATER_ZERO?
-		public Assignment getEndBlockRightCountAssignment_6_1_1() { return cEndBlockRightCountAssignment_6_1_1; }
+		//targetEndBlockCount=INT_GREATER_ZERO?
+		public Assignment getTargetEndBlockCountAssignment_6_1_1() { return cTargetEndBlockCountAssignment_6_1_1; }
 
 		//INT_GREATER_ZERO
-		public RuleCall getEndBlockRightCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0() { return cEndBlockRightCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0; }
+		public RuleCall getTargetEndBlockCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0() { return cTargetEndBlockCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0; }
 
 		//("sourceNote" sourceNote=STRING)?
 		public Group getGroup_7() { return cGroup_7; }
@@ -401,8 +362,8 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cLifelineAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final CrossReference cLifelineLifelineCrossReference_0_0 = (CrossReference)cLifelineAssignment_0.eContents().get(0);
 		private final RuleCall cLifelineLifelineIDTerminalRuleCall_0_0_1 = (RuleCall)cLifelineLifelineCrossReference_0_0.eContents().get(1);
-		private final Assignment cTransitionTypeAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cTransitionTypeTransitionTypeEnumRuleCall_1_0 = (RuleCall)cTransitionTypeAssignment_1.eContents().get(0);
+		private final Assignment cMessageTypeAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cMessageTypeMessageTypeEnumRuleCall_1_0 = (RuleCall)cMessageTypeAssignment_1.eContents().get(0);
 		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
 		private final Keyword cLostKeyword_2_0 = (Keyword)cAlternatives_2.eContents().get(0);
 		private final Keyword cFoundKeyword_2_1 = (Keyword)cAlternatives_2.eContents().get(1);
@@ -422,11 +383,11 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNoteSTRINGTerminalRuleCall_5_1_0 = (RuleCall)cNoteAssignment_5_1.eContents().get(0);
 		
 		//OneLifelineMessage:
-		//	Lifeline=[Lifeline] transitionType=TransitionType ("lost" | "found") caption=STRING (startBlock?="startBlock" |
+		//	Lifeline=[Lifeline] messageType=MessageType ("lost" | "found") caption=STRING (startBlock?="startBlock" |
 		//	endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
 		public ParserRule getRule() { return rule; }
 
-		//Lifeline=[Lifeline] transitionType=TransitionType ("lost" | "found") caption=STRING (startBlock?="startBlock" |
+		//Lifeline=[Lifeline] messageType=MessageType ("lost" | "found") caption=STRING (startBlock?="startBlock" |
 		//endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? ("note" note=STRING)?
 		public Group getGroup() { return cGroup; }
 
@@ -439,11 +400,11 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getLifelineLifelineIDTerminalRuleCall_0_0_1() { return cLifelineLifelineIDTerminalRuleCall_0_0_1; }
 
-		//transitionType=TransitionType
-		public Assignment getTransitionTypeAssignment_1() { return cTransitionTypeAssignment_1; }
+		//messageType=MessageType
+		public Assignment getMessageTypeAssignment_1() { return cMessageTypeAssignment_1; }
 
-		//TransitionType
-		public RuleCall getTransitionTypeTransitionTypeEnumRuleCall_1_0() { return cTransitionTypeTransitionTypeEnumRuleCall_1_0; }
+		//MessageType
+		public RuleCall getMessageTypeMessageTypeEnumRuleCall_1_0() { return cMessageTypeMessageTypeEnumRuleCall_1_0; }
 
 		//"lost" | "found"
 		public Alternatives getAlternatives_2() { return cAlternatives_2; }
@@ -503,16 +464,15 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cLifelineAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final CrossReference cLifelineLifelineCrossReference_0_0 = (CrossReference)cLifelineAssignment_0.eContents().get(0);
 		private final RuleCall cLifelineLifelineIDTerminalRuleCall_0_0_1 = (RuleCall)cLifelineLifelineCrossReference_0_0.eContents().get(1);
-		private final Assignment cEndBlockAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Keyword cEndBlockEndBlockKeyword_1_0 = (Keyword)cEndBlockAssignment_1.eContents().get(0);
+		private final Keyword cEndBlockKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		private final Assignment cEndBlockCountAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cEndBlockCountINT_GREATER_ZEROTerminalRuleCall_2_0 = (RuleCall)cEndBlockCountAssignment_2.eContents().get(0);
 		
 		//OneLifelineEndBlock:
-		//	Lifeline=[Lifeline] endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?;
+		//	Lifeline=[Lifeline] "endBlock" endBlockCount=INT_GREATER_ZERO?;
 		public ParserRule getRule() { return rule; }
 
-		//Lifeline=[Lifeline] endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?
+		//Lifeline=[Lifeline] "endBlock" endBlockCount=INT_GREATER_ZERO?
 		public Group getGroup() { return cGroup; }
 
 		//Lifeline=[Lifeline]
@@ -524,11 +484,8 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getLifelineLifelineIDTerminalRuleCall_0_0_1() { return cLifelineLifelineIDTerminalRuleCall_0_0_1; }
 
-		//endBlock?="endBlock"
-		public Assignment getEndBlockAssignment_1() { return cEndBlockAssignment_1; }
-
 		//"endBlock"
-		public Keyword getEndBlockEndBlockKeyword_1_0() { return cEndBlockEndBlockKeyword_1_0; }
+		public Keyword getEndBlockKeyword_1() { return cEndBlockKeyword_1; }
 
 		//endBlockCount=INT_GREATER_ZERO?
 		public Assignment getEndBlockCountAssignment_2() { return cEndBlockCountAssignment_2; }
@@ -573,20 +530,19 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getNoteSTRINGTerminalRuleCall_2_0() { return cNoteSTRINGTerminalRuleCall_2_0; }
 	}
 
-	public class DestroyElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Destroy");
+	public class DestroyLifelineEventElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "DestroyLifelineEvent");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cLifelineAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final CrossReference cLifelineLifelineCrossReference_0_0 = (CrossReference)cLifelineAssignment_0.eContents().get(0);
 		private final RuleCall cLifelineLifelineIDTerminalRuleCall_0_0_1 = (RuleCall)cLifelineLifelineCrossReference_0_0.eContents().get(1);
-		private final Assignment cDestroyAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Keyword cDestroyDestroyKeyword_1_0 = (Keyword)cDestroyAssignment_1.eContents().get(0);
+		private final Keyword cDestroyKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		
-		//Destroy:
-		//	Lifeline=[Lifeline] destroy?="destroy";
+		//DestroyLifelineEvent returns Destroy:
+		//	Lifeline=[Lifeline] "destroy";
 		public ParserRule getRule() { return rule; }
 
-		//Lifeline=[Lifeline] destroy?="destroy"
+		//Lifeline=[Lifeline] "destroy"
 		public Group getGroup() { return cGroup; }
 
 		//Lifeline=[Lifeline]
@@ -598,11 +554,8 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getLifelineLifelineIDTerminalRuleCall_0_0_1() { return cLifelineLifelineIDTerminalRuleCall_0_0_1; }
 
-		//destroy?="destroy"
-		public Assignment getDestroyAssignment_1() { return cDestroyAssignment_1; }
-
 		//"destroy"
-		public Keyword getDestroyDestroyKeyword_1_0() { return cDestroyDestroyKeyword_1_0; }
+		public Keyword getDestroyKeyword_1() { return cDestroyKeyword_1; }
 	}
 
 	public class FragmentElements extends AbstractParserRuleElementFinder {
@@ -611,16 +564,16 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cFragmentKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNameSTRINGTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
-		private final Assignment cFragmentContentsAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cFragmentContentsFragmentContentParserRuleCall_2_0 = (RuleCall)cFragmentContentsAssignment_2.eContents().get(0);
-		private final Assignment cFragmentContentsAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cFragmentContentsFragmentContentParserRuleCall_3_0 = (RuleCall)cFragmentContentsAssignment_3.eContents().get(0);
+		private final Assignment cSectionsAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cSectionsSectionParserRuleCall_2_0 = (RuleCall)cSectionsAssignment_2.eContents().get(0);
+		private final Assignment cSectionsAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cSectionsSectionParserRuleCall_3_0 = (RuleCall)cSectionsAssignment_3.eContents().get(0);
 		
 		//Fragment:
-		//	"fragment" name=STRING fragmentContents+=FragmentContent fragmentContents+=FragmentContent*;
+		//	"fragment" name=STRING sections+=Section sections+=Section*;
 		public ParserRule getRule() { return rule; }
 
-		//"fragment" name=STRING fragmentContents+=FragmentContent fragmentContents+=FragmentContent*
+		//"fragment" name=STRING sections+=Section sections+=Section*
 		public Group getGroup() { return cGroup; }
 
 		//"fragment"
@@ -632,21 +585,21 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//STRING
 		public RuleCall getNameSTRINGTerminalRuleCall_1_0() { return cNameSTRINGTerminalRuleCall_1_0; }
 
-		//fragmentContents+=FragmentContent
-		public Assignment getFragmentContentsAssignment_2() { return cFragmentContentsAssignment_2; }
+		//sections+=Section
+		public Assignment getSectionsAssignment_2() { return cSectionsAssignment_2; }
 
-		//FragmentContent
-		public RuleCall getFragmentContentsFragmentContentParserRuleCall_2_0() { return cFragmentContentsFragmentContentParserRuleCall_2_0; }
+		//Section
+		public RuleCall getSectionsSectionParserRuleCall_2_0() { return cSectionsSectionParserRuleCall_2_0; }
 
-		//fragmentContents+=FragmentContent*
-		public Assignment getFragmentContentsAssignment_3() { return cFragmentContentsAssignment_3; }
+		//sections+=Section*
+		public Assignment getSectionsAssignment_3() { return cSectionsAssignment_3; }
 
-		//FragmentContent
-		public RuleCall getFragmentContentsFragmentContentParserRuleCall_3_0() { return cFragmentContentsFragmentContentParserRuleCall_3_0; }
+		//Section
+		public RuleCall getSectionsSectionParserRuleCall_3_0() { return cSectionsSectionParserRuleCall_3_0; }
 	}
 
-	public class FragmentContentElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "FragmentContent");
+	public class SectionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Section");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cLeftCurlyBracketKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
@@ -659,7 +612,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cInteractionsInteractionParserRuleCall_3_0 = (RuleCall)cInteractionsAssignment_3.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		
-		//FragmentContent:
+		//Section:
 		//	"{" ("label" label=STRING)? interactions+=Interaction interactions+=Interaction* "}";
 		public ParserRule getRule() { return rule; }
 
@@ -701,77 +654,69 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Refinement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cRefinementKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Keyword cLeftCurlyBracketKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Keyword cLifelinesKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		private final Assignment cLifelinesAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final CrossReference cLifelinesLifelineCrossReference_3_0 = (CrossReference)cLifelinesAssignment_3.eContents().get(0);
-		private final RuleCall cLifelinesLifelineIDTerminalRuleCall_3_0_1 = (RuleCall)cLifelinesLifelineCrossReference_3_0.eContents().get(1);
-		private final Group cGroup_4 = (Group)cGroup.eContents().get(4);
-		private final Keyword cCommaKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Assignment cLifelinesAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
-		private final CrossReference cLifelinesLifelineCrossReference_4_1_0 = (CrossReference)cLifelinesAssignment_4_1.eContents().get(0);
-		private final RuleCall cLifelinesLifelineIDTerminalRuleCall_4_1_0_1 = (RuleCall)cLifelinesLifelineCrossReference_4_1_0.eContents().get(1);
-		private final Keyword cLabelKeyword_5 = (Keyword)cGroup.eContents().get(5);
-		private final Assignment cLabelAssignment_6 = (Assignment)cGroup.eContents().get(6);
-		private final RuleCall cLabelSTRINGTerminalRuleCall_6_0 = (RuleCall)cLabelAssignment_6.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		private final Keyword cLabelKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cLabelAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cLabelSTRINGTerminalRuleCall_2_0 = (RuleCall)cLabelAssignment_2.eContents().get(0);
+		private final Keyword cLifelinesKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cLifelinesAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final CrossReference cLifelinesLifelineCrossReference_4_0 = (CrossReference)cLifelinesAssignment_4.eContents().get(0);
+		private final RuleCall cLifelinesLifelineIDTerminalRuleCall_4_0_1 = (RuleCall)cLifelinesLifelineCrossReference_4_0.eContents().get(1);
+		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
+		private final Keyword cCommaKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
+		private final Assignment cLifelinesAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final CrossReference cLifelinesLifelineCrossReference_5_1_0 = (CrossReference)cLifelinesAssignment_5_1.eContents().get(0);
+		private final RuleCall cLifelinesLifelineIDTerminalRuleCall_5_1_0_1 = (RuleCall)cLifelinesLifelineCrossReference_5_1_0.eContents().get(1);
 		
 		//Refinement:
-		//	"refinement" "{" "lifelines" lifelines+=[Lifeline] ("," lifelines+=[Lifeline])* "label" label=STRING "}";
+		//	"refinement" "label" label=STRING "lifelines" lifelines+=[Lifeline] ("," lifelines+=[Lifeline])*;
 		public ParserRule getRule() { return rule; }
 
-		//"refinement" "{" "lifelines" lifelines+=[Lifeline] ("," lifelines+=[Lifeline])* "label" label=STRING "}"
+		//"refinement" "label" label=STRING "lifelines" lifelines+=[Lifeline] ("," lifelines+=[Lifeline])*
 		public Group getGroup() { return cGroup; }
 
 		//"refinement"
 		public Keyword getRefinementKeyword_0() { return cRefinementKeyword_0; }
 
-		//"{"
-		public Keyword getLeftCurlyBracketKeyword_1() { return cLeftCurlyBracketKeyword_1; }
-
-		//"lifelines"
-		public Keyword getLifelinesKeyword_2() { return cLifelinesKeyword_2; }
-
-		//lifelines+=[Lifeline]
-		public Assignment getLifelinesAssignment_3() { return cLifelinesAssignment_3; }
-
-		//[Lifeline]
-		public CrossReference getLifelinesLifelineCrossReference_3_0() { return cLifelinesLifelineCrossReference_3_0; }
-
-		//ID
-		public RuleCall getLifelinesLifelineIDTerminalRuleCall_3_0_1() { return cLifelinesLifelineIDTerminalRuleCall_3_0_1; }
-
-		//("," lifelines+=[Lifeline])*
-		public Group getGroup_4() { return cGroup_4; }
-
-		//","
-		public Keyword getCommaKeyword_4_0() { return cCommaKeyword_4_0; }
-
-		//lifelines+=[Lifeline]
-		public Assignment getLifelinesAssignment_4_1() { return cLifelinesAssignment_4_1; }
-
-		//[Lifeline]
-		public CrossReference getLifelinesLifelineCrossReference_4_1_0() { return cLifelinesLifelineCrossReference_4_1_0; }
-
-		//ID
-		public RuleCall getLifelinesLifelineIDTerminalRuleCall_4_1_0_1() { return cLifelinesLifelineIDTerminalRuleCall_4_1_0_1; }
-
 		//"label"
-		public Keyword getLabelKeyword_5() { return cLabelKeyword_5; }
+		public Keyword getLabelKeyword_1() { return cLabelKeyword_1; }
 
 		//label=STRING
-		public Assignment getLabelAssignment_6() { return cLabelAssignment_6; }
+		public Assignment getLabelAssignment_2() { return cLabelAssignment_2; }
 
 		//STRING
-		public RuleCall getLabelSTRINGTerminalRuleCall_6_0() { return cLabelSTRINGTerminalRuleCall_6_0; }
+		public RuleCall getLabelSTRINGTerminalRuleCall_2_0() { return cLabelSTRINGTerminalRuleCall_2_0; }
 
-		//"}"
-		public Keyword getRightCurlyBracketKeyword_7() { return cRightCurlyBracketKeyword_7; }
+		//"lifelines"
+		public Keyword getLifelinesKeyword_3() { return cLifelinesKeyword_3; }
+
+		//lifelines+=[Lifeline]
+		public Assignment getLifelinesAssignment_4() { return cLifelinesAssignment_4; }
+
+		//[Lifeline]
+		public CrossReference getLifelinesLifelineCrossReference_4_0() { return cLifelinesLifelineCrossReference_4_0; }
+
+		//ID
+		public RuleCall getLifelinesLifelineIDTerminalRuleCall_4_0_1() { return cLifelinesLifelineIDTerminalRuleCall_4_0_1; }
+
+		//("," lifelines+=[Lifeline])*
+		public Group getGroup_5() { return cGroup_5; }
+
+		//","
+		public Keyword getCommaKeyword_5_0() { return cCommaKeyword_5_0; }
+
+		//lifelines+=[Lifeline]
+		public Assignment getLifelinesAssignment_5_1() { return cLifelinesAssignment_5_1; }
+
+		//[Lifeline]
+		public CrossReference getLifelinesLifelineCrossReference_5_1_0() { return cLifelinesLifelineCrossReference_5_1_0; }
+
+		//ID
+		public RuleCall getLifelinesLifelineIDTerminalRuleCall_5_1_0_1() { return cLifelinesLifelineIDTerminalRuleCall_5_1_0_1; }
 	}
 	
 	
-	public class TransitionTypeElements extends AbstractEnumRuleElementFinder {
-		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "TransitionType");
+	public class MessageTypeElements extends AbstractEnumRuleElementFinder {
+		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "MessageType");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final EnumLiteralDeclaration cAsyncEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
 		private final Keyword cAsyncAsyncKeyword_0_0 = (Keyword)cAsyncEnumLiteralDeclaration_0.eContents().get(0);
@@ -782,7 +727,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final EnumLiteralDeclaration cSyncEnumLiteralDeclaration_3 = (EnumLiteralDeclaration)cAlternatives.eContents().get(3);
 		private final Keyword cSyncSyncKeyword_3_0 = (Keyword)cSyncEnumLiteralDeclaration_3.eContents().get(0);
 		
-		//enum TransitionType:
+		//enum MessageType:
 		//	async | create | response | sync;
 		public EnumRule getRule() { return rule; }
 
@@ -813,6 +758,50 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//"sync"
 		public Keyword getSyncSyncKeyword_3_0() { return cSyncSyncKeyword_3_0; }
 	}
+
+	public class DataTypeElements extends AbstractEnumRuleElementFinder {
+		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "DataType");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final EnumLiteralDeclaration cCharEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
+		private final Keyword cCharCharKeyword_0_0 = (Keyword)cCharEnumLiteralDeclaration_0.eContents().get(0);
+		private final EnumLiteralDeclaration cBooleanEnumLiteralDeclaration_1 = (EnumLiteralDeclaration)cAlternatives.eContents().get(1);
+		private final Keyword cBooleanBooleanKeyword_1_0 = (Keyword)cBooleanEnumLiteralDeclaration_1.eContents().get(0);
+		private final EnumLiteralDeclaration cIntegerEnumLiteralDeclaration_2 = (EnumLiteralDeclaration)cAlternatives.eContents().get(2);
+		private final Keyword cIntegerIntegerKeyword_2_0 = (Keyword)cIntegerEnumLiteralDeclaration_2.eContents().get(0);
+		private final EnumLiteralDeclaration cFloatEnumLiteralDeclaration_3 = (EnumLiteralDeclaration)cAlternatives.eContents().get(3);
+		private final Keyword cFloatFloatKeyword_3_0 = (Keyword)cFloatEnumLiteralDeclaration_3.eContents().get(0);
+		
+		//enum DataType:
+		//	char="Char" | boolean="Boolean" | integer="Integer" | float="Float";
+		public EnumRule getRule() { return rule; }
+
+		//char="Char" | boolean="Boolean" | integer="Integer" | float="Float"
+		public Alternatives getAlternatives() { return cAlternatives; }
+
+		//char="Char"
+		public EnumLiteralDeclaration getCharEnumLiteralDeclaration_0() { return cCharEnumLiteralDeclaration_0; }
+
+		//"Char"
+		public Keyword getCharCharKeyword_0_0() { return cCharCharKeyword_0_0; }
+
+		//boolean="Boolean"
+		public EnumLiteralDeclaration getBooleanEnumLiteralDeclaration_1() { return cBooleanEnumLiteralDeclaration_1; }
+
+		//"Boolean"
+		public Keyword getBooleanBooleanKeyword_1_0() { return cBooleanBooleanKeyword_1_0; }
+
+		//integer="Integer"
+		public EnumLiteralDeclaration getIntegerEnumLiteralDeclaration_2() { return cIntegerEnumLiteralDeclaration_2; }
+
+		//"Integer"
+		public Keyword getIntegerIntegerKeyword_2_0() { return cIntegerIntegerKeyword_2_0; }
+
+		//float="Float"
+		public EnumLiteralDeclaration getFloatEnumLiteralDeclaration_3() { return cFloatEnumLiteralDeclaration_3; }
+
+		//"Float"
+		public Keyword getFloatFloatKeyword_3_0() { return cFloatFloatKeyword_3_0; }
+	}
 	
 	private final SequenceDiagramElements pSequenceDiagram;
 	private final LocalVariableElements pLocalVariable;
@@ -822,12 +811,13 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	private final OneLifelineMessageElements pOneLifelineMessage;
 	private final OneLifelineEndBlockElements pOneLifelineEndBlock;
 	private final OneLifelineNoteElements pOneLifelineNote;
-	private final DestroyElements pDestroy;
+	private final DestroyLifelineEventElements pDestroyLifelineEvent;
 	private final FragmentElements pFragment;
-	private final FragmentContentElements pFragmentContent;
+	private final SectionElements pSection;
 	private final RefinementElements pRefinement;
+	private final MessageTypeElements unknownRuleMessageType;
+	private final DataTypeElements unknownRuleDataType;
 	private final TerminalRule tINT_GREATER_ZERO;
-	private final TransitionTypeElements unknownRuleTransitionType;
 	
 	private final Grammar grammar;
 
@@ -846,12 +836,13 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		this.pOneLifelineMessage = new OneLifelineMessageElements();
 		this.pOneLifelineEndBlock = new OneLifelineEndBlockElements();
 		this.pOneLifelineNote = new OneLifelineNoteElements();
-		this.pDestroy = new DestroyElements();
+		this.pDestroyLifelineEvent = new DestroyLifelineEventElements();
 		this.pFragment = new FragmentElements();
-		this.pFragmentContent = new FragmentContentElements();
+		this.pSection = new SectionElements();
 		this.pRefinement = new RefinementElements();
+		this.unknownRuleMessageType = new MessageTypeElements();
+		this.unknownRuleDataType = new DataTypeElements();
 		this.tINT_GREATER_ZERO = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "INT_GREATER_ZERO");
-		this.unknownRuleTransitionType = new TransitionTypeElements();
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -882,8 +873,8 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//SequenceDiagram:
-	//	{SequenceDiagram} "sequenceDiagram" DiagramName=STRING ("{" locals+=LocalVariable* "}")? lifelines+=Lifeline*
-	//	interactions+=Interaction*;
+	//	{SequenceDiagram} "sequenceDiagram" diagramName=STRING ("{" locals+=LocalVariable locals+=LocalVariable* "}")?
+	//	lifelines+=Lifeline* interactions+=Interaction*;
 	public SequenceDiagramElements getSequenceDiagramAccess() {
 		return pSequenceDiagram;
 	}
@@ -893,7 +884,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//LocalVariable:
-	//	"Char" name=ID | "Boolean" name=ID | "Integer" name=ID | "Float" name=ID;
+	//	type=DataType name=ID;
 	public LocalVariableElements getLocalVariableAccess() {
 		return pLocalVariable;
 	}
@@ -912,9 +903,9 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		return getLifelineAccess().getRule();
 	}
 
-	////OneLifelineInteraction;
 	//Interaction:
-	//	TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineEndBlock | OneLifelineNote | Destroy | Refinement;
+	//	TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineEndBlock | OneLifelineNote | DestroyLifelineEvent |
+	//	Refinement;
 	public InteractionElements getInteractionAccess() {
 		return pInteraction;
 	}
@@ -924,9 +915,9 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//TwoLifelineMessage:
-	//	sourceLifeline=[Lifeline] transitionType=TransitionType caption=STRING "to" targetLifeline=[Lifeline]
-	//	(startBlockLeft?="sourceStartBlock" | endBlockLeft?="sourceEndBlock" endBlockLeftCount=INT_GREATER_ZERO?)?
-	//	(startBlockRight?="targetStartBlock" | endBlockRight?="targetEndBlock" endBlockRightCount=INT_GREATER_ZERO?)?
+	//	sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
+	//	(sourceStartBlock?="sourceStartBlock" | sourceEndBlock?="sourceEndBlock" sourceEndBlockCount=INT_GREATER_ZERO?)?
+	//	(targetStartBlock?="targetStartBlock" | targetEndBlock?="targetEndBlock" targetEndBlockCount=INT_GREATER_ZERO?)?
 	//	("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?;
 	public TwoLifelineMessageElements getTwoLifelineMessageAccess() {
 		return pTwoLifelineMessage;
@@ -937,7 +928,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//OneLifelineMessage:
-	//	Lifeline=[Lifeline] transitionType=TransitionType ("lost" | "found") caption=STRING (startBlock?="startBlock" |
+	//	Lifeline=[Lifeline] messageType=MessageType ("lost" | "found") caption=STRING (startBlock?="startBlock" |
 	//	endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
 	public OneLifelineMessageElements getOneLifelineMessageAccess() {
 		return pOneLifelineMessage;
@@ -948,7 +939,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//OneLifelineEndBlock:
-	//	Lifeline=[Lifeline] endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?;
+	//	Lifeline=[Lifeline] "endBlock" endBlockCount=INT_GREATER_ZERO?;
 	public OneLifelineEndBlockElements getOneLifelineEndBlockAccess() {
 		return pOneLifelineEndBlock;
 	}
@@ -967,18 +958,18 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		return getOneLifelineNoteAccess().getRule();
 	}
 
-	//Destroy:
-	//	Lifeline=[Lifeline] destroy?="destroy";
-	public DestroyElements getDestroyAccess() {
-		return pDestroy;
+	//DestroyLifelineEvent returns Destroy:
+	//	Lifeline=[Lifeline] "destroy";
+	public DestroyLifelineEventElements getDestroyLifelineEventAccess() {
+		return pDestroyLifelineEvent;
 	}
 	
-	public ParserRule getDestroyRule() {
-		return getDestroyAccess().getRule();
+	public ParserRule getDestroyLifelineEventRule() {
+		return getDestroyLifelineEventAccess().getRule();
 	}
 
 	//Fragment:
-	//	"fragment" name=STRING fragmentContents+=FragmentContent fragmentContents+=FragmentContent*;
+	//	"fragment" name=STRING sections+=Section sections+=Section*;
 	public FragmentElements getFragmentAccess() {
 		return pFragment;
 	}
@@ -987,18 +978,18 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		return getFragmentAccess().getRule();
 	}
 
-	//FragmentContent:
+	//Section:
 	//	"{" ("label" label=STRING)? interactions+=Interaction interactions+=Interaction* "}";
-	public FragmentContentElements getFragmentContentAccess() {
-		return pFragmentContent;
+	public SectionElements getSectionAccess() {
+		return pSection;
 	}
 	
-	public ParserRule getFragmentContentRule() {
-		return getFragmentContentAccess().getRule();
+	public ParserRule getSectionRule() {
+		return getSectionAccess().getRule();
 	}
 
 	//Refinement:
-	//	"refinement" "{" "lifelines" lifelines+=[Lifeline] ("," lifelines+=[Lifeline])* "label" label=STRING "}";
+	//	"refinement" "label" label=STRING "lifelines" lifelines+=[Lifeline] ("," lifelines+=[Lifeline])*;
 	public RefinementElements getRefinementAccess() {
 		return pRefinement;
 	}
@@ -1007,21 +998,31 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		return getRefinementAccess().getRule();
 	}
 
+	//enum MessageType:
+	//	async | create | response | sync;
+	public MessageTypeElements getMessageTypeAccess() {
+		return unknownRuleMessageType;
+	}
+	
+	public EnumRule getMessageTypeRule() {
+		return getMessageTypeAccess().getRule();
+	}
+
+	//enum DataType:
+	//	char="Char" | boolean="Boolean" | integer="Integer" | float="Float";
+	public DataTypeElements getDataTypeAccess() {
+		return unknownRuleDataType;
+	}
+	
+	public EnumRule getDataTypeRule() {
+		return getDataTypeAccess().getRule();
+	}
+
 	//terminal INT_GREATER_ZERO returns ecore::EInt:
 	//	"1".."9" "0".."9"* | "all";
 	public TerminalRule getINT_GREATER_ZERORule() {
 		return tINT_GREATER_ZERO;
 	} 
-
-	//enum TransitionType:
-	//	async | create | response | sync;
-	public TransitionTypeElements getTransitionTypeAccess() {
-		return unknownRuleTransitionType;
-	}
-	
-	public EnumRule getTransitionTypeRule() {
-		return getTransitionTypeAccess().getRule();
-	}
 
 	//terminal ID:
 	//	"^"? ("a".."z" | "A".."Z" | "_") ("a".."z" | "A".."Z" | "_" | "0".."9")*;

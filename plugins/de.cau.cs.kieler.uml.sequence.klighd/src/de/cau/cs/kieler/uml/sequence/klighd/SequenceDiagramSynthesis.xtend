@@ -1,5 +1,6 @@
 package de.cau.cs.kieler.uml.sequence.klighd
 
+import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.krendering.KRenderingFactory
 import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
@@ -12,18 +13,20 @@ import de.cau.cs.kieler.core.krendering.extensions.KPortExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.options.SizeConstraint
+import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
+import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramLayoutProvider
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline
+import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram
+import de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage
 import java.util.EnumSet
 import javax.inject.Inject
-import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramLayoutProvider
 
 //import de.cau.cs.kieler.papyrus.sequence;
-
 class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram> {
-    
+
     @Inject extension KNodeExtensions
     @Inject extension KEdgeExtensions
     @Inject extension KPortExtensions
@@ -33,22 +36,23 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     @Inject extension KPolylineExtensions
     @Inject extension KColorExtensions
     extension KRenderingFactory = KRenderingFactory.eINSTANCE
-    
-    
+
     override KNode transform(SequenceDiagram model) {
         val root = model.createNode().associateWith(model);
-        
+
         root.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
         root.addInsideTopLeftNodeLabel(model.diagramName)
         model.lifelines.forEach[s|root.children += transformLifeline(s)]
-        
+
+//        model.interactions.forEach[s| transformEdge(s)]
+
         return root
     }
-    
+
     private def KNode transformLifeline(Lifeline lifeline) {
         val lifelineNode = lifeline.createNode().associateWith(lifeline)
 
-        lifelineNode.addRoundedRectangle(4, 4, 2)
+//        lifelineNode.addRoundedRectangle(4, 4, 2)
         lifelineNode.addInsideCenteredNodeLabel(lifeline.caption, KlighdConstants.DEFAULT_FONT_SIZE,
             KlighdConstants.DEFAULT_FONT_NAME);
         lifelineNode.addLayoutParam(LayoutOptions.SIZE_CONSTRAINT,
@@ -56,25 +60,39 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         return lifelineNode
     }
-    
+
     private def KNode destroyLifeline(Lifeline lifeline) {
-        val lifelineDestroy =lifeline.createNode().associateWith(lifeline)
-        
+        val lifelineDestroy = lifeline.createNode().associateWith(lifeline)
+
 //        lifelineDestroy
-        
-        return lifelineDestroy;     
+        return lifelineDestroy;
     }
-    
-//        private def KEdge transform(TwoLifelineMessage two) {
-//        val transEdge = two.createEdge().associateWith(two);
-//
-//        return
-//    }
-//
-//    private def KEdge transform(OneLifelineMessage one) {
-//        val transEdge = two.createEdge().associateWith(one);
-//
-//        return
-//    }
-    
+
+    private def dispatch KEdge transformEdge(TwoLifelineMessage msg) {
+        val transEdge = msg.createEdge().associateWith(msg);
+
+        transEdge.addPolyline(2).addHeadArrowDecorator();
+
+        // Add a label to the edge
+        val label = KimlUtil.createInitializedLabel(transEdge);
+        val labelText = msg.message;
+        label.configureCenterEdgeLabel(labelText, KlighdConstants.DEFAULT_FONT_SIZE, KlighdConstants.DEFAULT_FONT_NAME);
+
+//        transEdge.target = two.targetLifeline;
+        return transEdge
+    }
+    private def dispatch KEdge transformEdge(OneLifelineMessage msg) {
+        val transEdge = msg.createEdge().associateWith(msg);
+
+        transEdge.addPolyline(2).addHeadArrowDecorator();
+
+        // Add a label to the edge
+        val label = KimlUtil.createInitializedLabel(transEdge);
+        val labelText = msg.caption;
+        label.configureCenterEdgeLabel(labelText, KlighdConstants.DEFAULT_FONT_SIZE, KlighdConstants.DEFAULT_FONT_NAME);
+
+//        transEdge.target = two.targetLifeline;
+        return transEdge
+    }
+
 }
