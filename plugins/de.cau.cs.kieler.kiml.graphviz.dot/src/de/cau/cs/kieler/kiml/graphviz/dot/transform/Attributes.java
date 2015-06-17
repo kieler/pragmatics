@@ -181,7 +181,11 @@ public final class Attributes {
     /** property for the factor for rank separation used in dot. */
     public static final IProperty<Float> RANK_SEP_PROP = new Property<Float>(
             "de.cau.cs.kieler.graphviz.layerSpacingFactor", 1.0f, 0.0f);
-    
+
+    public static final String RANK = "rank";
+    public static final IProperty<Rank> RANK_PROP = new Property<Rank>(
+            "de.cau.cs.kieler.graphviz.rank", Rank.NONE);
+
     /** Specifies margin to leave around nodes when removing node overlap. */
     public static final String SEP = "sep";
     

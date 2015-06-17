@@ -109,6 +109,9 @@
          <knownOption
                option="de.cau.cs.kieler.graphviz.adaptPortPositions">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.graphviz.rank">
+         </knownOption>
       </layoutAlgorithm>
       <layoutAlgorithm
             category="de.cau.cs.kieler.kiml.categories.graphviz"
@@ -518,6 +521,14 @@
             id="de.cau.cs.kieler.graphviz.adaptPortPositions"
             name="Adapt Port Positions"
             type="boolean">
+      </layoutOption>
+      <layoutOption
+            appliesTo="nodes"
+            class="de.cau.cs.kieler.kiml.graphviz.dot.transform.Rank"
+            default="NONE"
+            id="de.cau.cs.kieler.graphviz.rank"
+            name="Rank"
+            type="enum">
       </layoutOption>
    </extension>
 

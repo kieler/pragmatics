@@ -19,10 +19,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
@@ -190,6 +192,9 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
         if (!fullExport) {
             setGraphAttributes(statements, parentLayout, transData);
         }
+        
+        Set<String> minRankNodes = Sets.newHashSet();
+        Set<String> maxRankNodes = Sets.newHashSet();
 
         // create nodes and subgraphs
         for (KNode childNode : parent.getChildren()) {
@@ -240,10 +245,49 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                 }
                 statements.add(nodeStatement);
             }
+            switch (nodeLayout.getProperty(Attributes.RANK_PROP)) {
+            case MIN:
+                minRankNodes.add(nodeID);
+                break;
+            case MAX:
+                maxRankNodes.add(nodeID);
+                break;
+            }
             Node node = DotFactory.eINSTANCE.createNode();
             node.setName(nodeID);
             nodeStatement.setNode(node);
         }
+        
+        // add the rank statements
+        if (!minRankNodes.isEmpty()) {
+            Subgraph subgraph = DotFactory.eINSTANCE.createSubgraph();
+            AttributeStatement attributeStatement = DotFactory.eINSTANCE.createAttributeStatement();
+            attributeStatement.getAttributes().add(createAttribute(Attributes.RANK, "min"));
+            subgraph.getStatements().add(attributeStatement);
+            for (String nodeID : minRankNodes) {
+                NodeStatement nodeStatement = DotFactory.eINSTANCE.createNodeStatement();
+                Node node = DotFactory.eINSTANCE.createNode();
+                node.setName(nodeID);
+                nodeStatement.setNode(node);
+                subgraph.getStatements().add(nodeStatement);
+            }
+            statements.add(subgraph);
+        }
+        if (!maxRankNodes.isEmpty()) {
+            Subgraph subgraph = DotFactory.eINSTANCE.createSubgraph();
+            AttributeStatement attributeStatement = DotFactory.eINSTANCE.createAttributeStatement();
+            attributeStatement.getAttributes().add(createAttribute(Attributes.RANK, "max"));
+            subgraph.getStatements().add(attributeStatement);
+            for (String nodeID : maxRankNodes) {
+                NodeStatement nodeStatement = DotFactory.eINSTANCE.createNodeStatement();
+                Node node = DotFactory.eINSTANCE.createNode();
+                node.setName(nodeID);
+                nodeStatement.setNode(node);
+                subgraph.getStatements().add(nodeStatement);
+            }
+            statements.add(subgraph);
+        }
+        
     }
 
     /**
@@ -826,10 +870,17 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             } else if (statement instanceof Subgraph) {
                 Subgraph subgraph = (Subgraph) statement;
                 KNode knode = (KNode) transData.getProperty(GRAPH_ELEMS).get(subgraph.getName());
+                // Subgraphs do not necessarily specify graphs but, according to the graphviz
+                //  documentation, "[...] can provide a context for setting attributes."
+                // It is quite possible though that graphviz attached positions to the node
+                //  definitions in this subgraph. Hence we have to recursively call the apply
+                //  layout function but avoid any access to the 'knode' variable
                 applyLayout(knode, subgraph.getStatements(), baseOffset, spacing, transData);
-                KShapeLayout subGraphLayout = knode.getData(KShapeLayout.class);
-                subGraphLayout.setXpos(subGraphLayout.getXpos() + (float) nodeOffset.x);
-                subGraphLayout.setYpos(subGraphLayout.getYpos() + (float) nodeOffset.y);
+                if (knode != null) {
+                    KShapeLayout subGraphLayout = knode.getData(KShapeLayout.class);
+                    subGraphLayout.setXpos(subGraphLayout.getXpos() + (float) nodeOffset.x);
+                    subGraphLayout.setYpos(subGraphLayout.getYpos() + (float) nodeOffset.y);
+                } 
             }
         }
     }
