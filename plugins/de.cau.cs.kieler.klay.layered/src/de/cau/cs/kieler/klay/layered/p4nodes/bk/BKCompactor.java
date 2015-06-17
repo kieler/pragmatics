@@ -263,7 +263,7 @@ public class BKCompactor implements ICompactor {
                     // They are not part of the same class. Compute how the two classes can be compacted
                     // later. Hence we determine a minimal required space between the two classes 
                     // relative two the two class sinks.
-                    double spacing = spacings.spacing;
+                    double spacing = spacings.nodeSpacing;
                     
                     if (bal.vdir == VDirection.UP) {
                         //  possible setup:

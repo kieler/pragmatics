@@ -92,8 +92,6 @@ public final class InteractiveNodePlacer implements ILayoutPhase {
      * Places the nodes in the given layer.
      * 
      * @param layer the layer whose nodes to place.
-     * @param spacing spacing between regular nodes.
-     * @param smallSpacing spacing between dummy nodes.
      */
     private void placeNodes(final Layer layer) {
         // The minimum value for the next valid y coordinate

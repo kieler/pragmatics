@@ -267,13 +267,13 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
                 }
                 
                 // If we are between two layers, make sure their minimal spacing is preserved
-                if (increment < spacings.spacing && !isLeftLayerExternal && !isRightLayerExternal) {
-                    increment = spacings.spacing;
+                if (increment < spacings.nodeSpacing && !isLeftLayerExternal && !isRightLayerExternal) {
+                    increment = spacings.nodeSpacing;
                 }
                 xpos += increment;
             } else if (!isLeftLayerExternal && !isRightLayerExternal) {
                 // If all edges are straight, use the usual spacing 
-                xpos += spacings.spacing;
+                xpos += spacings.nodeSpacing;
             }
             
             leftLayer = rightLayer;

@@ -781,7 +781,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
     private boolean mergeRegions(final LGraph layeredGraph) {
         
         boolean changed = false;
-        double threshold = OVERLAP_DETECT * spacings.spacing * spacings.inLayerSpacingFactor;
+        double threshold = OVERLAP_DETECT * spacings.nodeSpacing * spacings.inLayerSpacingFactor;
         for (Layer layer : layeredGraph) {
             Iterator<LNode> nodeIter = layer.getNodes().iterator();
 
