@@ -31,6 +31,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.Spacings;
 
 /**
  * Edge routing implementation that creates orthogonal bend points. Inspired by
@@ -216,14 +217,13 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
         monitor.begin("Orthogonal edge routing", 1);
         
         // Retrieve some generic values
-        double nodeSpacing = layeredGraph.getProperty(InternalProperties.SPACING).doubleValue();
-        double edgeSpacing = nodeSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        Spacings spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
         boolean debug = layeredGraph.getProperty(LayoutOptions.DEBUG_MODE);
         
         // Prepare for iteration!
         OrthogonalRoutingGenerator routingGenerator = new OrthogonalRoutingGenerator(
                 OrthogonalRoutingGenerator.RoutingDirection.WEST_TO_EAST,
-                edgeSpacing, debug ? "phase5" : null);
+                spacings.edgeEdgeSpacing, debug ? "phase5" : null);
         float xpos = 0.0f;
         ListIterator<Layer> layerIter = layeredGraph.getLayers().listIterator();
         Layer leftLayer = null;
@@ -249,8 +249,9 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
             }
             
             // Route edges between the two layers
+            double startPos = leftLayer == null ? xpos : xpos + spacings.edgeNodeSpacing;
             slotsCount = routingGenerator.routeEdges(layeredGraph, leftLayerNodes, leftLayerIndex,
-                    rightLayerNodes, leftLayer == null ? xpos : xpos + edgeSpacing);
+                    rightLayerNodes, startPos);
             
             boolean isLeftLayerExternal = leftLayer == null || Iterables.all(leftLayerNodes,
                     PolylineEdgeRouter.PRED_EXTERNAL_WEST_OR_EAST_PORT);
@@ -259,19 +260,20 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
             
             if (slotsCount > 0) {
                 // The space between each pair of edge segments, and between nodes and edges
-                double increment = slotsCount * edgeSpacing;
+                double increment =
+                        spacings.edgeNodeSpacing + (slotsCount - 1) * spacings.edgeEdgeSpacing;
                 if (rightLayer != null) {
-                    increment += edgeSpacing;
+                    increment += spacings.edgeNodeSpacing;
                 }
                 
                 // If we are between two layers, make sure their minimal spacing is preserved
-                if (increment < nodeSpacing && !isLeftLayerExternal && !isRightLayerExternal) {
-                    increment = nodeSpacing;
+                if (increment < spacings.spacing && !isLeftLayerExternal && !isRightLayerExternal) {
+                    increment = spacings.spacing;
                 }
                 xpos += increment;
             } else if (!isLeftLayerExternal && !isRightLayerExternal) {
                 // If all edges are straight, use the usual spacing 
-                xpos += nodeSpacing;
+                xpos += spacings.spacing;
             }
             
             leftLayer = rightLayer;
