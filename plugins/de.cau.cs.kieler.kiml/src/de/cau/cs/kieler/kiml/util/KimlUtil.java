@@ -770,6 +770,12 @@ public final class KimlUtil {
                     loadDataElement(dataService, holder, persistentEntry.getKey(),
                             persistentEntry.getValue(), knowPropsMap);
                 }
+                
+                // Since we have looked at all the descendants of the property holder that are relevant
+                // to us, skip all of its descendants when walking through the tree. Not doing so
+                // actually causes a ConcurrentModificationException because we're modifying persistent
+                // entries while iterating over the EObject tree. (KIPRA-1541)
+                iterator.prune();
             }
         }
         
