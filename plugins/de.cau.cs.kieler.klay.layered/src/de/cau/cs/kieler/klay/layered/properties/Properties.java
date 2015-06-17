@@ -58,6 +58,12 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.edgeSpacingFactor", 0.5f);
 
     /**
+     * Factor for minimal spacing between an edge and a node that is close by.
+     */
+    public static final Property<Float> EDGE_NODE_SPACING_FACTOR = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor", 0.7f);
+
+    /**
      * Whether nodes shall be distributed during layer assignment.
      *
      * @deprecated use the {@link #WIDE_NODES_ON_MULTIPLE_LAYERS} property instead.
