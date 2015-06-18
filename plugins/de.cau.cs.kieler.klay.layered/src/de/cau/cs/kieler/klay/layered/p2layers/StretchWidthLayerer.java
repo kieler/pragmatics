@@ -13,9 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.p2layers;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,50 +24,67 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * @author marc StretchWidth algorithm from described in In Search for Efficient Heuristics for
- *         Minimum-Width Graph Layering with Consideration of Dummy Nodes written by Nikolas S.
- *         Nikolov, Alexandre Tarassov, and Jürgen Branke
+ * StretchWidth algorithm described in In Search for Efficient Heuristics for Minimum-Width Graph
+ * Layering with Consideration of Dummy Nodes written by Nikolas S. Nikolov, Alexandre Tarassov, and
+ * Jürgen Branke
  * 
- *         the criteria for going the next layer was adapted to
+ * The criterion for going to the next layer was adapted to
  * 
- *         "widthUp > maxWidth * upperLayerInfluence"
+ * "widthUp > maxWidth * upperLayerInfluence"
  * 
- *         where upperLayerInfluence is set between 0 and 1 1 will result in the longest-path
- *         -layerer 0 will result in a layerer very similar to the one-node-layerer
+ * where upperLayerInfluence is set between 0 and 1 1 will result in the {@link LongestPathLayerer}
+ * 0 will result in a layerer very similar to the one-node-layerer.
+ * 
+ * 
+ * Precondition: the graph has no cycles, but might contain self-loops</dd> Postcondition: all nodes
+ * have been assigned a layer such that edges connect only nodes from layers with increasing indices
+ * 
+ * 
+ * @author mad
  */
 public class StretchWidthLayerer implements ILayoutPhase {
-    // indicates the width of the currently build layer
+    // indicates the width of the currently built layer
     private int widthCurrent = 0;
     // estimated width of the next layer
     private int widthUp = 0;
     // indicates the width of the layering
-    // will be changed dynamically increased if the layering fails for lower values
-    // pseudo codes says initialize with 0 but i think you can start with 1 or mb higher/average
+    // Will be increased dynamically increased if the layering fails for lower values
+    // The Pseudo codes says initialize with 0 but I think you can start with 1 or maybe
+    // higher/average
     // out-degree
     private int maxWidth = 0;
-    // the Graph the layering is done for
+    // The graph the layering is done for
     private LGraph currentGraph;
-    // outDegree with determines the bounding with widthUp and maxWidth
-    // can be choosen in soruce code: a)average out-degree b) max out-degree
+    // out-degree which determines the bounding with widthUp and maxWidth
     private double upperLayerInfluence;
     // sorted list of layerless nodes
     private List<LNode> sortedLayerlessNodes;
     // Set of nodes placed in the current layer
-    private Set<LNode> u = new HashSet<LNode>();
+    private Set<LNode> alreadyPlacedNodes = Sets.newHashSet();
     // Set of nodes in all layers except the current
-    private Set<LNode> z = new HashSet<LNode>();
-    // list of (later sorted) layerless nodes to be used in one layering approach
+    private Set<LNode> alreadyPlacedInOtherLayers = Sets.newHashSet();
+    // list of layerless nodes to be used in one layering approach, will be sorted after
+    // initialization
     private List<LNode> tempLayerlessNodes;
+    // List of sets of successors for every node
+    // can be accessed with successors.get(node.id)
+    private List<Set<LNode>> successors;
+    // array of out-degrees for every node
+    // access with outDegree[node.id]
+    private int[] outDegree;
+    // array of in-degrees for every node
+    // access with inDegree[node.id]
+    private int[] inDegree;
 
     /**
      * {@inheritDoc}
@@ -74,7 +92,11 @@ public class StretchWidthLayerer implements ILayoutPhase {
 
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
-        return IntermediateProcessingConfiguration.createEmpty();
+        return IntermediateProcessingConfiguration
+                .createEmpty()
+                .addBeforePhase1(
+                        IntermediateProcessorStrategy.EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER)
+                .addBeforePhase3(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
     }
 
     /**
@@ -91,44 +113,46 @@ public class StretchWidthLayerer implements ILayoutPhase {
         maxWidth = 1;
         // Layer currently worked on
         Layer currentLayer = new Layer(currentGraph);
-        // should next layer
-        boolean up;
+        // Should the algorithm go up to next the layer
         currentGraph.getLayers().add(currentLayer);
-        // scaling the outdegree cirteria fo testing purposes
-        // outDegreeCriteria = outDegreeCriteria / 30;
-        // works between 0 and 1 (1 = longest path? / 0 = one node per layer except for layers with
+        // works between 0 and 1 (1 = longest path / 0 = one node per layer except for layers with
         // nodes without incoming edges)
         // 0= widthUp > maxWidth * 0 -> only false for the first node and once every remaining node
         // has no incoming edges
         upperLayerInfluence = currentGraph.getProperty(Properties.UPPER_LAYER_SCALE).doubleValue();
         // sort the nodes at beginning, since the rank will not change
+        // since it uses the node.id field it has to be computed first
         computeSortedNodes();
+        // compute a list with the successors of every node
+        // can't be swapped with the computation of the out- and in-degrees
+        computeSuccessors();
+        // compute two arrays of out- and in-degree for every node
+        computeDegrees();
         // copy the sorted layerless nodes so we don't overwrite it for the reset case
         tempLayerlessNodes = Lists.newArrayList(sortedLayerlessNodes);
         LNode selectedNode;
         // variable to compute the difference of u and z
-        Set<LNode> diff;
 
         while (!tempLayerlessNodes.isEmpty()) {
             // select a node to be placed
             selectedNode = selectNode();
-            // compute u\z
-            diff = new HashSet<LNode>(u);
-            diff.removeAll(z);
-            up = conditionGoUp();
-            if (selectedNode == null || (up && !diff.isEmpty())) {
-                /* go to the next layer */
+            // The pseudo-code computes u\z but since u /alreadyPlacedNodes will be cleared here,
+            // it's enough to check if alreadyPlacedNodes is empty
+            // if it is empty it would indicate an empty layer
+            boolean up = conditionGoUp();
+            if (selectedNode == null || (up && !alreadyPlacedNodes.isEmpty())) {
+                // go to the next layer //
                 currentLayer = new Layer(currentGraph);
                 currentGraph.getLayers().add(currentLayer);
                 // union of z and u in z
-                z.addAll(u);
+                alreadyPlacedInOtherLayers.addAll(alreadyPlacedNodes);
+                alreadyPlacedNodes.clear();
                 // change width
-                // widthCurrent = 0;
                 widthCurrent = widthUp;
                 widthUp = 0;
             } else {
                 if (up) {
-                    /* reset layering */
+                    // reset layering //
                     // clear the placed layers
                     currentGraph.getLayers().clear();
                     // create the new first layer;
@@ -137,24 +161,21 @@ public class StretchWidthLayerer implements ILayoutPhase {
                     // reset variables
                     widthCurrent = 0;
                     widthUp = 0;
-                    u.clear();
-                    z.clear();
+                    alreadyPlacedNodes.clear();
+                    alreadyPlacedInOtherLayers.clear();
                     // increase maxWidth
                     maxWidth++;
                     // reset layerless nodes
                     tempLayerlessNodes = Lists.newArrayList(sortedLayerlessNodes);
 
                 } else {
-                    /* add node to current layer */
-                    // add node to layer
+                    // add node to current layer //
                     selectedNode.setLayer(currentLayer);
-                    // remove node from the
                     tempLayerlessNodes.remove(selectedNode);
-                    // add node to u
-                    u.add(selectedNode);
+                    alreadyPlacedNodes.add(selectedNode);
                     // compute new widthCurrent and widthUp
-                    widthCurrent = widthCurrent - getOutDegree(selectedNode) + 1;
-                    widthUp = widthUp + getInDegree(selectedNode);
+                    widthCurrent = widthCurrent - outDegree[selectedNode.id] + 1;
+                    widthUp = widthUp + inDegree[selectedNode.id];
                 }
             }
         }
@@ -179,60 +200,51 @@ public class StretchWidthLayerer implements ILayoutPhase {
     /**
      * Selects a node from the sorted list of layerless nodes. The selection is done according to
      * the rank of the node and only if all of its successors are already in z (the set of layered
-     * nodes after layers earlier than the current layer).
+     * nodes already placed in the other layers).
      * 
      * @return node to be placed in the current layer
      */
     private LNode selectNode() {
-        Set<LNode> accSucc = Sets.newHashSet();
         for (LNode node : tempLayerlessNodes) {
-            for (LEdge edge : node.getOutgoingEdges()) {
-                accSucc.add(edge.getTarget().getNode());
-            }
-            // remove current node from accSucc to deal with self-loops
-            accSucc.remove(node);
-            // if all successors of node are n z, choose this node, since the list is sorted by rank
-            if (z.containsAll(accSucc)) {
+            // If all successors of node are in the alreadyPlacedInOtherLayers set, choose this
+            // node, since the list is sorted by rank
+            if (alreadyPlacedInOtherLayers.containsAll(successors.get(node.id))) {
                 return node;
             }
-            accSucc.clear();
+
         }
-        // if no candidate was found return null
+        // If no candidate was found return null
         return null;
     }
 
     /**
-     * sorts a list of nodes after its rank. the rank is defined as max(d⁺(v),max(d⁺(u):(u,v)∈ E))
+     * Sorts a list of nodes after its rank. The rank is defined as max(d⁺(v),max(d⁺(u):(u,v)∈ E)).
+     * // since the id-field is reused later on, this function should be executed first
      */
     private void computeSortedNodes() {
         List<LNode> unsortedNodes = currentGraph.getLayerlessNodes();
-        List<Pair<LNode, Integer>> nodesWithRank = Lists.newArrayList();
-        sortedLayerlessNodes = Lists.newArrayList();
-        // didn't find something useful to Sort a Map by its value, so I used the Pair-construct
+        sortedLayerlessNodes = Lists.newArrayList(unsortedNodes);
+        // the id-field is reused later on, be careful
         for (LNode node : unsortedNodes) {
-            nodesWithRank.add(new Pair<LNode, Integer>(node, getRank(node)));
+            node.id = getRank(node);
         }
-        // sorting the Pair after its value
-        Collections.sort(nodesWithRank, new Comparator<Pair<LNode, Integer>>() {
-            // TODO maybe implement the comparator in the Pair-class
-            public int compare(final Pair<LNode, Integer> o1, final Pair<LNode, Integer> o2) {
+        // sorting the list by the node-id /rank
+        Collections.sort(sortedLayerlessNodes, new Comparator<LNode>() {
+            public int compare(final LNode o1, final LNode o2) {
                 // descending sort
-                if ((Integer) o1.getSecond() < (Integer) o2.getSecond()) {
+                if (o1.id < o2.id) {
                     return 1;
-                } else if ((Integer) o1.getSecond() > (Integer) o2.getSecond()) {
+                } else if (o1.id > o2.id) {
                     return -1;
                 }
                 return 0;
             }
         });
-        // only the nodes are needed now
-        for (Pair<LNode, Integer> pair : nodesWithRank) {
-            sortedLayerlessNodes.add(pair.getFirst());
-        }
+
     }
 
     /**
-     * Computes the rank of a node.
+     * Computes the rank of a node. The rank is defined as max(d⁺(v),max(d⁺(u):(u,v)∈ E)).
      * 
      * @param node
      *            node to compute the rank for
@@ -243,7 +255,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
         int temp;
         LNode pre;
 
-        // compute max of predecessors out-degree and
+        // compute max of predecessors out-degree and out-degree of the current node
         for (LEdge preEdge : node.getIncomingEdges()) {
             pre = preEdge.getSource().getNode();
             temp = getOutDegree(pre);
@@ -251,6 +263,45 @@ public class StretchWidthLayerer implements ILayoutPhase {
         }
 
         return max;
+    }
+
+    /**
+     * Computes the successors of every node and saves them in a list of sets of nodes. This list is
+     * used in selectNode. Needs to be executed after computeSortedNodes
+     */
+    private void computeSuccessors() {
+        int i = 0;
+        successors = Lists.newArrayList();
+        Set<LNode> currSucc = Sets.newHashSet();
+
+        for (LNode node : sortedLayerlessNodes) {
+            node.id = i;
+            for (LEdge edge : node.getOutgoingEdges()) {
+                currSucc.add(edge.getTarget().getNode());
+            }
+            // remove current node from accSucc to deal with self-loops
+            currSucc.remove(node);
+            successors.add(Sets.newHashSet(currSucc));
+            currSucc.clear();
+            i++;
+
+        }
+
+    }
+
+    /**
+     * Computes the in- and out-degree of every node. the values are used to determine widthUp and
+     * widthCurrent. Needs to be executed after computeSuccessors()
+     */
+    private void computeDegrees() {
+        inDegree = new int[sortedLayerlessNodes.size()];
+        outDegree = new int[sortedLayerlessNodes.size()];
+
+        for (LNode node : sortedLayerlessNodes) {
+            inDegree[node.id] = getInDegree(node);
+            outDegree[node.id] = getOutDegree(node);
+        }
+
     }
 
     /**
