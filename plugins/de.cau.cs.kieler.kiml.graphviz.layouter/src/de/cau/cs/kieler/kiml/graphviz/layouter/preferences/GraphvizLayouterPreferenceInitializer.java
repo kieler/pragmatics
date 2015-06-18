@@ -18,7 +18,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
-import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin;
 
 /**
  * Class used to initialize default preference values for the GraphViz layouter
@@ -28,14 +27,14 @@ import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class PreferenceInitializer extends AbstractPreferenceInitializer {
+public class GraphvizLayouterPreferenceInitializer extends AbstractPreferenceInitializer {
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void initializeDefaultPreferences() {
-        IPreferenceStore store = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore store = GraphvizLayouterPreferenceStore.getInstance().getPreferenceStore();
 
         store.setDefault(GraphvizTool.PREF_TIMEOUT, GraphvizTool.PROCESS_DEF_TIMEOUT);
         store.setDefault(GraphvizLayoutProvider.PREF_GRAPHVIZ_REUSE_PROCESS,
