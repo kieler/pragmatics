@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.p2layers;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -28,8 +27,8 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Implementation of the heuristic MinWidth for solving the NP-hard minimum-width layering problem
@@ -84,47 +83,46 @@ public final class MinWidthLayerer implements ILayoutPhase {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("MinWidth layering", 1);
-        
+
         List<Layer> layers = layeredGraph.getLayers();
         List<LNode> notInserted = layeredGraph.getLayerlessNodes();
 
-        // Some local variables we're going to use in the while-loop of the MinWidth algorithm down
-        // below
-        boolean noNodeSelected = false;
+        // in- and out-degree of the currently considered node, see while-loop below
         int inDegree = 0;
         int outDegree = 0;
 
-        // Requires: DAG G = (V, E). In this version self-loops are allowed.
+        // The algorithm requires DAG G = (V, E). In this version self-loops are allowed.
         // Additional properties as described above (called UBW and c in the original paper):
         final int upperBoundOnWidth = layeredGraph.getProperty(Properties.UPPER_BOUND_ON_WIDTH);
         final int compensator =
                 layeredGraph.getProperty(Properties.UPPER_LAYER_ESTIMATION_SCALING_FACTOR);
 
-        // Guarantee ConditionSelect from the paper, which states that nodes with maximum outdegree
+        // Guarantee ConditionSelect from the paper, which states that nodes with maximum out-degree
         // should be preferred during layer placement, by ordering the nodes by descending maximum
-        // outdegree in advance.
-        // We're using the nodes id property to store the outdegree (so it's not an id anymore in
+        // out-degree in advance.
+        // We're using the nodes id property to store the out-degree (so it's not an id anymore in
         // the strict sense, as it might not be unique).
         for (LNode node : notInserted) {
             node.id = countEdgesExceptSelfLoops(node.getOutgoingEdges());
         }
-
         Collections.sort(notInserted, new MaxOutgoingEdgesComparator());
 
-        // This naive implementation uses sets, just like in the papers pseudocode. We use a
-        // LinkedHashSet for the set of all real nodes of the graph in order to maintain the
-        // ordering
-        // by maximum outdegree.
-        Set<LNode> allNodes = Sets.newLinkedHashSet(notInserted);
+        // This implementation uses sets, just like in the papers pseudocode. A LinkedHashSet is
+        // used
+        // for the set of all real nodes of the graph in order to maintain the ordering by
+        // out-degree.
+        Set<LNode> unplacedNodes = Sets.newLinkedHashSet(notInserted);
 
         // The actual algorithm from the paper begins here:
-        // In the Paper the Set U contains all nodes, which have already been placed, and the set Z
-        // contains all nodes already placed in layers which have been determined before the
+        // In the Paper the first Set contains all nodes, which have already been placed, and the
+        // second contains all nodes already placed in layers which have been determined before the
         // currentLayer.
         Set<LNode> alreadyPlacedNodes = Sets.newHashSet();
         Set<LNode> alreadyPlacedInOtherLayers = Sets.newHashSet();
 
-        // Set up the first layers
+        // Set up the first layer (algorithm is bottom up, so the List layer is going to be reversed
+        // at
+        // the end.
         Layer currentLayer = new Layer(layeredGraph);
         layers.add(currentLayer);
 
@@ -133,21 +131,15 @@ public final class MinWidthLayerer implements ILayoutPhase {
         int widthCurrent = 0;
         int widthUp = 0;
 
-        // As long as not all nodes have been placed in a layer, do:
-        // Testing the condition of the while loop is pretty expensive in the original paper,
-        // TODO: improve condition!
-        while (!alreadyPlacedNodes.equals(allNodes)) {
-            // Creates a view of allNodes minus the alreadyPlacedNodes without modifying the given
-            // sets.
-            // TODO: Computing the difference of to set might be too costly, too.
-            Set<LNode> unplacedNodes = Sets.difference(allNodes, alreadyPlacedNodes);
+        while (!unplacedNodes.isEmpty()) {
+            // Find a node, whose edges only point to nodes in the Set alreadyPlacedInOtherLayers;
+            // will
+            // return {@code null} if such a node doesn't exist.
+            LNode currentNode = selectNode(unplacedNodes, alreadyPlacedInOtherLayers);
 
-            // If you can find a node, whose edges only point to nodes in the Set
-            // alreadyPlacedInOtherLayers, the try block won't fail …
-            try {
-                // This block of code will only be completed, if a node can be found by the
-                // following instruction; see definition of selectNode(nodes, targets).
-                LNode currentNode = selectNode(unplacedNodes, alreadyPlacedInOtherLayers);
+            // If you found a node in the previous step.
+            if (currentNode != null) {
+                unplacedNodes.remove(currentNode);
                 currentNode.setLayer(currentLayer);
                 alreadyPlacedNodes.add(currentNode);
 
@@ -156,23 +148,21 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
                 inDegree = countEdgesExceptSelfLoops(currentNode.getIncomingEdges());
                 widthUp += inDegree;
-            } catch (NoElementLeftException e) { // In case no node can be found
-                // … otherwise make sure you're going to the next layer
-                noNodeSelected = true;
             }
+
             // Go to the next layer if,
-            // 1) no node has been selected,
+            // 1) no current node has been selected,
             // 2) The conditionGoUp from the paper is satisfied, i.e.
             // 2.1) the width of the current layer is greater than the upper bound on the width and
             // the amount of dummy nodes in the layer can't be reduced, as only nodes with no
             // outgoing edges are left for being considered for the current layer; or:
             // 2.2) The estimated width of the not yet determined layers is greater than the
             // scaling factor/compensator times the upper bound on the width.
-            if (noNodeSelected || (widthCurrent >= upperBoundOnWidth && outDegree < 1)
+            if (currentNode == null || (widthCurrent >= upperBoundOnWidth && outDegree < 1)
                     || widthUp >= compensator * upperBoundOnWidth) {
-                noNodeSelected = false;
                 currentLayer = new Layer(layeredGraph);
                 layers.add(currentLayer);
+                // TODO: Can You improve the following step?
                 alreadyPlacedInOtherLayers.addAll(alreadyPlacedNodes);
                 widthCurrent = widthUp;
                 widthUp = 0;
@@ -189,23 +179,23 @@ public final class MinWidthLayerer implements ILayoutPhase {
     }
 
     /**
-     * Returns the first {@link LNode} in the given Set, whose outgoing edges end only in nodes of
-     * the Set {@code targets}. Self-loops are ignored.
+     * Change comment. Returns the first {@link LNode} in the given Set, whose outgoing edges end
+     * only in nodes of the Set {@code targets}. Self-loops are ignored.
+     * 
+     * Warning: Returns {@code null}, if such a node doesn't exist.
      * 
      * @param nodes
      *            Set to choose {@link LNode} from
      * @param targets
      *            Set of {@link LNode}
-     * @return chosen LNode from {@code nodes}, whose outgoing edges all end in a node contained in
-     *         {@code targets}
-     * @throws NoElementLeftException
-     *             when no node satisfies the condition.
+     * @return chosen {@link LNode} from {@code nodes}, whose outgoing edges all end in a node
+     *         contained in {@code targets}. Returns {@code null}, if such a node doesn't exist.
      */
-    // TODO: Replace Exception with null (according to mad and uru)
-    private LNode selectNode(final Set<LNode> nodes, final Set<LNode> targets)
-            throws NoElementLeftException {
-
-        Set<LNode> outNodes = new HashSet<LNode>();
+    // TODO: selectnode and countEdgesExecept… contain some duplicated code, can I make this prettier?
+    // Plus: Is there a way to only traverse all outgoing edges once in the whole algorithm once instead
+    // of twice?
+    private LNode selectNode(final Set<LNode> nodes, final Set<LNode> targets) {
+        Set<LNode> outNodes = Sets.newHashSet();
 
         for (LNode node : nodes) {
             outNodes.clear();
@@ -221,8 +211,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 return node;
             }
         }
-        // TODO: return null
-        throw new NoElementLeftException();
+        return null;
     }
 
     /**
@@ -254,8 +243,9 @@ public final class MinWidthLayerer implements ILayoutPhase {
     }
 
     /**
-     * Comparator for determining whether a LNode has more outgoing edges than another one. Requires
-     * the LNode property {@link LNode#id} to be set to the number of outgoing edges of the node.
+     * Comparator for determining whether a {@link LNode} has more outgoing edges than another one.
+     * Requires the LNode property {@link LNode#id} to be set to the number of outgoing edges of the
+     * node.
      * 
      * @author mic
      */
@@ -267,7 +257,9 @@ public final class MinWidthLayerer implements ILayoutPhase {
             int outs1 = o1.id;
             int outs2 = o2.id;
 
-            if (outs1 < outs2) {
+            //TODO: Talk to uru: This is against the API-documentation of the compare-function.
+            //What is an alternative for sorting in descending order.
+            if (outs1 > outs2) {
                 return -1;
             }
             if (outs1 == outs2) {
@@ -275,16 +267,6 @@ public final class MinWidthLayerer implements ILayoutPhase {
             }
             return 1;
         }
-    }
-
-    /**
-     * Exception for indicating that a Collection has unexpectedly ended before an element has been
-     * chosen to return.
-     * 
-     * @author mic
-     */
-    private class NoElementLeftException extends Exception {
-        private static final long serialVersionUID = -7510397180858968135L;
     }
 
 }
