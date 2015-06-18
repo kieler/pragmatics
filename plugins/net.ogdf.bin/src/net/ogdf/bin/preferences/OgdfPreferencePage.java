@@ -13,7 +13,6 @@
  */
 package net.ogdf.bin.preferences;
 
-import net.ogdf.bin.OgdfPlugin;
 import net.ogdf.bin.OgdfServer;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -32,6 +31,7 @@ public class OgdfPreferencePage extends FieldEditorPreferencePage implements
 
     /** identifier of the preference page. */
     public static final String ID = "net.ogdf.bin.preferences";
+
 
     /**
      * Creates the OgdfPreferencePage.
@@ -60,6 +60,7 @@ public class OgdfPreferencePage extends FieldEditorPreferencePage implements
      * {@inheritDoc}
      */
     public void init(final IWorkbench workbench) {
-        setPreferenceStore(OgdfPlugin.getDefault().getPreferenceStore());
+        setPreferenceStore(OgdfPreferenceStore.getInstance().getPreferenceStore());
     }
+
 }
