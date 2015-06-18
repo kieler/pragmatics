@@ -21,7 +21,7 @@ import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
-import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.CompactionStrategy;
 
 /**
  * Container for public property definitions. These are layout options that can be set on graph
@@ -39,7 +39,7 @@ public final class Properties {
      * A pre-defined seed for pseudo-random number generators.
      * We redefine the property here to set its default value to 1.
      *
-     * @see LayoutOptions#RANDOM_SEED
+     * @see de.cau.cs.kieler.kiml.options.LayoutOptions#RANDOM_SEED
      */
     public static final IProperty<Integer> RANDOM_SEED = new Property<Integer>(
             "de.cau.cs.kieler.randomSeed", 1);
@@ -216,7 +216,8 @@ public final class Properties {
                     SelfLoopPlacement.NORTH_STACKED);
 
     /**
-     * Specifies the compaction strategy when using the {@link BKNodePlacer}.
+     * Specifies the compaction strategy when using the
+     * {@link de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer BKNodePlacer}.
      */
     public static final IProperty<CompactionStrategy> COMPACTION_STRATEGY =
             new Property<CompactionStrategy>(
