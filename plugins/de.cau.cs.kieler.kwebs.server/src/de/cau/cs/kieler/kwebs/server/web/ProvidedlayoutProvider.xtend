@@ -568,13 +568,14 @@ class ProvidedlayoutProvider
                     builder.append(text.substring(p, s))
                 }
                 var int  e = s
-                var char c = 0 as char
+                var String c = ""
                 do {
                     e = e + 1
                     if (e < text.length) {
-                        c = text.charAt(e)
+                        c = text.charAt(e) + ""
                     }
-                } while (e < text.length && c != ' ' && c != '\t' && c != '\r' && c != '\n')
+                } while (e < text.length && !c.equals(" ") && !c.equals("\t")
+                    && !c.equals("\r") && !c.equals("\n"))
                 val String url = text.substring(s, e)
                 builder.append("<a href=\"").append(url).append("\">").append(url).append("</a>")
                 p = e
