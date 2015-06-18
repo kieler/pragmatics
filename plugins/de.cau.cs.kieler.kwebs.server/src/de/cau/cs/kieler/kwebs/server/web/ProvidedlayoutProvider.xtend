@@ -71,47 +71,35 @@ class ProvidedlayoutProvider
         '''
         <style type='text/css'>
             <!--
-                .even {
-                    background-color : #efefef;
-                }
-                .odd  {
-                    background-color : #ffffff;
-                }
-                .even:hover, .odd:hover {
-                    background-color : #a5F3a5;
-                    cursor           : pointer;
-                }
-                table.listing {
-                    border-width      : 2px;
-                    border-style      : ridge;
-                    border-color     : #000000;
-                    table-layout     : fixed;
-                }
-                table.listing thead tr > th, table.listing tbody tr > td {
-                    font-family      : Verdana, Arial; 
-                    font-size         : 8pt; 
-                    border-style     : none;
-                    text-align         : left;
-                    padding          : 10px;
-                }
-                table.listing thead tr > th {
-                    font-weight         : bold;
-                    border-bottom     : 1px solid;
-                }
-                table.advertisement {
-                    background-color : #a5F3a5;
-                    border           : 1px solid;
-                    padding          : 10px;
-                }
-                table.advertisement tr td > p{
-                    font-family      : Verdana, Arial; 
-                    font-size         : 8pt;
-                    border-style     : none;
-                    text-align         : left;
+                .link:hover {
+                    cursor: pointer;
                 }
                 .imgPlaceholder {
                     width: 20px;
                     height: 20px;
+                }
+                .center {
+                    display: inline-block;
+                    float: none;
+                    margin-left: auto;
+                    margin-right: auto;
+                }
+                th.rotate {
+                  /* Something you can count on */
+                  height: 140px;
+                  white-space: nowrap;
+                }
+                th.rotate > div {
+                  transform: 
+                    /* Magic Numbers */
+                    translate(-5px, -2px)
+                    /* 45 is really 360 - 45 */
+                    rotate(315deg);
+                  width: 30px;
+                }
+                th.rotate > div > span {
+                  border-bottom: 1px solid #ccc;
+                  padding: 5px 10px;
                 }
             //-->
         </style>
@@ -201,15 +189,15 @@ class ProvidedlayoutProvider
         </ul>
         <div class="tab-content">
             <div id="options" class="tab-pane active">
-                <table class='table table-striped table-hover'>
+                <table class='table table-striped table-hover table-responsive'>
                     <thead><tr><th>Name</th><th>Type</th><th>Identifier</th><th>Default Value</th></tr></thead>
                     <tbody>
                         «options.map(option | {
                             '''
-                            <tr onclick='document.location.href="Providedlayout.html?option=«
+                            <tr>
+                                <td class="link" onclick='document.location.href="Providedlayout.html?option=«
                                 option.option.id
-                            »";'>
-                                <td>«option.option.name»</td>
+                                »";'>«option.option.name»</td>
                                 <td>«option.option.type»</td>
                                 <td>«option.option.id»</td>
                                 <td>«if (option.^default == null) {
@@ -224,15 +212,13 @@ class ProvidedlayoutProvider
                 </table>
             </div>
             <div id="features" class="tab-pane">
-                <table class='table table-striped table-hover'>
+                <table class='table table-striped table-hover table-responsive'>
                     <thead><tr><th>Name</th><th>Description</th><th>Degree of Support</th></tr></thead>
                     <tbody>
                         «features.map(feature | {
                             if (algorithmData.supportsFeature(feature)) {
                             '''
-                            <tr onclick='document.location.href="Providedlayout.html?feature=«
-                                feature.name
-                            »";'>
+                            <tr>
                                 <td>«feature.name»</td>
                                 <td>«feature.description»</td>
                                 <td>«algorithmData.getSupportedFeatureDescription(feature)»</td>
@@ -254,9 +240,6 @@ class ProvidedlayoutProvider
     /** Path to the image which is shown when a preview image is not given by a plug in. */
     private static String IMAGE_CHECK
         = "/images/check.png"
-    /** Path to the image which is shown when a preview image is not given by a plug in. */
-    private static String IMAGE_CROSS
-        = "/images/cross.png"
 
     /**
      * Generates web page content giving an overview of the meta data.
@@ -297,34 +280,36 @@ class ProvidedlayoutProvider
                 <p>
                     The following option can be used to select a specific layout algorithm:
                 </p>
-                <div class="alert alert-info">
+                <div style="text-align: center;">
+                <div class="alert alert-info center" style="text-align: left;">
                     «generateForOption(processingExchange, LayoutOptions::ALGORITHM.id, true)»
+                </div>
                 </div>
                 <p>
                     The following layout algorithms are currently supported by this service. Click any 
                     algorithm to receive further information on it's supported layout options.
                 </p>
-                <table class='table table-striped table-hover'>
+                <table class='table table-striped table-hover table-responsive'>
                     <thead><tr><th>Name</th><th>Category</th><th>Type</th><th>Identifier</th><th>Version</th></tr></thead>
                     <tbody>
                         «algorithms.map(algorithm | {    
                             var String category = algorithm.category?.name
                             var String type     = algorithm.type?.name
                             var String version  = algorithm.version
-                            if (category == null || category.length== 0) {
+                            if (Strings.isNullOrEmpty(category)) {
                                 category = "&nbsp;"
                             }
-                            if (type == null || type.length== 0) {
+                            if (Strings.isNullOrEmpty(type)) {
                                 type = "&nbsp;"
                             }
-                            if (version == null || version.length== 0) {
+                            if (Strings.isNullOrEmpty(version)) {
                                 version = "&nbsp;"
                             }
                             '''
-                            <tr onclick='document.location.href="Providedlayout.html?algorithm=«
+                            <tr>
+                                <td class="link" onclick='document.location.href="Providedlayout.html?algorithm=«
                                 algorithm.id
-                            »";'>
-                                <td>«algorithm.name»</td>
+                                »";'>«algorithm.name»</td>
                                 <td>«category»</td>
                                 <td>«type»</td>
                                 <td>«algorithm.id»</td>
@@ -338,15 +323,15 @@ class ProvidedlayoutProvider
                 <p>
                     The following formats can be used to transfer graphs to the layout service:
                 </p>
-                <table class='table table-striped table-hover'>
+                <table class='table table-striped table-hover table-responsive'>
                     <thead><tr><th>Name</th><th>Identifier</th></tr></thead>
                     <tbody>
                         «formats.map(format | {
                             '''
-                            <tr onclick='document.location.href="Providedlayout.html?format=«
+                            <tr>
+                                <td class="link" onclick='document.location.href="Providedlayout.html?format=«
                                 format.id
-                            »";'>
-                                <td>«format.name»</td> 
+                                »";'>«format.name»</td> 
                                 <td>«format.id»</td>
                             </tr>'''
                         }).join»
@@ -357,34 +342,33 @@ class ProvidedlayoutProvider
                 <p>
                     The following features could be supported by the layout algorithms:
                 </p>
-                <table class='table table-striped table-hover'>
+                <table class='table table-striped table-hover table-responsive rotate-headers'>
                     <thead><tr><th>Algorithm</th>
                         «features.map(feature | {
-                            '''<th><span data-toggle="tooltip" title="«feature.description»">
-                                «feature.name»</span></th>'''
+                            '''<th class="rotate"><div><span data-toggle="tooltip" title="«feature.description»">
+                                «feature.name»</span></div></th>'''
                         }).join»</tr></thead>
                     <tbody>
                         «algorithms.map(algorithm | {
                             val LayoutAlgorithmData algorithmData =
                                     LayoutMetaDataService.instance.getAlgorithmData(algorithm.id)
                             '''
-                            <tr onclick='document.location.href="Providedlayout.html?algorithm=«
+                            <tr>
+                                <td class="link" onclick='document.location.href="Providedlayout.html?algorithm=«
                                 algorithm.id
-                            »";'><td>«algorithm.name»</td>
+                                »";'>«algorithm.name»</td>
                                 «features.map(feature | {
-                                    if (algorithmData.supportsFeature(feature)) {
-                                        '''<td><img height="20" src="«IMAGE_CHECK»"
-                                        «if (!Strings.isNullOrEmpty(algorithmData.getSupportedFeatureDescription(feature))) {
-                                            '''data-toggle="tooltip" title="«algorithmData.getSupportedFeatureDescription(feature)»"'''
-                                        } else {
-                                            ''''''
-                                        }»
-                                        /></td>'''
-                                    } else {
-                                        '''
-                                        <td><div class="imgPlaceholder"></div>
-                                        '''
-                                    }
+                                    '''<td>
+                                    «IF (algorithmData.supportsFeature(feature))»
+                                        <img height="20" src="«IMAGE_CHECK»"
+                                        «IF !Strings.isNullOrEmpty(algorithmData.getSupportedFeatureDescription(feature))»
+                                            data-toggle="tooltip" title="«algorithmData.getSupportedFeatureDescription(feature)»"
+                                        «ENDIF»
+                                        />
+                                    «ELSE»
+                                        <div class="imgPlaceholder"></div>
+                                    «ENDIF»
+                                    </td>'''
                                 }).join»
                             </tr>'''
                         }).join»
@@ -392,7 +376,16 @@ class ProvidedlayoutProvider
                 </table>
             </div>
         </div>
-        </div>'''
+        </div>
+        <script>
+            $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                if ($(e.target).attr("href") == "#features") {
+                    var width = $("th.rotate:last-child>div>span").first().width()
+                    $("th.rotate:last-child").first().width(width)
+                    $(".rotate-headers>tbody>tr>td:last-child").width(width)
+                }
+            })
+        </script>'''
     }
 
     /**
