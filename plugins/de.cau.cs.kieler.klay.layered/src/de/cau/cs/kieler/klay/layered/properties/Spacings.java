@@ -70,6 +70,11 @@ public final class Spacings {
     public final float inLayerSpacingFactor;
 
     /**
+     * Pre calculated spacing values between any pair of {@link NodeType}s.
+     */
+    private final float[][] nodeTypeSpacings;
+    
+    /**
      * @param graph
      *            the {@link LGraph} for which to record the spacing values.
      */
@@ -82,6 +87,58 @@ public final class Spacings {
         portSpacing = graph.getProperty(InternalProperties.PORT_SPACING);
         externalPortSpacing = graph.getProperty(InternalProperties.PORT_SPACING);
         labelSpacing = graph.getProperty(LayoutOptions.LABEL_SPACING);
+
+        // pre calculate the spacings between pairs of node types
+        int n = NodeType.values().length;
+        nodeTypeSpacings = new float[n][n];
+        precalculateNodeTypeSpacings();
+    }
+    
+    private void precalculateNodeTypeSpacings() {
+        // 6 node types --> (6 ncr 2) = 16 2-subsets + 6 1-subsets = 22
+        // sort them based on expected frequency
+        
+        // normal
+        nodeTypeSpacing(NodeType.NORMAL, nodeSpacing);
+        nodeTypeSpacing(NodeType.NORMAL, NodeType.LONG_EDGE, edgeNodeSpacing);
+        nodeTypeSpacing(NodeType.NORMAL, NodeType.NORTH_SOUTH_PORT, edgeNodeSpacing);
+        nodeTypeSpacing(NodeType.NORMAL, NodeType.EXTERNAL_PORT, externalPortSpacing);
+        nodeTypeSpacing(NodeType.NORMAL, NodeType.LABEL, edgeNodeSpacing);
+        nodeTypeSpacing(NodeType.NORMAL, NodeType.BIG_NODE, edgeNodeSpacing);
+
+        // longedge
+        nodeTypeSpacing(NodeType.LONG_EDGE, edgeEdgeSpacing);
+        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.NORTH_SOUTH_PORT, edgeEdgeSpacing);
+        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.EXTERNAL_PORT, externalPortSpacing);
+        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.LABEL, labelSpacing);
+        nodeTypeSpacing(NodeType.LONG_EDGE, NodeType.BIG_NODE, edgeNodeSpacing);
+
+        // northsouth
+        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, edgeEdgeSpacing);
+        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, NodeType.EXTERNAL_PORT, externalPortSpacing);
+        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, NodeType.LABEL, labelSpacing);
+        nodeTypeSpacing(NodeType.NORTH_SOUTH_PORT, NodeType.BIG_NODE, edgeNodeSpacing);
+
+        // external
+        nodeTypeSpacing(NodeType.EXTERNAL_PORT, externalPortSpacing);
+        nodeTypeSpacing(NodeType.EXTERNAL_PORT, NodeType.LABEL, externalPortSpacing);
+        nodeTypeSpacing(NodeType.EXTERNAL_PORT, NodeType.BIG_NODE, externalPortSpacing);
+
+        // label
+        nodeTypeSpacing(NodeType.LABEL, labelSpacing);
+        nodeTypeSpacing(NodeType.LABEL, NodeType.BIG_NODE, labelSpacing);
+
+        // bignode
+        nodeTypeSpacing(NodeType.BIG_NODE, nodeSpacing);
+    }
+    
+    private void nodeTypeSpacing(final NodeType nt, final float spacing) {
+        nodeTypeSpacings[nt.ordinal()][nt.ordinal()] = spacing;
+    }
+    
+    private  void nodeTypeSpacing(final NodeType n1, final NodeType n2, final float spacing) {
+        nodeTypeSpacings[n1.ordinal()][n2.ordinal()] = spacing;
+        nodeTypeSpacings[n2.ordinal()][n1.ordinal()] = spacing;
     }
 
     // ----------------------------------------------------------------------------------
@@ -122,97 +179,7 @@ public final class Spacings {
      * @return the horizontal spacing value according to the two passed node types.
      */
     public float getHorizontalSpacing(final NodeType t1, final NodeType t2) {
-
-        // 6 node types --> (6 ncr 2) = 16 2-subsets + 6 1-subsets = 22
-        // sort them based on expected frequency
-        
-        // frequent ones
-        if (matches(t1, t2, NodeType.NORMAL)) {
-            return nodeSpacing;
-        }
-        if (matches(t1, t2, NodeType.NORMAL, NodeType.LONG_EDGE)) {
-            return edgeNodeSpacing;
-        }
-        if (matches(t1, t2, NodeType.LONG_EDGE)) {
-            return edgeEdgeSpacing;
-        }
-        if (matches(t1, t2, NodeType.NORMAL, NodeType.NORTH_SOUTH_PORT)) {
-            return edgeNodeSpacing;
-        }
-        if (matches(t1, t2, NodeType.EXTERNAL_PORT)) {
-            return externalPortSpacing;
-        }
-        if (matches(t1, t2, NodeType.NORTH_SOUTH_PORT)) {
-            return edgeEdgeSpacing;
-        }
-        
-        // normal
-        if (matches(t1, t2, NodeType.NORMAL, NodeType.EXTERNAL_PORT)) {
-            return externalPortSpacing; // shouldnt happen though
-        }
-        if (matches(t1, t2, NodeType.NORMAL, NodeType.LABEL)) {
-            return edgeNodeSpacing;
-        }
-        if (matches(t1, t2, NodeType.NORMAL, NodeType.BIG_NODE)) {
-            return edgeNodeSpacing;
-        }
-        
-        // longedge
-        if (matches(t1, t2, NodeType.LONG_EDGE, NodeType.NORTH_SOUTH_PORT)) {
-            return edgeEdgeSpacing;
-        }
-        if (matches(t1, t2, NodeType.LONG_EDGE, NodeType.EXTERNAL_PORT)) {
-            return externalPortSpacing; // shouldnt happen
-        }
-        if (matches(t1, t2, NodeType.LONG_EDGE, NodeType.LABEL)) {
-            return labelSpacing;
-        }
-        if (matches(t1, t2, NodeType.LONG_EDGE, NodeType.BIG_NODE)) {
-            return edgeNodeSpacing;
-        }
-        
-        // northsouth
-        if (matches(t1, t2, NodeType.NORTH_SOUTH_PORT, NodeType.EXTERNAL_PORT)) {
-            return externalPortSpacing;
-        }
-        if (matches(t1, t2, NodeType.NORTH_SOUTH_PORT, NodeType.LABEL)) {
-            return labelSpacing;
-        }
-        if (matches(t1, t2, NodeType.NORTH_SOUTH_PORT, NodeType.BIG_NODE)) {
-            return edgeNodeSpacing;
-        }
-
-        // external
-        if (matches(t1, t2, NodeType.EXTERNAL_PORT, NodeType.LABEL)) {
-            return externalPortSpacing;
-        }
-        if (matches(t1, t2, NodeType.EXTERNAL_PORT, NodeType.BIG_NODE)) {
-            return externalPortSpacing;
-        }
-        
-        // label
-        if (matches(t1, t2, NodeType.LABEL)) {
-            return labelSpacing;
-        }
-        if (matches(t1, t2, NodeType.LABEL, NodeType.BIG_NODE)) {
-            return labelSpacing;
-        }
-        
-        // bignode
-        if (matches(t1, t2, NodeType.BIG_NODE)) {
-            return nodeSpacing;
-        }
-        
-        throw new UnspecifiedSpacingException("Node types: " + t1 + " " + t2);
-    }
-    
-    private static boolean matches(final NodeType n1, final NodeType n2, final NodeType desired) {
-        return n1 == desired && n2 == desired;
-    }
-
-    private static boolean matches(final NodeType n1, final NodeType n2, final NodeType desired1,
-            final NodeType desired2) {
-        return (n1 == desired1 && n2 == desired2) || (n2 == desired1 && n1 == desired2);
+        return nodeTypeSpacings[t1.ordinal()][t2.ordinal()];
     }
 
     // ----------------------------------------------------------------------------------
