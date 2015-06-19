@@ -13,11 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
@@ -33,11 +33,30 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
-// FIXME what to do if graph gets wider after compaction; also doesn't fit the frame
 
 /**
+ * This processor applies additional horizontal compaction to an already routed graph and can be
+ * executed after {@link OrthogonalEdgeRouter}. Therefore nodes and vertical segments of edges are
+ * repositioned in only the horizontal direction where the position is leftmost considering the desired
+ * spacing between elements.
+ * 
+ * 
+ * precondition:orthogonal edge routing  no N/S ports and no hyperedges (with junction points)
+ * 
+ * <dl>
+ *   <dt>Precondition:</dt>
+ *     <dd>The edges are routed orthogonally with at most two vertical segments per edge.</dd>
+ *     <dd>Edges do not connect to north or south ports.</dd>
+ *     <dd>The graph does not contain {@link HyperNode}s.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>Nodes and edges are positioned leftmost without colliding.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>After phase 5.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>After {@link LabelDummyRemover}</dd>
+ *     <dd>Before {@link ReversedEdgeRestorer}</dd>
+ * </dl>
  * @author dag
- *
  */
 public class OneDimensionalCompactor implements ILayoutProcessor {
 
@@ -53,13 +72,13 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                 layeredGraph.getProperty(InternalProperties.SPACING)
                         * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
-        List<CNode> nodes = new ArrayList<CNode>();
+        List<CNode> nodes = Lists.newArrayList();
 
-        // collecting positions of graph elements
+        /* collecting positions of graph elements */
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
-                // add all nodes of type NORMAL because dummy nodes shouldn't have any size but
-                // sometimes are 1 high.
+                // add all nodes of type NORMAL because dummy nodes shouldn't have any size or spacings
+                // at this point there shouldn't even be any
                 if (node.getNodeType().equals(NodeType.NORMAL)) {
                     // hitbox excluding object spacing
                     Rectangle r =
@@ -73,7 +92,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
                     Iterator<KVector> bends = edge.getBendPoints().iterator();
                     while (bends.hasNext()) {
-                        // infer vertical segments from order of bendpoints TODO consider x position
+                        // infer vertical segments from order of bendpoints
                         KVector bend1 = bends.next();
                         KVector bend2 = bends.next();
                         double x, y, h;
@@ -97,14 +116,13 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
             }
         }
 
-        // infer constraints from node intersections
+        /* infer constraints from hitbox intersections */
         for (CNode node1 : nodes) {
             for (CNode node2 : nodes) {
 
-                // set spacing in the following conditions
+                // determine if object or edge spacing should be used
+                // also retrieving margins around nodes
                 double spacing = edgeSpacing;
-
-                // get margins //TODO spacing = max(objSpacing, margin) ??
                 LInsets margin1 = new LInsets(0, 0, 0, 0);
                 if (node1.elem.getClass() == LNode.class) {
                     margin1 = ((LNode) node1.elem).getMargin();
@@ -123,24 +141,25 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                                                            // a->b and b->a
                         && Comp.gt(node2.hitbox.y + node2.hitbox.height + margin2.bottom + spacing,
                                 node1.hitbox.y - margin1.top)
-                        && Comp.lt(node2.hitbox.y - margin2.top, node1.hitbox.y + node1.hitbox.height
-                                + margin1.bottom + spacing)) {
-                    System.out.println("Adding Constraint " + node1.elem + " -> " + node2.elem);
+                        && Comp.lt(node2.hitbox.y - margin2.top, node1.hitbox.y
+                                + node1.hitbox.height + margin1.bottom + spacing)) {
+
                     node1.incoming.add(node2);
                     node2.outDegree++;
                 }
             }
         }
 
-        // calculate node positions
+        /* calculating node positions */
+        
         // starting with nodes with outDegree == 0
-        Queue<CNode> startNodes = new LinkedList<CNode>();
+        Queue<CNode> startNodes = Lists.newLinkedList();
         for (CNode node : nodes) {
             if (node.outDegree == 0) {
                 startNodes.add(node);
                 if (node.elem.getClass() == LNode.class) {
                     node.startX = ((LNode) node.elem).getPosition().x;
-                } else { // is LEdge
+                } else if (node.elem.getClass() == LEdge.class) {
                     node.startX = node.bend1.x;
                 }
             }
@@ -150,11 +169,9 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         while (!startNodes.isEmpty()) {
 
             CNode node = startNodes.poll();
-            System.out.println("Working on  " + node.elem);
             for (CNode inc : node.incoming) {
-                // TODO differentiate node edge
-                // but first try just margins like before
-                // set spacing in the following conditions
+                // determine if object or edge spacing should be used
+                // also retrieving margins around nodes
                 double spacing = edgeSpacing;
                 LInsets margin1 = new LInsets(0, 0, 0, 0);
                 if (node.elem.getClass() == LNode.class) {
@@ -167,28 +184,30 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                     spacing = objSpacing;
                 }
 
+                // calculating leftmost position according to constraints
                 inc.startX =
                         Math.max(inc.startX, node.startX + node.hitbox.width + margin1.right
                                 + margin2.left + spacing);
                 inc.outDegree--;
-                System.out.println("\t" + inc.elem + "  " + inc.startX);
 
+                // set startNodes for the next iteration
                 if (inc.outDegree == 0) {
                     startNodes.add(inc);
                 }
             }
         }
 
-        // position nodes
+        /* positioning nodes */
         for (CNode node : nodes) {
 
             if (node.elem.getClass() == LNode.class) {
                 LNode n = (LNode) node.elem;
                 n.getPosition().x = node.startX;
 
-            } else if (node.elem.getClass() == LEdge.class) { // TODO can't be anything else
+            } else if (node.elem.getClass() == LEdge.class) {
                 node.bend1.x = node.startX;
                 node.bend2.x = node.startX;
+
             }
         }
 
@@ -196,23 +215,25 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
     }
 
     /**
-     * 
-     * @author dag
-     *
+     * Internal representation of a node in the constraint graph specifying a hitbox for the
+     * {@link LGraphElement}.
      */
     private final class CNode {
 
         private LGraphElement elem;
         private Rectangle hitbox;
-        // specifies particular vertical edge segment
+        // specify particular vertical edge segment
         private KVector bend1, bend2;
-        private List<CNode> incoming = new ArrayList<CNode>();
+        // representation of constraints
+        private List<CNode> incoming = Lists.newArrayList();
         private int outDegree = 0;
         private double startX = Double.NEGATIVE_INFINITY;
 
         /**
-         * @param elem
-         * @param hitbox
+         * Creates new constraint node
+         * 
+         * @param elem  the graph element
+         * @param hitbox        the constraints are inferred from this box
          */
         private CNode(final LGraphElement elem, final Rectangle hitbox) {
             this.elem = elem;
@@ -220,31 +241,30 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         }
 
     }
-    
+
     /**
-     * 
-     * @author dag
-     *
+     * Internal class for tolerance affected double comparisons.
      */
     private static final class Comp {
-        
+
         private static final double TOLERANCE = 0.0001;
-        
+
         private static boolean eq(final double d1, final double d2) {
             return Math.abs(d1 - d2) <= TOLERANCE;
         }
-        
+
         private static boolean gt(final double d1, final double d2) {
             return d1 - d2 > TOLERANCE;
         }
-        
+
         private static boolean lt(final double d1, final double d2) {
             return d2 - d1 > TOLERANCE;
         }
+
         private static boolean ge(final double d1, final double d2) {
             return d1 - d2 >= -TOLERANCE;
         }
-        
+
         private static boolean le(final double d1, final double d2) {
             return d2 - d1 >= -TOLERANCE;
         }

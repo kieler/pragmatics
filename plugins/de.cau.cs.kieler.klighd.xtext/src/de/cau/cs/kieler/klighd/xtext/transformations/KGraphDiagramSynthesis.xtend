@@ -127,7 +127,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.nodeLayering", null),
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale", ImmutableList.of(0f, 1f)),
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth", ImmutableList.of(1, 100)),
-            specifyLayoutOption("de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", ImmutableList.of(1f, 2f)),
+            specifyLayoutOption("de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", ImmutableList.of(1f, 10f)),
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.nodePromotion",null),
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.oneDimensionalCompaction",null)
        

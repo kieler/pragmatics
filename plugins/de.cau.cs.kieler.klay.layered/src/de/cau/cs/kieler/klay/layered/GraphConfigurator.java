@@ -288,11 +288,11 @@ final class GraphConfigurator {
                 .addBeforePhase3(IntermediateProcessorStrategy.NODE_PROMOTION);
         }
 
-        // Additional prettification only if orthogonal edge routing is applied
-        if (lgraph.getProperty(Properties.ONE_DIMENSIONAL_COMPACTION) && lgraph.getProperty(InternalProperties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
-            configuration
-                .addAfterPhase5(IntermediateProcessorStrategy.ONE_D_COMPACTOR);
-        }  
+        // Additional horizontal compaction depends on orthogonal edge routing
+        if (lgraph.getProperty(Properties.ONE_DIMENSIONAL_COMPACTION)
+                && lgraph.getProperty(InternalProperties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+            configuration.addAfterPhase5(IntermediateProcessorStrategy.ONE_D_COMPACTOR);
+        } 
 
         return configuration;
     }

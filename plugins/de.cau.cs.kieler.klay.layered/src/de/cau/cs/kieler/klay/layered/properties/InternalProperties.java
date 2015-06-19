@@ -374,6 +374,8 @@ public final class InternalProperties {
      */
     public static final IProperty<List<LPort>> CONNECTED_NORTH_SOUTH_PORT_DUMMIES =
             new Property<List<LPort>>("connectedNorthSouthPorts", new ArrayList<LPort>());
+    
+    //TODO list hypernodes
 
     // /////////////////////////////////////////////////////////////////////////////
     // OVERWRITTEN PROPERTIES

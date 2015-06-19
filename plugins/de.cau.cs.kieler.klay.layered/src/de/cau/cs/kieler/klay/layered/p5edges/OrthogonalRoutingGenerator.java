@@ -618,6 +618,10 @@ public final class OrthogonalRoutingGenerator {
             routingStrategy.calculateBendPoints(node, startPos);
         }
         
+        //TODO lgraph.setProperty(InternalProperties.HYPERNODES, theHypernodes)
+        
+        // 
+        
         // release the created resources
         createdJunctionPoints.clear();
         return rankCount + 1;
