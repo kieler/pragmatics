@@ -108,10 +108,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
    </url>
 
-   <includes
-         id="org.eclipse.rcp"
-         version="0.0.0"/>
-
    <plugin
          id="com.google.guava"
          download-size="0"
