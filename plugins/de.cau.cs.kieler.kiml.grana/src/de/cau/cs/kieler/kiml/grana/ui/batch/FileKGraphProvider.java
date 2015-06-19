@@ -137,7 +137,7 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                 graph = (KNode) content;
             }
             // assure that properties, stored in the model file, are loaded properly 
-            KimlUtil.loadDataElements(graph);
+            KimlUtil.loadDataElements(graph, true);
             
             if (layoutBeforeAnalysis) {
                 if (configurator != null) {
