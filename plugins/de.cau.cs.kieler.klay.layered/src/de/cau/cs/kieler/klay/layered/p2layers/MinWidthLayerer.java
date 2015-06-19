@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -31,6 +32,8 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
+ * TODO: Check for all comments, if they still apply and add comments for the new pieces of Code!
+ * 
  * Implementation of the heuristic MinWidth for solving the NP-hard minimum-width layering problem
  * with consideration of dummy nodes. MinWidth is based on the longest-path algorithm, which finds
  * layerings with the minimum height, but doesn't consider the width of the graph. MinWidth also
@@ -105,7 +108,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
         for (LNode node : notInserted) {
             node.id = countEdgesExceptSelfLoops(node.getOutgoingEdges());
         }
-        Collections.sort(notInserted, new MaxOutgoingEdgesComparator());
+        Collections.sort(notInserted, Collections.reverseOrder(new MinOutgoingEdgesComparator()));
 
         // This implementation uses sets, just like in the papers pseudocode. A LinkedHashSet is
         // used
@@ -113,11 +116,14 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // out-degree.
         Set<LNode> unplacedNodes = Sets.newLinkedHashSet(notInserted);
 
+        // TODO: Comment why we precalculate + Warning that this will change the nodes' id again.
+        List<Set<LNode>> nodeSuccessors = precalcSuccessors(unplacedNodes);
+
         // The actual algorithm from the paper begins here:
         // In the Paper the first Set contains all nodes, which have already been placed, and the
         // second contains all nodes already placed in layers which have been determined before the
         // currentLayer.
-        Set<LNode> alreadyPlacedNodes = Sets.newHashSet();
+        Set<LNode> alreadyPlacedInCurrentLayer = Sets.newHashSet();
         Set<LNode> alreadyPlacedInOtherLayers = Sets.newHashSet();
 
         // Set up the first layer (algorithm is bottom up, so the List layer is going to be reversed
@@ -135,13 +141,13 @@ public final class MinWidthLayerer implements ILayoutPhase {
             // Find a node, whose edges only point to nodes in the Set alreadyPlacedInOtherLayers;
             // will
             // return {@code null} if such a node doesn't exist.
-            LNode currentNode = selectNode(unplacedNodes, alreadyPlacedInOtherLayers);
+            LNode currentNode = selectNode(unplacedNodes, nodeSuccessors, alreadyPlacedInOtherLayers);
 
             // If you found a node in the previous step.
             if (currentNode != null) {
                 unplacedNodes.remove(currentNode);
                 currentNode.setLayer(currentLayer);
-                alreadyPlacedNodes.add(currentNode);
+                alreadyPlacedInCurrentLayer.add(currentNode);
 
                 outDegree = currentNode.id;
                 widthCurrent += 1 - outDegree;
@@ -162,8 +168,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
                     || widthUp >= compensator * upperBoundOnWidth) {
                 currentLayer = new Layer(layeredGraph);
                 layers.add(currentLayer);
-                // TODO: Can You improve the following step?
-                alreadyPlacedInOtherLayers.addAll(alreadyPlacedNodes);
+                alreadyPlacedInOtherLayers.addAll(alreadyPlacedInCurrentLayer);
+                alreadyPlacedInCurrentLayer.clear();
                 widthCurrent = widthUp;
                 widthUp = 0;
             }
@@ -179,8 +185,39 @@ public final class MinWidthLayerer implements ILayoutPhase {
     }
 
     /**
-     * Change comment. Returns the first {@link LNode} in the given Set, whose outgoing edges end
-     * only in nodes of the Set {@code targets}. Self-loops are ignored.
+     * TODO: comment.
+     * 
+     * @param nodes
+     * @return
+     */
+    private List<Set<LNode>> precalcSuccessors(final Set<LNode> nodes) {
+        List<Set<LNode>> successors = Lists.newArrayListWithCapacity(nodes.size());
+
+        int index = 0;
+        for (LNode node : nodes) {
+            // WARNING: The id is being redefined here as an actual id!
+            node.id = index;
+
+            Set<LNode> outNodes = Sets.newHashSet();
+            Iterable<LEdge> outEdges = node.getOutgoingEdges();
+
+            for (LEdge edge : outEdges) {
+                if (!isSelfLoop(edge)) {
+                    outNodes.add(edge.getTarget().getNode());
+                }
+            }
+
+            successors.add(outNodes);
+            index++;
+        }
+
+        return successors;
+    }
+
+    /**
+     * TODO: Change comment.
+     * Returns the first {@link LNode} in the given Set, whose outgoing edges
+     * end only in nodes of the Set {@code targets}. Self-loops are ignored.
      * 
      * Warning: Returns {@code null}, if such a node doesn't exist.
      * 
@@ -191,23 +228,23 @@ public final class MinWidthLayerer implements ILayoutPhase {
      * @return chosen {@link LNode} from {@code nodes}, whose outgoing edges all end in a node
      *         contained in {@code targets}. Returns {@code null}, if such a node doesn't exist.
      */
-    // TODO: selectnode and countEdgesExecept… contain some duplicated code, can I make this prettier?
-    // Plus: Is there a way to only traverse all outgoing edges once in the whole algorithm once instead
-    // of twice?
-    private LNode selectNode(final Set<LNode> nodes, final Set<LNode> targets) {
-        Set<LNode> outNodes = Sets.newHashSet();
+    private LNode selectNode(final Set<LNode> nodes, final List<Set<LNode>> successors,
+            final Set<LNode> targets) {
+        
+        // TODO: remove unused pieces of code.
+        // Set<LNode> outNodes = Sets.newHashSet();
 
         for (LNode node : nodes) {
-            outNodes.clear();
-            Iterable<LEdge> outEdges = node.getOutgoingEdges();
+            // outNodes.clear();
+            // Iterable<LEdge> outEdges = node.getOutgoingEdges();
+            //
+            // for (LEdge edge : outEdges) {
+            // if (!isSelfLoop(edge)) {
+            // outNodes.add(edge.getTarget().getNode());
+            // }
+            // }
 
-            for (LEdge edge : outEdges) {
-                if (!isSelfLoop(edge)) {
-                    outNodes.add(edge.getTarget().getNode());
-                }
-            }
-
-            if (targets.containsAll(outNodes)) {
+            if (targets.containsAll(successors.get(node.id))) {
                 return node;
             }
         }
@@ -243,13 +280,13 @@ public final class MinWidthLayerer implements ILayoutPhase {
     }
 
     /**
-     * Comparator for determining whether a {@link LNode} has more outgoing edges than another one.
+     * Comparator for determining whether a {@link LNode} has less outgoing edges than another one.
      * Requires the LNode property {@link LNode#id} to be set to the number of outgoing edges of the
      * node.
      * 
      * @author mic
      */
-    private class MaxOutgoingEdgesComparator implements Comparator<LNode> {
+    private class MinOutgoingEdgesComparator implements Comparator<LNode> {
         /**
          * {@inheritDoc}
          */
@@ -257,9 +294,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
             int outs1 = o1.id;
             int outs2 = o2.id;
 
-            //TODO: Talk to uru: This is against the API-documentation of the compare-function.
-            //What is an alternative for sorting in descending order.
-            if (outs1 > outs2) {
+            if (outs1 < outs2) {
                 return -1;
             }
             if (outs1 == outs2) {
