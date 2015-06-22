@@ -40,8 +40,9 @@ public class AnalysisContext {
 
     /**
      * A map containing the results of previously executed analyses.
+     * Make it a linked hash set to preserve insertion order.
      */
-    private Map<String, Object> resultsMap = Maps.newHashMap();
+    private Map<String, Object> resultsMap = Maps.newLinkedHashMap();
 
     /**
      * @param instance

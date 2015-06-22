@@ -17,12 +17,32 @@
     </genClasses>
     <genClasses ecoreClass="Grana.ecore#//Job">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Job/name"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Job/layoutBeforeAnalysis"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Job/measureExecutionTime"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/resources"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/layoutOptions"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/analyses"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/output"/>
+    </genClasses>
+    <genClasses ecoreClass="Grana.ecore#//RegularJob">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//RegularJob/layoutBeforeAnalysis"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//RegularJob/measureExecutionTime"/>
+    </genClasses>
+    <genClasses ecoreClass="Grana.ecore#//RangeJob">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//RangeJob/rangeOption"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//RangeJob/rangeValues"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//RangeJob/rangeAnalysis"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//RangeJob/rangeAnalysisComponent"/>
+    </genClasses>
+    <genClasses ecoreClass="Grana.ecore#//Range"/>
+    <genClasses ecoreClass="Grana.ecore#//FloatRange">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//FloatRange/values"/>
+    </genClasses>
+    <genClasses ecoreClass="Grana.ecore#//IntRange"/>
+    <genClasses ecoreClass="Grana.ecore#//IntRangeValues">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//IntRangeValues/values"/>
+    </genClasses>
+    <genClasses ecoreClass="Grana.ecore#//IntRangeRange">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//IntRangeRange/start"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//IntRangeRange/end"/>
     </genClasses>
     <genClasses ecoreClass="Grana.ecore#//Resource"/>
     <genClasses ecoreClass="Grana.ecore#//ResourceReference">
