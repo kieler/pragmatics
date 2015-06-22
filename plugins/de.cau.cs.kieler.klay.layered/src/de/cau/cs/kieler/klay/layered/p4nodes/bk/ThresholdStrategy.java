@@ -46,7 +46,7 @@ public abstract class ThresholdStrategy {
     protected Set<LNode> blockFinished = Sets.newHashSet();
 
     /**
-     * .
+     * A queue with blocks that are postponed during compaction.
      */
     protected Queue<Pair<LNode, Boolean>> postProcessables = Lists.newLinkedList();
 

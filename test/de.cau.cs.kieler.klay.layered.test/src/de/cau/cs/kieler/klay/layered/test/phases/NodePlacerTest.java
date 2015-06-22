@@ -30,14 +30,16 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.p4nodes.InteractiveNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer;
-import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.CompactionStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.Spacings;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
@@ -79,6 +81,10 @@ public class NodePlacerTest extends AbstractLayeredProcessorTest {
     protected List<ILayoutConfigurator> getConfigurators() {
         List<ILayoutConfigurator> configs = Lists.newArrayList();
 
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.SIMPLE, SimpleNodePlacer.class));
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.INTERACTIVE, InteractiveNodePlacer.class));
         configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
                 NodePlacementStrategy.LINEAR_SEGMENTS, LinearSegmentsNodePlacer.class));
 
@@ -165,26 +171,8 @@ public class NodePlacerTest extends AbstractLayeredProcessorTest {
     }
     
     private double getSpacing(final LGraph g, final LNode n1, final LNode n2) {
-        
-        float normalSpacing = g.getProperty(InternalProperties.SPACING) 
-                * g.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
-        float smallSpacing = normalSpacing * g.getProperty(Properties.EDGE_SPACING_FACTOR);
-        float externalPortSpacing = g.getProperty(InternalProperties.PORT_SPACING);
-        
-        double spacing = smallSpacing;
-        if (n1.getNodeType() == NodeType.EXTERNAL_PORT
-                && n2.getNodeType() == NodeType.EXTERNAL_PORT) {
-            
-            spacing = externalPortSpacing;
-        } else if (n1.getNodeType() == NodeType.NORMAL
-                || n2.getNodeType() == NodeType.NORMAL) {
-            
-            // as soon as either of the two involved nodes is a regular node, 
-            // use normal spacing
-            spacing = normalSpacing;
-        }
-        return spacing;
-        
+        Spacings spacings = g.getProperty(InternalProperties.SPACINGS);
+        return spacings.getVerticalSpacing(n1, n2);
     }
 
     /**

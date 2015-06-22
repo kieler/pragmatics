@@ -374,6 +374,12 @@ public final class InternalProperties {
      */
     public static final IProperty<List<LPort>> CONNECTED_NORTH_SOUTH_PORT_DUMMIES =
             new Property<List<LPort>>("connectedNorthSouthPorts", new ArrayList<LPort>());
+    
+    /**
+     * Internal container for all possible spacing variations that we support.
+     */
+    public static final IProperty<Spacings> SPACINGS =
+            new Property<Spacings>("spacings");
 
     // /////////////////////////////////////////////////////////////////////////////
     // OVERWRITTEN PROPERTIES
@@ -388,38 +394,37 @@ public final class InternalProperties {
     /**
      * Minimal spacing between objects.
      */
-    public static final Property<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
+    public static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
             20.0f, 1.0f);
 
     /**
      * Minimal spacing between ports.
      */
-    public static final Property<Float> PORT_SPACING = new Property<Float>(LayoutOptions.PORT_SPACING,
+    public static final IProperty<Float> PORT_SPACING = new Property<Float>(LayoutOptions.PORT_SPACING,
             10.0f, 1.0f);
 
     /**
      * Spacing to the border of the drawing.
      */
-    public static final Property<Float> BORDER_SPACING = new Property<Float>(
+    public static final IProperty<Float> BORDER_SPACING = new Property<Float>(
             LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
 
     /**
      * Priority of elements. controls how much single edges are emphasized.
      */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
+    public static final IProperty<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
 
     /**
      * The aspect ratio for packing connected components.
      */
-    public static final Property<Float> ASPECT_RATIO = new Property<Float>(
+    public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
 
     /**
      * How to route edges.
      */
-    public static final Property<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
+    public static final IProperty<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
             LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
-
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
