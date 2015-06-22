@@ -42,7 +42,7 @@ class IndexProvider extends AbstractProvider {
         val Configuration config = Configuration::INSTANCE
        
        '''
-            <div class="jumbotron col-md-8 col-md-offset-2">
+            <div class="jumbotron">
               <h2>The KIELER Web Service for Layout...</h2>
               <p>
                 ... provides you with easy access to an extensive 
@@ -54,7 +54,7 @@ class IndexProvider extends AbstractProvider {
               <p><a class="btn btn-primary btn-lg" href="Providedlayout.html" role="button">Overview</a></p>
             </div>
             
-            <div class="col-md-6 col-md-offset-3" style="text-align: center;">
+            <div class="col-md-8 col-md-offset-2" style="text-align: center;">
                 <h2>Start using KIELER Layout today!</h2>
                 
                 <dl class="dl-horizontal" style="text-align: left;">

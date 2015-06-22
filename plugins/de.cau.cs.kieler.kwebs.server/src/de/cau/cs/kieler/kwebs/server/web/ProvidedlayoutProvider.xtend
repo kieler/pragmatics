@@ -171,7 +171,6 @@ class ProvidedlayoutProvider
                 LayoutMetaDataService.instance.getAlgorithmData(algorithm.id)
         
         '''
-        <div class="col-md-8 col-md-offset-2">
         <h3>«algorithm.category?.name» - «algorithm.name»</h3>
         <p>Type: «algorithm.type?.name»<br/></p>
         <p>Identifier: «algorithm.id»<br/></p>
@@ -233,7 +232,6 @@ class ProvidedlayoutProvider
             </div>
         </div>
         «generateBackButton(processingExchange)»
-        </div>
         '''
     }
     
@@ -257,7 +255,6 @@ class ProvidedlayoutProvider
         val List<GraphFeature> features = GraphFeature.values().sortBy[it.name]
         
         '''
-        <div class="col-md-8 col-md-offset-2">
         <h2>Provided Layout</h2>
         <p>
             This page offers details on the configuration options of the layout service.
@@ -376,7 +373,6 @@ class ProvidedlayoutProvider
                 </table>
             </div>
         </div>
-        </div>
         <script>
             $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                 if ($(e.target).attr("href") == "#features") {
@@ -423,7 +419,8 @@ class ProvidedlayoutProvider
  
         '''
         
-            «if (!rawAppend) '''<div class="col-md-8 col-md-offset-2"><h3>Layout Option Details</h3>'''»
+            «if (!rawAppend) '''
+            <h3>Layout Option Details</h3>'''»
             <dl class="dl-horizontal">
                 <dt>Name:</dt><dd>«option.name»</dd>
                 <dt>Identifier:</dt><dd>«option.id»</dd>
@@ -454,8 +451,7 @@ class ProvidedlayoutProvider
              <code> de.cau.cs.kieler.enumProp: "VAL_A VAL_B VAL_C"</code>
             </div>
             '''»
-            ««««if (!rawAppend) generateBackButton(processingExchange)»
-        «if (!rawAppend)'''</div>''' »
+            «if (!rawAppend) generateBackButton(processingExchange)»
         '''
     }
     
@@ -479,7 +475,6 @@ class ProvidedlayoutProvider
             return ''''''
         }
         '''
-        <div class="col-md-8 col-md-offset-2">
         <h3>Format Details</h3>
         <p>Name: «format.name»<br/></p>
         <p>Identifier: «format.id»<br/></p>
@@ -491,7 +486,6 @@ class ProvidedlayoutProvider
             </p>'''
         }»
         «generateBackButton(processingExchange)»
-        </div>
         '''
     }
     

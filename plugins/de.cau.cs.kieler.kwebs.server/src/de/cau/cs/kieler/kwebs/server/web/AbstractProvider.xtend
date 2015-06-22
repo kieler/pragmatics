@@ -122,7 +122,7 @@ abstract class AbstractProvider
                         «IF requireContainer()»
                         <div class="container-fluid">
                           <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-8 col-md-offset-2">
                         «ENDIF»
                         «getBody(processingExchange)»
                         «IF requireContainer()»
