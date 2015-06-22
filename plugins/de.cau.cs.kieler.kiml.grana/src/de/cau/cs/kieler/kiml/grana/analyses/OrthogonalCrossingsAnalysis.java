@@ -36,15 +36,14 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
- * <pre>
- * While iterating through all hierarchical nodes, this analysis counts orthogonal crossings by:
- *      1. collecting all vertical and horizontal segments of each edge once
- *      2. merging all overlapping segments to one
- *      3. counting intersections while ignoring those with a junction point on them
- * </pre>
+ * Counts orthogonal crossings. This is done by:
+ * <ol>
+ *   <li>collecting all vertical and horizontal segments of each edge once</li>
+ *   <li>merging all overlapping segments to one</li>
+ *   <li>counting intersections while ignoring those with a junction point on them</li>
+ * </ol>
  * 
  * @author alan
- *
  */
 public class OrthogonalCrossingsAnalysis implements IAnalysis {
 
@@ -88,7 +87,6 @@ public class OrthogonalCrossingsAnalysis implements IAnalysis {
      * Given parent node counts crossings in all children.
      * 
      * @author alan
-     *
      */
     private static class SingleHierarchyLevelOrthogonalCrossCounter {
         private static final double EPSILON = 1e-4;
