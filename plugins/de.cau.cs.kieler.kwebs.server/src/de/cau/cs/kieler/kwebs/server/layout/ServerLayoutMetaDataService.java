@@ -50,7 +50,7 @@ import de.cau.cs.kieler.kwebs.server.util.Resources;
  *
  * @author swe
  */
-public final class ServerLayoutMetaDataService extends ExtensionLayoutMetaDataService {
+public final class ServerLayoutMetaDataService extends AbstractExtensionLayoutMetaDataService {
 
     /** Caching the layout service meta data. */
     private static String serviceDataXMI;
