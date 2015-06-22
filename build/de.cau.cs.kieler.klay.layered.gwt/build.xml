@@ -80,6 +80,7 @@
 					<exclude name="**/LayoutConfigService.java" />
 					<exclude name="**/LayoutMetaDataService.java" />
 					<exclude name="**/LayoutTypeData.java" />
+					<exclude name="**/JsonDebugUtil.java" />
 				</fileset>
 				<filterchain>
 					<!-- Remove code snippets that are incompativle with GWT -->

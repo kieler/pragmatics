@@ -45,7 +45,7 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LShape;
-import de.cau.cs.kieler.klay.layered.graphimport.IGraphImporter;
+import de.cau.cs.kieler.klay.layered.graph.transform.IGraphTransformer;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -60,7 +60,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 
  * @author uru
  */
-public class JsonGraphImporter implements IGraphImporter<JSONObject> {
+public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
 
     /*
      * External Properties
