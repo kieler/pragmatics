@@ -535,7 +535,7 @@ class ProvidedlayoutProvider
         <p>
             <div align='center'>
                 <form action="javascript:history.back();" method="POST">
-                    <input type="submit" value="Back"/>
+                    <input class="btn btn-default" type="submit" value="Back"/>
                 </form>
             </div>
         </p>'''
