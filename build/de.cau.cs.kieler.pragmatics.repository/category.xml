@@ -58,16 +58,6 @@
    <feature url="features/de.cau.cs.kieler.kiml.graphviz.source_0.9.0.qualifier.jar" id="de.cau.cs.kieler.kiml.graphviz.feature.source" version="0.9.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
-
-   <feature url="features/de.cau.cs.kieler.kiml.libavoid_0.3.0.qualifier.jar" id="de.cau.cs.kieler.kiml.libavoid.feature" version="0.3.0.qualifier">
-      <category name="kieler-layout"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.kiml.libavoid.source_0.3.0.qualifier.jar" id="de.cau.cs.kieler.kiml.libavoid.feature.source" version="0.3.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-   <feature url="features/org.adaptagrams.libavoid_0.3.0.qualifier.jar" id="org.adaptagrams.libavoid.feature" version="0.3.0.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
-      <category name="kieler-layout"/>
-   </feature>
    
    <feature url="features/de.cau.cs.kieler.kiml.ogdf_0.7.0.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature" version="0.7.0.qualifier">
       <category name="kieler-layout"/>
@@ -92,13 +82,6 @@
       <category name="kieler-klighd"/>
    </feature>
    <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.9.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.9.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-
-   <feature url="features/de.cau.cs.kieler.klighd.batik.feature_0.3.0.qualifier.jar" id="de.cau.cs.kieler.klighd.batik.feature" version="0.3.0.qualifier">
-      <category name="kieler-klighd"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.batik.feature.source_0.3.0.qualifier.jar" id="de.cau.cs.kieler.klighd.batik.feature.source" version="0.3.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
