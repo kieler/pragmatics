@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.p2layers;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -22,6 +23,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -90,15 +92,14 @@ public final class MinWidthLayerer implements ILayoutPhase {
         List<Layer> layers = layeredGraph.getLayers();
         List<LNode> notInserted = layeredGraph.getLayerlessNodes();
 
-        // in- and out-degree of the currently considered node, see while-loop below
-        int inDegree = 0;
-        int outDegree = 0;
-
         // The algorithm requires DAG G = (V, E). In this version self-loops are allowed.
         // Additional properties as described above (called UBW and c in the original paper):
         final int upperBoundOnWidth = layeredGraph.getProperty(Properties.UPPER_BOUND_ON_WIDTH);
         final int compensator =
                 layeredGraph.getProperty(Properties.UPPER_LAYER_ESTIMATION_SCALING_FACTOR);
+
+        // final int upperBoundOnWidth = -1;
+        // final int compensator = -1;
 
         // Guarantee ConditionSelect from the paper, which states that nodes with maximum out-degree
         // should be preferred during layer placement, by ordering the nodes by descending maximum
@@ -114,65 +115,58 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // used
         // for the set of all real nodes of the graph in order to maintain the ordering by
         // out-degree.
-        Set<LNode> unplacedNodes = Sets.newLinkedHashSet(notInserted);
+        // Set<LNode> unplacedNodes = Sets.newLinkedHashSet(notInserted);
 
         // TODO: Comment why we precalculate + Warning that this will change the nodes' id again.
-        List<Set<LNode>> nodeSuccessors = precalcSuccessors(unplacedNodes);
+        List<Set<LNode>> nodeSuccessors = precalcSuccessors(notInserted);
 
-        // The actual algorithm from the paper begins here:
-        // In the Paper the first Set contains all nodes, which have already been placed, and the
-        // second contains all nodes already placed in layers which have been determined before the
-        // currentLayer.
-        Set<LNode> alreadyPlacedInCurrentLayer = Sets.newHashSet();
-        Set<LNode> alreadyPlacedInOtherLayers = Sets.newHashSet();
+        // TODO: Comment … a lot.
+        // layers.addAll(computeMinWidthLayering(layeredGraph, upperBoundOnWidth, compensator,
+        // notInserted, nodeSuccessors).getSecond());
+        // TODO: Reduce code duplication?
+        int minWidth = Integer.MAX_VALUE;
+        // initializing with null might be dirty, Exception?
+        List<List<LNode>> candidateLayering = null;
 
-        // Set up the first layer (algorithm is bottom up, so the List layer is going to be reversed
-        // at
-        // the end.
-        Layer currentLayer = new Layer(layeredGraph);
-        layers.add(currentLayer);
+        int ubwStart = upperBoundOnWidth;
+        int ubwEnd = upperBoundOnWidth;
+        int cStart = compensator;
+        int cEnd = compensator;
 
-        // Initial values for the width of the current layer and the estimated width of the coming
-        // layers
-        int widthCurrent = 0;
-        int widthUp = 0;
+        // Do all recommended settings for negative parameters
+        if (upperBoundOnWidth < 0) {
+            ubwStart = 1;
+            // TODO: Why should "4" be defined by a constant according to checkstyle?
+            ubwEnd = 4;
+        }
+        if (compensator < 0) {
+            cStart = 1;
+            cEnd = 2;
+        }
 
-        while (!unplacedNodes.isEmpty()) {
-            // Find a node, whose edges only point to nodes in the Set alreadyPlacedInOtherLayers;
-            // will
-            // return {@code null} if such a node doesn't exist.
-            LNode currentNode = selectNode(unplacedNodes, nodeSuccessors, alreadyPlacedInOtherLayers);
+        for (int ubw = ubwStart; ubw <= ubwEnd; ubw++) {
+            for (int c = cStart; c <= cEnd; c++) {
+                // Pair<Integer, List<Layer>> result =
+                // computeMinWidthLayering(layeredGraph, ubw, c, notInserted, nodeSuccessors);
+                Pair<Integer, List<List<LNode>>> result =
+                        computeMinWidthLayering(ubw, c, notInserted, nodeSuccessors);
+                int newWidth = result.getFirst();
+                if (newWidth < minWidth) {
+                    minWidth = newWidth;
+                    candidateLayering = result.getSecond();
+                }
+            }
+        }
 
-            // If you found a node in the previous step.
-            if (currentNode != null) {
-                unplacedNodes.remove(currentNode);
-                currentNode.setLayer(currentLayer);
-                alreadyPlacedInCurrentLayer.add(currentNode);
+        // Finally Add the winning layering to the Klay layered data structures.
+        for (List<LNode> layerList : candidateLayering) {
+            Layer currentLayer = new Layer(layeredGraph);
 
-                outDegree = currentNode.id;
-                widthCurrent += 1 - outDegree;
-
-                inDegree = countEdgesExceptSelfLoops(currentNode.getIncomingEdges());
-                widthUp += inDegree;
+            for (LNode node : layerList) {
+                node.setLayer(currentLayer);
             }
 
-            // Go to the next layer if,
-            // 1) no current node has been selected,
-            // 2) The conditionGoUp from the paper is satisfied, i.e.
-            // 2.1) the width of the current layer is greater than the upper bound on the width and
-            // the amount of dummy nodes in the layer can't be reduced, as only nodes with no
-            // outgoing edges are left for being considered for the current layer; or:
-            // 2.2) The estimated width of the not yet determined layers is greater than the
-            // scaling factor/compensator times the upper bound on the width.
-            if (currentNode == null || (widthCurrent >= upperBoundOnWidth && outDegree < 1)
-                    || widthUp >= compensator * upperBoundOnWidth) {
-                currentLayer = new Layer(layeredGraph);
-                layers.add(currentLayer);
-                alreadyPlacedInOtherLayers.addAll(alreadyPlacedInCurrentLayer);
-                alreadyPlacedInCurrentLayer.clear();
-                widthCurrent = widthUp;
-                widthUp = 0;
-            }
+            layers.add(currentLayer);
         }
 
         // The algorithm constructs the layering bottom up, but KlayLayered expects the list of
@@ -190,7 +184,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
      * @param nodes
      * @return
      */
-    private List<Set<LNode>> precalcSuccessors(final Set<LNode> nodes) {
+    private List<Set<LNode>> precalcSuccessors(final Collection<LNode> nodes) {
         List<Set<LNode>> successors = Lists.newArrayListWithCapacity(nodes.size());
 
         int index = 0;
@@ -215,8 +209,92 @@ public final class MinWidthLayerer implements ILayoutPhase {
     }
 
     /**
-     * TODO: Change comment.
-     * Returns the first {@link LNode} in the given Set, whose outgoing edges
+     * TODO: Comment.
+     * 
+     * 
+     */
+    private Pair<Integer, List<List<LNode>>> computeMinWidthLayering(
+            // final LGraph layeredGraph,
+            final int upperBoundOnWidth, final int compensator, final Iterable<LNode> nodes,
+            final List<Set<LNode>> nodeSuccessors) {
+
+        // List<Layer> layers = Lists.newArrayList();
+        List<List<LNode>> layers = Lists.newArrayList();
+        Set<LNode> unplacedNodes = Sets.newLinkedHashSet(nodes);
+
+        // in- and out-degree of the currently considered node, see while-loop below
+        int inDegree = 0;
+        int outDegree = 0;
+
+        // The actual algorithm from the paper begins here:
+        // In the Paper the first Set contains all nodes, which have already been placed, and the
+        // second contains all nodes already placed in layers which have been determined before the
+        // currentLayer.
+        Set<LNode> alreadyPlacedInCurrentLayer = Sets.newHashSet();
+        Set<LNode> alreadyPlacedInOtherLayers = Sets.newHashSet();
+
+        // Set up the first layer (algorithm is bottom up, so the List layer is going to be reversed
+        // at
+        // the end.
+        // Layer currentLayer = new Layer(layeredGraph);
+        List<LNode> currentLayer = Lists.newArrayList();
+        layers.add(currentLayer);
+
+        // Initial values for the width of the current layer and the estimated width of the coming
+        // layers
+        int widthCurrent = 0;
+        int widthUp = 0;
+        int maxWidth = 0;
+
+        while (!unplacedNodes.isEmpty()) {
+            // Find a node, whose edges only point to nodes in the Set alreadyPlacedInOtherLayers;
+            // will
+            // return {@code null} if such a node doesn't exist.
+            LNode currentNode =
+                    selectNode(unplacedNodes, nodeSuccessors, alreadyPlacedInOtherLayers);
+
+            // If you found a node in the previous step.
+            if (currentNode != null) {
+                unplacedNodes.remove(currentNode);
+                // Please do this after choosing a layering TODO: Rewrite algorithm
+                // currentNode.setLayer(currentLayer);
+                currentLayer.add(currentNode);
+                alreadyPlacedInCurrentLayer.add(currentNode);
+
+                outDegree = currentNode.id;
+                widthCurrent += 1 - outDegree;
+
+                inDegree = countEdgesExceptSelfLoops(currentNode.getIncomingEdges());
+                widthUp += inDegree;
+            }
+
+            // Go to the next layer if,
+            // 1) no current node has been selected,
+            // 2) The conditionGoUp from the paper is satisfied, i.e.
+            // 2.1) the width of the current layer is greater than the upper bound on the width and
+            // the amount of dummy nodes in the layer can't be reduced, as only nodes with no
+            // outgoing edges are left for being considered for the current layer; or:
+            // 2.2) The estimated width of the not yet determined layers is greater than the
+            // scaling factor/compensator times the upper bound on the width.
+            if (currentNode == null || (widthCurrent >= upperBoundOnWidth && outDegree < 1)
+                    || widthUp >= compensator * upperBoundOnWidth) {
+                // currentLayer = new Layer(layeredGraph);
+                currentLayer = Lists.newArrayList();
+                layers.add(currentLayer);
+                alreadyPlacedInOtherLayers.addAll(alreadyPlacedInCurrentLayer);
+                alreadyPlacedInCurrentLayer.clear();
+                //TODO: Is this the right way to determine the maximum width of the layering?
+                maxWidth = Math.max(maxWidth, widthCurrent);
+                widthCurrent = widthUp;
+                widthUp = 0;
+            }
+        }
+
+        return Pair.of(maxWidth, layers);
+    }
+
+    /**
+     * TODO: Change comment. Returns the first {@link LNode} in the given Set, whose outgoing edges
      * end only in nodes of the Set {@code targets}. Self-loops are ignored.
      * 
      * Warning: Returns {@code null}, if such a node doesn't exist.
@@ -230,20 +308,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
      */
     private LNode selectNode(final Set<LNode> nodes, final List<Set<LNode>> successors,
             final Set<LNode> targets) {
-        
-        // TODO: remove unused pieces of code.
-        // Set<LNode> outNodes = Sets.newHashSet();
 
         for (LNode node : nodes) {
-            // outNodes.clear();
-            // Iterable<LEdge> outEdges = node.getOutgoingEdges();
-            //
-            // for (LEdge edge : outEdges) {
-            // if (!isSelfLoop(edge)) {
-            // outNodes.add(edge.getTarget().getNode());
-            // }
-            // }
-
             if (targets.containsAll(successors.get(node.id))) {
                 return node;
             }
