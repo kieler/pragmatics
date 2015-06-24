@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.layered.graphimport;
+package de.cau.cs.kieler.klay.layered.graph.transform;
 
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
@@ -26,7 +26,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  * @kieler.design 2012-08-10 chsch grh
  * @kieler.rating proposed yellow by msp
  */
-public interface IGraphImporter<T> {
+public interface IGraphTransformer<T> {
     
     /**
      * Create a layered graph from the given graph.

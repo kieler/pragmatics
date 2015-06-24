@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
  * + Christian-Albrechts-University of Kiel
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -26,7 +26,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
 /**
  * Container for public property definitions. These are layout options that can be set on graph
  * elements before the algorithm is invoked.
- * 
+ *
  * @author msp
  * @author cds
  * @author uru
@@ -51,6 +51,9 @@ public final class Properties {
      * A pre-defined seed for pseudo-random number generators. We redefine the property here to set
      * its default value to 1.
      * 
+     * A pre-defined seed for pseudo-random number generators.
+     * We redefine the property here to set its default value to 1.
+     *
      * @see LayoutOptions#RANDOM_SEED
      */
     public static final IProperty<Integer> RANDOM_SEED = new Property<Integer>(
@@ -71,9 +74,10 @@ public final class Properties {
 
     /**
      * Whether nodes shall be distributed during layer assignment.
-     * 
+     *
      * @deprecated use the {@link #WIDE_NODES_ON_MULTIPLE_LAYERS} property instead.
      */
+    @Deprecated
     public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.distributeNodes", false);
 
@@ -103,6 +107,15 @@ public final class Properties {
     public static final IProperty<CrossingMinimizationStrategy> CROSS_MIN =
             new Property<CrossingMinimizationStrategy>("de.cau.cs.kieler.klay.layered.crossMin",
                     CrossingMinimizationStrategy.LAYER_SWEEP);
+
+
+    /**
+     * Property to choose a greedy Crossing Minimization Strategy.
+     */
+    public static final IProperty<GreedySwitchType> GREEDY_SWITCH_TYPE =
+            new Property<GreedySwitchType>("de.cau.cs.kieler.klay.layered.greedySwitch",
+                    GreedySwitchType.TWO_SIDED);
+
 
     /**
      * Property to choose a node placement strategy.
@@ -237,6 +250,7 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale",
             0.5f, 0.0f, 1.0f);
 
+
     /**
      * Specifies the compaction strategy when using the {@link BKNodePlacer}.
      */
@@ -253,4 +267,5 @@ public final class Properties {
      */
     private Properties() {
     }
+
 }
