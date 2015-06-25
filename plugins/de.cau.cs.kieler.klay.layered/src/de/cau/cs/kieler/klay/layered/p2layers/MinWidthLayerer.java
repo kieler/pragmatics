@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -71,6 +72,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author mic
  */
 public final class MinWidthLayerer implements ILayoutPhase {
+
+    /**
+     * TODO: Document ranges.
+     * 
+     */
+    private static final Range<Integer> UPPERBOUND_ON_WIDTH_RANGE = Range.closed(1, 4);
+    private static final Range<Integer> COMPENSATOR_RANGE = Range.closed(1, 2);
+
     /**
      * {@inheritDoc}
      */
@@ -97,9 +106,13 @@ public final class MinWidthLayerer implements ILayoutPhase {
         final int upperBoundOnWidth = layeredGraph.getProperty(Properties.UPPER_BOUND_ON_WIDTH);
         final int compensator =
                 layeredGraph.getProperty(Properties.UPPER_LAYER_ESTIMATION_SCALING_FACTOR);
+        // TODO: Explain this new property.
+        final Boolean ignoreDummys =
+                layeredGraph.getProperty(Properties.IGNORE_DUMMY_NODES_FOR_WIDTH);
 
-        // final int upperBoundOnWidth = -1;
-        // final int compensator = -1;
+//         final int upperBoundOnWidth = -1;
+//         final int compensator = -1;
+//         final Boolean ignoreDummys = true;
 
         // Guarantee ConditionSelect from the paper, which states that nodes with maximum out-degree
         // should be preferred during layer placement, by ordering the nodes by descending maximum
@@ -135,13 +148,12 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
         // Do all recommended settings for negative parameters
         if (upperBoundOnWidth < 0) {
-            ubwStart = 1;
-            // TODO: Why should "4" be defined by a constant according to checkstyle?
-            ubwEnd = 4;
+            ubwStart = UPPERBOUND_ON_WIDTH_RANGE.lowerEndpoint();
+            ubwEnd = UPPERBOUND_ON_WIDTH_RANGE.upperEndpoint();
         }
         if (compensator < 0) {
-            cStart = 1;
-            cEnd = 2;
+            cStart = COMPENSATOR_RANGE.lowerEndpoint();
+            cEnd = COMPENSATOR_RANGE.upperEndpoint();
         }
 
         for (int ubw = ubwStart; ubw <= ubwEnd; ubw++) {
@@ -151,6 +163,15 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 Pair<Integer, List<List<LNode>>> result =
                         computeMinWidthLayering(ubw, c, notInserted, nodeSuccessors);
                 int newWidth = result.getFirst();
+
+                // TODO: explain more. If you should only consider real nodes for the width…
+                if (ignoreDummys) {
+                    newWidth = 0;
+                    for (List<LNode> layer : result.getSecond()) {
+                        newWidth = Math.max(newWidth, layer.size());
+                    }
+                }
+
                 if (newWidth < minWidth) {
                     minWidth = newWidth;
                     candidateLayering = result.getSecond();
@@ -283,7 +304,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 layers.add(currentLayer);
                 alreadyPlacedInOtherLayers.addAll(alreadyPlacedInCurrentLayer);
                 alreadyPlacedInCurrentLayer.clear();
-                //TODO: Is this the right way to determine the maximum width of the layering?
+                // TODO: Is this the right way to determine the maximum width of the layering?
                 maxWidth = Math.max(maxWidth, widthCurrent);
                 widthCurrent = widthUp;
                 widthUp = 0;
