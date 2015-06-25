@@ -101,6 +101,12 @@ public class StretchWidthLayerer implements ILayoutPhase {
         // 0= widthUp > maxWidth * 0 -> only false for the first node and once every remaining node
         // has no incoming edges
         upperLayerInfluence = currentGraph.getProperty(Properties.UPPER_LAYER_SCALE).doubleValue();
+        // -1 is used to indicate that the original algorithm should be used 
+        if(upperLayerInfluence == -1){
+            upperLayerInfluence = getAverageOutDegree();
+            
+        }
+        
         // sort the nodes at beginning, since the rank will not change
         computeSortedNodes();
         // copy the sorted layerless nodes so we don't overwrite it for the reset case
@@ -283,5 +289,20 @@ public class StretchWidthLayerer implements ILayoutPhase {
             i++;
         }
         return i;
+    }
+    /**
+     * Computes the Average out-degree of the graph
+     * should be computed before changing the layerlessNodes list
+     * 
+     * @return average outdegree of the Graph
+     */
+    private float getAverageOutDegree(){
+        float allOut=0;
+        for(LNode node :currentGraph.getLayerlessNodes()){
+            allOut += getOutDegree(node);
+            
+        }
+        
+        return allOut/currentGraph.getLayerlessNodes().size();
     }
 }
