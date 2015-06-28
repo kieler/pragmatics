@@ -21,6 +21,9 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -28,34 +31,33 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
-
 
 /**
  * This processor applies additional horizontal compaction to an already routed graph and can be
  * executed after {@link OrthogonalEdgeRouter}. Therefore nodes and vertical segments of edges are
- * repositioned in only the horizontal direction where the position is leftmost considering the desired
- * spacing between elements.
- * 
- * 
- * precondition:orthogonal edge routing  no N/S ports and no hyperedges (with junction points)
+ * repositioned in only the horizontal direction where the position is leftmost considering the
+ * desired spacing between elements.
  * 
  * <dl>
- *   <dt>Precondition:</dt>
- *     <dd>The edges are routed orthogonally with at most two vertical segments per edge.</dd>
- *     <dd>Edges do not connect to north or south ports.</dd>
- *     <dd>The graph does not contain {@link HyperNode}s.</dd>
- *   <dt>Postcondition:</dt>
- *     <dd>Nodes and edges are positioned leftmost without colliding.</dd>
- *   <dt>Slots:</dt>
- *     <dd>After phase 5.</dd>
- *   <dt>Same-slot dependencies:</dt>
- *     <dd>After {@link LabelDummyRemover}</dd>
- *     <dd>Before {@link ReversedEdgeRestorer}</dd>
+ * <dt>Precondition:</dt>
+ * <dd>The edges are routed orthogonally with at most two vertical segments per edge.</dd>
+ * <dd>Edges do not connect to north or south ports.</dd>
+ * <dd>The graph does not contain {@link HyperNode}s.</dd>
+ * <dt>Postcondition:</dt>
+ * <dd>Nodes and edges are positioned leftmost without colliding.</dd>
+ * <dt>Slots:</dt>
+ * <dd>After phase 5.</dd>
+ * <dt>Same-slot dependencies:</dt>
+ * <dd>After {@link LabelDummyRemover}</dd>
+ * <dd>Before {@link ReversedEdgeRestorer}</dd>
  * </dl>
+ * 
  * @author dag
  */
 public class OneDimensionalCompactor implements ILayoutProcessor {
@@ -64,6 +66,27 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
+
+        // hypernodes testing
+        final double TOLERANCE = 0.01;
+        List<VerticalSegment> verticalSegments = Lists.newArrayList();
+        List<HyperNode> hyperNodes = layeredGraph.getProperty(InternalProperties.HYPERNODES);
+        for (HyperNode hyperNode : hyperNodes) {
+            if (Math.abs(hyperNode.end - hyperNode.start) > TOLERANCE) {
+                VerticalSegment vSeg = new VerticalSegment();
+//                for (LPort port : hyperNode.ports) {
+//                    if (port.getNode().getNodeType().equals(NodeType.NORMAL)) {
+//                        System.out.println(port.getOutgoingEdges());
+//                    }
+//                }
+                for (LNode node : hyperNode.connectedNodes) {
+                    if (!node.getNodeType().equals(NodeType.NORMAL)) {
+                        System.out.println(node.getProperty(InternalProperties.ORIGIN));
+                        System.out.println(node.getNodeType());
+                    }
+                }
+            }
+        }
 
         progressMonitor.begin("one dimensional compacting", 1);
 
@@ -77,7 +100,9 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         /* collecting positions of graph elements */
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
-                // add all nodes of type NORMAL because dummy nodes shouldn't have any size or spacings
+
+                // add all nodes of type NORMAL because dummy nodes shouldn't have any size or
+                // spacings
                 // at this point there shouldn't even be any
                 if (node.getNodeType().equals(NodeType.NORMAL)) {
                     // hitbox excluding object spacing
@@ -89,29 +114,32 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
                 // add vertical edge segments
                 for (LEdge edge : node.getOutgoingEdges()) {
-
-                    Iterator<KVector> bends = edge.getBendPoints().iterator();
-                    while (bends.hasNext()) {
-                        // infer vertical segments from order of bendpoints
-                        KVector bend1 = bends.next();
-                        KVector bend2 = bends.next();
-                        double x, y, h;
-                        if (bend1.y < bend2.y) {
-                            x = bend1.x;
-                            y = bend1.y;
-                            h = bend2.y - y;
-                        } else {
-                            x = bend2.x;
-                            y = bend2.y;
-                            h = bend1.y - y;
-                        }
-
-                        Rectangle rEdge = new Rectangle(x, y, 0, h);
-                        CNode cn = new CNode(edge, rEdge);
-                        cn.bend1 = bend1;
-                        cn.bend2 = bend2;
-                        nodes.add(cn);
-                    }
+                    // System.out.println(edge + " JPs: "
+                    // + edge.getProperty(LayoutOptions.JUNCTION_POINTS));
+                    //
+                    // Iterator<KVector> bends = edge.getBendPoints().iterator();
+                    //
+                    // while (bends.hasNext()) {
+                    // // infer vertical segments from order of bendpoints
+                    // KVector bend1 = bends.next();
+                    // KVector bend2 = bends.next();
+                    // double x, y, h;
+                    // if (bend1.y < bend2.y) {
+                    // x = bend1.x;
+                    // y = bend1.y;
+                    // h = bend2.y - y;
+                    // } else {
+                    // x = bend2.x;
+                    // y = bend2.y;
+                    // h = bend1.y - y;
+                    // }
+                    //
+                    // Rectangle rEdge = new Rectangle(x, y, 0, h);
+                    // CNode cn = new CNode(edge, rEdge);
+                    // cn.bend1 = bend1;
+                    // cn.bend2 = bend2;
+                    // nodes.add(cn);
+                    // }
                 }
             }
         }
@@ -151,7 +179,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         }
 
         /* calculating node positions */
-        
+
         // starting with nodes with outDegree == 0
         Queue<CNode> startNodes = Lists.newLinkedList();
         for (CNode node : nodes) {
@@ -219,7 +247,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
      * {@link LGraphElement}.
      */
     private final class CNode {
-
+        private boolean isNode;
         private LGraphElement elem;
         private Rectangle hitbox;
         // specify particular vertical edge segment
@@ -232,14 +260,21 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         /**
          * Creates new constraint node
          * 
-         * @param elem  the graph element
-         * @param hitbox        the constraints are inferred from this box
+         * @param elem
+         *            the graph element
+         * @param hitbox
+         *            the constraints are inferred from this box
          */
         private CNode(final LGraphElement elem, final Rectangle hitbox) {
             this.elem = elem;
             this.hitbox = hitbox;
         }
 
+    }
+
+    private final class VerticalSegment {
+        private List<Pair<LEdge, Pair<KVector, KVector>>> bends = Lists.newArrayList();
+        private KVectorChain junctionPoints = new KVectorChain();
     }
 
     /**

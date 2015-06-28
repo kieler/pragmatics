@@ -40,6 +40,7 @@ import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
+import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
 import de.cau.cs.kieler.klay.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import de.cau.cs.kieler.klay.layered.p5edges.splines.LoopSide;
 
@@ -375,7 +376,11 @@ public final class InternalProperties {
     public static final IProperty<List<LPort>> CONNECTED_NORTH_SOUTH_PORT_DUMMIES =
             new Property<List<LPort>>("connectedNorthSouthPorts", new ArrayList<LPort>());
     
-    //TODO list hypernodes
+    /**
+     * List of HyperNodes created by the OrthogonalRoutingGenerator.
+     */
+    public static final IProperty<List<HyperNode>> HYPERNODES =
+            new Property<List<HyperNode>>("hyperNodes", new ArrayList<HyperNode>());
 
     // /////////////////////////////////////////////////////////////////////////////
     // OVERWRITTEN PROPERTIES

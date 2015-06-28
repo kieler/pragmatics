@@ -304,16 +304,18 @@ public final class OrthogonalRoutingGenerator {
      * A hypernode used for routing a hyperedge.
      */
     public class HyperNode implements Comparable<HyperNode> {
+        //FIXME public for convenience
+        public Set<LNode> connectedNodes = Sets.newHashSet();
         /** ports represented by this hypernode. */
-        private List<LPort> ports = Lists.newArrayList();
+        public List<LPort> ports = Lists.newArrayList();
         /** mark value used for cycle breaking. */
         private int mark;
         /** the rank determines the horizontal distance to the preceding layer. */
         private int rank;
         /** vertical starting position of this hypernode. */
-        private double start = Double.NaN;
+        public double start = Double.NaN;
         /** vertical ending position of this hypernode. */
-        private double end = Double.NaN;
+        public double end = Double.NaN;
         /** positions of line segments going to the preceding layer. */
         private LinkedList<Double> sourcePosis = Lists.newLinkedList();
         /** positions of line segments going to the next layer. */
@@ -618,9 +620,20 @@ public final class OrthogonalRoutingGenerator {
             routingStrategy.calculateBendPoints(node, startPos);
         }
         
-        //TODO lgraph.setProperty(InternalProperties.HYPERNODES, theHypernodes)
+        // setting HYPERNODES property for OneDimensionalCompactor
+        //FIXME keep dummynodes
+        List<HyperNode> theHyperNodes = layeredGraph.getProperty(InternalProperties.HYPERNODES);
+        if (theHyperNodes == null) {
+            theHyperNodes = Lists.newArrayList();
+            layeredGraph.setProperty(InternalProperties.HYPERNODES, theHyperNodes);
+        }
+        for (HyperNode hn : hyperNodes) {
+            for (LPort port : hn.ports) {
+                hn.connectedNodes.add(port.getNode());
+            }
+            theHyperNodes.add(hn);
+        }
         
-        // 
         
         // release the created resources
         createdJunctionPoints.clear();
