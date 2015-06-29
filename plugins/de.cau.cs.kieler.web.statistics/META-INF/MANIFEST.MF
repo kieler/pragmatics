@@ -4,7 +4,7 @@ Bundle-Name: KIELER Web Statistics
 Bundle-SymbolicName: de.cau.cs.kieler.web.statistics
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ClassPath: .,
  lib/mongo-java-driver-2.11.3.jar
 Export-Package: com.mongodb,
