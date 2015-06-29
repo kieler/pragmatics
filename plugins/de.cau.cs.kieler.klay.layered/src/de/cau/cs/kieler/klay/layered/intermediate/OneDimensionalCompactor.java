@@ -13,16 +13,18 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Queue;
 
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
@@ -31,9 +33,9 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalRoutingGenerator.HyperNode;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -67,28 +69,28 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
 
-        // hypernodes testing
-        final double TOLERANCE = 0.01;
-        List<VerticalSegment> verticalSegments = Lists.newArrayList();
-        List<HyperNode> hyperNodes = layeredGraph.getProperty(InternalProperties.HYPERNODES);
-        for (HyperNode hyperNode : hyperNodes) {
-            if (Math.abs(hyperNode.end - hyperNode.start) > TOLERANCE) {
-                VerticalSegment vSeg = new VerticalSegment();
-//                for (LPort port : hyperNode.ports) {
-//                    if (port.getNode().getNodeType().equals(NodeType.NORMAL)) {
-//                        System.out.println(port.getOutgoingEdges());
-//                    }
-//                }
-                for (LNode node : hyperNode.connectedNodes) {
-                    if (!node.getNodeType().equals(NodeType.NORMAL)) {
-                        System.out.println(node.getProperty(InternalProperties.ORIGIN));
-                        System.out.println(node.getNodeType());
-                    }
-                }
-            }
-        }
+        // // hypernodes testing
+        // final double TOLERANCE = 0.01;
+        // List<VerticalSegment> verticalSegments = Lists.newArrayList();
+        // List<HyperNode> hyperNodes = layeredGraph.getProperty(InternalProperties.HYPERNODES);
+        // for (HyperNode hyperNode : hyperNodes) {
+        // if (Math.abs(hyperNode.end - hyperNode.start) > TOLERANCE) {
+        // VerticalSegment vSeg = new VerticalSegment();
+        // // for (LPort port : hyperNode.ports) {
+        // // if (port.getNode().getNodeType().equals(NodeType.NORMAL)) {
+        // // System.out.println(port.getOutgoingEdges());
+        // // }
+        // // }
+        // for (LNode node : hyperNode.connectedNodes) {
+        // if (!node.getNodeType().equals(NodeType.NORMAL)) {
+        // System.out.println(node.getProperty(InternalProperties.ORIGIN));
+        // System.out.println(node.getNodeType());
+        // }
+        // }
+        // }
+        // }
 
-        progressMonitor.begin("one dimensional compacting", 1);
+        progressMonitor.begin("Compacting horizontally", 1);
 
         double objSpacing = layeredGraph.getProperty(InternalProperties.SPACING);
         double edgeSpacing =
@@ -96,6 +98,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                         * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
         List<CNode> nodes = Lists.newArrayList();
+        List<VerticalSegment> verticalSegments = Lists.newArrayList();
 
         /* collecting positions of graph elements */
         for (Layer layer : layeredGraph) {
@@ -109,39 +112,93 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                     Rectangle r =
                             new Rectangle(node.getPosition().x, node.getPosition().y,
                                     node.getSize().x, node.getSize().y);
-                    nodes.add(new CNode(node, r));
+                    nodes.add(new CNode(true, node, r));
                 }
 
                 // add vertical edge segments
                 for (LEdge edge : node.getOutgoingEdges()) {
                     // System.out.println(edge + " JPs: "
                     // + edge.getProperty(LayoutOptions.JUNCTION_POINTS));
-                    //
-                    // Iterator<KVector> bends = edge.getBendPoints().iterator();
-                    //
-                    // while (bends.hasNext()) {
-                    // // infer vertical segments from order of bendpoints
-                    // KVector bend1 = bends.next();
-                    // KVector bend2 = bends.next();
-                    // double x, y, h;
-                    // if (bend1.y < bend2.y) {
-                    // x = bend1.x;
-                    // y = bend1.y;
-                    // h = bend2.y - y;
-                    // } else {
-                    // x = bend2.x;
-                    // y = bend2.y;
-                    // h = bend1.y - y;
-                    // }
-                    //
-                    // Rectangle rEdge = new Rectangle(x, y, 0, h);
-                    // CNode cn = new CNode(edge, rEdge);
-                    // cn.bend1 = bend1;
-                    // cn.bend2 = bend2;
-                    // nodes.add(cn);
-                    // }
+
+                    Iterator<KVector> bends = edge.getBendPoints().iterator();
+
+                    // infer vertical segments from positions of bendpoints
+                    if (bends.hasNext()) {
+                        KVector bend1 = bends.next();
+
+                        while (bends.hasNext()) {
+                            KVector bend2 = bends.next();
+                            // FIXME use just tolerance
+                            if (!Comp.eq(bend1.y, bend2.y)) {
+                                VerticalSegment vSeg = new VerticalSegment(bend1, bend2);
+                                // add JPs with same x
+                                KVectorChain inJPs =
+                                        edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                                for (KVector jp : inJPs) {
+                                    if (Comp.eq(jp.x, bend1.x)) {
+                                        vSeg.junctionPoints.add(jp);
+                                    }
+                                }
+                                verticalSegments.add(vSeg);
+                                // TODO test if all JPs found
+                                // missing the ones on n/s segments because thei're not considered
+
+                                // double x, y, h;
+                                // if (bend1.y < bend2.y) {
+                                // x = bend1.x;
+                                // y = bend1.y;
+                                // h = bend2.y - y;
+                                // } else {
+                                // x = bend2.x;
+                                // y = bend2.y;
+                                // h = bend1.y - y;
+                                // }
+                                //
+                                // Rectangle rEdge = new Rectangle(x, y, 0, h);
+                                // CNode cn = new CNode(false, edge, rEdge);
+                                // cn.bend1 = bend1;
+                                // cn.bend2 = bend2;
+                                // nodes.add(cn);
+                            }
+
+                            bend1 = bend2;
+                        }
+                    }
                 }
             }
+        }
+
+        // TODO find intersecting segments
+        if (!verticalSegments.isEmpty()) {
+            Collections.sort(verticalSegments, new Comparator<VerticalSegment>() {
+                /**
+                 * {@inheritDoc}
+                 */
+                public int compare(VerticalSegment o1, VerticalSegment o2) {
+                    int d = Double.compare(o1.x, o2.x);// FIXME Comp.eq()
+                    if (d == 0) {
+                        return Double.compare(o1.y, o2.y);
+                    }
+                    return d;
+                }
+            });
+
+            VerticalSegment last = verticalSegments.get(0);
+            CNode c = new CNode(last);
+
+            for (int i = 1; i < verticalSegments.size(); i++) {
+                VerticalSegment verticalSegment = verticalSegments.get(i);
+                if (!verticalSegment.intersects(last)) {
+                    nodes.add(c);
+                    c = new CNode(verticalSegment);
+                } else {
+                    // FIXME assuming a junction point is on one edge only, no duplicates
+                    c.addSegment(verticalSegment);
+                }
+
+                last = verticalSegment;
+            }
+            nodes.add(c);
         }
 
         /* infer constraints from hitbox intersections */
@@ -233,9 +290,14 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                 n.getPosition().x = node.startX;
 
             } else if (node.elem.getClass() == LEdge.class) {
-                node.bend1.x = node.startX;
-                node.bend2.x = node.startX;
-
+                // node.bend1.x = node.startX;
+                // node.bend2.x = node.startX;
+                for (KVector b : node.bends) {
+                    b.x = node.startX;
+                }
+                for (KVector j : node.juctionPoints) {
+                    j.x = node.startX;
+                }
             }
         }
 
@@ -248,10 +310,12 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
      */
     private final class CNode {
         private boolean isNode;
-        private LGraphElement elem;
+        private LGraphElement elem;// TODO LNode or just position
         private Rectangle hitbox;
-        // specify particular vertical edge segment
-        private KVector bend1, bend2;
+        // specify particular vertical edge segments and affected junction points
+        private KVector bend1, bend2;// TODO list bp + list jp
+        private KVectorChain bends;
+        private KVectorChain juctionPoints;
         // representation of constraints
         private List<CNode> incoming = Lists.newArrayList();
         private int outDegree = 0;
@@ -265,16 +329,71 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
          * @param hitbox
          *            the constraints are inferred from this box
          */
-        private CNode(final LGraphElement elem, final Rectangle hitbox) {
+        private CNode(final boolean isNode, final LGraphElement elem, final Rectangle hitbox) {
+            // TODO --isNode
             this.elem = elem;
             this.hitbox = hitbox;
+            this.isNode = isNode;
+        }
+
+        private CNode(final VerticalSegment vSeg) {
+            // FIXME param null ??
+            this.isNode = false;
+            this.bends = new KVectorChain(vSeg.bend1, vSeg.bend2);
+            this.juctionPoints = new KVectorChain(vSeg.junctionPoints);
+            this.hitbox = new Rectangle(vSeg.x, vSeg.y, 0, vSeg.h);
+            // TODO test
+            this.bend1 = vSeg.bend1;
+            this.bend2 = vSeg.bend2;
+            this.elem = new LEdge();
+        }
+
+        private void addSegment(final VerticalSegment vSeg) {
+            this.bends.addAll(vSeg.bend1, vSeg.bend2);
+            this.juctionPoints.addAll(vSeg.junctionPoints);
+            this.hitbox.setRect(vSeg.x, Math.min(this.hitbox.y, vSeg.y), 0,
+                    Math.max(this.hitbox.height, vSeg.h));
         }
 
     }
 
-    private final class VerticalSegment {
-        private List<Pair<LEdge, Pair<KVector, KVector>>> bends = Lists.newArrayList();
+    // TODO -- comparable
+    private final class VerticalSegment implements Comparable<VerticalSegment> {
+        // FIXME edge needed?
+        private KVector bend1, bend2;
         private KVectorChain junctionPoints = new KVectorChain();
+        private double x, y, h;
+
+        private VerticalSegment(final KVector bend1, final KVector bend2) {
+            this.bend1 = bend1;
+            this.bend2 = bend2;
+
+            if (bend1.y < bend2.y) {
+                x = bend1.x;
+                y = bend1.y;
+                h = bend2.y - y;
+            } else {
+                x = bend2.x;
+                y = bend2.y;
+                h = bend1.y - y;
+            }
+        }
+
+        private boolean intersects(VerticalSegment o) {
+            return Comp.eq(this.x, o.x) && Comp.ge(this.y, o.y) && Comp.le(this.y, o.y + o.h);
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public int compareTo(VerticalSegment o) {
+            return Double.compare(this.bend1.x, o.bend1.x);
+        }
+
+        @Override
+        public String toString() {
+            return "\nb1: " + bend1 + " \tb2: " + bend2 + " \t" + junctionPoints;
+        }
     }
 
     /**

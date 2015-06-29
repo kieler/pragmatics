@@ -376,11 +376,11 @@ public final class InternalProperties {
     public static final IProperty<List<LPort>> CONNECTED_NORTH_SOUTH_PORT_DUMMIES =
             new Property<List<LPort>>("connectedNorthSouthPorts", new ArrayList<LPort>());
     
-    /**
-     * List of HyperNodes created by the OrthogonalRoutingGenerator.
-     */
-    public static final IProperty<List<HyperNode>> HYPERNODES =
-            new Property<List<HyperNode>>("hyperNodes", new ArrayList<HyperNode>());
+//    /**
+//     * List of HyperNodes created by the OrthogonalRoutingGenerator.
+//     */
+//    public static final IProperty<List<HyperNode>> HYPERNODES =
+//            new Property<List<HyperNode>>("hyperNodes", new ArrayList<HyperNode>());
 
     // /////////////////////////////////////////////////////////////////////////////
     // OVERWRITTEN PROPERTIES
