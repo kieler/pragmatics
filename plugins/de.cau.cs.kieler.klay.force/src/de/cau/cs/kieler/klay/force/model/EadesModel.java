@@ -44,8 +44,8 @@ public final class EadesModel extends AbstractForceModel {
     protected void initialize(final FGraph graph) {
         super.initialize(graph);
         maxIterations = graph.getProperty(Properties.ITERATIONS);
-        springLength = graph.getProperty(Properties.SPACING);
-        repulsionFactor = graph.getProperty(Properties.REPULSION);
+        springLength = graph.getProperty(Properties.SPACING).doubleValue();
+        repulsionFactor = graph.getProperty(Properties.REPULSION).doubleValue();
     }
     
     /**
