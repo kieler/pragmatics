@@ -249,7 +249,16 @@ public final class Properties {
     public static final IProperty<Float> UPPER_LAYER_SCALE = new Property<Float>(
             "de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale",
             0.5f, 0.0f, 1.0f);
-
+    /**
+     * When using negative values for Upper Bound On Width or Upper Layer Estimation Scaling Factor, 
+     * more than one candidate layering will be computed based on suggesested values from the original 
+     * paper (1-4 for the upper bound, 1 and 2 for the scaling factor). After that the layering with the
+     * minimum maximum width of a layer is going to be chosen. If this property is true only real nodes 
+     * will be considered for the maximum width, otherwise real and dummy nodes will be considered.
+     * Should default to false.
+     */
+    public static final IProperty<Boolean> IGNORE_DUMMY_NODES_FOR_WIDTH = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.ignoreDummyNodesForWidth", false);
 
     /**
      * Specifies the compaction strategy when using the {@link BKNodePlacer}.
