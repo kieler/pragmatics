@@ -520,6 +520,9 @@ public final class JsonDebugUtil {
             LEdge edge = edgesIterator.next();
             final KVector source = new KVector(edge.getSource().getAbsoluteAnchor()).add(offset);
             final KVector target = new KVector(edge.getTarget().getAbsoluteAnchor()).add(offset);
+            if (edge.getProperty(InternalProperties.TARGET_OFFSET) != null) {
+                target.add(edge.getProperty(InternalProperties.TARGET_OFFSET));
+            }
             writer.write("\n" + indent1 + "{\n"
                 + indent2 + "\"id\": \"e" + edge.hashCode() + "\",\n"
                 + indent2 + "\"source\": \"n" + edge.getSource().getNode().hashCode() + "\",\n"
@@ -561,8 +564,7 @@ public final class JsonDebugUtil {
         writer.write(indent0 + "\"bendPoints\": [");
         Iterator<KVector> pointsIterator = bendPoints.iterator();
         while (pointsIterator.hasNext()) {
-            KVector point = pointsIterator.next();
-            point.add(offset);
+            KVector point = new KVector(pointsIterator.next()).add(offset);
             writer.write("\n" + indent1 + "{ \"x\": " + point.x + ", \"y\": " + point.y + "}");
             if (pointsIterator.hasNext()) {
                 writer.write(",");
@@ -671,7 +673,7 @@ public final class JsonDebugUtil {
             result.append("]");
             return result.toString();
         }
-        return value.toString();
+        return value.toString().replace("\n", "\\n");
     }
 
     /**
@@ -691,13 +693,13 @@ public final class JsonDebugUtil {
         if (node.getNodeType() == NodeType.NORMAL) {
             // Normal nodes display their name, if any
             if (node.getName() != null) {
-                name = node.getName().replace("\"", "\\\"");
+                name = node.getName();
             }
             name += " (" + layer + "," + index + ")";
         } else {
             // Dummy nodes show their name (if set), or their node ID
             if (node.getName() != null) {
-                name = node.getName().replace("\"", "\\\"");
+                name = node.getName();
             } else {
                 name = "n_" + node.id;
             }
@@ -708,9 +710,9 @@ public final class JsonDebugUtil {
                 }
             }
             name += " (" + layer + "," + index + ")";
-            name += "\\n DUMMY: " + node.getNodeType().name();
+            name += " [ DUMMY: " + node.getNodeType().name() + " ]";
         }
-        return name;
+        return name.replace("\"", "\\\"").replace("\n", "\\n");
     }
 
     /**
