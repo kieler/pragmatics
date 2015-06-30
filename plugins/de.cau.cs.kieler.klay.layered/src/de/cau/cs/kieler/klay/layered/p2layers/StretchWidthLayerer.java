@@ -147,7 +147,6 @@ public class StretchWidthLayerer implements ILayoutPhase {
             // The pseudo-code computes u\z but since u /alreadyPlacedNodes will be cleared here,
             // it's enough to check if alreadyPlacedNodes is empty
             // if it is empty it would indicate an empty layer
-//            boolean up = conditionGoUp();
             if (selectedNode == null || (conditionGoUp() && !alreadyPlacedNodes.isEmpty())) {
                 // go to the next layer //
                 currentLayer = new Layer(currentGraph);
