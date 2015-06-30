@@ -19,6 +19,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
@@ -80,6 +83,9 @@ public final class MinWidthLayerer implements ILayoutPhase {
     private static final Range<Integer> UPPERBOUND_ON_WIDTH_RANGE = Range.closed(1, 4);
     private static final Range<Integer> COMPENSATOR_RANGE = Range.closed(1, 2);
 
+    // TODO: COMMENT
+    private SelfLoopPredicate isSelfLoopTest = new SelfLoopPredicate();
+
     /**
      * {@inheritDoc}
      */
@@ -110,9 +116,9 @@ public final class MinWidthLayerer implements ILayoutPhase {
         final Boolean ignoreDummys =
                 layeredGraph.getProperty(Properties.IGNORE_DUMMY_NODES_FOR_WIDTH);
 
-//         final int upperBoundOnWidth = -1;
-//         final int compensator = -1;
-//         final Boolean ignoreDummys = true;
+        // final int upperBoundOnWidth = -1;
+        // final int compensator = -1;
+        // final Boolean ignoreDummys = true;
 
         // Guarantee ConditionSelect from the paper, which states that nodes with maximum out-degree
         // should be preferred during layer placement, by ordering the nodes by descending maximum
@@ -217,7 +223,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
             Iterable<LEdge> outEdges = node.getOutgoingEdges();
 
             for (LEdge edge : outEdges) {
-                if (!isSelfLoop(edge)) {
+                if (!isSelfLoopTest.apply(edge)) {
                     outNodes.add(edge.getTarget().getNode());
                 }
             }
@@ -265,7 +271,13 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // layers
         int widthCurrent = 0;
         int widthUp = 0;
+
+        // TODO: Comment.
         int maxWidth = 0;
+        int dummyNodeCount = 0;
+        Set<LEdge> dummysInNextLayer = Sets.newHashSet();
+        List<LEdge> goingOutFromThisLayer = Lists.newArrayList();
+        List<LEdge> comingIntoThisLayer = Lists.newArrayList();
 
         while (!unplacedNodes.isEmpty()) {
             // Find a node, whose edges only point to nodes in the Set alreadyPlacedInOtherLayers;
@@ -287,6 +299,16 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
                 inDegree = countEdgesExceptSelfLoops(currentNode.getIncomingEdges());
                 widthUp += inDegree;
+
+                // TODO: New for exact dummy node count:
+                Iterables.addAll(
+                        goingOutFromThisLayer,
+                        Iterables.filter(currentNode.getOutgoingEdges(),
+                                Predicates.not(isSelfLoopTest)));
+                Iterables.addAll(
+                        comingIntoThisLayer,
+                        Iterables.filter(currentNode.getIncomingEdges(),
+                                Predicates.not(isSelfLoopTest)));
             }
 
             // Go to the next layer if,
@@ -304,8 +326,14 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 layers.add(currentLayer);
                 alreadyPlacedInOtherLayers.addAll(alreadyPlacedInCurrentLayer);
                 alreadyPlacedInCurrentLayer.clear();
+
                 // TODO: Is this the right way to determine the maximum width of the layering?
-                maxWidth = Math.max(maxWidth, widthCurrent);
+                // Moreover: Comment
+                dummysInNextLayer.removeAll(goingOutFromThisLayer);
+                dummyNodeCount = dummysInNextLayer.size();
+                maxWidth = Math.max(maxWidth, dummyNodeCount + currentLayer.size());
+                dummysInNextLayer.addAll(comingIntoThisLayer);
+
                 widthCurrent = widthUp;
                 widthUp = 0;
             }
@@ -345,25 +373,41 @@ public final class MinWidthLayerer implements ILayoutPhase {
      *            Iterable whose edges without self-loops are to be counted
      * @return number of {@link LEdge} edges without self-loops
      */
-    private static int countEdgesExceptSelfLoops(final Iterable<LEdge> edges) {
+    private int countEdgesExceptSelfLoops(final Iterable<LEdge> edges) {
         int i = 0;
         for (LEdge edge : edges) {
-            if (!isSelfLoop(edge)) {
+            if (!isSelfLoopTest.apply(edge)) {
                 i++;
             }
         }
         return i;
     }
 
+    // /**
+    // * Checks whether an edge is a self-loop (i.e. source node == target node).
+    // *
+    // * @param edge
+    // * {@link LEdge} to be tested
+    // * @return true if edge is self-loop, false otherwise
+    // */
+    // private static boolean isSelfLoop(final LEdge edge) {
+    // return edge.getSource().getNode().equals(edge.getTarget().getNode());
+    // }
+
     /**
      * Checks whether an edge is a self-loop (i.e. source node == target node).
      * 
-     * @param edge
-     *            {@link LEdge} to be tested
-     * @return true if edge is self-loop, false otherwise
+     * @author mic
      */
-    private static boolean isSelfLoop(final LEdge edge) {
-        return edge.getSource().getNode().equals(edge.getTarget().getNode());
+    private class SelfLoopPredicate implements Predicate<LEdge> {
+
+        /**
+         * {@inheritDoc}
+         */
+        public boolean apply(final LEdge input) {
+            return input.getSource().getNode().equals(input.getTarget().getNode());
+        }
+
     }
 
     /**
