@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.TreeSet;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 
 /**
  * A property that uses a string for identification.
@@ -200,6 +201,16 @@ public class Property<T> implements IProperty<T>, Comparable<IProperty<?>> {
             return (T) clone;
         } else if (defaultValue instanceof ArrayList<?>) {
             return (T) ((ArrayList<?>) defaultValue).clone();
+        } else if (defaultValue instanceof KVectorChain) {
+            // KVectorChain extends LinkedList, thus we have to check it first here.
+            // Otherwise a linked list would be created which most likely 
+            // results in a class cast exception later on.
+            KVectorChain clone = new KVectorChain();
+            Iterator<KVector> it = ((KVectorChain) defaultValue).iterator();
+            while (it.hasNext()) {
+                clone.add(it.next());
+            }
+            return (T) clone;
         } else if (defaultValue instanceof LinkedList<?>) {
             // GWT's LinkedList does not support clone()
             LinkedList<Object> clone = new LinkedList<Object>();
