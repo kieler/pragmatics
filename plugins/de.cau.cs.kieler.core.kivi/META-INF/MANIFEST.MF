@@ -17,4 +17,4 @@ Export-Package: de.cau.cs.kieler.core.kivi,
  de.cau.cs.kieler.core.kivi.listeners,
  de.cau.cs.kieler.core.kivi.menu,
  de.cau.cs.kieler.core.kivi.triggers
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University

@@ -6,7 +6,7 @@ echo
 echo Generator script for JAX-WS implementation classes
 echo
 echo Copyright 2011 by Real-Time and Embedded Systems Group, Department
-echo of Computer Science, Christian-Albrechts-University of Kiel
+echo of Computer Science, Kiel University
 echo Published under the EPL v1.0 (see http://www.eclipse.org/legal/epl-v10.html)
 
 if [ "$JAVA_HOME"=="" ];
