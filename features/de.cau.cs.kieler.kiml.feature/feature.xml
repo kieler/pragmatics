@@ -3,7 +3,7 @@
       id="de.cau.cs.kieler.kiml.feature"
       label="KIELER Layout API"
       version="0.19.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel"
+      provider-name="Kiel University"
       plugin="de.cau.cs.kieler.kiml">
 
    <description url="http://rtsys.informatik.uni-kiel.de/confluence/x/jgEF">
@@ -16,7 +16,7 @@ to customize the layout using layout options.
 
    <copyright>
       Copyright 2013 by Real-Time and Embedded Systems Group, Department
-of Computer Science, Christian-Albrechts-University of Kiel
+of Computer Science, Kiel University
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

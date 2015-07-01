@@ -24,7 +24,7 @@ Export-Package: de.cau.cs.kieler.kwebs.server,
  de.cau.cs.kieler.kwebs.server.publishing,
  de.cau.cs.kieler.kwebs.server.service,
  de.cau.cs.kieler.kwebs.server.util
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University
 Eclipse-RegisterBuddy: org.apache.log4j
 
 

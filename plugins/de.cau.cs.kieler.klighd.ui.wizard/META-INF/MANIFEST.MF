@@ -21,4 +21,4 @@ Require-Bundle: org.apache.log4j,
  org.eclipse.xtext.ui.shared
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University

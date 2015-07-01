@@ -6,7 +6,7 @@
   ECHO Generator script for JAX-WS implementation classes
   ECHO.
   ECHO Copyright 2011 by Real-Time and Embedded Systems Group, Department
-  ECHO of Computer Science, Christian-Albrechts-University of Kiel
+  ECHO of Computer Science, Kiel University
   ECHO Published under the EPL v1.0 (see http://www.eclipse.org/legal/epl-v10.html)
   ECHO.
 

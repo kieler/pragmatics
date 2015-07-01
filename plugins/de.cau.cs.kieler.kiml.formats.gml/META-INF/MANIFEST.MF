@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Support for the GML Format
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University
 Bundle-Version: 0.4.0.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.formats.gml;singleton:=true
 Bundle-ActivationPolicy: lazy

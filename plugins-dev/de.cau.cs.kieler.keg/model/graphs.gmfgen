@@ -1279,7 +1279,7 @@
   </diagram>
   <plugin
       name="KEG"
-      provider="Christian-Albrechts-Universität zu Kiel"
+      provider="Kiel University"
       version="0.2.0.qualifier">
     <requiredPlugins>org.eclipse.draw2d</requiredPlugins>
     <requiredPlugins>org.eclipse.gmf.runtime.draw2d.ui</requiredPlugins>

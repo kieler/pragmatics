@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Lightweight Ptolemy Rendering
 Bundle-SymbolicName: de.cau.cs.kieler.ptolemy.klighd;singleton:=true
 Bundle-Version: 0.2.4.qualifier
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Require-Bundle: com.google.guava;bundle-version="10.0.0",
  com.google.inject;bundle-version="3.0.0",

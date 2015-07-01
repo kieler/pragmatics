@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Layout Bridge for GMF
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.gmf;singleton:=true
 Bundle-Version: 0.9.1.qualifier
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: de.cau.cs.kieler.kiml.gmf
 Require-Bundle: org.eclipse.gef;bundle-version="3.5.0",
