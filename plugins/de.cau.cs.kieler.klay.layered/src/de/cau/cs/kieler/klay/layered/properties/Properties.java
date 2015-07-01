@@ -21,7 +21,7 @@ import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
-import de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor.CompactionStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.CompactionStrategy;
 
 /**
  * Container for public property definitions. These are layout options that can be set on graph
@@ -54,7 +54,7 @@ public final class Properties {
      * A pre-defined seed for pseudo-random number generators.
      * We redefine the property here to set its default value to 1.
      *
-     * @see LayoutOptions#RANDOM_SEED
+     * @see de.cau.cs.kieler.kiml.options.LayoutOptions#RANDOM_SEED
      */
     public static final IProperty<Integer> RANDOM_SEED = new Property<Integer>(
             "de.cau.cs.kieler.randomSeed", 1);
@@ -71,6 +71,12 @@ public final class Properties {
      */
     public static final Property<Float> EDGE_SPACING_FACTOR = new Property<Float>(
             "de.cau.cs.kieler.klay.layered.edgeSpacingFactor", 0.5f);
+
+    /**
+     * Factor for minimal spacing between an edge and a node that is close by.
+     */
+    public static final Property<Float> EDGE_NODE_SPACING_FACTOR = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor", 0.7f);
 
     /**
      * Whether nodes shall be distributed during layer assignment.
@@ -155,7 +161,7 @@ public final class Properties {
      * Property that determines how much effort should be spent.
      */
     public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.thoroughness", 7, 1);
+            "de.cau.cs.kieler.klay.layered.thoroughness", 10, 1);
 
     /**
      * Property to set constraints on the node layering.

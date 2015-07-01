@@ -19,6 +19,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 
+import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
@@ -27,6 +28,7 @@ import org.eclipse.swt.printing.Printer;
 import de.cau.cs.kieler.klighd.DiagramExportConfig;
 import de.cau.cs.kieler.klighd.IExportBranding;
 import de.cau.cs.kieler.klighd.IExportBranding.Trim;
+import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.KlighdDataManager;
 import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
 import de.cau.cs.kieler.klighd.piccolo.export.AbstractDiagramExporter;
@@ -55,8 +57,8 @@ public final class PrintExporter extends AbstractDiagramExporter {
      */
     public PrintExporter(final PiccoloViewer viewer) {
         this.viewer = viewer;
-        this.exportBrandings =
-                KlighdDataManager.getExportBrandingByFormat("printout", viewer.getViewContext());
+        this.exportBrandings = KlighdDataManager.getExportBrandingByFormat(
+                KlighdConstants.EXPORT_PRINTOUT, viewer.getViewContext());
     }
 
 
@@ -234,6 +236,9 @@ public final class PrintExporter extends AbstractDiagramExporter {
      *
      * @param config
      *            the employed {@link DiagramExportConfig}
+     * @param printer
+     *            the printer to print to, required for creating
+     *            {@link org.eclipse.swt.graphics.Font SWT Fonts} while drawing exportBrandings
      * @param imageBounds
      *            the absolute (unadjusted) bounds of the diagram preview {@link Image} to be
      *            returned
@@ -247,12 +252,13 @@ public final class PrintExporter extends AbstractDiagramExporter {
      *            the offset to be applied to centrally align the diagram as requested
      * @return the image
      */
-    public Image exportPreview(final DiagramExportConfig config, final Dimension imageBounds,
-            final Rectangle imageClip, final double previewScale, final Point2D centeringOffset) {
+    public Image exportPreview(final DiagramExportConfig config, final Printer printer,
+            final Dimension imageBounds, final Rectangle imageClip, final double previewScale,
+            final Point2D centeringOffset) {
 
         final Image image = new Image(
                 viewer.getControl().getDisplay(), imageBounds.width, imageBounds.height);
-        export(config, image, imageBounds, imageClip, previewScale, centeringOffset);
+        export(config, image, printer, imageBounds, imageClip, previewScale, centeringOffset);
 
         return image;
     }
@@ -274,7 +280,7 @@ public final class PrintExporter extends AbstractDiagramExporter {
      */
     public void print(final DiagramExportConfig exportConfig, final Printer printer,
             final Dimension pageBounds, final Rectangle pageClip, final Point2D centeringOffset) {
-        export(exportConfig, printer, pageBounds, pageClip, 1d, centeringOffset);
+        export(exportConfig, printer, printer, pageBounds, pageClip, 1d, centeringOffset);
     }
 
 
@@ -285,6 +291,9 @@ public final class PrintExporter extends AbstractDiagramExporter {
      * @param drawable
      *            the {@link Drawable} to draw the diagram on, usually an {@link Image} or a
      *            {@link Printer}
+     * @param fontDevice
+     *            the {@link Device} to use for instantiating fonts while drawing exportBrandings,
+     *            for example
      * @param drawablesBounds
      *            the actual (unadjusted) pure bounds, which may differ from
      *            {@code exportConfig.tileBounds} in case the tiles are scaled (e.g. for print
@@ -299,11 +308,11 @@ public final class PrintExporter extends AbstractDiagramExporter {
      *            the offset to be applied to centrally align the diagram as requested
      */
     private void export(final DiagramExportConfig exportConfig, final Drawable drawable,
-            final Dimension drawablesBounds, final Rectangle baseTileClip, final double imageScale,
-            final Point2D centeringOffset) {
+            final Device fontDevice, final Dimension drawablesBounds, final Rectangle baseTileClip,
+            final double imageScale, final Point2D centeringOffset) {
 
         final GC gc = new GC(drawable);
-        final KlighdSWTGraphicsImpl graphics = new KlighdSWTGraphicsImpl(gc);
+        final KlighdSWTGraphicsImpl graphics = new KlighdSWTGraphicsImpl(gc, fontDevice);
 
         drawDiagramTile(exportConfig, graphics, viewer.getControl().getCamera(), drawablesBounds,
                 baseTileClip, imageScale, centeringOffset);

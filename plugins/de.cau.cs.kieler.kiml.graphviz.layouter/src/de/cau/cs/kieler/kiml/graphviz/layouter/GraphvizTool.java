@@ -22,7 +22,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
@@ -33,6 +32,7 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
+import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizLayouterPreferenceStoreAccess;
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizPreferencePage;
 
 /**
@@ -236,17 +236,19 @@ public class GraphvizTool {
      * @return path to the dot executable, or {@code null} if the executable was not found
      */
     public static String getDotExecutable(final boolean promptUser) {
-        String dotExecutable;
+        String dotExecutable = null;
         File dotFile;
         
         // Load the graphviz path from the preferences, if any. However, do this only if we're really
         // running in an Eclipse context
         if (EclipseRuntimeDetector.isEclipseRunning()) {
-            IPreferenceStore preferenceStore = GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-            dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
-            dotFile = new File(dotExecutable);
-            if (dotFile.exists() && dotFile.canExecute()) {
-                return dotExecutable;
+            dotExecutable =
+                    GraphvizLayouterPreferenceStoreAccess.getUISaveString(PREF_GRAPHVIZ_EXECUTABLE);
+            if (dotExecutable != null) {
+                dotFile = new File(dotExecutable);
+                if (dotFile.exists() && dotFile.canExecute()) {
+                    return dotExecutable;
+                }
             }
         }
         
@@ -271,12 +273,13 @@ public class GraphvizTool {
         if (promptUser && EclipseRuntimeDetector.isEclipseRunning()) {
             if (handleExecPath()) {
                 // fetch the executable string again after the user has entered a new path
-                IPreferenceStore preferenceStore =
-                        GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-                dotExecutable = preferenceStore.getString(PREF_GRAPHVIZ_EXECUTABLE);
-                dotFile = new File(dotExecutable);
-                if (dotFile.exists() && dotFile.canExecute()) {
-                    return dotExecutable;
+                dotExecutable =
+                        GraphvizLayouterPreferenceStoreAccess.getUISaveString(PREF_GRAPHVIZ_EXECUTABLE);
+                if (dotExecutable != null) {
+                    dotFile = new File(dotExecutable);
+                    if (dotFile.exists() && dotFile.canExecute()) {
+                        return dotExecutable;
+                    }
                 }
             }
         }
@@ -292,17 +295,22 @@ public class GraphvizTool {
      * @return true if the user has selected "Ok" in the shown dialog, false otherwise
      */
     private static boolean handleExecPath() {
-        final Display display = PlatformUI.getWorkbench().getDisplay();
-        final Maybe<Integer> dialogResult = Maybe.create();
-        display.syncExec(new Runnable() {
-            public void run() {
-                PreferenceDialog preferenceDialog =
-                        PreferencesUtil.createPreferenceDialogOn(display.getActiveShell(),
-                                GraphvizPreferencePage.ID, new String[] {}, null);
-                dialogResult.set(preferenceDialog.open());
-            }
-        });
-        return dialogResult.get() == PreferenceDialog.OK;
+        try {
+            final Display display = PlatformUI.getWorkbench().getDisplay();
+            final Maybe<Integer> dialogResult = Maybe.create();
+            display.syncExec(new Runnable() {
+                public void run() {
+                    PreferenceDialog preferenceDialog =
+                            PreferencesUtil.createPreferenceDialogOn(display.getActiveShell(),
+                                    GraphvizPreferencePage.ID, new String[] {}, null);
+                    dialogResult.set(preferenceDialog.open());
+                }
+            });
+            return dialogResult.get() == PreferenceDialog.OK;
+        } catch (NoClassDefFoundError e) {
+            // silent
+        }
+        return false;
     }
 
     /**
@@ -556,9 +564,8 @@ public class GraphvizTool {
                 // retrieve the current timeout value
                 int timeout = PROCESS_DEF_TIMEOUT;
                 if (EclipseRuntimeDetector.isEclipseRunning()) {
-                    IPreferenceStore preferenceStore =
-                            GraphvizLayouterPlugin.getDefault().getPreferenceStore();
-                    int timeoutPreference = preferenceStore.getInt(PREF_TIMEOUT);
+                    int timeoutPreference =
+                            GraphvizLayouterPreferenceStoreAccess.getUISaveInt(PREF_TIMEOUT);
                     if (timeoutPreference >= PROCESS_MIN_TIMEOUT) {
                         timeout = timeoutPreference;
                     }

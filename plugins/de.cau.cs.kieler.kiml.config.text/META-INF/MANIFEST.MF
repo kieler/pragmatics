@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Textual Layout Configuration
 Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
-Bundle-Version: 0.1.1.qualifier
+Bundle-Version: 0.1.2.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.config.text; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext;visibility:=reexport,
@@ -21,7 +21,7 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  de.cau.cs.kieler.kiml
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.cau.cs.kieler.kiml.config.text,
  de.cau.cs.kieler.kiml.config.text.services,
  de.cau.cs.kieler.kiml.config.text.serializer,

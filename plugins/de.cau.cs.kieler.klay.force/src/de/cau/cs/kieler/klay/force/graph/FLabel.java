@@ -81,7 +81,7 @@ public final class FLabel extends FParticle {
      * Refresh the label position, that is, place it in the center of the edge.
      */
     public void refreshPosition() { 
-        double spacing = edge.getProperty(Properties.LABEL_SPACING);
+        double spacing = edge.getProperty(Properties.LABEL_SPACING).doubleValue();
 
         KVector src = edge.getSource().getPosition();
         KVector tgt = edge.getTarget().getPosition();

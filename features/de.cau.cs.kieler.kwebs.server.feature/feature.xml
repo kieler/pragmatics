@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kwebs.server.feature"
       label="KIELER Layout Web Server"
-      version="0.4.0.qualifier"
+      version="0.5.0.qualifier"
       provider-name="Christian-Albrechts-Universität zu Kiel">
 
    <description url="http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF">
@@ -107,10 +107,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
    <url>
       <update label="KIELER Nightly Builds" url="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/"/>
    </url>
-
-   <includes
-         id="org.eclipse.rcp"
-         version="0.0.0"/>
 
    <plugin
          id="com.google.guava"
@@ -387,27 +383,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.help"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.jface"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.jface.databinding"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.osgi"
          download-size="0"
          install-size="0"
@@ -626,13 +601,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.service"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.kiml.formats.graphml"
          download-size="0"
          install-size="0"
@@ -662,6 +630,13 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="de.cau.cs.kieler.web.statistics"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtend.lib.macro"
          download-size="0"
          install-size="0"
          version="0.0.0"
