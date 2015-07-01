@@ -73,7 +73,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
         progressMonitor.begin("Compacting horizontally", 1);
 
-        double objSpacing = layeredGraph.getProperty(InternalProperties.SPACING);
+        double objSpacing = (double) layeredGraph.getProperty(InternalProperties.SPACING);
         double edgeSpacing =
                 layeredGraph.getProperty(InternalProperties.SPACING)
                         * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
