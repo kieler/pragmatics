@@ -65,7 +65,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
         // always suppress dummy port generation here
         rootLayout.setProperty(CodaflowProperties.PORT_DUMMIES, false);
 
-        moveLimit = rootLayout.getProperty(CodaflowProperties.MOVE_LIMIT);
+        moveLimit = rootLayout.getProperty(CodaflowProperties.MOVE_LIMIT).doubleValue();
 
         // calculate margins of the nodes
         KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);

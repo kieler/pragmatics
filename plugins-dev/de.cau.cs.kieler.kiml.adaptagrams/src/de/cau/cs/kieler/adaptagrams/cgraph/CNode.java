@@ -69,7 +69,7 @@ public class CNode extends CShape {
     @Override
     public void init() {
         // get spacing and margins
-        double spacing = graph.getProperty(CoLaProperties.SPACING);
+        double spacing = graph.getProperty(CoLaProperties.SPACING).doubleValue();
         Margins margin = getMargins();
 
         if (graph.getProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN)) {

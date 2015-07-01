@@ -89,7 +89,7 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         Rectangle.setYBorder(spacing);
 
         // further options
-        double idealEdgeLength = rootLayout.getProperty(CoLaProperties.IDEAL_EDGE_LENGTHS);
+        double idealEdgeLength = rootLayout.getProperty(CoLaProperties.IDEAL_EDGE_LENGTHS).doubleValue();
         boolean avoidOverlaps = rootLayout.getProperty(CoLaProperties.AVOID_OVERLAPS);
         borderSpacing = rootLayout.getProperty(LayoutOptions.BORDER_SPACING);
 

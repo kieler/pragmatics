@@ -48,7 +48,7 @@ import de.cau.cs.kieler.klay.codaflow.graphimport.KGraphImporter;
  * @author uru
  *
  */
-public class LibavoidLayoutProvider extends AbstractLayoutProvider {
+public class GlobalLibavoidLayoutProvider extends AbstractLayoutProvider {
 
     /**
      * {@inheritDoc}

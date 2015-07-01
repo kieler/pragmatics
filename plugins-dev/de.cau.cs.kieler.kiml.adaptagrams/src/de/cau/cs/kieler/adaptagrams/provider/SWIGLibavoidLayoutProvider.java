@@ -27,7 +27,7 @@ import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
  * 
  * @author uru
  */
-public class LibavoidLayoutProvider extends AbstractLayoutProvider {
+public class SWIGLibavoidLayoutProvider extends AbstractLayoutProvider {
 
     private static final int SUBTASK_WORK = 1;
     private static final int LAYOUT_WORK = SUBTASK_WORK + SUBTASK_WORK + SUBTASK_WORK

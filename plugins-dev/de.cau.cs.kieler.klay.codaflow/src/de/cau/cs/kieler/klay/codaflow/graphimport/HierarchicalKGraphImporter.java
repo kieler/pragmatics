@@ -338,7 +338,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
      */
     public void applyLayout(final CGraph constrainedGraph) {
 
-        double borderSpacing = graph.getProperty(CodaflowProperties.BORDER_SPACING);
+        double borderSpacing = graph.getProperty(CodaflowProperties.BORDER_SPACING).doubleValue();
 
         // calculate the offset from border spacing and node distribution
         double minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, maxX = Float.MIN_VALUE, maxY =

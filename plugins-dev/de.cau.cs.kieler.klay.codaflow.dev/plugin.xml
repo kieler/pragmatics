@@ -106,7 +106,7 @@
           <layoutAlgorithm
                 category="de.cau.cs.kieler.adaptagrams.category"
                 class="de.cau.cs.kieler.klay.codaflow.LibavoidLayoutProvider"
-                id="de.cau.cs.kieler.klay.cola.libavoid"
+                id="de.cau.cs.kieler.klay.codaflow.libavoid.global"
                 name="Global Libavoid Layout"
                 type="de.cau.cs.kieler.type.edgeRouting">
              <supportedFeature
