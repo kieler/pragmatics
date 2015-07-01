@@ -12,7 +12,7 @@
  */
 package net.ogdf.bin;
 
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -20,7 +20,7 @@ import org.osgi.framework.BundleContext;
  * 
  * @author mri
  */
-public class OgdfPlugin extends AbstractUIPlugin {
+public class OgdfPlugin extends Plugin {
 
     /** the plug-in ID. */
     public static final String PLUGIN_ID = "net.ogdf.bin"; //$NON-NLS-1$

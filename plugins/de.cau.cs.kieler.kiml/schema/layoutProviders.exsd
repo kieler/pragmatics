@@ -440,6 +440,13 @@ Apart from a set of default layout types offered by KIML, new layout providers a
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  A description of how well the feature is supported or which restrictions may apply to its usage.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

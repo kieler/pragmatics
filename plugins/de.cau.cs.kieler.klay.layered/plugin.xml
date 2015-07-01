@@ -58,6 +58,9 @@
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.unnecessaryBendpoints">
          </knownOption>
          <knownOption
@@ -286,6 +289,18 @@
             id="de.cau.cs.kieler.klay.layered.edgeSpacingFactor"
             lowerBound="0.01"
             name="Edge Spacing Factor"
+            type="float"
+            upperBound="100"
+            variance="0.2">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="0.5"
+            description="Factor by which the object spacing is multiplied to arrive at the minimal spacing between an edge and a node."
+            id="de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor"
+            lowerBound="0.01"
+            name="Edge Node Spacing Factor"
             type="float"
             upperBound="100"
             variance="0.2">

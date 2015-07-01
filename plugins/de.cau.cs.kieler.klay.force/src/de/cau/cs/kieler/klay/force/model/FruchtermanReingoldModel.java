@@ -48,7 +48,7 @@ public final class FruchtermanReingoldModel extends AbstractForceModel {
     @Override
     protected void initialize(final FGraph graph) {
         super.initialize(graph);
-        temperature = graph.getProperty(Properties.TEMPERATURE);
+        temperature = graph.getProperty(Properties.TEMPERATURE).doubleValue();
         threshold = temperature / graph.getProperty(Properties.ITERATIONS);
         
         // calculate an appropriate value for K

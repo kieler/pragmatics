@@ -124,8 +124,9 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
                     KVectorChain vectorChain = new KVectorChain();
                     // the first pair of numbers indicates the source and target node
                     vectorChain.add(
-                            edge.getSource().getData(KShapeLayout.class).getProperty(NODE_INDEX),
-                            edge.getTarget().getData(KShapeLayout.class).getProperty(NODE_INDEX));
+                            edge.getSource().getData(KShapeLayout.class).getProperty(NODE_INDEX)
+                                    .doubleValue(), edge.getTarget().getData(KShapeLayout.class)
+                                    .getProperty(NODE_INDEX).doubleValue());
                     // the remaining numbers are bend point coordinates
                     for (KPoint bendPoint : edgeLayout.getBendPoints()) {
                         vectorChain.add(bendPoint.getX(), bendPoint.getY());

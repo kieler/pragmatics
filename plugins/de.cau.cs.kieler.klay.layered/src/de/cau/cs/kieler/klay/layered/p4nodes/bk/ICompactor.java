@@ -30,14 +30,4 @@ public interface ICompactor {
      */
     void horizontalCompaction(final BKAlignedLayout bal);
     
-    /**
-     *  Specifies how the compaction step of 
-     *  the {@link BKNodePlacer} should be executed.
-     */
-    public enum CompactionStrategy {
-        /** As specified in the original paper. */
-        CLASSIC,
-        /** An integrated method trying to increase the number of straight edges. */
-        IMPROVE_STRAIGHTNESS,
-    }
 }

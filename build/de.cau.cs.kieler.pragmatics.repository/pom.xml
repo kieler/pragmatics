@@ -19,7 +19,7 @@
   <properties>
     <update.site.name>KIELER Pragmatics</update.site.name>
     <update.site.description>Nightly</update.site.description>
-    <update.site.version>2015-02</update.site.version>
+    <update.site.version>2015-06</update.site.version>
     <target.eclipse.version>4.4 (Luna)</target.eclipse.version>
   </properties>
 
