@@ -13,8 +13,6 @@
  */
 package de.cau.cs.kieler.klay.layered.p2layers;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -85,6 +83,10 @@ public class StretchWidthLayerer implements ILayoutPhase {
     // array of in-degrees for every node
     // access with inDegree[node.id]
     private int[] inDegree;
+    // selected node to be placed
+    private LNode selectedNode;
+    // indicator if the original Algorithm or the adaption should be used
+    private Boolean originalAlg = false;
 
     /**
      * {@inheritDoc}
@@ -120,12 +122,13 @@ public class StretchWidthLayerer implements ILayoutPhase {
         // 0= widthUp > maxWidth * 0 -> only false for the first node and once every remaining node
         // has no incoming edges
         upperLayerInfluence = currentGraph.getProperty(Properties.UPPER_LAYER_SCALE).doubleValue();
-        // -1 is used to indicate that the original algorithm should be used 
-        if(upperLayerInfluence == -1){
+        // -1 is used to indicate that the original algorithm should be used
+        if (upperLayerInfluence == -1) {
+            originalAlg = true;
             upperLayerInfluence = getAverageOutDegree();
-            
+
         }
-        
+
         // sort the nodes at beginning, since the rank will not change
         // since it uses the node.id field it has to be computed first
         computeSortedNodes();
@@ -136,7 +139,6 @@ public class StretchWidthLayerer implements ILayoutPhase {
         computeDegrees();
         // copy the sorted layerless nodes so we don't overwrite it for the reset case
         tempLayerlessNodes = Lists.newArrayList(sortedLayerlessNodes);
-        LNode selectedNode;
         // variable to compute the difference of u and z
 
         while (!tempLayerlessNodes.isEmpty()) {
@@ -145,8 +147,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
             // The pseudo-code computes u\z but since u /alreadyPlacedNodes will be cleared here,
             // it's enough to check if alreadyPlacedNodes is empty
             // if it is empty it would indicate an empty layer
-            boolean up = conditionGoUp();
-            if (selectedNode == null || (up && !alreadyPlacedNodes.isEmpty())) {
+            if (selectedNode == null || (conditionGoUp() && !alreadyPlacedNodes.isEmpty())) {
                 // go to the next layer //
                 currentLayer = new Layer(currentGraph);
                 currentGraph.getLayers().add(currentLayer);
@@ -157,7 +158,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
                 widthCurrent = widthUp;
                 widthUp = 0;
             } else {
-                if (up) {
+                if (conditionGoUp()) {
                     // reset layering //
                     // clear the placed layers
                     currentGraph.getLayers().clear();
@@ -196,11 +197,20 @@ public class StretchWidthLayerer implements ILayoutPhase {
 
     /**
      * Checks if the layering should go up to the next layer.
-     * 
+     * If the parameter was set to -1 it checks the effect of the hypothetical
+     * of the placement of the selected node
+     *     
      * @return true, if the algorithm should go to the next layer
      */
     private Boolean conditionGoUp() {
-        return widthCurrent > maxWidth || (widthUp > (maxWidth * upperLayerInfluence));
+        if (originalAlg) {
+        return ((widthCurrent - outDegree[selectedNode.id] + 1) > maxWidth 
+                || ((widthUp + inDegree[selectedNode.id]) > (maxWidth * upperLayerInfluence)));
+        } else {
+            return (widthCurrent  > maxWidth 
+                    || (widthUp  > (maxWidth * upperLayerInfluence)));
+           
+        }
     }
 
     /**
@@ -341,19 +351,20 @@ public class StretchWidthLayerer implements ILayoutPhase {
         }
         return i;
     }
+
     /**
-     * Computes the Average out-degree of the graph
-     * should be computed before changing the layerlessNodes list
+     * Computes the Average out-degree of the graph should be computed before changing the
+     * layerlessNodes list.
      * 
      * @return average outdegree of the Graph
      */
-    private float getAverageOutDegree(){
-        float allOut=0;
-        for(LNode node :currentGraph.getLayerlessNodes()){
+    private float getAverageOutDegree() {
+        float allOut = 0;
+        for (LNode node : currentGraph.getLayerlessNodes()) {
             allOut += getOutDegree(node);
-            
+
         }
-        
-        return allOut/currentGraph.getLayerlessNodes().size();
+
+        return allOut / currentGraph.getLayerlessNodes().size();
     }
 }
