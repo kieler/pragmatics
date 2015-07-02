@@ -196,22 +196,17 @@ public class StretchWidthLayerer implements ILayoutPhase {
     }
 
     /**
-     * Checks if the layering should go up to the next layer.
-     * If the parameter was set to -1 it checks the effect of the hypothetical
-     * of the placement of the selected node
+     * Checks the effects of the hypothetical
+     * placement of the selected node and if the algorithm should
+     *  rather go up, then placing the node
      *     
      * @return true, if the algorithm should go to the next layer
      */
     private Boolean conditionGoUp() {
-        if (originalAlg) {
         return ((widthCurrent - outDegree[selectedNode.id] + 1) > maxWidth 
-                || ((widthUp + inDegree[selectedNode.id]) > (maxWidth * upperLayerInfluence)));
-        } else {
-            return (widthCurrent  > maxWidth 
-                    || (widthUp  > (maxWidth * upperLayerInfluence)));
-           
-        }
-    }
+                || ((widthUp + inDegree[selectedNode.id]) > (maxWidth * upperLayerInfluence)));        
+        }    
+
 
     /**
      * Selects a node from the sorted list of layerless nodes. The selection is done according to

@@ -130,12 +130,13 @@ public enum IntermediateProcessorStrategy {
     HIERARCHICAL_PORT_ORTHOGONAL_EDGE_ROUTER,
     /** Takes a properly layered graph and removes the dummy nodes due to proper layering. */
     LONG_EDGE_JOINER,
-    /** TODO */
-    ONE_D_COMPACTOR,
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
     NORTH_SOUTH_PORT_POSTPROCESSOR,
     /** Removes dummy nodes which were introduced for center labels. */
-    LABEL_DUMMY_REMOVER,
+    LABEL_DUMMY_REMOVER,    
+    /** Moves nodes and vertical edge segments in horizontal direction to close some gaps that are wider
+     * than the desired spacing. */
+    ONE_D_COMPACTOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
     /** Mirrors the graph to perform a right-to-left drawing. */
