@@ -181,6 +181,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 if (newWidth < minWidth) {
                     minWidth = newWidth;
                     candidateLayering = result.getSecond();
+                    //System.out.println("Candidate updated: UBW: " + ubw + "\tc: " + c
+                    //        + "\tmaxWidth: " + minWidth);
                 }
             }
         }
@@ -275,9 +277,12 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // TODO: Comment.
         int maxWidth = 0;
         int dummyNodeCount = 0;
+        int realWidth = 0;
         Set<LEdge> dummysInNextLayer = Sets.newHashSet();
         List<LEdge> goingOutFromThisLayer = Lists.newArrayList();
         List<LEdge> comingIntoThisLayer = Lists.newArrayList();
+
+        //System.out.println("Layerwidths rtl for ubw: " + upperBoundOnWidth + "\tc: " + compensator);
 
         while (!unplacedNodes.isEmpty()) {
             // Find a node, whose edges only point to nodes in the Set alreadyPlacedInOtherLayers;
@@ -313,17 +318,20 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
             // Go to the next layer if,
             // 1) no current node has been selected,
+            // TODO: comment if empty
             // 2) The conditionGoUp from the paper is satisfied, i.e.
             // 2.1) the width of the current layer is greater than the upper bound on the width and
             // the amount of dummy nodes in the layer can't be reduced, as only nodes with no
             // outgoing edges are left for being considered for the current layer; or:
             // 2.2) The estimated width of the not yet determined layers is greater than the
             // scaling factor/compensator times the upper bound on the width.
-            if (currentNode == null || (widthCurrent >= upperBoundOnWidth && outDegree < 1)
+            if (currentNode == null || unplacedNodes.isEmpty()
+                    || (widthCurrent >= upperBoundOnWidth && outDegree < 1)
                     || widthUp >= compensator * upperBoundOnWidth) {
                 // currentLayer = new Layer(layeredGraph);
-                currentLayer = Lists.newArrayList();
                 layers.add(currentLayer);
+                realWidth = currentLayer.size();
+                currentLayer = Lists.newArrayList();
                 alreadyPlacedInOtherLayers.addAll(alreadyPlacedInCurrentLayer);
                 alreadyPlacedInCurrentLayer.clear();
 
@@ -331,13 +339,18 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 // Moreover: Comment
                 dummysInNextLayer.removeAll(goingOutFromThisLayer);
                 dummyNodeCount = dummysInNextLayer.size();
-                maxWidth = Math.max(maxWidth, dummyNodeCount + currentLayer.size());
+                maxWidth = Math.max(maxWidth, dummyNodeCount + realWidth);
                 dummysInNextLayer.addAll(comingIntoThisLayer);
 
                 widthCurrent = widthUp;
                 widthUp = 0;
+
+                //System.out.print((dummyNodeCount + realWidth) + "\t");
             }
         }
+
+        //System.out.println();
+        //System.out.println("maxWidth: " + maxWidth);
 
         return Pair.of(maxWidth, layers);
     }
