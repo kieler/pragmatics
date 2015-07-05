@@ -144,6 +144,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // notInserted, nodeSuccessors).getSecond());
         // TODO: Reduce code duplication?
         int minWidth = Integer.MAX_VALUE;
+        int minNumOfLayers = Integer.MAX_VALUE;
         // initializing with null might be dirty, Exception?
         List<List<LNode>> candidateLayering = null;
 
@@ -169,20 +170,23 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 Pair<Integer, List<List<LNode>>> result =
                         computeMinWidthLayering(ubw, c, notInserted, nodeSuccessors);
                 int newWidth = result.getFirst();
+                List<List<LNode>> layering = result.getSecond();
 
                 // TODO: explain more. If you should only consider real nodes for the width…
                 if (ignoreDummys) {
                     newWidth = 0;
-                    for (List<LNode> layer : result.getSecond()) {
+                    for (List<LNode> layer : layering) {
                         newWidth = Math.max(newWidth, layer.size());
                     }
                 }
 
-                if (newWidth < minWidth) {
+                int newNumOfLayers = layering.size();
+                if (newWidth < minWidth || (newWidth == minWidth && newNumOfLayers < minNumOfLayers)) {
                     minWidth = newWidth;
-                    candidateLayering = result.getSecond();
-                    //System.out.println("Candidate updated: UBW: " + ubw + "\tc: " + c
-                    //        + "\tmaxWidth: " + minWidth);
+                    minNumOfLayers = newNumOfLayers;
+                    candidateLayering = layering;
+//                    System.out.println("Candidate updated: UBW: " + ubw + "\tc: " + c
+//                            + "\tmaxWidth: " + minWidth + "\tnumOfLayers: " + minNumOfLayers);
                 }
             }
         }
@@ -282,7 +286,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
         List<LEdge> goingOutFromThisLayer = Lists.newArrayList();
         List<LEdge> comingIntoThisLayer = Lists.newArrayList();
 
-        //System.out.println("Layerwidths rtl for ubw: " + upperBoundOnWidth + "\tc: " + compensator);
+//        System.out.println("Layerwidths rtl for ubw: " + upperBoundOnWidth + "\tc: " + compensator);
 
         while (!unplacedNodes.isEmpty()) {
             // Find a node, whose edges only point to nodes in the Set alreadyPlacedInOtherLayers;
@@ -345,12 +349,12 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 widthCurrent = widthUp;
                 widthUp = 0;
 
-                //System.out.print((dummyNodeCount + realWidth) + "\t");
+//                System.out.print((dummyNodeCount + realWidth) + "\t");
             }
         }
 
-        //System.out.println();
-        //System.out.println("maxWidth: " + maxWidth);
+//        System.out.println();
+//        System.out.println("maxWidth: " + maxWidth);
 
         return Pair.of(maxWidth, layers);
     }
