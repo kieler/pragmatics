@@ -55,7 +55,6 @@ public interface OneLifelineMessage extends Interaction
 
   /**
    * Returns the value of the '<em><b>Message Type</b></em>' attribute.
-   * The literals are from the enumeration {@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageType}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Message Type</em>' attribute isn't clear,
@@ -63,24 +62,22 @@ public interface OneLifelineMessage extends Interaction
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Message Type</em>' attribute.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
-   * @see #setMessageType(MessageType)
+   * @see #setMessageType(String)
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_MessageType()
    * @model
    * @generated
    */
-  MessageType getMessageType();
+  String getMessageType();
 
   /**
    * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageType <em>Message Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Message Type</em>' attribute.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
    * @see #getMessageType()
    * @generated
    */
-  void setMessageType(MessageType value);
+  void setMessageType(String value);
 
   /**
    * Returns the value of the '<em><b>Caption</b></em>' attribute.

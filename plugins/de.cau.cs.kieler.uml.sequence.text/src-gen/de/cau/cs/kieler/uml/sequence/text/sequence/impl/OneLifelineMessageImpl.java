@@ -3,7 +3,6 @@
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
-import de.cau.cs.kieler.uml.sequence.text.sequence.MessageType;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
 
@@ -53,7 +52,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * @generated
    * @ordered
    */
-  protected static final MessageType MESSAGE_TYPE_EDEFAULT = MessageType.ASYNC;
+  protected static final String MESSAGE_TYPE_EDEFAULT = null;
 
   /**
    * The cached value of the '{@link #getMessageType() <em>Message Type</em>}' attribute.
@@ -63,7 +62,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * @generated
    * @ordered
    */
-  protected MessageType messageType = MESSAGE_TYPE_EDEFAULT;
+  protected String messageType = MESSAGE_TYPE_EDEFAULT;
 
   /**
    * The default value of the '{@link #getCaption() <em>Caption</em>}' attribute.
@@ -234,7 +233,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public MessageType getMessageType()
+  public String getMessageType()
   {
     return messageType;
   }
@@ -244,10 +243,10 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setMessageType(MessageType newMessageType)
+  public void setMessageType(String newMessageType)
   {
-    MessageType oldMessageType = messageType;
-    messageType = newMessageType == null ? MESSAGE_TYPE_EDEFAULT : newMessageType;
+    String oldMessageType = messageType;
+    messageType = newMessageType;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE, oldMessageType, messageType));
   }
@@ -410,7 +409,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
         setLifeline((Lifeline)newValue);
         return;
       case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
-        setMessageType((MessageType)newValue);
+        setMessageType((String)newValue);
         return;
       case SequencePackage.ONE_LIFELINE_MESSAGE__CAPTION:
         setCaption((String)newValue);
@@ -479,7 +478,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
       case SequencePackage.ONE_LIFELINE_MESSAGE__LIFELINE:
         return lifeline != null;
       case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
-        return messageType != MESSAGE_TYPE_EDEFAULT;
+        return MESSAGE_TYPE_EDEFAULT == null ? messageType != null : !MESSAGE_TYPE_EDEFAULT.equals(messageType);
       case SequencePackage.ONE_LIFELINE_MESSAGE__CAPTION:
         return CAPTION_EDEFAULT == null ? caption != null : !CAPTION_EDEFAULT.equals(caption);
       case SequencePackage.ONE_LIFELINE_MESSAGE__START_BLOCK:

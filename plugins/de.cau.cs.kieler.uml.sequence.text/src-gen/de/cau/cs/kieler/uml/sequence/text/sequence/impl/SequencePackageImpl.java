@@ -3,7 +3,7 @@
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.DataType;
-import de.cau.cs.kieler.uml.sequence.text.sequence.Destroy;
+import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Interaction;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
@@ -96,7 +96,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass destroyEClass = null;
+  private EClass destroyLifelineEventEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -591,9 +591,9 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getDestroy()
+  public EClass getDestroyLifelineEvent()
   {
-    return destroyEClass;
+    return destroyLifelineEventEClass;
   }
 
   /**
@@ -601,9 +601,9 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getDestroy_Lifeline()
+  public EReference getDestroyLifelineEvent_Lifeline()
   {
-    return (EReference)destroyEClass.getEStructuralFeatures().get(0);
+    return (EReference)destroyLifelineEventEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -793,8 +793,8 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     createEReference(oneLifelineNoteEClass, ONE_LIFELINE_NOTE__LIFELINE);
     createEAttribute(oneLifelineNoteEClass, ONE_LIFELINE_NOTE__NOTE);
 
-    destroyEClass = createEClass(DESTROY);
-    createEReference(destroyEClass, DESTROY__LIFELINE);
+    destroyLifelineEventEClass = createEClass(DESTROY_LIFELINE_EVENT);
+    createEReference(destroyLifelineEventEClass, DESTROY_LIFELINE_EVENT__LIFELINE);
 
     fragmentEClass = createEClass(FRAGMENT);
     createEAttribute(fragmentEClass, FRAGMENT__NAME);
@@ -846,7 +846,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     oneLifelineMessageEClass.getESuperTypes().add(this.getInteraction());
     oneLifelineEndBlockEClass.getESuperTypes().add(this.getInteraction());
     oneLifelineNoteEClass.getESuperTypes().add(this.getInteraction());
-    destroyEClass.getESuperTypes().add(this.getInteraction());
+    destroyLifelineEventEClass.getESuperTypes().add(this.getInteraction());
     fragmentEClass.getESuperTypes().add(this.getInteraction());
     refinementEClass.getESuperTypes().add(this.getInteraction());
 
@@ -883,7 +883,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
 
     initEClass(oneLifelineMessageEClass, OneLifelineMessage.class, "OneLifelineMessage", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getOneLifelineMessage_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getOneLifelineMessage_MessageType(), this.getMessageType(), "messageType", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getOneLifelineMessage_MessageType(), ecorePackage.getEString(), "messageType", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_Caption(), ecorePackage.getEString(), "caption", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_StartBlock(), ecorePackage.getEBoolean(), "startBlock", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_EndBlock(), ecorePackage.getEBoolean(), "endBlock", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -898,8 +898,8 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     initEReference(getOneLifelineNote_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, OneLifelineNote.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineNote_Note(), ecorePackage.getEString(), "note", null, 0, 1, OneLifelineNote.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(destroyEClass, Destroy.class, "Destroy", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getDestroy_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, Destroy.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEClass(destroyLifelineEventEClass, DestroyLifelineEvent.class, "DestroyLifelineEvent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getDestroyLifelineEvent_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, DestroyLifelineEvent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(fragmentEClass, Fragment.class, "Fragment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getFragment_Name(), ecorePackage.getEString(), "name", null, 0, 1, Fragment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

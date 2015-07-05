@@ -2,7 +2,7 @@
  */
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
-import de.cau.cs.kieler.uml.sequence.text.sequence.Destroy;
+import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
 
@@ -15,18 +15,18 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Destroy</b></em>'.
+ * An implementation of the model object '<em><b>Destroy Lifeline Event</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyImpl#getLifeline <em>Lifeline</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyLifelineEventImpl#getLifeline <em>Lifeline</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class DestroyImpl extends InteractionImpl implements Destroy
+public class DestroyLifelineEventImpl extends InteractionImpl implements DestroyLifelineEvent
 {
   /**
    * The cached value of the '{@link #getLifeline() <em>Lifeline</em>}' reference.
@@ -43,7 +43,7 @@ public class DestroyImpl extends InteractionImpl implements Destroy
    * <!-- end-user-doc -->
    * @generated
    */
-  protected DestroyImpl()
+  protected DestroyLifelineEventImpl()
   {
     super();
   }
@@ -56,7 +56,7 @@ public class DestroyImpl extends InteractionImpl implements Destroy
   @Override
   protected EClass eStaticClass()
   {
-    return SequencePackage.Literals.DESTROY;
+    return SequencePackage.Literals.DESTROY_LIFELINE_EVENT;
   }
 
   /**
@@ -73,7 +73,7 @@ public class DestroyImpl extends InteractionImpl implements Destroy
       if (lifeline != oldLifeline)
       {
         if (eNotificationRequired())
-          eNotify(new ENotificationImpl(this, Notification.RESOLVE, SequencePackage.DESTROY__LIFELINE, oldLifeline, lifeline));
+          eNotify(new ENotificationImpl(this, Notification.RESOLVE, SequencePackage.DESTROY_LIFELINE_EVENT__LIFELINE, oldLifeline, lifeline));
       }
     }
     return lifeline;
@@ -99,7 +99,7 @@ public class DestroyImpl extends InteractionImpl implements Destroy
     Lifeline oldLifeline = lifeline;
     lifeline = newLifeline;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.DESTROY__LIFELINE, oldLifeline, lifeline));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.DESTROY_LIFELINE_EVENT__LIFELINE, oldLifeline, lifeline));
   }
 
   /**
@@ -112,7 +112,7 @@ public class DestroyImpl extends InteractionImpl implements Destroy
   {
     switch (featureID)
     {
-      case SequencePackage.DESTROY__LIFELINE:
+      case SequencePackage.DESTROY_LIFELINE_EVENT__LIFELINE:
         if (resolve) return getLifeline();
         return basicGetLifeline();
     }
@@ -129,7 +129,7 @@ public class DestroyImpl extends InteractionImpl implements Destroy
   {
     switch (featureID)
     {
-      case SequencePackage.DESTROY__LIFELINE:
+      case SequencePackage.DESTROY_LIFELINE_EVENT__LIFELINE:
         setLifeline((Lifeline)newValue);
         return;
     }
@@ -146,7 +146,7 @@ public class DestroyImpl extends InteractionImpl implements Destroy
   {
     switch (featureID)
     {
-      case SequencePackage.DESTROY__LIFELINE:
+      case SequencePackage.DESTROY_LIFELINE_EVENT__LIFELINE:
         setLifeline((Lifeline)null);
         return;
     }
@@ -163,10 +163,10 @@ public class DestroyImpl extends InteractionImpl implements Destroy
   {
     switch (featureID)
     {
-      case SequencePackage.DESTROY__LIFELINE:
+      case SequencePackage.DESTROY_LIFELINE_EVENT__LIFELINE:
         return lifeline != null;
     }
     return super.eIsSet(featureID);
   }
 
-} //DestroyImpl
+} //DestroyLifelineEventImpl

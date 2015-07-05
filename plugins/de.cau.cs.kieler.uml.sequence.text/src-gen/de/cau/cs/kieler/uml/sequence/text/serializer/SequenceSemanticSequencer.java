@@ -2,7 +2,7 @@ package de.cau.cs.kieler.uml.sequence.text.serializer;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import de.cau.cs.kieler.uml.sequence.text.sequence.Destroy;
+import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
 import de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable;
@@ -35,10 +35,10 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	public void createSequence(EObject context, EObject semanticObject) {
 		if(semanticObject.eClass().getEPackage() == SequencePackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
-			case SequencePackage.DESTROY:
+			case SequencePackage.DESTROY_LIFELINE_EVENT:
 				if(context == grammarAccess.getDestroyLifelineEventRule() ||
 				   context == grammarAccess.getInteractionRule()) {
-					sequence_DestroyLifelineEvent(context, (Destroy) semanticObject); 
+					sequence_DestroyLifelineEvent(context, (DestroyLifelineEvent) semanticObject); 
 					return; 
 				}
 				else break;
@@ -116,10 +116,10 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 * Constraint:
 	 *     Lifeline=[Lifeline|ID]
 	 */
-	protected void sequence_DestroyLifelineEvent(EObject context, Destroy semanticObject) {
+	protected void sequence_DestroyLifelineEvent(EObject context, DestroyLifelineEvent semanticObject) {
 		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.DESTROY__LIFELINE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.DESTROY__LIFELINE));
+			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.DESTROY_LIFELINE_EVENT__LIFELINE) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.DESTROY_LIFELINE_EVENT__LIFELINE));
 		}
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
@@ -188,7 +188,7 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 * Constraint:
 	 *     (
 	 *         Lifeline=[Lifeline|ID] 
-	 *         messageType=MessageType 
+	 *         (messageType='lost' | messageType='found') 
 	 *         caption=STRING 
 	 *         (startBlock?='startBlock' | (endBlock?='endBlock' endBlockCount=INT_GREATER_ZERO?))? 
 	 *         note=STRING?

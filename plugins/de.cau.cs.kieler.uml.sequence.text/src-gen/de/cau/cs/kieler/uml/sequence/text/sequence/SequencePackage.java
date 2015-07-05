@@ -489,14 +489,14 @@ public interface SequencePackage extends EPackage
   int ONE_LIFELINE_NOTE_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 2;
 
   /**
-   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyImpl <em>Destroy</em>}' class.
+   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyLifelineEventImpl <em>Destroy Lifeline Event</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyImpl
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getDestroy()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyLifelineEventImpl
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getDestroyLifelineEvent()
    * @generated
    */
-  int DESTROY = 8;
+  int DESTROY_LIFELINE_EVENT = 8;
 
   /**
    * The feature id for the '<em><b>Lifeline</b></em>' reference.
@@ -505,16 +505,16 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int DESTROY__LIFELINE = INTERACTION_FEATURE_COUNT + 0;
+  int DESTROY_LIFELINE_EVENT__LIFELINE = INTERACTION_FEATURE_COUNT + 0;
 
   /**
-   * The number of structural features of the '<em>Destroy</em>' class.
+   * The number of structural features of the '<em>Destroy Lifeline Event</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DESTROY_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 1;
+  int DESTROY_LIFELINE_EVENT_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentImpl <em>Fragment</em>}' class.
@@ -1070,25 +1070,25 @@ public interface SequencePackage extends EPackage
   EAttribute getOneLifelineNote_Note();
 
   /**
-   * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Destroy <em>Destroy</em>}'.
+   * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent <em>Destroy Lifeline Event</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Destroy</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Destroy
+   * @return the meta object for class '<em>Destroy Lifeline Event</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
    * @generated
    */
-  EClass getDestroy();
+  EClass getDestroyLifelineEvent();
 
   /**
-   * Returns the meta object for the reference '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Destroy#getLifeline <em>Lifeline</em>}'.
+   * Returns the meta object for the reference '{@link de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent#getLifeline <em>Lifeline</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the reference '<em>Lifeline</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Destroy#getLifeline()
-   * @see #getDestroy()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent#getLifeline()
+   * @see #getDestroyLifelineEvent()
    * @generated
    */
-  EReference getDestroy_Lifeline();
+  EReference getDestroyLifelineEvent_Lifeline();
 
   /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Fragment <em>Fragment</em>}'.
@@ -1558,14 +1558,14 @@ public interface SequencePackage extends EPackage
     EAttribute ONE_LIFELINE_NOTE__NOTE = eINSTANCE.getOneLifelineNote_Note();
 
     /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyImpl <em>Destroy</em>}' class.
+     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyLifelineEventImpl <em>Destroy Lifeline Event</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyImpl
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getDestroy()
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyLifelineEventImpl
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getDestroyLifelineEvent()
      * @generated
      */
-    EClass DESTROY = eINSTANCE.getDestroy();
+    EClass DESTROY_LIFELINE_EVENT = eINSTANCE.getDestroyLifelineEvent();
 
     /**
      * The meta object literal for the '<em><b>Lifeline</b></em>' reference feature.
@@ -1573,7 +1573,7 @@ public interface SequencePackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference DESTROY__LIFELINE = eINSTANCE.getDestroy_Lifeline();
+    EReference DESTROY_LIFELINE_EVENT__LIFELINE = eINSTANCE.getDestroyLifelineEvent_Lifeline();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.FragmentImpl <em>Fragment</em>}' class.

@@ -45,8 +45,7 @@ TwoLifelineMessage returns TwoLifelineMessage:
 
 OneLifelineMessage returns OneLifelineMessage:
     Lifeline=[Lifeline|ID]
-    messageType=MessageType
-    ('lost' | 'found')
+    messageType = ('lost' | 'found')
     caption=STRING
     (startBlock?='startBlock' | endBlock?='endBlock' (endBlockCount=INT_GREATER_ZERO)?)?
     ('note' note=STRING)?;
@@ -59,7 +58,7 @@ OneLifelineNote returns OneLifelineNote:
     Lifeline=[Lifeline|ID]
     'note' note=STRING;
 
-DestroyLifelineEvent returns Destroy:
+DestroyLifelineEvent returns DestroyLifelineEvent:
     Lifeline=[Lifeline|ID]
     'destroy';
 

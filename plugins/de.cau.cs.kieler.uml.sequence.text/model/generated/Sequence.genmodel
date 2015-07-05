@@ -65,8 +65,8 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//OneLifelineNote/Lifeline"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineNote/note"/>
     </genClasses>
-    <genClasses ecoreClass="Sequence.ecore#//Destroy">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//Destroy/Lifeline"/>
+    <genClasses ecoreClass="Sequence.ecore#//DestroyLifelineEvent">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//DestroyLifelineEvent/Lifeline"/>
     </genClasses>
     <genClasses ecoreClass="Sequence.ecore#//Fragment">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//Fragment/name"/>

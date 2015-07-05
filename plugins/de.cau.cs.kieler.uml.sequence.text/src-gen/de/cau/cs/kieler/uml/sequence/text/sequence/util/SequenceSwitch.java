@@ -132,11 +132,11 @@ public class SequenceSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case SequencePackage.DESTROY:
+      case SequencePackage.DESTROY_LIFELINE_EVENT:
       {
-        Destroy destroy = (Destroy)theEObject;
-        T result = caseDestroy(destroy);
-        if (result == null) result = caseInteraction(destroy);
+        DestroyLifelineEvent destroyLifelineEvent = (DestroyLifelineEvent)theEObject;
+        T result = caseDestroyLifelineEvent(destroyLifelineEvent);
+        if (result == null) result = caseInteraction(destroyLifelineEvent);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -296,17 +296,17 @@ public class SequenceSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>Destroy</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>Destroy Lifeline Event</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Destroy</em>'.
+   * @return the result of interpreting the object as an instance of '<em>Destroy Lifeline Event</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseDestroy(Destroy object)
+  public T caseDestroyLifelineEvent(DestroyLifelineEvent object)
   {
     return null;
   }

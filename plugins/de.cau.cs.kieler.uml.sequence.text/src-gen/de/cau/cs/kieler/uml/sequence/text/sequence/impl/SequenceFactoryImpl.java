@@ -73,7 +73,7 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
       case SequencePackage.ONE_LIFELINE_MESSAGE: return createOneLifelineMessage();
       case SequencePackage.ONE_LIFELINE_END_BLOCK: return createOneLifelineEndBlock();
       case SequencePackage.ONE_LIFELINE_NOTE: return createOneLifelineNote();
-      case SequencePackage.DESTROY: return createDestroy();
+      case SequencePackage.DESTROY_LIFELINE_EVENT: return createDestroyLifelineEvent();
       case SequencePackage.FRAGMENT: return createFragment();
       case SequencePackage.SECTION: return createSection();
       case SequencePackage.REFINEMENT: return createRefinement();
@@ -213,10 +213,10 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Destroy createDestroy()
+  public DestroyLifelineEvent createDestroyLifelineEvent()
   {
-    DestroyImpl destroy = new DestroyImpl();
-    return destroy;
+    DestroyLifelineEventImpl destroyLifelineEvent = new DestroyLifelineEventImpl();
+    return destroyLifelineEvent;
   }
 
   /**

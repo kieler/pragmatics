@@ -115,9 +115,9 @@ public class SequenceAdapterFactory extends AdapterFactoryImpl
         return createOneLifelineNoteAdapter();
       }
       @Override
-      public Adapter caseDestroy(Destroy object)
+      public Adapter caseDestroyLifelineEvent(DestroyLifelineEvent object)
       {
-        return createDestroyAdapter();
+        return createDestroyLifelineEventAdapter();
       }
       @Override
       public Adapter caseFragment(Fragment object)
@@ -277,16 +277,16 @@ public class SequenceAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Destroy <em>Destroy</em>}'.
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent <em>Destroy Lifeline Event</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Destroy
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
    * @generated
    */
-  public Adapter createDestroyAdapter()
+  public Adapter createDestroyLifelineEventAdapter()
   {
     return null;
   }

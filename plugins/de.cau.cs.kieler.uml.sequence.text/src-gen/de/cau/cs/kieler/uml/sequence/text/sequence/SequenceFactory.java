@@ -95,13 +95,13 @@ public interface SequenceFactory extends EFactory
   OneLifelineNote createOneLifelineNote();
 
   /**
-   * Returns a new object of class '<em>Destroy</em>'.
+   * Returns a new object of class '<em>Destroy Lifeline Event</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Destroy</em>'.
+   * @return a new object of class '<em>Destroy Lifeline Event</em>'.
    * @generated
    */
-  Destroy createDestroy();
+  DestroyLifelineEvent createDestroyLifelineEvent();
 
   /**
    * Returns a new object of class '<em>Fragment</em>'.
