@@ -24,40 +24,40 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_NATURAL", "RULE_STRING", "RULE_BOOLEAN", "RULE_TFLOAT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "'globalResources'", "'globalOutputs'", "'execute'", "'all'", "'job'", "'layoutBeforeAnalysis'", "'measureExecutionTime'", "'resources'", "'layoutoptions'", "'analyses'", "'output'", "'rangejob'", "'rangeoption'", "'rangeanalysis'", "'component'", "'floatvalues'", "','", "'intvalues'", "'intrange'", "'to'", "'ref'", "'filter'", "'{'", "'}'", "':'", "'.'"
     };
     public static final int RULE_BOOLEAN=7;
-    public static final int RULE_ID=4;
-    public static final int T__29=29;
-    public static final int T__28=28;
-    public static final int T__27=27;
-    public static final int T__26=26;
-    public static final int T__25=25;
-    public static final int T__24=24;
-    public static final int T__23=23;
-    public static final int T__22=22;
-    public static final int T__21=21;
-    public static final int T__20=20;
-    public static final int RULE_NATURAL=5;
-    public static final int RULE_SL_COMMENT=10;
-    public static final int EOF=-1;
-    public static final int RULE_ML_COMMENT=9;
-    public static final int RULE_TFLOAT=8;
-    public static final int T__30=30;
-    public static final int T__19=19;
-    public static final int T__31=31;
     public static final int RULE_STRING=6;
-    public static final int T__32=32;
-    public static final int T__33=33;
-    public static final int T__16=16;
-    public static final int T__34=34;
+    public static final int RULE_SL_COMMENT=10;
+    public static final int T__19=19;
     public static final int T__15=15;
-    public static final int T__35=35;
-    public static final int T__18=18;
-    public static final int T__36=36;
-    public static final int T__17=17;
     public static final int T__37=37;
+    public static final int T__16=16;
+    public static final int T__17=17;
+    public static final int T__18=18;
+    public static final int T__33=33;
     public static final int T__12=12;
-    public static final int T__14=14;
+    public static final int T__34=34;
     public static final int T__13=13;
+    public static final int T__35=35;
+    public static final int T__14=14;
+    public static final int T__36=36;
+    public static final int EOF=-1;
+    public static final int T__30=30;
+    public static final int T__31=31;
+    public static final int T__32=32;
+    public static final int RULE_TFLOAT=8;
+    public static final int RULE_ID=4;
     public static final int RULE_WS=11;
+    public static final int T__26=26;
+    public static final int T__27=27;
+    public static final int T__28=28;
+    public static final int T__29=29;
+    public static final int T__22=22;
+    public static final int RULE_NATURAL=5;
+    public static final int RULE_ML_COMMENT=9;
+    public static final int T__23=23;
+    public static final int T__24=24;
+    public static final int T__25=25;
+    public static final int T__20=20;
+    public static final int T__21=21;
 
     // delegates
     // delegators
@@ -1938,7 +1938,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleIntRangeValues"
-    // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:753:1: ruleIntRangeValues returns [EObject current=null] : (otherlv_0= 'intvalues' ( (lv_values_1_0= RULE_NATURAL ) ) (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:753:1: ruleIntRangeValues returns [EObject current=null] : (otherlv_0= 'intvalues' ( (lv_values_1_0= RULE_NATURAL ) ) (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) )* ) ;
     public final EObject ruleIntRangeValues() throws RecognitionException {
         EObject current = null;
 
@@ -1950,11 +1950,11 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:756:28: ( (otherlv_0= 'intvalues' ( (lv_values_1_0= RULE_NATURAL ) ) (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:757:1: (otherlv_0= 'intvalues' ( (lv_values_1_0= RULE_NATURAL ) ) (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:756:28: ( (otherlv_0= 'intvalues' ( (lv_values_1_0= RULE_NATURAL ) ) (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) )* ) )
+            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:757:1: (otherlv_0= 'intvalues' ( (lv_values_1_0= RULE_NATURAL ) ) (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) )* )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:757:1: (otherlv_0= 'intvalues' ( (lv_values_1_0= RULE_NATURAL ) ) (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:757:3: otherlv_0= 'intvalues' ( (lv_values_1_0= RULE_NATURAL ) ) (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) )
+            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:757:1: (otherlv_0= 'intvalues' ( (lv_values_1_0= RULE_NATURAL ) ) (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) )* )
+            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:757:3: otherlv_0= 'intvalues' ( (lv_values_1_0= RULE_NATURAL ) ) (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) )*
             {
             otherlv_0=(Token)match(input,29,FOLLOW_29_in_ruleIntRangeValues1528); 
 
@@ -1986,41 +1986,59 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:779:2: (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:779:4: otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) )
-            {
-            otherlv_2=(Token)match(input,28,FOLLOW_28_in_ruleIntRangeValues1563); 
+            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:779:2: (otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) ) )*
+            loop21:
+            do {
+                int alt21=2;
+                int LA21_0 = input.LA(1);
 
-                	newLeafNode(otherlv_2, grammarAccess.getIntRangeValuesAccess().getCommaKeyword_2_0());
-                
-            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:783:1: ( (lv_values_3_0= RULE_NATURAL ) )
-            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:784:1: (lv_values_3_0= RULE_NATURAL )
-            {
-            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:784:1: (lv_values_3_0= RULE_NATURAL )
-            // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:785:3: lv_values_3_0= RULE_NATURAL
-            {
-            lv_values_3_0=(Token)match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_ruleIntRangeValues1580); 
-
-            			newLeafNode(lv_values_3_0, grammarAccess.getIntRangeValuesAccess().getValuesNATURALTerminalRuleCall_2_1_0()); 
-            		
-
-            	        if (current==null) {
-            	            current = createModelElement(grammarAccess.getIntRangeValuesRule());
-            	        }
-                   		addWithLastConsumed(
-                   			current, 
-                   			"values",
-                    		lv_values_3_0, 
-                    		"NATURAL");
-            	    
-
-            }
+                if ( (LA21_0==28) ) {
+                    alt21=1;
+                }
 
 
-            }
+                switch (alt21) {
+            	case 1 :
+            	    // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:779:4: otherlv_2= ',' ( (lv_values_3_0= RULE_NATURAL ) )
+            	    {
+            	    otherlv_2=(Token)match(input,28,FOLLOW_28_in_ruleIntRangeValues1563); 
+
+            	        	newLeafNode(otherlv_2, grammarAccess.getIntRangeValuesAccess().getCommaKeyword_2_0());
+            	        
+            	    // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:783:1: ( (lv_values_3_0= RULE_NATURAL ) )
+            	    // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:784:1: (lv_values_3_0= RULE_NATURAL )
+            	    {
+            	    // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:784:1: (lv_values_3_0= RULE_NATURAL )
+            	    // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:785:3: lv_values_3_0= RULE_NATURAL
+            	    {
+            	    lv_values_3_0=(Token)match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_ruleIntRangeValues1580); 
+
+            	    			newLeafNode(lv_values_3_0, grammarAccess.getIntRangeValuesAccess().getValuesNATURALTerminalRuleCall_2_1_0()); 
+            	    		
+
+            	    	        if (current==null) {
+            	    	            current = createModelElement(grammarAccess.getIntRangeValuesRule());
+            	    	        }
+            	           		addWithLastConsumed(
+            	           			current, 
+            	           			"values",
+            	            		lv_values_3_0, 
+            	            		"NATURAL");
+            	    	    
+
+            	    }
 
 
-            }
+            	    }
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop21;
+                }
+            } while (true);
 
 
             }
@@ -2055,13 +2073,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:811:2: iv_ruleIntRangeRange= ruleIntRangeRange EOF
             {
              newCompositeNode(grammarAccess.getIntRangeRangeRule()); 
-            pushFollow(FOLLOW_ruleIntRangeRange_in_entryRuleIntRangeRange1622);
+            pushFollow(FOLLOW_ruleIntRangeRange_in_entryRuleIntRangeRange1623);
             iv_ruleIntRangeRange=ruleIntRangeRange();
 
             state._fsp--;
 
              current =iv_ruleIntRangeRange; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleIntRangeRange1632); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleIntRangeRange1633); 
 
             }
 
@@ -2097,7 +2115,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:822:1: (otherlv_0= 'intrange' ( (lv_start_1_0= RULE_NATURAL ) ) otherlv_2= 'to' ( (lv_end_3_0= RULE_NATURAL ) ) )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:822:3: otherlv_0= 'intrange' ( (lv_start_1_0= RULE_NATURAL ) ) otherlv_2= 'to' ( (lv_end_3_0= RULE_NATURAL ) )
             {
-            otherlv_0=(Token)match(input,30,FOLLOW_30_in_ruleIntRangeRange1669); 
+            otherlv_0=(Token)match(input,30,FOLLOW_30_in_ruleIntRangeRange1670); 
 
                 	newLeafNode(otherlv_0, grammarAccess.getIntRangeRangeAccess().getIntrangeKeyword_0());
                 
@@ -2107,7 +2125,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:827:1: (lv_start_1_0= RULE_NATURAL )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:828:3: lv_start_1_0= RULE_NATURAL
             {
-            lv_start_1_0=(Token)match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_ruleIntRangeRange1686); 
+            lv_start_1_0=(Token)match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_ruleIntRangeRange1687); 
 
             			newLeafNode(lv_start_1_0, grammarAccess.getIntRangeRangeAccess().getStartNATURALTerminalRuleCall_1_0()); 
             		
@@ -2127,7 +2145,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_2=(Token)match(input,31,FOLLOW_31_in_ruleIntRangeRange1703); 
+            otherlv_2=(Token)match(input,31,FOLLOW_31_in_ruleIntRangeRange1704); 
 
                 	newLeafNode(otherlv_2, grammarAccess.getIntRangeRangeAccess().getToKeyword_2());
                 
@@ -2137,7 +2155,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:849:1: (lv_end_3_0= RULE_NATURAL )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:850:3: lv_end_3_0= RULE_NATURAL
             {
-            lv_end_3_0=(Token)match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_ruleIntRangeRange1720); 
+            lv_end_3_0=(Token)match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_ruleIntRangeRange1721); 
 
             			newLeafNode(lv_end_3_0, grammarAccess.getIntRangeRangeAccess().getEndNATURALTerminalRuleCall_3_0()); 
             		
@@ -2190,13 +2208,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:876:2: iv_ruleResource= ruleResource EOF
             {
              newCompositeNode(grammarAccess.getResourceRule()); 
-            pushFollow(FOLLOW_ruleResource_in_entryRuleResource1761);
+            pushFollow(FOLLOW_ruleResource_in_entryRuleResource1762);
             iv_ruleResource=ruleResource();
 
             state._fsp--;
 
              current =iv_ruleResource; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleResource1771); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleResource1772); 
 
             }
 
@@ -2230,29 +2248,29 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:887:1: (this_ResourceReference_0= ruleResourceReference | this_LocalResource_1= ruleLocalResource )
             {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:887:1: (this_ResourceReference_0= ruleResourceReference | this_LocalResource_1= ruleLocalResource )
-            int alt21=2;
-            int LA21_0 = input.LA(1);
+            int alt22=2;
+            int LA22_0 = input.LA(1);
 
-            if ( (LA21_0==32) ) {
-                alt21=1;
+            if ( (LA22_0==32) ) {
+                alt22=1;
             }
-            else if ( (LA21_0==RULE_STRING) ) {
-                alt21=2;
+            else if ( (LA22_0==RULE_STRING) ) {
+                alt22=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 21, 0, input);
+                    new NoViableAltException("", 22, 0, input);
 
                 throw nvae;
             }
-            switch (alt21) {
+            switch (alt22) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:888:5: this_ResourceReference_0= ruleResourceReference
                     {
                      
                             newCompositeNode(grammarAccess.getResourceAccess().getResourceReferenceParserRuleCall_0()); 
                         
-                    pushFollow(FOLLOW_ruleResourceReference_in_ruleResource1818);
+                    pushFollow(FOLLOW_ruleResourceReference_in_ruleResource1819);
                     this_ResourceReference_0=ruleResourceReference();
 
                     state._fsp--;
@@ -2270,7 +2288,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                      
                             newCompositeNode(grammarAccess.getResourceAccess().getLocalResourceParserRuleCall_1()); 
                         
-                    pushFollow(FOLLOW_ruleLocalResource_in_ruleResource1845);
+                    pushFollow(FOLLOW_ruleLocalResource_in_ruleResource1846);
                     this_LocalResource_1=ruleLocalResource();
 
                     state._fsp--;
@@ -2315,13 +2333,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:916:2: iv_ruleResourceReference= ruleResourceReference EOF
             {
              newCompositeNode(grammarAccess.getResourceReferenceRule()); 
-            pushFollow(FOLLOW_ruleResourceReference_in_entryRuleResourceReference1880);
+            pushFollow(FOLLOW_ruleResourceReference_in_entryRuleResourceReference1881);
             iv_ruleResourceReference=ruleResourceReference();
 
             state._fsp--;
 
              current =iv_ruleResourceReference; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleResourceReference1890); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleResourceReference1891); 
 
             }
 
@@ -2355,23 +2373,23 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:927:1: (otherlv_0= 'ref' ( (otherlv_1= RULE_ID ) )+ )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:927:3: otherlv_0= 'ref' ( (otherlv_1= RULE_ID ) )+
             {
-            otherlv_0=(Token)match(input,32,FOLLOW_32_in_ruleResourceReference1927); 
+            otherlv_0=(Token)match(input,32,FOLLOW_32_in_ruleResourceReference1928); 
 
                 	newLeafNode(otherlv_0, grammarAccess.getResourceReferenceAccess().getRefKeyword_0());
                 
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:931:1: ( (otherlv_1= RULE_ID ) )+
-            int cnt22=0;
-            loop22:
+            int cnt23=0;
+            loop23:
             do {
-                int alt22=2;
-                int LA22_0 = input.LA(1);
+                int alt23=2;
+                int LA23_0 = input.LA(1);
 
-                if ( (LA22_0==RULE_ID) ) {
-                    alt22=1;
+                if ( (LA23_0==RULE_ID) ) {
+                    alt23=1;
                 }
 
 
-                switch (alt22) {
+                switch (alt23) {
             	case 1 :
             	    // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:932:1: (otherlv_1= RULE_ID )
             	    {
@@ -2383,7 +2401,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    	            current = createModelElement(grammarAccess.getResourceReferenceRule());
             	    	        }
             	            
-            	    otherlv_1=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleResourceReference1947); 
+            	    otherlv_1=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleResourceReference1948); 
 
             	    		newLeafNode(otherlv_1, grammarAccess.getResourceReferenceAccess().getResourceRefsGlobalResourceRefCrossReference_1_0()); 
             	    	
@@ -2395,12 +2413,12 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    if ( cnt22 >= 1 ) break loop22;
+            	    if ( cnt23 >= 1 ) break loop23;
                         EarlyExitException eee =
-                            new EarlyExitException(22, input);
+                            new EarlyExitException(23, input);
                         throw eee;
                 }
-                cnt22++;
+                cnt23++;
             } while (true);
 
 
@@ -2436,13 +2454,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:954:2: iv_ruleGlobalResourceRef= ruleGlobalResourceRef EOF
             {
              newCompositeNode(grammarAccess.getGlobalResourceRefRule()); 
-            pushFollow(FOLLOW_ruleGlobalResourceRef_in_entryRuleGlobalResourceRef1984);
+            pushFollow(FOLLOW_ruleGlobalResourceRef_in_entryRuleGlobalResourceRef1985);
             iv_ruleGlobalResourceRef=ruleGlobalResourceRef();
 
             state._fsp--;
 
              current =iv_ruleGlobalResourceRef; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleGlobalResourceRef1994); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleGlobalResourceRef1995); 
 
             }
 
@@ -2483,7 +2501,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:966:1: (lv_name_0_0= RULE_ID )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:967:3: lv_name_0_0= RULE_ID
             {
-            lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleGlobalResourceRef2036); 
+            lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleGlobalResourceRef2037); 
 
             			newLeafNode(lv_name_0_0, grammarAccess.getGlobalResourceRefAccess().getNameIDTerminalRuleCall_0_0()); 
             		
@@ -2512,7 +2530,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
              
             	        newCompositeNode(grammarAccess.getGlobalResourceRefAccess().getResourcesLocalResourceParserRuleCall_1_0()); 
             	    
-            pushFollow(FOLLOW_ruleLocalResource_in_ruleGlobalResourceRef2062);
+            pushFollow(FOLLOW_ruleLocalResource_in_ruleGlobalResourceRef2063);
             lv_resources_1_0=ruleLocalResource();
 
             state._fsp--;
@@ -2567,13 +2585,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1011:2: iv_ruleLocalResource= ruleLocalResource EOF
             {
              newCompositeNode(grammarAccess.getLocalResourceRule()); 
-            pushFollow(FOLLOW_ruleLocalResource_in_entryRuleLocalResource2098);
+            pushFollow(FOLLOW_ruleLocalResource_in_entryRuleLocalResource2099);
             iv_ruleLocalResource=ruleLocalResource();
 
             state._fsp--;
 
              current =iv_ruleLocalResource; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleLocalResource2108); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleLocalResource2109); 
 
             }
 
@@ -2614,7 +2632,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1023:1: (lv_path_0_0= RULE_STRING )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1024:3: lv_path_0_0= RULE_STRING
             {
-            lv_path_0_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleLocalResource2150); 
+            lv_path_0_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleLocalResource2151); 
 
             			newLeafNode(lv_path_0_0, grammarAccess.getLocalResourceAccess().getPathSTRINGTerminalRuleCall_0_0()); 
             		
@@ -2637,7 +2655,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1040:2: (otherlv_1= 'filter' ( (lv_filter_2_0= RULE_STRING ) ) )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1040:4: otherlv_1= 'filter' ( (lv_filter_2_0= RULE_STRING ) )
             {
-            otherlv_1=(Token)match(input,33,FOLLOW_33_in_ruleLocalResource2168); 
+            otherlv_1=(Token)match(input,33,FOLLOW_33_in_ruleLocalResource2169); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getLocalResourceAccess().getFilterKeyword_1_0());
                 
@@ -2647,7 +2665,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1045:1: (lv_filter_2_0= RULE_STRING )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1046:3: lv_filter_2_0= RULE_STRING
             {
-            lv_filter_2_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleLocalResource2185); 
+            lv_filter_2_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleLocalResource2186); 
 
             			newLeafNode(lv_filter_2_0, grammarAccess.getLocalResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0()); 
             		
@@ -2703,13 +2721,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1072:2: iv_ruleOutput= ruleOutput EOF
             {
              newCompositeNode(grammarAccess.getOutputRule()); 
-            pushFollow(FOLLOW_ruleOutput_in_entryRuleOutput2227);
+            pushFollow(FOLLOW_ruleOutput_in_entryRuleOutput2228);
             iv_ruleOutput=ruleOutput();
 
             state._fsp--;
 
              current =iv_ruleOutput; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleOutput2237); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleOutput2238); 
 
             }
 
@@ -2743,29 +2761,29 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1083:1: (this_OutputReference_0= ruleOutputReference | this_LocalOutput_1= ruleLocalOutput )
             {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1083:1: (this_OutputReference_0= ruleOutputReference | this_LocalOutput_1= ruleLocalOutput )
-            int alt23=2;
-            int LA23_0 = input.LA(1);
+            int alt24=2;
+            int LA24_0 = input.LA(1);
 
-            if ( (LA23_0==32) ) {
-                alt23=1;
+            if ( (LA24_0==32) ) {
+                alt24=1;
             }
-            else if ( (LA23_0==RULE_STRING) ) {
-                alt23=2;
+            else if ( (LA24_0==RULE_STRING) ) {
+                alt24=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 23, 0, input);
+                    new NoViableAltException("", 24, 0, input);
 
                 throw nvae;
             }
-            switch (alt23) {
+            switch (alt24) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1084:5: this_OutputReference_0= ruleOutputReference
                     {
                      
                             newCompositeNode(grammarAccess.getOutputAccess().getOutputReferenceParserRuleCall_0()); 
                         
-                    pushFollow(FOLLOW_ruleOutputReference_in_ruleOutput2284);
+                    pushFollow(FOLLOW_ruleOutputReference_in_ruleOutput2285);
                     this_OutputReference_0=ruleOutputReference();
 
                     state._fsp--;
@@ -2783,7 +2801,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                      
                             newCompositeNode(grammarAccess.getOutputAccess().getLocalOutputParserRuleCall_1()); 
                         
-                    pushFollow(FOLLOW_ruleLocalOutput_in_ruleOutput2311);
+                    pushFollow(FOLLOW_ruleLocalOutput_in_ruleOutput2312);
                     this_LocalOutput_1=ruleLocalOutput();
 
                     state._fsp--;
@@ -2828,13 +2846,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1112:2: iv_ruleGlobalOutputRef= ruleGlobalOutputRef EOF
             {
              newCompositeNode(grammarAccess.getGlobalOutputRefRule()); 
-            pushFollow(FOLLOW_ruleGlobalOutputRef_in_entryRuleGlobalOutputRef2346);
+            pushFollow(FOLLOW_ruleGlobalOutputRef_in_entryRuleGlobalOutputRef2347);
             iv_ruleGlobalOutputRef=ruleGlobalOutputRef();
 
             state._fsp--;
 
              current =iv_ruleGlobalOutputRef; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleGlobalOutputRef2356); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleGlobalOutputRef2357); 
 
             }
 
@@ -2875,7 +2893,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1124:1: (lv_name_0_0= RULE_ID )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1125:3: lv_name_0_0= RULE_ID
             {
-            lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleGlobalOutputRef2398); 
+            lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleGlobalOutputRef2399); 
 
             			newLeafNode(lv_name_0_0, grammarAccess.getGlobalOutputRefAccess().getNameIDTerminalRuleCall_0_0()); 
             		
@@ -2904,7 +2922,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
              
             	        newCompositeNode(grammarAccess.getGlobalOutputRefAccess().getOutputLocalOutputParserRuleCall_1_0()); 
             	    
-            pushFollow(FOLLOW_ruleLocalOutput_in_ruleGlobalOutputRef2424);
+            pushFollow(FOLLOW_ruleLocalOutput_in_ruleGlobalOutputRef2425);
             lv_output_1_0=ruleLocalOutput();
 
             state._fsp--;
@@ -2959,13 +2977,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1169:2: iv_ruleOutputReference= ruleOutputReference EOF
             {
              newCompositeNode(grammarAccess.getOutputReferenceRule()); 
-            pushFollow(FOLLOW_ruleOutputReference_in_entryRuleOutputReference2460);
+            pushFollow(FOLLOW_ruleOutputReference_in_entryRuleOutputReference2461);
             iv_ruleOutputReference=ruleOutputReference();
 
             state._fsp--;
 
              current =iv_ruleOutputReference; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleOutputReference2470); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleOutputReference2471); 
 
             }
 
@@ -2999,7 +3017,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1180:1: (otherlv_0= 'ref' ( (otherlv_1= RULE_ID ) ) )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1180:3: otherlv_0= 'ref' ( (otherlv_1= RULE_ID ) )
             {
-            otherlv_0=(Token)match(input,32,FOLLOW_32_in_ruleOutputReference2507); 
+            otherlv_0=(Token)match(input,32,FOLLOW_32_in_ruleOutputReference2508); 
 
                 	newLeafNode(otherlv_0, grammarAccess.getOutputReferenceAccess().getRefKeyword_0());
                 
@@ -3014,7 +3032,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	            current = createModelElement(grammarAccess.getOutputReferenceRule());
             	        }
                     
-            otherlv_1=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleOutputReference2527); 
+            otherlv_1=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleOutputReference2528); 
 
             		newLeafNode(otherlv_1, grammarAccess.getOutputReferenceAccess().getOutputRefGlobalOutputRefCrossReference_1_0()); 
             	
@@ -3057,13 +3075,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1207:2: iv_ruleLocalOutput= ruleLocalOutput EOF
             {
              newCompositeNode(grammarAccess.getLocalOutputRule()); 
-            pushFollow(FOLLOW_ruleLocalOutput_in_entryRuleLocalOutput2563);
+            pushFollow(FOLLOW_ruleLocalOutput_in_entryRuleLocalOutput2564);
             iv_ruleLocalOutput=ruleLocalOutput();
 
             state._fsp--;
 
              current =iv_ruleLocalOutput; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleLocalOutput2573); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleLocalOutput2574); 
 
             }
 
@@ -3099,7 +3117,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1219:1: (lv_path_0_0= RULE_STRING )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1220:3: lv_path_0_0= RULE_STRING
             {
-            lv_path_0_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleLocalOutput2614); 
+            lv_path_0_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleLocalOutput2615); 
 
             			newLeafNode(lv_path_0_0, grammarAccess.getLocalOutputAccess().getPathSTRINGTerminalRuleCall_0()); 
             		
@@ -3149,13 +3167,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1246:2: iv_ruleAnalysis= ruleAnalysis EOF
             {
              newCompositeNode(grammarAccess.getAnalysisRule()); 
-            pushFollow(FOLLOW_ruleAnalysis_in_entryRuleAnalysis2654);
+            pushFollow(FOLLOW_ruleAnalysis_in_entryRuleAnalysis2655);
             iv_ruleAnalysis=ruleAnalysis();
 
             state._fsp--;
 
              current =iv_ruleAnalysis; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleAnalysis2664); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleAnalysis2665); 
 
             }
 
@@ -3195,7 +3213,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
              
             	        newCompositeNode(grammarAccess.getAnalysisAccess().getNameQualifiedIDParserRuleCall_0()); 
             	    
-            pushFollow(FOLLOW_ruleQualifiedID_in_ruleAnalysis2709);
+            pushFollow(FOLLOW_ruleQualifiedID_in_ruleAnalysis2710);
             lv_name_0_0=ruleQualifiedID();
 
             state._fsp--;
@@ -3247,13 +3265,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1285:2: iv_ruleKIdentifier= ruleKIdentifier EOF
             {
              newCompositeNode(grammarAccess.getKIdentifierRule()); 
-            pushFollow(FOLLOW_ruleKIdentifier_in_entryRuleKIdentifier2744);
+            pushFollow(FOLLOW_ruleKIdentifier_in_entryRuleKIdentifier2745);
             iv_ruleKIdentifier=ruleKIdentifier();
 
             state._fsp--;
 
              current =iv_ruleKIdentifier; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleKIdentifier2754); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleKIdentifier2755); 
 
             }
 
@@ -3309,7 +3327,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1303:1: (lv_id_1_0= RULE_ID )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1304:3: lv_id_1_0= RULE_ID
             {
-            lv_id_1_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleKIdentifier2805); 
+            lv_id_1_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleKIdentifier2806); 
 
             			newLeafNode(lv_id_1_0, grammarAccess.getKIdentifierAccess().getIdIDTerminalRuleCall_1_0()); 
             		
@@ -3329,18 +3347,18 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_2=(Token)match(input,34,FOLLOW_34_in_ruleKIdentifier2822); 
+            otherlv_2=(Token)match(input,34,FOLLOW_34_in_ruleKIdentifier2823); 
 
                 	newLeafNode(otherlv_2, grammarAccess.getKIdentifierAccess().getLeftCurlyBracketKeyword_2());
                 
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1324:1: ( ( (lv_persistentEntries_3_0= rulePersistentEntry ) ) ( (lv_persistentEntries_4_0= rulePersistentEntry ) )* )?
-            int alt25=2;
-            int LA25_0 = input.LA(1);
+            int alt26=2;
+            int LA26_0 = input.LA(1);
 
-            if ( (LA25_0==RULE_ID) ) {
-                alt25=1;
+            if ( (LA26_0==RULE_ID) ) {
+                alt26=1;
             }
-            switch (alt25) {
+            switch (alt26) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1324:2: ( (lv_persistentEntries_3_0= rulePersistentEntry ) ) ( (lv_persistentEntries_4_0= rulePersistentEntry ) )*
                     {
@@ -3353,7 +3371,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                      
                     	        newCompositeNode(grammarAccess.getKIdentifierAccess().getPersistentEntriesPersistentEntryParserRuleCall_3_0_0()); 
                     	    
-                    pushFollow(FOLLOW_rulePersistentEntry_in_ruleKIdentifier2844);
+                    pushFollow(FOLLOW_rulePersistentEntry_in_ruleKIdentifier2845);
                     lv_persistentEntries_3_0=rulePersistentEntry();
 
                     state._fsp--;
@@ -3376,17 +3394,17 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
 
                     // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1342:2: ( (lv_persistentEntries_4_0= rulePersistentEntry ) )*
-                    loop24:
+                    loop25:
                     do {
-                        int alt24=2;
-                        int LA24_0 = input.LA(1);
+                        int alt25=2;
+                        int LA25_0 = input.LA(1);
 
-                        if ( (LA24_0==RULE_ID) ) {
-                            alt24=1;
+                        if ( (LA25_0==RULE_ID) ) {
+                            alt25=1;
                         }
 
 
-                        switch (alt24) {
+                        switch (alt25) {
                     	case 1 :
                     	    // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1343:1: (lv_persistentEntries_4_0= rulePersistentEntry )
                     	    {
@@ -3396,7 +3414,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	     
                     	    	        newCompositeNode(grammarAccess.getKIdentifierAccess().getPersistentEntriesPersistentEntryParserRuleCall_3_1_0()); 
                     	    	    
-                    	    pushFollow(FOLLOW_rulePersistentEntry_in_ruleKIdentifier2865);
+                    	    pushFollow(FOLLOW_rulePersistentEntry_in_ruleKIdentifier2866);
                     	    lv_persistentEntries_4_0=rulePersistentEntry();
 
                     	    state._fsp--;
@@ -3420,7 +3438,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	    break;
 
                     	default :
-                    	    break loop24;
+                    	    break loop25;
                         }
                     } while (true);
 
@@ -3430,7 +3448,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_5=(Token)match(input,35,FOLLOW_35_in_ruleKIdentifier2880); 
+            otherlv_5=(Token)match(input,35,FOLLOW_35_in_ruleKIdentifier2881); 
 
                 	newLeafNode(otherlv_5, grammarAccess.getKIdentifierAccess().getRightCurlyBracketKeyword_4());
                 
@@ -3467,13 +3485,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1374:2: iv_rulePersistentEntry= rulePersistentEntry EOF
             {
              newCompositeNode(grammarAccess.getPersistentEntryRule()); 
-            pushFollow(FOLLOW_rulePersistentEntry_in_entryRulePersistentEntry2916);
+            pushFollow(FOLLOW_rulePersistentEntry_in_entryRulePersistentEntry2917);
             iv_rulePersistentEntry=rulePersistentEntry();
 
             state._fsp--;
 
              current =iv_rulePersistentEntry; 
-            match(input,EOF,FOLLOW_EOF_in_entryRulePersistentEntry2926); 
+            match(input,EOF,FOLLOW_EOF_in_entryRulePersistentEntry2927); 
 
             }
 
@@ -3519,7 +3537,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
              
             	        newCompositeNode(grammarAccess.getPersistentEntryAccess().getKeyQualifiedIDParserRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_ruleQualifiedID_in_rulePersistentEntry2972);
+            pushFollow(FOLLOW_ruleQualifiedID_in_rulePersistentEntry2973);
             lv_key_0_0=ruleQualifiedID();
 
             state._fsp--;
@@ -3541,7 +3559,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,36,FOLLOW_36_in_rulePersistentEntry2984); 
+            otherlv_1=(Token)match(input,36,FOLLOW_36_in_rulePersistentEntry2985); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getPersistentEntryAccess().getColonKeyword_1());
                 
@@ -3554,7 +3572,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
              
             	        newCompositeNode(grammarAccess.getPersistentEntryAccess().getValuePropertyValueParserRuleCall_2_0()); 
             	    
-            pushFollow(FOLLOW_rulePropertyValue_in_rulePersistentEntry3005);
+            pushFollow(FOLLOW_rulePropertyValue_in_rulePersistentEntry3006);
             lv_value_2_0=rulePropertyValue();
 
             state._fsp--;
@@ -3609,13 +3627,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1435:2: iv_ruleQualifiedID= ruleQualifiedID EOF
             {
              newCompositeNode(grammarAccess.getQualifiedIDRule()); 
-            pushFollow(FOLLOW_ruleQualifiedID_in_entryRuleQualifiedID3042);
+            pushFollow(FOLLOW_ruleQualifiedID_in_entryRuleQualifiedID3043);
             iv_ruleQualifiedID=ruleQualifiedID();
 
             state._fsp--;
 
              current =iv_ruleQualifiedID.getText(); 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleQualifiedID3053); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleQualifiedID3054); 
 
             }
 
@@ -3650,7 +3668,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1446:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1446:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
             {
-            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleQualifiedID3093); 
+            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleQualifiedID3094); 
 
             		current.merge(this_ID_0);
                 
@@ -3658,26 +3676,26 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                 newLeafNode(this_ID_0, grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_0()); 
                 
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1453:1: (kw= '.' this_ID_2= RULE_ID )*
-            loop26:
+            loop27:
             do {
-                int alt26=2;
-                int LA26_0 = input.LA(1);
+                int alt27=2;
+                int LA27_0 = input.LA(1);
 
-                if ( (LA26_0==37) ) {
-                    alt26=1;
+                if ( (LA27_0==37) ) {
+                    alt27=1;
                 }
 
 
-                switch (alt26) {
+                switch (alt27) {
             	case 1 :
             	    // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1454:2: kw= '.' this_ID_2= RULE_ID
             	    {
-            	    kw=(Token)match(input,37,FOLLOW_37_in_ruleQualifiedID3112); 
+            	    kw=(Token)match(input,37,FOLLOW_37_in_ruleQualifiedID3113); 
 
             	            current.merge(kw);
             	            newLeafNode(kw, grammarAccess.getQualifiedIDAccess().getFullStopKeyword_1_0()); 
             	        
-            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleQualifiedID3127); 
+            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleQualifiedID3128); 
 
             	    		current.merge(this_ID_2);
             	        
@@ -3689,7 +3707,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop26;
+            	    break loop27;
                 }
             } while (true);
 
@@ -3726,13 +3744,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1476:2: iv_rulePropertyValue= rulePropertyValue EOF
             {
              newCompositeNode(grammarAccess.getPropertyValueRule()); 
-            pushFollow(FOLLOW_rulePropertyValue_in_entryRulePropertyValue3175);
+            pushFollow(FOLLOW_rulePropertyValue_in_entryRulePropertyValue3176);
             iv_rulePropertyValue=rulePropertyValue();
 
             state._fsp--;
 
              current =iv_rulePropertyValue.getText(); 
-            match(input,EOF,FOLLOW_EOF_in_entryRulePropertyValue3186); 
+            match(input,EOF,FOLLOW_EOF_in_entryRulePropertyValue3187); 
 
             }
 
@@ -3768,41 +3786,41 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1487:1: (this_BOOLEAN_0= RULE_BOOLEAN | this_STRING_1= RULE_STRING | this_Float_2= ruleFloat | this_QualifiedID_3= ruleQualifiedID )
             {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1487:1: (this_BOOLEAN_0= RULE_BOOLEAN | this_STRING_1= RULE_STRING | this_Float_2= ruleFloat | this_QualifiedID_3= ruleQualifiedID )
-            int alt27=4;
+            int alt28=4;
             switch ( input.LA(1) ) {
             case RULE_BOOLEAN:
                 {
-                alt27=1;
+                alt28=1;
                 }
                 break;
             case RULE_STRING:
                 {
-                alt27=2;
+                alt28=2;
                 }
                 break;
             case RULE_NATURAL:
             case RULE_TFLOAT:
                 {
-                alt27=3;
+                alt28=3;
                 }
                 break;
             case RULE_ID:
                 {
-                alt27=4;
+                alt28=4;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 27, 0, input);
+                    new NoViableAltException("", 28, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt27) {
+            switch (alt28) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1487:6: this_BOOLEAN_0= RULE_BOOLEAN
                     {
-                    this_BOOLEAN_0=(Token)match(input,RULE_BOOLEAN,FOLLOW_RULE_BOOLEAN_in_rulePropertyValue3226); 
+                    this_BOOLEAN_0=(Token)match(input,RULE_BOOLEAN,FOLLOW_RULE_BOOLEAN_in_rulePropertyValue3227); 
 
                     		current.merge(this_BOOLEAN_0);
                         
@@ -3815,7 +3833,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                 case 2 :
                     // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1495:10: this_STRING_1= RULE_STRING
                     {
-                    this_STRING_1=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rulePropertyValue3252); 
+                    this_STRING_1=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rulePropertyValue3253); 
 
                     		current.merge(this_STRING_1);
                         
@@ -3831,7 +3849,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                      
                             newCompositeNode(grammarAccess.getPropertyValueAccess().getFloatParserRuleCall_2()); 
                         
-                    pushFollow(FOLLOW_ruleFloat_in_rulePropertyValue3285);
+                    pushFollow(FOLLOW_ruleFloat_in_rulePropertyValue3286);
                     this_Float_2=ruleFloat();
 
                     state._fsp--;
@@ -3851,7 +3869,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                      
                             newCompositeNode(grammarAccess.getPropertyValueAccess().getQualifiedIDParserRuleCall_3()); 
                         
-                    pushFollow(FOLLOW_ruleQualifiedID_in_rulePropertyValue3318);
+                    pushFollow(FOLLOW_ruleQualifiedID_in_rulePropertyValue3319);
                     this_QualifiedID_3=ruleQualifiedID();
 
                     state._fsp--;
@@ -3898,13 +3916,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1536:2: iv_ruleFloat= ruleFloat EOF
             {
              newCompositeNode(grammarAccess.getFloatRule()); 
-            pushFollow(FOLLOW_ruleFloat_in_entryRuleFloat3364);
+            pushFollow(FOLLOW_ruleFloat_in_entryRuleFloat3365);
             iv_ruleFloat=ruleFloat();
 
             state._fsp--;
 
              current =iv_ruleFloat.getText(); 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleFloat3375); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleFloat3376); 
 
             }
 
@@ -3936,26 +3954,26 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1547:1: (this_TFLOAT_0= RULE_TFLOAT | this_NATURAL_1= RULE_NATURAL )
             {
             // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1547:1: (this_TFLOAT_0= RULE_TFLOAT | this_NATURAL_1= RULE_NATURAL )
-            int alt28=2;
-            int LA28_0 = input.LA(1);
+            int alt29=2;
+            int LA29_0 = input.LA(1);
 
-            if ( (LA28_0==RULE_TFLOAT) ) {
-                alt28=1;
+            if ( (LA29_0==RULE_TFLOAT) ) {
+                alt29=1;
             }
-            else if ( (LA28_0==RULE_NATURAL) ) {
-                alt28=2;
+            else if ( (LA29_0==RULE_NATURAL) ) {
+                alt29=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 28, 0, input);
+                    new NoViableAltException("", 29, 0, input);
 
                 throw nvae;
             }
-            switch (alt28) {
+            switch (alt29) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1547:6: this_TFLOAT_0= RULE_TFLOAT
                     {
-                    this_TFLOAT_0=(Token)match(input,RULE_TFLOAT,FOLLOW_RULE_TFLOAT_in_ruleFloat3415); 
+                    this_TFLOAT_0=(Token)match(input,RULE_TFLOAT,FOLLOW_RULE_TFLOAT_in_ruleFloat3416); 
 
                     		current.merge(this_TFLOAT_0);
                         
@@ -3968,7 +3986,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                 case 2 :
                     // ../de.cau.cs.kieler.kiml.grana.text/src-gen/de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.g:1555:10: this_NATURAL_1= RULE_NATURAL
                     {
-                    this_NATURAL_1=(Token)match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_ruleFloat3441); 
+                    this_NATURAL_1=(Token)match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_ruleFloat3442); 
 
                     		current.merge(this_NATURAL_1);
                         
@@ -4066,76 +4084,76 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_ruleIntRangeValues_in_entryRuleIntRangeValues1481 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_EOF_in_entryRuleIntRangeValues1491 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_29_in_ruleIntRangeValues1528 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_RULE_NATURAL_in_ruleIntRangeValues1545 = new BitSet(new long[]{0x0000000010000000L});
+    public static final BitSet FOLLOW_RULE_NATURAL_in_ruleIntRangeValues1545 = new BitSet(new long[]{0x0000000010000002L});
     public static final BitSet FOLLOW_28_in_ruleIntRangeValues1563 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_RULE_NATURAL_in_ruleIntRangeValues1580 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleIntRangeRange_in_entryRuleIntRangeRange1622 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleIntRangeRange1632 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_30_in_ruleIntRangeRange1669 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_RULE_NATURAL_in_ruleIntRangeRange1686 = new BitSet(new long[]{0x0000000080000000L});
-    public static final BitSet FOLLOW_31_in_ruleIntRangeRange1703 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_RULE_NATURAL_in_ruleIntRangeRange1720 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleResource_in_entryRuleResource1761 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleResource1771 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleResourceReference_in_ruleResource1818 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleLocalResource_in_ruleResource1845 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleResourceReference_in_entryRuleResourceReference1880 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleResourceReference1890 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_32_in_ruleResourceReference1927 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleResourceReference1947 = new BitSet(new long[]{0x0000000000000012L});
-    public static final BitSet FOLLOW_ruleGlobalResourceRef_in_entryRuleGlobalResourceRef1984 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleGlobalResourceRef1994 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleGlobalResourceRef2036 = new BitSet(new long[]{0x0000000100000040L});
-    public static final BitSet FOLLOW_ruleLocalResource_in_ruleGlobalResourceRef2062 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleLocalResource_in_entryRuleLocalResource2098 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleLocalResource2108 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleLocalResource2150 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_33_in_ruleLocalResource2168 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleLocalResource2185 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleOutput_in_entryRuleOutput2227 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleOutput2237 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleOutputReference_in_ruleOutput2284 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleLocalOutput_in_ruleOutput2311 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleGlobalOutputRef_in_entryRuleGlobalOutputRef2346 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleGlobalOutputRef2356 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleGlobalOutputRef2398 = new BitSet(new long[]{0x0000000100000040L});
-    public static final BitSet FOLLOW_ruleLocalOutput_in_ruleGlobalOutputRef2424 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleOutputReference_in_entryRuleOutputReference2460 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleOutputReference2470 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_32_in_ruleOutputReference2507 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleOutputReference2527 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleLocalOutput_in_entryRuleLocalOutput2563 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleLocalOutput2573 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleLocalOutput2614 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAnalysis_in_entryRuleAnalysis2654 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleAnalysis2664 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleQualifiedID_in_ruleAnalysis2709 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleKIdentifier_in_entryRuleKIdentifier2744 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleKIdentifier2754 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleKIdentifier2805 = new BitSet(new long[]{0x0000000400000000L});
-    public static final BitSet FOLLOW_34_in_ruleKIdentifier2822 = new BitSet(new long[]{0x0000000800000010L});
-    public static final BitSet FOLLOW_rulePersistentEntry_in_ruleKIdentifier2844 = new BitSet(new long[]{0x0000000800000010L});
-    public static final BitSet FOLLOW_rulePersistentEntry_in_ruleKIdentifier2865 = new BitSet(new long[]{0x0000000800000010L});
-    public static final BitSet FOLLOW_35_in_ruleKIdentifier2880 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePersistentEntry_in_entryRulePersistentEntry2916 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRulePersistentEntry2926 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleQualifiedID_in_rulePersistentEntry2972 = new BitSet(new long[]{0x0000001000000000L});
-    public static final BitSet FOLLOW_36_in_rulePersistentEntry2984 = new BitSet(new long[]{0x00000000000001F0L});
-    public static final BitSet FOLLOW_rulePropertyValue_in_rulePersistentEntry3005 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleQualifiedID_in_entryRuleQualifiedID3042 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleQualifiedID3053 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleQualifiedID3093 = new BitSet(new long[]{0x0000002000000002L});
-    public static final BitSet FOLLOW_37_in_ruleQualifiedID3112 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleQualifiedID3127 = new BitSet(new long[]{0x0000002000000002L});
-    public static final BitSet FOLLOW_rulePropertyValue_in_entryRulePropertyValue3175 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRulePropertyValue3186 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_BOOLEAN_in_rulePropertyValue3226 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rulePropertyValue3252 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleFloat_in_rulePropertyValue3285 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleQualifiedID_in_rulePropertyValue3318 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleFloat_in_entryRuleFloat3364 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleFloat3375 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_TFLOAT_in_ruleFloat3415 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_NATURAL_in_ruleFloat3441 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_NATURAL_in_ruleIntRangeValues1580 = new BitSet(new long[]{0x0000000010000002L});
+    public static final BitSet FOLLOW_ruleIntRangeRange_in_entryRuleIntRangeRange1623 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleIntRangeRange1633 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_30_in_ruleIntRangeRange1670 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_RULE_NATURAL_in_ruleIntRangeRange1687 = new BitSet(new long[]{0x0000000080000000L});
+    public static final BitSet FOLLOW_31_in_ruleIntRangeRange1704 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_RULE_NATURAL_in_ruleIntRangeRange1721 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleResource_in_entryRuleResource1762 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleResource1772 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleResourceReference_in_ruleResource1819 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleLocalResource_in_ruleResource1846 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleResourceReference_in_entryRuleResourceReference1881 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleResourceReference1891 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_32_in_ruleResourceReference1928 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleResourceReference1948 = new BitSet(new long[]{0x0000000000000012L});
+    public static final BitSet FOLLOW_ruleGlobalResourceRef_in_entryRuleGlobalResourceRef1985 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleGlobalResourceRef1995 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleGlobalResourceRef2037 = new BitSet(new long[]{0x0000000100000040L});
+    public static final BitSet FOLLOW_ruleLocalResource_in_ruleGlobalResourceRef2063 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleLocalResource_in_entryRuleLocalResource2099 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleLocalResource2109 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleLocalResource2151 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_33_in_ruleLocalResource2169 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleLocalResource2186 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleOutput_in_entryRuleOutput2228 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleOutput2238 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleOutputReference_in_ruleOutput2285 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleLocalOutput_in_ruleOutput2312 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleGlobalOutputRef_in_entryRuleGlobalOutputRef2347 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleGlobalOutputRef2357 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleGlobalOutputRef2399 = new BitSet(new long[]{0x0000000100000040L});
+    public static final BitSet FOLLOW_ruleLocalOutput_in_ruleGlobalOutputRef2425 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleOutputReference_in_entryRuleOutputReference2461 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleOutputReference2471 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_32_in_ruleOutputReference2508 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleOutputReference2528 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleLocalOutput_in_entryRuleLocalOutput2564 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleLocalOutput2574 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleLocalOutput2615 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAnalysis_in_entryRuleAnalysis2655 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleAnalysis2665 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleQualifiedID_in_ruleAnalysis2710 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleKIdentifier_in_entryRuleKIdentifier2745 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleKIdentifier2755 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleKIdentifier2806 = new BitSet(new long[]{0x0000000400000000L});
+    public static final BitSet FOLLOW_34_in_ruleKIdentifier2823 = new BitSet(new long[]{0x0000000800000010L});
+    public static final BitSet FOLLOW_rulePersistentEntry_in_ruleKIdentifier2845 = new BitSet(new long[]{0x0000000800000010L});
+    public static final BitSet FOLLOW_rulePersistentEntry_in_ruleKIdentifier2866 = new BitSet(new long[]{0x0000000800000010L});
+    public static final BitSet FOLLOW_35_in_ruleKIdentifier2881 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePersistentEntry_in_entryRulePersistentEntry2917 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRulePersistentEntry2927 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleQualifiedID_in_rulePersistentEntry2973 = new BitSet(new long[]{0x0000001000000000L});
+    public static final BitSet FOLLOW_36_in_rulePersistentEntry2985 = new BitSet(new long[]{0x00000000000001F0L});
+    public static final BitSet FOLLOW_rulePropertyValue_in_rulePersistentEntry3006 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleQualifiedID_in_entryRuleQualifiedID3043 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleQualifiedID3054 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleQualifiedID3094 = new BitSet(new long[]{0x0000002000000002L});
+    public static final BitSet FOLLOW_37_in_ruleQualifiedID3113 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleQualifiedID3128 = new BitSet(new long[]{0x0000002000000002L});
+    public static final BitSet FOLLOW_rulePropertyValue_in_entryRulePropertyValue3176 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRulePropertyValue3187 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_BOOLEAN_in_rulePropertyValue3227 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rulePropertyValue3253 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleFloat_in_rulePropertyValue3286 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleQualifiedID_in_rulePropertyValue3319 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleFloat_in_entryRuleFloat3365 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleFloat3376 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_TFLOAT_in_ruleFloat3416 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_NATURAL_in_ruleFloat3442 = new BitSet(new long[]{0x0000000000000002L});
 
 }

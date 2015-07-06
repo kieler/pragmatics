@@ -76,7 +76,7 @@ IntRange:
 ;
 
 IntRangeValues:
-    'intvalues' values+=NATURAL (',' values+=NATURAL)
+    'intvalues' values+=NATURAL (',' values+=NATURAL)*
 ;
 
 IntRangeRange:
