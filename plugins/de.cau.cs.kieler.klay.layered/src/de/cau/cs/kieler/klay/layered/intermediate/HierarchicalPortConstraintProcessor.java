@@ -56,12 +56,17 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * the different port constraints later on.</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>A layered graph; long edge dummies have not yet been inserted;
- *     layer constraints have not yet been applied.</dd>
- *   <dt>Postcondition:</dt><dd>Hierarchical port dummies for northern and southern ports are
- *     replaced by multiple dummies if the port constraints are at least {@code FIXED_ORDER}.</dd>
- *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link LayerConstraintProcessor}</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph</dd>
+ *     <dd>long edge dummies have not yet been inserted</dd>
+ *     <dd>layer constraints have not yet been applied.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>Hierarchical port dummies for northern and southern ports are replaced by multiple dummies if
+ *       the port constraints are at least {@code FIXED_ORDER}.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link LayerConstraintProcessor}</dd>
  * </dl>
  * 
  * @see HierarchicalPortDummySizeProcessor
@@ -368,9 +373,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
         newDummy.setProperty(InternalProperties.EXT_PORT_REPLACED_DUMMY, originalDummy);
         newDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         newDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.CENTER);
-        
-        // DEBUG
-        newDummy.getLabels().addAll(originalDummy.getLabels());
+        newDummy.setType(NodeType.EXTERNAL_PORT);
         
         LPort inputPort = new LPort();
         inputPort.setNode(newDummy);
