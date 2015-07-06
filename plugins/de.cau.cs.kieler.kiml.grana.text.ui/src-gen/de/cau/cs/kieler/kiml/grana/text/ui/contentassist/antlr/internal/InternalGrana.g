@@ -2447,7 +2447,7 @@ rule__IntRangeValues__Group__2__Impl
 :
 (
 { before(grammarAccess.getIntRangeValuesAccess().getGroup_2()); }
-(rule__IntRangeValues__Group_2__0)
+(rule__IntRangeValues__Group_2__0)*
 { after(grammarAccess.getIntRangeValuesAccess().getGroup_2()); }
 )
 
