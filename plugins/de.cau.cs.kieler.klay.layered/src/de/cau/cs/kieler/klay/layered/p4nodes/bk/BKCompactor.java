@@ -177,7 +177,7 @@ public class BKCompactor implements ICompactor {
         do {
             int currentIndexInLayer = ni.nodeIndex[currentNode.id];
             int currentLayerSize = currentNode.getLayer().getNodes().size();
-            NodeType currentNodeType = currentNode.getNodeType();
+            NodeType currentNodeType = currentNode.getType();
 
             // If the node is the top or bottom node of its layer, it can be placed safely since it is
             // the first to be placed in its layer. If it's not, we'll have to check its neighbours
@@ -195,7 +195,7 @@ public class BKCompactor implements ICompactor {
                 neighborRoot = bal.root[neighbor.id];
                 
                 // The neighbour's node type is important for the spacing between the two later on
-                NodeType neighborNodeType = neighbor.getNodeType();
+                NodeType neighborNodeType = neighbor.getType();
 
                 // Ensure the neighbor was already placed
                 placeBlock(neighborRoot, bal);

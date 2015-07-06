@@ -96,7 +96,7 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
                             
                             // Create dummy node
                             LNode dummyNode = new LNode(layeredGraph);
-                            dummyNode.setNodeType(NodeType.LONG_EDGE);
+                            dummyNode.setType(NodeType.LONG_EDGE);
                             dummyNode.setProperty(InternalProperties.ORIGIN, edge);
                             dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
                                     PortConstraints.FIXED_POS);
@@ -175,7 +175,7 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
     private static void setDummyProperties(final LNode dummy, final LEdge inEdge, final LEdge outEdge) {
         LNode inEdgeSourceNode = inEdge.getSource().getNode();
         
-        if (inEdgeSourceNode.getNodeType() == NodeType.LONG_EDGE) {
+        if (inEdgeSourceNode.getType() == NodeType.LONG_EDGE) {
             // The incoming edge originates from a long edge dummy node, so we can
             // just copy its properties
             dummy.setProperty(InternalProperties.LONG_EDGE_SOURCE,

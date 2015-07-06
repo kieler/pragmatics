@@ -82,7 +82,7 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
                 LNode node = nodeIterator.next();
                 
                 // Check if it's a dummy edge we're looking for
-                if (node.getNodeType() == NodeType.LONG_EDGE) {
+                if (node.getType() == NodeType.LONG_EDGE) {
                     joinAt(node, addUnnecessaryBendpoints);
                     
                     // Remove the node

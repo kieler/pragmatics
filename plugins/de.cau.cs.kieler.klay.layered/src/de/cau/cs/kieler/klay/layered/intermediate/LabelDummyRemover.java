@@ -69,7 +69,7 @@ public final class LabelDummyRemover implements ILayoutProcessor {
             while (nodeIterator.hasNext()) {
                 LNode node = nodeIterator.next();
                 
-                if (node.getNodeType() == NodeType.LABEL) {
+                if (node.getType() == NodeType.LABEL) {
                     // First, place labels on position of dummy node 
                     LEdge originEdge = (LEdge) node.getProperty(InternalProperties.ORIGIN);
                     double ypos = node.getPosition().y;

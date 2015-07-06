@@ -190,7 +190,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             }
             
             // External port dummy?
-            if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+            if (node.getType() == NodeType.EXTERNAL_PORT) {
                 mirrorExternalPortSideX(node);
                 mirrorLayerConstraintX(node);
             }
@@ -367,7 +367,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             }
             
             // External port dummy?
-            if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+            if (node.getType() == NodeType.EXTERNAL_PORT) {
                 mirrorExternalPortSideY(node);
                 mirrorInLayerConstraintY(node);
             }
@@ -520,7 +520,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             }
             
             // External port dummy?
-            if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+            if (node.getType() == NodeType.EXTERNAL_PORT) {
                 transposeExternalPortSide(node);
                 transposeLayerConstraint(node);
             }

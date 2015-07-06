@@ -168,7 +168,7 @@ public abstract class AbstractCrossingsCounter {
             }
 
             // First sweep of part 2 of the crossing counting algorithm
-            NodeType nodeType = node.getNodeType();
+            NodeType nodeType = node.getType();
             if (layerLayoutUnitsSet
                     && (nodeType == NodeType.NORMAL || nodeType == NodeType.NORTH_SOUTH_PORT)) {
 
@@ -225,7 +225,7 @@ public abstract class AbstractCrossingsCounter {
 
             for (NodeGroup nodeGroup : layer) {
                 LNode node = nodeGroup.getNode();
-                NodeType nodeType = node.getNodeType();
+                NodeType nodeType = node.getType();
 
                 switch (nodeType) {
                 case NORMAL:
@@ -384,7 +384,7 @@ public abstract class AbstractCrossingsCounter {
         // Iterate through the layer's nodes
         for (int i = 0; i < layer.length; i++) {
             LNode node = layer[i].getNode();
-            NodeType nodeType = node.getNodeType();
+            NodeType nodeType = node.getType();
             
             if (nodeType == NodeType.NORMAL) {
                 // We possibly have a new recentNormalNode; we definitely change the side to the normal
@@ -433,7 +433,7 @@ public abstract class AbstractCrossingsCounter {
                 // new normal node or until we find our current normal node
                 for (int j = i + 1; j < layer.length; j++) {
                     LNode node2 = layer[j].getNode();
-                    NodeType node2Type = node2.getNodeType();
+                    NodeType node2Type = node2.getType();
                     
                     if (node2Type == NodeType.NORMAL) {
                         // We can stop

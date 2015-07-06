@@ -76,7 +76,7 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor {
             for (int nodeIndex = 0; nodeIndex < nodes.size(); nodeIndex++) {
                 // Get the next node
                 currentNode = nodes.get(nodeIndex);
-                currentNodeType = currentNode.getNodeType();
+                currentNodeType = currentNode.getType();
                 
                 // We're only interested if the current and last nodes are long edge dummies
                 if (currentNodeType == NodeType.LONG_EDGE

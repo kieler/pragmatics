@@ -209,7 +209,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
                 }
                 
                 // Count north/south dummy nodes
-                if (node.getNodeType() == NodeType.NORTH_SOUTH_PORT) {
+                if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
                     inLayerEdgeCount[layerIndex]++;
                     hasNorthSouthPorts[layerIndex] = true;
                 }

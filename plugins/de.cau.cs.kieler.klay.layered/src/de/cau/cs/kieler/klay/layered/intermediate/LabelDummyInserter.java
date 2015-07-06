@@ -86,7 +86,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         
                         // Create dummy node
                         LNode dummyNode = new LNode(layeredGraph);
-                        dummyNode.setNodeType(NodeType.LABEL);
+                        dummyNode.setType(NodeType.LABEL);
                         
                         dummyNode.setProperty(InternalProperties.ORIGIN, edge);
                         dummyNode.setProperty(InternalProperties.REPRESENTED_LABELS, representedLabels);

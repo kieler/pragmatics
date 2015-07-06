@@ -55,26 +55,26 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
         List<Pair<LNode, LNode>> nodesToSwap = Lists.newArrayList();
         for (Layer layer : layeredGraph) {
             for (LNode node : layer.getNodes()) {
-                if (node.getNodeType() == NodeType.LABEL) {
+                if (node.getType() == NodeType.LABEL) {
                     // Gather long edge dummies left of the label dummy
                     List<LNode> leftLongEdge = Lists.newArrayList();
                     LNode source = node;
                     do {
                         source = source.getIncomingEdges().iterator().next().getSource().getNode();
-                        if (source.getNodeType() == NodeType.LONG_EDGE) {
+                        if (source.getType() == NodeType.LONG_EDGE) {
                             leftLongEdge.add(source);
                         }
-                    } while (source.getNodeType() == NodeType.LONG_EDGE);
+                    } while (source.getType() == NodeType.LONG_EDGE);
                     
                     // Gather long edge dummies right of the label dummy
                     List<LNode> rightLongEdge = Lists.newArrayList();
                     LNode target = node;
                     do {
                         target = target.getOutgoingEdges().iterator().next().getTarget().getNode();
-                        if (target.getNodeType() == NodeType.LONG_EDGE) {
+                        if (target.getType() == NodeType.LONG_EDGE) {
                             rightLongEdge.add(target);
                         }
-                    } while (target.getNodeType() == NodeType.LONG_EDGE);
+                    } while (target.getType() == NodeType.LONG_EDGE);
                     
                     // Check whether the label dummy should be switched
                     int leftSize = leftLongEdge.size();

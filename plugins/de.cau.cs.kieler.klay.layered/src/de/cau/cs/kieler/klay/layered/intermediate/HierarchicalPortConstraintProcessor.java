@@ -84,9 +84,9 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
          * {@inheritDoc}
          */
         public int compare(final LNode node1, final LNode node2) {
-            NodeType nodeType1 = node1.getNodeType();
+            NodeType nodeType1 = node1.getType();
             double nodePos1 = node1.getProperty(InternalProperties.PORT_RATIO_OR_POSITION);
-            NodeType nodeType2 = node2.getNodeType();
+            NodeType nodeType2 = node2.getType();
             double nodePos2 = node2.getProperty(InternalProperties.PORT_RATIO_OR_POSITION);
             
             if (nodeType2 != NodeType.EXTERNAL_PORT) {
@@ -167,7 +167,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
         LNode lastHierarchicalDummy = null;
         
         for (LNode node : nodes) {
-            if (node.getNodeType() != NodeType.EXTERNAL_PORT) {
+            if (node.getType() != NodeType.EXTERNAL_PORT) {
                 // No hierarchical port dummy nodes any more
                 break;
             }
@@ -342,7 +342,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
      *         {@code false} otherwise.
      */
     private boolean isNorthernSouthernDummy(final LNode node) {
-        NodeType nodeType = node.getNodeType();
+        NodeType nodeType = node.getType();
         
         if (nodeType == NodeType.EXTERNAL_PORT) {
             PortSide portSide = node.getProperty(InternalProperties.EXT_PORT_SIDE);

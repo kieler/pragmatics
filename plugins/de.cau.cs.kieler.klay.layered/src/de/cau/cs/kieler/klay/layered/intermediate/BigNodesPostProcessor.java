@@ -137,7 +137,7 @@ public class BigNodesPostProcessor implements ILayoutProcessor {
             LNode target = edge.getTarget().getNode();
 
             // only walk through intermediate big nodes
-            if ((target.getNodeType() == NodeType.BIG_NODE) && !isInitialBigNode(target)) {
+            if ((target.getType() == NodeType.BIG_NODE) && !isInitialBigNode(target)) {
                 // remove the current dummy and its incoming edge
                 target.getLayer().getNodes().remove(target);
 

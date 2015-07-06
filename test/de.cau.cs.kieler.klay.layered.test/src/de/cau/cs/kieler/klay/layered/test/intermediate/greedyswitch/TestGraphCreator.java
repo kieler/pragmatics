@@ -951,7 +951,7 @@ public class TestGraphCreator {
     // CHECKSTYLEOFF Javadoc
 
     protected void setAsNorthSouthNode(final LNode node) {
-        node.setNodeType(NodeType.NORTH_SOUTH_PORT);
+        node.setType(NodeType.NORTH_SOUTH_PORT);
     }
 
     protected void addNorthSouthEdge(final PortSide side, final LNode nodeWithNSPorts,
@@ -994,7 +994,7 @@ public class TestGraphCreator {
 
 
     protected void setAsLongEdgeDummy(final LNode node) {
-        node.setNodeType(NodeType.LONG_EDGE);
+        node.setType(NodeType.LONG_EDGE);
     }
 
     protected void setPortOrderFixed(final LNode node) {
@@ -1036,7 +1036,7 @@ public class TestGraphCreator {
 
     protected LNode addNodeToLayer(final Layer layer) {
         LNode node = new LNode(graph);
-        node.setNodeType(NodeType.NORMAL);
+        node.setType(NodeType.NORMAL);
         node.setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, node);
         node.setLayer(layer);
         node.id = nodeId++;

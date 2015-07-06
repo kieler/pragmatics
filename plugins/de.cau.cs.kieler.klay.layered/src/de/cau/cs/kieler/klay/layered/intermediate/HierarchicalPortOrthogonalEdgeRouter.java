@@ -157,7 +157,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         // another hierarchical port dummy
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
-                if (node.getNodeType() != NodeType.EXTERNAL_PORT) {
+                if (node.getType() != NodeType.EXTERNAL_PORT) {
                     // Not a hierarchical port dummy - we're not interested. Move along,
                     // please, there's nothing to see here.
                     continue;
@@ -166,7 +166,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
                 LNode replacedDummy =
                         (LNode) node.getProperty(InternalProperties.EXT_PORT_REPLACED_DUMMY);
                 if (replacedDummy != null) {
-                    assert replacedDummy.getNodeType() == NodeType.EXTERNAL_PORT;
+                    assert replacedDummy.getType() == NodeType.EXTERNAL_PORT;
                     
                     // Restore the origin and connect the node to it
                     restoreDummy(replacedDummy, restoredDummies);
@@ -554,7 +554,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         // Iterate through all layers
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
-                if (node.getNodeType() != NodeType.EXTERNAL_PORT) {
+                if (node.getType() != NodeType.EXTERNAL_PORT) {
                     // We're only looking for hierarchical port dummies
                     continue;
                 }
@@ -691,7 +691,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         // During the first iteration, EAST and WEST dummy nodes are fixed. This may change the height
         // of the graph, so we're setting y coordinates of NORTH and SOUTH dummies in a second iteration
         for (LNode node : layer) {
-            if (node.getNodeType() != NodeType.EXTERNAL_PORT) {
+            if (node.getType() != NodeType.EXTERNAL_PORT) {
                 // We're only looking for hierarchical port dummies
                 continue;
             }
@@ -740,7 +740,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
         
         // Iterate over NORTH and SOUTH dummies now that the graph's height is fixed
         for (LNode node : layer) {
-            if (node.getNodeType() != NodeType.EXTERNAL_PORT) {
+            if (node.getType() != NodeType.EXTERNAL_PORT) {
                 // We're only looking for hierarchical port dummies
                 continue;
             }
@@ -787,7 +787,7 @@ public final class HierarchicalPortOrthogonalEdgeRouter implements ILayoutProces
      */
     private void correctSlantedEdgeSegments(final Layer layer) {
         for (LNode node : layer) {
-            if (node.getNodeType() != NodeType.EXTERNAL_PORT) {
+            if (node.getType() != NodeType.EXTERNAL_PORT) {
                 // We're only looking for hierarchical port dummies
                 continue;
             }

@@ -96,7 +96,7 @@ public class CrossHierarchyEdge {
      * @return the actual source port
      */
     public LPort getActualSource() {
-        if (newEdge.getSource().getNode().getNodeType() == NodeType.EXTERNAL_PORT) {
+        if (newEdge.getSource().getNode().getType() == NodeType.EXTERNAL_PORT) {
             return (LPort) newEdge.getSource().getNode().getProperty(InternalProperties.ORIGIN);
         }
         return newEdge.getSource();
@@ -109,7 +109,7 @@ public class CrossHierarchyEdge {
      * @return the actual target port
      */
     public LPort getActualTarget() {
-        if (newEdge.getTarget().getNode().getNodeType() == NodeType.EXTERNAL_PORT) {
+        if (newEdge.getTarget().getNode().getType() == NodeType.EXTERNAL_PORT) {
             return (LPort) newEdge.getTarget().getNode().getProperty(InternalProperties.ORIGIN);
         }
         return newEdge.getTarget();

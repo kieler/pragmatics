@@ -95,7 +95,7 @@ public final class HierarchicalPortPositionProcessor implements ILayoutProcessor
         // Iterate over the layer's nodes
         for (LNode node : layer) {
             // We only care about external port dummies...
-            if (node.getNodeType() != NodeType.EXTERNAL_PORT) {
+            if (node.getType() != NodeType.EXTERNAL_PORT) {
                 continue;
             }
             

@@ -79,7 +79,7 @@ public final class HierarchicalPortDummySizeProcessor implements ILayoutProcesso
             
             // Collect northern and southern hierarchical port dummies
             for (LNode node : layer) {
-                if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+                if (node.getType() == NodeType.EXTERNAL_PORT) {
                     PortSide side = node.getProperty(InternalProperties.EXT_PORT_SIDE);
                     
                     if (side == PortSide.NORTH) {

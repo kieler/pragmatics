@@ -170,7 +170,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                 pointer++;
 
                 // We only care about non-dummy nodes with fixed port sides
-                if (!(node.getNodeType() == NodeType.NORMAL
+                if (!(node.getType() == NodeType.NORMAL
                         && node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed())) {
 
                     continue;
@@ -500,7 +500,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             final LPort outPort, final List<LNode> dummyNodes) {
 
         LNode dummy = new LNode(layeredGraph);
-        dummy.setNodeType(NodeType.NORTH_SOUTH_PORT);
+        dummy.setType(NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
 
         int crossingHint = 0;
@@ -590,7 +590,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             final List<LNode> dummyNodes) {
 
         LNode dummy = new LNode(layeredGraph);
-        dummy.setNodeType(NodeType.NORTH_SOUTH_PORT);
+        dummy.setType(NodeType.NORTH_SOUTH_PORT);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         dummy.setProperty(InternalProperties.ORIGIN, selfLoop);
 
@@ -642,7 +642,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
 
         // North dummy
         LNode northDummy = new LNode(layeredGraph);
-        northDummy.setNodeType(NodeType.NORTH_SOUTH_PORT);
+        northDummy.setType(NodeType.NORTH_SOUTH_PORT);
         northDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         northDummy.setProperty(InternalProperties.ORIGIN, selfLoop.getSource().getNode());
 
@@ -655,7 +655,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
 
         // South dummy
         LNode southDummy = new LNode(layeredGraph);
-        southDummy.setNodeType(NodeType.NORTH_SOUTH_PORT);
+        southDummy.setType(NodeType.NORTH_SOUTH_PORT);
         southDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         southDummy.setProperty(InternalProperties.ORIGIN, selfLoop.getTarget().getNode());
 

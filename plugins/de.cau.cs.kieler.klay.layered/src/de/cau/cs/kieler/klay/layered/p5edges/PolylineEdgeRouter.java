@@ -63,7 +63,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
      */
     public static final Predicate<LNode> PRED_EXTERNAL_WEST_OR_EAST_PORT = new Predicate<LNode>() {
         public boolean apply(final LNode node) {
-            return node.getNodeType() == NodeType.EXTERNAL_PORT
+            return node.getType() == NodeType.EXTERNAL_PORT
                     && (node.getProperty(InternalProperties.EXT_PORT_SIDE) == PortSide.WEST
                             || node.getProperty(InternalProperties.EXT_PORT_SIDE) == PortSide.EAST);
         }
@@ -228,7 +228,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 }
                 
                 // Different node types have to be handled differently
-                NodeType nodeType = node.getNodeType();
+                NodeType nodeType = node.getType();
                 // FIXME use switch-case here?
                 if (nodeType == NodeType.NORMAL) {
                     processNormalNode(node, xpos, layer.getSize().x);
@@ -495,7 +495,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
         }
         
         // FIRST BEND POINT (if the source node is a dummy node)
-        if (sourcePort.getNode().getNodeType() != NodeType.NORMAL) {
+        if (sourcePort.getNode().getType() != NodeType.NORMAL) {
             edge.getBendPoints().add(new KVector(nearX, sourcePort.getAbsoluteAnchor().y));
         }
         
@@ -505,7 +505,7 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                 (sourcePort.getAbsoluteAnchor().y + targetPort.getAbsoluteAnchor().y) / 2.0));
         
         // THIRD BEND POINT (if the target node is a dummy node)
-        if (targetPort.getNode().getNodeType() != NodeType.NORMAL) {
+        if (targetPort.getNode().getType() != NodeType.NORMAL) {
             edge.getBendPoints().add(new KVector(nearX, targetPort.getAbsoluteAnchor().y));
         }
     }
