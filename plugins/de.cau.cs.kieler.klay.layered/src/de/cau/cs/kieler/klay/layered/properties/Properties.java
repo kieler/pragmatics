@@ -132,7 +132,7 @@ public final class Properties {
     public static final IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE_SELECTION =
             new Property<EdgeLabelSideSelection>(
                     "de.cau.cs.kieler.klay.layered.edgeLabelSideSelection",
-                    EdgeLabelSideSelection.SMART);
+                    EdgeLabelSideSelection.ALWAYS_DOWN);
 
     /**
      * Property to switch debug mode on or off.
