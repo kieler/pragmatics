@@ -42,6 +42,12 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.nodePromotion", false);
 
     /**
+     * 
+     */
+    public static final IProperty<Integer> NODE_PROMOTION_BOUNDARY = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.nodePromotionBoundary", 100, 1, 100);
+    
+    /**
      * Property to switch one dimensional compaction post-processing on or off.
      */
     public static final IProperty<Boolean> ONE_DIMENSIONAL_COMPACTION = new Property<Boolean>(

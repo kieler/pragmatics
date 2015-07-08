@@ -25,15 +25,15 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Approach of implementing the node-promotion heuristic of Nikola S. Nikolov and Alexandre Tarassov.
- * Goal is to achieve a layering with less dummy nodes. For this purpose the original graph nodes
- * are promoted recursively and the promotion is applied, if and only if this reduces the determined
- * count of dummy nodes.
+ * Approach of implementing the node-promotion heuristic of Nikola S. Nikolov and Alexandre
+ * Tarassov. Goal is to achieve a layering with less dummy nodes. For this purpose the original
+ * graph nodes are promoted recursively and the promotion is applied, if and only if this reduces
+ * the determined count of dummy nodes.
  * 
  * @author amf
- *
  */
 public class NodePromotion implements ILayoutProcessor {
 
@@ -60,6 +60,16 @@ public class NodePromotion implements ILayoutProcessor {
 
         int promotions;
 
+        boolean promotionFlag;
+
+        int promoteUntil = layeredGraph.getProperty(Properties.NODE_PROMOTION_BOUNDARY);
+
+        int promotionCounter = 0;
+
+        if (promoteUntil != 0) {
+            promoteUntil = (int) Math.ceil(layers.length * promoteUntil / 100.0);
+        }
+
         int[] layeringBackUp = layers.clone();
 
         do {
@@ -73,8 +83,15 @@ public class NodePromotion implements ILayoutProcessor {
                     layers = layeringBackUp.clone();
                 }
             }
-        } while (promotions != 0);
+            promotionCounter++;
+            promotionFlag = promotions == 0;
+            if (!promotionFlag) {
+                promotionFlag = !(promotionCounter <= promoteUntil);
+            }
+        } while (!promotionFlag);
 
+//        System.out.println("Maximum promotion iteration: " + promoteUntil + "; Used: "
+//                + promotionCounter);
         setNewLayering(layeredGraph);
 
         progressMonitor.done();
@@ -82,9 +99,9 @@ public class NodePromotion implements ILayoutProcessor {
     }
 
     /**
-     * Helper method for calculating needed information for the heuristic. 
-     * Sets ID's for layers and nodes to grant an easier access. 
-     * Also calculates the difference for each node between its incoming and outgoing edges.
+     * Helper method for calculating needed information for the heuristic. Sets ID's for layers and
+     * nodes to grant an easier access. Also calculates the difference for each node between its
+     * incoming and outgoing edges.
      * 
      * @param layeredGraph
      */
@@ -161,7 +178,6 @@ public class NodePromotion implements ILayoutProcessor {
         layeredGraph.getLayers().clear();
         layeredGraph.getLayers().addAll(layList);
 
-        
     }
 
     /**
