@@ -1,0 +1,56 @@
+properties:
+//de.cau.cs.kieler.klay.layered.oneDimensionalCompaction = true
+knode n0 {
+	size: width = 30 height = 30
+	klabel "N0"
+	kedge (-> n4)
+}
+knode n1 {
+	size: width = 30 height = 30
+	klabel "N1"
+}
+knode n2 {
+	size: width = 30 height = 30
+	klabel "N2"
+	kedge (-> n0)
+}
+knode n3 {
+	size: width = 30 height = 30
+	klabel "N3"
+	kedge (-> n5)
+	kedge (-> n1)
+}
+knode n4 {
+	size: width = 30 height = 30
+	klabel "N4"
+	kedge (-> n6)
+	kedge (-> n2)
+	kedge (-> n8)
+	kedge (-> n7)
+	kedge (-> n2)
+	kedge (-> n6)
+}
+knode n5 {
+	size: width = 30 height = 30
+	klabel "N5"
+	kedge (-> n2)
+	kedge (-> n1)
+}
+knode n6 {
+	size: width = 30 height = 30
+	klabel "N6"
+	kedge (-> n4)
+	kedge (-> n8)
+	kedge (-> n0)
+}
+knode n7 {
+	size: width = 30 height = 30
+	klabel "N7"
+	kedge (-> n7)
+	kedge (-> n4)
+}
+knode n8 {
+	size: width = 30 height = 30
+	klabel "N8"
+	kedge (-> n5)
+}

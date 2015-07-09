@@ -617,6 +617,7 @@ public final class OrthogonalRoutingGenerator {
             routingStrategy.calculateBendPoints(node, startPos);
         }
         
+        
         // release the created resources
         createdJunctionPoints.clear();
         return rankCount + 1;
