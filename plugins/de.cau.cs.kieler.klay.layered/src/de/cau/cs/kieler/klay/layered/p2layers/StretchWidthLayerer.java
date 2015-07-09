@@ -85,8 +85,6 @@ public class StretchWidthLayerer implements ILayoutPhase {
     private int[] inDegree;
     // selected node to be placed
     private LNode selectedNode;
-    // indicator if the original Algorithm or the adaption should be used
-    private Boolean originalAlg = false;
 
     /**
      * {@inheritDoc}
@@ -124,8 +122,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
         upperLayerInfluence = currentGraph.getProperty(Properties.UPPER_LAYER_SCALE).doubleValue();
         // -1 is used to indicate that the original algorithm should be used
         if (upperLayerInfluence == -1) {
-            originalAlg = true;
-            upperLayerInfluence = getAverageOutDegree();
+                 upperLayerInfluence = getAverageOutDegree();
 
         }
 
@@ -198,7 +195,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
     /**
      * Checks the effects of the hypothetical
      * placement of the selected node and if the algorithm should
-     *  rather go up, then placing the node
+     *  rather go up, then placing the node.
      *     
      * @return true, if the algorithm should go to the next layer
      */
