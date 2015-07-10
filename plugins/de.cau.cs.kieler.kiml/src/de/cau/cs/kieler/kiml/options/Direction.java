@@ -33,4 +33,25 @@ public enum Direction {
     /** upward vertical layout. */
     UP;
     
+    
+    /**
+     * Checks if this layout direction is horizontal. (that is, left or right) An undefined layout
+     * direction is not horizontal.
+     * 
+     * @return {@code trure} if the layout direction is horizontal.
+     */
+    public boolean isHorizontal() {
+        return this == LEFT || this == RIGHT;
+    }
+
+    /**
+     * Checks if this layout direction is vertical. (that is, up or down) An undefined layout
+     * direction is not vertical.
+     * 
+     * @return {@code trure} if the layout direction is vertical.
+     */
+    public boolean isVertical() {
+        return this == UP || this == DOWN;
+    }
+    
 }
