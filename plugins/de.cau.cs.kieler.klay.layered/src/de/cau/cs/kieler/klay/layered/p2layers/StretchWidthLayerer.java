@@ -85,6 +85,9 @@ public class StretchWidthLayerer implements ILayoutPhase {
     private int[] inDegree;
     // selected node to be placed
     private LNode selectedNode;
+    
+    private boolean org=false;
+
 
     /**
      * {@inheritDoc}
@@ -121,8 +124,10 @@ public class StretchWidthLayerer implements ILayoutPhase {
         // has no incoming edges
         upperLayerInfluence = currentGraph.getProperty(Properties.UPPER_LAYER_SCALE).doubleValue();
         // -1 is used to indicate that the original algorithm should be used
+        
         if (upperLayerInfluence == -1) {
                  upperLayerInfluence = getAverageOutDegree();
+                  org =true;
 
         }
 
@@ -200,9 +205,9 @@ public class StretchWidthLayerer implements ILayoutPhase {
      * @return true, if the algorithm should go to the next layer
      */
     private Boolean conditionGoUp() {
-        return ((widthCurrent - outDegree[selectedNode.id] + 1) > maxWidth 
-                || ((widthUp + inDegree[selectedNode.id]) > (maxWidth * upperLayerInfluence)));        
-        }    
+               return (widthCurrent  > maxWidth 
+                    || (widthUp > (maxWidth * upperLayerInfluence)));  
+          }
 
 
     /**
