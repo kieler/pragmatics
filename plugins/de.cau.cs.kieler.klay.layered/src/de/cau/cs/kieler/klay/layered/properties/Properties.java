@@ -21,6 +21,7 @@ import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.CompactionStrategy;
 
 /**
