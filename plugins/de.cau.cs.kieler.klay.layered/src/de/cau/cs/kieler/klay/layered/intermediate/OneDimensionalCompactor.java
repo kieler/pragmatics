@@ -28,6 +28,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -99,7 +100,8 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         getConstraints((a, b) -> a > b);
 
         for (CNode node : nodes) {
-            System.out.println(node + "    " + node.outDegree + "  " + node.incoming);
+            System.out.println(node + "    " + node.outDegree + "  " + node.incoming
+                    + node.pendingNSSegments);
         }
 
         compactLeft();
@@ -110,12 +112,12 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         // getConstraints((a, b) -> a < b);
         reverseConstraints();
 
-        for (CNode node : nodes) {
-            System.out.println(node + "    " + node.outDegree + "  " + node.incoming);
-        }
+        // for (CNode node : nodes) {
+        // System.out.println(node + "    " + node.outDegree + "  " + node.incoming);
+        // }
 
-        compactRight();
-        setNodePositions(nodes);
+        // compactRight();
+        // setNodePositions(nodes);
 
         nodes.clear();
         progressMonitor.done();
@@ -133,40 +135,19 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         // 1. collecting positions of graph elements
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
-
+                CNode cNode = null;
                 // add all nodes of type NORMAL because dummy nodes shouldn't have any size or
-                // spacings
-                // at this point there shouldn't even be any
+                // spacings TODO?
+                // at this point there shouldn't even be any dummy nodes?
                 if (node.getNodeType().equals(NodeType.NORMAL)) {
                     // hitbox excluding object spacing
                     Rectangle r =
                             new Rectangle(node.getPosition().x, node.getPosition().y,
                                     node.getSize().x, node.getSize().y);
-                    CNode cNode = new CNode(node, r);
+                    cNode = new CNode(node, r);
                     nodes.add(cNode);
-
-                    // TODO flag for repositioning if more edges connect to the previous layer
-                    // int d = 0;
-                    // for (LEdge edge : node.getIncomingEdges()) {
-                    // if (edge.getSource().getNode().getLayer().id < node.getLayer().id) {
-                    // d++;
-                    // } else {
-                    // d--;
-                    // }
-                    // }
-                    // for (LEdge edge : node.getOutgoingEdges()) {
-                    // if (edge.getTarget().getNode().getLayer().id < node.getLayer().id) {
-                    // d++;
-                    // } else {
-                    // d--;
-                    // }
-                    // }
-                    // if (d >= 0) {
-                    // cNode.reposition = true;
-                    // } else {
-                    // cNode.reposition = false;
-                    // }
-
+                } else { // FIXME obsolete
+                    System.out.println("WARNING! found a node with NodeType other than normal");
                 }
 
                 // add vertical edge segments
@@ -178,11 +159,26 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                     if (bends.hasNext()) {
                         KVector bend1 = bends.next();
 
+                        // get segment of source n/s port
+                        if (edge.getSource().getSide() == PortSide.NORTH
+                                || edge.getSource().getSide() == PortSide.SOUTH) {
+                            // TODO capsulate
+                            VerticalSegment vSeg =
+                                    new VerticalSegment(bend1, edge.getSource().getAbsoluteAnchor());
+                            KVectorChain inJPs = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                            for (KVector jp : inJPs) {
+                                if (Comp.eq(jp.x, bend1.x)) {
+                                    vSeg.junctionPoints.add(jp);
+                                }
+                            }
+                            vSeg.parentNode = cNode;
+                            vSeg.relativePositionX = vSeg.x - cNode.hitbox.x;
+                            verticalSegments.add(vSeg);
+                        }
+
+                        // get regular segments
                         while (bends.hasNext()) {
                             KVector bend2 = bends.next();
-                            // FIXME use just toleranceprintln(c.hitbox.x + " : " + c.hitbox.y +
-                            // " : " + c.hitbox.height
-                            // + "\n
                             if (!Comp.eq(bend1.y, bend2.y)) {
                                 VerticalSegment vSeg = new VerticalSegment(bend1, bend2);
                                 // add JPs with same x
@@ -194,11 +190,36 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                                     }
                                 }
                                 verticalSegments.add(vSeg);
-                                // TODO test if all JPs found
-                                // missing the ones on n/s segments because they're not on same x
                             }
 
                             bend1 = bend2;
+                        }
+                    }
+                }
+
+                // same for incoming edges to get those NSSegments
+                // TODO kinda shitty
+                for (LEdge edge : node.getIncomingEdges()) {
+                    Iterator<KVector> bends = edge.getBendPoints().iterator();
+                    if (bends.hasNext()) {
+                        KVector bend1 = bends.next();
+                        while (bends.hasNext()) { // TODO put inside next condition
+                            bend1 = bends.next();
+                        }
+                        // get segment of target n/s port
+                        if (edge.getTarget().getSide() == PortSide.NORTH
+                                || edge.getTarget().getSide() == PortSide.SOUTH) {
+                            VerticalSegment vSeg =
+                                    new VerticalSegment(bend1, edge.getTarget().getAbsoluteAnchor());
+                            KVectorChain inJPs = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                            for (KVector jp : inJPs) {
+                                if (Comp.eq(jp.x, bend1.x)) {
+                                    vSeg.junctionPoints.add(jp);
+                                }
+                            }
+                            vSeg.parentNode = cNode;
+                            vSeg.relativePositionX = vSeg.x - cNode.hitbox.x;
+                            verticalSegments.add(vSeg);
                         }
                     }
                 }
@@ -228,9 +249,20 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                 VerticalSegment verticalSegment = verticalSegments.get(i);
                 if (!verticalSegment.intersects(last)) {
                     nodes.add(c);
+                    // if c is NSSegment
+                    if (c.parentNode != null) {
+                        // parentNode null if not ns because that is set in 1.
+                        if (c.parentNode.connectedNSSegments == null) {
+                            c.parentNode.connectedNSSegments = Sets.newHashSet();
+                        }
+                        c.parentNode.pendingNSSegments++;
+                        c.parentNode.connectedNSSegments.add(c);
+                    }
                     // System.out.println(c.hitbox.x + " : " + c.hitbox.y + " : " + c.hitbox.height
                     // + "\n\tBPs: " + c.bends + "\n\tJPs: " + c.juctionPoints);
-                    c = new CNode(verticalSegment);
+                    c = new CNode(verticalSegment); // FIXME if nssegs intersect they belong to same
+                                                    // parent so this is faulty for intersectin
+                                                    // segments of different parents
                 } else {
                     // FIXME assuming a junction point is on one edge only, no duplicates
                     c.addSegment(verticalSegment);
@@ -245,6 +277,23 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
         verticalSegments.clear();
     }
+
+    // TODO why do nssegs not merge if this function is used??
+    // private void addNewVSegment(List<VerticalSegment> verticalSegments, LEdge edge, KVector
+    // bend1,
+    // KVector bend2, boolean regular) {
+    // if (regular || edge.getTarget().getSide() == PortSide.NORTH
+    // || edge.getTarget().getSide() == PortSide.SOUTH) {
+    // VerticalSegment vSeg = new VerticalSegment(bend1, bend2);
+    // KVectorChain inJPs = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+    // for (KVector jp : inJPs) {
+    // if (Comp.eq(jp.x, bend1.x)) {
+    // vSeg.junctionPoints.add(jp);
+    // }
+    // }
+    // verticalSegments.add(vSeg);
+    // }
+    // }
 
     private void lockNodes() {
         // TODO left/right lock nodes
@@ -289,8 +338,10 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
                 // add constraint if node2 is to the right/left of node1 and could collide in x
                 // direction
-                if (node1 != node2 && cmp.apply(node2.hitbox.x, node1.hitbox.x) // not >= neither
-                                                                                // Comp.gt to avoid
+                // exclude parentNode
+                if (node1 != node2 && node1 != node2.parentNode
+                        && cmp.apply(node2.hitbox.x, node1.hitbox.x) // not >= neither Comp.gt to
+                                                                     // avoid
                         // simultaneous constraints
                         // a->b and b->a
                         && Comp.gt(node2.hitbox.y + node2.hitbox.height + margin2.bottom + spacing,
@@ -308,6 +359,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
     private void reverseConstraints() {
         for (CNode node : nodes) {
             // TODO if CNodes are reversed again the (reversed flag)?(tmpIncoming) has to be reset
+            // TODO reset ns stuff
             node.startX = Double.POSITIVE_INFINITY;
             node.outDegree = 0;
             for (CNode inc : node.incoming) {
@@ -330,67 +382,150 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
         // starting with nodes with outDegree == 0
         Queue<CNode> startNodes = Lists.newLinkedList();
+        Queue<CNode> pendingNodes = Lists.newLinkedList();
         for (CNode node : nodes) {
             if (node.outDegree == 0) {
-                startNodes.add(node);
-                if (node.reposition) {
-                    node.startX = 0;
-                } else {
-                    if (node.isNode) {
-                        node.startX = node.lNode.getPosition().x;
+                if (node.pendingNSSegments == 0) {
+                    startNodes.add(node);
+                    if (node.reposition) {
+                        node.startX = 0;
                     } else {
-                        node.startX = node.bends.getFirst().x;
+                        if (node.isNode) {
+                            node.startX = node.lNode.getPosition().x;
+                        } else {
+                            node.startX = node.bends.getFirst().x;
+                        }
                     }
+                    // handle NSSegments
+                    if (node.parentNode != null) {
+                        node.parentNode.pendingNSSegments--;
+                        System.out.println(node + " is child of " + node.parentNode);
+                    }
+                    // handle NS parents
+                    if (node.connectedNSSegments != null) { // should not be empty
+                        // set parent startX
+                        for (CNode ns : node.connectedNSSegments) {
+                            // TODO specific to compactLeft
+                            node.startX = Math.max(node.startX, ns.startX - ns.relativePositionX);
+                            System.out.println("reset startX of " + node + ": " + node.startX);
+                        }
+                        // set connectedNSSegments startX
+                        for (CNode ns : node.connectedNSSegments) {
+                            // TODO specific to compactLeft
+                            ns.startX = node.startX + ns.relativePositionX;
+                        }
+                    }
+                } else {
+                    pendingNodes.add(node);
                 }
             }
         }
 
         // deriving leftmost positions from constraints
-        while (!startNodes.isEmpty()) {
+        while (!startNodes.isEmpty() || !pendingNodes.isEmpty()) {
 
             CNode node = startNodes.poll();
-            for (CNode inc : node.incoming) {
-                // determine if object or edge spacing should be used
-                // also retrieving margins around nodes
-                double spacing = edgeSpacing;
-                LInsets margin1 = new LInsets(0, 0, 0, 0);
-                if (node.isNode) {
-                    margin1 = node.lNode.getMargin();
-                    spacing = objSpacing;
-                }
-                LInsets margin2 = new LInsets(0, 0, 0, 0);
-                if (inc.isNode) {
-                    margin2 = inc.lNode.getMargin();
-                    spacing = objSpacing;
-                }
+            if (node != null) {
+                for (CNode inc : node.incoming) {
+                    // determine if object or edge spacing should be used
+                    // also retrieving margins around nodes
+                    double spacing = edgeSpacing;
+                    LInsets margin1 = new LInsets(0, 0, 0, 0);
+                    if (node.isNode) {
+                        margin1 = node.lNode.getMargin();
+                        spacing = objSpacing;
+                    }
+                    LInsets margin2 = new LInsets(0, 0, 0, 0);
+                    if (inc.isNode) {
+                        margin2 = inc.lNode.getMargin();
+                        spacing = objSpacing;
+                    }
 
-                double currentX;
-                if (inc.isNode) {
-                    currentX = inc.lNode.getPosition().x;
+                    double currentX;
+                    if (inc.isNode) {
+                        currentX = inc.lNode.getPosition().x;
+                    } else {
+                        currentX = inc.bends.getFirst().x;
+                    }
+
+                    double newStartX =
+                            Math.max(inc.startX, node.startX + node.hitbox.width + margin1.right
+                                    + margin2.left + spacing);
+
+                    inc.outDegree--;
+
+                    if (inc.reposition || newStartX > currentX) { // since spacing often is not
+                                                                  // sufficient enable widening
+                                                                  // (probably not needed if nothing
+                                                                  // was
+                                                                  // locked before)
+                        inc.startX = newStartX;
+                    } else {
+                        inc.startX = currentX;
+                        inc.outDegree = 0; // set 0 to prevent unnecessary loops if node is locked
+                                           // and
+                                           // spacing is correct
+                    }
+
+                    // set startNodes for the next iteration
+                    if (inc.outDegree == 0) {
+                        if (inc.pendingNSSegments == 0) { // TODO maybe do this only below ? this
+                                                          // seems duplicate
+                            startNodes.add(inc);
+                            // handle NSSegments
+                            if (inc.parentNode != null) {
+                                inc.parentNode.pendingNSSegments--;
+                                System.out.println(inc + " is child of " + inc.parentNode);
+                            }
+                            // handle NS parents
+                            if (inc.connectedNSSegments != null) { // should not be empty id not
+                                                                   // null
+                                // set parent startX
+                                for (CNode ns : inc.connectedNSSegments) {
+                                    // TODO specific to compactLeft
+                                    inc.startX =
+                                            Math.max(inc.startX, ns.startX - ns.relativePositionX);
+                                    System.out
+                                            .println("reset startX of " + inc + ": " + inc.startX);
+                                }
+                                // set connectedNSSegments startX
+                                for (CNode ns : inc.connectedNSSegments) {
+                                    // TODO specific to compactLeft
+                                    ns.startX = inc.startX + ns.relativePositionX;
+                                }
+                            }
+                        } else {
+                            pendingNodes.add(inc);
+                        }
+                    }
+                }
+            }
+
+            node = pendingNodes.poll();
+            if (node != null) {
+                if (node.pendingNSSegments == 0) {
+                    startNodes.add(node);
+                    // handle NSSegments
+                    if (node.parentNode != null) {
+                        node.parentNode.pendingNSSegments--;
+                        System.out.println(node + " is child of " + node.parentNode);
+                    }
+                    // handle NS parents
+                    if (node.connectedNSSegments != null) { // should not be empty id not null
+                        // set parent startX
+                        for (CNode ns : node.connectedNSSegments) {
+                            // TODO specific to compactLeft
+                            node.startX = Math.max(node.startX, ns.startX - ns.relativePositionX);
+                            System.out.println("reset startX of " + node + ": " + node.startX);
+                        }
+                        // set connectedNSSegments startX
+                        for (CNode ns : node.connectedNSSegments) {
+                            // TODO specific to compactLeft
+                            ns.startX = node.startX + ns.relativePositionX;
+                        }
+                    }
                 } else {
-                    currentX = inc.bends.getFirst().x;
-                }
-
-                double newStartX =
-                        Math.max(inc.startX, node.startX + node.hitbox.width + margin1.right
-                                + margin2.left + spacing);
-
-                inc.outDegree--;
-
-                if (inc.reposition || newStartX > currentX) { // since spacing often is not
-                                                              // sufficient enable widening
-                                                              // (probably not needed if nothing was
-                                                              // locked before)
-                    inc.startX = newStartX;
-                } else {
-                    inc.startX = currentX;
-                    inc.outDegree = 0; // set 0 to prevent unnecessary loops if node is locked and
-                                       // spacing is correct
-                }
-
-                // set startNodes for the next iteration
-                if (inc.outDegree == 0) {
-                    startNodes.add(inc);
+                    pendingNodes.add(node);
                 }
             }
         }
@@ -502,6 +637,11 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         // representation of constraints
         private Set<CNode> incoming = Sets.newHashSet();// Lists.newArrayList();
         private int outDegree = 0;
+        // TODO could there be multiple parents?
+        private CNode parentNode = null;
+        private double relativePositionX;
+        private int pendingNSSegments = 0;
+        private Set<CNode> connectedNSSegments = null;
         private double startX = Double.NEGATIVE_INFINITY;
 
         /**
@@ -523,6 +663,8 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
             this.bends = new KVectorChain(vSeg.bend1, vSeg.bend2);
             this.juctionPoints = new KVectorChain(vSeg.junctionPoints);
             this.hitbox = new Rectangle(vSeg.x, vSeg.y1, 0, vSeg.y2 - vSeg.y1);
+            this.parentNode = vSeg.parentNode;
+            this.relativePositionX = vSeg.relativePositionX;
         }
 
         private void addSegment(final VerticalSegment vSeg) { // TODO check this!!
@@ -531,6 +673,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
             double newY1 = Math.min(this.hitbox.y, vSeg.y1);
             double newY2 = Math.max(this.hitbox.y + this.hitbox.height, vSeg.y2);
             this.hitbox.setRect(vSeg.x, newY1, 0, newY2 - newY1);
+            // TODO necessary to merge ns stuff?
         }
 
         // TODO private boolean intersects(CNode o)
@@ -549,6 +692,8 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
     // TODO -- comparable
     private final class VerticalSegment /* implements Comparable<VerticalSegment> */{
+        private CNode parentNode;
+        private double relativePositionX;
         private KVector bend1, bend2;
         private KVectorChain junctionPoints = new KVectorChain();
         private double x, y1, y2;
