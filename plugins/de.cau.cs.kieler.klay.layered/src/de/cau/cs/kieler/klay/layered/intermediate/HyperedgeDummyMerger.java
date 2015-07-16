@@ -19,7 +19,6 @@ import java.util.ListIterator;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
@@ -34,14 +33,18 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * are joined that the crossing minimizer placed right next to each other.
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>a layered graph; node orders are fixed; for long edge dummies
- *     to be joined, their {@link de.cau.cs.kieler.klay.layered.properties.Properties#LONG_EDGE_SOURCE}
- *     and {@link de.cau.cs.kieler.klay.layered.properties.Properties#LONG_EDGE_TARGET} properties must
- *     be set.</dd>
- *   <dt>Postcondition:</dt><dd>long edge dummy nodes belonging to the same hyperedge and
- *     being directly next to each other are merged.</dd>
- *   <dt>Slots:</dt><dd>Before phase 4.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link InLayerConstraintProcessor}</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph</dd>
+ *     <dd>node orders are fixed</dd>
+ *     <dd>for long edge dummies {@link InternalProperties#LONG_EDGE_SOURCE} and
+ *         {@link InternalProperties#LONG_EDGE_TARGET} properties must be set.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>long edge dummy nodes belonging to the same hyperedge and being directly next to each other
+ *         are merged.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 4.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link InLayerConstraintProcessor}</dd>
  * </dl>
  *
  * @author cds
@@ -67,58 +70,48 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor {
                 continue;
             }
             
-            LNode currentNode = null;
-            NodeType currentNodeType = null;
+            LNode currNode = null;
+            NodeType currNodeType = null;
             LNode lastNode = null;
             NodeType lastNodeType = null;
             
             // Iterate through the remaining nodes
             for (int nodeIndex = 0; nodeIndex < nodes.size(); nodeIndex++) {
                 // Get the next node
-                currentNode = nodes.get(nodeIndex);
-                currentNodeType = currentNode.getType();
+                currNode = nodes.get(nodeIndex);
+                currNodeType = currNode.getType();
                 
                 // We're only interested if the current and last nodes are long edge dummies
-                if (currentNodeType == NodeType.LONG_EDGE
-                        && lastNodeType == NodeType.LONG_EDGE) {
-                    
+                if (currNodeType == NodeType.LONG_EDGE && lastNodeType == NodeType.LONG_EDGE) {
                     // Get long edge source and target ports
-                    LPort currentNodeSource = currentNode.getProperty(
-                            InternalProperties.LONG_EDGE_SOURCE);
-                    LPort lastNodeSource = lastNode.getProperty(
-                            InternalProperties.LONG_EDGE_SOURCE);
-                    LPort currentNodeTarget = currentNode.getProperty(
-                            InternalProperties.LONG_EDGE_TARGET);
-                    LPort lastNodeTarget = lastNode.getProperty(
-                            InternalProperties.LONG_EDGE_TARGET);
+                    LPort currNodeSource = currNode.getProperty(InternalProperties.LONG_EDGE_SOURCE);
+                    LPort lastNodeSource = lastNode.getProperty(InternalProperties.LONG_EDGE_SOURCE);
+                    LPort currNodeTarget = currNode.getProperty(InternalProperties.LONG_EDGE_TARGET);
+                    LPort lastNodeTarget = lastNode.getProperty(InternalProperties.LONG_EDGE_TARGET);
                     
                     // If at least one of the two nodes doesn't have the properties set, skip it
-                    boolean currentNodePropertiesSet =
-                        currentNodeSource != null || currentNodeTarget != null;
-                    boolean lastNodePropertiesSet =
-                        lastNodeSource != null || lastNodeTarget != null;
+                    boolean currNodePropertiesSet = currNodeSource != null || currNodeTarget != null;
+                    boolean lastNodePropertiesSet = lastNodeSource != null || lastNodeTarget != null;
                     
                     // If the source or the target are identical, merge the current node
                     // into the last
-                    if (currentNodePropertiesSet && lastNodePropertiesSet
-                            && (currentNodeSource == lastNodeSource
-                                    || currentNodeTarget == lastNodeTarget)) {
+                    if (currNodePropertiesSet && lastNodePropertiesSet
+                            && (currNodeSource == lastNodeSource || currNodeTarget == lastNodeTarget)) {
                         
-                        mergeNodes(lastNode, currentNode, currentNodeSource == lastNodeSource,
-                                currentNodeTarget == lastNodeTarget
-                        );
+                        mergeNodes(currNode, lastNode, currNodeSource == lastNodeSource,
+                                currNodeTarget == lastNodeTarget);
                         
                         // Remove the current node and make the last node the current node
                         nodes.remove(nodeIndex);
                         nodeIndex--;
-                        currentNode = lastNode;
-                        currentNodeType = lastNodeType;
+                        currNode = lastNode;
+                        currNodeType = lastNodeType;
                     }
                 }
                 
                 // Remember this node for the next iteration
-                lastNode = currentNode;
-                lastNodeType = currentNodeType;
+                lastNode = currNode;
+                lastNodeType = currNodeType;
             }
         }
         
@@ -128,14 +121,18 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor {
     /**
      * Merges the merge source node into the merge target node. All edges that were previously
      * connected to the merge source's ports are rerouted to the merge target. The merge target's
-     * long edge source and target ports can be set to null.
+     * long edge source and target ports can be set to {@code null}.
      * 
-     * @param mergeTarget the merge target node.
      * @param mergeSource the merge source node.
-     * @param keepSourcePort if {@code true}, the long edge source property is set to {@code null}.
-     * @param keepTargetPort if {@code true}, the long edge target property is set to {@code null}.
+     * @param mergeTarget the merge target node.
+     * @param keepSourcePort if {@code false}, the long edge source property is set to {@code null}.
+     *                       This should be done if the long edge sources of the two nodes to be merged
+     *                       are different.
+     * @param keepTargetPort if {@code false}, the long edge target property is set to {@code null}.
+     *                       This should be done if the long edge targets of the two nodes to be merged
+     *                       are different.
      */
-    private void mergeNodes(final LNode mergeTarget, final LNode mergeSource,
+    private void mergeNodes(final LNode mergeSource, final LNode mergeTarget,
             final boolean keepSourcePort, final boolean keepTargetPort) {
         
         // We assume that the input port is west, and the output port east
@@ -143,24 +140,12 @@ public final class HyperedgeDummyMerger implements ILayoutProcessor {
         LPort mergeTargetOutputPort = mergeTarget.getPorts(PortSide.EAST).iterator().next();
         
         for (LPort port : mergeSource.getPorts()) {
-            if (!port.getIncomingEdges().isEmpty()) {
-                // Use an array of edges to avoid concurrent modification exceptions
-                LEdge[] edgeArray = port.getIncomingEdges().toArray(
-                        new LEdge[port.getIncomingEdges().size()]);
-                
-                for (LEdge edge : edgeArray) {
-                    edge.setTarget(mergeTargetInputPort);
-                }
+            while (!port.getIncomingEdges().isEmpty()) {
+                port.getIncomingEdges().get(0).setTarget(mergeTargetInputPort);
             }
             
-            if (!port.getOutgoingEdges().isEmpty()) {
-                // Use an array of edges to avoid concurrent modification exceptions
-                LEdge[] edgeArray = port.getOutgoingEdges().toArray(
-                        new LEdge[port.getOutgoingEdges().size()]);
-                
-                for (LEdge edge : edgeArray) {
-                    edge.setSource(mergeTargetOutputPort);
-                }
+            while (!port.getOutgoingEdges().isEmpty()) {
+                port.getOutgoingEdges().get(0).setSource(mergeTargetOutputPort);
             }
         }
         
