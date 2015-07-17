@@ -66,6 +66,8 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author dag
  */
 public class OneDimensionalCompactor implements ILayoutProcessor {
+    
+    //TODO use sets or arraylists??
 
     private static final double TOLERANCE = 0.0001; // TODO ????????
 
@@ -174,6 +176,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                             vSeg.parentNode = cNode;
                             vSeg.relativePositionX = vSeg.x - cNode.hitbox.x;
                             verticalSegments.add(vSeg);
+                            vSeg.lEdge = edge;
                         }
 
                         // get regular segments
@@ -190,6 +193,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                                     }
                                 }
                                 verticalSegments.add(vSeg);
+                                vSeg.lEdge = edge;
                             }
 
                             bend1 = bend2;
@@ -200,15 +204,12 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                 // same for incoming edges to get those NSSegments
                 // TODO kinda shitty
                 for (LEdge edge : node.getIncomingEdges()) {
-                    Iterator<KVector> bends = edge.getBendPoints().iterator();
-                    if (bends.hasNext()) {
-                        KVector bend1 = bends.next();
-                        while (bends.hasNext()) { // TODO put inside next condition
-                            bend1 = bends.next();
-                        }
+                    if (!edge.getBendPoints().isEmpty()) { //FIXME what if 2 nodes connected by ns seg??
+                        
                         // get segment of target n/s port
                         if (edge.getTarget().getSide() == PortSide.NORTH
                                 || edge.getTarget().getSide() == PortSide.SOUTH) {
+                            KVector bend1 = edge.getBendPoints().getLast(); 
                             VerticalSegment vSeg =
                                     new VerticalSegment(bend1, edge.getTarget().getAbsoluteAnchor());
                             KVectorChain inJPs = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
@@ -220,6 +221,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                             vSeg.parentNode = cNode;
                             vSeg.relativePositionX = vSeg.x - cNode.hitbox.x;
                             verticalSegments.add(vSeg);
+                            vSeg.lEdge = edge;
                         }
                     }
                 }
@@ -228,7 +230,6 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
         // 2. combining intersecting segments to process them as one
         if (!verticalSegments.isEmpty()) {
-            // FIXME this part is the least efficient
             Collections.sort(verticalSegments, new Comparator<VerticalSegment>() {
                 /**
                  * {@inheritDoc}
@@ -261,7 +262,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                     // System.out.println(c.hitbox.x + " : " + c.hitbox.y + " : " + c.hitbox.height
                     // + "\n\tBPs: " + c.bends + "\n\tJPs: " + c.juctionPoints);
                     c = new CNode(verticalSegment); // FIXME if nssegs intersect they belong to same
-                                                    // parent so this is faulty for intersectin
+                                                    // parent so this is faulty for intersecting
                                                     // segments of different parents
                 } else {
                     // FIXME assuming a junction point is on one edge only, no duplicates
@@ -271,6 +272,15 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                 last = verticalSegment;
             }
             nodes.add(c);
+            // if c is NSSegment
+            if (c.parentNode != null) {
+                // parentNode null if not ns because that is set in 1.
+                if (c.parentNode.connectedNSSegments == null) {
+                    c.parentNode.connectedNSSegments = Sets.newHashSet();
+                }
+                c.parentNode.pendingNSSegments++;
+                c.parentNode.connectedNSSegments.add(c);
+            }
             // System.out.println(c.hitbox.x + " : " + c.hitbox.y + " : " + c.hitbox.height
             // + "\n\tBPs: " + c.bends + "\n\tJPs: " + c.juctionPoints);
         }
@@ -316,24 +326,33 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
             }
         }
     }
+    
+    private double getSpacing(CNode a, CNode b) {
+        if (a.isNode && b.isNode) {
+            return objSpacing;
+        }
+        //TODO testing zero spacing
+        if (a.parentNode != null && b.parentNode != null && !Sets.intersection(a.lEdges, b.lEdges).isEmpty()) {
+            return 0;
+        }
+        return edgeSpacing;
+    }
 
     private void getConstraints(final BiFunction<Double, Double, Boolean> cmp) { // FIXME overhead??
         // 3. infer constraints from hitbox intersections
         for (CNode node1 : nodes) {
-
-            double spacing = edgeSpacing;
+            
             LInsets margin1 = new LInsets(0, 0, 0, 0);
             if (node1.isNode) {
                 margin1 = node1.lNode.getMargin();
-                spacing = objSpacing;
             }
 
             for (CNode node2 : nodes) {
-
+                double spacing = getSpacing(node1, node2);
+                
                 LInsets margin2 = new LInsets(0, 0, 0, 0);
                 if (node2.isNode) {
                     margin2 = node2.lNode.getMargin();
-                    spacing = objSpacing;
                 }
 
                 // add constraint if node2 is to the right/left of node1 and could collide in x
@@ -429,16 +448,14 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                 for (CNode inc : node.incoming) {
                     // determine if object or edge spacing should be used
                     // also retrieving margins around nodes
-                    double spacing = edgeSpacing;
+                    double spacing = getSpacing(node, inc);
                     LInsets margin1 = new LInsets(0, 0, 0, 0);
                     if (node.isNode) {
                         margin1 = node.lNode.getMargin();
-                        spacing = objSpacing;
                     }
                     LInsets margin2 = new LInsets(0, 0, 0, 0);
                     if (inc.isNode) {
                         margin2 = inc.lNode.getMargin();
-                        spacing = objSpacing;
                     }
 
                     double currentX;
@@ -562,16 +579,14 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
             for (CNode inc : node.incoming) {
                 // determine if object or edge spacing should be used
                 // also retrieving margins around nodes
-                double spacing = edgeSpacing;
+                double spacing = getSpacing(node, inc);
                 LInsets margin1 = new LInsets(0, 0, 0, 0);
                 if (node.isNode) {
                     margin1 = node.lNode.getMargin();
-                    spacing = objSpacing;
                 }
                 LInsets margin2 = new LInsets(0, 0, 0, 0);
                 if (inc.isNode) {
                     margin2 = inc.lNode.getMargin();
-                    spacing = objSpacing;
                 }
 
                 // calculating rightmost position according to constraints
@@ -616,146 +631,6 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                     j.x = node.startX;
                 }
             }
-        }
-    }
-
-    /**
-     * Internal representation of a node in the constraint graph specifying a hitbox for the
-     * {@link LGraphElement}.
-     */
-    private final class CNode {
-        private boolean isNode;
-        // used for reversing constraints
-        private Set<CNode> tmpIncoming = Sets.newHashSet();
-        // flags a node to be repositioned
-        private boolean reposition = true;
-        private LNode lNode;// TODO LNode or just position? hmm need margins
-        private Rectangle hitbox;
-        // specify particular vertical edge segments and affected junction points
-        private KVectorChain bends;
-        private KVectorChain juctionPoints;
-        // representation of constraints
-        private Set<CNode> incoming = Sets.newHashSet();// Lists.newArrayList();
-        private int outDegree = 0;
-        // TODO could there be multiple parents?
-        private CNode parentNode = null;
-        private double relativePositionX;
-        private int pendingNSSegments = 0;
-        private Set<CNode> connectedNSSegments = null;
-        private double startX = Double.NEGATIVE_INFINITY;
-
-        /**
-         * Creates new constraint node
-         * 
-         * @param elem
-         *            the graph element
-         * @param hitbox
-         *            the constraints are inferred from this box
-         */
-        private CNode(final LNode lNode, final Rectangle hitbox) {
-            this.lNode = lNode;
-            this.hitbox = hitbox;
-            this.isNode = true;
-        }
-
-        private CNode(final VerticalSegment vSeg) {
-            this.isNode = false;
-            this.bends = new KVectorChain(vSeg.bend1, vSeg.bend2);
-            this.juctionPoints = new KVectorChain(vSeg.junctionPoints);
-            this.hitbox = new Rectangle(vSeg.x, vSeg.y1, 0, vSeg.y2 - vSeg.y1);
-            this.parentNode = vSeg.parentNode;
-            this.relativePositionX = vSeg.relativePositionX;
-        }
-
-        private void addSegment(final VerticalSegment vSeg) { // TODO check this!!
-            this.bends.addAll(vSeg.bend1, vSeg.bend2);
-            this.juctionPoints.addAll(vSeg.junctionPoints);
-            double newY1 = Math.min(this.hitbox.y, vSeg.y1);
-            double newY2 = Math.max(this.hitbox.y + this.hitbox.height, vSeg.y2);
-            this.hitbox.setRect(vSeg.x, newY1, 0, newY2 - newY1);
-            // TODO necessary to merge ns stuff?
-        }
-
-        // TODO private boolean intersects(CNode o)
-
-        // TODO test
-        @Override
-        public String toString() {
-            if (this.isNode) {
-                return this.lNode.getName();
-            } else {
-                return "seg(" + this.hitbox.x + ", " + this.hitbox.y + ")";
-            }
-        }
-
-    }
-
-    // TODO -- comparable
-    private final class VerticalSegment /* implements Comparable<VerticalSegment> */{
-        private CNode parentNode;
-        private double relativePositionX;
-        private KVector bend1, bend2;
-        private KVectorChain junctionPoints = new KVectorChain();
-        private double x, y1, y2;
-
-        private VerticalSegment(final KVector bend1, final KVector bend2) {
-            this.bend1 = bend1;
-            this.bend2 = bend2;
-
-            if (bend1.y < bend2.y) {
-                x = bend1.x;
-                y1 = bend1.y;
-                y2 = bend2.y;
-            } else {
-                x = bend2.x;
-                y1 = bend2.y;
-                y2 = bend1.y;
-            }
-        }
-
-        private boolean intersects(VerticalSegment o) {
-            return Comp.eq(this.x, o.x) && Comp.ge(this.y2, o.y1) && Comp.le(this.y1, o.y2); // FIXME
-                                                                                             // correct?
-        }
-
-        // /**
-        // * {@inheritDoc}
-        // */
-        // public int compareTo(VerticalSegment o) {
-        // return Double.compare(this.bend1.x, o.bend1.x);
-        // }
-
-        @Override
-        public String toString() {
-            return "\nb1: " + bend1 + " \tb2: " + bend2 + " \t" + junctionPoints;
-        }
-    }
-
-    /**
-     * Internal class for tolerance affected double comparisons.
-     */
-    private static final class Comp {
-
-        private static final double TOLERANCE = 0.0001;
-
-        private static boolean eq(final double d1, final double d2) {
-            return Math.abs(d1 - d2) <= TOLERANCE;
-        }
-
-        private static boolean gt(final double d1, final double d2) {
-            return d1 - d2 > TOLERANCE;
-        }
-
-        private static boolean lt(final double d1, final double d2) {
-            return d2 - d1 > TOLERANCE;
-        }
-
-        private static boolean ge(final double d1, final double d2) {
-            return d1 - d2 >= -TOLERANCE;
-        }
-
-        private static boolean le(final double d1, final double d2) {
-            return d2 - d1 >= -TOLERANCE;
         }
     }
 
