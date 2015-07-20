@@ -63,6 +63,8 @@ public class LayersAnalysis implements IAnalysis {
     public static final int INDEX_MAX_NODES_PER_LAYER = 3;
     public static final int INDEX_MAX_NODES_PER_LAYER_DUMMIES = 4;
     public static final int INDEX_EDGE_DENSITY = 5;
+    public static final int INDEX_EDGE_DENSITY_STD_DERIVATION = 6;
+
     
     // we store the determined layers in order for other 
     // analyses to access them
@@ -139,7 +141,7 @@ public class LayersAnalysis implements IAnalysis {
 
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
                 AnalysisOptions.ANALYZE_HIERARCHY);
-        int[] count = countLayers(parentNode, hierarchy);
+        double[] count = countLayers(parentNode, hierarchy);
 
         progressMonitor.done();
         // SUPPRESS CHECKSTYLE NEXT 1 MagicNumber
@@ -149,7 +151,8 @@ public class LayersAnalysis implements IAnalysis {
                 count[INDEX_DUMMIES],
                 count[INDEX_MAX_NODES_PER_LAYER],
                 count[INDEX_MAX_NODES_PER_LAYER_DUMMIES],
-                count[INDEX_EDGE_DENSITY]
+                count[INDEX_EDGE_DENSITY],
+                count[INDEX_EDGE_DENSITY_STD_DERIVATION]
         };
     }
     
@@ -160,7 +163,7 @@ public class LayersAnalysis implements IAnalysis {
      * @param hierarchy whether to process hierarchy recursively
      * @return the number of horizontal / vertical layers, respectively
      */
-    public int[] countLayers(final KNode parentNode, final boolean hierarchy) {
+    public double[] countLayers(final KNode parentNode, final boolean hierarchy) {
         // analyze horizontal layers
         List<Layer> horizontalLayers = new LinkedList<Layer>();
         for (KNode node : parentNode.getChildren()) {
@@ -266,6 +269,9 @@ public class LayersAnalysis implements IAnalysis {
         // incoming edges with a source in a layer j' > i plus the number of
         // dummy nodes in layer i
         int maxEdgeDensity = Integer.MIN_VALUE;
+        Map<Integer, Integer> allEdgeDensity = Maps.newHashMap();
+        int overallSamples;
+        
         if (dir == Direction.LEFT || dir == Direction.RIGHT
                 || dir == Direction.UNDEFINED) { // default direction is kindof left-to-right
             for (Layer l : verticalLayers) {
@@ -287,7 +293,19 @@ public class LayersAnalysis implements IAnalysis {
                     }
                 }
                 maxEdgeDensity = Math.max(maxEdgeDensity, layerOutEdges);
+                
+              //add edgedensity to the map  or increment counter if its already there
+                int count = 1;
+                if (allEdgeDensity.containsKey(layerOutEdges)) {
+                   count =  allEdgeDensity.get(layerOutEdges);
+                   count++;
+                }
+                allEdgeDensity.put(layerOutEdges, count);
+
+                
+                
             }
+         overallSamples = verticalLayers.size();   
         } else {
             for (Layer l : horizontalLayers) {
                 int layerOutEdges = l.dummies;
@@ -308,18 +326,42 @@ public class LayersAnalysis implements IAnalysis {
                     }
                 }
                 maxEdgeDensity = Math.max(maxEdgeDensity, layerOutEdges);
+                
+              //add edgedensity to the map  or increment counter if its already there
+                int count = 1;
+                if (allEdgeDensity.containsKey(layerOutEdges)) {
+                   count =  allEdgeDensity.get(layerOutEdges);
+                   count++;
+                }
+                allEdgeDensity.put(layerOutEdges, count);
+
             }
+           overallSamples = horizontalLayers.size(); 
         }
         
+        //compute expected Value
+        double expV = 0;
+        for (Integer density:allEdgeDensity.keySet()) {
+            expV = expV + density * allEdgeDensity.get(density);            
+        }
+        expV = expV / overallSamples;
+        //compute std. deviation
+        double stdDeviation = 0;
+        for (Integer density:allEdgeDensity.keySet()) {
+            stdDeviation = stdDeviation + ((density - expV) * (density - expV)) 
+                    * allEdgeDensity.get(density);            
+        }
+        stdDeviation = stdDeviation / overallSamples;
+        stdDeviation = Math.sqrt(stdDeviation);
         // count the number of layers in the nested subgraphs
-        int[] count =
-                new int[] { horizontalLayers.size(), verticalLayers.size(), dummyCount,
-                        maxNodesPerLayer, maxNodesPerLayerWDummies, maxEdgeDensity };
+        double[] count =
+                new double[] { horizontalLayers.size(), verticalLayers.size(), dummyCount,
+                        maxNodesPerLayer, maxNodesPerLayerWDummies, maxEdgeDensity, stdDeviation };
 
         if (hierarchy) {
             for (KNode child : parentNode.getChildren()) {
                 if (!child.getChildren().isEmpty()) {
-                    int[] childResult = countLayers(child, true);
+                    double[] childResult = countLayers(child, true);
                     count[INDEX_HORIZONTAL] += childResult[INDEX_HORIZONTAL];
                     count[INDEX_VERTICAL] += childResult[INDEX_VERTICAL];
                     count[INDEX_DUMMIES] += childResult[INDEX_DUMMIES];
@@ -332,6 +374,8 @@ public class LayersAnalysis implements IAnalysis {
                     count[INDEX_EDGE_DENSITY] = Math.max(
                             childResult[INDEX_EDGE_DENSITY],
                             count[INDEX_EDGE_DENSITY]);
+                    count[INDEX_EDGE_DENSITY_STD_DERIVATION] = -1;
+                    
                 }
             }
         }

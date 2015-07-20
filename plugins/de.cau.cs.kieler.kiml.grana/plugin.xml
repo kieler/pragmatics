@@ -462,6 +462,10 @@
                abbreviation="ED"
                name="Edge Density (Adj. Layer)">
          </component>
+          <component
+               abbreviation="ED-SD"
+               name="Edge Density Standard Deviation">
+         </component>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.drawing"
