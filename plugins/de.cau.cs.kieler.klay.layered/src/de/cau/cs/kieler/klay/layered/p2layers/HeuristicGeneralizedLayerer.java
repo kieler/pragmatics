@@ -102,8 +102,8 @@ public class HeuristicGeneralizedLayerer implements ILayoutPhase {
         
         // initialize some variables that can be configured using layout options
         random = layeredGraph.getProperty(InternalProperties.RANDOM);
-        wLen = layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT);
-        wRev = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT);
+        wLen = layeredGraph.getProperty(Properties.EDGE_LENGTH_WEIGHT).doubleValue();
+        wRev = layeredGraph.getProperty(Properties.EDGE_REVERSAL_WEIGHT).doubleValue();
         
    
         // ---------------------
