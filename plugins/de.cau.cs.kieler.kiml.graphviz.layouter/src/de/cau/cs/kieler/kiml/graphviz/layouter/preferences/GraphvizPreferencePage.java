@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2008 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -24,7 +24,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
 import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayoutProvider;
-import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizLayouterPlugin;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
 
 /**
@@ -80,7 +79,7 @@ public class GraphvizPreferencePage extends FieldEditorPreferencePage implements
      * {@inheritDoc}
      */
     public void init(final IWorkbench workbench) {
-        setPreferenceStore(GraphvizLayouterPlugin.getDefault().getPreferenceStore());
+        setPreferenceStore(GraphvizLayouterPreferenceStore.getInstance().getPreferenceStore());
     }
     
     /**

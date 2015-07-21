@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -110,7 +110,7 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
                 // if we have a long edge dummy node, save the calculated position in a property
                 // to be used by the interactive node placer (for dummy nodes other than long edge
                 // dummies, we haven't calculated meaningful positions)
-                if (node.getNodeType() == NodeType.LONG_EDGE) {
+                if (node.getType() == NodeType.LONG_EDGE) {
                     node.setProperty(InternalProperties.ORIGINAL_DUMMY_NODE_POSITION, pos[node.id]);
                 }
             }
@@ -155,7 +155,7 @@ public final class InteractiveCrossingMinimizer implements ILayoutPhase {
      * @return the vertical position used for sorting
      */
     private double getPos(final LNode node, final double horizPos) {
-        switch (node.getNodeType()) {
+        switch (node.getType()) {
         case LONG_EDGE:
             LEdge edge = (LEdge) node.getProperty(InternalProperties.ORIGIN);
             // reconstruct the original bend points from the node annotations

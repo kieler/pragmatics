@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -32,9 +32,7 @@ import de.cau.cs.kieler.klay.layered.graph.LShape;
  * @author tit
  */
 public final class Rectangle {
-    /** Format for the values shown on toString(). */
-    private static final DecimalFormat DEC_FORMAT = new DecimalFormat("#0.0");
-   
+    
     // The rectangle is defined by the four outer coordinates.
     /** Minimum y-value. */
     private double top = Double.MAX_VALUE; 
@@ -316,6 +314,11 @@ public final class Rectangle {
         return retVal;
     }
     
+    // GWTExcludeStart
+    // DecimalFormat not available in gwt
+    /** Format for the values shown on toString(). */
+    private static final DecimalFormat DEC_FORMAT = new DecimalFormat("#0.0");
+
     /**
      * Converts this rectangle to a readable string with rounded values.
      * 
@@ -328,4 +331,5 @@ public final class Rectangle {
         + ",bottom= " + DEC_FORMAT.format(bottom) 
         + ",right= " + DEC_FORMAT.format(right) + "]";
     }
+    // GWTExcludeEnd
 }

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -23,7 +23,6 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.kiml.LayoutMetaDataService;
 import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
 import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.klay.test.config.DummyLayoutConfigurator;
@@ -49,7 +48,7 @@ import de.cau.cs.kieler.klay.test.utils.TestPath;
 public abstract class KlayAutomatedJUnitTest {
 
     /** The graph files. */
-    private static List<GraphTestObject> graphsList;
+    protected static List<GraphTestObject> graphsList;
     private static List<ILayoutConfigurator> configurators;
 
     /**

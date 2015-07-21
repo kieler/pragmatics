@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -44,8 +44,8 @@ public final class EadesModel extends AbstractForceModel {
     protected void initialize(final FGraph graph) {
         super.initialize(graph);
         maxIterations = graph.getProperty(Properties.ITERATIONS);
-        springLength = graph.getProperty(Properties.SPACING);
-        repulsionFactor = graph.getProperty(Properties.REPULSION);
+        springLength = graph.getProperty(Properties.SPACING).doubleValue();
+        repulsionFactor = graph.getProperty(Properties.REPULSION).doubleValue();
     }
     
     /**

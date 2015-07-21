@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -345,6 +345,8 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
      * @param values
      *            the allowed values.
      * @return a pair with the property and the possible values.
+     * 
+     * @deprecated Use {@link DiagramSyntheses#specifyLayoutOption(String, List)}
      */
     protected Pair<IProperty<?>, List<?>> specifyLayoutOption(final IProperty<?> prop,
             final List<?> values) {
@@ -426,7 +428,8 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
 
 
     /**
-     * Convenience method for defining layout options for {@link KGraphElement KGraphElements}.
+     * Convenience method for defining layout options for {@link KGraphElement KGraphElements}. A
+     * list of typically configured options is given in {@link DiagramLayoutOptions}.
      *
      * @param <R>
      *            the concrete type of <code>element</code>
@@ -449,7 +452,8 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
 
     /**
      * Convenience method for defining multiple layout options for {@link KGraphElement
-     * KGraphElements}.<br>
+     * KGraphElements}. A list of typically configured options is given in
+     * {@link DiagramLayoutOptions}.<br>
      * The required <code>optionValueMap</code> can be easily created via
      * {@link com.google.common.collect.ImmutableMap#of(Object, Object, Object, Object)
      * ImmutableMap#of(Object, Object, Object, Object)}, for example.
@@ -472,7 +476,8 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
 
     /**
      * Convenience method for defining collapse/expand state dependent layout options for
-     * {@link KNode KNodes}.
+     * {@link KNode KNodes}. A list of typically configured options is given in
+     * {@link DiagramLayoutOptions}.
      *
      * @param <T>
      *            the property value type
@@ -497,7 +502,8 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
     /**
      * Convenience method for defining collapse/expand state dependent layout options for
      * {@link KPort KPorts}. The collapse/expand state refers to that of the {@link KNode}
-     * containing the {@link KPort}.
+     * containing the {@link KPort}. A list of typically configured options is given in
+     * {@link DiagramLayoutOptions}.
      *
      * @param <T>
      *            the property value type

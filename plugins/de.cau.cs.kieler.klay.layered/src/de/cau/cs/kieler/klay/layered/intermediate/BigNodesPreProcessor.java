@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -106,7 +106,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         double minWidth = Float.MAX_VALUE;
         for (LNode node : nodes) {
             // ignore all dummy nodes
-            if ((node.getNodeType() == NodeType.NORMAL) && (node.getSize().x < minWidth)) {
+            if ((node.getType() == NodeType.NORMAL) && (node.getSize().x < minWidth)) {
                 minWidth = node.getSize().x;
             }
         }
@@ -118,7 +118,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         List<BigNode> bigNodes = Lists.newArrayList();
         double threshold = (minWidth + spacing);
         for (LNode node : nodes) {
-            if ((node.getNodeType() == NodeType.NORMAL) && (node.getSize().x > threshold)) {
+            if ((node.getType() == NodeType.NORMAL) && (node.getSize().x > threshold)) {
                 // when splitting, consider that we can use the spacing area
                 // we try to find a node width that considers the spacing
                 // for every dummy node to be created despite the last one
@@ -281,7 +281,7 @@ public class BigNodesPreProcessor implements ILayoutProcessor {
         private LNode introduceDummyNode(final LNode src, final double width) {
             // create new dummy node
             LNode dummy = new LNode(layeredGraph);
-            dummy.setNodeType(NodeType.BIG_NODE);
+            dummy.setType(NodeType.BIG_NODE);
             
             // copy some properties
             dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS,

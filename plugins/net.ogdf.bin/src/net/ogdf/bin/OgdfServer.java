@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -24,10 +24,11 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ogdf.bin.preferences.OgdfPreferenceStoreAccess;
+
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.framework.Bundle;
 
 /**
@@ -589,6 +590,7 @@ public class OgdfServer {
      */
     private void exitValueError(final int exitValue, final StringBuilder error) {
         error.append("Process terminated with exit value ").append(exitValue);
+        // SUPPRESS CHECKSTYLE NEXT 30 MagicNumber
         if (exitValue > 128) {
             switch (exitValue - 128) {
             case 2: // SIGINT
@@ -660,8 +662,8 @@ public class OgdfServer {
                 }
                 
                 // retrieve the current timeout value
-                IPreferenceStore preferenceStore = OgdfPlugin.getDefault().getPreferenceStore();
-                int timeout = preferenceStore.getInt(PREF_TIMEOUT);
+                int timeout = PROCESS_DEF_TIMEOUT;
+                timeout = OgdfPreferenceStoreAccess.getUISaveInt(PREF_TIMEOUT);
                 if (timeout < PROCESS_MIN_TIMEOUT) {
                     timeout = PROCESS_DEF_TIMEOUT;
                 }

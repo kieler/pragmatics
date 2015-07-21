@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *     + Department of Computer Science
  *         + Real-Time and Embedded Systems Group
  *
@@ -44,7 +44,6 @@ class ContactProvider
     {
         val Configuration config = Configuration::INSTANCE
         '''
-        <div class="col-md-8 col-md-offset-2">
         <h2>Contact</h2>
         «if (config.hasConfigProperty(Configuration::CONTACT_INFORMATION)) {
             val String provider = config.getConfigProperty(Configuration::CONTACT_INFORMATION).escapeHtml                 
@@ -66,9 +65,7 @@ class ContactProvider
                 regarding the layout web service.
             </p>
             '''
-        }»
-        </div>
-        '''
+        }»'''
     }
     
     /**

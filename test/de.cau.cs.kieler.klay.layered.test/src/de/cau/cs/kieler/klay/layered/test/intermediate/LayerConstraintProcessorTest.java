@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -16,7 +16,9 @@ package de.cau.cs.kieler.klay.layered.test.intermediate;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +46,11 @@ import de.cau.cs.kieler.klay.test.utils.TestPath;
 public class LayerConstraintProcessorTest extends AbstractLayeredProcessorTest {
 
     private static final String TEST_FOLDER = "klay_layered/layer_constraints";
+    
+    /*
+     * Map to remember the nodes' layers before the LayerConstraintProcessor has altered them.
+     */
+    private Map<LNode, Layer> layersOfNodes;
 
     // CHECKSTYLEOFF javadoc
     public LayerConstraintProcessorTest(final GraphTestObject testObject,
@@ -73,6 +80,20 @@ public class LayerConstraintProcessorTest extends AbstractLayeredProcessorTest {
      */
     @Before
     public void runUntil() {
+        layered.runLayoutTestUntil(LayerConstraintProcessor.class, false, state);
+        
+        // remember layers of nodes with layer constraint set to NONE
+        layersOfNodes = new HashMap<LNode, Layer>();
+        for (LGraph g : state.getGraphs()) {
+            for (Layer layer : g.getLayers()) {
+                for (LNode node : layer.getNodes()) {
+                    if (node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.NONE) {
+                        layersOfNodes.put(node, layer);
+                    }
+                }
+            }
+        }
+        
         layered.runLayoutTestUntil(LayerConstraintProcessor.class, state);
     }
 
@@ -148,6 +169,24 @@ public class LayerConstraintProcessorTest extends AbstractLayeredProcessorTest {
         for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 assertTrue(!layer.getNodes().isEmpty());
+            }
+        }
+    }
+    
+    /**
+     * The processor is not allowed to move nodes with layerConstraint NONE
+     * 
+     * @see KIPRA-1640
+     */
+    @Test
+    public void noNodesWithoutLayerConstraintMoved() {
+        for (LGraph g : state.getGraphs()) {
+            for (Layer layer : g.getLayers()) {
+                for (LNode node : layer.getNodes()) {
+                    if (node.getProperty(Properties.LAYER_CONSTRAINT) == LayerConstraint.NONE) {
+                        assertTrue(layersOfNodes.get(node) == layer);
+                    }
+                }
             }
         }
     }

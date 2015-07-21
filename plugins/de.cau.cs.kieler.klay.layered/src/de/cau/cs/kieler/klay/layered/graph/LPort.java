@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -52,11 +52,11 @@ public final class LPort extends LShape {
     /** the margin area around this port. */
     private final LInsets margin = new LInsets();
     /** this port's labels. */
-    private final List<LLabel> labels = Lists.newArrayList();
+    private final List<LLabel> labels = Lists.newArrayListWithCapacity(2);
     /** the edges going into the port. */
-    private final List<LEdge> incomingEdges = Lists.newArrayList();
+    private final List<LEdge> incomingEdges = Lists.newArrayListWithCapacity(4);
     /** the edges going out of the port. */
-    private final List<LEdge> outgoingEdges = Lists.newArrayList();
+    private final List<LEdge> outgoingEdges = Lists.newArrayListWithCapacity(4);
     
     /** a predicate that checks for output ports, that is ports with outgoing edges. */
     public static final Predicate<LPort> OUTPUT_PREDICATE = new Predicate<LPort>() {

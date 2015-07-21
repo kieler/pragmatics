@@ -66,10 +66,21 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
     {
       case GranaPackage.GRANA: return createGrana();
       case GranaPackage.JOB: return createJob();
+      case GranaPackage.REGULAR_JOB: return createRegularJob();
+      case GranaPackage.RANGE_JOB: return createRangeJob();
+      case GranaPackage.RANGE: return createRange();
+      case GranaPackage.FLOAT_RANGE: return createFloatRange();
+      case GranaPackage.INT_RANGE: return createIntRange();
+      case GranaPackage.INT_RANGE_VALUES: return createIntRangeValues();
+      case GranaPackage.INT_RANGE_RANGE: return createIntRangeRange();
       case GranaPackage.RESOURCE: return createResource();
       case GranaPackage.RESOURCE_REFERENCE: return createResourceReference();
       case GranaPackage.GLOBAL_RESOURCE_REF: return createGlobalResourceRef();
       case GranaPackage.LOCAL_RESOURCE: return createLocalResource();
+      case GranaPackage.OUTPUT: return createOutput();
+      case GranaPackage.GLOBAL_OUTPUT_REF: return createGlobalOutputRef();
+      case GranaPackage.OUTPUT_REFERENCE: return createOutputReference();
+      case GranaPackage.LOCAL_OUTPUT: return createLocalOutput();
       case GranaPackage.ANALYSIS: return createAnalysis();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -96,6 +107,83 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
   {
     JobImpl job = new JobImpl();
     return job;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public RegularJob createRegularJob()
+  {
+    RegularJobImpl regularJob = new RegularJobImpl();
+    return regularJob;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public RangeJob createRangeJob()
+  {
+    RangeJobImpl rangeJob = new RangeJobImpl();
+    return rangeJob;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Range createRange()
+  {
+    RangeImpl range = new RangeImpl();
+    return range;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public FloatRange createFloatRange()
+  {
+    FloatRangeImpl floatRange = new FloatRangeImpl();
+    return floatRange;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IntRange createIntRange()
+  {
+    IntRangeImpl intRange = new IntRangeImpl();
+    return intRange;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IntRangeValues createIntRangeValues()
+  {
+    IntRangeValuesImpl intRangeValues = new IntRangeValuesImpl();
+    return intRangeValues;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IntRangeRange createIntRangeRange()
+  {
+    IntRangeRangeImpl intRangeRange = new IntRangeRangeImpl();
+    return intRangeRange;
   }
 
   /**
@@ -140,6 +228,50 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
   {
     LocalResourceImpl localResource = new LocalResourceImpl();
     return localResource;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Output createOutput()
+  {
+    OutputImpl output = new OutputImpl();
+    return output;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public GlobalOutputRef createGlobalOutputRef()
+  {
+    GlobalOutputRefImpl globalOutputRef = new GlobalOutputRefImpl();
+    return globalOutputRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public OutputReference createOutputReference()
+  {
+    OutputReferenceImpl outputReference = new OutputReferenceImpl();
+    return outputReference;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public LocalOutput createLocalOutput()
+  {
+    LocalOutputImpl localOutput = new LocalOutputImpl();
+    return localOutput;
   }
 
   /**

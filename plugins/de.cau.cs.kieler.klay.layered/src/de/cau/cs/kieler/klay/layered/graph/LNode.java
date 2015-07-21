@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -88,11 +88,11 @@ public final class LNode extends LShape {
     /** the containing layer. */
     private Layer layer;
     /** the node's node type. */
-    private NodeType nodeType = NodeType.NORMAL;
+    private NodeType type = NodeType.NORMAL;
     /** the ports of the node. */
-    private final List<LPort> ports = Lists.newArrayList();
+    private final List<LPort> ports = Lists.newArrayListWithCapacity(6);
     /** this node's labels. */
-    private final List<LLabel> labels = Lists.newArrayList();
+    private final List<LLabel> labels = Lists.newArrayListWithCapacity(2);
     /** the margin area around this node. */
     private final LInsets margin = new LInsets();
     /** the insets inside this node, usually reserved for port and label placement. */
@@ -230,8 +230,8 @@ public final class LNode extends LShape {
      * 
      * @return the node's node type.
      */
-    public NodeType getNodeType() {
-        return nodeType;
+    public NodeType getType() {
+        return type;
     }
     
     /**
@@ -240,8 +240,8 @@ public final class LNode extends LShape {
      * @param type
      *            the node's new node type.
      */
-    public void setNodeType(final NodeType type) {
-        this.nodeType = type;
+    public void setType(final NodeType type) {
+        this.type = type;
     }
 
     /**
@@ -284,8 +284,7 @@ public final class LNode extends LShape {
     /**
      * Returns an iterable for all ports of given side.
      * 
-     * @param side
-     *            a port side
+     * @param side a port side
      * @return an iterable for the ports of given side
      */
     public Iterable<LPort> getPorts(final PortSide side) {
@@ -306,10 +305,8 @@ public final class LNode extends LShape {
     /**
      * Returns an iterable for all ports of a given type and side.
      * 
-     * @param portType
-     *            a port type.
-     * @param side
-     *            a port side.
+     * @param portType a port type.
+     * @param side a port side.
      * @return an iterable for the ports of the given type and side.
      */
     public Iterable<LPort> getPorts(final PortType portType, final PortSide side) {

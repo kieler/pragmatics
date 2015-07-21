@@ -213,9 +213,9 @@ public class OptiPlacer implements ILayoutPhase {
                             //System.out.println("Segment: " + edge);
                             
                             // record long edge dummies
-                            if (edge.getSource().getNode().getNodeType()
+                            if (edge.getSource().getNode().getType()
                                     == NodeType.LONG_EDGE
-                                && edge.getTarget().getNode().getNodeType()
+                                && edge.getTarget().getNode().getType()
                                     == NodeType.LONG_EDGE) {
                                 longEdgeDummyPairs.add(
                                         Pair.of(edge.getSource().id + 1,
@@ -230,8 +230,8 @@ public class OptiPlacer implements ILayoutPhase {
                 // collect real edges. That is from real node to real node
                 for (Layer l : layeredGraph) {
                     for (LNode n : l) {
-                        if (n.getNodeType() != NodeType.NORMAL
-                                && n.getNodeType() != NodeType.EXTERNAL_PORT) {
+                        if (n.getType() != NodeType.NORMAL
+                                && n.getType() != NodeType.EXTERNAL_PORT) {
                             continue;
                         }
                         for (LPort po : n.getPorts()) {
@@ -240,8 +240,8 @@ public class OptiPlacer implements ILayoutPhase {
                                 // find the target
                                 LPort target = edge.getTarget();
                                 LEdge dummyEdge = edge;
-                                while (target.getNode().getNodeType() != NodeType.NORMAL
-                                        && target.getNode().getNodeType() != NodeType.EXTERNAL_PORT) {
+                                while (target.getNode().getType() != NodeType.NORMAL
+                                        && target.getNode().getType() != NodeType.EXTERNAL_PORT) {
                                     
                                     boolean found = false;
                                     for (LEdge tmpEdge : target.getNode().getOutgoingEdges()) {
@@ -253,7 +253,7 @@ public class OptiPlacer implements ILayoutPhase {
                                     if (!found) {
                                     throw new IllegalStateException("Could not infer original edge. "
                                             + " Found a "
-                                            + target.getNode().getNodeType());
+                                            + target.getNode().getType());
                                     }
                                 }
                                 

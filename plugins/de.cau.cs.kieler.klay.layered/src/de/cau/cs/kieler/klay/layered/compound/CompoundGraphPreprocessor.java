@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -87,54 +87,6 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 public class CompoundGraphPreprocessor implements ILayoutProcessor {
     
     ////////////////////////////////////////////////////////////////////////////////////////////
-    // Class ExternalPort
-
-    /**
-     * An internal representation for external ports. This class is used to pass information
-     * gathered on one hierarchy level to the containing hierarchy level. Instances are created
-     * whenever a cross-hierarchy edge crosses the hierarchy bounds of a parent node; the instance
-     * represents the split point of the edge.
-     */
-    private static class ExternalPort {
-        /** the list of original edges for which the port is created. */
-        private List<LEdge> origEdges = Lists.newArrayList();
-        /** the new edge by which the original edge is replaced. */
-        private LEdge newEdge;
-        /** the dummy node used by the algorithm as representative for the external port. */
-        private LNode dummyNode;
-        /** the dummy port used by the algorithm as representative for the external port. */
-        private LPort dummyPort;
-        /** the flow direction: input or output. */
-        private PortType type = PortType.UNDEFINED;
-        /**
-         * whether the external port will be exported to the outside or not. (it will not be exported
-         * if the port was introduced for connections from an inside node to its parent)
-         */
-        private boolean exported;
-        
-        /**
-         * Create an external port.
-         * 
-         * @param origEdge the original edge for which the port is created
-         * @param newEdge the new edge by which the original edge is replaced
-         * @param dummyNode the dummy node used by the algorithm as representative for the external port
-         * @param portType the flow direction: input or output
-         * @param exported whether the external port is to be exported by its parent.
-         */
-        ExternalPort(final LEdge origEdge, final LEdge newEdge, final LNode dummyNode,
-                final LPort dummyPort, final PortType portType, final boolean exported) {
-            
-            this.origEdges.add(origEdge);
-            this.newEdge = newEdge;
-            this.dummyNode = dummyNode;
-            this.dummyPort = dummyPort;
-            this.type = portType;
-            this.exported = exported;
-        }
-    }
-    
-    
-    ////////////////////////////////////////////////////////////////////////////////////////////
     // Variables
     
     /** map of original edges to generated cross-hierarchy edges. */
@@ -170,13 +122,14 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     /**
      * Recursively transform cross-hierarchy edges into sequences of dummy ports and dummy edges.
      * 
-     * @param graph the layered graph
-     * @param parentNode the parent node of the graph, or {@code null} if it is on top-level
+     * @param graph
+     *            the layered graph to process
+     * @param parentNode
+     *            the node that represents the graph in the upper hierarchy level, or {@code null}
+     *            if it already is on top-level
      * @return the external ports created to split edges that cross the boundary of the parent node
      */
-    private List<ExternalPort> transformHierarchyEdges(final LGraph graph,
-            final LNode parentNode) {
-        
+    private List<ExternalPort> transformHierarchyEdges(final LGraph graph, final LNode parentNode) {
         // process all children and recurse down to gather their external ports
         List<ExternalPort> containedExternalPorts = Lists.newArrayList();
         
@@ -186,6 +139,9 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                 // recursively process the child graph
                 List<ExternalPort> childPorts = transformHierarchyEdges(nestedGraph, node);
                 containedExternalPorts.addAll(childPorts);
+                
+                // process inside self loops
+                processInsideSelfLoops(nestedGraph, node);
                 
                 // make sure that all hierarchical ports have had dummy nodes created for them (some
                 // will already have been created, but perhaps not all)
@@ -211,8 +167,8 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         List<ExternalPort> exportedExternalPorts = Lists.newArrayList();
         
         // process the cross-hierarchy edges connected to the inside of the child nodes
-        processInnerHierarchicalEdgeSegments(graph, parentNode, exportedExternalPorts,
-                containedExternalPorts);
+        processInnerHierarchicalEdgeSegments(graph, parentNode, containedExternalPorts,
+                exportedExternalPorts);
         
         // process the cross-hierarchy edges connected to the outside of the parent node
         if (parentNode != null) {
@@ -223,10 +179,11 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     }
 
     /**
-     * Moves all labels of the original edges to the appropriate dummy edges and removes the original
-     * edges from the graph.
+     * Moves all labels of the original edges to the appropriate dummy edges and removes the
+     * original edges from the graph.
      * 
-     * @param graph the top-level graph.
+     * @param graph
+     *            the top-level graph.
      */
     private void moveLabelsAndRemoveOriginalEdges(final LGraph graph) {
         // move all labels of the original edges to the appropriate dummy edges and remove the original
@@ -291,23 +248,27 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     
     /**
      * Deals with the inner segments of hierarchical edges by breaking them between external ports.
-     * For each external port contained in child nodes, this method adds appropriate new external ports
-     * and / or dummy edges.
+     * For each external port contained in child nodes, this method adds appropriate new external
+     * ports and / or dummy edges.
      * 
-     * @param graph the graph whose child nodes have exposed external ports.
-     * @param parentNode the graph's parent node, or {@code null} if the graph is at the top level.
-     * @param exportedExternalPorts list that will be filled with the external ports this method
-     *                              creates.
-     * @param containedExternalPorts list of external ports exposed by the graph's child nodes.
+     * @param graph
+     *            the graph whose child nodes have exposed external ports.
+     * @param parentNode
+     *            the node that represents the graph in the upper hierarchy level, or {@code null}
+     *            if the graph already is at the top level.
+     * @param containedExternalPorts
+     *            list of external ports exposed by the graph's child nodes.
+     * @param exportedExternalPorts
+     *            list that will be filled with the external ports this method creates.
      */
     private void processInnerHierarchicalEdgeSegments(final LGraph graph, final LNode parentNode,
-            final List<ExternalPort> exportedExternalPorts,
-            final List<ExternalPort> containedExternalPorts) {
+            final List<ExternalPort> containedExternalPorts,
+            final List<ExternalPort> exportedExternalPorts) {
         
         // we remember the ports and the dummy nodes we create to add them to the graph afterwards
         // (this is not strictly necessary, but allows us to reuse methods we also use for outer
         // hierarchy edge segments)
-        List<ExternalPort> externalPorts = Lists.newArrayList();
+        List<ExternalPort> createdExternalPorts = Lists.newArrayList();
         
         // iterate over the list of contained external ports
         for (ExternalPort externalPort : containedExternalPorts) {
@@ -341,7 +302,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                                 PortType.OUTPUT,
                                 currentExternalPort);
                         if (newExternalPort != currentExternalPort) {
-                            externalPorts.add(newExternalPort);
+                            createdExternalPorts.add(newExternalPort);
                         }
                         
                         // the port is our new current external port if it is exported
@@ -378,7 +339,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                                 PortType.INPUT,
                                 currentExternalPort);
                         if (newExternalPort != currentExternalPort) {
-                            externalPorts.add(newExternalPort);
+                            createdExternalPorts.add(newExternalPort);
                         }
                         
                         // the port is our new current external port if it is exported
@@ -391,7 +352,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         }
         
         // add dummy nodes and exported external ports
-        for (ExternalPort externalPort : externalPorts) {
+        for (ExternalPort externalPort : createdExternalPorts) {
             if (!graph.getLayerlessNodes().contains(externalPort.dummyNode)) {
                 graph.getLayerlessNodes().add(externalPort.dummyNode);
             }
@@ -404,13 +365,19 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
 
     /**
      * Connects an external port with a child node of the given graph. To this end, a new dummy edge
-     * is inserted and associated with the original hierarchy-crossing edge in the cross hierarchy map.
+     * is inserted and associated with the original hierarchy-crossing edge in the cross hierarchy
+     * map.
      * 
-     * @param graph the graph whose child to connect.
-     * @param externalPort the external port that provides the other end of the connection.
-     * @param origEdge the original hierarchy-crossing edge.
-     * @param sourcePort the source port the edge shall be connected to.
-     * @param targetPort the target port the edge shall be connected to.
+     * @param graph
+     *            the graph whose child to connect.
+     * @param externalPort
+     *            the external port that provides the other end of the connection.
+     * @param origEdge
+     *            the original hierarchy-crossing edge.
+     * @param sourcePort
+     *            the source port the edge shall be connected to.
+     * @param targetPort
+     *            the target port the edge shall be connected to.
      */
     private void connectChild(final LGraph graph, final ExternalPort externalPort, final LEdge origEdge,
             final LPort sourcePort, final LPort targetPort) {
@@ -425,16 +392,20 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     }
 
     /**
-     * Connects external ports of two child nodes of the given graph. To this end, the provided list of
-     * external ports is searched for the counterpart of the provided external output port, and a new
-     * dummy edge is created to connect the two. The dummy edge is associated with the original
+     * Connects external ports of two child nodes of the given graph. To this end, the provided list
+     * of external ports is searched for the counterpart of the provided external output port, and a
+     * new dummy edge is created to connect the two. The dummy edge is associated with the original
      * hierarchy-crossing edge in the cross hierarchy map.
      * 
-     * @param graph the graph whose child nodes to connect.
-     * @param externalOutputPort the external output port. 
-     * @param containedExternalPorts list of external ports exposed by children of the graph. This list
-     *                               is searched for the external target port.
-     * @param origEdge the original edge that is being broken.
+     * @param graph
+     *            the graph whose child nodes to connect.
+     * @param externalOutputPort
+     *            the external output port.
+     * @param containedExternalPorts
+     *            list of external ports exposed by children of the graph. This list is searched for
+     *            the external target port.
+     * @param origEdge
+     *            the original edge that is being broken.
      */
     private void connectSiblings(final LGraph graph, final ExternalPort externalOutputPort,
             final List<ExternalPort> containedExternalPorts, final LEdge origEdge) {
@@ -463,21 +434,24 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     // Outer Hierarchical Edge Segment Processing
     
     /**
-     * Deals with the outer segments of hierarchical edges by breaking them at their source or target.
-     * For each hierarchical edge that starts or ends at one of the graph's children, this method adds
-     * appropriate new external ports and / or dummy edges.
+     * Deals with the outer segments of hierarchical edges by breaking them at their source or
+     * target. For each hierarchical edge that starts or ends at one of the graph's children, this
+     * method adds appropriate new external ports and / or dummy edges to the graph.
      * 
-     * @param graph the graph whose child nodes have exposed external ports.
-     * @param parentNode the graph's parent node, or {@code null} if the graph is at the top level.
-     * @param exportedExternalPorts list that will be filled with the external ports this method
-     *                              creates.
+     * @param graph
+     *            the graph whose child nodes have exposed external ports.
+     * @param parentNode
+     *            the node that represents the graph in the upper hierarchy level, or {@code null}
+     *            if the graph already is at the top level.
+     * @param exportedExternalPorts
+     *            list that will be filled with the external ports this method creates.
      */
     private void processOuterHierarchicalEdgeSegments(final LGraph graph, final LNode parentNode,
             final List<ExternalPort> exportedExternalPorts) {
         
         // we need to remember the ports and the dummy nodes we create to add them to the graph
         // afterwards (to avoid concurrent modification exceptions)
-        List<ExternalPort> externalPorts = Lists.newArrayList();
+        List<ExternalPort> createdExternalPorts = Lists.newArrayList();
         
         // iterate over all ports of the graph's child nodes
         for (LNode childNode : graph.getLayerlessNodes()) {
@@ -496,7 +470,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                                 PortType.OUTPUT,
                                 currentExternalOutputPort);
                         if (newExternalPort != currentExternalOutputPort) {
-                            externalPorts.add(newExternalPort);
+                            createdExternalPorts.add(newExternalPort);
                         }
                         
                         // the port is our new current external port if it is exported
@@ -519,7 +493,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                                 PortType.INPUT,
                                 currentExternalInputPort);
                         if (newExternalPort != currentExternalInputPort) {
-                            externalPorts.add(newExternalPort);
+                            createdExternalPorts.add(newExternalPort);
                         }
                         
                         // the port is our new current external port if it is exported
@@ -532,7 +506,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         }
         
         // add dummy nodes and exported external ports
-        for (ExternalPort externalPort : externalPorts) {
+        for (ExternalPort externalPort : createdExternalPorts) {
             if (!graph.getLayerlessNodes().contains(externalPort.dummyNode)) {
                 graph.getLayerlessNodes().add(externalPort.dummyNode);
             }
@@ -545,36 +519,123 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     
     
     ////////////////////////////////////////////////////////////////////////////////////////////
+    // Inside Self Loop Processing
+    
+    private void processInsideSelfLoops(final LGraph nestedGraph, final LNode node) {
+        // Check if inside self loops are enabled for the node
+        if (!node.getProperty(LayoutOptions.SELF_LOOP_INSIDE)) {
+            return;
+        }
+        
+        // Iterate over the edges and look for an inside self loop
+        for (LPort lport : node.getPorts()) {
+            // Avoid ConcurrentModificationExceptions
+            LEdge[] outEdges = lport.getOutgoingEdges().toArray(
+                    new LEdge[lport.getOutgoingEdges().size()]);
+            
+            for (LEdge outEdge : outEdges) {
+                boolean isSelfLoop = outEdge.getTarget().getNode() == node;
+                boolean isInsideSelfLoop = isSelfLoop
+                        && outEdge.getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+                
+                if (isInsideSelfLoop) {
+                    // Check if the ports have already been transformed into external port dummies
+                    LPort sourcePort = outEdge.getSource();
+                    LNode sourceExtPortDummy = dummyNodeMap.get(sourcePort);
+                    if (sourceExtPortDummy == null) {
+                        sourceExtPortDummy = LGraphUtil.createExternalPortDummy(
+                                sourcePort,
+                                PortConstraints.FREE,
+                                sourcePort.getSide(),
+                                -1,
+                                null,
+                                null,
+                                sourcePort.getSize(),
+                                nestedGraph.getProperty(LayoutOptions.DIRECTION),
+                                nestedGraph);
+                        sourceExtPortDummy.setProperty(InternalProperties.ORIGIN, sourcePort);
+                        dummyNodeMap.put(sourcePort, sourceExtPortDummy);
+                        nestedGraph.getLayerlessNodes().add(sourceExtPortDummy);
+                    }
+                    
+                    LPort targetPort = outEdge.getTarget();
+                    LNode targetExtPortDummy = dummyNodeMap.get(targetPort);
+                    if (targetExtPortDummy == null) {
+                        targetExtPortDummy = LGraphUtil.createExternalPortDummy(
+                                targetPort,
+                                PortConstraints.FREE,
+                                targetPort.getSide(),
+                                1,
+                                null,
+                                null,
+                                targetPort.getSize(),
+                                nestedGraph.getProperty(LayoutOptions.DIRECTION),
+                                nestedGraph);
+                        targetExtPortDummy.setProperty(InternalProperties.ORIGIN, targetPort);
+                        dummyNodeMap.put(targetPort, targetExtPortDummy);
+                        nestedGraph.getLayerlessNodes().add(targetExtPortDummy);
+                    }
+                    
+                    // Create a new dummy edge
+                    LEdge dummyEdge = createDummyEdge(nestedGraph, outEdge);
+                    dummyEdge.setSource(sourceExtPortDummy.getPorts().get(0));
+                    dummyEdge.setTarget(targetExtPortDummy.getPorts().get(0));
+                    
+                    // Remember the new edge
+                    crossHierarchyMap.put(outEdge,
+                            new CrossHierarchyEdge(dummyEdge, nestedGraph, PortType.OUTPUT));
+                    
+                    nestedGraph.getProperty(InternalProperties.GRAPH_PROPERTIES).add(
+                            GraphProperties.EXTERNAL_PORTS);
+                }
+            }
+        }
+    }
+
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
     // General Hierarchical Edge Segment Processing
     
     /**
-     * Does the actual work of creating a new hierarchical edge segment between an external port and a
-     * given opposite port. The external port used for the segment is returned. This method does not
-     * put any created edges into the cross hierarchy map!
+     * Does the actual work of creating a new hierarchical edge segment between an external port and
+     * a given opposite port. The external port used for the segment is returned. This method does
+     * not put any created edges into the cross hierarchy map!
      * 
-     * <p>The method first decides on an external port to use for the segment. If the default external
+     * <p>
+     * The method first decides on an external port to use for the segment. If the default external
      * port passed to the method is not {@code null} and if external ports are to be merged in the
-     * current graph, the default external port is reused. An exception are segments that start or end
-     * in the parent node; each such segments gets its own external port.</p>
+     * current graph, the default external port is reused. An exception are segments that start or
+     * end in the parent node; each such segments gets its own external port.
+     * </p>
      * 
-     * <p>If a new external port is created, the method also creates a dummy node for it as well as an
-     * actual port on the parent node, if no such port already exists, as well as a dummy edge for the
-     * connection. Thus, the newly created external port has everything it needs to be properly
-     * represented and initialized.</p>
+     * <p>
+     * If a new external port is created, the method also creates a dummy node for it as well as an
+     * actual port on the parent node, if no such port already exists, as well as a dummy edge for
+     * the connection. Thus, the newly created external port has everything it needs to be properly
+     * represented and initialized.
+     * </p>
      * 
-     * <p>The original edge is added to the list of original edges in the external port used for the
+     * <p>
+     * The original edge is added to the list of original edges in the external port used for the
      * segment. The dummy edge is associated with the original hierarchy-crossing edge in the cross
-     * hierarchy map.</p>
+     * hierarchy map.
+     * </p>
      * 
-     * @param graph the layered graph.
-     * @param parentNode the graph's parent node, or {@code null} if the graph is at the top level.
-     * @param origEdge the hierarchy-crossing edge that is being broken.
-     * @param oppositePort the port that will be one of the two end points of the new segment.
-     * @param portType the type of the port to create as one of the segment's edge points.
-     * @param defaultExternalPort a default external port we can reuse if external ports should be
-     *                            merged. If this is {@code null}, a new external port is always created.
-     *                            If this port is reused, it is returned by this method.
-     * @return the external port (created or reused) and used as one endpoint of the connection.
+     * @param graph
+     *            the layered graph.
+     * @param parentNode
+     *            the graph's parent node, or {@code null} if the graph is at the top level.
+     * @param origEdge
+     *            the hierarchy-crossing edge that is being broken.
+     * @param oppositePort
+     *            the port that will be one of the two end points of the new segment.
+     * @param portType
+     *            the type of the port to create as one of the segment's edge points.
+     * @param defaultExternalPort
+     *            a default external port we can reuse if external ports should be merged. If this
+     *            is {@code null}, a new external port is always created. If this port is reused, it
+     *            is returned by this method.
+     * @return the (created or reused) external port used as one endpoint of the edge segment.
      */
     private ExternalPort introduceHierarchicalEdgeSegment(final LGraph graph, final LNode parentNode,
             final LEdge origEdge, final LPort oppositePort, final PortType portType,
@@ -641,11 +702,13 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     }
     
     /**
-     * Creates and initializes a new dummy edge for the given original hierarchy-crossing edge. All that
-     * remains to be done afterwards is to properly connect the edge. Nice!
+     * Creates and initializes a new dummy edge for the given original hierarchy-crossing edge. All
+     * that remains to be done afterwards is to properly connect the edge. Nice!
      * 
-     * @param graph the graph the edge will be placed in.
-     * @param origEdge the original hierarchy-crossing edge.
+     * @param graph
+     *            the graph the edge will be placed in.
+     * @param origEdge
+     *            the original hierarchy-crossing edge.
      * @return a new dummy edge.
      */
     private LEdge createDummyEdge(final LGraph graph, final LEdge origEdge) {
@@ -657,13 +720,17 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     
     /**
      * Retrieves a dummy node to be used to represent a new external port of the parent node and to
-     * connect a new segment of the given hierarchical edge to. A proper dummy node might already have
-     * been created; if so, that one is returned.
+     * connect a new segment of the given hierarchical edge to. A proper dummy node might already
+     * have been created; if so, that one is returned.
      * 
-     * @param graph the graph.
-     * @param parentNode the graph's parent node.
-     * @param portType the type of the new external port.
-     * @param edge the edge that will be connected to the external port.
+     * @param graph
+     *            the graph.
+     * @param parentNode
+     *            the graph's parent node.
+     * @param portType
+     *            the type of the new external port.
+     * @param edge
+     *            the edge that will be connected to the external port.
      * @return an appropriate external port dummy.
      */
     private LNode createExternalPortDummy(final LGraph graph, final LNode parentNode,
@@ -728,7 +795,8 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     /**
      * Create suitable port properties for dummy external ports.
      * 
-     * @param graph the graph for which the dummy external port is created
+     * @param graph
+     *            the graph for which the dummy external port is created
      * @return properties to apply to the dummy port
      */
     private static IPropertyHolder createExternalPortProperties(final LGraph graph) {
@@ -742,9 +810,12 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
     /**
      * Create a port for an existing external port dummy node.
      * 
-     * @param dummyNode the dummy node
-     * @param parentNode the parent node to which it is attached
-     * @param type the port type
+     * @param dummyNode
+     *            the dummy node
+     * @param parentNode
+     *            the parent node to which it is attached
+     * @param type
+     *            the port type
      * @return a new port
      */
     private LPort createPortForDummy(final LNode dummyNode, final LNode parentNode,
@@ -766,6 +837,59 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         dummyNode.setProperty(InternalProperties.ORIGIN, port);
         dummyNodeMap.put(port, dummyNode);
         return port;
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////
+    // Class ExternalPort
+
+    /**
+     * An internal representation for external ports. This class is used to pass information
+     * gathered on one hierarchy level to the containing hierarchy level. Instances are created
+     * whenever a cross-hierarchy edge crosses the hierarchy bounds of a parent node; the instance
+     * represents the split point of the edge.
+     */
+    private static class ExternalPort {
+        /** the list of original edges for which the port is created. */
+        private List<LEdge> origEdges = Lists.newArrayList();
+        /** the new edge by which the original edge is replaced. */
+        private LEdge newEdge;
+        /** the dummy node used by the algorithm as representative for the external port. */
+        private LNode dummyNode;
+        /** the dummy port used by the algorithm as representative for the external port. */
+        private LPort dummyPort;
+        /** the flow direction: input or output. */
+        private PortType type = PortType.UNDEFINED;
+        /**
+         * whether the external port will be exported to the outside or not. (it will not be exported
+         * if the port was introduced for connections from an inside node to its parent)
+         */
+        private boolean exported;
+        
+        /**
+         * Create an external port.
+         * 
+         * @param origEdge
+         *            the original edge for which the port is created
+         * @param newEdge
+         *            the new edge by which the original edge is replaced
+         * @param dummyNode
+         *            the dummy node used by the algorithm as representative for the external port
+         * @param portType
+         *            the flow direction: input or output
+         * @param exported
+         *            whether the external port is to be exported by its parent.
+         */
+        ExternalPort(final LEdge origEdge, final LEdge newEdge, final LNode dummyNode,
+                final LPort dummyPort, final PortType portType, final boolean exported) {
+            
+            this.origEdges.add(origEdge);
+            this.newEdge = newEdge;
+            this.dummyNode = dummyNode;
+            this.dummyPort = dummyPort;
+            this.type = portType;
+            this.exported = exported;
+        }
     }
 
 }

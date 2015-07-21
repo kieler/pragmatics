@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -85,9 +85,9 @@ public class KlighdStyledText extends KlighdNode.KlighdFigureNode<KText> {
         this(theKText.getText(), KlighdConstants.DEFAULT_FONT);
         this.setRendering(theKText);
 
-        // re-enable the pickability of textNode as
-        //  the selection and cursor selection will not work otherwise
-        this.setPickable(true);
+        // re-enable the pickability of textNode if required,
+        //  as the selection and cursor selection will not work otherwise
+        this.setPickable(theKText.isCursorSelectable() || isSelectable());
     }
 
     /**

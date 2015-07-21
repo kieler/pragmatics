@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -60,6 +60,7 @@ public class KlighdNewProjectWizard extends XtextNewProjectWizard {
 
         // gather all information required to create the project
         projectInfo.setProjectName(mainPage.getProjectName());
+        projectInfo.setProjectLocation(mainPage.getLocationPath().append(projectInfo.getProjectName()));
         projectInfo.setTransformationName(mainPage.getTransformationName());
         projectInfo.setTransformationPackage(mainPage.getTransformationPackage());
         projectInfo.setSourceModelClassFullyQualified(mainPage.getSourceModel());

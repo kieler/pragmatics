@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -15,6 +15,7 @@ package de.cau.cs.kieler.klay.layered.p4nodes;
 
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.ILayoutPhaseFactory;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer;
 
 /**
  * Definition of the available node placement strategies for the layered layout approach.

@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -38,6 +38,7 @@ import de.cau.cs.kieler.klighd.IAction.ActionContext;
 import de.cau.cs.kieler.klighd.IAction.ActionResult;
 import de.cau.cs.kieler.klighd.DisplayedActionData;
 import de.cau.cs.kieler.klighd.IKlighdSelection;
+import de.cau.cs.kieler.klighd.IViewChangeListener;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.KlighdDataManager;
 import de.cau.cs.kieler.klighd.KlighdTreeSelection;
@@ -48,10 +49,10 @@ import de.cau.cs.kieler.klighd.util.Iterables2;
 
 /**
  * A factory providing methods for creating action controls in the diagram side bar.
- * 
+ *
  * @author chsch
  */
-public class ActionControlFactory implements ISelectionChangedListener {
+public class ActionControlFactory implements ISelectionChangedListener, IViewChangeListener {
 
     /** The parent composite into which controls are created. */
     private Composite parent;
@@ -66,20 +67,20 @@ public class ActionControlFactory implements ISelectionChangedListener {
 
     /**
      * Constructor.
-     * 
+     *
      * @param parent the widget container
      * @param formToolkit the form toolkit to be used to create controls
      */
     public ActionControlFactory(final Composite parent, final FormToolkit formToolkit) {
         this.parent = parent;
         this.formToolkit = formToolkit;
-        
+
         // configure the parent's layout
         final GridLayout gl = new GridLayout(1, false);
         gl.verticalSpacing = MAJOR_VERTICAL_SPACING;
         this.parent.setLayout(gl);
     }
-    
+
     /**
      * Clear the previously created option controls.
      */
@@ -95,7 +96,7 @@ public class ActionControlFactory implements ISelectionChangedListener {
 
     /**
      * Factory method for creating a check button related to a 'check' option.
-     * 
+     *
      * @param actionData
      *            an instance of {@link DisplayedActionData} providing the required information
      * @param viewContext
@@ -140,7 +141,7 @@ public class ActionControlFactory implements ISelectionChangedListener {
                 boolean anyActionPerformed = false;
 
                 viewContext.getLayoutRecorder().startRecording();
-                
+
                 // check if we actually have a selection
                 final KlighdTreeSelection diagramSelection = viewer.getDiagramSelection();
                 if (diagramSelection.isEmpty()) {
@@ -152,9 +153,9 @@ public class ActionControlFactory implements ISelectionChangedListener {
                     // call the action on all selected elements
                     for (final EObject e : Iterables2.toIterable(
                             diagramSelection.diagramElementsIterator())) {
-                        
+
                         final ActionContext aContext;
-                        
+
                         if (e instanceof KGraphElement) {
                             aContext = new ActionContext(viewer, null, (KGraphElement) e, null);
                         } else if (e instanceof KRendering) {
@@ -162,8 +163,8 @@ public class ActionControlFactory implements ISelectionChangedListener {
                         } else {
                             continue;
                         }
-                        
-                        final ActionResult res = action.execute(aContext); 
+
+                        final ActionResult res = action.execute(aContext);
                         if (res != null) {
                             result = res;
                             anyActionPerformed |= res.getActionPerformed();
@@ -182,6 +183,7 @@ public class ActionControlFactory implements ISelectionChangedListener {
         });
     }
 
+
     /**
      * {@inheritDoc}
      */
@@ -190,12 +192,26 @@ public class ActionControlFactory implements ISelectionChangedListener {
             return;
         }
 
-        final IKlighdSelection klighdSelection = (IKlighdSelection) event.getSelection();
+        updateControls((IKlighdSelection) event.getSelection());
+    }
 
-        for (final Map.Entry<DisplayedActionData, Control> entry : this.actionDataControlMap
-                .entrySet()) {
+    /**
+     * {@inheritDoc}
+     */
+    public void viewChanged(final ViewChange change) {
+        updateControls(change.getViewer().getSelection());
+    }
+
+    /**
+     * Executes the enablement tester of the tracked {@link DisplayedActionData} and set the
+     * corresponding controls' enablement accordingly.
+     *
+     * @param selection the current {@link IKlighdSelection}
+     */
+    private void updateControls(final IKlighdSelection selection) {
+        for (final Map.Entry<DisplayedActionData, Control> entry : actionDataControlMap.entrySet()) {
             // since only those actionData with 'enablementTester != null' are added to the map ...
-            entry.getValue().setEnabled(entry.getKey().enablementTester.apply(klighdSelection));
+            entry.getValue().setEnabled(entry.getKey().enablementTester.apply(selection));
         }
     }
 }

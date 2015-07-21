@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -44,6 +44,10 @@ public final class Messages extends NLS {
     public static String DebugWindow_FileTable_NameColumn_Text;
     
     public static String DebugWindow_PathDialog_Message;
+
+    public static String DebugWindow_ShowDotFiles;
+
+    public static String DebugWindow_ShowJsonFiles;
     
     public static String DebugWindow_Title;
     

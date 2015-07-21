@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -22,25 +22,13 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmf.runtime.diagram.ui.OffscreenEditPartFactory;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
-import org.eclipse.gmf.runtime.notation.Diagram;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.service.LayoutManagersService;
-import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.service.LayoutMapping;
-import de.cau.cs.kieler.kiml.service.LayoutOptionManager;
 
 /**
  *  This class is responsible for transforming and exporting graphs from graphical diagrams.
@@ -65,47 +53,6 @@ public class GraphFileHandler {
         IGraphTransformer<KNode, T> transformer = transHandler.getExporter();
         transformer.transform(transData);
         return transHandler.serialize(transData);
-    }
-    
-    /**
-     * Retrieve a GMF graph from the given diagram.
-     * 
-     * @param diagram a GMF diagram notation element
-     * @param resourceSet the resource set
-     * @return a graph for the given diagram
-     */
-    private static KNode retrieveGmfGraph(final Diagram diagram, final ResourceSet resourceSet) {
-        // create a diagram edit part
-        TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain(resourceSet);
-        final Maybe<DiagramEditPart> editPart = new Maybe<DiagramEditPart>();
-        final Maybe<RuntimeException> wrappedException = new Maybe<RuntimeException>();
-        Display.getDefault().syncExec(new Runnable() {
-            public void run() {
-                try {
-                    OffscreenEditPartFactory offscreenFactory = OffscreenEditPartFactory
-                            .getInstance();
-                    editPart.set(offscreenFactory.createDiagramEditPart(diagram, new Shell()));
-                } catch (RuntimeException re) {
-                    wrappedException.set(re);
-                }
-            }
-        });
-        if (wrappedException.get() != null) {
-            throw wrappedException.get();
-        }
-
-        // retrieve a kgraph representation of the diagram
-        IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance()
-                .getManager(null, editPart.get());
-        if (layoutManager == null) {
-            throw new RuntimeException("No layout manager could be retrieved for the selected file.");
-        }
-        LayoutMapping<?> mapping = layoutManager.buildLayoutGraph(null, editPart.get());
-        
-        // configure the new kgraph to obtain all layout options
-        new LayoutOptionManager().configure(mapping, new BasicProgressMonitor(0));
-
-        return mapping.getLayoutGraph();
     }
     
     /** The source file to export.  */
@@ -183,8 +130,6 @@ public class GraphFileHandler {
         EObject content = resource.getContents().get(0);
         if (content instanceof KNode) {
             return (KNode) content;
-        } else if (content instanceof Diagram) {
-            return retrieveGmfGraph((Diagram) content, resourceSet);
         } else {
             throw new IllegalArgumentException(
                     "The selected file does not contain a supported format.");

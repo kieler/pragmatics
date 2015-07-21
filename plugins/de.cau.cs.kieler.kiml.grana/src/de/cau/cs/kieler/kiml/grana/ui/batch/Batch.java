@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -15,8 +15,10 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedSet;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 
 /**
@@ -30,8 +32,14 @@ public class Batch {
     /** the analyses. */
     private List<AnalysisData> analyses;
     /** the batch jobs. */
-    private List<BatchJob<?>> batchJobs = new LinkedList<BatchJob<?>>();
-
+    private List<IBatchJob<?>> batchJobs = new LinkedList<IBatchJob<?>>();
+    
+    
+    private AnalysisData rangeAnalysis;
+    private Integer rangeAnalysisComponent;
+    private LayoutOptionData rangeOption;
+    private SortedSet<? extends Number> rangeValues;
+    
     /**
      * Constructs a Batch.
      * 
@@ -48,8 +56,66 @@ public class Batch {
      * @param batchJob
      *            the batch job
      */
-    public void appendJob(final BatchJob<?> batchJob) {
+    public void appendJob(final IBatchJob<?> batchJob) {
         batchJobs.add(batchJob);
+    }
+    
+    /**
+     * @return the rangeAnalysis
+     */
+    public AnalysisData getRangeAnalysis() {
+        return rangeAnalysis;
+    }
+
+    /**
+     * @param rangeAnalysis the rangeAnalysis to set
+     */
+    public void setRangeAnalysis(final AnalysisData rangeAnalysis) {
+        this.rangeAnalysis = rangeAnalysis;
+    }
+
+    /**
+     * @return the rangeAnalysisComponent
+     */
+    public Integer getRangeAnalysisComponent() {
+        return rangeAnalysisComponent;
+    }
+
+    /**
+     * @param rangeAnalysisComponent the rangeAnalysisComponent to set
+     */
+    public void setRangeAnalysisComponent(final Integer rangeAnalysisComponent) {
+        this.rangeAnalysisComponent = rangeAnalysisComponent;
+    }
+
+    /**
+     * @return the rangeOption
+     */
+    public LayoutOptionData getRangeOption() {
+        return rangeOption;
+    }
+
+    /**
+     * @param rangeOption the rangeOption to set
+     */
+    public void setRangeOption(final LayoutOptionData rangeOption) {
+        this.rangeOption = rangeOption;
+    }
+
+    
+    
+    /**
+     * @return the rangeValues
+     */
+    public SortedSet<? extends Number> getRangeValues() {
+        return rangeValues;
+    }
+
+    /**
+     * @param rangeValues the rangeValues to set
+     */
+    public void setRangeValues(final SortedSet<? extends Number> rangeValues) {
+        this.rangeValues = rangeValues;
     }
 
     /**
@@ -61,8 +127,8 @@ public class Batch {
      */
     public BatchResult execute(final IKielerProgressMonitor monitor) {
         monitor.begin("Executing analysis batch", batchJobs.size());
-        BatchResult batchResult = new BatchResult(analyses);
-        for (BatchJob<?> batchJob : batchJobs) {
+        BatchResult batchResult = new BatchResult(this, analyses);
+        for (IBatchJob<?> batchJob : batchJobs) {
             if (monitor.isCanceled()) {
                 return null;
             }

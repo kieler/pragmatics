@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -80,7 +80,8 @@ import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
  * 
  * <li>Attaching the parameterized annotations <samp>@BundleId("...")</samp>,
  * <samp>@ModelPath("...")</samp>, and optionally <samp>@ModelFilter("...")</samp> containing the
- * related String values to the test class besides the <samp>@RunWith(...)</samp> annotation.<br>
+ * related String values to the test class besides the {@link org.junit.runner.RunWith @RunWith(...)}
+ * annotation.<br>
  * Due to the limitation of Java annotations w.r.t. to the parameter type a custom ResourceSet may
  * only be provided by means of an annotated method as mentioned in item 2.</li>
  * </ol>
@@ -90,14 +91,20 @@ import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
  * method annotated with <samp>@ModelPath</samp> that may return a <samp>String[]</samp>, as well.</i>
  * </p>
  * 
- * <p><i>Note furthermore, that the values of the provided model paths may end with <samp>\/**</samp> or
- * <samp>\/**\/</samp> in order to instruct the model gathering to descent into sub folders.</i></p>
+ * <p><i>Note furthermore, that the values of the provided model paths may end with <samp>/**</samp> or
+ * <samp>/*&#042/...</samp> in order to instruct the model gathering to descent into sub folders.</i></p>
  * 
  * <p>The test classes may have a constructor with zero or one argument(s) of type {@link Object} or
  * {@link EObject} in order to inject the model into the test. The same holds for the test methods
- * (annotated with <samp>@Test</samp>). Hence, if a test method does not require any parameter the
+ * (annotated with {@link Test @Test}). Hence, if a test method does not require any parameter the
  * test class must provide a one argument constructor in order to get the models to be tested
  * injected into the test class object.</p>
+ * 
+ * <p>If the test incorporates <i>before</i> or <i>after</i> methods annotated with
+ * {@link org.junit.Before @Before} or {@link org.junit.After @After}, the constructor based "model
+ * injection" is required. (Evaluation and invocation of before & after methods could be customized as
+ * well; the corresponding methods in {@link Suite}, however, are marked deprecated, and I considered
+ * overriding them not a good idea.) 
  * 
  * <p>In case various tests in a test class are functionally dependent, i.e. executing test2(),
  * test3(), ... makes no sense if test1() failed, test1() may be annotated with
@@ -180,6 +187,44 @@ import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
  *     <samp>@Test</samp>
  *     public void test(EObject model) {
  *         System.out.println(((KNode) model).getData().get(0));
+ *     }
+ * }
+ * </pre>
+ * 
+ * The following example finally illustrates the incorporation of <i>before</i> and <i>after</i> methods.
+ * 
+ * <pre>
+ * <samp>@RunWith(ModelCollectionTestRunner.class)</samp>
+ * <samp>@BundleId("de.cau.cs.kieler.klighd.test")</samp>
+ * <samp>@ModelPath("sizeEstimationTests/")</samp>
+ * <samp>@ModelFilter("*.kgt")</samp>
+ * public class Test {
+ * 
+ *     <samp>@ModelCollectionTestRunner.ResourceSet</samp>
+ *     public static ResourceSet getResourceSet() {
+ *         return KGraphStandaloneSetup.doSetup().getInstance(XtextResourceSet.class);
+ *     }
+ *
+ *     private final KNode model;
+ *
+ *     public Test(EObject model) {
+ *         Assert.assertTrue(model instanceof KNode);
+ *         this.model = (KNode) model;
+ *     }
+ *
+ *     <samp>@Before</samp>
+ *     public void before() {
+ *         KimlUtil.validate(this.model);
+ *     }
+ *
+ *     <samp>@Test</samp>
+ *     public void test() {
+ *         System.out.println(this.model.getData().get(0));
+ *     }
+ *
+ *     <samp>@After</samp>
+ *     public void after() {
+ *         // do what you ever wanted to do with 'model'
  *     }
  * }
  * </pre>
@@ -646,10 +691,10 @@ public class ModelCollectionTestRunner extends Suite {
                     testMethod.validatePublicVoid(false, errors);
                     Method method = testMethod.getMethod();
                     final Class<?>[] methodParams = method.getParameterTypes();
-                boolean methodOK = (methodParams.length > 1 || (methodParams.length == 1
-                        && (methodParams[0].equals(Object.class)
+                boolean methodInvalid = (methodParams.length > 1 || (methodParams.length == 1
+                        && !(methodParams[0].equals(Object.class)
                                 || EObject.class.isAssignableFrom(methodParams[0]))));
-                if (!methodOK) {
+                if (methodInvalid) {
                     errors.add(new Exception("Method " + testMethod.getMethod().getName()
                             + " should have at most one parameter of type Object or (a sub type of)"
                             + " EObject."));

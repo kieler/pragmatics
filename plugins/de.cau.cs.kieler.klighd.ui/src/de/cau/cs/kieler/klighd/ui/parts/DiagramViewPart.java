@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -292,12 +292,12 @@ public class DiagramViewPart extends ViewPart implements IDiagramWorkbenchPart,
      */
     protected void addButtons() {
         final IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager();
-        toolBar.add(new Action("Refresh diagram", KlighdPlugin
-                .getImageDescriptor("icons/full/elcl16/refresh.gif")) {
+        toolBar.add(new Action("Refresh diagram",
+                KlighdPlugin.getImageDescriptor("icons/full/elcl16/refresh.gif")) {
 
             @Override
             public void run() {
-                DiagramViewManager.updateView(DiagramViewPart.this.getViewContext());
+                LightDiagramServices.updateDiagram(DiagramViewPart.this.getViewContext(), false);
             }
         });
 

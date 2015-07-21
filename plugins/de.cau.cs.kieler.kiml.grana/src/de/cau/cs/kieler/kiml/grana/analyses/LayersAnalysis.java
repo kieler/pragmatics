@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -319,13 +319,18 @@ public class LayersAnalysis implements IAnalysis {
             for (KNode child : parentNode.getChildren()) {
                 if (!child.getChildren().isEmpty()) {
                     int[] childResult = countLayers(child, true);
-                    count[0] += childResult[0];
-                    count[1] += childResult[1];
-                    count[2] += childResult[2];
-                    count[3] = Math.max(childResult[3], count[3]);
-                    count[4] = Math.max(childResult[4], count[4]);
-                    count[5] = Math.max(childResult[5], count[5]);
-                    // 3, 4, 5 do not make sense here
+                    count[INDEX_HORIZONTAL] += childResult[INDEX_HORIZONTAL];
+                    count[INDEX_VERTICAL] += childResult[INDEX_VERTICAL];
+                    count[INDEX_DUMMIES] += childResult[INDEX_DUMMIES];
+                    count[INDEX_MAX_NODES_PER_LAYER] = Math.max(
+                            childResult[INDEX_MAX_NODES_PER_LAYER],
+                            count[INDEX_MAX_NODES_PER_LAYER]);
+                    count[INDEX_MAX_NODES_PER_LAYER_DUMMIES] = Math.max(
+                            childResult[INDEX_MAX_NODES_PER_LAYER_DUMMIES],
+                            count[INDEX_MAX_NODES_PER_LAYER_DUMMIES]);
+                    count[INDEX_EDGE_DENSITY] = Math.max(
+                            childResult[INDEX_EDGE_DENSITY],
+                            count[INDEX_EDGE_DENSITY]);
                 }
             }
         }

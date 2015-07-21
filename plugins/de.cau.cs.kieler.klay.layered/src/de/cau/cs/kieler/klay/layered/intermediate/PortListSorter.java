@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -49,10 +49,10 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  * @kieler.rating proposed yellow by msp
  */
 public final class PortListSorter implements ILayoutProcessor {
-    
+
     /**
-     * A comparer for ports. Ports are sorted by side (north, east, south, west) in
-     * clockwise order, beginning at the top left corner.
+     * A comparer for ports. Ports are sorted by side (north, east, south, west) in clockwise order,
+     * beginning at the top left corner.
      */
     public static class PortComparator implements Comparator<LPort> {
 
@@ -66,7 +66,7 @@ public final class PortListSorter implements ILayoutProcessor {
             if (ordinalDifference != 0) {
                 return ordinalDifference;
             }
-            
+
             // If the ports are on the same side and the node has FIXED_ORDER port constraints (that is,
             // the coordinates of the ports don't necessarily make sense), we check if the port index
             // has been explicitly set
@@ -83,33 +83,33 @@ public final class PortListSorter implements ILayoutProcessor {
                     }
                 }
             }
-            
+
             // In case of equal index (or FIXED_POS), sort by position
             switch (port1.getSide()) {
             case NORTH:
                 // Compare x coordinates
                 return Double.compare(port1.getPosition().x, port2.getPosition().x);
-            
+
             case EAST:
                 // Compare y coordinates
                 return Double.compare(port1.getPosition().y, port2.getPosition().y);
-            
+
             case SOUTH:
                 // Compare x coordinates in reversed order
                 return Double.compare(port2.getPosition().x, port1.getPosition().x);
-            
+
             case WEST:
                 // Compare y coordinates in reversed order
                 return Double.compare(port2.getPosition().y, port1.getPosition().y);
-                
+
             default:
                 // Port sides should not be undefined
                 throw new IllegalStateException("Port side is undefined");
             }
         }
-        
+
     }
-    
+
 
     /**
      * {@inheritDoc}
@@ -117,7 +117,7 @@ public final class PortListSorter implements ILayoutProcessor {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Port order processing", 1);
         PortComparator portComparator = new PortComparator();
-        
+
         // Iterate through the nodes of all layers
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
@@ -127,7 +127,7 @@ public final class PortListSorter implements ILayoutProcessor {
                 }
             }
         }
-        
+
         monitor.done();
     }
 

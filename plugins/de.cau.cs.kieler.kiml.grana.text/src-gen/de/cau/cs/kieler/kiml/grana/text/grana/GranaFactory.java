@@ -41,6 +41,69 @@ public interface GranaFactory extends EFactory
   Job createJob();
 
   /**
+   * Returns a new object of class '<em>Regular Job</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Regular Job</em>'.
+   * @generated
+   */
+  RegularJob createRegularJob();
+
+  /**
+   * Returns a new object of class '<em>Range Job</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Range Job</em>'.
+   * @generated
+   */
+  RangeJob createRangeJob();
+
+  /**
+   * Returns a new object of class '<em>Range</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Range</em>'.
+   * @generated
+   */
+  Range createRange();
+
+  /**
+   * Returns a new object of class '<em>Float Range</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Float Range</em>'.
+   * @generated
+   */
+  FloatRange createFloatRange();
+
+  /**
+   * Returns a new object of class '<em>Int Range</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Int Range</em>'.
+   * @generated
+   */
+  IntRange createIntRange();
+
+  /**
+   * Returns a new object of class '<em>Int Range Values</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Int Range Values</em>'.
+   * @generated
+   */
+  IntRangeValues createIntRangeValues();
+
+  /**
+   * Returns a new object of class '<em>Int Range Range</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Int Range Range</em>'.
+   * @generated
+   */
+  IntRangeRange createIntRangeRange();
+
+  /**
    * Returns a new object of class '<em>Resource</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -75,6 +138,42 @@ public interface GranaFactory extends EFactory
    * @generated
    */
   LocalResource createLocalResource();
+
+  /**
+   * Returns a new object of class '<em>Output</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Output</em>'.
+   * @generated
+   */
+  Output createOutput();
+
+  /**
+   * Returns a new object of class '<em>Global Output Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Global Output Ref</em>'.
+   * @generated
+   */
+  GlobalOutputRef createGlobalOutputRef();
+
+  /**
+   * Returns a new object of class '<em>Output Reference</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Output Reference</em>'.
+   * @generated
+   */
+  OutputReference createOutputReference();
+
+  /**
+   * Returns a new object of class '<em>Local Output</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Local Output</em>'.
+   * @generated
+   */
+  LocalOutput createLocalOutput();
 
   /**
    * Returns a new object of class '<em>Analysis</em>'.

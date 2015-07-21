@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -117,6 +117,12 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
             if (e instanceof KEdge) {
                 KEdge kedge = (KEdge) e;
                 
+                // currently no self-loop support
+                if (kedge.getSource() == kedge.getTarget()) {
+                    throw new IllegalStateException("Self-loops are not supported by the "
+                            + this.getClass().getSimpleName());
+                }
+                
                 // get the direction of the edge's parent node
                 KNode parent = kedge.getSource().getParent();
                 if (kedge.getTarget().getParent() != kedge.getSource().getParent()) {
@@ -125,7 +131,6 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
                         parent = kedge.getSource();
                     }
                 }
-                
                 KLayoutData parentLayout = parent.getData(KLayoutData.class);
                 Direction direction = parentLayout.getProperty(LayoutOptions.DIRECTION);
                 

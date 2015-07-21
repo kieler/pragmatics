@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -42,7 +42,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 public final class ForsterConstraintResolver implements IConstraintResolver {
 
     /** the layout units for handling dummy nodes for north / south ports. */
-    private Multimap<LNode, LNode> layoutUnits;
+    private final Multimap<LNode, LNode> layoutUnits;
     
     /**
      * Constructs a Forster constraint resolver.
@@ -99,7 +99,7 @@ public final class ForsterConstraintResolver implements IConstraintResolver {
             }
 
             // Check if we're processing a a normal, none-dummy node
-            if (node.getNodeType() == NodeType.NORMAL) {
+            if (node.getType() == NodeType.NORMAL) {
                 // If we already processed another normal, non-dummy node, we need to add
                 // constraints from all of that other node's layout unit's vertices to this
                 // node's layout unit's vertices
@@ -137,7 +137,7 @@ public final class ForsterConstraintResolver implements IConstraintResolver {
         List<NodeGroup> activeNodeGroups = null;
 
         // Iterate through the constrained vertices
-        float lastValue = Short.MIN_VALUE;
+        double lastValue = Short.MIN_VALUE;
         for (NodeGroup nodeGroup : nodeGroups) {
             assert nodeGroup.barycenter != null && nodeGroup.barycenter >= lastValue;
             lastValue = nodeGroup.barycenter;

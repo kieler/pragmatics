@@ -2,12 +2,12 @@
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
- * 
+ *
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
- * 
+ *
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
@@ -23,11 +23,12 @@ import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.MinizincMode;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.CompactionStrategy;
 
 /**
  * Container for public property definitions. These are layout options that can be set on graph
  * elements before the algorithm is invoked.
- * 
+ *
  * @author msp
  * @author cds
  * @author uru
@@ -39,19 +40,19 @@ public final class Properties {
     /**
      * A pre-defined seed for pseudo-random number generators.
      * We redefine the property here to set its default value to 1.
-     * 
-     * @see LayoutOptions#RANDOM_SEED
+     *
+     * @see de.cau.cs.kieler.kiml.options.LayoutOptions#RANDOM_SEED
      */
     public static final IProperty<Integer> RANDOM_SEED = new Property<Integer>(
             "de.cau.cs.kieler.randomSeed", 1);
-    
+
     /**
      * The factor by which the in-layer spacing between objects differs from the inter-layer
      * {@link InternalProperties#SPACING}.
      */
     public static final IProperty<Float> OBJ_SPACING_IN_LAYER_FACTOR = new Property<Float>(
             "de.cau.cs.kieler.klay.layered.inLayerSpacingFactor", 1.0f, 0f);
-    
+
     /**
      * Factor for minimal spacing between edges.
      */
@@ -59,10 +60,17 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.edgeSpacingFactor", 0.5f);
 
     /**
+     * Factor for minimal spacing between an edge and a node that is close by.
+     */
+    public static final Property<Float> EDGE_NODE_SPACING_FACTOR = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor", 0.7f);
+
+    /**
      * Whether nodes shall be distributed during layer assignment.
-     * 
+     *
      * @deprecated use the {@link #WIDE_NODES_ON_MULTIPLE_LAYERS} property instead.
      */
+    @Deprecated
     public static final IProperty<Boolean> DISTRIBUTE_NODES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.distributeNodes", false);
 
@@ -76,9 +84,9 @@ public final class Properties {
     /**
      * Property to choose a cycle breaking strategy.
      */
-    public static final IProperty<CycleBreakingStrategy> CYCLE_BREAKING 
-        = new Property<CycleBreakingStrategy>(
-            "de.cau.cs.kieler.klay.layered.cycleBreaking", CycleBreakingStrategy.GREEDY);
+    public static final IProperty<CycleBreakingStrategy> CYCLE_BREAKING =
+            new Property<CycleBreakingStrategy>("de.cau.cs.kieler.klay.layered.cycleBreaking",
+                    CycleBreakingStrategy.GREEDY);
 
     /**
      * Property to choose a node layering strategy.
@@ -89,35 +97,44 @@ public final class Properties {
     /**
      * Property to choose a crossing minimization strategy.
      */
-    public static final IProperty<CrossingMinimizationStrategy> CROSS_MIN 
-        = new Property<CrossingMinimizationStrategy>(
-            "de.cau.cs.kieler.klay.layered.crossMin", CrossingMinimizationStrategy.LAYER_SWEEP);
+    public static final IProperty<CrossingMinimizationStrategy> CROSS_MIN =
+            new Property<CrossingMinimizationStrategy>("de.cau.cs.kieler.klay.layered.crossMin",
+                    CrossingMinimizationStrategy.LAYER_SWEEP);
+
+    /**
+     * Property to choose a greedy Crossing Minimization Strategy.
+     */
+    public static final IProperty<GreedySwitchType> GREEDY_SWITCH_TYPE =
+            new Property<GreedySwitchType>("de.cau.cs.kieler.klay.layered.greedySwitch",
+                    GreedySwitchType.TWO_SIDED);
 
     /**
      * Property to choose a node placement strategy.
      */
-    public static final IProperty<NodePlacementStrategy> NODE_PLACER
-            = new Property<NodePlacementStrategy>("de.cau.cs.kieler.klay.layered.nodePlace",
+    public static final IProperty<NodePlacementStrategy> NODE_PLACER =
+            new Property<NodePlacementStrategy>("de.cau.cs.kieler.klay.layered.nodePlace",
                     NodePlacementStrategy.BRANDES_KOEPF);
-    
+
     /**
      * Dampening of deflections between linear segments in the linear segments node placer.
      */
-    public static final IProperty<Float> LINEAR_SEGMENTS_DEFLECTION_DAMPENING = new Property<Float>(
-            "de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening", 0.3f, 0.0f, 1.0f);
-    
+    public static final IProperty<Float> LINEAR_SEGMENTS_DEFLECTION_DAMPENING =
+            new Property<Float>("de.cau.cs.kieler.klay.layered.linearSegmentsDeflectionDampening",
+                    0.3f, 0.0f, 1.0f);
+
     /**
      * Tells the BK node placer to use a certain alignment instead of taking the optimal result.
      */
     public static final IProperty<FixedAlignment> FIXED_ALIGNMENT = new Property<FixedAlignment>(
             "de.cau.cs.kieler.klay.layered.fixedAlignment", FixedAlignment.NONE);
-    
+
     /**
      * Property to choose an edge label placement strategy.
      */
     public static final IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE_SELECTION =
-            new Property<EdgeLabelSideSelection>("de.cau.cs.kieler.klay.layered.edgeLabelSideSelection",
-                                                         EdgeLabelSideSelection.SMART);
+            new Property<EdgeLabelSideSelection>(
+                    "de.cau.cs.kieler.klay.layered.edgeLabelSideSelection",
+                    EdgeLabelSideSelection.ALWAYS_DOWN);
 
     /**
      * Property to switch debug mode on or off.
@@ -129,13 +146,14 @@ public final class Properties {
      * Property that determines how much effort should be spent.
      */
     public static final IProperty<Integer> THOROUGHNESS = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.thoroughness", 7, 1);
+            "de.cau.cs.kieler.klay.layered.thoroughness", 10, 1);
 
     /**
      * Property to set constraints on the node layering.
      */
-    public static final IProperty<LayerConstraint> LAYER_CONSTRAINT = new Property<LayerConstraint>(
-            "de.cau.cs.kieler.klay.layered.layerConstraint", LayerConstraint.NONE);
+    public static final IProperty<LayerConstraint> LAYER_CONSTRAINT =
+            new Property<LayerConstraint>("de.cau.cs.kieler.klay.layered.layerConstraint",
+                    LayerConstraint.NONE);
 
     /**
      * Property to enable or disable port merging. Merging ports is only interesting for edges
@@ -148,10 +166,11 @@ public final class Properties {
 
     /**
      * Property to enable or disable hierarchical port merging. Merging hierarchical ports is only
-     * interesting for hierarchy-crossing edges. Those are broken by the algorithm, with hierarchical
-     * ports inserted as required. Usually, one such port is created for each edge at each hierarchy
-     * crossing point. With this option set to {@code true}, we try to create as few hierarchical ports
-     * as possible in the process. In particular, all edges that form a hyperedge can share a port.
+     * interesting for hierarchy-crossing edges. Those are broken by the algorithm, with
+     * hierarchical ports inserted as required. Usually, one such port is created for each edge at
+     * each hierarchy crossing point. With this option set to {@code true}, we try to create as few
+     * hierarchical ports as possible in the process. In particular, all edges that form a hyperedge
+     * can share a port.
      */
     public static final IProperty<Boolean> MERGE_HIERARCHICAL_EDGES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.mergeHierarchyEdges", true);
@@ -159,28 +178,27 @@ public final class Properties {
     /**
      * Property that determines which point in a node determines the result of interactive phases.
      */
-    public static final IProperty<InteractiveReferencePoint> INTERACTIVE_REFERENCE_POINT 
-        = new Property<InteractiveReferencePoint>(
-            "de.cau.cs.kieler.klay.layered.interactiveReferencePoint",
-            InteractiveReferencePoint.CENTER);
-    
+    public static final IProperty<InteractiveReferencePoint> INTERACTIVE_REFERENCE_POINT =
+            new Property<InteractiveReferencePoint>(
+                    "de.cau.cs.kieler.klay.layered.interactiveReferencePoint",
+                    InteractiveReferencePoint.CENTER);
+
     /**
      * Whether feedback edges should be highlighted by routing around the nodes.
      */
     public static final IProperty<Boolean> FEEDBACK_EDGES = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.feedBackEdges", false);
-    
+
     /**
-     * If true, each long edge dummy will contribute a bend point to its edges and hierarchy-crossing
-     * edges will always get a bend point where they cross hierarchy boundaries. By default, bend points
-     * are only added where an edge changes direction.
+     * If true, each long edge dummy will contribute a bend point to its edges and
+     * hierarchy-crossing edges will always get a bend point where they cross hierarchy boundaries.
+     * By default, bend points are only added where an edge changes direction.
      */
     public static final IProperty<Boolean> ADD_UNNECESSARY_BENDPOINTS = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.unnecessaryBendpoints", false);
 
     /**
-     * Specifies how the content of compound nodes is to be aligned, e.g. top-left 
-     * or center-center.
+     * Specifies how the content of compound nodes is to be aligned, e.g. top-left or center-center.
      */
     public static final IProperty<EnumSet<ContentAlignment>> CONTENT_ALIGNMENT =
             new Property<EnumSet<ContentAlignment>>(
@@ -232,6 +250,15 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.minizincMode", MinizincMode.STATIC);
 
     /**
+     * Specifies the compaction strategy when using the
+     * {@link de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer BKNodePlacer}.
+     */
+    public static final IProperty<CompactionStrategy> COMPACTION_STRATEGY =
+            new Property<CompactionStrategy>(
+                    "de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy",
+                    CompactionStrategy.CLASSIC);
+
+    /**
      * The solver to use for the layering problem.
      */
     public static final IProperty<LayeringSolver> LAYERING_SOLVER = new Property<LayeringSolver>(
@@ -249,4 +276,5 @@ public final class Properties {
      */
     private Properties() {
     }
+
 }

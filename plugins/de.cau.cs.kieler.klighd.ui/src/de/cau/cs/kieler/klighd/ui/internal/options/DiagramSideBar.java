@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.ui.internal.options;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -49,19 +50,19 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
-import com.google.common.collect.Lists;
-
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.config.ILayoutConfig;
 import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.klighd.DisplayedActionData;
 import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
+import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.KlighdPreferences;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.SynthesisOption;
+import de.cau.cs.kieler.klighd.ViewChangeType;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.ui.parts.DiagramViewPart;
@@ -135,7 +136,7 @@ public final class DiagramSideBar {
     /** the set of resources to be disposed when the view is closed. */
     private final List<Resource> resources = new LinkedList<Resource>();
 
-    private final List<Control> sideBarControls = Lists.newArrayListWithCapacity(5);
+    private final List<Control> sideBarControls = new ArrayList<Control>(5);
 
     private FormData sashLayoutData = null;
 
@@ -548,9 +549,6 @@ public final class DiagramSideBar {
 
         viewContext = theViewContext;
 
-        // register the actionsControlFactory as selection listener in the current context viewer
-        viewContext.getViewer().getContextViewer().addSelectionChangedListener(actionControlFactory);
-
         if (diagramComposite.isDisposed()) {
             return;
         }
@@ -563,6 +561,21 @@ public final class DiagramSideBar {
         for (final DisplayedActionData actionData : viewContext.getDisplayedActions()) {
             actionControlFactory.createActionControl(actionData, theViewContext);
             actionsAvailable = true;
+        }
+
+        final IViewer viewer = viewContext.getViewer();
+        if (actionsAvailable) {
+            // register the actionsControlFactory as selection listener in the current context viewer
+            //  multiple additions are harmless as internally a LinkedHashSet is used hold the listeners
+            viewer.getContextViewer().addSelectionChangedListener(actionControlFactory);
+
+            // register the actionsControlFactory as view change listener in the current (diagram) viewer
+            //  multiple additions are harmless as internally a HashMultimap is used hold the listeners
+            viewer.addViewChangeListener(actionControlFactory,
+                    ViewChangeType.clipCollapseExpandHideShow());
+        } else {
+            viewer.getContextViewer().removeSelectionChangedListener(actionControlFactory);
+            viewer.removeViewChangeListener(actionControlFactory);
         }
 
         // remove any option controls that have been created before

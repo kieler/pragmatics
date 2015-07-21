@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -349,7 +349,7 @@ public class DiagramEditorPart extends EditorPart implements
         final KNode viewModel = viewContext.getViewModel();
         final KShapeLayout diagramLayout = viewModel.getData(KShapeLayout.class);
 
-        return diagramLayout.getWidth() == 0 && diagramLayout.getHeight() == 0;
+        return diagramLayout.getWidth() == 0 && diagramLayout.getHeight() == 0; 
     }
 
     /**

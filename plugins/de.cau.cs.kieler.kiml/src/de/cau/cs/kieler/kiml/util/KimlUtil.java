@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2008 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -20,20 +20,28 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.AbstractTreeIterator;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EContentsEList.FeatureFilter;
+import org.eclipse.emf.ecore.util.EContentsEList.FeatureIteratorImpl;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.EMapPropertyHolder;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphData;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KGraphFactory;
+import de.cau.cs.kieler.core.kgraph.KGraphPackage;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -53,7 +61,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
@@ -701,6 +711,19 @@ public final class KimlUtil {
     }
     
     /**
+     * Calls {@link #loadDataElements(KNode, boolean, IProperty...)} with {@code clearProperties} set to
+     * {@code false}.
+     * 
+     * @param graph
+     *            the root element of the graph to load elements of.
+     * @param knownProps
+     *            a set of additional properties that are known, hence should be parsed properly
+     */
+    public static void loadDataElements(final KNode graph, final IProperty<?>... knownProps) {
+        loadDataElements(graph, PREDICATE_IS_KLAYOUTDATA, false, knownProps);
+    }
+    
+    /**
      * Loads all {@link de.cau.cs.kieler.core.properties.IProperty IProperty} of {@link KLayoutData}
      * elements of a KGraph by deserializing {@link PersistentEntry} tuples. Values are parsed using
      * layout option data obtained from the {@link LayoutMetaDataService}. Options that cannot be
@@ -709,12 +732,18 @@ public final class KimlUtil {
      * 
      * @param graph
      *            the root element of the graph to load elements of.
+     * @param clearProperties
+     *            {@code true} if the properties of a property holder should be cleared before
+     *            repopulating them based on persistent entries. Required if the removal of a persistent
+     *            entry should result in the removal of the correspondind property. This is for example
+     *            the case in our Xtext-based KGT editor.
      * @param knownProps
      *            a set of additional properties that are known, hence should be parsed properly
      */
-    public static void loadDataElements(final KNode graph,
+    public static void loadDataElements(final KNode graph, final boolean clearProperties,
             final IProperty<?>... knownProps) {
-        loadDataElements(graph, PREDICATE_IS_KLAYOUTDATA, knownProps);
+        
+        loadDataElements(graph, PREDICATE_IS_KLAYOUTDATA, clearProperties, knownProps);
     }
 
     /**
@@ -727,6 +756,68 @@ public final class KimlUtil {
                     return input instanceof KLayoutData;
                 }
             };
+            
+    /**
+     * Calls {@link #loadDataElements(KNode, Predicate, boolean, IProperty...)} with
+     * {@code clearProperties} set to {@code false}.
+     * 
+     * @param graph
+     *            the root element of the graph to load elements of.
+     * @param handledTypes
+     *            a predicate checking if we desire to load data elements for a certain subclass of
+     *            {@link EMapPropertyHolder}.
+     * @param knownProps
+     *            a set of additional properties that are known, hence should be parsed properly.
+     * 
+     * @return the graph itself
+     */
+    public static KNode loadDataElements(final KNode graph,
+            final Predicate<EMapPropertyHolder> handledTypes, final IProperty<?>... knownProps) {
+
+        return loadDataElements(graph, handledTypes, false, knownProps);
+    }
+    
+    /**
+     * A tree iterator that skips properties of {@link EMapPropertyHolder}s. For an explanation of
+     * why this is necessary, see the implementation of
+     * {@link KimlUtil#loadDataElements(KNode, Predicate, boolean, IProperty...)}.
+     * 
+     * @author cds
+     */
+    private static class PropertiesSkippingTreeIterator extends AbstractTreeIterator<EObject> {
+        /** Bogus serial version ID. */
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * {@inheritDoc}.
+         */
+        public PropertiesSkippingTreeIterator(final Object object, final boolean includeRoot) {
+            super(object, includeRoot);
+        }
+
+        @Override
+        protected Iterator<? extends EObject> getChildren(final Object object) {
+            // We know that the object is an EObject; get an iterator over its content
+            Iterator<EObject> iterator = ((EObject) object).eContents().iterator();
+            
+            // The iterator will usually be a FeatureIteratorImpl that we can set a feature filter on
+            if (iterator instanceof FeatureIteratorImpl) {
+                ((FeatureIteratorImpl<EObject>) iterator).filter(new FeatureFilter() {
+                    public boolean isIncluded(final EStructuralFeature eStructuralFeature) {
+                        // We include everything but properties (layout options)
+                        if (eStructuralFeature.getContainerClass().equals(EMapPropertyHolder.class)) {
+                            return eStructuralFeature.getFeatureID()
+                                    != KGraphPackage.EMAP_PROPERTY_HOLDER__PROPERTIES;
+                        } else {
+                            return true;
+                        }
+                    }
+                });
+            }
+            
+            return iterator;
+        }
+    }
     
     /**
      * Loads all {@link de.cau.cs.kieler.core.properties.IProperty IProperty} of elements that pass
@@ -740,13 +831,19 @@ public final class KimlUtil {
      * @param handledTypes
      *            a predicate checking if we desire to load data elements for a certain subclass of
      *            {@link EMapPropertyHolder}.
+     * @param clearProperties
+     *            {@code true} if the properties of a property holder should be cleared before
+     *            repopulating them based on persistent entries. Required if the removal of a persistent
+     *            entry should result in the removal of the correspondind property. This is for example
+     *            the case in our Xtext-based KGT editor.
      * @param knownProps
-     *            a set of additional properties that are known, hence should be parsed properly
+     *            a set of additional properties that are known, hence should be parsed properly.
      * 
      * @return the graph itself
      */
     public static KNode loadDataElements(final KNode graph,
-            final Predicate<EMapPropertyHolder> handledTypes, final IProperty<?>... knownProps) {
+            final Predicate<EMapPropertyHolder> handledTypes, final boolean clearProperties,
+            final IProperty<?>... knownProps) {
 
         Map<String, IProperty<?>> knowPropsMap = Maps.newHashMap();
         for (IProperty<?> p : knownProps) {
@@ -754,12 +851,26 @@ public final class KimlUtil {
         }
 
         LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
-        TreeIterator<EObject> iterator = graph.eAllContents();
+        
+        /* This is basically the same as graph.eAllContents(). However, using the latter would cause a
+         * ConcurrentModificationException. The reason we're walking through the graph here is that we
+         * rebuild properties based on persistent entries. But with eAllContents(), we would also iterate
+         * over the properties we're modifying. That's where the exception comes in. To avoid that, we're
+         * using a special tree iterator that skips over properties of EMapPropertyHolders. Magic!
+         * (KIPRA-1541)
+         */
+        TreeIterator<EObject> iterator = new PropertiesSkippingTreeIterator(graph, false);
         while (iterator.hasNext()) {
             EObject eObject = iterator.next();
             if (eObject instanceof EMapPropertyHolder
                     && handledTypes.apply((EMapPropertyHolder) eObject)) {
+                
                 final EMapPropertyHolder holder = (EMapPropertyHolder) eObject;
+                
+                if (clearProperties && holder.getProperties() != null) {
+                    holder.getProperties().clear();
+                }
+                
                 for (PersistentEntry persistentEntry : holder.getPersistentEntries()) {
                     loadDataElement(dataService, holder, persistentEntry.getKey(),
                             persistentEntry.getValue(), knowPropsMap);
@@ -1018,5 +1129,279 @@ public final class KimlUtil {
         points[n - 1] = edgeLayout.getTargetPoint().createVector();
         return points;
     }
+
+
+    /**
+     * Determines the {@link KEdge KEdges} that are (transitively) connected to the given
+     * {@code kedges} across hierarchy boundaries via common ports. See
+     * {@link #getConnectedEdges(KEdge)} for details.
+     *
+     * @see #getConnectedEdges(KEdge)
+     * @param kedges
+     *            an {@link Iterable} of {@link KEdge KEdges} that shall be checked
+     * @return an {@link Iterator} visiting the given {@code kedges} and all (transitively)
+     *         connected ones.
+     */
+    public static Iterator<KEdge> getConnectedEdges(final Iterable<KEdge> kedges) {
+        return Iterators.concat(
+                Iterators.transform(kedges.iterator(), new Function<KEdge, Iterator<KEdge>>() {
+
+            public Iterator<KEdge> apply(final KEdge kedge) {
+                return getConnectedEdges(kedge);
+            }
+        }));
+    }
+
+    /**
+     * Determines the {@link KEdge KEdges} that are (transitively) connected to {@code kedge} across
+     * hierarchy boundaries via common ports. Rational: Multiple {@link KEdge KEdges} that are
+     * pairwise connected by means of a {@link KPort} (target port of edge a == source port of edge
+     * b or vice versa) may form one logical connection. This kind splitting might be already
+     * present in the view model, or is performed by the layout algorithm for decomposing a nested
+     * layout input graph into flat sub graphs.
+     *
+     * @param kedge
+     *            the {@link KEdge} check for connected edges
+     * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
+     *         almost) breadth first search fashion
+     */
+    public static Iterator<KEdge> getConnectedEdges(final KEdge kedge) {
+        // Default behavior should be to not select the ports
+        return Iterators.filter(getConnectedEdges(kedge, false), KEdge.class);
+    }
     
+    /**
+     * Determines the {@link KEdge KEdges} that are (transitively) connected to {@code kedge} across
+     * hierarchy boundaries via common ports. Rational: Multiple {@link KEdge KEdges} that are
+     * pairwise connected by means of a {@link KPort} (target port of edge a == source port of edge
+     * b or vice versa) may form one logical connection. This kind splitting might be already
+     * present in the view model, or is performed by the layout algorithm for decomposing a nested
+     * layout input graph into flat sub graphs.
+     *
+     * @param kedge
+     *            the {@link KEdge} check for connected edges
+     * @param addPorts
+     *            flag to determine, whether ports should be added to the selection or not
+     * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
+     *         almost) breadth first search fashion
+     */
+    public static Iterator<KGraphElement> getConnectedEdges(final KEdge kedge, final boolean addPorts) {
+        // get a singleton iterator offering 'kedge'
+        final Iterator<KGraphElement> kedgeIt = Iterators.singletonIterator((KGraphElement) kedge);
+        final Set<KPort> visited = Sets.newHashSet();
+
+        // if 'kedge' has a source port,
+        //  create a bfs tree iterator visiting all source-sidewise connected edges
+        //  and ports if desired
+        final Iterator<KGraphElement> sourceSideIt =
+                kedge.getSourcePort() == null ? null : new AbstractTreeIterator<KGraphElement>(
+                        kedge, false) {
+
+            private static final long serialVersionUID = 2096899476184317737L;
+
+            @Override
+            protected Iterator<? extends KGraphElement> getChildren(final Object object) {
+                if (object instanceof KEdge) {
+                    final KPort sourcePort = ((KEdge) object).getSourcePort();
+    
+                    if (sourcePort == null || visited.contains(sourcePort)) {
+                        // return an empty iterator if no source port is configured
+                        //  or if the source port has been visited already, in order
+                        //  to break infinite loops
+                        return Iterators.<KGraphElement>emptyIterator();
+                    }
+    
+                    visited.add(sourcePort);
+    
+                    // for each object (kedge) visited by this iterator check all the edges connected to
+                    //  'sourcePort' and visit those edges satisfying the criterion stated above
+                    // this criterion btw. prevents from visiting 'object' immediately again,
+                    //  as "sourcePort == input.getTargetPort()" implies "object != input"
+                    Iterator<KEdge> resultEdges =
+                            Iterators.filter(sourcePort.getEdges().iterator(), new Predicate<KEdge>() {
+                        public boolean apply(final KEdge input) {
+                            return sourcePort == input.getTargetPort();
+                        }
+                    });
+                    
+                    // If the port should be added to the selection, add it to the result set
+                    if (addPorts) {
+                        Iterator<KGraphElement> sourcePortIterator =
+                                Iterators.singletonIterator((KGraphElement) sourcePort);
+                        return Iterators.concat(sourcePortIterator, resultEdges);
+                    } else {
+                        return resultEdges;
+                    }
+                } else {
+                    return Iterators.<KGraphElement>emptyIterator();
+                }
+            }
+        };
+
+        // if 'kedge' has a target port,
+        //  create a bfs tree iterator visiting all target-sidewise connected edges
+        //  and ports if desired
+        final Iterator<KGraphElement> targetSideIt =
+                kedge.getTargetPort() == null ? null : new AbstractTreeIterator<KGraphElement>(
+                        kedge, false) {
+
+            private static final long serialVersionUID = -4290192971641462249L;
+
+            @Override
+            protected Iterator<? extends KGraphElement> getChildren(final Object object) {
+                if (object instanceof KEdge) {
+                    final KPort targetPort = ((KEdge) object).getTargetPort();
+    
+                    if (targetPort == null || visited.contains(targetPort)) {
+                        // return an empty iterator if no target port is configured
+                        //  or if the target port has been visited already, in order
+                        //  to break infinite loops
+                        return Iterators.<KGraphElement>emptyIterator();
+                    }
+    
+                    visited.add(targetPort);
+    
+                    // for each object (kedge) visited by this iterator check all the edges connected to
+                    //  'targetPort' and visit those edges satisfying the criterion stated above
+                    // this criterion btw. prevents from visiting 'object' immediately again,
+                    //  as "targetPort == input.getSourcePort()" implies "object != input"
+                    Iterator<KEdge> resultEdges =
+                            Iterators.filter(targetPort.getEdges().iterator(), new Predicate<KEdge>() {
+    
+                        public boolean apply(final KEdge input) {
+                            return targetPort == input.getSourcePort();
+                        }
+                    });
+                                    
+                    // If the port should be added to the selection, add it to the result set
+                    if (addPorts) {
+                        Iterator<KGraphElement> sourcePortIterator =
+                                Iterators.singletonIterator((KGraphElement) targetPort);
+                        return Iterators.concat(sourcePortIterator, resultEdges);
+                    } else {
+                        return resultEdges;
+                    }
+                } else {
+                    return Iterators.<KGraphElement>emptyIterator();
+                }
+            }
+        };
+
+        // concatenate the source-sidewise and target-sidewise iterators if present ...
+        final Iterator<KGraphElement> connectedEdges = sourceSideIt == null ? targetSideIt
+                : targetSideIt == null ? sourceSideIt : Iterators.concat(sourceSideIt, targetSideIt);
+
+        // ... and attach them to the input 'kedge' offering iterator, or return just the
+        //  input 'kedge' iterator in case no ports are configured for 'kedge'
+        return connectedEdges == null ? kedgeIt : Iterators.concat(kedgeIt, connectedEdges);
+    }
+    
+    /**
+     * Recursively configures default values for all child elements of the passed graph. This
+     * includes node, ports, and edges.
+     * 
+     * Note that it is <b>not</b> checked whether the defaults flag is set on the graph.
+     * 
+     * @param graph
+     *            the graph to configure.
+     */
+    public static void configureDefaultsRecursively(final KNode graph) {
+
+        Iterator<KGraphElement> kgeIt =
+                Iterators.filter(graph.eAllContents(), KGraphElement.class);
+        while (kgeIt.hasNext()) {
+            KGraphElement kge = kgeIt.next();
+            if (kge instanceof KNode) {
+                configureWithDefaultValues((KNode) kge);
+            } else if (kge instanceof KPort) {
+                configureWithDefaultValues((KPort) kge);
+            } else if (kge instanceof KEdge) {
+                configureWithDefaultValues((KEdge) kge);
+            }
+        }
+    }
+    /**
+     * Adds some default values to the passed node. This includes a reasonable size, a label based
+     * on the node's {@link KIdentifier} and a inside center node label placement.
+     * 
+     * Such default values are useful for fast test case generation.
+     * 
+     * @param node
+     *            a node of a graph
+     */
+    public static void configureWithDefaultValues(final KNode node) {
+       
+        // Make sure the node has a size if the size constraints are fixed
+        KShapeLayout sl = node.getData(KShapeLayout.class);
+        if (sl != null) {
+            Set<SizeConstraint> sc = sl.getProperty(LayoutOptions.SIZE_CONSTRAINT);
+            
+            if (sc.equals(SizeConstraint.fixed()) && sl.getWidth() == 0f && sl.getHeight() == 0f) {
+                sl.setWidth(DEFAULT_MIN_WIDTH * 2 * 2);
+                sl.setHeight(DEFAULT_MIN_HEIGHT * 2 * 2);
+            }
+        } 
+        
+        // label
+        ensureLabel(node);
+        if (sl != null) {
+            Set<NodeLabelPlacement> nlp = sl.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT);
+            if (nlp.equals(NodeLabelPlacement.fixed())) {
+                sl.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT, NodeLabelPlacement.insideCenter());
+            }
+        }
+        
+    }
+    
+    /**
+     * Adds some default values to the passed port. This includes a reasonable size 
+     * and a label based on the port's {@link KIdentifier}.
+     * 
+     * Such default values are useful for fast test case generation.
+     * 
+     * @param port
+     *            a port of a node of a graph
+     */
+    public static void configureWithDefaultValues(final KPort port) {
+
+        KShapeLayout sl = port.getData(KShapeLayout.class);
+        if (sl != null && sl.getWidth() == 0f && sl.getHeight() == 0f) {
+            sl.setWidth(DEFAULT_MIN_WIDTH / 2 / 2);
+            sl.setHeight(DEFAULT_MIN_HEIGHT / 2 / 2);
+        }
+        
+        ensureLabel(port);
+    }
+    
+    /**
+     * Configures the {@link EdgeLabelPlacement} of the passed edge to be center of the edge.
+     * 
+     * @param edge
+     *            an edge of a graph
+     */
+    public static void configureWithDefaultValues(final KEdge edge) {
+
+        KLayoutData ld = edge.getData(KLayoutData.class);
+        if (ld != null) {
+            EdgeLabelPlacement elp = ld.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+            if (elp == EdgeLabelPlacement.UNDEFINED) {
+                ld.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.CENTER);
+            }
+        }
+    }
+    
+    /**
+     * If the element does not already own a label, a label is created based on the element's
+     * {@link KIdentifier} (if it exists, that is).
+     */
+    private static void ensureLabel(final KLabeledGraphElement klge) {
+        if (klge.getLabels().isEmpty()) {
+
+            KIdentifier id = klge.getData(KIdentifier.class);
+            if (id != null && !Strings.isNullOrEmpty(id.getId())) {
+                KLabel label = createInitializedLabel(klge);
+                label.setText(id.getId());
+            }
+        }
+    }
 }

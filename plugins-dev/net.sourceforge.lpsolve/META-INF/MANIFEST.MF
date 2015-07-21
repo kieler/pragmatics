@@ -5,4 +5,4 @@ Bundle-SymbolicName: net.sourceforge.lpsolve
 Bundle-Version: 5.5.2.qualifier
 Export-Package: lpsolve
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -174,6 +174,12 @@ public final class KlighdConstants {
      */
     // SUPPRESS CHECKSTYLE NEXT MagicNumber
     public static final int SIDE_BAR_LAYOUT_CONFIG_PRIORITY = VolatileLayoutConfig.DEFAULT_PRIORITY - 25;
+
+    /**
+     * Constant definition of <i>printout</i> export format, required e.g. in the registration of
+     * {@link IExportBranding IExportBrandings}.
+     */
+    public static final String EXPORT_PRINTOUT = "printout"; 
 
     /**
      * Special type of semantic data that represents an 'id'. A specified value should be mapped to

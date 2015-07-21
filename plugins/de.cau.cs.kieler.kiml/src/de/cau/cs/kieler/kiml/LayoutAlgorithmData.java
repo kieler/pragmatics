@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2009 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -63,6 +63,9 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     private final Map<String, Integer> supportedDiagrams = Maps.newHashMap();
     /** map of supported graph features. */
     private final Map<GraphFeature, Integer> supportedFeatures = Maps.newEnumMap(GraphFeature.class);
+    /** map of descriptions of supported graph features. */
+    private final Map<GraphFeature, String> supportedFeaturesDescriptions =
+            Maps.newEnumMap(GraphFeature.class);
     
     /**
      * {@inheritDoc}
@@ -163,6 +166,17 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     }
     
     /**
+     * Checks if the given diagram type is supported at all. This is equivalent to checking whether
+     * {@link #getDiagramSupport(String)} returns something greater than {@link #MIN_PRIORITY}.
+     * 
+     * @param diagramType the diagram type to check.
+     * @return {@code true} if the algorithm supports the given diagram type.
+     */
+    public boolean supportsFeature(final String diagramType) {
+        return getDiagramSupport(diagramType) > MIN_PRIORITY;
+    }
+    
+    /**
      * Sets support for the given graph feature. If the priority is less or equal to
      * {@link #MIN_PRIORITY}, the feature is treated as not supported.
      * 
@@ -194,6 +208,48 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
             return result;
         }
         return MIN_PRIORITY;
+    }
+    
+    /**
+     * Checks if the given graph feature is supported at all. This is equivalent to checking whether
+     * {@link #getFeatureSupport(GraphFeature)} returns something greater than {@link #MIN_PRIORITY}.
+     * 
+     * @param graphFeature the graph feature to check.
+     * @return {@code true} if the algorithm supports the given feature.
+     */
+    public boolean supportsFeature(final GraphFeature graphFeature) {
+        return getFeatureSupport(graphFeature) > MIN_PRIORITY;
+    }
+    
+    /**
+     * Adds a detailed description for a given {@link GraphFeature}. It should describe how well the
+     * feature is supported by the algorithm and if there are any restrictions to its usage.
+     * This setter does not perform any sanity checks whether the given feature is supported all or the
+     * like. If the the description is {@code null} or the emtpy string, possibly existing descriptions
+     * are removed.
+     * 
+     * @param feature the feature to describe.
+     * @param featureDescription the features' description. May be {@code null}.
+     */
+    public void setSupportedFeatureDescription(final GraphFeature feature,
+            final String featureDescription) {
+        
+        if (featureDescription != null && !"".equals(featureDescription)) {
+            supportedFeaturesDescriptions.put(feature, featureDescription);
+        } else {
+            supportedFeaturesDescriptions.remove(feature);
+        }
+    }
+
+    /**
+     * Gets the detailed description of the given {@link GraphFeature} how well the feature is supported.
+     * May be {@code null}.
+     * 
+     * @param feature the feature to get the description for.
+     * @return the description if set, {@code null} otherwise.
+     */
+    public String getSupportedFeatureDescription(final GraphFeature feature) {
+        return supportedFeaturesDescriptions.get(feature);
     }
 
     /**

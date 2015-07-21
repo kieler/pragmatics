@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -13,11 +13,11 @@
  */
 package de.cau.cs.kieler.klighd.ui.viewers;
 
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Control;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.klighd.IKlighdSelection;
 import de.cau.cs.kieler.klighd.IViewChangeListener;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.KlighdTreeSelection;
@@ -115,6 +116,14 @@ public class StringViewer implements IViewer {
      */
     public void addViewChangeListener(final IViewChangeListener listener,
             final ViewChangeType... eventTypes) {
+        // do nothing
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addViewChangeListener(final IViewChangeListener listener,
+            final EnumSet<ViewChangeType> eventTypes) {
         // do nothing
     }
 
@@ -402,7 +411,7 @@ public class StringViewer implements IViewer {
     /**
      * {@inheritDoc}
      */
-    public ISelection getSelection() {
+    public IKlighdSelection getSelection() {
         return null;
     }
 

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Graphviz Parser
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University
 Bundle-Version: 0.7.1.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.graphviz.dot; singleton:=true
 Bundle-ActivationPolicy: lazy
@@ -21,7 +21,7 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0",
  de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.formats
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.cau.cs.kieler.kiml.graphviz.dot,
  de.cau.cs.kieler.kiml.graphviz.dot.dot,
  de.cau.cs.kieler.kiml.graphviz.dot.dot.impl,

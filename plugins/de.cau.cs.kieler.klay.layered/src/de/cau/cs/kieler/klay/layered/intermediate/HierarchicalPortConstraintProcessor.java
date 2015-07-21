@@ -4,7 +4,7 @@ looks  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -56,12 +56,17 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * the different port constraints later on.</p>
  * 
  * <dl>
- *   <dt>Precondition:</dt><dd>A layered graph; long edge dummies have not yet been inserted;
- *     layer constraints have not yet been applied.</dd>
- *   <dt>Postcondition:</dt><dd>Hierarchical port dummies for northern and southern ports are
- *     replaced by multiple dummies if the port constraints are at least {@code FIXED_ORDER}.</dd>
- *   <dt>Slots:</dt><dd>Before phase 3.</dd>
- *   <dt>Same-slot dependencies:</dt><dd>{@link LayerConstraintProcessor}</dd>
+ *   <dt>Precondition:</dt>
+ *     <dd>a layered graph</dd>
+ *     <dd>long edge dummies have not yet been inserted</dd>
+ *     <dd>layer constraints have not yet been applied.</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>Hierarchical port dummies for northern and southern ports are replaced by multiple dummies if
+ *       the port constraints are at least {@code FIXED_ORDER}.</dd>
+ *   <dt>Slots:</dt>
+ *     <dd>Before phase 3.</dd>
+ *   <dt>Same-slot dependencies:</dt>
+ *     <dd>{@link LayerConstraintProcessor}</dd>
  * </dl>
  * 
  * @see HierarchicalPortDummySizeProcessor
@@ -84,9 +89,9 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
          * {@inheritDoc}
          */
         public int compare(final LNode node1, final LNode node2) {
-            NodeType nodeType1 = node1.getNodeType();
+            NodeType nodeType1 = node1.getType();
             double nodePos1 = node1.getProperty(InternalProperties.PORT_RATIO_OR_POSITION);
-            NodeType nodeType2 = node2.getNodeType();
+            NodeType nodeType2 = node2.getType();
             double nodePos2 = node2.getProperty(InternalProperties.PORT_RATIO_OR_POSITION);
             
             if (nodeType2 != NodeType.EXTERNAL_PORT) {
@@ -167,7 +172,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
         LNode lastHierarchicalDummy = null;
         
         for (LNode node : nodes) {
-            if (node.getNodeType() != NodeType.EXTERNAL_PORT) {
+            if (node.getType() != NodeType.EXTERNAL_PORT) {
                 // No hierarchical port dummy nodes any more
                 break;
             }
@@ -342,7 +347,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
      *         {@code false} otherwise.
      */
     private boolean isNorthernSouthernDummy(final LNode node) {
-        NodeType nodeType = node.getNodeType();
+        NodeType nodeType = node.getType();
         
         if (nodeType == NodeType.EXTERNAL_PORT) {
             PortSide portSide = node.getProperty(InternalProperties.EXT_PORT_SIDE);
@@ -368,9 +373,7 @@ public final class HierarchicalPortConstraintProcessor implements ILayoutProcess
         newDummy.setProperty(InternalProperties.EXT_PORT_REPLACED_DUMMY, originalDummy);
         newDummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         newDummy.setProperty(LayoutOptions.ALIGNMENT, Alignment.CENTER);
-        
-        // DEBUG
-        newDummy.getLabels().addAll(originalDummy.getLabels());
+        newDummy.setType(NodeType.EXTERNAL_PORT);
         
         LPort inputPort = new LPort();
         inputPort.setNode(newDummy);

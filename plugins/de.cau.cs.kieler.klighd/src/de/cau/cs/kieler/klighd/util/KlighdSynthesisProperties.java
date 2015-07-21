@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -57,6 +57,10 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
     /** property denoting the support of selecting multiple diagram elements. */
     public static final IProperty<Boolean> MULTI_SELECTION = new Property<Boolean>(
             "klighd.multiSelection", true);
+
+    /** property denoting the option to select included ports when selecting connected edges. */
+    public static final IProperty<Boolean> INCLUDE_PORTS_IN_CONNECTED_EDGES_SELECTIONS =
+            new Property<Boolean>("klighd.includePortsInConnectedEdgesSelections", false);
 
     /** property denoting pre-definition of diagram {@link SynthesisOption} values. */
     public static final IProperty<Map<SynthesisOption, Object>> SYNTHESIS_OPTION_CONFIG =
@@ -295,6 +299,21 @@ public class KlighdSynthesisProperties extends MapPropertyHolder {
      */
     public KlighdSynthesisProperties suppressMultiSelection() {
         this.setProperty(MULTI_SELECTION, false);
+        return this;
+    }
+
+    /**
+     * Configures the diagram viewer to include ports when selecting connected edges. <i>Connected
+     * edges<i> refer to edges connected to the same port on different levels of nested nodes.
+     * Usually such edges can be seen as a single logical connection that has been split, e.g., for
+     * technical reasons. If set each connected {@link de.cau.cs.kieler.core.kgraph.KEdge KEdge}
+     * "segment" and each {@link de.cau.cs.kieler.core.kgraph.KPort KPort} situated in between the
+     * edges will be taken into selection, otherwise only the edges are taken.
+     * 
+     * @return <code>this<code> {@link KlighdSynthesisProperties} object.
+     */
+    public KlighdSynthesisProperties includePortsInConnectedEdgesSelections() {
+        this.setProperty(INCLUDE_PORTS_IN_CONNECTED_EDGES_SELECTIONS, true);
         return this;
     }
 

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -95,7 +95,7 @@ public final class HierarchicalPortPositionProcessor implements ILayoutProcessor
         // Iterate over the layer's nodes
         for (LNode node : layer) {
             // We only care about external port dummies...
-            if (node.getNodeType() != NodeType.EXTERNAL_PORT) {
+            if (node.getType() != NodeType.EXTERNAL_PORT) {
                 continue;
             }
             

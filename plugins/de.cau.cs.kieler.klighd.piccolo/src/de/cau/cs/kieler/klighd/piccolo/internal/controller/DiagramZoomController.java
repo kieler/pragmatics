@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -224,7 +224,7 @@ public class DiagramZoomController {
 
             while (parent != null && parent != displayedKNode.getParent()) {
                 final KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
-                final double scale = parentLayout.getProperty(LayoutOptions.SCALE_FACTOR);
+                final double scale = parentLayout.getProperty(LayoutOptions.SCALE_FACTOR).doubleValue();
 
                 focusBounds.setSize(scale * focusBounds.width , scale * focusBounds.height);
                 focusBounds.setOrigin(scale * focusBounds.x, scale * focusBounds.y);

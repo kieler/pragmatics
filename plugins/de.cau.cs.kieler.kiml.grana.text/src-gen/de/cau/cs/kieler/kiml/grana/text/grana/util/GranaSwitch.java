@@ -86,6 +86,63 @@ public class GranaSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GranaPackage.REGULAR_JOB:
+      {
+        RegularJob regularJob = (RegularJob)theEObject;
+        T result = caseRegularJob(regularJob);
+        if (result == null) result = caseJob(regularJob);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.RANGE_JOB:
+      {
+        RangeJob rangeJob = (RangeJob)theEObject;
+        T result = caseRangeJob(rangeJob);
+        if (result == null) result = caseJob(rangeJob);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.RANGE:
+      {
+        Range range = (Range)theEObject;
+        T result = caseRange(range);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.FLOAT_RANGE:
+      {
+        FloatRange floatRange = (FloatRange)theEObject;
+        T result = caseFloatRange(floatRange);
+        if (result == null) result = caseRange(floatRange);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.INT_RANGE:
+      {
+        IntRange intRange = (IntRange)theEObject;
+        T result = caseIntRange(intRange);
+        if (result == null) result = caseRange(intRange);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.INT_RANGE_VALUES:
+      {
+        IntRangeValues intRangeValues = (IntRangeValues)theEObject;
+        T result = caseIntRangeValues(intRangeValues);
+        if (result == null) result = caseIntRange(intRangeValues);
+        if (result == null) result = caseRange(intRangeValues);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.INT_RANGE_RANGE:
+      {
+        IntRangeRange intRangeRange = (IntRangeRange)theEObject;
+        T result = caseIntRangeRange(intRangeRange);
+        if (result == null) result = caseIntRange(intRangeRange);
+        if (result == null) result = caseRange(intRangeRange);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GranaPackage.RESOURCE:
       {
         Resource resource = (Resource)theEObject;
@@ -113,6 +170,36 @@ public class GranaSwitch<T> extends Switch<T>
         LocalResource localResource = (LocalResource)theEObject;
         T result = caseLocalResource(localResource);
         if (result == null) result = caseResource(localResource);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.OUTPUT:
+      {
+        Output output = (Output)theEObject;
+        T result = caseOutput(output);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.GLOBAL_OUTPUT_REF:
+      {
+        GlobalOutputRef globalOutputRef = (GlobalOutputRef)theEObject;
+        T result = caseGlobalOutputRef(globalOutputRef);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.OUTPUT_REFERENCE:
+      {
+        OutputReference outputReference = (OutputReference)theEObject;
+        T result = caseOutputReference(outputReference);
+        if (result == null) result = caseOutput(outputReference);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GranaPackage.LOCAL_OUTPUT:
+      {
+        LocalOutput localOutput = (LocalOutput)theEObject;
+        T result = caseLocalOutput(localOutput);
+        if (result == null) result = caseOutput(localOutput);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -155,6 +242,118 @@ public class GranaSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseJob(Job object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Regular Job</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Regular Job</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseRegularJob(RegularJob object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Range Job</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Range Job</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseRangeJob(RangeJob object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Range</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Range</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseRange(Range object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Float Range</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Float Range</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseFloatRange(FloatRange object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Int Range</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Int Range</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIntRange(IntRange object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Int Range Values</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Int Range Values</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIntRangeValues(IntRangeValues object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Int Range Range</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Int Range Range</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseIntRangeRange(IntRangeRange object)
   {
     return null;
   }
@@ -219,6 +418,70 @@ public class GranaSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseLocalResource(LocalResource object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Output</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Output</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseOutput(Output object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Global Output Ref</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Global Output Ref</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseGlobalOutputRef(GlobalOutputRef object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Output Reference</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Output Reference</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseOutputReference(OutputReference object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Local Output</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Local Output</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLocalOutput(LocalOutput object)
   {
     return null;
   }

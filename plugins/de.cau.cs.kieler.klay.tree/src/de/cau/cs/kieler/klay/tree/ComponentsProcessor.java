@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -213,7 +213,7 @@ public class ComponentsProcessor {
         }
         maxRowWidth = Math.max(maxRowWidth,
                 (float) Math.sqrt(totalArea) * result.getProperty(Properties.ASPECT_RATIO));
-        double spacing = result.getProperty(Properties.SPACING);
+        double spacing = result.getProperty(Properties.SPACING).doubleValue();
 
         // place nodes iteratively into rows
         double xpos = 0, ypos = 0, highestBox = 0, broadestRow = spacing;

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -504,14 +504,20 @@ public class SaveAsImageDialog extends Dialog {
         // FIXME this does not always work ... if the dialog concats the
         // extension it does not check if that file exists
         fileDialog.setOverwrite(true);
-        // extensions passed to the dialog have to include the '.'
-        String ext = imageFormatCombo.getText().toLowerCase();
-        // remove any details contained in parentheses
-        if (ext.contains("(")) {
-            ext = ext.substring(0, ext.indexOf("(")).trim();
+        final ExporterDescriptor descriptor = descriptors.get(imageFormatCombo.getSelectionIndex());
+        String ext = descriptor.fileExtension;
+        // extensions passed to the dialog have to include the '*.'
+        if (!ext.startsWith("*.")) {
+            if (ext.startsWith(".")) {
+                ext = "*" + ext;
+            } else {
+                ext = "*." + ext;
+            }
         }
-        final String[] extensions = { "*." + ext }; //$NON-NLS-1$
+        final String[] extensions = { ext }; //$NON-NLS-1$
+        final String[] descriptions = { descriptor.description }; //$NON-NLS-1$
         fileDialog.setFilterExtensions(extensions);
+        fileDialog.setFilterNames(descriptions);
         fileDialog.setText(Messages.SaveAsImageDialog_save_as_caption);
         // open the dialog
         final String selectedFile = fileDialog.open();
@@ -535,12 +541,10 @@ public class SaveAsImageDialog extends Dialog {
                 fileText.setText(filePath.toString());
             } else {
                 // if no file extension was specified take the default one
-                String extDefault = imageFormatCombo.getText().toLowerCase();
-                if (extDefault.contains("(")) {
-                    extDefault = extDefault.substring(0, extDefault.indexOf("(")).trim();
-                }
-                fileText.setText(filePath.toString() + "." //$NON-NLS-1$
-                        + extDefault);
+                final ExporterDescriptor descriptor =
+                        descriptors.get(imageFormatCombo.getSelectionIndex());
+                String extDefault = descriptor.fileExtension;
+                fileText.setText(filePath.toString() + "." + extDefault); //$NON-NLS-1$
             }
         }
     }
@@ -548,11 +552,8 @@ public class SaveAsImageDialog extends Dialog {
     private void updateFileText() {
         if (fileText.getText().length() > 0 && Path.ROOT.isValidPath(fileText.getText())) {
             final IPath filePath = new Path(fileText.getText());
-            String ext = imageFormatCombo.getText().toLowerCase();
-            // retrieve the extension from the display string
-            if (ext.contains(")")) {
-                ext = ext.substring(ext.indexOf(".") + 1, ext.indexOf(')')).trim();
-            }
+            final ExporterDescriptor descriptor = descriptors.get(imageFormatCombo.getSelectionIndex());
+            String ext = descriptor.fileExtension;
             if (filePath.getFileExtension() != null) {
                 if (!filePath.getFileExtension().equals(ext)) {
                     fileText.setText(filePath.removeFileExtension().addFileExtension(ext)
