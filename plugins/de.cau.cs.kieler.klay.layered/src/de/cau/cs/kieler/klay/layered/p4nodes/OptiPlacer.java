@@ -38,9 +38,9 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
-import de.cau.cs.kieler.klay.layered.solver.AbstractCPLEXModel;
-import de.cau.cs.kieler.klay.layered.solver.ISolverModel;
-import de.cau.cs.kieler.klay.layered.solver.ModelRunner;
+import de.cau.cs.kieler.solvers.AbstractCPLEXModel;
+import de.cau.cs.kieler.solvers.ISolverModel;
+import de.cau.cs.kieler.solvers.ModelRunner;
 
 /**
  * @author uru
@@ -108,15 +108,18 @@ public class OptiPlacer implements ILayoutPhase {
 
         /** CPLEX model be executed. */
         private static final String CPLEX_NODE_PLACER = System.getenv("CPLEX_NODE_PLACER");
+        
+        /** The graph to be worked on. */
+        private LGraph layeredGraph = null;
 
         /**
          * @param graph
          *            the layered graph
          */
         public NodePlacementSolverModel(final LGraph graph) {
-            super(graph);
-
-            checkForExecutable(CPLEX_NODE_PLACER, "CPLEX_NODE_PLACER");
+            checkIfPathExists(CPLEX_NODE_PLACER, "CPLEX_NODE_PLACER");
+            
+            this.layeredGraph = graph;
         }
 
         /**

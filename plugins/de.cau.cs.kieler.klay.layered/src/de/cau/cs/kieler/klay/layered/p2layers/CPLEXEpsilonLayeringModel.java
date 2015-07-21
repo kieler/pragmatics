@@ -27,7 +27,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
-import de.cau.cs.kieler.klay.layered.solver.AbstractCPLEXModel;
+import de.cau.cs.kieler.solvers.AbstractCPLEXModel;
 
 /**
  * @author uru
@@ -38,13 +38,16 @@ public class CPLEXEpsilonLayeringModel extends AbstractCPLEXModel<Object, Pair<I
     /** CPLEX model be executed. */
     private static final String CPLEX_LAYERING = System.getenv("CPLEX_EPSILON_LAYERING");
     
+    /** The graph to be layered. */
+    private LGraph layeredGraph = null;
+    
     /**
      * @param graph the layered graph
      */
     public CPLEXEpsilonLayeringModel(final LGraph graph) {
-        super(graph);
+        checkIfPathExists(CPLEX_LAYERING, "CPLEX_EPSILON_LAYERING");
         
-        checkForExecutable(CPLEX_LAYERING, "CPLEX_EPSILON_LAYERING");
+        layeredGraph = graph;
     }
 
     /**

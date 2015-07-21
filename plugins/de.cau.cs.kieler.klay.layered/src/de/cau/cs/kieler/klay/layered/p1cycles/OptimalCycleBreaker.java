@@ -32,8 +32,8 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.solver.AbstractCPLEXModel;
-import de.cau.cs.kieler.klay.layered.solver.ModelRunner;
+import de.cau.cs.kieler.solvers.AbstractCPLEXModel;
+import de.cau.cs.kieler.solvers.ModelRunner;
 
 /**
  * @author uru
@@ -109,13 +109,8 @@ public class OptimalCycleBreaker implements ILayoutPhase {
         /** CPLEX model be executed. */
         private static final String CPLEX_MFAS = System.getenv("CPLEX_MFAS");
         
-        /**
-         * 
-         */
         public CycleBreakingModel() {
-            super(null);
-            
-            checkForExecutable(CPLEX_MFAS, "CPLEX_MFAS");
+            checkIfPathExists(CPLEX_MFAS, "CPLEX_MFAS");
         }
 
         /**

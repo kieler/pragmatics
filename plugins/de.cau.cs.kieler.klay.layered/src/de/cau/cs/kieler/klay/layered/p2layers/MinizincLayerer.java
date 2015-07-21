@@ -40,8 +40,8 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
-import de.cau.cs.kieler.klay.layered.solver.ISolverModel;
-import de.cau.cs.kieler.klay.layered.solver.ModelRunner;
+import de.cau.cs.kieler.solvers.ISolverModel;
+import de.cau.cs.kieler.solvers.ModelRunner;
 
 /**
  * A layer assignment implementation using the external tool MiniZinc.
@@ -61,6 +61,7 @@ public class MinizincLayerer implements ILayoutPhase {
      */
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
+        
         return INTERMEDIATE_PROCESSING_CONFIGURATION;
     }
 

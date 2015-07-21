@@ -26,7 +26,7 @@ import com.google.common.primitives.Floats;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
-import de.cau.cs.kieler.klay.layered.solver.AbstractMiniZincModel;
+import de.cau.cs.kieler.solvers.AbstractMiniZincModel;
 
 /**
  * @author uru
@@ -34,12 +34,16 @@ import de.cau.cs.kieler.klay.layered.solver.AbstractMiniZincModel;
 public class MiniZincLayeringModel extends
         AbstractMiniZincModel<Object, Pair<Integer, List<Integer>>> {
 
+    /** The graph to be layered. */
+    private LGraph layeredGraph = null;
+    
+    
     /**
      * @param graph
      *            the graph to be layered.
      */
     public MiniZincLayeringModel(final LGraph graph) {
-        super(graph);
+        this.layeredGraph = graph;
     }
 
     /**

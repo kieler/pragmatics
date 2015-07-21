@@ -26,7 +26,7 @@ import com.google.common.primitives.Floats;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
-import de.cau.cs.kieler.klay.layered.solver.AbstractCPLEXModel;
+import de.cau.cs.kieler.solvers.AbstractCPLEXModel;
 
 /**
  * @author uru
@@ -37,13 +37,17 @@ public class CPLEXLayeringModel extends AbstractCPLEXModel<Object, Pair<Integer,
     /** CPLEX model be executed. */
     private static final String CPLEX_LAYERING = System.getenv("CPLEX_LAYERING");
     
+    /** The graph to be layered. */
+    private LGraph layeredGraph = null;
+    
+    
     /**
      * @param graph the layered graph
      */
     public CPLEXLayeringModel(final LGraph graph) {
-        super(graph);
+        checkIfPathExists(CPLEX_LAYERING, "CPLEX_LAXERING");
         
-        checkForExecutable(CPLEX_LAYERING, "CPLEX_LAXERING");
+        layeredGraph = graph;
     }
 
     /**

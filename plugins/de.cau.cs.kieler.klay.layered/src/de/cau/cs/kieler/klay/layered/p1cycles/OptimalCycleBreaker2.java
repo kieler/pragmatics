@@ -19,10 +19,8 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharStreams;
-import com.google.common.primitives.Floats;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
@@ -32,8 +30,8 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.solver.AbstractCPLEXModel;
-import de.cau.cs.kieler.klay.layered.solver.ModelRunner;
+import de.cau.cs.kieler.solvers.AbstractCPLEXModel;
+import de.cau.cs.kieler.solvers.ModelRunner;
 
 /**
  * @author uru
@@ -107,13 +105,6 @@ public class OptimalCycleBreaker2 implements ILayoutPhase {
     private static class CycleBreakingModel extends AbstractCPLEXModel<LGraph, List<Integer>> {
 
         /**
-         * 
-         */
-        public CycleBreakingModel() {
-            super(null);
-        }
-
-        /**
          * {@inheritDoc}
          */
         public String getModel() {
@@ -136,7 +127,7 @@ public class OptimalCycleBreaker2 implements ILayoutPhase {
             for (LNode u : graph.getLayerlessNodes()) {
                 for (LEdge e : u.getOutgoingEdges()) {
                     LNode v = e.getTarget().getNode();
-                    edgeArray.append((first ? "" : ",\n") + "[" + (u.id+1) + "," + (v.id+1) + "]");
+                    edgeArray.append((first ? "" : ",\n") + "[" + (u.id + 1) + "," + (v.id + 1) + "]");
                     first = false;
                     edges++;
                 }
