@@ -13,12 +13,21 @@
  */
 package de.cau.cs.kieler.kiml.options;
 
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
 /**
- * Definition of port sides on a node. To be accessed using {@link LayoutOptions#PORT_SIDE}.
+ * Definition of port sides on a node. Besides defining the actual available port sides, this enumeration
+ * also defines convenience methods as well as constants with all possible port side combinations. The
+ * latter are named in a clockwise manner, starting at the northern side.
  * 
+ * @author msp
+ * @author cds
  * @kieler.design 2011-03-14 reviewed by cmot, cds
  * @kieler.rating yellow 2013-01-09 review KI-32 by ckru, chsch
- * @author msp
  */
 public enum PortSide {
     
@@ -32,6 +41,63 @@ public enum PortSide {
     SOUTH,
     /** left side. */
     WEST;
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // Port Side Combinations
+
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_NONE = Collections.unmodifiableSet(
+            EnumSet.noneOf(PortSide.class));
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_NORTH = Sets.immutableEnumSet(
+            PortSide.NORTH);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_EAST = Sets.immutableEnumSet(
+            PortSide.EAST);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_SOUTH = Sets.immutableEnumSet(
+            PortSide.SOUTH);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_WEST = Sets.immutableEnumSet(
+            PortSide.WEST);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_NORTH_SOUTH = Sets.immutableEnumSet(
+            PortSide.NORTH, PortSide.SOUTH);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_EAST_WEST = Sets.immutableEnumSet(
+            PortSide.EAST, PortSide.WEST);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_NORTH_WEST = Sets.immutableEnumSet(
+            PortSide.NORTH, PortSide.WEST);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_NORTH_EAST = Sets.immutableEnumSet(
+            PortSide.NORTH, PortSide.EAST);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_SOUTH_WEST = Sets.immutableEnumSet(
+            PortSide.SOUTH, PortSide.WEST);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_EAST_SOUTH = Sets.immutableEnumSet(
+            PortSide.EAST, PortSide.SOUTH);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_NORTH_EAST_WEST = Sets.immutableEnumSet(
+            PortSide.NORTH, PortSide.EAST, PortSide.WEST);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_EAST_SOUTH_WEST = Sets.immutableEnumSet(
+            PortSide.EAST, PortSide.SOUTH, PortSide.WEST);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> SIDES_NORTH_SOUTH_WEST = Sets.immutableEnumSet(
+            PortSide.WEST, PortSide.NORTH, PortSide.SOUTH);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> CONN_NORTH_EAST_SOUTH = Sets.immutableEnumSet(
+            PortSide.EAST, PortSide.NORTH, PortSide.SOUTH);
+    /** Immutable set containing the given port sides. */
+    public static final Set<PortSide> CONN_NORTH_EAST_SOUTH_WEST = Sets.immutableEnumSet(
+            PortSide.EAST, PortSide.NORTH, PortSide.SOUTH, PortSide.WEST);
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // Convenience Methods
     
     /**
      * Returns the next side in clockwise order.
