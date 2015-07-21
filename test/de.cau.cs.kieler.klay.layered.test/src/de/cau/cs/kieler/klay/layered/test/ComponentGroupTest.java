@@ -13,7 +13,7 @@ a * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  */
 package de.cau.cs.kieler.klay.layered.test;
 
-import static de.cau.cs.kieler.kiml.options.PortSide.CONN_NORTH_EAST_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_SOUTH;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH_WEST;
@@ -97,7 +97,7 @@ public class ComponentGroupTest {
         assertTrue(group.add(generateGraph(SIDES_EAST_WEST)));
         assertFalse(group.add(generateGraph(SIDES_NORTH_SOUTH)));
         assertFalse(group.add(generateGraph(SIDES_NORTH_SOUTH_WEST)));
-        assertFalse(group.add(generateGraph(CONN_NORTH_EAST_SOUTH)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_EAST_SOUTH)));
         
         // Do the reverse
         group = new ComponentGroup();
@@ -112,7 +112,7 @@ public class ComponentGroupTest {
         assertTrue(group.add(generateGraph(SIDES_NORTH_EAST)));
         assertTrue(group.add(generateGraph(SIDES_SOUTH_WEST)));
         assertTrue(group.add(generateGraph(SIDES_EAST_SOUTH)));
-        assertFalse(group.add(generateGraph(CONN_NORTH_EAST_SOUTH)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_EAST_SOUTH)));
         assertFalse(group.add(generateGraph(SIDES_NORTH_EAST_WEST)));
         assertFalse(group.add(generateGraph(SIDES_EAST_SOUTH_WEST)));
         assertFalse(group.add(generateGraph(SIDES_NORTH_SOUTH_WEST)));

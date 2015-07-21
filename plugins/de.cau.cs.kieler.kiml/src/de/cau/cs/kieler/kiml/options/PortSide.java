@@ -87,13 +87,13 @@ public enum PortSide {
             PortSide.EAST, PortSide.SOUTH, PortSide.WEST);
     /** Immutable set containing the given port sides. */
     public static final Set<PortSide> SIDES_NORTH_SOUTH_WEST = Sets.immutableEnumSet(
-            PortSide.WEST, PortSide.NORTH, PortSide.SOUTH);
+            PortSide.NORTH, PortSide.SOUTH, PortSide.WEST);
     /** Immutable set containing the given port sides. */
-    public static final Set<PortSide> CONN_NORTH_EAST_SOUTH = Sets.immutableEnumSet(
-            PortSide.EAST, PortSide.NORTH, PortSide.SOUTH);
+    public static final Set<PortSide> SIDES_NORTH_EAST_SOUTH = Sets.immutableEnumSet(
+            PortSide.NORTH, PortSide.EAST, PortSide.SOUTH);
     /** Immutable set containing the given port sides. */
-    public static final Set<PortSide> CONN_NORTH_EAST_SOUTH_WEST = Sets.immutableEnumSet(
-            PortSide.EAST, PortSide.NORTH, PortSide.SOUTH, PortSide.WEST);
+    public static final Set<PortSide> SIDES_NORTH_EAST_SOUTH_WEST = Sets.immutableEnumSet(
+            PortSide.NORTH, PortSide.EAST, PortSide.SOUTH, PortSide.WEST);
     
     
     //////////////////////////////////////////////////////////////////////////////////////////////

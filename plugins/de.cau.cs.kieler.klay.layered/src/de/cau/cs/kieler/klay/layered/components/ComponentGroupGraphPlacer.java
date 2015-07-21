@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.components;
 
-import static de.cau.cs.kieler.kiml.options.PortSide.CONN_NORTH_EAST_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_SOUTH;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH_WEST;
@@ -190,7 +190,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         KVector sizeWNS = placeComponentsVertically(
                 group.getComponents(SIDES_NORTH_SOUTH_WEST), spacing);
         KVector sizeENS = placeComponentsVertically(
-                group.getComponents(CONN_NORTH_EAST_SOUTH), spacing);
+                group.getComponents(SIDES_NORTH_EAST_SOUTH), spacing);
         
         // Find the maximum height of the three rows and the maximum width of the three columns the
         // component group is divided into (we're adding a fourth row for WE components and a fourth
@@ -240,7 +240,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         offsetGraphs(group.getComponents(SIDES_EAST_SOUTH_WEST),
                 0.0,
                 rowTopHeight + rowWeHeight + rowMidHeight);
-        offsetGraphs(group.getComponents(CONN_NORTH_EAST_SOUTH),
+        offsetGraphs(group.getComponents(SIDES_NORTH_EAST_SOUTH),
                 colLeftWidth + colNsWidth + colMidWidth,
                 0.0);
         
