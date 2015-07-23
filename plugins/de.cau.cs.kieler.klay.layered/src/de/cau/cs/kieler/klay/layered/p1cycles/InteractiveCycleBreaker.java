@@ -45,6 +45,7 @@ public final class InteractiveCycleBreaker implements ILayoutPhase {
     /** intermediate processing configuration. */
     private static final IntermediateProcessingConfiguration INTERMEDIATE_PROCESSING_CONFIGURATION =
         IntermediateProcessingConfiguration.createEmpty()
+            .addBeforePhase1(IntermediateProcessorStrategy.INTERACTIVE_EXTERNAL_PORT_POSITIONER)
             .addAfterPhase5(IntermediateProcessorStrategy.REVERSED_EDGE_RESTORER);
 
     /**
