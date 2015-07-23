@@ -18,7 +18,7 @@ package de.cau.cs.kieler.solvers;
  * Abstract class for CPLEX models. The class implements the execution of such models, implementing
  * classes have to implement the methods that serialize a model and deserialize its solution. This class
  * requires the {@code oplrun} executable to be on the path. Clients have to implement
- * {@link #getModel()}, which returns the file that defines the CPLEX model.
+ * {@link #getModelFile()}, which returns the file that defines the CPLEX model.
  * 
  * @author uru
  * 
@@ -33,7 +33,7 @@ public abstract class AbstractCPLEXModel<I, R> extends  AbstractSolverModel<I, R
      * {@inheritDoc}
      */
     public String[] getSolverArgs() {
-        return new String[] { "oplrun", "-deploy", getModel() };
+        return new String[] { "oplrun", "-deploy", getModelFile() };
     }
 
     /**
@@ -44,8 +44,8 @@ public abstract class AbstractCPLEXModel<I, R> extends  AbstractSolverModel<I, R
     }
 
     /**
-     * @return a reference to the model to be solved.
+     * @return the full path to the file that contains the model to be solved.
      */
-    public abstract String getModel();
+    public abstract String getModelFile();
 
 }
