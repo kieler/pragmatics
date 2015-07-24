@@ -236,7 +236,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                     rightLayersPosition += nodeSpacing;
                 }
                 
-                LGraphUtil.placeNodes(rightLayer, rightLayersPosition);
+                LGraphUtil.placeNodesHorizontally(rightLayer, rightLayersPosition);
             }
             
             ////////////////////////////////////

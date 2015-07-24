@@ -139,7 +139,7 @@ public final class LGraphUtil {
      * @param layer the layer in which to place the nodes
      * @param xoffset horizontal offset for layer placement
      */
-    public static void placeNodes(final Layer layer, final double xoffset) {
+    public static void placeNodesHorizontally(final Layer layer, final double xoffset) {
         // determine maximal left and right margin
         double maxLeftMargin = 0, maxRightMargin = 0;
         for (LNode node : layer.getNodes()) {
