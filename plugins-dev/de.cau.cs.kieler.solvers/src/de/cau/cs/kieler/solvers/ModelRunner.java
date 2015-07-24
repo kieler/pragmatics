@@ -18,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import com.google.common.collect.ObjectArrays;
@@ -29,11 +30,17 @@ import com.google.common.io.Files;
  * @author uru
  */
 public final class ModelRunner {
-
+    
+    /** Whether to print additional debug output to the console. */
     private static final boolean DEBUG = false;
-
+    
+    
+    /**
+     * Not intended to be instantiated.
+     */
     private ModelRunner() {
     }
+    
 
     /**
      * Runs a solver with specified input and parses the output.
@@ -62,14 +69,15 @@ public final class ModelRunner {
         Files.write(data.getBytes(), dataFile);
 
         if (DEBUG) {
-            //System.out.println("Written: " + Files.readLines(dataFile, Charset.forName("utf8")));
+            System.out.println("Written: "
+                    + Files.toString(dataFile, Charset.forName("utf8")).replace('\n', ' '));
         }
 
         // #2 execute the solver
         String[] args = ObjectArrays.concat(model.getSolverArgs(), dataFile.getAbsolutePath());
 
         if (DEBUG) {
-            System.out.println("\tArgs: " + Arrays.toString(args));
+            System.out.println("Args: " + Arrays.toString(args));
         }
 
         Process process = Runtime.getRuntime().exec(args);
