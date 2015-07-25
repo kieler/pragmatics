@@ -370,12 +370,6 @@ public final class InternalProperties {
             "splineSelfLoopMargins", new Margins());
 
     /**
-     * List of ports on north/south dummies connected to a north/south port on a normal node.
-     */
-    public static final IProperty<List<LPort>> CONNECTED_NORTH_SOUTH_PORT_DUMMIES =
-            new Property<List<LPort>>("connectedNorthSouthPorts", new ArrayList<LPort>());
-    
-    /**
      * Internal container for all possible spacing variations that we support.
      */
     public static final IProperty<Spacings> SPACINGS =

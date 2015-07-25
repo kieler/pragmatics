@@ -156,7 +156,8 @@ public class SwitchDecider {
     private boolean hasEdgesOnSide(final LNode node, final PortSide side) {
         Iterable<LPort> ports = node.getPorts(side);
         for (LPort port : ports) {
-            if (!port.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES).isEmpty()) {
+            if (port.getProperty(InternalProperties.PORT_DUMMY) != null
+                    || port.getConnectedEdges().iterator().hasNext()) {
                 return true;
             }
         }
