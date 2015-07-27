@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Random;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
@@ -130,7 +130,7 @@ public final class LayerSweepCrossingMinimizer implements ILayoutPhase {
     /**
      * Layout units represented by a single node.
      */
-    private final Multimap<LNode, LNode> layoutUnits = HashMultimap.create();
+    private final Multimap<LNode, LNode> layoutUnits = LinkedListMultimap.create();
     
     /**
      * Initialize all data for the layer sweep crossing minimizer.
