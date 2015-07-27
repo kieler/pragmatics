@@ -44,18 +44,19 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * 0 will result in a layerer very similar to the one-node-layerer.
  * 
  * 
- * Precondition: the graph has no cycles, but might contain self-loops</dd> Postcondition: all nodes
- * have been assigned a layer such that edges connect only nodes from layers with increasing indices
+ * Precondition: the graph has no cycles, but might contain self-loops
+ * Postcondition: all nodes have been assigned a layer such that edges 
+ * connect only nodes from layers with increasing indices
  * 
  * 
  * @author mad
  */
 public class StretchWidthLayerer implements ILayoutPhase {
-    // indicates the width of the currently built layer
+    // Indicates the width of the currently built layer
     private int widthCurrent = 0;
-    // estimated width of the next layer
+    // Estimated width of the next layer
     private int widthUp = 0;
-    // indicates the width of the layering
+    // Indicates the width of the layering
     // Will be increased dynamically increased if the layering fails for lower values
     // The Pseudo codes says initialize with 0 but I think you can start with 1 or maybe
     // higher/average
@@ -63,31 +64,29 @@ public class StretchWidthLayerer implements ILayoutPhase {
     private int maxWidth = 0;
     // The graph the layering is done for
     private LGraph currentGraph;
-    // out-degree which determines the bounding with widthUp and maxWidth
+    // Factor which determines the bounding of the incoming edges with widthUp and maxWidth
     private double upperLayerInfluence;
-    // sorted list of layerless nodes
+    // Sorted list of layerless nodes
     private List<LNode> sortedLayerlessNodes;
     // Set of nodes placed in the current layer
     private Set<LNode> alreadyPlacedNodes = Sets.newHashSet();
     // Set of nodes in all layers except the current
     private Set<LNode> alreadyPlacedInOtherLayers = Sets.newHashSet();
-    // list of layerless nodes to be used in one layering approach, will be sorted after
+    // List of layerless nodes to be used in one layering approach, will be sorted after
     // initialization
     private List<LNode> tempLayerlessNodes;
     // List of sets of successors for every node
     // can be accessed with successors.get(node.id)
     private List<Set<LNode>> successors;
-    // array of out-degrees for every node
+    // Array of out-degrees for every node
     // access with outDegree[node.id]
     private int[] outDegree;
-    // array of in-degrees for every node
+    // Array of in-degrees for every node
     // access with inDegree[node.id]
     private int[] inDegree;
-    // selected node to be placed
+    // Selected node to be placed
     private LNode selectedNode;
     
-    private boolean org=false;
-
 
     /**
      * {@inheritDoc}
@@ -118,36 +117,33 @@ public class StretchWidthLayerer implements ILayoutPhase {
         Layer currentLayer = new Layer(currentGraph);
         // Should the algorithm go up to next the layer
         currentGraph.getLayers().add(currentLayer);
-        // works between 0 and 1 (1 = longest path / 0 = one node per layer except for layers with
-        // nodes without incoming edges)
-        // 0= widthUp > maxWidth * 0 -> only false for the first node and once every remaining node
-        // has no incoming edges
+        //determines how much the width-boundary are influenced by the incomming edges of placed nodes 
         upperLayerInfluence = currentGraph.getProperty(Properties.UPPER_LAYER_SCALE).doubleValue();
         // -1 is used to indicate that the original algorithm should be used
+        // which uses the average out-degree
         
         if (upperLayerInfluence == -1) {
                  upperLayerInfluence = getAverageOutDegree();
-                  org =true;
 
         }
 
-        // sort the nodes at beginning, since the rank will not change
-        // since it uses the node.id field it has to be computed first
+        // Sort the nodes at beginning, since the rank will not change
+        // It has to be computed first
         computeSortedNodes();
-        // compute a list with the successors of every node
-        // can't be swapped with the computation of the out- and in-degrees
+        // Compute a list with the successors of every node
+        // Can't be swapped with the computation of the out- and in-degrees
         computeSuccessors();
-        // compute two arrays of out- and in-degree for every node
+        // Compute two arrays of out- and in-degree for every node
         computeDegrees();
-        // copy the sorted layerless nodes so we don't overwrite it for the reset case
+        // Copy the sorted layerless nodes so we don't overwrite it in the reset case
         tempLayerlessNodes = Lists.newArrayList(sortedLayerlessNodes);
-        // variable to compute the difference of u and z
+        // Variable to compute the difference of u and z
 
         while (!tempLayerlessNodes.isEmpty()) {
-            // select a node to be placed
+            // Select a node to be placed
             selectedNode = selectNode();
-            // The pseudo-code computes u\z but since u /alreadyPlacedNodes will be cleared here,
-            // it's enough to check if alreadyPlacedNodes is empty
+            // The pseudo-code computes u\z but since u /alreadyPlacedNodes will be cleared here
+            // It's enough to check if alreadyPlacedNodes is empty
             // if it is empty it would indicate an empty layer
             if (selectedNode == null || (conditionGoUp() && !alreadyPlacedNodes.isEmpty())) {
                 // go to the next layer //
@@ -189,7 +185,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
             }
         }
 
-        // layering done, delete original layerlessNodes
+        // Layering done, delete original layerlessNodes
         layeredGraph.getLayerlessNodes().clear();
         // Algorithm is Bottom-Up -> reverse Layers
         Collections.reverse(layeredGraph.getLayers());
@@ -200,13 +196,13 @@ public class StretchWidthLayerer implements ILayoutPhase {
     /**
      * Checks the effects of the hypothetical
      * placement of the selected node and if the algorithm should
-     *  rather go up, then placing the node.
+     * rather go up, then placing the node.
      *     
      * @return true, if the algorithm should go to the next layer
      */
     private Boolean conditionGoUp() {
-               return (widthCurrent  > maxWidth 
-                    || (widthUp > (maxWidth * upperLayerInfluence)));  
+               return ((widthCurrent - outDegree[selectedNode.id] + 1)   > maxWidth 
+                    || ((widthUp + inDegree[selectedNode.id]) > (maxWidth * upperLayerInfluence)));  
           }
 
 
@@ -232,7 +228,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
 
     /**
      * Sorts a list of nodes after its rank. The rank is defined as max(d⁺(v),max(d⁺(u):(u,v)∈ E)).
-     * // since the id-field is reused later on, this function should be executed first
+     * Since the id-field is reused later on, this function should be executed first
      */
     private void computeSortedNodes() {
         List<LNode> unsortedNodes = currentGraph.getLayerlessNodes();
@@ -259,8 +255,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
     /**
      * Computes the rank of a node. The rank is defined as max(d⁺(v),max(d⁺(u):(u,v)∈ E)).
      * 
-     * @param node
-     *            node to compute the rank for
+     * @param node to compute the rank for
      * @return rank of the node
      */
     private Integer getRank(final LNode node) {
@@ -280,7 +275,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
 
     /**
      * Computes the successors of every node and saves them in a list of sets of nodes. This list is
-     * used in selectNode. Needs to be executed after computeSortedNodes
+     * used in selectNode. Needs to be executed after computeSortedNodes.
      */
     private void computeSuccessors() {
         int i = 0;
@@ -320,8 +315,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
     /**
      * Computes the out-degree of a node.
      * 
-     * @param node
-     *            node to compute the out-degree for
+     * @param node to compute the out-degree for
      * @return out-degree of the node
      */
     private Integer getOutDegree(final LNode node) {
@@ -336,8 +330,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
     /**
      * Computes the in-degree of a node.
      * 
-     * @param node
-     *            node to compute the in-degree for
+     * @param node to compute the in-degree for
      * @return in-degree of the node
      */
     private Integer getInDegree(final LNode node) {
@@ -350,10 +343,10 @@ public class StretchWidthLayerer implements ILayoutPhase {
     }
 
     /**
-     * Computes the Average out-degree of the graph should be computed before changing the
+     * Computes the average out-degree of the graph should be computed before changing the
      * layerlessNodes list.
      * 
-     * @return average outdegree of the Graph
+     * @return average out-degree of the Graph
      */
     private float getAverageOutDegree() {
         float allOut = 0;

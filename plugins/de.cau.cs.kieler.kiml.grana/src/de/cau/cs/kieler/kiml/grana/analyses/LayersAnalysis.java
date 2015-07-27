@@ -56,7 +56,7 @@ public class LayersAnalysis implements IAnalysis {
     /** Id of this analysis. */
     public static final String ID = "de.cau.cs.kieler.kiml.grana.layers";
     
-    // SUPPRESS CHECKSTYLE NEXT 6 Javadoc
+    // SUPPRESS CHECKSTYLE NEXT 7 Javadoc
     public static final int INDEX_HORIZONTAL = 0;
     public static final int INDEX_VERTICAL = 1;
     public static final int INDEX_DUMMIES = 2;
