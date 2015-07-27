@@ -1,0 +1,173 @@
+
+// TODO turn this into a gradle wrapper ?!
+
+/*
+
+  Thus script has the following tasks
+
+  clean - remove all build artifacts
+
+  downloadArchives - downloads a zipped version of the kieler updatesite
+
+  unzipArchives - unzips it
+
+  unzipPlugins - unzips the required plugins
+
+  jar - assembles a jar file from the unzipped plugins
+
+  */
+
+defaultTasks 'jar'
+
+// project properties
+ext {
+
+    pragmaticsArchive = "http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/zipped/pragmatics-nightly.zip"
+    //pragmaticsArchive = "http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/release_pragmatics_2015-06/zipped/pragmatics-release-2015-06.zip"
+    targetPlatformArchive = "http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/luna441.zip"
+
+    includeEmf = true
+    includeJson = true
+
+    downloadsDir = file("${buildDir}/downloads/")
+    extractDir = file("${buildDir}/extracted/")
+    pluginsDir = file("${buildDir}/plugins/")
+
+    // TODO maybe possible to turn this into an include?
+    pluginExcludes = [
+        'META-INF/*',
+        'about.**',
+        'images',
+        'model',
+        'schema',
+        'plugin.properties',
+        '**/*.xml',
+        '**/*.html',
+        '**/*.exsd',
+        '**/*.xsd',
+        '**/*.ecore',
+        '**/*.genmodel',
+        '**/*.ecorediag',
+        '**/*.png',
+        '**/*.gif',
+        '**/*.pdf'
+    ]
+}
+
+// why the hack does this execute
+task clean {
+    doLast {
+        delete "${buildDir}"
+    }
+}
+
+// TODO instead of downloading the whole updatesite,
+// a better solution would be to only download the required plugins ...
+task downloadArchives {
+
+    outputs.dir downloadsDir
+
+    doLast {
+        downloadsDir.mkdirs()
+        ant.get(
+            src: pragmaticsArchive,
+            dest: downloadsDir,
+            skipexisting: 'true'
+        )
+        if (includeEmf) {
+            ant.get(
+                src: targetPlatformArchive,
+                dest: downloadsDir,
+                skipexisting: 'true'
+            )
+        }
+    }
+
+}
+
+task unzipArchives(dependsOn: downloadArchives) {
+
+    def archives = fileTree(downloadsDir)
+
+    inputs.files archives
+    outputs.dir extractDir
+
+    doLast {
+        archives.each { f ->
+            copy {
+                from zipTree(f)
+                into extractDir
+            }
+        }
+    }
+}
+
+task unzipPlugins(dependsOn: unzipArchives) {
+
+    // the core includes
+    def theIncludes = [
+        '**/de.cau.cs.kieler.core_*/**',
+        '**/de.cau.cs.kieler.core.kgraph_*/**',
+        '**/de.cau.cs.kieler.kiml_*/**',
+        '**/de.cau.cs.kieler.klay.layered_*/**',
+        '**/de.cau.cs.kieler.klay.force_*/**',
+        '**/de.cau.cs.kieler.klay.tree_*/**'
+    ]
+
+    // emf and friends
+    if (includeEmf) {
+        theIncludes += [
+            '**/org.eclipse.emf.common_*/**',
+            '**/org.eclipse.emf.ecore_*/**',
+            '**/org.eclipse.emf.ecore.xmi_*/**'
+        ]
+    }
+
+    // json format
+    if (includeJson) {
+        theIncludes += [
+            '**/de.cau.cs.kieler.kiml.formats_*/**',
+            '**/de.cau.cs.kieler.kiml.formats.json_*/**',
+
+            '**/com.google.guava_*/**',
+            '**/org.eclipse.xtend.lib_*/**',
+            '**/org.eclipse.xtext.xbase.lib_*/**'
+        ]
+    }
+
+    def plugs = fileTree(
+        dir: extractDir,
+        includes: theIncludes
+    )
+
+
+    inputs.files plugs
+    outputs.dir pluginsDir
+
+
+    // during execution extract actually extract the plugins
+    doLast {
+
+        plugs.each { f ->
+            copy {
+                from zipTree(f)
+                into pluginsDir
+                exclude pluginExcludes
+            }
+        }
+
+        // TODO copy license file
+    }
+
+}
+
+task jar(type: Jar, dependsOn: unzipPlugins) {
+    archiveName "klay.jar"
+
+    //archivePath "${buildDir}"
+    destinationDir file("${buildDir}")
+    from pluginsDir
+}
+
+
+// TODO specify artifacts?
