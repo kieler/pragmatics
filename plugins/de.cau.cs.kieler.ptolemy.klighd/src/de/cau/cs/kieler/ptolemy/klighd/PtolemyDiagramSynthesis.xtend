@@ -20,6 +20,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy
 import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
+import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsExtractor
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
@@ -40,6 +41,8 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         "Comments", true)
     public static val SynthesisOption SHOW_RELATIONS = SynthesisOption::createCheckOption(
         "Relations", false)
+    public static val SynthesisOption SHOW_PORT_LABELS = SynthesisOption::createCheckOption(
+        "Port Labels", false)
     public static val SynthesisOption COMMENT_ATTACHMENT_HEURISTIC =
         SynthesisOption::createCheckOption("Comment attachment heuristic", true)
     public static val SynthesisOption FLATTEN = SynthesisOption::createCheckOption(
@@ -63,7 +66,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
             if (SHOW_COMMENTS.booleanValue) commentsExtractor else null,
             this
         )
-        visualization.visualize(kgraph, (COMPOUND_NODE_ALPHA.intValue))
+        visualization.visualize(kgraph, COMPOUND_NODE_ALPHA.intValue, !SHOW_PORT_LABELS.booleanValue)
         
         // If comments should be shown, we want them to be attached properly. Do that now, because we
         // know the node sizes only after the visualization
@@ -81,6 +84,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         return ImmutableList::of(
             SHOW_COMMENTS,
             SHOW_RELATIONS,
+            SHOW_PORT_LABELS,
             COMMENT_ATTACHMENT_HEURISTIC,
             SynthesisOption.createSeparator("Hierarchy"),
             FLATTEN,
@@ -92,9 +96,9 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
      */
     override getDisplayedLayoutOptions() {
         return ImmutableList::of(
-            specifyLayoutOption(Properties::NODE_PLACER,
+            DiagramSyntheses.specifyLayoutOption(Properties::NODE_PLACER,
                 ImmutableList::copyOf(NodePlacementStrategy::values)),
-            specifyLayoutOption(LayoutOptions::SPACING,
+            DiagramSyntheses.specifyLayoutOption(LayoutOptions::SPACING,
                 ImmutableList::of(0, 255))
         )
     }
