@@ -697,7 +697,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
         }
     
         // assign marks to all nodes, ignore dependencies of weight zero
-        final Set<SplineHyperEdge> unprocessed = Sets.newLinkedHashSet();
+        final Set<SplineHyperEdge> unprocessed = Sets.newLinkedHashSet(edges);
         final int markBase = edges.size();
         int nextLeft = markBase + 1;
         int nextRight = markBase - 1;
