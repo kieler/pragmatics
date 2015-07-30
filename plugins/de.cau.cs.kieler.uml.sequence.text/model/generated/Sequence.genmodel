@@ -51,6 +51,7 @@
     <genClasses ecoreClass="Sequence.ecore#//OneLifelineMessage">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//OneLifelineMessage/Lifeline"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/messageType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/messageTypeLostAndFound"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/caption"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/startBlock"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/endBlock"/>

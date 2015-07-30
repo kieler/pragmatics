@@ -46,7 +46,8 @@ class SequenceValidator extends AbstractSequenceValidator {
         }
     }
 
-    // TODO check refinement lifeline names not doubled
+    //TODO check refinement lifeline names not doubled
+    //TODO check no messages after destroy
     
     @Check
     def correctUsageOfBlocks(SequenceDiagram s) {
@@ -55,9 +56,10 @@ class SequenceValidator extends AbstractSequenceValidator {
             correctUsageOfBlocksOnMessage(interact, map);
         }
         if (map.size > 0) {
-            warning("Not all Blocks are closed", SequencePackage.Literals.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK)
-            warning("Not all Blocks are closed", SequencePackage.Literals.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK)
-            warning("Not all Blocks are closed", SequencePackage.Literals.ONE_LIFELINE_MESSAGE__START_BLOCK)
+            //TODO display warning (not working)
+            warning("Not all Blocks are closed", s, SequencePackage.Literals.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK)
+            warning("Not all Blocks are closed", s, SequencePackage.Literals.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK)
+            warning("Not all Blocks are closed", s, SequencePackage.Literals.ONE_LIFELINE_MESSAGE__START_BLOCK)
         }
     }
 

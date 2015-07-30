@@ -760,65 +760,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
             {
             // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:332:1: (this_TwoLifelineMessage_0= ruleTwoLifelineMessage | this_OneLifelineMessage_1= ruleOneLifelineMessage | this_Fragment_2= ruleFragment | this_OneLifelineEndBlock_3= ruleOneLifelineEndBlock | this_OneLifelineNote_4= ruleOneLifelineNote | this_DestroyLifelineEvent_5= ruleDestroyLifelineEvent | this_Refinement_6= ruleRefinement )
             int alt5=7;
-            switch ( input.LA(1) ) {
-            case RULE_ID:
-                {
-                switch ( input.LA(2) ) {
-                case 27:
-                    {
-                    alt5=4;
-                    }
-                    break;
-                case 35:
-                case 36:
-                case 37:
-                case 38:
-                    {
-                    alt5=1;
-                    }
-                    break;
-                case 28:
-                    {
-                    alt5=5;
-                    }
-                    break;
-                case 29:
-                    {
-                    alt5=6;
-                    }
-                    break;
-                case 24:
-                case 25:
-                    {
-                    alt5=2;
-                    }
-                    break;
-                default:
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 5, 1, input);
-
-                    throw nvae;
-                }
-
-                }
-                break;
-            case 30:
-                {
-                alt5=3;
-                }
-                break;
-            case 32:
-                {
-                alt5=7;
-                }
-                break;
-            default:
-                NoViableAltException nvae =
-                    new NoViableAltException("", 5, 0, input);
-
-                throw nvae;
-            }
-
+            alt5 = dfa5.predict(input);
             switch (alt5) {
                 case 1 :
                     // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:333:5: this_TwoLifelineMessage_0= ruleTwoLifelineMessage
@@ -1513,28 +1455,30 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleOneLifelineMessage"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:647:1: ruleOneLifelineMessage returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) ( ( (lv_messageType_1_1= 'lost' | lv_messageType_1_2= 'found' ) ) ) ( (lv_caption_2_0= RULE_STRING ) ) ( ( (lv_startBlock_3_0= 'startBlock' ) ) | ( ( (lv_endBlock_4_0= 'endBlock' ) ) ( (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_6= 'note' ( (lv_note_7_0= RULE_STRING ) ) )? ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:647:1: ruleOneLifelineMessage returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? ) ;
     public final EObject ruleOneLifelineMessage() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_0=null;
-        Token lv_messageType_1_1=null;
-        Token lv_messageType_1_2=null;
-        Token lv_caption_2_0=null;
-        Token lv_startBlock_3_0=null;
-        Token lv_endBlock_4_0=null;
-        Token lv_endBlockCount_5_0=null;
-        Token otherlv_6=null;
-        Token lv_note_7_0=null;
+        Token lv_messageTypeLostAndFound_2_1=null;
+        Token lv_messageTypeLostAndFound_2_2=null;
+        Token lv_caption_3_0=null;
+        Token lv_startBlock_4_0=null;
+        Token lv_endBlock_5_0=null;
+        Token lv_endBlockCount_6_0=null;
+        Token otherlv_7=null;
+        Token lv_note_8_0=null;
+        Enumerator lv_messageType_1_0 = null;
+
 
          enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:650:28: ( ( ( (otherlv_0= RULE_ID ) ) ( ( (lv_messageType_1_1= 'lost' | lv_messageType_1_2= 'found' ) ) ) ( (lv_caption_2_0= RULE_STRING ) ) ( ( (lv_startBlock_3_0= 'startBlock' ) ) | ( ( (lv_endBlock_4_0= 'endBlock' ) ) ( (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_6= 'note' ( (lv_note_7_0= RULE_STRING ) ) )? ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:651:1: ( ( (otherlv_0= RULE_ID ) ) ( ( (lv_messageType_1_1= 'lost' | lv_messageType_1_2= 'found' ) ) ) ( (lv_caption_2_0= RULE_STRING ) ) ( ( (lv_startBlock_3_0= 'startBlock' ) ) | ( ( (lv_endBlock_4_0= 'endBlock' ) ) ( (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_6= 'note' ( (lv_note_7_0= RULE_STRING ) ) )? )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:650:28: ( ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:651:1: ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:651:1: ( ( (otherlv_0= RULE_ID ) ) ( ( (lv_messageType_1_1= 'lost' | lv_messageType_1_2= 'found' ) ) ) ( (lv_caption_2_0= RULE_STRING ) ) ( ( (lv_startBlock_3_0= 'startBlock' ) ) | ( ( (lv_endBlock_4_0= 'endBlock' ) ) ( (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_6= 'note' ( (lv_note_7_0= RULE_STRING ) ) )? )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:651:2: ( (otherlv_0= RULE_ID ) ) ( ( (lv_messageType_1_1= 'lost' | lv_messageType_1_2= 'found' ) ) ) ( (lv_caption_2_0= RULE_STRING ) ) ( ( (lv_startBlock_3_0= 'startBlock' ) ) | ( ( (lv_endBlock_4_0= 'endBlock' ) ) ( (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_6= 'note' ( (lv_note_7_0= RULE_STRING ) ) )?
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:651:1: ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:651:2: ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )?
             {
             // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:651:2: ( (otherlv_0= RULE_ID ) )
             // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:652:1: (otherlv_0= RULE_ID )
@@ -1557,13 +1501,44 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:664:2: ( ( (lv_messageType_1_1= 'lost' | lv_messageType_1_2= 'found' ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:665:1: ( (lv_messageType_1_1= 'lost' | lv_messageType_1_2= 'found' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:664:2: ( (lv_messageType_1_0= ruleMessageType ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:665:1: (lv_messageType_1_0= ruleMessageType )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:665:1: ( (lv_messageType_1_1= 'lost' | lv_messageType_1_2= 'found' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:666:1: (lv_messageType_1_1= 'lost' | lv_messageType_1_2= 'found' )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:665:1: (lv_messageType_1_0= ruleMessageType )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:666:3: lv_messageType_1_0= ruleMessageType
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:666:1: (lv_messageType_1_1= 'lost' | lv_messageType_1_2= 'found' )
+             
+            	        newCompositeNode(grammarAccess.getOneLifelineMessageAccess().getMessageTypeMessageTypeEnumRuleCall_1_0()); 
+            	    
+            pushFollow(FOLLOW_ruleMessageType_in_ruleOneLifelineMessage1318);
+            lv_messageType_1_0=ruleMessageType();
+
+            state._fsp--;
+
+
+            	        if (current==null) {
+            	            current = createModelElementForParent(grammarAccess.getOneLifelineMessageRule());
+            	        }
+                   		set(
+                   			current, 
+                   			"messageType",
+                    		lv_messageType_1_0, 
+                    		"MessageType");
+            	        afterParserOrEnumRuleCall();
+            	    
+
+            }
+
+
+            }
+
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:682:2: ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:683:1: ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) )
+            {
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:683:1: ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:684:1: (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' )
+            {
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:684:1: (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' )
             int alt12=2;
             int LA12_0 = input.LA(1);
 
@@ -1581,33 +1556,33 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
             }
             switch (alt12) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:667:3: lv_messageType_1_1= 'lost'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:685:3: lv_messageTypeLostAndFound_2_1= 'lost'
                     {
-                    lv_messageType_1_1=(Token)match(input,24,FOLLOW_24_in_ruleOneLifelineMessage1317); 
+                    lv_messageTypeLostAndFound_2_1=(Token)match(input,24,FOLLOW_24_in_ruleOneLifelineMessage1338); 
 
-                            newLeafNode(lv_messageType_1_1, grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostKeyword_1_0_0());
+                            newLeafNode(lv_messageTypeLostAndFound_2_1, grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundLostKeyword_2_0_0());
                         
 
                     	        if (current==null) {
                     	            current = createModelElement(grammarAccess.getOneLifelineMessageRule());
                     	        }
-                           		setWithLastConsumed(current, "messageType", lv_messageType_1_1, null);
+                           		setWithLastConsumed(current, "messageTypeLostAndFound", lv_messageTypeLostAndFound_2_1, null);
                     	    
 
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:679:8: lv_messageType_1_2= 'found'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:697:8: lv_messageTypeLostAndFound_2_2= 'found'
                     {
-                    lv_messageType_1_2=(Token)match(input,25,FOLLOW_25_in_ruleOneLifelineMessage1346); 
+                    lv_messageTypeLostAndFound_2_2=(Token)match(input,25,FOLLOW_25_in_ruleOneLifelineMessage1367); 
 
-                            newLeafNode(lv_messageType_1_2, grammarAccess.getOneLifelineMessageAccess().getMessageTypeFoundKeyword_1_0_1());
+                            newLeafNode(lv_messageTypeLostAndFound_2_2, grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundFoundKeyword_2_0_1());
                         
 
                     	        if (current==null) {
                     	            current = createModelElement(grammarAccess.getOneLifelineMessageRule());
                     	        }
-                           		setWithLastConsumed(current, "messageType", lv_messageType_1_2, null);
+                           		setWithLastConsumed(current, "messageTypeLostAndFound", lv_messageTypeLostAndFound_2_2, null);
                     	    
 
                     }
@@ -1621,15 +1596,15 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:694:2: ( (lv_caption_2_0= RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:695:1: (lv_caption_2_0= RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:712:2: ( (lv_caption_3_0= RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:713:1: (lv_caption_3_0= RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:695:1: (lv_caption_2_0= RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:696:3: lv_caption_2_0= RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:713:1: (lv_caption_3_0= RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:714:3: lv_caption_3_0= RULE_STRING
             {
-            lv_caption_2_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleOneLifelineMessage1379); 
+            lv_caption_3_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleOneLifelineMessage1400); 
 
-            			newLeafNode(lv_caption_2_0, grammarAccess.getOneLifelineMessageAccess().getCaptionSTRINGTerminalRuleCall_2_0()); 
+            			newLeafNode(lv_caption_3_0, grammarAccess.getOneLifelineMessageAccess().getCaptionSTRINGTerminalRuleCall_3_0()); 
             		
 
             	        if (current==null) {
@@ -1638,7 +1613,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                    		setWithLastConsumed(
                    			current, 
                    			"caption",
-                    		lv_caption_2_0, 
+                    		lv_caption_3_0, 
                     		"STRING");
             	    
 
@@ -1647,7 +1622,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:712:2: ( ( (lv_startBlock_3_0= 'startBlock' ) ) | ( ( (lv_endBlock_4_0= 'endBlock' ) ) ( (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO ) )? ) )?
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:730:2: ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )?
             int alt14=3;
             int LA14_0 = input.LA(1);
 
@@ -1659,17 +1634,17 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
             }
             switch (alt14) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:712:3: ( (lv_startBlock_3_0= 'startBlock' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:730:3: ( (lv_startBlock_4_0= 'startBlock' ) )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:712:3: ( (lv_startBlock_3_0= 'startBlock' ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:713:1: (lv_startBlock_3_0= 'startBlock' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:730:3: ( (lv_startBlock_4_0= 'startBlock' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:731:1: (lv_startBlock_4_0= 'startBlock' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:713:1: (lv_startBlock_3_0= 'startBlock' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:714:3: lv_startBlock_3_0= 'startBlock'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:731:1: (lv_startBlock_4_0= 'startBlock' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:732:3: lv_startBlock_4_0= 'startBlock'
                     {
-                    lv_startBlock_3_0=(Token)match(input,26,FOLLOW_26_in_ruleOneLifelineMessage1403); 
+                    lv_startBlock_4_0=(Token)match(input,26,FOLLOW_26_in_ruleOneLifelineMessage1424); 
 
-                            newLeafNode(lv_startBlock_3_0, grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_3_0_0());
+                            newLeafNode(lv_startBlock_4_0, grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_4_0_0());
                         
 
                     	        if (current==null) {
@@ -1687,20 +1662,20 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:728:6: ( ( (lv_endBlock_4_0= 'endBlock' ) ) ( (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO ) )? )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:746:6: ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:728:6: ( ( (lv_endBlock_4_0= 'endBlock' ) ) ( (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO ) )? )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:728:7: ( (lv_endBlock_4_0= 'endBlock' ) ) ( (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO ) )?
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:746:6: ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:746:7: ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )?
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:728:7: ( (lv_endBlock_4_0= 'endBlock' ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:729:1: (lv_endBlock_4_0= 'endBlock' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:746:7: ( (lv_endBlock_5_0= 'endBlock' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:747:1: (lv_endBlock_5_0= 'endBlock' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:729:1: (lv_endBlock_4_0= 'endBlock' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:730:3: lv_endBlock_4_0= 'endBlock'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:747:1: (lv_endBlock_5_0= 'endBlock' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:748:3: lv_endBlock_5_0= 'endBlock'
                     {
-                    lv_endBlock_4_0=(Token)match(input,27,FOLLOW_27_in_ruleOneLifelineMessage1441); 
+                    lv_endBlock_5_0=(Token)match(input,27,FOLLOW_27_in_ruleOneLifelineMessage1462); 
 
-                            newLeafNode(lv_endBlock_4_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_3_1_0_0());
+                            newLeafNode(lv_endBlock_5_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_4_1_0_0());
                         
 
                     	        if (current==null) {
@@ -1714,7 +1689,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:743:2: ( (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO ) )?
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:761:2: ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )?
                     int alt13=2;
                     int LA13_0 = input.LA(1);
 
@@ -1723,14 +1698,14 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt13) {
                         case 1 :
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:744:1: (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO )
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:762:1: (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO )
                             {
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:744:1: (lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO )
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:745:3: lv_endBlockCount_5_0= RULE_INT_GREATER_ZERO
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:762:1: (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO )
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:763:3: lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO
                             {
-                            lv_endBlockCount_5_0=(Token)match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_ruleOneLifelineMessage1471); 
+                            lv_endBlockCount_6_0=(Token)match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_ruleOneLifelineMessage1492); 
 
-                            			newLeafNode(lv_endBlockCount_5_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_3_1_1_0()); 
+                            			newLeafNode(lv_endBlockCount_6_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0()); 
                             		
 
                             	        if (current==null) {
@@ -1739,7 +1714,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                                    		setWithLastConsumed(
                                    			current, 
                                    			"endBlockCount",
-                                    		lv_endBlockCount_5_0, 
+                                    		lv_endBlockCount_6_0, 
                                     		"INT_GREATER_ZERO");
                             	    
 
@@ -1760,7 +1735,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:761:6: (otherlv_6= 'note' ( (lv_note_7_0= RULE_STRING ) ) )?
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:779:6: (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )?
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -1769,21 +1744,21 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
             }
             switch (alt15) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:761:8: otherlv_6= 'note' ( (lv_note_7_0= RULE_STRING ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:779:8: otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) )
                     {
-                    otherlv_6=(Token)match(input,28,FOLLOW_28_in_ruleOneLifelineMessage1493); 
+                    otherlv_7=(Token)match(input,28,FOLLOW_28_in_ruleOneLifelineMessage1514); 
 
-                        	newLeafNode(otherlv_6, grammarAccess.getOneLifelineMessageAccess().getNoteKeyword_4_0());
+                        	newLeafNode(otherlv_7, grammarAccess.getOneLifelineMessageAccess().getNoteKeyword_5_0());
                         
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:765:1: ( (lv_note_7_0= RULE_STRING ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:766:1: (lv_note_7_0= RULE_STRING )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:783:1: ( (lv_note_8_0= RULE_STRING ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:784:1: (lv_note_8_0= RULE_STRING )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:766:1: (lv_note_7_0= RULE_STRING )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:767:3: lv_note_7_0= RULE_STRING
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:784:1: (lv_note_8_0= RULE_STRING )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:785:3: lv_note_8_0= RULE_STRING
                     {
-                    lv_note_7_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleOneLifelineMessage1510); 
+                    lv_note_8_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleOneLifelineMessage1531); 
 
-                    			newLeafNode(lv_note_7_0, grammarAccess.getOneLifelineMessageAccess().getNoteSTRINGTerminalRuleCall_4_1_0()); 
+                    			newLeafNode(lv_note_8_0, grammarAccess.getOneLifelineMessageAccess().getNoteSTRINGTerminalRuleCall_5_1_0()); 
                     		
 
                     	        if (current==null) {
@@ -1792,7 +1767,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                            		setWithLastConsumed(
                            			current, 
                            			"note",
-                            		lv_note_7_0, 
+                            		lv_note_8_0, 
                             		"STRING");
                     	    
 
@@ -1828,7 +1803,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleOneLifelineEndBlock"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:791:1: entryRuleOneLifelineEndBlock returns [EObject current=null] : iv_ruleOneLifelineEndBlock= ruleOneLifelineEndBlock EOF ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:809:1: entryRuleOneLifelineEndBlock returns [EObject current=null] : iv_ruleOneLifelineEndBlock= ruleOneLifelineEndBlock EOF ;
     public final EObject entryRuleOneLifelineEndBlock() throws RecognitionException {
         EObject current = null;
 
@@ -1836,17 +1811,17 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:792:2: (iv_ruleOneLifelineEndBlock= ruleOneLifelineEndBlock EOF )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:793:2: iv_ruleOneLifelineEndBlock= ruleOneLifelineEndBlock EOF
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:810:2: (iv_ruleOneLifelineEndBlock= ruleOneLifelineEndBlock EOF )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:811:2: iv_ruleOneLifelineEndBlock= ruleOneLifelineEndBlock EOF
             {
              newCompositeNode(grammarAccess.getOneLifelineEndBlockRule()); 
-            pushFollow(FOLLOW_ruleOneLifelineEndBlock_in_entryRuleOneLifelineEndBlock1553);
+            pushFollow(FOLLOW_ruleOneLifelineEndBlock_in_entryRuleOneLifelineEndBlock1574);
             iv_ruleOneLifelineEndBlock=ruleOneLifelineEndBlock();
 
             state._fsp--;
 
              current =iv_ruleOneLifelineEndBlock; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleOneLifelineEndBlock1563); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleOneLifelineEndBlock1584); 
 
             }
 
@@ -1864,7 +1839,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleOneLifelineEndBlock"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:800:1: ruleOneLifelineEndBlock returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'endBlock' ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )? ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:818:1: ruleOneLifelineEndBlock returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'endBlock' ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )? ) ;
     public final EObject ruleOneLifelineEndBlock() throws RecognitionException {
         EObject current = null;
 
@@ -1875,24 +1850,24 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:803:28: ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'endBlock' ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )? ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:804:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'endBlock' ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )? )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:821:28: ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'endBlock' ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )? ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:822:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'endBlock' ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )? )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:804:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'endBlock' ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )? )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:804:2: ( (otherlv_0= RULE_ID ) ) otherlv_1= 'endBlock' ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )?
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:822:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'endBlock' ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )? )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:822:2: ( (otherlv_0= RULE_ID ) ) otherlv_1= 'endBlock' ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )?
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:804:2: ( (otherlv_0= RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:805:1: (otherlv_0= RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:822:2: ( (otherlv_0= RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:823:1: (otherlv_0= RULE_ID )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:805:1: (otherlv_0= RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:806:3: otherlv_0= RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:823:1: (otherlv_0= RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:824:3: otherlv_0= RULE_ID
             {
 
             			if (current==null) {
             	            current = createModelElement(grammarAccess.getOneLifelineEndBlockRule());
             	        }
                     
-            otherlv_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleOneLifelineEndBlock1608); 
+            otherlv_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleOneLifelineEndBlock1629); 
 
             		newLeafNode(otherlv_0, grammarAccess.getOneLifelineEndBlockAccess().getLifelineLifelineCrossReference_0_0()); 
             	
@@ -1902,11 +1877,11 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,27,FOLLOW_27_in_ruleOneLifelineEndBlock1620); 
+            otherlv_1=(Token)match(input,27,FOLLOW_27_in_ruleOneLifelineEndBlock1641); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getOneLifelineEndBlockAccess().getEndBlockKeyword_1());
                 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:821:1: ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )?
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:839:1: ( (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO ) )?
             int alt16=2;
             int LA16_0 = input.LA(1);
 
@@ -1915,12 +1890,12 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
             }
             switch (alt16) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:822:1: (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:840:1: (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:822:1: (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:823:3: lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:840:1: (lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:841:3: lv_endBlockCount_2_0= RULE_INT_GREATER_ZERO
                     {
-                    lv_endBlockCount_2_0=(Token)match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_ruleOneLifelineEndBlock1637); 
+                    lv_endBlockCount_2_0=(Token)match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_ruleOneLifelineEndBlock1658); 
 
                     			newLeafNode(lv_endBlockCount_2_0, grammarAccess.getOneLifelineEndBlockAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_2_0()); 
                     		
@@ -1964,7 +1939,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleOneLifelineNote"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:847:1: entryRuleOneLifelineNote returns [EObject current=null] : iv_ruleOneLifelineNote= ruleOneLifelineNote EOF ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:865:1: entryRuleOneLifelineNote returns [EObject current=null] : iv_ruleOneLifelineNote= ruleOneLifelineNote EOF ;
     public final EObject entryRuleOneLifelineNote() throws RecognitionException {
         EObject current = null;
 
@@ -1972,17 +1947,17 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:848:2: (iv_ruleOneLifelineNote= ruleOneLifelineNote EOF )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:849:2: iv_ruleOneLifelineNote= ruleOneLifelineNote EOF
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:866:2: (iv_ruleOneLifelineNote= ruleOneLifelineNote EOF )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:867:2: iv_ruleOneLifelineNote= ruleOneLifelineNote EOF
             {
              newCompositeNode(grammarAccess.getOneLifelineNoteRule()); 
-            pushFollow(FOLLOW_ruleOneLifelineNote_in_entryRuleOneLifelineNote1679);
+            pushFollow(FOLLOW_ruleOneLifelineNote_in_entryRuleOneLifelineNote1700);
             iv_ruleOneLifelineNote=ruleOneLifelineNote();
 
             state._fsp--;
 
              current =iv_ruleOneLifelineNote; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleOneLifelineNote1689); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleOneLifelineNote1710); 
 
             }
 
@@ -2000,7 +1975,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleOneLifelineNote"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:856:1: ruleOneLifelineNote returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'note' ( (lv_note_2_0= RULE_STRING ) ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:874:1: ruleOneLifelineNote returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'note' ( (lv_note_2_0= RULE_STRING ) ) ) ;
     public final EObject ruleOneLifelineNote() throws RecognitionException {
         EObject current = null;
 
@@ -2011,24 +1986,24 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:859:28: ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'note' ( (lv_note_2_0= RULE_STRING ) ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:860:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'note' ( (lv_note_2_0= RULE_STRING ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:877:28: ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'note' ( (lv_note_2_0= RULE_STRING ) ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:878:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'note' ( (lv_note_2_0= RULE_STRING ) ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:860:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'note' ( (lv_note_2_0= RULE_STRING ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:860:2: ( (otherlv_0= RULE_ID ) ) otherlv_1= 'note' ( (lv_note_2_0= RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:878:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'note' ( (lv_note_2_0= RULE_STRING ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:878:2: ( (otherlv_0= RULE_ID ) ) otherlv_1= 'note' ( (lv_note_2_0= RULE_STRING ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:860:2: ( (otherlv_0= RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:861:1: (otherlv_0= RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:878:2: ( (otherlv_0= RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:879:1: (otherlv_0= RULE_ID )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:861:1: (otherlv_0= RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:862:3: otherlv_0= RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:879:1: (otherlv_0= RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:880:3: otherlv_0= RULE_ID
             {
 
             			if (current==null) {
             	            current = createModelElement(grammarAccess.getOneLifelineNoteRule());
             	        }
                     
-            otherlv_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleOneLifelineNote1734); 
+            otherlv_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleOneLifelineNote1755); 
 
             		newLeafNode(otherlv_0, grammarAccess.getOneLifelineNoteAccess().getLifelineLifelineCrossReference_0_0()); 
             	
@@ -2038,17 +2013,17 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,28,FOLLOW_28_in_ruleOneLifelineNote1746); 
+            otherlv_1=(Token)match(input,28,FOLLOW_28_in_ruleOneLifelineNote1767); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getOneLifelineNoteAccess().getNoteKeyword_1());
                 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:877:1: ( (lv_note_2_0= RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:878:1: (lv_note_2_0= RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:895:1: ( (lv_note_2_0= RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:896:1: (lv_note_2_0= RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:878:1: (lv_note_2_0= RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:879:3: lv_note_2_0= RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:896:1: (lv_note_2_0= RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:897:3: lv_note_2_0= RULE_STRING
             {
-            lv_note_2_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleOneLifelineNote1763); 
+            lv_note_2_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleOneLifelineNote1784); 
 
             			newLeafNode(lv_note_2_0, grammarAccess.getOneLifelineNoteAccess().getNoteSTRINGTerminalRuleCall_2_0()); 
             		
@@ -2089,7 +2064,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleDestroyLifelineEvent"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:903:1: entryRuleDestroyLifelineEvent returns [EObject current=null] : iv_ruleDestroyLifelineEvent= ruleDestroyLifelineEvent EOF ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:921:1: entryRuleDestroyLifelineEvent returns [EObject current=null] : iv_ruleDestroyLifelineEvent= ruleDestroyLifelineEvent EOF ;
     public final EObject entryRuleDestroyLifelineEvent() throws RecognitionException {
         EObject current = null;
 
@@ -2097,17 +2072,17 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:904:2: (iv_ruleDestroyLifelineEvent= ruleDestroyLifelineEvent EOF )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:905:2: iv_ruleDestroyLifelineEvent= ruleDestroyLifelineEvent EOF
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:922:2: (iv_ruleDestroyLifelineEvent= ruleDestroyLifelineEvent EOF )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:923:2: iv_ruleDestroyLifelineEvent= ruleDestroyLifelineEvent EOF
             {
              newCompositeNode(grammarAccess.getDestroyLifelineEventRule()); 
-            pushFollow(FOLLOW_ruleDestroyLifelineEvent_in_entryRuleDestroyLifelineEvent1804);
+            pushFollow(FOLLOW_ruleDestroyLifelineEvent_in_entryRuleDestroyLifelineEvent1825);
             iv_ruleDestroyLifelineEvent=ruleDestroyLifelineEvent();
 
             state._fsp--;
 
              current =iv_ruleDestroyLifelineEvent; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleDestroyLifelineEvent1814); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleDestroyLifelineEvent1835); 
 
             }
 
@@ -2125,7 +2100,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDestroyLifelineEvent"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:912:1: ruleDestroyLifelineEvent returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'destroy' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:930:1: ruleDestroyLifelineEvent returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'destroy' ) ;
     public final EObject ruleDestroyLifelineEvent() throws RecognitionException {
         EObject current = null;
 
@@ -2135,24 +2110,24 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:915:28: ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'destroy' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:916:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'destroy' )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:933:28: ( ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'destroy' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:934:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'destroy' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:916:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'destroy' )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:916:2: ( (otherlv_0= RULE_ID ) ) otherlv_1= 'destroy'
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:934:1: ( ( (otherlv_0= RULE_ID ) ) otherlv_1= 'destroy' )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:934:2: ( (otherlv_0= RULE_ID ) ) otherlv_1= 'destroy'
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:916:2: ( (otherlv_0= RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:917:1: (otherlv_0= RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:934:2: ( (otherlv_0= RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:935:1: (otherlv_0= RULE_ID )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:917:1: (otherlv_0= RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:918:3: otherlv_0= RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:935:1: (otherlv_0= RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:936:3: otherlv_0= RULE_ID
             {
 
             			if (current==null) {
             	            current = createModelElement(grammarAccess.getDestroyLifelineEventRule());
             	        }
                     
-            otherlv_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleDestroyLifelineEvent1859); 
+            otherlv_0=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleDestroyLifelineEvent1880); 
 
             		newLeafNode(otherlv_0, grammarAccess.getDestroyLifelineEventAccess().getLifelineLifelineCrossReference_0_0()); 
             	
@@ -2162,7 +2137,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,29,FOLLOW_29_in_ruleDestroyLifelineEvent1871); 
+            otherlv_1=(Token)match(input,29,FOLLOW_29_in_ruleDestroyLifelineEvent1892); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getDestroyLifelineEventAccess().getDestroyKeyword_1());
                 
@@ -2187,7 +2162,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleFragment"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:941:1: entryRuleFragment returns [EObject current=null] : iv_ruleFragment= ruleFragment EOF ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:959:1: entryRuleFragment returns [EObject current=null] : iv_ruleFragment= ruleFragment EOF ;
     public final EObject entryRuleFragment() throws RecognitionException {
         EObject current = null;
 
@@ -2195,17 +2170,17 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:942:2: (iv_ruleFragment= ruleFragment EOF )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:943:2: iv_ruleFragment= ruleFragment EOF
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:960:2: (iv_ruleFragment= ruleFragment EOF )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:961:2: iv_ruleFragment= ruleFragment EOF
             {
              newCompositeNode(grammarAccess.getFragmentRule()); 
-            pushFollow(FOLLOW_ruleFragment_in_entryRuleFragment1907);
+            pushFollow(FOLLOW_ruleFragment_in_entryRuleFragment1928);
             iv_ruleFragment=ruleFragment();
 
             state._fsp--;
 
              current =iv_ruleFragment; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleFragment1917); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleFragment1938); 
 
             }
 
@@ -2223,7 +2198,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleFragment"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:950:1: ruleFragment returns [EObject current=null] : (otherlv_0= 'fragment' ( (lv_name_1_0= RULE_STRING ) ) ( (lv_sections_2_0= ruleSection ) ) ( (lv_sections_3_0= ruleSection ) )* ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:968:1: ruleFragment returns [EObject current=null] : (otherlv_0= 'fragment' ( (lv_name_1_0= RULE_STRING ) ) ( (lv_sections_2_0= ruleSection ) ) ( (lv_sections_3_0= ruleSection ) )* ) ;
     public final EObject ruleFragment() throws RecognitionException {
         EObject current = null;
 
@@ -2237,23 +2212,23 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:953:28: ( (otherlv_0= 'fragment' ( (lv_name_1_0= RULE_STRING ) ) ( (lv_sections_2_0= ruleSection ) ) ( (lv_sections_3_0= ruleSection ) )* ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:954:1: (otherlv_0= 'fragment' ( (lv_name_1_0= RULE_STRING ) ) ( (lv_sections_2_0= ruleSection ) ) ( (lv_sections_3_0= ruleSection ) )* )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:971:28: ( (otherlv_0= 'fragment' ( (lv_name_1_0= RULE_STRING ) ) ( (lv_sections_2_0= ruleSection ) ) ( (lv_sections_3_0= ruleSection ) )* ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:972:1: (otherlv_0= 'fragment' ( (lv_name_1_0= RULE_STRING ) ) ( (lv_sections_2_0= ruleSection ) ) ( (lv_sections_3_0= ruleSection ) )* )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:954:1: (otherlv_0= 'fragment' ( (lv_name_1_0= RULE_STRING ) ) ( (lv_sections_2_0= ruleSection ) ) ( (lv_sections_3_0= ruleSection ) )* )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:954:3: otherlv_0= 'fragment' ( (lv_name_1_0= RULE_STRING ) ) ( (lv_sections_2_0= ruleSection ) ) ( (lv_sections_3_0= ruleSection ) )*
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:972:1: (otherlv_0= 'fragment' ( (lv_name_1_0= RULE_STRING ) ) ( (lv_sections_2_0= ruleSection ) ) ( (lv_sections_3_0= ruleSection ) )* )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:972:3: otherlv_0= 'fragment' ( (lv_name_1_0= RULE_STRING ) ) ( (lv_sections_2_0= ruleSection ) ) ( (lv_sections_3_0= ruleSection ) )*
             {
-            otherlv_0=(Token)match(input,30,FOLLOW_30_in_ruleFragment1954); 
+            otherlv_0=(Token)match(input,30,FOLLOW_30_in_ruleFragment1975); 
 
                 	newLeafNode(otherlv_0, grammarAccess.getFragmentAccess().getFragmentKeyword_0());
                 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:958:1: ( (lv_name_1_0= RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:959:1: (lv_name_1_0= RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:976:1: ( (lv_name_1_0= RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:977:1: (lv_name_1_0= RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:959:1: (lv_name_1_0= RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:960:3: lv_name_1_0= RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:977:1: (lv_name_1_0= RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:978:3: lv_name_1_0= RULE_STRING
             {
-            lv_name_1_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleFragment1971); 
+            lv_name_1_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleFragment1992); 
 
             			newLeafNode(lv_name_1_0, grammarAccess.getFragmentAccess().getNameSTRINGTerminalRuleCall_1_0()); 
             		
@@ -2273,16 +2248,16 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:976:2: ( (lv_sections_2_0= ruleSection ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:977:1: (lv_sections_2_0= ruleSection )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:994:2: ( (lv_sections_2_0= ruleSection ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:995:1: (lv_sections_2_0= ruleSection )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:977:1: (lv_sections_2_0= ruleSection )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:978:3: lv_sections_2_0= ruleSection
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:995:1: (lv_sections_2_0= ruleSection )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:996:3: lv_sections_2_0= ruleSection
             {
              
             	        newCompositeNode(grammarAccess.getFragmentAccess().getSectionsSectionParserRuleCall_2_0()); 
             	    
-            pushFollow(FOLLOW_ruleSection_in_ruleFragment1997);
+            pushFollow(FOLLOW_ruleSection_in_ruleFragment2018);
             lv_sections_2_0=ruleSection();
 
             state._fsp--;
@@ -2304,7 +2279,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:994:2: ( (lv_sections_3_0= ruleSection ) )*
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1012:2: ( (lv_sections_3_0= ruleSection ) )*
             loop17:
             do {
                 int alt17=2;
@@ -2317,15 +2292,15 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
                 switch (alt17) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:995:1: (lv_sections_3_0= ruleSection )
+            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1013:1: (lv_sections_3_0= ruleSection )
             	    {
-            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:995:1: (lv_sections_3_0= ruleSection )
-            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:996:3: lv_sections_3_0= ruleSection
+            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1013:1: (lv_sections_3_0= ruleSection )
+            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1014:3: lv_sections_3_0= ruleSection
             	    {
             	     
             	    	        newCompositeNode(grammarAccess.getFragmentAccess().getSectionsSectionParserRuleCall_3_0()); 
             	    	    
-            	    pushFollow(FOLLOW_ruleSection_in_ruleFragment2018);
+            	    pushFollow(FOLLOW_ruleSection_in_ruleFragment2039);
             	    lv_sections_3_0=ruleSection();
 
             	    state._fsp--;
@@ -2374,7 +2349,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleSection"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1020:1: entryRuleSection returns [EObject current=null] : iv_ruleSection= ruleSection EOF ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1038:1: entryRuleSection returns [EObject current=null] : iv_ruleSection= ruleSection EOF ;
     public final EObject entryRuleSection() throws RecognitionException {
         EObject current = null;
 
@@ -2382,17 +2357,17 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1021:2: (iv_ruleSection= ruleSection EOF )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1022:2: iv_ruleSection= ruleSection EOF
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1039:2: (iv_ruleSection= ruleSection EOF )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1040:2: iv_ruleSection= ruleSection EOF
             {
              newCompositeNode(grammarAccess.getSectionRule()); 
-            pushFollow(FOLLOW_ruleSection_in_entryRuleSection2055);
+            pushFollow(FOLLOW_ruleSection_in_entryRuleSection2076);
             iv_ruleSection=ruleSection();
 
             state._fsp--;
 
              current =iv_ruleSection; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleSection2065); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleSection2086); 
 
             }
 
@@ -2410,7 +2385,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleSection"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1029:1: ruleSection returns [EObject current=null] : (otherlv_0= '{' (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )? ( (lv_interactions_3_0= ruleInteraction ) ) ( (lv_interactions_4_0= ruleInteraction ) )* otherlv_5= '}' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1047:1: ruleSection returns [EObject current=null] : (otherlv_0= '{' (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )? ( (lv_interactions_3_0= ruleInteraction ) ) ( (lv_interactions_4_0= ruleInteraction ) )* otherlv_5= '}' ) ;
     public final EObject ruleSection() throws RecognitionException {
         EObject current = null;
 
@@ -2426,17 +2401,17 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1032:28: ( (otherlv_0= '{' (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )? ( (lv_interactions_3_0= ruleInteraction ) ) ( (lv_interactions_4_0= ruleInteraction ) )* otherlv_5= '}' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1033:1: (otherlv_0= '{' (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )? ( (lv_interactions_3_0= ruleInteraction ) ) ( (lv_interactions_4_0= ruleInteraction ) )* otherlv_5= '}' )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1050:28: ( (otherlv_0= '{' (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )? ( (lv_interactions_3_0= ruleInteraction ) ) ( (lv_interactions_4_0= ruleInteraction ) )* otherlv_5= '}' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1051:1: (otherlv_0= '{' (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )? ( (lv_interactions_3_0= ruleInteraction ) ) ( (lv_interactions_4_0= ruleInteraction ) )* otherlv_5= '}' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1033:1: (otherlv_0= '{' (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )? ( (lv_interactions_3_0= ruleInteraction ) ) ( (lv_interactions_4_0= ruleInteraction ) )* otherlv_5= '}' )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1033:3: otherlv_0= '{' (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )? ( (lv_interactions_3_0= ruleInteraction ) ) ( (lv_interactions_4_0= ruleInteraction ) )* otherlv_5= '}'
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1051:1: (otherlv_0= '{' (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )? ( (lv_interactions_3_0= ruleInteraction ) ) ( (lv_interactions_4_0= ruleInteraction ) )* otherlv_5= '}' )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1051:3: otherlv_0= '{' (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )? ( (lv_interactions_3_0= ruleInteraction ) ) ( (lv_interactions_4_0= ruleInteraction ) )* otherlv_5= '}'
             {
-            otherlv_0=(Token)match(input,13,FOLLOW_13_in_ruleSection2102); 
+            otherlv_0=(Token)match(input,13,FOLLOW_13_in_ruleSection2123); 
 
                 	newLeafNode(otherlv_0, grammarAccess.getSectionAccess().getLeftCurlyBracketKeyword_0());
                 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1037:1: (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )?
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1055:1: (otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) )?
             int alt18=2;
             int LA18_0 = input.LA(1);
 
@@ -2445,19 +2420,19 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
             }
             switch (alt18) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1037:3: otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1055:3: otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) )
                     {
-                    otherlv_1=(Token)match(input,31,FOLLOW_31_in_ruleSection2115); 
+                    otherlv_1=(Token)match(input,31,FOLLOW_31_in_ruleSection2136); 
 
                         	newLeafNode(otherlv_1, grammarAccess.getSectionAccess().getLabelKeyword_1_0());
                         
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1041:1: ( (lv_label_2_0= RULE_STRING ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1042:1: (lv_label_2_0= RULE_STRING )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1059:1: ( (lv_label_2_0= RULE_STRING ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1060:1: (lv_label_2_0= RULE_STRING )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1042:1: (lv_label_2_0= RULE_STRING )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1043:3: lv_label_2_0= RULE_STRING
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1060:1: (lv_label_2_0= RULE_STRING )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1061:3: lv_label_2_0= RULE_STRING
                     {
-                    lv_label_2_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleSection2132); 
+                    lv_label_2_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleSection2153); 
 
                     			newLeafNode(lv_label_2_0, grammarAccess.getSectionAccess().getLabelSTRINGTerminalRuleCall_1_1_0()); 
                     		
@@ -2483,16 +2458,16 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1059:4: ( (lv_interactions_3_0= ruleInteraction ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1060:1: (lv_interactions_3_0= ruleInteraction )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1077:4: ( (lv_interactions_3_0= ruleInteraction ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1078:1: (lv_interactions_3_0= ruleInteraction )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1060:1: (lv_interactions_3_0= ruleInteraction )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1061:3: lv_interactions_3_0= ruleInteraction
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1078:1: (lv_interactions_3_0= ruleInteraction )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1079:3: lv_interactions_3_0= ruleInteraction
             {
              
             	        newCompositeNode(grammarAccess.getSectionAccess().getInteractionsInteractionParserRuleCall_2_0()); 
             	    
-            pushFollow(FOLLOW_ruleInteraction_in_ruleSection2160);
+            pushFollow(FOLLOW_ruleInteraction_in_ruleSection2181);
             lv_interactions_3_0=ruleInteraction();
 
             state._fsp--;
@@ -2514,7 +2489,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1077:2: ( (lv_interactions_4_0= ruleInteraction ) )*
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1095:2: ( (lv_interactions_4_0= ruleInteraction ) )*
             loop19:
             do {
                 int alt19=2;
@@ -2527,15 +2502,15 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
                 switch (alt19) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1078:1: (lv_interactions_4_0= ruleInteraction )
+            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1096:1: (lv_interactions_4_0= ruleInteraction )
             	    {
-            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1078:1: (lv_interactions_4_0= ruleInteraction )
-            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1079:3: lv_interactions_4_0= ruleInteraction
+            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1096:1: (lv_interactions_4_0= ruleInteraction )
+            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1097:3: lv_interactions_4_0= ruleInteraction
             	    {
             	     
             	    	        newCompositeNode(grammarAccess.getSectionAccess().getInteractionsInteractionParserRuleCall_3_0()); 
             	    	    
-            	    pushFollow(FOLLOW_ruleInteraction_in_ruleSection2181);
+            	    pushFollow(FOLLOW_ruleInteraction_in_ruleSection2202);
             	    lv_interactions_4_0=ruleInteraction();
 
             	    state._fsp--;
@@ -2563,7 +2538,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                 }
             } while (true);
 
-            otherlv_5=(Token)match(input,14,FOLLOW_14_in_ruleSection2194); 
+            otherlv_5=(Token)match(input,14,FOLLOW_14_in_ruleSection2215); 
 
                 	newLeafNode(otherlv_5, grammarAccess.getSectionAccess().getRightCurlyBracketKeyword_4());
                 
@@ -2588,7 +2563,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleRefinement"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1107:1: entryRuleRefinement returns [EObject current=null] : iv_ruleRefinement= ruleRefinement EOF ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1125:1: entryRuleRefinement returns [EObject current=null] : iv_ruleRefinement= ruleRefinement EOF ;
     public final EObject entryRuleRefinement() throws RecognitionException {
         EObject current = null;
 
@@ -2596,17 +2571,17 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1108:2: (iv_ruleRefinement= ruleRefinement EOF )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1109:2: iv_ruleRefinement= ruleRefinement EOF
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1126:2: (iv_ruleRefinement= ruleRefinement EOF )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1127:2: iv_ruleRefinement= ruleRefinement EOF
             {
              newCompositeNode(grammarAccess.getRefinementRule()); 
-            pushFollow(FOLLOW_ruleRefinement_in_entryRuleRefinement2230);
+            pushFollow(FOLLOW_ruleRefinement_in_entryRuleRefinement2251);
             iv_ruleRefinement=ruleRefinement();
 
             state._fsp--;
 
              current =iv_ruleRefinement; 
-            match(input,EOF,FOLLOW_EOF_in_entryRuleRefinement2240); 
+            match(input,EOF,FOLLOW_EOF_in_entryRuleRefinement2261); 
 
             }
 
@@ -2624,7 +2599,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleRefinement"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1116:1: ruleRefinement returns [EObject current=null] : (otherlv_0= 'refinement' otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) otherlv_3= 'lifelines' ( (otherlv_4= RULE_ID ) ) (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )* ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1134:1: ruleRefinement returns [EObject current=null] : (otherlv_0= 'refinement' otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) otherlv_3= 'lifelines' ( (otherlv_4= RULE_ID ) ) (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )* ) ;
     public final EObject ruleRefinement() throws RecognitionException {
         EObject current = null;
 
@@ -2639,27 +2614,27 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1119:28: ( (otherlv_0= 'refinement' otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) otherlv_3= 'lifelines' ( (otherlv_4= RULE_ID ) ) (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )* ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1120:1: (otherlv_0= 'refinement' otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) otherlv_3= 'lifelines' ( (otherlv_4= RULE_ID ) ) (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )* )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1137:28: ( (otherlv_0= 'refinement' otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) otherlv_3= 'lifelines' ( (otherlv_4= RULE_ID ) ) (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )* ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1138:1: (otherlv_0= 'refinement' otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) otherlv_3= 'lifelines' ( (otherlv_4= RULE_ID ) ) (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )* )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1120:1: (otherlv_0= 'refinement' otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) otherlv_3= 'lifelines' ( (otherlv_4= RULE_ID ) ) (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )* )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1120:3: otherlv_0= 'refinement' otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) otherlv_3= 'lifelines' ( (otherlv_4= RULE_ID ) ) (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )*
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1138:1: (otherlv_0= 'refinement' otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) otherlv_3= 'lifelines' ( (otherlv_4= RULE_ID ) ) (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )* )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1138:3: otherlv_0= 'refinement' otherlv_1= 'label' ( (lv_label_2_0= RULE_STRING ) ) otherlv_3= 'lifelines' ( (otherlv_4= RULE_ID ) ) (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )*
             {
-            otherlv_0=(Token)match(input,32,FOLLOW_32_in_ruleRefinement2277); 
+            otherlv_0=(Token)match(input,32,FOLLOW_32_in_ruleRefinement2298); 
 
                 	newLeafNode(otherlv_0, grammarAccess.getRefinementAccess().getRefinementKeyword_0());
                 
-            otherlv_1=(Token)match(input,31,FOLLOW_31_in_ruleRefinement2289); 
+            otherlv_1=(Token)match(input,31,FOLLOW_31_in_ruleRefinement2310); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getRefinementAccess().getLabelKeyword_1());
                 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1128:1: ( (lv_label_2_0= RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1129:1: (lv_label_2_0= RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1146:1: ( (lv_label_2_0= RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1147:1: (lv_label_2_0= RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1129:1: (lv_label_2_0= RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1130:3: lv_label_2_0= RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1147:1: (lv_label_2_0= RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1148:3: lv_label_2_0= RULE_STRING
             {
-            lv_label_2_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleRefinement2306); 
+            lv_label_2_0=(Token)match(input,RULE_STRING,FOLLOW_RULE_STRING_in_ruleRefinement2327); 
 
             			newLeafNode(lv_label_2_0, grammarAccess.getRefinementAccess().getLabelSTRINGTerminalRuleCall_2_0()); 
             		
@@ -2679,22 +2654,22 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_3=(Token)match(input,33,FOLLOW_33_in_ruleRefinement2323); 
+            otherlv_3=(Token)match(input,33,FOLLOW_33_in_ruleRefinement2344); 
 
                 	newLeafNode(otherlv_3, grammarAccess.getRefinementAccess().getLifelinesKeyword_3());
                 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1150:1: ( (otherlv_4= RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1151:1: (otherlv_4= RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1168:1: ( (otherlv_4= RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1169:1: (otherlv_4= RULE_ID )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1151:1: (otherlv_4= RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1152:3: otherlv_4= RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1169:1: (otherlv_4= RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1170:3: otherlv_4= RULE_ID
             {
 
             			if (current==null) {
             	            current = createModelElement(grammarAccess.getRefinementRule());
             	        }
                     
-            otherlv_4=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleRefinement2343); 
+            otherlv_4=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleRefinement2364); 
 
             		newLeafNode(otherlv_4, grammarAccess.getRefinementAccess().getLifelinesLifelineCrossReference_4_0()); 
             	
@@ -2704,7 +2679,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1163:2: (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )*
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1181:2: (otherlv_5= ',' ( (otherlv_6= RULE_ID ) ) )*
             loop20:
             do {
                 int alt20=2;
@@ -2717,24 +2692,24 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
                 switch (alt20) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1163:4: otherlv_5= ',' ( (otherlv_6= RULE_ID ) )
+            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1181:4: otherlv_5= ',' ( (otherlv_6= RULE_ID ) )
             	    {
-            	    otherlv_5=(Token)match(input,34,FOLLOW_34_in_ruleRefinement2356); 
+            	    otherlv_5=(Token)match(input,34,FOLLOW_34_in_ruleRefinement2377); 
 
             	        	newLeafNode(otherlv_5, grammarAccess.getRefinementAccess().getCommaKeyword_5_0());
             	        
-            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1167:1: ( (otherlv_6= RULE_ID ) )
-            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1168:1: (otherlv_6= RULE_ID )
+            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1185:1: ( (otherlv_6= RULE_ID ) )
+            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1186:1: (otherlv_6= RULE_ID )
             	    {
-            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1168:1: (otherlv_6= RULE_ID )
-            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1169:3: otherlv_6= RULE_ID
+            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1186:1: (otherlv_6= RULE_ID )
+            	    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1187:3: otherlv_6= RULE_ID
             	    {
 
             	    			if (current==null) {
             	    	            current = createModelElement(grammarAccess.getRefinementRule());
             	    	        }
             	            
-            	    otherlv_6=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleRefinement2376); 
+            	    otherlv_6=(Token)match(input,RULE_ID,FOLLOW_RULE_ID_in_ruleRefinement2397); 
 
             	    		newLeafNode(otherlv_6, grammarAccess.getRefinementAccess().getLifelinesLifelineCrossReference_5_1_0()); 
             	    	
@@ -2774,7 +2749,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMessageType"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1188:1: ruleMessageType returns [Enumerator current=null] : ( (enumLiteral_0= 'async' ) | (enumLiteral_1= 'create' ) | (enumLiteral_2= 'response' ) | (enumLiteral_3= 'sync' ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1206:1: ruleMessageType returns [Enumerator current=null] : ( (enumLiteral_0= 'async' ) | (enumLiteral_1= 'create' ) | (enumLiteral_2= 'response' ) | (enumLiteral_3= 'sync' ) ) ;
     public final Enumerator ruleMessageType() throws RecognitionException {
         Enumerator current = null;
 
@@ -2785,10 +2760,10 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
          enterRule(); 
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1190:28: ( ( (enumLiteral_0= 'async' ) | (enumLiteral_1= 'create' ) | (enumLiteral_2= 'response' ) | (enumLiteral_3= 'sync' ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1191:1: ( (enumLiteral_0= 'async' ) | (enumLiteral_1= 'create' ) | (enumLiteral_2= 'response' ) | (enumLiteral_3= 'sync' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1208:28: ( ( (enumLiteral_0= 'async' ) | (enumLiteral_1= 'create' ) | (enumLiteral_2= 'response' ) | (enumLiteral_3= 'sync' ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1209:1: ( (enumLiteral_0= 'async' ) | (enumLiteral_1= 'create' ) | (enumLiteral_2= 'response' ) | (enumLiteral_3= 'sync' ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1191:1: ( (enumLiteral_0= 'async' ) | (enumLiteral_1= 'create' ) | (enumLiteral_2= 'response' ) | (enumLiteral_3= 'sync' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1209:1: ( (enumLiteral_0= 'async' ) | (enumLiteral_1= 'create' ) | (enumLiteral_2= 'response' ) | (enumLiteral_3= 'sync' ) )
             int alt21=4;
             switch ( input.LA(1) ) {
             case 35:
@@ -2820,12 +2795,12 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             switch (alt21) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1191:2: (enumLiteral_0= 'async' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1209:2: (enumLiteral_0= 'async' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1191:2: (enumLiteral_0= 'async' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1191:4: enumLiteral_0= 'async'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1209:2: (enumLiteral_0= 'async' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1209:4: enumLiteral_0= 'async'
                     {
-                    enumLiteral_0=(Token)match(input,35,FOLLOW_35_in_ruleMessageType2428); 
+                    enumLiteral_0=(Token)match(input,35,FOLLOW_35_in_ruleMessageType2449); 
 
                             current = grammarAccess.getMessageTypeAccess().getAsyncEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_0, grammarAccess.getMessageTypeAccess().getAsyncEnumLiteralDeclaration_0()); 
@@ -2837,12 +2812,12 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1197:6: (enumLiteral_1= 'create' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1215:6: (enumLiteral_1= 'create' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1197:6: (enumLiteral_1= 'create' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1197:8: enumLiteral_1= 'create'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1215:6: (enumLiteral_1= 'create' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1215:8: enumLiteral_1= 'create'
                     {
-                    enumLiteral_1=(Token)match(input,36,FOLLOW_36_in_ruleMessageType2445); 
+                    enumLiteral_1=(Token)match(input,36,FOLLOW_36_in_ruleMessageType2466); 
 
                             current = grammarAccess.getMessageTypeAccess().getCreateEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_1, grammarAccess.getMessageTypeAccess().getCreateEnumLiteralDeclaration_1()); 
@@ -2854,12 +2829,12 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1203:6: (enumLiteral_2= 'response' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1221:6: (enumLiteral_2= 'response' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1203:6: (enumLiteral_2= 'response' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1203:8: enumLiteral_2= 'response'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1221:6: (enumLiteral_2= 'response' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1221:8: enumLiteral_2= 'response'
                     {
-                    enumLiteral_2=(Token)match(input,37,FOLLOW_37_in_ruleMessageType2462); 
+                    enumLiteral_2=(Token)match(input,37,FOLLOW_37_in_ruleMessageType2483); 
 
                             current = grammarAccess.getMessageTypeAccess().getResponseEnumLiteralDeclaration_2().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_2, grammarAccess.getMessageTypeAccess().getResponseEnumLiteralDeclaration_2()); 
@@ -2871,12 +2846,12 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1209:6: (enumLiteral_3= 'sync' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1227:6: (enumLiteral_3= 'sync' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1209:6: (enumLiteral_3= 'sync' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1209:8: enumLiteral_3= 'sync'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1227:6: (enumLiteral_3= 'sync' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1227:8: enumLiteral_3= 'sync'
                     {
-                    enumLiteral_3=(Token)match(input,38,FOLLOW_38_in_ruleMessageType2479); 
+                    enumLiteral_3=(Token)match(input,38,FOLLOW_38_in_ruleMessageType2500); 
 
                             current = grammarAccess.getMessageTypeAccess().getSyncEnumLiteralDeclaration_3().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_3, grammarAccess.getMessageTypeAccess().getSyncEnumLiteralDeclaration_3()); 
@@ -2908,7 +2883,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleDataType"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1219:1: ruleDataType returns [Enumerator current=null] : ( (enumLiteral_0= 'Char' ) | (enumLiteral_1= 'Boolean' ) | (enumLiteral_2= 'Integer' ) | (enumLiteral_3= 'Float' ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1237:1: ruleDataType returns [Enumerator current=null] : ( (enumLiteral_0= 'Char' ) | (enumLiteral_1= 'Boolean' ) | (enumLiteral_2= 'Integer' ) | (enumLiteral_3= 'Float' ) ) ;
     public final Enumerator ruleDataType() throws RecognitionException {
         Enumerator current = null;
 
@@ -2919,10 +2894,10 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
          enterRule(); 
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1221:28: ( ( (enumLiteral_0= 'Char' ) | (enumLiteral_1= 'Boolean' ) | (enumLiteral_2= 'Integer' ) | (enumLiteral_3= 'Float' ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1222:1: ( (enumLiteral_0= 'Char' ) | (enumLiteral_1= 'Boolean' ) | (enumLiteral_2= 'Integer' ) | (enumLiteral_3= 'Float' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1239:28: ( ( (enumLiteral_0= 'Char' ) | (enumLiteral_1= 'Boolean' ) | (enumLiteral_2= 'Integer' ) | (enumLiteral_3= 'Float' ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1240:1: ( (enumLiteral_0= 'Char' ) | (enumLiteral_1= 'Boolean' ) | (enumLiteral_2= 'Integer' ) | (enumLiteral_3= 'Float' ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1222:1: ( (enumLiteral_0= 'Char' ) | (enumLiteral_1= 'Boolean' ) | (enumLiteral_2= 'Integer' ) | (enumLiteral_3= 'Float' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1240:1: ( (enumLiteral_0= 'Char' ) | (enumLiteral_1= 'Boolean' ) | (enumLiteral_2= 'Integer' ) | (enumLiteral_3= 'Float' ) )
             int alt22=4;
             switch ( input.LA(1) ) {
             case 39:
@@ -2954,12 +2929,12 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             switch (alt22) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1222:2: (enumLiteral_0= 'Char' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1240:2: (enumLiteral_0= 'Char' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1222:2: (enumLiteral_0= 'Char' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1222:4: enumLiteral_0= 'Char'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1240:2: (enumLiteral_0= 'Char' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1240:4: enumLiteral_0= 'Char'
                     {
-                    enumLiteral_0=(Token)match(input,39,FOLLOW_39_in_ruleDataType2524); 
+                    enumLiteral_0=(Token)match(input,39,FOLLOW_39_in_ruleDataType2545); 
 
                             current = grammarAccess.getDataTypeAccess().getCharEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_0, grammarAccess.getDataTypeAccess().getCharEnumLiteralDeclaration_0()); 
@@ -2971,12 +2946,12 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1228:6: (enumLiteral_1= 'Boolean' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1246:6: (enumLiteral_1= 'Boolean' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1228:6: (enumLiteral_1= 'Boolean' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1228:8: enumLiteral_1= 'Boolean'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1246:6: (enumLiteral_1= 'Boolean' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1246:8: enumLiteral_1= 'Boolean'
                     {
-                    enumLiteral_1=(Token)match(input,40,FOLLOW_40_in_ruleDataType2541); 
+                    enumLiteral_1=(Token)match(input,40,FOLLOW_40_in_ruleDataType2562); 
 
                             current = grammarAccess.getDataTypeAccess().getBooleanEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_1, grammarAccess.getDataTypeAccess().getBooleanEnumLiteralDeclaration_1()); 
@@ -2988,12 +2963,12 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1234:6: (enumLiteral_2= 'Integer' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1252:6: (enumLiteral_2= 'Integer' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1234:6: (enumLiteral_2= 'Integer' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1234:8: enumLiteral_2= 'Integer'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1252:6: (enumLiteral_2= 'Integer' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1252:8: enumLiteral_2= 'Integer'
                     {
-                    enumLiteral_2=(Token)match(input,41,FOLLOW_41_in_ruleDataType2558); 
+                    enumLiteral_2=(Token)match(input,41,FOLLOW_41_in_ruleDataType2579); 
 
                             current = grammarAccess.getDataTypeAccess().getIntegerEnumLiteralDeclaration_2().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_2, grammarAccess.getDataTypeAccess().getIntegerEnumLiteralDeclaration_2()); 
@@ -3005,12 +2980,12 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1240:6: (enumLiteral_3= 'Float' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1258:6: (enumLiteral_3= 'Float' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1240:6: (enumLiteral_3= 'Float' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1240:8: enumLiteral_3= 'Float'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1258:6: (enumLiteral_3= 'Float' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:1258:8: enumLiteral_3= 'Float'
                     {
-                    enumLiteral_3=(Token)match(input,42,FOLLOW_42_in_ruleDataType2575); 
+                    enumLiteral_3=(Token)match(input,42,FOLLOW_42_in_ruleDataType2596); 
 
                             current = grammarAccess.getDataTypeAccess().getFloatEnumLiteralDeclaration_3().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_3, grammarAccess.getDataTypeAccess().getFloatEnumLiteralDeclaration_3()); 
@@ -3043,6 +3018,68 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
     // Delegated rules
 
 
+    protected DFA5 dfa5 = new DFA5(this);
+    static final String DFA5_eotS =
+        "\15\uffff";
+    static final String DFA5_eofS =
+        "\15\uffff";
+    static final String DFA5_minS =
+        "\1\5\1\33\2\uffff\4\4\5\uffff";
+    static final String DFA5_maxS =
+        "\1\40\1\46\2\uffff\4\31\5\uffff";
+    static final String DFA5_acceptS =
+        "\2\uffff\1\3\1\7\4\uffff\1\6\1\4\1\5\1\2\1\1";
+    static final String DFA5_specialS =
+        "\15\uffff}>";
+    static final String[] DFA5_transitionS = {
+            "\1\1\30\uffff\1\2\1\uffff\1\3",
+            "\1\11\1\12\1\10\5\uffff\1\4\1\5\1\6\1\7",
+            "",
+            "",
+            "\1\14\23\uffff\2\13",
+            "\1\14\23\uffff\2\13",
+            "\1\14\23\uffff\2\13",
+            "\1\14\23\uffff\2\13",
+            "",
+            "",
+            "",
+            "",
+            ""
+    };
+
+    static final short[] DFA5_eot = DFA.unpackEncodedString(DFA5_eotS);
+    static final short[] DFA5_eof = DFA.unpackEncodedString(DFA5_eofS);
+    static final char[] DFA5_min = DFA.unpackEncodedStringToUnsignedChars(DFA5_minS);
+    static final char[] DFA5_max = DFA.unpackEncodedStringToUnsignedChars(DFA5_maxS);
+    static final short[] DFA5_accept = DFA.unpackEncodedString(DFA5_acceptS);
+    static final short[] DFA5_special = DFA.unpackEncodedString(DFA5_specialS);
+    static final short[][] DFA5_transition;
+
+    static {
+        int numStates = DFA5_transitionS.length;
+        DFA5_transition = new short[numStates][];
+        for (int i=0; i<numStates; i++) {
+            DFA5_transition[i] = DFA.unpackEncodedString(DFA5_transitionS[i]);
+        }
+    }
+
+    class DFA5 extends DFA {
+
+        public DFA5(BaseRecognizer recognizer) {
+            this.recognizer = recognizer;
+            this.decisionNumber = 5;
+            this.eot = DFA5_eot;
+            this.eof = DFA5_eof;
+            this.min = DFA5_min;
+            this.max = DFA5_max;
+            this.accept = DFA5_accept;
+            this.special = DFA5_special;
+            this.transition = DFA5_transition;
+        }
+        public String getDescription() {
+            return "332:1: (this_TwoLifelineMessage_0= ruleTwoLifelineMessage | this_OneLifelineMessage_1= ruleOneLifelineMessage | this_Fragment_2= ruleFragment | this_OneLifelineEndBlock_3= ruleOneLifelineEndBlock | this_OneLifelineNote_4= ruleOneLifelineNote | this_DestroyLifelineEvent_5= ruleDestroyLifelineEvent | this_Refinement_6= ruleRefinement )";
+        }
+    }
  
 
     public static final BitSet FOLLOW_ruleSequenceDiagram_in_entryRuleSequenceDiagram75 = new BitSet(new long[]{0x0000000000000000L});
@@ -3093,59 +3130,60 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_RULE_STRING_in_ruleTwoLifelineMessage1199 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ruleOneLifelineMessage_in_entryRuleOneLifelineMessage1242 = new BitSet(new long[]{0x0000000000000000L});
     public static final BitSet FOLLOW_EOF_in_entryRuleOneLifelineMessage1252 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleOneLifelineMessage1297 = new BitSet(new long[]{0x0000000003000000L});
-    public static final BitSet FOLLOW_24_in_ruleOneLifelineMessage1317 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_25_in_ruleOneLifelineMessage1346 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleOneLifelineMessage1379 = new BitSet(new long[]{0x000000001C000002L});
-    public static final BitSet FOLLOW_26_in_ruleOneLifelineMessage1403 = new BitSet(new long[]{0x0000000010000002L});
-    public static final BitSet FOLLOW_27_in_ruleOneLifelineMessage1441 = new BitSet(new long[]{0x0000000010000042L});
-    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_ruleOneLifelineMessage1471 = new BitSet(new long[]{0x0000000010000002L});
-    public static final BitSet FOLLOW_28_in_ruleOneLifelineMessage1493 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleOneLifelineMessage1510 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleOneLifelineEndBlock_in_entryRuleOneLifelineEndBlock1553 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleOneLifelineEndBlock1563 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleOneLifelineEndBlock1608 = new BitSet(new long[]{0x0000000008000000L});
-    public static final BitSet FOLLOW_27_in_ruleOneLifelineEndBlock1620 = new BitSet(new long[]{0x0000000000000042L});
-    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_ruleOneLifelineEndBlock1637 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleOneLifelineNote_in_entryRuleOneLifelineNote1679 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleOneLifelineNote1689 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleOneLifelineNote1734 = new BitSet(new long[]{0x0000000010000000L});
-    public static final BitSet FOLLOW_28_in_ruleOneLifelineNote1746 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleOneLifelineNote1763 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleDestroyLifelineEvent_in_entryRuleDestroyLifelineEvent1804 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleDestroyLifelineEvent1814 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleDestroyLifelineEvent1859 = new BitSet(new long[]{0x0000000020000000L});
-    public static final BitSet FOLLOW_29_in_ruleDestroyLifelineEvent1871 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleFragment_in_entryRuleFragment1907 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleFragment1917 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_30_in_ruleFragment1954 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleFragment1971 = new BitSet(new long[]{0x0000000000002000L});
-    public static final BitSet FOLLOW_ruleSection_in_ruleFragment1997 = new BitSet(new long[]{0x0000000000002002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleOneLifelineMessage1297 = new BitSet(new long[]{0x0000007800000000L});
+    public static final BitSet FOLLOW_ruleMessageType_in_ruleOneLifelineMessage1318 = new BitSet(new long[]{0x0000000003000000L});
+    public static final BitSet FOLLOW_24_in_ruleOneLifelineMessage1338 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_25_in_ruleOneLifelineMessage1367 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleOneLifelineMessage1400 = new BitSet(new long[]{0x000000001C000002L});
+    public static final BitSet FOLLOW_26_in_ruleOneLifelineMessage1424 = new BitSet(new long[]{0x0000000010000002L});
+    public static final BitSet FOLLOW_27_in_ruleOneLifelineMessage1462 = new BitSet(new long[]{0x0000000010000042L});
+    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_ruleOneLifelineMessage1492 = new BitSet(new long[]{0x0000000010000002L});
+    public static final BitSet FOLLOW_28_in_ruleOneLifelineMessage1514 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleOneLifelineMessage1531 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleOneLifelineEndBlock_in_entryRuleOneLifelineEndBlock1574 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleOneLifelineEndBlock1584 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleOneLifelineEndBlock1629 = new BitSet(new long[]{0x0000000008000000L});
+    public static final BitSet FOLLOW_27_in_ruleOneLifelineEndBlock1641 = new BitSet(new long[]{0x0000000000000042L});
+    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_ruleOneLifelineEndBlock1658 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleOneLifelineNote_in_entryRuleOneLifelineNote1700 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleOneLifelineNote1710 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleOneLifelineNote1755 = new BitSet(new long[]{0x0000000010000000L});
+    public static final BitSet FOLLOW_28_in_ruleOneLifelineNote1767 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleOneLifelineNote1784 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleDestroyLifelineEvent_in_entryRuleDestroyLifelineEvent1825 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleDestroyLifelineEvent1835 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleDestroyLifelineEvent1880 = new BitSet(new long[]{0x0000000020000000L});
+    public static final BitSet FOLLOW_29_in_ruleDestroyLifelineEvent1892 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleFragment_in_entryRuleFragment1928 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleFragment1938 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_30_in_ruleFragment1975 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleFragment1992 = new BitSet(new long[]{0x0000000000002000L});
     public static final BitSet FOLLOW_ruleSection_in_ruleFragment2018 = new BitSet(new long[]{0x0000000000002002L});
-    public static final BitSet FOLLOW_ruleSection_in_entryRuleSection2055 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleSection2065 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_13_in_ruleSection2102 = new BitSet(new long[]{0x00000001C0000020L});
-    public static final BitSet FOLLOW_31_in_ruleSection2115 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleSection2132 = new BitSet(new long[]{0x0000000140000020L});
-    public static final BitSet FOLLOW_ruleInteraction_in_ruleSection2160 = new BitSet(new long[]{0x0000000140004020L});
+    public static final BitSet FOLLOW_ruleSection_in_ruleFragment2039 = new BitSet(new long[]{0x0000000000002002L});
+    public static final BitSet FOLLOW_ruleSection_in_entryRuleSection2076 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleSection2086 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_13_in_ruleSection2123 = new BitSet(new long[]{0x00000001C0000020L});
+    public static final BitSet FOLLOW_31_in_ruleSection2136 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleSection2153 = new BitSet(new long[]{0x0000000140000020L});
     public static final BitSet FOLLOW_ruleInteraction_in_ruleSection2181 = new BitSet(new long[]{0x0000000140004020L});
-    public static final BitSet FOLLOW_14_in_ruleSection2194 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleRefinement_in_entryRuleRefinement2230 = new BitSet(new long[]{0x0000000000000000L});
-    public static final BitSet FOLLOW_EOF_in_entryRuleRefinement2240 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_32_in_ruleRefinement2277 = new BitSet(new long[]{0x0000000080000000L});
-    public static final BitSet FOLLOW_31_in_ruleRefinement2289 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_RULE_STRING_in_ruleRefinement2306 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_33_in_ruleRefinement2323 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleRefinement2343 = new BitSet(new long[]{0x0000000400000002L});
-    public static final BitSet FOLLOW_34_in_ruleRefinement2356 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_RULE_ID_in_ruleRefinement2376 = new BitSet(new long[]{0x0000000400000002L});
-    public static final BitSet FOLLOW_35_in_ruleMessageType2428 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_36_in_ruleMessageType2445 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_37_in_ruleMessageType2462 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_38_in_ruleMessageType2479 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_39_in_ruleDataType2524 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_40_in_ruleDataType2541 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_41_in_ruleDataType2558 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_42_in_ruleDataType2575 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleInteraction_in_ruleSection2202 = new BitSet(new long[]{0x0000000140004020L});
+    public static final BitSet FOLLOW_14_in_ruleSection2215 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleRefinement_in_entryRuleRefinement2251 = new BitSet(new long[]{0x0000000000000000L});
+    public static final BitSet FOLLOW_EOF_in_entryRuleRefinement2261 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_32_in_ruleRefinement2298 = new BitSet(new long[]{0x0000000080000000L});
+    public static final BitSet FOLLOW_31_in_ruleRefinement2310 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_RULE_STRING_in_ruleRefinement2327 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_33_in_ruleRefinement2344 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleRefinement2364 = new BitSet(new long[]{0x0000000400000002L});
+    public static final BitSet FOLLOW_34_in_ruleRefinement2377 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_RULE_ID_in_ruleRefinement2397 = new BitSet(new long[]{0x0000000400000002L});
+    public static final BitSet FOLLOW_35_in_ruleMessageType2449 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_36_in_ruleMessageType2466 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_37_in_ruleMessageType2483 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_38_in_ruleMessageType2500 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_39_in_ruleDataType2545 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_40_in_ruleDataType2562 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_41_in_ruleDataType2579 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_42_in_ruleDataType2596 = new BitSet(new long[]{0x0000000000000002L});
 
 }

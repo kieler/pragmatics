@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -45,7 +45,8 @@ TwoLifelineMessage returns TwoLifelineMessage:
 
 OneLifelineMessage returns OneLifelineMessage:
     Lifeline=[Lifeline|ID]
-    messageType = ('lost' | 'found')
+    messageType=MessageType
+    messageTypeLostAndFound=('lost' | 'found')
     caption=STRING
     (startBlock?='startBlock' | endBlock?='endBlock' (endBlockCount=INT_GREATER_ZERO)?)?
     ('note' note=STRING)?;

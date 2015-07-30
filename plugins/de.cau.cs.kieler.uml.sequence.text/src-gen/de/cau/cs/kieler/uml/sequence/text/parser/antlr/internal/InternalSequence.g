@@ -663,29 +663,47 @@ ruleOneLifelineMessage returns [EObject current=null]
 )
 )(
 (
-(
-		lv_messageType_1_1=	'lost' 
-    {
-        newLeafNode(lv_messageType_1_1, grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostKeyword_1_0_0());
-    }
- 
-	    {
+		{ 
+	        newCompositeNode(grammarAccess.getOneLifelineMessageAccess().getMessageTypeMessageTypeEnumRuleCall_1_0()); 
+	    }
+		lv_messageType_1_0=ruleMessageType		{
 	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getOneLifelineMessageRule());
+	            $current = createModelElementForParent(grammarAccess.getOneLifelineMessageRule());
 	        }
-       		setWithLastConsumed($current, "messageType", lv_messageType_1_1, null);
+       		set(
+       			$current, 
+       			"messageType",
+        		lv_messageType_1_0, 
+        		"MessageType");
+	        afterParserOrEnumRuleCall();
 	    }
 
-    |		lv_messageType_1_2=	'found' 
+)
+)(
+(
+(
+		lv_messageTypeLostAndFound_2_1=	'lost' 
     {
-        newLeafNode(lv_messageType_1_2, grammarAccess.getOneLifelineMessageAccess().getMessageTypeFoundKeyword_1_0_1());
+        newLeafNode(lv_messageTypeLostAndFound_2_1, grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundLostKeyword_2_0_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getOneLifelineMessageRule());
 	        }
-       		setWithLastConsumed($current, "messageType", lv_messageType_1_2, null);
+       		setWithLastConsumed($current, "messageTypeLostAndFound", lv_messageTypeLostAndFound_2_1, null);
+	    }
+
+    |		lv_messageTypeLostAndFound_2_2=	'found' 
+    {
+        newLeafNode(lv_messageTypeLostAndFound_2_2, grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundFoundKeyword_2_0_1());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getOneLifelineMessageRule());
+	        }
+       		setWithLastConsumed($current, "messageTypeLostAndFound", lv_messageTypeLostAndFound_2_2, null);
 	    }
 
 )
@@ -693,9 +711,9 @@ ruleOneLifelineMessage returns [EObject current=null]
 )
 )(
 (
-		lv_caption_2_0=RULE_STRING
+		lv_caption_3_0=RULE_STRING
 		{
-			newLeafNode(lv_caption_2_0, grammarAccess.getOneLifelineMessageAccess().getCaptionSTRINGTerminalRuleCall_2_0()); 
+			newLeafNode(lv_caption_3_0, grammarAccess.getOneLifelineMessageAccess().getCaptionSTRINGTerminalRuleCall_3_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -704,16 +722,16 @@ ruleOneLifelineMessage returns [EObject current=null]
        		setWithLastConsumed(
        			$current, 
        			"caption",
-        		lv_caption_2_0, 
+        		lv_caption_3_0, 
         		"STRING");
 	    }
 
 )
 )((
 (
-		lv_startBlock_3_0=	'startBlock' 
+		lv_startBlock_4_0=	'startBlock' 
     {
-        newLeafNode(lv_startBlock_3_0, grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_3_0_0());
+        newLeafNode(lv_startBlock_4_0, grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_4_0_0());
     }
  
 	    {
@@ -727,9 +745,9 @@ ruleOneLifelineMessage returns [EObject current=null]
 )
     |((
 (
-		lv_endBlock_4_0=	'endBlock' 
+		lv_endBlock_5_0=	'endBlock' 
     {
-        newLeafNode(lv_endBlock_4_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_3_1_0_0());
+        newLeafNode(lv_endBlock_5_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_4_1_0_0());
     }
  
 	    {
@@ -742,9 +760,9 @@ ruleOneLifelineMessage returns [EObject current=null]
 )
 )(
 (
-		lv_endBlockCount_5_0=RULE_INT_GREATER_ZERO
+		lv_endBlockCount_6_0=RULE_INT_GREATER_ZERO
 		{
-			newLeafNode(lv_endBlockCount_5_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_3_1_1_0()); 
+			newLeafNode(lv_endBlockCount_6_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -753,20 +771,20 @@ ruleOneLifelineMessage returns [EObject current=null]
        		setWithLastConsumed(
        			$current, 
        			"endBlockCount",
-        		lv_endBlockCount_5_0, 
+        		lv_endBlockCount_6_0, 
         		"INT_GREATER_ZERO");
 	    }
 
 )
-)?))?(	otherlv_6='note' 
+)?))?(	otherlv_7='note' 
     {
-    	newLeafNode(otherlv_6, grammarAccess.getOneLifelineMessageAccess().getNoteKeyword_4_0());
+    	newLeafNode(otherlv_7, grammarAccess.getOneLifelineMessageAccess().getNoteKeyword_5_0());
     }
 (
 (
-		lv_note_7_0=RULE_STRING
+		lv_note_8_0=RULE_STRING
 		{
-			newLeafNode(lv_note_7_0, grammarAccess.getOneLifelineMessageAccess().getNoteSTRINGTerminalRuleCall_4_1_0()); 
+			newLeafNode(lv_note_8_0, grammarAccess.getOneLifelineMessageAccess().getNoteSTRINGTerminalRuleCall_5_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -775,7 +793,7 @@ ruleOneLifelineMessage returns [EObject current=null]
        		setWithLastConsumed(
        			$current, 
        			"note",
-        		lv_note_7_0, 
+        		lv_note_8_0, 
         		"STRING");
 	    }
 

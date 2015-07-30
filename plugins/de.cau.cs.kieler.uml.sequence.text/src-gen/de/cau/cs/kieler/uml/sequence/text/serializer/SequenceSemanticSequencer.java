@@ -188,7 +188,8 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 * Constraint:
 	 *     (
 	 *         Lifeline=[Lifeline|ID] 
-	 *         (messageType='lost' | messageType='found') 
+	 *         messageType=MessageType 
+	 *         (messageTypeLostAndFound='lost' | messageTypeLostAndFound='found') 
 	 *         caption=STRING 
 	 *         (startBlock?='startBlock' | (endBlock?='endBlock' endBlockCount=INT_GREATER_ZERO?))? 
 	 *         note=STRING?

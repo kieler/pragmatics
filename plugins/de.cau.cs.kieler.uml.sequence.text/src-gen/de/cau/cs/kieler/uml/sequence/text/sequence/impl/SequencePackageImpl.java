@@ -481,7 +481,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineMessage_Caption()
+  public EAttribute getOneLifelineMessage_MessageTypeLostAndFound()
   {
     return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(2);
   }
@@ -491,7 +491,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineMessage_StartBlock()
+  public EAttribute getOneLifelineMessage_Caption()
   {
     return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(3);
   }
@@ -501,7 +501,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineMessage_EndBlock()
+  public EAttribute getOneLifelineMessage_StartBlock()
   {
     return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(4);
   }
@@ -511,7 +511,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineMessage_EndBlockCount()
+  public EAttribute getOneLifelineMessage_EndBlock()
   {
     return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(5);
   }
@@ -521,9 +521,19 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineMessage_Note()
+  public EAttribute getOneLifelineMessage_EndBlockCount()
   {
     return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getOneLifelineMessage_Note()
+  {
+    return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -779,6 +789,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     oneLifelineMessageEClass = createEClass(ONE_LIFELINE_MESSAGE);
     createEReference(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__LIFELINE);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__MESSAGE_TYPE);
+    createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__CAPTION);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__START_BLOCK);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__END_BLOCK);
@@ -883,7 +894,8 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
 
     initEClass(oneLifelineMessageEClass, OneLifelineMessage.class, "OneLifelineMessage", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getOneLifelineMessage_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getOneLifelineMessage_MessageType(), ecorePackage.getEString(), "messageType", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getOneLifelineMessage_MessageType(), this.getMessageType(), "messageType", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getOneLifelineMessage_MessageTypeLostAndFound(), ecorePackage.getEString(), "messageTypeLostAndFound", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_Caption(), ecorePackage.getEString(), "caption", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_StartBlock(), ecorePackage.getEBoolean(), "startBlock", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_EndBlock(), ecorePackage.getEBoolean(), "endBlock", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

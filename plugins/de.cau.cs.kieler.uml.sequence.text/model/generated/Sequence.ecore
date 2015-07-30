@@ -36,7 +36,9 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OneLifelineMessage" eSuperTypes="#//Interaction">
     <eStructuralFeatures xsi:type="ecore:EReference" name="Lifeline" eType="#//Lifeline"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageType" eType="#//MessageType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageTypeLostAndFound"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="caption" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="startBlock" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="endBlock" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>

@@ -1129,65 +1129,7 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         try {
             // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:438:1: ( ( ruleTwoLifelineMessage ) | ( ruleOneLifelineMessage ) | ( ruleFragment ) | ( ruleOneLifelineEndBlock ) | ( ruleOneLifelineNote ) | ( ruleDestroyLifelineEvent ) | ( ruleRefinement ) )
             int alt1=7;
-            switch ( input.LA(1) ) {
-            case RULE_ID:
-                {
-                switch ( input.LA(2) ) {
-                case 14:
-                case 15:
-                case 16:
-                case 17:
-                    {
-                    alt1=1;
-                    }
-                    break;
-                case 30:
-                    {
-                    alt1=5;
-                    }
-                    break;
-                case 12:
-                case 13:
-                    {
-                    alt1=2;
-                    }
-                    break;
-                case 31:
-                    {
-                    alt1=4;
-                    }
-                    break;
-                case 32:
-                    {
-                    alt1=6;
-                    }
-                    break;
-                default:
-                    NoViableAltException nvae =
-                        new NoViableAltException("", 1, 1, input);
-
-                    throw nvae;
-                }
-
-                }
-                break;
-            case 33:
-                {
-                alt1=3;
-                }
-                break;
-            case 35:
-                {
-                alt1=7;
-                }
-                break;
-            default:
-                NoViableAltException nvae =
-                    new NoViableAltException("", 1, 0, input);
-
-                throw nvae;
-            }
-
+            alt1 = dfa1.predict(input);
             switch (alt1) {
                 case 1 :
                     // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:439:1: ( ruleTwoLifelineMessage )
@@ -1521,9 +1463,9 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__TwoLifelineMessage__Alternatives_6"
 
 
-    // $ANTLR start "rule__OneLifelineMessage__MessageTypeAlternatives_1_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:530:1: rule__OneLifelineMessage__MessageTypeAlternatives_1_0 : ( ( 'lost' ) | ( 'found' ) );
-    public final void rule__OneLifelineMessage__MessageTypeAlternatives_1_0() throws RecognitionException {
+    // $ANTLR start "rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:530:1: rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0 : ( ( 'lost' ) | ( 'found' ) );
+    public final void rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
@@ -1551,9 +1493,9 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
                     // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:535:1: ( 'lost' )
                     // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:536:1: 'lost'
                     {
-                     before(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostKeyword_1_0_0()); 
-                    match(input,12,FOLLOW_12_in_rule__OneLifelineMessage__MessageTypeAlternatives_1_01099); 
-                     after(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostKeyword_1_0_0()); 
+                     before(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundLostKeyword_2_0_0()); 
+                    match(input,12,FOLLOW_12_in_rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_01099); 
+                     after(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundLostKeyword_2_0_0()); 
 
                     }
 
@@ -1566,9 +1508,9 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
                     // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:543:6: ( 'found' )
                     // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:544:1: 'found'
                     {
-                     before(grammarAccess.getOneLifelineMessageAccess().getMessageTypeFoundKeyword_1_0_1()); 
-                    match(input,13,FOLLOW_13_in_rule__OneLifelineMessage__MessageTypeAlternatives_1_01119); 
-                     after(grammarAccess.getOneLifelineMessageAccess().getMessageTypeFoundKeyword_1_0_1()); 
+                     before(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundFoundKeyword_2_0_1()); 
+                    match(input,13,FOLLOW_13_in_rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_01119); 
+                     after(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundFoundKeyword_2_0_1()); 
 
                     }
 
@@ -1589,17 +1531,17 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__OneLifelineMessage__MessageTypeAlternatives_1_0"
+    // $ANTLR end "rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0"
 
 
-    // $ANTLR start "rule__OneLifelineMessage__Alternatives_3"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:556:1: rule__OneLifelineMessage__Alternatives_3 : ( ( ( rule__OneLifelineMessage__StartBlockAssignment_3_0 ) ) | ( ( rule__OneLifelineMessage__Group_3_1__0 ) ) );
-    public final void rule__OneLifelineMessage__Alternatives_3() throws RecognitionException {
+    // $ANTLR start "rule__OneLifelineMessage__Alternatives_4"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:556:1: rule__OneLifelineMessage__Alternatives_4 : ( ( ( rule__OneLifelineMessage__StartBlockAssignment_4_0 ) ) | ( ( rule__OneLifelineMessage__Group_4_1__0 ) ) );
+    public final void rule__OneLifelineMessage__Alternatives_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:560:1: ( ( ( rule__OneLifelineMessage__StartBlockAssignment_3_0 ) ) | ( ( rule__OneLifelineMessage__Group_3_1__0 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:560:1: ( ( ( rule__OneLifelineMessage__StartBlockAssignment_4_0 ) ) | ( ( rule__OneLifelineMessage__Group_4_1__0 ) ) )
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -1617,24 +1559,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
             }
             switch (alt5) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:561:1: ( ( rule__OneLifelineMessage__StartBlockAssignment_3_0 ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:561:1: ( ( rule__OneLifelineMessage__StartBlockAssignment_4_0 ) )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:561:1: ( ( rule__OneLifelineMessage__StartBlockAssignment_3_0 ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:562:1: ( rule__OneLifelineMessage__StartBlockAssignment_3_0 )
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:561:1: ( ( rule__OneLifelineMessage__StartBlockAssignment_4_0 ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:562:1: ( rule__OneLifelineMessage__StartBlockAssignment_4_0 )
                     {
-                     before(grammarAccess.getOneLifelineMessageAccess().getStartBlockAssignment_3_0()); 
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:563:1: ( rule__OneLifelineMessage__StartBlockAssignment_3_0 )
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:563:2: rule__OneLifelineMessage__StartBlockAssignment_3_0
+                     before(grammarAccess.getOneLifelineMessageAccess().getStartBlockAssignment_4_0()); 
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:563:1: ( rule__OneLifelineMessage__StartBlockAssignment_4_0 )
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:563:2: rule__OneLifelineMessage__StartBlockAssignment_4_0
                     {
-                    pushFollow(FOLLOW_rule__OneLifelineMessage__StartBlockAssignment_3_0_in_rule__OneLifelineMessage__Alternatives_31153);
-                    rule__OneLifelineMessage__StartBlockAssignment_3_0();
+                    pushFollow(FOLLOW_rule__OneLifelineMessage__StartBlockAssignment_4_0_in_rule__OneLifelineMessage__Alternatives_41153);
+                    rule__OneLifelineMessage__StartBlockAssignment_4_0();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getOneLifelineMessageAccess().getStartBlockAssignment_3_0()); 
+                     after(grammarAccess.getOneLifelineMessageAccess().getStartBlockAssignment_4_0()); 
 
                     }
 
@@ -1642,24 +1584,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:567:6: ( ( rule__OneLifelineMessage__Group_3_1__0 ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:567:6: ( ( rule__OneLifelineMessage__Group_4_1__0 ) )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:567:6: ( ( rule__OneLifelineMessage__Group_3_1__0 ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:568:1: ( rule__OneLifelineMessage__Group_3_1__0 )
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:567:6: ( ( rule__OneLifelineMessage__Group_4_1__0 ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:568:1: ( rule__OneLifelineMessage__Group_4_1__0 )
                     {
-                     before(grammarAccess.getOneLifelineMessageAccess().getGroup_3_1()); 
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:569:1: ( rule__OneLifelineMessage__Group_3_1__0 )
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:569:2: rule__OneLifelineMessage__Group_3_1__0
+                     before(grammarAccess.getOneLifelineMessageAccess().getGroup_4_1()); 
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:569:1: ( rule__OneLifelineMessage__Group_4_1__0 )
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:569:2: rule__OneLifelineMessage__Group_4_1__0
                     {
-                    pushFollow(FOLLOW_rule__OneLifelineMessage__Group_3_1__0_in_rule__OneLifelineMessage__Alternatives_31171);
-                    rule__OneLifelineMessage__Group_3_1__0();
+                    pushFollow(FOLLOW_rule__OneLifelineMessage__Group_4_1__0_in_rule__OneLifelineMessage__Alternatives_41171);
+                    rule__OneLifelineMessage__Group_4_1__0();
 
                     state._fsp--;
 
 
                     }
 
-                     after(grammarAccess.getOneLifelineMessageAccess().getGroup_3_1()); 
+                     after(grammarAccess.getOneLifelineMessageAccess().getGroup_4_1()); 
 
                     }
 
@@ -1680,7 +1622,7 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__OneLifelineMessage__Alternatives_3"
+    // $ANTLR end "rule__OneLifelineMessage__Alternatives_4"
 
 
     // $ANTLR start "rule__MessageType__Alternatives"
@@ -4971,31 +4913,31 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineMessage__Group__2__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1758:1: rule__OneLifelineMessage__Group__2__Impl : ( ( rule__OneLifelineMessage__CaptionAssignment_2 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1758:1: rule__OneLifelineMessage__Group__2__Impl : ( ( rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2 ) ) ;
     public final void rule__OneLifelineMessage__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1762:1: ( ( ( rule__OneLifelineMessage__CaptionAssignment_2 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1763:1: ( ( rule__OneLifelineMessage__CaptionAssignment_2 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1762:1: ( ( ( rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1763:1: ( ( rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1763:1: ( ( rule__OneLifelineMessage__CaptionAssignment_2 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1764:1: ( rule__OneLifelineMessage__CaptionAssignment_2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1763:1: ( ( rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1764:1: ( rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2 )
             {
-             before(grammarAccess.getOneLifelineMessageAccess().getCaptionAssignment_2()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1765:1: ( rule__OneLifelineMessage__CaptionAssignment_2 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1765:2: rule__OneLifelineMessage__CaptionAssignment_2
+             before(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundAssignment_2()); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1765:1: ( rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1765:2: rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2
             {
-            pushFollow(FOLLOW_rule__OneLifelineMessage__CaptionAssignment_2_in_rule__OneLifelineMessage__Group__2__Impl3596);
-            rule__OneLifelineMessage__CaptionAssignment_2();
+            pushFollow(FOLLOW_rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2_in_rule__OneLifelineMessage__Group__2__Impl3596);
+            rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2();
 
             state._fsp--;
 
 
             }
 
-             after(grammarAccess.getOneLifelineMessageAccess().getCaptionAssignment_2()); 
+             after(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundAssignment_2()); 
 
             }
 
@@ -5056,42 +4998,31 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineMessage__Group__3__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1787:1: rule__OneLifelineMessage__Group__3__Impl : ( ( rule__OneLifelineMessage__Alternatives_3 )? ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1787:1: rule__OneLifelineMessage__Group__3__Impl : ( ( rule__OneLifelineMessage__CaptionAssignment_3 ) ) ;
     public final void rule__OneLifelineMessage__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1791:1: ( ( ( rule__OneLifelineMessage__Alternatives_3 )? ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1792:1: ( ( rule__OneLifelineMessage__Alternatives_3 )? )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1791:1: ( ( ( rule__OneLifelineMessage__CaptionAssignment_3 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1792:1: ( ( rule__OneLifelineMessage__CaptionAssignment_3 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1792:1: ( ( rule__OneLifelineMessage__Alternatives_3 )? )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1793:1: ( rule__OneLifelineMessage__Alternatives_3 )?
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1792:1: ( ( rule__OneLifelineMessage__CaptionAssignment_3 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1793:1: ( rule__OneLifelineMessage__CaptionAssignment_3 )
             {
-             before(grammarAccess.getOneLifelineMessageAccess().getAlternatives_3()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1794:1: ( rule__OneLifelineMessage__Alternatives_3 )?
-            int alt18=2;
-            int LA18_0 = input.LA(1);
+             before(grammarAccess.getOneLifelineMessageAccess().getCaptionAssignment_3()); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1794:1: ( rule__OneLifelineMessage__CaptionAssignment_3 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1794:2: rule__OneLifelineMessage__CaptionAssignment_3
+            {
+            pushFollow(FOLLOW_rule__OneLifelineMessage__CaptionAssignment_3_in_rule__OneLifelineMessage__Group__3__Impl3656);
+            rule__OneLifelineMessage__CaptionAssignment_3();
 
-            if ( (LA18_0==31||LA18_0==42) ) {
-                alt18=1;
-            }
-            switch (alt18) {
-                case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1794:2: rule__OneLifelineMessage__Alternatives_3
-                    {
-                    pushFollow(FOLLOW_rule__OneLifelineMessage__Alternatives_3_in_rule__OneLifelineMessage__Group__3__Impl3656);
-                    rule__OneLifelineMessage__Alternatives_3();
+            state._fsp--;
 
-                    state._fsp--;
-
-
-                    }
-                    break;
 
             }
 
-             after(grammarAccess.getOneLifelineMessageAccess().getAlternatives_3()); 
+             after(grammarAccess.getOneLifelineMessageAccess().getCaptionAssignment_3()); 
 
             }
 
@@ -5114,17 +5045,22 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineMessage__Group__4"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1804:1: rule__OneLifelineMessage__Group__4 : rule__OneLifelineMessage__Group__4__Impl ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1804:1: rule__OneLifelineMessage__Group__4 : rule__OneLifelineMessage__Group__4__Impl rule__OneLifelineMessage__Group__5 ;
     public final void rule__OneLifelineMessage__Group__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1808:1: ( rule__OneLifelineMessage__Group__4__Impl )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1809:2: rule__OneLifelineMessage__Group__4__Impl
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1808:1: ( rule__OneLifelineMessage__Group__4__Impl rule__OneLifelineMessage__Group__5 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1809:2: rule__OneLifelineMessage__Group__4__Impl rule__OneLifelineMessage__Group__5
             {
-            pushFollow(FOLLOW_rule__OneLifelineMessage__Group__4__Impl_in_rule__OneLifelineMessage__Group__43687);
+            pushFollow(FOLLOW_rule__OneLifelineMessage__Group__4__Impl_in_rule__OneLifelineMessage__Group__43686);
             rule__OneLifelineMessage__Group__4__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_rule__OneLifelineMessage__Group__5_in_rule__OneLifelineMessage__Group__43689);
+            rule__OneLifelineMessage__Group__5();
 
             state._fsp--;
 
@@ -5147,32 +5083,32 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineMessage__Group__4__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1815:1: rule__OneLifelineMessage__Group__4__Impl : ( ( rule__OneLifelineMessage__Group_4__0 )? ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1816:1: rule__OneLifelineMessage__Group__4__Impl : ( ( rule__OneLifelineMessage__Alternatives_4 )? ) ;
     public final void rule__OneLifelineMessage__Group__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1819:1: ( ( ( rule__OneLifelineMessage__Group_4__0 )? ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1820:1: ( ( rule__OneLifelineMessage__Group_4__0 )? )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1820:1: ( ( ( rule__OneLifelineMessage__Alternatives_4 )? ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1821:1: ( ( rule__OneLifelineMessage__Alternatives_4 )? )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1820:1: ( ( rule__OneLifelineMessage__Group_4__0 )? )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1821:1: ( rule__OneLifelineMessage__Group_4__0 )?
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1821:1: ( ( rule__OneLifelineMessage__Alternatives_4 )? )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1822:1: ( rule__OneLifelineMessage__Alternatives_4 )?
             {
-             before(grammarAccess.getOneLifelineMessageAccess().getGroup_4()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1822:1: ( rule__OneLifelineMessage__Group_4__0 )?
-            int alt19=2;
-            int LA19_0 = input.LA(1);
+             before(grammarAccess.getOneLifelineMessageAccess().getAlternatives_4()); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1823:1: ( rule__OneLifelineMessage__Alternatives_4 )?
+            int alt18=2;
+            int LA18_0 = input.LA(1);
 
-            if ( (LA19_0==30) ) {
-                alt19=1;
+            if ( (LA18_0==31||LA18_0==42) ) {
+                alt18=1;
             }
-            switch (alt19) {
+            switch (alt18) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1822:2: rule__OneLifelineMessage__Group_4__0
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1823:2: rule__OneLifelineMessage__Alternatives_4
                     {
-                    pushFollow(FOLLOW_rule__OneLifelineMessage__Group_4__0_in_rule__OneLifelineMessage__Group__4__Impl3714);
-                    rule__OneLifelineMessage__Group_4__0();
+                    pushFollow(FOLLOW_rule__OneLifelineMessage__Alternatives_4_in_rule__OneLifelineMessage__Group__4__Impl3716);
+                    rule__OneLifelineMessage__Alternatives_4();
 
                     state._fsp--;
 
@@ -5182,7 +5118,7 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
             }
 
-             after(grammarAccess.getOneLifelineMessageAccess().getGroup_4()); 
+             after(grammarAccess.getOneLifelineMessageAccess().getAlternatives_4()); 
 
             }
 
@@ -5204,23 +5140,18 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__OneLifelineMessage__Group__4__Impl"
 
 
-    // $ANTLR start "rule__OneLifelineMessage__Group_3_1__0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1842:1: rule__OneLifelineMessage__Group_3_1__0 : rule__OneLifelineMessage__Group_3_1__0__Impl rule__OneLifelineMessage__Group_3_1__1 ;
-    public final void rule__OneLifelineMessage__Group_3_1__0() throws RecognitionException {
+    // $ANTLR start "rule__OneLifelineMessage__Group__5"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1833:1: rule__OneLifelineMessage__Group__5 : rule__OneLifelineMessage__Group__5__Impl ;
+    public final void rule__OneLifelineMessage__Group__5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1846:1: ( rule__OneLifelineMessage__Group_3_1__0__Impl rule__OneLifelineMessage__Group_3_1__1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1847:2: rule__OneLifelineMessage__Group_3_1__0__Impl rule__OneLifelineMessage__Group_3_1__1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1837:1: ( rule__OneLifelineMessage__Group__5__Impl )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1838:2: rule__OneLifelineMessage__Group__5__Impl
             {
-            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_3_1__0__Impl_in_rule__OneLifelineMessage__Group_3_1__03755);
-            rule__OneLifelineMessage__Group_3_1__0__Impl();
-
-            state._fsp--;
-
-            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_3_1__1_in_rule__OneLifelineMessage__Group_3_1__03758);
-            rule__OneLifelineMessage__Group_3_1__1();
+            pushFollow(FOLLOW_rule__OneLifelineMessage__Group__5__Impl_in_rule__OneLifelineMessage__Group__53747);
+            rule__OneLifelineMessage__Group__5__Impl();
 
             state._fsp--;
 
@@ -5239,116 +5170,36 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__OneLifelineMessage__Group_3_1__0"
+    // $ANTLR end "rule__OneLifelineMessage__Group__5"
 
 
-    // $ANTLR start "rule__OneLifelineMessage__Group_3_1__0__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1854:1: rule__OneLifelineMessage__Group_3_1__0__Impl : ( ( rule__OneLifelineMessage__EndBlockAssignment_3_1_0 ) ) ;
-    public final void rule__OneLifelineMessage__Group_3_1__0__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-            
-        try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1858:1: ( ( ( rule__OneLifelineMessage__EndBlockAssignment_3_1_0 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1859:1: ( ( rule__OneLifelineMessage__EndBlockAssignment_3_1_0 ) )
-            {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1859:1: ( ( rule__OneLifelineMessage__EndBlockAssignment_3_1_0 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1860:1: ( rule__OneLifelineMessage__EndBlockAssignment_3_1_0 )
-            {
-             before(grammarAccess.getOneLifelineMessageAccess().getEndBlockAssignment_3_1_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1861:1: ( rule__OneLifelineMessage__EndBlockAssignment_3_1_0 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1861:2: rule__OneLifelineMessage__EndBlockAssignment_3_1_0
-            {
-            pushFollow(FOLLOW_rule__OneLifelineMessage__EndBlockAssignment_3_1_0_in_rule__OneLifelineMessage__Group_3_1__0__Impl3785);
-            rule__OneLifelineMessage__EndBlockAssignment_3_1_0();
-
-            state._fsp--;
-
-
-            }
-
-             after(grammarAccess.getOneLifelineMessageAccess().getEndBlockAssignment_3_1_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__OneLifelineMessage__Group_3_1__0__Impl"
-
-
-    // $ANTLR start "rule__OneLifelineMessage__Group_3_1__1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1871:1: rule__OneLifelineMessage__Group_3_1__1 : rule__OneLifelineMessage__Group_3_1__1__Impl ;
-    public final void rule__OneLifelineMessage__Group_3_1__1() throws RecognitionException {
+    // $ANTLR start "rule__OneLifelineMessage__Group__5__Impl"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1844:1: rule__OneLifelineMessage__Group__5__Impl : ( ( rule__OneLifelineMessage__Group_5__0 )? ) ;
+    public final void rule__OneLifelineMessage__Group__5__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1875:1: ( rule__OneLifelineMessage__Group_3_1__1__Impl )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1876:2: rule__OneLifelineMessage__Group_3_1__1__Impl
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1848:1: ( ( ( rule__OneLifelineMessage__Group_5__0 )? ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1849:1: ( ( rule__OneLifelineMessage__Group_5__0 )? )
             {
-            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_3_1__1__Impl_in_rule__OneLifelineMessage__Group_3_1__13815);
-            rule__OneLifelineMessage__Group_3_1__1__Impl();
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1849:1: ( ( rule__OneLifelineMessage__Group_5__0 )? )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1850:1: ( rule__OneLifelineMessage__Group_5__0 )?
+            {
+             before(grammarAccess.getOneLifelineMessageAccess().getGroup_5()); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1851:1: ( rule__OneLifelineMessage__Group_5__0 )?
+            int alt19=2;
+            int LA19_0 = input.LA(1);
 
-            state._fsp--;
-
-
+            if ( (LA19_0==30) ) {
+                alt19=1;
             }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__OneLifelineMessage__Group_3_1__1"
-
-
-    // $ANTLR start "rule__OneLifelineMessage__Group_3_1__1__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1882:1: rule__OneLifelineMessage__Group_3_1__1__Impl : ( ( rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1 )? ) ;
-    public final void rule__OneLifelineMessage__Group_3_1__1__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-            
-        try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1886:1: ( ( ( rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1 )? ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1887:1: ( ( rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1 )? )
-            {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1887:1: ( ( rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1 )? )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1888:1: ( rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1 )?
-            {
-             before(grammarAccess.getOneLifelineMessageAccess().getEndBlockCountAssignment_3_1_1()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1889:1: ( rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1 )?
-            int alt20=2;
-            int LA20_0 = input.LA(1);
-
-            if ( (LA20_0==RULE_INT_GREATER_ZERO) ) {
-                alt20=1;
-            }
-            switch (alt20) {
+            switch (alt19) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1889:2: rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1851:2: rule__OneLifelineMessage__Group_5__0
                     {
-                    pushFollow(FOLLOW_rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1_in_rule__OneLifelineMessage__Group_3_1__1__Impl3842);
-                    rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1();
+                    pushFollow(FOLLOW_rule__OneLifelineMessage__Group_5__0_in_rule__OneLifelineMessage__Group__5__Impl3774);
+                    rule__OneLifelineMessage__Group_5__0();
 
                     state._fsp--;
 
@@ -5358,7 +5209,7 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
             }
 
-             after(grammarAccess.getOneLifelineMessageAccess().getEndBlockCountAssignment_3_1_1()); 
+             after(grammarAccess.getOneLifelineMessageAccess().getGroup_5()); 
 
             }
 
@@ -5377,96 +5228,26 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__OneLifelineMessage__Group_3_1__1__Impl"
+    // $ANTLR end "rule__OneLifelineMessage__Group__5__Impl"
 
 
-    // $ANTLR start "rule__OneLifelineMessage__Group_4__0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1903:1: rule__OneLifelineMessage__Group_4__0 : rule__OneLifelineMessage__Group_4__0__Impl rule__OneLifelineMessage__Group_4__1 ;
-    public final void rule__OneLifelineMessage__Group_4__0() throws RecognitionException {
+    // $ANTLR start "rule__OneLifelineMessage__Group_4_1__0"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1873:1: rule__OneLifelineMessage__Group_4_1__0 : rule__OneLifelineMessage__Group_4_1__0__Impl rule__OneLifelineMessage__Group_4_1__1 ;
+    public final void rule__OneLifelineMessage__Group_4_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1907:1: ( rule__OneLifelineMessage__Group_4__0__Impl rule__OneLifelineMessage__Group_4__1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1908:2: rule__OneLifelineMessage__Group_4__0__Impl rule__OneLifelineMessage__Group_4__1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1877:1: ( rule__OneLifelineMessage__Group_4_1__0__Impl rule__OneLifelineMessage__Group_4_1__1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1878:2: rule__OneLifelineMessage__Group_4_1__0__Impl rule__OneLifelineMessage__Group_4_1__1
             {
-            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_4__0__Impl_in_rule__OneLifelineMessage__Group_4__03877);
-            rule__OneLifelineMessage__Group_4__0__Impl();
+            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_4_1__0__Impl_in_rule__OneLifelineMessage__Group_4_1__03817);
+            rule__OneLifelineMessage__Group_4_1__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_4__1_in_rule__OneLifelineMessage__Group_4__03880);
-            rule__OneLifelineMessage__Group_4__1();
-
-            state._fsp--;
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__OneLifelineMessage__Group_4__0"
-
-
-    // $ANTLR start "rule__OneLifelineMessage__Group_4__0__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1915:1: rule__OneLifelineMessage__Group_4__0__Impl : ( 'note' ) ;
-    public final void rule__OneLifelineMessage__Group_4__0__Impl() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-            
-        try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1919:1: ( ( 'note' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1920:1: ( 'note' )
-            {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1920:1: ( 'note' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1921:1: 'note'
-            {
-             before(grammarAccess.getOneLifelineMessageAccess().getNoteKeyword_4_0()); 
-            match(input,30,FOLLOW_30_in_rule__OneLifelineMessage__Group_4__0__Impl3908); 
-             after(grammarAccess.getOneLifelineMessageAccess().getNoteKeyword_4_0()); 
-
-            }
-
-
-            }
-
-        }
-        catch (RecognitionException re) {
-            reportError(re);
-            recover(input,re);
-        }
-        finally {
-
-            	restoreStackSize(stackSize);
-
-        }
-        return ;
-    }
-    // $ANTLR end "rule__OneLifelineMessage__Group_4__0__Impl"
-
-
-    // $ANTLR start "rule__OneLifelineMessage__Group_4__1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1934:1: rule__OneLifelineMessage__Group_4__1 : rule__OneLifelineMessage__Group_4__1__Impl ;
-    public final void rule__OneLifelineMessage__Group_4__1() throws RecognitionException {
-
-        		int stackSize = keepStackSize();
-            
-        try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1938:1: ( rule__OneLifelineMessage__Group_4__1__Impl )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1939:2: rule__OneLifelineMessage__Group_4__1__Impl
-            {
-            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_4__1__Impl_in_rule__OneLifelineMessage__Group_4__13939);
-            rule__OneLifelineMessage__Group_4__1__Impl();
+            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_4_1__1_in_rule__OneLifelineMessage__Group_4_1__03820);
+            rule__OneLifelineMessage__Group_4_1__1();
 
             state._fsp--;
 
@@ -5485,35 +5266,35 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__OneLifelineMessage__Group_4__1"
+    // $ANTLR end "rule__OneLifelineMessage__Group_4_1__0"
 
 
-    // $ANTLR start "rule__OneLifelineMessage__Group_4__1__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1945:1: rule__OneLifelineMessage__Group_4__1__Impl : ( ( rule__OneLifelineMessage__NoteAssignment_4_1 ) ) ;
-    public final void rule__OneLifelineMessage__Group_4__1__Impl() throws RecognitionException {
+    // $ANTLR start "rule__OneLifelineMessage__Group_4_1__0__Impl"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1885:1: rule__OneLifelineMessage__Group_4_1__0__Impl : ( ( rule__OneLifelineMessage__EndBlockAssignment_4_1_0 ) ) ;
+    public final void rule__OneLifelineMessage__Group_4_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1949:1: ( ( ( rule__OneLifelineMessage__NoteAssignment_4_1 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1950:1: ( ( rule__OneLifelineMessage__NoteAssignment_4_1 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1889:1: ( ( ( rule__OneLifelineMessage__EndBlockAssignment_4_1_0 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1890:1: ( ( rule__OneLifelineMessage__EndBlockAssignment_4_1_0 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1950:1: ( ( rule__OneLifelineMessage__NoteAssignment_4_1 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1951:1: ( rule__OneLifelineMessage__NoteAssignment_4_1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1890:1: ( ( rule__OneLifelineMessage__EndBlockAssignment_4_1_0 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1891:1: ( rule__OneLifelineMessage__EndBlockAssignment_4_1_0 )
             {
-             before(grammarAccess.getOneLifelineMessageAccess().getNoteAssignment_4_1()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1952:1: ( rule__OneLifelineMessage__NoteAssignment_4_1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1952:2: rule__OneLifelineMessage__NoteAssignment_4_1
+             before(grammarAccess.getOneLifelineMessageAccess().getEndBlockAssignment_4_1_0()); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1892:1: ( rule__OneLifelineMessage__EndBlockAssignment_4_1_0 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1892:2: rule__OneLifelineMessage__EndBlockAssignment_4_1_0
             {
-            pushFollow(FOLLOW_rule__OneLifelineMessage__NoteAssignment_4_1_in_rule__OneLifelineMessage__Group_4__1__Impl3966);
-            rule__OneLifelineMessage__NoteAssignment_4_1();
+            pushFollow(FOLLOW_rule__OneLifelineMessage__EndBlockAssignment_4_1_0_in_rule__OneLifelineMessage__Group_4_1__0__Impl3847);
+            rule__OneLifelineMessage__EndBlockAssignment_4_1_0();
 
             state._fsp--;
 
 
             }
 
-             after(grammarAccess.getOneLifelineMessageAccess().getNoteAssignment_4_1()); 
+             after(grammarAccess.getOneLifelineMessageAccess().getEndBlockAssignment_4_1_0()); 
 
             }
 
@@ -5532,25 +5313,271 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__OneLifelineMessage__Group_4__1__Impl"
+    // $ANTLR end "rule__OneLifelineMessage__Group_4_1__0__Impl"
+
+
+    // $ANTLR start "rule__OneLifelineMessage__Group_4_1__1"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1902:1: rule__OneLifelineMessage__Group_4_1__1 : rule__OneLifelineMessage__Group_4_1__1__Impl ;
+    public final void rule__OneLifelineMessage__Group_4_1__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1906:1: ( rule__OneLifelineMessage__Group_4_1__1__Impl )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1907:2: rule__OneLifelineMessage__Group_4_1__1__Impl
+            {
+            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_4_1__1__Impl_in_rule__OneLifelineMessage__Group_4_1__13877);
+            rule__OneLifelineMessage__Group_4_1__1__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__OneLifelineMessage__Group_4_1__1"
+
+
+    // $ANTLR start "rule__OneLifelineMessage__Group_4_1__1__Impl"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1913:1: rule__OneLifelineMessage__Group_4_1__1__Impl : ( ( rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1 )? ) ;
+    public final void rule__OneLifelineMessage__Group_4_1__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1917:1: ( ( ( rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1 )? ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1918:1: ( ( rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1 )? )
+            {
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1918:1: ( ( rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1 )? )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1919:1: ( rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1 )?
+            {
+             before(grammarAccess.getOneLifelineMessageAccess().getEndBlockCountAssignment_4_1_1()); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1920:1: ( rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1 )?
+            int alt20=2;
+            int LA20_0 = input.LA(1);
+
+            if ( (LA20_0==RULE_INT_GREATER_ZERO) ) {
+                alt20=1;
+            }
+            switch (alt20) {
+                case 1 :
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1920:2: rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1
+                    {
+                    pushFollow(FOLLOW_rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1_in_rule__OneLifelineMessage__Group_4_1__1__Impl3904);
+                    rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1();
+
+                    state._fsp--;
+
+
+                    }
+                    break;
+
+            }
+
+             after(grammarAccess.getOneLifelineMessageAccess().getEndBlockCountAssignment_4_1_1()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__OneLifelineMessage__Group_4_1__1__Impl"
+
+
+    // $ANTLR start "rule__OneLifelineMessage__Group_5__0"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1934:1: rule__OneLifelineMessage__Group_5__0 : rule__OneLifelineMessage__Group_5__0__Impl rule__OneLifelineMessage__Group_5__1 ;
+    public final void rule__OneLifelineMessage__Group_5__0() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1938:1: ( rule__OneLifelineMessage__Group_5__0__Impl rule__OneLifelineMessage__Group_5__1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1939:2: rule__OneLifelineMessage__Group_5__0__Impl rule__OneLifelineMessage__Group_5__1
+            {
+            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_5__0__Impl_in_rule__OneLifelineMessage__Group_5__03939);
+            rule__OneLifelineMessage__Group_5__0__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_5__1_in_rule__OneLifelineMessage__Group_5__03942);
+            rule__OneLifelineMessage__Group_5__1();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__OneLifelineMessage__Group_5__0"
+
+
+    // $ANTLR start "rule__OneLifelineMessage__Group_5__0__Impl"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1946:1: rule__OneLifelineMessage__Group_5__0__Impl : ( 'note' ) ;
+    public final void rule__OneLifelineMessage__Group_5__0__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1950:1: ( ( 'note' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1951:1: ( 'note' )
+            {
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1951:1: ( 'note' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1952:1: 'note'
+            {
+             before(grammarAccess.getOneLifelineMessageAccess().getNoteKeyword_5_0()); 
+            match(input,30,FOLLOW_30_in_rule__OneLifelineMessage__Group_5__0__Impl3970); 
+             after(grammarAccess.getOneLifelineMessageAccess().getNoteKeyword_5_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__OneLifelineMessage__Group_5__0__Impl"
+
+
+    // $ANTLR start "rule__OneLifelineMessage__Group_5__1"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1965:1: rule__OneLifelineMessage__Group_5__1 : rule__OneLifelineMessage__Group_5__1__Impl ;
+    public final void rule__OneLifelineMessage__Group_5__1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1969:1: ( rule__OneLifelineMessage__Group_5__1__Impl )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1970:2: rule__OneLifelineMessage__Group_5__1__Impl
+            {
+            pushFollow(FOLLOW_rule__OneLifelineMessage__Group_5__1__Impl_in_rule__OneLifelineMessage__Group_5__14001);
+            rule__OneLifelineMessage__Group_5__1__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__OneLifelineMessage__Group_5__1"
+
+
+    // $ANTLR start "rule__OneLifelineMessage__Group_5__1__Impl"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1976:1: rule__OneLifelineMessage__Group_5__1__Impl : ( ( rule__OneLifelineMessage__NoteAssignment_5_1 ) ) ;
+    public final void rule__OneLifelineMessage__Group_5__1__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1980:1: ( ( ( rule__OneLifelineMessage__NoteAssignment_5_1 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1981:1: ( ( rule__OneLifelineMessage__NoteAssignment_5_1 ) )
+            {
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1981:1: ( ( rule__OneLifelineMessage__NoteAssignment_5_1 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1982:1: ( rule__OneLifelineMessage__NoteAssignment_5_1 )
+            {
+             before(grammarAccess.getOneLifelineMessageAccess().getNoteAssignment_5_1()); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1983:1: ( rule__OneLifelineMessage__NoteAssignment_5_1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1983:2: rule__OneLifelineMessage__NoteAssignment_5_1
+            {
+            pushFollow(FOLLOW_rule__OneLifelineMessage__NoteAssignment_5_1_in_rule__OneLifelineMessage__Group_5__1__Impl4028);
+            rule__OneLifelineMessage__NoteAssignment_5_1();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getOneLifelineMessageAccess().getNoteAssignment_5_1()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__OneLifelineMessage__Group_5__1__Impl"
 
 
     // $ANTLR start "rule__OneLifelineEndBlock__Group__0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1966:1: rule__OneLifelineEndBlock__Group__0 : rule__OneLifelineEndBlock__Group__0__Impl rule__OneLifelineEndBlock__Group__1 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1997:1: rule__OneLifelineEndBlock__Group__0 : rule__OneLifelineEndBlock__Group__0__Impl rule__OneLifelineEndBlock__Group__1 ;
     public final void rule__OneLifelineEndBlock__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1970:1: ( rule__OneLifelineEndBlock__Group__0__Impl rule__OneLifelineEndBlock__Group__1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1971:2: rule__OneLifelineEndBlock__Group__0__Impl rule__OneLifelineEndBlock__Group__1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2001:1: ( rule__OneLifelineEndBlock__Group__0__Impl rule__OneLifelineEndBlock__Group__1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2002:2: rule__OneLifelineEndBlock__Group__0__Impl rule__OneLifelineEndBlock__Group__1
             {
-            pushFollow(FOLLOW_rule__OneLifelineEndBlock__Group__0__Impl_in_rule__OneLifelineEndBlock__Group__04000);
+            pushFollow(FOLLOW_rule__OneLifelineEndBlock__Group__0__Impl_in_rule__OneLifelineEndBlock__Group__04062);
             rule__OneLifelineEndBlock__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__OneLifelineEndBlock__Group__1_in_rule__OneLifelineEndBlock__Group__04003);
+            pushFollow(FOLLOW_rule__OneLifelineEndBlock__Group__1_in_rule__OneLifelineEndBlock__Group__04065);
             rule__OneLifelineEndBlock__Group__1();
 
             state._fsp--;
@@ -5574,23 +5601,23 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineEndBlock__Group__0__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1978:1: rule__OneLifelineEndBlock__Group__0__Impl : ( ( rule__OneLifelineEndBlock__LifelineAssignment_0 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2009:1: rule__OneLifelineEndBlock__Group__0__Impl : ( ( rule__OneLifelineEndBlock__LifelineAssignment_0 ) ) ;
     public final void rule__OneLifelineEndBlock__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1982:1: ( ( ( rule__OneLifelineEndBlock__LifelineAssignment_0 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1983:1: ( ( rule__OneLifelineEndBlock__LifelineAssignment_0 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2013:1: ( ( ( rule__OneLifelineEndBlock__LifelineAssignment_0 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2014:1: ( ( rule__OneLifelineEndBlock__LifelineAssignment_0 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1983:1: ( ( rule__OneLifelineEndBlock__LifelineAssignment_0 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1984:1: ( rule__OneLifelineEndBlock__LifelineAssignment_0 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2014:1: ( ( rule__OneLifelineEndBlock__LifelineAssignment_0 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2015:1: ( rule__OneLifelineEndBlock__LifelineAssignment_0 )
             {
              before(grammarAccess.getOneLifelineEndBlockAccess().getLifelineAssignment_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1985:1: ( rule__OneLifelineEndBlock__LifelineAssignment_0 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1985:2: rule__OneLifelineEndBlock__LifelineAssignment_0
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2016:1: ( rule__OneLifelineEndBlock__LifelineAssignment_0 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2016:2: rule__OneLifelineEndBlock__LifelineAssignment_0
             {
-            pushFollow(FOLLOW_rule__OneLifelineEndBlock__LifelineAssignment_0_in_rule__OneLifelineEndBlock__Group__0__Impl4030);
+            pushFollow(FOLLOW_rule__OneLifelineEndBlock__LifelineAssignment_0_in_rule__OneLifelineEndBlock__Group__0__Impl4092);
             rule__OneLifelineEndBlock__LifelineAssignment_0();
 
             state._fsp--;
@@ -5621,21 +5648,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineEndBlock__Group__1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1995:1: rule__OneLifelineEndBlock__Group__1 : rule__OneLifelineEndBlock__Group__1__Impl rule__OneLifelineEndBlock__Group__2 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2026:1: rule__OneLifelineEndBlock__Group__1 : rule__OneLifelineEndBlock__Group__1__Impl rule__OneLifelineEndBlock__Group__2 ;
     public final void rule__OneLifelineEndBlock__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:1999:1: ( rule__OneLifelineEndBlock__Group__1__Impl rule__OneLifelineEndBlock__Group__2 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2000:2: rule__OneLifelineEndBlock__Group__1__Impl rule__OneLifelineEndBlock__Group__2
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2030:1: ( rule__OneLifelineEndBlock__Group__1__Impl rule__OneLifelineEndBlock__Group__2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2031:2: rule__OneLifelineEndBlock__Group__1__Impl rule__OneLifelineEndBlock__Group__2
             {
-            pushFollow(FOLLOW_rule__OneLifelineEndBlock__Group__1__Impl_in_rule__OneLifelineEndBlock__Group__14060);
+            pushFollow(FOLLOW_rule__OneLifelineEndBlock__Group__1__Impl_in_rule__OneLifelineEndBlock__Group__14122);
             rule__OneLifelineEndBlock__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__OneLifelineEndBlock__Group__2_in_rule__OneLifelineEndBlock__Group__14063);
+            pushFollow(FOLLOW_rule__OneLifelineEndBlock__Group__2_in_rule__OneLifelineEndBlock__Group__14125);
             rule__OneLifelineEndBlock__Group__2();
 
             state._fsp--;
@@ -5659,20 +5686,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineEndBlock__Group__1__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2007:1: rule__OneLifelineEndBlock__Group__1__Impl : ( 'endBlock' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2038:1: rule__OneLifelineEndBlock__Group__1__Impl : ( 'endBlock' ) ;
     public final void rule__OneLifelineEndBlock__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2011:1: ( ( 'endBlock' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2012:1: ( 'endBlock' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2042:1: ( ( 'endBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2043:1: ( 'endBlock' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2012:1: ( 'endBlock' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2013:1: 'endBlock'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2043:1: ( 'endBlock' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2044:1: 'endBlock'
             {
              before(grammarAccess.getOneLifelineEndBlockAccess().getEndBlockKeyword_1()); 
-            match(input,31,FOLLOW_31_in_rule__OneLifelineEndBlock__Group__1__Impl4091); 
+            match(input,31,FOLLOW_31_in_rule__OneLifelineEndBlock__Group__1__Impl4153); 
              after(grammarAccess.getOneLifelineEndBlockAccess().getEndBlockKeyword_1()); 
 
             }
@@ -5696,16 +5723,16 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineEndBlock__Group__2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2026:1: rule__OneLifelineEndBlock__Group__2 : rule__OneLifelineEndBlock__Group__2__Impl ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2057:1: rule__OneLifelineEndBlock__Group__2 : rule__OneLifelineEndBlock__Group__2__Impl ;
     public final void rule__OneLifelineEndBlock__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2030:1: ( rule__OneLifelineEndBlock__Group__2__Impl )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2031:2: rule__OneLifelineEndBlock__Group__2__Impl
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2061:1: ( rule__OneLifelineEndBlock__Group__2__Impl )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2062:2: rule__OneLifelineEndBlock__Group__2__Impl
             {
-            pushFollow(FOLLOW_rule__OneLifelineEndBlock__Group__2__Impl_in_rule__OneLifelineEndBlock__Group__24122);
+            pushFollow(FOLLOW_rule__OneLifelineEndBlock__Group__2__Impl_in_rule__OneLifelineEndBlock__Group__24184);
             rule__OneLifelineEndBlock__Group__2__Impl();
 
             state._fsp--;
@@ -5729,20 +5756,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineEndBlock__Group__2__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2037:1: rule__OneLifelineEndBlock__Group__2__Impl : ( ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )? ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2068:1: rule__OneLifelineEndBlock__Group__2__Impl : ( ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )? ) ;
     public final void rule__OneLifelineEndBlock__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2041:1: ( ( ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )? ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2042:1: ( ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )? )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2072:1: ( ( ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )? ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2073:1: ( ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )? )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2042:1: ( ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )? )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2043:1: ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )?
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2073:1: ( ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )? )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2074:1: ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )?
             {
              before(grammarAccess.getOneLifelineEndBlockAccess().getEndBlockCountAssignment_2()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2044:1: ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )?
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2075:1: ( rule__OneLifelineEndBlock__EndBlockCountAssignment_2 )?
             int alt21=2;
             int LA21_0 = input.LA(1);
 
@@ -5751,9 +5778,9 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
             }
             switch (alt21) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2044:2: rule__OneLifelineEndBlock__EndBlockCountAssignment_2
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2075:2: rule__OneLifelineEndBlock__EndBlockCountAssignment_2
                     {
-                    pushFollow(FOLLOW_rule__OneLifelineEndBlock__EndBlockCountAssignment_2_in_rule__OneLifelineEndBlock__Group__2__Impl4149);
+                    pushFollow(FOLLOW_rule__OneLifelineEndBlock__EndBlockCountAssignment_2_in_rule__OneLifelineEndBlock__Group__2__Impl4211);
                     rule__OneLifelineEndBlock__EndBlockCountAssignment_2();
 
                     state._fsp--;
@@ -5787,21 +5814,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineNote__Group__0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2060:1: rule__OneLifelineNote__Group__0 : rule__OneLifelineNote__Group__0__Impl rule__OneLifelineNote__Group__1 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2091:1: rule__OneLifelineNote__Group__0 : rule__OneLifelineNote__Group__0__Impl rule__OneLifelineNote__Group__1 ;
     public final void rule__OneLifelineNote__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2064:1: ( rule__OneLifelineNote__Group__0__Impl rule__OneLifelineNote__Group__1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2065:2: rule__OneLifelineNote__Group__0__Impl rule__OneLifelineNote__Group__1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2095:1: ( rule__OneLifelineNote__Group__0__Impl rule__OneLifelineNote__Group__1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2096:2: rule__OneLifelineNote__Group__0__Impl rule__OneLifelineNote__Group__1
             {
-            pushFollow(FOLLOW_rule__OneLifelineNote__Group__0__Impl_in_rule__OneLifelineNote__Group__04186);
+            pushFollow(FOLLOW_rule__OneLifelineNote__Group__0__Impl_in_rule__OneLifelineNote__Group__04248);
             rule__OneLifelineNote__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__OneLifelineNote__Group__1_in_rule__OneLifelineNote__Group__04189);
+            pushFollow(FOLLOW_rule__OneLifelineNote__Group__1_in_rule__OneLifelineNote__Group__04251);
             rule__OneLifelineNote__Group__1();
 
             state._fsp--;
@@ -5825,23 +5852,23 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineNote__Group__0__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2072:1: rule__OneLifelineNote__Group__0__Impl : ( ( rule__OneLifelineNote__LifelineAssignment_0 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2103:1: rule__OneLifelineNote__Group__0__Impl : ( ( rule__OneLifelineNote__LifelineAssignment_0 ) ) ;
     public final void rule__OneLifelineNote__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2076:1: ( ( ( rule__OneLifelineNote__LifelineAssignment_0 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2077:1: ( ( rule__OneLifelineNote__LifelineAssignment_0 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2107:1: ( ( ( rule__OneLifelineNote__LifelineAssignment_0 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2108:1: ( ( rule__OneLifelineNote__LifelineAssignment_0 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2077:1: ( ( rule__OneLifelineNote__LifelineAssignment_0 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2078:1: ( rule__OneLifelineNote__LifelineAssignment_0 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2108:1: ( ( rule__OneLifelineNote__LifelineAssignment_0 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2109:1: ( rule__OneLifelineNote__LifelineAssignment_0 )
             {
              before(grammarAccess.getOneLifelineNoteAccess().getLifelineAssignment_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2079:1: ( rule__OneLifelineNote__LifelineAssignment_0 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2079:2: rule__OneLifelineNote__LifelineAssignment_0
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2110:1: ( rule__OneLifelineNote__LifelineAssignment_0 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2110:2: rule__OneLifelineNote__LifelineAssignment_0
             {
-            pushFollow(FOLLOW_rule__OneLifelineNote__LifelineAssignment_0_in_rule__OneLifelineNote__Group__0__Impl4216);
+            pushFollow(FOLLOW_rule__OneLifelineNote__LifelineAssignment_0_in_rule__OneLifelineNote__Group__0__Impl4278);
             rule__OneLifelineNote__LifelineAssignment_0();
 
             state._fsp--;
@@ -5872,21 +5899,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineNote__Group__1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2089:1: rule__OneLifelineNote__Group__1 : rule__OneLifelineNote__Group__1__Impl rule__OneLifelineNote__Group__2 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2120:1: rule__OneLifelineNote__Group__1 : rule__OneLifelineNote__Group__1__Impl rule__OneLifelineNote__Group__2 ;
     public final void rule__OneLifelineNote__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2093:1: ( rule__OneLifelineNote__Group__1__Impl rule__OneLifelineNote__Group__2 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2094:2: rule__OneLifelineNote__Group__1__Impl rule__OneLifelineNote__Group__2
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2124:1: ( rule__OneLifelineNote__Group__1__Impl rule__OneLifelineNote__Group__2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2125:2: rule__OneLifelineNote__Group__1__Impl rule__OneLifelineNote__Group__2
             {
-            pushFollow(FOLLOW_rule__OneLifelineNote__Group__1__Impl_in_rule__OneLifelineNote__Group__14246);
+            pushFollow(FOLLOW_rule__OneLifelineNote__Group__1__Impl_in_rule__OneLifelineNote__Group__14308);
             rule__OneLifelineNote__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__OneLifelineNote__Group__2_in_rule__OneLifelineNote__Group__14249);
+            pushFollow(FOLLOW_rule__OneLifelineNote__Group__2_in_rule__OneLifelineNote__Group__14311);
             rule__OneLifelineNote__Group__2();
 
             state._fsp--;
@@ -5910,20 +5937,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineNote__Group__1__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2101:1: rule__OneLifelineNote__Group__1__Impl : ( 'note' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2132:1: rule__OneLifelineNote__Group__1__Impl : ( 'note' ) ;
     public final void rule__OneLifelineNote__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2105:1: ( ( 'note' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2106:1: ( 'note' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2136:1: ( ( 'note' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2137:1: ( 'note' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2106:1: ( 'note' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2107:1: 'note'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2137:1: ( 'note' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2138:1: 'note'
             {
              before(grammarAccess.getOneLifelineNoteAccess().getNoteKeyword_1()); 
-            match(input,30,FOLLOW_30_in_rule__OneLifelineNote__Group__1__Impl4277); 
+            match(input,30,FOLLOW_30_in_rule__OneLifelineNote__Group__1__Impl4339); 
              after(grammarAccess.getOneLifelineNoteAccess().getNoteKeyword_1()); 
 
             }
@@ -5947,16 +5974,16 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineNote__Group__2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2120:1: rule__OneLifelineNote__Group__2 : rule__OneLifelineNote__Group__2__Impl ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2151:1: rule__OneLifelineNote__Group__2 : rule__OneLifelineNote__Group__2__Impl ;
     public final void rule__OneLifelineNote__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2124:1: ( rule__OneLifelineNote__Group__2__Impl )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2125:2: rule__OneLifelineNote__Group__2__Impl
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2155:1: ( rule__OneLifelineNote__Group__2__Impl )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2156:2: rule__OneLifelineNote__Group__2__Impl
             {
-            pushFollow(FOLLOW_rule__OneLifelineNote__Group__2__Impl_in_rule__OneLifelineNote__Group__24308);
+            pushFollow(FOLLOW_rule__OneLifelineNote__Group__2__Impl_in_rule__OneLifelineNote__Group__24370);
             rule__OneLifelineNote__Group__2__Impl();
 
             state._fsp--;
@@ -5980,23 +6007,23 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineNote__Group__2__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2131:1: rule__OneLifelineNote__Group__2__Impl : ( ( rule__OneLifelineNote__NoteAssignment_2 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2162:1: rule__OneLifelineNote__Group__2__Impl : ( ( rule__OneLifelineNote__NoteAssignment_2 ) ) ;
     public final void rule__OneLifelineNote__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2135:1: ( ( ( rule__OneLifelineNote__NoteAssignment_2 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2136:1: ( ( rule__OneLifelineNote__NoteAssignment_2 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2166:1: ( ( ( rule__OneLifelineNote__NoteAssignment_2 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2167:1: ( ( rule__OneLifelineNote__NoteAssignment_2 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2136:1: ( ( rule__OneLifelineNote__NoteAssignment_2 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2137:1: ( rule__OneLifelineNote__NoteAssignment_2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2167:1: ( ( rule__OneLifelineNote__NoteAssignment_2 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2168:1: ( rule__OneLifelineNote__NoteAssignment_2 )
             {
              before(grammarAccess.getOneLifelineNoteAccess().getNoteAssignment_2()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2138:1: ( rule__OneLifelineNote__NoteAssignment_2 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2138:2: rule__OneLifelineNote__NoteAssignment_2
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2169:1: ( rule__OneLifelineNote__NoteAssignment_2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2169:2: rule__OneLifelineNote__NoteAssignment_2
             {
-            pushFollow(FOLLOW_rule__OneLifelineNote__NoteAssignment_2_in_rule__OneLifelineNote__Group__2__Impl4335);
+            pushFollow(FOLLOW_rule__OneLifelineNote__NoteAssignment_2_in_rule__OneLifelineNote__Group__2__Impl4397);
             rule__OneLifelineNote__NoteAssignment_2();
 
             state._fsp--;
@@ -6027,21 +6054,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__DestroyLifelineEvent__Group__0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2154:1: rule__DestroyLifelineEvent__Group__0 : rule__DestroyLifelineEvent__Group__0__Impl rule__DestroyLifelineEvent__Group__1 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2185:1: rule__DestroyLifelineEvent__Group__0 : rule__DestroyLifelineEvent__Group__0__Impl rule__DestroyLifelineEvent__Group__1 ;
     public final void rule__DestroyLifelineEvent__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2158:1: ( rule__DestroyLifelineEvent__Group__0__Impl rule__DestroyLifelineEvent__Group__1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2159:2: rule__DestroyLifelineEvent__Group__0__Impl rule__DestroyLifelineEvent__Group__1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2189:1: ( rule__DestroyLifelineEvent__Group__0__Impl rule__DestroyLifelineEvent__Group__1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2190:2: rule__DestroyLifelineEvent__Group__0__Impl rule__DestroyLifelineEvent__Group__1
             {
-            pushFollow(FOLLOW_rule__DestroyLifelineEvent__Group__0__Impl_in_rule__DestroyLifelineEvent__Group__04371);
+            pushFollow(FOLLOW_rule__DestroyLifelineEvent__Group__0__Impl_in_rule__DestroyLifelineEvent__Group__04433);
             rule__DestroyLifelineEvent__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__DestroyLifelineEvent__Group__1_in_rule__DestroyLifelineEvent__Group__04374);
+            pushFollow(FOLLOW_rule__DestroyLifelineEvent__Group__1_in_rule__DestroyLifelineEvent__Group__04436);
             rule__DestroyLifelineEvent__Group__1();
 
             state._fsp--;
@@ -6065,23 +6092,23 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__DestroyLifelineEvent__Group__0__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2166:1: rule__DestroyLifelineEvent__Group__0__Impl : ( ( rule__DestroyLifelineEvent__LifelineAssignment_0 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2197:1: rule__DestroyLifelineEvent__Group__0__Impl : ( ( rule__DestroyLifelineEvent__LifelineAssignment_0 ) ) ;
     public final void rule__DestroyLifelineEvent__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2170:1: ( ( ( rule__DestroyLifelineEvent__LifelineAssignment_0 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2171:1: ( ( rule__DestroyLifelineEvent__LifelineAssignment_0 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2201:1: ( ( ( rule__DestroyLifelineEvent__LifelineAssignment_0 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2202:1: ( ( rule__DestroyLifelineEvent__LifelineAssignment_0 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2171:1: ( ( rule__DestroyLifelineEvent__LifelineAssignment_0 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2172:1: ( rule__DestroyLifelineEvent__LifelineAssignment_0 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2202:1: ( ( rule__DestroyLifelineEvent__LifelineAssignment_0 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2203:1: ( rule__DestroyLifelineEvent__LifelineAssignment_0 )
             {
              before(grammarAccess.getDestroyLifelineEventAccess().getLifelineAssignment_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2173:1: ( rule__DestroyLifelineEvent__LifelineAssignment_0 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2173:2: rule__DestroyLifelineEvent__LifelineAssignment_0
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2204:1: ( rule__DestroyLifelineEvent__LifelineAssignment_0 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2204:2: rule__DestroyLifelineEvent__LifelineAssignment_0
             {
-            pushFollow(FOLLOW_rule__DestroyLifelineEvent__LifelineAssignment_0_in_rule__DestroyLifelineEvent__Group__0__Impl4401);
+            pushFollow(FOLLOW_rule__DestroyLifelineEvent__LifelineAssignment_0_in_rule__DestroyLifelineEvent__Group__0__Impl4463);
             rule__DestroyLifelineEvent__LifelineAssignment_0();
 
             state._fsp--;
@@ -6112,16 +6139,16 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__DestroyLifelineEvent__Group__1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2183:1: rule__DestroyLifelineEvent__Group__1 : rule__DestroyLifelineEvent__Group__1__Impl ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2214:1: rule__DestroyLifelineEvent__Group__1 : rule__DestroyLifelineEvent__Group__1__Impl ;
     public final void rule__DestroyLifelineEvent__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2187:1: ( rule__DestroyLifelineEvent__Group__1__Impl )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2188:2: rule__DestroyLifelineEvent__Group__1__Impl
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2218:1: ( rule__DestroyLifelineEvent__Group__1__Impl )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2219:2: rule__DestroyLifelineEvent__Group__1__Impl
             {
-            pushFollow(FOLLOW_rule__DestroyLifelineEvent__Group__1__Impl_in_rule__DestroyLifelineEvent__Group__14431);
+            pushFollow(FOLLOW_rule__DestroyLifelineEvent__Group__1__Impl_in_rule__DestroyLifelineEvent__Group__14493);
             rule__DestroyLifelineEvent__Group__1__Impl();
 
             state._fsp--;
@@ -6145,20 +6172,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__DestroyLifelineEvent__Group__1__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2194:1: rule__DestroyLifelineEvent__Group__1__Impl : ( 'destroy' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2225:1: rule__DestroyLifelineEvent__Group__1__Impl : ( 'destroy' ) ;
     public final void rule__DestroyLifelineEvent__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2198:1: ( ( 'destroy' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2199:1: ( 'destroy' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2229:1: ( ( 'destroy' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2230:1: ( 'destroy' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2199:1: ( 'destroy' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2200:1: 'destroy'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2230:1: ( 'destroy' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2231:1: 'destroy'
             {
              before(grammarAccess.getDestroyLifelineEventAccess().getDestroyKeyword_1()); 
-            match(input,32,FOLLOW_32_in_rule__DestroyLifelineEvent__Group__1__Impl4459); 
+            match(input,32,FOLLOW_32_in_rule__DestroyLifelineEvent__Group__1__Impl4521); 
              after(grammarAccess.getDestroyLifelineEventAccess().getDestroyKeyword_1()); 
 
             }
@@ -6182,21 +6209,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Fragment__Group__0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2217:1: rule__Fragment__Group__0 : rule__Fragment__Group__0__Impl rule__Fragment__Group__1 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2248:1: rule__Fragment__Group__0 : rule__Fragment__Group__0__Impl rule__Fragment__Group__1 ;
     public final void rule__Fragment__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2221:1: ( rule__Fragment__Group__0__Impl rule__Fragment__Group__1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2222:2: rule__Fragment__Group__0__Impl rule__Fragment__Group__1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2252:1: ( rule__Fragment__Group__0__Impl rule__Fragment__Group__1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2253:2: rule__Fragment__Group__0__Impl rule__Fragment__Group__1
             {
-            pushFollow(FOLLOW_rule__Fragment__Group__0__Impl_in_rule__Fragment__Group__04494);
+            pushFollow(FOLLOW_rule__Fragment__Group__0__Impl_in_rule__Fragment__Group__04556);
             rule__Fragment__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Fragment__Group__1_in_rule__Fragment__Group__04497);
+            pushFollow(FOLLOW_rule__Fragment__Group__1_in_rule__Fragment__Group__04559);
             rule__Fragment__Group__1();
 
             state._fsp--;
@@ -6220,20 +6247,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Fragment__Group__0__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2229:1: rule__Fragment__Group__0__Impl : ( 'fragment' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2260:1: rule__Fragment__Group__0__Impl : ( 'fragment' ) ;
     public final void rule__Fragment__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2233:1: ( ( 'fragment' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2234:1: ( 'fragment' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2264:1: ( ( 'fragment' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2265:1: ( 'fragment' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2234:1: ( 'fragment' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2235:1: 'fragment'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2265:1: ( 'fragment' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2266:1: 'fragment'
             {
              before(grammarAccess.getFragmentAccess().getFragmentKeyword_0()); 
-            match(input,33,FOLLOW_33_in_rule__Fragment__Group__0__Impl4525); 
+            match(input,33,FOLLOW_33_in_rule__Fragment__Group__0__Impl4587); 
              after(grammarAccess.getFragmentAccess().getFragmentKeyword_0()); 
 
             }
@@ -6257,21 +6284,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Fragment__Group__1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2248:1: rule__Fragment__Group__1 : rule__Fragment__Group__1__Impl rule__Fragment__Group__2 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2279:1: rule__Fragment__Group__1 : rule__Fragment__Group__1__Impl rule__Fragment__Group__2 ;
     public final void rule__Fragment__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2252:1: ( rule__Fragment__Group__1__Impl rule__Fragment__Group__2 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2253:2: rule__Fragment__Group__1__Impl rule__Fragment__Group__2
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2283:1: ( rule__Fragment__Group__1__Impl rule__Fragment__Group__2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2284:2: rule__Fragment__Group__1__Impl rule__Fragment__Group__2
             {
-            pushFollow(FOLLOW_rule__Fragment__Group__1__Impl_in_rule__Fragment__Group__14556);
+            pushFollow(FOLLOW_rule__Fragment__Group__1__Impl_in_rule__Fragment__Group__14618);
             rule__Fragment__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Fragment__Group__2_in_rule__Fragment__Group__14559);
+            pushFollow(FOLLOW_rule__Fragment__Group__2_in_rule__Fragment__Group__14621);
             rule__Fragment__Group__2();
 
             state._fsp--;
@@ -6295,23 +6322,23 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Fragment__Group__1__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2260:1: rule__Fragment__Group__1__Impl : ( ( rule__Fragment__NameAssignment_1 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2291:1: rule__Fragment__Group__1__Impl : ( ( rule__Fragment__NameAssignment_1 ) ) ;
     public final void rule__Fragment__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2264:1: ( ( ( rule__Fragment__NameAssignment_1 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2265:1: ( ( rule__Fragment__NameAssignment_1 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2295:1: ( ( ( rule__Fragment__NameAssignment_1 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2296:1: ( ( rule__Fragment__NameAssignment_1 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2265:1: ( ( rule__Fragment__NameAssignment_1 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2266:1: ( rule__Fragment__NameAssignment_1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2296:1: ( ( rule__Fragment__NameAssignment_1 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2297:1: ( rule__Fragment__NameAssignment_1 )
             {
              before(grammarAccess.getFragmentAccess().getNameAssignment_1()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2267:1: ( rule__Fragment__NameAssignment_1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2267:2: rule__Fragment__NameAssignment_1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2298:1: ( rule__Fragment__NameAssignment_1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2298:2: rule__Fragment__NameAssignment_1
             {
-            pushFollow(FOLLOW_rule__Fragment__NameAssignment_1_in_rule__Fragment__Group__1__Impl4586);
+            pushFollow(FOLLOW_rule__Fragment__NameAssignment_1_in_rule__Fragment__Group__1__Impl4648);
             rule__Fragment__NameAssignment_1();
 
             state._fsp--;
@@ -6342,21 +6369,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Fragment__Group__2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2277:1: rule__Fragment__Group__2 : rule__Fragment__Group__2__Impl rule__Fragment__Group__3 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2308:1: rule__Fragment__Group__2 : rule__Fragment__Group__2__Impl rule__Fragment__Group__3 ;
     public final void rule__Fragment__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2281:1: ( rule__Fragment__Group__2__Impl rule__Fragment__Group__3 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2282:2: rule__Fragment__Group__2__Impl rule__Fragment__Group__3
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2312:1: ( rule__Fragment__Group__2__Impl rule__Fragment__Group__3 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2313:2: rule__Fragment__Group__2__Impl rule__Fragment__Group__3
             {
-            pushFollow(FOLLOW_rule__Fragment__Group__2__Impl_in_rule__Fragment__Group__24616);
+            pushFollow(FOLLOW_rule__Fragment__Group__2__Impl_in_rule__Fragment__Group__24678);
             rule__Fragment__Group__2__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Fragment__Group__3_in_rule__Fragment__Group__24619);
+            pushFollow(FOLLOW_rule__Fragment__Group__3_in_rule__Fragment__Group__24681);
             rule__Fragment__Group__3();
 
             state._fsp--;
@@ -6380,23 +6407,23 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Fragment__Group__2__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2289:1: rule__Fragment__Group__2__Impl : ( ( rule__Fragment__SectionsAssignment_2 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2320:1: rule__Fragment__Group__2__Impl : ( ( rule__Fragment__SectionsAssignment_2 ) ) ;
     public final void rule__Fragment__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2293:1: ( ( ( rule__Fragment__SectionsAssignment_2 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2294:1: ( ( rule__Fragment__SectionsAssignment_2 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2324:1: ( ( ( rule__Fragment__SectionsAssignment_2 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2325:1: ( ( rule__Fragment__SectionsAssignment_2 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2294:1: ( ( rule__Fragment__SectionsAssignment_2 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2295:1: ( rule__Fragment__SectionsAssignment_2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2325:1: ( ( rule__Fragment__SectionsAssignment_2 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2326:1: ( rule__Fragment__SectionsAssignment_2 )
             {
              before(grammarAccess.getFragmentAccess().getSectionsAssignment_2()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2296:1: ( rule__Fragment__SectionsAssignment_2 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2296:2: rule__Fragment__SectionsAssignment_2
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2327:1: ( rule__Fragment__SectionsAssignment_2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2327:2: rule__Fragment__SectionsAssignment_2
             {
-            pushFollow(FOLLOW_rule__Fragment__SectionsAssignment_2_in_rule__Fragment__Group__2__Impl4646);
+            pushFollow(FOLLOW_rule__Fragment__SectionsAssignment_2_in_rule__Fragment__Group__2__Impl4708);
             rule__Fragment__SectionsAssignment_2();
 
             state._fsp--;
@@ -6427,16 +6454,16 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Fragment__Group__3"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2306:1: rule__Fragment__Group__3 : rule__Fragment__Group__3__Impl ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2337:1: rule__Fragment__Group__3 : rule__Fragment__Group__3__Impl ;
     public final void rule__Fragment__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2310:1: ( rule__Fragment__Group__3__Impl )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2311:2: rule__Fragment__Group__3__Impl
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2341:1: ( rule__Fragment__Group__3__Impl )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2342:2: rule__Fragment__Group__3__Impl
             {
-            pushFollow(FOLLOW_rule__Fragment__Group__3__Impl_in_rule__Fragment__Group__34676);
+            pushFollow(FOLLOW_rule__Fragment__Group__3__Impl_in_rule__Fragment__Group__34738);
             rule__Fragment__Group__3__Impl();
 
             state._fsp--;
@@ -6460,20 +6487,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Fragment__Group__3__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2317:1: rule__Fragment__Group__3__Impl : ( ( rule__Fragment__SectionsAssignment_3 )* ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2348:1: rule__Fragment__Group__3__Impl : ( ( rule__Fragment__SectionsAssignment_3 )* ) ;
     public final void rule__Fragment__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2321:1: ( ( ( rule__Fragment__SectionsAssignment_3 )* ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2322:1: ( ( rule__Fragment__SectionsAssignment_3 )* )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2352:1: ( ( ( rule__Fragment__SectionsAssignment_3 )* ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2353:1: ( ( rule__Fragment__SectionsAssignment_3 )* )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2322:1: ( ( rule__Fragment__SectionsAssignment_3 )* )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2323:1: ( rule__Fragment__SectionsAssignment_3 )*
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2353:1: ( ( rule__Fragment__SectionsAssignment_3 )* )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2354:1: ( rule__Fragment__SectionsAssignment_3 )*
             {
              before(grammarAccess.getFragmentAccess().getSectionsAssignment_3()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2324:1: ( rule__Fragment__SectionsAssignment_3 )*
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2355:1: ( rule__Fragment__SectionsAssignment_3 )*
             loop22:
             do {
                 int alt22=2;
@@ -6486,9 +6513,9 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
                 switch (alt22) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2324:2: rule__Fragment__SectionsAssignment_3
+            	    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2355:2: rule__Fragment__SectionsAssignment_3
             	    {
-            	    pushFollow(FOLLOW_rule__Fragment__SectionsAssignment_3_in_rule__Fragment__Group__3__Impl4703);
+            	    pushFollow(FOLLOW_rule__Fragment__SectionsAssignment_3_in_rule__Fragment__Group__3__Impl4765);
             	    rule__Fragment__SectionsAssignment_3();
 
             	    state._fsp--;
@@ -6525,21 +6552,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group__0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2342:1: rule__Section__Group__0 : rule__Section__Group__0__Impl rule__Section__Group__1 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2373:1: rule__Section__Group__0 : rule__Section__Group__0__Impl rule__Section__Group__1 ;
     public final void rule__Section__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2346:1: ( rule__Section__Group__0__Impl rule__Section__Group__1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2347:2: rule__Section__Group__0__Impl rule__Section__Group__1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2377:1: ( rule__Section__Group__0__Impl rule__Section__Group__1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2378:2: rule__Section__Group__0__Impl rule__Section__Group__1
             {
-            pushFollow(FOLLOW_rule__Section__Group__0__Impl_in_rule__Section__Group__04742);
+            pushFollow(FOLLOW_rule__Section__Group__0__Impl_in_rule__Section__Group__04804);
             rule__Section__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Section__Group__1_in_rule__Section__Group__04745);
+            pushFollow(FOLLOW_rule__Section__Group__1_in_rule__Section__Group__04807);
             rule__Section__Group__1();
 
             state._fsp--;
@@ -6563,20 +6590,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group__0__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2354:1: rule__Section__Group__0__Impl : ( '{' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2385:1: rule__Section__Group__0__Impl : ( '{' ) ;
     public final void rule__Section__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2358:1: ( ( '{' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2359:1: ( '{' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2389:1: ( ( '{' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2390:1: ( '{' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2359:1: ( '{' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2360:1: '{'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2390:1: ( '{' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2391:1: '{'
             {
              before(grammarAccess.getSectionAccess().getLeftCurlyBracketKeyword_0()); 
-            match(input,23,FOLLOW_23_in_rule__Section__Group__0__Impl4773); 
+            match(input,23,FOLLOW_23_in_rule__Section__Group__0__Impl4835); 
              after(grammarAccess.getSectionAccess().getLeftCurlyBracketKeyword_0()); 
 
             }
@@ -6600,21 +6627,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group__1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2373:1: rule__Section__Group__1 : rule__Section__Group__1__Impl rule__Section__Group__2 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2404:1: rule__Section__Group__1 : rule__Section__Group__1__Impl rule__Section__Group__2 ;
     public final void rule__Section__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2377:1: ( rule__Section__Group__1__Impl rule__Section__Group__2 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2378:2: rule__Section__Group__1__Impl rule__Section__Group__2
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2408:1: ( rule__Section__Group__1__Impl rule__Section__Group__2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2409:2: rule__Section__Group__1__Impl rule__Section__Group__2
             {
-            pushFollow(FOLLOW_rule__Section__Group__1__Impl_in_rule__Section__Group__14804);
+            pushFollow(FOLLOW_rule__Section__Group__1__Impl_in_rule__Section__Group__14866);
             rule__Section__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Section__Group__2_in_rule__Section__Group__14807);
+            pushFollow(FOLLOW_rule__Section__Group__2_in_rule__Section__Group__14869);
             rule__Section__Group__2();
 
             state._fsp--;
@@ -6638,20 +6665,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group__1__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2385:1: rule__Section__Group__1__Impl : ( ( rule__Section__Group_1__0 )? ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2416:1: rule__Section__Group__1__Impl : ( ( rule__Section__Group_1__0 )? ) ;
     public final void rule__Section__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2389:1: ( ( ( rule__Section__Group_1__0 )? ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2390:1: ( ( rule__Section__Group_1__0 )? )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2420:1: ( ( ( rule__Section__Group_1__0 )? ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2421:1: ( ( rule__Section__Group_1__0 )? )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2390:1: ( ( rule__Section__Group_1__0 )? )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2391:1: ( rule__Section__Group_1__0 )?
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2421:1: ( ( rule__Section__Group_1__0 )? )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2422:1: ( rule__Section__Group_1__0 )?
             {
              before(grammarAccess.getSectionAccess().getGroup_1()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2392:1: ( rule__Section__Group_1__0 )?
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2423:1: ( rule__Section__Group_1__0 )?
             int alt23=2;
             int LA23_0 = input.LA(1);
 
@@ -6660,9 +6687,9 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
             }
             switch (alt23) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2392:2: rule__Section__Group_1__0
+                    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2423:2: rule__Section__Group_1__0
                     {
-                    pushFollow(FOLLOW_rule__Section__Group_1__0_in_rule__Section__Group__1__Impl4834);
+                    pushFollow(FOLLOW_rule__Section__Group_1__0_in_rule__Section__Group__1__Impl4896);
                     rule__Section__Group_1__0();
 
                     state._fsp--;
@@ -6696,21 +6723,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group__2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2402:1: rule__Section__Group__2 : rule__Section__Group__2__Impl rule__Section__Group__3 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2433:1: rule__Section__Group__2 : rule__Section__Group__2__Impl rule__Section__Group__3 ;
     public final void rule__Section__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2406:1: ( rule__Section__Group__2__Impl rule__Section__Group__3 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2407:2: rule__Section__Group__2__Impl rule__Section__Group__3
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2437:1: ( rule__Section__Group__2__Impl rule__Section__Group__3 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2438:2: rule__Section__Group__2__Impl rule__Section__Group__3
             {
-            pushFollow(FOLLOW_rule__Section__Group__2__Impl_in_rule__Section__Group__24865);
+            pushFollow(FOLLOW_rule__Section__Group__2__Impl_in_rule__Section__Group__24927);
             rule__Section__Group__2__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Section__Group__3_in_rule__Section__Group__24868);
+            pushFollow(FOLLOW_rule__Section__Group__3_in_rule__Section__Group__24930);
             rule__Section__Group__3();
 
             state._fsp--;
@@ -6734,23 +6761,23 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group__2__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2414:1: rule__Section__Group__2__Impl : ( ( rule__Section__InteractionsAssignment_2 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2445:1: rule__Section__Group__2__Impl : ( ( rule__Section__InteractionsAssignment_2 ) ) ;
     public final void rule__Section__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2418:1: ( ( ( rule__Section__InteractionsAssignment_2 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2419:1: ( ( rule__Section__InteractionsAssignment_2 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2449:1: ( ( ( rule__Section__InteractionsAssignment_2 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2450:1: ( ( rule__Section__InteractionsAssignment_2 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2419:1: ( ( rule__Section__InteractionsAssignment_2 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2420:1: ( rule__Section__InteractionsAssignment_2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2450:1: ( ( rule__Section__InteractionsAssignment_2 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2451:1: ( rule__Section__InteractionsAssignment_2 )
             {
              before(grammarAccess.getSectionAccess().getInteractionsAssignment_2()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2421:1: ( rule__Section__InteractionsAssignment_2 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2421:2: rule__Section__InteractionsAssignment_2
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2452:1: ( rule__Section__InteractionsAssignment_2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2452:2: rule__Section__InteractionsAssignment_2
             {
-            pushFollow(FOLLOW_rule__Section__InteractionsAssignment_2_in_rule__Section__Group__2__Impl4895);
+            pushFollow(FOLLOW_rule__Section__InteractionsAssignment_2_in_rule__Section__Group__2__Impl4957);
             rule__Section__InteractionsAssignment_2();
 
             state._fsp--;
@@ -6781,21 +6808,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group__3"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2431:1: rule__Section__Group__3 : rule__Section__Group__3__Impl rule__Section__Group__4 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2462:1: rule__Section__Group__3 : rule__Section__Group__3__Impl rule__Section__Group__4 ;
     public final void rule__Section__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2435:1: ( rule__Section__Group__3__Impl rule__Section__Group__4 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2436:2: rule__Section__Group__3__Impl rule__Section__Group__4
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2466:1: ( rule__Section__Group__3__Impl rule__Section__Group__4 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2467:2: rule__Section__Group__3__Impl rule__Section__Group__4
             {
-            pushFollow(FOLLOW_rule__Section__Group__3__Impl_in_rule__Section__Group__34925);
+            pushFollow(FOLLOW_rule__Section__Group__3__Impl_in_rule__Section__Group__34987);
             rule__Section__Group__3__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Section__Group__4_in_rule__Section__Group__34928);
+            pushFollow(FOLLOW_rule__Section__Group__4_in_rule__Section__Group__34990);
             rule__Section__Group__4();
 
             state._fsp--;
@@ -6819,20 +6846,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group__3__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2443:1: rule__Section__Group__3__Impl : ( ( rule__Section__InteractionsAssignment_3 )* ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2474:1: rule__Section__Group__3__Impl : ( ( rule__Section__InteractionsAssignment_3 )* ) ;
     public final void rule__Section__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2447:1: ( ( ( rule__Section__InteractionsAssignment_3 )* ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2448:1: ( ( rule__Section__InteractionsAssignment_3 )* )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2478:1: ( ( ( rule__Section__InteractionsAssignment_3 )* ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2479:1: ( ( rule__Section__InteractionsAssignment_3 )* )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2448:1: ( ( rule__Section__InteractionsAssignment_3 )* )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2449:1: ( rule__Section__InteractionsAssignment_3 )*
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2479:1: ( ( rule__Section__InteractionsAssignment_3 )* )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2480:1: ( rule__Section__InteractionsAssignment_3 )*
             {
              before(grammarAccess.getSectionAccess().getInteractionsAssignment_3()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2450:1: ( rule__Section__InteractionsAssignment_3 )*
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2481:1: ( rule__Section__InteractionsAssignment_3 )*
             loop24:
             do {
                 int alt24=2;
@@ -6845,9 +6872,9 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
                 switch (alt24) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2450:2: rule__Section__InteractionsAssignment_3
+            	    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2481:2: rule__Section__InteractionsAssignment_3
             	    {
-            	    pushFollow(FOLLOW_rule__Section__InteractionsAssignment_3_in_rule__Section__Group__3__Impl4955);
+            	    pushFollow(FOLLOW_rule__Section__InteractionsAssignment_3_in_rule__Section__Group__3__Impl5017);
             	    rule__Section__InteractionsAssignment_3();
 
             	    state._fsp--;
@@ -6884,16 +6911,16 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group__4"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2460:1: rule__Section__Group__4 : rule__Section__Group__4__Impl ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2491:1: rule__Section__Group__4 : rule__Section__Group__4__Impl ;
     public final void rule__Section__Group__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2464:1: ( rule__Section__Group__4__Impl )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2465:2: rule__Section__Group__4__Impl
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2495:1: ( rule__Section__Group__4__Impl )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2496:2: rule__Section__Group__4__Impl
             {
-            pushFollow(FOLLOW_rule__Section__Group__4__Impl_in_rule__Section__Group__44986);
+            pushFollow(FOLLOW_rule__Section__Group__4__Impl_in_rule__Section__Group__45048);
             rule__Section__Group__4__Impl();
 
             state._fsp--;
@@ -6917,20 +6944,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group__4__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2471:1: rule__Section__Group__4__Impl : ( '}' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2502:1: rule__Section__Group__4__Impl : ( '}' ) ;
     public final void rule__Section__Group__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2475:1: ( ( '}' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2476:1: ( '}' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2506:1: ( ( '}' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2507:1: ( '}' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2476:1: ( '}' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2477:1: '}'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2507:1: ( '}' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2508:1: '}'
             {
              before(grammarAccess.getSectionAccess().getRightCurlyBracketKeyword_4()); 
-            match(input,24,FOLLOW_24_in_rule__Section__Group__4__Impl5014); 
+            match(input,24,FOLLOW_24_in_rule__Section__Group__4__Impl5076); 
              after(grammarAccess.getSectionAccess().getRightCurlyBracketKeyword_4()); 
 
             }
@@ -6954,21 +6981,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group_1__0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2500:1: rule__Section__Group_1__0 : rule__Section__Group_1__0__Impl rule__Section__Group_1__1 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2531:1: rule__Section__Group_1__0 : rule__Section__Group_1__0__Impl rule__Section__Group_1__1 ;
     public final void rule__Section__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2504:1: ( rule__Section__Group_1__0__Impl rule__Section__Group_1__1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2505:2: rule__Section__Group_1__0__Impl rule__Section__Group_1__1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2535:1: ( rule__Section__Group_1__0__Impl rule__Section__Group_1__1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2536:2: rule__Section__Group_1__0__Impl rule__Section__Group_1__1
             {
-            pushFollow(FOLLOW_rule__Section__Group_1__0__Impl_in_rule__Section__Group_1__05055);
+            pushFollow(FOLLOW_rule__Section__Group_1__0__Impl_in_rule__Section__Group_1__05117);
             rule__Section__Group_1__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Section__Group_1__1_in_rule__Section__Group_1__05058);
+            pushFollow(FOLLOW_rule__Section__Group_1__1_in_rule__Section__Group_1__05120);
             rule__Section__Group_1__1();
 
             state._fsp--;
@@ -6992,20 +7019,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group_1__0__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2512:1: rule__Section__Group_1__0__Impl : ( 'label' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2543:1: rule__Section__Group_1__0__Impl : ( 'label' ) ;
     public final void rule__Section__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2516:1: ( ( 'label' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2517:1: ( 'label' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2547:1: ( ( 'label' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2548:1: ( 'label' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2517:1: ( 'label' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2518:1: 'label'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2548:1: ( 'label' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2549:1: 'label'
             {
              before(grammarAccess.getSectionAccess().getLabelKeyword_1_0()); 
-            match(input,34,FOLLOW_34_in_rule__Section__Group_1__0__Impl5086); 
+            match(input,34,FOLLOW_34_in_rule__Section__Group_1__0__Impl5148); 
              after(grammarAccess.getSectionAccess().getLabelKeyword_1_0()); 
 
             }
@@ -7029,16 +7056,16 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group_1__1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2531:1: rule__Section__Group_1__1 : rule__Section__Group_1__1__Impl ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2562:1: rule__Section__Group_1__1 : rule__Section__Group_1__1__Impl ;
     public final void rule__Section__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2535:1: ( rule__Section__Group_1__1__Impl )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2536:2: rule__Section__Group_1__1__Impl
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2566:1: ( rule__Section__Group_1__1__Impl )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2567:2: rule__Section__Group_1__1__Impl
             {
-            pushFollow(FOLLOW_rule__Section__Group_1__1__Impl_in_rule__Section__Group_1__15117);
+            pushFollow(FOLLOW_rule__Section__Group_1__1__Impl_in_rule__Section__Group_1__15179);
             rule__Section__Group_1__1__Impl();
 
             state._fsp--;
@@ -7062,23 +7089,23 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__Group_1__1__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2542:1: rule__Section__Group_1__1__Impl : ( ( rule__Section__LabelAssignment_1_1 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2573:1: rule__Section__Group_1__1__Impl : ( ( rule__Section__LabelAssignment_1_1 ) ) ;
     public final void rule__Section__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2546:1: ( ( ( rule__Section__LabelAssignment_1_1 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2547:1: ( ( rule__Section__LabelAssignment_1_1 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2577:1: ( ( ( rule__Section__LabelAssignment_1_1 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2578:1: ( ( rule__Section__LabelAssignment_1_1 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2547:1: ( ( rule__Section__LabelAssignment_1_1 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2548:1: ( rule__Section__LabelAssignment_1_1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2578:1: ( ( rule__Section__LabelAssignment_1_1 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2579:1: ( rule__Section__LabelAssignment_1_1 )
             {
              before(grammarAccess.getSectionAccess().getLabelAssignment_1_1()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2549:1: ( rule__Section__LabelAssignment_1_1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2549:2: rule__Section__LabelAssignment_1_1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2580:1: ( rule__Section__LabelAssignment_1_1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2580:2: rule__Section__LabelAssignment_1_1
             {
-            pushFollow(FOLLOW_rule__Section__LabelAssignment_1_1_in_rule__Section__Group_1__1__Impl5144);
+            pushFollow(FOLLOW_rule__Section__LabelAssignment_1_1_in_rule__Section__Group_1__1__Impl5206);
             rule__Section__LabelAssignment_1_1();
 
             state._fsp--;
@@ -7109,21 +7136,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2563:1: rule__Refinement__Group__0 : rule__Refinement__Group__0__Impl rule__Refinement__Group__1 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2594:1: rule__Refinement__Group__0 : rule__Refinement__Group__0__Impl rule__Refinement__Group__1 ;
     public final void rule__Refinement__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2567:1: ( rule__Refinement__Group__0__Impl rule__Refinement__Group__1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2568:2: rule__Refinement__Group__0__Impl rule__Refinement__Group__1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2598:1: ( rule__Refinement__Group__0__Impl rule__Refinement__Group__1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2599:2: rule__Refinement__Group__0__Impl rule__Refinement__Group__1
             {
-            pushFollow(FOLLOW_rule__Refinement__Group__0__Impl_in_rule__Refinement__Group__05178);
+            pushFollow(FOLLOW_rule__Refinement__Group__0__Impl_in_rule__Refinement__Group__05240);
             rule__Refinement__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Refinement__Group__1_in_rule__Refinement__Group__05181);
+            pushFollow(FOLLOW_rule__Refinement__Group__1_in_rule__Refinement__Group__05243);
             rule__Refinement__Group__1();
 
             state._fsp--;
@@ -7147,20 +7174,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__0__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2575:1: rule__Refinement__Group__0__Impl : ( 'refinement' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2606:1: rule__Refinement__Group__0__Impl : ( 'refinement' ) ;
     public final void rule__Refinement__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2579:1: ( ( 'refinement' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2580:1: ( 'refinement' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2610:1: ( ( 'refinement' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2611:1: ( 'refinement' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2580:1: ( 'refinement' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2581:1: 'refinement'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2611:1: ( 'refinement' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2612:1: 'refinement'
             {
              before(grammarAccess.getRefinementAccess().getRefinementKeyword_0()); 
-            match(input,35,FOLLOW_35_in_rule__Refinement__Group__0__Impl5209); 
+            match(input,35,FOLLOW_35_in_rule__Refinement__Group__0__Impl5271); 
              after(grammarAccess.getRefinementAccess().getRefinementKeyword_0()); 
 
             }
@@ -7184,21 +7211,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2594:1: rule__Refinement__Group__1 : rule__Refinement__Group__1__Impl rule__Refinement__Group__2 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2625:1: rule__Refinement__Group__1 : rule__Refinement__Group__1__Impl rule__Refinement__Group__2 ;
     public final void rule__Refinement__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2598:1: ( rule__Refinement__Group__1__Impl rule__Refinement__Group__2 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2599:2: rule__Refinement__Group__1__Impl rule__Refinement__Group__2
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2629:1: ( rule__Refinement__Group__1__Impl rule__Refinement__Group__2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2630:2: rule__Refinement__Group__1__Impl rule__Refinement__Group__2
             {
-            pushFollow(FOLLOW_rule__Refinement__Group__1__Impl_in_rule__Refinement__Group__15240);
+            pushFollow(FOLLOW_rule__Refinement__Group__1__Impl_in_rule__Refinement__Group__15302);
             rule__Refinement__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Refinement__Group__2_in_rule__Refinement__Group__15243);
+            pushFollow(FOLLOW_rule__Refinement__Group__2_in_rule__Refinement__Group__15305);
             rule__Refinement__Group__2();
 
             state._fsp--;
@@ -7222,20 +7249,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__1__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2606:1: rule__Refinement__Group__1__Impl : ( 'label' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2637:1: rule__Refinement__Group__1__Impl : ( 'label' ) ;
     public final void rule__Refinement__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2610:1: ( ( 'label' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2611:1: ( 'label' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2641:1: ( ( 'label' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2642:1: ( 'label' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2611:1: ( 'label' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2612:1: 'label'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2642:1: ( 'label' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2643:1: 'label'
             {
              before(grammarAccess.getRefinementAccess().getLabelKeyword_1()); 
-            match(input,34,FOLLOW_34_in_rule__Refinement__Group__1__Impl5271); 
+            match(input,34,FOLLOW_34_in_rule__Refinement__Group__1__Impl5333); 
              after(grammarAccess.getRefinementAccess().getLabelKeyword_1()); 
 
             }
@@ -7259,21 +7286,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2625:1: rule__Refinement__Group__2 : rule__Refinement__Group__2__Impl rule__Refinement__Group__3 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2656:1: rule__Refinement__Group__2 : rule__Refinement__Group__2__Impl rule__Refinement__Group__3 ;
     public final void rule__Refinement__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2629:1: ( rule__Refinement__Group__2__Impl rule__Refinement__Group__3 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2630:2: rule__Refinement__Group__2__Impl rule__Refinement__Group__3
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2660:1: ( rule__Refinement__Group__2__Impl rule__Refinement__Group__3 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2661:2: rule__Refinement__Group__2__Impl rule__Refinement__Group__3
             {
-            pushFollow(FOLLOW_rule__Refinement__Group__2__Impl_in_rule__Refinement__Group__25302);
+            pushFollow(FOLLOW_rule__Refinement__Group__2__Impl_in_rule__Refinement__Group__25364);
             rule__Refinement__Group__2__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Refinement__Group__3_in_rule__Refinement__Group__25305);
+            pushFollow(FOLLOW_rule__Refinement__Group__3_in_rule__Refinement__Group__25367);
             rule__Refinement__Group__3();
 
             state._fsp--;
@@ -7297,23 +7324,23 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__2__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2637:1: rule__Refinement__Group__2__Impl : ( ( rule__Refinement__LabelAssignment_2 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2668:1: rule__Refinement__Group__2__Impl : ( ( rule__Refinement__LabelAssignment_2 ) ) ;
     public final void rule__Refinement__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2641:1: ( ( ( rule__Refinement__LabelAssignment_2 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2642:1: ( ( rule__Refinement__LabelAssignment_2 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2672:1: ( ( ( rule__Refinement__LabelAssignment_2 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2673:1: ( ( rule__Refinement__LabelAssignment_2 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2642:1: ( ( rule__Refinement__LabelAssignment_2 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2643:1: ( rule__Refinement__LabelAssignment_2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2673:1: ( ( rule__Refinement__LabelAssignment_2 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2674:1: ( rule__Refinement__LabelAssignment_2 )
             {
              before(grammarAccess.getRefinementAccess().getLabelAssignment_2()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2644:1: ( rule__Refinement__LabelAssignment_2 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2644:2: rule__Refinement__LabelAssignment_2
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2675:1: ( rule__Refinement__LabelAssignment_2 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2675:2: rule__Refinement__LabelAssignment_2
             {
-            pushFollow(FOLLOW_rule__Refinement__LabelAssignment_2_in_rule__Refinement__Group__2__Impl5332);
+            pushFollow(FOLLOW_rule__Refinement__LabelAssignment_2_in_rule__Refinement__Group__2__Impl5394);
             rule__Refinement__LabelAssignment_2();
 
             state._fsp--;
@@ -7344,21 +7371,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__3"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2654:1: rule__Refinement__Group__3 : rule__Refinement__Group__3__Impl rule__Refinement__Group__4 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2685:1: rule__Refinement__Group__3 : rule__Refinement__Group__3__Impl rule__Refinement__Group__4 ;
     public final void rule__Refinement__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2658:1: ( rule__Refinement__Group__3__Impl rule__Refinement__Group__4 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2659:2: rule__Refinement__Group__3__Impl rule__Refinement__Group__4
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2689:1: ( rule__Refinement__Group__3__Impl rule__Refinement__Group__4 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2690:2: rule__Refinement__Group__3__Impl rule__Refinement__Group__4
             {
-            pushFollow(FOLLOW_rule__Refinement__Group__3__Impl_in_rule__Refinement__Group__35362);
+            pushFollow(FOLLOW_rule__Refinement__Group__3__Impl_in_rule__Refinement__Group__35424);
             rule__Refinement__Group__3__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Refinement__Group__4_in_rule__Refinement__Group__35365);
+            pushFollow(FOLLOW_rule__Refinement__Group__4_in_rule__Refinement__Group__35427);
             rule__Refinement__Group__4();
 
             state._fsp--;
@@ -7382,20 +7409,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__3__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2666:1: rule__Refinement__Group__3__Impl : ( 'lifelines' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2697:1: rule__Refinement__Group__3__Impl : ( 'lifelines' ) ;
     public final void rule__Refinement__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2670:1: ( ( 'lifelines' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2671:1: ( 'lifelines' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2701:1: ( ( 'lifelines' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2702:1: ( 'lifelines' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2671:1: ( 'lifelines' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2672:1: 'lifelines'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2702:1: ( 'lifelines' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2703:1: 'lifelines'
             {
              before(grammarAccess.getRefinementAccess().getLifelinesKeyword_3()); 
-            match(input,36,FOLLOW_36_in_rule__Refinement__Group__3__Impl5393); 
+            match(input,36,FOLLOW_36_in_rule__Refinement__Group__3__Impl5455); 
              after(grammarAccess.getRefinementAccess().getLifelinesKeyword_3()); 
 
             }
@@ -7419,21 +7446,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__4"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2685:1: rule__Refinement__Group__4 : rule__Refinement__Group__4__Impl rule__Refinement__Group__5 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2716:1: rule__Refinement__Group__4 : rule__Refinement__Group__4__Impl rule__Refinement__Group__5 ;
     public final void rule__Refinement__Group__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2689:1: ( rule__Refinement__Group__4__Impl rule__Refinement__Group__5 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2690:2: rule__Refinement__Group__4__Impl rule__Refinement__Group__5
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2720:1: ( rule__Refinement__Group__4__Impl rule__Refinement__Group__5 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2721:2: rule__Refinement__Group__4__Impl rule__Refinement__Group__5
             {
-            pushFollow(FOLLOW_rule__Refinement__Group__4__Impl_in_rule__Refinement__Group__45424);
+            pushFollow(FOLLOW_rule__Refinement__Group__4__Impl_in_rule__Refinement__Group__45486);
             rule__Refinement__Group__4__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Refinement__Group__5_in_rule__Refinement__Group__45427);
+            pushFollow(FOLLOW_rule__Refinement__Group__5_in_rule__Refinement__Group__45489);
             rule__Refinement__Group__5();
 
             state._fsp--;
@@ -7457,23 +7484,23 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__4__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2697:1: rule__Refinement__Group__4__Impl : ( ( rule__Refinement__LifelinesAssignment_4 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2728:1: rule__Refinement__Group__4__Impl : ( ( rule__Refinement__LifelinesAssignment_4 ) ) ;
     public final void rule__Refinement__Group__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2701:1: ( ( ( rule__Refinement__LifelinesAssignment_4 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2702:1: ( ( rule__Refinement__LifelinesAssignment_4 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2732:1: ( ( ( rule__Refinement__LifelinesAssignment_4 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2733:1: ( ( rule__Refinement__LifelinesAssignment_4 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2702:1: ( ( rule__Refinement__LifelinesAssignment_4 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2703:1: ( rule__Refinement__LifelinesAssignment_4 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2733:1: ( ( rule__Refinement__LifelinesAssignment_4 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2734:1: ( rule__Refinement__LifelinesAssignment_4 )
             {
              before(grammarAccess.getRefinementAccess().getLifelinesAssignment_4()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2704:1: ( rule__Refinement__LifelinesAssignment_4 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2704:2: rule__Refinement__LifelinesAssignment_4
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2735:1: ( rule__Refinement__LifelinesAssignment_4 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2735:2: rule__Refinement__LifelinesAssignment_4
             {
-            pushFollow(FOLLOW_rule__Refinement__LifelinesAssignment_4_in_rule__Refinement__Group__4__Impl5454);
+            pushFollow(FOLLOW_rule__Refinement__LifelinesAssignment_4_in_rule__Refinement__Group__4__Impl5516);
             rule__Refinement__LifelinesAssignment_4();
 
             state._fsp--;
@@ -7504,16 +7531,16 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__5"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2714:1: rule__Refinement__Group__5 : rule__Refinement__Group__5__Impl ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2745:1: rule__Refinement__Group__5 : rule__Refinement__Group__5__Impl ;
     public final void rule__Refinement__Group__5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2718:1: ( rule__Refinement__Group__5__Impl )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2719:2: rule__Refinement__Group__5__Impl
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2749:1: ( rule__Refinement__Group__5__Impl )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2750:2: rule__Refinement__Group__5__Impl
             {
-            pushFollow(FOLLOW_rule__Refinement__Group__5__Impl_in_rule__Refinement__Group__55484);
+            pushFollow(FOLLOW_rule__Refinement__Group__5__Impl_in_rule__Refinement__Group__55546);
             rule__Refinement__Group__5__Impl();
 
             state._fsp--;
@@ -7537,20 +7564,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group__5__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2725:1: rule__Refinement__Group__5__Impl : ( ( rule__Refinement__Group_5__0 )* ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2756:1: rule__Refinement__Group__5__Impl : ( ( rule__Refinement__Group_5__0 )* ) ;
     public final void rule__Refinement__Group__5__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2729:1: ( ( ( rule__Refinement__Group_5__0 )* ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2730:1: ( ( rule__Refinement__Group_5__0 )* )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2760:1: ( ( ( rule__Refinement__Group_5__0 )* ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2761:1: ( ( rule__Refinement__Group_5__0 )* )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2730:1: ( ( rule__Refinement__Group_5__0 )* )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2731:1: ( rule__Refinement__Group_5__0 )*
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2761:1: ( ( rule__Refinement__Group_5__0 )* )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2762:1: ( rule__Refinement__Group_5__0 )*
             {
              before(grammarAccess.getRefinementAccess().getGroup_5()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2732:1: ( rule__Refinement__Group_5__0 )*
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2763:1: ( rule__Refinement__Group_5__0 )*
             loop25:
             do {
                 int alt25=2;
@@ -7563,9 +7590,9 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
                 switch (alt25) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2732:2: rule__Refinement__Group_5__0
+            	    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2763:2: rule__Refinement__Group_5__0
             	    {
-            	    pushFollow(FOLLOW_rule__Refinement__Group_5__0_in_rule__Refinement__Group__5__Impl5511);
+            	    pushFollow(FOLLOW_rule__Refinement__Group_5__0_in_rule__Refinement__Group__5__Impl5573);
             	    rule__Refinement__Group_5__0();
 
             	    state._fsp--;
@@ -7602,21 +7629,21 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group_5__0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2754:1: rule__Refinement__Group_5__0 : rule__Refinement__Group_5__0__Impl rule__Refinement__Group_5__1 ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2785:1: rule__Refinement__Group_5__0 : rule__Refinement__Group_5__0__Impl rule__Refinement__Group_5__1 ;
     public final void rule__Refinement__Group_5__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2758:1: ( rule__Refinement__Group_5__0__Impl rule__Refinement__Group_5__1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2759:2: rule__Refinement__Group_5__0__Impl rule__Refinement__Group_5__1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2789:1: ( rule__Refinement__Group_5__0__Impl rule__Refinement__Group_5__1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2790:2: rule__Refinement__Group_5__0__Impl rule__Refinement__Group_5__1
             {
-            pushFollow(FOLLOW_rule__Refinement__Group_5__0__Impl_in_rule__Refinement__Group_5__05554);
+            pushFollow(FOLLOW_rule__Refinement__Group_5__0__Impl_in_rule__Refinement__Group_5__05616);
             rule__Refinement__Group_5__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__Refinement__Group_5__1_in_rule__Refinement__Group_5__05557);
+            pushFollow(FOLLOW_rule__Refinement__Group_5__1_in_rule__Refinement__Group_5__05619);
             rule__Refinement__Group_5__1();
 
             state._fsp--;
@@ -7640,20 +7667,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group_5__0__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2766:1: rule__Refinement__Group_5__0__Impl : ( ',' ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2797:1: rule__Refinement__Group_5__0__Impl : ( ',' ) ;
     public final void rule__Refinement__Group_5__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2770:1: ( ( ',' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2771:1: ( ',' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2801:1: ( ( ',' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2802:1: ( ',' )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2771:1: ( ',' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2772:1: ','
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2802:1: ( ',' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2803:1: ','
             {
              before(grammarAccess.getRefinementAccess().getCommaKeyword_5_0()); 
-            match(input,37,FOLLOW_37_in_rule__Refinement__Group_5__0__Impl5585); 
+            match(input,37,FOLLOW_37_in_rule__Refinement__Group_5__0__Impl5647); 
              after(grammarAccess.getRefinementAccess().getCommaKeyword_5_0()); 
 
             }
@@ -7677,16 +7704,16 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group_5__1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2785:1: rule__Refinement__Group_5__1 : rule__Refinement__Group_5__1__Impl ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2816:1: rule__Refinement__Group_5__1 : rule__Refinement__Group_5__1__Impl ;
     public final void rule__Refinement__Group_5__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2789:1: ( rule__Refinement__Group_5__1__Impl )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2790:2: rule__Refinement__Group_5__1__Impl
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2820:1: ( rule__Refinement__Group_5__1__Impl )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2821:2: rule__Refinement__Group_5__1__Impl
             {
-            pushFollow(FOLLOW_rule__Refinement__Group_5__1__Impl_in_rule__Refinement__Group_5__15616);
+            pushFollow(FOLLOW_rule__Refinement__Group_5__1__Impl_in_rule__Refinement__Group_5__15678);
             rule__Refinement__Group_5__1__Impl();
 
             state._fsp--;
@@ -7710,23 +7737,23 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__Group_5__1__Impl"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2796:1: rule__Refinement__Group_5__1__Impl : ( ( rule__Refinement__LifelinesAssignment_5_1 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2827:1: rule__Refinement__Group_5__1__Impl : ( ( rule__Refinement__LifelinesAssignment_5_1 ) ) ;
     public final void rule__Refinement__Group_5__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2800:1: ( ( ( rule__Refinement__LifelinesAssignment_5_1 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2801:1: ( ( rule__Refinement__LifelinesAssignment_5_1 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2831:1: ( ( ( rule__Refinement__LifelinesAssignment_5_1 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2832:1: ( ( rule__Refinement__LifelinesAssignment_5_1 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2801:1: ( ( rule__Refinement__LifelinesAssignment_5_1 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2802:1: ( rule__Refinement__LifelinesAssignment_5_1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2832:1: ( ( rule__Refinement__LifelinesAssignment_5_1 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2833:1: ( rule__Refinement__LifelinesAssignment_5_1 )
             {
              before(grammarAccess.getRefinementAccess().getLifelinesAssignment_5_1()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2803:1: ( rule__Refinement__LifelinesAssignment_5_1 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2803:2: rule__Refinement__LifelinesAssignment_5_1
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2834:1: ( rule__Refinement__LifelinesAssignment_5_1 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2834:2: rule__Refinement__LifelinesAssignment_5_1
             {
-            pushFollow(FOLLOW_rule__Refinement__LifelinesAssignment_5_1_in_rule__Refinement__Group_5__1__Impl5643);
+            pushFollow(FOLLOW_rule__Refinement__LifelinesAssignment_5_1_in_rule__Refinement__Group_5__1__Impl5705);
             rule__Refinement__LifelinesAssignment_5_1();
 
             state._fsp--;
@@ -7757,20 +7784,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__SequenceDiagram__DiagramNameAssignment_2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2818:1: rule__SequenceDiagram__DiagramNameAssignment_2 : ( RULE_STRING ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2849:1: rule__SequenceDiagram__DiagramNameAssignment_2 : ( RULE_STRING ) ;
     public final void rule__SequenceDiagram__DiagramNameAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2822:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2823:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2853:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2854:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2823:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2824:1: RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2854:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2855:1: RULE_STRING
             {
              before(grammarAccess.getSequenceDiagramAccess().getDiagramNameSTRINGTerminalRuleCall_2_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__SequenceDiagram__DiagramNameAssignment_25682); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__SequenceDiagram__DiagramNameAssignment_25744); 
              after(grammarAccess.getSequenceDiagramAccess().getDiagramNameSTRINGTerminalRuleCall_2_0()); 
 
             }
@@ -7794,20 +7821,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__SequenceDiagram__LocalsAssignment_3_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2833:1: rule__SequenceDiagram__LocalsAssignment_3_1 : ( ruleLocalVariable ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2864:1: rule__SequenceDiagram__LocalsAssignment_3_1 : ( ruleLocalVariable ) ;
     public final void rule__SequenceDiagram__LocalsAssignment_3_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2837:1: ( ( ruleLocalVariable ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2838:1: ( ruleLocalVariable )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2868:1: ( ( ruleLocalVariable ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2869:1: ( ruleLocalVariable )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2838:1: ( ruleLocalVariable )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2839:1: ruleLocalVariable
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2869:1: ( ruleLocalVariable )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2870:1: ruleLocalVariable
             {
              before(grammarAccess.getSequenceDiagramAccess().getLocalsLocalVariableParserRuleCall_3_1_0()); 
-            pushFollow(FOLLOW_ruleLocalVariable_in_rule__SequenceDiagram__LocalsAssignment_3_15713);
+            pushFollow(FOLLOW_ruleLocalVariable_in_rule__SequenceDiagram__LocalsAssignment_3_15775);
             ruleLocalVariable();
 
             state._fsp--;
@@ -7835,20 +7862,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__SequenceDiagram__LocalsAssignment_3_2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2848:1: rule__SequenceDiagram__LocalsAssignment_3_2 : ( ruleLocalVariable ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2879:1: rule__SequenceDiagram__LocalsAssignment_3_2 : ( ruleLocalVariable ) ;
     public final void rule__SequenceDiagram__LocalsAssignment_3_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2852:1: ( ( ruleLocalVariable ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2853:1: ( ruleLocalVariable )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2883:1: ( ( ruleLocalVariable ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2884:1: ( ruleLocalVariable )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2853:1: ( ruleLocalVariable )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2854:1: ruleLocalVariable
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2884:1: ( ruleLocalVariable )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2885:1: ruleLocalVariable
             {
              before(grammarAccess.getSequenceDiagramAccess().getLocalsLocalVariableParserRuleCall_3_2_0()); 
-            pushFollow(FOLLOW_ruleLocalVariable_in_rule__SequenceDiagram__LocalsAssignment_3_25744);
+            pushFollow(FOLLOW_ruleLocalVariable_in_rule__SequenceDiagram__LocalsAssignment_3_25806);
             ruleLocalVariable();
 
             state._fsp--;
@@ -7876,20 +7903,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__SequenceDiagram__LifelinesAssignment_4"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2863:1: rule__SequenceDiagram__LifelinesAssignment_4 : ( ruleLifeline ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2894:1: rule__SequenceDiagram__LifelinesAssignment_4 : ( ruleLifeline ) ;
     public final void rule__SequenceDiagram__LifelinesAssignment_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2867:1: ( ( ruleLifeline ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2868:1: ( ruleLifeline )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2898:1: ( ( ruleLifeline ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2899:1: ( ruleLifeline )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2868:1: ( ruleLifeline )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2869:1: ruleLifeline
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2899:1: ( ruleLifeline )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2900:1: ruleLifeline
             {
              before(grammarAccess.getSequenceDiagramAccess().getLifelinesLifelineParserRuleCall_4_0()); 
-            pushFollow(FOLLOW_ruleLifeline_in_rule__SequenceDiagram__LifelinesAssignment_45775);
+            pushFollow(FOLLOW_ruleLifeline_in_rule__SequenceDiagram__LifelinesAssignment_45837);
             ruleLifeline();
 
             state._fsp--;
@@ -7917,20 +7944,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__SequenceDiagram__InteractionsAssignment_5"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2878:1: rule__SequenceDiagram__InteractionsAssignment_5 : ( ruleInteraction ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2909:1: rule__SequenceDiagram__InteractionsAssignment_5 : ( ruleInteraction ) ;
     public final void rule__SequenceDiagram__InteractionsAssignment_5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2882:1: ( ( ruleInteraction ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2883:1: ( ruleInteraction )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2913:1: ( ( ruleInteraction ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2914:1: ( ruleInteraction )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2883:1: ( ruleInteraction )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2884:1: ruleInteraction
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2914:1: ( ruleInteraction )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2915:1: ruleInteraction
             {
              before(grammarAccess.getSequenceDiagramAccess().getInteractionsInteractionParserRuleCall_5_0()); 
-            pushFollow(FOLLOW_ruleInteraction_in_rule__SequenceDiagram__InteractionsAssignment_55806);
+            pushFollow(FOLLOW_ruleInteraction_in_rule__SequenceDiagram__InteractionsAssignment_55868);
             ruleInteraction();
 
             state._fsp--;
@@ -7958,20 +7985,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__LocalVariable__TypeAssignment_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2893:1: rule__LocalVariable__TypeAssignment_0 : ( ruleDataType ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2924:1: rule__LocalVariable__TypeAssignment_0 : ( ruleDataType ) ;
     public final void rule__LocalVariable__TypeAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2897:1: ( ( ruleDataType ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2898:1: ( ruleDataType )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2928:1: ( ( ruleDataType ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2929:1: ( ruleDataType )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2898:1: ( ruleDataType )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2899:1: ruleDataType
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2929:1: ( ruleDataType )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2930:1: ruleDataType
             {
              before(grammarAccess.getLocalVariableAccess().getTypeDataTypeEnumRuleCall_0_0()); 
-            pushFollow(FOLLOW_ruleDataType_in_rule__LocalVariable__TypeAssignment_05837);
+            pushFollow(FOLLOW_ruleDataType_in_rule__LocalVariable__TypeAssignment_05899);
             ruleDataType();
 
             state._fsp--;
@@ -7999,20 +8026,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__LocalVariable__NameAssignment_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2908:1: rule__LocalVariable__NameAssignment_1 : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2939:1: rule__LocalVariable__NameAssignment_1 : ( RULE_ID ) ;
     public final void rule__LocalVariable__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2912:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2913:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2943:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2944:1: ( RULE_ID )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2913:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2914:1: RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2944:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2945:1: RULE_ID
             {
              before(grammarAccess.getLocalVariableAccess().getNameIDTerminalRuleCall_1_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__LocalVariable__NameAssignment_15868); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__LocalVariable__NameAssignment_15930); 
              after(grammarAccess.getLocalVariableAccess().getNameIDTerminalRuleCall_1_0()); 
 
             }
@@ -8036,20 +8063,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Lifeline__CaptionAssignment_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2923:1: rule__Lifeline__CaptionAssignment_1 : ( RULE_STRING ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2954:1: rule__Lifeline__CaptionAssignment_1 : ( RULE_STRING ) ;
     public final void rule__Lifeline__CaptionAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2927:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2928:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2958:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2959:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2928:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2929:1: RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2959:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2960:1: RULE_STRING
             {
              before(grammarAccess.getLifelineAccess().getCaptionSTRINGTerminalRuleCall_1_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__Lifeline__CaptionAssignment_15899); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__Lifeline__CaptionAssignment_15961); 
              after(grammarAccess.getLifelineAccess().getCaptionSTRINGTerminalRuleCall_1_0()); 
 
             }
@@ -8073,20 +8100,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Lifeline__NameAssignment_3"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2938:1: rule__Lifeline__NameAssignment_3 : ( RULE_ID ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2969:1: rule__Lifeline__NameAssignment_3 : ( RULE_ID ) ;
     public final void rule__Lifeline__NameAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2942:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2943:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2973:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2974:1: ( RULE_ID )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2943:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2944:1: RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2974:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2975:1: RULE_ID
             {
              before(grammarAccess.getLifelineAccess().getNameIDTerminalRuleCall_3_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__Lifeline__NameAssignment_35930); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__Lifeline__NameAssignment_35992); 
              after(grammarAccess.getLifelineAccess().getNameIDTerminalRuleCall_3_0()); 
 
             }
@@ -8110,24 +8137,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__SourceLifelineAssignment_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2953:1: rule__TwoLifelineMessage__SourceLifelineAssignment_0 : ( ( RULE_ID ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2984:1: rule__TwoLifelineMessage__SourceLifelineAssignment_0 : ( ( RULE_ID ) ) ;
     public final void rule__TwoLifelineMessage__SourceLifelineAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2957:1: ( ( ( RULE_ID ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2958:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2988:1: ( ( ( RULE_ID ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2989:1: ( ( RULE_ID ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2958:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2959:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2989:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2990:1: ( RULE_ID )
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getSourceLifelineLifelineCrossReference_0_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2960:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2961:1: RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2991:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2992:1: RULE_ID
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getSourceLifelineLifelineIDTerminalRuleCall_0_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__TwoLifelineMessage__SourceLifelineAssignment_05965); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__TwoLifelineMessage__SourceLifelineAssignment_06027); 
              after(grammarAccess.getTwoLifelineMessageAccess().getSourceLifelineLifelineIDTerminalRuleCall_0_0_1()); 
 
             }
@@ -8155,20 +8182,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__MessageTypeAssignment_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2972:1: rule__TwoLifelineMessage__MessageTypeAssignment_1 : ( ruleMessageType ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3003:1: rule__TwoLifelineMessage__MessageTypeAssignment_1 : ( ruleMessageType ) ;
     public final void rule__TwoLifelineMessage__MessageTypeAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2976:1: ( ( ruleMessageType ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2977:1: ( ruleMessageType )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3007:1: ( ( ruleMessageType ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3008:1: ( ruleMessageType )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2977:1: ( ruleMessageType )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2978:1: ruleMessageType
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3008:1: ( ruleMessageType )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3009:1: ruleMessageType
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getMessageTypeMessageTypeEnumRuleCall_1_0()); 
-            pushFollow(FOLLOW_ruleMessageType_in_rule__TwoLifelineMessage__MessageTypeAssignment_16000);
+            pushFollow(FOLLOW_ruleMessageType_in_rule__TwoLifelineMessage__MessageTypeAssignment_16062);
             ruleMessageType();
 
             state._fsp--;
@@ -8196,20 +8223,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__MessageAssignment_2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2987:1: rule__TwoLifelineMessage__MessageAssignment_2 : ( RULE_STRING ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3018:1: rule__TwoLifelineMessage__MessageAssignment_2 : ( RULE_STRING ) ;
     public final void rule__TwoLifelineMessage__MessageAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2991:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2992:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3022:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3023:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2992:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:2993:1: RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3023:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3024:1: RULE_STRING
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getMessageSTRINGTerminalRuleCall_2_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__MessageAssignment_26031); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__MessageAssignment_26093); 
              after(grammarAccess.getTwoLifelineMessageAccess().getMessageSTRINGTerminalRuleCall_2_0()); 
 
             }
@@ -8233,24 +8260,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__TargetLifelineAssignment_4"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3002:1: rule__TwoLifelineMessage__TargetLifelineAssignment_4 : ( ( RULE_ID ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3033:1: rule__TwoLifelineMessage__TargetLifelineAssignment_4 : ( ( RULE_ID ) ) ;
     public final void rule__TwoLifelineMessage__TargetLifelineAssignment_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3006:1: ( ( ( RULE_ID ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3007:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3037:1: ( ( ( RULE_ID ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3038:1: ( ( RULE_ID ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3007:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3008:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3038:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3039:1: ( RULE_ID )
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getTargetLifelineLifelineCrossReference_4_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3009:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3010:1: RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3040:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3041:1: RULE_ID
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getTargetLifelineLifelineIDTerminalRuleCall_4_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__TwoLifelineMessage__TargetLifelineAssignment_46066); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__TwoLifelineMessage__TargetLifelineAssignment_46128); 
              after(grammarAccess.getTwoLifelineMessageAccess().getTargetLifelineLifelineIDTerminalRuleCall_4_0_1()); 
 
             }
@@ -8278,24 +8305,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__SourceStartBlockAssignment_5_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3021:1: rule__TwoLifelineMessage__SourceStartBlockAssignment_5_0 : ( ( 'sourceStartBlock' ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3052:1: rule__TwoLifelineMessage__SourceStartBlockAssignment_5_0 : ( ( 'sourceStartBlock' ) ) ;
     public final void rule__TwoLifelineMessage__SourceStartBlockAssignment_5_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3025:1: ( ( ( 'sourceStartBlock' ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3026:1: ( ( 'sourceStartBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3056:1: ( ( ( 'sourceStartBlock' ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3057:1: ( ( 'sourceStartBlock' ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3026:1: ( ( 'sourceStartBlock' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3027:1: ( 'sourceStartBlock' )
-            {
-             before(grammarAccess.getTwoLifelineMessageAccess().getSourceStartBlockSourceStartBlockKeyword_5_0_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3028:1: ( 'sourceStartBlock' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3029:1: 'sourceStartBlock'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3057:1: ( ( 'sourceStartBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3058:1: ( 'sourceStartBlock' )
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getSourceStartBlockSourceStartBlockKeyword_5_0_0()); 
-            match(input,38,FOLLOW_38_in_rule__TwoLifelineMessage__SourceStartBlockAssignment_5_06106); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3059:1: ( 'sourceStartBlock' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3060:1: 'sourceStartBlock'
+            {
+             before(grammarAccess.getTwoLifelineMessageAccess().getSourceStartBlockSourceStartBlockKeyword_5_0_0()); 
+            match(input,38,FOLLOW_38_in_rule__TwoLifelineMessage__SourceStartBlockAssignment_5_06168); 
              after(grammarAccess.getTwoLifelineMessageAccess().getSourceStartBlockSourceStartBlockKeyword_5_0_0()); 
 
             }
@@ -8323,24 +8350,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__SourceEndBlockAssignment_5_1_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3044:1: rule__TwoLifelineMessage__SourceEndBlockAssignment_5_1_0 : ( ( 'sourceEndBlock' ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3075:1: rule__TwoLifelineMessage__SourceEndBlockAssignment_5_1_0 : ( ( 'sourceEndBlock' ) ) ;
     public final void rule__TwoLifelineMessage__SourceEndBlockAssignment_5_1_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3048:1: ( ( ( 'sourceEndBlock' ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3049:1: ( ( 'sourceEndBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3079:1: ( ( ( 'sourceEndBlock' ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3080:1: ( ( 'sourceEndBlock' ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3049:1: ( ( 'sourceEndBlock' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3050:1: ( 'sourceEndBlock' )
-            {
-             before(grammarAccess.getTwoLifelineMessageAccess().getSourceEndBlockSourceEndBlockKeyword_5_1_0_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3051:1: ( 'sourceEndBlock' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3052:1: 'sourceEndBlock'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3080:1: ( ( 'sourceEndBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3081:1: ( 'sourceEndBlock' )
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getSourceEndBlockSourceEndBlockKeyword_5_1_0_0()); 
-            match(input,39,FOLLOW_39_in_rule__TwoLifelineMessage__SourceEndBlockAssignment_5_1_06150); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3082:1: ( 'sourceEndBlock' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3083:1: 'sourceEndBlock'
+            {
+             before(grammarAccess.getTwoLifelineMessageAccess().getSourceEndBlockSourceEndBlockKeyword_5_1_0_0()); 
+            match(input,39,FOLLOW_39_in_rule__TwoLifelineMessage__SourceEndBlockAssignment_5_1_06212); 
              after(grammarAccess.getTwoLifelineMessageAccess().getSourceEndBlockSourceEndBlockKeyword_5_1_0_0()); 
 
             }
@@ -8368,20 +8395,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__SourceEndBlockCountAssignment_5_1_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3067:1: rule__TwoLifelineMessage__SourceEndBlockCountAssignment_5_1_1 : ( RULE_INT_GREATER_ZERO ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3098:1: rule__TwoLifelineMessage__SourceEndBlockCountAssignment_5_1_1 : ( RULE_INT_GREATER_ZERO ) ;
     public final void rule__TwoLifelineMessage__SourceEndBlockCountAssignment_5_1_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3071:1: ( ( RULE_INT_GREATER_ZERO ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3072:1: ( RULE_INT_GREATER_ZERO )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3102:1: ( ( RULE_INT_GREATER_ZERO ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3103:1: ( RULE_INT_GREATER_ZERO )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3072:1: ( RULE_INT_GREATER_ZERO )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3073:1: RULE_INT_GREATER_ZERO
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3103:1: ( RULE_INT_GREATER_ZERO )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3104:1: RULE_INT_GREATER_ZERO
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getSourceEndBlockCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0()); 
-            match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_rule__TwoLifelineMessage__SourceEndBlockCountAssignment_5_1_16189); 
+            match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_rule__TwoLifelineMessage__SourceEndBlockCountAssignment_5_1_16251); 
              after(grammarAccess.getTwoLifelineMessageAccess().getSourceEndBlockCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0()); 
 
             }
@@ -8405,24 +8432,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__TargetStartBlockAssignment_6_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3082:1: rule__TwoLifelineMessage__TargetStartBlockAssignment_6_0 : ( ( 'targetStartBlock' ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3113:1: rule__TwoLifelineMessage__TargetStartBlockAssignment_6_0 : ( ( 'targetStartBlock' ) ) ;
     public final void rule__TwoLifelineMessage__TargetStartBlockAssignment_6_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3086:1: ( ( ( 'targetStartBlock' ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3087:1: ( ( 'targetStartBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3117:1: ( ( ( 'targetStartBlock' ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3118:1: ( ( 'targetStartBlock' ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3087:1: ( ( 'targetStartBlock' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3088:1: ( 'targetStartBlock' )
-            {
-             before(grammarAccess.getTwoLifelineMessageAccess().getTargetStartBlockTargetStartBlockKeyword_6_0_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3089:1: ( 'targetStartBlock' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3090:1: 'targetStartBlock'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3118:1: ( ( 'targetStartBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3119:1: ( 'targetStartBlock' )
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getTargetStartBlockTargetStartBlockKeyword_6_0_0()); 
-            match(input,40,FOLLOW_40_in_rule__TwoLifelineMessage__TargetStartBlockAssignment_6_06225); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3120:1: ( 'targetStartBlock' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3121:1: 'targetStartBlock'
+            {
+             before(grammarAccess.getTwoLifelineMessageAccess().getTargetStartBlockTargetStartBlockKeyword_6_0_0()); 
+            match(input,40,FOLLOW_40_in_rule__TwoLifelineMessage__TargetStartBlockAssignment_6_06287); 
              after(grammarAccess.getTwoLifelineMessageAccess().getTargetStartBlockTargetStartBlockKeyword_6_0_0()); 
 
             }
@@ -8450,24 +8477,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__TargetEndBlockAssignment_6_1_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3105:1: rule__TwoLifelineMessage__TargetEndBlockAssignment_6_1_0 : ( ( 'targetEndBlock' ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3136:1: rule__TwoLifelineMessage__TargetEndBlockAssignment_6_1_0 : ( ( 'targetEndBlock' ) ) ;
     public final void rule__TwoLifelineMessage__TargetEndBlockAssignment_6_1_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3109:1: ( ( ( 'targetEndBlock' ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3110:1: ( ( 'targetEndBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3140:1: ( ( ( 'targetEndBlock' ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3141:1: ( ( 'targetEndBlock' ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3110:1: ( ( 'targetEndBlock' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3111:1: ( 'targetEndBlock' )
-            {
-             before(grammarAccess.getTwoLifelineMessageAccess().getTargetEndBlockTargetEndBlockKeyword_6_1_0_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3112:1: ( 'targetEndBlock' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3113:1: 'targetEndBlock'
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3141:1: ( ( 'targetEndBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3142:1: ( 'targetEndBlock' )
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getTargetEndBlockTargetEndBlockKeyword_6_1_0_0()); 
-            match(input,41,FOLLOW_41_in_rule__TwoLifelineMessage__TargetEndBlockAssignment_6_1_06269); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3143:1: ( 'targetEndBlock' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3144:1: 'targetEndBlock'
+            {
+             before(grammarAccess.getTwoLifelineMessageAccess().getTargetEndBlockTargetEndBlockKeyword_6_1_0_0()); 
+            match(input,41,FOLLOW_41_in_rule__TwoLifelineMessage__TargetEndBlockAssignment_6_1_06331); 
              after(grammarAccess.getTwoLifelineMessageAccess().getTargetEndBlockTargetEndBlockKeyword_6_1_0_0()); 
 
             }
@@ -8495,20 +8522,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__TargetEndBlockCountAssignment_6_1_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3128:1: rule__TwoLifelineMessage__TargetEndBlockCountAssignment_6_1_1 : ( RULE_INT_GREATER_ZERO ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3159:1: rule__TwoLifelineMessage__TargetEndBlockCountAssignment_6_1_1 : ( RULE_INT_GREATER_ZERO ) ;
     public final void rule__TwoLifelineMessage__TargetEndBlockCountAssignment_6_1_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3132:1: ( ( RULE_INT_GREATER_ZERO ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3133:1: ( RULE_INT_GREATER_ZERO )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3163:1: ( ( RULE_INT_GREATER_ZERO ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3164:1: ( RULE_INT_GREATER_ZERO )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3133:1: ( RULE_INT_GREATER_ZERO )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3134:1: RULE_INT_GREATER_ZERO
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3164:1: ( RULE_INT_GREATER_ZERO )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3165:1: RULE_INT_GREATER_ZERO
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getTargetEndBlockCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0()); 
-            match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_rule__TwoLifelineMessage__TargetEndBlockCountAssignment_6_1_16308); 
+            match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_rule__TwoLifelineMessage__TargetEndBlockCountAssignment_6_1_16370); 
              after(grammarAccess.getTwoLifelineMessageAccess().getTargetEndBlockCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0()); 
 
             }
@@ -8532,20 +8559,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__SourceNoteAssignment_7_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3143:1: rule__TwoLifelineMessage__SourceNoteAssignment_7_1 : ( RULE_STRING ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3174:1: rule__TwoLifelineMessage__SourceNoteAssignment_7_1 : ( RULE_STRING ) ;
     public final void rule__TwoLifelineMessage__SourceNoteAssignment_7_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3147:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3148:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3178:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3179:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3148:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3149:1: RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3179:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3180:1: RULE_STRING
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getSourceNoteSTRINGTerminalRuleCall_7_1_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__SourceNoteAssignment_7_16339); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__SourceNoteAssignment_7_16401); 
              after(grammarAccess.getTwoLifelineMessageAccess().getSourceNoteSTRINGTerminalRuleCall_7_1_0()); 
 
             }
@@ -8569,20 +8596,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__TwoLifelineMessage__TargetNoteAssignment_8_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3158:1: rule__TwoLifelineMessage__TargetNoteAssignment_8_1 : ( RULE_STRING ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3189:1: rule__TwoLifelineMessage__TargetNoteAssignment_8_1 : ( RULE_STRING ) ;
     public final void rule__TwoLifelineMessage__TargetNoteAssignment_8_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3162:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3163:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3193:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3194:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3163:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3164:1: RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3194:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3195:1: RULE_STRING
             {
              before(grammarAccess.getTwoLifelineMessageAccess().getTargetNoteSTRINGTerminalRuleCall_8_1_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__TargetNoteAssignment_8_16370); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__TargetNoteAssignment_8_16432); 
              after(grammarAccess.getTwoLifelineMessageAccess().getTargetNoteSTRINGTerminalRuleCall_8_1_0()); 
 
             }
@@ -8606,24 +8633,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineMessage__LifelineAssignment_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3173:1: rule__OneLifelineMessage__LifelineAssignment_0 : ( ( RULE_ID ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3204:1: rule__OneLifelineMessage__LifelineAssignment_0 : ( ( RULE_ID ) ) ;
     public final void rule__OneLifelineMessage__LifelineAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3177:1: ( ( ( RULE_ID ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3178:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3208:1: ( ( ( RULE_ID ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3209:1: ( ( RULE_ID ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3178:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3179:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3209:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3210:1: ( RULE_ID )
             {
              before(grammarAccess.getOneLifelineMessageAccess().getLifelineLifelineCrossReference_0_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3180:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3181:1: RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3211:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3212:1: RULE_ID
             {
              before(grammarAccess.getOneLifelineMessageAccess().getLifelineLifelineIDTerminalRuleCall_0_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__OneLifelineMessage__LifelineAssignment_06405); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__OneLifelineMessage__LifelineAssignment_06467); 
              after(grammarAccess.getOneLifelineMessageAccess().getLifelineLifelineIDTerminalRuleCall_0_0_1()); 
 
             }
@@ -8651,31 +8678,25 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineMessage__MessageTypeAssignment_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3192:1: rule__OneLifelineMessage__MessageTypeAssignment_1 : ( ( rule__OneLifelineMessage__MessageTypeAlternatives_1_0 ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3223:1: rule__OneLifelineMessage__MessageTypeAssignment_1 : ( ruleMessageType ) ;
     public final void rule__OneLifelineMessage__MessageTypeAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3196:1: ( ( ( rule__OneLifelineMessage__MessageTypeAlternatives_1_0 ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3197:1: ( ( rule__OneLifelineMessage__MessageTypeAlternatives_1_0 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3227:1: ( ( ruleMessageType ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3228:1: ( ruleMessageType )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3197:1: ( ( rule__OneLifelineMessage__MessageTypeAlternatives_1_0 ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3198:1: ( rule__OneLifelineMessage__MessageTypeAlternatives_1_0 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3228:1: ( ruleMessageType )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3229:1: ruleMessageType
             {
-             before(grammarAccess.getOneLifelineMessageAccess().getMessageTypeAlternatives_1_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3199:1: ( rule__OneLifelineMessage__MessageTypeAlternatives_1_0 )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3199:2: rule__OneLifelineMessage__MessageTypeAlternatives_1_0
-            {
-            pushFollow(FOLLOW_rule__OneLifelineMessage__MessageTypeAlternatives_1_0_in_rule__OneLifelineMessage__MessageTypeAssignment_16440);
-            rule__OneLifelineMessage__MessageTypeAlternatives_1_0();
+             before(grammarAccess.getOneLifelineMessageAccess().getMessageTypeMessageTypeEnumRuleCall_1_0()); 
+            pushFollow(FOLLOW_ruleMessageType_in_rule__OneLifelineMessage__MessageTypeAssignment_16502);
+            ruleMessageType();
 
             state._fsp--;
 
-
-            }
-
-             after(grammarAccess.getOneLifelineMessageAccess().getMessageTypeAlternatives_1_0()); 
+             after(grammarAccess.getOneLifelineMessageAccess().getMessageTypeMessageTypeEnumRuleCall_1_0()); 
 
             }
 
@@ -8697,22 +8718,32 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
     // $ANTLR end "rule__OneLifelineMessage__MessageTypeAssignment_1"
 
 
-    // $ANTLR start "rule__OneLifelineMessage__CaptionAssignment_2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3208:1: rule__OneLifelineMessage__CaptionAssignment_2 : ( RULE_STRING ) ;
-    public final void rule__OneLifelineMessage__CaptionAssignment_2() throws RecognitionException {
+    // $ANTLR start "rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3238:1: rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2 : ( ( rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0 ) ) ;
+    public final void rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3212:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3213:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3242:1: ( ( ( rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0 ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3243:1: ( ( rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0 ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3213:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3214:1: RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3243:1: ( ( rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0 ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3244:1: ( rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0 )
             {
-             before(grammarAccess.getOneLifelineMessageAccess().getCaptionSTRINGTerminalRuleCall_2_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__OneLifelineMessage__CaptionAssignment_26473); 
-             after(grammarAccess.getOneLifelineMessageAccess().getCaptionSTRINGTerminalRuleCall_2_0()); 
+             before(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundAlternatives_2_0()); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3245:1: ( rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0 )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3245:2: rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0
+            {
+            pushFollow(FOLLOW_rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0_in_rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_26533);
+            rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0();
+
+            state._fsp--;
+
+
+            }
+
+             after(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundAlternatives_2_0()); 
 
             }
 
@@ -8731,33 +8762,25 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__OneLifelineMessage__CaptionAssignment_2"
+    // $ANTLR end "rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2"
 
 
-    // $ANTLR start "rule__OneLifelineMessage__StartBlockAssignment_3_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3223:1: rule__OneLifelineMessage__StartBlockAssignment_3_0 : ( ( 'startBlock' ) ) ;
-    public final void rule__OneLifelineMessage__StartBlockAssignment_3_0() throws RecognitionException {
+    // $ANTLR start "rule__OneLifelineMessage__CaptionAssignment_3"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3254:1: rule__OneLifelineMessage__CaptionAssignment_3 : ( RULE_STRING ) ;
+    public final void rule__OneLifelineMessage__CaptionAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3227:1: ( ( ( 'startBlock' ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3228:1: ( ( 'startBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3258:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3259:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3228:1: ( ( 'startBlock' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3229:1: ( 'startBlock' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3259:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3260:1: RULE_STRING
             {
-             before(grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_3_0_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3230:1: ( 'startBlock' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3231:1: 'startBlock'
-            {
-             before(grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_3_0_0()); 
-            match(input,42,FOLLOW_42_in_rule__OneLifelineMessage__StartBlockAssignment_3_06509); 
-             after(grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_3_0_0()); 
-
-            }
-
-             after(grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_3_0_0()); 
+             before(grammarAccess.getOneLifelineMessageAccess().getCaptionSTRINGTerminalRuleCall_3_0()); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__OneLifelineMessage__CaptionAssignment_36566); 
+             after(grammarAccess.getOneLifelineMessageAccess().getCaptionSTRINGTerminalRuleCall_3_0()); 
 
             }
 
@@ -8776,33 +8799,33 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__OneLifelineMessage__StartBlockAssignment_3_0"
+    // $ANTLR end "rule__OneLifelineMessage__CaptionAssignment_3"
 
 
-    // $ANTLR start "rule__OneLifelineMessage__EndBlockAssignment_3_1_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3246:1: rule__OneLifelineMessage__EndBlockAssignment_3_1_0 : ( ( 'endBlock' ) ) ;
-    public final void rule__OneLifelineMessage__EndBlockAssignment_3_1_0() throws RecognitionException {
+    // $ANTLR start "rule__OneLifelineMessage__StartBlockAssignment_4_0"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3269:1: rule__OneLifelineMessage__StartBlockAssignment_4_0 : ( ( 'startBlock' ) ) ;
+    public final void rule__OneLifelineMessage__StartBlockAssignment_4_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3250:1: ( ( ( 'endBlock' ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3251:1: ( ( 'endBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3273:1: ( ( ( 'startBlock' ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3274:1: ( ( 'startBlock' ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3251:1: ( ( 'endBlock' ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3252:1: ( 'endBlock' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3274:1: ( ( 'startBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3275:1: ( 'startBlock' )
             {
-             before(grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_3_1_0_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3253:1: ( 'endBlock' )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3254:1: 'endBlock'
+             before(grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_4_0_0()); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3276:1: ( 'startBlock' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3277:1: 'startBlock'
             {
-             before(grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_3_1_0_0()); 
-            match(input,31,FOLLOW_31_in_rule__OneLifelineMessage__EndBlockAssignment_3_1_06553); 
-             after(grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_3_1_0_0()); 
+             before(grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_4_0_0()); 
+            match(input,42,FOLLOW_42_in_rule__OneLifelineMessage__StartBlockAssignment_4_06602); 
+             after(grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_4_0_0()); 
 
             }
 
-             after(grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_3_1_0_0()); 
+             after(grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_4_0_0()); 
 
             }
 
@@ -8821,25 +8844,33 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__OneLifelineMessage__EndBlockAssignment_3_1_0"
+    // $ANTLR end "rule__OneLifelineMessage__StartBlockAssignment_4_0"
 
 
-    // $ANTLR start "rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3269:1: rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1 : ( RULE_INT_GREATER_ZERO ) ;
-    public final void rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1() throws RecognitionException {
+    // $ANTLR start "rule__OneLifelineMessage__EndBlockAssignment_4_1_0"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3292:1: rule__OneLifelineMessage__EndBlockAssignment_4_1_0 : ( ( 'endBlock' ) ) ;
+    public final void rule__OneLifelineMessage__EndBlockAssignment_4_1_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3273:1: ( ( RULE_INT_GREATER_ZERO ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3274:1: ( RULE_INT_GREATER_ZERO )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3296:1: ( ( ( 'endBlock' ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3297:1: ( ( 'endBlock' ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3274:1: ( RULE_INT_GREATER_ZERO )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3275:1: RULE_INT_GREATER_ZERO
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3297:1: ( ( 'endBlock' ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3298:1: ( 'endBlock' )
             {
-             before(grammarAccess.getOneLifelineMessageAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_3_1_1_0()); 
-            match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_rule__OneLifelineMessage__EndBlockCountAssignment_3_1_16592); 
-             after(grammarAccess.getOneLifelineMessageAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_3_1_1_0()); 
+             before(grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_4_1_0_0()); 
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3299:1: ( 'endBlock' )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3300:1: 'endBlock'
+            {
+             before(grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_4_1_0_0()); 
+            match(input,31,FOLLOW_31_in_rule__OneLifelineMessage__EndBlockAssignment_4_1_06646); 
+             after(grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_4_1_0_0()); 
+
+            }
+
+             after(grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_4_1_0_0()); 
 
             }
 
@@ -8858,25 +8889,25 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1"
+    // $ANTLR end "rule__OneLifelineMessage__EndBlockAssignment_4_1_0"
 
 
-    // $ANTLR start "rule__OneLifelineMessage__NoteAssignment_4_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3284:1: rule__OneLifelineMessage__NoteAssignment_4_1 : ( RULE_STRING ) ;
-    public final void rule__OneLifelineMessage__NoteAssignment_4_1() throws RecognitionException {
+    // $ANTLR start "rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3315:1: rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1 : ( RULE_INT_GREATER_ZERO ) ;
+    public final void rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3288:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3289:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3319:1: ( ( RULE_INT_GREATER_ZERO ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3320:1: ( RULE_INT_GREATER_ZERO )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3289:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3290:1: RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3320:1: ( RULE_INT_GREATER_ZERO )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3321:1: RULE_INT_GREATER_ZERO
             {
-             before(grammarAccess.getOneLifelineMessageAccess().getNoteSTRINGTerminalRuleCall_4_1_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__OneLifelineMessage__NoteAssignment_4_16623); 
-             after(grammarAccess.getOneLifelineMessageAccess().getNoteSTRINGTerminalRuleCall_4_1_0()); 
+             before(grammarAccess.getOneLifelineMessageAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0()); 
+            match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_rule__OneLifelineMessage__EndBlockCountAssignment_4_1_16685); 
+             after(grammarAccess.getOneLifelineMessageAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0()); 
 
             }
 
@@ -8895,28 +8926,65 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
         }
         return ;
     }
-    // $ANTLR end "rule__OneLifelineMessage__NoteAssignment_4_1"
+    // $ANTLR end "rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1"
+
+
+    // $ANTLR start "rule__OneLifelineMessage__NoteAssignment_5_1"
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3330:1: rule__OneLifelineMessage__NoteAssignment_5_1 : ( RULE_STRING ) ;
+    public final void rule__OneLifelineMessage__NoteAssignment_5_1() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3334:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3335:1: ( RULE_STRING )
+            {
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3335:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3336:1: RULE_STRING
+            {
+             before(grammarAccess.getOneLifelineMessageAccess().getNoteSTRINGTerminalRuleCall_5_1_0()); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__OneLifelineMessage__NoteAssignment_5_16716); 
+             after(grammarAccess.getOneLifelineMessageAccess().getNoteSTRINGTerminalRuleCall_5_1_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__OneLifelineMessage__NoteAssignment_5_1"
 
 
     // $ANTLR start "rule__OneLifelineEndBlock__LifelineAssignment_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3299:1: rule__OneLifelineEndBlock__LifelineAssignment_0 : ( ( RULE_ID ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3345:1: rule__OneLifelineEndBlock__LifelineAssignment_0 : ( ( RULE_ID ) ) ;
     public final void rule__OneLifelineEndBlock__LifelineAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3303:1: ( ( ( RULE_ID ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3304:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3349:1: ( ( ( RULE_ID ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3350:1: ( ( RULE_ID ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3304:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3305:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3350:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3351:1: ( RULE_ID )
             {
              before(grammarAccess.getOneLifelineEndBlockAccess().getLifelineLifelineCrossReference_0_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3306:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3307:1: RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3352:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3353:1: RULE_ID
             {
              before(grammarAccess.getOneLifelineEndBlockAccess().getLifelineLifelineIDTerminalRuleCall_0_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__OneLifelineEndBlock__LifelineAssignment_06658); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__OneLifelineEndBlock__LifelineAssignment_06751); 
              after(grammarAccess.getOneLifelineEndBlockAccess().getLifelineLifelineIDTerminalRuleCall_0_0_1()); 
 
             }
@@ -8944,20 +9012,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineEndBlock__EndBlockCountAssignment_2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3318:1: rule__OneLifelineEndBlock__EndBlockCountAssignment_2 : ( RULE_INT_GREATER_ZERO ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3364:1: rule__OneLifelineEndBlock__EndBlockCountAssignment_2 : ( RULE_INT_GREATER_ZERO ) ;
     public final void rule__OneLifelineEndBlock__EndBlockCountAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3322:1: ( ( RULE_INT_GREATER_ZERO ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3323:1: ( RULE_INT_GREATER_ZERO )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3368:1: ( ( RULE_INT_GREATER_ZERO ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3369:1: ( RULE_INT_GREATER_ZERO )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3323:1: ( RULE_INT_GREATER_ZERO )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3324:1: RULE_INT_GREATER_ZERO
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3369:1: ( RULE_INT_GREATER_ZERO )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3370:1: RULE_INT_GREATER_ZERO
             {
              before(grammarAccess.getOneLifelineEndBlockAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_2_0()); 
-            match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_rule__OneLifelineEndBlock__EndBlockCountAssignment_26693); 
+            match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_rule__OneLifelineEndBlock__EndBlockCountAssignment_26786); 
              after(grammarAccess.getOneLifelineEndBlockAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_2_0()); 
 
             }
@@ -8981,24 +9049,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineNote__LifelineAssignment_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3333:1: rule__OneLifelineNote__LifelineAssignment_0 : ( ( RULE_ID ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3379:1: rule__OneLifelineNote__LifelineAssignment_0 : ( ( RULE_ID ) ) ;
     public final void rule__OneLifelineNote__LifelineAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3337:1: ( ( ( RULE_ID ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3338:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3383:1: ( ( ( RULE_ID ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3384:1: ( ( RULE_ID ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3338:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3339:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3384:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3385:1: ( RULE_ID )
             {
              before(grammarAccess.getOneLifelineNoteAccess().getLifelineLifelineCrossReference_0_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3340:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3341:1: RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3386:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3387:1: RULE_ID
             {
              before(grammarAccess.getOneLifelineNoteAccess().getLifelineLifelineIDTerminalRuleCall_0_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__OneLifelineNote__LifelineAssignment_06728); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__OneLifelineNote__LifelineAssignment_06821); 
              after(grammarAccess.getOneLifelineNoteAccess().getLifelineLifelineIDTerminalRuleCall_0_0_1()); 
 
             }
@@ -9026,20 +9094,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__OneLifelineNote__NoteAssignment_2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3352:1: rule__OneLifelineNote__NoteAssignment_2 : ( RULE_STRING ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3398:1: rule__OneLifelineNote__NoteAssignment_2 : ( RULE_STRING ) ;
     public final void rule__OneLifelineNote__NoteAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3356:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3357:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3402:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3403:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3357:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3358:1: RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3403:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3404:1: RULE_STRING
             {
              before(grammarAccess.getOneLifelineNoteAccess().getNoteSTRINGTerminalRuleCall_2_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__OneLifelineNote__NoteAssignment_26763); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__OneLifelineNote__NoteAssignment_26856); 
              after(grammarAccess.getOneLifelineNoteAccess().getNoteSTRINGTerminalRuleCall_2_0()); 
 
             }
@@ -9063,24 +9131,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__DestroyLifelineEvent__LifelineAssignment_0"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3367:1: rule__DestroyLifelineEvent__LifelineAssignment_0 : ( ( RULE_ID ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3413:1: rule__DestroyLifelineEvent__LifelineAssignment_0 : ( ( RULE_ID ) ) ;
     public final void rule__DestroyLifelineEvent__LifelineAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3371:1: ( ( ( RULE_ID ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3372:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3417:1: ( ( ( RULE_ID ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3418:1: ( ( RULE_ID ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3372:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3373:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3418:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3419:1: ( RULE_ID )
             {
              before(grammarAccess.getDestroyLifelineEventAccess().getLifelineLifelineCrossReference_0_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3374:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3375:1: RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3420:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3421:1: RULE_ID
             {
              before(grammarAccess.getDestroyLifelineEventAccess().getLifelineLifelineIDTerminalRuleCall_0_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__DestroyLifelineEvent__LifelineAssignment_06798); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__DestroyLifelineEvent__LifelineAssignment_06891); 
              after(grammarAccess.getDestroyLifelineEventAccess().getLifelineLifelineIDTerminalRuleCall_0_0_1()); 
 
             }
@@ -9108,20 +9176,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Fragment__NameAssignment_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3386:1: rule__Fragment__NameAssignment_1 : ( RULE_STRING ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3432:1: rule__Fragment__NameAssignment_1 : ( RULE_STRING ) ;
     public final void rule__Fragment__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3390:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3391:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3436:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3437:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3391:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3392:1: RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3437:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3438:1: RULE_STRING
             {
              before(grammarAccess.getFragmentAccess().getNameSTRINGTerminalRuleCall_1_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__Fragment__NameAssignment_16833); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__Fragment__NameAssignment_16926); 
              after(grammarAccess.getFragmentAccess().getNameSTRINGTerminalRuleCall_1_0()); 
 
             }
@@ -9145,20 +9213,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Fragment__SectionsAssignment_2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3401:1: rule__Fragment__SectionsAssignment_2 : ( ruleSection ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3447:1: rule__Fragment__SectionsAssignment_2 : ( ruleSection ) ;
     public final void rule__Fragment__SectionsAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3405:1: ( ( ruleSection ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3406:1: ( ruleSection )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3451:1: ( ( ruleSection ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3452:1: ( ruleSection )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3406:1: ( ruleSection )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3407:1: ruleSection
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3452:1: ( ruleSection )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3453:1: ruleSection
             {
              before(grammarAccess.getFragmentAccess().getSectionsSectionParserRuleCall_2_0()); 
-            pushFollow(FOLLOW_ruleSection_in_rule__Fragment__SectionsAssignment_26864);
+            pushFollow(FOLLOW_ruleSection_in_rule__Fragment__SectionsAssignment_26957);
             ruleSection();
 
             state._fsp--;
@@ -9186,20 +9254,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Fragment__SectionsAssignment_3"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3416:1: rule__Fragment__SectionsAssignment_3 : ( ruleSection ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3462:1: rule__Fragment__SectionsAssignment_3 : ( ruleSection ) ;
     public final void rule__Fragment__SectionsAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3420:1: ( ( ruleSection ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3421:1: ( ruleSection )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3466:1: ( ( ruleSection ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3467:1: ( ruleSection )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3421:1: ( ruleSection )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3422:1: ruleSection
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3467:1: ( ruleSection )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3468:1: ruleSection
             {
              before(grammarAccess.getFragmentAccess().getSectionsSectionParserRuleCall_3_0()); 
-            pushFollow(FOLLOW_ruleSection_in_rule__Fragment__SectionsAssignment_36895);
+            pushFollow(FOLLOW_ruleSection_in_rule__Fragment__SectionsAssignment_36988);
             ruleSection();
 
             state._fsp--;
@@ -9227,20 +9295,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__LabelAssignment_1_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3431:1: rule__Section__LabelAssignment_1_1 : ( RULE_STRING ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3477:1: rule__Section__LabelAssignment_1_1 : ( RULE_STRING ) ;
     public final void rule__Section__LabelAssignment_1_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3435:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3436:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3481:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3482:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3436:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3437:1: RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3482:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3483:1: RULE_STRING
             {
              before(grammarAccess.getSectionAccess().getLabelSTRINGTerminalRuleCall_1_1_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__Section__LabelAssignment_1_16926); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__Section__LabelAssignment_1_17019); 
              after(grammarAccess.getSectionAccess().getLabelSTRINGTerminalRuleCall_1_1_0()); 
 
             }
@@ -9264,20 +9332,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__InteractionsAssignment_2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3446:1: rule__Section__InteractionsAssignment_2 : ( ruleInteraction ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3492:1: rule__Section__InteractionsAssignment_2 : ( ruleInteraction ) ;
     public final void rule__Section__InteractionsAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3450:1: ( ( ruleInteraction ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3451:1: ( ruleInteraction )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3496:1: ( ( ruleInteraction ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3497:1: ( ruleInteraction )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3451:1: ( ruleInteraction )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3452:1: ruleInteraction
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3497:1: ( ruleInteraction )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3498:1: ruleInteraction
             {
              before(grammarAccess.getSectionAccess().getInteractionsInteractionParserRuleCall_2_0()); 
-            pushFollow(FOLLOW_ruleInteraction_in_rule__Section__InteractionsAssignment_26957);
+            pushFollow(FOLLOW_ruleInteraction_in_rule__Section__InteractionsAssignment_27050);
             ruleInteraction();
 
             state._fsp--;
@@ -9305,20 +9373,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Section__InteractionsAssignment_3"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3461:1: rule__Section__InteractionsAssignment_3 : ( ruleInteraction ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3507:1: rule__Section__InteractionsAssignment_3 : ( ruleInteraction ) ;
     public final void rule__Section__InteractionsAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3465:1: ( ( ruleInteraction ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3466:1: ( ruleInteraction )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3511:1: ( ( ruleInteraction ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3512:1: ( ruleInteraction )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3466:1: ( ruleInteraction )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3467:1: ruleInteraction
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3512:1: ( ruleInteraction )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3513:1: ruleInteraction
             {
              before(grammarAccess.getSectionAccess().getInteractionsInteractionParserRuleCall_3_0()); 
-            pushFollow(FOLLOW_ruleInteraction_in_rule__Section__InteractionsAssignment_36988);
+            pushFollow(FOLLOW_ruleInteraction_in_rule__Section__InteractionsAssignment_37081);
             ruleInteraction();
 
             state._fsp--;
@@ -9346,20 +9414,20 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__LabelAssignment_2"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3476:1: rule__Refinement__LabelAssignment_2 : ( RULE_STRING ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3522:1: rule__Refinement__LabelAssignment_2 : ( RULE_STRING ) ;
     public final void rule__Refinement__LabelAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3480:1: ( ( RULE_STRING ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3481:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3526:1: ( ( RULE_STRING ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3527:1: ( RULE_STRING )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3481:1: ( RULE_STRING )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3482:1: RULE_STRING
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3527:1: ( RULE_STRING )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3528:1: RULE_STRING
             {
              before(grammarAccess.getRefinementAccess().getLabelSTRINGTerminalRuleCall_2_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__Refinement__LabelAssignment_27019); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__Refinement__LabelAssignment_27112); 
              after(grammarAccess.getRefinementAccess().getLabelSTRINGTerminalRuleCall_2_0()); 
 
             }
@@ -9383,24 +9451,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__LifelinesAssignment_4"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3491:1: rule__Refinement__LifelinesAssignment_4 : ( ( RULE_ID ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3537:1: rule__Refinement__LifelinesAssignment_4 : ( ( RULE_ID ) ) ;
     public final void rule__Refinement__LifelinesAssignment_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3495:1: ( ( ( RULE_ID ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3496:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3541:1: ( ( ( RULE_ID ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3542:1: ( ( RULE_ID ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3496:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3497:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3542:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3543:1: ( RULE_ID )
             {
              before(grammarAccess.getRefinementAccess().getLifelinesLifelineCrossReference_4_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3498:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3499:1: RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3544:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3545:1: RULE_ID
             {
              before(grammarAccess.getRefinementAccess().getLifelinesLifelineIDTerminalRuleCall_4_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__Refinement__LifelinesAssignment_47054); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__Refinement__LifelinesAssignment_47147); 
              after(grammarAccess.getRefinementAccess().getLifelinesLifelineIDTerminalRuleCall_4_0_1()); 
 
             }
@@ -9428,24 +9496,24 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
 
 
     // $ANTLR start "rule__Refinement__LifelinesAssignment_5_1"
-    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3510:1: rule__Refinement__LifelinesAssignment_5_1 : ( ( RULE_ID ) ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3556:1: rule__Refinement__LifelinesAssignment_5_1 : ( ( RULE_ID ) ) ;
     public final void rule__Refinement__LifelinesAssignment_5_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3514:1: ( ( ( RULE_ID ) ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3515:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3560:1: ( ( ( RULE_ID ) ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3561:1: ( ( RULE_ID ) )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3515:1: ( ( RULE_ID ) )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3516:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3561:1: ( ( RULE_ID ) )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3562:1: ( RULE_ID )
             {
              before(grammarAccess.getRefinementAccess().getLifelinesLifelineCrossReference_5_1_0()); 
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3517:1: ( RULE_ID )
-            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3518:1: RULE_ID
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3563:1: ( RULE_ID )
+            // ../de.cau.cs.kieler.uml.sequence.text.ui/src-gen/de/cau/cs/kieler/uml/sequence/text/ui/contentassist/antlr/internal/InternalSequence.g:3564:1: RULE_ID
             {
              before(grammarAccess.getRefinementAccess().getLifelinesLifelineIDTerminalRuleCall_5_1_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__Refinement__LifelinesAssignment_5_17093); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__Refinement__LifelinesAssignment_5_17186); 
              after(grammarAccess.getRefinementAccess().getLifelinesLifelineIDTerminalRuleCall_5_1_0_1()); 
 
             }
@@ -9474,6 +9542,68 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
     // Delegated rules
 
 
+    protected DFA1 dfa1 = new DFA1(this);
+    static final String DFA1_eotS =
+        "\15\uffff";
+    static final String DFA1_eofS =
+        "\15\uffff";
+    static final String DFA1_minS =
+        "\1\5\1\16\4\uffff\4\4\3\uffff";
+    static final String DFA1_maxS =
+        "\1\43\1\40\4\uffff\4\15\3\uffff";
+    static final String DFA1_acceptS =
+        "\2\uffff\1\3\1\7\1\4\1\6\4\uffff\1\5\1\2\1\1";
+    static final String DFA1_specialS =
+        "\15\uffff}>";
+    static final String[] DFA1_transitionS = {
+            "\1\1\33\uffff\1\2\1\uffff\1\3",
+            "\1\6\1\7\1\10\1\11\14\uffff\1\12\1\4\1\5",
+            "",
+            "",
+            "",
+            "",
+            "\1\14\7\uffff\2\13",
+            "\1\14\7\uffff\2\13",
+            "\1\14\7\uffff\2\13",
+            "\1\14\7\uffff\2\13",
+            "",
+            "",
+            ""
+    };
+
+    static final short[] DFA1_eot = DFA.unpackEncodedString(DFA1_eotS);
+    static final short[] DFA1_eof = DFA.unpackEncodedString(DFA1_eofS);
+    static final char[] DFA1_min = DFA.unpackEncodedStringToUnsignedChars(DFA1_minS);
+    static final char[] DFA1_max = DFA.unpackEncodedStringToUnsignedChars(DFA1_maxS);
+    static final short[] DFA1_accept = DFA.unpackEncodedString(DFA1_acceptS);
+    static final short[] DFA1_special = DFA.unpackEncodedString(DFA1_specialS);
+    static final short[][] DFA1_transition;
+
+    static {
+        int numStates = DFA1_transitionS.length;
+        DFA1_transition = new short[numStates][];
+        for (int i=0; i<numStates; i++) {
+            DFA1_transition[i] = DFA.unpackEncodedString(DFA1_transitionS[i]);
+        }
+    }
+
+    class DFA1 extends DFA {
+
+        public DFA1(BaseRecognizer recognizer) {
+            this.recognizer = recognizer;
+            this.decisionNumber = 1;
+            this.eot = DFA1_eot;
+            this.eof = DFA1_eof;
+            this.min = DFA1_min;
+            this.max = DFA1_max;
+            this.accept = DFA1_accept;
+            this.special = DFA1_special;
+            this.transition = DFA1_transition;
+        }
+        public String getDescription() {
+            return "434:1: rule__Interaction__Alternatives : ( ( ruleTwoLifelineMessage ) | ( ruleOneLifelineMessage ) | ( ruleFragment ) | ( ruleOneLifelineEndBlock ) | ( ruleOneLifelineNote ) | ( ruleDestroyLifelineEvent ) | ( ruleRefinement ) );";
+        }
+    }
  
 
     public static final BitSet FOLLOW_ruleSequenceDiagram_in_entryRuleSequenceDiagram61 = new BitSet(new long[]{0x0000000000000000L});
@@ -9525,10 +9655,10 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
     public static final BitSet FOLLOW_rule__TwoLifelineMessage__Group_5_1__0_in_rule__TwoLifelineMessage__Alternatives_51014 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_rule__TwoLifelineMessage__TargetStartBlockAssignment_6_0_in_rule__TwoLifelineMessage__Alternatives_61047 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_rule__TwoLifelineMessage__Group_6_1__0_in_rule__TwoLifelineMessage__Alternatives_61065 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_12_in_rule__OneLifelineMessage__MessageTypeAlternatives_1_01099 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_13_in_rule__OneLifelineMessage__MessageTypeAlternatives_1_01119 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__StartBlockAssignment_3_0_in_rule__OneLifelineMessage__Alternatives_31153 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_3_1__0_in_rule__OneLifelineMessage__Alternatives_31171 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_12_in_rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_01099 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_13_in_rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_01119 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__StartBlockAssignment_4_0_in_rule__OneLifelineMessage__Alternatives_41153 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_4_1__0_in_rule__OneLifelineMessage__Alternatives_41171 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_14_in_rule__MessageType__Alternatives1205 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_15_in_rule__MessageType__Alternatives1226 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_16_in_rule__MessageType__Alternatives1247 = new BitSet(new long[]{0x0000000000000002L});
@@ -9626,144 +9756,148 @@ public class InternalSequenceParser extends AbstractInternalContentAssistParser 
     public static final BitSet FOLLOW_29_in_rule__TwoLifelineMessage__Group_8__0__Impl3354 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_rule__TwoLifelineMessage__Group_8__1__Impl_in_rule__TwoLifelineMessage__Group_8__13385 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_rule__TwoLifelineMessage__TargetNoteAssignment_8_1_in_rule__TwoLifelineMessage__Group_8__1__Impl3412 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__0__Impl_in_rule__OneLifelineMessage__Group__03446 = new BitSet(new long[]{0x0000000000003000L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__0__Impl_in_rule__OneLifelineMessage__Group__03446 = new BitSet(new long[]{0x000000000003C000L});
     public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__1_in_rule__OneLifelineMessage__Group__03449 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_rule__OneLifelineMessage__LifelineAssignment_0_in_rule__OneLifelineMessage__Group__0__Impl3476 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__1__Impl_in_rule__OneLifelineMessage__Group__13506 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__1__Impl_in_rule__OneLifelineMessage__Group__13506 = new BitSet(new long[]{0x0000000000003000L});
     public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__2_in_rule__OneLifelineMessage__Group__13509 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_rule__OneLifelineMessage__MessageTypeAssignment_1_in_rule__OneLifelineMessage__Group__1__Impl3536 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__2__Impl_in_rule__OneLifelineMessage__Group__23566 = new BitSet(new long[]{0x00000400C0000000L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__2__Impl_in_rule__OneLifelineMessage__Group__23566 = new BitSet(new long[]{0x0000000000000010L});
     public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__3_in_rule__OneLifelineMessage__Group__23569 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__CaptionAssignment_2_in_rule__OneLifelineMessage__Group__2__Impl3596 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_2_in_rule__OneLifelineMessage__Group__2__Impl3596 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__3__Impl_in_rule__OneLifelineMessage__Group__33626 = new BitSet(new long[]{0x00000400C0000000L});
     public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__4_in_rule__OneLifelineMessage__Group__33629 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Alternatives_3_in_rule__OneLifelineMessage__Group__3__Impl3656 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__4__Impl_in_rule__OneLifelineMessage__Group__43687 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_4__0_in_rule__OneLifelineMessage__Group__4__Impl3714 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_3_1__0__Impl_in_rule__OneLifelineMessage__Group_3_1__03755 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_3_1__1_in_rule__OneLifelineMessage__Group_3_1__03758 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__EndBlockAssignment_3_1_0_in_rule__OneLifelineMessage__Group_3_1__0__Impl3785 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_3_1__1__Impl_in_rule__OneLifelineMessage__Group_3_1__13815 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__EndBlockCountAssignment_3_1_1_in_rule__OneLifelineMessage__Group_3_1__1__Impl3842 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_4__0__Impl_in_rule__OneLifelineMessage__Group_4__03877 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_4__1_in_rule__OneLifelineMessage__Group_4__03880 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_30_in_rule__OneLifelineMessage__Group_4__0__Impl3908 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_4__1__Impl_in_rule__OneLifelineMessage__Group_4__13939 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__NoteAssignment_4_1_in_rule__OneLifelineMessage__Group_4__1__Impl3966 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__Group__0__Impl_in_rule__OneLifelineEndBlock__Group__04000 = new BitSet(new long[]{0x0000000080000000L});
-    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__Group__1_in_rule__OneLifelineEndBlock__Group__04003 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__LifelineAssignment_0_in_rule__OneLifelineEndBlock__Group__0__Impl4030 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__Group__1__Impl_in_rule__OneLifelineEndBlock__Group__14060 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__Group__2_in_rule__OneLifelineEndBlock__Group__14063 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_31_in_rule__OneLifelineEndBlock__Group__1__Impl4091 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__Group__2__Impl_in_rule__OneLifelineEndBlock__Group__24122 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__EndBlockCountAssignment_2_in_rule__OneLifelineEndBlock__Group__2__Impl4149 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineNote__Group__0__Impl_in_rule__OneLifelineNote__Group__04186 = new BitSet(new long[]{0x0000000040000000L});
-    public static final BitSet FOLLOW_rule__OneLifelineNote__Group__1_in_rule__OneLifelineNote__Group__04189 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineNote__LifelineAssignment_0_in_rule__OneLifelineNote__Group__0__Impl4216 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineNote__Group__1__Impl_in_rule__OneLifelineNote__Group__14246 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_rule__OneLifelineNote__Group__2_in_rule__OneLifelineNote__Group__14249 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_30_in_rule__OneLifelineNote__Group__1__Impl4277 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineNote__Group__2__Impl_in_rule__OneLifelineNote__Group__24308 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineNote__NoteAssignment_2_in_rule__OneLifelineNote__Group__2__Impl4335 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__DestroyLifelineEvent__Group__0__Impl_in_rule__DestroyLifelineEvent__Group__04371 = new BitSet(new long[]{0x0000000100000000L});
-    public static final BitSet FOLLOW_rule__DestroyLifelineEvent__Group__1_in_rule__DestroyLifelineEvent__Group__04374 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__DestroyLifelineEvent__LifelineAssignment_0_in_rule__DestroyLifelineEvent__Group__0__Impl4401 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__DestroyLifelineEvent__Group__1__Impl_in_rule__DestroyLifelineEvent__Group__14431 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_32_in_rule__DestroyLifelineEvent__Group__1__Impl4459 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Fragment__Group__0__Impl_in_rule__Fragment__Group__04494 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_rule__Fragment__Group__1_in_rule__Fragment__Group__04497 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_33_in_rule__Fragment__Group__0__Impl4525 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Fragment__Group__1__Impl_in_rule__Fragment__Group__14556 = new BitSet(new long[]{0x0000000000800000L});
-    public static final BitSet FOLLOW_rule__Fragment__Group__2_in_rule__Fragment__Group__14559 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Fragment__NameAssignment_1_in_rule__Fragment__Group__1__Impl4586 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Fragment__Group__2__Impl_in_rule__Fragment__Group__24616 = new BitSet(new long[]{0x0000000000800000L});
-    public static final BitSet FOLLOW_rule__Fragment__Group__3_in_rule__Fragment__Group__24619 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Fragment__SectionsAssignment_2_in_rule__Fragment__Group__2__Impl4646 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Fragment__Group__3__Impl_in_rule__Fragment__Group__34676 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Fragment__SectionsAssignment_3_in_rule__Fragment__Group__3__Impl4703 = new BitSet(new long[]{0x0000000000800002L});
-    public static final BitSet FOLLOW_rule__Section__Group__0__Impl_in_rule__Section__Group__04742 = new BitSet(new long[]{0x0000000E00000020L});
-    public static final BitSet FOLLOW_rule__Section__Group__1_in_rule__Section__Group__04745 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_23_in_rule__Section__Group__0__Impl4773 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Section__Group__1__Impl_in_rule__Section__Group__14804 = new BitSet(new long[]{0x0000000E00000020L});
-    public static final BitSet FOLLOW_rule__Section__Group__2_in_rule__Section__Group__14807 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Section__Group_1__0_in_rule__Section__Group__1__Impl4834 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Section__Group__2__Impl_in_rule__Section__Group__24865 = new BitSet(new long[]{0x0000000A01000020L});
-    public static final BitSet FOLLOW_rule__Section__Group__3_in_rule__Section__Group__24868 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Section__InteractionsAssignment_2_in_rule__Section__Group__2__Impl4895 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Section__Group__3__Impl_in_rule__Section__Group__34925 = new BitSet(new long[]{0x0000000A01000020L});
-    public static final BitSet FOLLOW_rule__Section__Group__4_in_rule__Section__Group__34928 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Section__InteractionsAssignment_3_in_rule__Section__Group__3__Impl4955 = new BitSet(new long[]{0x0000000A00000022L});
-    public static final BitSet FOLLOW_rule__Section__Group__4__Impl_in_rule__Section__Group__44986 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_24_in_rule__Section__Group__4__Impl5014 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Section__Group_1__0__Impl_in_rule__Section__Group_1__05055 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_rule__Section__Group_1__1_in_rule__Section__Group_1__05058 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_34_in_rule__Section__Group_1__0__Impl5086 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Section__Group_1__1__Impl_in_rule__Section__Group_1__15117 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Section__LabelAssignment_1_1_in_rule__Section__Group_1__1__Impl5144 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__Group__0__Impl_in_rule__Refinement__Group__05178 = new BitSet(new long[]{0x0000000400000000L});
-    public static final BitSet FOLLOW_rule__Refinement__Group__1_in_rule__Refinement__Group__05181 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_35_in_rule__Refinement__Group__0__Impl5209 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__Group__1__Impl_in_rule__Refinement__Group__15240 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_rule__Refinement__Group__2_in_rule__Refinement__Group__15243 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_34_in_rule__Refinement__Group__1__Impl5271 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__Group__2__Impl_in_rule__Refinement__Group__25302 = new BitSet(new long[]{0x0000001000000000L});
-    public static final BitSet FOLLOW_rule__Refinement__Group__3_in_rule__Refinement__Group__25305 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__LabelAssignment_2_in_rule__Refinement__Group__2__Impl5332 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__Group__3__Impl_in_rule__Refinement__Group__35362 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_rule__Refinement__Group__4_in_rule__Refinement__Group__35365 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_36_in_rule__Refinement__Group__3__Impl5393 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__Group__4__Impl_in_rule__Refinement__Group__45424 = new BitSet(new long[]{0x0000002000000000L});
-    public static final BitSet FOLLOW_rule__Refinement__Group__5_in_rule__Refinement__Group__45427 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__LifelinesAssignment_4_in_rule__Refinement__Group__4__Impl5454 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__Group__5__Impl_in_rule__Refinement__Group__55484 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__Group_5__0_in_rule__Refinement__Group__5__Impl5511 = new BitSet(new long[]{0x0000002000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__Group_5__0__Impl_in_rule__Refinement__Group_5__05554 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_rule__Refinement__Group_5__1_in_rule__Refinement__Group_5__05557 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_37_in_rule__Refinement__Group_5__0__Impl5585 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__Group_5__1__Impl_in_rule__Refinement__Group_5__15616 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__Refinement__LifelinesAssignment_5_1_in_rule__Refinement__Group_5__1__Impl5643 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__SequenceDiagram__DiagramNameAssignment_25682 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleLocalVariable_in_rule__SequenceDiagram__LocalsAssignment_3_15713 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleLocalVariable_in_rule__SequenceDiagram__LocalsAssignment_3_25744 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleLifeline_in_rule__SequenceDiagram__LifelinesAssignment_45775 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleInteraction_in_rule__SequenceDiagram__InteractionsAssignment_55806 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleDataType_in_rule__LocalVariable__TypeAssignment_05837 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__LocalVariable__NameAssignment_15868 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__Lifeline__CaptionAssignment_15899 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__Lifeline__NameAssignment_35930 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__TwoLifelineMessage__SourceLifelineAssignment_05965 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleMessageType_in_rule__TwoLifelineMessage__MessageTypeAssignment_16000 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__MessageAssignment_26031 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__TwoLifelineMessage__TargetLifelineAssignment_46066 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_38_in_rule__TwoLifelineMessage__SourceStartBlockAssignment_5_06106 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_39_in_rule__TwoLifelineMessage__SourceEndBlockAssignment_5_1_06150 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_rule__TwoLifelineMessage__SourceEndBlockCountAssignment_5_1_16189 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_40_in_rule__TwoLifelineMessage__TargetStartBlockAssignment_6_06225 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_41_in_rule__TwoLifelineMessage__TargetEndBlockAssignment_6_1_06269 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_rule__TwoLifelineMessage__TargetEndBlockCountAssignment_6_1_16308 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__SourceNoteAssignment_7_16339 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__TargetNoteAssignment_8_16370 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__OneLifelineMessage__LifelineAssignment_06405 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OneLifelineMessage__MessageTypeAlternatives_1_0_in_rule__OneLifelineMessage__MessageTypeAssignment_16440 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__OneLifelineMessage__CaptionAssignment_26473 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_42_in_rule__OneLifelineMessage__StartBlockAssignment_3_06509 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_31_in_rule__OneLifelineMessage__EndBlockAssignment_3_1_06553 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_rule__OneLifelineMessage__EndBlockCountAssignment_3_1_16592 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__OneLifelineMessage__NoteAssignment_4_16623 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__OneLifelineEndBlock__LifelineAssignment_06658 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_rule__OneLifelineEndBlock__EndBlockCountAssignment_26693 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__OneLifelineNote__LifelineAssignment_06728 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__OneLifelineNote__NoteAssignment_26763 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__DestroyLifelineEvent__LifelineAssignment_06798 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__Fragment__NameAssignment_16833 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleSection_in_rule__Fragment__SectionsAssignment_26864 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleSection_in_rule__Fragment__SectionsAssignment_36895 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__Section__LabelAssignment_1_16926 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleInteraction_in_rule__Section__InteractionsAssignment_26957 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleInteraction_in_rule__Section__InteractionsAssignment_36988 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__Refinement__LabelAssignment_27019 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__Refinement__LifelinesAssignment_47054 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__Refinement__LifelinesAssignment_5_17093 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__CaptionAssignment_3_in_rule__OneLifelineMessage__Group__3__Impl3656 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__4__Impl_in_rule__OneLifelineMessage__Group__43686 = new BitSet(new long[]{0x00000400C0000000L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__5_in_rule__OneLifelineMessage__Group__43689 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Alternatives_4_in_rule__OneLifelineMessage__Group__4__Impl3716 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group__5__Impl_in_rule__OneLifelineMessage__Group__53747 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_5__0_in_rule__OneLifelineMessage__Group__5__Impl3774 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_4_1__0__Impl_in_rule__OneLifelineMessage__Group_4_1__03817 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_4_1__1_in_rule__OneLifelineMessage__Group_4_1__03820 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__EndBlockAssignment_4_1_0_in_rule__OneLifelineMessage__Group_4_1__0__Impl3847 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_4_1__1__Impl_in_rule__OneLifelineMessage__Group_4_1__13877 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1_in_rule__OneLifelineMessage__Group_4_1__1__Impl3904 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_5__0__Impl_in_rule__OneLifelineMessage__Group_5__03939 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_5__1_in_rule__OneLifelineMessage__Group_5__03942 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_30_in_rule__OneLifelineMessage__Group_5__0__Impl3970 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__Group_5__1__Impl_in_rule__OneLifelineMessage__Group_5__14001 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__NoteAssignment_5_1_in_rule__OneLifelineMessage__Group_5__1__Impl4028 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__Group__0__Impl_in_rule__OneLifelineEndBlock__Group__04062 = new BitSet(new long[]{0x0000000080000000L});
+    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__Group__1_in_rule__OneLifelineEndBlock__Group__04065 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__LifelineAssignment_0_in_rule__OneLifelineEndBlock__Group__0__Impl4092 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__Group__1__Impl_in_rule__OneLifelineEndBlock__Group__14122 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__Group__2_in_rule__OneLifelineEndBlock__Group__14125 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_31_in_rule__OneLifelineEndBlock__Group__1__Impl4153 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__Group__2__Impl_in_rule__OneLifelineEndBlock__Group__24184 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineEndBlock__EndBlockCountAssignment_2_in_rule__OneLifelineEndBlock__Group__2__Impl4211 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineNote__Group__0__Impl_in_rule__OneLifelineNote__Group__04248 = new BitSet(new long[]{0x0000000040000000L});
+    public static final BitSet FOLLOW_rule__OneLifelineNote__Group__1_in_rule__OneLifelineNote__Group__04251 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineNote__LifelineAssignment_0_in_rule__OneLifelineNote__Group__0__Impl4278 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineNote__Group__1__Impl_in_rule__OneLifelineNote__Group__14308 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_rule__OneLifelineNote__Group__2_in_rule__OneLifelineNote__Group__14311 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_30_in_rule__OneLifelineNote__Group__1__Impl4339 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineNote__Group__2__Impl_in_rule__OneLifelineNote__Group__24370 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineNote__NoteAssignment_2_in_rule__OneLifelineNote__Group__2__Impl4397 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__DestroyLifelineEvent__Group__0__Impl_in_rule__DestroyLifelineEvent__Group__04433 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_rule__DestroyLifelineEvent__Group__1_in_rule__DestroyLifelineEvent__Group__04436 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__DestroyLifelineEvent__LifelineAssignment_0_in_rule__DestroyLifelineEvent__Group__0__Impl4463 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__DestroyLifelineEvent__Group__1__Impl_in_rule__DestroyLifelineEvent__Group__14493 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_32_in_rule__DestroyLifelineEvent__Group__1__Impl4521 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Fragment__Group__0__Impl_in_rule__Fragment__Group__04556 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_rule__Fragment__Group__1_in_rule__Fragment__Group__04559 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_33_in_rule__Fragment__Group__0__Impl4587 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Fragment__Group__1__Impl_in_rule__Fragment__Group__14618 = new BitSet(new long[]{0x0000000000800000L});
+    public static final BitSet FOLLOW_rule__Fragment__Group__2_in_rule__Fragment__Group__14621 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Fragment__NameAssignment_1_in_rule__Fragment__Group__1__Impl4648 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Fragment__Group__2__Impl_in_rule__Fragment__Group__24678 = new BitSet(new long[]{0x0000000000800000L});
+    public static final BitSet FOLLOW_rule__Fragment__Group__3_in_rule__Fragment__Group__24681 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Fragment__SectionsAssignment_2_in_rule__Fragment__Group__2__Impl4708 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Fragment__Group__3__Impl_in_rule__Fragment__Group__34738 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Fragment__SectionsAssignment_3_in_rule__Fragment__Group__3__Impl4765 = new BitSet(new long[]{0x0000000000800002L});
+    public static final BitSet FOLLOW_rule__Section__Group__0__Impl_in_rule__Section__Group__04804 = new BitSet(new long[]{0x0000000E00000020L});
+    public static final BitSet FOLLOW_rule__Section__Group__1_in_rule__Section__Group__04807 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_23_in_rule__Section__Group__0__Impl4835 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Section__Group__1__Impl_in_rule__Section__Group__14866 = new BitSet(new long[]{0x0000000E00000020L});
+    public static final BitSet FOLLOW_rule__Section__Group__2_in_rule__Section__Group__14869 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Section__Group_1__0_in_rule__Section__Group__1__Impl4896 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Section__Group__2__Impl_in_rule__Section__Group__24927 = new BitSet(new long[]{0x0000000A01000020L});
+    public static final BitSet FOLLOW_rule__Section__Group__3_in_rule__Section__Group__24930 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Section__InteractionsAssignment_2_in_rule__Section__Group__2__Impl4957 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Section__Group__3__Impl_in_rule__Section__Group__34987 = new BitSet(new long[]{0x0000000A01000020L});
+    public static final BitSet FOLLOW_rule__Section__Group__4_in_rule__Section__Group__34990 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Section__InteractionsAssignment_3_in_rule__Section__Group__3__Impl5017 = new BitSet(new long[]{0x0000000A00000022L});
+    public static final BitSet FOLLOW_rule__Section__Group__4__Impl_in_rule__Section__Group__45048 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_24_in_rule__Section__Group__4__Impl5076 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Section__Group_1__0__Impl_in_rule__Section__Group_1__05117 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_rule__Section__Group_1__1_in_rule__Section__Group_1__05120 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_34_in_rule__Section__Group_1__0__Impl5148 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Section__Group_1__1__Impl_in_rule__Section__Group_1__15179 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Section__LabelAssignment_1_1_in_rule__Section__Group_1__1__Impl5206 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__Group__0__Impl_in_rule__Refinement__Group__05240 = new BitSet(new long[]{0x0000000400000000L});
+    public static final BitSet FOLLOW_rule__Refinement__Group__1_in_rule__Refinement__Group__05243 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_35_in_rule__Refinement__Group__0__Impl5271 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__Group__1__Impl_in_rule__Refinement__Group__15302 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_rule__Refinement__Group__2_in_rule__Refinement__Group__15305 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_34_in_rule__Refinement__Group__1__Impl5333 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__Group__2__Impl_in_rule__Refinement__Group__25364 = new BitSet(new long[]{0x0000001000000000L});
+    public static final BitSet FOLLOW_rule__Refinement__Group__3_in_rule__Refinement__Group__25367 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__LabelAssignment_2_in_rule__Refinement__Group__2__Impl5394 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__Group__3__Impl_in_rule__Refinement__Group__35424 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_rule__Refinement__Group__4_in_rule__Refinement__Group__35427 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_36_in_rule__Refinement__Group__3__Impl5455 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__Group__4__Impl_in_rule__Refinement__Group__45486 = new BitSet(new long[]{0x0000002000000000L});
+    public static final BitSet FOLLOW_rule__Refinement__Group__5_in_rule__Refinement__Group__45489 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__LifelinesAssignment_4_in_rule__Refinement__Group__4__Impl5516 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__Group__5__Impl_in_rule__Refinement__Group__55546 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__Group_5__0_in_rule__Refinement__Group__5__Impl5573 = new BitSet(new long[]{0x0000002000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__Group_5__0__Impl_in_rule__Refinement__Group_5__05616 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_rule__Refinement__Group_5__1_in_rule__Refinement__Group_5__05619 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_37_in_rule__Refinement__Group_5__0__Impl5647 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__Group_5__1__Impl_in_rule__Refinement__Group_5__15678 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__Refinement__LifelinesAssignment_5_1_in_rule__Refinement__Group_5__1__Impl5705 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__SequenceDiagram__DiagramNameAssignment_25744 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleLocalVariable_in_rule__SequenceDiagram__LocalsAssignment_3_15775 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleLocalVariable_in_rule__SequenceDiagram__LocalsAssignment_3_25806 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleLifeline_in_rule__SequenceDiagram__LifelinesAssignment_45837 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleInteraction_in_rule__SequenceDiagram__InteractionsAssignment_55868 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleDataType_in_rule__LocalVariable__TypeAssignment_05899 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__LocalVariable__NameAssignment_15930 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__Lifeline__CaptionAssignment_15961 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__Lifeline__NameAssignment_35992 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__TwoLifelineMessage__SourceLifelineAssignment_06027 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleMessageType_in_rule__TwoLifelineMessage__MessageTypeAssignment_16062 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__MessageAssignment_26093 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__TwoLifelineMessage__TargetLifelineAssignment_46128 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_38_in_rule__TwoLifelineMessage__SourceStartBlockAssignment_5_06168 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_39_in_rule__TwoLifelineMessage__SourceEndBlockAssignment_5_1_06212 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_rule__TwoLifelineMessage__SourceEndBlockCountAssignment_5_1_16251 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_40_in_rule__TwoLifelineMessage__TargetStartBlockAssignment_6_06287 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_41_in_rule__TwoLifelineMessage__TargetEndBlockAssignment_6_1_06331 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_rule__TwoLifelineMessage__TargetEndBlockCountAssignment_6_1_16370 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__SourceNoteAssignment_7_16401 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__TwoLifelineMessage__TargetNoteAssignment_8_16432 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__OneLifelineMessage__LifelineAssignment_06467 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleMessageType_in_rule__OneLifelineMessage__MessageTypeAssignment_16502 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0_in_rule__OneLifelineMessage__MessageTypeLostAndFoundAssignment_26533 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__OneLifelineMessage__CaptionAssignment_36566 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_42_in_rule__OneLifelineMessage__StartBlockAssignment_4_06602 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_31_in_rule__OneLifelineMessage__EndBlockAssignment_4_1_06646 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_rule__OneLifelineMessage__EndBlockCountAssignment_4_1_16685 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__OneLifelineMessage__NoteAssignment_5_16716 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__OneLifelineEndBlock__LifelineAssignment_06751 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_INT_GREATER_ZERO_in_rule__OneLifelineEndBlock__EndBlockCountAssignment_26786 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__OneLifelineNote__LifelineAssignment_06821 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__OneLifelineNote__NoteAssignment_26856 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__DestroyLifelineEvent__LifelineAssignment_06891 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__Fragment__NameAssignment_16926 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleSection_in_rule__Fragment__SectionsAssignment_26957 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleSection_in_rule__Fragment__SectionsAssignment_36988 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__Section__LabelAssignment_1_17019 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleInteraction_in_rule__Section__InteractionsAssignment_27050 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleInteraction_in_rule__Section__InteractionsAssignment_37081 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__Refinement__LabelAssignment_27112 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__Refinement__LifelinesAssignment_47147 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__Refinement__LifelinesAssignment_5_17186 = new BitSet(new long[]{0x0000000000000002L});
 
 }

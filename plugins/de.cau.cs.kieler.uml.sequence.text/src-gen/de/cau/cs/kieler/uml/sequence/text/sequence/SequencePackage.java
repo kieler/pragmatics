@@ -361,13 +361,22 @@ public interface SequencePackage extends EPackage
   int ONE_LIFELINE_MESSAGE__MESSAGE_TYPE = INTERACTION_FEATURE_COUNT + 1;
 
   /**
+   * The feature id for the '<em><b>Message Type Lost And Found</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND = INTERACTION_FEATURE_COUNT + 2;
+
+  /**
    * The feature id for the '<em><b>Caption</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__CAPTION = INTERACTION_FEATURE_COUNT + 2;
+  int ONE_LIFELINE_MESSAGE__CAPTION = INTERACTION_FEATURE_COUNT + 3;
 
   /**
    * The feature id for the '<em><b>Start Block</b></em>' attribute.
@@ -376,7 +385,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__START_BLOCK = INTERACTION_FEATURE_COUNT + 3;
+  int ONE_LIFELINE_MESSAGE__START_BLOCK = INTERACTION_FEATURE_COUNT + 4;
 
   /**
    * The feature id for the '<em><b>End Block</b></em>' attribute.
@@ -385,7 +394,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__END_BLOCK = INTERACTION_FEATURE_COUNT + 4;
+  int ONE_LIFELINE_MESSAGE__END_BLOCK = INTERACTION_FEATURE_COUNT + 5;
 
   /**
    * The feature id for the '<em><b>End Block Count</b></em>' attribute.
@@ -394,7 +403,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT = INTERACTION_FEATURE_COUNT + 5;
+  int ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT = INTERACTION_FEATURE_COUNT + 6;
 
   /**
    * The feature id for the '<em><b>Note</b></em>' attribute.
@@ -403,7 +412,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__NOTE = INTERACTION_FEATURE_COUNT + 6;
+  int ONE_LIFELINE_MESSAGE__NOTE = INTERACTION_FEATURE_COUNT + 7;
 
   /**
    * The number of structural features of the '<em>One Lifeline Message</em>' class.
@@ -412,7 +421,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 7;
+  int ONE_LIFELINE_MESSAGE_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 8;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineEndBlockImpl <em>One Lifeline End Block</em>}' class.
@@ -951,6 +960,17 @@ public interface SequencePackage extends EPackage
   EAttribute getOneLifelineMessage_MessageType();
 
   /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageTypeLostAndFound <em>Message Type Lost And Found</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Message Type Lost And Found</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageTypeLostAndFound()
+   * @see #getOneLifelineMessage()
+   * @generated
+   */
+  EAttribute getOneLifelineMessage_MessageTypeLostAndFound();
+
+  /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getCaption <em>Caption</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1464,6 +1484,14 @@ public interface SequencePackage extends EPackage
      * @generated
      */
     EAttribute ONE_LIFELINE_MESSAGE__MESSAGE_TYPE = eINSTANCE.getOneLifelineMessage_MessageType();
+
+    /**
+     * The meta object literal for the '<em><b>Message Type Lost And Found</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND = eINSTANCE.getOneLifelineMessage_MessageTypeLostAndFound();
 
     /**
      * The meta object literal for the '<em><b>Caption</b></em>' attribute feature.

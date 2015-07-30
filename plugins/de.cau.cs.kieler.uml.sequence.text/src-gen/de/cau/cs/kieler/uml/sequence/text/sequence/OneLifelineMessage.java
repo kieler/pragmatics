@@ -13,6 +13,7 @@ package de.cau.cs.kieler.uml.sequence.text.sequence;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getLifeline <em>Lifeline</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageType <em>Message Type</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageTypeLostAndFound <em>Message Type Lost And Found</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getCaption <em>Caption</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartBlock <em>Start Block</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndBlock <em>End Block</em>}</li>
@@ -55,6 +56,7 @@ public interface OneLifelineMessage extends Interaction
 
   /**
    * Returns the value of the '<em><b>Message Type</b></em>' attribute.
+   * The literals are from the enumeration {@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageType}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Message Type</em>' attribute isn't clear,
@@ -62,22 +64,50 @@ public interface OneLifelineMessage extends Interaction
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Message Type</em>' attribute.
-   * @see #setMessageType(String)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
+   * @see #setMessageType(MessageType)
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_MessageType()
    * @model
    * @generated
    */
-  String getMessageType();
+  MessageType getMessageType();
 
   /**
    * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageType <em>Message Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Message Type</em>' attribute.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
    * @see #getMessageType()
    * @generated
    */
-  void setMessageType(String value);
+  void setMessageType(MessageType value);
+
+  /**
+   * Returns the value of the '<em><b>Message Type Lost And Found</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Message Type Lost And Found</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Message Type Lost And Found</em>' attribute.
+   * @see #setMessageTypeLostAndFound(String)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_MessageTypeLostAndFound()
+   * @model
+   * @generated
+   */
+  String getMessageTypeLostAndFound();
+
+  /**
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageTypeLostAndFound <em>Message Type Lost And Found</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Message Type Lost And Found</em>' attribute.
+   * @see #getMessageTypeLostAndFound()
+   * @generated
+   */
+  void setMessageTypeLostAndFound(String value);
 
   /**
    * Returns the value of the '<em><b>Caption</b></em>' attribute.
