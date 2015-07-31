@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *     + Department of Computer Science
  *         + Real-Time and Embedded Systems Group
  *
@@ -65,7 +65,7 @@ public final class ManagementApplicationHelper {
             "Management Client for the KIELER Layout Web Service (KWebS)",
             "",
             "Copyright 2012 by Real-Time and Embedded Systems Group,",
-            "Department of Computer Science, Christian-Albrechts-Universitaet zu Kiel",
+            "Department of Computer Science, Kiel University",
             "",
             "The management client is used to control the server from the command",
             "line. You can only use it from the server itself, meaning the management",

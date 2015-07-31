@@ -2,8 +2,8 @@
 <feature
       id="net.ogdf.bin.feature"
       label="OGDF Server Binaries"
-      version="2.0.2.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel"
+      version="2.1.0.qualifier"
+      provider-name="Kiel University"
       os="linux,macosx,solaris,win32"
       arch="sparc,x86,x86_64">
 

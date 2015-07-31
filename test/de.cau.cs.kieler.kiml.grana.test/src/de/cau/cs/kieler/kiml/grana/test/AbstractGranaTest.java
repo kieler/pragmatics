@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.Lists;
@@ -27,13 +26,10 @@ import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
-import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.klay.test.KlayAutomatedJUnitTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.runner.KlayTestRunner;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
-import de.cau.cs.kieler.klay.test.utils.GraphTestUtil;
 
 /**
  * Abstract implementation for a GrAna test file. Implementing classes have to specify which test cases
@@ -46,24 +42,7 @@ import de.cau.cs.kieler.klay.test.utils.GraphTestUtil;
  * 
  * @author uru
  */
-@RunWith(KlayTestRunner.class)
 public abstract class AbstractGranaTest extends KlayAutomatedJUnitTest {
-
-    /** The graph files. */
-    private static List<GraphTestObject> graphsList;
-
-    /**
-     * Initialization - Load the graphs to be tested. This is called in
-     * {@link KlayTestRunner#initialize(Object)}.
-     */
-    public void graphAutomatedTestInitialization() {
-        // make sure the ui plugin is loaded, as it holds required options.
-        KimlUiPlugin.getDefault();
-        // as well as the kiml.service plugin
-        KimlServicePlugin.getDefault();
-
-        graphsList = GraphTestUtil.loadGraphs(getBundleTestPath());
-    }
 
     /**
      * Gets all graph files and provides the parameters for the consecutive tests run by the

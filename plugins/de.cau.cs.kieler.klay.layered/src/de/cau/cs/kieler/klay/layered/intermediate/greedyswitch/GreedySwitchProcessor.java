@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -126,7 +126,7 @@ public class GreedySwitchProcessor implements ILayoutProcessor {
             // the old school way
             int length = bestNodeOrder[i].length;
             LNode[] copy = new LNode[length];
-            System.arraycopy(bestNodeOrder[i], 0, copy[i], 0, length);
+            System.arraycopy(bestNodeOrder[i], 0, copy, 0, length);
             order[i] = copy;
         }
         return order;

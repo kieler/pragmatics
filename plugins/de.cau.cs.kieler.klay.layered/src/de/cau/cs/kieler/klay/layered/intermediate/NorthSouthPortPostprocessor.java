@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -61,7 +61,7 @@ public final class NorthSouthPortPostprocessor implements ILayoutProcessor {
             LNode[] nodeArray = layer.getNodes().toArray(new LNode[layer.getNodes().size()]);
             for (LNode node : nodeArray) {
                 // We only care for North/South Port dummy nodes
-                if (node.getNodeType() != NodeType.NORTH_SOUTH_PORT) {
+                if (node.getType() != NodeType.NORTH_SOUTH_PORT) {
                     continue;
                 }
                 

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -42,6 +42,8 @@ import de.cau.cs.kieler.kiml.service.LayoutMapping;
  * 
  * @author mri
  * @kieler.ignore (excluded from review process)
+ * 
+ * TODO is this class really unused?
  */
 public class EditorKGraphProvider implements IKGraphProvider<IPath> {
 

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -32,6 +32,7 @@ import de.cau.cs.kieler.klay.layered.p5edges.EdgeRouterFactory;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.Spacings;
 
 /**
  * The configurator configures a graph in preparation for layout. This includes making sure that a
@@ -109,6 +110,10 @@ final class GraphConfigurator {
         } else {
             lgraph.setProperty(InternalProperties.RANDOM, new Random(randomSeed));
         }
+        
+        // pre-calculate spacing information
+        Spacings spacings = new Spacings(lgraph);
+        lgraph.setProperty(InternalProperties.SPACINGS, spacings);
     }
     
     

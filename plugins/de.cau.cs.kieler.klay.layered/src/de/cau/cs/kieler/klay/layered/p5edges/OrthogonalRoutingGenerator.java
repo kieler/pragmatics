@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -588,8 +588,8 @@ public final class OrthogonalRoutingGenerator {
         
         // write the full dependency graph to an output file
         if (debugPrefix != null) {
-            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
-                    hyperNodes, debugPrefix, "full");
+            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0
+                    : sourceLayerIndex + 1, hyperNodes, debugPrefix, "full");
         }
         
         // break cycles
@@ -597,8 +597,8 @@ public final class OrthogonalRoutingGenerator {
 
         // write the acyclic dependency graph to an output file
         if (debugPrefix != null) {
-            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0 : sourceLayerIndex + 1,
-                    hyperNodes, debugPrefix, "acyclic");
+            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0
+                    : sourceLayerIndex + 1, hyperNodes, debugPrefix, "acyclic");
         }
         
         // assign ranks to the hypernodes

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -39,8 +39,8 @@ import de.cau.cs.kieler.kiml.grana.text.GranaStandaloneSetup;
 import de.cau.cs.kieler.kiml.grana.text.GranaTextPlugin;
 import de.cau.cs.kieler.kiml.grana.text.GranaTextToBatchJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana;
-import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJob;
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchResult;
+import de.cau.cs.kieler.kiml.grana.ui.batch.IBatchJob;
 
 /**
  * Headless application used to execute Grana Batch Jobs from the command line.
@@ -117,7 +117,7 @@ public class HeadlessGranaExecutor implements IApplication {
                         monitor.beginTask("Execute Batch Analysis", 1);
                         try {
                             Iterable<BatchResult> results =
-                                    new GranaTextToBatchJob().execute(grana, monitor);
+                                    GranaTextToBatchJob.execute(grana, monitor);
                             displayProblems(results);
                         } catch (Exception e) {
                             IStatus status =
@@ -154,7 +154,7 @@ public class HeadlessGranaExecutor implements IApplication {
             if (!result.getFailedJobs().isEmpty()) {
                 IStatus[] stati = new IStatus[result.getFailedJobs().size()];
                 int i = 0;
-                for (Pair<BatchJob<?>, Throwable> entry : result.getFailedJobs()) {
+                for (Pair<IBatchJob<?>, Throwable> entry : result.getFailedJobs()) {
                     stati[i++] =
                             new Status(IStatus.ERROR, GranaTextPlugin.PLUGIN_ID,
                                     "Failed analysis of " + entry.getFirst().getParameter(),

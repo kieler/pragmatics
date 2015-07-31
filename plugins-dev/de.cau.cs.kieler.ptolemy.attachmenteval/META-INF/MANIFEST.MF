@@ -4,7 +4,7 @@ Bundle-Name: KIELER Ptolemy Comment Attachment Evaluation Infrastructure and Exc
 Bundle-SymbolicName: de.cau.cs.kieler.ptolemy.attachmenteval;singleton:=true
 Bundle-Version: 0.0.1.qualifier
 Bundle-Activator: de.cau.cs.kieler.ptolemy.attachmenteval.PtolemyAttachmentEvalPlugin
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jface.text,
@@ -23,6 +23,6 @@ Require-Bundle: org.eclipse.ui,
  de.cau.cs.kieler.core.krendering,
  org.eclipse.ui.workbench,
  de.cau.cs.kieler.kiml.grana
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Import-Package: de.cau.cs.kieler.kiml.service.util

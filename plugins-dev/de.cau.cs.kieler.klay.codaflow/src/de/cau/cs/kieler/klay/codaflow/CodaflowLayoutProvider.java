@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -18,7 +18,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
-import de.cau.cs.kieler.adaptagrams.provider.LibavoidLayoutProvider;
+import de.cau.cs.kieler.adaptagrams.provider.SWIGLibavoidLayoutProvider;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.codaflow.properties.CodaflowProperties;
 
@@ -62,13 +62,13 @@ public class CodaflowLayoutProvider extends AbstractLayoutProvider {
         parentLayout.setProperty(CodaflowProperties.REPOSITION_HIERARCHICAL_PORTS, false);
         if (parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
 
-            de.cau.cs.kieler.klay.codaflow.LibavoidLayoutProvider globalLibavoid =
-                    new de.cau.cs.kieler.klay.codaflow.LibavoidLayoutProvider();
+            de.cau.cs.kieler.klay.codaflow.GlobalLibavoidLayoutProvider globalLibavoid =
+                    new de.cau.cs.kieler.klay.codaflow.GlobalLibavoidLayoutProvider();
 
             globalLibavoid.doLayout(parentNode, progressMonitor.subTask(1));
 
         } else {
-            LibavoidLayoutProvider libavoid = new LibavoidLayoutProvider();
+            SWIGLibavoidLayoutProvider libavoid = new SWIGLibavoidLayoutProvider();
 
             libavoid.doLayout(parentNode, progressMonitor.subTask(1));
         }

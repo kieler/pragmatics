@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2009 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -63,6 +63,9 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
     private final Map<String, Integer> supportedDiagrams = Maps.newHashMap();
     /** map of supported graph features. */
     private final Map<GraphFeature, Integer> supportedFeatures = Maps.newEnumMap(GraphFeature.class);
+    /** map of descriptions of supported graph features. */
+    private final Map<GraphFeature, String> supportedFeaturesDescriptions =
+            Maps.newEnumMap(GraphFeature.class);
     
     /**
      * {@inheritDoc}
@@ -216,6 +219,37 @@ public final class LayoutAlgorithmData implements ILayoutMetaData {
      */
     public boolean supportsFeature(final GraphFeature graphFeature) {
         return getFeatureSupport(graphFeature) > MIN_PRIORITY;
+    }
+    
+    /**
+     * Adds a detailed description for a given {@link GraphFeature}. It should describe how well the
+     * feature is supported by the algorithm and if there are any restrictions to its usage.
+     * This setter does not perform any sanity checks whether the given feature is supported all or the
+     * like. If the the description is {@code null} or the emtpy string, possibly existing descriptions
+     * are removed.
+     * 
+     * @param feature the feature to describe.
+     * @param featureDescription the features' description. May be {@code null}.
+     */
+    public void setSupportedFeatureDescription(final GraphFeature feature,
+            final String featureDescription) {
+        
+        if (featureDescription != null && !"".equals(featureDescription)) {
+            supportedFeaturesDescriptions.put(feature, featureDescription);
+        } else {
+            supportedFeaturesDescriptions.remove(feature);
+        }
+    }
+
+    /**
+     * Gets the detailed description of the given {@link GraphFeature} how well the feature is supported.
+     * May be {@code null}.
+     * 
+     * @param feature the feature to get the description for.
+     * @return the description if set, {@code null} otherwise.
+     */
+    public String getSupportedFeatureDescription(final GraphFeature feature) {
+        return supportedFeaturesDescriptions.get(feature);
     }
 
     /**

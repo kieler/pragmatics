@@ -66,6 +66,13 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
     {
       case GranaPackage.GRANA: return createGrana();
       case GranaPackage.JOB: return createJob();
+      case GranaPackage.REGULAR_JOB: return createRegularJob();
+      case GranaPackage.RANGE_JOB: return createRangeJob();
+      case GranaPackage.RANGE: return createRange();
+      case GranaPackage.FLOAT_RANGE: return createFloatRange();
+      case GranaPackage.INT_RANGE: return createIntRange();
+      case GranaPackage.INT_RANGE_VALUES: return createIntRangeValues();
+      case GranaPackage.INT_RANGE_RANGE: return createIntRangeRange();
       case GranaPackage.RESOURCE: return createResource();
       case GranaPackage.RESOURCE_REFERENCE: return createResourceReference();
       case GranaPackage.GLOBAL_RESOURCE_REF: return createGlobalResourceRef();
@@ -100,6 +107,83 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
   {
     JobImpl job = new JobImpl();
     return job;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public RegularJob createRegularJob()
+  {
+    RegularJobImpl regularJob = new RegularJobImpl();
+    return regularJob;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public RangeJob createRangeJob()
+  {
+    RangeJobImpl rangeJob = new RangeJobImpl();
+    return rangeJob;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Range createRange()
+  {
+    RangeImpl range = new RangeImpl();
+    return range;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public FloatRange createFloatRange()
+  {
+    FloatRangeImpl floatRange = new FloatRangeImpl();
+    return floatRange;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IntRange createIntRange()
+  {
+    IntRangeImpl intRange = new IntRangeImpl();
+    return intRange;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IntRangeValues createIntRangeValues()
+  {
+    IntRangeValuesImpl intRangeValues = new IntRangeValuesImpl();
+    return intRangeValues;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public IntRangeRange createIntRangeRange()
+  {
+    IntRangeRangeImpl intRangeRange = new IntRangeRangeImpl();
+    return intRangeRange;
   }
 
   /**

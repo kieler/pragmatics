@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2008 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -13,8 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.graphviz.layouter;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -24,7 +23,7 @@ import org.osgi.framework.BundleContext;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class GraphvizLayouterPlugin extends AbstractUIPlugin {
+public class GraphvizLayouterPlugin extends Plugin {
 
     /** the plug-in ID. */
     public static final String PLUGIN_ID = "de.cau.cs.kieler.kiml.graphviz.layouter";
@@ -65,14 +64,4 @@ public class GraphvizLayouterPlugin extends AbstractUIPlugin {
         return plugin;
     }
 
-    /**
-     * Returns an image descriptor for the image file at the given plug-in
-     * relative path.
-     * 
-     * @param path the path
-     * @return the image descriptor
-     */
-    public static ImageDescriptor getImageDescriptor(final String path) {
-        return imageDescriptorFromPlugin(PLUGIN_ID, path);
-    }
 }

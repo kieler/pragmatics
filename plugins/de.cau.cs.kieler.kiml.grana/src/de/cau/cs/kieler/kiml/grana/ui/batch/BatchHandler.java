@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -43,6 +43,7 @@ import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
+import de.cau.cs.kieler.kiml.grana.ui.batch.wizard.BatchWizard;
 import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter;
 
 /**
@@ -132,7 +133,7 @@ public class BatchHandler extends AbstractHandler {
                             if (!result.getFailedJobs().isEmpty()) {
                                 IStatus[] stati = new IStatus[result.getFailedJobs().size()];
                                 int i = 0;
-                                for (Pair<BatchJob<?>, Throwable> entry : result.getFailedJobs()) {
+                                for (Pair<IBatchJob<?>, Throwable> entry : result.getFailedJobs()) {
                                     stati[i++] = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID,
                                             "Failed analysis of " + entry.getFirst().getParameter(),
                                             entry.getSecond());

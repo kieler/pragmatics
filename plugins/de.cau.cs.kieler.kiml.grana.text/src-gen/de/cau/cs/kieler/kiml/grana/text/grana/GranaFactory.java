@@ -41,6 +41,69 @@ public interface GranaFactory extends EFactory
   Job createJob();
 
   /**
+   * Returns a new object of class '<em>Regular Job</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Regular Job</em>'.
+   * @generated
+   */
+  RegularJob createRegularJob();
+
+  /**
+   * Returns a new object of class '<em>Range Job</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Range Job</em>'.
+   * @generated
+   */
+  RangeJob createRangeJob();
+
+  /**
+   * Returns a new object of class '<em>Range</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Range</em>'.
+   * @generated
+   */
+  Range createRange();
+
+  /**
+   * Returns a new object of class '<em>Float Range</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Float Range</em>'.
+   * @generated
+   */
+  FloatRange createFloatRange();
+
+  /**
+   * Returns a new object of class '<em>Int Range</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Int Range</em>'.
+   * @generated
+   */
+  IntRange createIntRange();
+
+  /**
+   * Returns a new object of class '<em>Int Range Values</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Int Range Values</em>'.
+   * @generated
+   */
+  IntRangeValues createIntRangeValues();
+
+  /**
+   * Returns a new object of class '<em>Int Range Range</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Int Range Range</em>'.
+   * @generated
+   */
+  IntRangeRange createIntRangeRange();
+
+  /**
    * Returns a new object of class '<em>Resource</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

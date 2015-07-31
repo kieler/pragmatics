@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -51,7 +51,7 @@ public class NodePositionProcessor implements ILayoutProcessor {
             if (tNode.getProperty(Properties.ROOT)) {
                 root = tNode;
                 KVector pos = tNode.getPosition();
-                pos.x = tNode.getProperty(Properties.XCOOR);
+                pos.x = tNode.getProperty(Properties.XCOOR).doubleValue();
                 pos.y = 0;
             }
         }
@@ -87,8 +87,8 @@ public class NodePositionProcessor implements ILayoutProcessor {
             for (TNode tNode : currentLevel) {
                 nextLevel.addAll(tNode.getChildrenCopy());
                 KVector pos = tNode.getPosition();
-                pos.x = tNode.getProperty(Properties.XCOOR);
-                pos.y = tNode.getProperty(Properties.YCOOR);
+                pos.x = tNode.getProperty(Properties.XCOOR).doubleValue();
+                pos.y = tNode.getProperty(Properties.YCOOR).doubleValue();
             }
 
             /** go to the next level */

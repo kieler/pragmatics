@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -32,7 +32,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * 
  * @author alan
  */
-class SwitchDecider {
+public class SwitchDecider {
     private final LNode[] freeLayer;
     private final InLayerEdgeTwoNodeCrossingCounter inLayerCounter;
     private final NorthSouthEdgeNeighbouringNodeCrossingsCounter northSouthCounter;
@@ -45,10 +45,10 @@ class SwitchDecider {
      *            The freeLayer to switch in.
      * @param graph
      *            The graph as LNode[][]
-     * @throws SwitchDeciderException
-     *             on faulty input
+     * @param crossingMatrixFiller
+     *            the crossing matrix filler
      */
-    SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
+    public SwitchDecider(final int freeLayerIndex, final LNode[][] graph,
             final CrossingMatrixFiller crossingMatrixFiller) {
         
         this.crossingMatrixFiller = crossingMatrixFiller;
@@ -62,6 +62,12 @@ class SwitchDecider {
         northSouthCounter = new NorthSouthEdgeNeighbouringNodeCrossingsCounter(freeLayer);
     }
 
+    /**
+     * @param upperNode
+     *            a node
+     * @param lowerNode
+     *            a node
+     */
     public final void notifyOfSwitch(final LNode upperNode, final LNode lowerNode) {
         inLayerCounter.notifyOfSwitch(upperNode, lowerNode);
     }
@@ -125,8 +131,8 @@ class SwitchDecider {
 
     private boolean haveLayoutUnitConstraints(final LNode upperNode, final LNode lowerNode) {
         boolean neitherNodeIsLongEdgeDummy =
-                upperNode.getNodeType() != NodeType.LONG_EDGE
-                        && lowerNode.getNodeType() != NodeType.LONG_EDGE;
+                upperNode.getType() != NodeType.LONG_EDGE
+                        && lowerNode.getType() != NodeType.LONG_EDGE;
 
         // If upperNode and lowerNode are part of a layout unit not only containing themselves,
         // then the layout units must be equal for a switch to be allowed.
@@ -150,7 +156,8 @@ class SwitchDecider {
     private boolean hasEdgesOnSide(final LNode node, final PortSide side) {
         Iterable<LPort> ports = node.getPorts(side);
         for (LPort port : ports) {
-            if (!port.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES).isEmpty()) {
+            if (port.getProperty(InternalProperties.PORT_DUMMY) != null
+                    || port.getConnectedEdges().iterator().hasNext()) {
                 return true;
             }
         }
@@ -167,11 +174,11 @@ class SwitchDecider {
     }
 
     private boolean isNormalNode(final LNode node) {
-        return node.getNodeType() == NodeType.NORMAL;
+        return node.getType() == NodeType.NORMAL;
     }
 
     private boolean isNorthSouthPortNode(final LNode node) {
-        return node.getNodeType() == NodeType.NORTH_SOUTH_PORT;
+        return node.getType() == NodeType.NORTH_SOUTH_PORT;
     }
 
 
@@ -181,7 +188,7 @@ class SwitchDecider {
      * @author alan
      *
      */
-    protected enum CrossingCountSide {
+    public enum CrossingCountSide {
         /** Consider crossings to the west of the free layer. */
         WEST,
         /** Consider crossings to the east of the free layer. */

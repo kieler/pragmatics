@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -28,6 +28,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.bk.ThresholdStrategy.NullThresholdS
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.ThresholdStrategy.SimpleThresholdStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.Spacings;
 
 /**
  * For documentation see {@link BKNodePlacer}.
@@ -43,16 +44,12 @@ public class BKCompactor implements ICompactor {
     
     /** The graph to process. */
     private LGraph layeredGraph;
-    /** Basic spacing between nodes, determined by layout options. */
-    private float normalSpacing;
-    /** Spacing between dummy nodes, determined by layout options. */
-    private float smallSpacing;
-    /** Spacing between external ports, determined by layout options. */
-    private float externalPortSpacing;
     /** Specific {@link ThresholdStrategy} to be used for execution. */
     private ThresholdStrategy threshStrategy;
     /** Information about a node's neighbors and index within its layer. */
-    private NeighborhoodInformation ni; 
+    private NeighborhoodInformation ni;
+    /** Spacings. */
+    private Spacings spacings;
     
     /**
      * @param layeredGraph the graph to handle.
@@ -61,11 +58,7 @@ public class BKCompactor implements ICompactor {
     public BKCompactor(final LGraph layeredGraph, final NeighborhoodInformation ni) {
         this.layeredGraph = layeredGraph;
         this.ni = ni;
-        // Initialize spacing value from layout options.
-        normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING) 
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
-        smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        externalPortSpacing = layeredGraph.getProperty(InternalProperties.PORT_SPACING);
+        spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
         
         // configure the requested threshold strategy
         if (layeredGraph.getProperty(Properties.COMPACTION_STRATEGY) 
@@ -184,7 +177,7 @@ public class BKCompactor implements ICompactor {
         do {
             int currentIndexInLayer = ni.nodeIndex[currentNode.id];
             int currentLayerSize = currentNode.getLayer().getNodes().size();
-            NodeType currentNodeType = currentNode.getNodeType();
+            NodeType currentNodeType = currentNode.getType();
 
             // If the node is the top or bottom node of its layer, it can be placed safely since it is
             // the first to be placed in its layer. If it's not, we'll have to check its neighbours
@@ -202,7 +195,7 @@ public class BKCompactor implements ICompactor {
                 neighborRoot = bal.root[neighbor.id];
                 
                 // The neighbour's node type is important for the spacing between the two later on
-                NodeType neighborNodeType = neighbor.getNodeType();
+                NodeType neighborNodeType = neighbor.getType();
 
                 // Ensure the neighbor was already placed
                 placeBlock(neighborRoot, bal);
@@ -223,7 +216,7 @@ public class BKCompactor implements ICompactor {
                     // They are part of the same class
                     
                     // The minimal spacing between the two nodes depends on their node type
-                    double spacing = getSpacing(currentNodeType, neighborNodeType);
+                    double spacing = spacings.getVerticalSpacing(currentNodeType, neighborNodeType);
                     
                     // Determine the block's final position
                     if (bal.vdir == VDirection.UP) {
@@ -270,7 +263,7 @@ public class BKCompactor implements ICompactor {
                     // They are not part of the same class. Compute how the two classes can be compacted
                     // later. Hence we determine a minimal required space between the two classes 
                     // relative two the two class sinks.
-                    double spacing = normalSpacing;
+                    double spacing = spacings.nodeSpacing;
                     
                     if (bal.vdir == VDirection.UP) {
                         //  possible setup:
@@ -317,21 +310,4 @@ public class BKCompactor implements ICompactor {
         
         threshStrategy.finishBlock(root);
     }
-
-    private double getSpacing(final NodeType currentNodeType, final NodeType neighborNodeType) {
-        double spacing = smallSpacing;
-        if (currentNodeType == NodeType.EXTERNAL_PORT
-                && neighborNodeType == NodeType.EXTERNAL_PORT) {
-            
-            spacing = externalPortSpacing;
-        } else if (currentNodeType == NodeType.NORMAL
-                || neighborNodeType == NodeType.NORMAL) {
-            
-            // as soon as either of the two involved nodes is a regular node, 
-            // use normal spacing
-            spacing = normalSpacing;
-        }
-        return spacing;
-    }
-    
 }

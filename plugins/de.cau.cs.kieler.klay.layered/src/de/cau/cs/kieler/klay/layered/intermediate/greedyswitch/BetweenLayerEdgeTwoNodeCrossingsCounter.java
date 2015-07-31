@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -31,7 +31,7 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
  *
  * @author alan
  */
-class BetweenLayerEdgeTwoNodeCrossingsCounter {
+public class BetweenLayerEdgeTwoNodeCrossingsCounter {
     private int upperLowerCrossings;
     private int lowerUpperCrossings;
     private AdjacencyList upperAdjacencies;

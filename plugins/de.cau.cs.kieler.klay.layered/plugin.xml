@@ -58,6 +58,9 @@
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.unnecessaryBendpoints">
          </knownOption>
          <knownOption
@@ -290,6 +293,18 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
+            default="0.5"
+            description="Factor by which the object spacing is multiplied to arrive at the minimal spacing between an edge and a node."
+            id="de.cau.cs.kieler.klay.layered.edgeNodeSpacingFactor"
+            lowerBound="0.01"
+            name="Edge Node Spacing Factor"
+            type="float"
+            upperBound="100"
+            variance="0.2">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
             default="false"
             description="Edges that have no ports are merged so they touch the connected nodes at the same points."
             id="de.cau.cs.kieler.klay.layered.mergeEdges"
@@ -378,7 +393,7 @@
       <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection"
-            default="SMART"
+            default="ALWAYS_DOWN"
             description="Method to decide on edge label sides."
             id="de.cau.cs.kieler.klay.layered.edgeLabelSideSelection"
             name="Edge Label Side Selection"
@@ -445,7 +460,7 @@
       <layoutOption
             advanced="true"
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor$CompactionStrategy"
+            class="de.cau.cs.kieler.klay.layered.p4nodes.bk.CompactionStrategy"
             description="Specifies the compaction strategy when using the Brandes and Koepf node placer."
             id="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy"
             name="Compaction Strategy"

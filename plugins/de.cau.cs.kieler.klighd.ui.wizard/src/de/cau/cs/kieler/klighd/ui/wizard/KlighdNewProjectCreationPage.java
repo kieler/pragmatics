@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -395,6 +395,8 @@ public class KlighdNewProjectCreationPage extends WizardNewProjectCreationPage {
             return false;
         }
         if (!sourceModel.getText().contains(".")) {
+            // this check actually keeps people from writing transformations against models that lie in
+            // the default package, but no one should use the default package anyway, so... screw it.
             setErrorMessage(JavaUIMessages.KlighdNewProjectCreationPage_MsgSourceModelNotQualified);
             return false;
         }

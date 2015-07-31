@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -84,7 +84,7 @@ public class KlighdCanvas extends PSWTCanvas {
         this.removeInputEventListener(super.getZoomEventHandler());
         this.removeInputEventListener(super.getPanEventHandler());
 
-        this.graphics = new KlighdSWTGraphicsImpl(null, parent.getDisplay());
+        this.graphics = new KlighdSWTGraphicsImpl(parent.getDisplay());
 
         // this reduces flickering drastically
         this.setDoubleBuffered(true);

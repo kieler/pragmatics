@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -26,6 +26,16 @@ import org.eclipse.jface.viewers.Viewer;
  * @author cds
  */
 public class FileTableContentProvider implements IStructuredContentProvider {
+    
+    private String fileExtension;
+    
+    /**
+     * 
+     */
+    public FileTableContentProvider() {
+        fileExtension = ".dot";
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -48,12 +58,26 @@ public class FileTableContentProvider implements IStructuredContentProvider {
             // Return a list of .dot files
             return ((File) inputElement).listFiles(new FileFilter() {
                 public boolean accept(final File file) {
-                    return file.isFile() && file.getName().endsWith(".dot"); //$NON-NLS-1$
+                    return file.isFile() && file.getName().endsWith(fileExtension);
                 }
             });
             
         } else {
             return new Object[0];
         }
+    }
+
+    /**
+     * @return the fileExtension
+     */
+    public String getFileExtension() {
+        return fileExtension;
+    }
+
+    /**
+     * @param fileExtension the fileExtension to set
+     */
+    public void setFileExtension(final String fileExtension) {
+        this.fileExtension = fileExtension;
     }
 }

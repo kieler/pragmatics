@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -30,7 +30,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
  * @kieler.ignore (excluded from review process)
  * @param <T> the type of the parameter
  */
-public class BatchJob<T> {
+public class BatchJob<T> implements IBatchJob<T> {
 
     /** the parameter for this batch job. */
     private T parameter;
@@ -51,20 +51,6 @@ public class BatchJob<T> {
     }
 
     /**
-     * The alternative constructor for an AnalysisBatchJob using a KGraph instance instead of a
-     * KGraph provider.
-     * 
-     * @param param
-     *            the parameter
-     * @param graph
-     *            the KGraph instance
-     */
-    public BatchJob(final T param, final KNode graph) {
-        parameter = param;
-        kgraphProvider = new StaticProvider(graph);
-    }
-
-    /**
      * Returns the parameter of the job.
      * 
      * @return the parameter
@@ -78,16 +64,7 @@ public class BatchJob<T> {
     private static final int WORK_ANALYSIS = 2;
 
     /**
-     * Executes the job which consists of retrieving a KGraph instance through the KGraph provider
-     * and performing the given analyses on it.
-     * 
-     * @param analyses
-     *            the analyses
-     * @param monitor
-     *            the progress monitor
-     * @return the job result
-     * @throws Exception
-     *             any kind of exception
+     * {@inheritDoc}
      */
     public BatchJobResult<T> execute(final List<AnalysisData> analyses,
             final IKielerProgressMonitor monitor) throws Exception {
@@ -101,33 +78,5 @@ public class BatchJob<T> {
                 new BatchJobResult<T>(this, context.getResults(), execResults);
         monitor.done();
         return batchJobResult;
-    }
-
-    /**
-     * A KGraph provider which returns a given KGraph instance.
-     * 
-     * @author mri
-     */
-    private class StaticProvider implements IKGraphProvider<T> {
-
-        /** the static kgraph instance. */
-        private KNode graph;
-
-        /**
-         * The constructor for the StaticProvider.
-         * 
-         * @param parent
-         *            the parent node of the KGraph instance
-         */
-        public StaticProvider(final KNode parent) {
-            graph = parent;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public KNode getKGraph(final T param, final IKielerProgressMonitor monitor) {
-            return graph;
-        }
     }
 }

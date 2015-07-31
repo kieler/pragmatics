@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -162,6 +162,35 @@ public final class LEdge extends LGraphElement {
         
         if (this.target != null) {
             this.target.getIncomingEdges().add(this);
+        }
+    }
+    
+    /**
+     * The same as {@link #setTarget(LPort)} with the exception that the index the edge is inserted at
+     * in the target port's list of incoming edges can be specified.
+     * 
+     * <p>
+     * <em>If you need to think about whether you want to use this or {@link #setTarget(LPort)}, chances
+     * are you want the latter.</em>
+     * </p>
+     *
+     * @param targetPort
+     *            the target port to set
+     * @param index
+     *            the index to insert the edge at in the port's list of edges.
+     * @throws IndexOutOfBoundsException
+     *             if {@code target != null} and the index is invalid.
+     */
+    public void setTargetAndInsertAtIndex(final LPort targetPort, final int index) {
+        if (this.target != null) {
+            this.target.getIncomingEdges().remove(this);
+        }
+
+        this.target = targetPort;
+
+        if (this.target != null) {
+            // The insertion index below is the only difference to setTarget(LPort)
+            this.target.getIncomingEdges().add(index, this);
         }
     }
     

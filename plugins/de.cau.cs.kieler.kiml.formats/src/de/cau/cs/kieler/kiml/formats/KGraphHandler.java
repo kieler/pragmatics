@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2008 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *     + Department of Computer Science
  *         + Real-Time and Embedded Systems Group
  *
@@ -56,10 +56,11 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
     @Override
     public void deserialize(final String serializedGraph,
             final TransformationData<KNode, KNode> transData) {
+        
         super.deserialize(serializedGraph, transData);
         if (transData.getSourceGraph() != null) {
             // load layout options from their serialized form
-            KimlUtil.loadDataElements(transData.getSourceGraph());
+            KimlUtil.loadDataElements(transData.getSourceGraph(), true);
         }
     }
 

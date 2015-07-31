@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -50,7 +50,7 @@ import de.cau.cs.kieler.kwebs.server.util.Resources;
  *
  * @author swe
  */
-public final class ServerLayoutMetaDataService extends ExtensionLayoutMetaDataService {
+public final class ServerLayoutMetaDataService extends AbstractExtensionLayoutMetaDataService {
 
     /** Caching the layout service meta data. */
     private static String serviceDataXMI;

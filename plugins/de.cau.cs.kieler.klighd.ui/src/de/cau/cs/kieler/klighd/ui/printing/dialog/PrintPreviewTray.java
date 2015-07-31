@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -237,8 +237,8 @@ public class PrintPreviewTray extends DialogTray {
 
                     config.setPageAndTileNumbers(++pageNo, row, column, rows, columns);
 
-                    final Image pageImg = exporter.exportPreview(
-                            config, imageBounds, imageClip, previewScale, centeringOffset);
+                    final Image pageImg = exporter.exportPreview(config, options.getPrinter(),
+                            imageBounds, imageClip, previewScale, centeringOffset);
 
                     final Label l = new Label(composite, SWT.NULL);
                     l.setImage(pageImg);

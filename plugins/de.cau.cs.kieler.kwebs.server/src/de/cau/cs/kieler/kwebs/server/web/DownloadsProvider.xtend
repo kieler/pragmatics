@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *     + Department of Computer Science
  *         + Real-Time and Embedded Systems Group
  *
@@ -107,7 +107,6 @@ class DownloadsProvider
         val String        urlTS  = config.getConfigProperty(Configuration::SUPPORTINGSERVER_PUBLIC_ADDRESS) + "/" + TRUSTSTORE_SUFFIX
         return 
             '''
-            <div class="col-md-8 col-md-offset-2">
             <h2>
                 Downloads
             </h2>
@@ -190,7 +189,6 @@ class DownloadsProvider
                 There is also a Java-based command line tool that can do layout and format translations.
                 You can download it from <a href='http://www.informatik.uni-kiel.de/rtsys/kieler/downloads/tools-libraries/'>the KIELER downloads page</a>.
             </p>
-            </div>
             '''
     }
     

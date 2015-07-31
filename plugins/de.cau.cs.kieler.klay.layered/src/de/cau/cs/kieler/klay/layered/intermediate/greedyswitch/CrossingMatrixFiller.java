@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -23,13 +23,14 @@ import de.cau.cs.kieler.klay.layered.properties.GreedySwitchType;
  * 
  * @author alan
  */
-class CrossingMatrixFiller {
+public class CrossingMatrixFiller {
     private final boolean[][] isCrossingMatrixFilled;
     private final int[][] crossingMatrix;
     private final BetweenLayerEdgeTwoNodeCrossingsCounter inBetweenLayerCrossingCounter;
     private final CrossingCountSide direction;
     private final boolean oneSided;
 
+    // SUPPRESS CHECKSTYLE NEXT 30 Javadoc
     /**
      * Constructs class which manages the crossing matrix.
      */

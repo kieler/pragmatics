@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -91,6 +91,12 @@ public interface IOffscreenRenderer {
      */
     IProperty<Boolean> EMBED_FONTS = new Property<Boolean>(
             "de.cau.cs.kieler.klighd.offscreenRendering.embedFonts", false);
+
+    /**
+     * Property definition for embedding a predefined description in the output.
+     */
+    IProperty<String> DESCRIPTION = new Property<String>(
+            "de.cau.cs.kieler.klighd.offscreenRendering.description", null);
 
     /**
      * Renders the provided <code>viewModel</code> into the (standard) diagram format supported by

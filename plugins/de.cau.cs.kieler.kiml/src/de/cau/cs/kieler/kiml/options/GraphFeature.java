@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -24,23 +24,54 @@ package de.cau.cs.kieler.kiml.options;
 public enum GraphFeature {
 
     /** Edges connecting a node with itself. */
-    SELF_LOOPS,
+    SELF_LOOPS("Edges connecting a node with itself."),
     /** Self-loops routed through a node instead of around it. */
-    INSIDE_SELF_LOOPS,
+    INSIDE_SELF_LOOPS("Self-loops routed through a node instead of around it."),
     /** Multiple edges with the same source and target node. */
-    MULTI_EDGES,
+    MULTI_EDGES("Multiple edges with the same source and target node."),
     /** Labels that are associated with edges. */
-    EDGE_LABELS,
+    EDGE_LABELS("Labels that are associated with edges."),
     /** Edges are connected to nodes over ports. */
-    PORTS,
+    PORTS("Edges are connected to nodes over ports."),
     /**
      * Edges that connect nodes from different hierarchy levels and are incident to compound nodes.
      * @see LayoutOptions#LAYOUT_HIERARCHY
      */
-    COMPOUND,
+    COMPOUND("Edges that connect nodes from different hierarchy levels"
+            + "and are incident to compound nodes."),
     /** Edges that connect nodes from different clusters, but not the cluster parent nodes. */
-    CLUSTERS,
+    CLUSTERS("Edges that connect nodes from different clusters, but not the cluster parent nodes."),
     /** Multiple connected components. */
-    DISCONNECTED;
+    DISCONNECTED("Multiple connected components.");
+    
+    /** The description of the graph feature. */
+    private String description;
+    
+    /**
+     * Create a new graph feature with no description.
+     */
+    private GraphFeature() {
+        description = "";
+    }
+    
+    /**
+     * Creates a new graph feature with the given description.
+     * 
+     * @param description
+     *            the description of the graph feature.
+     */
+    private GraphFeature(final String description) {
+        this.description = description;
+    }
+
+    /**
+     * Returns the description of the graph feature.
+     * 
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+    
 
 }

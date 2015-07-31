@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -114,7 +114,7 @@ public class BigNodesIntermediateProcessor implements ILayoutProcessor {
             // also ignore originally incoming WEST ports that are reverted
             // and outgoing edges targeting WEST ports (have to be part of another big node)
             if (!isInitialBigNode(target)
-                    && (target.getNodeType() == NodeType.BIG_NODE)
+                    && (target.getType() == NodeType.BIG_NODE)
                     && !edge.getProperty(InternalProperties.REVERSED)
                     && edge.getTarget().getSide() == PortSide.WEST
                     ) {

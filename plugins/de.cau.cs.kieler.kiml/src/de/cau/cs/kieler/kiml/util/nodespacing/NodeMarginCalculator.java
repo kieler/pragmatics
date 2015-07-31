@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -119,7 +119,7 @@ public final class NodeMarginCalculator  {
      * Calculates and assigns margins to all nodes.
      */
     public void process() {
-        double spacing = adapter.getProperty(LayoutOptions.LABEL_SPACING);
+        double spacing = adapter.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
 
         // Iterate through all nodes
         for (NodeAdapter<?> node : adapter.getNodes()) {

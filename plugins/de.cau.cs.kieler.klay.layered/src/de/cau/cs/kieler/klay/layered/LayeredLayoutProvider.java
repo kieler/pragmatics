@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -19,8 +19,8 @@ import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graphimport.IGraphImporter;
-import de.cau.cs.kieler.klay.layered.graphimport.KGraphImporter;
+import de.cau.cs.kieler.klay.layered.graph.transform.IGraphTransformer;
+import de.cau.cs.kieler.klay.layered.graph.transform.KGraphTransformer;
 
 /**
  * Layout provider to connect the layered layouter to the Eclipse based layout services.
@@ -55,7 +55,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an
         // LGraph instance, even though the IGraphImporter interface would allow null as a return
         // value)
-        IGraphImporter<KNode> graphImporter = new KGraphImporter();
+        IGraphTransformer<KNode> graphImporter = new KGraphTransformer();
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
 
         // Check if hierarchy handling for a compound graph is requested
@@ -95,7 +95,7 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
         // Import the graph (layeredGraph won't be null since the KGraphImporter always returns an
         // LGraph instance, even though the IGraphImporter interface would allow null as a return
         // value)
-        IGraphImporter<KNode> graphImporter = new KGraphImporter();
+        IGraphTransformer<KNode> graphImporter = new KGraphTransformer();
         LGraph layeredGraph = graphImporter.importGraph(kgraph);
         
         // Prepare a layout test and return the test execution state

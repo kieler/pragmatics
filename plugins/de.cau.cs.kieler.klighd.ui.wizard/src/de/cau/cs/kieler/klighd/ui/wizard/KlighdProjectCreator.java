@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -182,6 +182,7 @@ public class KlighdProjectCreator extends WorkspaceModifyOperation implements IP
         final PluginProjectFactory ppf = createProjectFactory();
 
         ppf.setProjectName(info.getProjectName());
+        ppf.setLocation(info.getProjectLocation());
         ppf.addFolders(getAllFolders());
         ppf.addReferencedProjects(getReferencedProjects());
         ppf.addProjectNatures(getProjectNatures());

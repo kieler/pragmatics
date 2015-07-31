@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -92,7 +92,7 @@ public class InvertedPortProcessorTest extends AbstractLayeredProcessorTest {
                         if (edge.getSource().getSide() == PortSide.WEST) {
                             LNode target = edge.getTarget().getNode();
                             // dummy in same layer
-                            assertTrue(target.getNodeType() == NodeType.LONG_EDGE);
+                            assertTrue(target.getType() == NodeType.LONG_EDGE);
                             assertTrue(target.getLayer().getIndex() == layer.getIndex());
                         }
                     }
@@ -102,7 +102,7 @@ public class InvertedPortProcessorTest extends AbstractLayeredProcessorTest {
                         if (edge.getTarget().getSide() == PortSide.EAST) {
                             LNode source = edge.getSource().getNode();
                             // dummy in same layer
-                            assertTrue(source.getNodeType() == NodeType.LONG_EDGE);
+                            assertTrue(source.getType() == NodeType.LONG_EDGE);
                             assertTrue(source.getLayer().getIndex() == layer.getIndex());
                         }
                     }

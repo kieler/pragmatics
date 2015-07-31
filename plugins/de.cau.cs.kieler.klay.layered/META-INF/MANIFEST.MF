@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Layered Layouter
 Bundle-SymbolicName: de.cau.cs.kieler.klay.layered;singleton:=true
-Bundle-Version: 0.11.0.qualifier
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Version: 0.12.0.qualifier
+Bundle-Vendor: Kiel University
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
@@ -13,7 +13,7 @@ Export-Package: de.cau.cs.kieler.klay.layered,
  de.cau.cs.kieler.klay.layered.components,
  de.cau.cs.kieler.klay.layered.compound,
  de.cau.cs.kieler.klay.layered.graph,
- de.cau.cs.kieler.klay.layered.graphimport,
+ de.cau.cs.kieler.klay.layered.graph.transform,
  de.cau.cs.kieler.klay.layered.intermediate,
  de.cau.cs.kieler.klay.layered.intermediate.greedyswitch,
  de.cau.cs.kieler.klay.layered.p1cycles,

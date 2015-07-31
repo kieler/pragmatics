@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -36,6 +36,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.Spacings;
 
 /**
  * Node placement implementation that aligns long edges using linear segments. Inspired by Section 4 of
@@ -192,6 +193,9 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
     /** array of sorted linear segments. */
     private LinearSegment[] linearSegments;
+    
+    /** Spacing values. */
+    private Spacings spacings;
 
     /**
      * {@inheritDoc}
@@ -199,6 +203,8 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Linear segments node placement", 1);
 
+        spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
+        
         // sort the linear segments of the layered graph
         sortLinearSegments(layeredGraph);
 
@@ -213,6 +219,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
         // release the created resources
         linearSegments = null;
+        spacings = null;
         monitor.done();
     }
 
@@ -469,7 +476,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      *         added to the given segment.
      */
     private boolean fillSegment(final LNode node, final LinearSegment segment) {
-        NodeType nodeType = node.getNodeType();
+        NodeType nodeType = node.getType();
         
         // handle initial big nodes as big node type
         if (node.getProperty(InternalProperties.BIG_NODE_INITIAL)) {
@@ -504,7 +511,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             for (LPort sourcePort : node.getPorts()) {
                 for (LPort targetPort : sourcePort.getSuccessorPorts()) {
                     LNode targetNode = targetPort.getNode();
-                    NodeType targetNodeType = targetNode.getNodeType();
+                    NodeType targetNodeType = targetNode.getType();
 
                     if (node.getLayer() != targetNode.getLayer()) {
                         if (nodeType == NodeType.BIG_NODE) {
@@ -545,12 +552,6 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      *            the layered graph to create an unbalanced placement for.
      */
     private void createUnbalancedPlacement(final LGraph layeredGraph) {
-        float normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
-        float smallSpacing = normalSpacing
-                * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        float externalPortSpacing = layeredGraph.getProperty(InternalProperties.PORT_SPACING);
-
         // How many nodes are currently placed in each layer
         int[] nodeCount = new int[layeredGraph.getLayers().size()];
 
@@ -562,22 +563,16 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             // Determine the uppermost placement for the linear segment
             double uppermostPlace = 0.0f;
             for (LNode node : segment.nodes) {
-                NodeType nodeType = node.getNodeType();
+                NodeType nodeType = node.getType();
                 int layerIndex = node.getLayer().getIndex();
                 nodeCount[layerIndex]++;
 
                 // Calculate how much space to leave between the linear segment and the last
                 // node of the given layer
-                float spacing = smallSpacing;
+                float spacing = spacings.edgeEdgeSpacing * spacings.inLayerSpacingFactor;
                 if (nodeCount[layerIndex] > 0) {
-                    if (recentNodeType[layerIndex] == NodeType.NORMAL
-                            || nodeType == NodeType.NORMAL) {
-
-                        spacing = normalSpacing;
-                    } else if (recentNodeType[layerIndex] == NodeType.EXTERNAL_PORT
-                            && nodeType == NodeType.EXTERNAL_PORT) {
-                        
-                        spacing = externalPortSpacing;
+                    if (recentNodeType[layerIndex] != null) {
+                        spacing = spacings.getVerticalSpacing(recentNodeType[layerIndex], nodeType);
                     }
                 }
 
@@ -594,7 +589,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 layer.getSize().y = uppermostPlace + node.getMargin().top
                         + node.getSize().y + node.getMargin().bottom;
 
-                recentNodeType[layer.getIndex()] = node.getNodeType();
+                recentNodeType[layer.getIndex()] = node.getType();
             }
         }
     }
@@ -629,10 +624,6 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      * @param layeredGraph a layered graph
      */
     private void balancePlacement(final LGraph layeredGraph) {
-        float spacing = layeredGraph.getProperty(InternalProperties.SPACING)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
-        float smallSpacing = spacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        float externalPortSpacing = layeredGraph.getProperty(InternalProperties.PORT_SPACING);
         double deflectionDampening = layeredGraph.getProperty(
                 Properties.LINEAR_SEGMENTS_DEFLECTION_DAMPENING).doubleValue();
         
@@ -661,7 +652,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             // Merge linear segments to form regions
             boolean merged;
             do {
-                merged = mergeRegions(layeredGraph, spacing, smallSpacing, externalPortSpacing);
+                merged = mergeRegions(layeredGraph);
             } while (merged);
 
             // Move the nodes according to the deflection value of their region
@@ -775,50 +766,38 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
         }
     }
     
-    /** factor for threshold within which node overlapping is detected. */
-    private static final double OVERLAP_DETECT = 0.01;
+    /**
+     * Factor for threshold within which node overlapping is detected. This factor should reflect
+     * the epsilon used in the {@link NodePlacerTest}.
+     */
+    private static final double OVERLAP_DETECT = 0.0001;
 
     /**
      * Merge regions by testing whether they would overlap after applying the deflection.
      * 
      * @param layeredGraph the layered graph
-     * @param normalSpacing the normal object spacing
-     * @param smallSpacing the dummy object spacing
-     * @param externalPortSpacing the external port dummy spacing
      * @return true if any two regions have been merged
      */
-    private boolean mergeRegions(final LGraph layeredGraph, final float normalSpacing,
-            final float smallSpacing, final float externalPortSpacing) {
+    private boolean mergeRegions(final LGraph layeredGraph) {
         
         boolean changed = false;
-        double threshold = OVERLAP_DETECT * normalSpacing;
+        double threshold = OVERLAP_DETECT * spacings.nodeSpacing * spacings.inLayerSpacingFactor;
         for (Layer layer : layeredGraph) {
             Iterator<LNode> nodeIter = layer.getNodes().iterator();
 
             // Get the first node
             LNode node1 = nodeIter.next();
-            NodeType node1Type = node1.getNodeType();
             LinearSegment region1 = linearSegments[node1.id].region();
 
             // While there are still nodes following the current node
             while (nodeIter.hasNext()) {
                 // Test whether nodes have different regions
                 LNode node2 = nodeIter.next();
-                NodeType node2Type = node2.getNodeType();
                 LinearSegment region2 = linearSegments[node2.id].region();
 
                 if (region1 != region2) {
                     // Calculate how much space is allowed between the nodes
-                    double spacing = smallSpacing;
-                    if (node1Type == NodeType.NORMAL
-                            || node2Type == NodeType.NORMAL) {
-                        
-                        spacing = normalSpacing;
-                    } else if (node1Type == NodeType.EXTERNAL_PORT
-                            && node2Type == NodeType.EXTERNAL_PORT) {
-                        
-                        spacing = externalPortSpacing;
-                    }
+                    double spacing = spacings.getVerticalSpacing(node1, node2);
                     
                     double node1Extent = node1.getPosition().y + node1.getSize().y
                             + node1.getMargin().bottom + region1.deflection + spacing;
@@ -840,7 +819,6 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
 
                 node1 = node2;
                 region1 = region2;
-                node1Type = node2Type;
             }
         }
         return changed;
@@ -858,10 +836,6 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      *            the layered graph
      */
     private void postProcess(final LGraph layeredGraph) {
-        float normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
-        float smallSpacing = normalSpacing
-                * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
         // process each linear segment independently
         for (LinearSegment segment : linearSegments) {
@@ -870,13 +844,11 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             for (LNode node : segment.nodes) {
                 double roomAbove, roomBelow;
                 int index = node.getIndex();
-                boolean isNodeNormal = node.getNodeType() == NodeType.NORMAL;
 
                 // determine the amount by which the linear segment can be moved up without overlap
                 if (index > 0) {
                     LNode neighbor = node.getLayer().getNodes().get(index - 1);
-                    boolean isNeighborNormal = neighbor.getNodeType() == NodeType.NORMAL;
-                    float spacing = isNodeNormal || isNeighborNormal ? normalSpacing : smallSpacing;
+                    float spacing = spacings.getVerticalSpacing(node, neighbor);
                     roomAbove = node.getPosition().y - node.getMargin().top
                             - (neighbor.getPosition().y + neighbor.getSize().y
                                     + neighbor.getMargin().bottom + spacing);
@@ -889,8 +861,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 // overlap
                 if (index < node.getLayer().getNodes().size() - 1) {
                     LNode neighbor = node.getLayer().getNodes().get(index + 1);
-                    boolean isNeighborNormal = neighbor.getNodeType() == NodeType.NORMAL;
-                    float spacing = isNodeNormal || isNeighborNormal ? normalSpacing : smallSpacing;
+                    float spacing = spacings.getVerticalSpacing(node, neighbor);
                     roomBelow = neighbor.getPosition().y - neighbor.getMargin().top
                             - (node.getPosition().y + node.getSize().y
                                     + node.getMargin().bottom + spacing);

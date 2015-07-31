@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -19,12 +19,11 @@ import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.Spacings;
 
 /**
  * Node placement implementation that centers all nodes vertically.
@@ -69,11 +68,8 @@ public final class SimpleNodePlacer implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Simple node placement", 1);
 
-        float normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
-        float smallSpacing = normalSpacing
-                * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-
+        Spacings spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
+        
         // first iteration: determine the height of each layer
         double maxHeight = 0;
         for (Layer layer : layeredGraph.getLayers()) {
@@ -83,13 +79,7 @@ public final class SimpleNodePlacer implements ILayoutPhase {
             for (LNode node : layer.getNodes()) {
                 if (lastNode != null) {
                     // use normal spacing as soon as a regular node is involved
-                    if (lastNode.getNodeType() == NodeType.NORMAL
-                            || node.getNodeType() == NodeType.NORMAL) {
-                        
-                        layerSize.y += normalSpacing;
-                    } else {
-                        layerSize.y += smallSpacing;
-                    }
+                    layerSize.y += spacings.getVerticalSpacing(node, lastNode);
                 }
                 layerSize.y += node.getMargin().top + node.getSize().y + node.getMargin().bottom;
                 lastNode = node;
@@ -104,13 +94,7 @@ public final class SimpleNodePlacer implements ILayoutPhase {
             LNode lastNode = null;
             for (LNode node : layer.getNodes()) {
                 if (lastNode != null) {
-                    if (lastNode.getNodeType() == NodeType.NORMAL
-                            || node.getNodeType() == NodeType.NORMAL) {
-                        
-                        pos += normalSpacing;
-                    } else {
-                        pos += smallSpacing;
-                    }
+                    pos += spacings.getVerticalSpacing(node, lastNode);
                 }
                 pos += node.getMargin().top;
                 node.getPosition().y = pos;

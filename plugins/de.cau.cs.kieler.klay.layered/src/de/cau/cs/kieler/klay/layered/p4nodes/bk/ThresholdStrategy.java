@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -46,7 +46,7 @@ public abstract class ThresholdStrategy {
     protected Set<LNode> blockFinished = Sets.newHashSet();
 
     /**
-     * .
+     * A queue with blocks that are postponed during compaction.
      */
     protected Queue<Pair<LNode, Boolean>> postProcessables = Lists.newLinkedList();
 
