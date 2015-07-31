@@ -43,21 +43,6 @@ public final class LPort extends LShape {
     /** the serial version UID. */
     private static final long serialVersionUID = -3406558719744943360L;
     
-    /** the owning node. */
-    private LNode owner;
-    /** the port side. */
-    private PortSide side = PortSide.UNDEFINED;
-    /** the anchor point position. */
-    private final KVector anchor = new KVector();
-    /** the margin area around this port. */
-    private final LInsets margin = new LInsets();
-    /** this port's labels. */
-    private final List<LLabel> labels = Lists.newArrayListWithCapacity(2);
-    /** the edges going into the port. */
-    private final List<LEdge> incomingEdges = Lists.newArrayListWithCapacity(4);
-    /** the edges going out of the port. */
-    private final List<LEdge> outgoingEdges = Lists.newArrayListWithCapacity(4);
-    
     /** a predicate that checks for output ports, that is ports with outgoing edges. */
     public static final Predicate<LPort> OUTPUT_PREDICATE = new Predicate<LPort>() {
         public boolean apply(final LPort port) {
@@ -100,19 +85,21 @@ public final class LPort extends LShape {
         }
     };
     
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        String text = getName();
-        if (text == null) {
-            return "p_" + id;
-        } else {
-            return "p_" + text;
-        }
-    }
+    /** the owning node. */
+    private LNode owner;
+    /** the port side. */
+    private PortSide side = PortSide.UNDEFINED;
+    /** the anchor point position. */
+    private final KVector anchor = new KVector();
+    /** the margin area around this port. */
+    private final LInsets margin = new LInsets();
+    /** this port's labels. */
+    private final List<LLabel> labels = Lists.newArrayListWithCapacity(2);
+    /** the edges going into the port. */
+    private final List<LEdge> incomingEdges = Lists.newArrayListWithCapacity(4);
+    /** the edges going out of the port. */
+    private final List<LEdge> outgoingEdges = Lists.newArrayListWithCapacity(4);
+    
 
     /**
      * Returns the node that owns this port.
@@ -338,6 +325,19 @@ public final class LPort extends LShape {
             return -1;
         } else {
             return owner.getPorts().indexOf(this);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        String text = getName();
+        if (text == null) {
+            return "p_" + id;
+        } else {
+            return "p_" + text;
         }
     }
     

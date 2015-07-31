@@ -45,7 +45,8 @@ import de.cau.cs.kieler.klay.layered.p5edges.splines.LoopSide;
 
 /**
  * Container for property definitions for internal use of the algorithm. These properties should
- * not be accessed from outside.
+ * not be accessed from outside. Some properties here are redefinitions of layout options in
+ * {@link LayoutOptions} to change their defaults.
  *
  * @author msp
  * @author cds
