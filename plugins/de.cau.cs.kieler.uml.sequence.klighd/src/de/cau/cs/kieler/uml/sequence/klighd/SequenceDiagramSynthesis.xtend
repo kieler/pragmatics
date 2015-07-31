@@ -68,12 +68,15 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         root.children.add(surrInteraction)
         surrInteraction.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
-        // surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 500)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 500)
+        surrInteraction.addLayoutParam(LayoutOptions.BORDER_SPACING, 10f);
+
         val surrInteractionRect = surrInteraction.addRoundedRectangle(2, 2, 2)
 
-        val captionRect = surrInteractionRect.addRectangle.foregroundInvisible = true
-
-        val captionRect2 = captionRect.addRectangle.foregroundInvisible = true
+//        val captionRect = surrInteractionRect.addRectangle.foregroundInvisible = true
+        
+        val captionRect2 = surrInteractionRect.addRectangle.foregroundInvisible = true
         captionRect2.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
 
         val list = new ArrayList<KPosition>
@@ -84,13 +87,17 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         // val line = 
         captionRect2.addPolyline(2, list)
-        // TODO better length?....
-        captionRect.setGridPlacement(2000)
+//        captionRect.setGridPlacement(2000)
+        captionRect2.setPointPlacementData(
+                    LEFT, 0, 0,
+                    TOP, 0, 0,
+                    H_LEFT, V_TOP,
+                    0, 0, 0, 0)
+        
         // val float length = model.diagramName.length * 13
         // captionRect2.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0).to(LEFT, length, 0, BOTTOM, 0, 0)
-        // val lifelinesRect = 
-        surrInteractionRect.addChildArea // .setForeground(Colors.RED)
-        surrInteractionRect.setGridPlacement = 1
+        //val lifelinesRect = 
+//        surrInteractionRect.addChildArea // .setForeground(Colors.RED)
 //        surrInteractionRect.children.add(captionRect)
 //        surrInteractionRect.children.add(lifelinesRect)
         surroundingInteraction = surrInteraction
@@ -119,7 +126,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         // TODO placement....
         val rect2 = rect.addRoundedRectangle(2, 2, 1).setBackgroundGradient(Colors.WHITE, Colors.CORNFLOWER_BLUE, 90)
-        rect2.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
+//        rect2.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
         rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
         rect2.setShadow(Colors.BLACK, 5)
 //        rect2.setAreaPlacementData(createKPosition(LEFT, 0, 0, TOP, 0, 0), createKPosition(RIGHT, 0, 0, TOP, 40, 0))
