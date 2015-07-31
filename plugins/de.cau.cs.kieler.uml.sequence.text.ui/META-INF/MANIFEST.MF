@@ -18,7 +18,7 @@ Require-Bundle: de.cau.cs.kieler.uml.sequence.text;visibility:=reexport,
  org.eclipse.xtext.ui.codetemplates.ui,
  org.eclipse.compare
 Import-Package: org.apache.log4j
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.cau.cs.kieler.uml.sequence.text.ui.quickfix,
  de.cau.cs.kieler.uml.sequence.text.ui.contentassist,
  de.cau.cs.kieler.uml.sequence.text.ui.contentassist.antlr,

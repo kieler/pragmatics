@@ -27,4 +27,4 @@ Require-Bundle: javax.inject,
  org.eclipse.xtext.ui;resolution:=optional,
  de.cau.cs.kieler.papyrus.sequence
 Import-Package: de.cau.cs.kieler.uml.sequence.text.sequence
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
