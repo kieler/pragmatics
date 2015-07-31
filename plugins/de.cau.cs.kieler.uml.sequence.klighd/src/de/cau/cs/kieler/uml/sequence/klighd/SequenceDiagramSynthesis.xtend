@@ -38,6 +38,9 @@ import java.util.ArrayList
 import java.util.HashMap
 import javax.inject.Inject
 import de.cau.cs.kieler.uml.sequence.text.sequence.Section
+//TODO move to SequenceProperties
+import de.cau.cs.kieler.papyrus.sequence.properties.SequenceExecution
+import de.cau.cs.kieler.papyrus.sequence.properties.SequenceExecution.SequenceExecutionType
 
 class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram> {
 
@@ -53,9 +56,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
     val lifelineNodes = new HashMap<String, KNode>
     var KNode surroundingInteraction
-    
-    //TODO lifeline sorting property
+    val blocks = new HashMap<String, SequenceExecution>
+    val numberOfBlocksOnLifeline = new HashMap<String, Integer>
 
+    // TODO lifeline sorting property
     override KNode transform(SequenceDiagram model) {
         val root = model.createNode()
         root.addLayoutParam(LayoutOptions.ALGORITHM, FixedLayoutProvider.ID)
@@ -64,28 +68,27 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         root.children.add(surrInteraction)
         surrInteraction.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
-        //surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 500)
-
+        // surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 500)
         val surrInteractionRect = surrInteraction.addRoundedRectangle(2, 2, 2)
 
         val captionRect = surrInteractionRect.addRectangle.foregroundInvisible = true
-        
+
         val captionRect2 = captionRect.addRectangle.foregroundInvisible = true
         captionRect2.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-        
+
         val list = new ArrayList<KPosition>
         list.add(createKPosition(LEFT, 0, 0, BOTTOM, 0, 0))
         list.add(createKPosition(RIGHT, 10, 0, BOTTOM, 0, 0))
         list.add(createKPosition(RIGHT, 0, 0, BOTTOM, 10, 0))
         list.add(createKPosition(RIGHT, 0, 0, TOP, 0, 0))
-        
-        //val line = 
+
+        // val line = 
         captionRect2.addPolyline(2, list)
-        //TODO better length?....
+        // TODO better length?....
         captionRect.setGridPlacement(2000)
         // val float length = model.diagramName.length * 13
         // captionRect2.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0).to(LEFT, length, 0, BOTTOM, 0, 0)
-        //val lifelinesRect = 
+        // val lifelinesRect = 
         surrInteractionRect.addChildArea // .setForeground(Colors.RED)
         surrInteractionRect.setGridPlacement = 1
 //        surrInteractionRect.children.add(captionRect)
@@ -93,14 +96,15 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         surroundingInteraction = surrInteraction
 
         model.lifelines.forEach[s|surrInteraction.children += transformLifeline(s)]
-        //TODO Message Sorting!!!
-        //System.out.println("interactions: " + model.interactions)
+        // TODO Message Sorting!!!
+        System.out.println("interactions: " + model.interactions)
         model.interactions.forEach[s|transformInteraction(s)]
-        
-        //TODO close all blocks if not closed yet
 
-        lifelineNodes.clear
+        // TODO close all blocks if not closed yet
+        lifelineNodes.clear()
         surroundingInteraction = null
+        blocks.clear()
+        numberOfBlocksOnLifeline.clear()
 
         return root
     }
@@ -112,9 +116,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         val rect = lifelineNode.addRectangle.foregroundInvisible = true
         rect.setGridPlacement(1).from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
-        
 
-        //TODO placement....
+        // TODO placement....
         val rect2 = rect.addRoundedRectangle(2, 2, 1).setBackgroundGradient(Colors.WHITE, Colors.CORNFLOWER_BLUE, 90)
         rect2.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
         rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
@@ -154,18 +157,18 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     }
 
     private def KEdge setMessageRendering(KEdge edge, String type) {
-        //TODO lifeline header weiter runter
+        // TODO lifeline header weiter runter
         if (type.equals("sync")) {
             edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.SYNCHRONOUS)
             edge.addPolyline(2).addHeadArrowDecorator()
         } else if (type.equals("async")) {
             edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.ASYNCHRONOUS)
-          edge.addPolyline(2).addAssociationArrowDecorator()
+            edge.addPolyline(2).addAssociationArrowDecorator()
         } else if (type.equals("response")) {
             edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.REPLY)
             edge.addPolyline(2).setLineStyle(LineStyle.DASH).addAssociationArrowDecorator()
         } else if (type.equals("create")) {
-            //TODO auf die caption zeigen
+            // TODO auf die caption zeigen
             edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.CREATE)
             edge.addPolyline(2).setLineStyle(LineStyle.DASH).addAssociationArrowDecorator()
         } else if (type.equals("lost")) {
@@ -181,83 +184,109 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val transEdge = msg.createEdge().associateWith(msg)
         transEdge.setMessageRendering(msg.messageType.toString)
 
+        System.out.println(msg.message)
+
         val label = KimlUtil.createInitializedLabel(transEdge)
-        
+
         val labelText = msg.message
+        val source = msg.sourceLifeline
+        val target = msg.targetLifeline
         label.configureCenterEdgeLabel(labelText, KlighdConstants.DEFAULT_FONT_SIZE, KlighdConstants.DEFAULT_FONT_NAME)
 
-        //TODO Self Message?!!!
-        transEdge.source = lifelineNodes.get(msg.sourceLifeline.name)
-        transEdge.target = lifelineNodes.get(msg.targetLifeline.name)
+        // TODO Self Message?!!!
+        transEdge.source = lifelineNodes.get(source.name)
+        transEdge.target = lifelineNodes.get(target.name)
 
         if (msg.sourceStartBlock) {
-            // createBlock(msg.sourceLifeline)
-        } else if (msg.sourceEndBlock) {
             //TODO
+            //createBlock(source)
+        } else if (msg.sourceEndBlock) {
+            // TODO?
+            //blocks.remove(source.name.concat(numberOfBlocksOnLifeline.get(source.name).toString()))
         }
 
         if (msg.targetStartBlock) {
-            // createBlock(msg.sourceLifeline)
-        } else if (msg.targetEndBlock) {
             //TODO
+            //createBlock(target)
+        } else if (msg.targetEndBlock) {
+            // TODO?
+            //blocks.remove(target.name.concat(numberOfBlocksOnLifeline.get(target.name).toString()))
+        }
+
+        if (blocks.containsKey(source.name)) {
+            blocks.get(source.name.concat(numberOfBlocksOnLifeline.get(source.name).toString())).addMessage(transEdge)
+        } else if (blocks.containsKey(target.name)) {
+            blocks.get(target.name.concat(numberOfBlocksOnLifeline.get(target.name).toString())).addMessage(transEdge)
         }
 
         return transEdge
     }
-    
-    
+
     /*  private void createExecution(final LayoutMapping<IGraphicalEditPart> mapping,
-            final ShapeNodeEditPart lifelineEditPart, final List<SequenceExecution> executions,
-            final ShapeNodeEditPart childEditPart, final NodeType nodeType, final KNode executionNode) {
-
-        KShapeLayout executionLayout = executionNode.getData(KShapeLayout.class);
-        IFigure executionFigure = childEditPart.getFigure();
-        Rectangle executionBounds = getAbsoluteBounds(executionFigure);
-
-        SequenceExecution execution = new SequenceExecution();
-
-        if (nodeType == NodeType.BEHAVIOUR_EXEC_SPECIFICATION
-                || nodeType == NodeType.ACTION_EXEC_SPECIFICATION) {
-
-            executionNode.getData(KShapeLayout.class).setProperty(SequenceDiagramProperties.NODE_TYPE,
-                    nodeType);
-            execution.setType(SequenceExecutionType.EXECUTION);
-        } else if (nodeType == NodeType.DURATION_CONSTRAINT) {
-            executionNode.getData(KShapeLayout.class).setProperty(SequenceDiagramProperties.NODE_TYPE,
-                    nodeType);
-            execution.setType(SequenceExecutionType.DURATION);
-        } else if (nodeType == NodeType.TIME_CONSTRAINT) {
-            executionNode.getData(KShapeLayout.class).setProperty(SequenceDiagramProperties.NODE_TYPE,
-                    nodeType);
-            execution.setType(SequenceExecutionType.TIME_CONSTRAINT);
-        }
-
-        // Walk through the connected messages
-        for (Object targetConn : childEditPart.getTargetConnections()) {
-            if (targetConn instanceof ConnectionEditPart) {
-                ConnectionEditPart connectionEditPart = (ConnectionEditPart) targetConn;
-                mapping.getProperty(CONNECTIONS).add(connectionEditPart);
-
-                execution.addMessage(connectionEditPart);
-            }
-        }
-        for (Object sourceConn : childEditPart.getSourceConnections()) {
-            if (sourceConn instanceof ConnectionEditPart) {
-                ConnectionEditPart connectionEditPart = (ConnectionEditPart) sourceConn;
-
-                execution.addMessage(connectionEditPart);
-            }
-        }
-        execution.setOrigin(executionNode);
-        executions.add(execution);
-        executionLayout.setProperty(PapyrusProperties.EXECUTION, execution); */
+     *         final ShapeNodeEditPart lifelineEditPart, final List<SequenceExecution> executions,
+     *         final ShapeNodeEditPart childEditPart, final NodeType nodeType, final KNode executionNode) {
+     * 
+     *     KShapeLayout executionLayout = executionNode.getData(KShapeLayout.class);
+     *     IFigure executionFigure = childEditPart.getFigure();
+     *     Rectangle executionBounds = getAbsoluteBounds(executionFigure);
+     * 
+     *     SequenceExecution execution = new SequenceExecution();
+     * 
+     *     if (nodeType == NodeType.BEHAVIOUR_EXEC_SPECIFICATION
+     *             || nodeType == NodeType.ACTION_EXEC_SPECIFICATION) {
+     * 
+     *         executionNode.getData(KShapeLayout.class).setProperty(SequenceDiagramProperties.NODE_TYPE,
+     *                 nodeType);
+     *         execution.setType(SequenceExecutionType.EXECUTION);
+     *     } else if (nodeType == NodeType.DURATION_CONSTRAINT) {
+     *         executionNode.getData(KShapeLayout.class).setProperty(SequenceDiagramProperties.NODE_TYPE,
+     *                 nodeType);
+     *         execution.setType(SequenceExecutionType.DURATION);
+     *     } else if (nodeType == NodeType.TIME_CONSTRAINT) {
+     *         executionNode.getData(KShapeLayout.class).setProperty(SequenceDiagramProperties.NODE_TYPE,
+     *                 nodeType);
+     *         execution.setType(SequenceExecutionType.TIME_CONSTRAINT);
+     *     }
+     * 
+     *     // Walk through the connected messages
+     *     for (Object targetConn : childEditPart.getTargetConnections()) {
+     *         if (targetConn instanceof ConnectionEditPart) {
+     *             ConnectionEditPart connectionEditPart = (ConnectionEditPart) targetConn;
+     *             mapping.getProperty(CONNECTIONS).add(connectionEditPart);
+     * 
+     *             execution.addMessage(connectionEditPart);
+     *         }
+     *     }
+     *     for (Object sourceConn : childEditPart.getSourceConnections()) {
+     *         if (sourceConn instanceof ConnectionEditPart) {
+     *             ConnectionEditPart connectionEditPart = (ConnectionEditPart) sourceConn;
+     * 
+     *             execution.addMessage(connectionEditPart);
+     *         }
+     *     }
+     *     execution.setOrigin(executionNode);
+     *     executions.add(execution);
+     executionLayout.setProperty(PapyrusProperties.EXECUTION, execution); */
     private def KNode createBlock(Lifeline l) {
         val block = l.createNode().associateWith(l)
         block.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.ACTION_EXEC_SPECIFICATION)
-        
+
+        val execution = new SequenceExecution()
+        if (numberOfBlocksOnLifeline.containsKey(l.name)) {
+            numberOfBlocksOnLifeline.put(l.name, numberOfBlocksOnLifeline.get(l.name) + 1)
+        } else {
+            numberOfBlocksOnLifeline.put(l.name, 1)
+        }
+        blocks.put(l.name.concat(numberOfBlocksOnLifeline.get(l.name).toString()), execution)
+
+        execution.setType(SequenceExecutionType.EXECUTION)
+        execution.setOrigin(lifelineNodes.get(l.name))
+
         lifelineNodes.get(l.name).children.add(block)
 
-        //TODO do stuff
+        block.addRectangle
+
+        // TODO do stuff
         return block
     }
 
@@ -273,11 +302,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.addPolyline(2).addHeadArrowDecorator()
 
         val dummyNode = surroundingInteraction.createNode()
-        //val circle = 
+        // val circle = 
         dummyNode.addRectangle.setForeground(Colors.AQUAMARINE)
 
-
-        //TODO source und target setzen und kreis am ende
+        // TODO source und target setzen und kreis am ende
         if (msg.messageTypeLostAndFound.equals("lost")) {
             transEdge.source = lifelineNodes.get(msg.lifeline.name)
             transEdge.target = dummyNode
@@ -291,29 +319,27 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
     private def dispatch KNode transformInteraction(OneLifelineEndBlock end) {
         val endBlockNode = end.createNode().associateWith(end)
-        
-        //TODO
-        
+
+        // TODO
         return endBlockNode
     }
 
     private def dispatch KNode transformInteraction(OneLifelineNote note) {
         val noteNode = note.createNode().associateWith(note)
         noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)
-        
-        //TODO 
-        
+
+        // TODO 
         return noteNode
     }
 
     private def dispatch KNode transformInteraction(DestroyLifelineEvent destroy) {
-        //TODO close blocks before if not closed yet
-        //TODO am Ende anzeigen
+        // TODO close blocks before if not closed yet
+        // TODO am Ende anzeigen
 //        val destroyNode = lifelineNodes.get(destroy.lifeline.name).createNode().associateWith(destroy)
         val destroyNode = destroy.createNode().associateWith(destroy)
         destroyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.DESTRUCTION_EVENT)
-        
-        //TODO 2 polylines point placement
+
+        // TODO 2 polylines point placement
         val list = new ArrayList<KPosition>
         list.add(createKPosition(LEFT, 0, 0, TOP, 0, 0))
         list.add(createKPosition(LEFT, 0, 0.5f, TOP, 5, 0))
@@ -322,7 +348,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         list.add(createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0))
         list.add(createKPosition(LEFT, 0, 0.5f, TOP, 5, 0))
         list.add(createKPosition(LEFT, 0, 0, BOTTOM, 0, 0))
-        
+
         val destroyRect = destroyNode.addRectangle().foregroundInvisible = true
         destroyRect.addPolyline(2, list)
 
@@ -333,7 +359,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
     private def dispatch KNode transformInteraction(Fragment frag) {
         val fragNode = frag.createNode().associateWith(frag)
-        
+
         if (frag.sections.size > 1) {
             fragNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMBINED_FRAGMENT)
         } else {
@@ -345,26 +371,26 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val fragNodeRect = fragNode.addRoundedRectangle(2, 2, 2)
 
         val captionRect = fragNodeRect.addRectangle.foregroundInvisible = true
-        //TODO better length?....
+        // TODO better length?....
         captionRect.setGridPlacement(2000)
-        
+
         val captionRect2 = captionRect.addRectangle.foregroundInvisible = true
         captionRect2.addText(frag.name).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-        
+
         val list = new ArrayList<KPosition>
         list.add(createKPosition(LEFT, 0, 0, BOTTOM, 0, 0))
         list.add(createKPosition(RIGHT, 10, 0, BOTTOM, 0, 0))
         list.add(createKPosition(RIGHT, 0, 0, BOTTOM, 10, 0))
         list.add(createKPosition(RIGHT, 0, 0, TOP, 0, 0))
-        
-        //val line = 
+
+        // val line = 
         captionRect2.addPolyline(2, list)
-        
-        //val messagesRect = 
+
+        // val messagesRect = 
         fragNodeRect.addChildArea
         fragNodeRect.setGridPlacement = 1
 
-        //TODO sections im messagerect
+        // TODO sections im messagerect
         for (sect : frag.sections) {
             if (sect.label != null) {
                 val captionRect3 = captionRect.addRectangle.foregroundInvisible = true
@@ -385,7 +411,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         return refNode
     }
 
-    //TODO time constraint between messages
+    // TODO time constraint between messages
     /**
      * Adds an arrow decorator suitable for associations to the given polyline.
      * 
