@@ -57,8 +57,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     //TODO lifeline sorting property
 
     override KNode transform(SequenceDiagram model) {
-        System.out.println("HALLO")
-        
         val root = model.createNode()
         root.addLayoutParam(LayoutOptions.ALGORITHM, FixedLayoutProvider.ID)
 
@@ -67,7 +65,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         surrInteraction.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
-        //surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 500)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 500)
+        surrInteraction.addLayoutParam(LayoutOptions.BORDER_SPACING, 10f);
 
         val surrInteractionRect = surrInteraction.addRoundedRectangle(2, 2, 2)
 
@@ -123,7 +122,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         //TODO placement....
         val rect2 = rect.addRoundedRectangle(2, 2, 1).setBackgroundGradient(Colors.WHITE, Colors.CORNFLOWER_BLUE, 90)
-        rect2.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
+//        rect2.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
         rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
         rect2.setShadow(Colors.BLACK, 5)
 //        rect2.setAreaPlacementData(createKPosition(LEFT, 0, 0, TOP, 0, 0), createKPosition(RIGHT, 0, 0, TOP, 40, 0))
