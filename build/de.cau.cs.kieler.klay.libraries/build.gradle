@@ -2,172 +2,95 @@
 // TODO turn this into a gradle wrapper ?!
 
 /*
+ *
+ */
 
-  Thus script has the following tasks
+apply plugin: 'java'
+apply plugin: 'signing'
+apply plugin: 'maven'
 
-  clean - remove all build artifacts
+group = 'de.cau.cs.kieler'
+version = '1.3.37'
+ext.packaging = 'jar'
 
-  downloadArchives - downloads a zipped version of the kieler updatesite
-
-  unzipArchives - unzips it
-
-  unzipPlugins - unzips the required plugins
-
-  jar - assembles a jar file from the unzipped plugins
-
-  */
-
-defaultTasks 'jar'
-
-// project properties
-ext {
-
-    pragmaticsArchive = "http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/zipped/pragmatics-nightly.zip"
-    //pragmaticsArchive = "http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/release_pragmatics_2015-06/zipped/pragmatics-release-2015-06.zip"
-    targetPlatformArchive = "http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/luna441.zip"
-
-    includeEmf = true
-    includeJson = true
-
-    downloadsDir = file("${buildDir}/downloads/")
-    extractDir = file("${buildDir}/extracted/")
-    pluginsDir = file("${buildDir}/plugins/")
-
-    // TODO maybe possible to turn this into an include?
-    pluginExcludes = [
-        'META-INF/*',
-        'about.**',
-        'images',
-        'model',
-        'schema',
-        'plugin.properties',
-        '**/*.xml',
-        '**/*.html',
-        '**/*.exsd',
-        '**/*.xsd',
-        '**/*.ecore',
-        '**/*.genmodel',
-        '**/*.ecorediag',
-        '**/*.png',
-        '**/*.gif',
-        '**/*.pdf'
-    ]
-}
-
-// why the hack does this execute
-task clean {
-    doLast {
-        delete "${buildDir}"
-    }
-}
-
-// TODO instead of downloading the whole updatesite,
-// a better solution would be to only download the required plugins ...
-task downloadArchives {
-
-    outputs.dir downloadsDir
-
-    doLast {
-        downloadsDir.mkdirs()
-        ant.get(
-            src: pragmaticsArchive,
-            dest: downloadsDir,
-            skipexisting: 'true'
-        )
-        if (includeEmf) {
-            ant.get(
-                src: targetPlatformArchive,
-                dest: downloadsDir,
-                skipexisting: 'true'
-            )
+sourceSets {
+    main {
+        java {
+            srcDir '../../plugins/de.cau.cs.kieler.core/src'
+            srcDir '../../plugins/de.cau.cs.kieler.core.kgraph/src'
+            srcDir '../../plugins/de.cau.cs.kieler.kiml/src'
+            srcDir '../../plugins/de.cau.cs.kieler.klay.force/src'
+            srcDir '../../plugins/de.cau.cs.kieler.klay.layered/src'
+            srcDir '../../plugins/de.cau.cs.kieler.klay.tree/src'
+        }
+        resources {
+            srcDir '../../plugins/de.cau.cs.kieler.kiml/images'
+            srcDir '../../plugins/de.cau.cs.kieler.klay.force/images'
+            srcDir '../../plugins/de.cau.cs.kieler.klay.layered/images'
+            srcDir '../../plugins/de.cau.cs.kieler.klay.tree/images'
         }
     }
-
 }
 
-task unzipArchives(dependsOn: downloadArchives) {
+repositories {
+    mavenCentral()
+}
 
-    def archives = fileTree(downloadsDir)
+dependencies {
+    compile 'org.eclipse.emf:org.eclipse.emf.common:[0,)'
+    compile 'org.eclipse.emf:org.eclipse.emf.ecore:[0,)'
+    compile 'org.eclipse.emf:org.eclipse.emf.ecore.xmi:[0,)'
+    compile 'com.google.guava:guava-gwt:[0,)'
+}
 
-    inputs.files archives
-    outputs.dir extractDir
 
-    doLast {
-        archives.each { f ->
-            copy {
-                from zipTree(f)
-                into extractDir
+task sourcesJar (type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadoc (type: Javadoc, overwrite: true) {
+    source = sourceSets.main.allJava
+    failOnError = false
+}
+
+task javadocJar (type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "file://$buildDir/repo") {
+              // authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            pom.project {
+                name 'KlayBundle'
+                packaging 'jar'
+                description 'Bundled Standalone Klay'
+                url 'http://rtsys.informatik.uni-kiel.de'
+
+                licenses {
+                    license {
+                        name 'Eclipse Public License - v 1.0'
+                        url 'http://www.eclipse.org/org/documents/epl-v10.html'
+                    }
+                }
             }
         }
     }
 }
-
-task unzipPlugins(dependsOn: unzipArchives) {
-
-    // the core includes
-    def theIncludes = [
-        '**/de.cau.cs.kieler.core_*/**',
-        '**/de.cau.cs.kieler.core.kgraph_*/**',
-        '**/de.cau.cs.kieler.kiml_*/**',
-        '**/de.cau.cs.kieler.klay.layered_*/**',
-        '**/de.cau.cs.kieler.klay.force_*/**',
-        '**/de.cau.cs.kieler.klay.tree_*/**'
-    ]
-
-    // emf and friends
-    if (includeEmf) {
-        theIncludes += [
-            '**/org.eclipse.emf.common_*/**',
-            '**/org.eclipse.emf.ecore_*/**',
-            '**/org.eclipse.emf.ecore.xmi_*/**'
-        ]
-    }
-
-    // json format
-    if (includeJson) {
-        theIncludes += [
-            '**/de.cau.cs.kieler.kiml.formats_*/**',
-            '**/de.cau.cs.kieler.kiml.formats.json_*/**',
-
-            '**/com.google.guava_*/**',
-            '**/org.eclipse.xtend.lib_*/**',
-            '**/org.eclipse.xtext.xbase.lib_*/**'
-        ]
-    }
-
-    def plugs = fileTree(
-        dir: extractDir,
-        includes: theIncludes
-    )
-
-
-    inputs.files plugs
-    outputs.dir pluginsDir
-
-
-    // during execution extract actually extract the plugins
-    doLast {
-
-        plugs.each { f ->
-            copy {
-                from zipTree(f)
-                into pluginsDir
-                exclude pluginExcludes
-            }
-        }
-
-        // TODO copy license file
-    }
-
-}
-
-task jar(type: Jar, dependsOn: unzipPlugins) {
-    archiveName "klay.jar"
-
-    //archivePath "${buildDir}"
-    destinationDir file("${buildDir}")
-    from pluginsDir
-}
-
-
-// TODO specify artifacts?
