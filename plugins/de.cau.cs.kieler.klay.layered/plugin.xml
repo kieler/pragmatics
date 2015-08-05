@@ -529,5 +529,15 @@
                value="BRANDES_KOEPF">
          </dependency>
       </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="0"
+            description="Limits the number of iterations for node promotion."
+            id="de.cau.cs.kieler.klay.layered.nodePromotionBoundary"
+            lowerBound="0"
+            name="Node Promotion Boundary"
+            type="int"
+            upperBound="100">
+      </layoutOption>
    </extension>
 </plugin>

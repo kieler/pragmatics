@@ -42,10 +42,11 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.nodePromotion", false);
 
     /**
-     * 
+     * Boundary for limiting the number of iterations of the node promotion algorithm.
+     * Delimited by a percentage of the number of nodes of the graph (1% to 70%, 0 sets no boundary).
      */
     public static final IProperty<Integer> NODE_PROMOTION_BOUNDARY = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.nodePromotionBoundary", 100, 1, 100);
+            "de.cau.cs.kieler.klay.layered.nodePromotionBoundary", 0, 0, 70);
     
     /**
      * Property to switch one dimensional compaction post-processing on or off.
