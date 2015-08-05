@@ -22,6 +22,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -29,7 +31,6 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * StretchWidth algorithm described in In Search for Efficient Heuristics for Minimum-Width Graph
@@ -53,7 +54,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class StretchWidthLayerer implements ILayoutPhase {
     // Indicates the width of the currently built layer
-    private int widthCurrent = 0;
+    private double widthCurrent = 0;
     // Estimated width of the next layer
     private int widthUp = 0;
     // Indicates the width of the layering
@@ -86,6 +87,11 @@ public class StretchWidthLayerer implements ILayoutPhase {
     private int[] inDegree;
     // Selected node to be placed
     private LNode selectedNode;
+    // minimumNodesize to normalize the other sizes
+    private double minimumNodeSize;
+    //normalized Size of every node
+    // access with normSize[node.id]
+    private double[] normSize;
     
 
     /**
@@ -113,20 +119,8 @@ public class StretchWidthLayerer implements ILayoutPhase {
         widthCurrent = 0;
         widthUp = 0;
         maxWidth = 1;
-        // Layer currently worked on
-        Layer currentLayer = new Layer(currentGraph);
-        // Should the algorithm go up to next the layer
-        currentGraph.getLayers().add(currentLayer);
-        //determines how much the width-boundary are influenced by the incomming edges of placed nodes 
-        upperLayerInfluence = currentGraph.getProperty(Properties.UPPER_LAYER_SCALE).doubleValue();
-        // -1 is used to indicate that the original algorithm should be used
-        // which uses the average out-degree
-        
-        if (upperLayerInfluence == -1) {
-                 upperLayerInfluence = getAverageOutDegree();
-
-        }
-
+          
+       
         // Sort the nodes at beginning, since the rank will not change
         // It has to be computed first
         computeSortedNodes();
@@ -135,6 +129,21 @@ public class StretchWidthLayerer implements ILayoutPhase {
         computeSuccessors();
         // Compute two arrays of out- and in-degree for every node
         computeDegrees();
+        //compute minimum node size
+        minimumNodeSize();
+        // compute normalized size of every node
+        computeNormalizedSize();
+        
+        // combine dummy nodes and real node size, you could also add the average normalized node size
+        // to this criteria and adjust the condition go up at widthUp
+        upperLayerInfluence = getAverageOutDegree();
+        
+        // Layer currently worked on
+        Layer currentLayer = new Layer(currentGraph);
+        
+        // add first layer to the graph 
+        currentGraph.getLayers().add(currentLayer);
+        
         // Copy the sorted layerless nodes so we don't overwrite it in the reset case
         tempLayerlessNodes = Lists.newArrayList(sortedLayerlessNodes);
         // Variable to compute the difference of u and z
@@ -179,20 +188,22 @@ public class StretchWidthLayerer implements ILayoutPhase {
                     tempLayerlessNodes.remove(selectedNode);
                     alreadyPlacedNodes.add(selectedNode);
                     // compute new widthCurrent and widthUp
-                    widthCurrent = widthCurrent - outDegree[selectedNode.id] + 1;
+                    widthCurrent = widthCurrent - outDegree[selectedNode.id] + normSize[selectedNode.id];
                     widthUp = widthUp + inDegree[selectedNode.id];
                 }
             }
         }
+     
 
-        // Layering done, delete original layerlessNodes
+     // Layering done, delete original layerlessNodes
         layeredGraph.getLayerlessNodes().clear();
         // Algorithm is Bottom-Up -> reverse Layers
         Collections.reverse(layeredGraph.getLayers());
-
+        
         progressMonitor.done();
     }
 
+    
     /**
      * Checks the effects of the hypothetical
      * placement of the selected node and if the algorithm should
@@ -201,7 +212,8 @@ public class StretchWidthLayerer implements ILayoutPhase {
      * @return true, if the algorithm should go to the next layer
      */
     private Boolean conditionGoUp() {
-               return ((widthCurrent - outDegree[selectedNode.id] + 1)   > maxWidth 
+               return ((widthCurrent - outDegree[selectedNode.id] + normSize[selectedNode.id]) 
+                       > maxWidth 
                     || ((widthUp + inDegree[selectedNode.id]) > (maxWidth * upperLayerInfluence)));  
           }
 
@@ -297,6 +309,8 @@ public class StretchWidthLayerer implements ILayoutPhase {
 
     }
 
+    
+    
     /**
      * Computes the in- and out-degree of every node. the values are used to determine widthUp and
      * widthCurrent. Needs to be executed after computeSuccessors()
@@ -311,6 +325,71 @@ public class StretchWidthLayerer implements ILayoutPhase {
         }
 
     }
+    
+    
+    /**
+     * Computes the minimum node size.
+     * Needs to be computed after computeSuccessors().
+     */
+    private void minimumNodeSize() {
+                
+        Direction dir = currentGraph.getProperty(LayoutOptions.DIRECTION);
+        
+        if (dir == Direction.DOWN || dir == Direction.UP) {
+            minimumNodeSize = sortedLayerlessNodes.get(0).getSize().x;
+            for (LNode node : sortedLayerlessNodes) {
+                if (minimumNodeSize > node.getSize().x) {
+                    minimumNodeSize = node.getSize().x;
+                }
+            }           
+        } else {
+            minimumNodeSize = sortedLayerlessNodes.get(0).getSize().y;
+            for (LNode node : sortedLayerlessNodes) {
+                if (minimumNodeSize > node.getSize().y) {
+                    minimumNodeSize = node.getSize().y;
+                }           
+            }
+        }
+    }
+    
+    
+    /**
+     * Computes the average normalized node size. 
+     * @return average normalized node size
+     */
+ private double avereageNodeSize() {        
+     double sum = 0;
+     for (LNode node : sortedLayerlessNodes) {
+        sum = sum + normSize[node.id];
+     }
+     return sum / sortedLayerlessNodes.size();
+    }
+    
+    /**
+     * Computes the size of every node according to the layering direction 
+     * and normalizes it by the minimum node size.
+     * Needs to be computed after computeSuccessors() and minimumNodeSize().
+     */
+    private void computeNormalizedSize() {
+        
+        //choose which size is the width
+        
+        Direction dir = currentGraph.getProperty(LayoutOptions.DIRECTION);
+        normSize = new double[sortedLayerlessNodes.size()];
+        if (dir == Direction.DOWN || dir == Direction.UP) {
+            for (LNode node : sortedLayerlessNodes) {
+                normSize[node.id] = node.getSize().x / minimumNodeSize;
+            }           
+        } else {
+            for (LNode node : sortedLayerlessNodes) {
+                normSize[node.id] = node.getSize().y / minimumNodeSize;
+            }
+            
+        }
+        
+    }
+    
+    
 
     /**
      * Computes the out-degree of a node.
