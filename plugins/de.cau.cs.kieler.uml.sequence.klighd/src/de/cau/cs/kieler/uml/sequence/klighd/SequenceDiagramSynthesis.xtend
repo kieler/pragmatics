@@ -27,8 +27,7 @@ import de.cau.cs.kieler.papyrus.sequence.properties.MessageType
 import de.cau.cs.kieler.papyrus.sequence.properties.NodeType
 import de.cau.cs.kieler.papyrus.sequence.properties.SequenceDiagramProperties
 import de.cau.cs.kieler.papyrus.sequence.properties.SequenceExecution
-import de.cau.cs.kieler.papyrus.sequence.properties.SequenceExecution.SequenceExecutionType
-import de.cau.cs.kieler.papyrus.sequence.sorter.LifelineSortingStrategy
+import de.cau.cs.kieler.papyrus.sequence.p4sorting.LifelineSortingStrategy
 import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline
@@ -70,9 +69,9 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         surrInteraction.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
-        //surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 500)
         surrInteraction.addLayoutParam(LayoutOptions.BORDER_SPACING, 10f)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_SORTING, LifelineSortingStrategy.LAYER_BASED)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 50)
 
         val surrInteractionRect = surrInteraction.addRoundedRectangle(2, 2, 2)
 
@@ -115,14 +114,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         lifelineNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.LIFELINE)
 
         val rect = lifelineNode.addRectangle.foregroundInvisible = true
-        rect.setGridPlacement(1).from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
 
         // TODO placement....
         val rect2 = rect.addRoundedRectangle(2, 2, 1).setBackgroundGradient(Colors.WHITE, Colors.CORNFLOWER_BLUE, 90)
-        rect2.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
+        rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
         rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
         rect2.setShadow(Colors.BLACK, 5)
-        rect2.setForeground(Colors.GREEN)
 //        rect2.setAreaPlacementData(createKPosition(LEFT, 0, 0, TOP, 0, 0), createKPosition(RIGHT, 0, 0, TOP, 40, 0))
         
         val list = new ArrayList<KPosition>
@@ -131,7 +128,13 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         
         val line = rect.addRectangle.setForeground(Colors.RED)//.foregroundInvisible = true
         line.addPolyline(2, list).setLineStyle(LineStyle.DASH)
-        line.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
+        line.setAreaPlacementData().from(LEFT, 0, 0.5f, TOP, 40, 0).to(LEFT, 0, 0.5f, BOTTOM, 0, 0)
+//        line.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
+//        line.setPointPlacementData(
+//                    LEFT, 0, 0.5f,
+//                    TOP, 50, 0,
+//                    H_LEFT, V_TOP,
+//                    0, 0, 0, 0)
 
 //        rect.children.get(0).setBackground(Colors.GREEN)
 //        rect.children.get(1).setBackground(Colors.RED)
