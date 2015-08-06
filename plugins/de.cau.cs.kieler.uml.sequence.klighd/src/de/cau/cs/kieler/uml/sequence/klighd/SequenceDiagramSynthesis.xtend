@@ -82,11 +82,11 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         surrInteraction.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
         surrInteraction.addLayoutParam(LayoutOptions.BORDER_SPACING, 10f)
-        // TODO flexible Schriftgrößen
-        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
-        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 40)
-        //surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, TEXTSIZE.intValue + 40)
-        //surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, TEXTSIZE.intValue + 30)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.MESSAGE_SPACING, 5*TEXTSIZE.floatValue)
+//        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
+//        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 40)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 2*TEXTSIZE.intValue + 30)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 2*TEXTSIZE.intValue + 10)
         
 
         switch LIFELINESORTING.objectValue {
@@ -113,8 +113,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 surrInteractionRect.setShadow(Colors.BLACK, 10)
 
                 val captionRect = surrInteractionRect.addRectangle.foregroundInvisible = true
-                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-                //captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+//                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
+                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
 
                 captionRect.addPolyline(2, list)
                 captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
@@ -124,8 +124,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 surrInteractionRect.setShadow(Colors.PURPLE, 10)
 
                 val captionRect = surrInteractionRect.addRectangle.foregroundInvisible = true
-                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-//                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+//                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
+                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
 
                 captionRect.addPolyline(2, list)
                 captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
@@ -134,8 +134,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 val surrInteractionRect = surrInteraction.addRectangle
 
                 val captionRect = surrInteractionRect.addRectangle.foregroundInvisible = true
-                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-//                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+//                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
+                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
 
                 captionRect.addPolyline(2, list)
                 captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
@@ -168,27 +168,27 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             case "Stylish": {
                 val rect2 = rect.addRoundedRectangle(15, 15, 1)
                 rect2.setBackgroundGradient(Colors.WHITE, Colors.CORNFLOWER_BLUE, 90)
-                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
-                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-//                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, TEXTSIZE.intValue + 30, 0)
-//                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+//                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
+//                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
+                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 2*TEXTSIZE.intValue + 10, 0)
+                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(TEXTSIZE.intValue, 0, 8, 0).fontSize = TEXTSIZE.intValue
                 rect2.setShadow(Colors.BLACK, 5)
             }
             case "Hello Kitty": {
                 val rect2 = rect.addRoundedRectangle(15, 15, 1)
                 rect2.setBackgroundGradient("#FFEEEE".color, "#FFBBBB".color, 90)
-                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
-                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-//                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, TEXTSIZE.intValue + 30, 0)
-//                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+//                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
+//                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
+                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 2*TEXTSIZE.intValue + 10, 0)
+                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(TEXTSIZE.intValue, 0, 8, 0).fontSize = TEXTSIZE.intValue
                 rect2.setShadow(Colors.PURPLE, 5)
             }
             default: {
                 val rect2 = rect.addRectangle
-                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
-                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-//                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, TEXTSIZE.intValue + 30, 0)
-//                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+//                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
+//                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
+                rect2.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 2*TEXTSIZE.intValue + 10, 0)
+                rect2.addText(lifeline.caption).setSurroundingSpaceGrid(TEXTSIZE.intValue, 0, 8, 0).fontSize = TEXTSIZE.intValue
             }
         }
 
@@ -198,7 +198,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         val line = rect.addRectangle.foregroundInvisible = true
         line.addPolyline(2, list).setLineStyle(LineStyle.DASH)
-        line.setAreaPlacementData().from(LEFT, 0, 0.5f, TOP, 40, 0).to(LEFT, 0, 0.5f, BOTTOM, 0, 0)
+//        line.setAreaPlacementData().from(LEFT, 0, 0.5f, TOP, 40, 0).to(LEFT, 0, 0.5f, BOTTOM, 0, 0)
+        line.setAreaPlacementData().from(LEFT, 0, 0.5f, TOP, 2*TEXTSIZE.intValue + 10, 0).to(LEFT, 0, 0.5f, BOTTOM, 0, 0)
 
         lifelineNodes.put(lifeline.name, lifelineNode)
 
@@ -245,7 +246,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val labelText = msg.message
         val source = msg.sourceLifeline
         val target = msg.targetLifeline
-        label.configureCenterEdgeLabel(labelText, KlighdConstants.DEFAULT_FONT_SIZE, KlighdConstants.DEFAULT_FONT_NAME)
+        label.configureCenterEdgeLabel(labelText, TEXTSIZE.intValue, KlighdConstants.DEFAULT_FONT_NAME)
 
         transEdge.source = lifelineNodes.get(source.name)
         transEdge.target = lifelineNodes.get(target.name)
@@ -410,7 +411,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
     private def dispatch KNode transformInteraction(DestroyLifelineEvent destroy) {
         // TODO close blocks before if not closed yet
-        // TODO am Ende anzeigen
         val destroyNode = destroy.createNode().associateWith(destroy)
         destroyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.DESTRUCTION_EVENT)
 
