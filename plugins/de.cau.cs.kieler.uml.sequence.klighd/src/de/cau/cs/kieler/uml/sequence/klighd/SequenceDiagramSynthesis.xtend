@@ -80,6 +80,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val surrInteraction = root.createNode().associateWith(model)
         root.children.add(surrInteraction)
         surrInteraction.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
+//        surrInteraction.addLayoutParam(SequenceDiagramProperties.COORDINATE_SYSTEM, CoordinateSystem.KGRAPH)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
         surrInteraction.addLayoutParam(LayoutOptions.BORDER_SPACING, 10f)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.MESSAGE_SPACING, 5*TEXTSIZE.floatValue)
