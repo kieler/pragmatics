@@ -54,8 +54,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         ImmutableList::of("Interactive", "Layer Based", "Short Messages"), "Interactive")
     
     // TODO fix initial value not taken at startup
-    private static final val SynthesisOption TEXTSIZE = SynthesisOption.createRangeOption("Text Size", 5.0, 30.0, 1.0,
-        13.0)
+    private static final val SynthesisOption TEXTSIZE = SynthesisOption.createRangeOption("Text Size", 5, 30, 1,
+        13)
 
     override getDisplayedSynthesisOptions() {
         return ImmutableList::of(STYLE, LIFELINESORTING, TEXTSIZE);
@@ -94,7 +94,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 //        surrInteraction.addLayoutParam(SequenceDiagramProperties.COORDINATE_SYSTEM, CoordinateSystem.KGRAPH)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
         surrInteraction.addLayoutParam(LayoutOptions.BORDER_SPACING, 10f)
-        surrInteraction.addLayoutParam(SequenceDiagramProperties.MESSAGE_SPACING, 5 * TEXTSIZE.floatValue)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.MESSAGE_SPACING, 5.0f * TEXTSIZE.intValue)
 //        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
 //        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 40)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 2 * TEXTSIZE.intValue + 30)
@@ -304,26 +304,26 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         label.configureCenterEdgeLabel(labelText, KlighdConstants.DEFAULT_FONT_SIZE, KlighdConstants.DEFAULT_FONT_NAME)
         transEdge.addPolyline(2).addHeadArrowDecorator()
 
-        val dummyNode = surroundingInteraction.createNode()
-        // val circle = 
-        dummyNode.addRectangle.setForeground(Colors.AQUAMARINE)
+        val dummyNode = KimlUtil.createInitializedNode();
+        surroundingInteraction.children += dummyNode;
 
         // TODO source und target setzen und kreis am ende
         if (msg.messageTypeLostAndFound.equals("lost")) {
             transEdge.source = lifelineNodes.get(msg.lifeline.name)
             transEdge.target = dummyNode
+            dummyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.LOST_MESSAGE_TARGET)
         } else {
             transEdge.source = dummyNode
             transEdge.target = lifelineNodes.get(msg.lifeline.name)
+            dummyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.FOUND_MESSAGE_SOURCE)
         }
 
         return transEdge
     }
 
+    // TODO remove
     private def dispatch KNode transformInteraction(OneLifelineEndBlock end) {
         val endBlockNode = end.createNode().associateWith(end)
-
-        // TODO
         return endBlockNode
     }
 
