@@ -35,15 +35,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 /**
  * StretchWidth algorithm described in In Search for Efficient Heuristics for Minimum-Width Graph
  * Layering with Consideration of Dummy Nodes written by Nikolas S. Nikolov, Alexandre Tarassov, and
- * Jürgen Branke
- * 
- * The criterion for going to the next layer was adapted to
- * 
- * "widthUp > maxWidth * upperLayerInfluence"
- * 
- * where upperLayerInfluence is set between 0 and 1 1 will result in the {@link LongestPathLayerer}
- * 0 will result in a layerer very similar to the one-node-layerer.
- * 
+ * Jürgen Branke 
  * 
  * Precondition: the graph has no cycles, but might contain self-loops
  * Postcondition: all nodes have been assigned a layer such that edges 
@@ -134,7 +126,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
         // compute normalized size of every node
         computeNormalizedSize();
         
-        // combine dummy nodes and real node size, you could also add the average normalized node size
+        // To combine dummy nodes and real node size, you could also add the average normalized node size
         // to this criteria and adjust the condition go up at widthUp
         upperLayerInfluence = getAverageOutDegree();
         
