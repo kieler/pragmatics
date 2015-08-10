@@ -325,7 +325,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
     
     
     /**
-     * Computes the minimum node size.
+     * Computes the minimum and the maximum node size.
      * Needs to be computed after computeSuccessors().
      */
     private void minMaxNodeSize() {
