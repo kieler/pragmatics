@@ -54,7 +54,8 @@ public class StretchWidthLayerer implements ILayoutPhase {
     // The Pseudo codes says initialize with 0 but I think you can start with 1 or maybe
     // higher/average
     // out-degree
-    private int maxWidth = 0;
+    // I choose, later, the broadest normalized node as the algorithm fails until it can be placed
+    private double maxWidth = 0;
     // The graph the layering is done for
     private LGraph currentGraph;
     // Factor which determines the bounding of the incoming edges with widthUp and maxWidth
@@ -74,13 +75,15 @@ public class StretchWidthLayerer implements ILayoutPhase {
     // Array of out-degrees for every node
     // access with outDegree[node.id]
     private int[] outDegree;
-    // Array of in-degrees for every node
+    // Array of in-degrees for every nodeminWidthNP
     // access with inDegree[node.id]
     private int[] inDegree;
     // Selected node to be placed
     private LNode selectedNode;
-    // minimumNodesize to normalize the other sizes
+    // minimum node size to normalize the other sizes
     private double minimumNodeSize;
+    // maximum node size to normalize the other sizes
+    private double maximumNodeSize;
     //normalized Size of every node
     // access with normSize[node.id]
     private double[] normSize;
@@ -110,7 +113,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
         // reset variables
         widthCurrent = 0;
         widthUp = 0;
-        maxWidth = 1;
+      
           
        
         // Sort the nodes at beginning, since the rank will not change
@@ -122,9 +125,11 @@ public class StretchWidthLayerer implements ILayoutPhase {
         // Compute two arrays of out- and in-degree for every node
         computeDegrees();
         //compute minimum node size
-        minimumNodeSize();
+        minMaxNodeSize();
         // compute normalized size of every node
         computeNormalizedSize();
+        
+        maxWidth = maximumNodeSize / minimumNodeSize;
         
         // To combine dummy nodes and real node size, you could also add the average normalized node size
         // to this criteria and adjust the condition go up at widthUp
@@ -323,23 +328,33 @@ public class StretchWidthLayerer implements ILayoutPhase {
      * Computes the minimum node size.
      * Needs to be computed after computeSuccessors().
      */
-    private void minimumNodeSize() {
+    private void minMaxNodeSize() {
                 
         Direction dir = currentGraph.getProperty(LayoutOptions.DIRECTION);
+        double size;
         
         if (dir == Direction.DOWN || dir == Direction.UP) {
             minimumNodeSize = sortedLayerlessNodes.get(0).getSize().x;
+            maximumNodeSize = sortedLayerlessNodes.get(0).getSize().x;
             for (LNode node : sortedLayerlessNodes) {
-                if (minimumNodeSize > node.getSize().x) {
-                    minimumNodeSize = node.getSize().x;
+                size = node.getSize().x;
+                if (minimumNodeSize > size) {
+                    minimumNodeSize = size;
+                }
+                if(maximumNodeSize < size){
+                    maximumNodeSize = size;
                 }
             }           
         } else {
             minimumNodeSize = sortedLayerlessNodes.get(0).getSize().y;
             for (LNode node : sortedLayerlessNodes) {
-                if (minimumNodeSize > node.getSize().y) {
-                    minimumNodeSize = node.getSize().y;
-                }           
+                size = node.getSize().y;
+                if (minimumNodeSize > size) {
+                    minimumNodeSize = size;
+                }
+                if(maximumNodeSize < size){
+                    maximumNodeSize = size;
+                }
             }
         }
     }
@@ -349,7 +364,8 @@ public class StretchWidthLayerer implements ILayoutPhase {
      * Computes the average normalized node size. 
      * @return average normalized node size
      */
- private double avereageNodeSize() {        
+ @SuppressWarnings("unused")
+private double avereageNodeSize() {        
      double sum = 0;
      for (LNode node : sortedLayerlessNodes) {
         sum = sum + normSize[node.id];
