@@ -18,6 +18,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
@@ -48,6 +49,7 @@ public class TestGraphCreator {
      */
     protected LGraph getGraph() {
         setUpIds();
+        graph.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
         return graph;
     }
 
@@ -58,6 +60,7 @@ public class TestGraphCreator {
      */
     public TestGraphCreator() {
         graph = new LGraph();
+        graph.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
     }
 
     /**
@@ -67,6 +70,7 @@ public class TestGraphCreator {
      */
     public LGraph getEmptyGraph() {
         setUpIds();
+        graph.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
         return graph;
     }
 
@@ -955,7 +959,7 @@ public class TestGraphCreator {
     }
 
     protected void addNorthSouthEdge(final PortSide side, final LNode nodeWithNSPorts,
-            final LNode northSouthNode, final LNode nodeWithEastWestPorts,
+            final LNode northSouthDummy, final LNode nodeWithEastWestPorts,
             final boolean nodeWithEastWestPortsIsOrigin) {
         boolean normalNodeEastOfNsPortNode =
                 nodeWithEastWestPorts.getLayer().getIndex() < nodeWithNSPorts.getLayer().getIndex();
@@ -964,26 +968,23 @@ public class TestGraphCreator {
         PortSide targetNodePortSide = direction == PortSide.WEST ? PortSide.EAST : PortSide.WEST;
         LPort normalNodePort = addPortOnSide(nodeWithEastWestPorts, targetNodePortSide);
 
-        LPort nsNodePort = addPortOnSide(northSouthNode, direction);
+
+        LPort dummyNodePort = addPortOnSide(northSouthDummy, direction);
 
         if (nodeWithEastWestPortsIsOrigin) {
-            addEdgeBetweenPorts(normalNodePort, nsNodePort);
+            addEdgeBetweenPorts(normalNodePort, dummyNodePort);
         } else {
-            addEdgeBetweenPorts(nsNodePort, normalNodePort);
+            addEdgeBetweenPorts(dummyNodePort, normalNodePort);
         }
 
-        northSouthNode.setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, nodeWithNSPorts);
-        northSouthNode.setProperty(InternalProperties.ORIGIN, nodeWithNSPorts);
+        northSouthDummy.setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, nodeWithNSPorts);
+        northSouthDummy.setProperty(InternalProperties.ORIGIN, nodeWithNSPorts);
 
-        setAsNorthSouthNode(northSouthNode);
-
-        northSouthNode.setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, nodeWithNSPorts);
+        setAsNorthSouthNode(northSouthDummy);
 
         LPort originPort = addPortOnSide(nodeWithNSPorts, side);
-        nsNodePort.setProperty(InternalProperties.ORIGIN, originPort);
-
-        originPort.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES).add(
-                nsNodePort);
+        dummyNodePort.setProperty(InternalProperties.ORIGIN, originPort);
+        originPort.setProperty(InternalProperties.PORT_DUMMY, northSouthDummy);
     }
 
     protected void setInLayerOrderConstraint(final LNode thisNode, final LNode beforeThisNode) {
@@ -1045,6 +1046,11 @@ public class TestGraphCreator {
 
     protected void eastWestEdgeFromTo(final LNode left, final LNode right) {
         LPort leftPort = addPortOnSide(left, PortSide.EAST);
+        LPort rightPort = addPortOnSide(right, PortSide.WEST);
+        addEdgeBetweenPorts(leftPort, rightPort);
+    }
+
+    protected void eastWestEdgeFromTo(final LPort leftPort, final LNode right) {
         LPort rightPort = addPortOnSide(right, PortSide.WEST);
         addEdgeBetweenPorts(leftPort, rightPort);
     }

@@ -39,6 +39,7 @@ import de.cau.cs.kieler.kiml.options.PortSide
 import de.cau.cs.kieler.kiml.options.SizeConstraint
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
+import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
@@ -51,7 +52,6 @@ import java.util.EnumSet
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
-import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -69,8 +69,6 @@ class Ptolemy2KGraphVisualization {
     @Inject extension MarkerExtensions
     /** Extensions used during the transformation. To make things easier. And stuff. */
     @Inject extension MiscellaneousExtensions
-    // /** Utility class that provides renderings. */
-    // @Inject extension KLabelExtensions
     /** Utility class that provides renderings. */
     @Inject extension KRenderingExtensions
     /** Utility class that provides renderings. */
@@ -82,6 +80,8 @@ class Ptolemy2KGraphVisualization {
     val isGraphvizAvailable = GraphvizTool::getDotExecutable(false) != null
     /** alpha value of the background of expanded compound nodes. */
     var compoundNodeAlpha = 10
+    /** whether port labels should be hidden. */
+    var hidePortLabels = false
     
     
     /**
@@ -90,9 +90,12 @@ class Ptolemy2KGraphVisualization {
      * @param kGraph the KGraph created from a Ptolemy model.
      * @param compoundNodeAlpha alpha value of the background of expanded compound nodes. A higher value
      *                          translates to more intense backgrounds. INTENSE!
+     * @param hidePortLabels if {@code true}, ports won't have labels. The label text is always available
+     *                       through the port's tool tip.
      */
-    def void visualize(KNode kGraph, int compoundNodeAlpha) {
+    def void visualize(KNode kGraph, int compoundNodeAlpha, boolean hidePortLabels) {
         this.compoundNodeAlpha = compoundNodeAlpha
+        this.hidePortLabels = hidePortLabels
         
         // Set the layout lagorithm for the graph
         kGraph.setLayoutAlgorithm()
@@ -448,9 +451,8 @@ class Ptolemy2KGraphVisualization {
         
         // Check if the port has a name
         if (port.name.length > 0) {
-            // If this is a model port, put the name into the parent node's label; if it is not, put
-            // the name into the tooltip
             if (port.markedAsModalModelPort) {
+                // This is a model port, put the name into the parent node's label
                 port.node.name = port.name
             } else {
                 rendering.setProperty(KlighdProperties::TOOLTIP, "Port: " + port.name)
@@ -458,7 +460,9 @@ class Ptolemy2KGraphVisualization {
         }
         
         // Remove the port's label
-        port.labels.clear()
+        if (hidePortLabels) {
+            port.labels.clear()
+        }
     }
     
     
@@ -524,14 +528,10 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addLabelRendering(KLabeledGraphElement element) {
         for (label : element.labels) {
-            // Add empty text rendering
-//            val ktext = label.addInvisibleContainerRendering.setSelectionInvisible(false).addText("")
-            // TODO: Re-enable
+            // Add empty selectable text rendering
             val ktext = DiagramSyntheses.addRenderingWithStandardSelectionWrapper(label, null)
                 .addText("")
-//            ktext.cursorSelectable = true
-//            val ktext = renderingFactory.createKText()
-//            label.data += ktext
+            ktext.cursorSelectable = true
             
             // If we have a modal model port, we need to determine a fixed placement for the label at
             // this point
@@ -543,7 +543,7 @@ class Ptolemy2KGraphVisualization {
                 layout.ypos = -(bounds.height + 3.0f)
             }
             
-            // Make the text of edge labels 
+            // Make the text of edge labels a bit smaller
             if (element instanceof KEdge) {
                 ktext.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
             }

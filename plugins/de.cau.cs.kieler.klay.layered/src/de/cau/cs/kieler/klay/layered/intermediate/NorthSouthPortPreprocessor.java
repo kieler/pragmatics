@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -150,6 +149,7 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
     /**
      * {@inheritDoc}
      */
+    @Override
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Odd port side processing", 1);
 
@@ -313,24 +313,22 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         }
 
         // With all IDs assigned, sort the port list
-        Collections.sort(node.getPorts(), new Comparator<LPort>() {
-            public int compare(final LPort port1, final LPort port2) {
-                PortSide side1 = port1.getSide();
-                PortSide side2 = port2.getSide();
+        Collections.sort(node.getPorts(), (port1, port2) -> {
+            PortSide side1 = port1.getSide();
+            PortSide side2 = port2.getSide();
 
-                if (side1 != side2) {
-                    // sort according to the node side
-                    return side1.ordinal() - side2.ordinal();
+            if (side1 != side2) {
+                // sort according to the node side
+                return side1.ordinal() - side2.ordinal();
+            } else {
+                if (port1.id == port2.id) {
+                    // Eastern and western ports have the same ID and have to retain their order
+                    return 0;
                 } else {
-                    if (port1.id == port2.id) {
-                        // Eastern and western ports have the same ID and have to retain their order
-                        return 0;
+                    if (side1 == PortSide.NORTH) {
+                        return port1.id - port2.id;
                     } else {
-                        if (side1 == PortSide.NORTH) {
-                            return port1.id - port2.id;
-                        } else {
-                            return port2.id - port1.id;
-                        }
+                        return port2.id - port1.id;
                     }
                 }
             }
@@ -516,8 +514,6 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             dummyInputPort.setSide(PortSide.WEST);
             dummyInputPort.setNode(dummy);
 
-            addToConnectedNorthSouthPortList(dummyInputPort, inPort);
-
             // Reroute edges
             LEdge[] edgeArray =
                     inPort.getIncomingEdges().toArray(new LEdge[inPort.getIncomingEdges().size()]);
@@ -542,8 +538,6 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
             dummyOutputPort.setSide(PortSide.EAST);
             dummyOutputPort.setNode(dummy);
 
-            addToConnectedNorthSouthPortList(dummyOutputPort, outPort);
-
             // Reroute edges
             LEdge[] edgeArray =
                     outPort.getOutgoingEdges()
@@ -564,14 +558,6 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
         dummyNodes.add(dummy);
 
         return dummy;
-    }
-
-    private void addToConnectedNorthSouthPortList(final LPort nsNodePort, 
-            final LPort portWithEdgeToNSNode) {
-        List<LPort> connectedPorts =
-                portWithEdgeToNSNode
-                        .getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES);
-        connectedPorts.add(nsNodePort);
     }
 
     /**
