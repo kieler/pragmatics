@@ -2,100 +2,199 @@
  * Gradle script for building and publishing Klay as bundled jar with and without dependencies.
  */
 
-plugins {
-    id 'java'
-    id 'signing'
-    id 'maven'
-    id 'com.github.johnrengelman.shadow' version '1.2.2'
-}
-
-import com.github.jengelman.gradle.plugins.shadow.transformers.AppendingTransformer
-
-group = 'de.cau.cs.kieler'
-version = '1.3.37'
-ext.packaging = 'jar'
-
-sourceSets {
-    main {
-        java {
-            srcDir '../../plugins/de.cau.cs.kieler.core/src'
-            srcDir '../../plugins/de.cau.cs.kieler.core.kgraph/src'
-            srcDir '../../plugins/de.cau.cs.kieler.kiml/src'
-            srcDir '../../plugins/de.cau.cs.kieler.klay.force/src'
-            srcDir '../../plugins/de.cau.cs.kieler.klay.layered/src'
-            srcDir '../../plugins/de.cau.cs.kieler.klay.tree/src'
-        }
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
     }
 }
 
-repositories {
-    mavenCentral()
+allprojects {
+    group = 'de.cau.cs.kieler'
+    ext.packaging = 'jar'
+    version = project.properties['v'] ?: 'NIGHTLY-' + getTimeStamp()
+
+    task hello << { task ->
+        println "Hello, I'm $task.project.name"
+    }
 }
 
-dependencies {
-    compile 'org.eclipse.emf:org.eclipse.emf.common:[0,)'
-    compile 'org.eclipse.emf:org.eclipse.emf.ecore:[0,)'
-    compile 'org.eclipse.emf:org.eclipse.emf.ecore.xmi:[0,)'
-    compile 'com.google.guava:guava-gwt:[0,)'
-}
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'signing'
+    apply plugin: 'maven'
+    apply plugin: 'com.github.johnrengelman.shadow'
 
-
-task sourcesJar (type: Jar) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
-}
-
-task javadoc (type: Javadoc, overwrite: true) {
-    source = sourceSets.main.allJava
-    failOnError = false
-}
-
-task javadocJar (type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
-}
-
-shadowJar {
-    from "epl-v10.html"
-    include '**/*.class'
-    include '**/*.jar'
-    include 'META-INF/MAINFEST.MF'
-    include 'epl-v10.html'
-    exclude 'javax/**'
-}
-
-signing {
-    sign configurations.archives
-}
-
-uploadArchives {
     repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+        mavenCentral()
+    }
 
-            repository(url: "file://$buildDir/repo") {
-              // authentication(userName: sonatypeUsername, password: sonatypePassword)
-            }
+// lib jars -----------------------------------------------
 
-            pom.project {
-                name 'KlayBundle'
-                packaging 'jar'
-                description 'Bundled Standalone Klay'
-                url 'http://rtsys.informatik.uni-kiel.de'
+    jar { afterEvaluate {project ->
+        // println "$project.projectBaseName"
+        baseName = project.projectBaseName
+        from project.sourceSets.main.output
+    }}
 
-                licenses {
-                    license {
-                        name 'Eclipse Public License - v 1.0'
-                        url 'http://www.eclipse.org/org/documents/epl-v10.html'
+// source jars --------------------------------------------
+
+    task sourcesJar (type: Jar) { afterEvaluate {project ->
+        baseName = project.projectBaseName
+        classifier = 'sources'
+        from project.sourceSets.main.allSource
+    }}
+
+
+// javadoc ------------------------------------------------
+
+    task javadoc (type: Javadoc, overwrite: true) { afterEvaluate {project ->
+        source = project.sourceSets.main.allJava
+        failOnError = false
+    }}
+
+    // javadoc jars -------------------------------------------
+
+    task javadocJar (type: Jar, dependsOn: javadoc) { afterEvaluate {project ->
+        baseName = project.projectBaseName
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }}
+
+// fat jars -----------------------------------------------
+
+    shadowJar { afterEvaluate {project ->
+        baseName = project.projectBaseName
+        from project.sourceSets.main.runtimeClasspath
+        from "../epl-v10.html"
+        include '**/*.class'
+        include '**/*.jar'
+        include 'META-INF/MAINFEST.MF'
+        include 'epl-v10.html'
+        exclude 'javax/**'
+    }}
+
+    artifacts {
+        archives jar
+        archives sourcesJar
+        archives javadocJar
+    }
+
+    signing {
+        sign configurations.archives
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                afterEvaluate {project ->
+                    repository(url: "file://${project.rootProject.buildDir}/repo") {
+                      // authentication(userName: sonatypeUsername, password: sonatypePassword)
+                    }
+                    pom.project {
+                        name project.pomName
+                        packaging 'jar'
+                        description project.pomDescr
+                        url 'http://rtsys.informatik.uni-kiel.de'
+
+                        licenses {
+                            license {
+                                name 'Eclipse Public License - v 1.0'
+                                url 'http://www.eclipse.org/org/documents/epl-v10.html'
+                            }
+                        }
                     }
                 }
             }
         }
     }
+}
+
+// // lib jars -----------------------------------------------
+
+// jar {
+//     baseName = projectBaseName
+//     from sourceSets.find{it.name == projectName}.output
+// }
+
+// // source jars --------------------------------------------
+
+// task sourcesJar (type: Jar) {
+//     baseName = projectBaseName
+//     classifier = 'sources'
+//     from sourceSets.find{it.name == projectName}.allSource
+// }
+
+// // javadoc ------------------------------------------------
+
+// task javadoc (type: Javadoc, overwrite: true) {
+//     source = sourceSets.find{it.name == projectName}.allJava
+//     failOnError = false
+// }
+
+// // javadoc jars -------------------------------------------
+
+// task javadocJar (type: Jar, dependsOn: javadoc) {
+//     baseName = projectBaseName
+//     classifier = 'javadoc'
+//     from javadoc.destinationDir
+// }
+
+// // fat jars -----------------------------------------------
+
+// shadowJar {
+//     baseName = projectBaseName
+//     from sourceSets.find{it.name == projectName}.runtimeClasspath
+//     from "epl-v10.html"
+//     include '**/*.class'
+//     include '**/*.jar'
+//     include 'META-INF/MAINFEST.MF'
+//     include 'epl-v10.html'
+//     exclude 'javax/**'
+// }
+
+// artifacts {
+//     archives jar
+//     archives sourcesJar
+//     archives javadocJar
+// }
+
+// signing {
+//     sign configurations.archives
+// }
+
+// uploadArchives {
+//     repositories {
+//         mavenDeployer {
+//             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+//             repository(url: "file://$buildDir/repo") {
+//               // authentication(userName: sonatypeUsername, password: sonatypePassword)
+//             }
+
+//             pom.project {
+//                 name 'KlayBundle'
+//                 packaging 'jar'
+//                 description 'Bundled Standalone Klay'
+//                 url 'http://rtsys.informatik.uni-kiel.de'
+
+//                 licenses {
+//                     license {
+//                         name 'Eclipse Public License - v 1.0'
+//                         url 'http://www.eclipse.org/org/documents/epl-v10.html'
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+
+def getTimeStamp() {
+    def date = new Date()
+    def formattedDate = date.format('yyyyMMddHHmmss')
+    return formattedDate
 }

@@ -1,0 +1,23 @@
+ext {
+    projectBaseName = 'kiml.formats'
+    pomName = 'KFormats'
+    pomDescr = 'Bundled Standalone KIELER Formats Library'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir '../../../plugins/de.cau.cs.kieler.kiml.formats/src'
+            srcDir '../../de.cau.cs.kieler.kiml.nonosgi/src/main/java'
+        }
+    }
+}
+
+dependencies {
+    compile project(':klay')
+    compile 'org.eclipse.equinox:app:[0,)'
+    compile 'org.eclipse.equinox:common:[0,)'
+    compile 'org.eclipse.equinox:registry:[0,)'
+    compile 'org.eclipse:osgi:[0,)'
+    compile 'com.google.guava:guava-gwt:[0,)'
+}

@@ -1,0 +1,20 @@
+ext {
+    projectBaseName = 'kiml.formats.json'
+    pomName = 'KJson'
+    pomDescr = 'Bundled Standalone KIELER Json Import'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir '../../../plugins/de.cau.cs.kieler.kiml.formats.json/src'
+        }
+    }
+}
+
+dependencies {
+    compile project(':klay')
+    compile project(':formats')
+    compile 'org.eclipse.xtend:org.eclipse.xtend.lib:[0,)'
+    compile 'org.eclipse.xtext:org.eclipse.xtext.xbase.lib:[0,)'
+}
