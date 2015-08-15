@@ -13,11 +13,20 @@ sourceSets {
     }
 }
 
+def specials = [
+    'org.eclipse.ui_*',
+    'org.eclipse.ui.workbench_*',
+    'org.eclipse.core.runtime_*',
+    'org.eclipse.core.resources_*',
+    'org.eclipse.core.jobs_*'
+]
+
 dependencies {
     compile project(':klay')
     compile 'org.eclipse.equinox:app:[0,)'
     compile 'org.eclipse.equinox:common:[0,)'
     compile 'org.eclipse.equinox:registry:[0,)'
     compile 'org.eclipse:osgi:[0,)'
-    compile 'com.google.guava:guava-gwt:[0,)'
+    // only for compilation, won't be bundled/included in pom.xml
+    compile fileTree(dir: '/home/carsten/programs/eclipse/bundle/pool/plugins', include: specials)
 }

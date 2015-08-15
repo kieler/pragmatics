@@ -1,3 +1,5 @@
+apply plugin: 'com.github.johnrengelman.shadow'
+
 ext {
     projectBaseName = 'klay'
     pomName = 'Klay'
@@ -22,4 +24,16 @@ dependencies {
     compile 'org.eclipse.emf:org.eclipse.emf.ecore:[0,)'
     compile 'org.eclipse.emf:org.eclipse.emf.ecore.xmi:[0,)'
     compile 'com.google.guava:guava-gwt:[0,)'
+}
+
+// fat jars -----------------------------------------------
+
+shadowJar {
+    baseName = projectBaseName
+    from '../epl-v10.html'
+    include '**/*.class'
+    include '**/*.jar'
+    include 'META-INF/MAINFEST.MF'
+    include 'epl-v10.html'
+    exclude 'javax/**'
 }
