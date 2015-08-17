@@ -267,6 +267,17 @@ public final class SplineEdgeRouter implements ILayoutPhase {
             // proceed to next layer
             if (rightLayer != null) {
                 xpos = rightLayersPosition + rightLayer.getSize().x + NODE_TO_VERTICAL_SEGMENT_GAP;
+            } else {
+                // When handling the last layer
+                // add spacing for the last routing area after the node
+                // Calculation taken from inter layer spacing calculation
+                int maxRank = -1;
+                for (final SplineHyperEdge edge : hyperEdges) {
+                    maxRank = Math.max(maxRank, edge.rank);
+                }
+                if (maxRank >= 0) {
+                    xpos += (maxRank + 2) * edgeSpacing;
+                }
             }
             leftLayer = rightLayer;
             externalLeftLayer = externalRightLayer;
