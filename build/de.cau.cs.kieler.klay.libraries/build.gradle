@@ -20,7 +20,7 @@ group = 'de.cau.cs.kieler'
 ext {
     packaging = 'jar'
     libsA = 'fatJar'
-    libsB = 'libsKlay'
+    libsB = 'libs'
     libsC = 'libsFormats'
 }
 version = project.properties['v'] ?: 'nightly-' + getTimeStamp()
@@ -106,7 +106,6 @@ def theExcludes = [
     'schema/**'
 ]
 task fatKlay(type: Jar) {
-    println "$buildDir/$libsA"
     destinationDir file("$buildDir/$libsA")
     baseName = "klay"
     classifier = ''
