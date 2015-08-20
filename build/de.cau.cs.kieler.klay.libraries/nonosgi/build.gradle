@@ -1,0 +1,22 @@
+apply plugin: 'java'
+
+sourceSets {
+    main {
+        java {
+            srcDir "$rootDir/../de.cau.cs.kieler.kiml.nonosgi/src/main/java"
+        }
+    }
+}
+
+dependencies {
+    compile 'com.google.guava:guava:[0,)'
+    compile 'de.cau.cs.kieler:de.cau.cs.kieler.core:[0,)'
+    compile 'de.cau.cs.kieler:de.cau.cs.kieler.core.kgraph:[0,)'
+    compile 'de.cau.cs.kieler:de.cau.cs.kieler.kiml:[0,)'
+    compile 'de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)'
+    compile 'org.eclipse.core:org.eclipse.core.resources:[0,)'
+    compile 'org.eclipse.core:org.eclipse.core.runtime:[0,)'
+    compile 'org.eclipse.equinox:common:[0,)'
+    compile 'org.eclipse.equinox:registry:[0,)'
+    compile 'org.eclipse:osgi:[0,)'
+}

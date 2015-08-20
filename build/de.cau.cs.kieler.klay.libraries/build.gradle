@@ -6,109 +6,207 @@
  * signing.keyId=<keyId>
  * signing.password=<pw>
  * signing.secretKeyRingFile=/home/<user>/.gnupg/secring.gpg
+ * sonatypeUsername=<username>
+ * sonatypePassword=<password>
  */
 
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.2'
-        classpath 'org.xtend:xtend-gradle-plugin:0.4.7'
-    }
+plugins {
+    id 'signing'
+    id 'maven'
+    // id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 
-allprojects {
-    group = 'de.cau.cs.kieler'
-    ext.packaging = 'jar'
-    version = project.properties['v'] ?: 'NIGHTLY-' + getTimeStamp()
-
-    task hello << { task ->
-        println "Hello, I'm $task.project.name"
-    }
+group = 'de.cau.cs.kieler'
+ext {
+    packaging = 'jar'
+    libsA = file("$buildDir/libsA/")
+    libsB = file("$buildDir/libsB/")
+    libsC = file("$buildDir/libsC/")
 }
+version = project.properties['v'] ?: 'nightly-' + getTimeStamp()
 
-subprojects {
-    apply plugin: 'java'
-    apply plugin: 'signing'
-    apply plugin: 'maven'
-
+allprojects{
     repositories {
+        ivy {
+            ivyPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/artifacts.jar/artifacts.xml'
+            artifactPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/plugins/[artifact](.[classifier])_[revision].jar'
+        }
+        ivy {
+            ivyPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/artifacts.jar/artifacts.xml'
+            artifactPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/plugins/[artifact](.[classifier])_[revision].jar'
+        }
         mavenCentral()
         jcenter()
     }
-
-// lib jars -----------------------------------------------
-
-    jar { afterEvaluate {project ->
-        baseName = project.projectBaseName
-        from project.sourceSets.main.output
-    }}
-
-// source jars --------------------------------------------
-
-    task sourcesJar (type: Jar) { afterEvaluate {project ->
-        baseName = project.projectBaseName
-        classifier = 'sources'
-        from project.sourceSets.main.allSource
-    }}
-
-
-// javadoc ------------------------------------------------
-
-    task javadoc (type: Javadoc, overwrite: true) { afterEvaluate {project ->
-        source = project.sourceSets.main.allJava
-        failOnError = false
-    }}
-
-    // javadoc jars -------------------------------------------
-
-    task javadocJar (type: Jar, dependsOn: javadoc) { afterEvaluate {project ->
-        baseName = project.projectBaseName
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }}
-
-    artifacts {
-        archives jar
-        archives sourcesJar
-        archives javadocJar
-    }
-
-    signing {
-        sign configurations.archives
-    }
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-                afterEvaluate {project ->
-                    repository(url: "file://${project.rootProject.buildDir}/repo") {
-                      // authentication(userName: sonatypeUsername, password: sonatypePassword)
-                    }
-                    pom.project {
-                        name project.pomName
-                        packaging 'jar'
-                        description project.pomDescr
-                        url 'http://rtsys.informatik.uni-kiel.de'
-
-                        licenses {
-                            license {
-                                name 'Eclipse Public License - v 1.0'
-                                url 'http://www.eclipse.org/org/documents/epl-v10.html'
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }
 
+configurations {
+    klay
+    klayExtra
+    formats
+    formatsExtra
+    json
+    jsonExtra
+}
+
+dependencies {
+    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.core:[0,)')
+    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.core.kgraph:[0,)')
+    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.kiml:[0,)')
+    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.klay.force:[0,)')
+    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.klay.layered:[0,)')
+    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.klay.tree:[0,)')
+
+    klayExtra dep('org.eclipse.emf:org.eclipse.emf.common:[0,)')
+    klayExtra dep('org.eclipse.emf:org.eclipse.emf.ecore:[0,)')
+    klayExtra dep('org.eclipse.emf:org.eclipse.emf.ecore.xmi:[0,)')
+    klayExtra dep('com.google.guava:guava:[0,)')
+
+    formats dep('de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)')
+    // only with short name on mvn central
+    formatsExtra dep('org.eclipse.equinox:org.eclipse.equinox.app:[0,)')
+    formatsExtra dep('org.eclipse.equinox:org.eclipse.equinox.common:[0,)')
+    formatsExtra dep('org.eclipse.equinox:org.eclipse.equinox.registry:[0,)')
+    formatsExtra dep('org.eclipse:org.eclipse.osgi:[0,)')
+
+    json dep('de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats.json:[0,)')
+    jsonExtra dep('org.eclipse.xtend:org.eclipse.xtend.lib:[0,)')
+    jsonExtra dep('org.eclipse.xtext:org.eclipse.xtext.xbase.lib:[0,)')
+}
+
+def deps = configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.dependencies.collect()}.flatten()
+def depFiles = configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.collect{file(it)}}.flatten()
+
+task asdf << {
+    deps.each{println it}
+    depFiles.each{println it}
+    new java.util.jar.JarFile(depFiles[0]).manifest.mainAttributes.entrySet().each {println "${it.key}: ${it.value}"}
+    // println configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{c->c.dependencies.collect()}.flatten()
+    // configurations.findAll{it.name =~ /^(klay|formats|json)$/}.each {c -> c.each{f-> println f}}
+    // println configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect {c -> c.collect()}.flatten()
+    // println configurations.findAll{it.name =~ /^(klay|formats|json)$/}.each{it.dependencies.each{println it}}
+    // configurations.archives.each {a -> println a}
+    // configurations.klay.fileCollection.each{e-> println e}
+}
+
+task fatKlay(type: Jar) {
+    destinationDir libsA
+    baseName = "klay"
+    classifier = ''
+    from "$rootDir/epl-v10.html"
+    from { configurations.klay.collect { it.isDirectory() ? it : zipTree(it) } }
+    include '**/*.class'
+    include 'META-INF/**'
+    include 'epl-v10.html'
+    exclude 'images/**'
+    exclude 'java/**'
+    exclude 'javax/**'
+    exclude 'model/**'
+    exclude 'schema/**'
+}
+
+task fatKlayEMF(type: Jar) {
+    destinationDir libsA
+    baseName = "klay"
+    classifier = 'all'
+    from "$rootDir/epl-v10.html"
+    from { configurations.klay.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.klayExtra.collect { it.isDirectory() ? it : zipTree(it) } }
+    include '**/*.class'
+    include 'META-INF/**'
+    include 'epl-v10.html'
+    exclude 'images/**'
+    exclude 'java/**'
+    exclude 'javax/**'
+    exclude 'model/**'
+    exclude 'schema/**'
+}
+
+task copyKlayPlugins(type: Copy) {
+    from configurations.klay
+    from configurations.klayExtra
+    into libsB
+}
+
+task copyFormatsPlugins(type: Copy, dependsOn: ":nonosgi:jar") {
+    from configurations.klay
+    from configurations.klayExtra
+    from configurations.formats
+    from configurations.formatsExtra
+    from configurations.json
+    from configurations.jsonExtra
+    from ":nonosgi:jar"
+    into libsC
+}
+
+// artifacts {
+//     depFiles.each{archives it}
+//     // archives configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.collect{file(it)}}.flatten()
+//     // archives sourcesJar
+//     // archives javadocJar
+// }
+
+// signing {
+//     sign configurations.archives
+// }
+
+// uploadArchives {
+//     repositories {
+//         mavenDeployer {
+//             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+//             repository(url: "file://${project.rootProject.buildDir}/repo") {
+//               // authentication(userName: sonatypeUsername, password: sonatypePassword)
+//             }
+
+//             println "publishing:"
+//             deps.eachWithIndex{dep, i ->
+//                 println "dep: $dep"
+//                 println "i:   $i"
+//                 addFilter(dep.name) { artifact, file ->
+//                     println artifact
+//                     println file
+//                 }
+//                 // def manif = "${depFiles[i]}/META-INF/MANIFEST.MF"
+//                 def manif = new java.util.jar.JarFile(depFiles[i]).manifest
+//                 manif.mainAttributes.entrySet().each {details ->
+//                     switch (details.key) {
+//                         case ~/Bundle-Name/:
+//                             pom(dep.name).name = details.value
+//                             break
+//                         case ~/Bundle-Version/:
+//                             pom(dep.name).version = details.value
+//                             break
+//                     }
+//                 }
+//                 //     }
+//                 // } else {
+//                 //     pom(dep.name).name = dep.name
+//                 // }
+//             }
+
+//             pom.project {
+//                 packaging 'jar'
+//                 url 'http://rtsys.informatik.uni-kiel.de/kieler'
+
+//                 licenses {
+//                     license {
+//                         name 'Eclipse Public License - v 1.0'
+//                         url 'http://www.eclipse.org/org/documents/epl-v10.html'
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+
 def getTimeStamp() {
-    def date = new Date()
-    def formattedDate = date.format('yyyyMMddHHmmss')
-    return formattedDate
+    return new Date().format('yyyyMMddHHmmss')
+}
+
+def dep(coords, javadoc = false, source = false) {
+    def result = [dependencies.create(coords)]
+    if (javadoc) result << dependencies.create("$coords:javadoc")
+    if (source) result << dependencies.create("$coords:source")
+    result
 }

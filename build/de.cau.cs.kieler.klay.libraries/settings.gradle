@@ -1,1 +1,1 @@
-include 'klay', 'formats', 'json'
+include 'nonosgi'
