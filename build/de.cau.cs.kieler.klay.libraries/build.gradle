@@ -19,9 +19,9 @@ plugins {
 group = 'de.cau.cs.kieler'
 ext {
     packaging = 'jar'
-    libsA = file("$buildDir/libsA/")
-    libsB = file("$buildDir/libsB/")
-    libsC = file("$buildDir/libsC/")
+    libsA = 'fatJar'
+    libsB = 'libsKlay'
+    libsC = 'libsFormats'
 }
 version = project.properties['v'] ?: 'nightly-' + getTimeStamp()
 
@@ -89,54 +89,85 @@ task asdf << {
     // configurations.klay.fileCollection.each{e-> println e}
 }
 
+// Part A: bundled klay
+// --------------------------------------------------------
+
+def theIncludes = [
+    '**/*.class',
+    'META-INF/**',
+    'epl-v10.html'
+]
+
+def theExcludes = [
+    'images/**',
+    'java/**',
+    'javax/**',
+    'model/**',
+    'schema/**'
+]
 task fatKlay(type: Jar) {
-    destinationDir libsA
+    println "$buildDir/$libsA"
+    destinationDir file("$buildDir/$libsA")
     baseName = "klay"
     classifier = ''
     from "$rootDir/epl-v10.html"
     from { configurations.klay.collect { it.isDirectory() ? it : zipTree(it) } }
-    include '**/*.class'
-    include 'META-INF/**'
-    include 'epl-v10.html'
-    exclude 'images/**'
-    exclude 'java/**'
-    exclude 'javax/**'
-    exclude 'model/**'
-    exclude 'schema/**'
+    include theIncludes
+    exclude theExcludes
 }
 
 task fatKlayEMF(type: Jar) {
-    destinationDir libsA
+    destinationDir file("$buildDir/$libsA")
     baseName = "klay"
     classifier = 'all'
     from "$rootDir/epl-v10.html"
     from { configurations.klay.collect { it.isDirectory() ? it : zipTree(it) } }
     from { configurations.klayExtra.collect { it.isDirectory() ? it : zipTree(it) } }
-    include '**/*.class'
-    include 'META-INF/**'
-    include 'epl-v10.html'
-    exclude 'images/**'
-    exclude 'java/**'
-    exclude 'javax/**'
-    exclude 'model/**'
-    exclude 'schema/**'
+    include theIncludes
+    exclude theExcludes
 }
+
+// Part B: klay plugins
+// --------------------------------------------------------
+
+def klayPlugins = [
+    configurations.klay,
+    configurations.klayExtra
+]
 
 task copyKlayPlugins(type: Copy) {
-    from configurations.klay
-    from configurations.klayExtra
-    into libsB
+    from klayPlugins
+    into "$buildDir/$libsB"
 }
 
+task zipKlayPlugins(type: Zip) {
+    archiveName "${libsB}.zip"
+    destinationDir buildDir
+    from klayPlugins
+}
+
+// Part C: klay plugins with formats & json
+// --------------------------------------------------------
+
+def formatsPlugins = [
+    configurations.klay,
+    configurations.klayExtra,
+    configurations.formats,
+    configurations.formatsExtra,
+    configurations.json,
+    configurations.jsonExtra,
+    ":nonosgi:jar"
+]
+
 task copyFormatsPlugins(type: Copy, dependsOn: ":nonosgi:jar") {
-    from configurations.klay
-    from configurations.klayExtra
-    from configurations.formats
-    from configurations.formatsExtra
-    from configurations.json
-    from configurations.jsonExtra
-    from ":nonosgi:jar"
-    into libsC
+    from formatsPlugins
+    into "$buildDir/$libsC"
+}
+
+task zipFormatsPlugins(type: Zip, dependsOn: ":nonosgi:jar") {
+    archiveName "${libsC}.zip"
+    destinationDir buildDir
+    from formatsPlugins
 }
 
 // artifacts {
