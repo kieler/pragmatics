@@ -35,8 +35,6 @@ allprojects{
             ivyPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/artifacts.jar/artifacts.xml'
             artifactPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/plugins/[artifact](.[classifier])_[revision].jar'
         }
-        mavenCentral()
-        jcenter()
     }
 }
 
@@ -60,7 +58,7 @@ dependencies {
     klayExtra dep('org.eclipse.emf:org.eclipse.emf.common:[0,)')
     klayExtra dep('org.eclipse.emf:org.eclipse.emf.ecore:[0,)')
     klayExtra dep('org.eclipse.emf:org.eclipse.emf.ecore.xmi:[0,)')
-    klayExtra dep('com.google.guava:guava:[0,)')
+    klayExtra dep('com.google.guava:com.google.guava:[0,)')
 
     formats dep('de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)')
     // only with short name on mvn central
