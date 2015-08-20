@@ -4,7 +4,6 @@ package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Interaction;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
-import de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
 
@@ -32,7 +31,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequenceDiagramImpl#getDiagramName <em>Diagram Name</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequenceDiagramImpl#getLocals <em>Locals</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequenceDiagramImpl#getLifelines <em>Lifelines</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequenceDiagramImpl#getInteractions <em>Interactions</em>}</li>
  * </ul>
@@ -61,16 +59,6 @@ public class SequenceDiagramImpl extends MinimalEObjectImpl.Container implements
    * @ordered
    */
   protected String diagramName = DIAGRAM_NAME_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getLocals() <em>Locals</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getLocals()
-   * @generated
-   * @ordered
-   */
-  protected EList<LocalVariable> locals;
 
   /**
    * The cached value of the '{@link #getLifelines() <em>Lifelines</em>}' containment reference list.
@@ -141,20 +129,6 @@ public class SequenceDiagramImpl extends MinimalEObjectImpl.Container implements
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<LocalVariable> getLocals()
-  {
-    if (locals == null)
-    {
-      locals = new EObjectContainmentEList<LocalVariable>(LocalVariable.class, this, SequencePackage.SEQUENCE_DIAGRAM__LOCALS);
-    }
-    return locals;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EList<Lifeline> getLifelines()
   {
     if (lifelines == null)
@@ -188,8 +162,6 @@ public class SequenceDiagramImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case SequencePackage.SEQUENCE_DIAGRAM__LOCALS:
-        return ((InternalEList<?>)getLocals()).basicRemove(otherEnd, msgs);
       case SequencePackage.SEQUENCE_DIAGRAM__LIFELINES:
         return ((InternalEList<?>)getLifelines()).basicRemove(otherEnd, msgs);
       case SequencePackage.SEQUENCE_DIAGRAM__INTERACTIONS:
@@ -210,8 +182,6 @@ public class SequenceDiagramImpl extends MinimalEObjectImpl.Container implements
     {
       case SequencePackage.SEQUENCE_DIAGRAM__DIAGRAM_NAME:
         return getDiagramName();
-      case SequencePackage.SEQUENCE_DIAGRAM__LOCALS:
-        return getLocals();
       case SequencePackage.SEQUENCE_DIAGRAM__LIFELINES:
         return getLifelines();
       case SequencePackage.SEQUENCE_DIAGRAM__INTERACTIONS:
@@ -233,10 +203,6 @@ public class SequenceDiagramImpl extends MinimalEObjectImpl.Container implements
     {
       case SequencePackage.SEQUENCE_DIAGRAM__DIAGRAM_NAME:
         setDiagramName((String)newValue);
-        return;
-      case SequencePackage.SEQUENCE_DIAGRAM__LOCALS:
-        getLocals().clear();
-        getLocals().addAll((Collection<? extends LocalVariable>)newValue);
         return;
       case SequencePackage.SEQUENCE_DIAGRAM__LIFELINES:
         getLifelines().clear();
@@ -263,9 +229,6 @@ public class SequenceDiagramImpl extends MinimalEObjectImpl.Container implements
       case SequencePackage.SEQUENCE_DIAGRAM__DIAGRAM_NAME:
         setDiagramName(DIAGRAM_NAME_EDEFAULT);
         return;
-      case SequencePackage.SEQUENCE_DIAGRAM__LOCALS:
-        getLocals().clear();
-        return;
       case SequencePackage.SEQUENCE_DIAGRAM__LIFELINES:
         getLifelines().clear();
         return;
@@ -288,8 +251,6 @@ public class SequenceDiagramImpl extends MinimalEObjectImpl.Container implements
     {
       case SequencePackage.SEQUENCE_DIAGRAM__DIAGRAM_NAME:
         return DIAGRAM_NAME_EDEFAULT == null ? diagramName != null : !DIAGRAM_NAME_EDEFAULT.equals(diagramName);
-      case SequencePackage.SEQUENCE_DIAGRAM__LOCALS:
-        return locals != null && !locals.isEmpty();
       case SequencePackage.SEQUENCE_DIAGRAM__LIFELINES:
         return lifelines != null && !lifelines.isEmpty();
       case SequencePackage.SEQUENCE_DIAGRAM__INTERACTIONS:

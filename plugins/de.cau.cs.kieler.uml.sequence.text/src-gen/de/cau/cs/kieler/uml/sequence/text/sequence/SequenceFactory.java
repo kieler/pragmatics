@@ -32,15 +32,6 @@ public interface SequenceFactory extends EFactory
   SequenceDiagram createSequenceDiagram();
 
   /**
-   * Returns a new object of class '<em>Local Variable</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Local Variable</em>'.
-   * @generated
-   */
-  LocalVariable createLocalVariable();
-
-  /**
    * Returns a new object of class '<em>Lifeline</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -75,15 +66,6 @@ public interface SequenceFactory extends EFactory
    * @generated
    */
   OneLifelineMessage createOneLifelineMessage();
-
-  /**
-   * Returns a new object of class '<em>One Lifeline End Block</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>One Lifeline End Block</em>'.
-   * @generated
-   */
-  OneLifelineEndBlock createOneLifelineEndBlock();
 
   /**
    * Returns a new object of class '<em>One Lifeline Note</em>'.

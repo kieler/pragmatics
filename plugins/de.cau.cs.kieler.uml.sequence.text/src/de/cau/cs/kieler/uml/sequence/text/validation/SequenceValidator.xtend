@@ -5,7 +5,7 @@ package de.cau.cs.kieler.uml.sequence.text.validation
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Interaction
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline
-import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock
+//import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage
@@ -15,6 +15,7 @@ import java.util.HashMap
 import java.util.Map
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.validation.Check
+import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
 
 /**
  * Custom validation rules. 
@@ -32,7 +33,7 @@ class SequenceValidator extends AbstractSequenceValidator {
     private static val EStructuralFeature ONE_END_COUNT = SequencePackage.Literals.
         ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT
     private static val EStructuralFeature ONE_END = SequencePackage.Literals.ONE_LIFELINE_MESSAGE__END_BLOCK
-    private static val EStructuralFeature END = SequencePackage.Literals.ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT
+//    private static val EStructuralFeature END = SequencePackage.Literals.ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT
 
     @Check
     def sameLifelineIdName(SequenceDiagram s) {
@@ -47,7 +48,12 @@ class SequenceValidator extends AbstractSequenceValidator {
     }
 
     //TODO check refinement lifeline names not doubled
+    
     //TODO check no messages after destroy
+//    @Check 
+//    def correctUsageOfDestroy(SequenceDiagram s) {
+//        
+//    }
     
     @Check
     def correctUsageOfBlocks(SequenceDiagram s) {
@@ -55,12 +61,12 @@ class SequenceValidator extends AbstractSequenceValidator {
         for (interact : s.interactions) {
             correctUsageOfBlocksOnMessage(interact, map);
         }
-        if (map.size > 0) {
-            //TODO display warning (not working)
-            warning("Not all Blocks are closed", s, SequencePackage.Literals.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK)
-            warning("Not all Blocks are closed", s, SequencePackage.Literals.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK)
-            warning("Not all Blocks are closed", s, SequencePackage.Literals.ONE_LIFELINE_MESSAGE__START_BLOCK)
-        }
+//        if (map.size > 0) {
+//            //TODO display warning (not working)
+//            warning("Not all Blocks are closed", s, SequencePackage.Literals.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK)
+//            warning("Not all Blocks are closed", s, SequencePackage.Literals.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK)
+//            warning("Not all Blocks are closed", s, SequencePackage.Literals.ONE_LIFELINE_MESSAGE__START_BLOCK)
+//        }
     }
 
     private def dispatch correctUsageOfBlocksOnMessage(TwoLifelineMessage m, Map<Lifeline, Integer> map) {
@@ -86,10 +92,15 @@ class SequenceValidator extends AbstractSequenceValidator {
             endBlock(m.lifeline, m.endBlockCount, map, ONE_END, ONE_END_COUNT, m)
         }
     }
-
-    private def dispatch correctUsageOfBlocksOnMessage(OneLifelineEndBlock e, Map<Lifeline, Integer> map) {
-        endBlock(e.lifeline, e.endBlockCount, map, END, END, e)
+    
+    // TODO Wegen dispatch muss alles definiert sein?
+    private def dispatch correctUsageOfBlocksOnMessage(DestroyLifelineEvent d, Map<Lifeline, Integer> map) {
+        
     }
+
+//    private def dispatch correctUsageOfBlocksOnMessage(OneLifelineEndBlock e, Map<Lifeline, Integer> map) {
+//        endBlock(e.lifeline, e.endBlockCount, map, END, END, e)
+//    }
 
     def startBlock(Lifeline l, Integer add, Map<Lifeline, Integer> map) {
         if (map.containsKey(l)) {

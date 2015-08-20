@@ -106,63 +106,19 @@ ruleSequenceDiagram returns [EObject current=null]
 	    }
 
 )
-)(	otherlv_3='{' 
-    {
-    	newLeafNode(otherlv_3, grammarAccess.getSequenceDiagramAccess().getLeftCurlyBracketKeyword_3_0());
-    }
-(
-(
-		{ 
-	        newCompositeNode(grammarAccess.getSequenceDiagramAccess().getLocalsLocalVariableParserRuleCall_3_1_0()); 
-	    }
-		lv_locals_4_0=ruleLocalVariable		{
-	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getSequenceDiagramRule());
-	        }
-       		add(
-       			$current, 
-       			"locals",
-        		lv_locals_4_0, 
-        		"LocalVariable");
-	        afterParserOrEnumRuleCall();
-	    }
-
-)
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getSequenceDiagramAccess().getLocalsLocalVariableParserRuleCall_3_2_0()); 
+	        newCompositeNode(grammarAccess.getSequenceDiagramAccess().getLifelinesLifelineParserRuleCall_3_0()); 
 	    }
-		lv_locals_5_0=ruleLocalVariable		{
-	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getSequenceDiagramRule());
-	        }
-       		add(
-       			$current, 
-       			"locals",
-        		lv_locals_5_0, 
-        		"LocalVariable");
-	        afterParserOrEnumRuleCall();
-	    }
-
-)
-)*	otherlv_6='}' 
-    {
-    	newLeafNode(otherlv_6, grammarAccess.getSequenceDiagramAccess().getRightCurlyBracketKeyword_3_3());
-    }
-)?(
-(
-		{ 
-	        newCompositeNode(grammarAccess.getSequenceDiagramAccess().getLifelinesLifelineParserRuleCall_4_0()); 
-	    }
-		lv_lifelines_7_0=ruleLifeline		{
+		lv_lifelines_3_0=ruleLifeline		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getSequenceDiagramRule());
 	        }
        		add(
        			$current, 
        			"lifelines",
-        		lv_lifelines_7_0, 
+        		lv_lifelines_3_0, 
         		"Lifeline");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -171,79 +127,22 @@ ruleSequenceDiagram returns [EObject current=null]
 )*(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getSequenceDiagramAccess().getInteractionsInteractionParserRuleCall_5_0()); 
+	        newCompositeNode(grammarAccess.getSequenceDiagramAccess().getInteractionsInteractionParserRuleCall_4_0()); 
 	    }
-		lv_interactions_8_0=ruleInteraction		{
+		lv_interactions_4_0=ruleInteraction		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getSequenceDiagramRule());
 	        }
        		add(
        			$current, 
        			"interactions",
-        		lv_interactions_8_0, 
+        		lv_interactions_4_0, 
         		"Interaction");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
 )*)
-;
-
-
-
-
-
-// Entry rule entryRuleLocalVariable
-entryRuleLocalVariable returns [EObject current=null] 
-	:
-	{ newCompositeNode(grammarAccess.getLocalVariableRule()); }
-	 iv_ruleLocalVariable=ruleLocalVariable 
-	 { $current=$iv_ruleLocalVariable.current; } 
-	 EOF 
-;
-
-// Rule LocalVariable
-ruleLocalVariable returns [EObject current=null] 
-    @init { enterRule(); 
-    }
-    @after { leaveRule(); }:
-((
-(
-		{ 
-	        newCompositeNode(grammarAccess.getLocalVariableAccess().getTypeDataTypeEnumRuleCall_0_0()); 
-	    }
-		lv_type_0_0=ruleDataType		{
-	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getLocalVariableRule());
-	        }
-       		set(
-       			$current, 
-       			"type",
-        		lv_type_0_0, 
-        		"DataType");
-	        afterParserOrEnumRuleCall();
-	    }
-
-)
-)(
-(
-		lv_name_1_0=RULE_ID
-		{
-			newLeafNode(lv_name_1_0, grammarAccess.getLocalVariableAccess().getNameIDTerminalRuleCall_1_0()); 
-		}
-		{
-	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getLocalVariableRule());
-	        }
-       		setWithLastConsumed(
-       			$current, 
-       			"name",
-        		lv_name_1_0, 
-        		"ID");
-	    }
-
-)
-))
 ;
 
 
@@ -361,41 +260,31 @@ ruleInteraction returns [EObject current=null]
 
     |
     { 
-        newCompositeNode(grammarAccess.getInteractionAccess().getOneLifelineEndBlockParserRuleCall_3()); 
+        newCompositeNode(grammarAccess.getInteractionAccess().getOneLifelineNoteParserRuleCall_3()); 
     }
-    this_OneLifelineEndBlock_3=ruleOneLifelineEndBlock
+    this_OneLifelineNote_3=ruleOneLifelineNote
     { 
-        $current = $this_OneLifelineEndBlock_3.current; 
+        $current = $this_OneLifelineNote_3.current; 
         afterParserOrEnumRuleCall();
     }
 
     |
     { 
-        newCompositeNode(grammarAccess.getInteractionAccess().getOneLifelineNoteParserRuleCall_4()); 
+        newCompositeNode(grammarAccess.getInteractionAccess().getDestroyLifelineEventParserRuleCall_4()); 
     }
-    this_OneLifelineNote_4=ruleOneLifelineNote
+    this_DestroyLifelineEvent_4=ruleDestroyLifelineEvent
     { 
-        $current = $this_OneLifelineNote_4.current; 
+        $current = $this_DestroyLifelineEvent_4.current; 
         afterParserOrEnumRuleCall();
     }
 
     |
     { 
-        newCompositeNode(grammarAccess.getInteractionAccess().getDestroyLifelineEventParserRuleCall_5()); 
+        newCompositeNode(grammarAccess.getInteractionAccess().getRefinementParserRuleCall_5()); 
     }
-    this_DestroyLifelineEvent_5=ruleDestroyLifelineEvent
+    this_Refinement_5=ruleRefinement
     { 
-        $current = $this_DestroyLifelineEvent_5.current; 
-        afterParserOrEnumRuleCall();
-    }
-
-    |
-    { 
-        newCompositeNode(grammarAccess.getInteractionAccess().getRefinementParserRuleCall_6()); 
-    }
-    this_Refinement_6=ruleRefinement
-    { 
-        $current = $this_Refinement_6.current; 
+        $current = $this_Refinement_5.current; 
         afterParserOrEnumRuleCall();
     }
 )
@@ -805,62 +694,6 @@ ruleOneLifelineMessage returns [EObject current=null]
 
 
 
-// Entry rule entryRuleOneLifelineEndBlock
-entryRuleOneLifelineEndBlock returns [EObject current=null] 
-	:
-	{ newCompositeNode(grammarAccess.getOneLifelineEndBlockRule()); }
-	 iv_ruleOneLifelineEndBlock=ruleOneLifelineEndBlock 
-	 { $current=$iv_ruleOneLifelineEndBlock.current; } 
-	 EOF 
-;
-
-// Rule OneLifelineEndBlock
-ruleOneLifelineEndBlock returns [EObject current=null] 
-    @init { enterRule(); 
-    }
-    @after { leaveRule(); }:
-((
-(
-		{
-			if ($current==null) {
-	            $current = createModelElement(grammarAccess.getOneLifelineEndBlockRule());
-	        }
-        }
-	otherlv_0=RULE_ID
-	{
-		newLeafNode(otherlv_0, grammarAccess.getOneLifelineEndBlockAccess().getLifelineLifelineCrossReference_0_0()); 
-	}
-
-)
-)	otherlv_1='endBlock' 
-    {
-    	newLeafNode(otherlv_1, grammarAccess.getOneLifelineEndBlockAccess().getEndBlockKeyword_1());
-    }
-(
-(
-		lv_endBlockCount_2_0=RULE_INT_GREATER_ZERO
-		{
-			newLeafNode(lv_endBlockCount_2_0, grammarAccess.getOneLifelineEndBlockAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_2_0()); 
-		}
-		{
-	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getOneLifelineEndBlockRule());
-	        }
-       		setWithLastConsumed(
-       			$current, 
-       			"endBlockCount",
-        		lv_endBlockCount_2_0, 
-        		"INT_GREATER_ZERO");
-	    }
-
-)
-)?)
-;
-
-
-
-
-
 // Entry rule entryRuleOneLifelineNote
 entryRuleOneLifelineNote returns [EObject current=null] 
 	:
@@ -1228,37 +1061,6 @@ ruleMessageType returns [Enumerator current=null]
 	{
         $current = grammarAccess.getMessageTypeAccess().getSyncEnumLiteralDeclaration_3().getEnumLiteral().getInstance();
         newLeafNode(enumLiteral_3, grammarAccess.getMessageTypeAccess().getSyncEnumLiteralDeclaration_3()); 
-    }
-));
-
-
-
-// Rule DataType
-ruleDataType returns [Enumerator current=null] 
-    @init { enterRule(); }
-    @after { leaveRule(); }:
-((	enumLiteral_0='Char' 
-	{
-        $current = grammarAccess.getDataTypeAccess().getCharEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
-        newLeafNode(enumLiteral_0, grammarAccess.getDataTypeAccess().getCharEnumLiteralDeclaration_0()); 
-    }
-)
-    |(	enumLiteral_1='Boolean' 
-	{
-        $current = grammarAccess.getDataTypeAccess().getBooleanEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
-        newLeafNode(enumLiteral_1, grammarAccess.getDataTypeAccess().getBooleanEnumLiteralDeclaration_1()); 
-    }
-)
-    |(	enumLiteral_2='Integer' 
-	{
-        $current = grammarAccess.getDataTypeAccess().getIntegerEnumLiteralDeclaration_2().getEnumLiteral().getInstance();
-        newLeafNode(enumLiteral_2, grammarAccess.getDataTypeAccess().getIntegerEnumLiteralDeclaration_2()); 
-    }
-)
-    |(	enumLiteral_3='Float' 
-	{
-        $current = grammarAccess.getDataTypeAccess().getFloatEnumLiteralDeclaration_3().getEnumLiteral().getInstance();
-        newLeafNode(enumLiteral_3, grammarAccess.getDataTypeAccess().getFloatEnumLiteralDeclaration_3()); 
     }
 ));
 

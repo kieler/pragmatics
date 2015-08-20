@@ -13,21 +13,10 @@
       <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageType/response"/>
       <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageType/sync"/>
     </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Sequence.ecore#//DataType">
-      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//DataType/char"/>
-      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//DataType/boolean"/>
-      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//DataType/integer"/>
-      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//DataType/float"/>
-    </genEnums>
     <genClasses ecoreClass="Sequence.ecore#//SequenceDiagram">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//SequenceDiagram/diagramName"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Sequence.ecore#//SequenceDiagram/locals"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Sequence.ecore#//SequenceDiagram/lifelines"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Sequence.ecore#//SequenceDiagram/interactions"/>
-    </genClasses>
-    <genClasses ecoreClass="Sequence.ecore#//LocalVariable">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//LocalVariable/type"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//LocalVariable/name"/>
     </genClasses>
     <genClasses ecoreClass="Sequence.ecore#//Lifeline">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//Lifeline/caption"/>
@@ -57,10 +46,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/endBlock"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/endBlockCount"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/note"/>
-    </genClasses>
-    <genClasses ecoreClass="Sequence.ecore#//OneLifelineEndBlock">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//OneLifelineEndBlock/Lifeline"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineEndBlock/endBlockCount"/>
     </genClasses>
     <genClasses ecoreClass="Sequence.ecore#//OneLifelineNote">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//OneLifelineNote/Lifeline"/>

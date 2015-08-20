@@ -79,13 +79,6 @@ public class SequenceSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case SequencePackage.LOCAL_VARIABLE:
-      {
-        LocalVariable localVariable = (LocalVariable)theEObject;
-        T result = caseLocalVariable(localVariable);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case SequencePackage.LIFELINE:
       {
         Lifeline lifeline = (Lifeline)theEObject;
@@ -113,14 +106,6 @@ public class SequenceSwitch<T> extends Switch<T>
         OneLifelineMessage oneLifelineMessage = (OneLifelineMessage)theEObject;
         T result = caseOneLifelineMessage(oneLifelineMessage);
         if (result == null) result = caseInteraction(oneLifelineMessage);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case SequencePackage.ONE_LIFELINE_END_BLOCK:
-      {
-        OneLifelineEndBlock oneLifelineEndBlock = (OneLifelineEndBlock)theEObject;
-        T result = caseOneLifelineEndBlock(oneLifelineEndBlock);
-        if (result == null) result = caseInteraction(oneLifelineEndBlock);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -179,22 +164,6 @@ public class SequenceSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseSequenceDiagram(SequenceDiagram object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Local Variable</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Local Variable</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseLocalVariable(LocalVariable object)
   {
     return null;
   }
@@ -259,22 +228,6 @@ public class SequenceSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseOneLifelineMessage(OneLifelineMessage object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>One Lifeline End Block</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>One Lifeline End Block</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseOneLifelineEndBlock(OneLifelineEndBlock object)
   {
     return null;
   }

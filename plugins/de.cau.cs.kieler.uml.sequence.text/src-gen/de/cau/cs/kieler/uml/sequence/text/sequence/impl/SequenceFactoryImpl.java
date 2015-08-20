@@ -66,12 +66,10 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
     switch (eClass.getClassifierID())
     {
       case SequencePackage.SEQUENCE_DIAGRAM: return createSequenceDiagram();
-      case SequencePackage.LOCAL_VARIABLE: return createLocalVariable();
       case SequencePackage.LIFELINE: return createLifeline();
       case SequencePackage.INTERACTION: return createInteraction();
       case SequencePackage.TWO_LIFELINE_MESSAGE: return createTwoLifelineMessage();
       case SequencePackage.ONE_LIFELINE_MESSAGE: return createOneLifelineMessage();
-      case SequencePackage.ONE_LIFELINE_END_BLOCK: return createOneLifelineEndBlock();
       case SequencePackage.ONE_LIFELINE_NOTE: return createOneLifelineNote();
       case SequencePackage.DESTROY_LIFELINE_EVENT: return createDestroyLifelineEvent();
       case SequencePackage.FRAGMENT: return createFragment();
@@ -94,8 +92,6 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
     {
       case SequencePackage.MESSAGE_TYPE:
         return createMessageTypeFromString(eDataType, initialValue);
-      case SequencePackage.DATA_TYPE:
-        return createDataTypeFromString(eDataType, initialValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -113,8 +109,6 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
     {
       case SequencePackage.MESSAGE_TYPE:
         return convertMessageTypeToString(eDataType, instanceValue);
-      case SequencePackage.DATA_TYPE:
-        return convertDataTypeToString(eDataType, instanceValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -129,17 +123,6 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
   {
     SequenceDiagramImpl sequenceDiagram = new SequenceDiagramImpl();
     return sequenceDiagram;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public LocalVariable createLocalVariable()
-  {
-    LocalVariableImpl localVariable = new LocalVariableImpl();
-    return localVariable;
   }
 
   /**
@@ -184,17 +167,6 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
   {
     OneLifelineMessageImpl oneLifelineMessage = new OneLifelineMessageImpl();
     return oneLifelineMessage;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public OneLifelineEndBlock createOneLifelineEndBlock()
-  {
-    OneLifelineEndBlockImpl oneLifelineEndBlock = new OneLifelineEndBlockImpl();
-    return oneLifelineEndBlock;
   }
 
   /**
@@ -270,28 +242,6 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
    * @generated
    */
   public String convertMessageTypeToString(EDataType eDataType, Object instanceValue)
-  {
-    return instanceValue == null ? null : instanceValue.toString();
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public DataType createDataTypeFromString(EDataType eDataType, String initialValue)
-  {
-    DataType result = DataType.get(initialValue);
-    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
-    return result;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String convertDataTypeToString(EDataType eDataType, Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }

@@ -99,14 +99,14 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
         c.setLinewrap().before(f.destroyLifelineEventRule);
         c.setLinewrap().before(f.getOneLifelineNoteRule);
         c.setLinewrap().before(f.getTwoLifelineMessageRule);
-        c.setLinewrap().before(f.getOneLifelineEndBlockRule);
+//        c.setLinewrap().before(f.getOneLifelineEndBlockRule);
         c.setLinewrap().before(f.getFragmentRule);
         c.setLinewrap().before(f.getRefinementRule);
-        c.setLinewrap().before(f.getLocalVariableRule);
+//        c.setLinewrap().before(f.getLocalVariableRule);
         
         // Formatting before and after the lifeline declarations
-        c.setLinewrap(2).before(f.getSequenceDiagramAccess.lifelinesAssignment_4.eContents.get(0))
-        c.setLinewrap(2).after(f.getSequenceDiagramAccess.lifelinesAssignment_4.eContents.last);
+        c.setLinewrap(2).before(f.getSequenceDiagramAccess.lifelinesAssignment_3.eContents.get(0))
+        c.setLinewrap(2).after(f.getSequenceDiagramAccess.lifelinesAssignment_3.eContents.last);
         
         // Formatting for comments
         c.setLinewrap(0, 1, 2).before(f.getSL_COMMENTRule)

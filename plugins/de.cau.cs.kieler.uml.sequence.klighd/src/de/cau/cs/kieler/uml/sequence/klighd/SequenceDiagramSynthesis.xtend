@@ -30,7 +30,7 @@ import de.cau.cs.kieler.papyrus.sequence.p4sorting.LifelineSortingStrategy
 import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline
-import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock
+//import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement
@@ -59,7 +59,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private static final val SynthesisOption TEXTSIZE = SynthesisOption.createRangeOption("Text Size", 5, 30, 1, 13)
 
     override getDisplayedSynthesisOptions() {
-        return ImmutableList::of(STYLE, LIFELINESORTING, TEXTSIZE);
+        return ImmutableList::of(STYLE, LIFELINESORTING, TEXTSIZE)
     }
 
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -118,40 +118,26 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         lineCoordinates.add(createKPosition(RIGHT, 0, 0, BOTTOM, 10, 0))
         lineCoordinates.add(createKPosition(RIGHT, 0, 0, TOP, 0, 0))
 
+        var KContainerRendering surrInteractionRect = null
         switch STYLE.objectValue {
             case "Stylish": {
-                val surrInteractionRect = surrInteraction.addRoundedRectangle(10, 10, 2)
+                surrInteractionRect = surrInteraction.addRoundedRectangle(10, 10, 2)
                 surrInteractionRect.setShadow(Colors.BLACK, 10)
-
-                val captionRect = surrInteractionRect.addRectangle.foregroundInvisible = true
-//                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.
-                    intValue
-                captionRect.addPolyline(2, lineCoordinates)
-                captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
             }
             case "Hello Kitty": {
-                val surrInteractionRect = surrInteraction.addRoundedRectangle(10, 10, 2)
+                surrInteractionRect = surrInteraction.addRoundedRectangle(10, 10, 2)
                 surrInteractionRect.setShadow(Colors.PURPLE, 10)
-
-                val captionRect = surrInteractionRect.addRectangle.foregroundInvisible = true
-//                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.
-                    intValue
-                captionRect.addPolyline(2, lineCoordinates)
-                captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
             }
             default: {
-                val surrInteractionRect = surrInteraction.addRectangle
-
-                val captionRect = surrInteractionRect.addRectangle.foregroundInvisible = true
-//                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-                captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.
-                    intValue
-                captionRect.addPolyline(2, lineCoordinates)
-                captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
+                surrInteractionRect = surrInteraction.addRectangle
             }
         }
+
+        val captionRect = surrInteractionRect.addRectangle.foregroundInvisible = true
+//        captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
+        captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+        captionRect.addPolyline(2, lineCoordinates)
+        captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
 
         surroundingInteraction = surrInteraction
 
@@ -235,7 +221,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.source = lifelineNodes.get(source.name)
         transEdge.target = lifelineNodes.get(target.name)
 
-// TODO FIX!
+// TODO FIX??
 //        if (msg.sourceStartBlock) {
 //            createExecution(source)
 //        }
@@ -255,13 +241,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 //        }
 //
 //        if (msg.sourceEndBlock) {
-//            endExecution(source, msg.sourceEndBlockCount);
+//            endExecution(source, msg.sourceEndBlockCount)
 //        }
 //
 //        if (msg.targetEndBlock) {
 //            endExecution(target, msg.targetEndBlockCount)
 //        }
-
         return transEdge
     }
 
@@ -271,14 +256,39 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         edgeCount(transEdge)
 
+// TODO FIX??
+//        if (msg.startBlock) {
+////            if (msg.messageTypeLostAndFound.equals("lost")) {
+//            createExecution(msg.lifeline)
+////            } else {
+////            }
+//        }
+//
+//        if (elementIdOnLifeline.containsKey(msg.lifeline.name)) {
+//            if (msg.messageTypeLostAndFound.equals("lost")) {
+//                transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_ID,
+//                    elementIdOnLifeline.get(msg.lifeline.name).peek())
+//            } else {
+//                transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_ID,
+//                    elementIdOnLifeline.get(msg.lifeline.name).peek())
+//            }
+//        }
+//
+//        if (msg.endBlock) {
+////            if (msg.messageTypeLostAndFound.equals("lost")) {
+//            endExecution(msg.lifeline, msg.endBlockCount)
+////            } else {
+////            }
+//        }
+
         val label = KimlUtil.createInitializedLabel(transEdge)
 
         val labelText = msg.caption
         label.configureCenterEdgeLabel(labelText, KlighdConstants.DEFAULT_FONT_SIZE, KlighdConstants.DEFAULT_FONT_NAME)
         transEdge.addPolyline(2).addHeadArrowDecorator()
 
-        val dummyNode = KimlUtil.createInitializedNode();
-        surroundingInteraction.children += dummyNode;
+        val dummyNode = KimlUtil.createInitializedNode()
+        surroundingInteraction.children += dummyNode
         dummyNode.addEllipse.setBackground(Colors.BLACK)
 
         if (msg.messageTypeLostAndFound.equals("lost")) {
@@ -294,12 +304,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         return transEdge
     }
 
-    // TODO remove
-    private def dispatch KNode transformInteraction(OneLifelineEndBlock end) {
-        val endBlockNode = end.createNode().associateWith(end)
-        return endBlockNode
-    }
-
+//    private def dispatch KNode transformInteraction(OneLifelineEndBlock end) {
+//        val endBlockNode = end.createNode().associateWith(end)
+//        return endBlockNode
+//    }
     private def dispatch KNode transformInteraction(OneLifelineNote note) {
         val noteNode = note.createNode().associateWith(note)
         noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)
@@ -311,12 +319,15 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private def dispatch KNode transformInteraction(DestroyLifelineEvent destroy) {
         // TODO close blocks before if not closed yet
         val destroyNode = destroy.createNode().associateWith(destroy)
+        // TODO Was macht das?
+        destroyNode.addLayoutParam(SequenceDiagramProperties.DESTRUCTION, destroyNode)
         destroyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.DESTRUCTION_EVENT)
 
         val destroyRect = destroyNode.addRectangle().foregroundInvisible = true
 
         val whiteBackgroundRect = destroyRect.addRectangle.foregroundInvisible = true
-        whiteBackgroundRect.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0.5f).to(RIGHT, 0, 0, BOTTOM, -2, 0).setBackground(Colors.WHITE)
+        whiteBackgroundRect.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0.5f).to(RIGHT, 0, 0, BOTTOM, -2, 0).
+            setBackground(Colors.WHITE)
 
         destroyRect.addPolyline(2).from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
         destroyRect.addPolyline(2).from(RIGHT, 0, 0, TOP, 0, 0).to(LEFT, 0, 0, BOTTOM, 0, 0)
@@ -396,7 +407,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     }
 
     // TODO time constraint between messages, 
-    // Duration constraint auch als property aber nur als string anhängen in der Darstellung
+    // TODO Duration constraint auch als property aber nur als string anhängen in der Darstellung
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Rest
     // Specifies the correct Properties for the different message types
@@ -476,7 +487,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     // Gives the edges an increasing number, so that the Algorithm knows the order of the messages
     private def edgeCount(KEdge e) {
         edgeCounter += 1
-        val edgeLayout = e.getData(typeof(KEdgeLayout));
+        val edgeLayout = e.getData(typeof(KEdgeLayout))
         edgeLayout.sourcePoint.y = edgeCounter
         edgeLayout.targetPoint.y = edgeCounter
     }

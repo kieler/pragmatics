@@ -77,22 +77,13 @@ public interface SequencePackage extends EPackage
   int SEQUENCE_DIAGRAM__DIAGRAM_NAME = 0;
 
   /**
-   * The feature id for the '<em><b>Locals</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SEQUENCE_DIAGRAM__LOCALS = 1;
-
-  /**
    * The feature id for the '<em><b>Lifelines</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SEQUENCE_DIAGRAM__LIFELINES = 2;
+  int SEQUENCE_DIAGRAM__LIFELINES = 1;
 
   /**
    * The feature id for the '<em><b>Interactions</b></em>' containment reference list.
@@ -101,7 +92,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int SEQUENCE_DIAGRAM__INTERACTIONS = 3;
+  int SEQUENCE_DIAGRAM__INTERACTIONS = 2;
 
   /**
    * The number of structural features of the '<em>Diagram</em>' class.
@@ -110,44 +101,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int SEQUENCE_DIAGRAM_FEATURE_COUNT = 4;
-
-  /**
-   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.LocalVariableImpl <em>Local Variable</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.LocalVariableImpl
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getLocalVariable()
-   * @generated
-   */
-  int LOCAL_VARIABLE = 1;
-
-  /**
-   * The feature id for the '<em><b>Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int LOCAL_VARIABLE__TYPE = 0;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int LOCAL_VARIABLE__NAME = 1;
-
-  /**
-   * The number of structural features of the '<em>Local Variable</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int LOCAL_VARIABLE_FEATURE_COUNT = 2;
+  int SEQUENCE_DIAGRAM_FEATURE_COUNT = 3;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.LifelineImpl <em>Lifeline</em>}' class.
@@ -157,7 +111,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getLifeline()
    * @generated
    */
-  int LIFELINE = 2;
+  int LIFELINE = 1;
 
   /**
    * The feature id for the '<em><b>Caption</b></em>' attribute.
@@ -194,7 +148,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getInteraction()
    * @generated
    */
-  int INTERACTION = 3;
+  int INTERACTION = 2;
 
   /**
    * The number of structural features of the '<em>Interaction</em>' class.
@@ -213,7 +167,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getTwoLifelineMessage()
    * @generated
    */
-  int TWO_LIFELINE_MESSAGE = 4;
+  int TWO_LIFELINE_MESSAGE = 3;
 
   /**
    * The feature id for the '<em><b>Source Lifeline</b></em>' reference.
@@ -340,7 +294,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getOneLifelineMessage()
    * @generated
    */
-  int ONE_LIFELINE_MESSAGE = 5;
+  int ONE_LIFELINE_MESSAGE = 4;
 
   /**
    * The feature id for the '<em><b>Lifeline</b></em>' reference.
@@ -424,43 +378,6 @@ public interface SequencePackage extends EPackage
   int ONE_LIFELINE_MESSAGE_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 8;
 
   /**
-   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineEndBlockImpl <em>One Lifeline End Block</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineEndBlockImpl
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getOneLifelineEndBlock()
-   * @generated
-   */
-  int ONE_LIFELINE_END_BLOCK = 6;
-
-  /**
-   * The feature id for the '<em><b>Lifeline</b></em>' reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ONE_LIFELINE_END_BLOCK__LIFELINE = INTERACTION_FEATURE_COUNT + 0;
-
-  /**
-   * The feature id for the '<em><b>End Block Count</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT = INTERACTION_FEATURE_COUNT + 1;
-
-  /**
-   * The number of structural features of the '<em>One Lifeline End Block</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ONE_LIFELINE_END_BLOCK_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 2;
-
-  /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineNoteImpl <em>One Lifeline Note</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -468,7 +385,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getOneLifelineNote()
    * @generated
    */
-  int ONE_LIFELINE_NOTE = 7;
+  int ONE_LIFELINE_NOTE = 5;
 
   /**
    * The feature id for the '<em><b>Lifeline</b></em>' reference.
@@ -505,7 +422,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getDestroyLifelineEvent()
    * @generated
    */
-  int DESTROY_LIFELINE_EVENT = 8;
+  int DESTROY_LIFELINE_EVENT = 6;
 
   /**
    * The feature id for the '<em><b>Lifeline</b></em>' reference.
@@ -533,7 +450,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getFragment()
    * @generated
    */
-  int FRAGMENT = 9;
+  int FRAGMENT = 7;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -570,7 +487,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getSection()
    * @generated
    */
-  int SECTION = 10;
+  int SECTION = 8;
 
   /**
    * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -607,7 +524,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getRefinement()
    * @generated
    */
-  int REFINEMENT = 11;
+  int REFINEMENT = 9;
 
   /**
    * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -644,17 +561,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageType()
    * @generated
    */
-  int MESSAGE_TYPE = 12;
-
-  /**
-   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.DataType <em>Data Type</em>}' enum.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.DataType
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getDataType()
-   * @generated
-   */
-  int DATA_TYPE = 13;
+  int MESSAGE_TYPE = 10;
 
 
   /**
@@ -679,17 +586,6 @@ public interface SequencePackage extends EPackage
   EAttribute getSequenceDiagram_DiagramName();
 
   /**
-   * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram#getLocals <em>Locals</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Locals</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram#getLocals()
-   * @see #getSequenceDiagram()
-   * @generated
-   */
-  EReference getSequenceDiagram_Locals();
-
-  /**
    * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram#getLifelines <em>Lifelines</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -710,38 +606,6 @@ public interface SequencePackage extends EPackage
    * @generated
    */
   EReference getSequenceDiagram_Interactions();
-
-  /**
-   * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable <em>Local Variable</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>Local Variable</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable
-   * @generated
-   */
-  EClass getLocalVariable();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable#getType <em>Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Type</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable#getType()
-   * @see #getLocalVariable()
-   * @generated
-   */
-  EAttribute getLocalVariable_Type();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable#getName()
-   * @see #getLocalVariable()
-   * @generated
-   */
-  EAttribute getLocalVariable_Name();
 
   /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline <em>Lifeline</em>}'.
@@ -1026,38 +890,6 @@ public interface SequencePackage extends EPackage
   EAttribute getOneLifelineMessage_Note();
 
   /**
-   * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock <em>One Lifeline End Block</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>One Lifeline End Block</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock
-   * @generated
-   */
-  EClass getOneLifelineEndBlock();
-
-  /**
-   * Returns the meta object for the reference '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock#getLifeline <em>Lifeline</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference '<em>Lifeline</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock#getLifeline()
-   * @see #getOneLifelineEndBlock()
-   * @generated
-   */
-  EReference getOneLifelineEndBlock_Lifeline();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock#getEndBlockCount <em>End Block Count</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>End Block Count</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock#getEndBlockCount()
-   * @see #getOneLifelineEndBlock()
-   * @generated
-   */
-  EAttribute getOneLifelineEndBlock_EndBlockCount();
-
-  /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote <em>One Lifeline Note</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1217,16 +1049,6 @@ public interface SequencePackage extends EPackage
   EEnum getMessageType();
 
   /**
-   * Returns the meta object for enum '{@link de.cau.cs.kieler.uml.sequence.text.sequence.DataType <em>Data Type</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for enum '<em>Data Type</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.DataType
-   * @generated
-   */
-  EEnum getDataType();
-
-  /**
    * Returns the factory that creates the instances of the model.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1268,14 +1090,6 @@ public interface SequencePackage extends EPackage
     EAttribute SEQUENCE_DIAGRAM__DIAGRAM_NAME = eINSTANCE.getSequenceDiagram_DiagramName();
 
     /**
-     * The meta object literal for the '<em><b>Locals</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SEQUENCE_DIAGRAM__LOCALS = eINSTANCE.getSequenceDiagram_Locals();
-
-    /**
      * The meta object literal for the '<em><b>Lifelines</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1290,32 +1104,6 @@ public interface SequencePackage extends EPackage
      * @generated
      */
     EReference SEQUENCE_DIAGRAM__INTERACTIONS = eINSTANCE.getSequenceDiagram_Interactions();
-
-    /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.LocalVariableImpl <em>Local Variable</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.LocalVariableImpl
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getLocalVariable()
-     * @generated
-     */
-    EClass LOCAL_VARIABLE = eINSTANCE.getLocalVariable();
-
-    /**
-     * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute LOCAL_VARIABLE__TYPE = eINSTANCE.getLocalVariable_Type();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute LOCAL_VARIABLE__NAME = eINSTANCE.getLocalVariable_Name();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.LifelineImpl <em>Lifeline</em>}' class.
@@ -1534,32 +1322,6 @@ public interface SequencePackage extends EPackage
     EAttribute ONE_LIFELINE_MESSAGE__NOTE = eINSTANCE.getOneLifelineMessage_Note();
 
     /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineEndBlockImpl <em>One Lifeline End Block</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineEndBlockImpl
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getOneLifelineEndBlock()
-     * @generated
-     */
-    EClass ONE_LIFELINE_END_BLOCK = eINSTANCE.getOneLifelineEndBlock();
-
-    /**
-     * The meta object literal for the '<em><b>Lifeline</b></em>' reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference ONE_LIFELINE_END_BLOCK__LIFELINE = eINSTANCE.getOneLifelineEndBlock_Lifeline();
-
-    /**
-     * The meta object literal for the '<em><b>End Block Count</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT = eINSTANCE.getOneLifelineEndBlock_EndBlockCount();
-
-    /**
      * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineNoteImpl <em>One Lifeline Note</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1690,16 +1452,6 @@ public interface SequencePackage extends EPackage
      * @generated
      */
     EEnum MESSAGE_TYPE = eINSTANCE.getMessageType();
-
-    /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.DataType <em>Data Type</em>}' enum.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.DataType
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getDataType()
-     * @generated
-     */
-    EEnum DATA_TYPE = eINSTANCE.getDataType();
 
   }
 

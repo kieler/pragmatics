@@ -80,11 +80,6 @@ public class SequenceAdapterFactory extends AdapterFactoryImpl
         return createSequenceDiagramAdapter();
       }
       @Override
-      public Adapter caseLocalVariable(LocalVariable object)
-      {
-        return createLocalVariableAdapter();
-      }
-      @Override
       public Adapter caseLifeline(Lifeline object)
       {
         return createLifelineAdapter();
@@ -103,11 +98,6 @@ public class SequenceAdapterFactory extends AdapterFactoryImpl
       public Adapter caseOneLifelineMessage(OneLifelineMessage object)
       {
         return createOneLifelineMessageAdapter();
-      }
-      @Override
-      public Adapter caseOneLifelineEndBlock(OneLifelineEndBlock object)
-      {
-        return createOneLifelineEndBlockAdapter();
       }
       @Override
       public Adapter caseOneLifelineNote(OneLifelineNote object)
@@ -172,21 +162,6 @@ public class SequenceAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable <em>Local Variable</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable
-   * @generated
-   */
-  public Adapter createLocalVariableAdapter()
-  {
-    return null;
-  }
-
-  /**
    * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline <em>Lifeline</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -242,21 +217,6 @@ public class SequenceAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createOneLifelineMessageAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock <em>One Lifeline End Block</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock
-   * @generated
-   */
-  public Adapter createOneLifelineEndBlockAdapter()
   {
     return null;
   }

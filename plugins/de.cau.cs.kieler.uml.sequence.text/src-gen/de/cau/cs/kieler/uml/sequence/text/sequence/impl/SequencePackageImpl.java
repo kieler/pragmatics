@@ -2,14 +2,11 @@
  */
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
-import de.cau.cs.kieler.uml.sequence.text.sequence.DataType;
 import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Interaction;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
-import de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable;
 import de.cau.cs.kieler.uml.sequence.text.sequence.MessageType;
-import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement;
@@ -47,13 +44,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass localVariableEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass lifelineEClass = null;
 
   /**
@@ -76,13 +66,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * @generated
    */
   private EClass oneLifelineMessageEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass oneLifelineEndBlockEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -125,13 +108,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * @generated
    */
   private EEnum messageTypeEEnum = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EEnum dataTypeEEnum = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -221,7 +197,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getSequenceDiagram_Locals()
+  public EReference getSequenceDiagram_Lifelines()
   {
     return (EReference)sequenceDiagramEClass.getEStructuralFeatures().get(1);
   }
@@ -231,49 +207,9 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getSequenceDiagram_Lifelines()
-  {
-    return (EReference)sequenceDiagramEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getSequenceDiagram_Interactions()
   {
-    return (EReference)sequenceDiagramEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getLocalVariable()
-  {
-    return localVariableEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getLocalVariable_Type()
-  {
-    return (EAttribute)localVariableEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getLocalVariable_Name()
-  {
-    return (EAttribute)localVariableEClass.getEStructuralFeatures().get(1);
+    return (EReference)sequenceDiagramEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -541,36 +477,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getOneLifelineEndBlock()
-  {
-    return oneLifelineEndBlockEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getOneLifelineEndBlock_Lifeline()
-  {
-    return (EReference)oneLifelineEndBlockEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getOneLifelineEndBlock_EndBlockCount()
-  {
-    return (EAttribute)oneLifelineEndBlockEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getOneLifelineNote()
   {
     return oneLifelineNoteEClass;
@@ -721,16 +627,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EEnum getDataType()
-  {
-    return dataTypeEEnum;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public SequenceFactory getSequenceFactory()
   {
     return (SequenceFactory)getEFactoryInstance();
@@ -758,13 +654,8 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     // Create classes and their features
     sequenceDiagramEClass = createEClass(SEQUENCE_DIAGRAM);
     createEAttribute(sequenceDiagramEClass, SEQUENCE_DIAGRAM__DIAGRAM_NAME);
-    createEReference(sequenceDiagramEClass, SEQUENCE_DIAGRAM__LOCALS);
     createEReference(sequenceDiagramEClass, SEQUENCE_DIAGRAM__LIFELINES);
     createEReference(sequenceDiagramEClass, SEQUENCE_DIAGRAM__INTERACTIONS);
-
-    localVariableEClass = createEClass(LOCAL_VARIABLE);
-    createEAttribute(localVariableEClass, LOCAL_VARIABLE__TYPE);
-    createEAttribute(localVariableEClass, LOCAL_VARIABLE__NAME);
 
     lifelineEClass = createEClass(LIFELINE);
     createEAttribute(lifelineEClass, LIFELINE__CAPTION);
@@ -796,10 +687,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__NOTE);
 
-    oneLifelineEndBlockEClass = createEClass(ONE_LIFELINE_END_BLOCK);
-    createEReference(oneLifelineEndBlockEClass, ONE_LIFELINE_END_BLOCK__LIFELINE);
-    createEAttribute(oneLifelineEndBlockEClass, ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT);
-
     oneLifelineNoteEClass = createEClass(ONE_LIFELINE_NOTE);
     createEReference(oneLifelineNoteEClass, ONE_LIFELINE_NOTE__LIFELINE);
     createEAttribute(oneLifelineNoteEClass, ONE_LIFELINE_NOTE__NOTE);
@@ -821,7 +708,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
 
     // Create enums
     messageTypeEEnum = createEEnum(MESSAGE_TYPE);
-    dataTypeEEnum = createEEnum(DATA_TYPE);
   }
 
   /**
@@ -855,7 +741,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     // Add supertypes to classes
     twoLifelineMessageEClass.getESuperTypes().add(this.getInteraction());
     oneLifelineMessageEClass.getESuperTypes().add(this.getInteraction());
-    oneLifelineEndBlockEClass.getESuperTypes().add(this.getInteraction());
     oneLifelineNoteEClass.getESuperTypes().add(this.getInteraction());
     destroyLifelineEventEClass.getESuperTypes().add(this.getInteraction());
     fragmentEClass.getESuperTypes().add(this.getInteraction());
@@ -864,13 +749,8 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     // Initialize classes and features; add operations and parameters
     initEClass(sequenceDiagramEClass, SequenceDiagram.class, "SequenceDiagram", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getSequenceDiagram_DiagramName(), ecorePackage.getEString(), "diagramName", null, 0, 1, SequenceDiagram.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSequenceDiagram_Locals(), this.getLocalVariable(), null, "locals", null, 0, -1, SequenceDiagram.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSequenceDiagram_Lifelines(), this.getLifeline(), null, "lifelines", null, 0, -1, SequenceDiagram.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSequenceDiagram_Interactions(), this.getInteraction(), null, "interactions", null, 0, -1, SequenceDiagram.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(localVariableEClass, LocalVariable.class, "LocalVariable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getLocalVariable_Type(), this.getDataType(), "type", null, 0, 1, LocalVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getLocalVariable_Name(), ecorePackage.getEString(), "name", null, 0, 1, LocalVariable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(lifelineEClass, Lifeline.class, "Lifeline", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getLifeline_Caption(), ecorePackage.getEString(), "caption", null, 0, 1, Lifeline.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -902,10 +782,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     initEAttribute(getOneLifelineMessage_EndBlockCount(), ecorePackage.getEInt(), "endBlockCount", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_Note(), ecorePackage.getEString(), "note", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-    initEClass(oneLifelineEndBlockEClass, OneLifelineEndBlock.class, "OneLifelineEndBlock", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getOneLifelineEndBlock_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, OneLifelineEndBlock.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getOneLifelineEndBlock_EndBlockCount(), ecorePackage.getEInt(), "endBlockCount", null, 0, 1, OneLifelineEndBlock.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
     initEClass(oneLifelineNoteEClass, OneLifelineNote.class, "OneLifelineNote", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getOneLifelineNote_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, OneLifelineNote.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineNote_Note(), ecorePackage.getEString(), "note", null, 0, 1, OneLifelineNote.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -931,12 +807,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     addEEnumLiteral(messageTypeEEnum, MessageType.CREATE);
     addEEnumLiteral(messageTypeEEnum, MessageType.RESPONSE);
     addEEnumLiteral(messageTypeEEnum, MessageType.SYNC);
-
-    initEEnum(dataTypeEEnum, DataType.class, "DataType");
-    addEEnumLiteral(dataTypeEEnum, DataType.CHAR);
-    addEEnumLiteral(dataTypeEEnum, DataType.BOOLEAN);
-    addEEnumLiteral(dataTypeEEnum, DataType.INTEGER);
-    addEEnumLiteral(dataTypeEEnum, DataType.FLOAT);
 
     // Create resource
     createResource(eNS_URI);

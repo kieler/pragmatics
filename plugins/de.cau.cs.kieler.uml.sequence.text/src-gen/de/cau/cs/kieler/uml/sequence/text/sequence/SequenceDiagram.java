@@ -15,7 +15,6 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram#getDiagramName <em>Diagram Name</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram#getLocals <em>Locals</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram#getLifelines <em>Lifelines</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram#getInteractions <em>Interactions</em>}</li>
  * </ul>
@@ -52,22 +51,6 @@ public interface SequenceDiagram extends EObject
    * @generated
    */
   void setDiagramName(String value);
-
-  /**
-   * Returns the value of the '<em><b>Locals</b></em>' containment reference list.
-   * The list contents are of type {@link de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Locals</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Locals</em>' containment reference list.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getSequenceDiagram_Locals()
-   * @model containment="true"
-   * @generated
-   */
-  EList<LocalVariable> getLocals();
 
   /**
    * Returns the value of the '<em><b>Lifelines</b></em>' containment reference list.

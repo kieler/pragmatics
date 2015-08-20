@@ -5,8 +5,6 @@ import com.google.inject.Provider;
 import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
-import de.cau.cs.kieler.uml.sequence.text.sequence.LocalVariable;
-import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement;
@@ -52,19 +50,6 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 			case SequencePackage.LIFELINE:
 				if(context == grammarAccess.getLifelineRule()) {
 					sequence_Lifeline(context, (Lifeline) semanticObject); 
-					return; 
-				}
-				else break;
-			case SequencePackage.LOCAL_VARIABLE:
-				if(context == grammarAccess.getLocalVariableRule()) {
-					sequence_LocalVariable(context, (LocalVariable) semanticObject); 
-					return; 
-				}
-				else break;
-			case SequencePackage.ONE_LIFELINE_END_BLOCK:
-				if(context == grammarAccess.getInteractionRule() ||
-				   context == grammarAccess.getOneLifelineEndBlockRule()) {
-					sequence_OneLifelineEndBlock(context, (OneLifelineEndBlock) semanticObject); 
 					return; 
 				}
 				else break;
@@ -158,34 +143,6 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (type=DataType name=ID)
-	 */
-	protected void sequence_LocalVariable(EObject context, LocalVariable semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.LOCAL_VARIABLE__TYPE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.LOCAL_VARIABLE__TYPE));
-			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.LOCAL_VARIABLE__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.LOCAL_VARIABLE__NAME));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getLocalVariableAccess().getTypeDataTypeEnumRuleCall_0_0(), semanticObject.getType());
-		feeder.accept(grammarAccess.getLocalVariableAccess().getNameIDTerminalRuleCall_1_0(), semanticObject.getName());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (Lifeline=[Lifeline|ID] endBlockCount=INT_GREATER_ZERO?)
-	 */
-	protected void sequence_OneLifelineEndBlock(EObject context, OneLifelineEndBlock semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
 	 *     (
 	 *         Lifeline=[Lifeline|ID] 
 	 *         messageType=MessageType 
@@ -239,7 +196,7 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (diagramName=STRING (locals+=LocalVariable locals+=LocalVariable*)? lifelines+=Lifeline* interactions+=Interaction*)
+	 *     (diagramName=STRING lifelines+=Lifeline* interactions+=Interaction*)
 	 */
 	protected void sequence_SequenceDiagram(EObject context, SequenceDiagram semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

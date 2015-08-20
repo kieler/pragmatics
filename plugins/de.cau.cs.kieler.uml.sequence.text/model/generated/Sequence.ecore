@@ -4,16 +4,10 @@
     nsPrefix="sequence">
   <eClassifiers xsi:type="ecore:EClass" name="SequenceDiagram">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="diagramName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="locals" upperBound="-1"
-        eType="#//LocalVariable" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="lifelines" upperBound="-1"
         eType="#//Lifeline" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="interactions" upperBound="-1"
         eType="#//Interaction" containment="true"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="LocalVariable">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//DataType"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Lifeline">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="caption" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -45,10 +39,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="endBlockCount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="note" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="OneLifelineEndBlock" eSuperTypes="#//Interaction">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="Lifeline" eType="#//Lifeline"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endBlockCount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OneLifelineNote" eSuperTypes="#//Interaction">
     <eStructuralFeatures xsi:type="ecore:EReference" name="Lifeline" eType="#//Lifeline"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="note" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -76,11 +66,5 @@
     <eLiterals name="create" value="1" literal="create"/>
     <eLiterals name="response" value="2" literal="response"/>
     <eLiterals name="sync" value="3" literal="sync"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="DataType">
-    <eLiterals name="char" literal="Char"/>
-    <eLiterals name="boolean" value="1" literal="Boolean"/>
-    <eLiterals name="integer" value="2" literal="Integer"/>
-    <eLiterals name="float" value="3" literal="Float"/>
   </eClassifiers>
 </ecore:EPackage>

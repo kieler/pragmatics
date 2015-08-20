@@ -43,10 +43,7 @@ public class SequenceParser extends AbstractContentAssistParser {
 					put(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundAlternatives_2_0(), "rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0");
 					put(grammarAccess.getOneLifelineMessageAccess().getAlternatives_4(), "rule__OneLifelineMessage__Alternatives_4");
 					put(grammarAccess.getMessageTypeAccess().getAlternatives(), "rule__MessageType__Alternatives");
-					put(grammarAccess.getDataTypeAccess().getAlternatives(), "rule__DataType__Alternatives");
 					put(grammarAccess.getSequenceDiagramAccess().getGroup(), "rule__SequenceDiagram__Group__0");
-					put(grammarAccess.getSequenceDiagramAccess().getGroup_3(), "rule__SequenceDiagram__Group_3__0");
-					put(grammarAccess.getLocalVariableAccess().getGroup(), "rule__LocalVariable__Group__0");
 					put(grammarAccess.getLifelineAccess().getGroup(), "rule__Lifeline__Group__0");
 					put(grammarAccess.getTwoLifelineMessageAccess().getGroup(), "rule__TwoLifelineMessage__Group__0");
 					put(grammarAccess.getTwoLifelineMessageAccess().getGroup_5_1(), "rule__TwoLifelineMessage__Group_5_1__0");
@@ -56,7 +53,6 @@ public class SequenceParser extends AbstractContentAssistParser {
 					put(grammarAccess.getOneLifelineMessageAccess().getGroup(), "rule__OneLifelineMessage__Group__0");
 					put(grammarAccess.getOneLifelineMessageAccess().getGroup_4_1(), "rule__OneLifelineMessage__Group_4_1__0");
 					put(grammarAccess.getOneLifelineMessageAccess().getGroup_5(), "rule__OneLifelineMessage__Group_5__0");
-					put(grammarAccess.getOneLifelineEndBlockAccess().getGroup(), "rule__OneLifelineEndBlock__Group__0");
 					put(grammarAccess.getOneLifelineNoteAccess().getGroup(), "rule__OneLifelineNote__Group__0");
 					put(grammarAccess.getDestroyLifelineEventAccess().getGroup(), "rule__DestroyLifelineEvent__Group__0");
 					put(grammarAccess.getFragmentAccess().getGroup(), "rule__Fragment__Group__0");
@@ -65,12 +61,8 @@ public class SequenceParser extends AbstractContentAssistParser {
 					put(grammarAccess.getRefinementAccess().getGroup(), "rule__Refinement__Group__0");
 					put(grammarAccess.getRefinementAccess().getGroup_5(), "rule__Refinement__Group_5__0");
 					put(grammarAccess.getSequenceDiagramAccess().getDiagramNameAssignment_2(), "rule__SequenceDiagram__DiagramNameAssignment_2");
-					put(grammarAccess.getSequenceDiagramAccess().getLocalsAssignment_3_1(), "rule__SequenceDiagram__LocalsAssignment_3_1");
-					put(grammarAccess.getSequenceDiagramAccess().getLocalsAssignment_3_2(), "rule__SequenceDiagram__LocalsAssignment_3_2");
-					put(grammarAccess.getSequenceDiagramAccess().getLifelinesAssignment_4(), "rule__SequenceDiagram__LifelinesAssignment_4");
-					put(grammarAccess.getSequenceDiagramAccess().getInteractionsAssignment_5(), "rule__SequenceDiagram__InteractionsAssignment_5");
-					put(grammarAccess.getLocalVariableAccess().getTypeAssignment_0(), "rule__LocalVariable__TypeAssignment_0");
-					put(grammarAccess.getLocalVariableAccess().getNameAssignment_1(), "rule__LocalVariable__NameAssignment_1");
+					put(grammarAccess.getSequenceDiagramAccess().getLifelinesAssignment_3(), "rule__SequenceDiagram__LifelinesAssignment_3");
+					put(grammarAccess.getSequenceDiagramAccess().getInteractionsAssignment_4(), "rule__SequenceDiagram__InteractionsAssignment_4");
 					put(grammarAccess.getLifelineAccess().getCaptionAssignment_1(), "rule__Lifeline__CaptionAssignment_1");
 					put(grammarAccess.getLifelineAccess().getNameAssignment_3(), "rule__Lifeline__NameAssignment_3");
 					put(grammarAccess.getTwoLifelineMessageAccess().getSourceLifelineAssignment_0(), "rule__TwoLifelineMessage__SourceLifelineAssignment_0");
@@ -93,8 +85,6 @@ public class SequenceParser extends AbstractContentAssistParser {
 					put(grammarAccess.getOneLifelineMessageAccess().getEndBlockAssignment_4_1_0(), "rule__OneLifelineMessage__EndBlockAssignment_4_1_0");
 					put(grammarAccess.getOneLifelineMessageAccess().getEndBlockCountAssignment_4_1_1(), "rule__OneLifelineMessage__EndBlockCountAssignment_4_1_1");
 					put(grammarAccess.getOneLifelineMessageAccess().getNoteAssignment_5_1(), "rule__OneLifelineMessage__NoteAssignment_5_1");
-					put(grammarAccess.getOneLifelineEndBlockAccess().getLifelineAssignment_0(), "rule__OneLifelineEndBlock__LifelineAssignment_0");
-					put(grammarAccess.getOneLifelineEndBlockAccess().getEndBlockCountAssignment_2(), "rule__OneLifelineEndBlock__EndBlockCountAssignment_2");
 					put(grammarAccess.getOneLifelineNoteAccess().getLifelineAssignment_0(), "rule__OneLifelineNote__LifelineAssignment_0");
 					put(grammarAccess.getOneLifelineNoteAccess().getNoteAssignment_2(), "rule__OneLifelineNote__NoteAssignment_2");
 					put(grammarAccess.getDestroyLifelineEventAccess().getLifelineAssignment_0(), "rule__DestroyLifelineEvent__LifelineAssignment_0");

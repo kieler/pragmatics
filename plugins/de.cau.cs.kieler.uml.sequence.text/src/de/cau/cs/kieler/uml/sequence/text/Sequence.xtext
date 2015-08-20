@@ -18,18 +18,19 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 
 SequenceDiagram returns SequenceDiagram:
     {SequenceDiagram}
-    'sequenceDiagram' diagramName=STRING ('{' locals+=LocalVariable (locals+=LocalVariable)* '}')?
+    'sequenceDiagram' diagramName=STRING //('{' locals+=LocalVariable (locals+=LocalVariable)* '}')?
     lifelines+=Lifeline*
     interactions+=Interaction*;
 
-LocalVariable returns LocalVariable:
-    type=DataType name=ID;
+//LocalVariable returns LocalVariable:
+//    type=DataType name=ID;
 
 Lifeline returns Lifeline:
     'lifeline' caption=STRING 'as' name=ID;
 
 Interaction returns Interaction:
-    TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineEndBlock | OneLifelineNote
+    TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineNote
+    //| OneLifelineEndBlock
     | DestroyLifelineEvent | Refinement;
 
 TwoLifelineMessage returns TwoLifelineMessage:
@@ -51,9 +52,9 @@ OneLifelineMessage returns OneLifelineMessage:
     (startBlock?='startBlock' | endBlock?='endBlock' (endBlockCount=INT_GREATER_ZERO)?)?
     ('note' note=STRING)?;
 
-OneLifelineEndBlock returns OneLifelineEndBlock:
-    Lifeline=[Lifeline|ID]
-    'endBlock' (endBlockCount=INT_GREATER_ZERO)?;
+//OneLifelineEndBlock returns OneLifelineEndBlock:
+//    Lifeline=[Lifeline|ID]
+//    'endBlock' (endBlockCount=INT_GREATER_ZERO)?;
 
 OneLifelineNote returns OneLifelineNote:
     Lifeline=[Lifeline|ID]
@@ -82,8 +83,8 @@ Refinement returns Refinement:
 enum MessageType:
     async='async' | create='create' | response='response' | sync='sync';
 
-enum DataType:
-    char='Char' | boolean='Boolean' | integer='Integer' | float='Float';
+//enum DataType:
+//    char='Char' | boolean='Boolean' | integer='Integer' | float='Float';
 
 terminal INT_GREATER_ZERO returns ecore::EInt:
     '1'..'9' ('0'..'9')* | 'all';
