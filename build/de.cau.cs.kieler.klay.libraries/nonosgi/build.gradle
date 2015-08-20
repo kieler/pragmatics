@@ -20,3 +20,7 @@ dependencies {
     compile 'org.eclipse.equinox:org.eclipse.equinox.registry:[0,)'
     compile 'org.eclipse:org.eclipse.osgi:[0,)'
 }
+
+jar {
+    baseName 'de.cau.cs.kieler.kiml.nonosgi-' + getTimeStamp()
+}

@@ -153,7 +153,7 @@ def formatsPlugins = [
     configurations.formatsExtra,
     configurations.json,
     configurations.jsonExtra,
-    ":nonosgi:jar"
+    tasks.getByPath(':nonosgi:jar')
 ]
 
 task copyFormatsPlugins(type: Copy, dependsOn: ":nonosgi:jar") {
