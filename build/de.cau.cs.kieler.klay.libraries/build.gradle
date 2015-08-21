@@ -1,19 +1,43 @@
 /**
  * Gradle script for building and publishing Klay as bundled jar with and without dependencies.
  * 
+ * Available tasks
+ * ===============
+ * ./gradlew tasks
+ * Relevant tasks have descriptions beginning with 'KIELER'.
+ * Test tasks' descriptions begin with 'KIELER TEST'.
+ * 
+ * Extra parameters via properties-file and/or cmd-line parameter
+ * ==============================================================
  * ~/.gradle/gradle.properties:
+ * ----------------------------
  * org.gradle.daemon=false
  * signing.keyId=<keyId>
  * signing.password=<pw>
  * signing.secretKeyRingFile=/home/<user>/.gnupg/secring.gpg
  * sonatypeUsername=<username>
  * sonatypePassword=<password>
+ * 
+ * cli:
+ * ----
+ * ./gradlew -Dorg.gradle.daemon=false -D...=... <tasks>
+ * 
+ * Specifying release versions
+ * ===========================
+ * ./gradlew -Pv=<version> ... uploadArchives
+ * 
+ * Build complete nightlies
+ * ========================
+ * ./gradlew clean fatKlay fatKlayAll copyKlayPlugins copyFormatsPlugins zipKlayPlugins zipFormatsPlugins
+ * 
+ * Run all tests
+ * =============
+ * ./gradlew testFatKlay testFatKlayAll testKlay testJson
  */
 
 plugins {
     id 'signing'
     id 'maven'
-    // id 'com.github.johnrengelman.shadow' version '1.2.2'
 }
 
 group = 'de.cau.cs.kieler'
@@ -22,6 +46,36 @@ ext {
     libsA = 'fatJar'
     libsB = 'libs'
     libsC = 'libsFormats'
+
+    klayDeps = [
+        'de.cau.cs.kieler:de.cau.cs.kieler.core:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.core.kgraph:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.kiml:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.klay.force:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.klay.layered:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.klay.tree:[0,)'
+    ]
+    klayExtraDeps = [
+        // long names on mvn central
+        'org.eclipse.emf:org.eclipse.emf.common:[0,)',
+        'org.eclipse.emf:org.eclipse.emf.ecore:[0,)',
+        'org.eclipse.emf:org.eclipse.emf.ecore.xmi:[0,)',
+        // short name on mvn central
+        'com.google.guava:com.google.guava:[0,)'
+    ]
+    formatsDeps = ['de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)']
+    formatsExtraDeps = [
+        // short names on mvn central
+        'org.eclipse.equinox:org.eclipse.equinox.app:[0,)',
+        'org.eclipse.equinox:org.eclipse.equinox.common:[0,)',
+        'org.eclipse.equinox:org.eclipse.equinox.registry:[0,)',
+        'org.eclipse:org.eclipse.osgi:[0,)'
+    ]
+    jsonDeps = ['de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats.json:[0,)']
+    jsonExtraDeps = [
+        'org.eclipse.xtend:org.eclipse.xtend.lib:[0,)',
+        'org.eclipse.xtext:org.eclipse.xtext.xbase.lib:[0,)'
+    ]
 }
 version = project.properties['v'] ?: 'nightly-' + getTimeStamp()
 
@@ -48,43 +102,14 @@ configurations {
 }
 
 dependencies {
-    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.core:[0,)')
-    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.core.kgraph:[0,)')
-    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.kiml:[0,)')
-    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.klay.force:[0,)')
-    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.klay.layered:[0,)')
-    klay dep('de.cau.cs.kieler:de.cau.cs.kieler.klay.tree:[0,)')
+    klay klayDeps
+    klayExtra klayExtraDeps
 
-    klayExtra dep('org.eclipse.emf:org.eclipse.emf.common:[0,)')
-    klayExtra dep('org.eclipse.emf:org.eclipse.emf.ecore:[0,)')
-    klayExtra dep('org.eclipse.emf:org.eclipse.emf.ecore.xmi:[0,)')
-    klayExtra dep('com.google.guava:com.google.guava:[0,)')
+    formats formatsDeps
+    formatsExtra formatsExtraDeps
 
-    formats dep('de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)')
-    // only with short name on mvn central
-    formatsExtra dep('org.eclipse.equinox:org.eclipse.equinox.app:[0,)')
-    formatsExtra dep('org.eclipse.equinox:org.eclipse.equinox.common:[0,)')
-    formatsExtra dep('org.eclipse.equinox:org.eclipse.equinox.registry:[0,)')
-    formatsExtra dep('org.eclipse:org.eclipse.osgi:[0,)')
-
-    json dep('de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats.json:[0,)')
-    jsonExtra dep('org.eclipse.xtend:org.eclipse.xtend.lib:[0,)')
-    jsonExtra dep('org.eclipse.xtext:org.eclipse.xtext.xbase.lib:[0,)')
-}
-
-def deps = configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.dependencies.collect()}.flatten()
-def depFiles = configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.collect{file(it)}}.flatten()
-
-task asdf << {
-    deps.each{println it}
-    depFiles.each{println it}
-    new java.util.jar.JarFile(depFiles[0]).manifest.mainAttributes.entrySet().each {println "${it.key}: ${it.value}"}
-    // println configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{c->c.dependencies.collect()}.flatten()
-    // configurations.findAll{it.name =~ /^(klay|formats|json)$/}.each {c -> c.each{f-> println f}}
-    // println configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect {c -> c.collect()}.flatten()
-    // println configurations.findAll{it.name =~ /^(klay|formats|json)$/}.each{it.dependencies.each{println it}}
-    // configurations.archives.each {a -> println a}
-    // configurations.klay.fileCollection.each{e-> println e}
+    json jsonDeps
+    jsonExtra jsonExtraDeps
 }
 
 // Part A: bundled klay
@@ -92,7 +117,7 @@ task asdf << {
 
 def theIncludes = [
     '**/*.class',
-    'META-INF/**',
+    'META-INF/MANIFEST.MF',
     'epl-v10.html'
 ]
 
@@ -104,6 +129,7 @@ def theExcludes = [
     'schema/**'
 ]
 task fatKlay(type: Jar) {
+    description = 'KIELER: Bundles the core plugins and the three layouters into one jar.'
     destinationDir file("$buildDir/$libsA")
     baseName = "klay"
     classifier = ''
@@ -113,7 +139,8 @@ task fatKlay(type: Jar) {
     exclude theExcludes
 }
 
-task fatKlayEMF(type: Jar) {
+task fatKlayAll(type: Jar) {
+    description = 'KIELER: Bundles the core plugins, the three layouters and all dependencies into one jar.'
     destinationDir file("$buildDir/$libsA")
     baseName = "klay"
     classifier = 'all'
@@ -133,14 +160,16 @@ def klayPlugins = [
 ]
 
 task copyKlayPlugins(type: Copy) {
+    description = 'KIELER: Gathers all needed jars (including dependencies) to use the layouters.'
     from klayPlugins
     into "$buildDir/$libsB"
 }
 
 task zipKlayPlugins(type: Zip) {
+    description = 'KIELER: Zips (for convenient download) all needed jars (including dependencies) to use the layouters.'
     archiveName "${libsB}.zip"
-    destinationDir buildDir
     from klayPlugins
+    destinationDir buildDir
 }
 
 // Part C: klay plugins with formats & json
@@ -157,15 +186,30 @@ def formatsPlugins = [
 ]
 
 task copyFormatsPlugins(type: Copy, dependsOn: ":nonosgi:jar") {
+    description = 'KIELER: Gathers all needed jars (including dependencies) to use the layouters and importers like JSON.'
     from formatsPlugins
     into "$buildDir/$libsC"
 }
 
 task zipFormatsPlugins(type: Zip, dependsOn: ":nonosgi:jar") {
+    description = 'KIELER: Zips (for convenient download) all needed jars (including dependencies) to use the layouters and importers like JSON.'
     archiveName "${libsC}.zip"
-    destinationDir buildDir
     from formatsPlugins
+    destinationDir buildDir
 }
+
+// Publishing klay to maven central (TBD)
+// --------------------------------------------------------
+
+// def deps = configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.dependencies.collect()}.flatten()
+// def depFiles = configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.collect{file(it)}}.flatten()
+
+// artifacts {
+//     fatKlayJars fatKlay
+//     fatKlayAllJars fatKlayAll
+//     // klayJars copyKlayPlugins
+//     // formatsJars copyFormatsPlugins
+// }
 
 // artifacts {
 //     depFiles.each{archives it}
@@ -227,6 +271,9 @@ task zipFormatsPlugins(type: Zip, dependsOn: ":nonosgi:jar") {
 //         }
 //     }
 // }
+
+// Utility stuff
+// --------------------------------------------------------
 
 def getTimeStamp() {
     return new Date().format('yyyyMMddHHmmss')
