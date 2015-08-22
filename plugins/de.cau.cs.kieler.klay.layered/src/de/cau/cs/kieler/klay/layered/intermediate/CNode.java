@@ -13,14 +13,21 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
+import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
+import de.cau.cs.kieler.klay.layered.graph.LInsets;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Internal representation of a node in the constraint graph specifying a hitbox for the
@@ -28,14 +35,14 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  * @author dag
  *
  */
-public final class CNode {
+public final class CNode { //impl icomp
     
     // easy access of fields ;)
     //TODO better justification
     // SUPPRESS CHECKSTYLE NEXT 30 VisibilityModifier
     boolean isNode;
     // used for reversing constraints
-    Set<CNode> tmpIncoming = Sets.newHashSet();
+    List<CNode> tmpIncoming = Lists.newArrayList();
     // flags a node to be repositioned
     boolean reposition = true;
     LNode lNode;// TODO LNode or just position? hmm need margins
@@ -44,14 +51,17 @@ public final class CNode {
     KVectorChain bends;
     KVectorChain juctionPoints;
     // representation of constraints
-    Set<CNode> incoming = Sets.newHashSet();// Lists.newArrayList();
+    List<CNode> incoming = Lists.newArrayList();
     int outDegree = 0;
     // TODO could there be multiple parents?
-    CNode parentNode = null;
+    CNode parentNode = null; //TODO parentCGroup
     double relativePositionX;
+    double cGroupOffset; //TODO like relativePositionX
     int pendingNSSegments = 0;
-    Set<CNode> connectedNSSegments = null;
+    List<CNode> connectedNSSegments = null;
     double startX = Double.NEGATIVE_INFINITY;
+    CGroup group; //TODO cGroup
+    LGraph layeredGraph;
     //testing zero spacing
     Set<LEdge> lEdges = Sets.newHashSet();
 
@@ -63,23 +73,25 @@ public final class CNode {
      * @param hitbox
      *            the constraints are inferred from this box
      */
-    CNode(final LNode lNode, final Rectangle hitbox) {
+    CNode(final LNode lNode, final Rectangle hitbox, final LGraph layeredGraph) {
         this.lNode = lNode;
         this.hitbox = hitbox;
         this.isNode = true;
+        this.layeredGraph = layeredGraph;
     }
 
-    CNode(final VerticalSegment vSeg) {
+    CNode(final VerticalSegment vSeg, final LGraph layeredGraph) {
         this.isNode = false;
         this.bends = new KVectorChain(vSeg.bend1, vSeg.bend2);
         this.juctionPoints = new KVectorChain(vSeg.junctionPoints);
         this.hitbox = new Rectangle(vSeg.x, vSeg.y1, 0, vSeg.y2 - vSeg.y1);
-        this.parentNode = vSeg.parentNode;
+        this.parentNode = vSeg.parentNode; //TODO rename parentCGroup
         this.relativePositionX = vSeg.relativePositionX;
         if(vSeg.lEdge!=null)this.lEdges.add(vSeg.lEdge);
+        this.layeredGraph = layeredGraph;
     }
 
-    void addSegment(final VerticalSegment vSeg) { // TODO check this!!
+    void addSegment(final VerticalSegment vSeg) {
         this.bends.addAll(vSeg.bend1, vSeg.bend2);
         this.juctionPoints.addAll(vSeg.junctionPoints);
         double newY1 = Math.min(this.hitbox.y, vSeg.y1);
@@ -90,6 +102,57 @@ public final class CNode {
     }
 
     // TODO private boolean intersects(CNode o)
+    
+    private LInsets getMargin() {
+        if (this.isNode) {
+            return this.lNode.getMargin();
+        }
+        return new LInsets(0, 0, 0, 0);
+    }
+    
+    private double getSpacing(CNode other) {
+        if (this.isNode && other.isNode) {
+            return (double) this.layeredGraph.getProperty(InternalProperties.SPACING);
+        }
+        // TODO testing zero spacing
+        if (this.parentNode != null && other.parentNode != null
+                && !Sets.intersection(this.lEdges, other.lEdges).isEmpty()) {
+            return 0;
+        }
+        return this.layeredGraph.getProperty(InternalProperties.SPACING)
+                * this.layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+    }
+    
+    public void updateStartX(CNode outgoingCNode) {
+            // determine if object or edge spacing should be used
+            // also retrieving margins around nodes
+            double spacing = getSpacing(outgoingCNode);
+            LInsets margin1 = outgoingCNode.getMargin();
+            LInsets margin2 = this.getMargin();
+
+            // calculating rightmost position according to constraints
+            double newStartX =
+                    Math.min(this.startX, outgoingCNode.startX - margin1.left - margin2.right - spacing
+                            - this.hitbox.width);
+            double currentX;
+            if (this.isNode) { // TODO necessary to check that??
+                currentX = this.lNode.getPosition().x;
+            } else {
+                currentX = this.bends.getFirst().x;
+            }
+            if (this.reposition || newStartX < currentX) {
+                this.startX = newStartX;
+            } else {
+                this.startX = currentX;
+            }
+
+            this.outDegree--; // FIXME set 0 to prevent unnecessary loops
+
+//            // set startNodes for the next iteration
+//            if (this.outDegree == 0) {
+//                startNodes.add(this);
+//            }
+    }
 
     // TODO test
     @Override

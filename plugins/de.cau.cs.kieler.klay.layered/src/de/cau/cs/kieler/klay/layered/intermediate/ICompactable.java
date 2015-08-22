@@ -19,14 +19,14 @@ import java.util.List;
  * @author dag
  *
  */
-interface ICGroup {
+interface ICompactable {
     /**
      * TODO docs
      * @return
      */
     List<CNode> getCNodes();
     int getPendingPlacements();
-    //FIXME eh
+    //FIXME meh
     void setordecpendingplacements();
     double getOffset(CNode cNode);
     double getStartX();
