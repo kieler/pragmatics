@@ -1,0 +1,15 @@
+{
+  "name": "klayJStest",
+  "version": "0.0.0",
+  "description": "Testsuite for JavaScript compiled KLay Layered",
+  "main": "klay_test.js",
+  "author": "Carsten Sprung",
+  "license": "EPL",
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-qunit": "~0.7.0",
+    "grunt-qunit-junit": "~0.3.1",
+    "qunitjs": "~1.18.0",
+    "klayjs": "*"
+  }
+}

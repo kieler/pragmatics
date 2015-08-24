@@ -3,7 +3,7 @@
 	<classpathentry excluding="org/eclipse/emf/emul/" kind="src" path="src"/>
 	<classpathentry excluding="org/eclipse/emf/emul/|org/eclipse/emf/emul/|org/eclipse/emf/emul/|de/cau/cs/kieler/emul/" kind="src" path="src-external"/>
 	<classpathentry kind="src" path="src-external/de/cau/cs/kieler/emul"/>
-	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="test/java/src"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-gwt-15.0.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/guava-15.0.jar"/>

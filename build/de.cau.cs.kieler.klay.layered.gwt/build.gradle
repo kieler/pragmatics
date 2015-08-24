@@ -1,0 +1,24 @@
+ant.importBuild 'build.xml'
+
+task npmInstall(type: Exec) {
+    workingDir 'test/js'
+    executable 'npm'
+    args 'install'
+}
+
+task unzipKlayJs(type: Copy, dependsOn: plainjslinker) {
+    from zipTree('target/klay_layered_js_plainjslinker_nightly_latest.zip')
+    include 'klay.js'
+    into 'test/js'
+}
+
+task qunit(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
+    workingDir 'test/js'
+    executable 'grunt'
+}
+
+task cleanJs(type: Delete) {
+    delete 'test/js/node_modules'
+    delete 'test/js/build'
+    delete 'test/js/klay.js'
+}
