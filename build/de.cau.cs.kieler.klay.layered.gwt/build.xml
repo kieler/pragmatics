@@ -194,7 +194,7 @@
 	<!-- TARGET Compile Test -->
 	<target name="compileTest" depends="copySrc, javac" description="Compile jUnit Tests">
 		<mkdir dir="${outputFolder}/test" />
-		<javac srcdir="test" destdir="${outputFolder}/test" includeantruntime="true">
+		<javac srcdir="test/java/src" destdir="${outputFolder}/test" includeantruntime="true">
 			<classpath refid="project.class.path" />
 	    </javac>
 	</target>
@@ -238,7 +238,7 @@
 		<property name="outputFile.klay.latest" location="${outputFolder}/klay_layered_js${gwt.module.suffix}_nightly_latest.zip" />
 
 		<zip destfile="${outputFile.klay}" basedir="${outputFolder.tmp}" update="true" />
-		<symlink link="${outputFile.klay.latest}" resource="${outputFile.klay}" />
+		<symlink link="${outputFile.klay.latest}" resource="${outputFile.klay}" overwrite="true" />
 		<!--delete dir="${outputFolder.tmp}" failonerror="false" /-->
 	</target>
 

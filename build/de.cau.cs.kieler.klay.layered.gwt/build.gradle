@@ -18,6 +18,7 @@ task qunit(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
 }
 
 task cleanJs(type: Delete) {
+    delete 'build'
     delete 'test/js/node_modules'
     delete 'test/js/build'
     delete 'test/js/klay.js'
