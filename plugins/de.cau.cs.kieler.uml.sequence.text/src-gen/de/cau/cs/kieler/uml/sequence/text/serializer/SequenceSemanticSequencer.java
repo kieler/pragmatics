@@ -124,20 +124,10 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
-	 *     (caption=STRING name=ID)
+	 *     ((caption=STRING name=ID) | (usecaseCaption=STRING name=ID))
 	 */
 	protected void sequence_Lifeline(EObject context, Lifeline semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.LIFELINE__CAPTION) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.LIFELINE__CAPTION));
-			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.LIFELINE__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.LIFELINE__NAME));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getLifelineAccess().getCaptionSTRINGTerminalRuleCall_1_0(), semanticObject.getCaption());
-		feeder.accept(grammarAccess.getLifelineAccess().getNameIDTerminalRuleCall_3_0(), semanticObject.getName());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	

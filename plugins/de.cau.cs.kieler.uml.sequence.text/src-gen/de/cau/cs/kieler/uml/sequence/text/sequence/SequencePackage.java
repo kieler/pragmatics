@@ -132,13 +132,22 @@ public interface SequencePackage extends EPackage
   int LIFELINE__NAME = 1;
 
   /**
+   * The feature id for the '<em><b>Usecase Caption</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LIFELINE__USECASE_CAPTION = 2;
+
+  /**
    * The number of structural features of the '<em>Lifeline</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int LIFELINE_FEATURE_COUNT = 2;
+  int LIFELINE_FEATURE_COUNT = 3;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.InteractionImpl <em>Interaction</em>}' class.
@@ -640,6 +649,17 @@ public interface SequencePackage extends EPackage
   EAttribute getLifeline_Name();
 
   /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline#getUsecaseCaption <em>Usecase Caption</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Usecase Caption</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline#getUsecaseCaption()
+   * @see #getLifeline()
+   * @generated
+   */
+  EAttribute getLifeline_UsecaseCaption();
+
+  /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Interaction <em>Interaction</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1130,6 +1150,14 @@ public interface SequencePackage extends EPackage
      * @generated
      */
     EAttribute LIFELINE__NAME = eINSTANCE.getLifeline_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Usecase Caption</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LIFELINE__USECASE_CAPTION = eINSTANCE.getLifeline_UsecaseCaption();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.InteractionImpl <em>Interaction</em>}' class.

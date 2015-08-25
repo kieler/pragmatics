@@ -161,32 +161,51 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         val lifelineRect = lifelineNode.addRectangle.foregroundInvisible = true
 
-        var KContainerRendering captionRect = null
-        switch STYLE.objectValue {
-            case "Stylish": {
-                captionRect = lifelineRect.addRoundedRectangle(15, 15, 1)
-                captionRect.setBackgroundGradient(Colors.WHITE, Colors.CORNFLOWER_BLUE, 90)
+        if (lifeline.caption != null) {
+            var KContainerRendering captionRect = null
+            switch STYLE.objectValue {
+                case "Stylish": {
+                    captionRect = lifelineRect.addRoundedRectangle(15, 15, 1)
+                    captionRect.setBackgroundGradient(Colors.WHITE, Colors.CORNFLOWER_BLUE, 90)
 //                captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
 //                captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-                captionRect.setShadow(Colors.BLACK, 5)
-            }
-            case "Hello Kitty": {
-                captionRect = lifelineRect.addRoundedRectangle(15, 15, 1)
-                captionRect.setBackgroundGradient("#FFEEEE".color, "#FFBBBB".color, 90)
+                    captionRect.setShadow(Colors.BLACK, 5)
+                }
+                case "Hello Kitty": {
+                    captionRect = lifelineRect.addRoundedRectangle(15, 15, 1)
+                    captionRect.setBackgroundGradient("#FFEEEE".color, "#FFBBBB".color, 90)
 //                captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
 //                captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-                captionRect.setShadow(Colors.PURPLE, 5)
-            }
-            default: {
-                captionRect = lifelineRect.addRectangle
+                    captionRect.setShadow(Colors.PURPLE, 5)
+                }
+                default: {
+                    captionRect = lifelineRect.addRectangle
 //                captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
 //                captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
+                }
             }
+            captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP,
+                2 * TEXTSIZE.intValue + 10, 0)
+            captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(TEXTSIZE.intValue, 0, 8,
+                0).fontSize = TEXTSIZE.intValue
+        } else {
+            val usecaseRect = lifelineRect.addRectangle.foregroundInvisible = true
+            usecaseRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(LEFT, 30, 0, TOP,
+                2 * TEXTSIZE.intValue + 10, 0)
+
+            usecaseRect.addEllipse.setAreaPlacementData().from(LEFT, 0, 0.35f, TOP, 0, 0).to(LEFT, 0, 0.65f, TOP, 10, 0)
+            usecaseRect.addPolyline(1).from(LEFT, 0, 0.5f, TOP, 10, 0).to(LEFT, 0, 0.5f, TOP, 2 * TEXTSIZE.intValue, 0)
+            usecaseRect.addPolyline(1).from(LEFT, 0, 0.3f, TOP, 15, 0).to(LEFT, 0, 0.7f, TOP, 15, 0)
+            usecaseRect.addPolyline(1).from(LEFT, 0, 0.5f, TOP, 2 * TEXTSIZE.intValue, 0).to(LEFT, 0, 0.3f, TOP,
+                2 * TEXTSIZE.intValue + 10, 0)
+            usecaseRect.addPolyline(1).from(LEFT, 0, 0.5f, TOP, 2 * TEXTSIZE.intValue, 0).to(LEFT, 0, 0.7f, TOP,
+                2 * TEXTSIZE.intValue + 10, 0)
+
+            val captionRect = lifelineRect.addRectangle.foregroundInvisible = true
+            captionRect.setAreaPlacementData().from(LEFT, 30, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP,
+                2 * TEXTSIZE.intValue + 10, 0)
+            captionRect.addText(lifeline.usecaseCaption).fontSize = TEXTSIZE.intValue
         }
-        captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP,
-            2 * TEXTSIZE.intValue + 10, 0)
-        captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(TEXTSIZE.intValue, 0, 8, 0).fontSize = TEXTSIZE.
-            intValue
 
         // Coordinates for the dashed line of the Lifeline
         val lineCoordinates = new ArrayList<KPosition>
@@ -280,7 +299,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 ////            } else {
 ////            }
 //        }
-
         val label = KimlUtil.createInitializedLabel(transEdge)
 
         val labelText = msg.caption
@@ -329,6 +347,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         whiteBackgroundRect.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0.5f).to(RIGHT, 0, 0, BOTTOM, -2, 0).
             setBackground(Colors.WHITE)
 
+        // Coordinates for the "X"
         destroyRect.addPolyline(2).from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
         destroyRect.addPolyline(2).from(RIGHT, 0, 0, TOP, 0, 0).to(LEFT, 0, 0, BOTTOM, 0, 0)
 
@@ -408,6 +427,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
     // TODO time constraint between messages, 
     // TODO Duration constraint auch als property aber nur als string anhängen in der Darstellung
+    // TODO Strichmann (Actor, Use cases)
+    // TODO Zustandsinvariante als Notiz
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Rest
     // Specifies the correct Properties for the different message types
@@ -498,6 +519,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      * @param pl the polyline to add the decorator to.
      * @return the given polyline.
      */
+    // TODO Pfeilspitze zu lang
     def private KRendering addAssociationArrowDecorator(KPolyline pl) {
         pl.addPolyline(2) => [
             it.points += createKPosition(LEFT, 0, 0, TOP, 0, 0)

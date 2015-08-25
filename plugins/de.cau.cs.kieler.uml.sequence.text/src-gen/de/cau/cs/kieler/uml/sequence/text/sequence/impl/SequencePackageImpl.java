@@ -247,6 +247,16 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getLifeline_UsecaseCaption()
+  {
+    return (EAttribute)lifelineEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getInteraction()
   {
     return interactionEClass;
@@ -660,6 +670,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     lifelineEClass = createEClass(LIFELINE);
     createEAttribute(lifelineEClass, LIFELINE__CAPTION);
     createEAttribute(lifelineEClass, LIFELINE__NAME);
+    createEAttribute(lifelineEClass, LIFELINE__USECASE_CAPTION);
 
     interactionEClass = createEClass(INTERACTION);
 
@@ -755,6 +766,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     initEClass(lifelineEClass, Lifeline.class, "Lifeline", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getLifeline_Caption(), ecorePackage.getEString(), "caption", null, 0, 1, Lifeline.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLifeline_Name(), ecorePackage.getEString(), "name", null, 0, 1, Lifeline.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLifeline_UsecaseCaption(), ecorePackage.getEString(), "usecaseCaption", null, 0, 1, Lifeline.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(interactionEClass, Interaction.class, "Interaction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

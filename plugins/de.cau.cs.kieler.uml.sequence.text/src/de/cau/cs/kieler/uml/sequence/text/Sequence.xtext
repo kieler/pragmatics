@@ -26,7 +26,8 @@ SequenceDiagram returns SequenceDiagram:
 //    type=DataType name=ID;
 
 Lifeline returns Lifeline:
-    'lifeline' caption=STRING 'as' name=ID;
+    ('lifeline' caption=STRING 'as' name=ID) |
+    ('usecase' usecaseCaption=STRING 'as' name=ID);
 
 Interaction returns Interaction:
     TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineNote

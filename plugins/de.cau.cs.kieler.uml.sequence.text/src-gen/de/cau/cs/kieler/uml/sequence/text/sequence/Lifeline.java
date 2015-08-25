@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline#getCaption <em>Caption</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline#getName <em>Name</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline#getUsecaseCaption <em>Usecase Caption</em>}</li>
  * </ul>
  * </p>
  *
@@ -74,5 +75,31 @@ public interface Lifeline extends EObject
    * @generated
    */
   void setName(String value);
+
+  /**
+   * Returns the value of the '<em><b>Usecase Caption</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Usecase Caption</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Usecase Caption</em>' attribute.
+   * @see #setUsecaseCaption(String)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getLifeline_UsecaseCaption()
+   * @model
+   * @generated
+   */
+  String getUsecaseCaption();
+
+  /**
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline#getUsecaseCaption <em>Usecase Caption</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Usecase Caption</em>' attribute.
+   * @see #getUsecaseCaption()
+   * @generated
+   */
+  void setUsecaseCaption(String value);
 
 } // Lifeline

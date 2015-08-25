@@ -163,15 +163,15 @@ ruleLifeline returns [EObject current=null]
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
-(	otherlv_0='lifeline' 
+((	otherlv_0='lifeline' 
     {
-    	newLeafNode(otherlv_0, grammarAccess.getLifelineAccess().getLifelineKeyword_0());
+    	newLeafNode(otherlv_0, grammarAccess.getLifelineAccess().getLifelineKeyword_0_0());
     }
 (
 (
 		lv_caption_1_0=RULE_STRING
 		{
-			newLeafNode(lv_caption_1_0, grammarAccess.getLifelineAccess().getCaptionSTRINGTerminalRuleCall_1_0()); 
+			newLeafNode(lv_caption_1_0, grammarAccess.getLifelineAccess().getCaptionSTRINGTerminalRuleCall_0_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -187,13 +187,13 @@ ruleLifeline returns [EObject current=null]
 )
 )	otherlv_2='as' 
     {
-    	newLeafNode(otherlv_2, grammarAccess.getLifelineAccess().getAsKeyword_2());
+    	newLeafNode(otherlv_2, grammarAccess.getLifelineAccess().getAsKeyword_0_2());
     }
 (
 (
 		lv_name_3_0=RULE_ID
 		{
-			newLeafNode(lv_name_3_0, grammarAccess.getLifelineAccess().getNameIDTerminalRuleCall_3_0()); 
+			newLeafNode(lv_name_3_0, grammarAccess.getLifelineAccess().getNameIDTerminalRuleCall_0_3_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -208,6 +208,51 @@ ruleLifeline returns [EObject current=null]
 
 )
 ))
+    |(	otherlv_4='usecase' 
+    {
+    	newLeafNode(otherlv_4, grammarAccess.getLifelineAccess().getUsecaseKeyword_1_0());
+    }
+(
+(
+		lv_usecaseCaption_5_0=RULE_STRING
+		{
+			newLeafNode(lv_usecaseCaption_5_0, grammarAccess.getLifelineAccess().getUsecaseCaptionSTRINGTerminalRuleCall_1_1_0()); 
+		}
+		{
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getLifelineRule());
+	        }
+       		setWithLastConsumed(
+       			$current, 
+       			"usecaseCaption",
+        		lv_usecaseCaption_5_0, 
+        		"STRING");
+	    }
+
+)
+)	otherlv_6='as' 
+    {
+    	newLeafNode(otherlv_6, grammarAccess.getLifelineAccess().getAsKeyword_1_2());
+    }
+(
+(
+		lv_name_7_0=RULE_ID
+		{
+			newLeafNode(lv_name_7_0, grammarAccess.getLifelineAccess().getNameIDTerminalRuleCall_1_3_0()); 
+		}
+		{
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getLifelineRule());
+	        }
+       		setWithLastConsumed(
+       			$current, 
+       			"name",
+        		lv_name_7_0, 
+        		"ID");
+	    }
+
+)
+)))
 ;
 
 

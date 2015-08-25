@@ -68,40 +68,72 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 
 	public class LifelineElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Lifeline");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword cLifelineKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Assignment cCaptionAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cCaptionSTRINGTerminalRuleCall_1_0 = (RuleCall)cCaptionAssignment_1.eContents().get(0);
-		private final Keyword cAsKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		private final Assignment cNameAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cNameIDTerminalRuleCall_3_0 = (RuleCall)cNameAssignment_3.eContents().get(0);
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Keyword cLifelineKeyword_0_0 = (Keyword)cGroup_0.eContents().get(0);
+		private final Assignment cCaptionAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
+		private final RuleCall cCaptionSTRINGTerminalRuleCall_0_1_0 = (RuleCall)cCaptionAssignment_0_1.eContents().get(0);
+		private final Keyword cAsKeyword_0_2 = (Keyword)cGroup_0.eContents().get(2);
+		private final Assignment cNameAssignment_0_3 = (Assignment)cGroup_0.eContents().get(3);
+		private final RuleCall cNameIDTerminalRuleCall_0_3_0 = (RuleCall)cNameAssignment_0_3.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Keyword cUsecaseKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cUsecaseCaptionAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cUsecaseCaptionSTRINGTerminalRuleCall_1_1_0 = (RuleCall)cUsecaseCaptionAssignment_1_1.eContents().get(0);
+		private final Keyword cAsKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
+		private final Assignment cNameAssignment_1_3 = (Assignment)cGroup_1.eContents().get(3);
+		private final RuleCall cNameIDTerminalRuleCall_1_3_0 = (RuleCall)cNameAssignment_1_3.eContents().get(0);
 		
 		////LocalVariable returns LocalVariable:
 		////    type=DataType name=ID;
 		//Lifeline:
-		//	"lifeline" caption=STRING "as" name=ID;
+		//	"lifeline" caption=STRING "as" name=ID | "usecase" usecaseCaption=STRING "as" name=ID;
 		public ParserRule getRule() { return rule; }
 
+		//"lifeline" caption=STRING "as" name=ID | "usecase" usecaseCaption=STRING "as" name=ID
+		public Alternatives getAlternatives() { return cAlternatives; }
+
 		//"lifeline" caption=STRING "as" name=ID
-		public Group getGroup() { return cGroup; }
+		public Group getGroup_0() { return cGroup_0; }
 
 		//"lifeline"
-		public Keyword getLifelineKeyword_0() { return cLifelineKeyword_0; }
+		public Keyword getLifelineKeyword_0_0() { return cLifelineKeyword_0_0; }
 
 		//caption=STRING
-		public Assignment getCaptionAssignment_1() { return cCaptionAssignment_1; }
+		public Assignment getCaptionAssignment_0_1() { return cCaptionAssignment_0_1; }
 
 		//STRING
-		public RuleCall getCaptionSTRINGTerminalRuleCall_1_0() { return cCaptionSTRINGTerminalRuleCall_1_0; }
+		public RuleCall getCaptionSTRINGTerminalRuleCall_0_1_0() { return cCaptionSTRINGTerminalRuleCall_0_1_0; }
 
 		//"as"
-		public Keyword getAsKeyword_2() { return cAsKeyword_2; }
+		public Keyword getAsKeyword_0_2() { return cAsKeyword_0_2; }
 
 		//name=ID
-		public Assignment getNameAssignment_3() { return cNameAssignment_3; }
+		public Assignment getNameAssignment_0_3() { return cNameAssignment_0_3; }
 
 		//ID
-		public RuleCall getNameIDTerminalRuleCall_3_0() { return cNameIDTerminalRuleCall_3_0; }
+		public RuleCall getNameIDTerminalRuleCall_0_3_0() { return cNameIDTerminalRuleCall_0_3_0; }
+
+		//"usecase" usecaseCaption=STRING "as" name=ID
+		public Group getGroup_1() { return cGroup_1; }
+
+		//"usecase"
+		public Keyword getUsecaseKeyword_1_0() { return cUsecaseKeyword_1_0; }
+
+		//usecaseCaption=STRING
+		public Assignment getUsecaseCaptionAssignment_1_1() { return cUsecaseCaptionAssignment_1_1; }
+
+		//STRING
+		public RuleCall getUsecaseCaptionSTRINGTerminalRuleCall_1_1_0() { return cUsecaseCaptionSTRINGTerminalRuleCall_1_1_0; }
+
+		//"as"
+		public Keyword getAsKeyword_1_2() { return cAsKeyword_1_2; }
+
+		//name=ID
+		public Assignment getNameAssignment_1_3() { return cNameAssignment_1_3; }
+
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_1_3_0() { return cNameIDTerminalRuleCall_1_3_0; }
 	}
 
 	public class InteractionElements extends AbstractParserRuleElementFinder {
@@ -751,7 +783,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	////LocalVariable returns LocalVariable:
 	////    type=DataType name=ID;
 	//Lifeline:
-	//	"lifeline" caption=STRING "as" name=ID;
+	//	"lifeline" caption=STRING "as" name=ID | "usecase" usecaseCaption=STRING "as" name=ID;
 	public LifelineElements getLifelineAccess() {
 		return pLifeline;
 	}

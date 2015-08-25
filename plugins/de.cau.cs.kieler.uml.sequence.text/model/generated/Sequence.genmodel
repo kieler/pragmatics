@@ -21,6 +21,7 @@
     <genClasses ecoreClass="Sequence.ecore#//Lifeline">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//Lifeline/caption"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//Lifeline/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//Lifeline/usecaseCaption"/>
     </genClasses>
     <genClasses ecoreClass="Sequence.ecore#//Interaction"/>
     <genClasses ecoreClass="Sequence.ecore#//TwoLifelineMessage">
