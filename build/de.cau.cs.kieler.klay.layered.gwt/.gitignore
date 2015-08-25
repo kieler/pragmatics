@@ -6,11 +6,12 @@
 /reports
 /test-classes
 /tomcat
-/war/klaygwt
-/war/WEB-INF/deploy/klaygwt
+/war/klay
+/war/WEB-INF/deploy
 /war/WEB-INF/classes
 Thumbs.db
 node_modules
 src-external/de/cau/cs
 build
 .gradle
+*Test.xml
