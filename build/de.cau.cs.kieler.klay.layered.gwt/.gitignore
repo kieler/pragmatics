@@ -13,4 +13,4 @@ Thumbs.db
 node_modules
 src-external/de/cau/cs
 build
-/build/de.cau.cs.kieler.klay.layered.gwt/test/js/klay.js
+.gradle
