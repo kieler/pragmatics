@@ -68,7 +68,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
     private static final double TOLERANCE = 0.0001; // TODO ????????
 
     // TODO icg --
-    private List<CNode> nodes = Lists.newArrayList();
+    private List<CNode> cNodes = Lists.newArrayList();
     private List<CGroup> cGroups = Lists.newArrayList();
 
     private double objSpacing, edgeSpacing;
@@ -90,15 +90,27 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
         // 3. 4.
         getConstraints((a, b) -> a > b);
-
-        compactLeft();
+//        System.out.println(cNodes);
+        groupCNodes();
+        System.out.println("\ngroups:\n");
+        for (CGroup g : cGroups) {
+            System.out.println(g.cNodes);
+            System.out.println("\tinc: " + g.incomingConstraints);
+        }
+        compactCGroups();
+        System.out.println("\nstartX after compaction:\n");
+        for (CNode node : cNodes) {
+            System.out.println(node + "startX: " + node.startX);
+        }
+        //compactLeft();
         setNodePositions();
-        lockNodes();
+        lockCNodes();
         reverseConstraints();
         // compactRight();
         // setNodePositions();
 
-        nodes.clear();
+        cGroups.clear();
+        cNodes.clear();
         progressMonitor.done();
     }
 
@@ -121,8 +133,8 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                         new Rectangle(node.getPosition().x, node.getPosition().y, node.getSize().x,
                                 node.getSize().y);
                 cNode = new CNode(node, r, layeredGraph);
-                nodes.add(cNode);
-                //TODO icg new cgroup
+                cNodes.add(cNode);
+                // TODO icg new cgroup
 
                 // add vertical edge segments
                 for (LEdge edge : node.getOutgoingEdges()) {
@@ -145,7 +157,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                                     vSeg.junctionPoints.add(jp);
                                 }
                             }
-                            vSeg.parentNode = cNode; //TODO icg = cGroup
+                            vSeg.parentNode = cNode; // TODO icg = cGroup
                             vSeg.relativePositionX = vSeg.x - cNode.hitbox.x;
                             verticalSegments.add(vSeg);
                             vSeg.lEdge = edge;
@@ -191,7 +203,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                                     vSeg.junctionPoints.add(jp);
                                 }
                             }
-                            vSeg.parentNode = cNode; //TODO icg = cGroup
+                            vSeg.parentNode = cNode; // TODO icg = cGroup
                             vSeg.relativePositionX = vSeg.x - cNode.hitbox.x;
                             verticalSegments.add(vSeg);
                             vSeg.lEdge = edge;
@@ -217,27 +229,29 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
             });
 
             VerticalSegment last = verticalSegments.get(0);
-            CNode c = new CNode(last, layeredGraph); //TODO icg cg = new CGroup
+            CNode c = new CNode(last, layeredGraph); // TODO icg cg = new CGroup
 
             for (int i = 1; i < verticalSegments.size(); i++) {
                 VerticalSegment verticalSegment = verticalSegments.get(i);
                 if (!verticalSegment.intersects(last)) {
-                    nodes.add(c); //TODO icg --?
+                    cNodes.add(c); // TODO icg --?
                     // if c is NSSegment
-                    if (c.parentNode != null) { //TODO icg cg.getFirst().parentCGroup or c.parentCGroup
+                    if (c.parentNode != null) { // TODO icg cg.getFirst().parentCGroup or
+                                                // c.parentCGroup
                         // parentNode null if not ns because that is set in 1.
                         if (c.parentNode.connectedNSSegments == null) {
                             c.parentNode.connectedNSSegments = Lists.newArrayList();
                         }
                         c.parentNode.pendingNSSegments++;
                         c.parentNode.connectedNSSegments.add(c);
-                        //TODO icg c.parentCGroup.addCNode(c)
+                        // TODO icg c.parentCGroup.addCNode(c)
                     }
                     // System.out.println(c.hitbox.x + " : " + c.hitbox.y + " : " + c.hitbox.height
                     // + "\n\tBPs: " + c.bends + "\n\tJPs: " + c.juctionPoints);
-                    c = new CNode(verticalSegment, layeredGraph); // FIXME if nssegs intersect they belong to same
-                                                    // parent so this is faulty for intersecting
-                                                    // segments of different parents
+                    c = new CNode(verticalSegment, layeredGraph); // FIXME if nssegs intersect they
+                                                                  // belong to same
+                    // parent so this is faulty for intersecting
+                    // segments of different parents (not happening in layered graph)
                 } else {
                     // FIXME assuming a junction point is on one edge only, no duplicates
                     c.addSegment(verticalSegment);
@@ -245,8 +259,8 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
                 last = verticalSegment;
             }
-            nodes.add(c);
-            //TODO maybe do the merging completely here
+            cNodes.add(c);
+            // TODO maybe do the merging completely here
             // if c is NSSegment
             if (c.parentNode != null) {
                 // parentNode null if not ns because that is set in 1.
@@ -280,9 +294,44 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
     // }
     // }
 
-    private void lockNodes() { //TODO icg need to rename? lockCGroups
+    private void groupCNodes() {
+        for (CNode node : cNodes) {
+            if (node.parentNode == null) {
+                CGroup group = new CGroup(node);
+                if (node.connectedNSSegments != null) {
+                    for (CNode nsSegment : node.connectedNSSegments) {
+                        group.addCNode(nsSegment);
+                    }
+                }
+                cGroups.add(group);
+            }
+        }
+        
+        //set outDegree TODO calc offsets ?? seem to be ok
+        for (CGroup group : cGroups) {
+            for (CNode node : group.cNodes) {
+                for (CNode inc : node.incoming) {
+                    if (group.incomingConstraints.contains(inc)) {
+                        inc.group.outDegree++;
+                    }
+                }
+            }
+        }
+        
+        //check if incomingConstraints is correct
+        for (CGroup group : cGroups) {
+            List<CNode> incs = Lists.newArrayList();
+            for (CNode n : group.cNodes) {
+                incs.addAll(n.incoming);
+            }
+            System.out.println(group.cNodes+" all incs: "+incs+" g.inc: "+group.incomingConstraints);
+            incs.clear();
+        }
+    }
+
+    private void lockCNodes() { // TODO icg need to rename? lockCGroups
         // TODO left/right lock nodes
-        for (CNode node : nodes) {
+        for (CNode node : cNodes) {
             if (node.isNode) {
                 boolean b = false;
                 for (LEdge edge : node.lNode.getIncomingEdges()) {
@@ -313,22 +362,20 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         }
         return edgeSpacing;
     }
-    
-    
 
     private void getConstraints(final BiFunction<Double, Double, Boolean> cmp) { // FIXME overhead??
                                                                                  // bifunction
                                                                                  // obsolete
                                                                                  // (reverseConstraints)
         // 3. infer constraints from hitbox intersections
-        for (CNode node1 : nodes) {
-
+        for (CNode node1 : cNodes) {
+//TODO use node.getMargin
             LInsets margin1 = new LInsets(0, 0, 0, 0);
             if (node1.isNode) {
                 margin1 = node1.lNode.getMargin();
             }
 
-            for (CNode node2 : nodes) {
+            for (CNode node2 : cNodes) {
                 double spacing = getSpacing(node1, node2);
 
                 LInsets margin2 = new LInsets(0, 0, 0, 0);
@@ -357,7 +404,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
     }
 
     private void reverseConstraints() {
-        for (CNode node : nodes) {
+        for (CNode node : cNodes) {
             // TODO if CNodes are reversed again the (reversed flag)?(tmpIncoming) has to be reset
             // TODO reset ns stuff
             node.startX = Double.POSITIVE_INFINITY;
@@ -368,7 +415,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
             }
 
         }
-        for (CNode node : nodes) {
+        for (CNode node : cNodes) {
             node.incoming = node.tmpIncoming;
         }
     }
@@ -383,7 +430,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         // starting with nodes with outDegree == 0
         Queue<CNode> startNodes = Lists.newLinkedList();
         Queue<CNode> pendingNodes = Lists.newLinkedList();
-        for (CNode node : nodes) {
+        for (CNode node : cNodes) {
             if (node.outDegree == 0) {
                 if (node.pendingNSSegments == 0) {
                     startNodes.add(node);
@@ -399,7 +446,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                     // handle NSSegments
                     if (node.parentNode != null) {
                         node.parentNode.pendingNSSegments--;
-//                        System.out.println(node + " is child of " + node.parentNode);
+                        // System.out.println(node + " is child of " + node.parentNode);
                     }
                     // handle NS parents
                     if (node.connectedNSSegments != null) { // should not be empty
@@ -407,7 +454,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                         for (CNode ns : node.connectedNSSegments) {
                             // TODO specific to compactLeft
                             node.startX = Math.max(node.startX, ns.startX - ns.relativePositionX);
-//                            System.out.println("reset startX of " + node + ": " + node.startX);
+                            // System.out.println("reset startX of " + node + ": " + node.startX);
                         }
                         // set connectedNSSegments startX
                         for (CNode ns : node.connectedNSSegments) {
@@ -464,8 +511,8 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                                            // and
                                            // spacing is correct
                     }
-                    
-//                    System.out.println("startX "+inc+"   "+inc.startX);
+
+                    // System.out.println("startX "+inc+"   "+inc.startX);
 
                     // set startNodes for the next iteration
                     if (inc.outDegree == 0) {
@@ -475,7 +522,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                             // handle NSSegments
                             if (inc.parentNode != null) {
                                 inc.parentNode.pendingNSSegments--;
-//                                System.out.println(inc + " is child of " + inc.parentNode);
+                                // System.out.println(inc + " is child of " + inc.parentNode);
                             }
                             // handle NS parents
                             if (inc.connectedNSSegments != null) { // should not be empty id not
@@ -485,8 +532,8 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                                     // TODO specific to compactLeft
                                     inc.startX =
                                             Math.max(inc.startX, ns.startX - ns.relativePositionX);
-//                                    System.out
-//                                            .println("reset startX of " + inc + ": " + inc.startX);
+                                    // System.out
+                                    // .println("reset startX of " + inc + ": " + inc.startX);
                                 }
                                 // set connectedNSSegments startX
                                 for (CNode ns : inc.connectedNSSegments) {
@@ -508,7 +555,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                     // handle NSSegments
                     if (node.parentNode != null) {
                         node.parentNode.pendingNSSegments--;
-//                        System.out.println(node + " is child of " + node.parentNode);
+                        // System.out.println(node + " is child of " + node.parentNode);
                     }
                     // handle NS parents
                     if (node.connectedNSSegments != null) { // should not be empty id not null
@@ -516,7 +563,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                         for (CNode ns : node.connectedNSSegments) {
                             // TODO specific to compactLeft
                             node.startX = Math.max(node.startX, ns.startX - ns.relativePositionX);
-//                            System.out.println("reset startX of " + node + ": " + node.startX);
+                            // System.out.println("reset startX of " + node + ": " + node.startX);
                         }
                         // set connectedNSSegments startX
                         for (CNode ns : node.connectedNSSegments) {
@@ -530,57 +577,53 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
             }
         }
     }
-    
+
     /**
      * TODO
      */
-    private void compactCGroups() {//TODO rn
-//TODO interface later
+    private void compactCGroups() {// TODO rn
+    // TODO interface later
+        System.out.println("\n initial sinks:\n");
         Queue<CGroup> sinks = Lists.newLinkedList();
         for (CGroup group : cGroups) {
             if (group.isInnerCompactable()) {
                 group.compactInnerCNodes();
                 sinks.add(group);
+                System.out.println("group: "+group.cNodes);
             }
         }
-
+        System.out.println("\nfurther compaction:\n");
         while (!sinks.isEmpty()) {
             CGroup group = sinks.poll();
             List<CGroup> compactables = group.propagate();
             for (CGroup g : compactables) {
                 g.compactInnerCNodes();
                 sinks.add(g);
+                System.out.println("new sink: "+g.cNodes);
             }
             compactables.clear();
         }
 
-
-
-
-/*
-
-the group.startX has to be initialized on creation
-
-group.outgoingConstraints := not in group
-group.isInnerCompactable() if outgoing constraints not contained in itself are empty
-
-group.compactInnerCNodes() postcondition: isSink()==true and add to sinks (needs to be done outside)
-    Queue<CNode> startNodes = lists...
-    like before
-    while..
-        only for incoming inside group ???
-            remove those from group.incomingConstraints
-    at the end set positions at offsets from minimal startX of group
-
-group.propagate() update startX of incomings (CNodes), decrease outDegree or remove oneself from its outgoing
-  constraints, if one becomes innerCompactable add to return list
-
-?? CNode.updateStartX() has to know both nodes
-++CNode.cGroup
-
-(use updateStartX instead) CNode.propagate could be used in group.propagate and compactInnerCNodes
-    also has to handle in/outgoings of group
-*/
+        /*
+         * 
+         * the group.startX has to be initialized on creation
+         * 
+         * group.outgoingConstraints := not in group group.isInnerCompactable() if outgoing
+         * constraints not contained in itself are empty
+         * 
+         * group.compactInnerCNodes() postcondition: isSink()==true and add to sinks (needs to be
+         * done outside) Queue<CNode> startNodes = lists... like before while.. only for incoming
+         * inside group ??? remove those from group.incomingConstraints at the end set positions at
+         * offsets from minimal startX of group
+         * 
+         * group.propagate() update startX of incomings (CNodes), decrease outDegree or remove
+         * oneself from its outgoing constraints, if one becomes innerCompactable add to return list
+         * 
+         * ?? CNode.updateStartX() has to know both nodes ++CNode.cGroup
+         * 
+         * (use updateStartX instead) CNode.propagate could be used in group.propagate and
+         * compactInnerCNodes also has to handle in/outgoings of group
+         */
     }
 
     /**
@@ -592,7 +635,7 @@ group.propagate() update startX of incomings (CNodes), decrease outDegree or rem
 
         // starting with nodes with outDegree == 0
         Queue<CNode> startNodes = Lists.newLinkedList();
-        for (CNode node : nodes) {
+        for (CNode node : cNodes) {
             // TODO -- init
             node.startX = Double.POSITIVE_INFINITY;
 
@@ -652,7 +695,7 @@ group.propagate() update startX of incomings (CNodes), decrease outDegree or rem
     }
 
     private void setNodePositions() { // TODO icg move to cnode or cgroup
-        for (CNode node : nodes) {
+        for (CNode node : cNodes) {
 
             if (node.isNode) {
                 LNode n = node.lNode;

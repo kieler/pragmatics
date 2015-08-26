@@ -20,8 +20,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.klay.layered.graph.LInsets;
-
+//TODO use /** */ remove this.
 /**
  * @author dag
  *
@@ -29,16 +28,14 @@ import de.cau.cs.kieler.klay.layered.graph.LInsets;
 final class CGroup implements ICompactable {
     // FIXME anything that is altered here has to be reset before compactRight!
     private double startX;
-    private List<CNode> cNodes;
-    // constraints pointing to CNodes not withhin the group
-    private Set<CNode> outgoingConstraints;
-    private Set<CNode> incomingConstraints;
-    //TODO use,  make private?
-    public int inDegree, outDegree;
+    public Set<CNode> cNodes;
+    // constraints pointing to CNodes not within the group
+    //private Set<CNode> outgoingConstraints;
+    public Set<CNode> incomingConstraints;
+    public int outDegree;
 
     public boolean isInnerCompactable() {
         return outDegree == 0;
-//        return outgoingConstraints.isEmpty();
     }
 
     public void compactInnerCNodes() {
@@ -46,10 +43,14 @@ final class CGroup implements ICompactable {
         for (CNode node : cNodes) {
             if (node.outDegree == 0) {
                 startNodes.add(node);
-                if (node.isNode) {
-                    node.startX = node.lNode.getPosition().x;
+                if (node.reposition) {
+                    node.startX = 0;
                 } else {
-                    node.startX = node.bends.getFirst().x;
+                    if (node.isNode) {
+                        node.startX = node.lNode.getPosition().x;
+                    } else {
+                        node.startX = node.bends.getFirst().x;
+                    }
                 }
             }
         }
@@ -66,23 +67,26 @@ final class CGroup implements ICompactable {
             }
         }
         
-        CNode rightmostCNode = cNodes.get(0);
+        CNode rightmostCNode = cNodes.iterator().next();
         for (CNode node : cNodes) {
-            if (node.startX > rightmostCNode.startX) {
+            if (node.startX - node.cGroupOffset > rightmostCNode.startX - rightmostCNode.cGroupOffset) {
                 rightmostCNode = node;
             }
+            //better?? this.startX = Math.max(this.startX, ode.startX - node.cGroupOffset);
         }
         this.startX = rightmostCNode.startX - rightmostCNode.cGroupOffset;
+        System.out.println("\n");
         for (CNode node : cNodes) {
             node.startX = this.startX + node.cGroupOffset;
+            System.out.println("new startX: " +"("+node.startX+")"+node);
         }
     }
 
     public List<CGroup> propagate() {
         List<CGroup> compactables = Lists.newArrayList();
         for (CNode node : cNodes) {
-            for (CNode inc : node.incoming) {
-                if (this.incomingConstraints.contains(inc)) {
+            for (CNode inc : node.incoming) {//need the node
+                if (this.incomingConstraints.contains(inc)) {//FIXME incoming Constraints is a set but multiple nodes in the group have the same incoming so outDegree is too low
                     inc.updateStartX(node);
                     inc.group.outDegree--;
                     if (inc.group.isInnerCompactable()) {
@@ -93,13 +97,49 @@ final class CGroup implements ICompactable {
         }
         return compactables;
     }
-
-    public CGroup(double startX) {
-        this.startX = startX;
-        this.cNodes = Lists.newArrayList();
-        this.outgoingConstraints = Sets.newHashSet();
-        this.incomingConstraints = Sets.newHashSet();
+    
+    public void addCNode(CNode node) {
+        cNodes.add(node);
+        node.group = this;
+        //FIXME not generic
+        node.cGroupOffset = node.relativePositionX;
+        //TODO does this even work??
+        incomingConstraints.remove(node);
+//        this.outDegree += node.outDegree;//FIXME don't count constraints from within
+        for (CNode inc : node.incoming) {
+            if (!this.cNodes.contains(inc)) {
+                this.incomingConstraints.add(inc);
+            }
+        }
     }
+
+    public CGroup(CNode node /* not used double startX*/) {
+        //this.startX = startX;
+        this.cNodes = Sets.newLinkedHashSet();
+        //this.outgoingConstraints = Sets.newHashSet();
+        this.incomingConstraints = Sets.newLinkedHashSet();
+        outDegree = 0;
+        addCNode(node);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     // TODO interface inherited
     /**

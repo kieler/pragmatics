@@ -63,7 +63,7 @@ public final class CNode { //impl icomp
     CGroup group; //TODO cGroup
     LGraph layeredGraph;
     //testing zero spacing
-    Set<LEdge> lEdges = Sets.newHashSet();
+    Set<LEdge> lEdges = Sets.newLinkedHashSet();
 
     /**
      * Creates new constraint node
@@ -78,6 +78,7 @@ public final class CNode { //impl icomp
         this.hitbox = hitbox;
         this.isNode = true;
         this.layeredGraph = layeredGraph;
+        this.relativePositionX = 0;
     }
 
     CNode(final VerticalSegment vSeg, final LGraph layeredGraph) {
@@ -132,18 +133,22 @@ public final class CNode { //impl icomp
 
             // calculating rightmost position according to constraints
             double newStartX =
-                    Math.min(this.startX, outgoingCNode.startX - margin1.left - margin2.right - spacing
-                            - this.hitbox.width);
+                    Math.max(this.startX, outgoingCNode.startX + outgoingCNode.hitbox.width + margin1.right
+                            + margin2.left + spacing);
             double currentX;
-            if (this.isNode) { // TODO necessary to check that??
+            if (this.isNode) {
                 currentX = this.lNode.getPosition().x;
             } else {
                 currentX = this.bends.getFirst().x;
             }
+            
+            this.outDegree--;
+            
             if (this.reposition || newStartX < currentX) {
                 this.startX = newStartX;
             } else {
                 this.startX = currentX;
+                //TODO would outDegree=0 work in this case?? probably!
             }
 
             this.outDegree--; // FIXME set 0 to prevent unnecessary loops
@@ -152,15 +157,16 @@ public final class CNode { //impl icomp
 //            if (this.outDegree == 0) {
 //                startNodes.add(this);
 //            }
+            System.out.println("updateStartX: "+this.startX+" "+this+" out: "+outgoingCNode);
     }
 
     // TODO test
     @Override
     public String toString() {
         if (this.isNode) {
-            return this.lNode.getName();
+            return this.lNode.getName() + "(o:" + this.cGroupOffset + ")";
         } else {
-            return "seg(" + this.hitbox.x + ", " + this.hitbox.y + ")";
+            return "seg(" + this.hitbox.x + ", " + this.hitbox.y + ")" + "(o:" + this.cGroupOffset + ")";
         }
     }
 }
