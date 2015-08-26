@@ -1,0 +1,287 @@
+/**
+ * Gradle script for building and publishing Klay as bundled jar with and without dependencies.
+ * 
+ * Available tasks
+ * ===============
+ * ./gradlew tasks
+ * Relevant tasks have descriptions beginning with 'KIELER'.
+ * Test tasks' descriptions begin with 'KIELER TEST'.
+ * 
+ * Extra parameters via properties-file and/or cmd-line parameter
+ * ==============================================================
+ * ~/.gradle/gradle.properties:
+ * ----------------------------
+ * org.gradle.daemon=false
+ * signing.keyId=<keyId>
+ * signing.password=<pw>
+ * signing.secretKeyRingFile=/home/<user>/.gnupg/secring.gpg
+ * sonatypeUsername=<username>
+ * sonatypePassword=<password>
+ * 
+ * cli:
+ * ----
+ * ./gradlew -Dorg.gradle.daemon=false -D...=... <tasks>
+ * 
+ * Specifying release versions
+ * ===========================
+ * ./gradlew -Pv=<version> ... uploadArchives
+ * 
+ * Build complete nightlies
+ * ========================
+ * ./gradlew clean fatKlay fatKlayAll copyKlayPlugins copyFormatsPlugins zipKlayPlugins zipFormatsPlugins
+ * 
+ * Run all tests
+ * =============
+ * ./gradlew testFatKlay testFatKlayAll testKlay testJson
+ */
+
+plugins {
+    id 'signing'
+    id 'maven'
+}
+
+group = 'de.cau.cs.kieler'
+ext {
+    packaging = 'jar'
+    libsA = 'fatJar'
+    libsB = 'libs'
+    libsC = 'libsFormats'
+
+    klayDeps = [
+        'de.cau.cs.kieler:de.cau.cs.kieler.core:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.core.kgraph:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.kiml:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.klay.force:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.klay.layered:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.klay.tree:[0,)'
+    ]
+    klayExtraDeps = [
+        // long names on mvn central
+        'org.eclipse.emf:org.eclipse.emf.common:[0,)',
+        'org.eclipse.emf:org.eclipse.emf.ecore:[0,)',
+        'org.eclipse.emf:org.eclipse.emf.ecore.xmi:[0,)',
+        // short name on mvn central
+        'com.google.guava:com.google.guava:[0,)'
+    ]
+    formatsDeps = ['de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)']
+    formatsExtraDeps = [
+        // short names on mvn central
+        'org.eclipse.equinox:org.eclipse.equinox.app:[0,)',
+        'org.eclipse.equinox:org.eclipse.equinox.common:[0,)',
+        'org.eclipse.equinox:org.eclipse.equinox.registry:[0,)',
+        'org.eclipse:org.eclipse.osgi:[0,)'
+    ]
+    jsonDeps = ['de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats.json:[0,)']
+    jsonExtraDeps = [
+        'org.eclipse.xtend:org.eclipse.xtend.lib:[0,)',
+        'org.eclipse.xtext:org.eclipse.xtext.xbase.lib:[0,)'
+    ]
+}
+version = project.properties['v'] ?: 'nightly-' + getTimeStamp()
+
+allprojects{
+    repositories {
+        ivy {
+            ivyPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/artifacts.jar/artifacts.xml'
+            artifactPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/plugins/[artifact](.[classifier])_[revision].jar'
+        }
+        ivy {
+            ivyPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/artifacts.jar/artifacts.xml'
+            artifactPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/plugins/[artifact](.[classifier])_[revision].jar'
+        }
+    }
+}
+
+configurations {
+    klay
+    klayExtra
+    formats
+    formatsExtra
+    json
+    jsonExtra
+}
+
+dependencies {
+    klay klayDeps
+    klayExtra klayExtraDeps
+
+    formats formatsDeps
+    formatsExtra formatsExtraDeps
+
+    json jsonDeps
+    jsonExtra jsonExtraDeps
+}
+
+// Part A: bundled klay
+// --------------------------------------------------------
+
+def theIncludes = [
+    '**/*.class',
+    'META-INF/MANIFEST.MF',
+    'epl-v10.html'
+]
+
+def theExcludes = [
+    'images/**',
+    'java/**',
+    'javax/**',
+    'model/**',
+    'schema/**'
+]
+task fatKlay(type: Jar) {
+    description = 'KIELER: Bundles the core plugins and the three layouters into one jar.'
+    destinationDir file("$buildDir/$libsA")
+    baseName = "klay"
+    classifier = ''
+    from "$rootDir/epl-v10.html"
+    from { configurations.klay.collect { it.isDirectory() ? it : zipTree(it) } }
+    include theIncludes
+    exclude theExcludes
+}
+
+task fatKlayAll(type: Jar) {
+    description = 'KIELER: Bundles the core plugins, the three layouters and all dependencies into one jar.'
+    destinationDir file("$buildDir/$libsA")
+    baseName = "klay"
+    classifier = 'all'
+    from "$rootDir/epl-v10.html"
+    from { configurations.klay.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.klayExtra.collect { it.isDirectory() ? it : zipTree(it) } }
+    include theIncludes
+    exclude theExcludes
+}
+
+// Part B: klay plugins
+// --------------------------------------------------------
+
+def klayPlugins = [
+    configurations.klay,
+    configurations.klayExtra
+]
+
+task copyKlayPlugins(type: Copy) {
+    description = 'KIELER: Gathers all needed jars (including dependencies) to use the layouters.'
+    from klayPlugins
+    into "$buildDir/$libsB"
+}
+
+task zipKlayPlugins(type: Zip) {
+    description = 'KIELER: Zips (for convenient download) all needed jars (including dependencies) to use the layouters.'
+    archiveName "${libsB}.zip"
+    from klayPlugins
+    destinationDir buildDir
+}
+
+// Part C: klay plugins with formats & json
+// --------------------------------------------------------
+
+def formatsPlugins = [
+    configurations.klay,
+    configurations.klayExtra,
+    configurations.formats,
+    configurations.formatsExtra,
+    configurations.json,
+    configurations.jsonExtra,
+    tasks.getByPath(':nonosgi:jar')
+]
+
+task copyFormatsPlugins(type: Copy, dependsOn: ":nonosgi:jar") {
+    description = 'KIELER: Gathers all needed jars (including dependencies) to use the layouters and importers like JSON.'
+    from formatsPlugins
+    into "$buildDir/$libsC"
+}
+
+task zipFormatsPlugins(type: Zip, dependsOn: ":nonosgi:jar") {
+    description = 'KIELER: Zips (for convenient download) all needed jars (including dependencies) to use the layouters and importers like JSON.'
+    archiveName "${libsC}.zip"
+    from formatsPlugins
+    destinationDir buildDir
+}
+
+// Publishing klay to maven central (TBD)
+// --------------------------------------------------------
+
+// def deps = configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.dependencies.collect()}.flatten()
+// def depFiles = configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.collect{file(it)}}.flatten()
+
+// artifacts {
+//     fatKlayJars fatKlay
+//     fatKlayAllJars fatKlayAll
+//     // klayJars copyKlayPlugins
+//     // formatsJars copyFormatsPlugins
+// }
+
+// artifacts {
+//     depFiles.each{archives it}
+//     // archives configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.collect{file(it)}}.flatten()
+//     // archives sourcesJar
+//     // archives javadocJar
+// }
+
+// signing {
+//     sign configurations.archives
+// }
+
+// uploadArchives {
+//     repositories {
+//         mavenDeployer {
+//             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+//             repository(url: "file://${project.rootProject.buildDir}/repo") {
+//               // authentication(userName: sonatypeUsername, password: sonatypePassword)
+//             }
+
+//             println "publishing:"
+//             deps.eachWithIndex{dep, i ->
+//                 println "dep: $dep"
+//                 println "i:   $i"
+//                 addFilter(dep.name) { artifact, file ->
+//                     println artifact
+//                     println file
+//                 }
+//                 // def manif = "${depFiles[i]}/META-INF/MANIFEST.MF"
+//                 def manif = new java.util.jar.JarFile(depFiles[i]).manifest
+//                 manif.mainAttributes.entrySet().each {details ->
+//                     switch (details.key) {
+//                         case ~/Bundle-Name/:
+//                             pom(dep.name).name = details.value
+//                             break
+//                         case ~/Bundle-Version/:
+//                             pom(dep.name).version = details.value
+//                             break
+//                     }
+//                 }
+//                 //     }
+//                 // } else {
+//                 //     pom(dep.name).name = dep.name
+//                 // }
+//             }
+
+//             pom.project {
+//                 packaging 'jar'
+//                 url 'http://rtsys.informatik.uni-kiel.de/kieler'
+
+//                 licenses {
+//                     license {
+//                         name 'Eclipse Public License - v 1.0'
+//                         url 'http://www.eclipse.org/org/documents/epl-v10.html'
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+
+// Utility stuff
+// --------------------------------------------------------
+
+def getTimeStamp() {
+    return new Date().format('yyyyMMddHHmmss')
+}
+
+def dep(coords, javadoc = false, source = false) {
+    def result = [dependencies.create(coords)]
+    if (javadoc) result << dependencies.create("$coords:javadoc")
+    if (source) result << dependencies.create("$coords:source")
+    result
+}

@@ -484,11 +484,11 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     private boolean incidentToInnerSegment(final LNode node, final int layer1, final int layer2) {
         // consider that big nodes include their respective start and end node.
-        if (node.getNodeType() == NodeType.BIG_NODE) {
+        if (node.getType() == NodeType.BIG_NODE) {
             // all nodes should be placed straightly
             for (LEdge edge : node.getIncomingEdges()) {
                 LNode source = edge.getSource().getNode();
-                if ((source.getNodeType() == NodeType.BIG_NODE
+                if ((source.getType() == NodeType.BIG_NODE
                         || source.getProperty(InternalProperties.BIG_NODE_INITIAL))
                         && ni.layerIndex[edge.getSource().getNode().getLayer().id] == layer2
                         && ni.layerIndex[node.getLayer().id] == layer1) {
@@ -498,9 +498,9 @@ public final class BKNodePlacer implements ILayoutPhase {
             }
         }
         
-        if (node.getNodeType() == NodeType.LONG_EDGE) {
+        if (node.getType() == NodeType.LONG_EDGE) {
             for (LEdge edge : node.getIncomingEdges()) {
-                NodeType sourceNodeType = edge.getSource().getNode().getNodeType();
+                NodeType sourceNodeType = edge.getSource().getNode().getType();
                 
                 if (sourceNodeType == NodeType.LONG_EDGE
                         && ni.layerIndex[edge.getSource().getNode().getLayer().id] == layer2

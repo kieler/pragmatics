@@ -172,7 +172,7 @@ public final class ComponentsProcessor {
             mutableData.getFirst().add(node);
             
             // Check if this node is an external port dummy and, if so, add its side
-            if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+            if (node.getType() == NodeType.EXTERNAL_PORT) {
                 mutableData.getSecond().add(node.getProperty(InternalProperties.EXT_PORT_SIDE));
             }
             

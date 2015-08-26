@@ -102,7 +102,7 @@ public final class InteractiveNodePlacer implements ILayoutPhase {
         
         for (LNode node : layer) {
             // Check which kind of node it is
-            NodeType nodeType = node.getNodeType();
+            NodeType nodeType = node.getType();
             if (nodeType != NodeType.NORMAL) {
                 // While normal nodes have their original position already in them, with dummy nodes
                 // it's more complicated. Check if the interactive crossing minimizer has calculated

@@ -99,7 +99,7 @@ public final class ForsterConstraintResolver implements IConstraintResolver {
             }
 
             // Check if we're processing a a normal, none-dummy node
-            if (node.getNodeType() == NodeType.NORMAL) {
+            if (node.getType() == NodeType.NORMAL) {
                 // If we already processed another normal, non-dummy node, we need to add
                 // constraints from all of that other node's layout unit's vertices to this
                 // node's layout unit's vertices

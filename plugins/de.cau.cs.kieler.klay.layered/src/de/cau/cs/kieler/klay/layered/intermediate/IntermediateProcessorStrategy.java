@@ -47,6 +47,8 @@ public enum IntermediateProcessorStrategy {
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
     /** Creates connected compontents for the SplineSelfLoopPre- and postprocessor. */
     SPLINE_SELF_LOOP_PREPROCESSOR,
+    /** If one of the phases is set to interactive mode, this processor positions external ports. */
+    INTERACTIVE_EXTERNAL_PORT_POSITIONER,
 
     // Before Phase 2
 
@@ -198,6 +200,9 @@ public enum IntermediateProcessorStrategy {
 
         case IN_LAYER_CONSTRAINT_PROCESSOR:
             return new InLayerConstraintProcessor();
+            
+        case INTERACTIVE_EXTERNAL_PORT_POSITIONER:
+            return new InteractiveExternalPortPositioner();
 
         case LABEL_AND_NODE_SIZE_PROCESSOR:
             return new LabelAndNodeSizeProcessor();

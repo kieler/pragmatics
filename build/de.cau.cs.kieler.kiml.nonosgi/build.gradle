@@ -1,0 +1,173 @@
+/**
+ * Build script to assemble a jar library that allows to execute
+ * the klay layout algorithms from a plain java environment without osgi.
+ *
+ * Run 'gradle' and find the jar alongside its dependencies in 'build/libs'.
+ */
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+defaultTasks 'jar'
+
+ext {
+
+	libraryName = "klay-emf-json.jar"//-${getTimestamp()}.jar"
+
+	// kieler plugins
+  	//pragmaticsArchive = "http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/zipped/pragmatics-nightly.zip"
+    pragmaticsArchive = "http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/release_pragmatics_2015-06/zipped/pragmatics-release-2015-06.zip"
+
+    // eclipse plugins
+    targetPlatformArchive = "http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/luna441.zip"
+
+    // directories to store intermediate data
+    downloadsDir = file("${buildDir}/downloads/")
+    extractDir = file("${buildDir}/extracted/")
+    libDir = file("${buildDir}/libs/")
+
+}
+
+// we further specify the task later
+task copyRequiredJars
+
+// add some task deps
+tasks.compileJava.dependsOn copyRequiredJars
+tasks.eclipse.dependsOn copyRequiredJars
+
+// dependencies of the jars
+dependencies {
+    compile fileTree(dir: libDir, include: '*.jar')
+    // compile time dependencies are automatically runtime dependencies
+}
+
+// java compiler compatibility
+sourceCompatibility = 1.6
+targetCompatibility = 1.6
+
+// configure the jar
+jar {
+	// since we assemble the classpath based on libraries that are downloaded
+	// during the build, care to not execute this during configuration
+	// but during execution
+	doFirst {
+		archiveName libraryName
+		destinationDir libDir
+
+		manifest {
+			attributes += [
+			    'Main-Class': 'de.cau.cs.kieler.kiml.nonosgi.Main',
+			    'Class-Path': configurations.runtime.files.collect { it.name }.join(' ')
+			]
+		}
+	}
+}
+
+
+/** ----------------------------------------------------------------------
+                        Additional task definitions
+    ---------------------------------------------------------------------- */
+
+task downloadArchives {
+
+    outputs.dir downloadsDir
+
+    doLast {
+        downloadsDir.mkdirs()
+        ant.get(
+            src: pragmaticsArchive,
+            dest: downloadsDir,
+            skipexisting: 'true'
+        )
+        ant.get(
+            src: targetPlatformArchive,
+            dest: downloadsDir,
+            skipexisting: 'true'
+        )
+    }
+
+}
+
+task unzipArchives(dependsOn: downloadArchives) {
+
+    def archives = fileTree(downloadsDir)
+
+    inputs.files archives
+    outputs.dir extractDir
+
+    doLast {
+        archives.each { f ->
+            copy {
+                from zipTree(f)
+                into extractDir
+            }
+        }
+    }
+}
+
+copyRequiredJars {
+	dependsOn unzipArchives
+
+	 // the kieler core layout includes
+    def theIncludes = [
+        '**/de.cau.cs.kieler.core_*/**',
+        '**/de.cau.cs.kieler.core.kgraph_*/**',
+        '**/de.cau.cs.kieler.kiml_*/**',
+        '**/de.cau.cs.kieler.klay.layered_*/**',
+        //'**/de.cau.cs.kieler.klay.force_*/**',
+        //'**/de.cau.cs.kieler.klay.tree_*/**',
+    ]
+
+    // emf and friends
+    theIncludes += [
+        '**/org.eclipse.emf.common_*/**',
+        '**/org.eclipse.emf.ecore_*/**',
+        '**/org.eclipse.emf.ecore.xmi_*/**'
+    ]
+
+    // osgi requirements
+    theIncludes += [
+        '**/org.eclipse.equinox.app_*/**',
+        '**/org.eclipse.equinox.common_*/**',
+        '**/org.eclipse.equinox.registry_*/**',
+        '**/org.eclipse.osgi_*/**'
+	]
+
+	// kiml formats base
+	theIncludes += [
+		'**/com.google.guava_*/**',
+        '**/de.cau.cs.kieler.kiml.formats_*/**',
+    ]
+
+    // json format ...
+    theIncludes += [
+    	'**/de.cau.cs.kieler.kiml.formats.json_*/**',
+        '**/org.eclipse.xtend.lib_*/**',
+        '**/org.eclipse.xtext.xbase.lib_*/**'
+    ]
+
+    def plugs = fileTree(
+        dir: extractDir,
+        includes: theIncludes
+    )
+
+    // inputs and outputs of this task
+    inputs.files plugs
+    outputs.dir libDir
+
+
+    // the actual copying process
+	doLast {
+        plugs.each { f ->
+            copy {
+                from f
+                into libDir
+            }
+        }
+    }
+
+}
+
+def getTimestamp() {
+    return new Date().format('yyyyMMddHHmmss')
+}

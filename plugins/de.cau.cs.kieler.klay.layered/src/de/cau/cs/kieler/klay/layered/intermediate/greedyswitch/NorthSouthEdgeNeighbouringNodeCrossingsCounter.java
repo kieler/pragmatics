@@ -14,9 +14,9 @@
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -37,6 +37,7 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     private int lowerUpperCrossings;
     private final Map<LPort, Integer> portPositions;
     private final LNode[] layer;
+    private final boolean usesOrthogonalLayout;
 
     /**
      * Creates a counter for north south port crossings.
@@ -45,6 +46,8 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
      *            the order of nodes in the layer in question.
      */
     public NorthSouthEdgeNeighbouringNodeCrossingsCounter(final LNode[] nodes) {
+        usesOrthogonalLayout =
+                nodes[0].getGraph().getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL;
         layer = nodes;
         portPositions = new HashMap<LPort, Integer>();
         initializePortPositions();
@@ -114,25 +117,25 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
         
         if (furtherNodePortSide == PortSide.EAST && closerNodePortSide == PortSide.EAST) {
             if (originPortPositionOf(furtherFromNormalNode) > originPortPositionOf(closerToNormalNode)) {
-                upperLowerCrossings = 1;
+                upperLowerCrossings = numberOfEdgesConnectTo(closerToNormalNode);
             } else {
-                lowerUpperCrossings = 1;
+                lowerUpperCrossings = numberOfEdgesConnectTo(furtherFromNormalNode);
             }
         } else if (furtherNodePortSide == PortSide.WEST && closerNodePortSide == PortSide.WEST) {
             if (originPortPositionOf(furtherFromNormalNode) < originPortPositionOf(closerToNormalNode)) {
-                upperLowerCrossings = 1;
+                upperLowerCrossings = numberOfEdgesConnectTo(closerToNormalNode);
             } else {
-                lowerUpperCrossings = 1;
+                lowerUpperCrossings = numberOfEdgesConnectTo(furtherFromNormalNode);
             }
         } else if (furtherNodePortSide == PortSide.WEST && closerNodePortSide == PortSide.EAST) {
             if (originPortPositionOf(furtherFromNormalNode) > originPortPositionOf(closerToNormalNode)) {
-                upperLowerCrossings = 1;
-                lowerUpperCrossings = 1;
+                upperLowerCrossings = numberOfEdgesConnectTo(closerToNormalNode);
+                lowerUpperCrossings = numberOfEdgesConnectTo(furtherFromNormalNode);
             }
         } else {
             if (originPortPositionOf(furtherFromNormalNode) < originPortPositionOf(closerToNormalNode)) {
-                upperLowerCrossings = 1;
-                lowerUpperCrossings = 1;
+                upperLowerCrossings = numberOfEdgesConnectTo(closerToNormalNode);
+                lowerUpperCrossings = numberOfEdgesConnectTo(furtherFromNormalNode);
             }
         }
     }
@@ -159,27 +162,25 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
             final LNode lowerNode) {
         
         if (isNormal(upperNode) && isLongEdgeDummy(lowerNode)) {
-            upperLowerCrossings =
-                    numberOfDummyEdgeCrossingsWithNSEdgesOnSide(upperNode, PortSide.SOUTH);
-            lowerUpperCrossings =
-                    numberOfDummyEdgeCrossingsWithNSEdgesOnSide(upperNode, PortSide.NORTH);
+            upperLowerCrossings = numberOfNorthSouthEdges(upperNode, PortSide.SOUTH);
+            lowerUpperCrossings = numberOfNorthSouthEdges(upperNode, PortSide.NORTH);
         }
         if (isNormal(lowerNode) && isLongEdgeDummy(upperNode)) {
-            upperLowerCrossings =
-                    numberOfDummyEdgeCrossingsWithNSEdgesOnSide(lowerNode, PortSide.NORTH);
-            lowerUpperCrossings =
-                    numberOfDummyEdgeCrossingsWithNSEdgesOnSide(lowerNode, PortSide.SOUTH);
+            upperLowerCrossings = numberOfNorthSouthEdges(lowerNode, PortSide.NORTH);
+            lowerUpperCrossings = numberOfNorthSouthEdges(lowerNode, PortSide.SOUTH);
         }
     }
 
-    private int numberOfDummyEdgeCrossingsWithNSEdgesOnSide(final LNode node, final PortSide side) {
-        int numberOfPorts = 0;
+    private int numberOfNorthSouthEdges(final LNode node, final PortSide side) {
+        int numberOfEdges = 0;
         for (LPort port : node.getPorts(side)) {
-            List<LPort> nsPorts =
-                    port.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES);
-            numberOfPorts += nsPorts.size();
+            numberOfEdges += hasConnectedNorthSouthEdge(port) ? 1 : 0;
         }
-        return numberOfPorts;
+        return numberOfEdges;
+    }
+
+    private boolean hasConnectedNorthSouthEdge(final LPort port) {
+        return port.getProperty(InternalProperties.PORT_DUMMY) != null;
     }
 
     private boolean haveDifferentOrigins(final LNode upperNode, final LNode lowerNode) {
@@ -218,15 +219,26 @@ public class NorthSouthEdgeNeighbouringNodeCrossingsCounter {
     }
 
     private boolean isLongEdgeDummy(final LNode node) {
-        return node.getNodeType() == NodeType.LONG_EDGE;
+        return node.getType() == NodeType.LONG_EDGE;
     }
 
     private boolean isNorthSouth(final LNode node) {
-        return node.getNodeType() == NodeType.NORTH_SOUTH_PORT;
+        return node.getType() == NodeType.NORTH_SOUTH_PORT;
+    }
+
+    private int numberOfEdgesConnectTo(final LNode node) {
+        if (usesOrthogonalLayout) {
+            return 1;
+        }
+        int n = 0;
+        for (LPort port : node.getPorts()) {
+            n += port.getDegree();
+        }
+        return n;
     }
 
     private boolean isNormal(final LNode node) {
-        return node.getNodeType() == NodeType.NORMAL;
+        return node.getType() == NodeType.NORMAL;
     }
 
     /**

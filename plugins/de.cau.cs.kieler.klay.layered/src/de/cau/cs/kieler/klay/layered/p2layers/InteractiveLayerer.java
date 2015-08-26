@@ -52,8 +52,9 @@ public final class InteractiveLayerer implements ILayoutPhase {
     public IntermediateProcessingConfiguration getIntermediateProcessingConfiguration(
             final LGraph graph) {
 
-        return IntermediateProcessingConfiguration.createEmpty().addBeforePhase3(
-                IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
+        return IntermediateProcessingConfiguration.createEmpty()
+                .addBeforePhase1(IntermediateProcessorStrategy.INTERACTIVE_EXTERNAL_PORT_POSITIONER)
+                .addBeforePhase3(IntermediateProcessorStrategy.LAYER_CONSTRAINT_PROCESSOR);
     }
     
     /** Utility class for marking horizontal regions that are already covered by some nodes. */
@@ -74,6 +75,9 @@ public final class InteractiveLayerer implements ILayoutPhase {
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             double minx = node.getPosition().x;
             double maxx = minx + node.getSize().x;
+            // for the following code we have to guarantee that every node has a width,
+            // which, for instance, might not be the case for external dummy nodes
+            maxx = Math.max(minx + 1, maxx);
             // look for a position in the sorted list where the node can be inserted
             ListIterator<LayerSpan> spanIter = currentSpans.listIterator();
             LayerSpan foundSpan = null;

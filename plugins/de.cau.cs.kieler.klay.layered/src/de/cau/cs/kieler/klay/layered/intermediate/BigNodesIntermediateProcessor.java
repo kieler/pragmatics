@@ -114,7 +114,7 @@ public class BigNodesIntermediateProcessor implements ILayoutProcessor {
             // also ignore originally incoming WEST ports that are reverted
             // and outgoing edges targeting WEST ports (have to be part of another big node)
             if (!isInitialBigNode(target)
-                    && (target.getNodeType() == NodeType.BIG_NODE)
+                    && (target.getType() == NodeType.BIG_NODE)
                     && !edge.getProperty(InternalProperties.REVERSED)
                     && edge.getTarget().getSide() == PortSide.WEST
                     ) {

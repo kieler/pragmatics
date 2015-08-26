@@ -82,7 +82,7 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
                 LNode node = nodeIterator.next();
                 
                 // Check if it's a dummy edge we're looking for
-                if (node.getNodeType() == NodeType.LONG_EDGE) {
+                if (node.getType() == NodeType.LONG_EDGE) {
                     joinAt(node, addUnnecessaryBendpoints);
                     
                     // Remove the node
@@ -127,8 +127,18 @@ public final class LongEdgeJoiner implements ILayoutProcessor {
             LEdge survivingEdge = inputPortEdges.get(0);
             LEdge droppedEdge = outputPortEdges.get(0);
             
-            // Do some edgy stuff
-            survivingEdge.setTarget(droppedEdge.getTarget());
+            // The surviging edge's target needs to be set to the old target of the dropped edge.
+            // However, this doesn't replace the dropped edge with the surviving edge in the list of
+            // incoming edges of the (new) target port, but instead appends the surviving edge. That in
+            // turn messes with the implicit assumption that edges with the same index on input and
+            // output ports of long edge dummies belong to each other. Thus, we need to ensure that the
+            // surviving edge is at the correct index in the list of incoming edges. Hence the
+            // complicated code below. (KIPRA-1670)
+            List<LEdge> targetIncomingEdges = droppedEdge.getTarget().getIncomingEdges();
+            int droppedEdgeListIndex = targetIncomingEdges.indexOf(droppedEdge);
+            survivingEdge.setTargetAndInsertAtIndex(droppedEdge.getTarget(), droppedEdgeListIndex);
+            
+            // Remove the dropped edge from the graph
             droppedEdge.setSource(null);
             droppedEdge.setTarget(null);
             

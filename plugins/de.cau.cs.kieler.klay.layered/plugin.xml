@@ -393,7 +393,7 @@
       <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection"
-            default="SMART"
+            default="ALWAYS_DOWN"
             description="Method to decide on edge label sides."
             id="de.cau.cs.kieler.klay.layered.edgeLabelSideSelection"
             name="Edge Label Side Selection"

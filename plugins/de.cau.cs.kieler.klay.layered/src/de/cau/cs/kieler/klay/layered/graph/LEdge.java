@@ -166,6 +166,35 @@ public final class LEdge extends LGraphElement {
     }
     
     /**
+     * The same as {@link #setTarget(LPort)} with the exception that the index the edge is inserted at
+     * in the target port's list of incoming edges can be specified.
+     * 
+     * <p>
+     * <em>If you need to think about whether you want to use this or {@link #setTarget(LPort)}, chances
+     * are you want the latter.</em>
+     * </p>
+     *
+     * @param targetPort
+     *            the target port to set
+     * @param index
+     *            the index to insert the edge at in the port's list of edges.
+     * @throws IndexOutOfBoundsException
+     *             if {@code target != null} and the index is invalid.
+     */
+    public void setTargetAndInsertAtIndex(final LPort targetPort, final int index) {
+        if (this.target != null) {
+            this.target.getIncomingEdges().remove(this);
+        }
+
+        this.target = targetPort;
+
+        if (this.target != null) {
+            // The insertion index below is the only difference to setTarget(LPort)
+            this.target.getIncomingEdges().add(index, this);
+        }
+    }
+    
+    /**
      * Determines if this edge is a self-loop or not. An edge is considered a self-loop if both, source
      * and target port are defined and belong to the same non-null node.
      * 

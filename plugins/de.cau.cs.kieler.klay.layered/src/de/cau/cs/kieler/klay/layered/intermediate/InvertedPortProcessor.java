@@ -112,7 +112,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
             // Iterate through the layer's nodes
             for (LNode node : currentLayer) {
                 // Skip dummy nodes
-                if (node.getNodeType() != NodeType.NORMAL) {
+                if (node.getType() != NodeType.NORMAL) {
                     continue;
                 }
                 
@@ -181,7 +181,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         
         // Dummy node in the same layer
         LNode dummy = new LNode(layeredGraph);
-        dummy.setNodeType(NodeType.LONG_EDGE);
+        dummy.setType(NodeType.LONG_EDGE);
         dummy.setProperty(InternalProperties.ORIGIN, edge);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
@@ -243,7 +243,7 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         
         // Dummy node in the same layer
         LNode dummy = new LNode(layeredGraph);
-        dummy.setNodeType(NodeType.LONG_EDGE);
+        dummy.setType(NodeType.LONG_EDGE);
         dummy.setProperty(InternalProperties.ORIGIN, edge);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         layerNodeList.add(dummy);
@@ -293,11 +293,11 @@ public final class InvertedPortProcessor implements ILayoutProcessor {
         // There's exactly one edge connected to the input and output port
         LPort sourcePort = dummyInputPort.getIncomingEdges().get(0).getSource();
         LNode sourceNode = sourcePort.getNode();
-        NodeType sourceNodeType = sourceNode.getNodeType();
+        NodeType sourceNodeType = sourceNode.getType();
         
         LPort targetPort = dummyOutputPort.getOutgoingEdges().get(0).getTarget();
         LNode targetNode = targetPort.getNode();
-        NodeType targetNodeType = targetNode.getNodeType();
+        NodeType targetNodeType = targetNode.getType();
         
         // Set the LONG_EDGE_SOURCE property
         if (sourceNodeType == NodeType.LONG_EDGE) {

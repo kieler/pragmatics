@@ -94,7 +94,7 @@ public class LabelDummyRemoverTest extends AbstractLayeredProcessorTest {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     noOverallNodes++;
-                    if (node.getNodeType() == NodeType.LABEL) {
+                    if (node.getType() == NodeType.LABEL) {
                         noTypeNodes++;
                     }
                 }
@@ -114,7 +114,7 @@ public class LabelDummyRemoverTest extends AbstractLayeredProcessorTest {
         for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
-                    assertTrue(node.getNodeType() != NodeType.LABEL);
+                    assertTrue(node.getType() != NodeType.LABEL);
                     noNodesAfter++;
                 }
             }

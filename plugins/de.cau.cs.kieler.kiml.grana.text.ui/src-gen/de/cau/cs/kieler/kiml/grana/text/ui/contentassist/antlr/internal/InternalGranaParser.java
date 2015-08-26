@@ -25,40 +25,40 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
         "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_BOOLEAN", "RULE_STRING", "RULE_TFLOAT", "RULE_NATURAL", "RULE_ID", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "'globalResources'", "'globalOutputs'", "'execute'", "'job'", "'resources'", "'layoutoptions'", "'analyses'", "'output'", "'rangejob'", "'rangeoption'", "'rangeanalysis'", "'component'", "'floatvalues'", "','", "'intvalues'", "'intrange'", "'to'", "'ref'", "'filter'", "'{'", "'}'", "':'", "'.'", "'all'", "'layoutBeforeAnalysis'", "'measureExecutionTime'"
     };
     public static final int RULE_BOOLEAN=4;
-    public static final int RULE_ID=8;
-    public static final int T__29=29;
-    public static final int T__28=28;
-    public static final int T__27=27;
-    public static final int T__26=26;
-    public static final int T__25=25;
-    public static final int T__24=24;
-    public static final int T__23=23;
-    public static final int T__22=22;
-    public static final int T__21=21;
-    public static final int T__20=20;
-    public static final int RULE_NATURAL=7;
-    public static final int RULE_SL_COMMENT=10;
-    public static final int EOF=-1;
-    public static final int RULE_ML_COMMENT=9;
-    public static final int RULE_TFLOAT=6;
-    public static final int T__30=30;
-    public static final int T__19=19;
-    public static final int T__31=31;
     public static final int RULE_STRING=5;
-    public static final int T__32=32;
-    public static final int T__33=33;
-    public static final int T__16=16;
-    public static final int T__34=34;
+    public static final int RULE_SL_COMMENT=10;
+    public static final int T__19=19;
     public static final int T__15=15;
-    public static final int T__35=35;
-    public static final int T__18=18;
-    public static final int T__36=36;
-    public static final int T__17=17;
     public static final int T__37=37;
+    public static final int T__16=16;
+    public static final int T__17=17;
+    public static final int T__18=18;
+    public static final int T__33=33;
     public static final int T__12=12;
-    public static final int T__14=14;
+    public static final int T__34=34;
     public static final int T__13=13;
+    public static final int T__35=35;
+    public static final int T__14=14;
+    public static final int T__36=36;
+    public static final int EOF=-1;
+    public static final int T__30=30;
+    public static final int T__31=31;
+    public static final int T__32=32;
+    public static final int RULE_TFLOAT=6;
+    public static final int RULE_ID=8;
     public static final int RULE_WS=11;
+    public static final int T__26=26;
+    public static final int T__27=27;
+    public static final int T__28=28;
+    public static final int T__29=29;
+    public static final int T__22=22;
+    public static final int RULE_NATURAL=7;
+    public static final int RULE_ML_COMMENT=9;
+    public static final int T__23=23;
+    public static final int T__24=24;
+    public static final int T__25=25;
+    public static final int T__20=20;
+    public static final int T__21=21;
 
     // delegates
     // delegators
@@ -6796,29 +6796,47 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__IntRangeValues__Group__2__Impl"
-    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2443:1: rule__IntRangeValues__Group__2__Impl : ( ( rule__IntRangeValues__Group_2__0 ) ) ;
+    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2443:1: rule__IntRangeValues__Group__2__Impl : ( ( rule__IntRangeValues__Group_2__0 )* ) ;
     public final void rule__IntRangeValues__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2447:1: ( ( ( rule__IntRangeValues__Group_2__0 ) ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2448:1: ( ( rule__IntRangeValues__Group_2__0 ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2447:1: ( ( ( rule__IntRangeValues__Group_2__0 )* ) )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2448:1: ( ( rule__IntRangeValues__Group_2__0 )* )
             {
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2448:1: ( ( rule__IntRangeValues__Group_2__0 ) )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2449:1: ( rule__IntRangeValues__Group_2__0 )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2448:1: ( ( rule__IntRangeValues__Group_2__0 )* )
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2449:1: ( rule__IntRangeValues__Group_2__0 )*
             {
              before(grammarAccess.getIntRangeValuesAccess().getGroup_2()); 
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2450:1: ( rule__IntRangeValues__Group_2__0 )
-            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2450:2: rule__IntRangeValues__Group_2__0
-            {
-            pushFollow(FOLLOW_rule__IntRangeValues__Group_2__0_in_rule__IntRangeValues__Group__2__Impl4968);
-            rule__IntRangeValues__Group_2__0();
+            // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2450:1: ( rule__IntRangeValues__Group_2__0 )*
+            loop25:
+            do {
+                int alt25=2;
+                int LA25_0 = input.LA(1);
 
-            state._fsp--;
+                if ( (LA25_0==25) ) {
+                    alt25=1;
+                }
 
 
-            }
+                switch (alt25) {
+            	case 1 :
+            	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2450:2: rule__IntRangeValues__Group_2__0
+            	    {
+            	    pushFollow(FOLLOW_rule__IntRangeValues__Group_2__0_in_rule__IntRangeValues__Group__2__Impl4968);
+            	    rule__IntRangeValues__Group_2__0();
+
+            	    state._fsp--;
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop25;
+                }
+            } while (true);
 
              after(grammarAccess.getIntRangeValuesAccess().getGroup_2()); 
 
@@ -6852,12 +6870,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2470:1: ( rule__IntRangeValues__Group_2__0__Impl rule__IntRangeValues__Group_2__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2471:2: rule__IntRangeValues__Group_2__0__Impl rule__IntRangeValues__Group_2__1
             {
-            pushFollow(FOLLOW_rule__IntRangeValues__Group_2__0__Impl_in_rule__IntRangeValues__Group_2__05004);
+            pushFollow(FOLLOW_rule__IntRangeValues__Group_2__0__Impl_in_rule__IntRangeValues__Group_2__05005);
             rule__IntRangeValues__Group_2__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__IntRangeValues__Group_2__1_in_rule__IntRangeValues__Group_2__05007);
+            pushFollow(FOLLOW_rule__IntRangeValues__Group_2__1_in_rule__IntRangeValues__Group_2__05008);
             rule__IntRangeValues__Group_2__1();
 
             state._fsp--;
@@ -6894,7 +6912,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2484:1: ','
             {
              before(grammarAccess.getIntRangeValuesAccess().getCommaKeyword_2_0()); 
-            match(input,25,FOLLOW_25_in_rule__IntRangeValues__Group_2__0__Impl5035); 
+            match(input,25,FOLLOW_25_in_rule__IntRangeValues__Group_2__0__Impl5036); 
              after(grammarAccess.getIntRangeValuesAccess().getCommaKeyword_2_0()); 
 
             }
@@ -6927,7 +6945,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2501:1: ( rule__IntRangeValues__Group_2__1__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2502:2: rule__IntRangeValues__Group_2__1__Impl
             {
-            pushFollow(FOLLOW_rule__IntRangeValues__Group_2__1__Impl_in_rule__IntRangeValues__Group_2__15066);
+            pushFollow(FOLLOW_rule__IntRangeValues__Group_2__1__Impl_in_rule__IntRangeValues__Group_2__15067);
             rule__IntRangeValues__Group_2__1__Impl();
 
             state._fsp--;
@@ -6967,7 +6985,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2515:1: ( rule__IntRangeValues__ValuesAssignment_2_1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2515:2: rule__IntRangeValues__ValuesAssignment_2_1
             {
-            pushFollow(FOLLOW_rule__IntRangeValues__ValuesAssignment_2_1_in_rule__IntRangeValues__Group_2__1__Impl5093);
+            pushFollow(FOLLOW_rule__IntRangeValues__ValuesAssignment_2_1_in_rule__IntRangeValues__Group_2__1__Impl5094);
             rule__IntRangeValues__ValuesAssignment_2_1();
 
             state._fsp--;
@@ -7007,12 +7025,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2533:1: ( rule__IntRangeRange__Group__0__Impl rule__IntRangeRange__Group__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2534:2: rule__IntRangeRange__Group__0__Impl rule__IntRangeRange__Group__1
             {
-            pushFollow(FOLLOW_rule__IntRangeRange__Group__0__Impl_in_rule__IntRangeRange__Group__05127);
+            pushFollow(FOLLOW_rule__IntRangeRange__Group__0__Impl_in_rule__IntRangeRange__Group__05128);
             rule__IntRangeRange__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__IntRangeRange__Group__1_in_rule__IntRangeRange__Group__05130);
+            pushFollow(FOLLOW_rule__IntRangeRange__Group__1_in_rule__IntRangeRange__Group__05131);
             rule__IntRangeRange__Group__1();
 
             state._fsp--;
@@ -7049,7 +7067,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2547:1: 'intrange'
             {
              before(grammarAccess.getIntRangeRangeAccess().getIntrangeKeyword_0()); 
-            match(input,27,FOLLOW_27_in_rule__IntRangeRange__Group__0__Impl5158); 
+            match(input,27,FOLLOW_27_in_rule__IntRangeRange__Group__0__Impl5159); 
              after(grammarAccess.getIntRangeRangeAccess().getIntrangeKeyword_0()); 
 
             }
@@ -7082,12 +7100,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2564:1: ( rule__IntRangeRange__Group__1__Impl rule__IntRangeRange__Group__2 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2565:2: rule__IntRangeRange__Group__1__Impl rule__IntRangeRange__Group__2
             {
-            pushFollow(FOLLOW_rule__IntRangeRange__Group__1__Impl_in_rule__IntRangeRange__Group__15189);
+            pushFollow(FOLLOW_rule__IntRangeRange__Group__1__Impl_in_rule__IntRangeRange__Group__15190);
             rule__IntRangeRange__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__IntRangeRange__Group__2_in_rule__IntRangeRange__Group__15192);
+            pushFollow(FOLLOW_rule__IntRangeRange__Group__2_in_rule__IntRangeRange__Group__15193);
             rule__IntRangeRange__Group__2();
 
             state._fsp--;
@@ -7127,7 +7145,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2579:1: ( rule__IntRangeRange__StartAssignment_1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2579:2: rule__IntRangeRange__StartAssignment_1
             {
-            pushFollow(FOLLOW_rule__IntRangeRange__StartAssignment_1_in_rule__IntRangeRange__Group__1__Impl5219);
+            pushFollow(FOLLOW_rule__IntRangeRange__StartAssignment_1_in_rule__IntRangeRange__Group__1__Impl5220);
             rule__IntRangeRange__StartAssignment_1();
 
             state._fsp--;
@@ -7167,12 +7185,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2593:1: ( rule__IntRangeRange__Group__2__Impl rule__IntRangeRange__Group__3 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2594:2: rule__IntRangeRange__Group__2__Impl rule__IntRangeRange__Group__3
             {
-            pushFollow(FOLLOW_rule__IntRangeRange__Group__2__Impl_in_rule__IntRangeRange__Group__25249);
+            pushFollow(FOLLOW_rule__IntRangeRange__Group__2__Impl_in_rule__IntRangeRange__Group__25250);
             rule__IntRangeRange__Group__2__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__IntRangeRange__Group__3_in_rule__IntRangeRange__Group__25252);
+            pushFollow(FOLLOW_rule__IntRangeRange__Group__3_in_rule__IntRangeRange__Group__25253);
             rule__IntRangeRange__Group__3();
 
             state._fsp--;
@@ -7209,7 +7227,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2607:1: 'to'
             {
              before(grammarAccess.getIntRangeRangeAccess().getToKeyword_2()); 
-            match(input,28,FOLLOW_28_in_rule__IntRangeRange__Group__2__Impl5280); 
+            match(input,28,FOLLOW_28_in_rule__IntRangeRange__Group__2__Impl5281); 
              after(grammarAccess.getIntRangeRangeAccess().getToKeyword_2()); 
 
             }
@@ -7242,7 +7260,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2624:1: ( rule__IntRangeRange__Group__3__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2625:2: rule__IntRangeRange__Group__3__Impl
             {
-            pushFollow(FOLLOW_rule__IntRangeRange__Group__3__Impl_in_rule__IntRangeRange__Group__35311);
+            pushFollow(FOLLOW_rule__IntRangeRange__Group__3__Impl_in_rule__IntRangeRange__Group__35312);
             rule__IntRangeRange__Group__3__Impl();
 
             state._fsp--;
@@ -7282,7 +7300,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2638:1: ( rule__IntRangeRange__EndAssignment_3 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2638:2: rule__IntRangeRange__EndAssignment_3
             {
-            pushFollow(FOLLOW_rule__IntRangeRange__EndAssignment_3_in_rule__IntRangeRange__Group__3__Impl5338);
+            pushFollow(FOLLOW_rule__IntRangeRange__EndAssignment_3_in_rule__IntRangeRange__Group__3__Impl5339);
             rule__IntRangeRange__EndAssignment_3();
 
             state._fsp--;
@@ -7322,12 +7340,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2660:1: ( rule__ResourceReference__Group__0__Impl rule__ResourceReference__Group__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2661:2: rule__ResourceReference__Group__0__Impl rule__ResourceReference__Group__1
             {
-            pushFollow(FOLLOW_rule__ResourceReference__Group__0__Impl_in_rule__ResourceReference__Group__05376);
+            pushFollow(FOLLOW_rule__ResourceReference__Group__0__Impl_in_rule__ResourceReference__Group__05377);
             rule__ResourceReference__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__ResourceReference__Group__1_in_rule__ResourceReference__Group__05379);
+            pushFollow(FOLLOW_rule__ResourceReference__Group__1_in_rule__ResourceReference__Group__05380);
             rule__ResourceReference__Group__1();
 
             state._fsp--;
@@ -7364,7 +7382,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2674:1: 'ref'
             {
              before(grammarAccess.getResourceReferenceAccess().getRefKeyword_0()); 
-            match(input,29,FOLLOW_29_in_rule__ResourceReference__Group__0__Impl5407); 
+            match(input,29,FOLLOW_29_in_rule__ResourceReference__Group__0__Impl5408); 
              after(grammarAccess.getResourceReferenceAccess().getRefKeyword_0()); 
 
             }
@@ -7397,7 +7415,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2691:1: ( rule__ResourceReference__Group__1__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2692:2: rule__ResourceReference__Group__1__Impl
             {
-            pushFollow(FOLLOW_rule__ResourceReference__Group__1__Impl_in_rule__ResourceReference__Group__15438);
+            pushFollow(FOLLOW_rule__ResourceReference__Group__1__Impl_in_rule__ResourceReference__Group__15439);
             rule__ResourceReference__Group__1__Impl();
 
             state._fsp--;
@@ -7440,7 +7458,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2706:1: ( rule__ResourceReference__ResourceRefsAssignment_1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2706:2: rule__ResourceReference__ResourceRefsAssignment_1
             {
-            pushFollow(FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl5467);
+            pushFollow(FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl5468);
             rule__ResourceReference__ResourceRefsAssignment_1();
 
             state._fsp--;
@@ -7457,21 +7475,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             {
              before(grammarAccess.getResourceReferenceAccess().getResourceRefsAssignment_1()); 
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2711:1: ( rule__ResourceReference__ResourceRefsAssignment_1 )*
-            loop25:
+            loop26:
             do {
-                int alt25=2;
-                int LA25_0 = input.LA(1);
+                int alt26=2;
+                int LA26_0 = input.LA(1);
 
-                if ( (LA25_0==RULE_ID) ) {
-                    alt25=1;
+                if ( (LA26_0==RULE_ID) ) {
+                    alt26=1;
                 }
 
 
-                switch (alt25) {
+                switch (alt26) {
             	case 1 :
             	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2711:2: rule__ResourceReference__ResourceRefsAssignment_1
             	    {
-            	    pushFollow(FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl5479);
+            	    pushFollow(FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl5480);
             	    rule__ResourceReference__ResourceRefsAssignment_1();
 
             	    state._fsp--;
@@ -7481,7 +7499,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop25;
+            	    break loop26;
                 }
             } while (true);
 
@@ -7520,12 +7538,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2730:1: ( rule__GlobalResourceRef__Group__0__Impl rule__GlobalResourceRef__Group__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2731:2: rule__GlobalResourceRef__Group__0__Impl rule__GlobalResourceRef__Group__1
             {
-            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__0__Impl_in_rule__GlobalResourceRef__Group__05516);
+            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__0__Impl_in_rule__GlobalResourceRef__Group__05517);
             rule__GlobalResourceRef__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__1_in_rule__GlobalResourceRef__Group__05519);
+            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__1_in_rule__GlobalResourceRef__Group__05520);
             rule__GlobalResourceRef__Group__1();
 
             state._fsp--;
@@ -7565,7 +7583,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2745:1: ( rule__GlobalResourceRef__NameAssignment_0 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2745:2: rule__GlobalResourceRef__NameAssignment_0
             {
-            pushFollow(FOLLOW_rule__GlobalResourceRef__NameAssignment_0_in_rule__GlobalResourceRef__Group__0__Impl5546);
+            pushFollow(FOLLOW_rule__GlobalResourceRef__NameAssignment_0_in_rule__GlobalResourceRef__Group__0__Impl5547);
             rule__GlobalResourceRef__NameAssignment_0();
 
             state._fsp--;
@@ -7605,7 +7623,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2759:1: ( rule__GlobalResourceRef__Group__1__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2760:2: rule__GlobalResourceRef__Group__1__Impl
             {
-            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__1__Impl_in_rule__GlobalResourceRef__Group__15576);
+            pushFollow(FOLLOW_rule__GlobalResourceRef__Group__1__Impl_in_rule__GlobalResourceRef__Group__15577);
             rule__GlobalResourceRef__Group__1__Impl();
 
             state._fsp--;
@@ -7645,7 +7663,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2773:1: ( rule__GlobalResourceRef__ResourcesAssignment_1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2773:2: rule__GlobalResourceRef__ResourcesAssignment_1
             {
-            pushFollow(FOLLOW_rule__GlobalResourceRef__ResourcesAssignment_1_in_rule__GlobalResourceRef__Group__1__Impl5603);
+            pushFollow(FOLLOW_rule__GlobalResourceRef__ResourcesAssignment_1_in_rule__GlobalResourceRef__Group__1__Impl5604);
             rule__GlobalResourceRef__ResourcesAssignment_1();
 
             state._fsp--;
@@ -7685,12 +7703,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2791:1: ( rule__LocalResource__Group__0__Impl rule__LocalResource__Group__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2792:2: rule__LocalResource__Group__0__Impl rule__LocalResource__Group__1
             {
-            pushFollow(FOLLOW_rule__LocalResource__Group__0__Impl_in_rule__LocalResource__Group__05637);
+            pushFollow(FOLLOW_rule__LocalResource__Group__0__Impl_in_rule__LocalResource__Group__05638);
             rule__LocalResource__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__LocalResource__Group__1_in_rule__LocalResource__Group__05640);
+            pushFollow(FOLLOW_rule__LocalResource__Group__1_in_rule__LocalResource__Group__05641);
             rule__LocalResource__Group__1();
 
             state._fsp--;
@@ -7730,7 +7748,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2806:1: ( rule__LocalResource__PathAssignment_0 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2806:2: rule__LocalResource__PathAssignment_0
             {
-            pushFollow(FOLLOW_rule__LocalResource__PathAssignment_0_in_rule__LocalResource__Group__0__Impl5667);
+            pushFollow(FOLLOW_rule__LocalResource__PathAssignment_0_in_rule__LocalResource__Group__0__Impl5668);
             rule__LocalResource__PathAssignment_0();
 
             state._fsp--;
@@ -7770,7 +7788,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2820:1: ( rule__LocalResource__Group__1__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2821:2: rule__LocalResource__Group__1__Impl
             {
-            pushFollow(FOLLOW_rule__LocalResource__Group__1__Impl_in_rule__LocalResource__Group__15697);
+            pushFollow(FOLLOW_rule__LocalResource__Group__1__Impl_in_rule__LocalResource__Group__15698);
             rule__LocalResource__Group__1__Impl();
 
             state._fsp--;
@@ -7810,7 +7828,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2834:1: ( rule__LocalResource__Group_1__0 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2834:2: rule__LocalResource__Group_1__0
             {
-            pushFollow(FOLLOW_rule__LocalResource__Group_1__0_in_rule__LocalResource__Group__1__Impl5724);
+            pushFollow(FOLLOW_rule__LocalResource__Group_1__0_in_rule__LocalResource__Group__1__Impl5725);
             rule__LocalResource__Group_1__0();
 
             state._fsp--;
@@ -7850,12 +7868,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2852:1: ( rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2853:2: rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1
             {
-            pushFollow(FOLLOW_rule__LocalResource__Group_1__0__Impl_in_rule__LocalResource__Group_1__05758);
+            pushFollow(FOLLOW_rule__LocalResource__Group_1__0__Impl_in_rule__LocalResource__Group_1__05759);
             rule__LocalResource__Group_1__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__LocalResource__Group_1__1_in_rule__LocalResource__Group_1__05761);
+            pushFollow(FOLLOW_rule__LocalResource__Group_1__1_in_rule__LocalResource__Group_1__05762);
             rule__LocalResource__Group_1__1();
 
             state._fsp--;
@@ -7892,7 +7910,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2866:1: 'filter'
             {
              before(grammarAccess.getLocalResourceAccess().getFilterKeyword_1_0()); 
-            match(input,30,FOLLOW_30_in_rule__LocalResource__Group_1__0__Impl5789); 
+            match(input,30,FOLLOW_30_in_rule__LocalResource__Group_1__0__Impl5790); 
              after(grammarAccess.getLocalResourceAccess().getFilterKeyword_1_0()); 
 
             }
@@ -7925,7 +7943,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2883:1: ( rule__LocalResource__Group_1__1__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2884:2: rule__LocalResource__Group_1__1__Impl
             {
-            pushFollow(FOLLOW_rule__LocalResource__Group_1__1__Impl_in_rule__LocalResource__Group_1__15820);
+            pushFollow(FOLLOW_rule__LocalResource__Group_1__1__Impl_in_rule__LocalResource__Group_1__15821);
             rule__LocalResource__Group_1__1__Impl();
 
             state._fsp--;
@@ -7965,7 +7983,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2897:1: ( rule__LocalResource__FilterAssignment_1_1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2897:2: rule__LocalResource__FilterAssignment_1_1
             {
-            pushFollow(FOLLOW_rule__LocalResource__FilterAssignment_1_1_in_rule__LocalResource__Group_1__1__Impl5847);
+            pushFollow(FOLLOW_rule__LocalResource__FilterAssignment_1_1_in_rule__LocalResource__Group_1__1__Impl5848);
             rule__LocalResource__FilterAssignment_1_1();
 
             state._fsp--;
@@ -8005,12 +8023,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2915:1: ( rule__GlobalOutputRef__Group__0__Impl rule__GlobalOutputRef__Group__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2916:2: rule__GlobalOutputRef__Group__0__Impl rule__GlobalOutputRef__Group__1
             {
-            pushFollow(FOLLOW_rule__GlobalOutputRef__Group__0__Impl_in_rule__GlobalOutputRef__Group__05881);
+            pushFollow(FOLLOW_rule__GlobalOutputRef__Group__0__Impl_in_rule__GlobalOutputRef__Group__05882);
             rule__GlobalOutputRef__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__GlobalOutputRef__Group__1_in_rule__GlobalOutputRef__Group__05884);
+            pushFollow(FOLLOW_rule__GlobalOutputRef__Group__1_in_rule__GlobalOutputRef__Group__05885);
             rule__GlobalOutputRef__Group__1();
 
             state._fsp--;
@@ -8050,7 +8068,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2930:1: ( rule__GlobalOutputRef__NameAssignment_0 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2930:2: rule__GlobalOutputRef__NameAssignment_0
             {
-            pushFollow(FOLLOW_rule__GlobalOutputRef__NameAssignment_0_in_rule__GlobalOutputRef__Group__0__Impl5911);
+            pushFollow(FOLLOW_rule__GlobalOutputRef__NameAssignment_0_in_rule__GlobalOutputRef__Group__0__Impl5912);
             rule__GlobalOutputRef__NameAssignment_0();
 
             state._fsp--;
@@ -8090,7 +8108,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2944:1: ( rule__GlobalOutputRef__Group__1__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2945:2: rule__GlobalOutputRef__Group__1__Impl
             {
-            pushFollow(FOLLOW_rule__GlobalOutputRef__Group__1__Impl_in_rule__GlobalOutputRef__Group__15941);
+            pushFollow(FOLLOW_rule__GlobalOutputRef__Group__1__Impl_in_rule__GlobalOutputRef__Group__15942);
             rule__GlobalOutputRef__Group__1__Impl();
 
             state._fsp--;
@@ -8130,7 +8148,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2958:1: ( rule__GlobalOutputRef__OutputAssignment_1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2958:2: rule__GlobalOutputRef__OutputAssignment_1
             {
-            pushFollow(FOLLOW_rule__GlobalOutputRef__OutputAssignment_1_in_rule__GlobalOutputRef__Group__1__Impl5968);
+            pushFollow(FOLLOW_rule__GlobalOutputRef__OutputAssignment_1_in_rule__GlobalOutputRef__Group__1__Impl5969);
             rule__GlobalOutputRef__OutputAssignment_1();
 
             state._fsp--;
@@ -8170,12 +8188,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2976:1: ( rule__OutputReference__Group__0__Impl rule__OutputReference__Group__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2977:2: rule__OutputReference__Group__0__Impl rule__OutputReference__Group__1
             {
-            pushFollow(FOLLOW_rule__OutputReference__Group__0__Impl_in_rule__OutputReference__Group__06002);
+            pushFollow(FOLLOW_rule__OutputReference__Group__0__Impl_in_rule__OutputReference__Group__06003);
             rule__OutputReference__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__OutputReference__Group__1_in_rule__OutputReference__Group__06005);
+            pushFollow(FOLLOW_rule__OutputReference__Group__1_in_rule__OutputReference__Group__06006);
             rule__OutputReference__Group__1();
 
             state._fsp--;
@@ -8212,7 +8230,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:2990:1: 'ref'
             {
              before(grammarAccess.getOutputReferenceAccess().getRefKeyword_0()); 
-            match(input,29,FOLLOW_29_in_rule__OutputReference__Group__0__Impl6033); 
+            match(input,29,FOLLOW_29_in_rule__OutputReference__Group__0__Impl6034); 
              after(grammarAccess.getOutputReferenceAccess().getRefKeyword_0()); 
 
             }
@@ -8245,7 +8263,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3007:1: ( rule__OutputReference__Group__1__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3008:2: rule__OutputReference__Group__1__Impl
             {
-            pushFollow(FOLLOW_rule__OutputReference__Group__1__Impl_in_rule__OutputReference__Group__16064);
+            pushFollow(FOLLOW_rule__OutputReference__Group__1__Impl_in_rule__OutputReference__Group__16065);
             rule__OutputReference__Group__1__Impl();
 
             state._fsp--;
@@ -8285,7 +8303,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3021:1: ( rule__OutputReference__OutputRefAssignment_1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3021:2: rule__OutputReference__OutputRefAssignment_1
             {
-            pushFollow(FOLLOW_rule__OutputReference__OutputRefAssignment_1_in_rule__OutputReference__Group__1__Impl6091);
+            pushFollow(FOLLOW_rule__OutputReference__OutputRefAssignment_1_in_rule__OutputReference__Group__1__Impl6092);
             rule__OutputReference__OutputRefAssignment_1();
 
             state._fsp--;
@@ -8325,12 +8343,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3039:1: ( rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3040:2: rule__KIdentifier__Group__0__Impl rule__KIdentifier__Group__1
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__06125);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__06126);
             rule__KIdentifier__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__06128);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__06129);
             rule__KIdentifier__Group__1();
 
             state._fsp--;
@@ -8400,12 +8418,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3070:1: ( rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3071:2: rule__KIdentifier__Group__1__Impl rule__KIdentifier__Group__2
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__16186);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__16187);
             rule__KIdentifier__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__16189);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__16190);
             rule__KIdentifier__Group__2();
 
             state._fsp--;
@@ -8445,7 +8463,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3085:1: ( rule__KIdentifier__IdAssignment_1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3085:2: rule__KIdentifier__IdAssignment_1
             {
-            pushFollow(FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl6216);
+            pushFollow(FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl6217);
             rule__KIdentifier__IdAssignment_1();
 
             state._fsp--;
@@ -8485,12 +8503,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3099:1: ( rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3100:2: rule__KIdentifier__Group__2__Impl rule__KIdentifier__Group__3
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__26246);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__26247);
             rule__KIdentifier__Group__2__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__26249);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__26250);
             rule__KIdentifier__Group__3();
 
             state._fsp--;
@@ -8527,7 +8545,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3113:1: '{'
             {
              before(grammarAccess.getKIdentifierAccess().getLeftCurlyBracketKeyword_2()); 
-            match(input,31,FOLLOW_31_in_rule__KIdentifier__Group__2__Impl6277); 
+            match(input,31,FOLLOW_31_in_rule__KIdentifier__Group__2__Impl6278); 
              after(grammarAccess.getKIdentifierAccess().getLeftCurlyBracketKeyword_2()); 
 
             }
@@ -8560,12 +8578,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3130:1: ( rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3131:2: rule__KIdentifier__Group__3__Impl rule__KIdentifier__Group__4
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__36308);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__36309);
             rule__KIdentifier__Group__3__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__36311);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__36312);
             rule__KIdentifier__Group__4();
 
             state._fsp--;
@@ -8603,17 +8621,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             {
              before(grammarAccess.getKIdentifierAccess().getGroup_3()); 
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3145:1: ( rule__KIdentifier__Group_3__0 )?
-            int alt26=2;
-            int LA26_0 = input.LA(1);
+            int alt27=2;
+            int LA27_0 = input.LA(1);
 
-            if ( (LA26_0==RULE_ID) ) {
-                alt26=1;
+            if ( (LA27_0==RULE_ID) ) {
+                alt27=1;
             }
-            switch (alt26) {
+            switch (alt27) {
                 case 1 :
                     // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3145:2: rule__KIdentifier__Group_3__0
                     {
-                    pushFollow(FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl6338);
+                    pushFollow(FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl6339);
                     rule__KIdentifier__Group_3__0();
 
                     state._fsp--;
@@ -8656,7 +8674,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3159:1: ( rule__KIdentifier__Group__4__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3160:2: rule__KIdentifier__Group__4__Impl
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__46369);
+            pushFollow(FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__46370);
             rule__KIdentifier__Group__4__Impl();
 
             state._fsp--;
@@ -8693,7 +8711,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3172:1: '}'
             {
              before(grammarAccess.getKIdentifierAccess().getRightCurlyBracketKeyword_4()); 
-            match(input,32,FOLLOW_32_in_rule__KIdentifier__Group__4__Impl6397); 
+            match(input,32,FOLLOW_32_in_rule__KIdentifier__Group__4__Impl6398); 
              after(grammarAccess.getKIdentifierAccess().getRightCurlyBracketKeyword_4()); 
 
             }
@@ -8726,12 +8744,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3199:1: ( rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3200:2: rule__KIdentifier__Group_3__0__Impl rule__KIdentifier__Group_3__1
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__06438);
+            pushFollow(FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__06439);
             rule__KIdentifier__Group_3__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__06441);
+            pushFollow(FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__06442);
             rule__KIdentifier__Group_3__1();
 
             state._fsp--;
@@ -8771,7 +8789,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3214:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_0 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3214:2: rule__KIdentifier__PersistentEntriesAssignment_3_0
             {
-            pushFollow(FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl6468);
+            pushFollow(FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl6469);
             rule__KIdentifier__PersistentEntriesAssignment_3_0();
 
             state._fsp--;
@@ -8811,7 +8829,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3228:1: ( rule__KIdentifier__Group_3__1__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3229:2: rule__KIdentifier__Group_3__1__Impl
             {
-            pushFollow(FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__16498);
+            pushFollow(FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__16499);
             rule__KIdentifier__Group_3__1__Impl();
 
             state._fsp--;
@@ -8849,21 +8867,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             {
              before(grammarAccess.getKIdentifierAccess().getPersistentEntriesAssignment_3_1()); 
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3242:1: ( rule__KIdentifier__PersistentEntriesAssignment_3_1 )*
-            loop27:
+            loop28:
             do {
-                int alt27=2;
-                int LA27_0 = input.LA(1);
+                int alt28=2;
+                int LA28_0 = input.LA(1);
 
-                if ( (LA27_0==RULE_ID) ) {
-                    alt27=1;
+                if ( (LA28_0==RULE_ID) ) {
+                    alt28=1;
                 }
 
 
-                switch (alt27) {
+                switch (alt28) {
             	case 1 :
             	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3242:2: rule__KIdentifier__PersistentEntriesAssignment_3_1
             	    {
-            	    pushFollow(FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl6525);
+            	    pushFollow(FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl6526);
             	    rule__KIdentifier__PersistentEntriesAssignment_3_1();
 
             	    state._fsp--;
@@ -8873,7 +8891,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop27;
+            	    break loop28;
                 }
             } while (true);
 
@@ -8909,12 +8927,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3260:1: ( rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3261:2: rule__PersistentEntry__Group__0__Impl rule__PersistentEntry__Group__1
             {
-            pushFollow(FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__06560);
+            pushFollow(FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__06561);
             rule__PersistentEntry__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__06563);
+            pushFollow(FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__06564);
             rule__PersistentEntry__Group__1();
 
             state._fsp--;
@@ -8954,7 +8972,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3275:1: ( rule__PersistentEntry__KeyAssignment_0 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3275:2: rule__PersistentEntry__KeyAssignment_0
             {
-            pushFollow(FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl6590);
+            pushFollow(FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl6591);
             rule__PersistentEntry__KeyAssignment_0();
 
             state._fsp--;
@@ -8994,12 +9012,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3289:1: ( rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3290:2: rule__PersistentEntry__Group__1__Impl rule__PersistentEntry__Group__2
             {
-            pushFollow(FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__16620);
+            pushFollow(FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__16621);
             rule__PersistentEntry__Group__1__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__16623);
+            pushFollow(FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__16624);
             rule__PersistentEntry__Group__2();
 
             state._fsp--;
@@ -9036,7 +9054,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3303:1: ':'
             {
              before(grammarAccess.getPersistentEntryAccess().getColonKeyword_1()); 
-            match(input,33,FOLLOW_33_in_rule__PersistentEntry__Group__1__Impl6651); 
+            match(input,33,FOLLOW_33_in_rule__PersistentEntry__Group__1__Impl6652); 
              after(grammarAccess.getPersistentEntryAccess().getColonKeyword_1()); 
 
             }
@@ -9069,7 +9087,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3320:1: ( rule__PersistentEntry__Group__2__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3321:2: rule__PersistentEntry__Group__2__Impl
             {
-            pushFollow(FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__26682);
+            pushFollow(FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__26683);
             rule__PersistentEntry__Group__2__Impl();
 
             state._fsp--;
@@ -9109,7 +9127,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3334:1: ( rule__PersistentEntry__ValueAssignment_2 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3334:2: rule__PersistentEntry__ValueAssignment_2
             {
-            pushFollow(FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl6709);
+            pushFollow(FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl6710);
             rule__PersistentEntry__ValueAssignment_2();
 
             state._fsp--;
@@ -9149,12 +9167,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3354:1: ( rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3355:2: rule__QualifiedID__Group__0__Impl rule__QualifiedID__Group__1
             {
-            pushFollow(FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__06745);
+            pushFollow(FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__06746);
             rule__QualifiedID__Group__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__06748);
+            pushFollow(FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__06749);
             rule__QualifiedID__Group__1();
 
             state._fsp--;
@@ -9191,7 +9209,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3368:1: RULE_ID
             {
              before(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl6775); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl6776); 
              after(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_0()); 
 
             }
@@ -9224,7 +9242,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3383:1: ( rule__QualifiedID__Group__1__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3384:2: rule__QualifiedID__Group__1__Impl
             {
-            pushFollow(FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__16804);
+            pushFollow(FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__16805);
             rule__QualifiedID__Group__1__Impl();
 
             state._fsp--;
@@ -9262,21 +9280,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             {
              before(grammarAccess.getQualifiedIDAccess().getGroup_1()); 
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3397:1: ( rule__QualifiedID__Group_1__0 )*
-            loop28:
+            loop29:
             do {
-                int alt28=2;
-                int LA28_0 = input.LA(1);
+                int alt29=2;
+                int LA29_0 = input.LA(1);
 
-                if ( (LA28_0==34) ) {
-                    alt28=1;
+                if ( (LA29_0==34) ) {
+                    alt29=1;
                 }
 
 
-                switch (alt28) {
+                switch (alt29) {
             	case 1 :
             	    // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3397:2: rule__QualifiedID__Group_1__0
             	    {
-            	    pushFollow(FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl6831);
+            	    pushFollow(FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl6832);
             	    rule__QualifiedID__Group_1__0();
 
             	    state._fsp--;
@@ -9286,7 +9304,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop28;
+            	    break loop29;
                 }
             } while (true);
 
@@ -9322,12 +9340,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3415:1: ( rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1 )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3416:2: rule__QualifiedID__Group_1__0__Impl rule__QualifiedID__Group_1__1
             {
-            pushFollow(FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__06866);
+            pushFollow(FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__06867);
             rule__QualifiedID__Group_1__0__Impl();
 
             state._fsp--;
 
-            pushFollow(FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__06869);
+            pushFollow(FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__06870);
             rule__QualifiedID__Group_1__1();
 
             state._fsp--;
@@ -9364,7 +9382,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3429:1: '.'
             {
              before(grammarAccess.getQualifiedIDAccess().getFullStopKeyword_1_0()); 
-            match(input,34,FOLLOW_34_in_rule__QualifiedID__Group_1__0__Impl6897); 
+            match(input,34,FOLLOW_34_in_rule__QualifiedID__Group_1__0__Impl6898); 
              after(grammarAccess.getQualifiedIDAccess().getFullStopKeyword_1_0()); 
 
             }
@@ -9397,7 +9415,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3446:1: ( rule__QualifiedID__Group_1__1__Impl )
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3447:2: rule__QualifiedID__Group_1__1__Impl
             {
-            pushFollow(FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__16928);
+            pushFollow(FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__16929);
             rule__QualifiedID__Group_1__1__Impl();
 
             state._fsp--;
@@ -9434,7 +9452,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3459:1: RULE_ID
             {
              before(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_1_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl6955); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl6956); 
              after(grammarAccess.getQualifiedIDAccess().getIDTerminalRuleCall_1_1()); 
 
             }
@@ -9471,7 +9489,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3481:1: ruleGlobalResourceRef
             {
              before(grammarAccess.getGranaAccess().getGlobalResourcesGlobalResourceRefParserRuleCall_0_1_0()); 
-            pushFollow(FOLLOW_ruleGlobalResourceRef_in_rule__Grana__GlobalResourcesAssignment_0_16993);
+            pushFollow(FOLLOW_ruleGlobalResourceRef_in_rule__Grana__GlobalResourcesAssignment_0_16994);
             ruleGlobalResourceRef();
 
             state._fsp--;
@@ -9512,7 +9530,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3496:1: ruleGlobalOutputRef
             {
              before(grammarAccess.getGranaAccess().getGloobalOutputsGlobalOutputRefParserRuleCall_1_1_0()); 
-            pushFollow(FOLLOW_ruleGlobalOutputRef_in_rule__Grana__GloobalOutputsAssignment_1_17024);
+            pushFollow(FOLLOW_ruleGlobalOutputRef_in_rule__Grana__GloobalOutputsAssignment_1_17025);
             ruleGlobalOutputRef();
 
             state._fsp--;
@@ -9557,7 +9575,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3513:1: 'all'
             {
              before(grammarAccess.getGranaAccess().getExecuteAllAllKeyword_2_1_0_0()); 
-            match(input,35,FOLLOW_35_in_rule__Grana__ExecuteAllAssignment_2_1_07060); 
+            match(input,35,FOLLOW_35_in_rule__Grana__ExecuteAllAssignment_2_1_07061); 
              after(grammarAccess.getGranaAccess().getExecuteAllAllKeyword_2_1_0_0()); 
 
             }
@@ -9602,7 +9620,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3536:1: RULE_ID
             {
              before(grammarAccess.getGranaAccess().getExecuteJobIDTerminalRuleCall_2_1_1_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__Grana__ExecuteAssignment_2_1_17103); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__Grana__ExecuteAssignment_2_1_17104); 
              after(grammarAccess.getGranaAccess().getExecuteJobIDTerminalRuleCall_2_1_1_0_1()); 
 
             }
@@ -9643,7 +9661,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3553:1: ruleJob
             {
              before(grammarAccess.getGranaAccess().getJobsJobParserRuleCall_3_0()); 
-            pushFollow(FOLLOW_ruleJob_in_rule__Grana__JobsAssignment_37138);
+            pushFollow(FOLLOW_ruleJob_in_rule__Grana__JobsAssignment_37139);
             ruleJob();
 
             state._fsp--;
@@ -9684,7 +9702,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3568:1: RULE_ID
             {
              before(grammarAccess.getRegularJobAccess().getNameIDTerminalRuleCall_1_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__RegularJob__NameAssignment_17169); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__RegularJob__NameAssignment_17170); 
              after(grammarAccess.getRegularJobAccess().getNameIDTerminalRuleCall_1_0()); 
 
             }
@@ -9725,7 +9743,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3585:1: 'layoutBeforeAnalysis'
             {
              before(grammarAccess.getRegularJobAccess().getLayoutBeforeAnalysisLayoutBeforeAnalysisKeyword_2_0()); 
-            match(input,36,FOLLOW_36_in_rule__RegularJob__LayoutBeforeAnalysisAssignment_27205); 
+            match(input,36,FOLLOW_36_in_rule__RegularJob__LayoutBeforeAnalysisAssignment_27206); 
              after(grammarAccess.getRegularJobAccess().getLayoutBeforeAnalysisLayoutBeforeAnalysisKeyword_2_0()); 
 
             }
@@ -9770,7 +9788,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3608:1: 'measureExecutionTime'
             {
              before(grammarAccess.getRegularJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_3_0()); 
-            match(input,37,FOLLOW_37_in_rule__RegularJob__MeasureExecutionTimeAssignment_37249); 
+            match(input,37,FOLLOW_37_in_rule__RegularJob__MeasureExecutionTimeAssignment_37250); 
              after(grammarAccess.getRegularJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_3_0()); 
 
             }
@@ -9811,7 +9829,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3629:1: ruleResource
             {
              before(grammarAccess.getRegularJobAccess().getResourcesResourceParserRuleCall_5_0()); 
-            pushFollow(FOLLOW_ruleResource_in_rule__RegularJob__ResourcesAssignment_57288);
+            pushFollow(FOLLOW_ruleResource_in_rule__RegularJob__ResourcesAssignment_57289);
             ruleResource();
 
             state._fsp--;
@@ -9852,7 +9870,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3644:1: ruleKIdentifier
             {
              before(grammarAccess.getRegularJobAccess().getLayoutOptionsKIdentifierParserRuleCall_7_0()); 
-            pushFollow(FOLLOW_ruleKIdentifier_in_rule__RegularJob__LayoutOptionsAssignment_77319);
+            pushFollow(FOLLOW_ruleKIdentifier_in_rule__RegularJob__LayoutOptionsAssignment_77320);
             ruleKIdentifier();
 
             state._fsp--;
@@ -9893,7 +9911,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3659:1: ruleAnalysis
             {
              before(grammarAccess.getRegularJobAccess().getAnalysesAnalysisParserRuleCall_9_0()); 
-            pushFollow(FOLLOW_ruleAnalysis_in_rule__RegularJob__AnalysesAssignment_97350);
+            pushFollow(FOLLOW_ruleAnalysis_in_rule__RegularJob__AnalysesAssignment_97351);
             ruleAnalysis();
 
             state._fsp--;
@@ -9934,7 +9952,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3674:1: ruleOutput
             {
              before(grammarAccess.getRegularJobAccess().getOutputOutputParserRuleCall_11_0()); 
-            pushFollow(FOLLOW_ruleOutput_in_rule__RegularJob__OutputAssignment_117381);
+            pushFollow(FOLLOW_ruleOutput_in_rule__RegularJob__OutputAssignment_117382);
             ruleOutput();
 
             state._fsp--;
@@ -9975,7 +9993,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3689:1: RULE_ID
             {
              before(grammarAccess.getRangeJobAccess().getNameIDTerminalRuleCall_1_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__RangeJob__NameAssignment_17412); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__RangeJob__NameAssignment_17413); 
              after(grammarAccess.getRangeJobAccess().getNameIDTerminalRuleCall_1_0()); 
 
             }
@@ -10012,7 +10030,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3704:1: ruleResource
             {
              before(grammarAccess.getRangeJobAccess().getResourcesResourceParserRuleCall_3_0()); 
-            pushFollow(FOLLOW_ruleResource_in_rule__RangeJob__ResourcesAssignment_37443);
+            pushFollow(FOLLOW_ruleResource_in_rule__RangeJob__ResourcesAssignment_37444);
             ruleResource();
 
             state._fsp--;
@@ -10053,7 +10071,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3719:1: ruleKIdentifier
             {
              before(grammarAccess.getRangeJobAccess().getLayoutOptionsKIdentifierParserRuleCall_5_0()); 
-            pushFollow(FOLLOW_ruleKIdentifier_in_rule__RangeJob__LayoutOptionsAssignment_57474);
+            pushFollow(FOLLOW_ruleKIdentifier_in_rule__RangeJob__LayoutOptionsAssignment_57475);
             ruleKIdentifier();
 
             state._fsp--;
@@ -10094,7 +10112,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3734:1: ruleAnalysis
             {
              before(grammarAccess.getRangeJobAccess().getAnalysesAnalysisParserRuleCall_7_0()); 
-            pushFollow(FOLLOW_ruleAnalysis_in_rule__RangeJob__AnalysesAssignment_77505);
+            pushFollow(FOLLOW_ruleAnalysis_in_rule__RangeJob__AnalysesAssignment_77506);
             ruleAnalysis();
 
             state._fsp--;
@@ -10135,7 +10153,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3749:1: ruleQualifiedID
             {
              before(grammarAccess.getRangeJobAccess().getRangeOptionQualifiedIDParserRuleCall_9_0()); 
-            pushFollow(FOLLOW_ruleQualifiedID_in_rule__RangeJob__RangeOptionAssignment_97536);
+            pushFollow(FOLLOW_ruleQualifiedID_in_rule__RangeJob__RangeOptionAssignment_97537);
             ruleQualifiedID();
 
             state._fsp--;
@@ -10176,7 +10194,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3764:1: ruleRange
             {
              before(grammarAccess.getRangeJobAccess().getRangeValuesRangeParserRuleCall_10_0()); 
-            pushFollow(FOLLOW_ruleRange_in_rule__RangeJob__RangeValuesAssignment_107567);
+            pushFollow(FOLLOW_ruleRange_in_rule__RangeJob__RangeValuesAssignment_107568);
             ruleRange();
 
             state._fsp--;
@@ -10217,7 +10235,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3779:1: ruleAnalysis
             {
              before(grammarAccess.getRangeJobAccess().getRangeAnalysisAnalysisParserRuleCall_12_0()); 
-            pushFollow(FOLLOW_ruleAnalysis_in_rule__RangeJob__RangeAnalysisAssignment_127598);
+            pushFollow(FOLLOW_ruleAnalysis_in_rule__RangeJob__RangeAnalysisAssignment_127599);
             ruleAnalysis();
 
             state._fsp--;
@@ -10258,7 +10276,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3794:1: RULE_NATURAL
             {
              before(grammarAccess.getRangeJobAccess().getRangeAnalysisComponentNATURALTerminalRuleCall_13_1_0()); 
-            match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_rule__RangeJob__RangeAnalysisComponentAssignment_13_17629); 
+            match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_rule__RangeJob__RangeAnalysisComponentAssignment_13_17630); 
              after(grammarAccess.getRangeJobAccess().getRangeAnalysisComponentNATURALTerminalRuleCall_13_1_0()); 
 
             }
@@ -10295,7 +10313,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3809:1: ruleOutput
             {
              before(grammarAccess.getRangeJobAccess().getOutputOutputParserRuleCall_15_0()); 
-            pushFollow(FOLLOW_ruleOutput_in_rule__RangeJob__OutputAssignment_157660);
+            pushFollow(FOLLOW_ruleOutput_in_rule__RangeJob__OutputAssignment_157661);
             ruleOutput();
 
             state._fsp--;
@@ -10336,7 +10354,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3824:1: ruleFloat
             {
              before(grammarAccess.getFloatRangeAccess().getValuesFloatParserRuleCall_1_0()); 
-            pushFollow(FOLLOW_ruleFloat_in_rule__FloatRange__ValuesAssignment_17691);
+            pushFollow(FOLLOW_ruleFloat_in_rule__FloatRange__ValuesAssignment_17692);
             ruleFloat();
 
             state._fsp--;
@@ -10377,7 +10395,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3839:1: ruleFloat
             {
              before(grammarAccess.getFloatRangeAccess().getValuesFloatParserRuleCall_2_1_0()); 
-            pushFollow(FOLLOW_ruleFloat_in_rule__FloatRange__ValuesAssignment_2_17722);
+            pushFollow(FOLLOW_ruleFloat_in_rule__FloatRange__ValuesAssignment_2_17723);
             ruleFloat();
 
             state._fsp--;
@@ -10418,7 +10436,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3854:1: RULE_NATURAL
             {
              before(grammarAccess.getIntRangeValuesAccess().getValuesNATURALTerminalRuleCall_1_0()); 
-            match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_rule__IntRangeValues__ValuesAssignment_17753); 
+            match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_rule__IntRangeValues__ValuesAssignment_17754); 
              after(grammarAccess.getIntRangeValuesAccess().getValuesNATURALTerminalRuleCall_1_0()); 
 
             }
@@ -10455,7 +10473,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3869:1: RULE_NATURAL
             {
              before(grammarAccess.getIntRangeValuesAccess().getValuesNATURALTerminalRuleCall_2_1_0()); 
-            match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_rule__IntRangeValues__ValuesAssignment_2_17784); 
+            match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_rule__IntRangeValues__ValuesAssignment_2_17785); 
              after(grammarAccess.getIntRangeValuesAccess().getValuesNATURALTerminalRuleCall_2_1_0()); 
 
             }
@@ -10492,7 +10510,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3884:1: RULE_NATURAL
             {
              before(grammarAccess.getIntRangeRangeAccess().getStartNATURALTerminalRuleCall_1_0()); 
-            match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_rule__IntRangeRange__StartAssignment_17815); 
+            match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_rule__IntRangeRange__StartAssignment_17816); 
              after(grammarAccess.getIntRangeRangeAccess().getStartNATURALTerminalRuleCall_1_0()); 
 
             }
@@ -10529,7 +10547,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3899:1: RULE_NATURAL
             {
              before(grammarAccess.getIntRangeRangeAccess().getEndNATURALTerminalRuleCall_3_0()); 
-            match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_rule__IntRangeRange__EndAssignment_37846); 
+            match(input,RULE_NATURAL,FOLLOW_RULE_NATURAL_in_rule__IntRangeRange__EndAssignment_37847); 
              after(grammarAccess.getIntRangeRangeAccess().getEndNATURALTerminalRuleCall_3_0()); 
 
             }
@@ -10570,7 +10588,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3916:1: RULE_ID
             {
              before(grammarAccess.getResourceReferenceAccess().getResourceRefsGlobalResourceRefIDTerminalRuleCall_1_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__ResourceReference__ResourceRefsAssignment_17881); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__ResourceReference__ResourceRefsAssignment_17882); 
              after(grammarAccess.getResourceReferenceAccess().getResourceRefsGlobalResourceRefIDTerminalRuleCall_1_0_1()); 
 
             }
@@ -10611,7 +10629,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3933:1: RULE_ID
             {
              before(grammarAccess.getGlobalResourceRefAccess().getNameIDTerminalRuleCall_0_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__GlobalResourceRef__NameAssignment_07916); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__GlobalResourceRef__NameAssignment_07917); 
              after(grammarAccess.getGlobalResourceRefAccess().getNameIDTerminalRuleCall_0_0()); 
 
             }
@@ -10648,7 +10666,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3948:1: ruleLocalResource
             {
              before(grammarAccess.getGlobalResourceRefAccess().getResourcesLocalResourceParserRuleCall_1_0()); 
-            pushFollow(FOLLOW_ruleLocalResource_in_rule__GlobalResourceRef__ResourcesAssignment_17947);
+            pushFollow(FOLLOW_ruleLocalResource_in_rule__GlobalResourceRef__ResourcesAssignment_17948);
             ruleLocalResource();
 
             state._fsp--;
@@ -10689,7 +10707,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3963:1: RULE_STRING
             {
              before(grammarAccess.getLocalResourceAccess().getPathSTRINGTerminalRuleCall_0_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__LocalResource__PathAssignment_07978); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__LocalResource__PathAssignment_07979); 
              after(grammarAccess.getLocalResourceAccess().getPathSTRINGTerminalRuleCall_0_0()); 
 
             }
@@ -10726,7 +10744,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3978:1: RULE_STRING
             {
              before(grammarAccess.getLocalResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__LocalResource__FilterAssignment_1_18009); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__LocalResource__FilterAssignment_1_18010); 
              after(grammarAccess.getLocalResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0()); 
 
             }
@@ -10763,7 +10781,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:3993:1: RULE_ID
             {
              before(grammarAccess.getGlobalOutputRefAccess().getNameIDTerminalRuleCall_0_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__GlobalOutputRef__NameAssignment_08040); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__GlobalOutputRef__NameAssignment_08041); 
              after(grammarAccess.getGlobalOutputRefAccess().getNameIDTerminalRuleCall_0_0()); 
 
             }
@@ -10800,7 +10818,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:4008:1: ruleLocalOutput
             {
              before(grammarAccess.getGlobalOutputRefAccess().getOutputLocalOutputParserRuleCall_1_0()); 
-            pushFollow(FOLLOW_ruleLocalOutput_in_rule__GlobalOutputRef__OutputAssignment_18071);
+            pushFollow(FOLLOW_ruleLocalOutput_in_rule__GlobalOutputRef__OutputAssignment_18072);
             ruleLocalOutput();
 
             state._fsp--;
@@ -10845,7 +10863,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:4025:1: RULE_ID
             {
              before(grammarAccess.getOutputReferenceAccess().getOutputRefGlobalOutputRefIDTerminalRuleCall_1_0_1()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__OutputReference__OutputRefAssignment_18106); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__OutputReference__OutputRefAssignment_18107); 
              after(grammarAccess.getOutputReferenceAccess().getOutputRefGlobalOutputRefIDTerminalRuleCall_1_0_1()); 
 
             }
@@ -10886,7 +10904,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:4042:1: RULE_STRING
             {
              before(grammarAccess.getLocalOutputAccess().getPathSTRINGTerminalRuleCall_0()); 
-            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__LocalOutput__PathAssignment8141); 
+            match(input,RULE_STRING,FOLLOW_RULE_STRING_in_rule__LocalOutput__PathAssignment8142); 
              after(grammarAccess.getLocalOutputAccess().getPathSTRINGTerminalRuleCall_0()); 
 
             }
@@ -10923,7 +10941,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:4057:1: ruleQualifiedID
             {
              before(grammarAccess.getAnalysisAccess().getNameQualifiedIDParserRuleCall_0()); 
-            pushFollow(FOLLOW_ruleQualifiedID_in_rule__Analysis__NameAssignment8172);
+            pushFollow(FOLLOW_ruleQualifiedID_in_rule__Analysis__NameAssignment8173);
             ruleQualifiedID();
 
             state._fsp--;
@@ -10964,7 +10982,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:4072:1: RULE_ID
             {
              before(grammarAccess.getKIdentifierAccess().getIdIDTerminalRuleCall_1_0()); 
-            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__KIdentifier__IdAssignment_18203); 
+            match(input,RULE_ID,FOLLOW_RULE_ID_in_rule__KIdentifier__IdAssignment_18204); 
              after(grammarAccess.getKIdentifierAccess().getIdIDTerminalRuleCall_1_0()); 
 
             }
@@ -11001,7 +11019,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:4087:1: rulePersistentEntry
             {
              before(grammarAccess.getKIdentifierAccess().getPersistentEntriesPersistentEntryParserRuleCall_3_0_0()); 
-            pushFollow(FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_08234);
+            pushFollow(FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_08235);
             rulePersistentEntry();
 
             state._fsp--;
@@ -11042,7 +11060,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:4102:1: rulePersistentEntry
             {
              before(grammarAccess.getKIdentifierAccess().getPersistentEntriesPersistentEntryParserRuleCall_3_1_0()); 
-            pushFollow(FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_18265);
+            pushFollow(FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_18266);
             rulePersistentEntry();
 
             state._fsp--;
@@ -11083,7 +11101,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:4117:1: ruleQualifiedID
             {
              before(grammarAccess.getPersistentEntryAccess().getKeyQualifiedIDParserRuleCall_0_0()); 
-            pushFollow(FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_08296);
+            pushFollow(FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_08297);
             ruleQualifiedID();
 
             state._fsp--;
@@ -11124,7 +11142,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             // ../de.cau.cs.kieler.kiml.grana.text.ui/src-gen/de/cau/cs/kieler/kiml/grana/text/ui/contentassist/antlr/internal/InternalGrana.g:4132:1: rulePropertyValue
             {
              before(grammarAccess.getPersistentEntryAccess().getValuePropertyValueParserRuleCall_2_0()); 
-            pushFollow(FOLLOW_rulePropertyValue_in_rule__PersistentEntry__ValueAssignment_28327);
+            pushFollow(FOLLOW_rulePropertyValue_in_rule__PersistentEntry__ValueAssignment_28328);
             rulePropertyValue();
 
             state._fsp--;
@@ -11383,131 +11401,131 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
     public static final BitSet FOLLOW_rule__IntRangeValues__Group__2_in_rule__IntRangeValues__Group__14884 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_rule__IntRangeValues__ValuesAssignment_1_in_rule__IntRangeValues__Group__1__Impl4911 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_rule__IntRangeValues__Group__2__Impl_in_rule__IntRangeValues__Group__24941 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__IntRangeValues__Group_2__0_in_rule__IntRangeValues__Group__2__Impl4968 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__IntRangeValues__Group_2__0__Impl_in_rule__IntRangeValues__Group_2__05004 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_rule__IntRangeValues__Group_2__1_in_rule__IntRangeValues__Group_2__05007 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_25_in_rule__IntRangeValues__Group_2__0__Impl5035 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__IntRangeValues__Group_2__1__Impl_in_rule__IntRangeValues__Group_2__15066 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__IntRangeValues__ValuesAssignment_2_1_in_rule__IntRangeValues__Group_2__1__Impl5093 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__IntRangeRange__Group__0__Impl_in_rule__IntRangeRange__Group__05127 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_rule__IntRangeRange__Group__1_in_rule__IntRangeRange__Group__05130 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_27_in_rule__IntRangeRange__Group__0__Impl5158 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__IntRangeRange__Group__1__Impl_in_rule__IntRangeRange__Group__15189 = new BitSet(new long[]{0x0000000010000000L});
-    public static final BitSet FOLLOW_rule__IntRangeRange__Group__2_in_rule__IntRangeRange__Group__15192 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__IntRangeRange__StartAssignment_1_in_rule__IntRangeRange__Group__1__Impl5219 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__IntRangeRange__Group__2__Impl_in_rule__IntRangeRange__Group__25249 = new BitSet(new long[]{0x0000000000000080L});
-    public static final BitSet FOLLOW_rule__IntRangeRange__Group__3_in_rule__IntRangeRange__Group__25252 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_28_in_rule__IntRangeRange__Group__2__Impl5280 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__IntRangeRange__Group__3__Impl_in_rule__IntRangeRange__Group__35311 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__IntRangeRange__EndAssignment_3_in_rule__IntRangeRange__Group__3__Impl5338 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__ResourceReference__Group__0__Impl_in_rule__ResourceReference__Group__05376 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_rule__ResourceReference__Group__1_in_rule__ResourceReference__Group__05379 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_29_in_rule__ResourceReference__Group__0__Impl5407 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__ResourceReference__Group__1__Impl_in_rule__ResourceReference__Group__15438 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl5467 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl5479 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__0__Impl_in_rule__GlobalResourceRef__Group__05516 = new BitSet(new long[]{0x0000000020000020L});
-    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__1_in_rule__GlobalResourceRef__Group__05519 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__GlobalResourceRef__NameAssignment_0_in_rule__GlobalResourceRef__Group__0__Impl5546 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__1__Impl_in_rule__GlobalResourceRef__Group__15576 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__GlobalResourceRef__ResourcesAssignment_1_in_rule__GlobalResourceRef__Group__1__Impl5603 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group__0__Impl_in_rule__LocalResource__Group__05637 = new BitSet(new long[]{0x0000000040000000L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group__1_in_rule__LocalResource__Group__05640 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__PathAssignment_0_in_rule__LocalResource__Group__0__Impl5667 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group__1__Impl_in_rule__LocalResource__Group__15697 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group_1__0_in_rule__LocalResource__Group__1__Impl5724 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group_1__0__Impl_in_rule__LocalResource__Group_1__05758 = new BitSet(new long[]{0x0000000000000020L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group_1__1_in_rule__LocalResource__Group_1__05761 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_30_in_rule__LocalResource__Group_1__0__Impl5789 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__Group_1__1__Impl_in_rule__LocalResource__Group_1__15820 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__LocalResource__FilterAssignment_1_1_in_rule__LocalResource__Group_1__1__Impl5847 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__GlobalOutputRef__Group__0__Impl_in_rule__GlobalOutputRef__Group__05881 = new BitSet(new long[]{0x0000000020000020L});
-    public static final BitSet FOLLOW_rule__GlobalOutputRef__Group__1_in_rule__GlobalOutputRef__Group__05884 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__GlobalOutputRef__NameAssignment_0_in_rule__GlobalOutputRef__Group__0__Impl5911 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__GlobalOutputRef__Group__1__Impl_in_rule__GlobalOutputRef__Group__15941 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__GlobalOutputRef__OutputAssignment_1_in_rule__GlobalOutputRef__Group__1__Impl5968 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OutputReference__Group__0__Impl_in_rule__OutputReference__Group__06002 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_rule__OutputReference__Group__1_in_rule__OutputReference__Group__06005 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_29_in_rule__OutputReference__Group__0__Impl6033 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OutputReference__Group__1__Impl_in_rule__OutputReference__Group__16064 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__OutputReference__OutputRefAssignment_1_in_rule__OutputReference__Group__1__Impl6091 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__06125 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__06128 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__16186 = new BitSet(new long[]{0x0000000080000000L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__16189 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl6216 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__26246 = new BitSet(new long[]{0x0000000100000100L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__26249 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_31_in_rule__KIdentifier__Group__2__Impl6277 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__36308 = new BitSet(new long[]{0x0000000100000100L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__36311 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl6338 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__46369 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_32_in_rule__KIdentifier__Group__4__Impl6397 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__06438 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__06441 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl6468 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__16498 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl6525 = new BitSet(new long[]{0x0000000000000102L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__06560 = new BitSet(new long[]{0x0000000200000000L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__06563 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl6590 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__16620 = new BitSet(new long[]{0x00000000000001F0L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__16623 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_33_in_rule__PersistentEntry__Group__1__Impl6651 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__26682 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl6709 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__06745 = new BitSet(new long[]{0x0000000400000000L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__06748 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl6775 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__16804 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl6831 = new BitSet(new long[]{0x0000000400000002L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__06866 = new BitSet(new long[]{0x0000000000000100L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__06869 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_34_in_rule__QualifiedID__Group_1__0__Impl6897 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__16928 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl6955 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleGlobalResourceRef_in_rule__Grana__GlobalResourcesAssignment_0_16993 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleGlobalOutputRef_in_rule__Grana__GloobalOutputsAssignment_1_17024 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_35_in_rule__Grana__ExecuteAllAssignment_2_1_07060 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__Grana__ExecuteAssignment_2_1_17103 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleJob_in_rule__Grana__JobsAssignment_37138 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__RegularJob__NameAssignment_17169 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_36_in_rule__RegularJob__LayoutBeforeAnalysisAssignment_27205 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_37_in_rule__RegularJob__MeasureExecutionTimeAssignment_37249 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleResource_in_rule__RegularJob__ResourcesAssignment_57288 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleKIdentifier_in_rule__RegularJob__LayoutOptionsAssignment_77319 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAnalysis_in_rule__RegularJob__AnalysesAssignment_97350 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleOutput_in_rule__RegularJob__OutputAssignment_117381 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__RangeJob__NameAssignment_17412 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleResource_in_rule__RangeJob__ResourcesAssignment_37443 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleKIdentifier_in_rule__RangeJob__LayoutOptionsAssignment_57474 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAnalysis_in_rule__RangeJob__AnalysesAssignment_77505 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleQualifiedID_in_rule__RangeJob__RangeOptionAssignment_97536 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleRange_in_rule__RangeJob__RangeValuesAssignment_107567 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleAnalysis_in_rule__RangeJob__RangeAnalysisAssignment_127598 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_NATURAL_in_rule__RangeJob__RangeAnalysisComponentAssignment_13_17629 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleOutput_in_rule__RangeJob__OutputAssignment_157660 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleFloat_in_rule__FloatRange__ValuesAssignment_17691 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleFloat_in_rule__FloatRange__ValuesAssignment_2_17722 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_NATURAL_in_rule__IntRangeValues__ValuesAssignment_17753 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_NATURAL_in_rule__IntRangeValues__ValuesAssignment_2_17784 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_NATURAL_in_rule__IntRangeRange__StartAssignment_17815 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_NATURAL_in_rule__IntRangeRange__EndAssignment_37846 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__ResourceReference__ResourceRefsAssignment_17881 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__GlobalResourceRef__NameAssignment_07916 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleLocalResource_in_rule__GlobalResourceRef__ResourcesAssignment_17947 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__LocalResource__PathAssignment_07978 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__LocalResource__FilterAssignment_1_18009 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__GlobalOutputRef__NameAssignment_08040 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleLocalOutput_in_rule__GlobalOutputRef__OutputAssignment_18071 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__OutputReference__OutputRefAssignment_18106 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_STRING_in_rule__LocalOutput__PathAssignment8141 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleQualifiedID_in_rule__Analysis__NameAssignment8172 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_RULE_ID_in_rule__KIdentifier__IdAssignment_18203 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_08234 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_18265 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_08296 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_rulePropertyValue_in_rule__PersistentEntry__ValueAssignment_28327 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__IntRangeValues__Group_2__0_in_rule__IntRangeValues__Group__2__Impl4968 = new BitSet(new long[]{0x0000000002000002L});
+    public static final BitSet FOLLOW_rule__IntRangeValues__Group_2__0__Impl_in_rule__IntRangeValues__Group_2__05005 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_rule__IntRangeValues__Group_2__1_in_rule__IntRangeValues__Group_2__05008 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_25_in_rule__IntRangeValues__Group_2__0__Impl5036 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__IntRangeValues__Group_2__1__Impl_in_rule__IntRangeValues__Group_2__15067 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__IntRangeValues__ValuesAssignment_2_1_in_rule__IntRangeValues__Group_2__1__Impl5094 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__IntRangeRange__Group__0__Impl_in_rule__IntRangeRange__Group__05128 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_rule__IntRangeRange__Group__1_in_rule__IntRangeRange__Group__05131 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_27_in_rule__IntRangeRange__Group__0__Impl5159 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__IntRangeRange__Group__1__Impl_in_rule__IntRangeRange__Group__15190 = new BitSet(new long[]{0x0000000010000000L});
+    public static final BitSet FOLLOW_rule__IntRangeRange__Group__2_in_rule__IntRangeRange__Group__15193 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__IntRangeRange__StartAssignment_1_in_rule__IntRangeRange__Group__1__Impl5220 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__IntRangeRange__Group__2__Impl_in_rule__IntRangeRange__Group__25250 = new BitSet(new long[]{0x0000000000000080L});
+    public static final BitSet FOLLOW_rule__IntRangeRange__Group__3_in_rule__IntRangeRange__Group__25253 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_28_in_rule__IntRangeRange__Group__2__Impl5281 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__IntRangeRange__Group__3__Impl_in_rule__IntRangeRange__Group__35312 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__IntRangeRange__EndAssignment_3_in_rule__IntRangeRange__Group__3__Impl5339 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__ResourceReference__Group__0__Impl_in_rule__ResourceReference__Group__05377 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_rule__ResourceReference__Group__1_in_rule__ResourceReference__Group__05380 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_29_in_rule__ResourceReference__Group__0__Impl5408 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__ResourceReference__Group__1__Impl_in_rule__ResourceReference__Group__15439 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl5468 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_rule__ResourceReference__ResourceRefsAssignment_1_in_rule__ResourceReference__Group__1__Impl5480 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__0__Impl_in_rule__GlobalResourceRef__Group__05517 = new BitSet(new long[]{0x0000000020000020L});
+    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__1_in_rule__GlobalResourceRef__Group__05520 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__GlobalResourceRef__NameAssignment_0_in_rule__GlobalResourceRef__Group__0__Impl5547 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__GlobalResourceRef__Group__1__Impl_in_rule__GlobalResourceRef__Group__15577 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__GlobalResourceRef__ResourcesAssignment_1_in_rule__GlobalResourceRef__Group__1__Impl5604 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group__0__Impl_in_rule__LocalResource__Group__05638 = new BitSet(new long[]{0x0000000040000000L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group__1_in_rule__LocalResource__Group__05641 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__PathAssignment_0_in_rule__LocalResource__Group__0__Impl5668 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group__1__Impl_in_rule__LocalResource__Group__15698 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group_1__0_in_rule__LocalResource__Group__1__Impl5725 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group_1__0__Impl_in_rule__LocalResource__Group_1__05759 = new BitSet(new long[]{0x0000000000000020L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group_1__1_in_rule__LocalResource__Group_1__05762 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_30_in_rule__LocalResource__Group_1__0__Impl5790 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__Group_1__1__Impl_in_rule__LocalResource__Group_1__15821 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__LocalResource__FilterAssignment_1_1_in_rule__LocalResource__Group_1__1__Impl5848 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__GlobalOutputRef__Group__0__Impl_in_rule__GlobalOutputRef__Group__05882 = new BitSet(new long[]{0x0000000020000020L});
+    public static final BitSet FOLLOW_rule__GlobalOutputRef__Group__1_in_rule__GlobalOutputRef__Group__05885 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__GlobalOutputRef__NameAssignment_0_in_rule__GlobalOutputRef__Group__0__Impl5912 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__GlobalOutputRef__Group__1__Impl_in_rule__GlobalOutputRef__Group__15942 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__GlobalOutputRef__OutputAssignment_1_in_rule__GlobalOutputRef__Group__1__Impl5969 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OutputReference__Group__0__Impl_in_rule__OutputReference__Group__06003 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_rule__OutputReference__Group__1_in_rule__OutputReference__Group__06006 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_29_in_rule__OutputReference__Group__0__Impl6034 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OutputReference__Group__1__Impl_in_rule__OutputReference__Group__16065 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__OutputReference__OutputRefAssignment_1_in_rule__OutputReference__Group__1__Impl6092 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__0__Impl_in_rule__KIdentifier__Group__06126 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__1_in_rule__KIdentifier__Group__06129 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__1__Impl_in_rule__KIdentifier__Group__16187 = new BitSet(new long[]{0x0000000080000000L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__2_in_rule__KIdentifier__Group__16190 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__IdAssignment_1_in_rule__KIdentifier__Group__1__Impl6217 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__2__Impl_in_rule__KIdentifier__Group__26247 = new BitSet(new long[]{0x0000000100000100L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__3_in_rule__KIdentifier__Group__26250 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_31_in_rule__KIdentifier__Group__2__Impl6278 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__3__Impl_in_rule__KIdentifier__Group__36309 = new BitSet(new long[]{0x0000000100000100L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__4_in_rule__KIdentifier__Group__36312 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0_in_rule__KIdentifier__Group__3__Impl6339 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group__4__Impl_in_rule__KIdentifier__Group__46370 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_32_in_rule__KIdentifier__Group__4__Impl6398 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__0__Impl_in_rule__KIdentifier__Group_3__06439 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1_in_rule__KIdentifier__Group_3__06442 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_0_in_rule__KIdentifier__Group_3__0__Impl6469 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__Group_3__1__Impl_in_rule__KIdentifier__Group_3__16499 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__KIdentifier__PersistentEntriesAssignment_3_1_in_rule__KIdentifier__Group_3__1__Impl6526 = new BitSet(new long[]{0x0000000000000102L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__Group__0__Impl_in_rule__PersistentEntry__Group__06561 = new BitSet(new long[]{0x0000000200000000L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__Group__1_in_rule__PersistentEntry__Group__06564 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__KeyAssignment_0_in_rule__PersistentEntry__Group__0__Impl6591 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__Group__1__Impl_in_rule__PersistentEntry__Group__16621 = new BitSet(new long[]{0x00000000000001F0L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__Group__2_in_rule__PersistentEntry__Group__16624 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_33_in_rule__PersistentEntry__Group__1__Impl6652 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__Group__2__Impl_in_rule__PersistentEntry__Group__26683 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__PersistentEntry__ValueAssignment_2_in_rule__PersistentEntry__Group__2__Impl6710 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group__0__Impl_in_rule__QualifiedID__Group__06746 = new BitSet(new long[]{0x0000000400000000L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group__1_in_rule__QualifiedID__Group__06749 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group__0__Impl6776 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group__1__Impl_in_rule__QualifiedID__Group__16805 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0_in_rule__QualifiedID__Group__1__Impl6832 = new BitSet(new long[]{0x0000000400000002L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__0__Impl_in_rule__QualifiedID__Group_1__06867 = new BitSet(new long[]{0x0000000000000100L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1_in_rule__QualifiedID__Group_1__06870 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_34_in_rule__QualifiedID__Group_1__0__Impl6898 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rule__QualifiedID__Group_1__1__Impl_in_rule__QualifiedID__Group_1__16929 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__QualifiedID__Group_1__1__Impl6956 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleGlobalResourceRef_in_rule__Grana__GlobalResourcesAssignment_0_16994 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleGlobalOutputRef_in_rule__Grana__GloobalOutputsAssignment_1_17025 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_35_in_rule__Grana__ExecuteAllAssignment_2_1_07061 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__Grana__ExecuteAssignment_2_1_17104 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleJob_in_rule__Grana__JobsAssignment_37139 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__RegularJob__NameAssignment_17170 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_36_in_rule__RegularJob__LayoutBeforeAnalysisAssignment_27206 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_37_in_rule__RegularJob__MeasureExecutionTimeAssignment_37250 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleResource_in_rule__RegularJob__ResourcesAssignment_57289 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleKIdentifier_in_rule__RegularJob__LayoutOptionsAssignment_77320 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAnalysis_in_rule__RegularJob__AnalysesAssignment_97351 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleOutput_in_rule__RegularJob__OutputAssignment_117382 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__RangeJob__NameAssignment_17413 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleResource_in_rule__RangeJob__ResourcesAssignment_37444 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleKIdentifier_in_rule__RangeJob__LayoutOptionsAssignment_57475 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAnalysis_in_rule__RangeJob__AnalysesAssignment_77506 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleQualifiedID_in_rule__RangeJob__RangeOptionAssignment_97537 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleRange_in_rule__RangeJob__RangeValuesAssignment_107568 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleAnalysis_in_rule__RangeJob__RangeAnalysisAssignment_127599 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_NATURAL_in_rule__RangeJob__RangeAnalysisComponentAssignment_13_17630 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleOutput_in_rule__RangeJob__OutputAssignment_157661 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleFloat_in_rule__FloatRange__ValuesAssignment_17692 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleFloat_in_rule__FloatRange__ValuesAssignment_2_17723 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_NATURAL_in_rule__IntRangeValues__ValuesAssignment_17754 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_NATURAL_in_rule__IntRangeValues__ValuesAssignment_2_17785 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_NATURAL_in_rule__IntRangeRange__StartAssignment_17816 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_NATURAL_in_rule__IntRangeRange__EndAssignment_37847 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__ResourceReference__ResourceRefsAssignment_17882 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__GlobalResourceRef__NameAssignment_07917 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleLocalResource_in_rule__GlobalResourceRef__ResourcesAssignment_17948 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__LocalResource__PathAssignment_07979 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__LocalResource__FilterAssignment_1_18010 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__GlobalOutputRef__NameAssignment_08041 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleLocalOutput_in_rule__GlobalOutputRef__OutputAssignment_18072 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__OutputReference__OutputRefAssignment_18107 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_STRING_in_rule__LocalOutput__PathAssignment8142 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleQualifiedID_in_rule__Analysis__NameAssignment8173 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_RULE_ID_in_rule__KIdentifier__IdAssignment_18204 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_08235 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePersistentEntry_in_rule__KIdentifier__PersistentEntriesAssignment_3_18266 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ruleQualifiedID_in_rule__PersistentEntry__KeyAssignment_08297 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_rulePropertyValue_in_rule__PersistentEntry__ValueAssignment_28328 = new BitSet(new long[]{0x0000000000000002L});
 
 }

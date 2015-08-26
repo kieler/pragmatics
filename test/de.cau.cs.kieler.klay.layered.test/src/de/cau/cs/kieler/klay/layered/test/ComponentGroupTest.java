@@ -13,9 +13,25 @@ a * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  */
 package de.cau.cs.kieler.klay.layered.test;
 
-import java.util.Set;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NONE;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_SOUTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_SOUTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_WEST;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import static org.junit.Assert.*; // SUPPRESS CHECKSTYLE AvoidStarImport
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -37,38 +53,38 @@ public class ComponentGroupTest {
     public void testValidConstraints() {
         // Add two N, E, W, S, and C components each to a single compound group
         ComponentGroup group = new ComponentGroup();
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_N)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_N)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_S)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_S)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_W)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_W)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_E)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_E)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_C)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_C)));
+        assertTrue(group.add(generateGraph(SIDES_NORTH)));
+        assertTrue(group.add(generateGraph(SIDES_NORTH)));
+        assertTrue(group.add(generateGraph(SIDES_SOUTH)));
+        assertTrue(group.add(generateGraph(SIDES_SOUTH)));
+        assertTrue(group.add(generateGraph(SIDES_WEST)));
+        assertTrue(group.add(generateGraph(SIDES_WEST)));
+        assertTrue(group.add(generateGraph(SIDES_EAST)));
+        assertTrue(group.add(generateGraph(SIDES_EAST)));
+        assertTrue(group.add(generateGraph(SIDES_NONE)));
+        assertTrue(group.add(generateGraph(SIDES_NONE)));
         
         // Add a horizontal and two E, W, and C components each to a single compound group
         group = new ComponentGroup();
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_WE)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_WE)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_W)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_W)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_E)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_E)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_C)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_C)));
+        assertTrue(group.add(generateGraph(SIDES_EAST_WEST)));
+        assertTrue(group.add(generateGraph(SIDES_EAST_WEST)));
+        assertTrue(group.add(generateGraph(SIDES_WEST)));
+        assertTrue(group.add(generateGraph(SIDES_WEST)));
+        assertTrue(group.add(generateGraph(SIDES_EAST)));
+        assertTrue(group.add(generateGraph(SIDES_EAST)));
+        assertTrue(group.add(generateGraph(SIDES_NONE)));
+        assertTrue(group.add(generateGraph(SIDES_NONE)));
         
         // Add a vertical and two N, S, and C components each to a single compound group
         group = new ComponentGroup();
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_NS)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_NS)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_N)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_N)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_S)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_S)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_C)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_C)));
+        assertTrue(group.add(generateGraph(SIDES_NORTH_SOUTH)));
+        assertTrue(group.add(generateGraph(SIDES_NORTH_SOUTH)));
+        assertTrue(group.add(generateGraph(SIDES_NORTH)));
+        assertTrue(group.add(generateGraph(SIDES_NORTH)));
+        assertTrue(group.add(generateGraph(SIDES_SOUTH)));
+        assertTrue(group.add(generateGraph(SIDES_SOUTH)));
+        assertTrue(group.add(generateGraph(SIDES_NONE)));
+        assertTrue(group.add(generateGraph(SIDES_NONE)));
     }
     
     /**
@@ -78,28 +94,28 @@ public class ComponentGroupTest {
     public void testInvalidConstraints() {
         // Add a horizontal and a vertical component to a single component group
         ComponentGroup group = new ComponentGroup();
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_WE)));
-        assertFalse(group.add(generateGraph(ComponentGroup.CONN_NS)));
-        assertFalse(group.add(generateGraph(ComponentGroup.CONN_WNS)));
-        assertFalse(group.add(generateGraph(ComponentGroup.CONN_ENS)));
+        assertTrue(group.add(generateGraph(SIDES_EAST_WEST)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_SOUTH)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_SOUTH_WEST)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_EAST_SOUTH)));
         
         // Do the reverse
         group = new ComponentGroup();
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_NS)));
-        assertFalse(group.add(generateGraph(ComponentGroup.CONN_WE)));
-        assertFalse(group.add(generateGraph(ComponentGroup.CONN_NWE)));
-        assertFalse(group.add(generateGraph(ComponentGroup.CONN_SWE)));
+        assertTrue(group.add(generateGraph(SIDES_NORTH_SOUTH)));
+        assertFalse(group.add(generateGraph(SIDES_EAST_WEST)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_EAST_WEST)));
+        assertFalse(group.add(generateGraph(SIDES_EAST_SOUTH_WEST)));
         
         // Add graphs to each corner
         group = new ComponentGroup();
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_NW)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_NE)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_SW)));
-        assertTrue(group.add(generateGraph(ComponentGroup.CONN_SE)));
-        assertFalse(group.add(generateGraph(ComponentGroup.CONN_ENS)));
-        assertFalse(group.add(generateGraph(ComponentGroup.CONN_NWE)));
-        assertFalse(group.add(generateGraph(ComponentGroup.CONN_SWE)));
-        assertFalse(group.add(generateGraph(ComponentGroup.CONN_WNS)));
+        assertTrue(group.add(generateGraph(SIDES_NORTH_WEST)));
+        assertTrue(group.add(generateGraph(SIDES_NORTH_EAST)));
+        assertTrue(group.add(generateGraph(SIDES_SOUTH_WEST)));
+        assertTrue(group.add(generateGraph(SIDES_EAST_SOUTH)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_EAST_SOUTH)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_EAST_WEST)));
+        assertFalse(group.add(generateGraph(SIDES_EAST_SOUTH_WEST)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_SOUTH_WEST)));
     }
     
     

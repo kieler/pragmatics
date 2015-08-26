@@ -143,17 +143,17 @@ public class SpacingTest extends AbstractLayeredProcessorTest {
                         }
                         
                         spacingToCheck = -1;
-                        if (u.getNodeType() == NodeType.NORMAL && v.getNodeType() == NodeType.NORMAL) {
+                        if (u.getType() == NodeType.NORMAL && v.getType() == NodeType.NORMAL) {
                             spacingToCheck = verticalNodeSpacing;
-                        } else if (u.getNodeType() == NodeType.LONG_EDGE && v.getNodeType() == NodeType.LONG_EDGE) {
+                        } else if (u.getType() == NodeType.LONG_EDGE && v.getType() == NodeType.LONG_EDGE) {
                             spacingToCheck = verticalEdgeEdgeSpacing;
-                        } else if ((u.getNodeType() == NodeType.LONG_EDGE && v.getNodeType() == NodeType.NORMAL)
-                                || (u.getNodeType() == NodeType.NORMAL && v.getNodeType() == NodeType.LONG_EDGE)) {
+                        } else if ((u.getType() == NodeType.LONG_EDGE && v.getType() == NodeType.NORMAL)
+                                || (u.getType() == NodeType.NORMAL && v.getType() == NodeType.LONG_EDGE)) {
                             spacingToCheck = verticalEdgeNodeSpacing;
                         } else {
                             throw new IllegalStateException(
                                     "Spacing test does not support to validate input model "
-                                            + graphObject.getFile() + "\n Node types were: " + u.getNodeType() + " " + v.getNodeType() );
+                                            + graphObject.getFile() + "\n Node types were: " + u.getType() + " " + v.getType() );
                         }
                         
                         // if the overlap horizontally ...

@@ -168,7 +168,7 @@ public final class Spacings {
      * @return the spacing to be preserved between {@code n1} and {@code n2}
      */
     public float getHorizontalSpacing(final LNode n1, final LNode n2) {
-        return getHorizontalSpacing(n1.getNodeType(), n2.getNodeType());
+        return getHorizontalSpacing(n1.getType(), n2.getType());
     }
 
     /**
