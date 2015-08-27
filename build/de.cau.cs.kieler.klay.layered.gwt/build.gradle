@@ -28,17 +28,52 @@ task npmInstall(type: Exec) {
 task unzipKlayJs(type: Copy, dependsOn: plainjslinker) {
     from zipTree('target/klay_layered_js_plainjslinker_nightly_latest.zip')
     include 'klay.js'
-    into 'test/js'
+    into 'test/js/src'
 }
 
-task qunit(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
+task testBrowser(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
     workingDir 'test/js'
-    executable 'grunt'
+    executable 'npm'
+    args = ['test']
 }
+
+task testNodejs(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
+    workingDir 'test/js'
+    executable 'node'
+    args = ['src/nodejs/run_tests.js']
+}
+
+task testWebworker(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
+    workingDir 'test/js'
+    executable 'node'
+    args = ['src/webworker/run_tests.js']
+}
+
+task testJs(dependsOn: [testBrowser, testNodejs, testWebworker]) {}
 
 task cleanJs(type: Delete) {
     delete 'build'
     delete 'test/js/node_modules'
     delete 'test/js/build'
-    delete 'test/js/klay.js'
+    delete 'test/js/src/klay.js'
+}
+
+task runSuperDevMode(type:Exec, dependsOn: javac) {
+    def gwt = System.getenv('GWT_SDK')
+    // TODO run check only when task is executed
+    // if (!gwt) {
+    //     throw new InvalidUserDataException("No GWT_SDK was specified!")
+    // }
+    workingDir '.'
+    executable 'java'
+    args = [
+        "-cp",
+        "$gwt/gwt-dev.jar:$gwt/*:war/WEB-INF/lib/*:src:src-external",
+        "com.google.gwt.dev.DevMode",
+        "-war",
+        "war",
+        "-startupUrl",
+        "KlayJsExample.html",
+        "de.cau.cs.kieler.klay.gwt.KlayGWT"
+    ]
 }

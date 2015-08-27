@@ -4,7 +4,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     qunit: {
-      all: ['klay_test.html']
+      plainJS: ['src/browser/klay_test.html']
     },
     qunit_junit: {
       options: {
