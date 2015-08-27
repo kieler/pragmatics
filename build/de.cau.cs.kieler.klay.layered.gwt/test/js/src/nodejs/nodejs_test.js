@@ -10,7 +10,6 @@ exports.testSuccessfulLayout = function(test) {
       spacing: 50
     },
     success: function(result){
-      console.log(result);
       test.ok(true, 'Valid graph successful layouted.');
     },
     error: function(result){
