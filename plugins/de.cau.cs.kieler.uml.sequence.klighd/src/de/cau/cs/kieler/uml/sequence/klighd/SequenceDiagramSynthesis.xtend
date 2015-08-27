@@ -519,13 +519,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      * @param pl the polyline to add the decorator to.
      * @return the given polyline.
      */
-    // TODO Pfeilspitze zu lang
     def private KRendering addAssociationArrowDecorator(KPolyline pl) {
         pl.addPolyline(2) => [
             it.points += createKPosition(LEFT, 0, 0, TOP, 0, 0)
             it.points += createKPosition(RIGHT, 0, 0, TOP, 0, 0.5f)
             it.points += createKPosition(LEFT, 0, 0, BOTTOM, 0, 0)
-            it.setDecoratorPlacementData(12, 12, -6, 1.0f, true)
+            it.setDecoratorPlacementData(10, 12, -6, 1.0f, true)
         // it.foreground = modelOptions.getProperty(OPTION_EDGE_COLOR).color
         ]
     }
