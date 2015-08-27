@@ -4,8 +4,6 @@
  * Available tasks
  * ===============
  * ./gradlew tasks
- * Relevant tasks have descriptions beginning with 'KIELER'.
- * Test tasks' descriptions begin with 'KIELER TEST'.
  * 
  * Extra parameters via properties-file and/or cmd-line parameter
  * ==============================================================
