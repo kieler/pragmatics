@@ -88,7 +88,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
      */
     private int[] remainingOutGoing;
     /**
-     * Array of in-degrees for every nodeminWidthNP, access with inDegree[node.id].
+     * Array of in-degrees for every node, access with inDegree[node.id].
      */
     private int[] inDegree;
     /** Selected node to be placed. */
@@ -180,7 +180,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
                 updateOutGoing(currentLayer);
                 currentLayer = new Layer(currentGraph);
                 currentGraph.getLayers().add(currentLayer);
-                // union of z and u in z
+                // union of  alreadyPlacedInOtherLayers and alreadyPlacedNodes
                 alreadyPlacedInOtherLayers.addAll(alreadyPlacedNodes);
                 alreadyPlacedNodes.clear();
                 // change width
