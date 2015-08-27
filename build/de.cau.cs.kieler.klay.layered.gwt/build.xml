@@ -139,7 +139,6 @@
 		<fileset dir="${gwt.sdk}" includes="gwt-dev*.jar" />
 		<!-- Add any additional non-server libs (such as JUnit) -->
 		<fileset dir="war/WEB-INF/lib" includes="**/*.jar" />
-		<fileset dir="war/WEB-INF/classes" includes="**/*.class" />
 	</path>
 
 	<target name="libs" description="Copy libs to WEB-INF/lib">
@@ -201,7 +200,7 @@
 	
 	<!-- TARGET Test -->
 	<target name="test" depends="compileTest">
-		<junit haltonfailure="no" failureproperty="test.failed">
+		<junit haltonfailure="no" failureproperty="test.failed" fork="true">
 			<classpath>
 				<path refid="project.class.path" />
 				<pathelement location="${outputFolder}/test" />
