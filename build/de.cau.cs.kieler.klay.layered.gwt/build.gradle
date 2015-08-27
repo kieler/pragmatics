@@ -1,3 +1,31 @@
+/**
+ * Gradle script for building Klay JavaScript version.
+ * 
+ * Available tasks
+ * ===============
+ * ./gradlew tasks
+ * Relevant tasks have descriptions beginning with 'KIELER'.
+ * Test tasks' descriptions begin with 'KIELER TEST'.
+ * 
+ * Extra parameters via properties-file and/or cmd-line parameter
+ * ==============================================================
+ * ~/.gradle/gradle.properties:
+ * ----------------------------
+ * org.gradle.daemon=false
+ * 
+ * cli:
+ * ----
+ * ./gradlew -Dorg.gradle.daemon=false -D...=... <tasks>
+ * 
+ * Build complete nightlies
+ * ========================
+ * ./gradlew clean buildall
+ * 
+ * Run all tests
+ * =============
+ * ./gradlew testJs
+ */
+
 repositories {
     mavenCentral()
 }
