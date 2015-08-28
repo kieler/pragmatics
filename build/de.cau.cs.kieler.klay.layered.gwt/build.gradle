@@ -1,24 +1,24 @@
 /**
  * Gradle script for building Klay JavaScript version.
- * 
+ *
  * Available tasks
  * ===============
  * ./gradlew tasks
- * 
+ *
  * Extra parameters via properties-file and/or cmd-line parameter
  * ==============================================================
  * ~/.gradle/gradle.properties:
  * ----------------------------
  * org.gradle.daemon=false
- * 
+ *
  * cli:
  * ----
  * ./gradlew -Dorg.gradle.daemon=false -D...=... <tasks>
- * 
+ *
  * Build complete nightlies
  * ========================
  * ./gradlew clean buildall
- * 
+ *
  * Run all tests
  * =============
  * ./gradlew testJs
@@ -86,15 +86,17 @@ task cleanJs(type: Delete) {
 
 task runSuperDevMode(type:Exec, dependsOn: javac) {
     def gwt = System.getenv('GWT_SDK')
-    // TODO run check only when task is executed
-    // if (!gwt) {
-    //     throw new InvalidUserDataException("No GWT_SDK was specified!")
-    // }
+
     workingDir '.'
     executable 'java'
     args = [
         "-cp",
-        "$gwt/gwt-dev.jar:$gwt/*:war/WEB-INF/lib/*:src:src-external",
+        [ // windows and unix required different path separators
+         "$gwt/gwt-dev.jar",
+         "$gwt/*",
+         "war/WEB-INF/lib/*",
+         "src",
+         "src-external"].join(File.pathSeparator),
         "com.google.gwt.dev.DevMode",
         "-war",
         "war",
@@ -102,4 +104,11 @@ task runSuperDevMode(type:Exec, dependsOn: javac) {
         "KlayJsExample.html",
         "de.cau.cs.kieler.klay.gwt.KlayGWT"
     ]
+
+    doFirst {
+        // run check only when task is actually executed
+        if (!gwt) {
+            throw new InvalidUserDataException("No GWT_SDK was specified!")
+        }
+    }
 }
