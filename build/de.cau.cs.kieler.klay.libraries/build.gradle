@@ -1,12 +1,12 @@
 /**
  * Gradle script for building and publishing Klay as bundled jar with and without dependencies.
- * 
+ *
  * Available tasks
  * ===============
  * ./gradlew tasks
  * Relevant tasks have descriptions beginning with 'KIELER'.
  * Test tasks' descriptions begin with 'KIELER TEST'.
- * 
+ *
  * Extra parameters via properties-file and/or cmd-line parameter
  * ==============================================================
  * ~/.gradle/gradle.properties:
@@ -17,19 +17,19 @@
  * signing.secretKeyRingFile=/home/<user>/.gnupg/secring.gpg
  * sonatypeUsername=<username>
  * sonatypePassword=<password>
- * 
+ *
  * cli:
  * ----
  * ./gradlew -Dorg.gradle.daemon=false -D...=... <tasks>
- * 
+ *
  * Specifying release versions
  * ===========================
  * ./gradlew -Pv=<version> ... uploadArchives
- * 
+ *
  * Build complete nightlies
  * ========================
  * ./gradlew clean fatKlay fatKlayAll copyKlayPlugins copyFormatsPlugins zipKlayPlugins zipFormatsPlugins
- * 
+ *
  * Run all tests
  * =============
  * ./gradlew testFatKlay testFatKlayAll testKlay testJson
@@ -63,7 +63,9 @@ ext {
         // short name on mvn central
         'com.google.guava:com.google.guava:[0,)'
     ]
-    formatsDeps = ['de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)']
+    formatsDeps = [
+        'de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)'
+    ]
     formatsExtraDeps = [
         // short names on mvn central
         'org.eclipse.equinox:org.eclipse.equinox.app:[0,)',
@@ -71,7 +73,9 @@ ext {
         'org.eclipse.equinox:org.eclipse.equinox.registry:[0,)',
         'org.eclipse:org.eclipse.osgi:[0,)'
     ]
-    jsonDeps = ['de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats.json:[0,)']
+    jsonDeps = [
+        'de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats.json:[0,)'
+    ]
     jsonExtraDeps = [
         'org.eclipse.xtend:org.eclipse.xtend.lib:[0,)',
         'org.eclipse.xtext:org.eclipse.xtext.xbase.lib:[0,)'
@@ -128,6 +132,7 @@ def theExcludes = [
     'model/**',
     'schema/**'
 ]
+
 task fatKlay(type: Jar) {
     description = 'KIELER: Bundles the core plugins and the three layouters into one jar.'
     destinationDir file("$buildDir/$libsA")

@@ -1,6 +1,6 @@
 fatJar
 ======
-Use one of these if you are using our  KGraph format and want to include a single jar.
+Use one of these if you are using our KGraph format and want to include a single jar.
 
 klay-nightly-<timestamp>.jar
     Bundle containing layouters klay.force, klay.layered and klay.tree with KIELER dependencies, but no EMF or Google Guava.
@@ -18,7 +18,7 @@ Zipped libs folder for convenient download.
 
 libsFormats
 ===========
-Layouters klay.force, klay.layered, klay.tree, and importers like JSON with all dependencies as separate jars.
+Layouters klay.force, klay.layered, klay.tree, and our JSON importer with all dependencies as separate jars.
 If you are using JSON instead of KGraph as input format, use these.
 
 libsFormats.zip
