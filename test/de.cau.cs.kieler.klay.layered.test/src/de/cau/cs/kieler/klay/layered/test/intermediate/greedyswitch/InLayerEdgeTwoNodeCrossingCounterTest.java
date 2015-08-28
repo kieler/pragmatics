@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.InLayerEdgeTwoNodeCrossingCounter;
 
@@ -29,7 +30,7 @@ import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.InLayerEdgeTwoNod
  * @author alan
  *
  */
-public class InLayerEdgeTwoNodeCrossingCounterTest {
+public class InLayerEdgeTwoNodeCrossingCounterTest extends TestGraphCreator {
     private InLayerEdgeTestGraphCreator creator;
     private InLayerEdgeTwoNodeCrossingCounter counter;
     private int lowerUpperCrossings;
@@ -300,7 +301,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
     }
 
     @Test
-    public void multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder() {
+    public void inBetweenLayerEdgesIntoNodeWithNoFixedPortOrder() {
         creator.multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
@@ -310,7 +311,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
     }
 
     @Test
-    public void multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings() {
+    public void inBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings() {
         creator.multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
@@ -363,6 +364,27 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
         countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
         assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
+
+    /**
+     * <pre>
+     * *------
+     * *---\ |
+     * ___ | |
+     * | |--/
+     * |_|
+     * </pre>
+     */
+    @Test
+    public void multipleEdgesIntoOnePort_ShouldNotCauseCrossing() {
+        LNode[] nodes = addNodesToLayer(3, makeLayer(graph));
+        addInLayerEdge(nodes[0], nodes[2], PortSide.EAST);
+        addInLayerEdge(nodes[1], nodes[2], PortSide.EAST);
+
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
     }
 

@@ -42,7 +42,7 @@ public class TestGraphCreator {
     private int portId = 0;
     private int nodeId = 0;
     /** the graph. */
-    private final LGraph graph;
+    protected final LGraph graph;
 
     /**
      * @return the graph
@@ -1029,6 +1029,10 @@ public class TestGraphCreator {
     }
 
     protected Layer makeLayer() {
+        return makeLayer(graph);
+    }
+
+    protected Layer makeLayer(final LGraph graph) {
         List<Layer> layers = graph.getLayers();
         Layer layer = new Layer(graph);
         layers.add(layer);
