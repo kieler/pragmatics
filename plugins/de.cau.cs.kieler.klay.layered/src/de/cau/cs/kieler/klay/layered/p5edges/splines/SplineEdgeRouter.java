@@ -259,7 +259,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                 if (edge.isStraight) {
                     calculateNUBSBendPointStraight(edge, xpos);
                 } else {
-                    calculateNUBSBendPoints(edge, xpos);
+                    calculateNUBSBendPoints(edge, xpos, rightLayersPosition);
                 }
             }
 
@@ -1022,12 +1022,17 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      * through the graph. All NubSpline control-points are taken from the edges and the final bezier 
      * bend-points are calculated and added the the last edge part.
      * 
-     * @param hyperEdge The hyper edge, those edges shall be processed.
-     * @param startPos The start x position of current between layer gap.
+     * @param hyperEdge
+     *            The hyper edge, those edges shall be processed.
+     * @param startXPos
+     *            The start x position of current between layer gap.
+     * @param endXPos
+     *            The end x position of current between layer gap.
      */
-    private void calculateNUBSBendPoints(final SplineHyperEdge hyperEdge, final double startPos) {
+    private void calculateNUBSBendPoints(final SplineHyperEdge hyperEdge, final double startXPos,
+            final double endXPos) {
         // the center position is the same for all edges
-        final double centerXPos = startPos + (hyperEdge.rank + 1) * edgeSpacing;
+        final double centerXPos = startXPos + (hyperEdge.rank + 1) * edgeSpacing;
         final double centerYPos = hyperEdge.centerYPos;
         final KVector center = new KVector(centerXPos, centerYPos);
         
@@ -1037,6 +1042,11 @@ public final class SplineEdgeRouter implements ILayoutPhase {
             final KVector targetVerticalCP = 
                     new KVector(centerXPos, edge.getTarget().getAbsoluteAnchor().y);
 
+            // Add a bend point for the horizontal inner-layer segment in the left layer
+            edge.getBendPoints().add(
+                    new KVector(startXPos - NODE_TO_VERTICAL_SEGMENT_GAP, edge.getSource()
+                            .getAbsoluteAnchor().y));
+
             // add the NubSpline control points to the edge, but in revered order!
             if (hyperEdge.edges.size() == 1) {
                 // Special handling of single edges. They don't need a center CP.
@@ -1044,6 +1054,9 @@ public final class SplineEdgeRouter implements ILayoutPhase {
             } else {
                 edge.getBendPoints().addAll(sourceVerticalCP, center, targetVerticalCP);
             }
+
+            //Add a bend point for the horizontal inner-layer segment for the right layer
+            edge.getBendPoints().add(new KVector(endXPos, edge.getTarget().getAbsoluteAnchor().y));
         }
     }
 
