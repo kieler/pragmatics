@@ -1,15 +1,14 @@
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * http://rtsys.informatik.uni-kiel.de/kieler
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
@@ -20,170 +19,137 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-//TODO use /** */ remove this.
 /**
+ * Represents a group of {@link CNode}s whose relative distances to each other are preserved.
+ * CGroups are used to ensure that vertical edge segments, that are connected to north/south ports,
+ * are kept at the position of the port.
+ * 
+ * @see OneDimensionalCompactor
+ * 
  * @author dag
- *
  */
-final class CGroup implements ICompactable {
-    // FIXME anything that is altered here has to be reset before compactRight!
-    private double startX;
+public final class CGroup {
+    /** root position of the {@link CGroup}. */
+    private double startPos;
+    // Variables are public for convenience reasons since this class is used internally only.
+    // SUPPRESS CHECKSTYLE NEXT 6 VisibilityModifier
+    /** grouped {@link CNode}s. */
     public Set<CNode> cNodes;
-    // constraints pointing to CNodes not within the group
-    //private Set<CNode> outgoingConstraints;
+    /** constraints pointing to CNodes not within the {@link CGroup}. */
     public Set<CNode> incomingConstraints;
+    /** number of constraints originating from within the {@link CGroup}. */
     public int outDegree;
 
+    /**
+     * The constructor for a {@link CGroup} receives a {@link CNode} since a {@link CGroup} has to
+     * contain at least one.
+     * @param node the {@link CNode} to add
+     */
+    public CGroup(final CNode node) {
+        cNodes = Sets.newLinkedHashSet();
+        incomingConstraints = Sets.newLinkedHashSet();
+        outDegree = 0;
+        addCNode(node);
+    }
+    
+    /**
+     * Checks whether all outgoing constraints of the {@link CGroup} are processed.
+     * 
+     * @return {@code true} if the {@link CNode}s inside this group are ready to be compacted.
+     */
     public boolean isInnerCompactable() {
         return outDegree == 0;
     }
 
+    /**
+     * Compacts the grouped {@link CNode}s while maintaining their relative positions.
+     */
     public void compactInnerCNodes() {
+
+        // adding CNodes that are initially sinks to startNodes
         Queue<CNode> startNodes = Lists.newLinkedList();
         for (CNode node : cNodes) {
+            // a CNode is a sink if all outgoing constraints are processed
             if (node.outDegree == 0) {
                 startNodes.add(node);
+
+                // CNodes can be locked in place to avoid pulling clusters apart
                 if (node.reposition) {
-                    node.startX = 0;
+                    node.startPos = 0;
                 } else {
-                    if (node.isNode) {
-                        node.startX = node.lNode.getPosition().x;
-                    } else {
-                        node.startX = node.bends.getFirst().x;
-                    }
+                    node.startPos = node.getPosition();
                 }
             }
         }
 
+        // processing startNodes and deriving start positions of incoming CNodes from constraints
         while (!startNodes.isEmpty()) {
             CNode node = startNodes.poll();
             for (CNode inc : node.incoming) {
-                if (!this.incomingConstraints.contains(inc)) {
-                    inc.updateStartX(node);
+                // process constraints from within the CGroup only
+                if (!incomingConstraints.contains(inc)) {
+                    inc.updateStartPos(node);
+
+                    // adding new sinks to the queue
                     if (inc.outDegree == 0) {
                         startNodes.add(inc);
                     }
                 }
             }
         }
-        
-        CNode rightmostCNode = cNodes.iterator().next();
+
+        // finding the required root position for the CGroup that satisfies the constraints of each
+        // member
+        CNode firstCNode = cNodes.iterator().next();
+        startPos = firstCNode.startPos - firstCNode.cGroupOffset;
         for (CNode node : cNodes) {
-            if (node.startX - node.cGroupOffset > rightmostCNode.startX - rightmostCNode.cGroupOffset) {
-                rightmostCNode = node;
-            }
-            //better?? this.startX = Math.max(this.startX, ode.startX - node.cGroupOffset);
+            startPos = Math.max(startPos, node.startPos - node.cGroupOffset);
         }
-        this.startX = rightmostCNode.startX - rightmostCNode.cGroupOffset;
-        System.out.println("\n");
+        // setting the positions of the CGroups members according to their specified offset
         for (CNode node : cNodes) {
-            node.startX = this.startX + node.cGroupOffset;
-            System.out.println("new startX: " +"("+node.startX+")"+node);
+            node.startPos = startPos + node.cGroupOffset;
         }
     }
 
+    /**
+     * Propagates starting positions according to the {@link CGroup}s incoming constraints.
+     * This method may be called after {@link #compactInnerCNodes()}.
+     * @return a list of {@link CGroup}s that became {@link #isInnerCompactable() compactable}
+     */
     public List<CGroup> propagate() {
         List<CGroup> compactables = Lists.newArrayList();
+        
         for (CNode node : cNodes) {
-            for (CNode inc : node.incoming) {//need the node
-                if (this.incomingConstraints.contains(inc)) {//FIXME incoming Constraints is a set but multiple nodes in the group have the same incoming so outDegree is too low
-                    inc.updateStartX(node);
-                    inc.group.outDegree--;
-                    if (inc.group.isInnerCompactable()) {
-                        compactables.add(inc.group);
+            for (CNode inc : node.incoming) {
+                // processing constraints that refer to CNodes outside of this CGroup
+                if (incomingConstraints.contains(inc)) {
+                    // updating the starting position of an incoming constraint
+                    inc.updateStartPos(node);
+                    inc.cGroup.outDegree--;
+                    // collecting CGroups of incoming constraints that became compactable
+                    if (inc.cGroup.isInnerCompactable()) {
+                        compactables.add(inc.cGroup);
                     }
                 }
             }
         }
+        
         return compactables;
     }
-    
-    public void addCNode(CNode node) {
+
+    /**
+     * Adding a {@link CNode} to the {@link CGroup} and updating the incoming constraints.
+     * @param node the {@link CNode} to add
+     */
+    public void addCNode(final CNode node) {
         cNodes.add(node);
-        node.group = this;
-        //FIXME not generic
-        node.cGroupOffset = node.relativePositionX;
-        //TODO does this even work??
+        node.cGroup = this;
+        // ensuring that only incoming constraints are added, that refer to CNodes outside of this CGroup
         incomingConstraints.remove(node);
-//        this.outDegree += node.outDegree;//FIXME don't count constraints from within
         for (CNode inc : node.incoming) {
-            if (!this.cNodes.contains(inc)) {
-                this.incomingConstraints.add(inc);
+            if (!cNodes.contains(inc)) {
+                incomingConstraints.add(inc);
             }
         }
     }
-
-    public CGroup(CNode node /* not used double startX*/) {
-        //this.startX = startX;
-        this.cNodes = Sets.newLinkedHashSet();
-        //this.outgoingConstraints = Sets.newHashSet();
-        this.incomingConstraints = Sets.newLinkedHashSet();
-        outDegree = 0;
-        addCNode(node);
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    // TODO interface inherited
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<CNode> getCNodes() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getPendingPlacements() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setordecpendingplacements() {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public double getOffset(CNode cNode) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public double getStartX() {
-        return startX;
-    }
-
 }

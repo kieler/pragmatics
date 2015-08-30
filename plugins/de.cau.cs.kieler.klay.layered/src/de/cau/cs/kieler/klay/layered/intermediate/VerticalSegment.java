@@ -1,36 +1,36 @@
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * http://rtsys.informatik.uni-kiel.de/kieler
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 
 /**
  * @author dag
  *
  */
-final class VerticalSegment {
+public final class VerticalSegment {
     CNode parentNode;
-    double relativePositionX;
+    double relativePosition;
     KVector bend1, bend2;
     KVectorChain junctionPoints = new KVectorChain();
     double x, y1, y2;
-    //testing zero spacing
+    // testing zero spacing
     LEdge lEdge;
 
-    VerticalSegment(final KVector bend1, final KVector bend2) {
+    VerticalSegment(final KVector bend1, final KVector bend2, final CNode cNode, final LEdge lEdge) {
         this.bend1 = bend1;
         this.bend2 = bend2;
 
@@ -43,8 +43,22 @@ final class VerticalSegment {
             y1 = bend2.y;
             y2 = bend1.y;
         }
+
+        KVectorChain inJPs = lEdge.getProperty(LayoutOptions.JUNCTION_POINTS);
+        for (KVector jp : inJPs) {
+            if (Comp.eq(jp.x, bend1.x)) {
+                junctionPoints.add(jp);
+            }
+        }
+        parentNode = cNode;
+        // only north/south segments have a parent node
+        if (parentNode != null) {
+            relativePosition = x - cNode.hitbox.x;// + cNode.cGroupOffset;
+        }
+        this.lEdge = lEdge;
     }
 
+    // TODO use TOLERANCE from odc
     boolean intersects(final VerticalSegment o) {
         return Comp.eq(this.x, o.x) && Comp.ge(this.y2, o.y1) && Comp.le(this.y1, o.y2);
     }
