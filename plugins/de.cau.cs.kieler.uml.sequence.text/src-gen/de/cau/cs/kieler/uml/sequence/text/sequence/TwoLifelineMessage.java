@@ -15,12 +15,12 @@ package de.cau.cs.kieler.uml.sequence.text.sequence;
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessageType <em>Message Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessage <em>Message</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetLifeline <em>Target Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartBlock <em>Source Start Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndBlock <em>Source End Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndBlockCount <em>Source End Block Count</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartBlock <em>Target Start Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndBlock <em>Target End Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndBlockCount <em>Target End Block Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartExec <em>Source Start Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndExec <em>Source End Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndExecCount <em>Source End Exec Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartExec <em>Target Start Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndExec <em>Target End Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndExecCount <em>Target End Exec Count</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceNote <em>Source Note</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetNote <em>Target Note</em>}</li>
  * </ul>
@@ -140,160 +140,160 @@ public interface TwoLifelineMessage extends Interaction
   void setTargetLifeline(Lifeline value);
 
   /**
-   * Returns the value of the '<em><b>Source Start Block</b></em>' attribute.
+   * Returns the value of the '<em><b>Source Start Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Source Start Block</em>' attribute isn't clear,
+   * If the meaning of the '<em>Source Start Exec</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Source Start Block</em>' attribute.
-   * @see #setSourceStartBlock(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_SourceStartBlock()
+   * @return the value of the '<em>Source Start Exec</em>' attribute.
+   * @see #setSourceStartExec(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_SourceStartExec()
    * @model
    * @generated
    */
-  boolean isSourceStartBlock();
+  boolean isSourceStartExec();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartBlock <em>Source Start Block</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartExec <em>Source Start Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Source Start Block</em>' attribute.
-   * @see #isSourceStartBlock()
+   * @param value the new value of the '<em>Source Start Exec</em>' attribute.
+   * @see #isSourceStartExec()
    * @generated
    */
-  void setSourceStartBlock(boolean value);
+  void setSourceStartExec(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Source End Block</b></em>' attribute.
+   * Returns the value of the '<em><b>Source End Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Source End Block</em>' attribute isn't clear,
+   * If the meaning of the '<em>Source End Exec</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Source End Block</em>' attribute.
-   * @see #setSourceEndBlock(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_SourceEndBlock()
+   * @return the value of the '<em>Source End Exec</em>' attribute.
+   * @see #setSourceEndExec(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_SourceEndExec()
    * @model
    * @generated
    */
-  boolean isSourceEndBlock();
+  boolean isSourceEndExec();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndBlock <em>Source End Block</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndExec <em>Source End Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Source End Block</em>' attribute.
-   * @see #isSourceEndBlock()
+   * @param value the new value of the '<em>Source End Exec</em>' attribute.
+   * @see #isSourceEndExec()
    * @generated
    */
-  void setSourceEndBlock(boolean value);
+  void setSourceEndExec(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Source End Block Count</b></em>' attribute.
+   * Returns the value of the '<em><b>Source End Exec Count</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Source End Block Count</em>' attribute isn't clear,
+   * If the meaning of the '<em>Source End Exec Count</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Source End Block Count</em>' attribute.
-   * @see #setSourceEndBlockCount(int)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_SourceEndBlockCount()
+   * @return the value of the '<em>Source End Exec Count</em>' attribute.
+   * @see #setSourceEndExecCount(int)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_SourceEndExecCount()
    * @model
    * @generated
    */
-  int getSourceEndBlockCount();
+  int getSourceEndExecCount();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndBlockCount <em>Source End Block Count</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndExecCount <em>Source End Exec Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Source End Block Count</em>' attribute.
-   * @see #getSourceEndBlockCount()
+   * @param value the new value of the '<em>Source End Exec Count</em>' attribute.
+   * @see #getSourceEndExecCount()
    * @generated
    */
-  void setSourceEndBlockCount(int value);
+  void setSourceEndExecCount(int value);
 
   /**
-   * Returns the value of the '<em><b>Target Start Block</b></em>' attribute.
+   * Returns the value of the '<em><b>Target Start Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Target Start Block</em>' attribute isn't clear,
+   * If the meaning of the '<em>Target Start Exec</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Target Start Block</em>' attribute.
-   * @see #setTargetStartBlock(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_TargetStartBlock()
+   * @return the value of the '<em>Target Start Exec</em>' attribute.
+   * @see #setTargetStartExec(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_TargetStartExec()
    * @model
    * @generated
    */
-  boolean isTargetStartBlock();
+  boolean isTargetStartExec();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartBlock <em>Target Start Block</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartExec <em>Target Start Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Target Start Block</em>' attribute.
-   * @see #isTargetStartBlock()
+   * @param value the new value of the '<em>Target Start Exec</em>' attribute.
+   * @see #isTargetStartExec()
    * @generated
    */
-  void setTargetStartBlock(boolean value);
+  void setTargetStartExec(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Target End Block</b></em>' attribute.
+   * Returns the value of the '<em><b>Target End Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Target End Block</em>' attribute isn't clear,
+   * If the meaning of the '<em>Target End Exec</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Target End Block</em>' attribute.
-   * @see #setTargetEndBlock(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_TargetEndBlock()
+   * @return the value of the '<em>Target End Exec</em>' attribute.
+   * @see #setTargetEndExec(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_TargetEndExec()
    * @model
    * @generated
    */
-  boolean isTargetEndBlock();
+  boolean isTargetEndExec();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndBlock <em>Target End Block</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndExec <em>Target End Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Target End Block</em>' attribute.
-   * @see #isTargetEndBlock()
+   * @param value the new value of the '<em>Target End Exec</em>' attribute.
+   * @see #isTargetEndExec()
    * @generated
    */
-  void setTargetEndBlock(boolean value);
+  void setTargetEndExec(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Target End Block Count</b></em>' attribute.
+   * Returns the value of the '<em><b>Target End Exec Count</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Target End Block Count</em>' attribute isn't clear,
+   * If the meaning of the '<em>Target End Exec Count</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Target End Block Count</em>' attribute.
-   * @see #setTargetEndBlockCount(int)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_TargetEndBlockCount()
+   * @return the value of the '<em>Target End Exec Count</em>' attribute.
+   * @see #setTargetEndExecCount(int)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_TargetEndExecCount()
    * @model
    * @generated
    */
-  int getTargetEndBlockCount();
+  int getTargetEndExecCount();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndBlockCount <em>Target End Block Count</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndExecCount <em>Target End Exec Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Target End Block Count</em>' attribute.
-   * @see #getTargetEndBlockCount()
+   * @param value the new value of the '<em>Target End Exec Count</em>' attribute.
+   * @see #getTargetEndExecCount()
    * @generated
    */
-  void setTargetEndBlockCount(int value);
+  void setTargetEndExecCount(int value);
 
   /**
    * Returns the value of the '<em><b>Source Note</b></em>' attribute.

@@ -138,7 +138,7 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *         messageType=MessageType 
 	 *         (messageTypeLostAndFound='lost' | messageTypeLostAndFound='found') 
 	 *         caption=STRING 
-	 *         (startBlock?='startBlock' | (endBlock?='endBlock' endBlockCount=INT_GREATER_ZERO?))? 
+	 *         (startExec?='startExec' | (endExec?='endExec' endExecCount=INT_GREATER_ZERO?))? 
 	 *         note=STRING?
 	 *     )
 	 */
@@ -200,8 +200,8 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *         messageType=MessageType 
 	 *         message=STRING 
 	 *         targetLifeline=[Lifeline|ID] 
-	 *         (sourceStartBlock?='sourceStartBlock' | (sourceEndBlock?='sourceEndBlock' sourceEndBlockCount=INT_GREATER_ZERO?))? 
-	 *         (targetStartBlock?='targetStartBlock' | (targetEndBlock?='targetEndBlock' targetEndBlockCount=INT_GREATER_ZERO?))? 
+	 *         (sourceStartExec?='sourceStartExec' | (sourceEndExec?='sourceEndExec' sourceEndExecCount=INT_GREATER_ZERO?))? 
+	 *         (targetStartExec?='targetStartExec' | (targetEndExec?='targetEndExec' targetEndExecCount=INT_GREATER_ZERO?))? 
 	 *         sourceNote=STRING? 
 	 *         targetNote=STRING?
 	 *     )

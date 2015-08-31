@@ -189,21 +189,21 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final CrossReference cTargetLifelineLifelineCrossReference_4_0 = (CrossReference)cTargetLifelineAssignment_4.eContents().get(0);
 		private final RuleCall cTargetLifelineLifelineIDTerminalRuleCall_4_0_1 = (RuleCall)cTargetLifelineLifelineCrossReference_4_0.eContents().get(1);
 		private final Alternatives cAlternatives_5 = (Alternatives)cGroup.eContents().get(5);
-		private final Assignment cSourceStartBlockAssignment_5_0 = (Assignment)cAlternatives_5.eContents().get(0);
-		private final Keyword cSourceStartBlockSourceStartBlockKeyword_5_0_0 = (Keyword)cSourceStartBlockAssignment_5_0.eContents().get(0);
+		private final Assignment cSourceStartExecAssignment_5_0 = (Assignment)cAlternatives_5.eContents().get(0);
+		private final Keyword cSourceStartExecSourceStartExecKeyword_5_0_0 = (Keyword)cSourceStartExecAssignment_5_0.eContents().get(0);
 		private final Group cGroup_5_1 = (Group)cAlternatives_5.eContents().get(1);
-		private final Assignment cSourceEndBlockAssignment_5_1_0 = (Assignment)cGroup_5_1.eContents().get(0);
-		private final Keyword cSourceEndBlockSourceEndBlockKeyword_5_1_0_0 = (Keyword)cSourceEndBlockAssignment_5_1_0.eContents().get(0);
-		private final Assignment cSourceEndBlockCountAssignment_5_1_1 = (Assignment)cGroup_5_1.eContents().get(1);
-		private final RuleCall cSourceEndBlockCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0 = (RuleCall)cSourceEndBlockCountAssignment_5_1_1.eContents().get(0);
+		private final Assignment cSourceEndExecAssignment_5_1_0 = (Assignment)cGroup_5_1.eContents().get(0);
+		private final Keyword cSourceEndExecSourceEndExecKeyword_5_1_0_0 = (Keyword)cSourceEndExecAssignment_5_1_0.eContents().get(0);
+		private final Assignment cSourceEndExecCountAssignment_5_1_1 = (Assignment)cGroup_5_1.eContents().get(1);
+		private final RuleCall cSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0 = (RuleCall)cSourceEndExecCountAssignment_5_1_1.eContents().get(0);
 		private final Alternatives cAlternatives_6 = (Alternatives)cGroup.eContents().get(6);
-		private final Assignment cTargetStartBlockAssignment_6_0 = (Assignment)cAlternatives_6.eContents().get(0);
-		private final Keyword cTargetStartBlockTargetStartBlockKeyword_6_0_0 = (Keyword)cTargetStartBlockAssignment_6_0.eContents().get(0);
+		private final Assignment cTargetStartExecAssignment_6_0 = (Assignment)cAlternatives_6.eContents().get(0);
+		private final Keyword cTargetStartExecTargetStartExecKeyword_6_0_0 = (Keyword)cTargetStartExecAssignment_6_0.eContents().get(0);
 		private final Group cGroup_6_1 = (Group)cAlternatives_6.eContents().get(1);
-		private final Assignment cTargetEndBlockAssignment_6_1_0 = (Assignment)cGroup_6_1.eContents().get(0);
-		private final Keyword cTargetEndBlockTargetEndBlockKeyword_6_1_0_0 = (Keyword)cTargetEndBlockAssignment_6_1_0.eContents().get(0);
-		private final Assignment cTargetEndBlockCountAssignment_6_1_1 = (Assignment)cGroup_6_1.eContents().get(1);
-		private final RuleCall cTargetEndBlockCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0 = (RuleCall)cTargetEndBlockCountAssignment_6_1_1.eContents().get(0);
+		private final Assignment cTargetEndExecAssignment_6_1_0 = (Assignment)cGroup_6_1.eContents().get(0);
+		private final Keyword cTargetEndExecTargetEndExecKeyword_6_1_0_0 = (Keyword)cTargetEndExecAssignment_6_1_0.eContents().get(0);
+		private final Assignment cTargetEndExecCountAssignment_6_1_1 = (Assignment)cGroup_6_1.eContents().get(1);
+		private final RuleCall cTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0 = (RuleCall)cTargetEndExecCountAssignment_6_1_1.eContents().get(0);
 		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
 		private final Keyword cSourceNoteKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
 		private final Assignment cSourceNoteAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
@@ -215,14 +215,14 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//TwoLifelineMessage:
 		//	sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
-		//	(sourceStartBlock?="sourceStartBlock" | sourceEndBlock?="sourceEndBlock" sourceEndBlockCount=INT_GREATER_ZERO?)?
-		//	(targetStartBlock?="targetStartBlock" | targetEndBlock?="targetEndBlock" targetEndBlockCount=INT_GREATER_ZERO?)?
+		//	(sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec" sourceEndExecCount=INT_GREATER_ZERO?)?
+		//	(targetStartExec?="targetStartExec" | targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)?
 		//	("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?;
 		public ParserRule getRule() { return rule; }
 
 		//sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
-		//(sourceStartBlock?="sourceStartBlock" | sourceEndBlock?="sourceEndBlock" sourceEndBlockCount=INT_GREATER_ZERO?)?
-		//(targetStartBlock?="targetStartBlock" | targetEndBlock?="targetEndBlock" targetEndBlockCount=INT_GREATER_ZERO?)?
+		//(sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec" sourceEndExecCount=INT_GREATER_ZERO?)?
+		//(targetStartExec?="targetStartExec" | targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)?
 		//("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?
 		public Group getGroup() { return cGroup; }
 
@@ -259,53 +259,53 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getTargetLifelineLifelineIDTerminalRuleCall_4_0_1() { return cTargetLifelineLifelineIDTerminalRuleCall_4_0_1; }
 
-		//(sourceStartBlock?="sourceStartBlock" | sourceEndBlock?="sourceEndBlock" sourceEndBlockCount=INT_GREATER_ZERO?)?
+		//(sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec" sourceEndExecCount=INT_GREATER_ZERO?)?
 		public Alternatives getAlternatives_5() { return cAlternatives_5; }
 
-		//sourceStartBlock?="sourceStartBlock"
-		public Assignment getSourceStartBlockAssignment_5_0() { return cSourceStartBlockAssignment_5_0; }
+		//sourceStartExec?="sourceStartExec"
+		public Assignment getSourceStartExecAssignment_5_0() { return cSourceStartExecAssignment_5_0; }
 
-		//"sourceStartBlock"
-		public Keyword getSourceStartBlockSourceStartBlockKeyword_5_0_0() { return cSourceStartBlockSourceStartBlockKeyword_5_0_0; }
+		//"sourceStartExec"
+		public Keyword getSourceStartExecSourceStartExecKeyword_5_0_0() { return cSourceStartExecSourceStartExecKeyword_5_0_0; }
 
-		//sourceEndBlock?="sourceEndBlock" sourceEndBlockCount=INT_GREATER_ZERO?
+		//sourceEndExec?="sourceEndExec" sourceEndExecCount=INT_GREATER_ZERO?
 		public Group getGroup_5_1() { return cGroup_5_1; }
 
-		//sourceEndBlock?="sourceEndBlock"
-		public Assignment getSourceEndBlockAssignment_5_1_0() { return cSourceEndBlockAssignment_5_1_0; }
+		//sourceEndExec?="sourceEndExec"
+		public Assignment getSourceEndExecAssignment_5_1_0() { return cSourceEndExecAssignment_5_1_0; }
 
-		//"sourceEndBlock"
-		public Keyword getSourceEndBlockSourceEndBlockKeyword_5_1_0_0() { return cSourceEndBlockSourceEndBlockKeyword_5_1_0_0; }
+		//"sourceEndExec"
+		public Keyword getSourceEndExecSourceEndExecKeyword_5_1_0_0() { return cSourceEndExecSourceEndExecKeyword_5_1_0_0; }
 
-		//sourceEndBlockCount=INT_GREATER_ZERO?
-		public Assignment getSourceEndBlockCountAssignment_5_1_1() { return cSourceEndBlockCountAssignment_5_1_1; }
+		//sourceEndExecCount=INT_GREATER_ZERO?
+		public Assignment getSourceEndExecCountAssignment_5_1_1() { return cSourceEndExecCountAssignment_5_1_1; }
 
 		//INT_GREATER_ZERO
-		public RuleCall getSourceEndBlockCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0() { return cSourceEndBlockCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0; }
+		public RuleCall getSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0() { return cSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0; }
 
-		//(targetStartBlock?="targetStartBlock" | targetEndBlock?="targetEndBlock" targetEndBlockCount=INT_GREATER_ZERO?)?
+		//(targetStartExec?="targetStartExec" | targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)?
 		public Alternatives getAlternatives_6() { return cAlternatives_6; }
 
-		//targetStartBlock?="targetStartBlock"
-		public Assignment getTargetStartBlockAssignment_6_0() { return cTargetStartBlockAssignment_6_0; }
+		//targetStartExec?="targetStartExec"
+		public Assignment getTargetStartExecAssignment_6_0() { return cTargetStartExecAssignment_6_0; }
 
-		//"targetStartBlock"
-		public Keyword getTargetStartBlockTargetStartBlockKeyword_6_0_0() { return cTargetStartBlockTargetStartBlockKeyword_6_0_0; }
+		//"targetStartExec"
+		public Keyword getTargetStartExecTargetStartExecKeyword_6_0_0() { return cTargetStartExecTargetStartExecKeyword_6_0_0; }
 
-		//targetEndBlock?="targetEndBlock" targetEndBlockCount=INT_GREATER_ZERO?
+		//targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?
 		public Group getGroup_6_1() { return cGroup_6_1; }
 
-		//targetEndBlock?="targetEndBlock"
-		public Assignment getTargetEndBlockAssignment_6_1_0() { return cTargetEndBlockAssignment_6_1_0; }
+		//targetEndExec?="targetEndExec"
+		public Assignment getTargetEndExecAssignment_6_1_0() { return cTargetEndExecAssignment_6_1_0; }
 
-		//"targetEndBlock"
-		public Keyword getTargetEndBlockTargetEndBlockKeyword_6_1_0_0() { return cTargetEndBlockTargetEndBlockKeyword_6_1_0_0; }
+		//"targetEndExec"
+		public Keyword getTargetEndExecTargetEndExecKeyword_6_1_0_0() { return cTargetEndExecTargetEndExecKeyword_6_1_0_0; }
 
-		//targetEndBlockCount=INT_GREATER_ZERO?
-		public Assignment getTargetEndBlockCountAssignment_6_1_1() { return cTargetEndBlockCountAssignment_6_1_1; }
+		//targetEndExecCount=INT_GREATER_ZERO?
+		public Assignment getTargetEndExecCountAssignment_6_1_1() { return cTargetEndExecCountAssignment_6_1_1; }
 
 		//INT_GREATER_ZERO
-		public RuleCall getTargetEndBlockCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0() { return cTargetEndBlockCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0; }
+		public RuleCall getTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0() { return cTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0; }
 
 		//("sourceNote" sourceNote=STRING)?
 		public Group getGroup_7() { return cGroup_7; }
@@ -347,13 +347,13 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cCaptionAssignment_3 = (Assignment)cGroup.eContents().get(3);
 		private final RuleCall cCaptionSTRINGTerminalRuleCall_3_0 = (RuleCall)cCaptionAssignment_3.eContents().get(0);
 		private final Alternatives cAlternatives_4 = (Alternatives)cGroup.eContents().get(4);
-		private final Assignment cStartBlockAssignment_4_0 = (Assignment)cAlternatives_4.eContents().get(0);
-		private final Keyword cStartBlockStartBlockKeyword_4_0_0 = (Keyword)cStartBlockAssignment_4_0.eContents().get(0);
+		private final Assignment cStartExecAssignment_4_0 = (Assignment)cAlternatives_4.eContents().get(0);
+		private final Keyword cStartExecStartExecKeyword_4_0_0 = (Keyword)cStartExecAssignment_4_0.eContents().get(0);
 		private final Group cGroup_4_1 = (Group)cAlternatives_4.eContents().get(1);
-		private final Assignment cEndBlockAssignment_4_1_0 = (Assignment)cGroup_4_1.eContents().get(0);
-		private final Keyword cEndBlockEndBlockKeyword_4_1_0_0 = (Keyword)cEndBlockAssignment_4_1_0.eContents().get(0);
-		private final Assignment cEndBlockCountAssignment_4_1_1 = (Assignment)cGroup_4_1.eContents().get(1);
-		private final RuleCall cEndBlockCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0 = (RuleCall)cEndBlockCountAssignment_4_1_1.eContents().get(0);
+		private final Assignment cEndExecAssignment_4_1_0 = (Assignment)cGroup_4_1.eContents().get(0);
+		private final Keyword cEndExecEndExecKeyword_4_1_0_0 = (Keyword)cEndExecAssignment_4_1_0.eContents().get(0);
+		private final Assignment cEndExecCountAssignment_4_1_1 = (Assignment)cGroup_4_1.eContents().get(1);
+		private final RuleCall cEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0 = (RuleCall)cEndExecCountAssignment_4_1_1.eContents().get(0);
 		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
 		private final Keyword cNoteKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
 		private final Assignment cNoteAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
@@ -361,11 +361,11 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//OneLifelineMessage:
 		//	Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") caption=STRING
-		//	(startBlock?="startBlock" | endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
+		//	(startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
 		public ParserRule getRule() { return rule; }
 
 		//Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") caption=STRING
-		//(startBlock?="startBlock" | endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? ("note" note=STRING)?
+		//(startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?
 		public Group getGroup() { return cGroup; }
 
 		//Lifeline=[Lifeline]
@@ -401,29 +401,29 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//STRING
 		public RuleCall getCaptionSTRINGTerminalRuleCall_3_0() { return cCaptionSTRINGTerminalRuleCall_3_0; }
 
-		//(startBlock?="startBlock" | endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)?
+		//(startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)?
 		public Alternatives getAlternatives_4() { return cAlternatives_4; }
 
-		//startBlock?="startBlock"
-		public Assignment getStartBlockAssignment_4_0() { return cStartBlockAssignment_4_0; }
+		//startExec?="startExec"
+		public Assignment getStartExecAssignment_4_0() { return cStartExecAssignment_4_0; }
 
-		//"startBlock"
-		public Keyword getStartBlockStartBlockKeyword_4_0_0() { return cStartBlockStartBlockKeyword_4_0_0; }
+		//"startExec"
+		public Keyword getStartExecStartExecKeyword_4_0_0() { return cStartExecStartExecKeyword_4_0_0; }
 
-		//endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?
+		//endExec?="endExec" endExecCount=INT_GREATER_ZERO?
 		public Group getGroup_4_1() { return cGroup_4_1; }
 
-		//endBlock?="endBlock"
-		public Assignment getEndBlockAssignment_4_1_0() { return cEndBlockAssignment_4_1_0; }
+		//endExec?="endExec"
+		public Assignment getEndExecAssignment_4_1_0() { return cEndExecAssignment_4_1_0; }
 
-		//"endBlock"
-		public Keyword getEndBlockEndBlockKeyword_4_1_0_0() { return cEndBlockEndBlockKeyword_4_1_0_0; }
+		//"endExec"
+		public Keyword getEndExecEndExecKeyword_4_1_0_0() { return cEndExecEndExecKeyword_4_1_0_0; }
 
-		//endBlockCount=INT_GREATER_ZERO?
-		public Assignment getEndBlockCountAssignment_4_1_1() { return cEndBlockCountAssignment_4_1_1; }
+		//endExecCount=INT_GREATER_ZERO?
+		public Assignment getEndExecCountAssignment_4_1_1() { return cEndExecCountAssignment_4_1_1; }
 
 		//INT_GREATER_ZERO
-		public RuleCall getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0() { return cEndBlockCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0; }
+		public RuleCall getEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0() { return cEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0; }
 
 		//("note" note=STRING)?
 		public Group getGroup_5() { return cGroup_5; }
@@ -805,8 +805,8 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 
 	//TwoLifelineMessage:
 	//	sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
-	//	(sourceStartBlock?="sourceStartBlock" | sourceEndBlock?="sourceEndBlock" sourceEndBlockCount=INT_GREATER_ZERO?)?
-	//	(targetStartBlock?="targetStartBlock" | targetEndBlock?="targetEndBlock" targetEndBlockCount=INT_GREATER_ZERO?)?
+	//	(sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec" sourceEndExecCount=INT_GREATER_ZERO?)?
+	//	(targetStartExec?="targetStartExec" | targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)?
 	//	("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?;
 	public TwoLifelineMessageElements getTwoLifelineMessageAccess() {
 		return pTwoLifelineMessage;
@@ -818,7 +818,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 
 	//OneLifelineMessage:
 	//	Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") caption=STRING
-	//	(startBlock?="startBlock" | endBlock?="endBlock" endBlockCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
+	//	(startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
 	public OneLifelineMessageElements getOneLifelineMessageAccess() {
 		return pOneLifelineMessage;
 	}

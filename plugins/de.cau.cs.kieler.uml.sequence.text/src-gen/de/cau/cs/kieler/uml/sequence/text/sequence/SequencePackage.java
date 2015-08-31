@@ -215,58 +215,58 @@ public interface SequencePackage extends EPackage
   int TWO_LIFELINE_MESSAGE__TARGET_LIFELINE = INTERACTION_FEATURE_COUNT + 3;
 
   /**
-   * The feature id for the '<em><b>Source Start Block</b></em>' attribute.
+   * The feature id for the '<em><b>Source Start Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK = INTERACTION_FEATURE_COUNT + 4;
+  int TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC = INTERACTION_FEATURE_COUNT + 4;
 
   /**
-   * The feature id for the '<em><b>Source End Block</b></em>' attribute.
+   * The feature id for the '<em><b>Source End Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK = INTERACTION_FEATURE_COUNT + 5;
+  int TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC = INTERACTION_FEATURE_COUNT + 5;
 
   /**
-   * The feature id for the '<em><b>Source End Block Count</b></em>' attribute.
+   * The feature id for the '<em><b>Source End Exec Count</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT = INTERACTION_FEATURE_COUNT + 6;
+  int TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT = INTERACTION_FEATURE_COUNT + 6;
 
   /**
-   * The feature id for the '<em><b>Target Start Block</b></em>' attribute.
+   * The feature id for the '<em><b>Target Start Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK = INTERACTION_FEATURE_COUNT + 7;
+  int TWO_LIFELINE_MESSAGE__TARGET_START_EXEC = INTERACTION_FEATURE_COUNT + 7;
 
   /**
-   * The feature id for the '<em><b>Target End Block</b></em>' attribute.
+   * The feature id for the '<em><b>Target End Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK = INTERACTION_FEATURE_COUNT + 8;
+  int TWO_LIFELINE_MESSAGE__TARGET_END_EXEC = INTERACTION_FEATURE_COUNT + 8;
 
   /**
-   * The feature id for the '<em><b>Target End Block Count</b></em>' attribute.
+   * The feature id for the '<em><b>Target End Exec Count</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT = INTERACTION_FEATURE_COUNT + 9;
+  int TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT = INTERACTION_FEATURE_COUNT + 9;
 
   /**
    * The feature id for the '<em><b>Source Note</b></em>' attribute.
@@ -342,31 +342,31 @@ public interface SequencePackage extends EPackage
   int ONE_LIFELINE_MESSAGE__CAPTION = INTERACTION_FEATURE_COUNT + 3;
 
   /**
-   * The feature id for the '<em><b>Start Block</b></em>' attribute.
+   * The feature id for the '<em><b>Start Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__START_BLOCK = INTERACTION_FEATURE_COUNT + 4;
+  int ONE_LIFELINE_MESSAGE__START_EXEC = INTERACTION_FEATURE_COUNT + 4;
 
   /**
-   * The feature id for the '<em><b>End Block</b></em>' attribute.
+   * The feature id for the '<em><b>End Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__END_BLOCK = INTERACTION_FEATURE_COUNT + 5;
+  int ONE_LIFELINE_MESSAGE__END_EXEC = INTERACTION_FEATURE_COUNT + 5;
 
   /**
-   * The feature id for the '<em><b>End Block Count</b></em>' attribute.
+   * The feature id for the '<em><b>End Exec Count</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT = INTERACTION_FEATURE_COUNT + 6;
+  int ONE_LIFELINE_MESSAGE__END_EXEC_COUNT = INTERACTION_FEATURE_COUNT + 6;
 
   /**
    * The feature id for the '<em><b>Note</b></em>' attribute.
@@ -724,70 +724,70 @@ public interface SequencePackage extends EPackage
   EReference getTwoLifelineMessage_TargetLifeline();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartBlock <em>Source Start Block</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartExec <em>Source Start Exec</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Source Start Block</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartBlock()
+   * @return the meta object for the attribute '<em>Source Start Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartExec()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_SourceStartBlock();
+  EAttribute getTwoLifelineMessage_SourceStartExec();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndBlock <em>Source End Block</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndExec <em>Source End Exec</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Source End Block</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndBlock()
+   * @return the meta object for the attribute '<em>Source End Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndExec()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_SourceEndBlock();
+  EAttribute getTwoLifelineMessage_SourceEndExec();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndBlockCount <em>Source End Block Count</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndExecCount <em>Source End Exec Count</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Source End Block Count</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndBlockCount()
+   * @return the meta object for the attribute '<em>Source End Exec Count</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndExecCount()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_SourceEndBlockCount();
+  EAttribute getTwoLifelineMessage_SourceEndExecCount();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartBlock <em>Target Start Block</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartExec <em>Target Start Exec</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Target Start Block</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartBlock()
+   * @return the meta object for the attribute '<em>Target Start Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartExec()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_TargetStartBlock();
+  EAttribute getTwoLifelineMessage_TargetStartExec();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndBlock <em>Target End Block</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndExec <em>Target End Exec</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Target End Block</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndBlock()
+   * @return the meta object for the attribute '<em>Target End Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndExec()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_TargetEndBlock();
+  EAttribute getTwoLifelineMessage_TargetEndExec();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndBlockCount <em>Target End Block Count</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndExecCount <em>Target End Exec Count</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Target End Block Count</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndBlockCount()
+   * @return the meta object for the attribute '<em>Target End Exec Count</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndExecCount()
    * @see #getTwoLifelineMessage()
    * @generated
    */
-  EAttribute getTwoLifelineMessage_TargetEndBlockCount();
+  EAttribute getTwoLifelineMessage_TargetEndExecCount();
 
   /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceNote <em>Source Note</em>}'.
@@ -866,37 +866,37 @@ public interface SequencePackage extends EPackage
   EAttribute getOneLifelineMessage_Caption();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartBlock <em>Start Block</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartExec <em>Start Exec</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Start Block</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartBlock()
+   * @return the meta object for the attribute '<em>Start Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartExec()
    * @see #getOneLifelineMessage()
    * @generated
    */
-  EAttribute getOneLifelineMessage_StartBlock();
+  EAttribute getOneLifelineMessage_StartExec();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndBlock <em>End Block</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndExec <em>End Exec</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>End Block</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndBlock()
+   * @return the meta object for the attribute '<em>End Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndExec()
    * @see #getOneLifelineMessage()
    * @generated
    */
-  EAttribute getOneLifelineMessage_EndBlock();
+  EAttribute getOneLifelineMessage_EndExec();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getEndBlockCount <em>End Block Count</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getEndExecCount <em>End Exec Count</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>End Block Count</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getEndBlockCount()
+   * @return the meta object for the attribute '<em>End Exec Count</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getEndExecCount()
    * @see #getOneLifelineMessage()
    * @generated
    */
-  EAttribute getOneLifelineMessage_EndBlockCount();
+  EAttribute getOneLifelineMessage_EndExecCount();
 
   /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getNote <em>Note</em>}'.
@@ -1212,52 +1212,52 @@ public interface SequencePackage extends EPackage
     EReference TWO_LIFELINE_MESSAGE__TARGET_LIFELINE = eINSTANCE.getTwoLifelineMessage_TargetLifeline();
 
     /**
-     * The meta object literal for the '<em><b>Source Start Block</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Source Start Exec</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK = eINSTANCE.getTwoLifelineMessage_SourceStartBlock();
+    EAttribute TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC = eINSTANCE.getTwoLifelineMessage_SourceStartExec();
 
     /**
-     * The meta object literal for the '<em><b>Source End Block</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Source End Exec</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK = eINSTANCE.getTwoLifelineMessage_SourceEndBlock();
+    EAttribute TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC = eINSTANCE.getTwoLifelineMessage_SourceEndExec();
 
     /**
-     * The meta object literal for the '<em><b>Source End Block Count</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Source End Exec Count</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT = eINSTANCE.getTwoLifelineMessage_SourceEndBlockCount();
+    EAttribute TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT = eINSTANCE.getTwoLifelineMessage_SourceEndExecCount();
 
     /**
-     * The meta object literal for the '<em><b>Target Start Block</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Target Start Exec</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK = eINSTANCE.getTwoLifelineMessage_TargetStartBlock();
+    EAttribute TWO_LIFELINE_MESSAGE__TARGET_START_EXEC = eINSTANCE.getTwoLifelineMessage_TargetStartExec();
 
     /**
-     * The meta object literal for the '<em><b>Target End Block</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Target End Exec</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK = eINSTANCE.getTwoLifelineMessage_TargetEndBlock();
+    EAttribute TWO_LIFELINE_MESSAGE__TARGET_END_EXEC = eINSTANCE.getTwoLifelineMessage_TargetEndExec();
 
     /**
-     * The meta object literal for the '<em><b>Target End Block Count</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Target End Exec Count</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT = eINSTANCE.getTwoLifelineMessage_TargetEndBlockCount();
+    EAttribute TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT = eINSTANCE.getTwoLifelineMessage_TargetEndExecCount();
 
     /**
      * The meta object literal for the '<em><b>Source Note</b></em>' attribute feature.
@@ -1318,28 +1318,28 @@ public interface SequencePackage extends EPackage
     EAttribute ONE_LIFELINE_MESSAGE__CAPTION = eINSTANCE.getOneLifelineMessage_Caption();
 
     /**
-     * The meta object literal for the '<em><b>Start Block</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Start Exec</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute ONE_LIFELINE_MESSAGE__START_BLOCK = eINSTANCE.getOneLifelineMessage_StartBlock();
+    EAttribute ONE_LIFELINE_MESSAGE__START_EXEC = eINSTANCE.getOneLifelineMessage_StartExec();
 
     /**
-     * The meta object literal for the '<em><b>End Block</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>End Exec</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute ONE_LIFELINE_MESSAGE__END_BLOCK = eINSTANCE.getOneLifelineMessage_EndBlock();
+    EAttribute ONE_LIFELINE_MESSAGE__END_EXEC = eINSTANCE.getOneLifelineMessage_EndExec();
 
     /**
-     * The meta object literal for the '<em><b>End Block Count</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>End Exec Count</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT = eINSTANCE.getOneLifelineMessage_EndBlockCount();
+    EAttribute ONE_LIFELINE_MESSAGE__END_EXEC_COUNT = eINSTANCE.getOneLifelineMessage_EndExecCount();
 
     /**
      * The meta object literal for the '<em><b>Note</b></em>' attribute feature.

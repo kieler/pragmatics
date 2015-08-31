@@ -167,23 +167,19 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 case "Stylish": {
                     captionRect = lifelineRect.addRoundedRectangle(15, 15, 1)
                     captionRect.setBackgroundGradient(Colors.WHITE, Colors.CORNFLOWER_BLUE, 90)
-//                captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
-//                captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
                     captionRect.setShadow(Colors.BLACK, 5)
                 }
                 case "Hello Kitty": {
                     captionRect = lifelineRect.addRoundedRectangle(15, 15, 1)
                     captionRect.setBackgroundGradient("#FFEEEE".color, "#FFBBBB".color, 90)
-//                captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
-//                captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
                     captionRect.setShadow(Colors.PURPLE, 5)
                 }
                 default: {
                     captionRect = lifelineRect.addRectangle
-//                captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
-//                captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
                 }
             }
+//            captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
+//            captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
             captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP,
                 2 * TEXTSIZE.intValue + 10, 0)
             captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(TEXTSIZE.intValue, 0, 8,
@@ -239,33 +235,33 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         transEdge.source = lifelineNodes.get(source.name)
         transEdge.target = lifelineNodes.get(target.name)
-
+// TODO argo UML oder poseidon als 2. drag and drop editor, visual paradigm
 // TODO FIX??
-//        if (msg.sourceStartBlock) {
-//            createExecution(source)
-//        }
-//
-//        if (msg.targetStartBlock) {
-//            createExecution(target)
-//        }
-//
-//        if (elementIdOnLifeline.containsKey(source.name)) {
-//            transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_ID,
-//                elementIdOnLifeline.get(source.name).peek())
-//        }
-//
-//        if (elementIdOnLifeline.containsKey(target.name)) {
-//            transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_ID,
-//                elementIdOnLifeline.get(target.name).peek())
-//        }
-//
-//        if (msg.sourceEndBlock) {
-//            endExecution(source, msg.sourceEndBlockCount)
-//        }
-//
-//        if (msg.targetEndBlock) {
-//            endExecution(target, msg.targetEndBlockCount)
-//        }
+        if (msg.sourceStartExec) {
+            createExecution(source)
+        }
+
+        if (msg.targetStartExec) {
+            createExecution(target)
+        }
+
+        if (elementIdOnLifeline.containsKey(source.name)) {
+            transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_ID,
+                elementIdOnLifeline.get(source.name).peek())
+        }
+
+        if (elementIdOnLifeline.containsKey(target.name)) {
+            transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_ID,
+                elementIdOnLifeline.get(target.name).peek())
+        }
+
+        if (msg.sourceEndExec) {
+            endExecution(source, msg.sourceEndExecCount)
+        }
+
+        if (msg.targetEndExec) {
+            endExecution(target, msg.targetEndExecCount)
+        }
         return transEdge
     }
 
@@ -276,29 +272,29 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         edgeCount(transEdge)
 
 // TODO FIX??
-//        if (msg.startBlock) {
-////            if (msg.messageTypeLostAndFound.equals("lost")) {
-//            createExecution(msg.lifeline)
-////            } else {
-////            }
-//        }
-//
-//        if (elementIdOnLifeline.containsKey(msg.lifeline.name)) {
+        if (msg.startExec) {
 //            if (msg.messageTypeLostAndFound.equals("lost")) {
-//                transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_ID,
-//                    elementIdOnLifeline.get(msg.lifeline.name).peek())
+            createExecution(msg.lifeline)
 //            } else {
-//                transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_ID,
-//                    elementIdOnLifeline.get(msg.lifeline.name).peek())
 //            }
-//        }
-//
-//        if (msg.endBlock) {
-////            if (msg.messageTypeLostAndFound.equals("lost")) {
-//            endExecution(msg.lifeline, msg.endBlockCount)
-////            } else {
-////            }
-//        }
+        }
+
+        if (elementIdOnLifeline.containsKey(msg.lifeline.name)) {
+            if (msg.messageTypeLostAndFound.equals("lost")) {
+                transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_ID,
+                    elementIdOnLifeline.get(msg.lifeline.name).peek())
+            } else {
+                transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_ID,
+                    elementIdOnLifeline.get(msg.lifeline.name).peek())
+            }
+        }
+
+        if (msg.endExec) {
+//            if (msg.messageTypeLostAndFound.equals("lost")) {
+            endExecution(msg.lifeline, msg.endExecCount)
+//            } else {
+//            }
+        }
         val label = KimlUtil.createInitializedLabel(transEdge)
 
         val labelText = msg.caption
@@ -337,8 +333,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private def dispatch KNode transformInteraction(DestroyLifelineEvent destroy) {
         // TODO close blocks before if not closed yet
         val destroyNode = destroy.createNode().associateWith(destroy)
-        // TODO Was macht das?
-        destroyNode.addLayoutParam(SequenceDiagramProperties.DESTRUCTION, destroyNode)
         destroyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.DESTRUCTION_EVENT)
 
         val destroyRect = destroyNode.addRectangle().foregroundInvisible = true
@@ -456,8 +450,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
     // Creates an execution specification to display the "blocks" on the lifelines
     private def KNode createExecution(Lifeline l) {
-        val execution = l.createNode().associateWith(l)
-        // execution.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.ACTION_EXEC_SPECIFICATION)
+        val execution = createNode()
+        execution.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.ACTION_EXEC_SPECIFICATION)
         executionCount += 1
         if (elementIdOnLifeline.containsKey(l.name)) {
             val stack = elementIdOnLifeline.get(l.name)
@@ -470,10 +464,19 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         }
         execution.addLayoutParam(SequenceDiagramProperties.ELEMENT_ID, elementIdOnLifeline.get(l.name).peek())
         execution.addLayoutParam(SequenceDiagramProperties.EXECUTION_TYPE, SequenceExecutionType.EXECUTION)
-
+        
+        switch STYLE.objectValue {
+            case "Stylish": {
+                execution.addRectangle.setBackgroundGradient(Colors.WHITE, Colors.CORNFLOWER_BLUE, 90)
+            }
+            case "Hello Kitty": {
+                execution.addRectangle.setBackgroundGradient("#FFEEEE".color, "#FFBBBB".color, 90)
+            }
+            default: {
+                execution.addRectangle.setBackground(Colors.LIGHT_GRAY)
+            }
+        }
         lifelineNodes.get(l.name).children.add(execution)
-
-        execution.addRectangle
 
         return execution
     }

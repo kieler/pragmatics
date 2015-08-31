@@ -25,9 +25,9 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getMessageType <em>Message Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getMessageTypeLostAndFound <em>Message Type Lost And Found</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getCaption <em>Caption</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#isStartBlock <em>Start Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#isEndBlock <em>End Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getEndBlockCount <em>End Block Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#isStartExec <em>Start Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#isEndExec <em>End Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getEndExecCount <em>End Exec Count</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getNote <em>Note</em>}</li>
  * </ul>
  * </p>
@@ -107,64 +107,64 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
   protected String caption = CAPTION_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isStartBlock() <em>Start Block</em>}' attribute.
+   * The default value of the '{@link #isStartExec() <em>Start Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isStartBlock()
+   * @see #isStartExec()
    * @generated
    * @ordered
    */
-  protected static final boolean START_BLOCK_EDEFAULT = false;
+  protected static final boolean START_EXEC_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isStartBlock() <em>Start Block</em>}' attribute.
+   * The cached value of the '{@link #isStartExec() <em>Start Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isStartBlock()
+   * @see #isStartExec()
    * @generated
    * @ordered
    */
-  protected boolean startBlock = START_BLOCK_EDEFAULT;
+  protected boolean startExec = START_EXEC_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isEndBlock() <em>End Block</em>}' attribute.
+   * The default value of the '{@link #isEndExec() <em>End Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isEndBlock()
+   * @see #isEndExec()
    * @generated
    * @ordered
    */
-  protected static final boolean END_BLOCK_EDEFAULT = false;
+  protected static final boolean END_EXEC_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isEndBlock() <em>End Block</em>}' attribute.
+   * The cached value of the '{@link #isEndExec() <em>End Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isEndBlock()
+   * @see #isEndExec()
    * @generated
    * @ordered
    */
-  protected boolean endBlock = END_BLOCK_EDEFAULT;
+  protected boolean endExec = END_EXEC_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getEndBlockCount() <em>End Block Count</em>}' attribute.
+   * The default value of the '{@link #getEndExecCount() <em>End Exec Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getEndBlockCount()
+   * @see #getEndExecCount()
    * @generated
    * @ordered
    */
-  protected static final int END_BLOCK_COUNT_EDEFAULT = 0;
+  protected static final int END_EXEC_COUNT_EDEFAULT = 0;
 
   /**
-   * The cached value of the '{@link #getEndBlockCount() <em>End Block Count</em>}' attribute.
+   * The cached value of the '{@link #getEndExecCount() <em>End Exec Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getEndBlockCount()
+   * @see #getEndExecCount()
    * @generated
    * @ordered
    */
-  protected int endBlockCount = END_BLOCK_COUNT_EDEFAULT;
+  protected int endExecCount = END_EXEC_COUNT_EDEFAULT;
 
   /**
    * The default value of the '{@link #getNote() <em>Note</em>}' attribute.
@@ -324,9 +324,9 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isStartBlock()
+  public boolean isStartExec()
   {
-    return startBlock;
+    return startExec;
   }
 
   /**
@@ -334,12 +334,12 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setStartBlock(boolean newStartBlock)
+  public void setStartExec(boolean newStartExec)
   {
-    boolean oldStartBlock = startBlock;
-    startBlock = newStartBlock;
+    boolean oldStartExec = startExec;
+    startExec = newStartExec;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__START_BLOCK, oldStartBlock, startBlock));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__START_EXEC, oldStartExec, startExec));
   }
 
   /**
@@ -347,9 +347,9 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isEndBlock()
+  public boolean isEndExec()
   {
-    return endBlock;
+    return endExec;
   }
 
   /**
@@ -357,12 +357,12 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setEndBlock(boolean newEndBlock)
+  public void setEndExec(boolean newEndExec)
   {
-    boolean oldEndBlock = endBlock;
-    endBlock = newEndBlock;
+    boolean oldEndExec = endExec;
+    endExec = newEndExec;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__END_BLOCK, oldEndBlock, endBlock));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC, oldEndExec, endExec));
   }
 
   /**
@@ -370,9 +370,9 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public int getEndBlockCount()
+  public int getEndExecCount()
   {
-    return endBlockCount;
+    return endExecCount;
   }
 
   /**
@@ -380,12 +380,12 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setEndBlockCount(int newEndBlockCount)
+  public void setEndExecCount(int newEndExecCount)
   {
-    int oldEndBlockCount = endBlockCount;
-    endBlockCount = newEndBlockCount;
+    int oldEndExecCount = endExecCount;
+    endExecCount = newEndExecCount;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT, oldEndBlockCount, endBlockCount));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC_COUNT, oldEndExecCount, endExecCount));
   }
 
   /**
@@ -430,12 +430,12 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
         return getMessageTypeLostAndFound();
       case SequencePackage.ONE_LIFELINE_MESSAGE__CAPTION:
         return getCaption();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_BLOCK:
-        return isStartBlock();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_BLOCK:
-        return isEndBlock();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT:
-        return getEndBlockCount();
+      case SequencePackage.ONE_LIFELINE_MESSAGE__START_EXEC:
+        return isStartExec();
+      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC:
+        return isEndExec();
+      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC_COUNT:
+        return getEndExecCount();
       case SequencePackage.ONE_LIFELINE_MESSAGE__NOTE:
         return getNote();
     }
@@ -464,14 +464,14 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
       case SequencePackage.ONE_LIFELINE_MESSAGE__CAPTION:
         setCaption((String)newValue);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_BLOCK:
-        setStartBlock((Boolean)newValue);
+      case SequencePackage.ONE_LIFELINE_MESSAGE__START_EXEC:
+        setStartExec((Boolean)newValue);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_BLOCK:
-        setEndBlock((Boolean)newValue);
+      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC:
+        setEndExec((Boolean)newValue);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT:
-        setEndBlockCount((Integer)newValue);
+      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC_COUNT:
+        setEndExecCount((Integer)newValue);
         return;
       case SequencePackage.ONE_LIFELINE_MESSAGE__NOTE:
         setNote((String)newValue);
@@ -502,14 +502,14 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
       case SequencePackage.ONE_LIFELINE_MESSAGE__CAPTION:
         setCaption(CAPTION_EDEFAULT);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_BLOCK:
-        setStartBlock(START_BLOCK_EDEFAULT);
+      case SequencePackage.ONE_LIFELINE_MESSAGE__START_EXEC:
+        setStartExec(START_EXEC_EDEFAULT);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_BLOCK:
-        setEndBlock(END_BLOCK_EDEFAULT);
+      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC:
+        setEndExec(END_EXEC_EDEFAULT);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT:
-        setEndBlockCount(END_BLOCK_COUNT_EDEFAULT);
+      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC_COUNT:
+        setEndExecCount(END_EXEC_COUNT_EDEFAULT);
         return;
       case SequencePackage.ONE_LIFELINE_MESSAGE__NOTE:
         setNote(NOTE_EDEFAULT);
@@ -536,12 +536,12 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
         return MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT == null ? messageTypeLostAndFound != null : !MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT.equals(messageTypeLostAndFound);
       case SequencePackage.ONE_LIFELINE_MESSAGE__CAPTION:
         return CAPTION_EDEFAULT == null ? caption != null : !CAPTION_EDEFAULT.equals(caption);
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_BLOCK:
-        return startBlock != START_BLOCK_EDEFAULT;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_BLOCK:
-        return endBlock != END_BLOCK_EDEFAULT;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT:
-        return endBlockCount != END_BLOCK_COUNT_EDEFAULT;
+      case SequencePackage.ONE_LIFELINE_MESSAGE__START_EXEC:
+        return startExec != START_EXEC_EDEFAULT;
+      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC:
+        return endExec != END_EXEC_EDEFAULT;
+      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC_COUNT:
+        return endExecCount != END_EXEC_COUNT_EDEFAULT;
       case SequencePackage.ONE_LIFELINE_MESSAGE__NOTE:
         return NOTE_EDEFAULT == null ? note != null : !NOTE_EDEFAULT.equals(note);
     }
@@ -565,12 +565,12 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     result.append(messageTypeLostAndFound);
     result.append(", caption: ");
     result.append(caption);
-    result.append(", startBlock: ");
-    result.append(startBlock);
-    result.append(", endBlock: ");
-    result.append(endBlock);
-    result.append(", endBlockCount: ");
-    result.append(endBlockCount);
+    result.append(", startExec: ");
+    result.append(startExec);
+    result.append(", endExec: ");
+    result.append(endExec);
+    result.append(", endExecCount: ");
+    result.append(endExecCount);
     result.append(", note: ");
     result.append(note);
     result.append(')');

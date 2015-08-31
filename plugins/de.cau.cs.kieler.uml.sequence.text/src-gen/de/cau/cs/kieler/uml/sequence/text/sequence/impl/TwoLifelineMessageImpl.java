@@ -25,12 +25,12 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getMessageType <em>Message Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getMessage <em>Message</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getTargetLifeline <em>Target Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isSourceStartBlock <em>Source Start Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isSourceEndBlock <em>Source End Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getSourceEndBlockCount <em>Source End Block Count</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isTargetStartBlock <em>Target Start Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isTargetEndBlock <em>Target End Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getTargetEndBlockCount <em>Target End Block Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isSourceStartExec <em>Source Start Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isSourceEndExec <em>Source End Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getSourceEndExecCount <em>Source End Exec Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isTargetStartExec <em>Target Start Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isTargetEndExec <em>Target End Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getTargetEndExecCount <em>Target End Exec Count</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getSourceNote <em>Source Note</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getTargetNote <em>Target Note</em>}</li>
  * </ul>
@@ -101,124 +101,124 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
   protected Lifeline targetLifeline;
 
   /**
-   * The default value of the '{@link #isSourceStartBlock() <em>Source Start Block</em>}' attribute.
+   * The default value of the '{@link #isSourceStartExec() <em>Source Start Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isSourceStartBlock()
+   * @see #isSourceStartExec()
    * @generated
    * @ordered
    */
-  protected static final boolean SOURCE_START_BLOCK_EDEFAULT = false;
+  protected static final boolean SOURCE_START_EXEC_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isSourceStartBlock() <em>Source Start Block</em>}' attribute.
+   * The cached value of the '{@link #isSourceStartExec() <em>Source Start Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isSourceStartBlock()
+   * @see #isSourceStartExec()
    * @generated
    * @ordered
    */
-  protected boolean sourceStartBlock = SOURCE_START_BLOCK_EDEFAULT;
+  protected boolean sourceStartExec = SOURCE_START_EXEC_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isSourceEndBlock() <em>Source End Block</em>}' attribute.
+   * The default value of the '{@link #isSourceEndExec() <em>Source End Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isSourceEndBlock()
+   * @see #isSourceEndExec()
    * @generated
    * @ordered
    */
-  protected static final boolean SOURCE_END_BLOCK_EDEFAULT = false;
+  protected static final boolean SOURCE_END_EXEC_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isSourceEndBlock() <em>Source End Block</em>}' attribute.
+   * The cached value of the '{@link #isSourceEndExec() <em>Source End Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isSourceEndBlock()
+   * @see #isSourceEndExec()
    * @generated
    * @ordered
    */
-  protected boolean sourceEndBlock = SOURCE_END_BLOCK_EDEFAULT;
+  protected boolean sourceEndExec = SOURCE_END_EXEC_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getSourceEndBlockCount() <em>Source End Block Count</em>}' attribute.
+   * The default value of the '{@link #getSourceEndExecCount() <em>Source End Exec Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getSourceEndBlockCount()
+   * @see #getSourceEndExecCount()
    * @generated
    * @ordered
    */
-  protected static final int SOURCE_END_BLOCK_COUNT_EDEFAULT = 0;
+  protected static final int SOURCE_END_EXEC_COUNT_EDEFAULT = 0;
 
   /**
-   * The cached value of the '{@link #getSourceEndBlockCount() <em>Source End Block Count</em>}' attribute.
+   * The cached value of the '{@link #getSourceEndExecCount() <em>Source End Exec Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getSourceEndBlockCount()
+   * @see #getSourceEndExecCount()
    * @generated
    * @ordered
    */
-  protected int sourceEndBlockCount = SOURCE_END_BLOCK_COUNT_EDEFAULT;
+  protected int sourceEndExecCount = SOURCE_END_EXEC_COUNT_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isTargetStartBlock() <em>Target Start Block</em>}' attribute.
+   * The default value of the '{@link #isTargetStartExec() <em>Target Start Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isTargetStartBlock()
+   * @see #isTargetStartExec()
    * @generated
    * @ordered
    */
-  protected static final boolean TARGET_START_BLOCK_EDEFAULT = false;
+  protected static final boolean TARGET_START_EXEC_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isTargetStartBlock() <em>Target Start Block</em>}' attribute.
+   * The cached value of the '{@link #isTargetStartExec() <em>Target Start Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isTargetStartBlock()
+   * @see #isTargetStartExec()
    * @generated
    * @ordered
    */
-  protected boolean targetStartBlock = TARGET_START_BLOCK_EDEFAULT;
+  protected boolean targetStartExec = TARGET_START_EXEC_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isTargetEndBlock() <em>Target End Block</em>}' attribute.
+   * The default value of the '{@link #isTargetEndExec() <em>Target End Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isTargetEndBlock()
+   * @see #isTargetEndExec()
    * @generated
    * @ordered
    */
-  protected static final boolean TARGET_END_BLOCK_EDEFAULT = false;
+  protected static final boolean TARGET_END_EXEC_EDEFAULT = false;
 
   /**
-   * The cached value of the '{@link #isTargetEndBlock() <em>Target End Block</em>}' attribute.
+   * The cached value of the '{@link #isTargetEndExec() <em>Target End Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #isTargetEndBlock()
+   * @see #isTargetEndExec()
    * @generated
    * @ordered
    */
-  protected boolean targetEndBlock = TARGET_END_BLOCK_EDEFAULT;
+  protected boolean targetEndExec = TARGET_END_EXEC_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getTargetEndBlockCount() <em>Target End Block Count</em>}' attribute.
+   * The default value of the '{@link #getTargetEndExecCount() <em>Target End Exec Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getTargetEndBlockCount()
+   * @see #getTargetEndExecCount()
    * @generated
    * @ordered
    */
-  protected static final int TARGET_END_BLOCK_COUNT_EDEFAULT = 0;
+  protected static final int TARGET_END_EXEC_COUNT_EDEFAULT = 0;
 
   /**
-   * The cached value of the '{@link #getTargetEndBlockCount() <em>Target End Block Count</em>}' attribute.
+   * The cached value of the '{@link #getTargetEndExecCount() <em>Target End Exec Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getTargetEndBlockCount()
+   * @see #getTargetEndExecCount()
    * @generated
    * @ordered
    */
-  protected int targetEndBlockCount = TARGET_END_BLOCK_COUNT_EDEFAULT;
+  protected int targetEndExecCount = TARGET_END_EXEC_COUNT_EDEFAULT;
 
   /**
    * The default value of the '{@link #getSourceNote() <em>Source Note</em>}' attribute.
@@ -418,9 +418,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isSourceStartBlock()
+  public boolean isSourceStartExec()
   {
-    return sourceStartBlock;
+    return sourceStartExec;
   }
 
   /**
@@ -428,12 +428,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setSourceStartBlock(boolean newSourceStartBlock)
+  public void setSourceStartExec(boolean newSourceStartExec)
   {
-    boolean oldSourceStartBlock = sourceStartBlock;
-    sourceStartBlock = newSourceStartBlock;
+    boolean oldSourceStartExec = sourceStartExec;
+    sourceStartExec = newSourceStartExec;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK, oldSourceStartBlock, sourceStartBlock));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC, oldSourceStartExec, sourceStartExec));
   }
 
   /**
@@ -441,9 +441,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isSourceEndBlock()
+  public boolean isSourceEndExec()
   {
-    return sourceEndBlock;
+    return sourceEndExec;
   }
 
   /**
@@ -451,12 +451,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setSourceEndBlock(boolean newSourceEndBlock)
+  public void setSourceEndExec(boolean newSourceEndExec)
   {
-    boolean oldSourceEndBlock = sourceEndBlock;
-    sourceEndBlock = newSourceEndBlock;
+    boolean oldSourceEndExec = sourceEndExec;
+    sourceEndExec = newSourceEndExec;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK, oldSourceEndBlock, sourceEndBlock));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC, oldSourceEndExec, sourceEndExec));
   }
 
   /**
@@ -464,9 +464,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public int getSourceEndBlockCount()
+  public int getSourceEndExecCount()
   {
-    return sourceEndBlockCount;
+    return sourceEndExecCount;
   }
 
   /**
@@ -474,12 +474,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setSourceEndBlockCount(int newSourceEndBlockCount)
+  public void setSourceEndExecCount(int newSourceEndExecCount)
   {
-    int oldSourceEndBlockCount = sourceEndBlockCount;
-    sourceEndBlockCount = newSourceEndBlockCount;
+    int oldSourceEndExecCount = sourceEndExecCount;
+    sourceEndExecCount = newSourceEndExecCount;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT, oldSourceEndBlockCount, sourceEndBlockCount));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT, oldSourceEndExecCount, sourceEndExecCount));
   }
 
   /**
@@ -487,9 +487,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isTargetStartBlock()
+  public boolean isTargetStartExec()
   {
-    return targetStartBlock;
+    return targetStartExec;
   }
 
   /**
@@ -497,12 +497,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setTargetStartBlock(boolean newTargetStartBlock)
+  public void setTargetStartExec(boolean newTargetStartExec)
   {
-    boolean oldTargetStartBlock = targetStartBlock;
-    targetStartBlock = newTargetStartBlock;
+    boolean oldTargetStartExec = targetStartExec;
+    targetStartExec = newTargetStartExec;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK, oldTargetStartBlock, targetStartBlock));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_EXEC, oldTargetStartExec, targetStartExec));
   }
 
   /**
@@ -510,9 +510,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public boolean isTargetEndBlock()
+  public boolean isTargetEndExec()
   {
-    return targetEndBlock;
+    return targetEndExec;
   }
 
   /**
@@ -520,12 +520,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setTargetEndBlock(boolean newTargetEndBlock)
+  public void setTargetEndExec(boolean newTargetEndExec)
   {
-    boolean oldTargetEndBlock = targetEndBlock;
-    targetEndBlock = newTargetEndBlock;
+    boolean oldTargetEndExec = targetEndExec;
+    targetEndExec = newTargetEndExec;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK, oldTargetEndBlock, targetEndBlock));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC, oldTargetEndExec, targetEndExec));
   }
 
   /**
@@ -533,9 +533,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public int getTargetEndBlockCount()
+  public int getTargetEndExecCount()
   {
-    return targetEndBlockCount;
+    return targetEndExecCount;
   }
 
   /**
@@ -543,12 +543,12 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setTargetEndBlockCount(int newTargetEndBlockCount)
+  public void setTargetEndExecCount(int newTargetEndExecCount)
   {
-    int oldTargetEndBlockCount = targetEndBlockCount;
-    targetEndBlockCount = newTargetEndBlockCount;
+    int oldTargetEndExecCount = targetEndExecCount;
+    targetEndExecCount = newTargetEndExecCount;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT, oldTargetEndBlockCount, targetEndBlockCount));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT, oldTargetEndExecCount, targetEndExecCount));
   }
 
   /**
@@ -617,18 +617,18 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         if (resolve) return getTargetLifeline();
         return basicGetTargetLifeline();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK:
-        return isSourceStartBlock();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK:
-        return isSourceEndBlock();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT:
-        return getSourceEndBlockCount();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK:
-        return isTargetStartBlock();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK:
-        return isTargetEndBlock();
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT:
-        return getTargetEndBlockCount();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC:
+        return isSourceStartExec();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC:
+        return isSourceEndExec();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT:
+        return getSourceEndExecCount();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_EXEC:
+        return isTargetStartExec();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC:
+        return isTargetEndExec();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT:
+        return getTargetEndExecCount();
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_NOTE:
         return getSourceNote();
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_NOTE:
@@ -659,23 +659,23 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         setTargetLifeline((Lifeline)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK:
-        setSourceStartBlock((Boolean)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC:
+        setSourceStartExec((Boolean)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK:
-        setSourceEndBlock((Boolean)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC:
+        setSourceEndExec((Boolean)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT:
-        setSourceEndBlockCount((Integer)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT:
+        setSourceEndExecCount((Integer)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK:
-        setTargetStartBlock((Boolean)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_EXEC:
+        setTargetStartExec((Boolean)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK:
-        setTargetEndBlock((Boolean)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC:
+        setTargetEndExec((Boolean)newValue);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT:
-        setTargetEndBlockCount((Integer)newValue);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT:
+        setTargetEndExecCount((Integer)newValue);
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_NOTE:
         setSourceNote((String)newValue);
@@ -709,23 +709,23 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         setTargetLifeline((Lifeline)null);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK:
-        setSourceStartBlock(SOURCE_START_BLOCK_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC:
+        setSourceStartExec(SOURCE_START_EXEC_EDEFAULT);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK:
-        setSourceEndBlock(SOURCE_END_BLOCK_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC:
+        setSourceEndExec(SOURCE_END_EXEC_EDEFAULT);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT:
-        setSourceEndBlockCount(SOURCE_END_BLOCK_COUNT_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT:
+        setSourceEndExecCount(SOURCE_END_EXEC_COUNT_EDEFAULT);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK:
-        setTargetStartBlock(TARGET_START_BLOCK_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_EXEC:
+        setTargetStartExec(TARGET_START_EXEC_EDEFAULT);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK:
-        setTargetEndBlock(TARGET_END_BLOCK_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC:
+        setTargetEndExec(TARGET_END_EXEC_EDEFAULT);
         return;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT:
-        setTargetEndBlockCount(TARGET_END_BLOCK_COUNT_EDEFAULT);
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT:
+        setTargetEndExecCount(TARGET_END_EXEC_COUNT_EDEFAULT);
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_NOTE:
         setSourceNote(SOURCE_NOTE_EDEFAULT);
@@ -755,18 +755,18 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
         return MESSAGE_EDEFAULT == null ? message != null : !MESSAGE_EDEFAULT.equals(message);
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         return targetLifeline != null;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK:
-        return sourceStartBlock != SOURCE_START_BLOCK_EDEFAULT;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK:
-        return sourceEndBlock != SOURCE_END_BLOCK_EDEFAULT;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT:
-        return sourceEndBlockCount != SOURCE_END_BLOCK_COUNT_EDEFAULT;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK:
-        return targetStartBlock != TARGET_START_BLOCK_EDEFAULT;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK:
-        return targetEndBlock != TARGET_END_BLOCK_EDEFAULT;
-      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT:
-        return targetEndBlockCount != TARGET_END_BLOCK_COUNT_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC:
+        return sourceStartExec != SOURCE_START_EXEC_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC:
+        return sourceEndExec != SOURCE_END_EXEC_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT:
+        return sourceEndExecCount != SOURCE_END_EXEC_COUNT_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_EXEC:
+        return targetStartExec != TARGET_START_EXEC_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC:
+        return targetEndExec != TARGET_END_EXEC_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT:
+        return targetEndExecCount != TARGET_END_EXEC_COUNT_EDEFAULT;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_NOTE:
         return SOURCE_NOTE_EDEFAULT == null ? sourceNote != null : !SOURCE_NOTE_EDEFAULT.equals(sourceNote);
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_NOTE:
@@ -790,18 +790,18 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
     result.append(messageType);
     result.append(", message: ");
     result.append(message);
-    result.append(", sourceStartBlock: ");
-    result.append(sourceStartBlock);
-    result.append(", sourceEndBlock: ");
-    result.append(sourceEndBlock);
-    result.append(", sourceEndBlockCount: ");
-    result.append(sourceEndBlockCount);
-    result.append(", targetStartBlock: ");
-    result.append(targetStartBlock);
-    result.append(", targetEndBlock: ");
-    result.append(targetEndBlock);
-    result.append(", targetEndBlockCount: ");
-    result.append(targetEndBlockCount);
+    result.append(", sourceStartExec: ");
+    result.append(sourceStartExec);
+    result.append(", sourceEndExec: ");
+    result.append(sourceEndExec);
+    result.append(", sourceEndExecCount: ");
+    result.append(sourceEndExecCount);
+    result.append(", targetStartExec: ");
+    result.append(targetStartExec);
+    result.append(", targetEndExec: ");
+    result.append(targetEndExec);
+    result.append(", targetEndExecCount: ");
+    result.append(targetEndExecCount);
     result.append(", sourceNote: ");
     result.append(sourceNote);
     result.append(", targetNote: ");

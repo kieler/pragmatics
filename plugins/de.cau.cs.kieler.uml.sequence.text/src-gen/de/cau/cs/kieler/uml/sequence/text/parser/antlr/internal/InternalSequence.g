@@ -421,40 +421,40 @@ ruleTwoLifelineMessage returns [EObject current=null]
 )
 )((
 (
-		lv_sourceStartBlock_5_0=	'sourceStartBlock' 
+		lv_sourceStartExec_5_0=	'sourceStartExec' 
     {
-        newLeafNode(lv_sourceStartBlock_5_0, grammarAccess.getTwoLifelineMessageAccess().getSourceStartBlockSourceStartBlockKeyword_5_0_0());
+        newLeafNode(lv_sourceStartExec_5_0, grammarAccess.getTwoLifelineMessageAccess().getSourceStartExecSourceStartExecKeyword_5_0_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getTwoLifelineMessageRule());
 	        }
-       		setWithLastConsumed($current, "sourceStartBlock", true, "sourceStartBlock");
+       		setWithLastConsumed($current, "sourceStartExec", true, "sourceStartExec");
 	    }
 
 )
 )
     |((
 (
-		lv_sourceEndBlock_6_0=	'sourceEndBlock' 
+		lv_sourceEndExec_6_0=	'sourceEndExec' 
     {
-        newLeafNode(lv_sourceEndBlock_6_0, grammarAccess.getTwoLifelineMessageAccess().getSourceEndBlockSourceEndBlockKeyword_5_1_0_0());
+        newLeafNode(lv_sourceEndExec_6_0, grammarAccess.getTwoLifelineMessageAccess().getSourceEndExecSourceEndExecKeyword_5_1_0_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getTwoLifelineMessageRule());
 	        }
-       		setWithLastConsumed($current, "sourceEndBlock", true, "sourceEndBlock");
+       		setWithLastConsumed($current, "sourceEndExec", true, "sourceEndExec");
 	    }
 
 )
 )(
 (
-		lv_sourceEndBlockCount_7_0=RULE_INT_GREATER_ZERO
+		lv_sourceEndExecCount_7_0=RULE_INT_GREATER_ZERO
 		{
-			newLeafNode(lv_sourceEndBlockCount_7_0, grammarAccess.getTwoLifelineMessageAccess().getSourceEndBlockCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0()); 
+			newLeafNode(lv_sourceEndExecCount_7_0, grammarAccess.getTwoLifelineMessageAccess().getSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -462,48 +462,48 @@ ruleTwoLifelineMessage returns [EObject current=null]
 	        }
        		setWithLastConsumed(
        			$current, 
-       			"sourceEndBlockCount",
-        		lv_sourceEndBlockCount_7_0, 
+       			"sourceEndExecCount",
+        		lv_sourceEndExecCount_7_0, 
         		"INT_GREATER_ZERO");
 	    }
 
 )
 )?))?((
 (
-		lv_targetStartBlock_8_0=	'targetStartBlock' 
+		lv_targetStartExec_8_0=	'targetStartExec' 
     {
-        newLeafNode(lv_targetStartBlock_8_0, grammarAccess.getTwoLifelineMessageAccess().getTargetStartBlockTargetStartBlockKeyword_6_0_0());
+        newLeafNode(lv_targetStartExec_8_0, grammarAccess.getTwoLifelineMessageAccess().getTargetStartExecTargetStartExecKeyword_6_0_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getTwoLifelineMessageRule());
 	        }
-       		setWithLastConsumed($current, "targetStartBlock", true, "targetStartBlock");
+       		setWithLastConsumed($current, "targetStartExec", true, "targetStartExec");
 	    }
 
 )
 )
     |((
 (
-		lv_targetEndBlock_9_0=	'targetEndBlock' 
+		lv_targetEndExec_9_0=	'targetEndExec' 
     {
-        newLeafNode(lv_targetEndBlock_9_0, grammarAccess.getTwoLifelineMessageAccess().getTargetEndBlockTargetEndBlockKeyword_6_1_0_0());
+        newLeafNode(lv_targetEndExec_9_0, grammarAccess.getTwoLifelineMessageAccess().getTargetEndExecTargetEndExecKeyword_6_1_0_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getTwoLifelineMessageRule());
 	        }
-       		setWithLastConsumed($current, "targetEndBlock", true, "targetEndBlock");
+       		setWithLastConsumed($current, "targetEndExec", true, "targetEndExec");
 	    }
 
 )
 )(
 (
-		lv_targetEndBlockCount_10_0=RULE_INT_GREATER_ZERO
+		lv_targetEndExecCount_10_0=RULE_INT_GREATER_ZERO
 		{
-			newLeafNode(lv_targetEndBlockCount_10_0, grammarAccess.getTwoLifelineMessageAccess().getTargetEndBlockCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0()); 
+			newLeafNode(lv_targetEndExecCount_10_0, grammarAccess.getTwoLifelineMessageAccess().getTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -511,8 +511,8 @@ ruleTwoLifelineMessage returns [EObject current=null]
 	        }
        		setWithLastConsumed(
        			$current, 
-       			"targetEndBlockCount",
-        		lv_targetEndBlockCount_10_0, 
+       			"targetEndExecCount",
+        		lv_targetEndExecCount_10_0, 
         		"INT_GREATER_ZERO");
 	    }
 
@@ -663,40 +663,40 @@ ruleOneLifelineMessage returns [EObject current=null]
 )
 )((
 (
-		lv_startBlock_4_0=	'startBlock' 
+		lv_startExec_4_0=	'startExec' 
     {
-        newLeafNode(lv_startBlock_4_0, grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_4_0_0());
+        newLeafNode(lv_startExec_4_0, grammarAccess.getOneLifelineMessageAccess().getStartExecStartExecKeyword_4_0_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getOneLifelineMessageRule());
 	        }
-       		setWithLastConsumed($current, "startBlock", true, "startBlock");
+       		setWithLastConsumed($current, "startExec", true, "startExec");
 	    }
 
 )
 )
     |((
 (
-		lv_endBlock_5_0=	'endBlock' 
+		lv_endExec_5_0=	'endExec' 
     {
-        newLeafNode(lv_endBlock_5_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_4_1_0_0());
+        newLeafNode(lv_endExec_5_0, grammarAccess.getOneLifelineMessageAccess().getEndExecEndExecKeyword_4_1_0_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getOneLifelineMessageRule());
 	        }
-       		setWithLastConsumed($current, "endBlock", true, "endBlock");
+       		setWithLastConsumed($current, "endExec", true, "endExec");
 	    }
 
 )
 )(
 (
-		lv_endBlockCount_6_0=RULE_INT_GREATER_ZERO
+		lv_endExecCount_6_0=RULE_INT_GREATER_ZERO
 		{
-			newLeafNode(lv_endBlockCount_6_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0()); 
+			newLeafNode(lv_endExecCount_6_0, grammarAccess.getOneLifelineMessageAccess().getEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -704,8 +704,8 @@ ruleOneLifelineMessage returns [EObject current=null]
 	        }
        		setWithLastConsumed(
        			$current, 
-       			"endBlockCount",
-        		lv_endBlockCount_6_0, 
+       			"endExecCount",
+        		lv_endExecCount_6_0, 
         		"INT_GREATER_ZERO");
 	    }
 

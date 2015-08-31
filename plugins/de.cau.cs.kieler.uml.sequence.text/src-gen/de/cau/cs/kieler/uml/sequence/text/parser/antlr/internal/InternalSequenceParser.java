@@ -22,7 +22,7 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalSequenceParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_ID", "RULE_INT_GREATER_ZERO", "RULE_INT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'sequenceDiagram'", "'lifeline'", "'as'", "'usecase'", "'to'", "'sourceStartBlock'", "'sourceEndBlock'", "'targetStartBlock'", "'targetEndBlock'", "'sourceNote'", "'targetNote'", "'lost'", "'found'", "'startBlock'", "'endBlock'", "'note'", "'destroy'", "'fragment'", "'{'", "'label'", "'}'", "'refinement'", "'lifelines'", "','", "'async'", "'create'", "'response'", "'sync'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_ID", "RULE_INT_GREATER_ZERO", "RULE_INT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'sequenceDiagram'", "'lifeline'", "'as'", "'usecase'", "'to'", "'sourceStartExec'", "'sourceEndExec'", "'targetStartExec'", "'targetEndExec'", "'sourceNote'", "'targetNote'", "'lost'", "'found'", "'startExec'", "'endExec'", "'note'", "'destroy'", "'fragment'", "'{'", "'label'", "'}'", "'refinement'", "'lifelines'", "','", "'async'", "'create'", "'response'", "'sync'"
     };
     public static final int RULE_STRING=4;
     public static final int RULE_SL_COMMENT=9;
@@ -782,7 +782,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTwoLifelineMessage"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:352:1: ruleTwoLifelineMessage returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( (lv_message_2_0= RULE_STRING ) ) otherlv_3= 'to' ( (otherlv_4= RULE_ID ) ) ( ( (lv_sourceStartBlock_5_0= 'sourceStartBlock' ) ) | ( ( (lv_sourceEndBlock_6_0= 'sourceEndBlock' ) ) ( (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )? ( ( (lv_targetStartBlock_8_0= 'targetStartBlock' ) ) | ( ( (lv_targetEndBlock_9_0= 'targetEndBlock' ) ) ( (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_11= 'sourceNote' ( (lv_sourceNote_12_0= RULE_STRING ) ) )? (otherlv_13= 'targetNote' ( (lv_targetNote_14_0= RULE_STRING ) ) )? ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:352:1: ruleTwoLifelineMessage returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( (lv_message_2_0= RULE_STRING ) ) otherlv_3= 'to' ( (otherlv_4= RULE_ID ) ) ( ( (lv_sourceStartExec_5_0= 'sourceStartExec' ) ) | ( ( (lv_sourceEndExec_6_0= 'sourceEndExec' ) ) ( (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )? ( ( (lv_targetStartExec_8_0= 'targetStartExec' ) ) | ( ( (lv_targetEndExec_9_0= 'targetEndExec' ) ) ( (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_11= 'sourceNote' ( (lv_sourceNote_12_0= RULE_STRING ) ) )? (otherlv_13= 'targetNote' ( (lv_targetNote_14_0= RULE_STRING ) ) )? ) ;
     public final EObject ruleTwoLifelineMessage() throws RecognitionException {
         EObject current = null;
 
@@ -790,12 +790,12 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
         Token lv_message_2_0=null;
         Token otherlv_3=null;
         Token otherlv_4=null;
-        Token lv_sourceStartBlock_5_0=null;
-        Token lv_sourceEndBlock_6_0=null;
-        Token lv_sourceEndBlockCount_7_0=null;
-        Token lv_targetStartBlock_8_0=null;
-        Token lv_targetEndBlock_9_0=null;
-        Token lv_targetEndBlockCount_10_0=null;
+        Token lv_sourceStartExec_5_0=null;
+        Token lv_sourceEndExec_6_0=null;
+        Token lv_sourceEndExecCount_7_0=null;
+        Token lv_targetStartExec_8_0=null;
+        Token lv_targetEndExec_9_0=null;
+        Token lv_targetEndExecCount_10_0=null;
         Token otherlv_11=null;
         Token lv_sourceNote_12_0=null;
         Token otherlv_13=null;
@@ -806,11 +806,11 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:355:28: ( ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( (lv_message_2_0= RULE_STRING ) ) otherlv_3= 'to' ( (otherlv_4= RULE_ID ) ) ( ( (lv_sourceStartBlock_5_0= 'sourceStartBlock' ) ) | ( ( (lv_sourceEndBlock_6_0= 'sourceEndBlock' ) ) ( (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )? ( ( (lv_targetStartBlock_8_0= 'targetStartBlock' ) ) | ( ( (lv_targetEndBlock_9_0= 'targetEndBlock' ) ) ( (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_11= 'sourceNote' ( (lv_sourceNote_12_0= RULE_STRING ) ) )? (otherlv_13= 'targetNote' ( (lv_targetNote_14_0= RULE_STRING ) ) )? ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:356:1: ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( (lv_message_2_0= RULE_STRING ) ) otherlv_3= 'to' ( (otherlv_4= RULE_ID ) ) ( ( (lv_sourceStartBlock_5_0= 'sourceStartBlock' ) ) | ( ( (lv_sourceEndBlock_6_0= 'sourceEndBlock' ) ) ( (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )? ( ( (lv_targetStartBlock_8_0= 'targetStartBlock' ) ) | ( ( (lv_targetEndBlock_9_0= 'targetEndBlock' ) ) ( (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_11= 'sourceNote' ( (lv_sourceNote_12_0= RULE_STRING ) ) )? (otherlv_13= 'targetNote' ( (lv_targetNote_14_0= RULE_STRING ) ) )? )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:355:28: ( ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( (lv_message_2_0= RULE_STRING ) ) otherlv_3= 'to' ( (otherlv_4= RULE_ID ) ) ( ( (lv_sourceStartExec_5_0= 'sourceStartExec' ) ) | ( ( (lv_sourceEndExec_6_0= 'sourceEndExec' ) ) ( (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )? ( ( (lv_targetStartExec_8_0= 'targetStartExec' ) ) | ( ( (lv_targetEndExec_9_0= 'targetEndExec' ) ) ( (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_11= 'sourceNote' ( (lv_sourceNote_12_0= RULE_STRING ) ) )? (otherlv_13= 'targetNote' ( (lv_targetNote_14_0= RULE_STRING ) ) )? ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:356:1: ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( (lv_message_2_0= RULE_STRING ) ) otherlv_3= 'to' ( (otherlv_4= RULE_ID ) ) ( ( (lv_sourceStartExec_5_0= 'sourceStartExec' ) ) | ( ( (lv_sourceEndExec_6_0= 'sourceEndExec' ) ) ( (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )? ( ( (lv_targetStartExec_8_0= 'targetStartExec' ) ) | ( ( (lv_targetEndExec_9_0= 'targetEndExec' ) ) ( (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_11= 'sourceNote' ( (lv_sourceNote_12_0= RULE_STRING ) ) )? (otherlv_13= 'targetNote' ( (lv_targetNote_14_0= RULE_STRING ) ) )? )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:356:1: ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( (lv_message_2_0= RULE_STRING ) ) otherlv_3= 'to' ( (otherlv_4= RULE_ID ) ) ( ( (lv_sourceStartBlock_5_0= 'sourceStartBlock' ) ) | ( ( (lv_sourceEndBlock_6_0= 'sourceEndBlock' ) ) ( (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )? ( ( (lv_targetStartBlock_8_0= 'targetStartBlock' ) ) | ( ( (lv_targetEndBlock_9_0= 'targetEndBlock' ) ) ( (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_11= 'sourceNote' ( (lv_sourceNote_12_0= RULE_STRING ) ) )? (otherlv_13= 'targetNote' ( (lv_targetNote_14_0= RULE_STRING ) ) )? )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:356:2: ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( (lv_message_2_0= RULE_STRING ) ) otherlv_3= 'to' ( (otherlv_4= RULE_ID ) ) ( ( (lv_sourceStartBlock_5_0= 'sourceStartBlock' ) ) | ( ( (lv_sourceEndBlock_6_0= 'sourceEndBlock' ) ) ( (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )? ( ( (lv_targetStartBlock_8_0= 'targetStartBlock' ) ) | ( ( (lv_targetEndBlock_9_0= 'targetEndBlock' ) ) ( (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_11= 'sourceNote' ( (lv_sourceNote_12_0= RULE_STRING ) ) )? (otherlv_13= 'targetNote' ( (lv_targetNote_14_0= RULE_STRING ) ) )?
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:356:1: ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( (lv_message_2_0= RULE_STRING ) ) otherlv_3= 'to' ( (otherlv_4= RULE_ID ) ) ( ( (lv_sourceStartExec_5_0= 'sourceStartExec' ) ) | ( ( (lv_sourceEndExec_6_0= 'sourceEndExec' ) ) ( (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )? ( ( (lv_targetStartExec_8_0= 'targetStartExec' ) ) | ( ( (lv_targetEndExec_9_0= 'targetEndExec' ) ) ( (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_11= 'sourceNote' ( (lv_sourceNote_12_0= RULE_STRING ) ) )? (otherlv_13= 'targetNote' ( (lv_targetNote_14_0= RULE_STRING ) ) )? )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:356:2: ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( (lv_message_2_0= RULE_STRING ) ) otherlv_3= 'to' ( (otherlv_4= RULE_ID ) ) ( ( (lv_sourceStartExec_5_0= 'sourceStartExec' ) ) | ( ( (lv_sourceEndExec_6_0= 'sourceEndExec' ) ) ( (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )? ( ( (lv_targetStartExec_8_0= 'targetStartExec' ) ) | ( ( (lv_targetEndExec_9_0= 'targetEndExec' ) ) ( (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_11= 'sourceNote' ( (lv_sourceNote_12_0= RULE_STRING ) ) )? (otherlv_13= 'targetNote' ( (lv_targetNote_14_0= RULE_STRING ) ) )?
             {
             // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:356:2: ( (otherlv_0= RULE_ID ) )
             // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:357:1: (otherlv_0= RULE_ID )
@@ -915,7 +915,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:422:2: ( ( (lv_sourceStartBlock_5_0= 'sourceStartBlock' ) ) | ( ( (lv_sourceEndBlock_6_0= 'sourceEndBlock' ) ) ( (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )?
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:422:2: ( ( (lv_sourceStartExec_5_0= 'sourceStartExec' ) ) | ( ( (lv_sourceEndExec_6_0= 'sourceEndExec' ) ) ( (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO ) )? ) )?
             int alt6=3;
             int LA6_0 = input.LA(1);
 
@@ -927,23 +927,23 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
             }
             switch (alt6) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:422:3: ( (lv_sourceStartBlock_5_0= 'sourceStartBlock' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:422:3: ( (lv_sourceStartExec_5_0= 'sourceStartExec' ) )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:422:3: ( (lv_sourceStartBlock_5_0= 'sourceStartBlock' ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:423:1: (lv_sourceStartBlock_5_0= 'sourceStartBlock' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:422:3: ( (lv_sourceStartExec_5_0= 'sourceStartExec' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:423:1: (lv_sourceStartExec_5_0= 'sourceStartExec' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:423:1: (lv_sourceStartBlock_5_0= 'sourceStartBlock' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:424:3: lv_sourceStartBlock_5_0= 'sourceStartBlock'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:423:1: (lv_sourceStartExec_5_0= 'sourceStartExec' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:424:3: lv_sourceStartExec_5_0= 'sourceStartExec'
                     {
-                    lv_sourceStartBlock_5_0=(Token)match(input,17,FOLLOW_17_in_ruleTwoLifelineMessage826); 
+                    lv_sourceStartExec_5_0=(Token)match(input,17,FOLLOW_17_in_ruleTwoLifelineMessage826); 
 
-                            newLeafNode(lv_sourceStartBlock_5_0, grammarAccess.getTwoLifelineMessageAccess().getSourceStartBlockSourceStartBlockKeyword_5_0_0());
+                            newLeafNode(lv_sourceStartExec_5_0, grammarAccess.getTwoLifelineMessageAccess().getSourceStartExecSourceStartExecKeyword_5_0_0());
                         
 
                     	        if (current==null) {
                     	            current = createModelElement(grammarAccess.getTwoLifelineMessageRule());
                     	        }
-                           		setWithLastConsumed(current, "sourceStartBlock", true, "sourceStartBlock");
+                           		setWithLastConsumed(current, "sourceStartExec", true, "sourceStartExec");
                     	    
 
                     }
@@ -955,26 +955,26 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:438:6: ( ( (lv_sourceEndBlock_6_0= 'sourceEndBlock' ) ) ( (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO ) )? )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:438:6: ( ( (lv_sourceEndExec_6_0= 'sourceEndExec' ) ) ( (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO ) )? )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:438:6: ( ( (lv_sourceEndBlock_6_0= 'sourceEndBlock' ) ) ( (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO ) )? )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:438:7: ( (lv_sourceEndBlock_6_0= 'sourceEndBlock' ) ) ( (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO ) )?
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:438:6: ( ( (lv_sourceEndExec_6_0= 'sourceEndExec' ) ) ( (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO ) )? )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:438:7: ( (lv_sourceEndExec_6_0= 'sourceEndExec' ) ) ( (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO ) )?
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:438:7: ( (lv_sourceEndBlock_6_0= 'sourceEndBlock' ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:439:1: (lv_sourceEndBlock_6_0= 'sourceEndBlock' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:438:7: ( (lv_sourceEndExec_6_0= 'sourceEndExec' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:439:1: (lv_sourceEndExec_6_0= 'sourceEndExec' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:439:1: (lv_sourceEndBlock_6_0= 'sourceEndBlock' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:440:3: lv_sourceEndBlock_6_0= 'sourceEndBlock'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:439:1: (lv_sourceEndExec_6_0= 'sourceEndExec' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:440:3: lv_sourceEndExec_6_0= 'sourceEndExec'
                     {
-                    lv_sourceEndBlock_6_0=(Token)match(input,18,FOLLOW_18_in_ruleTwoLifelineMessage864); 
+                    lv_sourceEndExec_6_0=(Token)match(input,18,FOLLOW_18_in_ruleTwoLifelineMessage864); 
 
-                            newLeafNode(lv_sourceEndBlock_6_0, grammarAccess.getTwoLifelineMessageAccess().getSourceEndBlockSourceEndBlockKeyword_5_1_0_0());
+                            newLeafNode(lv_sourceEndExec_6_0, grammarAccess.getTwoLifelineMessageAccess().getSourceEndExecSourceEndExecKeyword_5_1_0_0());
                         
 
                     	        if (current==null) {
                     	            current = createModelElement(grammarAccess.getTwoLifelineMessageRule());
                     	        }
-                           		setWithLastConsumed(current, "sourceEndBlock", true, "sourceEndBlock");
+                           		setWithLastConsumed(current, "sourceEndExec", true, "sourceEndExec");
                     	    
 
                     }
@@ -982,7 +982,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:453:2: ( (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO ) )?
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:453:2: ( (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO ) )?
                     int alt5=2;
                     int LA5_0 = input.LA(1);
 
@@ -991,14 +991,14 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt5) {
                         case 1 :
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:454:1: (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO )
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:454:1: (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO )
                             {
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:454:1: (lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO )
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:455:3: lv_sourceEndBlockCount_7_0= RULE_INT_GREATER_ZERO
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:454:1: (lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO )
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:455:3: lv_sourceEndExecCount_7_0= RULE_INT_GREATER_ZERO
                             {
-                            lv_sourceEndBlockCount_7_0=(Token)match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_ruleTwoLifelineMessage894); 
+                            lv_sourceEndExecCount_7_0=(Token)match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_ruleTwoLifelineMessage894); 
 
-                            			newLeafNode(lv_sourceEndBlockCount_7_0, grammarAccess.getTwoLifelineMessageAccess().getSourceEndBlockCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0()); 
+                            			newLeafNode(lv_sourceEndExecCount_7_0, grammarAccess.getTwoLifelineMessageAccess().getSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0()); 
                             		
 
                             	        if (current==null) {
@@ -1006,8 +1006,8 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                             	        }
                                    		setWithLastConsumed(
                                    			current, 
-                                   			"sourceEndBlockCount",
-                                    		lv_sourceEndBlockCount_7_0, 
+                                   			"sourceEndExecCount",
+                                    		lv_sourceEndExecCount_7_0, 
                                     		"INT_GREATER_ZERO");
                             	    
 
@@ -1028,7 +1028,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:471:6: ( ( (lv_targetStartBlock_8_0= 'targetStartBlock' ) ) | ( ( (lv_targetEndBlock_9_0= 'targetEndBlock' ) ) ( (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )?
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:471:6: ( ( (lv_targetStartExec_8_0= 'targetStartExec' ) ) | ( ( (lv_targetEndExec_9_0= 'targetEndExec' ) ) ( (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO ) )? ) )?
             int alt8=3;
             int LA8_0 = input.LA(1);
 
@@ -1040,23 +1040,23 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
             }
             switch (alt8) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:471:7: ( (lv_targetStartBlock_8_0= 'targetStartBlock' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:471:7: ( (lv_targetStartExec_8_0= 'targetStartExec' ) )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:471:7: ( (lv_targetStartBlock_8_0= 'targetStartBlock' ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:472:1: (lv_targetStartBlock_8_0= 'targetStartBlock' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:471:7: ( (lv_targetStartExec_8_0= 'targetStartExec' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:472:1: (lv_targetStartExec_8_0= 'targetStartExec' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:472:1: (lv_targetStartBlock_8_0= 'targetStartBlock' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:473:3: lv_targetStartBlock_8_0= 'targetStartBlock'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:472:1: (lv_targetStartExec_8_0= 'targetStartExec' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:473:3: lv_targetStartExec_8_0= 'targetStartExec'
                     {
-                    lv_targetStartBlock_8_0=(Token)match(input,19,FOLLOW_19_in_ruleTwoLifelineMessage922); 
+                    lv_targetStartExec_8_0=(Token)match(input,19,FOLLOW_19_in_ruleTwoLifelineMessage922); 
 
-                            newLeafNode(lv_targetStartBlock_8_0, grammarAccess.getTwoLifelineMessageAccess().getTargetStartBlockTargetStartBlockKeyword_6_0_0());
+                            newLeafNode(lv_targetStartExec_8_0, grammarAccess.getTwoLifelineMessageAccess().getTargetStartExecTargetStartExecKeyword_6_0_0());
                         
 
                     	        if (current==null) {
                     	            current = createModelElement(grammarAccess.getTwoLifelineMessageRule());
                     	        }
-                           		setWithLastConsumed(current, "targetStartBlock", true, "targetStartBlock");
+                           		setWithLastConsumed(current, "targetStartExec", true, "targetStartExec");
                     	    
 
                     }
@@ -1068,26 +1068,26 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:487:6: ( ( (lv_targetEndBlock_9_0= 'targetEndBlock' ) ) ( (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO ) )? )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:487:6: ( ( (lv_targetEndExec_9_0= 'targetEndExec' ) ) ( (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO ) )? )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:487:6: ( ( (lv_targetEndBlock_9_0= 'targetEndBlock' ) ) ( (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO ) )? )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:487:7: ( (lv_targetEndBlock_9_0= 'targetEndBlock' ) ) ( (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO ) )?
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:487:6: ( ( (lv_targetEndExec_9_0= 'targetEndExec' ) ) ( (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO ) )? )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:487:7: ( (lv_targetEndExec_9_0= 'targetEndExec' ) ) ( (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO ) )?
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:487:7: ( (lv_targetEndBlock_9_0= 'targetEndBlock' ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:488:1: (lv_targetEndBlock_9_0= 'targetEndBlock' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:487:7: ( (lv_targetEndExec_9_0= 'targetEndExec' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:488:1: (lv_targetEndExec_9_0= 'targetEndExec' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:488:1: (lv_targetEndBlock_9_0= 'targetEndBlock' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:489:3: lv_targetEndBlock_9_0= 'targetEndBlock'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:488:1: (lv_targetEndExec_9_0= 'targetEndExec' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:489:3: lv_targetEndExec_9_0= 'targetEndExec'
                     {
-                    lv_targetEndBlock_9_0=(Token)match(input,20,FOLLOW_20_in_ruleTwoLifelineMessage960); 
+                    lv_targetEndExec_9_0=(Token)match(input,20,FOLLOW_20_in_ruleTwoLifelineMessage960); 
 
-                            newLeafNode(lv_targetEndBlock_9_0, grammarAccess.getTwoLifelineMessageAccess().getTargetEndBlockTargetEndBlockKeyword_6_1_0_0());
+                            newLeafNode(lv_targetEndExec_9_0, grammarAccess.getTwoLifelineMessageAccess().getTargetEndExecTargetEndExecKeyword_6_1_0_0());
                         
 
                     	        if (current==null) {
                     	            current = createModelElement(grammarAccess.getTwoLifelineMessageRule());
                     	        }
-                           		setWithLastConsumed(current, "targetEndBlock", true, "targetEndBlock");
+                           		setWithLastConsumed(current, "targetEndExec", true, "targetEndExec");
                     	    
 
                     }
@@ -1095,7 +1095,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:502:2: ( (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO ) )?
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:502:2: ( (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO ) )?
                     int alt7=2;
                     int LA7_0 = input.LA(1);
 
@@ -1104,14 +1104,14 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt7) {
                         case 1 :
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:503:1: (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO )
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:503:1: (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO )
                             {
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:503:1: (lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO )
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:504:3: lv_targetEndBlockCount_10_0= RULE_INT_GREATER_ZERO
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:503:1: (lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO )
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:504:3: lv_targetEndExecCount_10_0= RULE_INT_GREATER_ZERO
                             {
-                            lv_targetEndBlockCount_10_0=(Token)match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_ruleTwoLifelineMessage990); 
+                            lv_targetEndExecCount_10_0=(Token)match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_ruleTwoLifelineMessage990); 
 
-                            			newLeafNode(lv_targetEndBlockCount_10_0, grammarAccess.getTwoLifelineMessageAccess().getTargetEndBlockCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0()); 
+                            			newLeafNode(lv_targetEndExecCount_10_0, grammarAccess.getTwoLifelineMessageAccess().getTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0()); 
                             		
 
                             	        if (current==null) {
@@ -1119,8 +1119,8 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                             	        }
                                    		setWithLastConsumed(
                                    			current, 
-                                   			"targetEndBlockCount",
-                                    		lv_targetEndBlockCount_10_0, 
+                                   			"targetEndExecCount",
+                                    		lv_targetEndExecCount_10_0, 
                                     		"INT_GREATER_ZERO");
                             	    
 
@@ -1292,7 +1292,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleOneLifelineMessage"
-    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:581:1: ruleOneLifelineMessage returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? ) ;
+    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:581:1: ruleOneLifelineMessage returns [EObject current=null] : ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startExec_4_0= 'startExec' ) ) | ( ( (lv_endExec_5_0= 'endExec' ) ) ( (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? ) ;
     public final EObject ruleOneLifelineMessage() throws RecognitionException {
         EObject current = null;
 
@@ -1300,9 +1300,9 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
         Token lv_messageTypeLostAndFound_2_1=null;
         Token lv_messageTypeLostAndFound_2_2=null;
         Token lv_caption_3_0=null;
-        Token lv_startBlock_4_0=null;
-        Token lv_endBlock_5_0=null;
-        Token lv_endBlockCount_6_0=null;
+        Token lv_startExec_4_0=null;
+        Token lv_endExec_5_0=null;
+        Token lv_endExecCount_6_0=null;
         Token otherlv_7=null;
         Token lv_note_8_0=null;
         Enumerator lv_messageType_1_0 = null;
@@ -1311,11 +1311,11 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:584:28: ( ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? ) )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:585:1: ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:584:28: ( ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startExec_4_0= 'startExec' ) ) | ( ( (lv_endExec_5_0= 'endExec' ) ) ( (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? ) )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:585:1: ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startExec_4_0= 'startExec' ) ) | ( ( (lv_endExec_5_0= 'endExec' ) ) ( (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? )
             {
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:585:1: ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? )
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:585:2: ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )?
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:585:1: ( ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startExec_4_0= 'startExec' ) ) | ( ( (lv_endExec_5_0= 'endExec' ) ) ( (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )? )
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:585:2: ( (otherlv_0= RULE_ID ) ) ( (lv_messageType_1_0= ruleMessageType ) ) ( ( (lv_messageTypeLostAndFound_2_1= 'lost' | lv_messageTypeLostAndFound_2_2= 'found' ) ) ) ( (lv_caption_3_0= RULE_STRING ) ) ( ( (lv_startExec_4_0= 'startExec' ) ) | ( ( (lv_endExec_5_0= 'endExec' ) ) ( (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )? (otherlv_7= 'note' ( (lv_note_8_0= RULE_STRING ) ) )?
             {
             // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:585:2: ( (otherlv_0= RULE_ID ) )
             // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:586:1: (otherlv_0= RULE_ID )
@@ -1459,7 +1459,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
             }
 
-            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:664:2: ( ( (lv_startBlock_4_0= 'startBlock' ) ) | ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )?
+            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:664:2: ( ( (lv_startExec_4_0= 'startExec' ) ) | ( ( (lv_endExec_5_0= 'endExec' ) ) ( (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO ) )? ) )?
             int alt13=3;
             int LA13_0 = input.LA(1);
 
@@ -1471,23 +1471,23 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
             }
             switch (alt13) {
                 case 1 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:664:3: ( (lv_startBlock_4_0= 'startBlock' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:664:3: ( (lv_startExec_4_0= 'startExec' ) )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:664:3: ( (lv_startBlock_4_0= 'startBlock' ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:665:1: (lv_startBlock_4_0= 'startBlock' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:664:3: ( (lv_startExec_4_0= 'startExec' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:665:1: (lv_startExec_4_0= 'startExec' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:665:1: (lv_startBlock_4_0= 'startBlock' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:666:3: lv_startBlock_4_0= 'startBlock'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:665:1: (lv_startExec_4_0= 'startExec' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:666:3: lv_startExec_4_0= 'startExec'
                     {
-                    lv_startBlock_4_0=(Token)match(input,25,FOLLOW_25_in_ruleOneLifelineMessage1291); 
+                    lv_startExec_4_0=(Token)match(input,25,FOLLOW_25_in_ruleOneLifelineMessage1291); 
 
-                            newLeafNode(lv_startBlock_4_0, grammarAccess.getOneLifelineMessageAccess().getStartBlockStartBlockKeyword_4_0_0());
+                            newLeafNode(lv_startExec_4_0, grammarAccess.getOneLifelineMessageAccess().getStartExecStartExecKeyword_4_0_0());
                         
 
                     	        if (current==null) {
                     	            current = createModelElement(grammarAccess.getOneLifelineMessageRule());
                     	        }
-                           		setWithLastConsumed(current, "startBlock", true, "startBlock");
+                           		setWithLastConsumed(current, "startExec", true, "startExec");
                     	    
 
                     }
@@ -1499,26 +1499,26 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:680:6: ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:680:6: ( ( (lv_endExec_5_0= 'endExec' ) ) ( (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO ) )? )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:680:6: ( ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )? )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:680:7: ( (lv_endBlock_5_0= 'endBlock' ) ) ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )?
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:680:6: ( ( (lv_endExec_5_0= 'endExec' ) ) ( (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO ) )? )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:680:7: ( (lv_endExec_5_0= 'endExec' ) ) ( (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO ) )?
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:680:7: ( (lv_endBlock_5_0= 'endBlock' ) )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:681:1: (lv_endBlock_5_0= 'endBlock' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:680:7: ( (lv_endExec_5_0= 'endExec' ) )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:681:1: (lv_endExec_5_0= 'endExec' )
                     {
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:681:1: (lv_endBlock_5_0= 'endBlock' )
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:682:3: lv_endBlock_5_0= 'endBlock'
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:681:1: (lv_endExec_5_0= 'endExec' )
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:682:3: lv_endExec_5_0= 'endExec'
                     {
-                    lv_endBlock_5_0=(Token)match(input,26,FOLLOW_26_in_ruleOneLifelineMessage1329); 
+                    lv_endExec_5_0=(Token)match(input,26,FOLLOW_26_in_ruleOneLifelineMessage1329); 
 
-                            newLeafNode(lv_endBlock_5_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockEndBlockKeyword_4_1_0_0());
+                            newLeafNode(lv_endExec_5_0, grammarAccess.getOneLifelineMessageAccess().getEndExecEndExecKeyword_4_1_0_0());
                         
 
                     	        if (current==null) {
                     	            current = createModelElement(grammarAccess.getOneLifelineMessageRule());
                     	        }
-                           		setWithLastConsumed(current, "endBlock", true, "endBlock");
+                           		setWithLastConsumed(current, "endExec", true, "endExec");
                     	    
 
                     }
@@ -1526,7 +1526,7 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:695:2: ( (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO ) )?
+                    // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:695:2: ( (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO ) )?
                     int alt12=2;
                     int LA12_0 = input.LA(1);
 
@@ -1535,14 +1535,14 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt12) {
                         case 1 :
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:696:1: (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO )
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:696:1: (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO )
                             {
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:696:1: (lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO )
-                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:697:3: lv_endBlockCount_6_0= RULE_INT_GREATER_ZERO
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:696:1: (lv_endExecCount_6_0= RULE_INT_GREATER_ZERO )
+                            // ../de.cau.cs.kieler.uml.sequence.text/src-gen/de/cau/cs/kieler/uml/sequence/text/parser/antlr/internal/InternalSequence.g:697:3: lv_endExecCount_6_0= RULE_INT_GREATER_ZERO
                             {
-                            lv_endBlockCount_6_0=(Token)match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_ruleOneLifelineMessage1359); 
+                            lv_endExecCount_6_0=(Token)match(input,RULE_INT_GREATER_ZERO,FOLLOW_RULE_INT_GREATER_ZERO_in_ruleOneLifelineMessage1359); 
 
-                            			newLeafNode(lv_endBlockCount_6_0, grammarAccess.getOneLifelineMessageAccess().getEndBlockCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0()); 
+                            			newLeafNode(lv_endExecCount_6_0, grammarAccess.getOneLifelineMessageAccess().getEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0()); 
                             		
 
                             	        if (current==null) {
@@ -1550,8 +1550,8 @@ public class InternalSequenceParser extends AbstractInternalAntlrParser {
                             	        }
                                    		setWithLastConsumed(
                                    			current, 
-                                   			"endBlockCount",
-                                    		lv_endBlockCount_6_0, 
+                                   			"endExecCount",
+                                    		lv_endExecCount_6_0, 
                                     		"INT_GREATER_ZERO");
                             	    
 

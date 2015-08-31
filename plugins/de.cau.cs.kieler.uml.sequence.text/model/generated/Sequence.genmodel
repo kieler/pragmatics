@@ -29,12 +29,12 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/messageType"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/message"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//TwoLifelineMessage/targetLifeline"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceStartBlock"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceEndBlock"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceEndBlockCount"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetStartBlock"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetEndBlock"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetEndBlockCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceStartExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceEndExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceEndExecCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetStartExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetEndExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetEndExecCount"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceNote"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetNote"/>
     </genClasses>
@@ -43,9 +43,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/messageType"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/messageTypeLostAndFound"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/caption"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/startBlock"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/endBlock"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/endBlockCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/startExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/endExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/endExecCount"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/note"/>
     </genClasses>
     <genClasses ecoreClass="Sequence.ecore#//OneLifelineNote">

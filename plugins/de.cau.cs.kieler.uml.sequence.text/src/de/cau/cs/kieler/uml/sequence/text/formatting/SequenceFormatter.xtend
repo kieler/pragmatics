@@ -47,35 +47,35 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
             c.setIndentationIncrement.before(note)
             c.setIndentationDecrement.after(note)
         }
-        for (block : findKeywords('startBlock')) {
-            c.setLinewrap(1).before(block)
-            c.setIndentationIncrement.before(block)
-            c.setIndentationDecrement.after(block)
-            c.setLinewrap(1).after(block)
+        for (exec : findKeywords('startExec')) {
+            c.setLinewrap(1).before(exec)
+            c.setIndentationIncrement.before(exec)
+            c.setIndentationDecrement.after(exec)
+            c.setLinewrap(1).after(exec)
         }
-        for (block : findKeywords('targetStartBlock')) {
-            c.setLinewrap(1).before(block)
-            c.setIndentationIncrement.before(block)
-            c.setIndentationDecrement.after(block)
-            c.setLinewrap(1).after(block)
+        for (exec : findKeywords('targetStartExec')) {
+            c.setLinewrap(1).before(exec)
+            c.setIndentationIncrement.before(exec)
+            c.setIndentationDecrement.after(exec)
+            c.setLinewrap(1).after(exec)
         }
-        for (block : findKeywords('sourceStartBlock')) {
-            c.setLinewrap(1).before(block)
-            c.setIndentationIncrement.before(block)
-            c.setIndentationDecrement.after(block)
-            c.setLinewrap(1).after(block)
+        for (exec : findKeywords('sourceStartExec')) {
+            c.setLinewrap(1).before(exec)
+            c.setIndentationIncrement.before(exec)
+            c.setIndentationDecrement.after(exec)
+            c.setLinewrap(1).after(exec)
         }
-        for (block : findKeywords('sourceEndBlock')) {
-            c.setLinewrap(1).before(block)
-            c.setIndentationIncrement.before(block)
-            c.setIndentationDecrement.after(block)
-            c.setLinewrap(1).after(block)
+        for (exec : findKeywords('sourceEndExec')) {
+            c.setLinewrap(1).before(exec)
+            c.setIndentationIncrement.before(exec)
+            c.setIndentationDecrement.after(exec)
+            c.setLinewrap(1).after(exec)
         }
-        for (block : findKeywords('targetEndBlock')) {
-            c.setLinewrap(1).before(block)
-            c.setIndentationIncrement.before(block)
-            c.setIndentationDecrement.after(block)
-            c.setLinewrap(1).after(block)
+        for (exec : findKeywords('targetEndExec')) {
+            c.setLinewrap(1).before(exec)
+            c.setIndentationIncrement.before(exec)
+            c.setIndentationDecrement.after(exec)
+            c.setLinewrap(1).after(exec)
         }
         for (comma : findKeywords(',')) {
             c.setNoLinewrap().before(comma)
@@ -99,12 +99,12 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
         c.setLinewrap().before(f.destroyLifelineEventRule);
         c.setLinewrap().before(f.getOneLifelineNoteRule);
         c.setLinewrap().before(f.getTwoLifelineMessageRule);
-//        c.setLinewrap().before(f.getOneLifelineEndBlockRule);
+//        c.setLinewrap().before(f.getOneLifelineEndExecRule);
         c.setLinewrap().before(f.getFragmentRule);
         c.setLinewrap().before(f.getRefinementRule);
 //        c.setLinewrap().before(f.getLocalVariableRule);
         
-        // Formatting before and after the lifeline declarations
+        // Formatting before and after the lifeline/usecase declaration(s)
         c.setLinewrap(2).before(f.getSequenceDiagramAccess.lifelinesAssignment_3.eContents.get(0))
         c.setLinewrap(2).after(f.getSequenceDiagramAccess.lifelinesAssignment_3.eContents.last);
         

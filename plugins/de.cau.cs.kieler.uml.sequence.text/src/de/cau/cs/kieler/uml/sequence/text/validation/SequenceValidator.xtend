@@ -25,14 +25,14 @@ import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
 class SequenceValidator extends AbstractSequenceValidator {
 
     private static val EStructuralFeature END_LEFT_COUNT = SequencePackage.Literals.
-        TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK_COUNT
-    private static val EStructuralFeature END_LEFT = SequencePackage.Literals.TWO_LIFELINE_MESSAGE__SOURCE_END_BLOCK
+        TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT
+    private static val EStructuralFeature END_LEFT = SequencePackage.Literals.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC
     private static val EStructuralFeature END_RIGHT_COUNT = SequencePackage.Literals.
-        TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK_COUNT
-    private static val EStructuralFeature END_RIGHT = SequencePackage.Literals.TWO_LIFELINE_MESSAGE__TARGET_END_BLOCK
+        TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT
+    private static val EStructuralFeature END_RIGHT = SequencePackage.Literals.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC
     private static val EStructuralFeature ONE_END_COUNT = SequencePackage.Literals.
-        ONE_LIFELINE_MESSAGE__END_BLOCK_COUNT
-    private static val EStructuralFeature ONE_END = SequencePackage.Literals.ONE_LIFELINE_MESSAGE__END_BLOCK
+        ONE_LIFELINE_MESSAGE__END_EXEC_COUNT
+    private static val EStructuralFeature ONE_END = SequencePackage.Literals.ONE_LIFELINE_MESSAGE__END_EXEC
 //    private static val EStructuralFeature END = SequencePackage.Literals.ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT
 
     @Check
@@ -70,26 +70,26 @@ class SequenceValidator extends AbstractSequenceValidator {
     }
 
     private def dispatch correctUsageOfBlocksOnMessage(TwoLifelineMessage m, Map<Lifeline, Integer> map) {
-        if (m.sourceStartBlock) {
+        if (m.sourceStartExec) {
             startBlock(m.sourceLifeline, 1, map)
         }
-        if (m.targetStartBlock) {
+        if (m.targetStartExec) {
             startBlock(m.targetLifeline, 1, map)
         }
-        if (m.sourceEndBlock) {
-            endBlock(m.sourceLifeline, m.sourceEndBlockCount, map, END_LEFT, END_LEFT_COUNT, m)
+        if (m.sourceEndExec) {
+            endBlock(m.sourceLifeline, m.sourceEndExecCount, map, END_LEFT, END_LEFT_COUNT, m)
         }
-        if (m.targetEndBlock) {
-            endBlock(m.targetLifeline, m.targetEndBlockCount, map, END_RIGHT, END_RIGHT_COUNT, m)
+        if (m.targetEndExec) {
+            endBlock(m.targetLifeline, m.targetEndExecCount, map, END_RIGHT, END_RIGHT_COUNT, m)
         }
     }
 
     private def dispatch correctUsageOfBlocksOnMessage(OneLifelineMessage m, Map<Lifeline, Integer> map) {
-        if (m.startBlock) {
+        if (m.startExec) {
             startBlock(m.lifeline, 1, map)
         }
-        if (m.endBlock) {
-            endBlock(m.lifeline, m.endBlockCount, map, ONE_END, ONE_END_COUNT, m)
+        if (m.endExec) {
+            endBlock(m.lifeline, m.endExecCount, map, ONE_END, ONE_END_COUNT, m)
         }
     }
     

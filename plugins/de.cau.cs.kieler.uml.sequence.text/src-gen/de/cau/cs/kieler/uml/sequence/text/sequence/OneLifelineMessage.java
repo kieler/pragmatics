@@ -15,9 +15,9 @@ package de.cau.cs.kieler.uml.sequence.text.sequence;
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageType <em>Message Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageTypeLostAndFound <em>Message Type Lost And Found</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getCaption <em>Caption</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartBlock <em>Start Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndBlock <em>End Block</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getEndBlockCount <em>End Block Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartExec <em>Start Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndExec <em>End Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getEndExecCount <em>End Exec Count</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getNote <em>Note</em>}</li>
  * </ul>
  * </p>
@@ -136,82 +136,82 @@ public interface OneLifelineMessage extends Interaction
   void setCaption(String value);
 
   /**
-   * Returns the value of the '<em><b>Start Block</b></em>' attribute.
+   * Returns the value of the '<em><b>Start Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Start Block</em>' attribute isn't clear,
+   * If the meaning of the '<em>Start Exec</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Start Block</em>' attribute.
-   * @see #setStartBlock(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_StartBlock()
+   * @return the value of the '<em>Start Exec</em>' attribute.
+   * @see #setStartExec(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_StartExec()
    * @model
    * @generated
    */
-  boolean isStartBlock();
+  boolean isStartExec();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartBlock <em>Start Block</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartExec <em>Start Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Start Block</em>' attribute.
-   * @see #isStartBlock()
+   * @param value the new value of the '<em>Start Exec</em>' attribute.
+   * @see #isStartExec()
    * @generated
    */
-  void setStartBlock(boolean value);
+  void setStartExec(boolean value);
 
   /**
-   * Returns the value of the '<em><b>End Block</b></em>' attribute.
+   * Returns the value of the '<em><b>End Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>End Block</em>' attribute isn't clear,
+   * If the meaning of the '<em>End Exec</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>End Block</em>' attribute.
-   * @see #setEndBlock(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_EndBlock()
+   * @return the value of the '<em>End Exec</em>' attribute.
+   * @see #setEndExec(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_EndExec()
    * @model
    * @generated
    */
-  boolean isEndBlock();
+  boolean isEndExec();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndBlock <em>End Block</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndExec <em>End Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>End Block</em>' attribute.
-   * @see #isEndBlock()
+   * @param value the new value of the '<em>End Exec</em>' attribute.
+   * @see #isEndExec()
    * @generated
    */
-  void setEndBlock(boolean value);
+  void setEndExec(boolean value);
 
   /**
-   * Returns the value of the '<em><b>End Block Count</b></em>' attribute.
+   * Returns the value of the '<em><b>End Exec Count</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>End Block Count</em>' attribute isn't clear,
+   * If the meaning of the '<em>End Exec Count</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>End Block Count</em>' attribute.
-   * @see #setEndBlockCount(int)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_EndBlockCount()
+   * @return the value of the '<em>End Exec Count</em>' attribute.
+   * @see #setEndExecCount(int)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_EndExecCount()
    * @model
    * @generated
    */
-  int getEndBlockCount();
+  int getEndExecCount();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getEndBlockCount <em>End Block Count</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getEndExecCount <em>End Exec Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>End Block Count</em>' attribute.
-   * @see #getEndBlockCount()
+   * @param value the new value of the '<em>End Exec Count</em>' attribute.
+   * @see #getEndExecCount()
    * @generated
    */
-  void setEndBlockCount(int value);
+  void setEndExecCount(int value);
 
   /**
    * Returns the value of the '<em><b>Note</b></em>' attribute.
