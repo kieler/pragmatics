@@ -43,7 +43,9 @@ public final class CGroup {
     /**
      * The constructor for a {@link CGroup} receives a {@link CNode} since a {@link CGroup} has to
      * contain at least one.
-     * @param node the {@link CNode} to add
+     * 
+     * @param node
+     *            the {@link CNode} to add
      */
     public CGroup(final CNode node) {
         cNodes = Sets.newLinkedHashSet();
@@ -51,7 +53,7 @@ public final class CGroup {
         outDegree = 0;
         addCNode(node);
     }
-    
+
     /**
      * Checks whether all outgoing constraints of the {@link CGroup} are processed.
      * 
@@ -112,13 +114,14 @@ public final class CGroup {
     }
 
     /**
-     * Propagates starting positions according to the {@link CGroup}s incoming constraints.
-     * This method may be called after {@link #compactInnerCNodes()}.
+     * Propagates starting positions according to the {@link CGroup}s incoming constraints. This
+     * method may be called after {@link #compactInnerCNodes()}.
+     * 
      * @return a list of {@link CGroup}s that became {@link #isInnerCompactable() compactable}
      */
     public List<CGroup> propagate() {
         List<CGroup> compactables = Lists.newArrayList();
-        
+
         for (CNode node : cNodes) {
             for (CNode inc : node.incoming) {
                 // processing constraints that refer to CNodes outside of this CGroup
@@ -133,18 +136,21 @@ public final class CGroup {
                 }
             }
         }
-        
+
         return compactables;
     }
 
     /**
-     * Adding a {@link CNode} to the {@link CGroup} and updating the incoming constraints.
-     * @param node the {@link CNode} to add
+     * Adds a {@link CNode} to the {@link CGroup} and updates the incoming constraints.
+     * 
+     * @param node
+     *            the {@link CNode} to add
      */
     public void addCNode(final CNode node) {
         cNodes.add(node);
         node.cGroup = this;
-        // ensuring that only incoming constraints are added, that refer to CNodes outside of this CGroup
+        // ensuring that only incoming constraints are added, that refer to CNodes outside of this
+        // CGroup
         incomingConstraints.remove(node);
         for (CNode inc : node.incoming) {
             if (!cNodes.contains(inc)) {
