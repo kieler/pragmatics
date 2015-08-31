@@ -63,7 +63,7 @@ public class LayersAnalysis implements IAnalysis {
     public static final int INDEX_MAX_NODES_PER_LAYER = 3;
     public static final int INDEX_MAX_NODES_PER_LAYER_DUMMIES = 4;
     public static final int INDEX_EDGE_DENSITY = 5;
-    public static final int INDEX_EDGE_DENSITY_STD_DERIVATION = 6;
+    public static final int INDEX_EDGE_DENSITY_STD_DEVIATION = 6;
 
     
     // we store the determined layers in order for other 
@@ -152,7 +152,7 @@ public class LayersAnalysis implements IAnalysis {
                 count[INDEX_MAX_NODES_PER_LAYER],
                 count[INDEX_MAX_NODES_PER_LAYER_DUMMIES],
                 count[INDEX_EDGE_DENSITY],
-                count[INDEX_EDGE_DENSITY_STD_DERIVATION]
+                count[INDEX_EDGE_DENSITY_STD_DEVIATION]
         };
     }
     
@@ -374,7 +374,7 @@ public class LayersAnalysis implements IAnalysis {
                     count[INDEX_EDGE_DENSITY] = Math.max(
                             childResult[INDEX_EDGE_DENSITY],
                             count[INDEX_EDGE_DENSITY]);
-                    count[INDEX_EDGE_DENSITY_STD_DERIVATION] = -1;
+                    count[INDEX_EDGE_DENSITY_STD_DEVIATION] = -1;
                     
                 }
             }
