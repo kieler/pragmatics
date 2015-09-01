@@ -23,5 +23,6 @@ public enum LayeringSolver {
     CPLEX, 
     /** SCIP Solver. */
     SCIP,
-    CPLEX_EPSILON
+    CPLEX_EPSILON,
+    CPLEX_DLP
 }

@@ -130,6 +130,9 @@ public class MinizincLayerer implements ILayoutPhase {
             } else if (layeredGraph.getProperty(Properties.LAYERING_SOLVER) 
                             == LayeringSolver.CPLEX_EPSILON) {
                 model = new CPLEXEpsilonLayeringModel(layeredGraph);
+            } else if (layeredGraph.getProperty(Properties.LAYERING_SOLVER) 
+                            == LayeringSolver.CPLEX_DLP) {
+                model = new CPLEXDLPModel(layeredGraph);
             } else {
                 model = new CPLEXLayeringModel(layeredGraph);
             }
