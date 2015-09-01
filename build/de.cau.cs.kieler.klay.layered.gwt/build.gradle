@@ -1,28 +1,37 @@
-/**
- * Gradle script for building Klay JavaScript version.
- *
- * Available tasks
- * ===============
- * ./gradlew tasks
- *
- * Extra parameters via properties-file and/or cmd-line parameter
- * ==============================================================
- * ~/.gradle/gradle.properties:
- * ----------------------------
- * org.gradle.daemon=false
- *
- * cli:
- * ----
- * ./gradlew -Dorg.gradle.daemon=false -D...=... <tasks>
- *
- * Build complete nightlies
- * ========================
- * ./gradlew clean buildall
- *
- * Run all tests
- * =============
- * ./gradlew testJs
- */
+def helpMsg = """
+Gradle script for building Klay JavaScript version.
+
+Required environment variables
+==============================
+GWT_SDK=/path/to/gwt-sdk
+
+Build and test all
+==================
+./gradlew all
+
+Build complete nightlies
+========================
+./gradlew clean buildall
+
+Run all tests
+=============
+./gradlew clean testAll
+
+Available tasks
+===============
+./gradlew tasks
+Relevant tasks are grouped in 'KIELER {build|test|misc} tasks'.
+
+Extra parameters via properties-file and/or cmd-line parameter
+==============================================================
+~/.gradle/gradle.properties:
+----------------------------
+org.gradle.daemon=false
+
+cli:
+----
+./gradlew -Dorg.gradle.daemon=false -D...=... <tasks>
+"""
 
 repositories {
     mavenCentral()
@@ -42,56 +51,92 @@ dependencies {
     }
 }
 
+// Importing ant build.xml
+// --------------------------------------------------------
+
 ant.taskdef(name: 'junit', classname: 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTask', classpath: configurations.junitAnt.asPath)
 ant.importBuild 'build.xml'
 
+clean.group 'KIELER build'
+clean.description 'Deletes the target directory with all of its contents.'
+copySrc.group 'KIELER build'
+copySrc.description "Copies klay's java sources from the main repository."
+dist.group 'KIELER build'
+dist.description 'Compiles and bundles the klay layered algortihm as js.'
+buildall.group 'KIELER build'
+buildall.description 'Clean and dist.'
+
+
+// Prepare testing
+// --------------------------------------------------------
+
 task npmInstall(type: Exec) {
+    description 'Installs all required nodejs modules.'
     workingDir 'test/js'
     executable 'npm'
     args 'install'
 }
 
 task unzipKlayJs(type: Copy, dependsOn: plainjslinker) {
+    description 'Extracts the latest KlayJs build for testing.'
     from zipTree('target/klay_layered_js_plainjslinker_nightly_latest.zip')
     include 'klay.js'
     into 'test/js/src'
 }
 
+// Testing
+// --------------------------------------------------------
+
 task testBrowser(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
+    group 'KIELER test'
+    description 'Tests KlayJs via plain javascript loading inside an html file.'
     workingDir 'test/js'
     executable 'npm'
     args = ['test']
 }
 
 task testNodejs(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
+    group 'KIELER test'
+    description 'Tests KlayJs via nodejs.'
     workingDir 'test/js'
     executable 'node'
     args = ['src/nodejs/run_tests.js']
 }
 
 task testWebworker(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
+    group 'KIELER test'
+    description 'Tests KlayJs via webworker.'
     workingDir 'test/js'
     executable 'node'
     args = ['src/webworker/run_tests.js']
 }
 
-task testJs(dependsOn: [testBrowser, testNodejs, testWebworker]) {}
+// Cleanup
+// --------------------------------------------------------
 
 task cleanJs(type: Delete) {
+    group 'KIELER build'
+    description 'Deletes build directories and installed modules.'
     delete 'build'
     delete 'test/js/node_modules'
     delete 'test/js/build'
     delete 'test/js/src/klay.js'
 }
+clean.dependsOn cleanJs
+
+// Utilities
+// --------------------------------------------------------
 
 task runSuperDevMode(type:Exec, dependsOn: javac) {
+    group 'KIELER misc'
+    description 'Starts the SuperDevMode code server.'
     def gwt = System.getenv('GWT_SDK')
 
     workingDir '.'
     executable 'java'
     args = [
         "-cp",
-        [ // windows and unix required different path separators
+        [ // windows and unix require different path separators
          "$gwt/gwt-dev.jar",
          "$gwt/*",
          "war/WEB-INF/lib/*",
@@ -111,4 +156,32 @@ task runSuperDevMode(type:Exec, dependsOn: javac) {
             throw new InvalidUserDataException("No GWT_SDK was specified!")
         }
     }
+}
+
+
+// Convenience tasks
+// --------------------------------------------------------
+
+// Explicitly set task order to prevent the clean task from running after any build task.
+testBrowser.mustRunAfter cleanJs
+testNodejs.mustRunAfter cleanJs
+testWebworker.mustRunAfter cleanJs
+buildall.mustRunAfter clean
+
+// TBD when migrating ant to gradle
+// task buildAll(dependsOn: []) {
+//     group 'KIELER build'
+//     description 'Bundle and/or gather all artifacts.'
+// }
+task testAll(dependsOn: [test, testBrowser, testNodejs, testWebworker]) {
+    group 'KIELER test'
+    description 'Run all tests.'
+}
+task all(dependsOn: [clean, cleanJs, buildall, testAll]) {
+    group 'KIELER build'
+    description 'Clean, build and test all.'
+}
+
+help.doLast {
+    println helpMsg
 }
