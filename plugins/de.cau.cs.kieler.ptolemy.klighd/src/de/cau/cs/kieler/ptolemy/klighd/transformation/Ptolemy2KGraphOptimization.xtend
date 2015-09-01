@@ -94,7 +94,7 @@ public class Ptolemy2KGraphOptimization {
         makeStatesPortless(kGraph)
         
         // Convert special annotations into nodes
-        convertAnnotationsToNodes(kGraph)
+        convertAnnotationsToNodes(kGraph, diagramSynthesis)
         
         // Convert comments into nodes
         if (commentsExtractor != null) {
@@ -668,8 +668,12 @@ public class Ptolemy2KGraphOptimization {
      * correctly displayed.
      * 
      * @param root root element of the model to look for convertible annotations in.
+     * @param diagramSynthesis the diagram synthesis that uses this classes. Used to map Ptolemy model
+     *                         objects to KGraph model objects.
      */
-    def private void convertAnnotationsToNodes(KNode root) {
+    def private void convertAnnotationsToNodes(KNode root,
+        AbstractDiagramSynthesis<?> diagramSynthesis) {
+            
         // Only consider nodes that were not themselves created from annotations
         if (root.markedAsFormerAnnotationNode) {
             return
@@ -686,6 +690,7 @@ public class Ptolemy2KGraphOptimization {
             if (annotation.class_ != null && annotation.class_.endsWith("Director")) {
                 // Create a new node for it
                 val directorNode = KimlUtil::createInitializedNode()
+                diagramSynthesis.associateWith(directorNode, annotation);
                 
                 // Set the name, add language annotation and mark it as having been created from
                 // an annotation
@@ -724,7 +729,7 @@ public class Ptolemy2KGraphOptimization {
         
         // Recurse into child nodes
         for (child : root.children) {
-            convertAnnotationsToNodes(child)
+            convertAnnotationsToNodes(child, diagramSynthesis);
         }
     }
 }
