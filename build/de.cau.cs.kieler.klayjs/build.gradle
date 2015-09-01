@@ -1,9 +1,19 @@
 def helpMsg = """
 Gradle script for building Klay JavaScript version.
 
-Required environment variables
-==============================
+Requirements
+============
+
+environment variables
+---------------------
 GWT_SDK=/path/to/gwt-sdk
+
+software (for running the tests)
+--------------------------------
+nodejs
+    https://nodejs.org/download/
+.NET Framework Software Development Kit (SDK) version 2.0
+    http://www.microsoft.com/en-us/download/details.aspx?id=19988
 
 Build and test all
 ==================
@@ -184,4 +194,15 @@ task all(dependsOn: [clean, cleanJs, buildall, testAll]) {
 
 help.doLast {
     println helpMsg
+}
+
+// Extra args to execute stuff on windows
+
+def isWindows = System.properties['os.name'].toLowerCase().contains('windows');
+
+tasks.withType(Exec){task ->
+    if (isWindows) {
+        task.args = ['/c', task.executable] + task.args
+        task.executable = 'cmd'
+    }
 }
