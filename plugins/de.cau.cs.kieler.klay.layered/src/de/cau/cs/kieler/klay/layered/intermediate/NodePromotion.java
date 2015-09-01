@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -41,9 +42,9 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * The goal of the node promotion is to achieve a layering with less dummy nodes. For this purpose
  * the original graph nodes are promoted recursively and the promotion is applied, if and only if
  * this reduces the determined count of dummy nodes. A promotion takes a node and puts it on a
- * higher layer, if there is a predecessor on that layer this node will promoted as well and so on.
- * After that the effect of the promotion is evaluated, if the number of dummy nodes decreases the
- * promotion is applied.
+ * higher layer, if there is a predecessor on that layer this node will be promoted as well and so
+ * on. After that the effect of the promotion is evaluated, if the number of dummy nodes decreases
+ * the promotion is applied.
  * 
  * <ul>
  * <li>{@link Properties#NODE_PROMOTION}: Enables or disables the node promotion.</li>
@@ -59,12 +60,13 @@ public class NodePromotion implements ILayoutProcessor {
     /** Holds all nodes of the graph that have incoming edges. */
     private List<LNode> nodesWithIncomingEdges;
 
-    /** Stores all nodes of the graph. 
-     *  TODO how is it indexed for a node n layer[n.id] holds the layer index...
-     */
+    /** Stores all nodes of the graph. */
     private List<LNode> nodes;
 
-    /** Contains the number of the layer for each node. */
+    /**
+     * Contains the number of the layer for each node. For a node with the ID i layer[i] holds
+     * the index of the layer to which it is currently assigned.
+     */
     private int[] layers;
 
     /** Precalculated difference between count of incoming and outgoing edges for each node. */
@@ -88,8 +90,7 @@ public class NodePromotion implements ILayoutProcessor {
         // Set maximal number of iterations till stopping the node promotion.
         // It depends on the number of nodes in the graph. 0 causes the algorithm to run until no
         // more promotions are made. Other values lie between 1% to 70% of the number of nodes in
-        // the graph.
-        // TODO why 70%?
+        // the graph. Values greater than 70% would lead to the same results like using no boundary.
         if (promoteUntil != 0) {
             promoteUntil = (int) Math.ceil(layers.length * promoteUntil / 100.0);
         }
@@ -150,8 +151,8 @@ public class NodePromotion implements ILayoutProcessor {
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 layers[node.id] = node.getLayer().id;
-                int inDegree = countEdges(node.getIncomingEdges());
-                degreeDiff[node.id] = countEdges(node.getOutgoingEdges()) - inDegree;
+                int inDegree = Iterables.size(node.getIncomingEdges());
+                degreeDiff[node.id] = Iterables.size(node.getOutgoingEdges()) - inDegree;
                 if (inDegree > 0) {
                     nodesWithIncomingEdges.add(node);
                 }
@@ -162,25 +163,9 @@ public class NodePromotion implements ILayoutProcessor {
     }
 
     /**
-     * Method for determining the size of a given {@link Iterable} of {@link LEdge}s.
-     * 
-     * @param edges
-     *            The {@link Iterable} of which the size shall be determined.
-     * @return The size of the given {@link Iterable}.
-     */
-    private int countEdges(final Iterable<LEdge> edges) {
-        int count = 0;
-        for (@SuppressWarnings("unused")
-        LEdge edge : edges) {
-            count++;
-        }
-        return count;
-    }
-
-    /**
      * Node-promotion heuristic of the paper. Works on an array of integers which represents the
-     * nodes and their position within the layers to avoid difficulties while creating and deleting new
-     * layers over the course of the discarded promotions.
+     * nodes and their position within the layers to avoid difficulties while creating and deleting
+     * new layers over the course of the discarded promotions.
      * 
      * @param node
      *            Node that shall be promoted.
@@ -190,13 +175,11 @@ public class NodePromotion implements ILayoutProcessor {
     private int promoteNode(final LNode node) {
 
         int dummydiff = 0;
-        // Calculate number of the layer for the promoted node.
-        // TODO number/index?
+        // Calculate index of the layer for the promoted node.
         int nodeNewLayerPos = layers[node.id] + 1;
 
-        // Set new layering of the node by promoting preceding nodes in the above neighboring layer
-        // recursively and calculating the difference of dummy nodes.
-        /* TODO more comments!, because it had to be looked up in the paper! */
+        // Set new position of the node in the layering by promoting preceding nodes in the above
+        // neighboring layer recursively and calculating the difference of dummy nodes.
         for (LEdge edge : node.getIncomingEdges()) {
             LNode masterNode = edge.getSource().getNode();
             if (layers[masterNode.id] == nodeNewLayerPos) {
@@ -212,7 +195,7 @@ public class NodePromotion implements ILayoutProcessor {
 
     /**
      * Helper method for setting the calculated and potentially improved layering after the
-     * node-promotion-heuristic is finished.
+     * node-promotion heuristic is finished.
      * 
      * @param layeredGraph
      *            The graph to which the calculated new layering is applied.
@@ -222,11 +205,13 @@ public class NodePromotion implements ILayoutProcessor {
         // Determine required number of layers.
         int maxLayerCnt = layers[0];
         for (int in : layers) {
-            if (in > maxLayerCnt) {
-                maxLayerCnt = in;
-            }
+            maxLayerCnt = Math.max(maxLayerCnt, in);
         }
 
+        // The laLaLayer, born in the far away laLaLand, traveled here to be of special use for
+        // our layering. It is added to the layeredGraph with reversed IDs so they fit to the IDs
+        // stored in the nodes but can also be properly assigned compliant with the layering used in
+        // KLay Layered.
         List<Layer> layList = Lists.newArrayList();
         for (int i = 0; i <= maxLayerCnt; i++) {
             Layer laLaLayer = new Layer(layeredGraph);
@@ -234,15 +219,17 @@ public class NodePromotion implements ILayoutProcessor {
             layList.add(laLaLayer);
         }
 
+        // Assign all nodes to the beforehand created (laLa)layers.
         for (LNode node : nodes) {
             node.setLayer(layList.get(maxLayerCnt - layers[node.id]));
         }
 
-        Iterator<Layer> variable = layList.iterator();
-        while (variable.hasNext()) {
-            Layer layerIt = variable.next();
-            if (layerIt.getNodes().isEmpty()) {
-                variable.remove();
+        // One Loop to exterminate all deceiving layers that don't contain any nodes!
+        Iterator<Layer> layerIt = layList.iterator();
+        while (layerIt.hasNext()) {
+            Layer possiblyEvilLayer = layerIt.next();
+            if (possiblyEvilLayer.getNodes().isEmpty()) {
+                layerIt.remove();
             }
         }
         layeredGraph.getLayers().clear();
