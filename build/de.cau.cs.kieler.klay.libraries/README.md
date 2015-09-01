@@ -1,7 +1,7 @@
 We're using gradle to build and bundle our layouters to libraries which are usable from plain Java projects.
 
 For information on how to build them, run ```./gradlew help```.
-These libraries are build in three different configurations (see [here](./deploy/README.md) for more details on the produced artifacts).
+These libraries are build in three different configurations (see [here](build/de.cau.cs.kieler.klay.libraries/deploy/README.md) for more details on the produced artifacts).
 
 # Bundled KLay
 
