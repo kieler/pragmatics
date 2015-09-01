@@ -1,7 +1,7 @@
 # Testing in JavaScript
 
 The tests are all run from [nodejs](https://nodejs.org/) with different in-between layers of runners and/or frameworks.
-All framework dependencies are loaded via [npm](https://www.npmjs.com/].
+All framework dependencies are loaded via [npm](https://www.npmjs.com/).
 
 To execute the tests, from the project's root directory, run ```./gradlew testAll```.
 To get more information on available tasks, run ```./gradlew help``` or ```./gradlew tasks```.
@@ -10,7 +10,7 @@ There are three types of loading KlayJs which are to be tested.
 
 ## Loading via plain JavaScript inside an html file
 
-The used testing framework here is [QUnit](https://qunitjs.com/].
+The used testing framework here is [QUnit](https://qunitjs.com/).
 The tests are run via [Grunt](http://gruntjs.com/) (a JavaScript taskrunner) which uses [PhantomJS](http://phantomjs.org/) to load the test page.
 The Grunt plugin [QUnit JUnit](https://github.com/sbrandwoo/grunt-qunit-junit) is used to generate JUnit compatible xml reports which are then parsed by our Bamboo CI server.
 
