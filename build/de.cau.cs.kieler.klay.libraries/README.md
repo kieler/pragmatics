@@ -1,26 +1,18 @@
-fatJar
-======
-Use one of these if you are using our KGraph format and want to include a single jar.
+We're using gradle to build and bundle our layouters to libraries which are usable from plain Java projects.
 
-klay-nightly-<timestamp>.jar
-    Bundle containing layouters klay.force, klay.layered and klay.tree with KIELER dependencies, but no EMF or Google Guava.
-klay-nightly-<timestamp>-all.jar
-    Same as above but with EMF and Google Guava.
+For information on how to build them, run ```./gradlew help```.
+These libraries are build in three different configurations (see [here](./deploy/README.md) for more details on the produced artifacts).
 
-libs
-====
-Layouters klay.force, klay.layered, and klay.tree with all dependencies as separate jars.
-If you want full control and/or use only one of the layouters, get these.
+# Bundled KLay
 
-libs.zip
-========
-Zipped libs folder for convenient download.
+Bundle of our layouters with or without dependencies to use with our KGraph format.
 
-libsFormats
-===========
-Layouters klay.force, klay.layered, klay.tree, and our JSON importer with all dependencies as separate jars.
-If you are using JSON instead of KGraph as input format, use these.
+# Plugin-like KLay
 
-libsFormats.zip
-===============
-Zipped libsFormats folder for convenient download.
+Collection of our layouters (with dependencies) in separate jars. Uses the KGraph format too.
+
+# Plugin-like KLay with formats support
+
+Collection of our layouters (with dependencies) in separate jars including our JSON importer.
+
+This configuration uses the nonosgi-wrapper to load the registered layout algorithms via extension points in an non-eclipse environment.
