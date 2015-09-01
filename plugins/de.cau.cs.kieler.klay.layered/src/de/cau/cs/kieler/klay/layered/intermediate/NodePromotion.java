@@ -42,12 +42,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * the original graph nodes are promoted recursively and the promotion is applied, if and only if
  * this reduces the determined count of dummy nodes. A promotion takes a node and puts it on a
  * higher layer, if there is a predecessor on that layer this node will promoted as well and so on.
- * After that the effect of the promotion is evaluated, when the number of dummy nodes decreases the
+ * After that the effect of the promotion is evaluated, if the number of dummy nodes decreases the
  * promotion is applied.
  * 
  * <ul>
  * <li>{@link Properties#NODE_PROMOTION}: Enables or disables the node promotion.</li>
- * <li>{@link Properties#NODE_PROMOTION_BOUNDARY}: Sets an upper boundary for the iterations of the
+ * <li>{@link Properties#NODE_PROMOTION_BOUNDARY}: Sets an upper bound for the iterations of the
  * node promotion. Is calculated by a percentage of the number of all nodes. The algorithm stops if
  * this boundary is reached, even if it's still possible to promote nodes.</li>
  * </ul>
@@ -56,16 +56,18 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  */
 public class NodePromotion implements ILayoutProcessor {
 
-    // Holds all nodes of the graph that have incoming edges.
+    /** Holds all nodes of the graph that have incoming edges. */
     private List<LNode> nodesWithIncomingEdges;
 
-    // Stores all nodes of the graph.
+    /** Stores all nodes of the graph. 
+     *  TODO how is it indexed for a node n layer[n.id] holds the layer index...
+     */
     private List<LNode> nodes;
 
-    // Contains the number of the layer for each node.
+    /** Contains the number of the layer for each node. */
     private int[] layers;
 
-    // Precalculated difference between count of incoming and outgoing edges for each node.
+    /** Precalculated difference between count of incoming and outgoing edges for each node. */
     private int[] degreeDiff;
 
     /**
@@ -80,13 +82,14 @@ public class NodePromotion implements ILayoutProcessor {
         int promotions; // Indicator if there have been promotions applied in a run.
         boolean promotionFlag;
         int promoteUntil = layeredGraph.getProperty(Properties.NODE_PROMOTION_BOUNDARY).intValue();
-        int promotionCounter = 0; // Counts the number of iterations over all nodes.
-        int[] layeringBackUp = layers.clone();
+        int iterationCounter = 0; // Counts the number of iterations over all nodes.
+        int[] layeringBackup = layers.clone();
 
         // Set maximal number of iterations till stopping the node promotion.
-        // It depends of the number of nodes in the graph. 0 causes the algorithm to run until no
+        // It depends on the number of nodes in the graph. 0 causes the algorithm to run until no
         // more promotions are made. Other values lie between 1% to 70% of the number of nodes in
         // the graph.
+        // TODO why 70%?
         if (promoteUntil != 0) {
             promoteUntil = (int) Math.ceil(layers.length * promoteUntil / 100.0);
         }
@@ -97,27 +100,26 @@ public class NodePromotion implements ILayoutProcessor {
             for (LNode node : nodesWithIncomingEdges) {
                 if (promoteNode(node) < 0) {
                     promotions++;
-                    layeringBackUp = layers.clone();
+                    layeringBackup = layers.clone();
                 } else {
-                    layers = layeringBackUp.clone();
+                    layers = layeringBackup.clone();
                 }
             }
-            promotionCounter++;
+            iterationCounter++;
             promotionFlag = promotions != 0; // Abortion criterium of Nikolov et al..
             if (promotionFlag && promoteUntil != 0) {
                 // Abortion criterium if a lower boundary for the number of iterations is set.
-                promotionFlag = promotionCounter < promoteUntil;
+                promotionFlag = iterationCounter < promoteUntil;
             }
         } while (promotionFlag);
 
         setNewLayering(layeredGraph);
 
         progressMonitor.done();
-
     }
 
     /**
-     * Helper method for calculating needed information for the heuristic. Sets ID's for layers and
+     * Helper method for calculating needed information for the heuristic. Sets IDs for layers and
      * nodes to grant an easier access. Also calculates the difference for each node between its
      * incoming and outgoing edges.
      * 
@@ -145,11 +147,10 @@ public class NodePromotion implements ILayoutProcessor {
         nodesWithIncomingEdges = Lists.newArrayList();
 
         // Calculate difference and determine all nodes with incoming edges.
-        int inDegree;
         for (Layer layer : layeredGraph.getLayers()) {
             for (LNode node : layer.getNodes()) {
                 layers[node.id] = node.getLayer().id;
-                inDegree = countEdges(node.getIncomingEdges());
+                int inDegree = countEdges(node.getIncomingEdges());
                 degreeDiff[node.id] = countEdges(node.getOutgoingEdges()) - inDegree;
                 if (inDegree > 0) {
                     nodesWithIncomingEdges.add(node);
@@ -178,7 +179,7 @@ public class NodePromotion implements ILayoutProcessor {
 
     /**
      * Node-promotion heuristic of the paper. Works on an array of integers which represents the
-     * nodes and their position on the layers to avoid difficulties while creating and deleting new
+     * nodes and their position within the layers to avoid difficulties while creating and deleting new
      * layers over the course of the discarded promotions.
      * 
      * @param node
@@ -190,6 +191,7 @@ public class NodePromotion implements ILayoutProcessor {
 
         int dummydiff = 0;
         // Calculate number of the layer for the promoted node.
+        // TODO number/index?
         int nodeNewLayerPos = layers[node.id] + 1;
 
         // Set new layering of the node by promoting preceding nodes in the above neighboring layer
@@ -245,6 +247,5 @@ public class NodePromotion implements ILayoutProcessor {
         }
         layeredGraph.getLayers().clear();
         layeredGraph.getLayers().addAll(layList);
-
     }
 }
