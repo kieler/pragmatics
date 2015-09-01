@@ -516,7 +516,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
 
         for (CNode cNode : cNodes) {
             
-            cNode.reposition = false; //cNode.getLNode() == null;//TODO except for edges dammit
+            cNode.reposition = false; 
             
             for (LNode connectedNode : cNode.getConnectedNodes()) {
                 if (nodeMap.get(connectedNode).getPosition() < cNode.getPosition()) {
