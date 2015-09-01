@@ -253,15 +253,6 @@ public final class Properties {
     public static final IProperty<Integer> UPPER_LAYER_ESTIMATION_SCALING_FACTOR =
             new Property<Integer>(
                     "de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", 2, 1);
-
-    /**
-     * Defines the added Scale for the upper layer Weight (wdithUp) in the condition that decides if
-     * a new layer should be used or not it Ranges from 0 to 1, with 0 being very similar to a
-     * one-node-layerer and 1 being the longest-path-layerer.
-     */
-    public static final IProperty<Float> UPPER_LAYER_SCALE = new Property<Float>(
-            "de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale",
-            0.5f, 0.0f, 1.0f);
     /**
      * When using negative values for Upper Bound On Width or Upper Layer Estimation Scaling Factor, 
      * more than one candidate layering will be computed based on suggesested values from the original 

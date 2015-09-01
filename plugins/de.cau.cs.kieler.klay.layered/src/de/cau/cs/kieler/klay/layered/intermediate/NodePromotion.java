@@ -75,7 +75,7 @@ public class NodePromotion implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
 
-        progressMonitor.begin("Node-promotion heuristic", 1);
+        progressMonitor.begin("Node promotion heuristic", 1);
 
         precalculateAndSetInformation(layeredGraph);
 

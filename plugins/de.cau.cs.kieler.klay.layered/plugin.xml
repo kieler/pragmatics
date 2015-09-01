@@ -192,10 +192,7 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.portAlignment.east">
-         </knownOption>
-         <knownOption
-               option="de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale">
-          </knownOption>    
+         </knownOption>       
          <knownOption
                option="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy">
          </knownOption>
@@ -497,19 +494,6 @@
             id="de.cau.cs.kieler.klay.layered.ignoreDummyNodesForWidth"
             name="ignore dummy nodes [MinWidthLayerer]"
             type="boolean">
-      </layoutOption>
-      <layoutOption
-            advanced="true"
-            appliesTo="parents"
-            default="0.5"
-            description="Influecnes the weigth of the width-estimation of the 
-            next Layer. 1 resuts in the longest-path-layerer and 0 is similar 
-            to the one-node-layerer"
-            id="de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale"
-            lowerBound="0"
-            name="Stretch Width Scale"
-            type="float"
-            upperBound="1">
       </layoutOption>
       <layoutOption
             advanced="true"
