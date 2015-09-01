@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.nonosgi;
+package de.cau.cs.kieler.kiml.formats.standalone;
 
 import org.eclipse.equinox.nonosgi.registry.RegistryFactoryHelper;
 
@@ -24,7 +24,7 @@ import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.nonosgi.service.NonOsgiExtensionLayoutMetaDataService;
+import de.cau.cs.kieler.kiml.formats.standalone.service.NonOsgiExtensionLayoutMetaDataService;
 
 /**
  * This class provides an interface to KIELER layout with graph format support, such as JSON, in a
@@ -37,7 +37,7 @@ import de.cau.cs.kieler.kiml.nonosgi.service.NonOsgiExtensionLayoutMetaDataServi
  *
  * @author uru
  */
-public final class KielerNonOsgiLayout {
+public final class StandaloneGraphLayoutEngine {
 
     // Initialization
     static {
@@ -63,7 +63,7 @@ public final class KielerNonOsgiLayout {
 
     }
 
-    private KielerNonOsgiLayout() {
+    private StandaloneGraphLayoutEngine() {
     }
 
     /**
