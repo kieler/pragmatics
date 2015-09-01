@@ -11,7 +11,9 @@
 /war/WEB-INF/classes
 Thumbs.db
 node_modules
-src-external/de/cau/cs
+src-external/de/cau/cs/kieler/core
+src-external/de/cau/cs/kieler/kiml
+src-external/de/cau/cs/kieler/klay
 build
 .gradle
 *Test.xml
