@@ -1,8 +1,10 @@
 package de.cau.cs.kieler.uml.sequence.klighd
 
+import com.google.common.collect.ImmutableList
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.krendering.Colors
+import de.cau.cs.kieler.core.krendering.KContainerRendering
 import de.cau.cs.kieler.core.krendering.KPolyline
 import de.cau.cs.kieler.core.krendering.KPosition
 import de.cau.cs.kieler.core.krendering.KRendering
@@ -21,29 +23,27 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.util.FixedLayoutProvider
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klighd.KlighdConstants
+import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramLayoutProvider
+import de.cau.cs.kieler.papyrus.sequence.p4sorting.LifelineSortingStrategy
 import de.cau.cs.kieler.papyrus.sequence.properties.MessageType
 import de.cau.cs.kieler.papyrus.sequence.properties.NodeType
 import de.cau.cs.kieler.papyrus.sequence.properties.SequenceDiagramProperties
-import de.cau.cs.kieler.papyrus.sequence.p4sorting.LifelineSortingStrategy
+import de.cau.cs.kieler.papyrus.sequence.properties.SequenceExecutionType
 import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline
-//import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement
+import de.cau.cs.kieler.uml.sequence.text.sequence.Section
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram
 import de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage
 import java.util.ArrayList
 import java.util.HashMap
-import javax.inject.Inject
-import de.cau.cs.kieler.klighd.SynthesisOption
-import com.google.common.collect.ImmutableList
-import de.cau.cs.kieler.papyrus.sequence.properties.SequenceExecutionType
-import de.cau.cs.kieler.core.krendering.KContainerRendering
 import java.util.Stack
+import javax.inject.Inject
 
 class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram> {
 
@@ -77,8 +77,9 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private val lifelineNodes = new HashMap<String, KNode>
     private var KNode surroundingInteraction
     private val elementIdOnLifeline = new HashMap<String, Stack<Integer>>
-    private var executionCount = 0
+    private var elementId = 0
     private var edgeCounter = 0
+    private var fragmentList = new ArrayList<Integer>
 
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Synthesis
@@ -148,7 +149,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         lifelineNodes.clear()
         surroundingInteraction = null
         elementIdOnLifeline.clear()
-        executionCount = 0
+        elementId = 0
         edgeCounter = 0
         return root
     }
@@ -236,7 +237,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.source = lifelineNodes.get(source.name)
         transEdge.target = lifelineNodes.get(target.name)
 // TODO argo UML oder poseidon als 2. drag and drop editor, visual paradigm
-// TODO FIX??
         if (msg.sourceStartExec) {
             createExecution(source)
         }
@@ -262,6 +262,13 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         if (msg.targetEndExec) {
             endExecution(target, msg.targetEndExecCount)
         }
+
+        if (msg.eContainer instanceof Section) {
+            val list = new ArrayList 
+            list.add(fragmentList.last)
+            transEdge.addLayoutParam(SequenceDiagramProperties.FRAGMENT_ID, list)
+        }
+        
         return transEdge
     }
 
@@ -271,7 +278,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         edgeCount(transEdge)
 
-// TODO FIX??
         if (msg.startExec) {
 //            if (msg.messageTypeLostAndFound.equals("lost")) {
             createExecution(msg.lifeline)
@@ -358,51 +364,51 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         } else {
             fragNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.INTERACTION_USE)
         }
+        
+        elementId += 1
+        
+        fragmentList.add(elementId)
+        
+        fragNode.addLayoutParam(SequenceDiagramProperties.ELEMENT_ID, elementId)
 
         surroundingInteraction.children.add(fragNode)
 
-        // TODO use this?
-//        val fragNodeRect = fragNode.addRoundedRectangle(2, 2, 2)
-//
-//        val captionRect = fragNodeRect.addRectangle.foregroundInvisible = true
-//        captionRect.addText(frag.name).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-//
-//        val list = new ArrayList<KPosition>
-//        list.add(createKPosition(LEFT, 0, 0, BOTTOM, 0, 0))
-//        list.add(createKPosition(RIGHT, 10, 0, BOTTOM, 0, 0))
-//        list.add(createKPosition(RIGHT, 0, 0, BOTTOM, 10, 0))
-//        list.add(createKPosition(RIGHT, 0, 0, TOP, 0, 0))
-//
-//        captionRect.addPolyline(2, list)
-//        captionRect.setPointPlacementData(
-//                    LEFT, 0, 0,
-//                    TOP, 0, 0,
-//                    H_LEFT, V_TOP,
-//                    0, 0, 0, 0)
-        val fragNodeRect = fragNode.addRoundedRectangle(2, 2, 2)
+        val lineCoordinates = new ArrayList<KPosition>
+        lineCoordinates.add(createKPosition(LEFT, 0, 0, BOTTOM, 0, 0))
+        lineCoordinates.add(createKPosition(RIGHT, 10, 0, BOTTOM, 0, 0))
+        lineCoordinates.add(createKPosition(RIGHT, 0, 0, BOTTOM, 10, 0))
+        lineCoordinates.add(createKPosition(RIGHT, 0, 0, TOP, 0, 0))
+
+        var KContainerRendering fragNodeRect = null
+        switch STYLE.objectValue {
+            case "Stylish": {
+                fragNodeRect = fragNode.addRoundedRectangle(10, 10, 2)
+                fragNodeRect.setShadow(Colors.BLACK, 10)
+            }
+            case "Hello Kitty": {
+                fragNodeRect = fragNode.addRoundedRectangle(10, 10, 2)
+                fragNodeRect.setShadow(Colors.PURPLE, 10)
+            }
+            default: {
+                fragNodeRect = fragNode.addRectangle
+            }
+        }
 
         val captionRect = fragNodeRect.addRectangle.foregroundInvisible = true
-        captionRect.setGridPlacement(2000)
+//        captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
+        captionRect.addText(frag.name).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+        captionRect.addPolyline(2, lineCoordinates)
+        captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
 
-        val captionRect2 = captionRect.addRectangle.foregroundInvisible = true
-        captionRect2.addText(frag.name).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-
-        val list = new ArrayList<KPosition>
-        list.add(createKPosition(LEFT, 0, 0, BOTTOM, 0, 0))
-        list.add(createKPosition(RIGHT, 10, 0, BOTTOM, 0, 0))
-        list.add(createKPosition(RIGHT, 0, 0, BOTTOM, 10, 0))
-        list.add(createKPosition(RIGHT, 0, 0, TOP, 0, 0))
-
-        captionRect2.addPolyline(2, list)
-
-        fragNodeRect.addChildArea
-        fragNodeRect.setGridPlacement = 1
-
-        // TODO sections im messagerect
         for (sect : frag.sections) {
             if (sect.label != null) {
-                val captionRect3 = captionRect.addRectangle.foregroundInvisible = true
-                captionRect3.addText(sect.label).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
+                val label = KimlUtil.createInitializedLabel(fragNode)
+
+                val labelText = sect.label
+                label.configureCenterEdgeLabel(labelText, KlighdConstants.DEFAULT_FONT_SIZE,
+                    KlighdConstants.DEFAULT_FONT_NAME)
+//                val captionRect3 = captionRect.addRectangle.foregroundInvisible = true
+//                captionRect3.addText(sect.label).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
             }
             sect.interactions.forEach[s|transformInteraction(s)]
         }
@@ -452,19 +458,19 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private def KNode createExecution(Lifeline l) {
         val execution = createNode()
         execution.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.ACTION_EXEC_SPECIFICATION)
-        executionCount += 1
+        elementId += 1
         if (elementIdOnLifeline.containsKey(l.name)) {
             val stack = elementIdOnLifeline.get(l.name)
-            stack.push(executionCount)
+            stack.push(elementId)
             elementIdOnLifeline.put(l.name, stack)
         } else {
             val stack = new Stack()
-            stack.push(executionCount)
+            stack.push(elementId)
             elementIdOnLifeline.put(l.name, stack)
         }
         execution.addLayoutParam(SequenceDiagramProperties.ELEMENT_ID, elementIdOnLifeline.get(l.name).peek())
         execution.addLayoutParam(SequenceDiagramProperties.EXECUTION_TYPE, SequenceExecutionType.EXECUTION)
-        
+
         switch STYLE.objectValue {
             case "Stylish": {
                 execution.addRectangle.setBackgroundGradient(Colors.WHITE, Colors.CORNFLOWER_BLUE, 90)
