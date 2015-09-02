@@ -81,11 +81,11 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
             c.setNoLinewrap().before(comma)
             c.setNoSpace().before(comma)
         }
-        for (label : findKeywords('label')) {
-            c.setLinewrap(1).before(label)
-            c.setIndentationIncrement.before(label)
-            c.setIndentationDecrement.after(label)
-        }
+//        for (label : findKeywords('label')) {
+//            c.setLinewrap(1).before(label)
+//            c.setIndentationIncrement.before(label)
+//            c.setIndentationDecrement.after(label)
+//        }
         for (lifelines : findKeywords('lifelines')) {
             c.setLinewrap(1).before(lifelines)
             c.setIndentationIncrement.before(lifelines)
