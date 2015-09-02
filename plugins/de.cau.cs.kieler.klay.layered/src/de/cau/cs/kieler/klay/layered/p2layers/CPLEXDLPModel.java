@@ -97,6 +97,10 @@ public class CPLEXDLPModel extends AbstractCPLEXModel<Object, Pair<Integer, List
         int index = 0;
         boolean start = false;
         for (String line : lines) {
+            if (line.startsWith("Time")) {
+                System.out.println("\t" + line); 
+                continue;
+            }
             if (line.startsWith("Done")) {
                 break;
             }

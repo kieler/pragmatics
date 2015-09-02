@@ -131,7 +131,7 @@ final class GranaTextToBatchJob {
                     val wsloc = p.findMember(resource.path.replace(p.name, ""))
     
                     // add all files to the batch job
-                    for (file : (wsloc as IContainer).members) {
+                    for (file : (wsloc as IContainer).members.sortBy[m|m.name]) {
                         if (filter == null || filter.matcher(file.name).matches) {
                             // add the job
                             addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
@@ -146,7 +146,7 @@ final class GranaTextToBatchJob {
 							+ resource.path + "'")
 					}                    	
                 	
-                    for (file : dir.listFiles) {
+                    for (file : dir.listFiles.sortBy(f|f.name)) {
                         if (filter == null || filter.matcher(file.name).matches) {
                             addBatchJob(batch, job, new Path(file.absolutePath))
                         }

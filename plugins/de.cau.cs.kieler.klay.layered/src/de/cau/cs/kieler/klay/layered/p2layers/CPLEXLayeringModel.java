@@ -114,6 +114,11 @@ public class CPLEXLayeringModel extends AbstractCPLEXModel<Object, Pair<Integer,
         int index = 0;
         boolean start = false;
         for (String line : lines) {
+            // System.out.println(line);
+            if (line.startsWith("Time")) {
+               System.out.println("\t" + line); 
+               continue;
+            }
             if (line.startsWith("Done")) {
                 break;
             }
