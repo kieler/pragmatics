@@ -266,7 +266,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         if (msg.eContainer instanceof Section) {
             val list = new ArrayList 
             list.add(fragmentList.last)
-            transEdge.addLayoutParam(SequenceDiagramProperties.FRAGMENT_ID, list)
+            transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
         }
         
         return transEdge
