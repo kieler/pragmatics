@@ -57,7 +57,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private static final val SynthesisOption LIFELINESORTING = SynthesisOption.createChoiceOption("Lifeline Sorting",
         ImmutableList::of("Interactive", "Layer Based", "Short Messages"), "Interactive")
 
-    // TODO remove?
+    // TODO remove!
     private static final val SynthesisOption TEXTSIZE = SynthesisOption.createRangeOption("Text Size", 5, 30, 1, 13)
 
     override getDisplayedSynthesisOptions() {
@@ -101,6 +101,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 //        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 40)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 2 * TEXTSIZE.intValue + 30)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 2 * TEXTSIZE.intValue + 10)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.AREA_HEADER, 45)
 
         switch LIFELINESORTING.objectValue {
             case "Layer Based":
@@ -404,7 +405,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val captionRect = fragNodeRect.addRoundedRectangle(10, 10, 2).foregroundInvisible = true
         captionRect.setBackground(Colors.WHITE)
 //        captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-        captionRect.addText(frag.name).setSurroundingSpaceGrid(15, 0, 0, 0).fontSize = TEXTSIZE.intValue
+        captionRect.addText("[" + frag.name + "]").setSurroundingSpaceGrid(15, 0, 0, 0).fontSize = TEXTSIZE.intValue
         captionRect.addPolyline(2, lineCoordinates)
         captionRect.setPointPlacementData(LEFT, 1, 0, TOP, 1, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
 
@@ -436,6 +437,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     // TODO time constraint between messages, 
     // TODO Duration constraint auch als property aber nur als string anhängen in der Darstellung
     // TODO Zustandsinvariante als Notiz
+    // TODO übergreifenden Zugriff auf lifelines bei autovervollständigung entfernen
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Rest
     // Specifies the correct Properties for the different message types

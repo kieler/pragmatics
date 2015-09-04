@@ -6,7 +6,7 @@ package de.cau.cs.kieler.uml.sequence.text.formatting
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter
 import org.eclipse.xtext.formatting.impl.FormattingConfig
 
-import com.google.inject.Inject;
+import com.google.inject.Inject
 import de.cau.cs.kieler.uml.sequence.text.services.SequenceGrammarAccess
 
 /**
@@ -24,7 +24,7 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
     SequenceGrammarAccess f
 
     override protected void configureFormatting(FormattingConfig c) {
-        f = getGrammarAccess as SequenceGrammarAccess;
+        f = getGrammarAccess as SequenceGrammarAccess
 
         // Formatting at specific keywords
         for (bracket : findKeywordPairs('{', '}')) {
@@ -69,13 +69,13 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
             c.setIndentationDecrement.after(exec)
-            c.setLinewrap(1).after(exec)
+//            c.setLinewrap(1).after(exec)
         }
         for (exec : findKeywords('targetEndExec')) {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
             c.setIndentationDecrement.after(exec)
-            c.setLinewrap(1).after(exec)
+//            c.setLinewrap(1).after(exec)
         }
         for (comma : findKeywords(',')) {
             c.setNoLinewrap().before(comma)
@@ -93,20 +93,19 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
         }
 
         // Formatting before every Rule
-        c.setLinewrap().before(f.getLifelineRule);
-        c.setLinewrap().before(f.getTwoLifelineMessageRule);
-        c.setLinewrap().before(f.getOneLifelineMessageRule);
-        c.setLinewrap().before(f.destroyLifelineEventRule);
-        c.setLinewrap().before(f.getOneLifelineNoteRule);
-        c.setLinewrap().before(f.getTwoLifelineMessageRule);
-//        c.setLinewrap().before(f.getOneLifelineEndExecRule);
-        c.setLinewrap().before(f.getFragmentRule);
-        c.setLinewrap().before(f.getRefinementRule);
-//        c.setLinewrap().before(f.getLocalVariableRule);
+        c.setLinewrap().before(f.getLifelineRule)
+        c.setLinewrap().before(f.getTwoLifelineMessageRule)
+        c.setLinewrap().before(f.getOneLifelineMessageRule)
+        c.setLinewrap().before(f.destroyLifelineEventRule)
+        c.setLinewrap().before(f.getOneLifelineNoteRule)
+//        c.setLinewrap().before(f.getOneLifelineEndExecRule)
+        c.setLinewrap().before(f.getFragmentRule)
+        c.setLinewrap().before(f.getRefinementRule)
+//        c.setLinewrap().before(f.getLocalVariableRule)
         
         // Formatting before and after the lifeline/usecase declaration(s)
         c.setLinewrap(2).before(f.getSequenceDiagramAccess.lifelinesAssignment_3.eContents.get(0))
-        c.setLinewrap(2).after(f.getSequenceDiagramAccess.lifelinesAssignment_3.eContents.last);
+        c.setLinewrap(2).after(f.getSequenceDiagramAccess.lifelinesAssignment_3.eContents.last)
         
         // Formatting for comments
         c.setLinewrap(0, 1, 2).before(f.getSL_COMMENTRule)
