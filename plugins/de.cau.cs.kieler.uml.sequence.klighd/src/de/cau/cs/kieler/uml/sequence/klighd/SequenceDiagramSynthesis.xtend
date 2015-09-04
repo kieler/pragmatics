@@ -55,7 +55,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private static final val SynthesisOption LIFELINESORTING = SynthesisOption.createChoiceOption("Lifeline Sorting",
         ImmutableList::of("Interactive", "Layer Based", "Short Messages"), "Interactive")
 
-    // TODO fix initial value not taken at startup
+    // TODO remove?
     private static final val SynthesisOption TEXTSIZE = SynthesisOption.createRangeOption("Text Size", 5, 30, 1, 13)
 
     override getDisplayedSynthesisOptions() {
@@ -145,7 +145,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         model.lifelines.forEach[s|surrInteraction.children += transformLifeline(s)]
         model.interactions.forEach[s|transformInteraction(s)]
 
-        // TODO close all blocks if not closed yet
         lifelineNodes.clear()
         surroundingInteraction = null
         elementIdOnLifeline.clear()
@@ -236,7 +235,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         transEdge.source = lifelineNodes.get(source.name)
         transEdge.target = lifelineNodes.get(target.name)
-// TODO argo UML oder poseidon als 2. drag and drop editor, visual paradigm
+
         if (msg.sourceStartExec) {
             createExecution(source)
         }
@@ -337,7 +336,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     }
 
     private def dispatch KNode transformInteraction(DestroyLifelineEvent destroy) {
-        // TODO close blocks before if not closed yet
         val destroyNode = destroy.createNode().associateWith(destroy)
         destroyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.DESTRUCTION_EVENT)
 
@@ -383,22 +381,22 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         switch STYLE.objectValue {
             case "Stylish": {
                 fragNodeRect = fragNode.addRoundedRectangle(10, 10, 2)
-                fragNodeRect.setShadow(Colors.BLACK, 10)
             }
             case "Hello Kitty": {
                 fragNodeRect = fragNode.addRoundedRectangle(10, 10, 2)
-                fragNodeRect.setShadow(Colors.PURPLE, 10)
             }
             default: {
                 fragNodeRect = fragNode.addRectangle
             }
         }
+        fragNodeRect.backgroundInvisible = true
 
-        val captionRect = fragNodeRect.addRectangle.foregroundInvisible = true
+        val captionRect = fragNodeRect.addRoundedRectangle(10, 10, 2).foregroundInvisible = true
+        captionRect.setBackground(Colors.WHITE)
 //        captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-        captionRect.addText(frag.name).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+        captionRect.addText(frag.name).setSurroundingSpaceGrid(15, 0, 0, 0).fontSize = TEXTSIZE.intValue
         captionRect.addPolyline(2, lineCoordinates)
-        captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
+        captionRect.setPointPlacementData(LEFT, 1, 0, TOP, 1, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
 
         for (sect : frag.sections) {
             if (sect.label != null) {
@@ -427,7 +425,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
     // TODO time constraint between messages, 
     // TODO Duration constraint auch als property aber nur als string anhängen in der Darstellung
-    // TODO Strichmann (Actor, Use cases)
     // TODO Zustandsinvariante als Notiz
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Rest
