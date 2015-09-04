@@ -44,6 +44,8 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Stack
 import javax.inject.Inject
+import java.util.List
+import com.google.common.collect.Lists
 
 class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram> {
 
@@ -245,13 +247,17 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         }
 
         if (elementIdOnLifeline.containsKey(source.name)) {
-            transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_ID,
-                elementIdOnLifeline.get(source.name).peek())
+            val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(source.name))
+            
+            transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS,
+                executionList)
         }
 
         if (elementIdOnLifeline.containsKey(target.name)) {
-            transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_ID,
-                elementIdOnLifeline.get(target.name).peek())
+            val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(target.name))
+            
+            transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_IDS,
+                executionList)
         }
 
         if (msg.sourceEndExec) {
@@ -286,11 +292,15 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         if (elementIdOnLifeline.containsKey(msg.lifeline.name)) {
             if (msg.messageTypeLostAndFound.equals("lost")) {
-                transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_ID,
-                    elementIdOnLifeline.get(msg.lifeline.name).peek())
+                val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(msg.lifeline.name))
+                
+                transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS,
+                    executionList)
             } else {
-                transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_ID,
-                    elementIdOnLifeline.get(msg.lifeline.name).peek())
+                val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(msg.lifeline.name))
+                
+                transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_IDS,
+                    executionList)
             }
         }
 
