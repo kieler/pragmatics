@@ -341,8 +341,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private def dispatch KNode transformInteraction(OneLifelineNote note) {
         val noteNode = note.createNode().associateWith(note)
         noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)
+        
+        surroundingInteraction.children.add(noteNode)
+        
+        val noteRect = noteNode.addRectangle()
+        noteRect.addText(note.note).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
 
-        // TODO 
         return noteNode
     }
 
@@ -405,7 +409,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val captionRect = fragNodeRect.addRoundedRectangle(10, 10, 2).foregroundInvisible = true
         captionRect.setBackground(Colors.WHITE)
 //        captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-        captionRect.addText("[" + frag.name + "]").setSurroundingSpaceGrid(15, 0, 0, 0).fontSize = TEXTSIZE.intValue
+        captionRect.addText(frag.name).setSurroundingSpaceGrid(15, 0, 0, 0).fontSize = TEXTSIZE.intValue
         captionRect.addPolyline(2, lineCoordinates)
         captionRect.setPointPlacementData(LEFT, 1, 0, TOP, 1, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
 
@@ -413,7 +417,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             if (sect.label != null) {
                 val label = KimlUtil.createInitializedLabel(fragNode)
 
-                val labelText = sect.label
+                val labelText = "[" + sect.label + "]"
                 label.configureCenterEdgeLabel(labelText, KlighdConstants.DEFAULT_FONT_SIZE,
                     KlighdConstants.DEFAULT_FONT_NAME)
 //                val captionRect3 = captionRect.addRectangle.foregroundInvisible = true
@@ -434,10 +438,11 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         return refNode
     }
 
-    // TODO time constraint between messages, 
-    // TODO Duration constraint auch als property aber nur als string anhängen in der Darstellung
     // TODO Zustandsinvariante als Notiz
     // TODO übergreifenden Zugriff auf lifelines bei autovervollständigung entfernen
+    // TODO selfmessages bei großer Schachtelung
+    // TODO validation und formatting überprüfen
+    // TODO Modellordner
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Rest
     // Specifies the correct Properties for the different message types
