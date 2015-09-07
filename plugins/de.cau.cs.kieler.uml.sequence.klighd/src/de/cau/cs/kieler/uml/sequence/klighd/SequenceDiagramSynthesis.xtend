@@ -354,7 +354,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val destroyNode = destroy.createNode().associateWith(destroy)
         destroyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.DESTRUCTION_EVENT)
 
-        val destroyRect = destroyNode.addRectangle().foregroundInvisible = true
+        val destroyRect = destroyNode.setNodeSize(20,20).addRectangle().foregroundInvisible = true
 
         val whiteBackgroundRect = destroyRect.addRectangle.foregroundInvisible = true
         whiteBackgroundRect.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0.5f).to(RIGHT, 0, 0, BOTTOM, -2, 0).
