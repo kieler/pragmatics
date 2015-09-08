@@ -15,13 +15,13 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
  * Internal representation of a node in the constraint graph.
@@ -34,25 +34,29 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
  */
 public abstract class CNode {
     // Variables are public for convenience reasons since this class is used internally only.
-    // SUPPRESS CHECKSTYLE NEXT 18 VisibilityModifier
-    /** flags a node to be repositioned in the case of left/right balanced compaction. */
-    public boolean reposition = true;
-    /** the area occupied by this element including margins for ports and labels. */
-    public Rectangle hitbox;
-    /** representation of constraints. */
-    public List<CNode> incoming = Lists.newArrayList();
-    /** number of {@link CNode}s imposing a constraint on this one. */
-    public int outDegree = 0;
+    // SUPPRESS CHECKSTYLE NEXT 22 VisibilityModifier
+    /** the associated layered graph. */
+    public LGraph layeredGraph;
+    /** containing {@link CGroup}. */
+    public CGroup cGroup;
     /** refers to the parent node of a north/south segment. */
     public CNode parentNode = null;
+    
+    /** representation of constraints. */
+    public List<CNode> constraints = Lists.newArrayList();
+    /** number of {@link CNode}s imposing a constraint on this one. */
+    public int outDegree = 0;
+    
+    /** the area occupied by this element including margins for ports and labels. */
+    public Rectangle hitbox;
     /** offset to the root position of the containing {@link CGroup} . */
     public double cGroupOffset;
     /** leftmost possible position for this {@link CNode} to be drawn. */
     public double startPos = Double.NEGATIVE_INFINITY;
-    /** containing {@link CGroup}. */
-    public CGroup cGroup;
-    /** the associated layered graph. */
-    public LGraph layeredGraph;
+    /** flags a node to be repositioned in the case of left/right balanced compaction. */
+    public boolean reposition = true;
+    /** a 4 tuple stating if the {@link CNode} is locked in a particular direction. */
+    public CompactionLock lock;
 
     /**
      * Constructor.
@@ -62,6 +66,7 @@ public abstract class CNode {
      */
     public CNode(final LGraph layeredGraph) {
         this.layeredGraph = layeredGraph;
+        lock = new CompactionLock();
     }
 
     /**
@@ -75,6 +80,7 @@ public abstract class CNode {
 
         // joining north/south segments that belong to the same edge by setting their spacing to 0
         if (parentNode != null && other.parentNode != null
+                // this might seem quite expensive but in most cases the sets contain only one element
                 && !Sets.intersection(getOriginalEdges(), other.getOriginalEdges()).isEmpty()) {
             return 0;
         }
@@ -83,6 +89,7 @@ public abstract class CNode {
         return Math.min(getSingleSpacing(), other.getSingleSpacing());
     }
 
+    // TODO too specific for cnode
     /**
      * Gets a set of {@link LEdge}s that belong to a segment.
      * 
@@ -91,25 +98,18 @@ public abstract class CNode {
     public abstract Set<LEdge> getOriginalEdges();
 
     /**
-     * Gets the associated {@link LNode}.
-     * 
-     * @return the {@link LNode} or {@code null}
-     */
-    public abstract LNode getLNode();
-    
-    /**
-     * Returns the {@link LNode}s that are connected to this node.
-     * 
-     * @return the {@link LNode}s
-     */
-    public abstract List<LNode> getConnectedNodes();
-
-    /**
      * Returns object spacing for a {@link LNode} and edge spacing for a {@link LEdge}.
+     * If the {@link LNode} is an {@link NodeType#EXTERNAL_PORT external port} the returned spacing is 0.
+     * This works because {@link LGraphUtil#getExternalPortPosition(LGraph, LNode, double, double)
+     * LGraphUtil.getExternalPortPosition} is called in 
+     * {@link de.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer#applyLayout(LGraph)
+     * KGraphLayoutTransferrer.applyLayout} and resets the position of the
+     * {@link NodeType#EXTERNAL_PORT external port} dummy, which results in the correct border spacing
+     * being used.
      * 
      * @return the spacing
      */
-    public abstract double getSingleSpacing();
+    abstract double getSingleSpacing();
 
     /**
      * Updates the leftmost possible starting position of this {@link CNode} according to
@@ -127,7 +127,7 @@ public abstract class CNode {
                 Math.max(startPos, outgoingCNode.startPos + outgoingCNode.hitbox.width + spacing);
         double currentPos = getPosition();
 
-        outDegree -= 2;
+        outDegree --;
 
         // setting new position is the CNode is flagged to be repositioned
         // or if the current position doesn't comply with the required spacing
@@ -150,16 +150,17 @@ public abstract class CNode {
     }
 
     /**
-     * Setter for the position. Used after compaction to allow reverse transformation of hitboxes.
+     * Applies the compacted starting position to the hitbox. Used after compaction to allow
+     * reverse transformation of hitboxes.
      */
-    public void setPosition() {
+    public void applyPosition() {
         hitbox.x = startPos;
     }
 
     /**
      * Sets the position of the {@link LGraphElement} according to the hitbox.
      */
-    public abstract void setElementPosition();
+    public abstract void applyElementPosition();
 
     /**
      * Returns the position of the {@link LGraphElement}.

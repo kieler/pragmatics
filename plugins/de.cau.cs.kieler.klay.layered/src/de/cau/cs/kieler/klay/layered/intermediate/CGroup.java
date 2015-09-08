@@ -24,7 +24,7 @@ import com.google.common.collect.Sets;
  * CGroups are used to ensure that vertical edge segments, that are connected to north/south ports,
  * are kept at the position of the port.
  * 
- * @see OneDimensionalCompactor
+ * @see HorizontalGraphCompactor
  * 
  * @author dag
  */
@@ -35,23 +35,24 @@ public final class CGroup {
     // SUPPRESS CHECKSTYLE NEXT 6 VisibilityModifier
     /** grouped {@link CNode}s. */
     public Set<CNode> cNodes;
-    /** constraints pointing to CNodes not within the {@link CGroup}. */
+    /** constraints pointing from within the {@link CGroup} to CNodes outside the {@link CGroup}. */
     public Set<CNode> incomingConstraints;
     /** number of constraints originating from within the {@link CGroup}. */
     public int outDegree;
 
     /**
-     * The constructor for a {@link CGroup} receives a {@link CNode} since a {@link CGroup} has to
-     * contain at least one.
+     * The constructor for a {@link CGroup} receives {@link CNode}s to group.
      * 
-     * @param node
-     *            the {@link CNode} to add
+     * @param nodes
+     *            the {@link CNode}s to add
      */
-    public CGroup(final CNode node) {
+    public CGroup(final CNode... nodes) {
         cNodes = Sets.newLinkedHashSet();
         incomingConstraints = Sets.newLinkedHashSet();
         outDegree = 0;
-        addCNode(node);
+        for (CNode node : nodes) {
+            addCNode(node);
+        }
     }
 
     /**
@@ -67,17 +68,22 @@ public final class CGroup {
      * Compacts the grouped {@link CNode}s while maintaining their relative positions.
      */
     public void compactInnerCNodes() {
-
+        System.out.println("inner compacting group: " + cNodes); //TODO
         // adding CNodes that are initially sinks to startNodes
         Queue<CNode> startNodes = Lists.newLinkedList();
         for (CNode node : cNodes) {
             // a CNode is a sink if all outgoing constraints are processed
             if (node.outDegree == 0) {
+                System.out.println("initial inner sink: " + node); //TODO
                 startNodes.add(node);
 
                 // CNodes can be locked in place to avoid pulling clusters apart
                 if (node.reposition) {
-                    node.startPos = 0;
+                    //TODO nodes become inner sinks after they were updated by propagation
+                    // so only if fresh :)
+                    if (node.startPos == Double.NEGATIVE_INFINITY) {
+                        node.startPos = 0;
+                    }
                 } else {
                     node.startPos = node.getPosition();
                 }
@@ -87,13 +93,14 @@ public final class CGroup {
         // processing startNodes and deriving start positions of incoming CNodes from constraints
         while (!startNodes.isEmpty()) {
             CNode node = startNodes.poll();
-            for (CNode inc : node.incoming) {
+            for (CNode inc : node.constraints) {
                 // process constraints from within the CGroup only
                 if (!incomingConstraints.contains(inc)) {
                     inc.updateStartPos(node);
 
                     // adding new sinks to the queue
                     if (inc.outDegree == 0) {
+                        System.out.println("new inner sink: " + inc); //TODO
                         startNodes.add(inc);
                     }
                 }
@@ -102,8 +109,10 @@ public final class CGroup {
 
         // finding the required root position for the CGroup that satisfies the constraints of each
         // member
-        CNode firstCNode = cNodes.iterator().next();
-        startPos = firstCNode.startPos - firstCNode.cGroupOffset;
+        if (!cNodes.isEmpty()) {
+            CNode firstCNode = cNodes.iterator().next();
+            startPos = firstCNode.startPos - firstCNode.cGroupOffset;
+        }
         for (CNode node : cNodes) {
             startPos = Math.max(startPos, node.startPos - node.cGroupOffset);
         }
@@ -123,7 +132,7 @@ public final class CGroup {
         List<CGroup> compactables = Lists.newArrayList();
 
         for (CNode node : cNodes) {
-            for (CNode inc : node.incoming) {
+            for (CNode inc : node.constraints) {
                 // processing constraints that refer to CNodes outside of this CGroup
                 if (incomingConstraints.contains(inc)) {
                     // updating the starting position of an incoming constraint
@@ -148,14 +157,9 @@ public final class CGroup {
      */
     public void addCNode(final CNode node) {
         cNodes.add(node);
-        node.cGroup = this;
-        // ensuring that only incoming constraints are added, that refer to CNodes outside of this
-        // CGroup
-        incomingConstraints.remove(node);
-        for (CNode inc : node.incoming) {
-            if (!cNodes.contains(inc)) {
-                incomingConstraints.add(inc);
-            }
+        if (node.cGroup != null) {
+            throw new RuntimeException("CNode belongs to another CGroup.");
         }
+        node.cGroup = this;
     }
 }

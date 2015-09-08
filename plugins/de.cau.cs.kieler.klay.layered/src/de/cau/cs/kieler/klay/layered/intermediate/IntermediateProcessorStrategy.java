@@ -255,7 +255,7 @@ public enum IntermediateProcessorStrategy {
             return new NorthSouthPortPreprocessor();
             
         case ONE_D_COMPACTOR:
-            return new OneDimensionalCompactor();
+            return new HorizontalGraphCompactor();
         
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();

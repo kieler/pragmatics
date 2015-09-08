@@ -35,6 +35,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 
 /**
  * This processor applies additional compaction to an already routed graph and can be
@@ -56,7 +57,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  * 
  * @author dag
  */
-public class OneDimensionalCompactor implements ILayoutProcessor {
+public class HorizontalGraphCompactor implements ILayoutProcessor {
     /** the layered graph. */
     private LGraph layeredGraph;
     /** the list of {@link CNode}s modeling the constraints in this graph. */
@@ -77,7 +78,11 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         
         // compacting left, locking all nodes that don't have any edge pointing to the right,
         // then compacting right to shorten unnecessary long edges
-        changeDirection(Direction.LEFT).compact().changeDirection(Direction.RIGHT).compact().done();
+        changeDirection(Direction.LEFT)
+            .compact()
+            .changeDirection(Direction.RIGHT)
+            .compact()
+            .applyGraphSize();
         
         progressMonitor.done();
     }
@@ -86,9 +91,9 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
      * Compacts the graph, reverses the transformation of hitboxes and writes the
      * new positions to the graph elements.
      * @return
-     *          this instance of {@link OneDimensionalCompactor}
+     *          this instance of {@link HorizontalGraphCompactor}
      */
-    public OneDimensionalCompactor compact() {
+    public HorizontalGraphCompactor compact() {
         // if no direction was specified readNodes() has to reload the CNodes
         if (direction == Direction.UNDEFINED) {
             changeDirection(Direction.LEFT);
@@ -119,7 +124,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
             break;
         }
         
-        setNodePositions();
+        applyNodePositions();
         
         return this;
     }
@@ -129,9 +134,9 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
      * @param dir
      *          the new direction
      * @return
-     *          this instance of {@link OneDimensionalCompactor}
+     *          this instance of {@link HorizontalGraphCompactor}
      */
-    public OneDimensionalCompactor changeDirection(final Direction dir) {
+    public HorizontalGraphCompactor changeDirection(final Direction dir) {
         /*
          * *>UNDEFINED: nop
          * UNDEFINED>L: read, getcons, group
@@ -157,8 +162,8 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                     .anyMatch(n -> !Iterables.isEmpty(n.getConnectedEdges()));
 
             if (hasEdges) {
-                System.out.println("Vertical compaction is not permitted on graphs containing edges.");
-                return null;
+                throw new RuntimeException(
+                        "Vertical compaction is not permitted on graphs containing edges.");
             }
         }
         
@@ -167,19 +172,19 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         case UNDEFINED:
             switch (dir) {
             case LEFT:
-                readNodes(); getConstraints(); groupCNodes();
+                readNodes(); calculateConstraints();
                 break;
                 
             case RIGHT:
-                readNodes(); mirrorHitboxes(); getConstraints(); groupCNodes();
+                readNodes(); mirrorHitboxes(); calculateConstraints();
                 break;
                 
             case UP:
-                readNodes(); transposeHitboxes(); getConstraints(); groupCNodes();
+                readNodes(); transposeHitboxes(); calculateConstraints();
                 break;
                 
             case DOWN:
-                readNodes(); transposeHitboxes(); mirrorHitboxes(); getConstraints(); groupCNodes();
+                readNodes(); transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
                 break;
 
             default:
@@ -190,15 +195,15 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         case LEFT:
             switch (dir) {
             case RIGHT:
-                mirrorHitboxes(); lockCNodes(); reverseConstraints(); groupCNodes();
+                mirrorHitboxes(); lockCNodes(dir); reverseConstraints();
                 break;
                 
             case UP:
-                transposeHitboxes(); getConstraints(); groupCNodes();
+                transposeHitboxes(); calculateConstraints();
                 break;
                 
             case DOWN:
-                transposeHitboxes(); mirrorHitboxes(); getConstraints(); groupCNodes();
+                transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
                 break;
 
             default:
@@ -209,15 +214,15 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         case RIGHT:
             switch (dir) {
             case LEFT:
-                mirrorHitboxes(); lockCNodes(); reverseConstraints(); groupCNodes();
+                mirrorHitboxes(); lockCNodes(dir); reverseConstraints();
                 break;
                 
             case UP:
-                mirrorHitboxes(); transposeHitboxes(); getConstraints(); groupCNodes();
+                mirrorHitboxes(); transposeHitboxes(); calculateConstraints();
                 break;
                 
             case DOWN:
-                mirrorHitboxes(); transposeHitboxes(); mirrorHitboxes(); getConstraints(); groupCNodes();
+                mirrorHitboxes(); transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
                 break;
 
             default:
@@ -228,15 +233,15 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         case UP:
             switch (dir) {
             case LEFT:
-                mirrorHitboxes(); transposeHitboxes(); mirrorHitboxes(); getConstraints(); groupCNodes();
+                mirrorHitboxes(); transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
                 break;
                 
             case RIGHT:
-                mirrorHitboxes(); transposeHitboxes(); getConstraints(); groupCNodes();
+                mirrorHitboxes(); transposeHitboxes(); calculateConstraints();
                 break;
                 
             case DOWN:
-                mirrorHitboxes(); lockCNodes(); reverseConstraints(); groupCNodes();
+                mirrorHitboxes(); lockCNodes(dir); reverseConstraints();
                 break;
 
             default:
@@ -247,15 +252,15 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         case DOWN:
             switch (dir) {
             case LEFT:
-                transposeHitboxes(); mirrorHitboxes(); getConstraints(); groupCNodes();
+                transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
                 break;
                 
             case RIGHT:
-                transposeHitboxes(); getConstraints(); groupCNodes();
+                transposeHitboxes(); calculateConstraints();
                 break;
                 
             case UP:
-                mirrorHitboxes(); lockCNodes(); reverseConstraints(); groupCNodes();
+                mirrorHitboxes(); lockCNodes(dir); reverseConstraints();
                 break;
 
             default:
@@ -274,7 +279,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
     /**
      * Updates graph properties offset and size and clears lists.
      */
-    public void done() {
+    public void applyGraphSize() {
         KVector topLeft = new KVector(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         KVector bottomRight = new KVector(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         for (CNode cNode : cNodes) {
@@ -433,12 +438,12 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         // 2. combining intersecting segments in CLEdges to process them as one
         if (!verticalSegments.isEmpty()) {
             // sorting the segments by position in ascending order
-            Collections.sort(verticalSegments, new Comparator<VerticalSegment>() {
+            verticalSegments.sort( new Comparator<VerticalSegment>() {
                 /**
                  * {@inheritDoc}
                  */
                 public int compare(final VerticalSegment o1, final VerticalSegment o2) {
-                    int d = Double.compare(o1.x, o2.x);
+                    int d = Double.compare(o1.x1, o2.x1);
                     if (d == 0) {
                         return Double.compare(o1.y1, o2.y1);
                     }
@@ -467,6 +472,9 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         }
 
         verticalSegments.clear();
+        
+        // grouping nodes with their connected north/south segments
+        groupCNodes();
     }
     
     /**
@@ -476,6 +484,10 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
     private void groupCNodes() {
         // resetting groups from previous compaction
         cGroups.clear();
+        // necessary because of the exception in CGroup.addCNode
+        for (CNode cNode : cNodes) {
+            cNode.cGroup = null;
+        }
         
         // creating groups for independent CNodes
         for (CNode cNode : cNodes) {
@@ -490,11 +502,30 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                 cNode.parentNode.cGroup.addCNode(cNode);
             }
         }
+    }
+    
+    /**
+     * Sets the constraints of {@link CGroup}s according to the constraints of the included
+     * {@link CNode}s.
+     */
+    private void calculateConstraintsForCGroups() {
+        // adding constraints to each CGroup, that refer to CNodes outside of the CGroup
+        for (CGroup group : cGroups) {
+            group.outDegree = 0;
+            group.incomingConstraints.clear();
+            for (CNode cNode : group.cNodes) {
+                for (CNode inc : cNode.constraints) {
+                    if (!group.cNodes.contains(inc)) {
+                        group.incomingConstraints.add(inc);
+                    }
+                }
+            }
+        }
         
-        // setting the outDegree (number of CNodes this group is constrained by) of CGroups
+        // setting the outDegree of CGroups (number of CNodes a group is constrained by)
         for (CGroup group : cGroups) {
             for (CNode cNode : group.cNodes) {
-                for (CNode inc : cNode.incoming) {
+                for (CNode inc : cNode.constraints) {
                     if (group.incomingConstraints.contains(inc)) {
                         inc.cGroup.outDegree++;
                     }
@@ -506,37 +537,23 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
     /**
      * Locks the position of CNodes before a second compaction in opposite direction
      * if the CNode has no edges connected to a node in that direction.
+     * @param dir
+     *          the direction
      */
-    private void lockCNodes() {
-        // maps CNodes to LNodes
-        Map<LNode, CNode> nodeMap = Maps.newHashMap();
+    private void lockCNodes(final Direction dir) {
         for (CNode cNode : cNodes) {
-            nodeMap.put(cNode.getLNode(), cNode);
-        }
-
-        for (CNode cNode : cNodes) {
-            
-            cNode.reposition = false; 
-            
-            for (LNode connectedNode : cNode.getConnectedNodes()) {
-                if (nodeMap.get(connectedNode).getPosition() < cNode.getPosition()) {
-                    cNode.reposition = true;
-                    break;
-                }
-            }
+            cNode.reposition = !cNode.lock.get(dir);
         }
     }
 
     /**
      * Creates a constraint between CNodes a and b if a could cast a shadow on b
      * considering margins and spacing.
-     * @param cmp
-     *          a function comparing the position of two CNodes (usually >)
      */
-    private void getConstraints() {
+    private void calculateConstraints() {
         // resetting constraintsinitially
         for (CNode cNode : cNodes) {
-            cNode.incoming.clear();
+            cNode.constraints.clear();
             cNode.outDegree = 0;
         }
         
@@ -557,17 +574,20 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
                         && Comp.lt(cNode2.hitbox.y, cNode1.hitbox.y
                                    + cNode1.hitbox.height + spacing)) {
 
-                    cNode1.incoming.add(cNode2);
+                    cNode1.constraints.add(cNode2);
                     cNode2.outDegree++;
                 }
             }
         }
 
+        // setting outDegree for CGroups
+        calculateConstraintsForCGroups();
     }
 
     /**
      * If the graph is compacted twice in opposing directions, the constraints can be reversed to
-     * avoid recalculating them.
+     * avoid recalculating them. Also the {@link CNode}s' starting position is reset to be ready for
+     * compaction.
      */
     private void reverseConstraints() {
         // maps CNodes to temporary lists of incoming constraints
@@ -580,7 +600,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         for (CNode cNode : cNodes) {
             cNode.startPos = Double.NEGATIVE_INFINITY;
             cNode.outDegree = 0;
-            for (CNode inc : cNode.incoming) {
+            for (CNode inc : cNode.constraints) {
                 cNode.outDegree++;
                 incMap.get(inc).add(cNode);
             }
@@ -588,9 +608,12 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         
         // write back
         for (CNode cNode : cNodes) {
-            cNode.incoming.clear();
-            cNode.incoming = incMap.get(cNode);
+            cNode.constraints.clear();
+            cNode.constraints = incMap.get(cNode);
         }
+        
+        // setting outDegree for CGroups
+        calculateConstraintsForCGroups();
     }
 
     /**
@@ -603,6 +626,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         // finding and compacting CGroups that are sinks
         for (CGroup group : cGroups) {
             if (group.isInnerCompactable()) {
+                System.out.println("this group is initial sink"); //TODO
                 group.compactInnerCNodes();
                 sinks.add(group);
             }
@@ -617,6 +641,7 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
             
             // compacting CGroups that became sinks in this iteration
             for (CGroup g : compactables) {
+                System.out.println("this group became sink after propagation of: " + group.cNodes); //TODO
                 g.compactInnerCNodes();
                 sinks.add(g);
             }
@@ -625,16 +650,16 @@ public class OneDimensionalCompactor implements ILayoutProcessor {
         
         // setting hitbox positions to new starting positions
         for (CNode cNode : cNodes) {
-            cNode.setPosition();
+            cNode.applyPosition();
         }
     }
 
     /**
      * Sets the positions of graph elements to the compacted position.
      */
-    private void setNodePositions() {
+    private void applyNodePositions() {
         for (CNode cNode : cNodes) {
-            cNode.setElementPosition();
+            cNode.applyElementPosition();
         }
     }
 

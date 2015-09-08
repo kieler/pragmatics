@@ -12,10 +12,8 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.math.KVector;
@@ -23,7 +21,6 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
@@ -35,13 +32,15 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * @author dag
  */
 public final class CLEdge extends CNode {
-    // SUPPRESS CHECKSTYLE NEXT 6 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 4 VisibilityModifier
     /** specifies the bend points belonging to this vertical edge segment. */
     public KVectorChain bends;
     /** junction points affected by manipulation of this segment. */
     public KVectorChain juctionPoints;
     /** referring to the {@link LEdge}s this segment is a part of. */
-    public Set<LEdge> originalLEdges = Sets.newLinkedHashSet();
+    private Set<LEdge> originalLEdges = Sets.newLinkedHashSet();
+    
+    //private Set<CLEdge> associatedVerticalSegments = Sets.newLinkedHashSet();
 
     /**
      * The constructor adds a {@link VerticalSegment} to the list and appends its bend and junction
@@ -56,9 +55,12 @@ public final class CLEdge extends CNode {
         super(layeredGraph);
         bends = new KVectorChain(vSeg.bend1, vSeg.bend2);
         juctionPoints = new KVectorChain(vSeg.junctionPoints);
-        hitbox = new Rectangle(vSeg.x, vSeg.y1, 0, vSeg.y2 - vSeg.y1);
+        hitbox = new Rectangle(vSeg.x1, vSeg.y1, 0, vSeg.y2 - vSeg.y1);
         parentNode = vSeg.parentNode;
         cGroupOffset = vSeg.relativePosition;
+        
+        // edges are locked by default
+        lock.set(true, true, true, true);
 
         if (vSeg.lEdge != null) {
             originalLEdges.add(vSeg.lEdge);
@@ -78,7 +80,7 @@ public final class CLEdge extends CNode {
         // updating the hitbox to span over the new segment
         double newY1 = Math.min(hitbox.y, vSeg.y1);
         double newY2 = Math.max(hitbox.y + hitbox.height, vSeg.y2);
-        hitbox.setRect(vSeg.x, newY1, 0, newY2 - newY1);
+        hitbox.setRect(vSeg.x1, newY1, 0, newY2 - newY1);
 
         if (vSeg.lEdge != null) {
             originalLEdges.add(vSeg.lEdge);
@@ -89,7 +91,7 @@ public final class CLEdge extends CNode {
      * {@inheritDoc}
      */
     @Override
-    public void setElementPosition() {
+    public void applyElementPosition() {
         for (KVector b : bends) {
             b.x = hitbox.x;
         }
@@ -122,20 +124,9 @@ public final class CLEdge extends CNode {
     public Set<LEdge> getOriginalEdges() {
         return originalLEdges;
     }
-
-    /**
-     * {@inheritDoc}
-     */
+    
     @Override
-    public LNode getLNode() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<LNode> getConnectedNodes() {
-        return Lists.newArrayList();
+    public String toString() {
+        return originalLEdges.toString();
     }
 }

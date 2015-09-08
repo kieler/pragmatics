@@ -34,8 +34,8 @@ public final class VerticalSegment {
     public KVector bend1, bend2;
     /** the junction points of the original {@link LEdge}, that are between the bend points. */
     public KVectorChain junctionPoints = new KVectorChain();
-    /** coordinates. */
-    public double x, y1, y2;
+    /** Top left corner and bottom of the vertical edge segment. */
+    public double x1, y1, y2;
     /** the parent {@link LEdge}. */
     public LEdge lEdge;
 
@@ -57,11 +57,11 @@ public final class VerticalSegment {
 
         // setting coordinates according to bend points
         if (bend1.y < bend2.y) {
-            x = bend1.x;
+            x1 = bend1.x;
             y1 = bend1.y;
             y2 = bend2.y;
         } else {
-            x = bend2.x;
+            x1 = bend2.x;
             y1 = bend2.y;
             y2 = bend1.y;
         }
@@ -78,7 +78,7 @@ public final class VerticalSegment {
 
         // only north/south segments have a parent node
         if (parentNode != null) {
-            relativePosition = x - cNode.hitbox.x;
+            relativePosition = x1 - cNode.hitbox.x;
         }
 
         this.lEdge = lEdge;
@@ -92,11 +92,6 @@ public final class VerticalSegment {
      * @return {@code true} if the segments intersect
      */
     public boolean intersects(final VerticalSegment o) {
-        return Comp.eq(this.x, o.x) && Comp.ge(this.y2, o.y1) && Comp.le(this.y1, o.y2);
-    }
-
-    @Override
-    public String toString() {
-        return "\nb1: " + bend1 + " \tb2: " + bend2 + " \t" + junctionPoints;
+        return Comp.eq(this.x1, o.x1) && Comp.ge(this.y2, o.y1) && Comp.le(this.y1, o.y2);
     }
 }

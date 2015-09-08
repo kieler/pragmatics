@@ -13,16 +13,17 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 
-import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
@@ -54,13 +55,22 @@ public final class CLNode extends CNode {
                         + lNode.getMargin().bottom);
 
         cGroupOffset = 0;
+        
+        // locking the node for directions that no edges are connected in
+        // at the moment this applies only to left/right compaction
+        if (Iterables.isEmpty(lNode.getIncomingEdges())) {
+            lock.set(true, Direction.LEFT);
+        }
+        if (Iterables.isEmpty(lNode.getOutgoingEdges())) {
+            lock.set(true, Direction.RIGHT);
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setElementPosition() {
+    public void applyElementPosition() {
         lNode.getPosition().x = hitbox.x + lNode.getMargin().left;
     }
 
@@ -77,6 +87,9 @@ public final class CLNode extends CNode {
      */
     @Override
     public double getSingleSpacing() {
+        if (lNode.getNodeType() == NodeType.EXTERNAL_PORT) {
+            return 0;
+        }
         return (double) layeredGraph.getProperty(InternalProperties.SPACING);
     }
 
@@ -87,28 +100,9 @@ public final class CLNode extends CNode {
     public Set<LEdge> getOriginalEdges() {
         return Sets.newLinkedHashSet();
     }
-
-    /**
-     * {@inheritDoc}
-     */
+    
     @Override
-    public LNode getLNode() {
-        return lNode;
+    public String toString() {
+        return lNode.toString();
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<LNode> getConnectedNodes() {
-        List<LNode> connectedNodes = Lists.newArrayList();
-        for (LEdge edge : lNode.getIncomingEdges()) {
-            connectedNodes.add(edge.getSource().getNode());
-        }
-        for (LEdge edge : lNode.getOutgoingEdges()) {
-            connectedNodes.add(edge.getTarget().getNode());
-        }
-        return connectedNodes;
-    }
-
 }
