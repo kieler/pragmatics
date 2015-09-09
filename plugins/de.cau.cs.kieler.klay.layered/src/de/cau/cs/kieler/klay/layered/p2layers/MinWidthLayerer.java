@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -306,9 +306,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
         Set<LNode> alreadyPlacedInOtherLayers = Sets.newHashSet();
 
         // Set up the first layer (algorithm is bottom up, so the List layer is going to be reversed
-        // at
-        // the end.
-        // Layer currentLayer = new Layer(layeredGraph);
+        // at the end.
         List<LNode> currentLayer = Lists.newArrayList();
         layers.add(currentLayer);
 
@@ -321,7 +319,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
         int maxWidth = 0;
         int dummyNodeCount = 0;
         int realWidth = 0;
-        Set<LEdge> dummysInNextLayer = Sets.newHashSet();
+        Set<LEdge> dummysInLayer = Sets.newHashSet();
         List<LEdge> goingOutFromThisLayer = Lists.newArrayList();
         List<LEdge> comingIntoThisLayer = Lists.newArrayList();
 
@@ -345,8 +343,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 inDegree = countEdgesExceptSelfLoops(currentNode.getIncomingEdges());
                 widthUp += inDegree;
 
-                // For counting the dummy nodes we count all the outgoing from and incoming edges to
-                // the current layer.
+                // For counting the dummy nodes we count all the outgoing edges from and incoming
+                // edges to the current layer.
                 Iterables.addAll(
                         goingOutFromThisLayer,
                         Iterables.filter(currentNode.getOutgoingEdges(),
@@ -375,28 +373,27 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 alreadyPlacedInOtherLayers.addAll(alreadyPlacedInCurrentLayer);
                 alreadyPlacedInCurrentLayer.clear();
 
-                // TODO: Is this the right way to determine the maximum width of the layering?
-                // Moreover: Comment
-                dummysInNextLayer.removeAll(goingOutFromThisLayer);
-                dummyNodeCount = dummysInNextLayer.size();
+                // Remove all edges from the dummy node count, which are starting at a node placed
+                // in this layer …
+                dummysInLayer.removeAll(goingOutFromThisLayer);
+                // … Now we have the actual dummy node count for this layer and can add it to the
+                // real nodes for comparing the width.
+                dummyNodeCount = dummysInLayer.size();
                 maxWidth = Math.max(maxWidth, dummyNodeCount + realWidth);
-                dummysInNextLayer.addAll(comingIntoThisLayer);
+                // In the next iteration we have to consider new dummy nodes from edges coming into the
+                // layer we've just finished.
+                dummysInLayer.addAll(comingIntoThisLayer);
 
                 widthCurrent = widthUp;
                 widthUp = 0;
-
-                // System.out.print((dummyNodeCount + realWidth) + "\t");
             }
         }
-
-        // System.out.println();
-        // System.out.println("maxWidth: " + maxWidth);
 
         return Pair.of(maxWidth, layers);
     }
 
     /**
-     * TODO: Change comment. Returns the first {@link LNode} in the given Set, whose outgoing edges
+     * Returns the first {@link LNode} in the given Set, whose outgoing edges
      * end only in nodes of the Set {@code targets}. Self-loops are ignored.
      * 
      * Warning: Returns {@code null}, if such a node doesn't exist.
@@ -426,6 +423,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
      *            Iterable whose edges without self-loops are to be counted
      * @return number of {@link LEdge} edges without self-loops
      */
+    //TODO: There might be a Google Guava solution for this (like above). Ask whether preferable.
     private int countEdgesExceptSelfLoops(final Iterable<LEdge> edges) {
         int i = 0;
         for (LEdge edge : edges) {
@@ -435,17 +433,6 @@ public final class MinWidthLayerer implements ILayoutPhase {
         }
         return i;
     }
-
-    // /**
-    // * Checks whether an edge is a self-loop (i.e. source node == target node).
-    // *
-    // * @param edge
-    // * {@link LEdge} to be tested
-    // * @return true if edge is self-loop, false otherwise
-    // */
-    // private static boolean isSelfLoop(final LEdge edge) {
-    // return edge.getSource().getNode().equals(edge.getTarget().getNode());
-    // }
 
     /**
      * Checks whether an edge is a self-loop (i.e. source node == target node).
