@@ -490,15 +490,6 @@
             type="int">
       </layoutOption>
       <layoutOption
-            advanced="false"
-            appliesTo="parents"
-            default="false"
-            description="When using negative values for Upper Bound On Width or Upper Layer Estimation Scaling Factor, more than one candidate layering will be computed based on suggesested values from the original paper (1-4 for the upper bound, 1 and 2 for the scaling factor). After that the layering with the minimum maximum width of a layer is going to be chosen. If this property is true only real nodes will be considered for the maximum width, otherwise real and dummy nodes will be considered. Should default to false.s"
-            id="de.cau.cs.kieler.klay.layered.ignoreDummyNodesForWidth"
-            name="ignore dummy nodes [MinWidthLayerer]"
-            type="boolean">
-      </layoutOption>
-      <layoutOption
             advanced="true"
             appliesTo="parents"
             default="0.5"

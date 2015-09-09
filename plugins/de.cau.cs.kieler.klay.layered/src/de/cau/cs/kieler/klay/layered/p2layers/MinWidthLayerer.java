@@ -38,13 +38,13 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * 
  * Implementation of the heuristic MinWidth for solving the NP-hard minimum-width layering problem
  * with consideration of dummy nodes. MinWidth is based on the longest-path algorithm, which finds
  * layerings with the minimum height, but doesn't consider the width of the graph. MinWidth also
- * considers an upper bound on the width of a given graph.
+ * considers an upper bound on the width of a given graph. The upper bound isn't a "bound" in a
+ * strict sense, as some layers might exceed its limit, if certain conditions are met.
  * 
- * The algorithm is described in
+ * Details are described in
  * <ul>
  * <li>Nikola S. Nikolov, Alexandre Tarassov, and Jürgen Branke. 2005. In search for efficient
  * heuristics for minimum-width graph layering with consideration of dummy nodes. J. Exp.
@@ -55,12 +55,14 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * MinWidth takes two additional parameters, which can be configured as a property:
  * <ul>
  * <li>Upper Bound On Width {@link Properties#UPPER_BOUND_ON_WIDTH} – Defines a loose upper bound on
- * the width of the MinWidth layerer. Defaults to 4, lower bound is 1.</li>
+ * the width of the MinWidth layerer. Defaults to -1 (special value for using both 1, 2, 3 and 4 as
+ * values and choosing the narrowest layering afterwards), lower bound is 1.</li>
  * <li>Upper Layer Estimation Scaling Factor
  * {@link Properties#UPPER_LAYER_ESTIMATION_SCALING_FACTOR} – Multiplied with
  * {@link Properties#UPPER_BOUND_ON_WIDTH} for defining an upper bound on the width of layers which
- * haven't been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth
- * algorithm. Compensates for too high estimations. Defaults to 2, lower bound is 1.</li>
+ * haven't been placed yet, but whose maximum width had been (roughly) estimated by the MinWidth
+ * algorithm. Compensates for too high estimations. Defaults to -1 (special value for using both 1
+ * and 2 as values and choosing the narrowest layering afterwards), lower bound is 1.</li>
  * </ul>
  * 
  * <dl>
@@ -92,8 +94,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
     /**
      * Checks whether an edge is a self-loop (i.e. source node == target node). Used internally, as
-     * Klay doesn't remove self-loops in its cycle breaking phase, but MinWidth expects only real
-     * directected acyclic graphs (DAGs).
+     * KLay Layered doesn't remove self-loops in its cycle breaking phase, but MinWidth expects only
+     * real directected acyclic graphs (DAGs).
      */
     private SelfLoopPredicate isSelfLoopTest = new SelfLoopPredicate();
 
@@ -124,39 +126,32 @@ public final class MinWidthLayerer implements ILayoutPhase {
         final int upperBoundOnWidth = layeredGraph.getProperty(Properties.UPPER_BOUND_ON_WIDTH);
         final int compensator =
                 layeredGraph.getProperty(Properties.UPPER_LAYER_ESTIMATION_SCALING_FACTOR);
-        // If more than one layering is computed (for different combinations of {@code
-        // upperBoundOnWidth}
-        // and {@code compensator}), this property can be set to true to choose the layering with
-        // the minimum maximum layer size based on real nodes, instead of real nodes plus dummy
-        // nodes. Defaults to false.
-        final Boolean ignoreDummys =
-                layeredGraph.getProperty(Properties.IGNORE_DUMMY_NODES_FOR_WIDTH);
 
         // Guarantee ConditionSelect from the paper, which states that nodes with maximum out-degree
         // should be preferred during layer placement, by ordering the nodes by descending maximum
         // out-degree in advance.
-        // We're using the nodes id property to store the out-degree (so it's not an id anymore in
+        // We're using the nodes' id property to store the out-degree (so it's not an id anymore in
         // the strict sense, as it might not be unique).
         for (LNode node : notInserted) {
             // Warning: LNode.id is being redefined here!
             node.id = countEdgesExceptSelfLoops(node.getOutgoingEdges());
         }
-        Collections.sort(notInserted, Collections.reverseOrder(new MinOutgoingEdgesComparator()));
+        notInserted.sort(Collections.reverseOrder(new MinOutgoingEdgesComparator()));
 
         // Precalculate the successors of all nodes (as a Set) and put them in a list. The id of a
         // node is changed again to the index of its successor-set in the resulting list (thus being
         // an unique id) for easier access later on. Beware: The id has two different meanings in
         // this class:
-        // 1.) At first it represents the number of outgoing edges of a nodes (without self-loops),
+        // 1.) At first it represents the number of outgoing edges of a node (without self-loops),
         // see above.
         // 2.) From now on and till the end of the algorithm it will be an index for easy access of
         // the successor-set of the node.
         List<Set<LNode>> nodeSuccessors = precalcSuccessors(notInserted);
 
-        // minimum width of a layer of maximum size in a layering (primary criterion used for
-        // comparison, if more than one layering is computed).
+        // minimum width of a layer of maximum size in a computed layering (primary criterion used
+        // for comparison, if more than one layering is computed).
         int minWidth = Integer.MAX_VALUE;
-        // minimum number of layers size in a layering of current {@code minWidth} (secondary
+        // minimum number of layers in a computed layering {@code minWidth} (secondary
         // criterion used for comparison, if more than one layering is computed).
         int minNumOfLayers = Integer.MAX_VALUE;
         // holding the currently chosen candidate for the final layering as a List
@@ -181,24 +176,14 @@ public final class MinWidthLayerer implements ILayoutPhase {
             cEnd = COMPENSATOR_RANGE.upperEndpoint();
         }
 
-        // … Depending on the start- and end-values, this nested for-loop will last for only one or
-        // many iterations resulting in only one or many different layerings.
+        // … Depending on the start- and end-values, this nested for-loop will last for up to 8
+        // iterations resulting in one, two, four or eight different layerings.
         for (int ubw = ubwStart; ubw <= ubwEnd; ubw++) {
             for (int c = cStart; c <= cEnd; c++) {
                 Pair<Integer, List<List<LNode>>> result =
                         computeMinWidthLayering(ubw, c, notInserted, nodeSuccessors);
                 int newWidth = result.getFirst();
                 List<List<LNode>> layering = result.getSecond();
-
-                // If you want to only consider real nodes for the width (ignoreDummys == true) and
-                // no dummy nodes, ignore the width returned by computeMinWidthLayering and simply
-                // inspect the layering as it only contains the real nodes.
-                if (ignoreDummys) {
-                    newWidth = 0;
-                    for (List<LNode> layer : layering) {
-                        newWidth = Math.max(newWidth, layer.size());
-                    }
-                }
 
                 // Important if more than one layering is computed: replace the current candidate
                 // layering with a newly computed one, if it is narrower or has the same maximum
@@ -213,7 +198,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
             }
         }
 
-        // Finally Add the winning layering to the Klay layered data structures.
+        // Finally, add the winning layering to the Klay layered data structures.
         for (List<LNode> layerList : candidateLayering) {
             Layer currentLayer = new Layer(layeredGraph);
             for (LNode node : layerList) {
@@ -225,7 +210,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // The algorithm constructs the layering bottom up, but KlayLayered expects the list of
         // layers to be ordered top down.
         Collections.reverse(layers);
-        // After the algorithm, there should be no nodes left to be put in a layer.
+        // After the algorithm, there should be no nodes left to be put in a layer, so we're gonna
+        // delete them.
         notInserted.clear();
 
         progressMonitor.done();
@@ -233,7 +219,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
     /**
      * Calculates for a given Collection of {@link LNode} all its successors (i.e. a Set of
-     * {@link LNode}) without self-loops.
+     * {@link LNode}s) without self-loops.
      * 
      * Warning: Changes {@link LNode#id}! After execution its value will be the index of the
      * respective Set of successor-nodes in the returned List.
@@ -329,7 +315,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
             LNode currentNode =
                     selectNode(unplacedNodes, nodeSuccessors, alreadyPlacedInOtherLayers);
 
-            // If you found a node in the previous step:
+            // If a node is found in the previous step:
             if (currentNode != null) {
                 unplacedNodes.remove(currentNode);
                 // Please do this after choosing a layering TODO: Rewrite algorithm
@@ -360,7 +346,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
             // 2) there are no unplaced nodes left (last iteration of the while-loop),
             // 3) The conditionGoUp from the paper is satisfied, i.e.
             // 3.1) the width of the current layer is greater than the upper bound on the width and
-            // the amount of dummy nodes in the layer can't be reduced, as only nodes with no
+            // the number of dummy nodes in the layer can't be reduced, as only nodes with no
             // outgoing edges are left for being considered for the current layer; or:
             // 3.2) The estimated width of the not yet determined layers is greater than the
             // scaling factor/compensator times the upper bound on the width.
@@ -380,7 +366,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 // real nodes for comparing the width.
                 dummyNodeCount = dummysInLayer.size();
                 maxWidth = Math.max(maxWidth, dummyNodeCount + realWidth);
-                // In the next iteration we have to consider new dummy nodes from edges coming into the
+                // In the next iteration we have to consider new dummy nodes from edges coming into
+                // the
                 // layer we've just finished.
                 dummysInLayer.addAll(comingIntoThisLayer);
 
@@ -393,8 +380,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
     }
 
     /**
-     * Returns the first {@link LNode} in the given Set, whose outgoing edges
-     * end only in nodes of the Set {@code targets}. Self-loops are ignored.
+     * Returns the first {@link LNode} in the given Set, whose outgoing edges end only in nodes of
+     * the Set {@code targets}. Self-loops are ignored.
      * 
      * Warning: Returns {@code null}, if such a node doesn't exist.
      * 
@@ -423,7 +410,6 @@ public final class MinWidthLayerer implements ILayoutPhase {
      *            Iterable whose edges without self-loops are to be counted
      * @return number of {@link LEdge} edges without self-loops
      */
-    //TODO: There might be a Google Guava solution for this (like above). Ask whether preferable.
     private int countEdgesExceptSelfLoops(final Iterable<LEdge> edges) {
         int i = 0;
         for (LEdge edge : edges) {
@@ -436,8 +422,6 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
     /**
      * Checks whether an edge is a self-loop (i.e. source node == target node).
-     * 
-     * @author mic
      */
     private class SelfLoopPredicate implements Predicate<LEdge> {
 

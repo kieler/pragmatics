@@ -237,7 +237,7 @@ public final class Properties {
      * Defines a loose upper bound on the width of the MinWidth layerer.
      */
     public static final IProperty<Integer> UPPER_BOUND_ON_WIDTH = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth", 4, 1);
+            "de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth", -1, 1);
     /**
      * Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which
      * haven't been determined yet, but whose maximum width had been (roughly) estimated by the
@@ -245,7 +245,7 @@ public final class Properties {
      */
     public static final IProperty<Integer> UPPER_LAYER_ESTIMATION_SCALING_FACTOR =
             new Property<Integer>(
-                    "de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", 2, 1);
+                    "de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", -1, 1);
 
     /**
      * Defines the added Scale for the upper layer Weight (wdithUp) in the condition that decides if
@@ -255,16 +255,6 @@ public final class Properties {
     public static final IProperty<Float> UPPER_LAYER_SCALE = new Property<Float>(
             "de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale",
             0.5f, 0.0f, 1.0f);
-    /**
-     * When using negative values for Upper Bound On Width or Upper Layer Estimation Scaling Factor, 
-     * more than one candidate layering will be computed based on suggesested values from the original 
-     * paper (1-4 for the upper bound, 1 and 2 for the scaling factor). After that the layering with the
-     * minimum maximum width of a layer is going to be chosen. If this property is true only real nodes 
-     * will be considered for the maximum width, otherwise real and dummy nodes will be considered.
-     * Should default to false.
-     */
-    public static final IProperty<Boolean> IGNORE_DUMMY_NODES_FOR_WIDTH = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.ignoreDummyNodesForWidth", false);
 
     /**
      * Specifies the compaction strategy when using the {@link BKNodePlacer}.
