@@ -4,6 +4,7 @@
 package de.cau.cs.kieler.uml.sequence.text;
 
 import org.eclipse.xtext.conversion.IValueConverterService;
+import org.eclipse.xtext.scoping.IGlobalScopeProvider;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
@@ -16,6 +17,11 @@ public class SequenceRuntimeModule extends de.cau.cs.kieler.uml.sequence.text.Ab
     @Override
     public Class<? extends IValueConverterService> bindIValueConverterService() {
         return SequenceValueConverter.class;
+    }
+    
+    @Override
+    public Class<? extends IGlobalScopeProvider> bindIGlobalScopeProvider() {
+      return NullGlobalScopeProvider.class;
     }
 
 }
