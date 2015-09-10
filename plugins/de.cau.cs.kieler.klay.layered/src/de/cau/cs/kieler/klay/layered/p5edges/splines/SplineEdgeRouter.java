@@ -51,12 +51,15 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * Implements a way of routing the edges with splines. Uses the dummy nodes as reference points for
  * a spline calculation, but the dummy nodes do not lay on the edge. They are only approximated.
  * 
- * <dl><dt>Precondition:</dt>
- * <dd>the graph has a proper layering with assigned node and port positions; the size of each layer
- * is correctly set</dd>
- * <dt>Postcondition:</dt>
- * <dd>each node is assigned a horizontal coordinate; the bend points of each edge are set; the
- * width of the whole graph is set</dd></dl>
+ * <dl>
+ *   <dt>Precondition:</dt>
+ *     <dd>the graph has a proper layering with assigned node and port positions</dd>
+ *     <dd>the size of each layer is correctly set</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>each node is assigned a horizontal coordinate</dd>
+ *     <dd>the bend points of each edge are set such that they can be interpreted as Bezier splines</dd>
+ *     <dd>the width of the whole graph is set</dd>
+ * </dl>
  * 
  * @author tit
  */
