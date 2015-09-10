@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -244,7 +244,7 @@ public final class OrthogonalEdgeRouter implements ILayoutPhase {
             
             // Place the left layer's nodes, if any
             if (leftLayer != null) {
-                LGraphUtil.placeNodes(leftLayer, xpos);
+                LGraphUtil.placeNodesHorizontally(leftLayer, xpos);
                 xpos += leftLayer.getSize().x;
             }
             

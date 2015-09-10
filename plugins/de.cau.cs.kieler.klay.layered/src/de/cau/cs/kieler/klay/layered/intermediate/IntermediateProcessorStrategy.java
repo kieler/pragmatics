@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -48,6 +48,8 @@ public enum IntermediateProcessorStrategy {
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
     /** Creates connected components for the SplineSelfLoopPre- and postprocessor. */
     SPLINE_SELF_LOOP_PREPROCESSOR,
+    /** If one of the phases is set to interactive mode, this processor positions external ports. */
+    INTERACTIVE_EXTERNAL_PORT_POSITIONER,
 
     // Before Phase 2
 
@@ -208,6 +210,9 @@ public enum IntermediateProcessorStrategy {
 
         case IN_LAYER_CONSTRAINT_PROCESSOR:
             return new InLayerConstraintProcessor();
+            
+        case INTERACTIVE_EXTERNAL_PORT_POSITIONER:
+            return new InteractiveExternalPortPositioner();
 
         case LABEL_AND_NODE_SIZE_PROCESSOR:
             return new LabelAndNodeSizeProcessor();

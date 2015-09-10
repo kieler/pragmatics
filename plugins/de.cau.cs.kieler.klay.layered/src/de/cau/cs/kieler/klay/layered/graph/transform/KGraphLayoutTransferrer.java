@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -207,7 +207,10 @@ class KGraphLayoutTransferrer {
         
         // Only the orthogonal edge routing algorithm supports self-loops. Thus, leave self-loops
         // untouched if another routing algorithm is selected.
-        if (kedge == null || (ledge.isSelfLoop() && routing != EdgeRouting.ORTHOGONAL)) {
+        if (kedge == null
+                || (ledge.isSelfLoop() 
+                        && routing != EdgeRouting.ORTHOGONAL 
+                        && routing != EdgeRouting.SPLINES)) {
             return;
         }
         

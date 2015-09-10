@@ -14,6 +14,6 @@ Require-Bundle: org.eclipse.ui;resolution:=optional,
  de.cau.cs.kieler.kiml.graphviz.dot,
  de.cau.cs.kieler.kiml.formats
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.cau.cs.kieler.kiml.graphviz.layouter

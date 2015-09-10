@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -172,7 +172,7 @@ public final class ComponentsProcessor {
             mutableData.getFirst().add(node);
             
             // Check if this node is an external port dummy and, if so, add its side
-            if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+            if (node.getType() == NodeType.EXTERNAL_PORT) {
                 mutableData.getSecond().add(node.getProperty(InternalProperties.EXT_PORT_SIDE));
             }
             

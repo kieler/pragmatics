@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -66,7 +66,7 @@ public class LongEdgeJoinerTest extends AbstractLayeredProcessorTest {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     noOverallNodes++;
-                    if (node.getNodeType() == NodeType.LONG_EDGE) {
+                    if (node.getType() == NodeType.LONG_EDGE) {
                         noTypeNodes++;
                     }
                 }
@@ -87,7 +87,7 @@ public class LongEdgeJoinerTest extends AbstractLayeredProcessorTest {
         for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
-                    assertTrue(node.getNodeType() != NodeType.LONG_EDGE);
+                    assertTrue(node.getType() != NodeType.LONG_EDGE);
                     noNodesAfter++;
                 }
             }

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -92,7 +92,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         
         // Apply the maximum width to all label dummy nodes
         for (LNode labelDummy : layer) {
-            if (labelDummy.getNodeType() == NodeType.LABEL) {
+            if (labelDummy.getType() == NodeType.LABEL) {
                 LEdge edge = labelDummy.getConnectedEdges().iterator().next();
                 double edgeThickness = edge.getProperty(LayoutOptions.THICKNESS).doubleValue();
                 
@@ -134,7 +134,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         double maxWidth = 0.0;
         
         for (LNode node : layer) {
-            if (node.getNodeType() == NodeType.NORMAL) {
+            if (node.getType() == NodeType.NORMAL) {
                 maxWidth = Math.max(maxWidth, node.getSize().x);
             }
         }

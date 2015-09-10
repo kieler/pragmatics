@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -139,7 +139,7 @@ public final class LGraphUtil {
      * @param layer the layer in which to place the nodes
      * @param xoffset horizontal offset for layer placement
      */
-    public static void placeNodes(final Layer layer, final double xoffset) {
+    public static void placeNodesHorizontally(final Layer layer, final double xoffset) {
         // determine maximal left and right margin
         double maxLeftMargin = 0, maxRightMargin = 0;
         for (LNode node : layer.getNodes()) {
@@ -234,7 +234,7 @@ public final class LGraphUtil {
             } else if (node.getProperty(LayoutOptions.HYPERNODE)) {
                 props.add(GraphProperties.HYPERNODES);
                 props.add(GraphProperties.HYPEREDGES);
-            } else if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+            } else if (node.getType() == NodeType.EXTERNAL_PORT) {
                 props.add(GraphProperties.EXTERNAL_PORTS);
             }
             
@@ -672,7 +672,7 @@ public final class LGraphUtil {
         
         // Create the dummy with one port
         LNode dummy = new LNode(layeredGraph);
-        dummy.setNodeType(NodeType.EXTERNAL_PORT);
+        dummy.setType(NodeType.EXTERNAL_PORT);
         dummy.setProperty(InternalProperties.EXT_PORT_SIZE, portSize);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         dummy.setProperty(InternalProperties.OFFSET, propertyHolder.getProperty(LayoutOptions.OFFSET));

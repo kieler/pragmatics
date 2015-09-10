@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -17,6 +17,7 @@ import java.util.List;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphAdapters;
@@ -66,6 +67,7 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
             // Iterate through the layer's nodes
             for (LNode node : layer) {
                 processComments(node, spacing);
+                processSelfLoops(node);                
             }
         }
         
@@ -116,5 +118,20 @@ public final class NodeMarginCalculator implements ILayoutProcessor {
             margin.right = Math.max(margin.right, protrusion);
         }
     }
+    
+    /**
+     * Apply the additional space from spline self loops.
+     * 
+     * @param node a node
+     */
+    private void processSelfLoops(final LNode node) {
+        LInsets nodeMargin = node.getMargin();
+        Margins selfLoopMargin = node.getProperty(InternalProperties.SPLINE_SELF_LOOP_MARGINS);
+
+        nodeMargin.left = Math.max(nodeMargin.left, selfLoopMargin.left);
+        nodeMargin.right = Math.max(nodeMargin.right, selfLoopMargin.right);
+        nodeMargin.bottom = Math.max(nodeMargin.bottom, selfLoopMargin.bottom);
+        nodeMargin.top = Math.max(nodeMargin.top, selfLoopMargin.top);
+    }    
     
 }

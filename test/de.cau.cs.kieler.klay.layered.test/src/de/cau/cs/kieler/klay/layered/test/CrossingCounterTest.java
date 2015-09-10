@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -189,7 +189,7 @@ public class CrossingCounterTest extends AbstractLayeredProcessorTest {
                 }
                 
                 // Count north/south dummy nodes
-                if (node.getNodeType() == NodeType.NORTH_SOUTH_PORT) {
+                if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
                     inLayerEdgeCount[layerIndex]++;
                     hasNorthSouthPorts[layerIndex] = true;
                 }

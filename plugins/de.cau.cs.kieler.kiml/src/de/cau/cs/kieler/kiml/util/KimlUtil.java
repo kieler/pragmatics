@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2008 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -21,11 +21,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.AbstractTreeIterator;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.util.EContentsEList;
 import org.eclipse.emf.ecore.util.EContentsEList.FeatureFilter;
 import org.eclipse.emf.ecore.util.EContentsEList.FeatureIteratorImpl;
 

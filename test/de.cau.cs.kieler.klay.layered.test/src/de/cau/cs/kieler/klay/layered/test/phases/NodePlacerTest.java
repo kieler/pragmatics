@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -37,6 +37,7 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.CompactionStrategy;
+import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.properties.Spacings;
@@ -91,11 +92,37 @@ public class NodePlacerTest extends AbstractLayeredProcessorTest {
         // BK with different compaction strategies
         configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
                 NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
-                CONFIG_COMPACTION_STRAT_CLASSIC));
+                CONFIG_COMPACTION_STRAT_CLASSIC.apply(FixedAlignment.LEFTUP)));
         configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
                 NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
-                CONFIG_COMPACTION_STRAT_STRAIGHT));
-
+                CONFIG_COMPACTION_STRAT_CLASSIC.apply(FixedAlignment.LEFTDOWN)));
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT_CLASSIC.apply(FixedAlignment.RIGHTUP)));
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT_CLASSIC.apply(FixedAlignment.RIGHTDOWN)));
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT_CLASSIC.apply(FixedAlignment.BALANCED)));
+        
+        // BK with straightening in every variation
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT_STRAIGHT.apply(FixedAlignment.LEFTUP)));
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT_STRAIGHT.apply(FixedAlignment.LEFTDOWN)));
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT_STRAIGHT.apply(FixedAlignment.RIGHTDOWN)));
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT_STRAIGHT.apply(FixedAlignment.RIGHTUP)));
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT_STRAIGHT.apply(FixedAlignment.BALANCED)));
+        
         return configs;
     }
 
@@ -181,33 +208,62 @@ public class NodePlacerTest extends AbstractLayeredProcessorTest {
      */
     private static final double EPSILON = 0.0001;
 
-    private static final Function<KNode, KNode> CONFIG_COMPACTION_STRAT_CLASSIC =
-            new Function<KNode, KNode>() {
-                public KNode apply(final KNode input) {
-                    input.getData(KShapeLayout.class).setProperty(Properties.COMPACTION_STRATEGY,
-                            CompactionStrategy.CLASSIC);
-                   Iterator<KNode> it = Iterators.filter(input.eAllContents(), KNode.class);
-                   while (it.hasNext()) {
-                       KNode n = it.next();
-                       n.getData(KShapeLayout.class).setProperty(Properties.COMPACTION_STRATEGY,
+    private static final Function<FixedAlignment, Function<KNode, KNode>> CONFIG_COMPACTION_STRAT_CLASSIC =
+        new Function<FixedAlignment, Function<KNode, KNode>>() {
+            public Function<KNode, KNode> apply(FixedAlignment alignment) {
+                return new Function<KNode, KNode>() {
+                    public KNode apply(final KNode input) {
+                        
+                        // apply to parent
+                        input.getData(KShapeLayout.class).setProperty(Properties.COMPACTION_STRATEGY,
                                 CompactionStrategy.CLASSIC);
-                    }
-                    return input;
+                        input.getData(KShapeLayout.class).setProperty(
+                                Properties.FIXED_ALIGNMENT, alignment);
+                        
+                        // apply the options to children
+                        Iterator<KNode> it = Iterators.filter(input.eAllContents(), KNode.class);
+                        while (it.hasNext()) {
+                           KNode n = it.next();
+                           n.getData(KShapeLayout.class).setProperty(Properties.COMPACTION_STRATEGY,
+                                    CompactionStrategy.CLASSIC);
+                        }
+                        return input;
+                    };
                 };
-            };
-            
-    private static final Function<KNode, KNode> CONFIG_COMPACTION_STRAT_STRAIGHT =
-            new Function<KNode, KNode>() {
-        public KNode apply(final KNode input) {
-            input.getData(KShapeLayout.class).setProperty(Properties.COMPACTION_STRATEGY,
-                    CompactionStrategy.IMPROVE_STRAIGHTNESS);
-           Iterator<KNode> it = Iterators.filter(input.eAllContents(), KNode.class);
-           while (it.hasNext()) {
-               KNode n = it.next();
-               n.getData(KShapeLayout.class).setProperty(Properties.COMPACTION_STRATEGY,
-                        CompactionStrategy.IMPROVE_STRAIGHTNESS);
             }
-            return input;
-        };
     };
+    
+    private static final Function<FixedAlignment, Function<KNode, KNode>> CONFIG_COMPACTION_STRAT_STRAIGHT =
+        new Function<FixedAlignment, Function<KNode, KNode>>() {
+            public Function<KNode, KNode> apply(FixedAlignment alignment) {
+                return new Function<KNode, KNode>() {
+                    public KNode apply(final KNode input) {
+                        
+                        // apply to parent
+                        input.getData(KShapeLayout.class).setProperty(
+                                Properties.COMPACTION_STRATEGY,
+                                CompactionStrategy.IMPROVE_STRAIGHTNESS);
+                        input.getData(KShapeLayout.class).setProperty(
+                                Properties.FIXED_ALIGNMENT, alignment);
+                        
+                        // apply the options to children
+                        Iterator<KNode> it =
+                                Iterators.filter(input.eAllContents(), KNode.class);
+                        while (it.hasNext()) {
+                            KNode n = it.next();
+                            n.getData(KShapeLayout.class).setProperty(
+                                    Properties.COMPACTION_STRATEGY,
+                                    CompactionStrategy.IMPROVE_STRAIGHTNESS);
+                            n.getData(KShapeLayout.class).setProperty(
+                                    Properties.FIXED_ALIGNMENT, alignment);
+                        }
+                        
+                        return input;
+                    };
+                };
+            }
+        };
+    
 }
+
+

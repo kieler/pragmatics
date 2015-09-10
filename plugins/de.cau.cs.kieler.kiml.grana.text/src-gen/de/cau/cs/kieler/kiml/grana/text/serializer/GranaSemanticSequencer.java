@@ -233,7 +233,7 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	
 	/**
 	 * Constraint:
-	 *     (values+=NATURAL values+=NATURAL)
+	 *     (values+=NATURAL values+=NATURAL*)
 	 */
 	protected void sequence_IntRangeValues(EObject context, IntRangeValues semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

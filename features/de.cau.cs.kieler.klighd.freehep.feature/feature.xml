@@ -3,16 +3,20 @@
       id="de.cau.cs.kieler.klighd.freehep.feature"
       label="KIELER Lightweight Diagrams Vector Graphics Export Powered by FreeHEP 2.1.1"
       version="0.3.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel">
+      provider-name="Kiel University">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
       The KLighD project contributes infrastructure for easy and fast
 synthesis of graphical model representations in form of node-link-diagrams.
+
+The &apos;FreeHEP Vector Graphics&apos; toolkit contained in this feature
+is offered under the terms and conditions of the Apache Software License
+2.0 http://www.apache.org/licenses/LICENSE-2.0
    </description>
 
    <copyright>
       Copyright 2014 by Real-Time and Embedded Systems Group, Department
-of Computer Science, Christian-Albrechts-University of Kiel
+of Computer Science, Kiel University
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

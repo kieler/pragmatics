@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -17,6 +17,7 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.ptolemy.moml.EntityType;
+import org.ptolemy.moml.PropertyType;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
@@ -82,6 +83,8 @@ final class AttachmentLabelProvider implements ITableLabelProvider {
                         
                         if (sourceElement instanceof EntityType) {
                             return ((EntityType) sourceElement).getName();
+                        } else if (sourceElement instanceof PropertyType) {
+                            return ((PropertyType) sourceElement).getName();
                         }
                     } else {
                         // No attachment
