@@ -10,17 +10,13 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 import java.util.List;
-import java.util.Set;
 
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
@@ -69,35 +65,22 @@ public abstract class CNode {
         lock = new CompactionLock();
     }
 
-    /**
+    /** TODO consider renaming horizontal/vertical when transforming to vertical compaction
      * Returns the required spacing to the specified {@link CNode}.
      * 
      * @param other
      *            the other {@link CNode}
      * @return the spacing
      */
-    public double getSpacing(final CNode other) {
-
-        // joining north/south segments that belong to the same edge by setting their spacing to 0
-        if (parentNode != null && other.parentNode != null
-                // this might seem quite expensive but in most cases the sets contain only one element
-                && !Sets.intersection(getOriginalEdges(), other.getOriginalEdges()).isEmpty()) {
-            return 0;
-        }
-
+    public abstract double getHorizontalSpacing(final CNode other);
+    
+    
+    public double getVerticalSpacing(final CNode other) {
         // returning edge spacing if an edge is involved, otherwise object spacing
-        return Math.min(getSingleSpacing(), other.getSingleSpacing());
+        return Math.min(getSingleVerticalSpacing(), other.getSingleVerticalSpacing());
     }
 
-    // TODO too specific for cnode
-    /**
-     * Gets a set of {@link LEdge}s that belong to a segment.
-     * 
-     * @return the original edges
-     */
-    public abstract Set<LEdge> getOriginalEdges();
-
-    /**
+    /**TODO this might be obsolete
      * Returns object spacing for a {@link LNode} and edge spacing for a {@link LEdge}.
      * If the {@link LNode} is an {@link NodeType#EXTERNAL_PORT external port} the returned spacing is 0.
      * This works because {@link LGraphUtil#getExternalPortPosition(LGraph, LNode, double, double)
@@ -109,7 +92,8 @@ public abstract class CNode {
      * 
      * @return the spacing
      */
-    abstract double getSingleSpacing();
+    abstract double getSingleHorizontalSpacing();
+    abstract double getSingleVerticalSpacing();
 
     /**
      * Updates the leftmost possible starting position of this {@link CNode} according to
@@ -120,21 +104,22 @@ public abstract class CNode {
      */
     public void updateStartPos(final CNode outgoingCNode) {
         // determine if object or edge spacing should be used
-        double spacing = getSpacing(outgoingCNode);
+        double spacing = getHorizontalSpacing(outgoingCNode);
 
         // calculating rightmost position according to constraints
         double newStartPos =
                 Math.max(startPos, outgoingCNode.startPos + outgoingCNode.hitbox.width + spacing);
         double currentPos = getPosition();
 
-        outDegree --;
+        outDegree--;
 
         // setting new position is the CNode is flagged to be repositioned
-        // or if the current position doesn't comply with the required spacing
-        if (reposition || newStartPos < currentPos) {
+        //TODO not anymore ( or if the current position doesn't comply with the required spacing)
+        if (reposition) {
             startPos = newStartPos;
         } else {
             startPos = currentPos;
+            // preventing unnecessary iterations if CNode is locked
             outDegree = 0;
         }
 

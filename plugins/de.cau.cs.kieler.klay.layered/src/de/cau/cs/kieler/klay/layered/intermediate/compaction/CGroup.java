@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 import java.util.List;
 import java.util.Queue;
@@ -67,14 +67,14 @@ public final class CGroup {
     /**
      * Compacts the grouped {@link CNode}s while maintaining their relative positions.
      */
-    public void compactInnerCNodes() {
-        System.out.println("inner compacting group: " + cNodes); //TODO
+    public void compactInnerCNodes(final double minStartPos) {
+//        System.out.println("inner compacting group: " + cNodes); //TODO
         // adding CNodes that are initially sinks to startNodes
         Queue<CNode> startNodes = Lists.newLinkedList();
         for (CNode node : cNodes) {
             // a CNode is a sink if all outgoing constraints are processed
             if (node.outDegree == 0) {
-                System.out.println("initial inner sink: " + node); //TODO
+//                System.out.println("initial inner sink: " + node); //TODO
                 startNodes.add(node);
 
                 // CNodes can be locked in place to avoid pulling clusters apart
@@ -82,7 +82,7 @@ public final class CGroup {
                     //TODO nodes become inner sinks after they were updated by propagation
                     // so only if fresh :)
                     if (node.startPos == Double.NEGATIVE_INFINITY) {
-                        node.startPos = 0;
+                        node.startPos = minStartPos;
                     }
                 } else {
                     node.startPos = node.getPosition();
@@ -100,7 +100,7 @@ public final class CGroup {
 
                     // adding new sinks to the queue
                     if (inc.outDegree == 0) {
-                        System.out.println("new inner sink: " + inc); //TODO
+//                        System.out.println("new inner sink: " + inc); //TODO
                         startNodes.add(inc);
                     }
                 }

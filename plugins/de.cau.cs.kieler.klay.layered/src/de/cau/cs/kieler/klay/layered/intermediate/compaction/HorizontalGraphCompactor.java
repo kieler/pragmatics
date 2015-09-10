@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,6 +36,8 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
+import de.cau.cs.kieler.klay.layered.intermediate.LabelDummyRemover;
+import de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer;
 
 /**
  * This processor applies additional compaction to an already routed graph and can be
@@ -71,10 +73,23 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
         
         // compacting left, locking all nodes that don't have any edge pointing to the right,
         // then compacting right to shorten unnecessary long edges
-        odc.compact()
-           .changeDirection(Direction.RIGHT)
+        odc.changeDirection(Direction.LEFT)
+           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "DLEFT" + ".svg")
            .compact()
-           .applyGraphSize();
+           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "LEFT_COMPACT" + ".svg")
+           .setLockingStrategy((n, d) -> n.reposition = !n.lock.get(d))
+           .changeDirection(Direction.RIGHT)
+           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "DRIGHT" + ".svg")
+           .compact()
+           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "RIGHT_COMPACT" + ".svg")
+//           .setLockingStrategy((n, d) -> n.reposition = !n.lock.get(d))
+//           .changeDirection(Direction.LEFT)
+//           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "DLEFT2" + ".svg")
+//           .compact()
+//           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "LEFT_COMPACT2" + ".svg")
+           .changeDirection(Direction.LEFT)
+           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "FINAL_LEFT" + ".svg")
+           .applyToGraph();
         
         progressMonitor.done();
     }

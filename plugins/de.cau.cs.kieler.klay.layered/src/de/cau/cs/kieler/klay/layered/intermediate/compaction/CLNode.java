@@ -10,21 +10,19 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
-
-import java.util.Set;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Representation of a {@link LNode} in the constraint graph.
@@ -56,13 +54,19 @@ public final class CLNode extends CNode {
 
         cGroupOffset = 0;
         
-        // locking the node for directions that no edges are connected in
+        // locking the node for directions that fewer are connected in
         // at the moment this applies only to left/right compaction
-        if (Iterables.isEmpty(lNode.getIncomingEdges())) {
+        int difference = Iterables.size(lNode.getIncomingEdges())
+                       - Iterables.size(lNode.getOutgoingEdges());
+        if (difference < 0) {
             lock.set(true, Direction.LEFT);
-        }
-        if (Iterables.isEmpty(lNode.getOutgoingEdges())) {
+        }else if (difference >0) {
             lock.set(true, Direction.RIGHT);
+        }
+        
+        // except those again TODO
+        if (lNode.getNodeType() == NodeType.EXTERNAL_PORT) {
+            lock.set(false, false, false, false);
         }
     }
 
@@ -86,19 +90,32 @@ public final class CLNode extends CNode {
      * {@inheritDoc}
      */
     @Override
-    public double getSingleSpacing() {
+    public double getSingleHorizontalSpacing() {
         if (lNode.getNodeType() == NodeType.EXTERNAL_PORT) {
             return 0;
         }
         return (double) layeredGraph.getProperty(InternalProperties.SPACING);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double getSingleVerticalSpacing() {
+        if (lNode.getNodeType() == NodeType.EXTERNAL_PORT) {
+            return 0;
+        }
+        return layeredGraph.getProperty(InternalProperties.SPACING)
+                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Set<LEdge> getOriginalEdges() {
-        return Sets.newLinkedHashSet();
+    public double getHorizontalSpacing(final CNode other) {
+      // returning edge spacing if an edge is involved, otherwise object spacing
+      return Math.min(getSingleHorizontalSpacing(), other.getSingleHorizontalSpacing());
     }
     
     @Override

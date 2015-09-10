@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,14 +18,17 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.function.BiConsumer;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
  * @author dag
@@ -40,10 +43,13 @@ public final class OneDimensionalCompactor {
     /** compacting in this direction. */
     private Direction direction = Direction.UNDEFINED;
     
+    private BiConsumer<CNode, Direction> lockingStrategy;
+    
     public OneDimensionalCompactor(final CGraph cGraph) {
         layeredGraph = cGraph.layeredGraph;
         cNodes = cGraph.cNodes;
         cGroups = cGraph.cGroups;
+        setLockingStrategy((n, d) -> n.reposition = !(n.outDegree == 0));
     }
     
     /**
@@ -58,6 +64,9 @@ public final class OneDimensionalCompactor {
             changeDirection(Direction.LEFT);
         }
         
+        // if (((KNode) layeredGraph.getProperty(InternalProperties.ORIGIN)).getParent() != null)//TODO
+//        drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + direction + ".svg"); 
+        
         compactCGroups();
         
         /* transform back
@@ -66,24 +75,27 @@ public final class OneDimensionalCompactor {
          * U: transpose
          * D: mirror, transpose
          */
-        switch (direction) {
-        case RIGHT:
-            mirrorHitboxes();
-            break;
-            
-        case UP:
-            transposeHitboxes();
-            break;
-            
-        case DOWN:
-            mirrorHitboxes(); transposeHitboxes();
-            break;
-
-        default:
-            break;
-        }
+//        switch (direction) {
+//        case RIGHT:
+//            mirrorHitboxes();
+//            break;
+//            
+//        case UP:
+//            transposeHitboxes();
+//            break;
+//            
+//        case DOWN:
+//            mirrorHitboxes(); transposeHitboxes();
+//            break;
+//
+//        default:
+//            break;
+//        }
+//        direction = Direction.LEFT;
         
-        applyNodePositions();
+//        changeDirection(Direction.LEFT);
+        
+//        applyNodePositions();
         
         return this;
     }
@@ -154,7 +166,7 @@ public final class OneDimensionalCompactor {
         case LEFT:
             switch (dir) {
             case RIGHT:
-                mirrorHitboxes(); lockCNodes(dir); reverseConstraints();
+                mirrorHitboxes(); reverseConstraints(); lockCNodes(dir);
                 break;
                 
             case UP:
@@ -173,7 +185,7 @@ public final class OneDimensionalCompactor {
         case RIGHT:
             switch (dir) {
             case LEFT:
-                mirrorHitboxes(); lockCNodes(dir); reverseConstraints();
+                mirrorHitboxes(); reverseConstraints(); lockCNodes(dir);
                 break;
                 
             case UP:
@@ -200,7 +212,7 @@ public final class OneDimensionalCompactor {
                 break;
                 
             case DOWN:
-                mirrorHitboxes(); lockCNodes(dir); reverseConstraints();
+                mirrorHitboxes(); reverseConstraints(); lockCNodes(dir);
                 break;
 
             default:
@@ -219,7 +231,7 @@ public final class OneDimensionalCompactor {
                 break;
                 
             case UP:
-                mirrorHitboxes(); lockCNodes(dir); reverseConstraints();
+                mirrorHitboxes(); reverseConstraints(); lockCNodes(dir);
                 break;
 
             default:
@@ -238,7 +250,12 @@ public final class OneDimensionalCompactor {
     /**
      * Updates graph properties offset and size and clears lists.
      */
-    public void applyGraphSize() {
+    public OneDimensionalCompactor applyToGraph() {
+        // TODO
+//        drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "FINISHED.svg");
+        
+        applyNodePositions();
+        
         KVector topLeft = new KVector(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         KVector bottomRight = new KVector(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         for (CNode cNode : cNodes) {
@@ -255,6 +272,8 @@ public final class OneDimensionalCompactor {
         
         // resetting direction between calls of process()
         direction = Direction.UNDEFINED;
+        
+        return this;
     }
     
     /**
@@ -263,6 +282,7 @@ public final class OneDimensionalCompactor {
     private void mirrorHitboxes() {
         for (CNode cNode : cNodes) {
             cNode.hitbox.x = -cNode.hitbox.x - cNode.hitbox.width;
+            
             if (cNode.parentNode != null) {
                 cNode.cGroupOffset = -cNode.cGroupOffset + cNode.parentNode.hitbox.width;
             }
@@ -290,7 +310,7 @@ public final class OneDimensionalCompactor {
      *          filename
      */
     @SuppressWarnings("unused")
-    private void drawHitboxes(final String name) {
+    public OneDimensionalCompactor drawHitboxes(final String name) {
         // update graph properties to determine viewBox
         KVector topLeft = new KVector(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         KVector bottomRight = new KVector(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
@@ -316,11 +336,25 @@ public final class OneDimensionalCompactor {
                 if (cNode.getClass().equals(CLNode.class)) {
                     out.println("<rect x=\"" + cNode.hitbox.x + "\" y=\"" + cNode.hitbox.y
                             + "\" width=\"" + cNode.hitbox.width + "\" height=\""
-                            + cNode.hitbox.height + "\" fill=\"white\" stroke=\"black\"/>");
+                            + cNode.hitbox.height + "\" fill=\""
+                            + (cNode.reposition ? "green" : "orange")
+                            + "\" stroke=\"black\" opacity=\"0.5\"/>");
+                    out.println("<text x=\"" + (cNode.hitbox.x + 2) 
+                            + "\" y=\"" + (cNode.hitbox.y + 11) + "\">" 
+                            + "(" + Math.round(cNode.hitbox.x) 
+                            + ", " + Math.round(cNode.hitbox.y) + ")" + "</text>");
                 } else {
                     out.println("<line x1=\"" + cNode.hitbox.x + "\" y1=\"" + cNode.hitbox.y
                             + "\" x2=\"" + (cNode.hitbox.x + cNode.hitbox.width) + "\" y2=\""
-                            + (cNode.hitbox.y + cNode.hitbox.height) + "\" stroke=\"blue\"/>");
+                            + (cNode.hitbox.y + cNode.hitbox.height) + "\" stroke=\""
+                            + (cNode.reposition ? "blue" : "red") + "\" stroke-width=\"3px\"/>");
+                }
+                for (CNode inc : cNode.constraints) {
+                    out.println("<line x1=\"" + (cNode.hitbox.x + cNode.hitbox.width / 2)
+                            + "\" y1=\"" + (cNode.hitbox.y + cNode.hitbox.height / 2) + "\" x2=\""
+                            + (inc.hitbox.x + inc.hitbox.width / 2) + "\" y2=\""
+                            + (inc.hitbox.y + inc.hitbox.height / 2)
+                            + "\" stroke=\"grey\" opacity=\"0.2\"/>");
                 }
             }
 
@@ -330,6 +364,7 @@ public final class OneDimensionalCompactor {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return this;
     }
     
     /**
@@ -361,6 +396,11 @@ public final class OneDimensionalCompactor {
             }
         }
     }
+    
+    public OneDimensionalCompactor setLockingStrategy(BiConsumer<CNode, Direction> strategy) {
+        lockingStrategy = strategy;
+        return this;
+    }
 
     /**
      * Locks the position of CNodes before a second compaction in opposite direction
@@ -369,8 +409,11 @@ public final class OneDimensionalCompactor {
      *          the direction
      */
     private void lockCNodes(final Direction dir) {
-        for (CNode cNode : cNodes) {
-            cNode.reposition = !cNode.lock.get(dir);
+        for (CNode cNode : cNodes) { //TODO
+            lockingStrategy.accept(cNode, dir);
+//            cNode.reposition = !cNode.lock.get(dir);
+//            cNode.reposition = !cNode.constraints.isEmpty();
+//            cNode.reposition = !(cNode.outDegree == 0); // because lock and reverse are swapped
         }
     }
 
@@ -388,7 +431,7 @@ public final class OneDimensionalCompactor {
         //  inferring constraints from hitbox intersections
         for (CNode cNode1 : cNodes) {
             for (CNode cNode2 : cNodes) {
-                double spacing = cNode1.getSpacing(cNode2);
+                double spacing = cNode1.getVerticalSpacing(cNode2);
 
                 // add constraint if node2 is to the right of node1 and could collide if 
                 // movedhorizontally
@@ -448,14 +491,19 @@ public final class OneDimensionalCompactor {
      * Compacting CGroups and the CNodes inside.
      */
     private void compactCGroups() {
+        double minStartPos = Double.POSITIVE_INFINITY;
+        for (CNode cNode : cNodes) {
+            minStartPos = Math.min(minStartPos, cNode.getPosition());
+        }
+        
         // queues CGroups whose outgoing constraints are processed
         Queue<CGroup> sinks = Lists.newLinkedList();
         
         // finding and compacting CGroups that are sinks
         for (CGroup group : cGroups) {
             if (group.isInnerCompactable()) {
-                System.out.println("this group is initial sink"); //TODO
-                group.compactInnerCNodes();
+//                System.out.println("this group is initial sink"); //TODO
+                group.compactInnerCNodes(minStartPos);
                 sinks.add(group);
             }
         }
@@ -469,8 +517,8 @@ public final class OneDimensionalCompactor {
             
             // compacting CGroups that became sinks in this iteration
             for (CGroup g : compactables) {
-                System.out.println("this group became sink after propagation of: " + group.cNodes); //TODO
-                g.compactInnerCNodes();
+//                System.out.println("this group became sink after propagation of: " + group.cNodes); //TODO
+                g.compactInnerCNodes(minStartPos);
                 sinks.add(g);
             }
             compactables.clear();
