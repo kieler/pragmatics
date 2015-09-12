@@ -187,6 +187,14 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                 }
             }
             
+                try {
+                    Resource r = resourceSet.createResource(URI.createFileURI("/home/dag/tmp/graph" + System.currentTimeMillis() + ".kgx"));
+                    r.getContents().add(graph);
+                    r.save(Collections.emptyMap());
+                } catch (Exception e ) {
+                    e.printStackTrace();
+                }
+            
             monitor.done();
             return graph;
         } else if (content instanceof Diagram) {

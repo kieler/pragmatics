@@ -26,11 +26,13 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 
 /**
+ * Manages the transformation of {@link LNode}s and {@link LEdge}s from an {@link LGraph} into
+ * compactable {@link CNode}s and {@link CGroup}s.
+ * 
  * @author dag
- *
  */
 public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGraph> {
-    /** the output graph. */
+    /** the output CGraph. */
     private CGraph cGraph;
     /** the layered graph. */
     private LGraph layeredGraph;
@@ -46,21 +48,24 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
     public CGraph transform(final LGraph inputGraph) {
         layeredGraph = inputGraph;
         
+        // initializing fields
         cGraph = new CGraph();
         cNodes = Lists.newArrayList();
         cGroups = Lists.newArrayList();
         
+        // importing LGraphElements into CNodes
         readNodes();
 
-        cGraph.layeredGraph = layeredGraph;
+        // writing results to the output CGraph
+        cGraph.transformer = this;
         cGraph.cNodes = cNodes;
         cGraph.cGroups = cGroups;
         return cGraph;
     }
 
     /**
-     * Collects the positions and dimensions of nodes and vertical segments in the layered graph and
-     * writes them to the {@link CNode}s.
+     * Collects the positions and dimensions of {@link LNode}s and vertical segments in the layered
+     * graph and writes them to the {@link CNode}s.
      */
     private void readNodes() {
         List<VerticalSegment> verticalSegments = Lists.newArrayList();
@@ -158,13 +163,13 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
 
         verticalSegments.clear();
 
-        // grouping nodes with their connected north/south segments
+        // 3. grouping nodes with their connected north/south segments
         groupCNodes();
     }
 
     /**
      * Groups nodes with their connected north/south segments to keep them at the correct position
-     * to each other.
+     * relative to each other.
      */
     private void groupCNodes() {
         // resetting groups from previous compaction
@@ -187,5 +192,47 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
                 cNode.parentNode.cGroup.addCNode(cNode);
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void applyToGraph() {
+        // applying the compacted positions
+        applyNodePositions();
+        
+        // calculating new graph size and offset
+        KVector topLeft = new KVector(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+        KVector bottomRight = new KVector(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+        for (CNode cNode : cNodes) {
+            topLeft.x = Math.min(topLeft.x, cNode.hitbox.x);
+            topLeft.y = Math.min(topLeft.y, cNode.hitbox.y);
+            bottomRight.x = Math.max(bottomRight.x, cNode.hitbox.x + cNode.hitbox.width);
+            bottomRight.y = Math.max(bottomRight.y, cNode.hitbox.y + cNode.hitbox.height);
+        }
+        layeredGraph.getOffset().reset().add(topLeft.clone().negate());
+        layeredGraph.getSize().reset().add(bottomRight.clone().sub(topLeft));
+        
+        // resetting lists
+        cGroups.clear();
+        cNodes.clear();
+    }
+    
+    /**
+     * Applies the compacted positions to the {@link LGraphElement}s represented by {@link CNode}s.
+     */
+    private void applyNodePositions() {
+        for (CNode cNode : cNodes) {
+            cNode.applyElementPosition();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public LGraph getInputGraph() {
+        return layeredGraph;
     }
 }

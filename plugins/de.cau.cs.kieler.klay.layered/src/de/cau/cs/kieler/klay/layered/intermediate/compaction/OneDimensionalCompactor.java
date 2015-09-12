@@ -24,111 +24,72 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
+ * Implements the compaction of a {@link CGraph}.
+ * 
  * @author dag
  */
 public final class OneDimensionalCompactor {
-    /** the layered graph. */
-    private LGraph layeredGraph;
+    
+    /** the {@link CGraph}. */
+    private CGraph cGraph;
     /** the list of {@link CNode}s modeling the constraints in this graph. */
     private List<CNode> cNodes;
     /** groups of elements that are supposed to stay in the configuration they are. */
     private List<CGroup> cGroups;
     /** compacting in this direction. */
     private Direction direction = Direction.UNDEFINED;
-    
+    /** a function that sets the {@link CNode#reposition} flag according to the direction. */
     private BiConsumer<CNode, Direction> lockingStrategy;
     
+    /**
+     * Initializes the fileds of the {@link OneDimensionalCompactor}.
+     * 
+     * @param cGraph
+     *          the graph to compact
+     */
     public OneDimensionalCompactor(final CGraph cGraph) {
-        layeredGraph = cGraph.layeredGraph;
+        this.cGraph = cGraph;
         cNodes = cGraph.cNodes;
         cGroups = cGraph.cGroups;
+        // the default locking strategy locks CNodes if they are not constrained
         setLockingStrategy((n, d) -> n.reposition = !(n.outDegree == 0));
     }
     
     /**
-     * Compacts the graph, reverses the transformation of hitboxes and writes the
-     * new positions to the graph elements.
+     * Compacts the graph in the specified direction.
+     * 
      * @return
      *          this instance of {@link HorizontalGraphCompactor}
      */
     public OneDimensionalCompactor compact() {
-        // if no direction was specified readNodes() has to reload the CNodes
+        // if no direction was specified the direction defaults to LEFT
         if (direction == Direction.UNDEFINED) {
             changeDirection(Direction.LEFT);
         }
         
-        // if (((KNode) layeredGraph.getProperty(InternalProperties.ORIGIN)).getParent() != null)//TODO
-//        drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + direction + ".svg"); 
-        
         compactCGroups();
-        
-        /* transform back
-         * L: nop
-         * R: mirror
-         * U: transpose
-         * D: mirror, transpose
-         */
-//        switch (direction) {
-//        case RIGHT:
-//            mirrorHitboxes();
-//            break;
-//            
-//        case UP:
-//            transposeHitboxes();
-//            break;
-//            
-//        case DOWN:
-//            mirrorHitboxes(); transposeHitboxes();
-//            break;
-//
-//        default:
-//            break;
-//        }
-//        direction = Direction.LEFT;
-        
-//        changeDirection(Direction.LEFT);
-        
-//        applyNodePositions();
         
         return this;
     }
     
     /**
      * Changes the direction for compaction by transforming the hitboxes.
+     * 
      * @param dir
      *          the new direction
      * @return
      *          this instance of {@link HorizontalGraphCompactor}
      */
     public OneDimensionalCompactor changeDirection(final Direction dir) {
-        /*
-         * *>UNDEFINED: nop
-         * UNDEFINED>L: read, getcons, group
-         * UNDEFINED>R: read, mirror, getcons, group
-         * UNDEFINED>U: read, transpose, getcons, group
-         * UNDEFINED>D: read, transpose, mirror, getcons, group
-         * L>R|R>L|U>D|D>U: mirror, lock, revcons, group
-         * L>D|[R>d]|[U>l]|D>L: transpose, mirror, getcons, group
-         * [L>d]|R>D|U>L|[D>l]: mirror, transpose, mirror, getcons, group
-         * L>U|[R>u]|[U>r]|D>R: transpose, getcons, group
-         * [L>u]|R>U|U>R|[D>r]: mirror, transpose, getcons, group
-         * *>*: nop
-         * 
-         * U,D is only permitted if !layeredGraph.hasEdges 
-         * (but this cannot happen in an intermediate processor)
-         */
         
         // prohibits vertical compaction if the graph has edges, because vertical and horizontal
         // segments would interchange
         if (dir == Direction.UP || dir == Direction.DOWN) {
-            boolean hasEdges = layeredGraph.getLayers().stream()
+            boolean hasEdges = cGraph.transformer.getInputGraph().getLayers().stream()
                     .flatMap(l -> l.getNodes().stream())
                     .anyMatch(n -> !Iterables.isEmpty(n.getConnectedEdges()));
 
@@ -138,7 +99,9 @@ public final class OneDimensionalCompactor {
             }
         }
         
-        // executes required transformations
+        // executes required transformations and calculates constraints
+        // if the graph is compacted in opposing directions the constraints are reversed instead of
+        // being recalculated and CNodes are locked
         switch (direction) {
         case UNDEFINED:
             switch (dir) {
@@ -248,41 +211,12 @@ public final class OneDimensionalCompactor {
     }
     
     /**
-     * Updates graph properties offset and size and clears lists.
-     */
-    public OneDimensionalCompactor applyToGraph() {
-        // TODO
-//        drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "FINISHED.svg");
-        
-        applyNodePositions();
-        
-        KVector topLeft = new KVector(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-        KVector bottomRight = new KVector(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-        for (CNode cNode : cNodes) {
-            topLeft.x = Math.min(topLeft.x, cNode.hitbox.x);
-            topLeft.y = Math.min(topLeft.y, cNode.hitbox.y);
-            bottomRight.x = Math.max(bottomRight.x, cNode.hitbox.x + cNode.hitbox.width);
-            bottomRight.y = Math.max(bottomRight.y, cNode.hitbox.y + cNode.hitbox.height);
-        }
-        layeredGraph.getOffset().reset().add(topLeft.clone().negate());
-        layeredGraph.getSize().reset().add(bottomRight.clone().sub(topLeft));
-
-        cGroups.clear();
-        cNodes.clear();
-        
-        // resetting direction between calls of process()
-        direction = Direction.UNDEFINED;
-        
-        return this;
-    }
-    
-    /**
      * Mirrors hitboxes horizontally.
      */
     private void mirrorHitboxes() {
         for (CNode cNode : cNodes) {
             cNode.hitbox.x = -cNode.hitbox.x - cNode.hitbox.width;
-            
+            // mirroring the offsets inside CGroups
             if (cNode.parentNode != null) {
                 cNode.cGroupOffset = -cNode.cGroupOffset + cNode.parentNode.hitbox.width;
             }
@@ -306,12 +240,14 @@ public final class OneDimensionalCompactor {
     
     /**
      * For debugging. Writes hitboxes to svg.
+     * 
      * @param name
      *          filename
+     * @return
+     *          this instance of {@link HorizontalGraphCompactor}
      */
-    @SuppressWarnings("unused")
     public OneDimensionalCompactor drawHitboxes(final String name) {
-        // update graph properties to determine viewBox
+        //determine viewBox
         KVector topLeft = new KVector(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         KVector bottomRight = new KVector(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
         for (CNode cNode : cNodes) {
@@ -320,17 +256,17 @@ public final class OneDimensionalCompactor {
             bottomRight.x = Math.max(bottomRight.x, cNode.hitbox.x + cNode.hitbox.width);
             bottomRight.y = Math.max(bottomRight.y, cNode.hitbox.y + cNode.hitbox.height);
         }
-        layeredGraph.getOffset().reset().add(topLeft.clone().negate());
-        layeredGraph.getSize().reset().add(bottomRight.clone().sub(topLeft));
+        
+        KVector size = bottomRight.clone().sub(topLeft);
 
         // drawing hitboxes to svg
         PrintWriter out;
         try {
             out = new PrintWriter(new FileWriter(name));
 
-            out.println("<svg viewBox=\"" + (-layeredGraph.getOffset().x) + " "
-                    + (-layeredGraph.getOffset().y) + " " + layeredGraph.getSize().x + " "
-                    + layeredGraph.getSize().y + "\">");
+            out.println("<svg viewBox=\"" + (topLeft.x) + " "
+                    + (topLeft.y) + " " + size.x + " "
+                    + size.y + "\">");
 
             for (CNode cNode : cNodes) {
                 if (cNode.getClass().equals(CLNode.class)) {
@@ -340,7 +276,7 @@ public final class OneDimensionalCompactor {
                             + (cNode.reposition ? "green" : "orange")
                             + "\" stroke=\"black\" opacity=\"0.5\"/>");
                     out.println("<text x=\"" + (cNode.hitbox.x + 2) 
-                            + "\" y=\"" + (cNode.hitbox.y + 11) + "\">" 
+                            + "\" y=\"" + (cNode.hitbox.y + 2 * 2 * 2 + 2 + 1) + "\">" 
                             + "(" + Math.round(cNode.hitbox.x) 
                             + ", " + Math.round(cNode.hitbox.y) + ")" + "</text>");
                 } else {
@@ -397,32 +333,38 @@ public final class OneDimensionalCompactor {
         }
     }
     
-    public OneDimensionalCompactor setLockingStrategy(BiConsumer<CNode, Direction> strategy) {
+    /**
+     * Sets the function to lock cNodes.
+     * 
+     * @param strategy
+     *          a function that sets the reposition flag of a {@link CNode} according to the direction
+     * @return
+     *          this instance of {@link HorizontalGraphCompactor}
+     */
+    public OneDimensionalCompactor setLockingStrategy(final BiConsumer<CNode, Direction> strategy) {
         lockingStrategy = strategy;
         return this;
     }
 
     /**
      * Locks the position of CNodes before a second compaction in opposite direction
-     * if the CNode has no edges connected to a node in that direction.
+     * based on the {@link OneDimensionalCompactor#lockingStrategy locking strategy}.
+     * 
      * @param dir
      *          the direction
      */
     private void lockCNodes(final Direction dir) {
-        for (CNode cNode : cNodes) { //TODO
+        for (CNode cNode : cNodes) {
             lockingStrategy.accept(cNode, dir);
-//            cNode.reposition = !cNode.lock.get(dir);
-//            cNode.reposition = !cNode.constraints.isEmpty();
-//            cNode.reposition = !(cNode.outDegree == 0); // because lock and reverse are swapped
         }
     }
 
     /**
-     * Creates a constraint between CNodes a and b if a could cast a shadow on b
-     * considering margins and spacing.
+     * Creates a constraint between CNodes A and B if B collides with the right shadow of A
+     * considering vertical spacing.
      */
     private void calculateConstraints() {
-        // resetting constraintsinitially
+        // resetting constraints
         for (CNode cNode : cNodes) {
             cNode.constraints.clear();
             cNode.outDegree = 0;
@@ -433,11 +375,11 @@ public final class OneDimensionalCompactor {
             for (CNode cNode2 : cNodes) {
                 double spacing = cNode1.getVerticalSpacing(cNode2);
 
-                // add constraint if node2 is to the right of node1 and could collide if 
-                // movedhorizontally
+                // add constraint if cNode2 is to the right of cNode1 and could collide if moved
+                // horizontally
                 // exclude parentNodes because they don't constrain their north/south segments
                 if (cNode1 != cNode2 && cNode1 != cNode2.parentNode
-                        // shouldn't use >= nor Comp.gt to avoid simultaneous constraints a->b and b->a
+                        // '>' avoids simultaneous constraints A->B and B->A
                         && cNode2.hitbox.x > cNode1.hitbox.x
                         
                         && Comp.gt(cNode2.hitbox.y + cNode2.hitbox.height + spacing, cNode1.hitbox.y)
@@ -451,14 +393,14 @@ public final class OneDimensionalCompactor {
             }
         }
 
-        // setting outDegree for CGroups
+        // resetting constraints for CGroups
         calculateConstraintsForCGroups();
     }
 
     /**
      * If the graph is compacted twice in opposing directions, the constraints can be reversed to
      * avoid recalculating them. Also the {@link CNode}s' starting position is reset to be ready for
-     * compaction.
+     * another compaction.
      */
     private void reverseConstraints() {
         // maps CNodes to temporary lists of incoming constraints
@@ -483,14 +425,15 @@ public final class OneDimensionalCompactor {
             cNode.constraints = incMap.get(cNode);
         }
         
-        // setting outDegree for CGroups
+        // resetting constraints for CGroups
         calculateConstraintsForCGroups();
     }
 
     /**
-     * Compacting CGroups and the CNodes inside.
+     * Compacts CGroups and the CNodes inside.
      */
     private void compactCGroups() {
+        // calculating the leftmost position to compact against
         double minStartPos = Double.POSITIVE_INFINITY;
         for (CNode cNode : cNodes) {
             minStartPos = Math.min(minStartPos, cNode.getPosition());
@@ -502,7 +445,6 @@ public final class OneDimensionalCompactor {
         // finding and compacting CGroups that are sinks
         for (CGroup group : cGroups) {
             if (group.isInnerCompactable()) {
-//                System.out.println("this group is initial sink"); //TODO
                 group.compactInnerCNodes(minStartPos);
                 sinks.add(group);
             }
@@ -517,7 +459,6 @@ public final class OneDimensionalCompactor {
             
             // compacting CGroups that became sinks in this iteration
             for (CGroup g : compactables) {
-//                System.out.println("this group became sink after propagation of: " + group.cNodes); //TODO
                 g.compactInnerCNodes(minStartPos);
                 sinks.add(g);
             }
@@ -527,15 +468,6 @@ public final class OneDimensionalCompactor {
         // setting hitbox positions to new starting positions
         for (CNode cNode : cNodes) {
             cNode.applyPosition();
-        }
-    }
-
-    /**
-     * Sets the positions of graph elements to the compacted position.
-     */
-    private void applyNodePositions() {
-        for (CNode cNode : cNodes) {
-            cNode.applyElementPosition();
         }
     }
 }

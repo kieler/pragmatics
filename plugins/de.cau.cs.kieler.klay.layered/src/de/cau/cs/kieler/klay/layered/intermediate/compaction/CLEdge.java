@@ -23,26 +23,29 @@ import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
- * Representation of a vertical {@link LEdge} segment in the constraint graph.
+ * Representation of a combination of intersecting vertical segments of {@link LEdge}s in the
+ * constraint graph. The {@link LEdge} segments are conceived as one element in the compaction.
  * 
  * @see CNode
  * 
  * @author dag
  */
 public final class CLEdge extends CNode {
-    // SUPPRESS CHECKSTYLE NEXT 6 VisibilityModifier
+    /** the associated horizontal spacing. */
+    private double horizontalSpacing;
+    /** the associated horizontal spacing. */
+    private double verticalSpacing;
     /** specifies the bend points belonging to this vertical edge segment. */
-    public KVectorChain bends;
+    private KVectorChain bends;
     /** junction points affected by manipulation of this segment. */
-    public KVectorChain juctionPoints;
+    private KVectorChain juctionPoints;
     /** referring to the {@link LEdge}s this segment is a part of. */
-    public Set<LEdge> originalLEdges = Sets.newLinkedHashSet();
+    private Set<LEdge> originalLEdges = Sets.newLinkedHashSet();
 
     /**
      * The constructor adds a {@link VerticalSegment} to the list and appends its bend and junction
@@ -54,7 +57,12 @@ public final class CLEdge extends CNode {
      *            the containing layered graph
      */
     public CLEdge(final VerticalSegment vSeg, final LGraph layeredGraph) {
-        super(layeredGraph);
+        // getting the spacing properties
+        horizontalSpacing = layeredGraph.getProperty(InternalProperties.SPACING)
+                          * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        verticalSpacing = horizontalSpacing
+                        * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
+        
         bends = new KVectorChain();
         juctionPoints = new KVectorChain();
         hitbox = new Rectangle(vSeg.x1, vSeg.y1, 0, vSeg.y2 - vSeg.y1);
@@ -65,7 +73,9 @@ public final class CLEdge extends CNode {
     }
 
     /**
-     * Adds an intersecting {@link VerticalSegment} to the {@link CLEdge}.
+     * Adds an intersecting {@link VerticalSegment} to the {@link CLEdge} and merges the hitboxes.
+     * The {@link CompactionLock} is set for selfloops and {@link Direction}s that fewer different
+     * {@link LPort}s are connected in to avoid prolonging more {@link LEdge}s than shortening.
      * 
      * @param vSeg
      *            the single vertical segment
@@ -81,11 +91,12 @@ public final class CLEdge extends CNode {
 
         originalLEdges.add(vSeg.lEdge);
     
-        // edges are locked by default TODO only selfloops? 
+        // edges are locked if they belong to selfloops
         if (vSeg.lEdge.getSource().getNode() == vSeg.lEdge.getTarget().getNode()) {
             lock.set(true, true, true, true);
         }
-        // segments belonging to multiple edges should be locked in the direction of fewer different nodes
+        // segments belonging to multiple edges should be locked in the direction that fewer different
+        // ports are connected in
         Set<LPort> inc = Sets.newLinkedHashSet(originalLEdges.stream()
                                                 .map(e -> e.getSource())
                                                 .collect(Collectors.toSet()));
@@ -128,8 +139,7 @@ public final class CLEdge extends CNode {
      */
     @Override
     public double getSingleHorizontalSpacing() {
-        return layeredGraph.getProperty(InternalProperties.SPACING)
-                * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        return horizontalSpacing;
     }
     
     /**
@@ -137,9 +147,7 @@ public final class CLEdge extends CNode {
      */
     @Override
     public double getSingleVerticalSpacing() {
-        return layeredGraph.getProperty(InternalProperties.SPACING)
-                * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
+        return verticalSpacing;
     }
     
     /**

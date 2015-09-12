@@ -17,7 +17,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
 
 /**
  * Internal representation of a node in the constraint graph.
@@ -30,9 +29,7 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  */
 public abstract class CNode {
     // Variables are public for convenience reasons since this class is used internally only.
-    // SUPPRESS CHECKSTYLE NEXT 22 VisibilityModifier
-    /** the associated layered graph. */
-    public LGraph layeredGraph;
+    // SUPPRESS CHECKSTYLE NEXT 20 VisibilityModifier
     /** containing {@link CGroup}. */
     public CGroup cGroup;
     /** refers to the parent node of a north/south segment. */
@@ -49,24 +46,13 @@ public abstract class CNode {
     public double cGroupOffset;
     /** leftmost possible position for this {@link CNode} to be drawn. */
     public double startPos = Double.NEGATIVE_INFINITY;
-    /** flags a node to be repositioned in the case of left/right balanced compaction. */
+    /** flags a {@link CNode} to be repositioned in the case of left/right balanced compaction. */
     public boolean reposition = true;
     /** a 4 tuple stating if the {@link CNode} is locked in a particular direction. */
-    public CompactionLock lock;
+    public CompactionLock lock = new CompactionLock();
 
     /**
-     * Constructor.
-     * 
-     * @param layeredGraph
-     *            the associated layered graph
-     */
-    public CNode(final LGraph layeredGraph) {
-        this.layeredGraph = layeredGraph;
-        lock = new CompactionLock();
-    }
-
-    /** TODO consider renaming horizontal/vertical when transforming to vertical compaction
-     * Returns the required spacing to the specified {@link CNode}.
+     * Returns the required horizontal spacing to the specified {@link CNode}.
      * 
      * @param other
      *            the other {@link CNode}
@@ -74,30 +60,35 @@ public abstract class CNode {
      */
     public abstract double getHorizontalSpacing(final CNode other);
     
-    
+    /**
+     * Returns the required vertical spacing to the specified {@link CNode}.
+     * 
+     * @param other
+     *            the other {@link CNode}
+     * @return the spacing
+     */
     public double getVerticalSpacing(final CNode other) {
         // returning edge spacing if an edge is involved, otherwise object spacing
         return Math.min(getSingleVerticalSpacing(), other.getSingleVerticalSpacing());
     }
 
-    /**TODO this might be obsolete
-     * Returns object spacing for a {@link LNode} and edge spacing for a {@link LEdge}.
-     * If the {@link LNode} is an {@link NodeType#EXTERNAL_PORT external port} the returned spacing is 0.
-     * This works because {@link LGraphUtil#getExternalPortPosition(LGraph, LNode, double, double)
-     * LGraphUtil.getExternalPortPosition} is called in 
-     * {@link de.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer#applyLayout(LGraph)
-     * KGraphLayoutTransferrer.applyLayout} and resets the position of the
-     * {@link NodeType#EXTERNAL_PORT external port} dummy, which results in the correct border spacing
-     * being used.
+    /**
+     * Returns the vertical spacing that is associated with the contained {@link LGraphElement}.
      * 
      * @return the spacing
      */
     abstract double getSingleHorizontalSpacing();
+    
+    /**
+     * Returns the vertical spacing that is associated with the contained {@link LGraphElement}.
+     * 
+     * @return the spacing
+     */
     abstract double getSingleVerticalSpacing();
 
     /**
      * Updates the leftmost possible starting position of this {@link CNode} according to
-     * outgoingCNode.
+     * the constraint that outgoingCNode imposes on this {@link CNode}.
      * 
      * @param outgoingCNode
      *            the {@link CNode} imposing a constraint on this one
@@ -113,8 +104,7 @@ public abstract class CNode {
 
         outDegree--;
 
-        // setting new position is the CNode is flagged to be repositioned
-        //TODO not anymore ( or if the current position doesn't comply with the required spacing)
+        // setting new position if the CNode is flagged to be repositioned
         if (reposition) {
             startPos = newStartPos;
         } else {

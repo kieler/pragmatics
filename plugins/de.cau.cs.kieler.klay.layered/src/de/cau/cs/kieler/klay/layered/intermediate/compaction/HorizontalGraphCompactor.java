@@ -12,32 +12,11 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
-import de.cau.cs.kieler.klay.layered.intermediate.LabelDummyRemover;
-import de.cau.cs.kieler.klay.layered.intermediate.ReversedEdgeRestorer;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * This processor applies additional compaction to an already routed graph and can be
@@ -68,28 +47,49 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
 
         progressMonitor.begin("Compacting", 1);
         
+        // the layered graph is transformed into a CGraph that is passed to OneDimensionalCompactor
+        LGraphToCGraphTransformer transformer = new LGraphToCGraphTransformer();
         OneDimensionalCompactor odc =
-                new OneDimensionalCompactor(new LGraphToCGraphTransformer().transform(layeredGraph));
+                new OneDimensionalCompactor(transformer.transform(layeredGraph));
         
-        // compacting left, locking all nodes that don't have any edge pointing to the right,
-        // then compacting right to shorten unnecessary long edges
-        odc.changeDirection(Direction.LEFT)
-           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "DLEFT" + ".svg")
-           .compact()
-           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "LEFT_COMPACT" + ".svg")
-           .setLockingStrategy((n, d) -> n.reposition = !n.lock.get(d))
-           .changeDirection(Direction.RIGHT)
-           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "DRIGHT" + ".svg")
-           .compact()
-           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "RIGHT_COMPACT" + ".svg")
-//           .setLockingStrategy((n, d) -> n.reposition = !n.lock.get(d))
-//           .changeDirection(Direction.LEFT)
-//           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "DLEFT2" + ".svg")
-//           .compact()
-//           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "LEFT_COMPACT2" + ".svg")
-           .changeDirection(Direction.LEFT)
-           .drawHitboxes("/home/dag/cgraphdebug/test_" + System.nanoTime() + "FINAL_LEFT" + ".svg")
-           .applyToGraph();
+        GraphCompactionStrategy strategy = layeredGraph.getProperty(Properties.HORIZONTAL_COMPACTION);
+        switch (strategy) {
+        case LEFT:
+            // the default direction is LEFT
+            odc.compact();
+            break;
+            
+        case RIGHT:
+            odc.changeDirection(Direction.RIGHT)
+               .compact()
+               // since changeDirection transforms hitboxes the final direction has to be LEFT again
+               .changeDirection(Direction.LEFT);
+            break;
+            
+        case LEFT_RIGHT_CONSTRAINT_LOCKING:
+            // the default locking strategy locks CNodes if they are not constrained
+            odc.compact()
+               .changeDirection(Direction.RIGHT)
+               .compact()
+               .changeDirection(Direction.LEFT);
+            break;
+            
+        case LEFT_RIGHT_CONNECTION_LOCKING:
+            // compacting left, locking all CNodes that have fewer connections to the right,
+            // then compacting right to shorten unnecessary long edges
+            odc.compact()
+               .setLockingStrategy((n, d) -> n.reposition = !n.lock.get(d))
+               .changeDirection(Direction.RIGHT)
+               .compact()
+               .changeDirection(Direction.LEFT);
+         break;
+
+        default:
+            break;
+        }
+        
+        // applying the compacted positions to the LGraph and updating its size and offset
+        transformer.applyToGraph();
         
         progressMonitor.done();
     }

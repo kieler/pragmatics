@@ -13,9 +13,33 @@
 package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 /**
+ * Interface for classes that import a {@link CGraph}.
+ * 
+ * @param <T> the type of data structure that is transformed into a {@link CGraph}
+ * 
  * @author dag
  */
 public interface ICGraphTransformer<T> {
+    /**
+     * Transforms the input graph into a {@link CGraph} consisting of {@link CNode}s that may
+     * be grouped in {@link CGroup}s.
+     * 
+     * @param inputGraph
+     *          the graph to transform into a {@link CGraph}
+     * @return a {@link CGraph}
+     */
+    CGraph transform(final T inputGraph);
     
-    public CGraph transform(final T inputGraph);
+    /**
+     * Updates the properties of the input graph and applies the compacted positions to the
+     * elements of the input graph.
+     */
+    void applyToGraph();
+    
+    /**
+     * Getter for the input graph.
+     * 
+     * @return the input graph
+     */
+    T getInputGraph();
 }

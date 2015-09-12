@@ -17,6 +17,7 @@ import java.util.EnumSet;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
@@ -43,10 +44,12 @@ public final class Properties {
             "de.cau.cs.kieler.klay.layered.nodePromotion", false);
 
     /**
-     * Property to switch one dimensional compaction post-processing on or off.
+     * Property to choose a one dimensional compaction strategy.
      */
-    public static final IProperty<Boolean> ONE_DIMENSIONAL_COMPACTION = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.oneDimensionalCompaction", false);
+    public static final IProperty<GraphCompactionStrategy> HORIZONTAL_COMPACTION =
+            new Property<GraphCompactionStrategy>(
+                    "de.cau.cs.kieler.klay.layered.horizontalCompaction",
+                    GraphCompactionStrategy.NONE);
 
     /**
      * A pre-defined seed for pseudo-random number generators. We redefine the property here to set

@@ -14,6 +14,7 @@ package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 /**
  * Internal Class for tolerance affected double comparisons.
+ * 
  * @author dag
  */
 public final class Comp {

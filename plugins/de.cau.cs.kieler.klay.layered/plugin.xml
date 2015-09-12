@@ -461,13 +461,13 @@
             type="enumset">
       </layoutOption>
       <layoutOption
-            advanced="true"
             appliesTo="parents"
-            default="true"
-            description="whether additional compaction of the layout should be applied"
-            id="de.cau.cs.kieler.klay.layered.oneDimensionalCompaction"
-            name="One Dimensional Compaction"
-            type="boolean">
+            class="de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy"
+            default="NONE"
+            description="Specifies how horizontal compaction is to be applied."
+            id="de.cau.cs.kieler.klay.layered.horizontalCompaction"
+            name="Horizontal Compaction"
+            type="enum">
       </layoutOption>
       <layoutOption
             advanced="false"

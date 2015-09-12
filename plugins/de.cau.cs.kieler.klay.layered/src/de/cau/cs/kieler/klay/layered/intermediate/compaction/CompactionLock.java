@@ -17,20 +17,48 @@ import de.cau.cs.kieler.kiml.options.Direction;
 /**
  * Internal class representing a 4 tuple that states for a {@link CNode} if the compaction should
  * be locked in a particular direction.
+ * 
  * @author dag
  */
 public final class CompactionLock {
     /** directional locks. */
     private boolean left, right, up, down;
     
+    /**
+     * The lock defaults to false.
+     */
     public CompactionLock() {
         set(false, false, false, false);
     }
     
+    /**
+     * This constructor initializes the lock.
+     * 
+     * @param l
+     *          left
+     * @param r
+     *          right
+     * @param u
+     *          up
+     * @param d
+     *          down
+     */
     public CompactionLock(final boolean l, final boolean r, final boolean u, final boolean d) {
         set(l, r, u, d);
     }
     
+    /**
+     * Sets the lock.
+     * 
+     * @param l
+     *          left
+     * @param r
+     *          right
+     * @param u
+     *          up
+     * @param d
+     *          down
+     */
     public void set(final boolean l, final boolean r, final boolean u, final boolean d) {
         left = l;
         right = r;
@@ -38,7 +66,15 @@ public final class CompactionLock {
         down = d;
     }
     
-    public void set(final boolean value, final Direction direction){
+    /**
+     * Sets the lock in a specific {@link Direction}.
+     * 
+     * @param value
+     *          desired state
+     * @param direction
+     *          the {@link Direction} of compaction
+     */
+    public void set(final boolean value, final Direction direction) {
         switch (direction) {
         case LEFT:
             left = value;
@@ -61,7 +97,14 @@ public final class CompactionLock {
         }
     }
     
-    public boolean get(final Direction direction){
+    /**
+     * Returns the state for a {@link Direction}.
+     * 
+     * @param direction
+     *          the {@link Direction}
+     * @return the state
+     */
+    public boolean get(final Direction direction) {
         switch (direction) {
         case LEFT:
             return left;

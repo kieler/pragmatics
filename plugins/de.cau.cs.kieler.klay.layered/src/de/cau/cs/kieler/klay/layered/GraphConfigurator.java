@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.EdgeRouterFactory;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -294,9 +295,9 @@ final class GraphConfigurator {
         }
 
         // Additional horizontal compaction depends on orthogonal edge routing
-        if (lgraph.getProperty(Properties.ONE_DIMENSIONAL_COMPACTION)
+        if (lgraph.getProperty(Properties.HORIZONTAL_COMPACTION) != GraphCompactionStrategy.NONE
                 && lgraph.getProperty(InternalProperties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
-            configuration.addAfterPhase5(IntermediateProcessorStrategy.ONE_D_COMPACTOR);
+            configuration.addAfterPhase5(IntermediateProcessorStrategy.HORIZONTAL_COMPACTOR);
         } 
 
         return configuration;

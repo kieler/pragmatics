@@ -703,9 +703,12 @@ public final class KimlUtil {
     public static void persistDataElements(final KNode graph) {
         TreeIterator<EObject> iterator = graph.eAllContents();
         while (iterator.hasNext()) {
+            try{
             EObject eObject = iterator.next();
             if (eObject instanceof KGraphData) {
                 ((KGraphData) eObject).makePersistent();
+            }} catch (Exception e) {
+                
             }
         }
     }

@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
 import de.cau.cs.kieler.kiml.options.EdgeRouting
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.labels.TruncatingLabelManager
@@ -46,6 +47,7 @@ import de.cau.cs.kieler.klighd.util.KlighdProperties
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
+
 import static de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 
 /**
@@ -129,7 +131,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth", ImmutableList.of(-1, 20)),
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", ImmutableList.of(-1, 2)),
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.nodePromotion",null),
-            specifyLayoutOption("de.cau.cs.kieler.klay.layered.oneDimensionalCompaction",null)
+            specifyLayoutOption("de.cau.cs.kieler.klay.layered.horizontalCompaction", ImmutableList::copyOf(GraphCompactionStrategy::values))
        
         // These values are annoying :)
         //specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
