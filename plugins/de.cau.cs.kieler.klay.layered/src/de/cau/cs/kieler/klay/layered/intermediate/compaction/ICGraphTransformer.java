@@ -34,7 +34,7 @@ public interface ICGraphTransformer<T> {
      * Updates the properties of the input graph and applies the compacted positions to the
      * elements of the input graph.
      */
-    void applyToGraph();
+    void applyLayout();
     
     /**
      * Getter for the input graph.

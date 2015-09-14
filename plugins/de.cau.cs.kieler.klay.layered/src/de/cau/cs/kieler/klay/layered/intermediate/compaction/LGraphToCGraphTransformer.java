@@ -12,13 +12,16 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
-import java.util.Comparator;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -36,10 +39,8 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
     private CGraph cGraph;
     /** the layered graph. */
     private LGraph layeredGraph;
-    /** the list of {@link CNode}s modeling the constraints in this graph. */
-    private List<CNode> cNodes;
-    /** groups of elements that are supposed to stay in the configuration they are. */
-    private List<CGroup> cGroups;
+    /** flags the input graph if it has edges. */
+    private boolean hasEdges;
 
     /**
      * {@inheritDoc}
@@ -48,18 +49,24 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
     public CGraph transform(final LGraph inputGraph) {
         layeredGraph = inputGraph;
         
+        // checking if the graph has edges and possibly prohibiting vertical compaction
+        hasEdges = layeredGraph.getLayers().stream()
+                    .flatMap(l -> l.getNodes().stream())
+                    .anyMatch(n -> !Iterables.isEmpty(n.getConnectedEdges()));
+        EnumSet<Direction> supportedDirections =
+                EnumSet.of(Direction.UNDEFINED, Direction.LEFT, Direction.RIGHT);
+        if (!hasEdges) {
+            supportedDirections.add(Direction.UP);
+            supportedDirections.add(Direction.DOWN);
+        }
+        
+        
         // initializing fields
-        cGraph = new CGraph();
-        cNodes = Lists.newArrayList();
-        cGroups = Lists.newArrayList();
+        cGraph = new CGraph(supportedDirections);
         
         // importing LGraphElements into CNodes
         readNodes();
 
-        // writing results to the output CGraph
-        cGraph.transformer = this;
-        cGraph.cNodes = cNodes;
-        cGraph.cGroups = cGroups;
         return cGraph;
     }
 
@@ -70,14 +77,14 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
     private void readNodes() {
         List<VerticalSegment> verticalSegments = Lists.newArrayList();
         // resetting to avoid problems if this is called repeatedly
-        cNodes.clear();
+        cGraph.cNodes.clear();
 
         // 1. collecting positions of graph elements
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
                 // add all nodes
                 CLNode cNode = new CLNode(node, layeredGraph);
-                cNodes.add(cNode);
+                cGraph.cNodes.add(cNode);
 
                 // add vertical edge segments
                 for (LEdge edge : node.getOutgoingEdges()) {
@@ -99,7 +106,7 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
                         // get regular segments
                         while (bends.hasNext()) {
                             KVector bend2 = bends.next();
-                            if (!Comp.eq(bend1.y, bend2.y)) {
+                            if (!CompareFuzzy.eq(bend1.y, bend2.y)) {
                                 verticalSegments.add(new VerticalSegment(bend1, bend2, null, edge));
                             }
 
@@ -128,18 +135,7 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
         // 2. combining intersecting segments in CLEdges to process them as one
         if (!verticalSegments.isEmpty()) {
             // sorting the segments by position in ascending order
-            verticalSegments.sort(new Comparator<VerticalSegment>() {
-                /**
-                 * {@inheritDoc}
-                 */
-                public int compare(final VerticalSegment o1, final VerticalSegment o2) {
-                    int d = Double.compare(o1.x1, o2.x1);
-                    if (d == 0) {
-                        return Double.compare(o1.y1, o2.y1);
-                    }
-                    return d;
-                }
-            });
+            Collections.sort(verticalSegments);
 
             // merging intersecting segments in the same CLEdge
             VerticalSegment last = verticalSegments.get(0);
@@ -152,13 +148,13 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
                 if (verticalSegment.intersects(last)) {
                     c.addSegment(verticalSegment);
                 } else {
-                    cNodes.add(c);
+                    cGraph.cNodes.add(c);
                     c = new CLEdge(verticalSegment, layeredGraph);
                 }
 
                 last = verticalSegment;
             }
-            cNodes.add(c);
+            cGraph.cNodes.add(c);
         }
 
         verticalSegments.clear();
@@ -173,21 +169,21 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
      */
     private void groupCNodes() {
         // resetting groups from previous compaction
-        cGroups.clear();
+        cGraph.cGroups.clear();
         // necessary because of the exception in CGroup.addCNode
-        for (CNode cNode : cNodes) {
+        for (CNode cNode : cGraph.cNodes) {
             cNode.cGroup = null;
         }
 
         // creating groups for independent CNodes
-        for (CNode cNode : cNodes) {
+        for (CNode cNode : cGraph.cNodes) {
             if (cNode.parentNode == null) {
-                cGroups.add(new CGroup(cNode));
+                cGraph.cGroups.add(new CGroup(cNode));
             }
         }
 
         // adding CNodes of north/south segments to the same group as their parent nodes
-        for (CNode cNode : cNodes) {
+        for (CNode cNode : cGraph.cNodes) {
             if (cNode.parentNode != null) {
                 cNode.parentNode.cGroup.addCNode(cNode);
             }
@@ -198,14 +194,14 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
      * {@inheritDoc}
      */
     @Override
-    public void applyToGraph() {
+    public void applyLayout() {
         // applying the compacted positions
         applyNodePositions();
         
         // calculating new graph size and offset
         KVector topLeft = new KVector(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         KVector bottomRight = new KVector(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-        for (CNode cNode : cNodes) {
+        for (CNode cNode : cGraph.cNodes) {
             topLeft.x = Math.min(topLeft.x, cNode.hitbox.x);
             topLeft.y = Math.min(topLeft.y, cNode.hitbox.y);
             bottomRight.x = Math.max(bottomRight.x, cNode.hitbox.x + cNode.hitbox.width);
@@ -215,15 +211,15 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
         layeredGraph.getSize().reset().add(bottomRight.clone().sub(topLeft));
         
         // resetting lists
-        cGroups.clear();
-        cNodes.clear();
+        cGraph.cGroups.clear();
+        cGraph.cNodes.clear();
     }
     
     /**
      * Applies the compacted positions to the {@link LGraphElement}s represented by {@link CNode}s.
      */
     private void applyNodePositions() {
-        for (CNode cNode : cNodes) {
+        for (CNode cNode : cGraph.cNodes) {
             cNode.applyElementPosition();
         }
     }

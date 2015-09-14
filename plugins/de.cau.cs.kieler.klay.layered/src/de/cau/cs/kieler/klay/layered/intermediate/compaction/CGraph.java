@@ -12,9 +12,12 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
+import java.util.EnumSet;
 import java.util.List;
 
-import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import com.google.common.collect.Lists;
+
+import de.cau.cs.kieler.kiml.options.Direction;
 
 /**
  * Internal representation of a constraint graph.
@@ -25,15 +28,31 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
  */
 public final class CGraph {
     // Variables are public for convenience reasons since this class is used internally only.
-    // SUPPRESS CHECKSTYLE NEXT 10 VisibilityModifier
-    /** the instance of the associated CGraphTransformer.
-     *  This is used in
-     *  {@link OneDimensionalCompactor#changeDirection(de.cau.cs.kieler.kiml.options.Direction)}
-     *  to find out if the original graph has edges and in that case prohibit vertical compaction.
-     */
-    public ICGraphTransformer<LGraph> transformer;
+    // SUPPRESS CHECKSTYLE NEXT 4 VisibilityModifier
     /** the list of {@link CNode}s modeling the constraints in this graph. */
-    public List<CNode> cNodes;
+    public List<CNode> cNodes = Lists.newArrayList();
     /** groups of elements that are supposed to stay in the configuration they are. */
-    public List<CGroup> cGroups;
+    public List<CGroup> cGroups = Lists.newArrayList();
+    /** the directions that are supported for compaction. */
+    private EnumSet<Direction> supportedDirections;
+    
+    /**
+     * Constructor sets the supported directions.
+     * 
+     * @param supportedDirections
+     *          the directions that are supported for compaction
+     */
+    public CGraph(final EnumSet<Direction> supportedDirections) {
+        this.supportedDirections = supportedDirections;
+    }
+    
+    /**
+     * If the {@link CGraph} supports compaction in the direction specified by the parameter.
+     * @param direction
+     *          the direction to check
+     * @return if compaction is supported
+     */
+    public boolean supports(final Direction direction) {
+        return supportedDirections.contains(direction);
+    }
 }

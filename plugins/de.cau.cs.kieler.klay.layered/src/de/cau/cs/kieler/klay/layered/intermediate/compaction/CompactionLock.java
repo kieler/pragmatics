@@ -34,14 +34,10 @@ public final class CompactionLock {
     /**
      * This constructor initializes the lock.
      * 
-     * @param l
-     *          left
-     * @param r
-     *          right
-     * @param u
-     *          up
-     * @param d
-     *          down
+     * @param l left
+     * @param r right
+     * @param u up
+     * @param d down
      */
     public CompactionLock(final boolean l, final boolean r, final boolean u, final boolean d) {
         set(l, r, u, d);
@@ -50,14 +46,10 @@ public final class CompactionLock {
     /**
      * Sets the lock.
      * 
-     * @param l
-     *          left
-     * @param r
-     *          right
-     * @param u
-     *          up
-     * @param d
-     *          down
+     * @param l left
+     * @param r right
+     * @param u up
+     * @param d down
      */
     public void set(final boolean l, final boolean r, final boolean u, final boolean d) {
         left = l;
@@ -69,10 +61,9 @@ public final class CompactionLock {
     /**
      * Sets the lock in a specific {@link Direction}.
      * 
-     * @param value
-     *          desired state
-     * @param direction
-     *          the {@link Direction} of compaction
+     * @param value 
+     *          the desired state
+     * @param direction the {@link Direction} of compaction
      */
     public void set(final boolean value, final Direction direction) {
         switch (direction) {

@@ -21,8 +21,8 @@ import com.google.common.collect.Sets;
 
 /**
  * Represents a group of {@link CNode}s whose relative distances to each other are preserved.
- * CGroups are used to ensure that vertical edge segments, that are connected to north/south ports,
- * are kept at the position of the port.
+ * For instance, when compacting a layered graph, CGroups are used to ensure that vertical edge segments,
+ * that are connected to north/south ports, are kept at the position of the port.
  * 
  * @see HorizontalGraphCompactor
  * 
@@ -48,7 +48,7 @@ public final class CGroup {
      */
     public CGroup(final CNode... inputCNodes) {
         cNodes = Sets.newLinkedHashSet();
-        incomingConstraints = Sets.newLinkedHashSet();
+        incomingConstraints = Sets.newHashSet();
         outDegree = 0;
         for (CNode cNode : inputCNodes) {
             addCNode(cNode);

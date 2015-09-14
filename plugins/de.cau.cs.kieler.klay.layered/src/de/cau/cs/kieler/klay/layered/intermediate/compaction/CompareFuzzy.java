@@ -12,34 +12,36 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
+import com.google.common.math.DoubleMath;
+
 /**
  * Internal Class for tolerance affected double comparisons.
  * 
  * @author dag
  */
-public final class Comp {
+public final class CompareFuzzy {
     static final double TOLERANCE = 0.0001;
     
-    private Comp() {
+    private CompareFuzzy() {
     }
 
     static boolean eq(final double d1, final double d2) {
-        return Math.abs(d1 - d2) <= TOLERANCE;
+        return DoubleMath.fuzzyEquals(d1, d2, TOLERANCE);
     }
 
     static boolean gt(final double d1, final double d2) {
-        return d1 - d2 > TOLERANCE;
+        return DoubleMath.fuzzyCompare(d1, d2, TOLERANCE) > 0;
     }
 
     static boolean lt(final double d1, final double d2) {
-        return d2 - d1 > TOLERANCE;
+        return DoubleMath.fuzzyCompare(d1, d2, TOLERANCE) < 0;
     }
 
     static boolean ge(final double d1, final double d2) {
-        return d1 - d2 >= -TOLERANCE;
+        return DoubleMath.fuzzyCompare(d1, d2, TOLERANCE) >= 0;
     }
 
     static boolean le(final double d1, final double d2) {
-        return d2 - d1 >= -TOLERANCE;
+        return DoubleMath.fuzzyCompare(d1, d2, TOLERANCE) <= 0;
     }
 }

@@ -29,7 +29,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Representation of a combination of intersecting vertical segments of {@link LEdge}s in the
- * constraint graph. The {@link LEdge} segments are conceived as one element in the compaction.
+ * constraint graph. The {@link LEdge} segments are handled as one element during the compaction.
  * 
  * @see CNode
  * 
@@ -45,7 +45,7 @@ public final class CLEdge extends CNode {
     /** junction points affected by manipulation of this segment. */
     private KVectorChain juctionPoints;
     /** referring to the {@link LEdge}s this segment is a part of. */
-    private Set<LEdge> originalLEdges = Sets.newLinkedHashSet();
+    private Set<LEdge> originalLEdges = Sets.newHashSet();
 
     /**
      * The constructor adds a {@link VerticalSegment} to the list and appends its bend and junction
@@ -97,10 +97,10 @@ public final class CLEdge extends CNode {
         }
         // segments belonging to multiple edges should be locked in the direction that fewer different
         // ports are connected in
-        Set<LPort> inc = Sets.newLinkedHashSet(originalLEdges.stream()
+        Set<LPort> inc = Sets.newHashSet(originalLEdges.stream()
                                                 .map(e -> e.getSource())
                                                 .collect(Collectors.toSet()));
-        Set<LPort> out = Sets.newLinkedHashSet(originalLEdges.stream()
+        Set<LPort> out = Sets.newHashSet(originalLEdges.stream()
                                                 .map(e -> e.getTarget())
                                                 .collect(Collectors.toSet()));
         int difference = inc.size() - out.size();
@@ -158,7 +158,7 @@ public final class CLEdge extends CNode {
         
       //joining north/south segments that belong to the same edge by setting their spacing to 0
       if (parentNode != null && other.parentNode != null
-              && other.getClass() == CLEdge.class
+              && (other instanceof CLEdge)
               // this might seem quite expensive but in most cases the sets contain only one element
               && !Sets.intersection(originalLEdges, ((CLEdge) other).originalLEdges).isEmpty()) {
           return 0;

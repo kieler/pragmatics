@@ -20,11 +20,18 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 /**
  * Represents a vertical segment on a single {@link LEdge} that is merged with intersecting
  * {@link VerticalSegment}s.
+ * <p>
+ * There are two types of vertical segments that are handled differently and are distinguished by
+ * the presence of a parent node. The usual segment stems from a step in an edge and has no parent
+ * node. The other type is the vertical part of an edge that is connected to the north or south side
+ * of a node. In this case the node is the parent of the segment and neither impose any constraints on
+ * each other because they are supposed to connect and therefore collide.
+ * </p>
  * 
  * @see CLEdge
  * @author dag
  */
-public final class VerticalSegment {
+public final class VerticalSegment implements Comparable<VerticalSegment> {
     // SUPPRESS CHECKSTYLE NEXT 12 VisibilityModifier
     /** the node a north/south segment is connected to, otherwise null. */
     public CNode parentNode;
@@ -51,7 +58,8 @@ public final class VerticalSegment {
      * @param lEdge
      *            parent edge
      */
-    VerticalSegment(final KVector bend1, final KVector bend2, final CNode cNode, final LEdge lEdge) {
+    public VerticalSegment(final KVector bend1, final KVector bend2, final CNode cNode,
+            final LEdge lEdge) {
         this.bend1 = bend1;
         this.bend2 = bend2;
 
@@ -68,9 +76,12 @@ public final class VerticalSegment {
 
         // adding junction points
         KVectorChain inJPs = lEdge.getProperty(LayoutOptions.JUNCTION_POINTS);
-        for (KVector jp : inJPs) {
-            if (Comp.eq(jp.x, bend1.x)) {
-                junctionPoints.add(jp);
+        // this property could be null
+        if (inJPs != null) {
+            for (KVector jp : inJPs) {
+                if (CompareFuzzy.eq(jp.x, bend1.x)) {
+                    junctionPoints.add(jp);
+                }
             }
         }
 
@@ -92,6 +103,19 @@ public final class VerticalSegment {
      * @return {@code true} if the segments intersect
      */
     public boolean intersects(final VerticalSegment o) {
-        return Comp.eq(this.x1, o.x1) && Comp.ge(this.y2, o.y1) && Comp.le(this.y1, o.y2);
+        return CompareFuzzy.eq(this.x1, o.x1) && CompareFuzzy.ge(this.y2, o.y1)
+                && CompareFuzzy.le(this.y1, o.y2);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final VerticalSegment o) {
+        int d = Double.compare(this.x1, o.x1);
+        if (d == 0) {
+            return Double.compare(this.y1, o.y1);
+        }
+        return d;
     }
 }

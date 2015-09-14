@@ -24,6 +24,12 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * repositioned in the specified direction where the position is minimal considering the
  * desired spacing between elements.
  * 
+ * <p>
+ * Since the locking functionality in {@link CLNode} and {@link CLEdge} relies on the direction of
+ * incoming and outgoing edges, this processor is required to be executed before
+ * the {@link ReversedEdgeRestorer}.
+ * </p>
+ * 
  * <dl>
  * <dt>Precondition:</dt>
  * <dd>The edges are routed orthogonally</dd>
@@ -45,7 +51,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
 
-        progressMonitor.begin("Compacting", 1);
+        progressMonitor.begin("Horizontal Compaction", 1);
         
         // the layered graph is transformed into a CGraph that is passed to OneDimensionalCompactor
         LGraphToCGraphTransformer transformer = new LGraphToCGraphTransformer();
@@ -61,35 +67,34 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
             
         case RIGHT:
             odc.changeDirection(Direction.RIGHT)
-               .compact()
-               // since changeDirection transforms hitboxes the final direction has to be LEFT again
-               .changeDirection(Direction.LEFT);
+               .compact();
             break;
             
         case LEFT_RIGHT_CONSTRAINT_LOCKING:
             // the default locking strategy locks CNodes if they are not constrained
             odc.compact()
                .changeDirection(Direction.RIGHT)
-               .compact()
-               .changeDirection(Direction.LEFT);
+               .compact();
             break;
             
         case LEFT_RIGHT_CONNECTION_LOCKING:
             // compacting left, locking all CNodes that have fewer connections to the right,
             // then compacting right to shorten unnecessary long edges
             odc.compact()
-               .setLockingStrategy((n, d) -> n.reposition = !n.lock.get(d))
+               .setLockingStrategy((n, d) -> !n.lock.get(d))
                .changeDirection(Direction.RIGHT)
-               .compact()
-               .changeDirection(Direction.LEFT);
+               .compact();
          break;
 
         default:
             break;
         }
         
+        // since changeDirection transforms hitboxes the final direction has to be LEFT again
+        odc.changeDirection(Direction.LEFT);
+        
         // applying the compacted positions to the LGraph and updating its size and offset
-        transformer.applyToGraph();
+        transformer.applyLayout();
         
         progressMonitor.done();
     }

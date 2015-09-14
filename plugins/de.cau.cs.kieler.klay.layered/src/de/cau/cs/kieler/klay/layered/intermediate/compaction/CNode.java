@@ -13,15 +13,13 @@
 package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 
 /**
  * Internal representation of a node in the constraint graph.
  * 
- * This class is extended to handle specific {@link LGraphElement}s.
+ * For instance his class is extended to handle specific {@link LGraphElement}s.
  * 
  * @see CLNode
  * @see CLEdge
@@ -29,7 +27,7 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
  */
 public abstract class CNode {
     // Variables are public for convenience reasons since this class is used internally only.
-    // SUPPRESS CHECKSTYLE NEXT 20 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 22 VisibilityModifier
     /** containing {@link CGroup}. */
     public CGroup cGroup;
     /** refers to the parent node of a north/south segment. */
@@ -44,11 +42,13 @@ public abstract class CNode {
     public Rectangle hitbox;
     /** offset to the root position of the containing {@link CGroup} . */
     public double cGroupOffset;
-    /** leftmost possible position for this {@link CNode} to be drawn. */
+    /** leftmost possible position for this {@link CNode} to be drawn. 
+     *  This position can be intermediate and is increased to its final value by updateStartPos(). */
     public double startPos = Double.NEGATIVE_INFINITY;
     /** flags a {@link CNode} to be repositioned in the case of left/right balanced compaction. */
     public boolean reposition = true;
-    /** a 4 tuple stating if the {@link CNode} is locked in a particular direction. */
+    /** a 4 tuple stating if the {@link CNode} should locked in a particular direction based on
+     *  conditions defined in an extended class. */
     public CompactionLock lock = new CompactionLock();
 
     /**
@@ -102,6 +102,7 @@ public abstract class CNode {
                 Math.max(startPos, outgoingCNode.startPos + outgoingCNode.hitbox.width + spacing);
         double currentPos = getPosition();
 
+        // decrementing the number of constraints that still have to be processed for this CNode
         outDegree--;
 
         // setting new position if the CNode is flagged to be repositioned
