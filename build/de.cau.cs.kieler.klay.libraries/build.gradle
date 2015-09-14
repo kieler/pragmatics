@@ -1,44 +1,47 @@
-/**
- * Gradle script for building and publishing Klay as bundled jar with and without dependencies.
- * 
- * Available tasks
- * ===============
- * ./gradlew tasks
- * Relevant tasks have descriptions beginning with 'KIELER'.
- * Test tasks' descriptions begin with 'KIELER TEST'.
- * 
- * Extra parameters via properties-file and/or cmd-line parameter
- * ==============================================================
- * ~/.gradle/gradle.properties:
- * ----------------------------
- * org.gradle.daemon=false
- * signing.keyId=<keyId>
- * signing.password=<pw>
- * signing.secretKeyRingFile=/home/<user>/.gnupg/secring.gpg
- * sonatypeUsername=<username>
- * sonatypePassword=<password>
- * 
- * cli:
- * ----
- * ./gradlew -Dorg.gradle.daemon=false -D...=... <tasks>
- * 
- * Specifying release versions
- * ===========================
- * ./gradlew -Pv=<version> ... uploadArchives
- * 
- * Build complete nightlies
- * ========================
- * ./gradlew clean fatKlay fatKlayAll copyKlayPlugins copyFormatsPlugins zipKlayPlugins zipFormatsPlugins
- * 
- * Run all tests
- * =============
- * ./gradlew testFatKlay testFatKlayAll testKlay testJson
- */
-
 plugins {
     id 'signing'
     id 'maven'
 }
+
+def helpMsg = """
+Gradle script for building and publishing Klay as bundled jar with and without dependencies.
+
+Build and test all
+==================
+./gradlew all
+
+Available tasks
+===============
+./gradlew tasks
+Relevant tasks are grouped in 'KIELER build tasks' and 'KIELER test tasks'.
+
+Extra parameters via properties-file and/or cmd-line parameter
+==============================================================
+~/.gradle/gradle.properties:
+----------------------------
+org.gradle.daemon=false
+signing.keyId=<keyId>
+signing.password=<pw>
+signing.secretKeyRingFile=/home/<user>/.gnupg/secring.gpg
+sonatypeUsername=<username>
+sonatypePassword=<password>
+
+cli:
+----
+./gradlew -Dorg.gradle.daemon=false -D...=... <tasks>
+
+Specifying release versions (TBD)
+===========================
+./gradlew -Pv=<version> ... uploadArchives
+
+Build complete nightlies
+========================
+./gradlew clean buildAll
+
+Run all tests
+=============
+./gradlew clean testAll
+"""
 
 group = 'de.cau.cs.kieler'
 ext {
@@ -63,7 +66,9 @@ ext {
         // short name on mvn central
         'com.google.guava:com.google.guava:[0,)'
     ]
-    formatsDeps = ['de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)']
+    formatsDeps = [
+        'de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)'
+    ]
     formatsExtraDeps = [
         // short names on mvn central
         'org.eclipse.equinox:org.eclipse.equinox.app:[0,)',
@@ -71,7 +76,9 @@ ext {
         'org.eclipse.equinox:org.eclipse.equinox.registry:[0,)',
         'org.eclipse:org.eclipse.osgi:[0,)'
     ]
-    jsonDeps = ['de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats.json:[0,)']
+    jsonDeps = [
+        'de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats.json:[0,)'
+    ]
     jsonExtraDeps = [
         'org.eclipse.xtend:org.eclipse.xtend.lib:[0,)',
         'org.eclipse.xtext:org.eclipse.xtext.xbase.lib:[0,)'
@@ -128,8 +135,10 @@ def theExcludes = [
     'model/**',
     'schema/**'
 ]
+
 task fatKlay(type: Jar) {
-    description = 'KIELER: Bundles the core plugins and the three layouters into one jar.'
+    group 'KIELER build'
+    description 'Bundles the core plugins and the three layouters into one jar.'
     destinationDir file("$buildDir/$libsA")
     baseName = "klay"
     classifier = ''
@@ -140,7 +149,8 @@ task fatKlay(type: Jar) {
 }
 
 task fatKlayAll(type: Jar) {
-    description = 'KIELER: Bundles the core plugins, the three layouters and all dependencies into one jar.'
+    group 'KIELER build'
+    description 'Bundles the core plugins, the three layouters and all dependencies into one jar.'
     destinationDir file("$buildDir/$libsA")
     baseName = "klay"
     classifier = 'all'
@@ -160,13 +170,15 @@ def klayPlugins = [
 ]
 
 task copyKlayPlugins(type: Copy) {
-    description = 'KIELER: Gathers all needed jars (including dependencies) to use the layouters.'
+    group 'KIELER build'
+    description 'Gathers all needed jars (including dependencies) to use the layouters.'
     from klayPlugins
     into "$buildDir/$libsB"
 }
 
 task zipKlayPlugins(type: Zip) {
-    description = 'KIELER: Zips (for convenient download) all needed jars (including dependencies) to use the layouters.'
+    group 'KIELER build'
+    description 'Zips (for convenient download) all needed jars (including dependencies) to use the layouters.'
     archiveName "${libsB}.zip"
     from klayPlugins
     destinationDir buildDir
@@ -186,13 +198,15 @@ def formatsPlugins = [
 ]
 
 task copyFormatsPlugins(type: Copy, dependsOn: ":nonosgi:jar") {
-    description = 'KIELER: Gathers all needed jars (including dependencies) to use the layouters and importers like JSON.'
+    group 'KIELER build'
+    description 'Gathers all needed jars (including dependencies) to use the layouters and importers like JSON.'
     from formatsPlugins
     into "$buildDir/$libsC"
 }
 
 task zipFormatsPlugins(type: Zip, dependsOn: ":nonosgi:jar") {
-    description = 'KIELER: Zips (for convenient download) all needed jars (including dependencies) to use the layouters and importers like JSON.'
+    group 'KIELER build'
+    description 'Zips (for convenient download) all needed jars (including dependencies) to use the layouters and importers like JSON.'
     archiveName "${libsC}.zip"
     from formatsPlugins
     destinationDir buildDir
@@ -271,6 +285,35 @@ task zipFormatsPlugins(type: Zip, dependsOn: ":nonosgi:jar") {
 //         }
 //     }
 // }
+
+// Convenience tasks
+// --------------------------------------------------------
+
+// Explicitly set task order to prevent the clean task from running after any build task.
+fatKlay.mustRunAfter clean
+fatKlayAll.mustRunAfter clean
+copyKlayPlugins.mustRunAfter clean
+copyFormatsPlugins.mustRunAfter clean
+zipKlayPlugins.mustRunAfter clean
+zipFormatsPlugins.mustRunAfter clean
+
+task buildAll(dependsOn: ['fatKlay', 'fatKlayAll', 'copyKlayPlugins', 'copyFormatsPlugins', 'zipKlayPlugins', 'zipFormatsPlugins']) {
+    group 'KIELER build'
+    description 'Bundle and/or gather all artifacts.'
+}
+task testAll(dependsOn: [':tests:testFatKlay', ':tests:testFatKlayAll', ':tests:testKlay', ':tests:testJson']) {
+    group 'KIELER test'
+    description 'Run all tests.'
+}
+
+task all(dependsOn: ['clean', 'buildAll', 'testAll']) {
+    group 'KIELER build'
+    description 'Clean, build and test all.'
+}
+
+help.doLast {
+    println helpMsg
+}
 
 // Utility stuff
 // --------------------------------------------------------

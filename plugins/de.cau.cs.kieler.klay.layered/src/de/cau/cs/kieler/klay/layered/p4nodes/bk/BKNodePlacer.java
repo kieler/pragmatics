@@ -557,7 +557,7 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
 
     /**
-     * Finds all classes of a given layout.
+     * Finds all classes of a given layout. Only used for debug output.
      * 
      * @param bal The layout whose classes to find
      * @return The classes of the given layout
@@ -568,6 +568,10 @@ public final class BKNodePlacer implements ILayoutPhase {
         // We need to enumerate all block roots
         Set<LNode> roots = Sets.newLinkedHashSet(Arrays.asList(bal.root));
         for (LNode root : roots) {
+            if (root == null) {
+                System.out.println("There are no classes in a balanced layout.");
+                break;
+            }
             LNode sink = bal.sink[root.id];
             List<LNode> classContents = classes.get(sink);
             
