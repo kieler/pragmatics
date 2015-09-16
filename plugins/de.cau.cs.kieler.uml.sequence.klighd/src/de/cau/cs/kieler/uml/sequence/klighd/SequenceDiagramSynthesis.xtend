@@ -93,7 +93,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val surrInteraction = root.createNode().associateWith(model)
         root.children.add(surrInteraction)
         surrInteraction.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
-//        surrInteraction.addLayoutParam(SequenceDiagramProperties.COORDINATE_SYSTEM, CoordinateSystem.KGRAPH)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
         surrInteraction.addLayoutParam(LayoutOptions.BORDER_SPACING, 10f)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.MESSAGE_SPACING, 5.0f * TEXTSIZE.intValue)
@@ -102,6 +101,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 2 * TEXTSIZE.intValue + 30)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 2 * TEXTSIZE.intValue + 10)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.AREA_HEADER, 45)
+//        surrInteraction.addLayoutParam(LayoutOptions.MIN_HEIGHT, 100f)
+//        surrInteraction.addLayoutParam(LayoutOptions.MIN_WIDTH, 100f)
 
         switch LIFELINESORTING.objectValue {
             case "Layer Based":
@@ -125,15 +126,15 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         var KContainerRendering surrInteractionRect = null
         switch STYLE.objectValue {
             case "Stylish": {
-                surrInteractionRect = surrInteraction.addRoundedRectangle(10, 10, 2)
+                surrInteractionRect = surrInteraction.setNodeSize(100,100).addRoundedRectangle(10, 10, 2)
                 surrInteractionRect.setShadow(Colors.BLACK, 10)
             }
             case "Hello Kitty": {
-                surrInteractionRect = surrInteraction.addRoundedRectangle(10, 10, 2)
+                surrInteractionRect = surrInteraction.setNodeSize(100,100).addRoundedRectangle(10, 10, 2)
                 surrInteractionRect.setShadow(Colors.PURPLE, 10)
             }
             default: {
-                surrInteractionRect = surrInteraction.addRectangle
+                surrInteractionRect = surrInteraction.setNodeSize(100,100).addRectangle
             }
         }
 
@@ -141,7 +142,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 //        captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
         captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
         captionRect.addPolyline(2, lineCoordinates)
-        captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
+//        captionRect.setSurroundingSpaceGrid(10,0,8,0)
+        captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 20, 0, 0, 0)
 
         surroundingInteraction = surrInteraction
 
@@ -246,6 +248,14 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         if (msg.targetStartExec) {
             createExecution(target)
         }
+        
+//        if (msg.sourceStartEndExec) {
+//            
+//        }
+//        
+//        if (msg.targetStartEndExex) {
+//            
+//        }
 
         if (elementIdOnLifeline.containsKey(source.name)) {
             val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(source.name))
@@ -439,10 +449,13 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     }
 
     // TODO Zustandsinvariante als Notiz
-    // TODO übergreifenden Zugriff auf lifelines bei autovervollständigung entfernen
-    // TODO selfmessages bei großer Schachtelung
     // TODO validation und formatting überprüfen
     // TODO Modellordner
+    // TODO sourceStartEndExec
+    // TODO beliebige Reihenfolge an Optionen + validation
+    // TODO self message zusätzlich
+    // TODO ksd file ending
+    // TODO space zwischen titel und rechter Kante bei nur einer lifeline
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Rest
     // Specifies the correct Properties for the different message types
@@ -548,7 +561,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             it.points += createKPosition(RIGHT, 0, 0, TOP, 0, 0.5f)
             it.points += createKPosition(LEFT, 0, 0, BOTTOM, 0, 0)
             it.setDecoratorPlacementData(10, 12, -6, 1.0f, true)
-        // it.foreground = modelOptions.getProperty(OPTION_EDGE_COLOR).color
         ]
     }
 
