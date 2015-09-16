@@ -80,7 +80,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private var KNode surroundingInteraction
     private val elementIdOnLifeline = new HashMap<String, Stack<Integer>>
     private var elementId = 0
-    private var edgeCounter = 0
     private var fragmentList = new ArrayList<Integer>
 
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +153,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         surroundingInteraction = null
         elementIdOnLifeline.clear()
         elementId = 0
-        edgeCounter = 0
         return root
     }
 
@@ -230,6 +228,14 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.setMessageRendering(msg.messageType.toString)
 
         edgeCount(transEdge)
+        
+        if (msg.sourceNote != null) {
+            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
+        }
+        
+        if (msg.targetNote != null) {
+            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
+        }
 
         val label = KimlUtil.createInitializedLabel(transEdge)
 
@@ -293,6 +299,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.setMessageRendering(msg.messageTypeLostAndFound.toString)
 
         edgeCount(transEdge)
+        
+        if (msg.note != null) {
+            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
+        }
 
         if (msg.startExec) {
 //            if (msg.messageTypeLostAndFound.equals("lost")) {
@@ -543,10 +553,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
     // Gives the edges an increasing number, so that the Algorithm knows the order of the messages
     private def edgeCount(KEdge e) {
-        edgeCounter += 1
+        elementId += 1
         val edgeLayout = e.getData(typeof(KEdgeLayout))
-        edgeLayout.sourcePoint.y = edgeCounter
-        edgeLayout.targetPoint.y = edgeCounter
+        edgeLayout.sourcePoint.y = elementId
+        edgeLayout.targetPoint.y = elementId
     }
 
     /**
