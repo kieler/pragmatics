@@ -143,16 +143,16 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cOneLifelineMessageParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		private final RuleCall cFragmentParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		private final RuleCall cOneLifelineNoteParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
-		private final RuleCall cDestroyLifelineEventParserRuleCall_4 = (RuleCall)cAlternatives.eContents().get(4);
-		private final RuleCall cRefinementParserRuleCall_5 = (RuleCall)cAlternatives.eContents().get(5);
+		private final RuleCall cSelfMessageParserRuleCall_4 = (RuleCall)cAlternatives.eContents().get(4);
+		private final RuleCall cDestroyLifelineEventParserRuleCall_5 = (RuleCall)cAlternatives.eContents().get(5);
+		private final RuleCall cRefinementParserRuleCall_6 = (RuleCall)cAlternatives.eContents().get(6);
 		
 		//Interaction:
-		//	TwoLifelineMessage //| OneLifelineEndBlock
-		//	| OneLifelineMessage | Fragment | OneLifelineNote | DestroyLifelineEvent | Refinement;
+		//	TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineNote | SelfMessage | DestroyLifelineEvent |
+		//	Refinement;
 		public ParserRule getRule() { return rule; }
 
-		//TwoLifelineMessage //| OneLifelineEndBlock
-		//| OneLifelineMessage | Fragment | OneLifelineNote | DestroyLifelineEvent | Refinement
+		//TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineNote | SelfMessage | DestroyLifelineEvent | Refinement
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//TwoLifelineMessage
@@ -167,11 +167,14 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//OneLifelineNote
 		public RuleCall getOneLifelineNoteParserRuleCall_3() { return cOneLifelineNoteParserRuleCall_3; }
 
+		//SelfMessage
+		public RuleCall getSelfMessageParserRuleCall_4() { return cSelfMessageParserRuleCall_4; }
+
 		//DestroyLifelineEvent
-		public RuleCall getDestroyLifelineEventParserRuleCall_4() { return cDestroyLifelineEventParserRuleCall_4; }
+		public RuleCall getDestroyLifelineEventParserRuleCall_5() { return cDestroyLifelineEventParserRuleCall_5; }
 
 		//Refinement
-		public RuleCall getRefinementParserRuleCall_5() { return cRefinementParserRuleCall_5; }
+		public RuleCall getRefinementParserRuleCall_6() { return cRefinementParserRuleCall_6; }
 	}
 
 	public class TwoLifelineMessageElements extends AbstractParserRuleElementFinder {
@@ -189,21 +192,25 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final CrossReference cTargetLifelineLifelineCrossReference_4_0 = (CrossReference)cTargetLifelineAssignment_4.eContents().get(0);
 		private final RuleCall cTargetLifelineLifelineIDTerminalRuleCall_4_0_1 = (RuleCall)cTargetLifelineLifelineCrossReference_4_0.eContents().get(1);
 		private final Alternatives cAlternatives_5 = (Alternatives)cGroup.eContents().get(5);
-		private final Assignment cSourceStartExecAssignment_5_0 = (Assignment)cAlternatives_5.eContents().get(0);
-		private final Keyword cSourceStartExecSourceStartExecKeyword_5_0_0 = (Keyword)cSourceStartExecAssignment_5_0.eContents().get(0);
-		private final Group cGroup_5_1 = (Group)cAlternatives_5.eContents().get(1);
-		private final Assignment cSourceEndExecAssignment_5_1_0 = (Assignment)cGroup_5_1.eContents().get(0);
-		private final Keyword cSourceEndExecSourceEndExecKeyword_5_1_0_0 = (Keyword)cSourceEndExecAssignment_5_1_0.eContents().get(0);
-		private final Assignment cSourceEndExecCountAssignment_5_1_1 = (Assignment)cGroup_5_1.eContents().get(1);
-		private final RuleCall cSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0 = (RuleCall)cSourceEndExecCountAssignment_5_1_1.eContents().get(0);
+		private final Assignment cSourceStartEndExecAssignment_5_0 = (Assignment)cAlternatives_5.eContents().get(0);
+		private final Keyword cSourceStartEndExecSourceStartEndExecKeyword_5_0_0 = (Keyword)cSourceStartEndExecAssignment_5_0.eContents().get(0);
+		private final Assignment cSourceStartExecAssignment_5_1 = (Assignment)cAlternatives_5.eContents().get(1);
+		private final Keyword cSourceStartExecSourceStartExecKeyword_5_1_0 = (Keyword)cSourceStartExecAssignment_5_1.eContents().get(0);
+		private final Group cGroup_5_2 = (Group)cAlternatives_5.eContents().get(2);
+		private final Assignment cSourceEndExecAssignment_5_2_0 = (Assignment)cGroup_5_2.eContents().get(0);
+		private final Keyword cSourceEndExecSourceEndExecKeyword_5_2_0_0 = (Keyword)cSourceEndExecAssignment_5_2_0.eContents().get(0);
+		private final Assignment cSourceEndExecCountAssignment_5_2_1 = (Assignment)cGroup_5_2.eContents().get(1);
+		private final RuleCall cSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_2_1_0 = (RuleCall)cSourceEndExecCountAssignment_5_2_1.eContents().get(0);
 		private final Alternatives cAlternatives_6 = (Alternatives)cGroup.eContents().get(6);
-		private final Assignment cTargetStartExecAssignment_6_0 = (Assignment)cAlternatives_6.eContents().get(0);
-		private final Keyword cTargetStartExecTargetStartExecKeyword_6_0_0 = (Keyword)cTargetStartExecAssignment_6_0.eContents().get(0);
-		private final Group cGroup_6_1 = (Group)cAlternatives_6.eContents().get(1);
-		private final Assignment cTargetEndExecAssignment_6_1_0 = (Assignment)cGroup_6_1.eContents().get(0);
-		private final Keyword cTargetEndExecTargetEndExecKeyword_6_1_0_0 = (Keyword)cTargetEndExecAssignment_6_1_0.eContents().get(0);
-		private final Assignment cTargetEndExecCountAssignment_6_1_1 = (Assignment)cGroup_6_1.eContents().get(1);
-		private final RuleCall cTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0 = (RuleCall)cTargetEndExecCountAssignment_6_1_1.eContents().get(0);
+		private final Assignment cTargetStartEndExecAssignment_6_0 = (Assignment)cAlternatives_6.eContents().get(0);
+		private final Keyword cTargetStartEndExecTargetStartEndExecKeyword_6_0_0 = (Keyword)cTargetStartEndExecAssignment_6_0.eContents().get(0);
+		private final Assignment cTargetStartExecAssignment_6_1 = (Assignment)cAlternatives_6.eContents().get(1);
+		private final Keyword cTargetStartExecTargetStartExecKeyword_6_1_0 = (Keyword)cTargetStartExecAssignment_6_1.eContents().get(0);
+		private final Group cGroup_6_2 = (Group)cAlternatives_6.eContents().get(2);
+		private final Assignment cTargetEndExecAssignment_6_2_0 = (Assignment)cGroup_6_2.eContents().get(0);
+		private final Keyword cTargetEndExecTargetEndExecKeyword_6_2_0_0 = (Keyword)cTargetEndExecAssignment_6_2_0.eContents().get(0);
+		private final Assignment cTargetEndExecCountAssignment_6_2_1 = (Assignment)cGroup_6_2.eContents().get(1);
+		private final RuleCall cTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_2_1_0 = (RuleCall)cTargetEndExecCountAssignment_6_2_1.eContents().get(0);
 		private final Group cGroup_7 = (Group)cGroup.eContents().get(7);
 		private final Keyword cSourceNoteKeyword_7_0 = (Keyword)cGroup_7.eContents().get(0);
 		private final Assignment cSourceNoteAssignment_7_1 = (Assignment)cGroup_7.eContents().get(1);
@@ -215,15 +222,17 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//TwoLifelineMessage:
 		//	sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
-		//	(sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec" sourceEndExecCount=INT_GREATER_ZERO?)?
-		//	(targetStartExec?="targetStartExec" | targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)?
-		//	("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?;
+		//	(sourceStartEndExec?="sourceStartEndExec" | sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec"
+		//	sourceEndExecCount=INT_GREATER_ZERO?)? (targetStartEndExec?="targetStartEndExec" | targetStartExec?="targetStartExec"
+		//	| targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)? ("sourceNote" sourceNote=STRING)?
+		//	("targetNote" targetNote=STRING)?;
 		public ParserRule getRule() { return rule; }
 
 		//sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
-		//(sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec" sourceEndExecCount=INT_GREATER_ZERO?)?
-		//(targetStartExec?="targetStartExec" | targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)?
-		//("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?
+		//(sourceStartEndExec?="sourceStartEndExec" | sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec"
+		//sourceEndExecCount=INT_GREATER_ZERO?)? (targetStartEndExec?="targetStartEndExec" | targetStartExec?="targetStartExec" |
+		//targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)? ("sourceNote" sourceNote=STRING)? ("targetNote"
+		//targetNote=STRING)?
 		public Group getGroup() { return cGroup; }
 
 		//sourceLifeline=[Lifeline]
@@ -259,53 +268,67 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getTargetLifelineLifelineIDTerminalRuleCall_4_0_1() { return cTargetLifelineLifelineIDTerminalRuleCall_4_0_1; }
 
-		//(sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec" sourceEndExecCount=INT_GREATER_ZERO?)?
+		//(sourceStartEndExec?="sourceStartEndExec" | sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec"
+		//sourceEndExecCount=INT_GREATER_ZERO?)?
 		public Alternatives getAlternatives_5() { return cAlternatives_5; }
 
+		//sourceStartEndExec?="sourceStartEndExec"
+		public Assignment getSourceStartEndExecAssignment_5_0() { return cSourceStartEndExecAssignment_5_0; }
+
+		//"sourceStartEndExec"
+		public Keyword getSourceStartEndExecSourceStartEndExecKeyword_5_0_0() { return cSourceStartEndExecSourceStartEndExecKeyword_5_0_0; }
+
 		//sourceStartExec?="sourceStartExec"
-		public Assignment getSourceStartExecAssignment_5_0() { return cSourceStartExecAssignment_5_0; }
+		public Assignment getSourceStartExecAssignment_5_1() { return cSourceStartExecAssignment_5_1; }
 
 		//"sourceStartExec"
-		public Keyword getSourceStartExecSourceStartExecKeyword_5_0_0() { return cSourceStartExecSourceStartExecKeyword_5_0_0; }
+		public Keyword getSourceStartExecSourceStartExecKeyword_5_1_0() { return cSourceStartExecSourceStartExecKeyword_5_1_0; }
 
 		//sourceEndExec?="sourceEndExec" sourceEndExecCount=INT_GREATER_ZERO?
-		public Group getGroup_5_1() { return cGroup_5_1; }
+		public Group getGroup_5_2() { return cGroup_5_2; }
 
 		//sourceEndExec?="sourceEndExec"
-		public Assignment getSourceEndExecAssignment_5_1_0() { return cSourceEndExecAssignment_5_1_0; }
+		public Assignment getSourceEndExecAssignment_5_2_0() { return cSourceEndExecAssignment_5_2_0; }
 
 		//"sourceEndExec"
-		public Keyword getSourceEndExecSourceEndExecKeyword_5_1_0_0() { return cSourceEndExecSourceEndExecKeyword_5_1_0_0; }
+		public Keyword getSourceEndExecSourceEndExecKeyword_5_2_0_0() { return cSourceEndExecSourceEndExecKeyword_5_2_0_0; }
 
 		//sourceEndExecCount=INT_GREATER_ZERO?
-		public Assignment getSourceEndExecCountAssignment_5_1_1() { return cSourceEndExecCountAssignment_5_1_1; }
+		public Assignment getSourceEndExecCountAssignment_5_2_1() { return cSourceEndExecCountAssignment_5_2_1; }
 
 		//INT_GREATER_ZERO
-		public RuleCall getSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0() { return cSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_1_1_0; }
+		public RuleCall getSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_2_1_0() { return cSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_2_1_0; }
 
-		//(targetStartExec?="targetStartExec" | targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)?
+		//(targetStartEndExec?="targetStartEndExec" | targetStartExec?="targetStartExec" | targetEndExec?="targetEndExec"
+		//targetEndExecCount=INT_GREATER_ZERO?)?
 		public Alternatives getAlternatives_6() { return cAlternatives_6; }
 
+		//targetStartEndExec?="targetStartEndExec"
+		public Assignment getTargetStartEndExecAssignment_6_0() { return cTargetStartEndExecAssignment_6_0; }
+
+		//"targetStartEndExec"
+		public Keyword getTargetStartEndExecTargetStartEndExecKeyword_6_0_0() { return cTargetStartEndExecTargetStartEndExecKeyword_6_0_0; }
+
 		//targetStartExec?="targetStartExec"
-		public Assignment getTargetStartExecAssignment_6_0() { return cTargetStartExecAssignment_6_0; }
+		public Assignment getTargetStartExecAssignment_6_1() { return cTargetStartExecAssignment_6_1; }
 
 		//"targetStartExec"
-		public Keyword getTargetStartExecTargetStartExecKeyword_6_0_0() { return cTargetStartExecTargetStartExecKeyword_6_0_0; }
+		public Keyword getTargetStartExecTargetStartExecKeyword_6_1_0() { return cTargetStartExecTargetStartExecKeyword_6_1_0; }
 
 		//targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?
-		public Group getGroup_6_1() { return cGroup_6_1; }
+		public Group getGroup_6_2() { return cGroup_6_2; }
 
 		//targetEndExec?="targetEndExec"
-		public Assignment getTargetEndExecAssignment_6_1_0() { return cTargetEndExecAssignment_6_1_0; }
+		public Assignment getTargetEndExecAssignment_6_2_0() { return cTargetEndExecAssignment_6_2_0; }
 
 		//"targetEndExec"
-		public Keyword getTargetEndExecTargetEndExecKeyword_6_1_0_0() { return cTargetEndExecTargetEndExecKeyword_6_1_0_0; }
+		public Keyword getTargetEndExecTargetEndExecKeyword_6_2_0_0() { return cTargetEndExecTargetEndExecKeyword_6_2_0_0; }
 
 		//targetEndExecCount=INT_GREATER_ZERO?
-		public Assignment getTargetEndExecCountAssignment_6_1_1() { return cTargetEndExecCountAssignment_6_1_1; }
+		public Assignment getTargetEndExecCountAssignment_6_2_1() { return cTargetEndExecCountAssignment_6_2_1; }
 
 		//INT_GREATER_ZERO
-		public RuleCall getTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0() { return cTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_1_1_0; }
+		public RuleCall getTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_2_1_0() { return cTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_2_1_0; }
 
 		//("sourceNote" sourceNote=STRING)?
 		public Group getGroup_7() { return cGroup_7; }
@@ -344,28 +367,32 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cMessageTypeLostAndFoundAlternatives_2_0 = (Alternatives)cMessageTypeLostAndFoundAssignment_2.eContents().get(0);
 		private final Keyword cMessageTypeLostAndFoundLostKeyword_2_0_0 = (Keyword)cMessageTypeLostAndFoundAlternatives_2_0.eContents().get(0);
 		private final Keyword cMessageTypeLostAndFoundFoundKeyword_2_0_1 = (Keyword)cMessageTypeLostAndFoundAlternatives_2_0.eContents().get(1);
-		private final Assignment cCaptionAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cCaptionSTRINGTerminalRuleCall_3_0 = (RuleCall)cCaptionAssignment_3.eContents().get(0);
+		private final Assignment cMessageAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cMessageSTRINGTerminalRuleCall_3_0 = (RuleCall)cMessageAssignment_3.eContents().get(0);
 		private final Alternatives cAlternatives_4 = (Alternatives)cGroup.eContents().get(4);
-		private final Assignment cStartExecAssignment_4_0 = (Assignment)cAlternatives_4.eContents().get(0);
-		private final Keyword cStartExecStartExecKeyword_4_0_0 = (Keyword)cStartExecAssignment_4_0.eContents().get(0);
-		private final Group cGroup_4_1 = (Group)cAlternatives_4.eContents().get(1);
-		private final Assignment cEndExecAssignment_4_1_0 = (Assignment)cGroup_4_1.eContents().get(0);
-		private final Keyword cEndExecEndExecKeyword_4_1_0_0 = (Keyword)cEndExecAssignment_4_1_0.eContents().get(0);
-		private final Assignment cEndExecCountAssignment_4_1_1 = (Assignment)cGroup_4_1.eContents().get(1);
-		private final RuleCall cEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0 = (RuleCall)cEndExecCountAssignment_4_1_1.eContents().get(0);
+		private final Assignment cStartEndExecAssignment_4_0 = (Assignment)cAlternatives_4.eContents().get(0);
+		private final Keyword cStartEndExecStartEndExecKeyword_4_0_0 = (Keyword)cStartEndExecAssignment_4_0.eContents().get(0);
+		private final Assignment cStartExecAssignment_4_1 = (Assignment)cAlternatives_4.eContents().get(1);
+		private final Keyword cStartExecStartExecKeyword_4_1_0 = (Keyword)cStartExecAssignment_4_1.eContents().get(0);
+		private final Group cGroup_4_2 = (Group)cAlternatives_4.eContents().get(2);
+		private final Assignment cEndExecAssignment_4_2_0 = (Assignment)cGroup_4_2.eContents().get(0);
+		private final Keyword cEndExecEndExecKeyword_4_2_0_0 = (Keyword)cEndExecAssignment_4_2_0.eContents().get(0);
+		private final Assignment cEndExecCountAssignment_4_2_1 = (Assignment)cGroup_4_2.eContents().get(1);
+		private final RuleCall cEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_2_1_0 = (RuleCall)cEndExecCountAssignment_4_2_1.eContents().get(0);
 		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
 		private final Keyword cNoteKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
 		private final Assignment cNoteAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
 		private final RuleCall cNoteSTRINGTerminalRuleCall_5_1_0 = (RuleCall)cNoteAssignment_5_1.eContents().get(0);
 		
 		//OneLifelineMessage:
-		//	Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") caption=STRING
-		//	(startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
+		//	Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") message=STRING
+		//	(startEndExec?="startEndExec" | startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note"
+		//	note=STRING)?;
 		public ParserRule getRule() { return rule; }
 
-		//Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") caption=STRING
-		//(startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?
+		//Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") message=STRING
+		//(startEndExec?="startEndExec" | startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note"
+		//note=STRING)?
 		public Group getGroup() { return cGroup; }
 
 		//Lifeline=[Lifeline]
@@ -395,35 +422,155 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//"found"
 		public Keyword getMessageTypeLostAndFoundFoundKeyword_2_0_1() { return cMessageTypeLostAndFoundFoundKeyword_2_0_1; }
 
-		//caption=STRING
-		public Assignment getCaptionAssignment_3() { return cCaptionAssignment_3; }
+		//message=STRING
+		public Assignment getMessageAssignment_3() { return cMessageAssignment_3; }
 
 		//STRING
-		public RuleCall getCaptionSTRINGTerminalRuleCall_3_0() { return cCaptionSTRINGTerminalRuleCall_3_0; }
+		public RuleCall getMessageSTRINGTerminalRuleCall_3_0() { return cMessageSTRINGTerminalRuleCall_3_0; }
 
-		//(startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)?
+		//(startEndExec?="startEndExec" | startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)?
 		public Alternatives getAlternatives_4() { return cAlternatives_4; }
 
+		//startEndExec?="startEndExec"
+		public Assignment getStartEndExecAssignment_4_0() { return cStartEndExecAssignment_4_0; }
+
+		//"startEndExec"
+		public Keyword getStartEndExecStartEndExecKeyword_4_0_0() { return cStartEndExecStartEndExecKeyword_4_0_0; }
+
 		//startExec?="startExec"
-		public Assignment getStartExecAssignment_4_0() { return cStartExecAssignment_4_0; }
+		public Assignment getStartExecAssignment_4_1() { return cStartExecAssignment_4_1; }
 
 		//"startExec"
-		public Keyword getStartExecStartExecKeyword_4_0_0() { return cStartExecStartExecKeyword_4_0_0; }
+		public Keyword getStartExecStartExecKeyword_4_1_0() { return cStartExecStartExecKeyword_4_1_0; }
 
 		//endExec?="endExec" endExecCount=INT_GREATER_ZERO?
-		public Group getGroup_4_1() { return cGroup_4_1; }
+		public Group getGroup_4_2() { return cGroup_4_2; }
 
 		//endExec?="endExec"
-		public Assignment getEndExecAssignment_4_1_0() { return cEndExecAssignment_4_1_0; }
+		public Assignment getEndExecAssignment_4_2_0() { return cEndExecAssignment_4_2_0; }
 
 		//"endExec"
-		public Keyword getEndExecEndExecKeyword_4_1_0_0() { return cEndExecEndExecKeyword_4_1_0_0; }
+		public Keyword getEndExecEndExecKeyword_4_2_0_0() { return cEndExecEndExecKeyword_4_2_0_0; }
 
 		//endExecCount=INT_GREATER_ZERO?
-		public Assignment getEndExecCountAssignment_4_1_1() { return cEndExecCountAssignment_4_1_1; }
+		public Assignment getEndExecCountAssignment_4_2_1() { return cEndExecCountAssignment_4_2_1; }
 
 		//INT_GREATER_ZERO
-		public RuleCall getEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0() { return cEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_1_1_0; }
+		public RuleCall getEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_2_1_0() { return cEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_2_1_0; }
+
+		//("note" note=STRING)?
+		public Group getGroup_5() { return cGroup_5; }
+
+		//"note"
+		public Keyword getNoteKeyword_5_0() { return cNoteKeyword_5_0; }
+
+		//note=STRING
+		public Assignment getNoteAssignment_5_1() { return cNoteAssignment_5_1; }
+
+		//STRING
+		public RuleCall getNoteSTRINGTerminalRuleCall_5_1_0() { return cNoteSTRINGTerminalRuleCall_5_1_0; }
+	}
+
+	public class SelfMessageElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "SelfMessage");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cLifelineAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final CrossReference cLifelineLifelineCrossReference_0_0 = (CrossReference)cLifelineAssignment_0.eContents().get(0);
+		private final RuleCall cLifelineLifelineIDTerminalRuleCall_0_0_1 = (RuleCall)cLifelineLifelineCrossReference_0_0.eContents().get(1);
+		private final Assignment cMessageTypeAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final Alternatives cMessageTypeAlternatives_1_0 = (Alternatives)cMessageTypeAssignment_1.eContents().get(0);
+		private final Keyword cMessageTypeSyncKeyword_1_0_0 = (Keyword)cMessageTypeAlternatives_1_0.eContents().get(0);
+		private final Keyword cMessageTypeAsyncKeyword_1_0_1 = (Keyword)cMessageTypeAlternatives_1_0.eContents().get(1);
+		private final Keyword cMessageTypeResponseKeyword_1_0_2 = (Keyword)cMessageTypeAlternatives_1_0.eContents().get(2);
+		private final Keyword cSelfKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cMessageAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cMessageSTRINGTerminalRuleCall_3_0 = (RuleCall)cMessageAssignment_3.eContents().get(0);
+		private final Alternatives cAlternatives_4 = (Alternatives)cGroup.eContents().get(4);
+		private final Assignment cStartEndExecAssignment_4_0 = (Assignment)cAlternatives_4.eContents().get(0);
+		private final Keyword cStartEndExecStartEndExecKeyword_4_0_0 = (Keyword)cStartEndExecAssignment_4_0.eContents().get(0);
+		private final Assignment cStartExecAssignment_4_1 = (Assignment)cAlternatives_4.eContents().get(1);
+		private final Keyword cStartExecStartExecKeyword_4_1_0 = (Keyword)cStartExecAssignment_4_1.eContents().get(0);
+		private final Group cGroup_4_2 = (Group)cAlternatives_4.eContents().get(2);
+		private final Assignment cEndExecAssignment_4_2_0 = (Assignment)cGroup_4_2.eContents().get(0);
+		private final Keyword cEndExecEndExecKeyword_4_2_0_0 = (Keyword)cEndExecAssignment_4_2_0.eContents().get(0);
+		private final Assignment cEndExecCountAssignment_4_2_1 = (Assignment)cGroup_4_2.eContents().get(1);
+		private final RuleCall cEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_2_1_0 = (RuleCall)cEndExecCountAssignment_4_2_1.eContents().get(0);
+		private final Group cGroup_5 = (Group)cGroup.eContents().get(5);
+		private final Keyword cNoteKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
+		private final Assignment cNoteAssignment_5_1 = (Assignment)cGroup_5.eContents().get(1);
+		private final RuleCall cNoteSTRINGTerminalRuleCall_5_1_0 = (RuleCall)cNoteAssignment_5_1.eContents().get(0);
+		
+		//SelfMessage:
+		//	Lifeline=[Lifeline] messageType=("sync" | "async" | "response") "self" message=STRING (startEndExec?="startEndExec" |
+		//	startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
+		public ParserRule getRule() { return rule; }
+
+		//Lifeline=[Lifeline] messageType=("sync" | "async" | "response") "self" message=STRING (startEndExec?="startEndExec" |
+		//startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?
+		public Group getGroup() { return cGroup; }
+
+		//Lifeline=[Lifeline]
+		public Assignment getLifelineAssignment_0() { return cLifelineAssignment_0; }
+
+		//[Lifeline]
+		public CrossReference getLifelineLifelineCrossReference_0_0() { return cLifelineLifelineCrossReference_0_0; }
+
+		//ID
+		public RuleCall getLifelineLifelineIDTerminalRuleCall_0_0_1() { return cLifelineLifelineIDTerminalRuleCall_0_0_1; }
+
+		//messageType=("sync" | "async" | "response")
+		public Assignment getMessageTypeAssignment_1() { return cMessageTypeAssignment_1; }
+
+		//"sync" | "async" | "response"
+		public Alternatives getMessageTypeAlternatives_1_0() { return cMessageTypeAlternatives_1_0; }
+
+		//"sync"
+		public Keyword getMessageTypeSyncKeyword_1_0_0() { return cMessageTypeSyncKeyword_1_0_0; }
+
+		//"async"
+		public Keyword getMessageTypeAsyncKeyword_1_0_1() { return cMessageTypeAsyncKeyword_1_0_1; }
+
+		//"response"
+		public Keyword getMessageTypeResponseKeyword_1_0_2() { return cMessageTypeResponseKeyword_1_0_2; }
+
+		//"self"
+		public Keyword getSelfKeyword_2() { return cSelfKeyword_2; }
+
+		//message=STRING
+		public Assignment getMessageAssignment_3() { return cMessageAssignment_3; }
+
+		//STRING
+		public RuleCall getMessageSTRINGTerminalRuleCall_3_0() { return cMessageSTRINGTerminalRuleCall_3_0; }
+
+		//(startEndExec?="startEndExec" | startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)?
+		public Alternatives getAlternatives_4() { return cAlternatives_4; }
+
+		//startEndExec?="startEndExec"
+		public Assignment getStartEndExecAssignment_4_0() { return cStartEndExecAssignment_4_0; }
+
+		//"startEndExec"
+		public Keyword getStartEndExecStartEndExecKeyword_4_0_0() { return cStartEndExecStartEndExecKeyword_4_0_0; }
+
+		//startExec?="startExec"
+		public Assignment getStartExecAssignment_4_1() { return cStartExecAssignment_4_1; }
+
+		//"startExec"
+		public Keyword getStartExecStartExecKeyword_4_1_0() { return cStartExecStartExecKeyword_4_1_0; }
+
+		//endExec?="endExec" endExecCount=INT_GREATER_ZERO?
+		public Group getGroup_4_2() { return cGroup_4_2; }
+
+		//endExec?="endExec"
+		public Assignment getEndExecAssignment_4_2_0() { return cEndExecAssignment_4_2_0; }
+
+		//"endExec"
+		public Keyword getEndExecEndExecKeyword_4_2_0_0() { return cEndExecEndExecKeyword_4_2_0_0; }
+
+		//endExecCount=INT_GREATER_ZERO?
+		public Assignment getEndExecCountAssignment_4_2_1() { return cEndExecCountAssignment_4_2_1; }
+
+		//INT_GREATER_ZERO
+		public RuleCall getEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_2_1_0() { return cEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_2_1_0; }
 
 		//("note" note=STRING)?
 		public Group getGroup_5() { return cGroup_5; }
@@ -448,9 +595,6 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cNoteAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cNoteSTRINGTerminalRuleCall_2_0 = (RuleCall)cNoteAssignment_2.eContents().get(0);
 		
-		////OneLifelineEndBlock returns OneLifelineEndBlock:
-		////    Lifeline=[Lifeline|ID]
-		////    'endBlock' (endBlockCount=INT_GREATER_ZERO)?;
 		//OneLifelineNote:
 		//	Lifeline=[Lifeline] "note" note=STRING;
 		public ParserRule getRule() { return rule; }
@@ -711,6 +855,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	private final InteractionElements pInteraction;
 	private final TwoLifelineMessageElements pTwoLifelineMessage;
 	private final OneLifelineMessageElements pOneLifelineMessage;
+	private final SelfMessageElements pSelfMessage;
 	private final OneLifelineNoteElements pOneLifelineNote;
 	private final DestroyLifelineEventElements pDestroyLifelineEvent;
 	private final FragmentElements pFragment;
@@ -733,6 +878,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		this.pInteraction = new InteractionElements();
 		this.pTwoLifelineMessage = new TwoLifelineMessageElements();
 		this.pOneLifelineMessage = new OneLifelineMessageElements();
+		this.pSelfMessage = new SelfMessageElements();
 		this.pOneLifelineNote = new OneLifelineNoteElements();
 		this.pDestroyLifelineEvent = new DestroyLifelineEventElements();
 		this.pFragment = new FragmentElements();
@@ -793,8 +939,8 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Interaction:
-	//	TwoLifelineMessage //| OneLifelineEndBlock
-	//	| OneLifelineMessage | Fragment | OneLifelineNote | DestroyLifelineEvent | Refinement;
+	//	TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineNote | SelfMessage | DestroyLifelineEvent |
+	//	Refinement;
 	public InteractionElements getInteractionAccess() {
 		return pInteraction;
 	}
@@ -805,9 +951,10 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 
 	//TwoLifelineMessage:
 	//	sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
-	//	(sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec" sourceEndExecCount=INT_GREATER_ZERO?)?
-	//	(targetStartExec?="targetStartExec" | targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)?
-	//	("sourceNote" sourceNote=STRING)? ("targetNote" targetNote=STRING)?;
+	//	(sourceStartEndExec?="sourceStartEndExec" | sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec"
+	//	sourceEndExecCount=INT_GREATER_ZERO?)? (targetStartEndExec?="targetStartEndExec" | targetStartExec?="targetStartExec"
+	//	| targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)? ("sourceNote" sourceNote=STRING)?
+	//	("targetNote" targetNote=STRING)?;
 	public TwoLifelineMessageElements getTwoLifelineMessageAccess() {
 		return pTwoLifelineMessage;
 	}
@@ -817,8 +964,9 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//OneLifelineMessage:
-	//	Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") caption=STRING
-	//	(startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
+	//	Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") message=STRING
+	//	(startEndExec?="startEndExec" | startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note"
+	//	note=STRING)?;
 	public OneLifelineMessageElements getOneLifelineMessageAccess() {
 		return pOneLifelineMessage;
 	}
@@ -827,9 +975,17 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		return getOneLifelineMessageAccess().getRule();
 	}
 
-	////OneLifelineEndBlock returns OneLifelineEndBlock:
-	////    Lifeline=[Lifeline|ID]
-	////    'endBlock' (endBlockCount=INT_GREATER_ZERO)?;
+	//SelfMessage:
+	//	Lifeline=[Lifeline] messageType=("sync" | "async" | "response") "self" message=STRING (startEndExec?="startEndExec" |
+	//	startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
+	public SelfMessageElements getSelfMessageAccess() {
+		return pSelfMessage;
+	}
+	
+	public ParserRule getSelfMessageRule() {
+		return getSelfMessageAccess().getRule();
+	}
+
 	//OneLifelineNote:
 	//	Lifeline=[Lifeline] "note" note=STRING;
 	public OneLifelineNoteElements getOneLifelineNoteAccess() {

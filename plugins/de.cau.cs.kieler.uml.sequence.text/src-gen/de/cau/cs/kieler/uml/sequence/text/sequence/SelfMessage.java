@@ -5,29 +5,28 @@ package de.cau.cs.kieler.uml.sequence.text.sequence;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>One Lifeline Message</b></em>'.
+ * A representation of the model object '<em><b>Self Message</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getLifeline <em>Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageType <em>Message Type</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageTypeLostAndFound <em>Message Type Lost And Found</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessage <em>Message</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartEndExec <em>Start End Exec</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartExec <em>Start Exec</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndExec <em>End Exec</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getEndExecCount <em>End Exec Count</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getNote <em>Note</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getLifeline <em>Lifeline</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getMessageType <em>Message Type</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getMessage <em>Message</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isStartEndExec <em>Start End Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isStartExec <em>Start Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isEndExec <em>End Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getEndExecCount <em>End Exec Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getNote <em>Note</em>}</li>
  * </ul>
  * </p>
  *
- * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage()
+ * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getSelfMessage()
  * @model
  * @generated
  */
-public interface OneLifelineMessage extends Interaction
+public interface SelfMessage extends Interaction
 {
   /**
    * Returns the value of the '<em><b>Lifeline</b></em>' reference.
@@ -39,14 +38,14 @@ public interface OneLifelineMessage extends Interaction
    * <!-- end-user-doc -->
    * @return the value of the '<em>Lifeline</em>' reference.
    * @see #setLifeline(Lifeline)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_Lifeline()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getSelfMessage_Lifeline()
    * @model
    * @generated
    */
   Lifeline getLifeline();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getLifeline <em>Lifeline</em>}' reference.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getLifeline <em>Lifeline</em>}' reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Lifeline</em>' reference.
@@ -57,7 +56,6 @@ public interface OneLifelineMessage extends Interaction
 
   /**
    * Returns the value of the '<em><b>Message Type</b></em>' attribute.
-   * The literals are from the enumeration {@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageType}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Message Type</em>' attribute isn't clear,
@@ -65,50 +63,22 @@ public interface OneLifelineMessage extends Interaction
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Message Type</em>' attribute.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
-   * @see #setMessageType(MessageType)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_MessageType()
+   * @see #setMessageType(String)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getSelfMessage_MessageType()
    * @model
    * @generated
    */
-  MessageType getMessageType();
+  String getMessageType();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageType <em>Message Type</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getMessageType <em>Message Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Message Type</em>' attribute.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
    * @see #getMessageType()
    * @generated
    */
-  void setMessageType(MessageType value);
-
-  /**
-   * Returns the value of the '<em><b>Message Type Lost And Found</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Message Type Lost And Found</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Message Type Lost And Found</em>' attribute.
-   * @see #setMessageTypeLostAndFound(String)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_MessageTypeLostAndFound()
-   * @model
-   * @generated
-   */
-  String getMessageTypeLostAndFound();
-
-  /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessageTypeLostAndFound <em>Message Type Lost And Found</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Message Type Lost And Found</em>' attribute.
-   * @see #getMessageTypeLostAndFound()
-   * @generated
-   */
-  void setMessageTypeLostAndFound(String value);
+  void setMessageType(String value);
 
   /**
    * Returns the value of the '<em><b>Message</b></em>' attribute.
@@ -120,14 +90,14 @@ public interface OneLifelineMessage extends Interaction
    * <!-- end-user-doc -->
    * @return the value of the '<em>Message</em>' attribute.
    * @see #setMessage(String)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_Message()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getSelfMessage_Message()
    * @model
    * @generated
    */
   String getMessage();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessage <em>Message</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getMessage <em>Message</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Message</em>' attribute.
@@ -146,14 +116,14 @@ public interface OneLifelineMessage extends Interaction
    * <!-- end-user-doc -->
    * @return the value of the '<em>Start End Exec</em>' attribute.
    * @see #setStartEndExec(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_StartEndExec()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getSelfMessage_StartEndExec()
    * @model
    * @generated
    */
   boolean isStartEndExec();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartEndExec <em>Start End Exec</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isStartEndExec <em>Start End Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Start End Exec</em>' attribute.
@@ -172,14 +142,14 @@ public interface OneLifelineMessage extends Interaction
    * <!-- end-user-doc -->
    * @return the value of the '<em>Start Exec</em>' attribute.
    * @see #setStartExec(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_StartExec()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getSelfMessage_StartExec()
    * @model
    * @generated
    */
   boolean isStartExec();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartExec <em>Start Exec</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isStartExec <em>Start Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Start Exec</em>' attribute.
@@ -198,14 +168,14 @@ public interface OneLifelineMessage extends Interaction
    * <!-- end-user-doc -->
    * @return the value of the '<em>End Exec</em>' attribute.
    * @see #setEndExec(boolean)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_EndExec()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getSelfMessage_EndExec()
    * @model
    * @generated
    */
   boolean isEndExec();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isEndExec <em>End Exec</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isEndExec <em>End Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>End Exec</em>' attribute.
@@ -224,14 +194,14 @@ public interface OneLifelineMessage extends Interaction
    * <!-- end-user-doc -->
    * @return the value of the '<em>End Exec Count</em>' attribute.
    * @see #setEndExecCount(int)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_EndExecCount()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getSelfMessage_EndExecCount()
    * @model
    * @generated
    */
   int getEndExecCount();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getEndExecCount <em>End Exec Count</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getEndExecCount <em>End Exec Count</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>End Exec Count</em>' attribute.
@@ -250,14 +220,14 @@ public interface OneLifelineMessage extends Interaction
    * <!-- end-user-doc -->
    * @return the value of the '<em>Note</em>' attribute.
    * @see #setNote(String)
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getOneLifelineMessage_Note()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getSelfMessage_Note()
    * @model
    * @generated
    */
   String getNote();
 
   /**
-   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getNote <em>Note</em>}' attribute.
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getNote <em>Note</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Note</em>' attribute.
@@ -266,4 +236,4 @@ public interface OneLifelineMessage extends Interaction
    */
   void setNote(String value);
 
-} // OneLifelineMessage
+} // SelfMessage

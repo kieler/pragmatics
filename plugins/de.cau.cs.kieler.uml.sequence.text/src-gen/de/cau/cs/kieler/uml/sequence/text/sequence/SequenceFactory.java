@@ -68,6 +68,15 @@ public interface SequenceFactory extends EFactory
   OneLifelineMessage createOneLifelineMessage();
 
   /**
+   * Returns a new object of class '<em>Self Message</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Self Message</em>'.
+   * @generated
+   */
+  SelfMessage createSelfMessage();
+
+  /**
    * Returns a new object of class '<em>One Lifeline Note</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

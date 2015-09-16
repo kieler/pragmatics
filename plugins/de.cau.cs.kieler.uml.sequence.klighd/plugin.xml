@@ -48,7 +48,7 @@
                          <test
                                forcePluginActivation="false"
                                property="org.eclipse.core.resources.extension"
-                               value="sd">
+                               value="ksd">
                          </test>
                      </adapt>
                   </with>
@@ -62,7 +62,7 @@
                          <test
                                forcePluginActivation="false"
                                property="org.eclipse.core.resources.extension"
-                               value="sd">
+                               value="ksd">
                          </test>
                      </adapt>
                   </or>

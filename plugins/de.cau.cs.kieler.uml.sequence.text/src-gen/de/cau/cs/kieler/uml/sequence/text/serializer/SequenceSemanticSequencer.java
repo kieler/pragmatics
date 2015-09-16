@@ -9,6 +9,7 @@ import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Section;
+import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage;
@@ -80,6 +81,13 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 					return; 
 				}
 				else break;
+			case SequencePackage.SELF_MESSAGE:
+				if(context == grammarAccess.getInteractionRule() ||
+				   context == grammarAccess.getSelfMessageRule()) {
+					sequence_SelfMessage(context, (SelfMessage) semanticObject); 
+					return; 
+				}
+				else break;
 			case SequencePackage.SEQUENCE_DIAGRAM:
 				if(context == grammarAccess.getSequenceDiagramRule()) {
 					sequence_SequenceDiagram(context, (SequenceDiagram) semanticObject); 
@@ -137,8 +145,8 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *         Lifeline=[Lifeline|ID] 
 	 *         messageType=MessageType 
 	 *         (messageTypeLostAndFound='lost' | messageTypeLostAndFound='found') 
-	 *         caption=STRING 
-	 *         (startExec?='startExec' | (endExec?='endExec' endExecCount=INT_GREATER_ZERO?))? 
+	 *         message=STRING 
+	 *         (startEndExec?='startEndExec' | startExec?='startExec' | (endExec?='endExec' endExecCount=INT_GREATER_ZERO?))? 
 	 *         note=STRING?
 	 *     )
 	 */
@@ -186,6 +194,21 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	
 	/**
 	 * Constraint:
+	 *     (
+	 *         Lifeline=[Lifeline|ID] 
+	 *         (messageType='sync' | messageType='async' | messageType='response') 
+	 *         message=STRING 
+	 *         (startEndExec?='startEndExec' | startExec?='startExec' | (endExec?='endExec' endExecCount=INT_GREATER_ZERO?))? 
+	 *         note=STRING?
+	 *     )
+	 */
+	protected void sequence_SelfMessage(EObject context, SelfMessage semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (diagramName=STRING lifelines+=Lifeline* interactions+=Interaction*)
 	 */
 	protected void sequence_SequenceDiagram(EObject context, SequenceDiagram semanticObject) {
@@ -200,8 +223,16 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *         messageType=MessageType 
 	 *         message=STRING 
 	 *         targetLifeline=[Lifeline|ID] 
-	 *         (sourceStartExec?='sourceStartExec' | (sourceEndExec?='sourceEndExec' sourceEndExecCount=INT_GREATER_ZERO?))? 
-	 *         (targetStartExec?='targetStartExec' | (targetEndExec?='targetEndExec' targetEndExecCount=INT_GREATER_ZERO?))? 
+	 *         (
+	 *             sourceStartEndExec?='sourceStartEndExec' | 
+	 *             sourceStartExec?='sourceStartExec' | 
+	 *             (sourceEndExec?='sourceEndExec' sourceEndExecCount=INT_GREATER_ZERO?)
+	 *         )? 
+	 *         (
+	 *             targetStartEndExec?='targetStartEndExec' | 
+	 *             targetStartExec?='targetStartExec' | 
+	 *             (targetEndExec?='targetEndExec' targetEndExecCount=INT_GREATER_ZERO?)
+	 *         )? 
 	 *         sourceNote=STRING? 
 	 *         targetNote=STRING?
 	 *     )

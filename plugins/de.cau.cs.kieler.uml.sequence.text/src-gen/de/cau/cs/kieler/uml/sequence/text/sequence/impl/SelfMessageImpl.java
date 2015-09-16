@@ -3,8 +3,7 @@
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
-import de.cau.cs.kieler.uml.sequence.text.sequence.MessageType;
-import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
+import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -16,26 +15,25 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>One Lifeline Message</b></em>'.
+ * An implementation of the model object '<em><b>Self Message</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getLifeline <em>Lifeline</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getMessageType <em>Message Type</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getMessageTypeLostAndFound <em>Message Type Lost And Found</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getMessage <em>Message</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#isStartEndExec <em>Start End Exec</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#isStartExec <em>Start Exec</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#isEndExec <em>End Exec</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getEndExecCount <em>End Exec Count</em>}</li>
- *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl#getNote <em>Note</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl#getLifeline <em>Lifeline</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl#getMessageType <em>Message Type</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl#getMessage <em>Message</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl#isStartEndExec <em>Start End Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl#isStartExec <em>Start Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl#isEndExec <em>End Exec</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl#getEndExecCount <em>End Exec Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl#getNote <em>Note</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class OneLifelineMessageImpl extends InteractionImpl implements OneLifelineMessage
+public class SelfMessageImpl extends InteractionImpl implements SelfMessage
 {
   /**
    * The cached value of the '{@link #getLifeline() <em>Lifeline</em>}' reference.
@@ -55,7 +53,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * @generated
    * @ordered
    */
-  protected static final MessageType MESSAGE_TYPE_EDEFAULT = MessageType.ASYNC;
+  protected static final String MESSAGE_TYPE_EDEFAULT = null;
 
   /**
    * The cached value of the '{@link #getMessageType() <em>Message Type</em>}' attribute.
@@ -65,27 +63,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * @generated
    * @ordered
    */
-  protected MessageType messageType = MESSAGE_TYPE_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #getMessageTypeLostAndFound() <em>Message Type Lost And Found</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getMessageTypeLostAndFound()
-   * @generated
-   * @ordered
-   */
-  protected static final String MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getMessageTypeLostAndFound() <em>Message Type Lost And Found</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getMessageTypeLostAndFound()
-   * @generated
-   * @ordered
-   */
-  protected String messageTypeLostAndFound = MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT;
+  protected String messageType = MESSAGE_TYPE_EDEFAULT;
 
   /**
    * The default value of the '{@link #getMessage() <em>Message</em>}' attribute.
@@ -212,7 +190,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  protected OneLifelineMessageImpl()
+  protected SelfMessageImpl()
   {
     super();
   }
@@ -225,7 +203,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
   @Override
   protected EClass eStaticClass()
   {
-    return SequencePackage.Literals.ONE_LIFELINE_MESSAGE;
+    return SequencePackage.Literals.SELF_MESSAGE;
   }
 
   /**
@@ -242,7 +220,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
       if (lifeline != oldLifeline)
       {
         if (eNotificationRequired())
-          eNotify(new ENotificationImpl(this, Notification.RESOLVE, SequencePackage.ONE_LIFELINE_MESSAGE__LIFELINE, oldLifeline, lifeline));
+          eNotify(new ENotificationImpl(this, Notification.RESOLVE, SequencePackage.SELF_MESSAGE__LIFELINE, oldLifeline, lifeline));
       }
     }
     return lifeline;
@@ -268,7 +246,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     Lifeline oldLifeline = lifeline;
     lifeline = newLifeline;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__LIFELINE, oldLifeline, lifeline));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.SELF_MESSAGE__LIFELINE, oldLifeline, lifeline));
   }
 
   /**
@@ -276,7 +254,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public MessageType getMessageType()
+  public String getMessageType()
   {
     return messageType;
   }
@@ -286,35 +264,12 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setMessageType(MessageType newMessageType)
+  public void setMessageType(String newMessageType)
   {
-    MessageType oldMessageType = messageType;
-    messageType = newMessageType == null ? MESSAGE_TYPE_EDEFAULT : newMessageType;
+    String oldMessageType = messageType;
+    messageType = newMessageType;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE, oldMessageType, messageType));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String getMessageTypeLostAndFound()
-  {
-    return messageTypeLostAndFound;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setMessageTypeLostAndFound(String newMessageTypeLostAndFound)
-  {
-    String oldMessageTypeLostAndFound = messageTypeLostAndFound;
-    messageTypeLostAndFound = newMessageTypeLostAndFound;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND, oldMessageTypeLostAndFound, messageTypeLostAndFound));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.SELF_MESSAGE__MESSAGE_TYPE, oldMessageType, messageType));
   }
 
   /**
@@ -337,7 +292,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     String oldMessage = message;
     message = newMessage;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE, oldMessage, message));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.SELF_MESSAGE__MESSAGE, oldMessage, message));
   }
 
   /**
@@ -360,7 +315,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     boolean oldStartEndExec = startEndExec;
     startEndExec = newStartEndExec;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__START_END_EXEC, oldStartEndExec, startEndExec));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.SELF_MESSAGE__START_END_EXEC, oldStartEndExec, startEndExec));
   }
 
   /**
@@ -383,7 +338,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     boolean oldStartExec = startExec;
     startExec = newStartExec;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__START_EXEC, oldStartExec, startExec));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.SELF_MESSAGE__START_EXEC, oldStartExec, startExec));
   }
 
   /**
@@ -406,7 +361,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     boolean oldEndExec = endExec;
     endExec = newEndExec;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC, oldEndExec, endExec));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.SELF_MESSAGE__END_EXEC, oldEndExec, endExec));
   }
 
   /**
@@ -429,7 +384,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     int oldEndExecCount = endExecCount;
     endExecCount = newEndExecCount;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC_COUNT, oldEndExecCount, endExecCount));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.SELF_MESSAGE__END_EXEC_COUNT, oldEndExecCount, endExecCount));
   }
 
   /**
@@ -452,7 +407,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     String oldNote = note;
     note = newNote;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__NOTE, oldNote, note));
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.SELF_MESSAGE__NOTE, oldNote, note));
   }
 
   /**
@@ -465,24 +420,22 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
   {
     switch (featureID)
     {
-      case SequencePackage.ONE_LIFELINE_MESSAGE__LIFELINE:
+      case SequencePackage.SELF_MESSAGE__LIFELINE:
         if (resolve) return getLifeline();
         return basicGetLifeline();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
+      case SequencePackage.SELF_MESSAGE__MESSAGE_TYPE:
         return getMessageType();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND:
-        return getMessageTypeLostAndFound();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE:
+      case SequencePackage.SELF_MESSAGE__MESSAGE:
         return getMessage();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_END_EXEC:
+      case SequencePackage.SELF_MESSAGE__START_END_EXEC:
         return isStartEndExec();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_EXEC:
+      case SequencePackage.SELF_MESSAGE__START_EXEC:
         return isStartExec();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC:
+      case SequencePackage.SELF_MESSAGE__END_EXEC:
         return isEndExec();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC_COUNT:
+      case SequencePackage.SELF_MESSAGE__END_EXEC_COUNT:
         return getEndExecCount();
-      case SequencePackage.ONE_LIFELINE_MESSAGE__NOTE:
+      case SequencePackage.SELF_MESSAGE__NOTE:
         return getNote();
     }
     return super.eGet(featureID, resolve, coreType);
@@ -498,31 +451,28 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
   {
     switch (featureID)
     {
-      case SequencePackage.ONE_LIFELINE_MESSAGE__LIFELINE:
+      case SequencePackage.SELF_MESSAGE__LIFELINE:
         setLifeline((Lifeline)newValue);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
-        setMessageType((MessageType)newValue);
+      case SequencePackage.SELF_MESSAGE__MESSAGE_TYPE:
+        setMessageType((String)newValue);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND:
-        setMessageTypeLostAndFound((String)newValue);
-        return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE:
+      case SequencePackage.SELF_MESSAGE__MESSAGE:
         setMessage((String)newValue);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_END_EXEC:
+      case SequencePackage.SELF_MESSAGE__START_END_EXEC:
         setStartEndExec((Boolean)newValue);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_EXEC:
+      case SequencePackage.SELF_MESSAGE__START_EXEC:
         setStartExec((Boolean)newValue);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC:
+      case SequencePackage.SELF_MESSAGE__END_EXEC:
         setEndExec((Boolean)newValue);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC_COUNT:
+      case SequencePackage.SELF_MESSAGE__END_EXEC_COUNT:
         setEndExecCount((Integer)newValue);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__NOTE:
+      case SequencePackage.SELF_MESSAGE__NOTE:
         setNote((String)newValue);
         return;
     }
@@ -539,31 +489,28 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
   {
     switch (featureID)
     {
-      case SequencePackage.ONE_LIFELINE_MESSAGE__LIFELINE:
+      case SequencePackage.SELF_MESSAGE__LIFELINE:
         setLifeline((Lifeline)null);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
+      case SequencePackage.SELF_MESSAGE__MESSAGE_TYPE:
         setMessageType(MESSAGE_TYPE_EDEFAULT);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND:
-        setMessageTypeLostAndFound(MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT);
-        return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE:
+      case SequencePackage.SELF_MESSAGE__MESSAGE:
         setMessage(MESSAGE_EDEFAULT);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_END_EXEC:
+      case SequencePackage.SELF_MESSAGE__START_END_EXEC:
         setStartEndExec(START_END_EXEC_EDEFAULT);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_EXEC:
+      case SequencePackage.SELF_MESSAGE__START_EXEC:
         setStartExec(START_EXEC_EDEFAULT);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC:
+      case SequencePackage.SELF_MESSAGE__END_EXEC:
         setEndExec(END_EXEC_EDEFAULT);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC_COUNT:
+      case SequencePackage.SELF_MESSAGE__END_EXEC_COUNT:
         setEndExecCount(END_EXEC_COUNT_EDEFAULT);
         return;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__NOTE:
+      case SequencePackage.SELF_MESSAGE__NOTE:
         setNote(NOTE_EDEFAULT);
         return;
     }
@@ -580,23 +527,21 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
   {
     switch (featureID)
     {
-      case SequencePackage.ONE_LIFELINE_MESSAGE__LIFELINE:
+      case SequencePackage.SELF_MESSAGE__LIFELINE:
         return lifeline != null;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
-        return messageType != MESSAGE_TYPE_EDEFAULT;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND:
-        return MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT == null ? messageTypeLostAndFound != null : !MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT.equals(messageTypeLostAndFound);
-      case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE:
+      case SequencePackage.SELF_MESSAGE__MESSAGE_TYPE:
+        return MESSAGE_TYPE_EDEFAULT == null ? messageType != null : !MESSAGE_TYPE_EDEFAULT.equals(messageType);
+      case SequencePackage.SELF_MESSAGE__MESSAGE:
         return MESSAGE_EDEFAULT == null ? message != null : !MESSAGE_EDEFAULT.equals(message);
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_END_EXEC:
+      case SequencePackage.SELF_MESSAGE__START_END_EXEC:
         return startEndExec != START_END_EXEC_EDEFAULT;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__START_EXEC:
+      case SequencePackage.SELF_MESSAGE__START_EXEC:
         return startExec != START_EXEC_EDEFAULT;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC:
+      case SequencePackage.SELF_MESSAGE__END_EXEC:
         return endExec != END_EXEC_EDEFAULT;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__END_EXEC_COUNT:
+      case SequencePackage.SELF_MESSAGE__END_EXEC_COUNT:
         return endExecCount != END_EXEC_COUNT_EDEFAULT;
-      case SequencePackage.ONE_LIFELINE_MESSAGE__NOTE:
+      case SequencePackage.SELF_MESSAGE__NOTE:
         return NOTE_EDEFAULT == null ? note != null : !NOTE_EDEFAULT.equals(note);
     }
     return super.eIsSet(featureID);
@@ -615,8 +560,6 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (messageType: ");
     result.append(messageType);
-    result.append(", messageTypeLostAndFound: ");
-    result.append(messageTypeLostAndFound);
     result.append(", message: ");
     result.append(message);
     result.append(", startEndExec: ");
@@ -633,4 +576,4 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
     return result.toString();
   }
 
-} //OneLifelineMessageImpl
+} //SelfMessageImpl

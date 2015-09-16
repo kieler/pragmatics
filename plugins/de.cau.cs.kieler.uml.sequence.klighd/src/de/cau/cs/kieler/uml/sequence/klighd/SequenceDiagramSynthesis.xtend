@@ -46,6 +46,7 @@ import java.util.Stack
 import javax.inject.Inject
 import java.util.List
 import com.google.common.collect.Lists
+import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage
 
 class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram> {
 
@@ -102,7 +103,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         surrInteraction.addLayoutParam(SequenceDiagramProperties.AREA_HEADER, 45)
 //        surrInteraction.addLayoutParam(LayoutOptions.MIN_HEIGHT, 100f)
 //        surrInteraction.addLayoutParam(LayoutOptions.MIN_WIDTH, 100f)
-
         switch LIFELINESORTING.objectValue {
             case "Layer Based":
                 surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_SORTING,
@@ -125,15 +125,15 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         var KContainerRendering surrInteractionRect = null
         switch STYLE.objectValue {
             case "Stylish": {
-                surrInteractionRect = surrInteraction.setNodeSize(100,100).addRoundedRectangle(10, 10, 2)
+                surrInteractionRect = surrInteraction.setNodeSize(100, 100).addRoundedRectangle(10, 10, 2)
                 surrInteractionRect.setShadow(Colors.BLACK, 10)
             }
             case "Hello Kitty": {
-                surrInteractionRect = surrInteraction.setNodeSize(100,100).addRoundedRectangle(10, 10, 2)
+                surrInteractionRect = surrInteraction.setNodeSize(100, 100).addRoundedRectangle(10, 10, 2)
                 surrInteractionRect.setShadow(Colors.PURPLE, 10)
             }
             default: {
-                surrInteractionRect = surrInteraction.setNodeSize(100,100).addRectangle
+                surrInteractionRect = surrInteraction.setNodeSize(100, 100).addRectangle
             }
         }
 
@@ -233,30 +233,30 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val source = msg.sourceLifeline
         val target = msg.targetLifeline
         label.configureCenterEdgeLabel(labelText, TEXTSIZE.intValue, KlighdConstants.DEFAULT_FONT_NAME)
-        
+
         transEdge.source = lifelineNodes.get(source.name)
         transEdge.target = lifelineNodes.get(target.name)
-        
+
         edgeCount(transEdge)
-        
+
         if (msg.sourceNote != null) {
             transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
             createNote(source, msg.sourceNote)
         }
-        
+
         if (msg.targetNote != null) {
             transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
             createNote(target, msg.targetNote)
         }
 
-        if (msg.sourceStartExec) {
+        if (msg.sourceStartExec || msg.sourceStartEndExec) {
             createExecution(source)
         }
 
-        if (msg.targetStartExec) {
+        if (msg.targetStartExec || msg.targetStartEndExec) {
             createExecution(target)
         }
-        
+
 //        if (msg.sourceStartEndExec) {
 //            
 //        }
@@ -264,35 +264,32 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 //        if (msg.targetStartEndExex) {
 //            
 //        }
-
         if (elementIdOnLifeline.containsKey(source.name)) {
             val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(source.name))
-            
-            transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS,
-                executionList)
+
+            transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS, executionList)
         }
 
         if (elementIdOnLifeline.containsKey(target.name)) {
             val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(target.name))
-            
-            transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_IDS,
-                executionList)
+
+            transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_IDS, executionList)
         }
 
-        if (msg.sourceEndExec) {
+        if (msg.sourceEndExec || msg.sourceStartEndExec) {
             endExecution(source, msg.sourceEndExecCount)
         }
 
-        if (msg.targetEndExec) {
+        if (msg.targetEndExec || msg.targetStartEndExec) {
             endExecution(target, msg.targetEndExecCount)
         }
 
         if (msg.eContainer instanceof Section) {
-            val list = new ArrayList 
+            val list = new ArrayList
             list.add(fragmentList.last)
             transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
         }
-        
+
         return transEdge
     }
 
@@ -300,43 +297,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val transEdge = msg.createEdge().associateWith(msg)
         transEdge.setMessageRendering(msg.messageTypeLostAndFound.toString)
 
-        edgeCount(transEdge)
-        
-        if (msg.note != null) {
-            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
-        }
-
-        if (msg.startExec) {
-//            if (msg.messageTypeLostAndFound.equals("lost")) {
-            createExecution(msg.lifeline)
-//            } else {
-//            }
-        }
-
-        if (elementIdOnLifeline.containsKey(msg.lifeline.name)) {
-            if (msg.messageTypeLostAndFound.equals("lost")) {
-                val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(msg.lifeline.name))
-                
-                transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS,
-                    executionList)
-            } else {
-                val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(msg.lifeline.name))
-                
-                transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_IDS,
-                    executionList)
-            }
-        }
-
-        if (msg.endExec) {
-//            if (msg.messageTypeLostAndFound.equals("lost")) {
-            endExecution(msg.lifeline, msg.endExecCount)
-//            } else {
-//            }
-        }
         val label = KimlUtil.createInitializedLabel(transEdge)
 
-        val labelText = msg.caption
-        label.configureCenterEdgeLabel(labelText, KlighdConstants.DEFAULT_FONT_SIZE, KlighdConstants.DEFAULT_FONT_NAME)
+        val labelText = msg.message
+        label.configureCenterEdgeLabel(labelText, TEXTSIZE.intValue, KlighdConstants.DEFAULT_FONT_NAME)
         transEdge.addPolyline(2).addHeadArrowDecorator()
 
         val dummyNode = KimlUtil.createInitializedNode()
@@ -353,6 +317,94 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             dummyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.FOUND_MESSAGE_SOURCE)
         }
 
+        edgeCount(transEdge)
+
+        if (msg.note != null) {
+            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
+            createNote(msg.lifeline, msg.note)
+        }
+
+        if (msg.startExec || msg.startEndExec) {
+//            if (msg.messageTypeLostAndFound.equals("lost")) {
+            createExecution(msg.lifeline)
+//            } else {
+//            }
+        }
+
+        if (elementIdOnLifeline.containsKey(msg.lifeline.name)) {
+            if (msg.messageTypeLostAndFound.equals("lost")) {
+                val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(msg.lifeline.name))
+
+                transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS, executionList)
+            } else {
+                val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(msg.lifeline.name))
+
+                transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_IDS, executionList)
+            }
+        }
+
+        if (msg.endExec || msg.startEndExec) {
+//            if (msg.messageTypeLostAndFound.equals("lost")) {
+            endExecution(msg.lifeline, msg.endExecCount)
+//            } else {
+//            }
+        }
+
+//        if (msg.messageTypeLostAndFound.equals("lost")) {
+//            System.out.println("lost " + msg.eContainer)
+//        } else {
+//            System.out.println("found " + msg.eContainer)
+//        }
+
+        if (msg.eContainer instanceof Section) {
+            //System.out.println("bla")
+            val list = new ArrayList
+            list.add(fragmentList.last)
+            transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+        }
+
+        return transEdge
+    }
+
+    private def dispatch KEdge transformInteraction(SelfMessage msg) {
+        val transEdge = msg.createEdge().associateWith(msg)
+        transEdge.setMessageRendering(msg.messageType.toString)
+
+        val label = KimlUtil.createInitializedLabel(transEdge)
+
+        val labelText = msg.message
+        label.configureCenterEdgeLabel(labelText, TEXTSIZE.intValue, KlighdConstants.DEFAULT_FONT_NAME)
+
+        transEdge.source = lifelineNodes.get(msg.lifeline.name)
+        transEdge.target = lifelineNodes.get(msg.lifeline.name)
+
+        edgeCount(transEdge)
+
+        if (msg.note != null) {
+            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
+            createNote(msg.lifeline, msg.note)
+        }
+
+        if (msg.startExec || msg.startEndExec) {
+            createExecution(msg.lifeline)
+        }
+
+        if (elementIdOnLifeline.containsKey(msg.lifeline.name)) {
+            val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(msg.lifeline.name))
+
+            transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS, executionList)
+        }
+
+        if (msg.endExec || msg.startEndExec) {
+            endExecution(msg.lifeline, msg.endExecCount)
+        }
+
+        if (msg.eContainer instanceof Section) {
+            val list = new ArrayList
+            list.add(fragmentList.last)
+            transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+        }
+
         return transEdge
     }
 
@@ -360,9 +412,9 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         // TODO maybe remove
         val noteNode = note.createNode().associateWith(note)
         noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)
-        
+
         surroundingInteraction.children.add(noteNode)
-        
+
         val noteRect = noteNode.addRectangle()
         noteRect.addText(note.note).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
 
@@ -373,7 +425,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val destroyNode = destroy.createNode().associateWith(destroy)
         destroyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.DESTRUCTION_EVENT)
 
-        val destroyRect = destroyNode.setNodeSize(20,20).addRectangle().foregroundInvisible = true
+        val destroyRect = destroyNode.setNodeSize(20, 20).addRectangle().foregroundInvisible = true
 
         val whiteBackgroundRect = destroyRect.addRectangle.foregroundInvisible = true
         whiteBackgroundRect.setGridPlacementData.from(LEFT, 0, 0, TOP, 0, 0.5f).to(RIGHT, 0, 0, BOTTOM, -2, 0).
@@ -396,11 +448,11 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         } else {
             fragNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.INTERACTION_USE)
         }
-        
+
         elementId += 1
-        
+
         fragmentList.add(elementId)
-        
+
         fragNode.addLayoutParam(SequenceDiagramProperties.ELEMENT_ID, elementId)
 
         surroundingInteraction.children.add(fragNode)
@@ -549,13 +601,13 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             elementIdOnLifeline.remove(l.name)
         }
     }
-    
+
     private def KNode createNote(Lifeline l, String note) {
         val noteNode = createNode()
         noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)
-        
+
         surroundingInteraction.children.add(noteNode)
-        
+
         val noteRect = noteNode.addRectangle()
         noteRect.addText(note).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
 

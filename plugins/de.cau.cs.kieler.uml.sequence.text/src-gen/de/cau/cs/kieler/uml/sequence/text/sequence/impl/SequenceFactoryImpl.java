@@ -70,6 +70,7 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
       case SequencePackage.INTERACTION: return createInteraction();
       case SequencePackage.TWO_LIFELINE_MESSAGE: return createTwoLifelineMessage();
       case SequencePackage.ONE_LIFELINE_MESSAGE: return createOneLifelineMessage();
+      case SequencePackage.SELF_MESSAGE: return createSelfMessage();
       case SequencePackage.ONE_LIFELINE_NOTE: return createOneLifelineNote();
       case SequencePackage.DESTROY_LIFELINE_EVENT: return createDestroyLifelineEvent();
       case SequencePackage.FRAGMENT: return createFragment();
@@ -167,6 +168,17 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
   {
     OneLifelineMessageImpl oneLifelineMessage = new OneLifelineMessageImpl();
     return oneLifelineMessage;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public SelfMessage createSelfMessage()
+  {
+    SelfMessageImpl selfMessage = new SelfMessageImpl();
+    return selfMessage;
   }
 
   /**

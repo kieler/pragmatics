@@ -11,6 +11,7 @@ import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Section;
+import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceFactory;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
@@ -66,6 +67,13 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * @generated
    */
   private EClass oneLifelineMessageEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass selfMessageEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -317,7 +325,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_SourceStartExec()
+  public EAttribute getTwoLifelineMessage_SourceStartEndExec()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(4);
   }
@@ -327,7 +335,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_SourceEndExec()
+  public EAttribute getTwoLifelineMessage_SourceStartExec()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(5);
   }
@@ -337,7 +345,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_SourceEndExecCount()
+  public EAttribute getTwoLifelineMessage_SourceEndExec()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(6);
   }
@@ -347,7 +355,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_TargetStartExec()
+  public EAttribute getTwoLifelineMessage_SourceEndExecCount()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(7);
   }
@@ -357,7 +365,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_TargetEndExec()
+  public EAttribute getTwoLifelineMessage_TargetStartEndExec()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(8);
   }
@@ -367,7 +375,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_TargetEndExecCount()
+  public EAttribute getTwoLifelineMessage_TargetStartExec()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(9);
   }
@@ -377,7 +385,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_SourceNote()
+  public EAttribute getTwoLifelineMessage_TargetEndExec()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(10);
   }
@@ -387,9 +395,29 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getTwoLifelineMessage_TargetNote()
+  public EAttribute getTwoLifelineMessage_TargetEndExecCount()
   {
     return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(11);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getTwoLifelineMessage_SourceNote()
+  {
+    return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getTwoLifelineMessage_TargetNote()
+  {
+    return (EAttribute)twoLifelineMessageEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -437,7 +465,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineMessage_Caption()
+  public EAttribute getOneLifelineMessage_Message()
   {
     return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(3);
   }
@@ -447,7 +475,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineMessage_StartExec()
+  public EAttribute getOneLifelineMessage_StartEndExec()
   {
     return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(4);
   }
@@ -457,7 +485,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineMessage_EndExec()
+  public EAttribute getOneLifelineMessage_StartExec()
   {
     return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(5);
   }
@@ -467,7 +495,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineMessage_EndExecCount()
+  public EAttribute getOneLifelineMessage_EndExec()
   {
     return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(6);
   }
@@ -477,9 +505,109 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getOneLifelineMessage_Note()
+  public EAttribute getOneLifelineMessage_EndExecCount()
   {
     return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getOneLifelineMessage_Note()
+  {
+    return (EAttribute)oneLifelineMessageEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getSelfMessage()
+  {
+    return selfMessageEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getSelfMessage_Lifeline()
+  {
+    return (EReference)selfMessageEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getSelfMessage_MessageType()
+  {
+    return (EAttribute)selfMessageEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getSelfMessage_Message()
+  {
+    return (EAttribute)selfMessageEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getSelfMessage_StartEndExec()
+  {
+    return (EAttribute)selfMessageEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getSelfMessage_StartExec()
+  {
+    return (EAttribute)selfMessageEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getSelfMessage_EndExec()
+  {
+    return (EAttribute)selfMessageEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getSelfMessage_EndExecCount()
+  {
+    return (EAttribute)selfMessageEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getSelfMessage_Note()
+  {
+    return (EAttribute)selfMessageEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -679,9 +807,11 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__MESSAGE_TYPE);
     createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__MESSAGE);
     createEReference(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__TARGET_LIFELINE);
+    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__SOURCE_START_END_EXEC);
     createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC);
     createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC);
     createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT);
+    createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__TARGET_START_END_EXEC);
     createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__TARGET_START_EXEC);
     createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__TARGET_END_EXEC);
     createEAttribute(twoLifelineMessageEClass, TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT);
@@ -692,11 +822,22 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     createEReference(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__LIFELINE);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__MESSAGE_TYPE);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND);
-    createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__CAPTION);
+    createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__MESSAGE);
+    createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__START_END_EXEC);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__START_EXEC);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__END_EXEC);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__END_EXEC_COUNT);
     createEAttribute(oneLifelineMessageEClass, ONE_LIFELINE_MESSAGE__NOTE);
+
+    selfMessageEClass = createEClass(SELF_MESSAGE);
+    createEReference(selfMessageEClass, SELF_MESSAGE__LIFELINE);
+    createEAttribute(selfMessageEClass, SELF_MESSAGE__MESSAGE_TYPE);
+    createEAttribute(selfMessageEClass, SELF_MESSAGE__MESSAGE);
+    createEAttribute(selfMessageEClass, SELF_MESSAGE__START_END_EXEC);
+    createEAttribute(selfMessageEClass, SELF_MESSAGE__START_EXEC);
+    createEAttribute(selfMessageEClass, SELF_MESSAGE__END_EXEC);
+    createEAttribute(selfMessageEClass, SELF_MESSAGE__END_EXEC_COUNT);
+    createEAttribute(selfMessageEClass, SELF_MESSAGE__NOTE);
 
     oneLifelineNoteEClass = createEClass(ONE_LIFELINE_NOTE);
     createEReference(oneLifelineNoteEClass, ONE_LIFELINE_NOTE__LIFELINE);
@@ -752,6 +893,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     // Add supertypes to classes
     twoLifelineMessageEClass.getESuperTypes().add(this.getInteraction());
     oneLifelineMessageEClass.getESuperTypes().add(this.getInteraction());
+    selfMessageEClass.getESuperTypes().add(this.getInteraction());
     oneLifelineNoteEClass.getESuperTypes().add(this.getInteraction());
     destroyLifelineEventEClass.getESuperTypes().add(this.getInteraction());
     fragmentEClass.getESuperTypes().add(this.getInteraction());
@@ -775,9 +917,11 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     initEAttribute(getTwoLifelineMessage_MessageType(), this.getMessageType(), "messageType", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTwoLifelineMessage_Message(), ecorePackage.getEString(), "message", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getTwoLifelineMessage_TargetLifeline(), this.getLifeline(), null, "targetLifeline", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTwoLifelineMessage_SourceStartEndExec(), ecorePackage.getEBoolean(), "sourceStartEndExec", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTwoLifelineMessage_SourceStartExec(), ecorePackage.getEBoolean(), "sourceStartExec", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTwoLifelineMessage_SourceEndExec(), ecorePackage.getEBoolean(), "sourceEndExec", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTwoLifelineMessage_SourceEndExecCount(), ecorePackage.getEInt(), "sourceEndExecCount", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getTwoLifelineMessage_TargetStartEndExec(), ecorePackage.getEBoolean(), "targetStartEndExec", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTwoLifelineMessage_TargetStartExec(), ecorePackage.getEBoolean(), "targetStartExec", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTwoLifelineMessage_TargetEndExec(), ecorePackage.getEBoolean(), "targetEndExec", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTwoLifelineMessage_TargetEndExecCount(), ecorePackage.getEInt(), "targetEndExecCount", null, 0, 1, TwoLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -788,11 +932,22 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     initEReference(getOneLifelineMessage_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_MessageType(), this.getMessageType(), "messageType", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_MessageTypeLostAndFound(), ecorePackage.getEString(), "messageTypeLostAndFound", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getOneLifelineMessage_Caption(), ecorePackage.getEString(), "caption", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getOneLifelineMessage_Message(), ecorePackage.getEString(), "message", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getOneLifelineMessage_StartEndExec(), ecorePackage.getEBoolean(), "startEndExec", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_StartExec(), ecorePackage.getEBoolean(), "startExec", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_EndExec(), ecorePackage.getEBoolean(), "endExec", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_EndExecCount(), ecorePackage.getEInt(), "endExecCount", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_Note(), ecorePackage.getEString(), "note", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(selfMessageEClass, SelfMessage.class, "SelfMessage", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getSelfMessage_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, SelfMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSelfMessage_MessageType(), ecorePackage.getEString(), "messageType", null, 0, 1, SelfMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSelfMessage_Message(), ecorePackage.getEString(), "message", null, 0, 1, SelfMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSelfMessage_StartEndExec(), ecorePackage.getEBoolean(), "startEndExec", null, 0, 1, SelfMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSelfMessage_StartExec(), ecorePackage.getEBoolean(), "startExec", null, 0, 1, SelfMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSelfMessage_EndExec(), ecorePackage.getEBoolean(), "endExec", null, 0, 1, SelfMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSelfMessage_EndExecCount(), ecorePackage.getEInt(), "endExecCount", null, 0, 1, SelfMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getSelfMessage_Note(), ecorePackage.getEString(), "note", null, 0, 1, SelfMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(oneLifelineNoteEClass, OneLifelineNote.class, "OneLifelineNote", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getOneLifelineNote_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, OneLifelineNote.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

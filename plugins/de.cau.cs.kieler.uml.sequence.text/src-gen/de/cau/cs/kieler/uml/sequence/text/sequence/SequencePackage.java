@@ -215,13 +215,22 @@ public interface SequencePackage extends EPackage
   int TWO_LIFELINE_MESSAGE__TARGET_LIFELINE = INTERACTION_FEATURE_COUNT + 3;
 
   /**
+   * The feature id for the '<em><b>Source Start End Exec</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TWO_LIFELINE_MESSAGE__SOURCE_START_END_EXEC = INTERACTION_FEATURE_COUNT + 4;
+
+  /**
    * The feature id for the '<em><b>Source Start Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC = INTERACTION_FEATURE_COUNT + 4;
+  int TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC = INTERACTION_FEATURE_COUNT + 5;
 
   /**
    * The feature id for the '<em><b>Source End Exec</b></em>' attribute.
@@ -230,7 +239,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC = INTERACTION_FEATURE_COUNT + 5;
+  int TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC = INTERACTION_FEATURE_COUNT + 6;
 
   /**
    * The feature id for the '<em><b>Source End Exec Count</b></em>' attribute.
@@ -239,7 +248,16 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT = INTERACTION_FEATURE_COUNT + 6;
+  int TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT = INTERACTION_FEATURE_COUNT + 7;
+
+  /**
+   * The feature id for the '<em><b>Target Start End Exec</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TWO_LIFELINE_MESSAGE__TARGET_START_END_EXEC = INTERACTION_FEATURE_COUNT + 8;
 
   /**
    * The feature id for the '<em><b>Target Start Exec</b></em>' attribute.
@@ -248,7 +266,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__TARGET_START_EXEC = INTERACTION_FEATURE_COUNT + 7;
+  int TWO_LIFELINE_MESSAGE__TARGET_START_EXEC = INTERACTION_FEATURE_COUNT + 9;
 
   /**
    * The feature id for the '<em><b>Target End Exec</b></em>' attribute.
@@ -257,7 +275,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__TARGET_END_EXEC = INTERACTION_FEATURE_COUNT + 8;
+  int TWO_LIFELINE_MESSAGE__TARGET_END_EXEC = INTERACTION_FEATURE_COUNT + 10;
 
   /**
    * The feature id for the '<em><b>Target End Exec Count</b></em>' attribute.
@@ -266,7 +284,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT = INTERACTION_FEATURE_COUNT + 9;
+  int TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT = INTERACTION_FEATURE_COUNT + 11;
 
   /**
    * The feature id for the '<em><b>Source Note</b></em>' attribute.
@@ -275,7 +293,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__SOURCE_NOTE = INTERACTION_FEATURE_COUNT + 10;
+  int TWO_LIFELINE_MESSAGE__SOURCE_NOTE = INTERACTION_FEATURE_COUNT + 12;
 
   /**
    * The feature id for the '<em><b>Target Note</b></em>' attribute.
@@ -284,7 +302,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE__TARGET_NOTE = INTERACTION_FEATURE_COUNT + 11;
+  int TWO_LIFELINE_MESSAGE__TARGET_NOTE = INTERACTION_FEATURE_COUNT + 13;
 
   /**
    * The number of structural features of the '<em>Two Lifeline Message</em>' class.
@@ -293,7 +311,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int TWO_LIFELINE_MESSAGE_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 12;
+  int TWO_LIFELINE_MESSAGE_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 14;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineMessageImpl <em>One Lifeline Message</em>}' class.
@@ -333,13 +351,22 @@ public interface SequencePackage extends EPackage
   int ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND = INTERACTION_FEATURE_COUNT + 2;
 
   /**
-   * The feature id for the '<em><b>Caption</b></em>' attribute.
+   * The feature id for the '<em><b>Message</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__CAPTION = INTERACTION_FEATURE_COUNT + 3;
+  int ONE_LIFELINE_MESSAGE__MESSAGE = INTERACTION_FEATURE_COUNT + 3;
+
+  /**
+   * The feature id for the '<em><b>Start End Exec</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ONE_LIFELINE_MESSAGE__START_END_EXEC = INTERACTION_FEATURE_COUNT + 4;
 
   /**
    * The feature id for the '<em><b>Start Exec</b></em>' attribute.
@@ -348,7 +375,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__START_EXEC = INTERACTION_FEATURE_COUNT + 4;
+  int ONE_LIFELINE_MESSAGE__START_EXEC = INTERACTION_FEATURE_COUNT + 5;
 
   /**
    * The feature id for the '<em><b>End Exec</b></em>' attribute.
@@ -357,7 +384,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__END_EXEC = INTERACTION_FEATURE_COUNT + 5;
+  int ONE_LIFELINE_MESSAGE__END_EXEC = INTERACTION_FEATURE_COUNT + 6;
 
   /**
    * The feature id for the '<em><b>End Exec Count</b></em>' attribute.
@@ -366,7 +393,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__END_EXEC_COUNT = INTERACTION_FEATURE_COUNT + 6;
+  int ONE_LIFELINE_MESSAGE__END_EXEC_COUNT = INTERACTION_FEATURE_COUNT + 7;
 
   /**
    * The feature id for the '<em><b>Note</b></em>' attribute.
@@ -375,7 +402,7 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE__NOTE = INTERACTION_FEATURE_COUNT + 7;
+  int ONE_LIFELINE_MESSAGE__NOTE = INTERACTION_FEATURE_COUNT + 8;
 
   /**
    * The number of structural features of the '<em>One Lifeline Message</em>' class.
@@ -384,7 +411,98 @@ public interface SequencePackage extends EPackage
    * @generated
    * @ordered
    */
-  int ONE_LIFELINE_MESSAGE_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 8;
+  int ONE_LIFELINE_MESSAGE_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 9;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl <em>Self Message</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getSelfMessage()
+   * @generated
+   */
+  int SELF_MESSAGE = 5;
+
+  /**
+   * The feature id for the '<em><b>Lifeline</b></em>' reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELF_MESSAGE__LIFELINE = INTERACTION_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Message Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELF_MESSAGE__MESSAGE_TYPE = INTERACTION_FEATURE_COUNT + 1;
+
+  /**
+   * The feature id for the '<em><b>Message</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELF_MESSAGE__MESSAGE = INTERACTION_FEATURE_COUNT + 2;
+
+  /**
+   * The feature id for the '<em><b>Start End Exec</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELF_MESSAGE__START_END_EXEC = INTERACTION_FEATURE_COUNT + 3;
+
+  /**
+   * The feature id for the '<em><b>Start Exec</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELF_MESSAGE__START_EXEC = INTERACTION_FEATURE_COUNT + 4;
+
+  /**
+   * The feature id for the '<em><b>End Exec</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELF_MESSAGE__END_EXEC = INTERACTION_FEATURE_COUNT + 5;
+
+  /**
+   * The feature id for the '<em><b>End Exec Count</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELF_MESSAGE__END_EXEC_COUNT = INTERACTION_FEATURE_COUNT + 6;
+
+  /**
+   * The feature id for the '<em><b>Note</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELF_MESSAGE__NOTE = INTERACTION_FEATURE_COUNT + 7;
+
+  /**
+   * The number of structural features of the '<em>Self Message</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SELF_MESSAGE_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 8;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineNoteImpl <em>One Lifeline Note</em>}' class.
@@ -394,7 +512,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getOneLifelineNote()
    * @generated
    */
-  int ONE_LIFELINE_NOTE = 5;
+  int ONE_LIFELINE_NOTE = 6;
 
   /**
    * The feature id for the '<em><b>Lifeline</b></em>' reference.
@@ -431,7 +549,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getDestroyLifelineEvent()
    * @generated
    */
-  int DESTROY_LIFELINE_EVENT = 6;
+  int DESTROY_LIFELINE_EVENT = 7;
 
   /**
    * The feature id for the '<em><b>Lifeline</b></em>' reference.
@@ -459,7 +577,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getFragment()
    * @generated
    */
-  int FRAGMENT = 7;
+  int FRAGMENT = 8;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -496,7 +614,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getSection()
    * @generated
    */
-  int SECTION = 8;
+  int SECTION = 9;
 
   /**
    * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -533,7 +651,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getRefinement()
    * @generated
    */
-  int REFINEMENT = 9;
+  int REFINEMENT = 10;
 
   /**
    * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -570,7 +688,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageType()
    * @generated
    */
-  int MESSAGE_TYPE = 10;
+  int MESSAGE_TYPE = 11;
 
 
   /**
@@ -724,6 +842,17 @@ public interface SequencePackage extends EPackage
   EReference getTwoLifelineMessage_TargetLifeline();
 
   /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartEndExec <em>Source Start End Exec</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Source Start End Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartEndExec()
+   * @see #getTwoLifelineMessage()
+   * @generated
+   */
+  EAttribute getTwoLifelineMessage_SourceStartEndExec();
+
+  /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartExec <em>Source Start Exec</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -755,6 +884,17 @@ public interface SequencePackage extends EPackage
    * @generated
    */
   EAttribute getTwoLifelineMessage_SourceEndExecCount();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartEndExec <em>Target Start End Exec</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Target Start End Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartEndExec()
+   * @see #getTwoLifelineMessage()
+   * @generated
+   */
+  EAttribute getTwoLifelineMessage_TargetStartEndExec();
 
   /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartExec <em>Target Start Exec</em>}'.
@@ -855,15 +995,26 @@ public interface SequencePackage extends EPackage
   EAttribute getOneLifelineMessage_MessageTypeLostAndFound();
 
   /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getCaption <em>Caption</em>}'.
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessage <em>Message</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Caption</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getCaption()
+   * @return the meta object for the attribute '<em>Message</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#getMessage()
    * @see #getOneLifelineMessage()
    * @generated
    */
-  EAttribute getOneLifelineMessage_Caption();
+  EAttribute getOneLifelineMessage_Message();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartEndExec <em>Start End Exec</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Start End Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartEndExec()
+   * @see #getOneLifelineMessage()
+   * @generated
+   */
+  EAttribute getOneLifelineMessage_StartEndExec();
 
   /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage#isStartExec <em>Start Exec</em>}'.
@@ -908,6 +1059,104 @@ public interface SequencePackage extends EPackage
    * @generated
    */
   EAttribute getOneLifelineMessage_Note();
+
+  /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage <em>Self Message</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Self Message</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage
+   * @generated
+   */
+  EClass getSelfMessage();
+
+  /**
+   * Returns the meta object for the reference '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getLifeline <em>Lifeline</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the reference '<em>Lifeline</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getLifeline()
+   * @see #getSelfMessage()
+   * @generated
+   */
+  EReference getSelfMessage_Lifeline();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getMessageType <em>Message Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Message Type</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getMessageType()
+   * @see #getSelfMessage()
+   * @generated
+   */
+  EAttribute getSelfMessage_MessageType();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getMessage <em>Message</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Message</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getMessage()
+   * @see #getSelfMessage()
+   * @generated
+   */
+  EAttribute getSelfMessage_Message();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isStartEndExec <em>Start End Exec</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Start End Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isStartEndExec()
+   * @see #getSelfMessage()
+   * @generated
+   */
+  EAttribute getSelfMessage_StartEndExec();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isStartExec <em>Start Exec</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Start Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isStartExec()
+   * @see #getSelfMessage()
+   * @generated
+   */
+  EAttribute getSelfMessage_StartExec();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isEndExec <em>End Exec</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>End Exec</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#isEndExec()
+   * @see #getSelfMessage()
+   * @generated
+   */
+  EAttribute getSelfMessage_EndExec();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getEndExecCount <em>End Exec Count</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>End Exec Count</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getEndExecCount()
+   * @see #getSelfMessage()
+   * @generated
+   */
+  EAttribute getSelfMessage_EndExecCount();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getNote <em>Note</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Note</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getNote()
+   * @see #getSelfMessage()
+   * @generated
+   */
+  EAttribute getSelfMessage_Note();
 
   /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote <em>One Lifeline Note</em>}'.
@@ -1212,6 +1461,14 @@ public interface SequencePackage extends EPackage
     EReference TWO_LIFELINE_MESSAGE__TARGET_LIFELINE = eINSTANCE.getTwoLifelineMessage_TargetLifeline();
 
     /**
+     * The meta object literal for the '<em><b>Source Start End Exec</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TWO_LIFELINE_MESSAGE__SOURCE_START_END_EXEC = eINSTANCE.getTwoLifelineMessage_SourceStartEndExec();
+
+    /**
      * The meta object literal for the '<em><b>Source Start Exec</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1234,6 +1491,14 @@ public interface SequencePackage extends EPackage
      * @generated
      */
     EAttribute TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT = eINSTANCE.getTwoLifelineMessage_SourceEndExecCount();
+
+    /**
+     * The meta object literal for the '<em><b>Target Start End Exec</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute TWO_LIFELINE_MESSAGE__TARGET_START_END_EXEC = eINSTANCE.getTwoLifelineMessage_TargetStartEndExec();
 
     /**
      * The meta object literal for the '<em><b>Target Start Exec</b></em>' attribute feature.
@@ -1310,12 +1575,20 @@ public interface SequencePackage extends EPackage
     EAttribute ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND = eINSTANCE.getOneLifelineMessage_MessageTypeLostAndFound();
 
     /**
-     * The meta object literal for the '<em><b>Caption</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Message</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute ONE_LIFELINE_MESSAGE__CAPTION = eINSTANCE.getOneLifelineMessage_Caption();
+    EAttribute ONE_LIFELINE_MESSAGE__MESSAGE = eINSTANCE.getOneLifelineMessage_Message();
+
+    /**
+     * The meta object literal for the '<em><b>Start End Exec</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ONE_LIFELINE_MESSAGE__START_END_EXEC = eINSTANCE.getOneLifelineMessage_StartEndExec();
 
     /**
      * The meta object literal for the '<em><b>Start Exec</b></em>' attribute feature.
@@ -1348,6 +1621,80 @@ public interface SequencePackage extends EPackage
      * @generated
      */
     EAttribute ONE_LIFELINE_MESSAGE__NOTE = eINSTANCE.getOneLifelineMessage_Note();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl <em>Self Message</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SelfMessageImpl
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getSelfMessage()
+     * @generated
+     */
+    EClass SELF_MESSAGE = eINSTANCE.getSelfMessage();
+
+    /**
+     * The meta object literal for the '<em><b>Lifeline</b></em>' reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference SELF_MESSAGE__LIFELINE = eINSTANCE.getSelfMessage_Lifeline();
+
+    /**
+     * The meta object literal for the '<em><b>Message Type</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SELF_MESSAGE__MESSAGE_TYPE = eINSTANCE.getSelfMessage_MessageType();
+
+    /**
+     * The meta object literal for the '<em><b>Message</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SELF_MESSAGE__MESSAGE = eINSTANCE.getSelfMessage_Message();
+
+    /**
+     * The meta object literal for the '<em><b>Start End Exec</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SELF_MESSAGE__START_END_EXEC = eINSTANCE.getSelfMessage_StartEndExec();
+
+    /**
+     * The meta object literal for the '<em><b>Start Exec</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SELF_MESSAGE__START_EXEC = eINSTANCE.getSelfMessage_StartExec();
+
+    /**
+     * The meta object literal for the '<em><b>End Exec</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SELF_MESSAGE__END_EXEC = eINSTANCE.getSelfMessage_EndExec();
+
+    /**
+     * The meta object literal for the '<em><b>End Exec Count</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SELF_MESSAGE__END_EXEC_COUNT = eINSTANCE.getSelfMessage_EndExecCount();
+
+    /**
+     * The meta object literal for the '<em><b>Note</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SELF_MESSAGE__NOTE = eINSTANCE.getSelfMessage_Note();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineNoteImpl <em>One Lifeline Note</em>}' class.

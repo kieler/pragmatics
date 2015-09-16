@@ -9,7 +9,7 @@
             class="de.cau.cs.kieler.uml.sequence.text.ui.SequenceExecutableExtensionFactory:org.eclipse.xtext.ui.editor.XtextEditor"
             contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
             default="true"
-            extensions="sd"
+            extensions="ksd"
             id="de.cau.cs.kieler.uml.sequence.text.Sequence"
             name="Sequence Editor">
         </editor>
@@ -213,13 +213,13 @@
 		point="org.eclipse.emf.ecore.extension_parser">
 		<parser
 			class="de.cau.cs.kieler.uml.sequence.text.ui.SequenceExecutableExtensionFactory:org.eclipse.xtext.resource.IResourceFactory"
-			type="sd">
+			type="ksd">
 		</parser>
 	</extension>
 	<extension point="org.eclipse.xtext.extension_resourceServiceProvider">
         <resourceServiceProvider
             class="de.cau.cs.kieler.uml.sequence.text.ui.SequenceExecutableExtensionFactory:org.eclipse.xtext.ui.resource.IResourceUIServiceProvider"
-            uriExtension="sd">
+            uriExtension="ksd">
         </resourceServiceProvider>
     </extension>
 
@@ -251,7 +251,7 @@
          point="org.eclipse.xtext.builder.participant">
       <participant
             class="de.cau.cs.kieler.uml.sequence.text.ui.SequenceExecutableExtensionFactory:org.eclipse.xtext.builder.IXtextBuilderParticipant"
-            fileExtensions="sd"
+            fileExtensions="ksd"
             >
       </participant>
    </extension>
@@ -379,19 +379,19 @@
   <extension point="org.eclipse.compare.contentViewers">
     <viewer id="de.cau.cs.kieler.uml.sequence.text.Sequence.compare.contentViewers"
             class="de.cau.cs.kieler.uml.sequence.text.ui.SequenceExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="sd">
+            extensions="ksd">
     </viewer>
   </extension>
   <extension point="org.eclipse.compare.contentMergeViewers">
     <viewer id="de.cau.cs.kieler.uml.sequence.text.Sequence.compare.contentMergeViewers"
             class="de.cau.cs.kieler.uml.sequence.text.ui.SequenceExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="sd" label="Sequence Compare">
+            extensions="ksd" label="Sequence Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
     <provider id="de.cau.cs.kieler.uml.sequence.text.Sequence.editors.documentProviders"
             class="de.cau.cs.kieler.uml.sequence.text.ui.SequenceExecutableExtensionFactory:org.eclipse.xtext.ui.editor.model.XtextDocumentProvider"
-            extensions="sd">
+            extensions="ksd">
     </provider>
   </extension>
 

@@ -15,9 +15,11 @@ package de.cau.cs.kieler.uml.sequence.text.sequence;
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessageType <em>Message Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getMessage <em>Message</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetLifeline <em>Target Lifeline</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartEndExec <em>Source Start End Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartExec <em>Source Start Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceEndExec <em>Source End Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getSourceEndExecCount <em>Source End Exec Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartEndExec <em>Target Start End Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartExec <em>Target Start Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetEndExec <em>Target End Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#getTargetEndExecCount <em>Target End Exec Count</em>}</li>
@@ -140,6 +142,32 @@ public interface TwoLifelineMessage extends Interaction
   void setTargetLifeline(Lifeline value);
 
   /**
+   * Returns the value of the '<em><b>Source Start End Exec</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Source Start End Exec</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Source Start End Exec</em>' attribute.
+   * @see #setSourceStartEndExec(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_SourceStartEndExec()
+   * @model
+   * @generated
+   */
+  boolean isSourceStartEndExec();
+
+  /**
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isSourceStartEndExec <em>Source Start End Exec</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Source Start End Exec</em>' attribute.
+   * @see #isSourceStartEndExec()
+   * @generated
+   */
+  void setSourceStartEndExec(boolean value);
+
+  /**
    * Returns the value of the '<em><b>Source Start Exec</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
@@ -216,6 +244,32 @@ public interface TwoLifelineMessage extends Interaction
    * @generated
    */
   void setSourceEndExecCount(int value);
+
+  /**
+   * Returns the value of the '<em><b>Target Start End Exec</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Target Start End Exec</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Target Start End Exec</em>' attribute.
+   * @see #setTargetStartEndExec(boolean)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getTwoLifelineMessage_TargetStartEndExec()
+   * @model
+   * @generated
+   */
+  boolean isTargetStartEndExec();
+
+  /**
+   * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage#isTargetStartEndExec <em>Target Start End Exec</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Target Start End Exec</em>' attribute.
+   * @see #isTargetStartEndExec()
+   * @generated
+   */
+  void setTargetStartEndExec(boolean value);
 
   /**
    * Returns the value of the '<em><b>Target Start Exec</b></em>' attribute.

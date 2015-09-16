@@ -25,9 +25,11 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getMessageType <em>Message Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getMessage <em>Message</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getTargetLifeline <em>Target Lifeline</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isSourceStartEndExec <em>Source Start End Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isSourceStartExec <em>Source Start Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isSourceEndExec <em>Source End Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getSourceEndExecCount <em>Source End Exec Count</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isTargetStartEndExec <em>Target Start End Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isTargetStartExec <em>Target Start Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#isTargetEndExec <em>Target End Exec</em>}</li>
  *   <li>{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.TwoLifelineMessageImpl#getTargetEndExecCount <em>Target End Exec Count</em>}</li>
@@ -101,6 +103,26 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
   protected Lifeline targetLifeline;
 
   /**
+   * The default value of the '{@link #isSourceStartEndExec() <em>Source Start End Exec</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isSourceStartEndExec()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean SOURCE_START_END_EXEC_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isSourceStartEndExec() <em>Source Start End Exec</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isSourceStartEndExec()
+   * @generated
+   * @ordered
+   */
+  protected boolean sourceStartEndExec = SOURCE_START_END_EXEC_EDEFAULT;
+
+  /**
    * The default value of the '{@link #isSourceStartExec() <em>Source Start Exec</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -159,6 +181,26 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * @ordered
    */
   protected int sourceEndExecCount = SOURCE_END_EXEC_COUNT_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isTargetStartEndExec() <em>Target Start End Exec</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTargetStartEndExec()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean TARGET_START_END_EXEC_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isTargetStartEndExec() <em>Target Start End Exec</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTargetStartEndExec()
+   * @generated
+   * @ordered
+   */
+  protected boolean targetStartEndExec = TARGET_START_END_EXEC_EDEFAULT;
 
   /**
    * The default value of the '{@link #isTargetStartExec() <em>Target Start Exec</em>}' attribute.
@@ -418,6 +460,29 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isSourceStartEndExec()
+  {
+    return sourceStartEndExec;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setSourceStartEndExec(boolean newSourceStartEndExec)
+  {
+    boolean oldSourceStartEndExec = sourceStartEndExec;
+    sourceStartEndExec = newSourceStartEndExec;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_END_EXEC, oldSourceStartEndExec, sourceStartEndExec));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public boolean isSourceStartExec()
   {
     return sourceStartExec;
@@ -480,6 +545,29 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
     sourceEndExecCount = newSourceEndExecCount;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT, oldSourceEndExecCount, sourceEndExecCount));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isTargetStartEndExec()
+  {
+    return targetStartEndExec;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setTargetStartEndExec(boolean newTargetStartEndExec)
+  {
+    boolean oldTargetStartEndExec = targetStartEndExec;
+    targetStartEndExec = newTargetStartEndExec;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_END_EXEC, oldTargetStartEndExec, targetStartEndExec));
   }
 
   /**
@@ -617,12 +705,16 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         if (resolve) return getTargetLifeline();
         return basicGetTargetLifeline();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_END_EXEC:
+        return isSourceStartEndExec();
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC:
         return isSourceStartExec();
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC:
         return isSourceEndExec();
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT:
         return getSourceEndExecCount();
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_END_EXEC:
+        return isTargetStartEndExec();
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_EXEC:
         return isTargetStartExec();
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC:
@@ -659,6 +751,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         setTargetLifeline((Lifeline)newValue);
         return;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_END_EXEC:
+        setSourceStartEndExec((Boolean)newValue);
+        return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC:
         setSourceStartExec((Boolean)newValue);
         return;
@@ -667,6 +762,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT:
         setSourceEndExecCount((Integer)newValue);
+        return;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_END_EXEC:
+        setTargetStartEndExec((Boolean)newValue);
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_EXEC:
         setTargetStartExec((Boolean)newValue);
@@ -709,6 +807,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         setTargetLifeline((Lifeline)null);
         return;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_END_EXEC:
+        setSourceStartEndExec(SOURCE_START_END_EXEC_EDEFAULT);
+        return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC:
         setSourceStartExec(SOURCE_START_EXEC_EDEFAULT);
         return;
@@ -717,6 +818,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT:
         setSourceEndExecCount(SOURCE_END_EXEC_COUNT_EDEFAULT);
+        return;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_END_EXEC:
+        setTargetStartEndExec(TARGET_START_END_EXEC_EDEFAULT);
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_EXEC:
         setTargetStartExec(TARGET_START_EXEC_EDEFAULT);
@@ -755,12 +859,16 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
         return MESSAGE_EDEFAULT == null ? message != null : !MESSAGE_EDEFAULT.equals(message);
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_LIFELINE:
         return targetLifeline != null;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_END_EXEC:
+        return sourceStartEndExec != SOURCE_START_END_EXEC_EDEFAULT;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_START_EXEC:
         return sourceStartExec != SOURCE_START_EXEC_EDEFAULT;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC:
         return sourceEndExec != SOURCE_END_EXEC_EDEFAULT;
       case SequencePackage.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT:
         return sourceEndExecCount != SOURCE_END_EXEC_COUNT_EDEFAULT;
+      case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_END_EXEC:
+        return targetStartEndExec != TARGET_START_END_EXEC_EDEFAULT;
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_START_EXEC:
         return targetStartExec != TARGET_START_EXEC_EDEFAULT;
       case SequencePackage.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC:
@@ -790,12 +898,16 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
     result.append(messageType);
     result.append(", message: ");
     result.append(message);
+    result.append(", sourceStartEndExec: ");
+    result.append(sourceStartEndExec);
     result.append(", sourceStartExec: ");
     result.append(sourceStartExec);
     result.append(", sourceEndExec: ");
     result.append(sourceEndExec);
     result.append(", sourceEndExecCount: ");
     result.append(sourceEndExecCount);
+    result.append(", targetStartEndExec: ");
+    result.append(targetStartEndExec);
     result.append(", targetStartExec: ");
     result.append(targetStartExec);
     result.append(", targetEndExec: ");

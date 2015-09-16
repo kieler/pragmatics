@@ -31,8 +31,7 @@ Lifeline returns Lifeline:
 
 Interaction returns Interaction:
     TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineNote
-    //| OneLifelineEndBlock
-    | DestroyLifelineEvent | Refinement;
+    | SelfMessage | DestroyLifelineEvent | Refinement;
 
 TwoLifelineMessage returns TwoLifelineMessage:
     sourceLifeline=[Lifeline|ID]
@@ -40,8 +39,8 @@ TwoLifelineMessage returns TwoLifelineMessage:
     message=STRING
     'to'
     targetLifeline=[Lifeline|ID]
-    (sourceStartExec?='sourceStartExec' | sourceEndExec?='sourceEndExec' (sourceEndExecCount=INT_GREATER_ZERO)?)?
-    (targetStartExec?='targetStartExec' | targetEndExec?='targetEndExec' (targetEndExecCount=INT_GREATER_ZERO)?)?
+    (sourceStartEndExec?='sourceStartEndExec' | sourceStartExec?='sourceStartExec' | sourceEndExec?='sourceEndExec' (sourceEndExecCount=INT_GREATER_ZERO)?)?
+    (targetStartEndExec?='targetStartEndExec' | targetStartExec?='targetStartExec' | targetEndExec?='targetEndExec' (targetEndExecCount=INT_GREATER_ZERO)?)?
     ('sourceNote' sourceNote=STRING)?
     ('targetNote' targetNote=STRING)?;
 
@@ -49,13 +48,17 @@ OneLifelineMessage returns OneLifelineMessage:
     Lifeline=[Lifeline|ID]
     messageType=MessageType
     messageTypeLostAndFound=('lost' | 'found')
-    caption=STRING
-    (startExec?='startExec' | endExec?='endExec' (endExecCount=INT_GREATER_ZERO)?)?
+    message=STRING
+    (startEndExec?='startEndExec' | startExec?='startExec' | endExec?='endExec' (endExecCount=INT_GREATER_ZERO)?)?
     ('note' note=STRING)?;
-
-//OneLifelineEndBlock returns OneLifelineEndBlock:
-//    Lifeline=[Lifeline|ID]
-//    'endBlock' (endBlockCount=INT_GREATER_ZERO)?;
+    
+SelfMessage returns SelfMessage:
+    Lifeline=[Lifeline|ID]
+    messageType=('sync' | 'async' | 'response')
+    'self'
+    message=STRING
+    (startEndExec?='startEndExec' | startExec?='startExec' | endExec?='endExec' (endExecCount=INT_GREATER_ZERO)?)?
+    ('note' note=STRING)?;
 
 OneLifelineNote returns OneLifelineNote:
     Lifeline=[Lifeline|ID]
