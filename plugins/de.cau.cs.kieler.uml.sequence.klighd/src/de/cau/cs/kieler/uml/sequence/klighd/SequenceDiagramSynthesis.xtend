@@ -227,25 +227,27 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val transEdge = msg.createEdge().associateWith(msg)
         transEdge.setMessageRendering(msg.messageType.toString)
 
-        edgeCount(transEdge)
-        
-        if (msg.sourceNote != null) {
-            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
-        }
-        
-        if (msg.targetNote != null) {
-            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
-        }
-
         val label = KimlUtil.createInitializedLabel(transEdge)
 
         val labelText = msg.message
         val source = msg.sourceLifeline
         val target = msg.targetLifeline
         label.configureCenterEdgeLabel(labelText, TEXTSIZE.intValue, KlighdConstants.DEFAULT_FONT_NAME)
-
+        
         transEdge.source = lifelineNodes.get(source.name)
         transEdge.target = lifelineNodes.get(target.name)
+        
+        edgeCount(transEdge)
+        
+        if (msg.sourceNote != null) {
+            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
+            createNote(source, msg.sourceNote)
+        }
+        
+        if (msg.targetNote != null) {
+            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
+            createNote(target, msg.targetNote)
+        }
 
         if (msg.sourceStartExec) {
             createExecution(source)
@@ -354,11 +356,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         return transEdge
     }
 
-//    private def dispatch KNode transformInteraction(OneLifelineEndBlock end) {
-//        val endBlockNode = end.createNode().associateWith(end)
-//        return endBlockNode
-//    }
     private def dispatch KNode transformInteraction(OneLifelineNote note) {
+        // TODO maybe remove
         val noteNode = note.createNode().associateWith(note)
         noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)
         
@@ -549,6 +548,18 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         if (stack.isEmpty) {
             elementIdOnLifeline.remove(l.name)
         }
+    }
+    
+    private def KNode createNote(Lifeline l, String note) {
+        val noteNode = createNode()
+        noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)
+        
+        surroundingInteraction.children.add(noteNode)
+        
+        val noteRect = noteNode.addRectangle()
+        noteRect.addText(note).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+
+        return noteNode
     }
 
     // Gives the edges an increasing number, so that the Algorithm knows the order of the messages
