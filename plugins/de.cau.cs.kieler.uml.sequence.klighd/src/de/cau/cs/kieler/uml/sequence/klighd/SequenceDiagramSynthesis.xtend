@@ -257,13 +257,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             createExecution(target)
         }
 
-//        if (msg.sourceStartEndExec) {
-//            
-//        }
-//        
-//        if (msg.targetStartEndExex) {
-//            
-//        }
         if (elementIdOnLifeline.containsKey(source.name)) {
             val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(source.name))
 
@@ -304,7 +297,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.addPolyline(2).addHeadArrowDecorator()
 
         val dummyNode = KimlUtil.createInitializedNode()
-        surroundingInteraction.children += dummyNode
+        surroundingInteraction.children.add(dummyNode)
         dummyNode.addEllipse.setBackground(Colors.BLACK)
 
         if (msg.messageTypeLostAndFound.equals("lost")) {
@@ -411,12 +404,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private def dispatch KNode transformInteraction(OneLifelineNote note) {
         // TODO maybe remove
         val noteNode = note.createNode().associateWith(note)
-        noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)
-
-        surroundingInteraction.children.add(noteNode)
-
-        val noteRect = noteNode.addRectangle()
-        noteRect.addText(note.note).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+        
+        createNote(note.lifeline, note.note)
 
         return noteNode
     }
@@ -479,7 +468,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         val captionRect = fragNodeRect.addRoundedRectangle(10, 10, 2).foregroundInvisible = true
         captionRect.setBackground(Colors.WHITE)
-//        captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
+//        captionRect.addText(frag.name).setSurroundingSpaceGrid(15, 0, 0, 0).fontSize = 13
         captionRect.addText(frag.name).setSurroundingSpaceGrid(15, 0, 0, 0).fontSize = TEXTSIZE.intValue
         captionRect.addPolyline(2, lineCoordinates)
         captionRect.setPointPlacementData(LEFT, 1, 0, TOP, 1, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
@@ -491,8 +480,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 val labelText = "[" + sect.label + "]"
                 label.configureCenterEdgeLabel(labelText, KlighdConstants.DEFAULT_FONT_SIZE,
                     KlighdConstants.DEFAULT_FONT_NAME)
-//                val captionRect3 = captionRect.addRectangle.foregroundInvisible = true
-//                captionRect3.addText(sect.label).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
             }
             sect.interactions.forEach[s|transformInteraction(s)]
         }
@@ -512,11 +499,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     // TODO Zustandsinvariante als Notiz
     // TODO validation und formatting überprüfen
     // TODO Modellordner
-    // TODO sourceStartEndExec
     // TODO beliebige Reihenfolge an Optionen + validation
-    // TODO self message zusätzlich
     // TODO ksd file ending
-    // TODO space zwischen titel und rechter Kante bei nur einer lifeline
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Rest
     // Specifies the correct Properties for the different message types
@@ -602,6 +586,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         }
     }
 
+    //Creates a Note
     private def KNode createNote(Lifeline l, String note) {
         val noteNode = createNode()
         noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)

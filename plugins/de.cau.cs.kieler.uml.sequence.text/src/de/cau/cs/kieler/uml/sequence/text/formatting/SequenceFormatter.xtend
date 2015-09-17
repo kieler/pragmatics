@@ -53,6 +53,29 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
             c.setIndentationDecrement.after(exec)
             c.setLinewrap(1).after(exec)
         }
+        for (exec : findKeywords('endExec')) {
+            c.setLinewrap(1).before(exec)
+            c.setIndentationIncrement.before(exec)
+            c.setIndentationDecrement.after(exec)
+        }
+        for (exec : findKeywords('sourceStartEndExec')) {
+            c.setLinewrap(1).before(exec)
+            c.setIndentationIncrement.before(exec)
+            c.setIndentationDecrement.after(exec)
+            c.setLinewrap(1).after(exec)
+        }
+        for (exec : findKeywords('targetStartEndExec')) {
+            c.setLinewrap(1).before(exec)
+            c.setIndentationIncrement.before(exec)
+            c.setIndentationDecrement.after(exec)
+            c.setLinewrap(1).after(exec)
+        }
+        for (exec : findKeywords('startEndExec')) {
+            c.setLinewrap(1).before(exec)
+            c.setIndentationIncrement.before(exec)
+            c.setIndentationDecrement.after(exec)
+            c.setLinewrap(1).after(exec)
+        }
         for (exec : findKeywords('targetStartExec')) {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
@@ -98,6 +121,7 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
         c.setLinewrap().before(f.getOneLifelineMessageRule)
         c.setLinewrap().before(f.destroyLifelineEventRule)
         c.setLinewrap().before(f.getOneLifelineNoteRule)
+        c.setLinewrap().before(f.selfMessageRule)
 //        c.setLinewrap().before(f.getOneLifelineEndExecRule)
         c.setLinewrap().before(f.getFragmentRule)
         c.setLinewrap().before(f.getRefinementRule)
