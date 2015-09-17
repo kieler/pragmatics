@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Range;
 import com.google.common.collect.Sets;
@@ -99,6 +97,10 @@ public final class MinWidthLayerer implements ILayoutPhase {
      */
     private SelfLoopPredicate isSelfLoopTest = new SelfLoopPredicate();
 
+    // TODO degrees of nodes without self loops, indexed by node.id
+    private int[] inDegree;
+    private int[] outDegree;
+
     /**
      * {@inheritDoc}
      */
@@ -132,12 +134,20 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // out-degree in advance.
         // We're using the nodes' id property to store the out-degree (so it's not an id anymore in
         // the strict sense, as it might not be unique).
+        inDegree = new int[layeredGraph.getLayerlessNodes().size()];
+        outDegree = new int[layeredGraph.getLayerlessNodes().size()];
+        int i = 0;
         for (LNode node : notInserted) {
             // Warning: LNode.id is being redefined here!
-            node.id = countEdgesExceptSelfLoops(node.getOutgoingEdges());
+            node.id = i++;
+            inDegree[node.id] = countEdgesExceptSelfLoops(node.getIncomingEdges());
+            outDegree[node.id] = countEdgesExceptSelfLoops(node.getOutgoingEdges());
         }
-        notInserted.sort(Collections.reverseOrder(new MinOutgoingEdgesComparator()));
 
+        // // TODO still correct?? -YUPPP
+        // notInserted.sort(Collections.reverseOrder(new MinOutgoingEdgesComparator()));
+
+        // TODO comment + is this stil necessary?
         // Precalculate the successors of all nodes (as a Set) and put them in a list. The id of a
         // node is changed again to the index of its successor-set in the resulting list (thus being
         // an unique id) for easier access later on. Beware: The id has two different meanings in
@@ -147,6 +157,9 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // 2.) From now on and till the end of the algorithm it will be an index for easy access of
         // the successor-set of the node.
         List<Set<LNode>> nodeSuccessors = precalcSuccessors(notInserted);
+
+        // TODO this is a new position
+        notInserted.sort(Collections.reverseOrder(new MinOutgoingEdgesComparator()));
 
         // minimum width of a layer of maximum size in a computed layering (primary criterion used
         // for comparison, if more than one layering is computed).
@@ -176,6 +189,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
             cEnd = COMPENSATOR_RANGE.upperEndpoint();
         }
 
+        int index = 1;
         // … Depending on the start- and end-values, this nested for-loop will last for up to 8
         // iterations resulting in one, two, four or eight different layerings.
         for (int ubw = ubwStart; ubw <= ubwEnd; ubw++) {
@@ -194,7 +208,11 @@ public final class MinWidthLayerer implements ILayoutPhase {
                     minWidth = newWidth;
                     minNumOfLayers = newNumOfLayers;
                     candidateLayering = layering;
+                    System.out.println("Chosen Layering #" + index + " of 8 with width " + minWidth
+                            + " and height" + minNumOfLayers);
+                    System.out.println(candidateLayering);
                 }
+                index++;
             }
         }
 
@@ -217,6 +235,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
         progressMonitor.done();
     }
 
+    // TODO comment -- still needed?
     /**
      * Calculates for a given Collection of {@link LNode} all its successors (i.e. a Set of
      * {@link LNode}s) without self-loops.
@@ -231,10 +250,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
     private List<Set<LNode>> precalcSuccessors(final Collection<LNode> nodes) {
         List<Set<LNode>> successors = Lists.newArrayListWithCapacity(nodes.size());
 
-        int index = 0;
         for (LNode node : nodes) {
-            // Warning: LNode.id is being redefined here!
-            node.id = index;
 
             Set<LNode> outNodes = Sets.newHashSet();
             Iterable<LEdge> outEdges = node.getOutgoingEdges();
@@ -246,7 +262,6 @@ public final class MinWidthLayerer implements ILayoutPhase {
             }
 
             successors.add(outNodes);
-            index++;
         }
 
         return successors;
@@ -280,8 +295,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
         Set<LNode> unplacedNodes = Sets.newLinkedHashSet(nodes);
 
         // in- and out-degree of the currently considered node, see while-loop below
-        int inDegree = 0;
-        int outDegree = 0;
+        int inDeg = 0;
+        int outDeg = 0;
 
         // The actual algorithm from the paper begins here:
         // In the Paper the first Set contains all nodes, which have already been placed (in this
@@ -294,7 +309,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // Set up the first layer (algorithm is bottom up, so the List layer is going to be reversed
         // at the end.
         List<LNode> currentLayer = Lists.newArrayList();
-        layers.add(currentLayer);
+        //layers.add(currentLayer);
 
         // Initial values for the width of the current layer and the estimated width of the coming
         // layers
@@ -303,11 +318,19 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
         // Parameters needed for computing the width of a layering including dummy nodes:
         int maxWidth = 0;
-        int dummyNodeCount = 0;
+        // int dummyNodeCount = 0;
         int realWidth = 0;
-        Set<LEdge> dummysInLayer = Sets.newHashSet();
-        List<LEdge> goingOutFromThisLayer = Lists.newArrayList();
-        List<LEdge> comingIntoThisLayer = Lists.newArrayList();
+        // Set<LEdge> dummysInLayer = Sets.newHashSet();
+        // List<LEdge> goingOutFromThisLayer = Lists.newArrayList();
+        // List<LEdge> comingIntoThisLayer = Lists.newArrayList();
+        int currentSpanningEdges = 0;
+        int goingOutFromThisLayer = 0;
+        // int comingIntoThisLayer = 0;
+
+        // number of "started" edges that did not "finish" yet
+        // currentSpanningEdges += outDegreeS - inDegreeS of all nodes in the layer
+
+        // width of current layer = real nodes + currentSpanningEdges
 
         while (!unplacedNodes.isEmpty()) {
             // Find a node, whose edges only point to nodes in the Set alreadyPlacedInOtherLayers;
@@ -323,22 +346,27 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 currentLayer.add(currentNode);
                 alreadyPlacedInCurrentLayer.add(currentNode);
 
-                outDegree = currentNode.id;
-                widthCurrent += 1 - outDegree;
+                // TODO
+                outDeg = this.outDegree[currentNode.id];
+                // outDegree = currentNode.id;
+                widthCurrent += 1 - outDeg;
 
-                inDegree = countEdgesExceptSelfLoops(currentNode.getIncomingEdges());
-                widthUp += inDegree;
+                inDeg = this.inDegree[currentNode.id];
+                widthUp += inDeg;
+
+                goingOutFromThisLayer += outDeg;
+                // comingIntoThisLayer += inDeg;
 
                 // For counting the dummy nodes we count all the outgoing edges from and incoming
                 // edges to the current layer.
-                Iterables.addAll(
-                        goingOutFromThisLayer,
-                        Iterables.filter(currentNode.getOutgoingEdges(),
-                                Predicates.not(isSelfLoopTest)));
-                Iterables.addAll(
-                        comingIntoThisLayer,
-                        Iterables.filter(currentNode.getIncomingEdges(),
-                                Predicates.not(isSelfLoopTest)));
+                // Iterables.addAll(
+                // goingOutFromThisLayer,
+                // Iterables.filter(currentNode.getOutgoingEdges(),
+                // Predicates.not(isSelfLoopTest)));
+                // Iterables.addAll(
+                // comingIntoThisLayer,
+                // Iterables.filter(currentNode.getIncomingEdges(),
+                // Predicates.not(isSelfLoopTest)));
             }
 
             // Go to the next layer if,
@@ -351,7 +379,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
             // 3.2) The estimated width of the not yet determined layers is greater than the
             // scaling factor/compensator times the upper bound on the width.
             if (currentNode == null || unplacedNodes.isEmpty()
-                    || (widthCurrent >= upperBoundOnWidth && outDegree < 1)
+                    || (widthCurrent >= upperBoundOnWidth && outDeg < 1)
                     || widthUp >= compensator * upperBoundOnWidth) {
                 layers.add(currentLayer);
                 realWidth = currentLayer.size();
@@ -361,18 +389,21 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
                 // Remove all edges from the dummy node count, which are starting at a node placed
                 // in this layer …
-                dummysInLayer.removeAll(goingOutFromThisLayer);
+                // dummysInLayer.removeAll(goingOutFromThisLayer);
+                currentSpanningEdges -= goingOutFromThisLayer;
                 // … Now we have the actual dummy node count for this layer and can add it to the
                 // real nodes for comparing the width.
-                dummyNodeCount = dummysInLayer.size();
-                maxWidth = Math.max(maxWidth, dummyNodeCount + realWidth);
+                // dummyNodeCount = dummysInLayer.size();
+                maxWidth = Math.max(maxWidth, currentSpanningEdges + realWidth);
                 // In the next iteration we have to consider new dummy nodes from edges coming into
                 // the
                 // layer we've just finished.
-                dummysInLayer.addAll(comingIntoThisLayer);
+                // dummysInLayer.addAll(comingIntoThisLayer);
+                currentSpanningEdges += widthUp;
 
                 widthCurrent = widthUp;
                 widthUp = 0;
+                goingOutFromThisLayer = 0;
             }
         }
 
@@ -446,8 +477,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
          * {@inheritDoc}
          */
         public int compare(final LNode o1, final LNode o2) {
-            int outs1 = o1.id;
-            int outs2 = o2.id;
+            int outs1 = outDegree[o1.id];
+            int outs2 = outDegree[o2.id];
 
             if (outs1 < outs2) {
                 return -1;
