@@ -91,8 +91,10 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
   {
     switch (eDataType.getClassifierID())
     {
-      case SequencePackage.MESSAGE_TYPE:
-        return createMessageTypeFromString(eDataType, initialValue);
+      case SequencePackage.MESSAGE_TYPE_ONE:
+        return createMessageTypeOneFromString(eDataType, initialValue);
+      case SequencePackage.MESSAGE_TYPE_TWO:
+        return createMessageTypeTwoFromString(eDataType, initialValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -108,8 +110,10 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
   {
     switch (eDataType.getClassifierID())
     {
-      case SequencePackage.MESSAGE_TYPE:
-        return convertMessageTypeToString(eDataType, instanceValue);
+      case SequencePackage.MESSAGE_TYPE_ONE:
+        return convertMessageTypeOneToString(eDataType, instanceValue);
+      case SequencePackage.MESSAGE_TYPE_TWO:
+        return convertMessageTypeTwoToString(eDataType, instanceValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -241,9 +245,9 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public MessageType createMessageTypeFromString(EDataType eDataType, String initialValue)
+  public MessageTypeOne createMessageTypeOneFromString(EDataType eDataType, String initialValue)
   {
-    MessageType result = MessageType.get(initialValue);
+    MessageTypeOne result = MessageTypeOne.get(initialValue);
     if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
     return result;
   }
@@ -253,7 +257,29 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public String convertMessageTypeToString(EDataType eDataType, Object instanceValue)
+  public String convertMessageTypeOneToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public MessageTypeTwo createMessageTypeTwoFromString(EDataType eDataType, String initialValue)
+  {
+    MessageTypeTwo result = MessageTypeTwo.get(initialValue);
+    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    return result;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertMessageTypeTwoToString(EDataType eDataType, Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }

@@ -681,14 +681,24 @@ public interface SequencePackage extends EPackage
   int REFINEMENT_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 2;
 
   /**
-   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageType <em>Message Type</em>}' enum.
+   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne <em>Message Type One</em>}' enum.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageType()
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageTypeOne()
    * @generated
    */
-  int MESSAGE_TYPE = 11;
+  int MESSAGE_TYPE_ONE = 11;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeTwo <em>Message Type Two</em>}' enum.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeTwo
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageTypeTwo()
+   * @generated
+   */
+  int MESSAGE_TYPE_TWO = 12;
 
 
   /**
@@ -1308,14 +1318,24 @@ public interface SequencePackage extends EPackage
   EReference getRefinement_Lifelines();
 
   /**
-   * Returns the meta object for enum '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageType <em>Message Type</em>}'.
+   * Returns the meta object for enum '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne <em>Message Type One</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for enum '<em>Message Type</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
+   * @return the meta object for enum '<em>Message Type One</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne
    * @generated
    */
-  EEnum getMessageType();
+  EEnum getMessageTypeOne();
+
+  /**
+   * Returns the meta object for enum '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeTwo <em>Message Type Two</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for enum '<em>Message Type Two</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeTwo
+   * @generated
+   */
+  EEnum getMessageTypeTwo();
 
   /**
    * Returns the factory that creates the instances of the model.
@@ -1819,14 +1839,24 @@ public interface SequencePackage extends EPackage
     EReference REFINEMENT__LIFELINES = eINSTANCE.getRefinement_Lifelines();
 
     /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageType <em>Message Type</em>}' enum.
+     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne <em>Message Type One</em>}' enum.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageType
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageType()
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageTypeOne()
      * @generated
      */
-    EEnum MESSAGE_TYPE = eINSTANCE.getMessageType();
+    EEnum MESSAGE_TYPE_ONE = eINSTANCE.getMessageTypeOne();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeTwo <em>Message Type Two</em>}' enum.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeTwo
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageTypeTwo()
+     * @generated
+     */
+    EEnum MESSAGE_TYPE_TWO = eINSTANCE.getMessageTypeTwo();
 
   }
 

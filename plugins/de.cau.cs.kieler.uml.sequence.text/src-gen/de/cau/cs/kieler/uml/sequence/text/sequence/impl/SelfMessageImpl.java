@@ -3,6 +3,7 @@
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
+import de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
 
@@ -53,7 +54,7 @@ public class SelfMessageImpl extends InteractionImpl implements SelfMessage
    * @generated
    * @ordered
    */
-  protected static final String MESSAGE_TYPE_EDEFAULT = null;
+  protected static final MessageTypeOne MESSAGE_TYPE_EDEFAULT = MessageTypeOne.ASYNC;
 
   /**
    * The cached value of the '{@link #getMessageType() <em>Message Type</em>}' attribute.
@@ -63,7 +64,7 @@ public class SelfMessageImpl extends InteractionImpl implements SelfMessage
    * @generated
    * @ordered
    */
-  protected String messageType = MESSAGE_TYPE_EDEFAULT;
+  protected MessageTypeOne messageType = MESSAGE_TYPE_EDEFAULT;
 
   /**
    * The default value of the '{@link #getMessage() <em>Message</em>}' attribute.
@@ -254,7 +255,7 @@ public class SelfMessageImpl extends InteractionImpl implements SelfMessage
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getMessageType()
+  public MessageTypeOne getMessageType()
   {
     return messageType;
   }
@@ -264,10 +265,10 @@ public class SelfMessageImpl extends InteractionImpl implements SelfMessage
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setMessageType(String newMessageType)
+  public void setMessageType(MessageTypeOne newMessageType)
   {
-    String oldMessageType = messageType;
-    messageType = newMessageType;
+    MessageTypeOne oldMessageType = messageType;
+    messageType = newMessageType == null ? MESSAGE_TYPE_EDEFAULT : newMessageType;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.SELF_MESSAGE__MESSAGE_TYPE, oldMessageType, messageType));
   }
@@ -455,7 +456,7 @@ public class SelfMessageImpl extends InteractionImpl implements SelfMessage
         setLifeline((Lifeline)newValue);
         return;
       case SequencePackage.SELF_MESSAGE__MESSAGE_TYPE:
-        setMessageType((String)newValue);
+        setMessageType((MessageTypeOne)newValue);
         return;
       case SequencePackage.SELF_MESSAGE__MESSAGE:
         setMessage((String)newValue);
@@ -530,7 +531,7 @@ public class SelfMessageImpl extends InteractionImpl implements SelfMessage
       case SequencePackage.SELF_MESSAGE__LIFELINE:
         return lifeline != null;
       case SequencePackage.SELF_MESSAGE__MESSAGE_TYPE:
-        return MESSAGE_TYPE_EDEFAULT == null ? messageType != null : !MESSAGE_TYPE_EDEFAULT.equals(messageType);
+        return messageType != MESSAGE_TYPE_EDEFAULT;
       case SequencePackage.SELF_MESSAGE__MESSAGE:
         return MESSAGE_EDEFAULT == null ? message != null : !MESSAGE_EDEFAULT.equals(message);
       case SequencePackage.SELF_MESSAGE__START_END_EXEC:

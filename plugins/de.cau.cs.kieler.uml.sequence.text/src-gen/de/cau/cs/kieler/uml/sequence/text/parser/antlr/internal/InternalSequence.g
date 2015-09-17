@@ -379,9 +379,9 @@ ruleTwoLifelineMessage returns [EObject current=null]
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getTwoLifelineMessageAccess().getMessageTypeMessageTypeEnumRuleCall_1_0()); 
+	        newCompositeNode(grammarAccess.getTwoLifelineMessageAccess().getMessageTypeMessageTypeTwoEnumRuleCall_1_0()); 
 	    }
-		lv_messageType_1_0=ruleMessageType		{
+		lv_messageType_1_0=ruleMessageTypeTwo		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getTwoLifelineMessageRule());
 	        }
@@ -389,7 +389,7 @@ ruleTwoLifelineMessage returns [EObject current=null]
        			$current, 
        			"messageType",
         		lv_messageType_1_0, 
-        		"MessageType");
+        		"MessageTypeTwo");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -640,9 +640,9 @@ ruleOneLifelineMessage returns [EObject current=null]
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getOneLifelineMessageAccess().getMessageTypeMessageTypeEnumRuleCall_1_0()); 
+	        newCompositeNode(grammarAccess.getOneLifelineMessageAccess().getMessageTypeMessageTypeOneEnumRuleCall_1_0()); 
 	    }
-		lv_messageType_1_0=ruleMessageType		{
+		lv_messageType_1_0=ruleMessageTypeOne		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getOneLifelineMessageRule());
 	        }
@@ -650,7 +650,7 @@ ruleOneLifelineMessage returns [EObject current=null]
        			$current, 
        			"messageType",
         		lv_messageType_1_0, 
-        		"MessageType");
+        		"MessageTypeOne");
 	        afterParserOrEnumRuleCall();
 	    }
 
@@ -826,44 +826,20 @@ ruleSelfMessage returns [EObject current=null]
 )
 )(
 (
-(
-		lv_messageType_1_1=	'sync' 
-    {
-        newLeafNode(lv_messageType_1_1, grammarAccess.getSelfMessageAccess().getMessageTypeSyncKeyword_1_0_0());
-    }
- 
-	    {
-	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getSelfMessageRule());
-	        }
-       		setWithLastConsumed($current, "messageType", lv_messageType_1_1, null);
+		{ 
+	        newCompositeNode(grammarAccess.getSelfMessageAccess().getMessageTypeMessageTypeOneEnumRuleCall_1_0()); 
 	    }
-
-    |		lv_messageType_1_2=	'async' 
-    {
-        newLeafNode(lv_messageType_1_2, grammarAccess.getSelfMessageAccess().getMessageTypeAsyncKeyword_1_0_1());
-    }
- 
-	    {
+		lv_messageType_1_0=ruleMessageTypeOne		{
 	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getSelfMessageRule());
+	            $current = createModelElementForParent(grammarAccess.getSelfMessageRule());
 	        }
-       		setWithLastConsumed($current, "messageType", lv_messageType_1_2, null);
+       		set(
+       			$current, 
+       			"messageType",
+        		lv_messageType_1_0, 
+        		"MessageTypeOne");
+	        afterParserOrEnumRuleCall();
 	    }
-
-    |		lv_messageType_1_3=	'response' 
-    {
-        newLeafNode(lv_messageType_1_3, grammarAccess.getSelfMessageAccess().getMessageTypeResponseKeyword_1_0_2());
-    }
- 
-	    {
-	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getSelfMessageRule());
-	        }
-       		setWithLastConsumed($current, "messageType", lv_messageType_1_3, null);
-	    }
-
-)
 
 )
 )	otherlv_2='self' 
@@ -1323,32 +1299,57 @@ ruleRefinement returns [EObject current=null]
 
 
 
-// Rule MessageType
-ruleMessageType returns [Enumerator current=null] 
+// Rule MessageTypeOne
+ruleMessageTypeOne returns [Enumerator current=null] 
     @init { enterRule(); }
     @after { leaveRule(); }:
 ((	enumLiteral_0='async' 
 	{
-        $current = grammarAccess.getMessageTypeAccess().getAsyncEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
-        newLeafNode(enumLiteral_0, grammarAccess.getMessageTypeAccess().getAsyncEnumLiteralDeclaration_0()); 
+        $current = grammarAccess.getMessageTypeOneAccess().getAsyncEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
+        newLeafNode(enumLiteral_0, grammarAccess.getMessageTypeOneAccess().getAsyncEnumLiteralDeclaration_0()); 
     }
 )
-    |(	enumLiteral_1='create' 
+    |(	enumLiteral_1='response' 
 	{
-        $current = grammarAccess.getMessageTypeAccess().getCreateEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
-        newLeafNode(enumLiteral_1, grammarAccess.getMessageTypeAccess().getCreateEnumLiteralDeclaration_1()); 
+        $current = grammarAccess.getMessageTypeOneAccess().getResponseEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
+        newLeafNode(enumLiteral_1, grammarAccess.getMessageTypeOneAccess().getResponseEnumLiteralDeclaration_1()); 
     }
 )
-    |(	enumLiteral_2='response' 
+    |(	enumLiteral_2='sync' 
 	{
-        $current = grammarAccess.getMessageTypeAccess().getResponseEnumLiteralDeclaration_2().getEnumLiteral().getInstance();
-        newLeafNode(enumLiteral_2, grammarAccess.getMessageTypeAccess().getResponseEnumLiteralDeclaration_2()); 
+        $current = grammarAccess.getMessageTypeOneAccess().getSyncEnumLiteralDeclaration_2().getEnumLiteral().getInstance();
+        newLeafNode(enumLiteral_2, grammarAccess.getMessageTypeOneAccess().getSyncEnumLiteralDeclaration_2()); 
+    }
+));
+
+
+
+// Rule MessageTypeTwo
+ruleMessageTypeTwo returns [Enumerator current=null] 
+    @init { enterRule(); }
+    @after { leaveRule(); }:
+((	enumLiteral_0='async' 
+	{
+        $current = grammarAccess.getMessageTypeTwoAccess().getAsyncEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
+        newLeafNode(enumLiteral_0, grammarAccess.getMessageTypeTwoAccess().getAsyncEnumLiteralDeclaration_0()); 
     }
 )
-    |(	enumLiteral_3='sync' 
+    |(	enumLiteral_1='response' 
 	{
-        $current = grammarAccess.getMessageTypeAccess().getSyncEnumLiteralDeclaration_3().getEnumLiteral().getInstance();
-        newLeafNode(enumLiteral_3, grammarAccess.getMessageTypeAccess().getSyncEnumLiteralDeclaration_3()); 
+        $current = grammarAccess.getMessageTypeTwoAccess().getResponseEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
+        newLeafNode(enumLiteral_1, grammarAccess.getMessageTypeTwoAccess().getResponseEnumLiteralDeclaration_1()); 
+    }
+)
+    |(	enumLiteral_2='sync' 
+	{
+        $current = grammarAccess.getMessageTypeTwoAccess().getSyncEnumLiteralDeclaration_2().getEnumLiteral().getInstance();
+        newLeafNode(enumLiteral_2, grammarAccess.getMessageTypeTwoAccess().getSyncEnumLiteralDeclaration_2()); 
+    }
+)
+    |(	enumLiteral_3='create' 
+	{
+        $current = grammarAccess.getMessageTypeTwoAccess().getCreateEnumLiteralDeclaration_3().getEnumLiteral().getInstance();
+        newLeafNode(enumLiteral_3, grammarAccess.getMessageTypeTwoAccess().getCreateEnumLiteralDeclaration_3()); 
     }
 ));
 

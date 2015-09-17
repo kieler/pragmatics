@@ -184,7 +184,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final CrossReference cSourceLifelineLifelineCrossReference_0_0 = (CrossReference)cSourceLifelineAssignment_0.eContents().get(0);
 		private final RuleCall cSourceLifelineLifelineIDTerminalRuleCall_0_0_1 = (RuleCall)cSourceLifelineLifelineCrossReference_0_0.eContents().get(1);
 		private final Assignment cMessageTypeAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cMessageTypeMessageTypeEnumRuleCall_1_0 = (RuleCall)cMessageTypeAssignment_1.eContents().get(0);
+		private final RuleCall cMessageTypeMessageTypeTwoEnumRuleCall_1_0 = (RuleCall)cMessageTypeAssignment_1.eContents().get(0);
 		private final Assignment cMessageAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cMessageSTRINGTerminalRuleCall_2_0 = (RuleCall)cMessageAssignment_2.eContents().get(0);
 		private final Keyword cToKeyword_3 = (Keyword)cGroup.eContents().get(3);
@@ -221,14 +221,14 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cTargetNoteSTRINGTerminalRuleCall_8_1_0 = (RuleCall)cTargetNoteAssignment_8_1.eContents().get(0);
 		
 		//TwoLifelineMessage:
-		//	sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
+		//	sourceLifeline=[Lifeline] messageType=MessageTypeTwo message=STRING "to" targetLifeline=[Lifeline]
 		//	(sourceStartEndExec?="sourceStartEndExec" | sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec"
 		//	sourceEndExecCount=INT_GREATER_ZERO?)? (targetStartEndExec?="targetStartEndExec" | targetStartExec?="targetStartExec"
 		//	| targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)? ("sourceNote" sourceNote=STRING)?
 		//	("targetNote" targetNote=STRING)?;
 		public ParserRule getRule() { return rule; }
 
-		//sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
+		//sourceLifeline=[Lifeline] messageType=MessageTypeTwo message=STRING "to" targetLifeline=[Lifeline]
 		//(sourceStartEndExec?="sourceStartEndExec" | sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec"
 		//sourceEndExecCount=INT_GREATER_ZERO?)? (targetStartEndExec?="targetStartEndExec" | targetStartExec?="targetStartExec" |
 		//targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)? ("sourceNote" sourceNote=STRING)? ("targetNote"
@@ -244,11 +244,11 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getSourceLifelineLifelineIDTerminalRuleCall_0_0_1() { return cSourceLifelineLifelineIDTerminalRuleCall_0_0_1; }
 
-		//messageType=MessageType
+		//messageType=MessageTypeTwo
 		public Assignment getMessageTypeAssignment_1() { return cMessageTypeAssignment_1; }
 
-		//MessageType
-		public RuleCall getMessageTypeMessageTypeEnumRuleCall_1_0() { return cMessageTypeMessageTypeEnumRuleCall_1_0; }
+		//MessageTypeTwo
+		public RuleCall getMessageTypeMessageTypeTwoEnumRuleCall_1_0() { return cMessageTypeMessageTypeTwoEnumRuleCall_1_0; }
 
 		//message=STRING
 		public Assignment getMessageAssignment_2() { return cMessageAssignment_2; }
@@ -362,7 +362,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final CrossReference cLifelineLifelineCrossReference_0_0 = (CrossReference)cLifelineAssignment_0.eContents().get(0);
 		private final RuleCall cLifelineLifelineIDTerminalRuleCall_0_0_1 = (RuleCall)cLifelineLifelineCrossReference_0_0.eContents().get(1);
 		private final Assignment cMessageTypeAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cMessageTypeMessageTypeEnumRuleCall_1_0 = (RuleCall)cMessageTypeAssignment_1.eContents().get(0);
+		private final RuleCall cMessageTypeMessageTypeOneEnumRuleCall_1_0 = (RuleCall)cMessageTypeAssignment_1.eContents().get(0);
 		private final Assignment cMessageTypeLostAndFoundAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final Alternatives cMessageTypeLostAndFoundAlternatives_2_0 = (Alternatives)cMessageTypeLostAndFoundAssignment_2.eContents().get(0);
 		private final Keyword cMessageTypeLostAndFoundLostKeyword_2_0_0 = (Keyword)cMessageTypeLostAndFoundAlternatives_2_0.eContents().get(0);
@@ -385,12 +385,12 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNoteSTRINGTerminalRuleCall_5_1_0 = (RuleCall)cNoteAssignment_5_1.eContents().get(0);
 		
 		//OneLifelineMessage:
-		//	Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") message=STRING
+		//	Lifeline=[Lifeline] messageType=MessageTypeOne messageTypeLostAndFound=("lost" | "found") message=STRING
 		//	(startEndExec?="startEndExec" | startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note"
 		//	note=STRING)?;
 		public ParserRule getRule() { return rule; }
 
-		//Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") message=STRING
+		//Lifeline=[Lifeline] messageType=MessageTypeOne messageTypeLostAndFound=("lost" | "found") message=STRING
 		//(startEndExec?="startEndExec" | startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note"
 		//note=STRING)?
 		public Group getGroup() { return cGroup; }
@@ -404,11 +404,11 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getLifelineLifelineIDTerminalRuleCall_0_0_1() { return cLifelineLifelineIDTerminalRuleCall_0_0_1; }
 
-		//messageType=MessageType
+		//messageType=MessageTypeOne
 		public Assignment getMessageTypeAssignment_1() { return cMessageTypeAssignment_1; }
 
-		//MessageType
-		public RuleCall getMessageTypeMessageTypeEnumRuleCall_1_0() { return cMessageTypeMessageTypeEnumRuleCall_1_0; }
+		//MessageTypeOne
+		public RuleCall getMessageTypeMessageTypeOneEnumRuleCall_1_0() { return cMessageTypeMessageTypeOneEnumRuleCall_1_0; }
 
 		//messageTypeLostAndFound=("lost" | "found")
 		public Assignment getMessageTypeLostAndFoundAssignment_2() { return cMessageTypeLostAndFoundAssignment_2; }
@@ -478,10 +478,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final CrossReference cLifelineLifelineCrossReference_0_0 = (CrossReference)cLifelineAssignment_0.eContents().get(0);
 		private final RuleCall cLifelineLifelineIDTerminalRuleCall_0_0_1 = (RuleCall)cLifelineLifelineCrossReference_0_0.eContents().get(1);
 		private final Assignment cMessageTypeAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final Alternatives cMessageTypeAlternatives_1_0 = (Alternatives)cMessageTypeAssignment_1.eContents().get(0);
-		private final Keyword cMessageTypeSyncKeyword_1_0_0 = (Keyword)cMessageTypeAlternatives_1_0.eContents().get(0);
-		private final Keyword cMessageTypeAsyncKeyword_1_0_1 = (Keyword)cMessageTypeAlternatives_1_0.eContents().get(1);
-		private final Keyword cMessageTypeResponseKeyword_1_0_2 = (Keyword)cMessageTypeAlternatives_1_0.eContents().get(2);
+		private final RuleCall cMessageTypeMessageTypeOneEnumRuleCall_1_0 = (RuleCall)cMessageTypeAssignment_1.eContents().get(0);
 		private final Keyword cSelfKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		private final Assignment cMessageAssignment_3 = (Assignment)cGroup.eContents().get(3);
 		private final RuleCall cMessageSTRINGTerminalRuleCall_3_0 = (RuleCall)cMessageAssignment_3.eContents().get(0);
@@ -501,11 +498,11 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNoteSTRINGTerminalRuleCall_5_1_0 = (RuleCall)cNoteAssignment_5_1.eContents().get(0);
 		
 		//SelfMessage:
-		//	Lifeline=[Lifeline] messageType=("sync" | "async" | "response") "self" message=STRING (startEndExec?="startEndExec" |
+		//	Lifeline=[Lifeline] messageType=MessageTypeOne "self" message=STRING (startEndExec?="startEndExec" |
 		//	startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
 		public ParserRule getRule() { return rule; }
 
-		//Lifeline=[Lifeline] messageType=("sync" | "async" | "response") "self" message=STRING (startEndExec?="startEndExec" |
+		//Lifeline=[Lifeline] messageType=MessageTypeOne "self" message=STRING (startEndExec?="startEndExec" |
 		//startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?
 		public Group getGroup() { return cGroup; }
 
@@ -518,20 +515,11 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//ID
 		public RuleCall getLifelineLifelineIDTerminalRuleCall_0_0_1() { return cLifelineLifelineIDTerminalRuleCall_0_0_1; }
 
-		//messageType=("sync" | "async" | "response")
+		//messageType=MessageTypeOne
 		public Assignment getMessageTypeAssignment_1() { return cMessageTypeAssignment_1; }
 
-		//"sync" | "async" | "response"
-		public Alternatives getMessageTypeAlternatives_1_0() { return cMessageTypeAlternatives_1_0; }
-
-		//"sync"
-		public Keyword getMessageTypeSyncKeyword_1_0_0() { return cMessageTypeSyncKeyword_1_0_0; }
-
-		//"async"
-		public Keyword getMessageTypeAsyncKeyword_1_0_1() { return cMessageTypeAsyncKeyword_1_0_1; }
-
-		//"response"
-		public Keyword getMessageTypeResponseKeyword_1_0_2() { return cMessageTypeResponseKeyword_1_0_2; }
+		//MessageTypeOne
+		public RuleCall getMessageTypeMessageTypeOneEnumRuleCall_1_0() { return cMessageTypeMessageTypeOneEnumRuleCall_1_0; }
 
 		//"self"
 		public Keyword getSelfKeyword_2() { return cSelfKeyword_2; }
@@ -806,23 +794,21 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	
-	public class MessageTypeElements extends AbstractEnumRuleElementFinder {
-		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "MessageType");
+	public class MessageTypeOneElements extends AbstractEnumRuleElementFinder {
+		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "MessageTypeOne");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final EnumLiteralDeclaration cAsyncEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
 		private final Keyword cAsyncAsyncKeyword_0_0 = (Keyword)cAsyncEnumLiteralDeclaration_0.eContents().get(0);
-		private final EnumLiteralDeclaration cCreateEnumLiteralDeclaration_1 = (EnumLiteralDeclaration)cAlternatives.eContents().get(1);
-		private final Keyword cCreateCreateKeyword_1_0 = (Keyword)cCreateEnumLiteralDeclaration_1.eContents().get(0);
-		private final EnumLiteralDeclaration cResponseEnumLiteralDeclaration_2 = (EnumLiteralDeclaration)cAlternatives.eContents().get(2);
-		private final Keyword cResponseResponseKeyword_2_0 = (Keyword)cResponseEnumLiteralDeclaration_2.eContents().get(0);
-		private final EnumLiteralDeclaration cSyncEnumLiteralDeclaration_3 = (EnumLiteralDeclaration)cAlternatives.eContents().get(3);
-		private final Keyword cSyncSyncKeyword_3_0 = (Keyword)cSyncEnumLiteralDeclaration_3.eContents().get(0);
+		private final EnumLiteralDeclaration cResponseEnumLiteralDeclaration_1 = (EnumLiteralDeclaration)cAlternatives.eContents().get(1);
+		private final Keyword cResponseResponseKeyword_1_0 = (Keyword)cResponseEnumLiteralDeclaration_1.eContents().get(0);
+		private final EnumLiteralDeclaration cSyncEnumLiteralDeclaration_2 = (EnumLiteralDeclaration)cAlternatives.eContents().get(2);
+		private final Keyword cSyncSyncKeyword_2_0 = (Keyword)cSyncEnumLiteralDeclaration_2.eContents().get(0);
 		
-		//enum MessageType:
-		//	async | create | response | sync;
+		//enum MessageTypeOne:
+		//	async | response | sync;
 		public EnumRule getRule() { return rule; }
 
-		//async | create | response | sync
+		//async | response | sync
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//async
@@ -831,23 +817,61 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		//"async"
 		public Keyword getAsyncAsyncKeyword_0_0() { return cAsyncAsyncKeyword_0_0; }
 
-		//create
-		public EnumLiteralDeclaration getCreateEnumLiteralDeclaration_1() { return cCreateEnumLiteralDeclaration_1; }
-
-		//"create"
-		public Keyword getCreateCreateKeyword_1_0() { return cCreateCreateKeyword_1_0; }
-
 		//response
-		public EnumLiteralDeclaration getResponseEnumLiteralDeclaration_2() { return cResponseEnumLiteralDeclaration_2; }
+		public EnumLiteralDeclaration getResponseEnumLiteralDeclaration_1() { return cResponseEnumLiteralDeclaration_1; }
 
 		//"response"
-		public Keyword getResponseResponseKeyword_2_0() { return cResponseResponseKeyword_2_0; }
+		public Keyword getResponseResponseKeyword_1_0() { return cResponseResponseKeyword_1_0; }
 
 		//sync
-		public EnumLiteralDeclaration getSyncEnumLiteralDeclaration_3() { return cSyncEnumLiteralDeclaration_3; }
+		public EnumLiteralDeclaration getSyncEnumLiteralDeclaration_2() { return cSyncEnumLiteralDeclaration_2; }
 
 		//"sync"
-		public Keyword getSyncSyncKeyword_3_0() { return cSyncSyncKeyword_3_0; }
+		public Keyword getSyncSyncKeyword_2_0() { return cSyncSyncKeyword_2_0; }
+	}
+
+	public class MessageTypeTwoElements extends AbstractEnumRuleElementFinder {
+		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "MessageTypeTwo");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final EnumLiteralDeclaration cAsyncEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
+		private final Keyword cAsyncAsyncKeyword_0_0 = (Keyword)cAsyncEnumLiteralDeclaration_0.eContents().get(0);
+		private final EnumLiteralDeclaration cResponseEnumLiteralDeclaration_1 = (EnumLiteralDeclaration)cAlternatives.eContents().get(1);
+		private final Keyword cResponseResponseKeyword_1_0 = (Keyword)cResponseEnumLiteralDeclaration_1.eContents().get(0);
+		private final EnumLiteralDeclaration cSyncEnumLiteralDeclaration_2 = (EnumLiteralDeclaration)cAlternatives.eContents().get(2);
+		private final Keyword cSyncSyncKeyword_2_0 = (Keyword)cSyncEnumLiteralDeclaration_2.eContents().get(0);
+		private final EnumLiteralDeclaration cCreateEnumLiteralDeclaration_3 = (EnumLiteralDeclaration)cAlternatives.eContents().get(3);
+		private final Keyword cCreateCreateKeyword_3_0 = (Keyword)cCreateEnumLiteralDeclaration_3.eContents().get(0);
+		
+		//enum MessageTypeTwo:
+		//	async | response | sync | create;
+		public EnumRule getRule() { return rule; }
+
+		//async | response | sync | create
+		public Alternatives getAlternatives() { return cAlternatives; }
+
+		//async
+		public EnumLiteralDeclaration getAsyncEnumLiteralDeclaration_0() { return cAsyncEnumLiteralDeclaration_0; }
+
+		//"async"
+		public Keyword getAsyncAsyncKeyword_0_0() { return cAsyncAsyncKeyword_0_0; }
+
+		//response
+		public EnumLiteralDeclaration getResponseEnumLiteralDeclaration_1() { return cResponseEnumLiteralDeclaration_1; }
+
+		//"response"
+		public Keyword getResponseResponseKeyword_1_0() { return cResponseResponseKeyword_1_0; }
+
+		//sync
+		public EnumLiteralDeclaration getSyncEnumLiteralDeclaration_2() { return cSyncEnumLiteralDeclaration_2; }
+
+		//"sync"
+		public Keyword getSyncSyncKeyword_2_0() { return cSyncSyncKeyword_2_0; }
+
+		//create
+		public EnumLiteralDeclaration getCreateEnumLiteralDeclaration_3() { return cCreateEnumLiteralDeclaration_3; }
+
+		//"create"
+		public Keyword getCreateCreateKeyword_3_0() { return cCreateCreateKeyword_3_0; }
 	}
 	
 	private final SequenceDiagramElements pSequenceDiagram;
@@ -861,7 +885,8 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	private final FragmentElements pFragment;
 	private final SectionElements pSection;
 	private final RefinementElements pRefinement;
-	private final MessageTypeElements unknownRuleMessageType;
+	private final MessageTypeOneElements unknownRuleMessageTypeOne;
+	private final MessageTypeTwoElements unknownRuleMessageTypeTwo;
 	private final TerminalRule tINT_GREATER_ZERO;
 	
 	private final Grammar grammar;
@@ -884,7 +909,8 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		this.pFragment = new FragmentElements();
 		this.pSection = new SectionElements();
 		this.pRefinement = new RefinementElements();
-		this.unknownRuleMessageType = new MessageTypeElements();
+		this.unknownRuleMessageTypeOne = new MessageTypeOneElements();
+		this.unknownRuleMessageTypeTwo = new MessageTypeTwoElements();
 		this.tINT_GREATER_ZERO = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "INT_GREATER_ZERO");
 	}
 	
@@ -950,7 +976,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//TwoLifelineMessage:
-	//	sourceLifeline=[Lifeline] messageType=MessageType message=STRING "to" targetLifeline=[Lifeline]
+	//	sourceLifeline=[Lifeline] messageType=MessageTypeTwo message=STRING "to" targetLifeline=[Lifeline]
 	//	(sourceStartEndExec?="sourceStartEndExec" | sourceStartExec?="sourceStartExec" | sourceEndExec?="sourceEndExec"
 	//	sourceEndExecCount=INT_GREATER_ZERO?)? (targetStartEndExec?="targetStartEndExec" | targetStartExec?="targetStartExec"
 	//	| targetEndExec?="targetEndExec" targetEndExecCount=INT_GREATER_ZERO?)? ("sourceNote" sourceNote=STRING)?
@@ -964,7 +990,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//OneLifelineMessage:
-	//	Lifeline=[Lifeline] messageType=MessageType messageTypeLostAndFound=("lost" | "found") message=STRING
+	//	Lifeline=[Lifeline] messageType=MessageTypeOne messageTypeLostAndFound=("lost" | "found") message=STRING
 	//	(startEndExec?="startEndExec" | startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note"
 	//	note=STRING)?;
 	public OneLifelineMessageElements getOneLifelineMessageAccess() {
@@ -976,7 +1002,7 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//SelfMessage:
-	//	Lifeline=[Lifeline] messageType=("sync" | "async" | "response") "self" message=STRING (startEndExec?="startEndExec" |
+	//	Lifeline=[Lifeline] messageType=MessageTypeOne "self" message=STRING (startEndExec?="startEndExec" |
 	//	startExec?="startExec" | endExec?="endExec" endExecCount=INT_GREATER_ZERO?)? ("note" note=STRING)?;
 	public SelfMessageElements getSelfMessageAccess() {
 		return pSelfMessage;
@@ -1036,14 +1062,24 @@ public class SequenceGrammarAccess extends AbstractGrammarElementFinder {
 		return getRefinementAccess().getRule();
 	}
 
-	//enum MessageType:
-	//	async | create | response | sync;
-	public MessageTypeElements getMessageTypeAccess() {
-		return unknownRuleMessageType;
+	//enum MessageTypeOne:
+	//	async | response | sync;
+	public MessageTypeOneElements getMessageTypeOneAccess() {
+		return unknownRuleMessageTypeOne;
 	}
 	
-	public EnumRule getMessageTypeRule() {
-		return getMessageTypeAccess().getRule();
+	public EnumRule getMessageTypeOneRule() {
+		return getMessageTypeOneAccess().getRule();
+	}
+
+	//enum MessageTypeTwo:
+	//	async | response | sync | create;
+	public MessageTypeTwoElements getMessageTypeTwoAccess() {
+		return unknownRuleMessageTypeTwo;
+	}
+	
+	public EnumRule getMessageTypeTwoRule() {
+		return getMessageTypeTwoAccess().getRule();
 	}
 
 	////enum DataType:

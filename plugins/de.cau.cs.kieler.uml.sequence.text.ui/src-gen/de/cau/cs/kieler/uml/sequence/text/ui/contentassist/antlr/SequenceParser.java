@@ -43,9 +43,9 @@ public class SequenceParser extends AbstractContentAssistParser {
 					put(grammarAccess.getTwoLifelineMessageAccess().getAlternatives_6(), "rule__TwoLifelineMessage__Alternatives_6");
 					put(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundAlternatives_2_0(), "rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0");
 					put(grammarAccess.getOneLifelineMessageAccess().getAlternatives_4(), "rule__OneLifelineMessage__Alternatives_4");
-					put(grammarAccess.getSelfMessageAccess().getMessageTypeAlternatives_1_0(), "rule__SelfMessage__MessageTypeAlternatives_1_0");
 					put(grammarAccess.getSelfMessageAccess().getAlternatives_4(), "rule__SelfMessage__Alternatives_4");
-					put(grammarAccess.getMessageTypeAccess().getAlternatives(), "rule__MessageType__Alternatives");
+					put(grammarAccess.getMessageTypeOneAccess().getAlternatives(), "rule__MessageTypeOne__Alternatives");
+					put(grammarAccess.getMessageTypeTwoAccess().getAlternatives(), "rule__MessageTypeTwo__Alternatives");
 					put(grammarAccess.getSequenceDiagramAccess().getGroup(), "rule__SequenceDiagram__Group__0");
 					put(grammarAccess.getLifelineAccess().getGroup_0(), "rule__Lifeline__Group_0__0");
 					put(grammarAccess.getLifelineAccess().getGroup_1(), "rule__Lifeline__Group_1__0");

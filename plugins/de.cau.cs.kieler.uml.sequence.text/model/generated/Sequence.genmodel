@@ -7,11 +7,16 @@
     editorPluginID="de.cau.cs.kieler.uml.sequence.text.editor" runtimeVersion="2.10">
   <genPackages prefix="Sequence" basePackage="de.cau.cs.kieler.uml.sequence.text"
       disposableProviderFactory="true" fileExtensions="ksd" ecorePackage="Sequence.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Sequence.ecore#//MessageType">
-      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageType/async"/>
-      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageType/create"/>
-      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageType/response"/>
-      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageType/sync"/>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Sequence.ecore#//MessageTypeOne">
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeOne/async"/>
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeOne/response"/>
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeOne/sync"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Sequence.ecore#//MessageTypeTwo">
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeTwo/async"/>
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeTwo/response"/>
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeTwo/sync"/>
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeTwo/create"/>
     </genEnums>
     <genClasses ecoreClass="Sequence.ecore#//SequenceDiagram">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//SequenceDiagram/diagramName"/>

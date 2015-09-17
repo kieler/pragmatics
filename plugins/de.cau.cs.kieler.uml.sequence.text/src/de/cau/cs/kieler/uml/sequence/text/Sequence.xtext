@@ -22,9 +22,8 @@ SequenceDiagram returns SequenceDiagram:
     lifelines+=Lifeline*
     interactions+=Interaction*;
 
-//LocalVariable returns LocalVariable:
+    //LocalVariable returns LocalVariable:
 //    type=DataType name=ID;
-
 Lifeline returns Lifeline:
     ('lifeline' caption=STRING 'as' name=ID) |
     ('usecase' usecaseCaption=STRING 'as' name=ID);
@@ -35,26 +34,28 @@ Interaction returns Interaction:
 
 TwoLifelineMessage returns TwoLifelineMessage:
     sourceLifeline=[Lifeline|ID]
-    messageType=MessageType
+    messageType=MessageTypeTwo
     message=STRING
     'to'
     targetLifeline=[Lifeline|ID]
-    (sourceStartEndExec?='sourceStartEndExec' | sourceStartExec?='sourceStartExec' | sourceEndExec?='sourceEndExec' (sourceEndExecCount=INT_GREATER_ZERO)?)?
-    (targetStartEndExec?='targetStartEndExec' | targetStartExec?='targetStartExec' | targetEndExec?='targetEndExec' (targetEndExecCount=INT_GREATER_ZERO)?)?
+    (sourceStartEndExec?='sourceStartEndExec' | sourceStartExec?='sourceStartExec' | sourceEndExec?='sourceEndExec'
+    (sourceEndExecCount=INT_GREATER_ZERO)?)?
+    (targetStartEndExec?='targetStartEndExec' | targetStartExec?='targetStartExec' | targetEndExec?='targetEndExec'
+    (targetEndExecCount=INT_GREATER_ZERO)?)?
     ('sourceNote' sourceNote=STRING)?
     ('targetNote' targetNote=STRING)?;
 
 OneLifelineMessage returns OneLifelineMessage:
     Lifeline=[Lifeline|ID]
-    messageType=MessageType
+    messageType=MessageTypeOne
     messageTypeLostAndFound=('lost' | 'found')
     message=STRING
     (startEndExec?='startEndExec' | startExec?='startExec' | endExec?='endExec' (endExecCount=INT_GREATER_ZERO)?)?
     ('note' note=STRING)?;
-    
+
 SelfMessage returns SelfMessage:
     Lifeline=[Lifeline|ID]
-    messageType=('sync' | 'async' | 'response')
+    messageType=MessageTypeOne
     'self'
     message=STRING
     (startEndExec?='startEndExec' | startExec?='startExec' | endExec?='endExec' (endExecCount=INT_GREATER_ZERO)?)?
@@ -84,11 +85,13 @@ Refinement returns Refinement:
     'label' label=STRING
     'lifelines' lifelines+=[Lifeline|ID] (',' lifelines+=[Lifeline|ID])*;
 
-enum MessageType:
-    async='async' | create='create' | response='response' | sync='sync';
+enum MessageTypeOne:
+    async='async' | response='response' | sync='sync';
 
-//enum DataType:
+enum MessageTypeTwo:
+    async='async' | response='response' | sync='sync' | create='create';
+
+    //enum DataType:
 //    char='Char' | boolean='Boolean' | integer='Integer' | float='Float';
-
 terminal INT_GREATER_ZERO returns ecore::EInt:
     '1'..'9' ('0'..'9')* | 'all';

@@ -10,14 +10,14 @@ import org.eclipse.emf.common.util.Enumerator;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Message Type</b></em>',
+ * A representation of the literals of the enumeration '<em><b>Message Type One</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getMessageType()
+ * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getMessageTypeOne()
  * @model
  * @generated
  */
-public enum MessageType implements Enumerator
+public enum MessageTypeOne implements Enumerator
 {
   /**
    * The '<em><b>Async</b></em>' literal object.
@@ -30,16 +30,6 @@ public enum MessageType implements Enumerator
   ASYNC(0, "async", "async"),
 
   /**
-   * The '<em><b>Create</b></em>' literal object.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #CREATE_VALUE
-   * @generated
-   * @ordered
-   */
-  CREATE(1, "create", "create"),
-
-  /**
    * The '<em><b>Response</b></em>' literal object.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -47,7 +37,7 @@ public enum MessageType implements Enumerator
    * @generated
    * @ordered
    */
-  RESPONSE(2, "response", "response"),
+  RESPONSE(1, "response", "response"),
 
   /**
    * The '<em><b>Sync</b></em>' literal object.
@@ -57,7 +47,7 @@ public enum MessageType implements Enumerator
    * @generated
    * @ordered
    */
-  SYNC(3, "sync", "sync");
+  SYNC(2, "sync", "sync");
 
   /**
    * The '<em><b>Async</b></em>' literal value.
@@ -75,21 +65,6 @@ public enum MessageType implements Enumerator
   public static final int ASYNC_VALUE = 0;
 
   /**
-   * The '<em><b>Create</b></em>' literal value.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of '<em><b>Create</b></em>' literal object isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @see #CREATE
-   * @model name="create"
-   * @generated
-   * @ordered
-   */
-  public static final int CREATE_VALUE = 1;
-
-  /**
    * The '<em><b>Response</b></em>' literal value.
    * <!-- begin-user-doc -->
    * <p>
@@ -102,7 +77,7 @@ public enum MessageType implements Enumerator
    * @generated
    * @ordered
    */
-  public static final int RESPONSE_VALUE = 2;
+  public static final int RESPONSE_VALUE = 1;
 
   /**
    * The '<em><b>Sync</b></em>' literal value.
@@ -117,42 +92,41 @@ public enum MessageType implements Enumerator
    * @generated
    * @ordered
    */
-  public static final int SYNC_VALUE = 3;
+  public static final int SYNC_VALUE = 2;
 
   /**
-   * An array of all the '<em><b>Message Type</b></em>' enumerators.
+   * An array of all the '<em><b>Message Type One</b></em>' enumerators.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  private static final MessageType[] VALUES_ARRAY =
-    new MessageType[]
+  private static final MessageTypeOne[] VALUES_ARRAY =
+    new MessageTypeOne[]
     {
       ASYNC,
-      CREATE,
       RESPONSE,
       SYNC,
     };
 
   /**
-   * A public read-only list of all the '<em><b>Message Type</b></em>' enumerators.
+   * A public read-only list of all the '<em><b>Message Type One</b></em>' enumerators.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  public static final List<MessageType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+  public static final List<MessageTypeOne> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
   /**
-   * Returns the '<em><b>Message Type</b></em>' literal with the specified literal value.
+   * Returns the '<em><b>Message Type One</b></em>' literal with the specified literal value.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  public static MessageType get(String literal)
+  public static MessageTypeOne get(String literal)
   {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
-      MessageType result = VALUES_ARRAY[i];
+      MessageTypeOne result = VALUES_ARRAY[i];
       if (result.toString().equals(literal))
       {
         return result;
@@ -162,16 +136,16 @@ public enum MessageType implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Message Type</b></em>' literal with the specified name.
+   * Returns the '<em><b>Message Type One</b></em>' literal with the specified name.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  public static MessageType getByName(String name)
+  public static MessageTypeOne getByName(String name)
   {
     for (int i = 0; i < VALUES_ARRAY.length; ++i)
     {
-      MessageType result = VALUES_ARRAY[i];
+      MessageTypeOne result = VALUES_ARRAY[i];
       if (result.getName().equals(name))
       {
         return result;
@@ -181,17 +155,16 @@ public enum MessageType implements Enumerator
   }
 
   /**
-   * Returns the '<em><b>Message Type</b></em>' literal with the specified integer value.
+   * Returns the '<em><b>Message Type One</b></em>' literal with the specified integer value.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  public static MessageType get(int value)
+  public static MessageTypeOne get(int value)
   {
     switch (value)
     {
       case ASYNC_VALUE: return ASYNC;
-      case CREATE_VALUE: return CREATE;
       case RESPONSE_VALUE: return RESPONSE;
       case SYNC_VALUE: return SYNC;
     }
@@ -225,7 +198,7 @@ public enum MessageType implements Enumerator
    * <!-- end-user-doc -->
    * @generated
    */
-  private MessageType(int value, String name, String literal)
+  private MessageTypeOne(int value, String name, String literal)
   {
     this.value = value;
     this.name = name;
@@ -274,4 +247,4 @@ public enum MessageType implements Enumerator
     return literal;
   }
   
-} //MessageType
+} //MessageTypeOne

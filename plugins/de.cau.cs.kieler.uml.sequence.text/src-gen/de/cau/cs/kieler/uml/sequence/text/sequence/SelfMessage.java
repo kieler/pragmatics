@@ -56,6 +56,7 @@ public interface SelfMessage extends Interaction
 
   /**
    * Returns the value of the '<em><b>Message Type</b></em>' attribute.
+   * The literals are from the enumeration {@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Message Type</em>' attribute isn't clear,
@@ -63,22 +64,24 @@ public interface SelfMessage extends Interaction
    * </p>
    * <!-- end-user-doc -->
    * @return the value of the '<em>Message Type</em>' attribute.
-   * @see #setMessageType(String)
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne
+   * @see #setMessageType(MessageTypeOne)
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage#getSelfMessage_MessageType()
    * @model
    * @generated
    */
-  String getMessageType();
+  MessageTypeOne getMessageType();
 
   /**
    * Sets the value of the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage#getMessageType <em>Message Type</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @param value the new value of the '<em>Message Type</em>' attribute.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne
    * @see #getMessageType()
    * @generated
    */
-  void setMessageType(String value);
+  void setMessageType(MessageTypeOne value);
 
   /**
    * Returns the value of the '<em><b>Message</b></em>' attribute.

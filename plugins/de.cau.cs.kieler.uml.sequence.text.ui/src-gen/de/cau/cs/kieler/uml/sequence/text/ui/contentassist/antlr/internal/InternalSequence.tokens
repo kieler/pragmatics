@@ -1,6 +1,6 @@
 ','=34
 'as'=20
-'async'=15
+'async'=14
 'create'=17
 'destroy'=27
 'endExec'=43
@@ -12,7 +12,7 @@
 'lost'=12
 'note'=25
 'refinement'=32
-'response'=16
+'response'=15
 'self'=26
 'sequenceDiagram'=18
 'sourceEndExec'=37
@@ -21,7 +21,7 @@
 'sourceStartExec'=36
 'startEndExec'=41
 'startExec'=42
-'sync'=14
+'sync'=16
 'targetEndExec'=40
 'targetNote'=24
 'targetStartEndExec'=38

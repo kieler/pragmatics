@@ -143,7 +143,7 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 * Constraint:
 	 *     (
 	 *         Lifeline=[Lifeline|ID] 
-	 *         messageType=MessageType 
+	 *         messageType=MessageTypeOne 
 	 *         (messageTypeLostAndFound='lost' | messageTypeLostAndFound='found') 
 	 *         message=STRING 
 	 *         (startEndExec?='startEndExec' | startExec?='startExec' | (endExec?='endExec' endExecCount=INT_GREATER_ZERO?))? 
@@ -196,7 +196,7 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 * Constraint:
 	 *     (
 	 *         Lifeline=[Lifeline|ID] 
-	 *         (messageType='sync' | messageType='async' | messageType='response') 
+	 *         messageType=MessageTypeOne 
 	 *         message=STRING 
 	 *         (startEndExec?='startEndExec' | startExec?='startExec' | (endExec?='endExec' endExecCount=INT_GREATER_ZERO?))? 
 	 *         note=STRING?
@@ -220,7 +220,7 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 * Constraint:
 	 *     (
 	 *         sourceLifeline=[Lifeline|ID] 
-	 *         messageType=MessageType 
+	 *         messageType=MessageTypeTwo 
 	 *         message=STRING 
 	 *         targetLifeline=[Lifeline|ID] 
 	 *         (

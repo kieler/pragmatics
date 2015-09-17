@@ -3,7 +3,7 @@
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
-import de.cau.cs.kieler.uml.sequence.text.sequence.MessageType;
+import de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
 
@@ -55,7 +55,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * @generated
    * @ordered
    */
-  protected static final MessageType MESSAGE_TYPE_EDEFAULT = MessageType.ASYNC;
+  protected static final MessageTypeOne MESSAGE_TYPE_EDEFAULT = MessageTypeOne.ASYNC;
 
   /**
    * The cached value of the '{@link #getMessageType() <em>Message Type</em>}' attribute.
@@ -65,7 +65,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * @generated
    * @ordered
    */
-  protected MessageType messageType = MESSAGE_TYPE_EDEFAULT;
+  protected MessageTypeOne messageType = MESSAGE_TYPE_EDEFAULT;
 
   /**
    * The default value of the '{@link #getMessageTypeLostAndFound() <em>Message Type Lost And Found</em>}' attribute.
@@ -276,7 +276,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public MessageType getMessageType()
+  public MessageTypeOne getMessageType()
   {
     return messageType;
   }
@@ -286,9 +286,9 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setMessageType(MessageType newMessageType)
+  public void setMessageType(MessageTypeOne newMessageType)
   {
-    MessageType oldMessageType = messageType;
+    MessageTypeOne oldMessageType = messageType;
     messageType = newMessageType == null ? MESSAGE_TYPE_EDEFAULT : newMessageType;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE, oldMessageType, messageType));
@@ -502,7 +502,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
         setLifeline((Lifeline)newValue);
         return;
       case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
-        setMessageType((MessageType)newValue);
+        setMessageType((MessageTypeOne)newValue);
         return;
       case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND:
         setMessageTypeLostAndFound((String)newValue);

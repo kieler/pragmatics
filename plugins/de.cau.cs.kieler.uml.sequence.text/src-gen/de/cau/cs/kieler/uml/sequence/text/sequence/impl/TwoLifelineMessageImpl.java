@@ -3,7 +3,7 @@
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
-import de.cau.cs.kieler.uml.sequence.text.sequence.MessageType;
+import de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeTwo;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage;
 
@@ -60,7 +60,7 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * @generated
    * @ordered
    */
-  protected static final MessageType MESSAGE_TYPE_EDEFAULT = MessageType.ASYNC;
+  protected static final MessageTypeTwo MESSAGE_TYPE_EDEFAULT = MessageTypeTwo.ASYNC;
 
   /**
    * The cached value of the '{@link #getMessageType() <em>Message Type</em>}' attribute.
@@ -70,7 +70,7 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * @generated
    * @ordered
    */
-  protected MessageType messageType = MESSAGE_TYPE_EDEFAULT;
+  protected MessageTypeTwo messageType = MESSAGE_TYPE_EDEFAULT;
 
   /**
    * The default value of the '{@link #getMessage() <em>Message</em>}' attribute.
@@ -371,7 +371,7 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public MessageType getMessageType()
+  public MessageTypeTwo getMessageType()
   {
     return messageType;
   }
@@ -381,9 +381,9 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setMessageType(MessageType newMessageType)
+  public void setMessageType(MessageTypeTwo newMessageType)
   {
-    MessageType oldMessageType = messageType;
+    MessageTypeTwo oldMessageType = messageType;
     messageType = newMessageType == null ? MESSAGE_TYPE_EDEFAULT : newMessageType;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE_TYPE, oldMessageType, messageType));
@@ -743,7 +743,7 @@ public class TwoLifelineMessageImpl extends InteractionImpl implements TwoLifeli
         setSourceLifeline((Lifeline)newValue);
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE_TYPE:
-        setMessageType((MessageType)newValue);
+        setMessageType((MessageTypeTwo)newValue);
         return;
       case SequencePackage.TWO_LIFELINE_MESSAGE__MESSAGE:
         setMessage((String)newValue);

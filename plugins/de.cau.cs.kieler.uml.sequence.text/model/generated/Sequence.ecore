@@ -17,7 +17,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="Interaction"/>
   <eClassifiers xsi:type="ecore:EClass" name="TwoLifelineMessage" eSuperTypes="#//Interaction">
     <eStructuralFeatures xsi:type="ecore:EReference" name="sourceLifeline" eType="#//Lifeline"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageType" eType="#//MessageType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageType" eType="#//MessageTypeTwo"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="targetLifeline" eType="#//Lifeline"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceStartEndExec" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
@@ -33,7 +33,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OneLifelineMessage" eSuperTypes="#//Interaction">
     <eStructuralFeatures xsi:type="ecore:EReference" name="Lifeline" eType="#//Lifeline"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageType" eType="#//MessageType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageType" eType="#//MessageTypeOne"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageTypeLostAndFound"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -45,7 +45,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SelfMessage" eSuperTypes="#//Interaction">
     <eStructuralFeatures xsi:type="ecore:EReference" name="Lifeline" eType="#//Lifeline"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageType" eType="#//MessageTypeOne"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="startEndExec" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="startExec" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
@@ -75,10 +75,15 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="lifelines" unique="false"
         upperBound="-1" eType="#//Lifeline"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="MessageType">
+  <eClassifiers xsi:type="ecore:EEnum" name="MessageTypeOne">
     <eLiterals name="async" literal="async"/>
-    <eLiterals name="create" value="1" literal="create"/>
-    <eLiterals name="response" value="2" literal="response"/>
-    <eLiterals name="sync" value="3" literal="sync"/>
+    <eLiterals name="response" value="1" literal="response"/>
+    <eLiterals name="sync" value="2" literal="sync"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="MessageTypeTwo">
+    <eLiterals name="async" literal="async"/>
+    <eLiterals name="response" value="1" literal="response"/>
+    <eLiterals name="sync" value="2" literal="sync"/>
+    <eLiterals name="create" value="3" literal="create"/>
   </eClassifiers>
 </ecore:EPackage>
