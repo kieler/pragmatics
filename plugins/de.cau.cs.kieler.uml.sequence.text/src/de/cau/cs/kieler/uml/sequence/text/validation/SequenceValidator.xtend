@@ -5,7 +5,6 @@ package de.cau.cs.kieler.uml.sequence.text.validation
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Interaction
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline
-//import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineEndBlock
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage
@@ -16,6 +15,7 @@ import java.util.Map
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.validation.Check
 import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
+import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage
 
 /**
  * Custom validation rules. 
@@ -32,8 +32,10 @@ class SequenceValidator extends AbstractSequenceValidator {
     private static val EStructuralFeature END_RIGHT = SequencePackage.Literals.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC
     private static val EStructuralFeature ONE_END_COUNT = SequencePackage.Literals.
         ONE_LIFELINE_MESSAGE__END_EXEC_COUNT
+    private static val EStructuralFeature SELF_END_COUNT = SequencePackage.Literals.
+        SELF_MESSAGE__END_EXEC_COUNT
     private static val EStructuralFeature ONE_END = SequencePackage.Literals.ONE_LIFELINE_MESSAGE__END_EXEC
-//    private static val EStructuralFeature END = SequencePackage.Literals.ONE_LIFELINE_END_BLOCK__END_BLOCK_COUNT
+    private static val EStructuralFeature SELF_END = SequencePackage.Literals.SELF_MESSAGE__END_EXEC
 
     @Check
     def sameLifelineIdName(SequenceDiagram s) {
@@ -56,10 +58,10 @@ class SequenceValidator extends AbstractSequenceValidator {
 //    }
     
     @Check
-    def correctUsageOfBlocks(SequenceDiagram s) {
+    def correctUsageOfExecutions(SequenceDiagram s) {
         val map = new HashMap<Lifeline, Integer>();
         for (interact : s.interactions) {
-            correctUsageOfBlocksOnMessage(interact, map);
+            correctUsageOfExecutionsOnMessage(interact, map);
         }
 //        if (map.size > 0) {
 //            //TODO display warning (not working)
@@ -69,40 +71,45 @@ class SequenceValidator extends AbstractSequenceValidator {
 //        }
     }
 
-    private def dispatch correctUsageOfBlocksOnMessage(TwoLifelineMessage m, Map<Lifeline, Integer> map) {
+    private def dispatch correctUsageOfExecutionsOnMessage(TwoLifelineMessage m, Map<Lifeline, Integer> map) {
         if (m.sourceStartExec) {
-            startBlock(m.sourceLifeline, 1, map)
+            startExec(m.sourceLifeline, 1, map)
         }
         if (m.targetStartExec) {
-            startBlock(m.targetLifeline, 1, map)
+            startExec(m.targetLifeline, 1, map)
         }
         if (m.sourceEndExec) {
-            endBlock(m.sourceLifeline, m.sourceEndExecCount, map, END_LEFT, END_LEFT_COUNT, m)
+            endExec(m.sourceLifeline, m.sourceEndExecCount, map, END_LEFT, END_LEFT_COUNT, m)
         }
         if (m.targetEndExec) {
-            endBlock(m.targetLifeline, m.targetEndExecCount, map, END_RIGHT, END_RIGHT_COUNT, m)
+            endExec(m.targetLifeline, m.targetEndExecCount, map, END_RIGHT, END_RIGHT_COUNT, m)
         }
     }
 
-    private def dispatch correctUsageOfBlocksOnMessage(OneLifelineMessage m, Map<Lifeline, Integer> map) {
+    private def dispatch correctUsageOfExecutionsOnMessage(OneLifelineMessage m, Map<Lifeline, Integer> map) {
         if (m.startExec) {
-            startBlock(m.lifeline, 1, map)
+            startExec(m.lifeline, 1, map)
         }
         if (m.endExec) {
-            endBlock(m.lifeline, m.endExecCount, map, ONE_END, ONE_END_COUNT, m)
+            endExec(m.lifeline, m.endExecCount, map, ONE_END, ONE_END_COUNT, m)
+        }
+    }
+    
+    private def dispatch correctUsageOfExecutionsOnMessage(SelfMessage m, Map<Lifeline, Integer> map) {
+        if (m.startExec) {
+            startExec(m.lifeline, 1, map)
+        }
+        if (m.endExec) {
+            endExec(m.lifeline, m.endExecCount, map, SELF_END, SELF_END_COUNT, m)
         }
     }
     
     // TODO Wegen dispatch muss alles definiert sein?
-    private def dispatch correctUsageOfBlocksOnMessage(DestroyLifelineEvent d, Map<Lifeline, Integer> map) {
+    private def dispatch correctUsageOfExecutionsOnMessage(DestroyLifelineEvent d, Map<Lifeline, Integer> map) {
         
     }
 
-//    private def dispatch correctUsageOfBlocksOnMessage(OneLifelineEndBlock e, Map<Lifeline, Integer> map) {
-//        endBlock(e.lifeline, e.endBlockCount, map, END, END, e)
-//    }
-
-    def startBlock(Lifeline l, Integer add, Map<Lifeline, Integer> map) {
+    def startExec(Lifeline l, Integer add, Map<Lifeline, Integer> map) {
         if (map.containsKey(l)) {
             var temp = map.get(l) + add
             map.put(l, temp)
@@ -111,29 +118,29 @@ class SequenceValidator extends AbstractSequenceValidator {
         }
     }
 
-    def endBlock(Lifeline l, int endBlockCount, Map<Lifeline, Integer> map, EStructuralFeature feature,
+    def endExec(Lifeline l, int endExecCount, Map<Lifeline, Integer> map, EStructuralFeature feature,
         EStructuralFeature featureCnt, Interaction i) {
         if (map.containsKey(l)) {
             var temp = 0
-            if (endBlockCount > 0) {
-                temp = map.get(l) - endBlockCount
-            } else if (endBlockCount == 0) {
+            if (endExecCount > 0) {
+                temp = map.get(l) - endExecCount
+            } else if (endExecCount == 0) {
                 temp = map.get(l) - 1
             }
             
             if (temp == 0) {
                 map.remove(l)
             } else if (temp < 0) {
-                if (endBlockCount > 1) {
-                    error("The number of blocks closed is higher than the number of created", i, featureCnt)
+                if (endExecCount > 1) {
+                    error("The number of executions closed is higher than the number of created", i, featureCnt)
                 } else {
-                    error("The number of blocks closed is higher than the number of created", i, feature)
+                    error("The number of executions closed is higher than the number of created", i, feature)
                 }
             } else {
                 map.put(l, temp)
             }
         } else {
-            error("The number of blocks closed is higher than the number of created", i, feature)
+            error("The number of executions closed is higher than the number of created", i, feature)
         }
     }
 }
