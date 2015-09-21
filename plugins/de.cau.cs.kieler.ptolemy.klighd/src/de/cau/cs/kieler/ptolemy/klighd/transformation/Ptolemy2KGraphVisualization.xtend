@@ -1,7 +1,7 @@
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * http://rtsys.informatik.uni-kiel.de/kieler
  * 
  * Copyright 2013 by
  * + Kiel University
@@ -9,7 +9,6 @@
  *     + Real-Time and Embedded Systems Group
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
@@ -52,6 +51,7 @@ import java.util.EnumSet
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
+import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.Options
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -78,24 +78,18 @@ class Ptolemy2KGraphVisualization {
     
     /** Whether Graphviz is available to be used or not. */
     val isGraphvizAvailable = GraphvizTool::getDotExecutable(false) != null
-    /** alpha value of the background of expanded compound nodes. */
-    var compoundNodeAlpha = 10
-    /** whether port labels should be hidden. */
-    var hidePortLabels = false
     
+    /** User-specified diagram synthesis options. */
+    private var Options options
     
     /**
      * Annotates the given KGraph with the information necessary to render it as a Ptolemy model.
      * 
      * @param kGraph the KGraph created from a Ptolemy model.
-     * @param compoundNodeAlpha alpha value of the background of expanded compound nodes. A higher value
-     *                          translates to more intense backgrounds. INTENSE!
-     * @param hidePortLabels if {@code true}, ports won't have labels. The label text is always available
-     *                       through the port's tool tip.
+     * @param options a container class holding synthesis option values
      */
-    def void visualize(KNode kGraph, int compoundNodeAlpha, boolean hidePortLabels) {
-        this.compoundNodeAlpha = compoundNodeAlpha
-        this.hidePortLabels = hidePortLabels
+    def void visualize(KNode kGraph, Options options) {
+        this.options = options
         
         // Set the layout lagorithm for the graph
         kGraph.setLayoutAlgorithm()
@@ -198,7 +192,7 @@ class Ptolemy2KGraphVisualization {
         //layout.setLayoutSize(collapsedRendering)
         
         // Create the rendering for the expanded version of this node
-        val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha);
+        val expandedRendering = createExpandedCompoundNodeRendering(node, options.compoundNodeAlpha);
         DiagramSyntheses.addRenderingWithStandardSelectionWrapper(node, expandedRendering) => [
             it.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
             it.addDoubleClickAction(KlighdConstants::ACTION_COLLAPSE_EXPAND)
@@ -228,7 +222,7 @@ class Ptolemy2KGraphVisualization {
             node.data += collapsedRendering
             
             // Create the rendering for the expanded version of this node
-            val expandedRendering = createExpandedCompoundNodeRendering(node, compoundNodeAlpha)
+            val expandedRendering = createExpandedCompoundNodeRendering(node, options.compoundNodeAlpha)
             expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
             expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
             node.data += expandedRendering
@@ -460,7 +454,7 @@ class Ptolemy2KGraphVisualization {
         }
         
         // Remove the port's label
-        if (hidePortLabels) {
+        if (!options.portLabels) {
             port.labels.clear()
         }
     }
