@@ -58,11 +58,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private static final val SynthesisOption LIFELINESORTING = SynthesisOption.createChoiceOption("Lifeline Sorting",
         ImmutableList::of("Interactive", "Layer Based", "Short Messages"), "Interactive")
 
-    // TODO remove!
-    private static final val SynthesisOption TEXTSIZE = SynthesisOption.createRangeOption("Text Size", 5, 30, 1, 13)
-
     override getDisplayedSynthesisOptions() {
-        return ImmutableList::of(STYLE, LIFELINESORTING, TEXTSIZE)
+        return ImmutableList::of(
+            STYLE,
+            LIFELINESORTING)
     }
 
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -97,14 +96,11 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         surrInteraction.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
         surrInteraction.addLayoutParam(LayoutOptions.BORDER_SPACING, 10f)
-        surrInteraction.addLayoutParam(SequenceDiagramProperties.MESSAGE_SPACING, 5.0f * TEXTSIZE.intValue)
-//        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
-//        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 40)
-        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 2 * TEXTSIZE.intValue + 30)
-        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 2 * TEXTSIZE.intValue + 10)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.MESSAGE_SPACING, 65f)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
+        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 40)
         surrInteraction.addLayoutParam(SequenceDiagramProperties.AREA_HEADER, 45)
-//        surrInteraction.addLayoutParam(LayoutOptions.MIN_HEIGHT, 100f)
-//        surrInteraction.addLayoutParam(LayoutOptions.MIN_WIDTH, 100f)
+
         switch LIFELINESORTING.objectValue {
             case "Layer Based":
                 surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_SORTING,
@@ -140,10 +136,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         }
 
         val captionRect = surrInteractionRect.addRectangle.foregroundInvisible = true
-//        captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-        captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+        captionRect.addText("sd " + model.diagramName).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
         captionRect.addPolyline(2, lineCoordinates)
-//        captionRect.setSurroundingSpaceGrid(10,0,8,0)
         captionRect.setPointPlacementData(LEFT, 0, 0, TOP, 0, 0, H_LEFT, V_TOP, 20, 0, 0, 0)
 
         surroundingInteraction = surrInteraction
@@ -156,7 +150,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         elementIdOnLifeline.clear()
         elementId = 0
         edgeId = 0
-        
+
         return root
     }
 
@@ -165,9 +159,9 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val lifelineNode = lifeline.createNode().associateWith(lifeline)
 
         lifelineNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.LIFELINE)
-        
+
         elementId += 1
-        
+
         lifelineId.put(lifeline.name, elementId)
 
         val lifelineRect = lifelineNode.addRectangle.foregroundInvisible = true
@@ -189,29 +183,21 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                     captionRect = lifelineRect.addRectangle
                 }
             }
-//            captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 40, 0)
-//            captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
-            captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP,
-                2 * TEXTSIZE.intValue + 10, 0)
-            captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(TEXTSIZE.intValue, 0, 8,
-                0).fontSize = TEXTSIZE.intValue
+            captionRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 36, 0)
+            captionRect.addText(lifeline.caption).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 13
         } else {
             val usecaseRect = lifelineRect.addRectangle.foregroundInvisible = true
-            usecaseRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(LEFT, 30, 0, TOP,
-                2 * TEXTSIZE.intValue + 10, 0)
+            usecaseRect.setAreaPlacementData().from(LEFT, 0, 0, TOP, 0, 0).to(LEFT, 30, 0, TOP, 36, 0)
 
             usecaseRect.addEllipse.setAreaPlacementData().from(LEFT, 0, 0.35f, TOP, 0, 0).to(LEFT, 0, 0.65f, TOP, 10, 0)
-            usecaseRect.addPolyline(1).from(LEFT, 0, 0.5f, TOP, 10, 0).to(LEFT, 0, 0.5f, TOP, 2 * TEXTSIZE.intValue, 0)
+            usecaseRect.addPolyline(1).from(LEFT, 0, 0.5f, TOP, 10, 0).to(LEFT, 0, 0.5f, TOP, 26, 0)
             usecaseRect.addPolyline(1).from(LEFT, 0, 0.3f, TOP, 15, 0).to(LEFT, 0, 0.7f, TOP, 15, 0)
-            usecaseRect.addPolyline(1).from(LEFT, 0, 0.5f, TOP, 2 * TEXTSIZE.intValue, 0).to(LEFT, 0, 0.3f, TOP,
-                2 * TEXTSIZE.intValue + 10, 0)
-            usecaseRect.addPolyline(1).from(LEFT, 0, 0.5f, TOP, 2 * TEXTSIZE.intValue, 0).to(LEFT, 0, 0.7f, TOP,
-                2 * TEXTSIZE.intValue + 10, 0)
+            usecaseRect.addPolyline(1).from(LEFT, 0, 0.5f, TOP, 26, 0).to(LEFT, 0, 0.3f, TOP, 36, 0)
+            usecaseRect.addPolyline(1).from(LEFT, 0, 0.5f, TOP, 26, 0).to(LEFT, 0, 0.7f, TOP, 36, 0)
 
             val captionRect = lifelineRect.addRectangle.foregroundInvisible = true
-            captionRect.setAreaPlacementData().from(LEFT, 30, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP,
-                2 * TEXTSIZE.intValue + 10, 0)
-            captionRect.addText(lifeline.usecaseCaption).fontSize = TEXTSIZE.intValue
+            captionRect.setAreaPlacementData().from(LEFT, 30, 0, TOP, 0, 0).to(RIGHT, 0, 0, TOP, 36, 0)
+            captionRect.addText(lifeline.usecaseCaption).fontSize = 13
         }
 
         // Coordinates for the dashed line of the Lifeline
@@ -221,9 +207,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         val dashedLine = lifelineRect.addRectangle.foregroundInvisible = true
         dashedLine.addPolyline(2, lineCoordinates).setLineStyle(LineStyle.DASH)
-//        dashedLine.setAreaPlacementData().from(LEFT, 0, 0.5f, TOP, 40, 0).to(LEFT, 0, 0.5f, BOTTOM, 0, 0)
-        dashedLine.setAreaPlacementData().from(LEFT, 0, 0.5f, TOP, 2 * TEXTSIZE.intValue + 10, 0).to(LEFT, 0, 0.5f,
-            BOTTOM, 0, 0)
+        dashedLine.setAreaPlacementData().from(LEFT, 0, 0.5f, TOP, 36, 0).to(LEFT, 0, 0.5f, BOTTOM, 0, 0)
 
         lifelineNodes.put(lifeline.name, lifelineNode)
 
@@ -240,7 +224,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val labelText = msg.message
         val source = msg.sourceLifeline
         val target = msg.targetLifeline
-        label.configureCenterEdgeLabel(labelText, TEXTSIZE.intValue, KlighdConstants.DEFAULT_FONT_NAME)
+        label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
 
         transEdge.source = lifelineNodes.get(source.name)
         transEdge.target = lifelineNodes.get(target.name)
@@ -248,12 +232,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         edgeCount(transEdge)
 
         if (msg.sourceNote != null) {
-            //transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
+            // transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
             createNote(source, msg.sourceNote, edgeId)
         }
 
         if (msg.targetNote != null) {
-            //transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
+            // transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
             createNote(target, msg.targetNote, edgeId)
         }
 
@@ -301,7 +285,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val label = KimlUtil.createInitializedLabel(transEdge)
 
         val labelText = msg.message
-        label.configureCenterEdgeLabel(labelText, TEXTSIZE.intValue, KlighdConstants.DEFAULT_FONT_NAME)
+        label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
         transEdge.addPolyline(2).addHeadArrowDecorator()
 
         val dummyNode = KimlUtil.createInitializedNode()
@@ -321,7 +305,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         edgeCount(transEdge)
 
         if (msg.note != null) {
-            //transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
+            // transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
             createNote(msg.lifeline, msg.note, edgeId)
         }
 
@@ -356,9 +340,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 //        } else {
 //            System.out.println("found " + msg.eContainer)
 //        }
-
         if (msg.eContainer instanceof Section) {
-            //System.out.println("bla")
+            // System.out.println("bla")
             val list = new ArrayList
             list.add(fragmentList.last)
             transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
@@ -374,7 +357,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val label = KimlUtil.createInitializedLabel(transEdge)
 
         val labelText = msg.message
-        label.configureCenterEdgeLabel(labelText, TEXTSIZE.intValue, KlighdConstants.DEFAULT_FONT_NAME)
+        label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
 
         transEdge.source = lifelineNodes.get(msg.lifeline.name)
         transEdge.target = lifelineNodes.get(msg.lifeline.name)
@@ -382,7 +365,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         edgeCount(transEdge)
 
         if (msg.note != null) {
-            //transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
+            // transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
             createNote(msg.lifeline, msg.note, edgeId)
         }
 
@@ -412,13 +395,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private def dispatch transformInteraction(OneLifelineNote note) {
         // TODO maybe remove
         val noteNode = note.createNode().associateWith(note)
-        
+
         val id = lifelineId.get(note.lifeline.name)
-        
-        //noteNode.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, id)
-        
+
+        // noteNode.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, id)
         createNote(note.lifeline, note.note, id)
-        
+
         return noteNode
     }
 
@@ -480,8 +462,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         val captionRect = fragNodeRect.addRoundedRectangle(10, 10, 2).foregroundInvisible = true
         captionRect.setBackground(Colors.WHITE)
-//        captionRect.addText(frag.name).setSurroundingSpaceGrid(15, 0, 0, 0).fontSize = 13
-        captionRect.addText(frag.name).setSurroundingSpaceGrid(15, 0, 0, 0).fontSize = TEXTSIZE.intValue
+        captionRect.addText(frag.name).setSurroundingSpaceGrid(15, 0, 0, 0).fontSize = 13
         captionRect.addPolyline(2, lineCoordinates)
         captionRect.setPointPlacementData(LEFT, 1, 0, TOP, 1, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
 
@@ -598,7 +579,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         }
     }
 
-    //Creates a Note
+    // Creates a Note
     private def KNode createNote(Lifeline l, String note, Integer id) {
         val noteNode = createNode()
         noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)
@@ -616,7 +597,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private def edgeCount(KEdge e) {
         elementId += 1
         edgeId = elementId
-        
+
         val edgeLayout = e.getData(typeof(KEdgeLayout))
         edgeLayout.sourcePoint.y = elementId
         edgeLayout.targetPoint.y = elementId
