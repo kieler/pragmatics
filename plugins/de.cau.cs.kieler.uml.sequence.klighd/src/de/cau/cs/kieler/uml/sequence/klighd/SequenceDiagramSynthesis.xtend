@@ -59,9 +59,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         ImmutableList::of("Interactive", "Layer Based", "Short Messages"), "Interactive")
 
     override getDisplayedSynthesisOptions() {
-        return ImmutableList::of(
-            STYLE,
-            LIFELINESORTING)
+        return ImmutableList::of(STYLE, LIFELINESORTING)
     }
 
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,9 +78,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private var KNode surroundingInteraction
     private val elementIdOnLifeline = new HashMap<String, Stack<Integer>>
     private var elementId = 0
-    private var fragmentList = new ArrayList<Integer>
+    private var fragmentList = new Stack<Integer>
     private var edgeId = 0
     private var lifelineId = new HashMap<String, Integer>
+    private val fragmentDepths = new ArrayList<Integer>
 
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Synthesis
@@ -145,11 +144,16 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         model.lifelines.forEach[s|surrInteraction.children += transformLifeline(s)]
         model.interactions.forEach[s|transformInteraction(s)]
 
+        System.out.println("FragmentList = " + fragmentList)
+
         lifelineNodes.clear()
         surroundingInteraction = null
         elementIdOnLifeline.clear()
         elementId = 0
+        fragmentList.clear()
         edgeId = 0
+        lifelineId.clear()
+        fragmentDepths.clear()
 
         return root
     }
@@ -270,9 +274,21 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         }
 
         if (msg.eContainer instanceof Section) {
-            val list = new ArrayList
-            list.add(fragmentList.last)
-            transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+            if (msg.eContainer.eContainer.eContainer instanceof Section) {
+                val i = fragmentList.pop()
+                fragmentDepths.add(i)
+                if (!fragmentDepths.contains(fragmentList.last)) {
+                    fragmentDepths.add(fragmentList.last)
+                }
+                System.out.println(fragmentDepths)
+                var list = new ArrayList
+                list.addAll(fragmentDepths)
+                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+            } else {
+                val list = new ArrayList
+                list.add(fragmentList.last)
+                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+            }
         }
 
         return transEdge
@@ -341,12 +357,22 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 //            System.out.println("found " + msg.eContainer)
 //        }
         if (msg.eContainer instanceof Section) {
-            // System.out.println("bla")
-            val list = new ArrayList
-            list.add(fragmentList.last)
-            transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+            if (msg.eContainer.eContainer.eContainer instanceof Section) {
+                val i = fragmentList.pop()
+                fragmentDepths.add(i)
+                if (!fragmentDepths.contains(fragmentList.last)) {
+                    fragmentDepths.add(fragmentList.last)
+                }
+                System.out.println(fragmentDepths)
+                var list = new ArrayList
+                list.addAll(fragmentDepths)
+                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+            } else {
+                val list = new ArrayList
+                list.add(fragmentList.last)
+                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+            }
         }
-
         return transEdge
     }
 
@@ -384,9 +410,21 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         }
 
         if (msg.eContainer instanceof Section) {
-            val list = new ArrayList
-            list.add(fragmentList.last)
-            transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+            if (msg.eContainer.eContainer.eContainer instanceof Section) {
+                val i = fragmentList.pop()
+                fragmentDepths.add(i)
+                if (!fragmentDepths.contains(fragmentList.last)) {
+                    fragmentDepths.add(fragmentList.last)
+                }
+                System.out.println(fragmentDepths)
+                var list = new ArrayList
+                list.addAll(fragmentDepths)
+                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+            } else {
+                val list = new ArrayList
+                list.add(fragmentList.last)
+                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+            }
         }
 
         return transEdge
@@ -425,8 +463,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
     private def dispatch KNode transformInteraction(Fragment frag) {
         val fragNode = frag.createNode().associateWith(frag)
+        val sectionSize = frag.sections.size
+        //var sectionCount = 0
 
-        if (frag.sections.size > 1) {
+        if (sectionSize > 1) {
             fragNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMBINED_FRAGMENT)
         } else {
             fragNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.INTERACTION_USE)
@@ -434,7 +474,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 
         elementId += 1
 
-        fragmentList.add(elementId)
+        fragmentList.push(elementId)
 
         fragNode.addLayoutParam(SequenceDiagramProperties.ELEMENT_ID, elementId)
 
@@ -467,14 +507,20 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         captionRect.setPointPlacementData(LEFT, 1, 0, TOP, 1, 0, H_LEFT, V_TOP, 0, 0, 0, 0)
 
         for (sect : frag.sections) {
+            //sectionCount += 1
+            //val sectRect = fragNodeRect.addRectangle // .foregroundInvisible = true
             if (sect.label != null) {
                 val label = KimlUtil.createInitializedLabel(fragNode)
 
                 val labelText = "[" + sect.label + "]"
-                label.configureCenterEdgeLabel(labelText, KlighdConstants.DEFAULT_FONT_SIZE,
-                    KlighdConstants.DEFAULT_FONT_NAME)
+                label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
             }
             sect.interactions.forEach[s|transformInteraction(s)]
+//            if (sectionSize - sectionCount > 0) {
+//                sectRect.addPolyline(2).from(LEFT, 0, 0, BOTTOM, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
+//            }
+            System.out.println("fragmentDepths = " + fragmentDepths)
+            fragmentDepths.clear()
         }
 
         return fragNode
