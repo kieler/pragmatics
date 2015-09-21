@@ -82,6 +82,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private val elementIdOnLifeline = new HashMap<String, Stack<Integer>>
     private var elementId = 0
     private var fragmentList = new ArrayList<Integer>
+    private var edgeId = 0
+    private var lifelineId = new HashMap<String, Integer>
 
     // ///////////////////////////////////////////////////////////////////////////////////////////////////
     // Synthesis
@@ -153,6 +155,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         surroundingInteraction = null
         elementIdOnLifeline.clear()
         elementId = 0
+        edgeId = 0
+        
         return root
     }
 
@@ -161,6 +165,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         val lifelineNode = lifeline.createNode().associateWith(lifeline)
 
         lifelineNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.LIFELINE)
+        
+        elementId += 1
+        
+        lifelineId.put(lifeline.name, elementId)
 
         val lifelineRect = lifelineNode.addRectangle.foregroundInvisible = true
 
@@ -240,13 +248,13 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         edgeCount(transEdge)
 
         if (msg.sourceNote != null) {
-            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
-            createNote(source, msg.sourceNote)
+            //transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
+            createNote(source, msg.sourceNote, edgeId)
         }
 
         if (msg.targetNote != null) {
-            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
-            createNote(target, msg.targetNote)
+            //transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
+            createNote(target, msg.targetNote, edgeId)
         }
 
         if (msg.sourceStartExec || msg.sourceStartEndExec) {
@@ -313,8 +321,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         edgeCount(transEdge)
 
         if (msg.note != null) {
-            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
-            createNote(msg.lifeline, msg.note)
+            //transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
+            createNote(msg.lifeline, msg.note, edgeId)
         }
 
         if (msg.startExec || msg.startEndExec) {
@@ -374,8 +382,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         edgeCount(transEdge)
 
         if (msg.note != null) {
-            transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, elementId)
-            createNote(msg.lifeline, msg.note)
+            //transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
+            createNote(msg.lifeline, msg.note, edgeId)
         }
 
         if (msg.startExec || msg.startEndExec) {
@@ -401,12 +409,16 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         return transEdge
     }
 
-    private def dispatch KNode transformInteraction(OneLifelineNote note) {
+    private def dispatch transformInteraction(OneLifelineNote note) {
         // TODO maybe remove
         val noteNode = note.createNode().associateWith(note)
         
-        createNote(note.lifeline, note.note)
-
+        val id = lifelineId.get(note.lifeline.name)
+        
+        //noteNode.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, id)
+        
+        createNote(note.lifeline, note.note, id)
+        
         return noteNode
     }
 
@@ -587,14 +599,15 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     }
 
     //Creates a Note
-    private def KNode createNote(Lifeline l, String note) {
+    private def KNode createNote(Lifeline l, String note, Integer id) {
         val noteNode = createNode()
         noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)
+        noteNode.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, id)
 
         surroundingInteraction.children.add(noteNode)
 
         val noteRect = noteNode.addRectangle()
-        noteRect.addText(note).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = TEXTSIZE.intValue
+        noteRect.addText(note).setSurroundingSpaceGrid(10, 0, 8, 0).fontSize = 8
 
         return noteNode
     }
@@ -602,6 +615,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     // Gives the edges an increasing number, so that the Algorithm knows the order of the messages
     private def edgeCount(KEdge e) {
         elementId += 1
+        edgeId = elementId
+        
         val edgeLayout = e.getData(typeof(KEdgeLayout))
         edgeLayout.sourcePoint.y = elementId
         edgeLayout.targetPoint.y = elementId
