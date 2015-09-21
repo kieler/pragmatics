@@ -523,5 +523,13 @@
             type="int"
             upperBound="100">
       </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="false"
+            description="Enables or disables the consideration of the beforehand given maximal width of the layer. If disabled the width of a graph may increase through the node promotion."
+            id="de.cau.cs.kieler.klay.layered.nodePromotionWidthConsideration"
+            name="Node Promotion Width Consideration"
+            type="boolean">
+      </layoutOption>
    </extension>
 </plugin>

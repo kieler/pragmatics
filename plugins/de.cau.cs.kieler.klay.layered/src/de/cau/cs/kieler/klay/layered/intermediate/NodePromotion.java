@@ -13,13 +13,17 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -64,13 +68,31 @@ public class NodePromotion implements ILayoutProcessor {
     private List<LNode> nodes;
 
     /**
-     * Contains the number of the layer for each node. For a node with the ID i layer[i] holds
-     * the index of the layer to which it is currently assigned.
+     * Holds for each layer the current number of nodes inside it, where the index in the list
+     * stands for the index of the layer.
+     */
+    private List<Integer> currentWidth;
+
+    /**
+     * Contains the number of the layer for each node. For a node with the ID i layer[i] holds the
+     * index of the layer to which it is currently assigned.
      */
     private int[] layers;
 
-    /** Precalculated difference between count of incoming and outgoing edges for each node. */
-    private int[] degreeDiff;
+    /** Precalculated difference between count of incoming and outgoing edges for each node. TODO */
+    private int[][] degreeDiff;
+
+    /** Stores the maximum width of the graph before processing. */
+    private int maxWidth;
+
+    /** Holds current number of dummy nodes in the graph. */
+    private int dummyNodeCount;
+
+    /** TODO . */
+    private int maxHeight;
+
+    /** TODO . */
+    private boolean widthConsideration;
 
     /**
      * {@inheritDoc}
@@ -81,29 +103,62 @@ public class NodePromotion implements ILayoutProcessor {
 
         precalculateAndSetInformation(layeredGraph);
 
+
+        System.out.println("Maximum width: " + maxWidth);
+        
+        promotionFactory(layeredGraph);            
+        
+        if (widthConsideration) {
+            // && if new max width < maxWidth
+            // promotion factory with controlled promotion
+        }
+
+        setNewLayering(layeredGraph);
+
+        progressMonitor.done();
+    }
+
+    /**
+     * 
+     */
+    private void promotionFactory(LGraph layeredGraph) {
+        // TODO Auto-generated method stub
         int promotions; // Indicator if there have been promotions applied in a run.
         boolean promotionFlag;
         int promoteUntil = layeredGraph.getProperty(Properties.NODE_PROMOTION_BOUNDARY).intValue();
+        widthConsideration =
+                layeredGraph.getProperty(Properties.NODE_PROMOTION_WIDTH_CONSIDERATION)
+                        .booleanValue();
+//        widthConsideration = true;
         int iterationCounter = 0; // Counts the number of iterations over all nodes.
         int[] layeringBackup = layers.clone();
+        int dummyBackup = dummyNodeCount;
+        int heightBackup = maxHeight;
+        List<Integer> currentWidthBackup = currentWidth;
 
         // Set maximal number of iterations till stopping the node promotion.
         // It depends on the number of nodes in the graph. 0 causes the algorithm to run until no
         // more promotions are made. Other values lie between 1% to 70% of the number of nodes in
-        // the graph. Values greater than 70% would lead to the same results like using no boundary.
+        // the graph. Values greater than 70% would lead to the same results as using no boundary.
         if (promoteUntil != 0) {
             promoteUntil = (int) Math.ceil(layers.length * promoteUntil / 100.0);
         }
-
         do {
             promotions = 0;
             // Start promotion for all nodes with incoming edges.
             for (LNode node : nodesWithIncomingEdges) {
-                if (promoteNode(node) < 0) {
+                Pair<Integer, Boolean> promotionPair = promoteNode(node);
+                if (promotionPair.getFirst() < 0 && promotionPair.getSecond()) {
                     promotions++;
                     layeringBackup = layers.clone();
+                    dummyBackup = dummyNodeCount;
+                    heightBackup = maxHeight;
+                    currentWidthBackup = Lists.newArrayList(currentWidth);
                 } else {
                     layers = layeringBackup.clone();
+                    dummyNodeCount = dummyBackup;
+                    currentWidth = Lists.newArrayList(currentWidthBackup);
+                    maxHeight = heightBackup;
                 }
             }
             iterationCounter++;
@@ -113,10 +168,7 @@ public class NodePromotion implements ILayoutProcessor {
                 promotionFlag = iterationCounter < promoteUntil;
             }
         } while (promotionFlag);
-
-        setNewLayering(layeredGraph);
-
-        progressMonitor.done();
+        
     }
 
     /**
@@ -131,35 +183,70 @@ public class NodePromotion implements ILayoutProcessor {
 
         // Set IDs for all layers and nodes.
         // Layer IDs are reversed for easier handling in the heuristic.
-        int layerID = layeredGraph.getLayers().size() - 1;
+        // Determine maximum width of all layers and fill list of the width of all current layers
+        // with information at corresponding position in the list.
+        maxHeight = layeredGraph.getLayers().size();
+        int layerID = maxHeight - 1;
         int nodeID = 0;
+        maxWidth = 0;
+        currentWidth = Lists.newArrayList(new Integer[maxHeight]);
+        System.out.println("Current width: " + currentWidth);
         for (Layer layer : layeredGraph.getLayers()) {
             layer.id = layerID;
-            layerID--;
             for (LNode node : layer.getNodes()) {
                 node.id = nodeID;
                 nodeID++;
             }
+            layerID--;
         }
 
         layers = new int[nodeID];
-        degreeDiff = new int[nodeID];
+        degreeDiff = new int[nodeID][3];
         nodes = Lists.newArrayList();
         nodesWithIncomingEdges = Lists.newArrayList();
+        int baggage = 0;
 
         // Calculate difference and determine all nodes with incoming edges.
-        for (Layer layer : layeredGraph.getLayers()) {
+        for (Layer layer : layeredGraph) {
+            layerID = layer.id;
+            System.out.println("Layer: " + layerID);
+            int incoming = 0;
+            int outcoming = 0;
+            int layerSize = layer.getNodes().size();
             for (LNode node : layer.getNodes()) {
-                layers[node.id] = node.getLayer().id;
+                nodeID = node.id;
+                layers[nodeID] = node.getLayer().id;
                 int inDegree = Iterables.size(node.getIncomingEdges());
-                degreeDiff[node.id] = Iterables.size(node.getOutgoingEdges()) - inDegree;
+                int outDegree = Iterables.size(node.getOutgoingEdges());
+                degreeDiff[nodeID][0] = outDegree - inDegree;
+                degreeDiff[nodeID][1] = inDegree;
+                degreeDiff[nodeID][2] = outDegree;
+                incoming += inDegree;
+                outcoming += outDegree;
                 if (inDegree > 0) {
                     nodesWithIncomingEdges.add(node);
                 }
                 nodes.add(node);
             }
+            baggage -= incoming;
+            int nodesNdummies = layerSize + baggage;
+            currentWidth.set(layerID, nodesNdummies);
+            maxWidth = Math.max(maxWidth, nodesNdummies);
+            baggage += outcoming;
+            System.out.println("Layer     : " + layerID + "\nLayersize : " + layerSize
+                    + "\nDummynodes: " + baggage);
         }
 
+        // Calculate number of dummy nodes in the graph.
+        dummyNodeCount = 0;
+        for (LNode node : nodes) {
+            for (LEdge edge : node.getOutgoingEdges()) {
+                int layerDistance = node.getLayer().id - edge.getTarget().getNode().getLayer().id;
+                if (layerDistance > 1) {
+                    dummyNodeCount += layerDistance - 1;
+                }
+            }
+        }
     }
 
     /**
@@ -169,28 +256,43 @@ public class NodePromotion implements ILayoutProcessor {
      * 
      * @param node
      *            Node that shall be promoted.
-     * @return The estimated difference of dummy nodes after applying the node promotion. A negative
-     *         value indicates a reduction of dummy nodes.
+     * @return TODO The estimated difference of dummy nodes after applying the node promotion. A
+     *         negative value indicates a reduction of dummy nodes.
      */
-    private int promoteNode(final LNode node) {
-
+    private Pair<Integer, Boolean> promoteNode(final LNode node) {
+        boolean maxWidthNotExceeded = true;
         int dummydiff = 0;
+        int nodeLayerPos = layers[node.id];
+        currentWidth.set(nodeLayerPos, currentWidth.get(nodeLayerPos) - 1
+                + degreeDiff[nodeLayerPos][2]); // TODO.
         // Calculate index of the layer for the promoted node.
-        int nodeNewLayerPos = layers[node.id] + 1;
+        nodeLayerPos++;
+        if (nodeLayerPos >= maxHeight) {
+            maxHeight++;
+            currentWidth.add(1);
+        } else {
+            currentWidth.set(nodeLayerPos, currentWidth.get(nodeLayerPos) + 1
+                    - degreeDiff[nodeLayerPos][1]); // TODO murks?
+        }
+        if (currentWidth.get(nodeLayerPos) > maxWidth && widthConsideration) {
+            maxWidthNotExceeded = false;
+        }
 
         // Set new position of the node in the layering by promoting preceding nodes in the above
         // neighboring layer recursively and calculating the difference of dummy nodes.
         for (LEdge edge : node.getIncomingEdges()) {
             LNode masterNode = edge.getSource().getNode();
-            if (layers[masterNode.id] == nodeNewLayerPos) {
-                dummydiff = dummydiff + promoteNode(masterNode);
+            if (layers[masterNode.id] == nodeLayerPos) {
+                Pair<Integer, Boolean> promotion = promoteNode(masterNode);
+                dummydiff = dummydiff + promotion.getFirst();
+                maxWidthNotExceeded = maxWidthNotExceeded && promotion.getSecond();
             }
         }
 
-        layers[node.id] = nodeNewLayerPos;
-        dummydiff = dummydiff + degreeDiff[node.id];
+        layers[node.id] = nodeLayerPos;
+        dummydiff = dummydiff + degreeDiff[node.id][0];
 
-        return dummydiff;
+        return new Pair<Integer, Boolean>(dummydiff, maxWidthNotExceeded);
     }
 
     /**
