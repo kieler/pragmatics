@@ -144,8 +144,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         model.lifelines.forEach[s|surrInteraction.children += transformLifeline(s)]
         model.interactions.forEach[s|transformInteraction(s)]
 
-        System.out.println("FragmentList = " + fragmentList)
-
         lifelineNodes.clear()
         surroundingInteraction = null
         elementIdOnLifeline.clear()
@@ -280,7 +278,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 if (!fragmentDepths.contains(fragmentList.last)) {
                     fragmentDepths.add(fragmentList.last)
                 }
-                System.out.println(fragmentDepths)
                 var list = new ArrayList
                 list.addAll(fragmentDepths)
                 transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
@@ -363,7 +360,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 if (!fragmentDepths.contains(fragmentList.last)) {
                     fragmentDepths.add(fragmentList.last)
                 }
-                System.out.println(fragmentDepths)
                 var list = new ArrayList
                 list.addAll(fragmentDepths)
                 transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
@@ -416,7 +412,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 if (!fragmentDepths.contains(fragmentList.last)) {
                     fragmentDepths.add(fragmentList.last)
                 }
-                System.out.println(fragmentDepths)
                 var list = new ArrayList
                 list.addAll(fragmentDepths)
                 transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
@@ -519,7 +514,6 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
 //            if (sectionSize - sectionCount > 0) {
 //                sectRect.addPolyline(2).from(LEFT, 0, 0, BOTTOM, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
 //            }
-            System.out.println("fragmentDepths = " + fragmentDepths)
             fragmentDepths.clear()
         }
 
