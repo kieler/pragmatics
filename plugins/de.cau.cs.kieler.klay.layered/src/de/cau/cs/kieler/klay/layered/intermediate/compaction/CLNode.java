@@ -148,6 +148,7 @@ public final class CLNode extends CNode {
     
     @Override
     public String toString() {
-        return lNode.toString();
+        //return lNode.toString();
+        return lNode.getProperty(InternalProperties.ORIGIN).toString();
     }
 }

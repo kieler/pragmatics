@@ -56,7 +56,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
         // the layered graph is transformed into a CGraph that is passed to OneDimensionalCompactor
         LGraphToCGraphTransformer transformer = new LGraphToCGraphTransformer();
         OneDimensionalCompactor odc =
-                new OneDimensionalCompactor(transformer.transform(layeredGraph));
+                new OneDimensionalCompactor(transformer.transform(layeredGraph), progressMonitor);
         
         GraphCompactionStrategy strategy = layeredGraph.getProperty(Properties.HORIZONTAL_COMPACTION);
         switch (strategy) {
@@ -92,6 +92,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
         
         // since changeDirection transforms hitboxes the final direction has to be LEFT again
         odc.changeDirection(Direction.LEFT);
+//           .drawHitboxes("/home/dag/cgraphdebug/junit"+System.nanoTime()+".svg");
         
         // applying the compacted positions to the LGraph and updating its size and offset
         transformer.applyLayout();

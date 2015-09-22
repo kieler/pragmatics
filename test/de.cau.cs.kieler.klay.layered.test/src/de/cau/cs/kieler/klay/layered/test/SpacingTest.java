@@ -13,25 +13,33 @@
  */
 package de.cau.cs.kieler.klay.layered.test;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.core.kgraph.KNode;
+import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.InteractiveNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.LinearSegmentsNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy;
 import de.cau.cs.kieler.klay.layered.p4nodes.SimpleNodePlacer;
 import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.CompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
+import de.cau.cs.kieler.klay.layered.properties.FixedAlignment;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.properties.Spacings;
@@ -61,15 +69,29 @@ public class SpacingTest extends AbstractLayeredProcessorTest {
     protected List<ILayoutConfigurator> getConfigurators() {
         List<ILayoutConfigurator> configs = Lists.newArrayList();
 
-        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
-                NodePlacementStrategy.INTERACTIVE, InteractiveNodePlacer.class));
-        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
-                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class));
-        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
-                NodePlacementStrategy.SIMPLE, SimpleNodePlacer.class));
-        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
-                NodePlacementStrategy.LINEAR_SEGMENTS, LinearSegmentsNodePlacer.class));
+//        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+//                NodePlacementStrategy.INTERACTIVE, InteractiveNodePlacer.class));
+//        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+//                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class));
+//        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+//                NodePlacementStrategy.SIMPLE, SimpleNodePlacer.class));
+//        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+//                NodePlacementStrategy.LINEAR_SEGMENTS, LinearSegmentsNodePlacer.class));
 
+        
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT.apply(GraphCompactionStrategy.LEFT)));
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT.apply(GraphCompactionStrategy.RIGHT)));
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT.apply(GraphCompactionStrategy.LEFT_RIGHT_CONNECTION_LOCKING)));
+        configs.add(new SimplePhaseLayoutConfigurator(Properties.NODE_PLACER,
+                NodePlacementStrategy.BRANDES_KOEPF, BKNodePlacer.class,
+                CONFIG_COMPACTION_STRAT.apply(GraphCompactionStrategy.LEFT_RIGHT_CONSTRAINT_LOCKING)));
+        
         return configs;
     }
 
@@ -79,7 +101,8 @@ public class SpacingTest extends AbstractLayeredProcessorTest {
     @Override
     protected TestPath[] getBundleTestPath() {
         TestPath[] testPaths =
-                { new TestPath("klay_layered/spacing/", false, false, TestPath.Type.KGRAPH) };
+                { new TestPath("klay_layered/spacing/", false, false, TestPath.Type.KGRAPH),
+                    new TestPath("ptolemy_flat_kgx/", false, false, TestPath.Type.KGRAPH)   };
         return testPaths;
     }
 
@@ -133,12 +156,12 @@ public class SpacingTest extends AbstractLayeredProcessorTest {
                                 // u left of v
                                 dist = v.getPosition().x - v.getMargin().left
                                         - (u.getPosition().x + u.getSize().x + u.getMargin().right);
-                                Assert.assertTrue(dist + " >= " + spacingToCheck, doubleGtEq(dist, spacingToCheck));
+                                Assert.assertTrue(u + " " + v +" " + dist + " >= " + spacingToCheck, doubleGtEq(dist, spacingToCheck));
                             } else {
                                 // v left of u
                                 dist = u.getPosition().x - u.getMargin().left
                                         - (v.getPosition().x + v.getSize().x + v.getMargin().right);
-                                Assert.assertTrue(dist + " >= " + spacingToCheck, doubleGtEq(dist, spacingToCheck));
+                                Assert.assertTrue(u + " " + v +" " + dist + " >= " + spacingToCheck, doubleGtEq(dist, spacingToCheck));
                             }
                         }
                         
@@ -151,9 +174,10 @@ public class SpacingTest extends AbstractLayeredProcessorTest {
                                 || (u.getType() == NodeType.NORMAL && v.getType() == NodeType.LONG_EDGE)) {
                             spacingToCheck = verticalEdgeNodeSpacing;
                         } else {
-                            throw new IllegalStateException(
-                                    "Spacing test does not support to validate input model "
-                                            + graphObject.getFile() + "\n Node types were: " + u.getType() + " " + v.getType() );
+//                            throw new IllegalStateException(
+//                                    "Spacing test does not support to validate input model "
+//                                            + graphObject.getFile() + "\n Node types were: " + u.getType() + " " + v.getType() );
+                            return;
                         }
                         
                         // if the overlap horizontally ...
@@ -192,4 +216,21 @@ public class SpacingTest extends AbstractLayeredProcessorTest {
         return false;
     }
     
+    private static final Function<GraphCompactionStrategy, Function<KNode, KNode>> CONFIG_COMPACTION_STRAT =
+            new Function<GraphCompactionStrategy, Function<KNode, KNode>>() {
+                public Function<KNode, KNode> apply(GraphCompactionStrategy compaction) {
+                    return new Function<KNode, KNode>() {
+                        public KNode apply(final KNode input) {
+                            
+                            // apply to parent
+                            input.getData(KShapeLayout.class).setProperty(Properties.COMPACTION_STRATEGY,
+                                    CompactionStrategy.CLASSIC);
+                            input.getData(KShapeLayout.class).setProperty(
+                                    Properties.HORIZONTAL_COMPACTION, compaction);
+                            
+                            return input;
+                        };
+                    };
+                }
+        };
 }

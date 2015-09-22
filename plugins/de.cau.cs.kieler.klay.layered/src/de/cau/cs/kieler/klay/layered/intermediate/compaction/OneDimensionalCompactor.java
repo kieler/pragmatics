@@ -18,12 +18,12 @@ import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.Direction;
 
@@ -39,6 +39,7 @@ public final class OneDimensionalCompactor {
     private Direction direction = Direction.UNDEFINED;
     /** a function that sets the {@link CNode#reposition} flag according to the direction. */
     private BiFunction<CNode, Direction, Boolean> lockingStrategy;
+    private IKielerProgressMonitor progmon;
     
     /**
      * Initializes the fields of the {@link OneDimensionalCompactor}.
@@ -46,7 +47,8 @@ public final class OneDimensionalCompactor {
      * @param cGraph
      *          the graph to compact
      */
-    public OneDimensionalCompactor(final CGraph cGraph) {
+    public OneDimensionalCompactor(final CGraph cGraph, final IKielerProgressMonitor progressMonitor) {//TODO - progmon
+        progmon = progressMonitor.subTask(1);
         this.cGraph = cGraph;
         // the default locking strategy locks CNodes if they are not constrained
         setLockingStrategy((n, d) -> !(n.outDegree == 0));
@@ -230,25 +232,22 @@ public final class OneDimensionalCompactor {
      * {@link CNode}s.
      */
     private void calculateConstraintsForCGroups() {
-        // adding constraints to each CGroup, that refer to CNodes outside of the CGroup
+        
         for (CGroup group : cGraph.cGroups) {
             group.outDegree = 0;
             group.incomingConstraints.clear();
-            for (CNode cNode : group.cNodes) {
-                for (CNode inc : cNode.constraints) {
-                    if (!group.cNodes.contains(inc)) {
-                        group.incomingConstraints.add(inc);
-                    }
-                }
-            }
         }
         
-        // setting the outDegree of CGroups
-        // (number of CNodes outside the group that the group is constrained by)
         for (CGroup group : cGraph.cGroups) {
             for (CNode cNode : group.cNodes) {
                 for (CNode inc : cNode.constraints) {
-                    if (group.incomingConstraints.contains(inc)) {
+
+                    if (inc.cGroup != group) {
+                        // adding constraints to each CGroup, that refer to CNodes outside of the
+                        // CGroup
+                        group.incomingConstraints.add(inc);
+                        // setting the outDegree of CGroups
+                        // (number of CNodes outside the group that the group is constrained by)
                         inc.cGroup.outDegree++;
                     }
                 }
@@ -289,6 +288,9 @@ public final class OneDimensionalCompactor {
      * considering vertical spacing.
      */
     private void calculateConstraints() {
+        //TODO - progmon
+        progmon.begin("Constraint calculation", 1);
+        
         // resetting constraints
         for (CNode cNode : cGraph.cNodes) {
             cNode.constraints.clear();
@@ -305,12 +307,16 @@ public final class OneDimensionalCompactor {
                 // exclude parentNodes because they don't constrain their north/south segments
                 if (cNode1 != cNode2 && cNode1 != cNode2.parentNode
                         // '>' avoids simultaneous constraints A->B and B->A
-                        && cNode2.hitbox.x > cNode1.hitbox.x
-                        
-                        && CompareFuzzy.gt(cNode2.hitbox.y + cNode2.hitbox.height + spacing, cNode1.hitbox.y)
-                        
-                        && CompareFuzzy.lt(cNode2.hitbox.y, cNode1.hitbox.y
-                                   + cNode1.hitbox.height + spacing)) {
+                        && (cNode2.hitbox.x > cNode1.hitbox.x 
+                                // 
+                                || (cNode1.hitbox.x == cNode2.hitbox.x 
+                                    && cNode1.hitbox.width < cNode2.hitbox.width))
+
+                        && CompareFuzzy.gt(cNode2.hitbox.y + cNode2.hitbox.height + spacing,
+                                cNode1.hitbox.y)
+
+                        && CompareFuzzy.lt(cNode2.hitbox.y, cNode1.hitbox.y + cNode1.hitbox.height
+                                + spacing)) {
 
                     cNode1.constraints.add(cNode2);
                     cNode2.outDegree++;
@@ -320,6 +326,8 @@ public final class OneDimensionalCompactor {
 
         // resetting constraints for CGroups
         calculateConstraintsForCGroups();
+        
+        progmon.done();
     }
 
     /**
@@ -436,7 +444,8 @@ public final class OneDimensionalCompactor {
                     out.println("<text x=\"" + (cNode.hitbox.x + 2) 
                             + "\" y=\"" + (cNode.hitbox.y + 2 * 2 * 2 + 2 + 1) + "\">" 
                             + "(" + Math.round(cNode.hitbox.x) 
-                            + ", " + Math.round(cNode.hitbox.y) + ")" + "</text>");
+                            + ", " + Math.round(cNode.hitbox.y) + ")\n" 
+                            + cNode + "</text>");
                 } else {
                     out.println("<line x1=\"" + cNode.hitbox.x + "\" y1=\"" + cNode.hitbox.y
                             + "\" x2=\"" + (cNode.hitbox.x + cNode.hitbox.width) + "\" y2=\""

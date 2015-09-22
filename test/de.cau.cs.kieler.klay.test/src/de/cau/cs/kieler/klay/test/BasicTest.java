@@ -23,6 +23,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
@@ -31,12 +32,16 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.math.KielerMath;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
+import de.cau.cs.kieler.klay.layered.p4nodes.bk.CompactionStrategy;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.TestPath;
@@ -52,6 +57,8 @@ public class BasicTest extends KlayAutomatedJUnitTest {
 
     // Object containing the current graphTestObject that contains both, a File and a KNode.
     private GraphTestObject graphObject;
+    
+    private ILayoutConfigurator configurator;
 
     /**
      * Instantiates a new KlayTestExample test and set the graphObject to the current graph to test.
@@ -63,23 +70,68 @@ public class BasicTest extends KlayAutomatedJUnitTest {
      */
     public BasicTest(final GraphTestObject testObject, final ILayoutConfigurator configurator) {
         graphObject = testObject;
+        this.configurator = configurator;
     }
+
 
     /**
      * {@inheritDoc}
      */
     protected TestPath[] getBundleTestPath() {
-        TestPath[] testPaths = { new TestPath("misc/random", false, false, TestPath.Type.KGRAPH) };
+        TestPath[] testPaths = { new TestPath("misc/random", false, false, TestPath.Type.KGRAPH),
+                new TestPath("ptolemy_flat_kgx/", false, false, TestPath.Type.KGRAPH) };
         return testPaths;
     }
 
+    /**
+     * Configuration cannot be performed in the constructor. @Before methods in subclasses are
+     * called <em>after</em> this one.
+     */
+    @Before
+    public void configure() {
+        // apply the configurator
+        configurator.applyConfiguration(graphObject.getKnode());
+    }
+    
     /**
      * {@inheritDoc}
      */
     @Override
     protected List<ILayoutConfigurator> getConfigurators() {
-        return Lists.newArrayList();
+     
+        return Lists.newArrayList(
+                CONFIG_COMPACTION_STRAT.apply(GraphCompactionStrategy.NONE),
+                CONFIG_COMPACTION_STRAT.apply(GraphCompactionStrategy.LEFT),
+                CONFIG_COMPACTION_STRAT.apply(GraphCompactionStrategy.RIGHT),
+                CONFIG_COMPACTION_STRAT.apply(GraphCompactionStrategy.LEFT_RIGHT_CONNECTION_LOCKING),
+                CONFIG_COMPACTION_STRAT.apply(GraphCompactionStrategy.LEFT_RIGHT_CONSTRAINT_LOCKING)
+                );
     }
+    
+
+    
+    private static final Function<GraphCompactionStrategy, ILayoutConfigurator> CONFIG_COMPACTION_STRAT =
+            new Function<GraphCompactionStrategy, ILayoutConfigurator>() {
+                public ILayoutConfigurator apply(GraphCompactionStrategy compaction) {
+                    return new ILayoutConfigurator() {
+
+                        @Override
+                        public String getDescription() {
+                            return compaction.toString();
+                        }
+
+                        @Override
+                        public void applyConfiguration(KNode input) {
+                            // apply to parent
+                            input.getData(KShapeLayout.class).setProperty(
+                                    Properties.COMPACTION_STRATEGY, CompactionStrategy.CLASSIC);
+                            input.getData(KShapeLayout.class).setProperty(
+                                    Properties.HORIZONTAL_COMPACTION, compaction);
+
+                        }
+                    };
+                }
+            };
 
     /**
      * Perform automatic layout before testing. This is done here instead of specifying layout in
@@ -148,8 +200,13 @@ public class BasicTest extends KlayAutomatedJUnitTest {
             while (nodeIter2.hasNext()) {
                 KNode node2 = nodeIter2.next();
                 if (!(node1 == node2 || KimlUtil.isDescendant(node1, node2))) {
-
-                    assertFalse(hasNodeEdgeOverlaps(node1, node2));
+                    Pair<Boolean, String> result = hasNodeEdgeOverlaps(node1, node2);
+                    if ( result.getFirst()){
+                        System.out.println(node1.getOutgoingEdges() + "\n" + node1.getIncomingEdges());
+                        System.out.println(node2.getOutgoingEdges() + "\n" + node2.getIncomingEdges());
+                    }
+                    assertFalse(result.getSecond() + node1 
+                            + " " + node2, result.getFirst());
                 }
             }
         }
@@ -186,7 +243,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
      *            the second node
      * @return true if overlaps and false otherwise
      */
-    private boolean hasNodeEdgeOverlaps(final KNode node1, final KNode node2) {
+    private Pair<Boolean,String> hasNodeEdgeOverlaps(final KNode node1, final KNode node2) {
         KShapeLayout node2Layout = node2.getData(KShapeLayout.class);
         KVector node2Pos = node2Layout.createVector();
         KimlUtil.toAbsolute(node2Pos, node2.getParent());
@@ -212,13 +269,13 @@ public class BasicTest extends KlayAutomatedJUnitTest {
                     KVector p2 = pointIter.next().add(offset);
                     if (hasNodeEdgeIntersection(p1, p2, node2Pos, node2Layout.getWidth(),
                             node2Layout.getHeight())) {
-                        return true;
+                        return new Pair<Boolean, String>(true, "segment:(" + p1 + ", " + p2 + ") ");
                     }
                     p1 = p2;
                 }
             }
         }
-        return false;
+        return new Pair<Boolean, String>(false, "");
     }
 
     /**
