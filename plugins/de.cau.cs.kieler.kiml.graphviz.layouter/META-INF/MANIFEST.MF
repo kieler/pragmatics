@@ -11,8 +11,7 @@ Require-Bundle: org.eclipse.ui;resolution:=optional,
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml,
- de.cau.cs.kieler.kiml.graphviz.dot,
- de.cau.cs.kieler.kiml.formats
+ de.cau.cs.kieler.kiml.graphviz.dot
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Kiel University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
