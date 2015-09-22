@@ -23,7 +23,6 @@ import java.util.function.BiFunction;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.Direction;
 
@@ -39,7 +38,6 @@ public final class OneDimensionalCompactor {
     private Direction direction = Direction.UNDEFINED;
     /** a function that sets the {@link CNode#reposition} flag according to the direction. */
     private BiFunction<CNode, Direction, Boolean> lockingStrategy;
-    private IKielerProgressMonitor progmon;
     
     /**
      * Initializes the fields of the {@link OneDimensionalCompactor}.
@@ -47,8 +45,7 @@ public final class OneDimensionalCompactor {
      * @param cGraph
      *          the graph to compact
      */
-    public OneDimensionalCompactor(final CGraph cGraph, final IKielerProgressMonitor progressMonitor) {//TODO - progmon
-        progmon = progressMonitor.subTask(1);
+    public OneDimensionalCompactor(final CGraph cGraph) {
         this.cGraph = cGraph;
         // the default locking strategy locks CNodes if they are not constrained
         setLockingStrategy((n, d) -> !(n.outDegree == 0));
@@ -288,9 +285,6 @@ public final class OneDimensionalCompactor {
      * considering vertical spacing.
      */
     private void calculateConstraints() {
-        //TODO - progmon
-        progmon.begin("Constraint calculation", 1);
-        
         // resetting constraints
         for (CNode cNode : cGraph.cNodes) {
             cNode.constraints.clear();
@@ -326,8 +320,6 @@ public final class OneDimensionalCompactor {
 
         // resetting constraints for CGroups
         calculateConstraintsForCGroups();
-        
-        progmon.done();
     }
 
     /**

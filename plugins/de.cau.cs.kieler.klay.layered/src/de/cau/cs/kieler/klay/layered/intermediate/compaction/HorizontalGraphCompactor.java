@@ -56,7 +56,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
         // the layered graph is transformed into a CGraph that is passed to OneDimensionalCompactor
         LGraphToCGraphTransformer transformer = new LGraphToCGraphTransformer();
         OneDimensionalCompactor odc =
-                new OneDimensionalCompactor(transformer.transform(layeredGraph), progressMonitor);
+                new OneDimensionalCompactor(transformer.transform(layeredGraph));
         
         GraphCompactionStrategy strategy = layeredGraph.getProperty(Properties.HORIZONTAL_COMPACTION);
         switch (strategy) {
