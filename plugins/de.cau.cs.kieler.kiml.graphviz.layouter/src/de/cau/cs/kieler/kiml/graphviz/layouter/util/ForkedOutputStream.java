@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.util;
+package de.cau.cs.kieler.kiml.graphviz.layouter.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -19,8 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * An output stream that can be used to send the same output to multiple
- * output streams.
+ * An output stream that can be used to send the same output to multiple output streams.
  * 
  * @kieler.design 2014-04-17 reviewed by cds, chsch, tit, uru
  * @kieler.rating 2009-12-11 proposed yellow msp

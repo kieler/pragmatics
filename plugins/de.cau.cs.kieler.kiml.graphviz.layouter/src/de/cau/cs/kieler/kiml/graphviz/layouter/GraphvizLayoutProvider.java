@@ -31,8 +31,6 @@ import com.google.inject.Injector;
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.ForkedOutputStream;
-import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
@@ -43,6 +41,8 @@ import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotTransformationData;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.IDotTransformationData;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool.Cleanup;
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizLayouterPreferenceStoreAccess;
+import de.cau.cs.kieler.kiml.graphviz.layouter.util.ForkedOutputStream;
+import de.cau.cs.kieler.kiml.graphviz.layouter.util.ForwardingInputStream;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
