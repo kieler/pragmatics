@@ -33,8 +33,12 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
+//TODO: adjust comments, give mad some recognition for thinking about a solution for considering
+//different node sizes. Maybe implement a switch for changing between considering and not considering
+//node sizes.
 /**
  * Implementation of the heuristic MinWidth for solving the NP-hard minimum-width layering problem
  * with consideration of dummy nodes. MinWidth is based on the longest-path algorithm, which finds
@@ -90,6 +94,13 @@ public final class MinWidthLayerer implements ILayoutPhase {
     private static final Range<Integer> UPPERBOUND_ON_WIDTH_RANGE = Range.closed(1, 4);
     private static final Range<Integer> COMPENSATOR_RANGE = Range.closed(1, 2);
 
+    // TODO
+    // initialize the dummy size with the spacing properties
+    private double dummySize;
+    private double minimumNodeSize;
+    private double[] normSize;
+    private double avgSize;
+
     /**
      * Checks whether an edge is a self-loop (i.e. source node == target node). Used internally, as
      * KLay Layered doesn't remove self-loops in its cycle breaking phase, but MinWidth expects only
@@ -129,16 +140,34 @@ public final class MinWidthLayerer implements ILayoutPhase {
         final int compensator =
                 layeredGraph.getProperty(Properties.UPPER_LAYER_ESTIMATION_SCALING_FACTOR);
 
-        // We initialize the nodes' id an use it to refer to its in- and out-degree stored each in an
-        // array.
-        inDegree = new int[layeredGraph.getLayerlessNodes().size()];
-        outDegree = new int[layeredGraph.getLayerlessNodes().size()];
+        // TODO 1 Prepare for node sizes
+        // initialize the dummy size with the spacing properties
+        dummySize =
+                layeredGraph.getProperty(InternalProperties.SPACING)
+                        * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+
+        //TODO 2 outsource: Compute minimum node size.
+        double size;
+        minimumNodeSize = Double.MAX_VALUE;
+        for (LNode node : notInserted) {
+            size = node.getSize().y;
+            minimumNodeSize = Math.min(minimumNodeSize, size);
+        }
+        
+        // We initialize the nodes' id an use it to refer to its in- and out-degree stored each in
+        // an array.
+        // TODO 3: Normalizing nodes
+        int numOfNodes = notInserted.size();
+        inDegree = new int[numOfNodes];
+        outDegree = new int[numOfNodes];
+        normSize = new double[numOfNodes];
         int i = 0;
         for (LNode node : notInserted) {
             // Warning: LNode.id is being redefined here!
             node.id = i++;
             inDegree[node.id] = countEdgesExceptSelfLoops(node.getIncomingEdges());
             outDegree[node.id] = countEdgesExceptSelfLoops(node.getOutgoingEdges());
+            normSize[node.id] = node.getSize().y / minimumNodeSize;  
         }
 
         // Precalculate the successors of all nodes (as a Set) and put them in a list.
