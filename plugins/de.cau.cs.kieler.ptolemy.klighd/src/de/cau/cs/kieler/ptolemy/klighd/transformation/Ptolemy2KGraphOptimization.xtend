@@ -14,12 +14,13 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KEdge
+import de.cau.cs.kieler.core.kgraph.KEdge 
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.util.Pair
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
+import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.Options
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
@@ -59,6 +60,8 @@ public class Ptolemy2KGraphOptimization {
     /** Flattening. */
     @Inject Flattener flattener;
     
+    /** User-specified diagram synthesis options. */
+    private var Options options
     
     /**
      * Optimizes the given KGraph model.
@@ -69,22 +72,22 @@ public class Ptolemy2KGraphOptimization {
      * important.</p>
      * 
      * @param kGraph the model to optimize.
-     * @param hideRelations {@code true} if relations should be replaced by hyperedges; otherwise, we
-     *                      only try and hide as many relations as possible.
-     * @param flatten {@code true} if the graph should be flattened by removing all hierarchy.
+     * @param options a container class holding synthesis option values
      * @param commentsExtractor the extractor to use for extracting comments, or {@code null} if no
      *                          comments should be extracted.
      * @param diagramSynthesis the diagram synthesis that uses this classes. Used to map Ptolemy model
      *                         objects to KGraph model objects.
      */
-    def void optimize(KNode kGraph, boolean hideRelations, boolean flatten,
+    def void optimize(KNode kGraph, Options options,
         CommentsExtractor commentsExtractor, AbstractDiagramSynthesis<?> diagramSynthesis) {
+        
+        this.options = options
         
         // Infer edge directions
         inferEdgeDirections(kGraph)
         
         // Remove either unnecessary or all relations
-        if (hideRelations) {
+        if (!options.relations) {
             removeAllRelations(kGraph)
         } else {
             removeUnnecessaryRelations(kGraph)
@@ -102,7 +105,7 @@ public class Ptolemy2KGraphOptimization {
         }
         
         // Flatten
-        if (flatten) {
+        if (options.flatten) {
             flattener.flatten(kGraph);
         }
     }
@@ -687,7 +690,7 @@ public class Ptolemy2KGraphOptimization {
             val annotation = annotationsIterator.next()
             
             // Check if the annotation denotes a Ptolemy director
-            if (annotation.class_ != null && annotation.class_.endsWith("Director")) {
+            if (annotation.class_ != null && annotation.class_.endsWith("Director") && options.directors) {
                 // Create a new node for it
                 val directorNode = KimlUtil::createInitializedNode()
                 diagramSynthesis.associateWith(directorNode, annotation);
@@ -707,7 +710,7 @@ public class Ptolemy2KGraphOptimization {
         }
         
         // Check if we need to create a parameter node
-        if (!root.children.empty && !parameterList.empty) {
+        if (!root.children.empty && !parameterList.empty && options.properties) {
             // Make a list out of the parameters
             val List<Pair<String, String>> parameterPairs = newLinkedList()
             for (parameter : parameterList) {
