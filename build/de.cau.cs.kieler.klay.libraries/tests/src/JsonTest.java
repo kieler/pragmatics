@@ -18,7 +18,7 @@ import org.junit.Test;
 
 import de.cau.cs.kieler.kiml.formats.json.JsonFormatHandler;
 import de.cau.cs.kieler.kiml.formats.json.JsonImporter;
-import de.cau.cs.kieler.kiml.nonosgi.KielerNonOsgiLayout;
+import de.cau.cs.kieler.kiml.formats.standalone.StandaloneGraphLayoutEngine;
 
 /**
  * Tests for successful layout of a graph given as a JSON-String.
@@ -52,7 +52,7 @@ public class JsonTest {
         JsonImporter jsonImporter = new JsonImporter();
 
         // execute the layout algorithm
-        String result = KielerNonOsgiLayout.performLayout(exampleGraph, jsonHandler, jsonImporter);
+        String result = StandaloneGraphLayoutEngine.performLayout(exampleGraph, jsonHandler, jsonImporter);
 
         assertTrue(result != null && result != "");
     }

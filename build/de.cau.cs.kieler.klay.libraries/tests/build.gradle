@@ -65,25 +65,35 @@ tasks.withType(Test){task ->
 }
 
 task testFatKlay(type: Test, dependsOn: rootProject.tasks['fatKlay']) {
-    description = 'KIELER TEST: Test the bundled Klay (which does not include dependencies).'
+    group 'KIELER test'
+    description = 'Test the bundled Klay (which does not include dependencies).'
     testClassesDir = sourceSets.testFatKlay.output.classesDir
     classpath = sourceSets.testFatKlay.runtimeClasspath
 }
 
 task testFatKlayAll(type: Test, dependsOn: rootProject.tasks['fatKlayAll']) {
-    description = 'KIELER TEST: Test the bundled Klay (which does include dependencies).'
+    group 'KIELER test'
+    description = 'Test the bundled Klay (which does include dependencies).'
     testClassesDir = sourceSets.testFatKlayAll.output.classesDir
     classpath = sourceSets.testFatKlayAll.runtimeClasspath
 }
 
 task testKlay(type: Test) {
-    description = 'KIELER TEST: Test the Klay plugin collection.'
+    group 'KIELER test'
+    description = 'Test the Klay plugin collection.'
     testClassesDir = sourceSets.testKlay.output.classesDir
     classpath = sourceSets.testKlay.runtimeClasspath
 }
 
 task testJson(type: Test) {
-    description = 'KIELER TEST: Test the Klay with JSON import plugin collection.'
+    group 'KIELER test'
+    description = 'Test the Klay with JSON import plugin collection.'
     testClassesDir = sourceSets.testJson.output.classesDir
     classpath = sourceSets.testJson.runtimeClasspath
 }
+
+// Explicitly set task order to prevent the clean task from running after any build task.
+testFatKlay.mustRunAfter clean
+testFatKlayAll.mustRunAfter clean
+testKlay.mustRunAfter clean
+testJson.mustRunAfter clean

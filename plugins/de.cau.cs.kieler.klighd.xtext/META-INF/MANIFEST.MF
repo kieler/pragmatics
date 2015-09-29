@@ -19,4 +19,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: de.cau.cs.kieler.klighd.xtext,
  de.cau.cs.kieler.klighd.xtext.effects,
- de.cau.cs.kieler.klighd.xtext.triggers 
+ de.cau.cs.kieler.klighd.xtext.transformations,
+ de.cau.cs.kieler.klighd.xtext.triggers

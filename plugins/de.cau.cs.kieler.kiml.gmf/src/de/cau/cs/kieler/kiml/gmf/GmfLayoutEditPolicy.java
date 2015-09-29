@@ -64,8 +64,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
-import de.cau.cs.kieler.kiml.service.LayoutManagersService;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -123,10 +121,8 @@ public class GmfLayoutEditPolicy extends AbstractEditPolicy {
                     }
                 }
 
-                // set further options
-                boolean obliqueRouting = KimlServicePlugin.getDefault().getPreferenceStore().getBoolean(
-                        LayoutManagersService.PREF_OBLIQUE_ROUTE);
-                command.setObliqueRouting(obliqueRouting);
+                // TODO Make this configurable?
+                command.setObliqueRouting(true);
 
                 pointListMap.clear();
                 return new ICommandProxy(command);

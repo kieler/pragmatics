@@ -208,7 +208,7 @@ public final class NodeMarginCalculator  {
         // Process end labels of edges directly connected to the node
         if (includeEdgeHeadTailLabels) {
             processEdgeHeadTailLabels(boundingBox, node.getOutgoingEdges(), node.getIncomingEdges(),
-                    null, null, null, labelSpacing);
+                    node, null, null, labelSpacing);
         }
         
         // Reset the margin
