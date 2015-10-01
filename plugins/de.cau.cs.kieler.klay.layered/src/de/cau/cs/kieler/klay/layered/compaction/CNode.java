@@ -13,7 +13,9 @@
 package de.cau.cs.kieler.klay.layered.compaction;
 
 import java.util.List;
+
 import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 
 /**
@@ -77,14 +79,14 @@ public abstract class CNode {
      * 
      * @return the spacing
      */
-    abstract double getSingleHorizontalSpacing();
+    public abstract double getSingleHorizontalSpacing();
     
     /**
      * Returns the vertical spacing that is associated with the contained {@link LGraphElement}.
      * 
      * @return the spacing
      */
-    abstract double getSingleVerticalSpacing();
+    public abstract double getSingleVerticalSpacing();
 
     /**
      * Updates the leftmost possible starting position of this {@link CNode} according to

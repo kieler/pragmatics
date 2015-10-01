@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klay.layered.compaction;
+package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
+import de.cau.cs.kieler.klay.layered.compaction.CNode;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LPort;

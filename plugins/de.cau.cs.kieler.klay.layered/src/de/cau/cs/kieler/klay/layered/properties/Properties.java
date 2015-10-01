@@ -17,7 +17,7 @@ import java.util.EnumSet;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.klay.layered.intermediate.GraphCompactionStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;

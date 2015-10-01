@@ -25,23 +25,24 @@ public final class CompareFuzzy {
     private CompareFuzzy() {
     }
 
-    static boolean eq(final double d1, final double d2) {
+    // SUPPRESS CHECKSTYLE NEXT 20 Javadoc
+    public static boolean eq(final double d1, final double d2) {
         return DoubleMath.fuzzyEquals(d1, d2, TOLERANCE);
     }
 
-    static boolean gt(final double d1, final double d2) {
+    public static boolean gt(final double d1, final double d2) {
         return DoubleMath.fuzzyCompare(d1, d2, TOLERANCE) > 0;
     }
 
-    static boolean lt(final double d1, final double d2) {
+    public static boolean lt(final double d1, final double d2) {
         return DoubleMath.fuzzyCompare(d1, d2, TOLERANCE) < 0;
     }
 
-    static boolean ge(final double d1, final double d2) {
+    public static boolean ge(final double d1, final double d2) {
         return DoubleMath.fuzzyCompare(d1, d2, TOLERANCE) >= 0;
     }
 
-    static boolean le(final double d1, final double d2) {
+    public static boolean le(final double d1, final double d2) {
         return DoubleMath.fuzzyCompare(d1, d2, TOLERANCE) <= 0;
     }
 }

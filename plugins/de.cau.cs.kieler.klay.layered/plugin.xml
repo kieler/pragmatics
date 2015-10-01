@@ -476,7 +476,7 @@
       </layoutOption>
       <layoutOption
             appliesTo="parents"
-            class="de.cau.cs.kieler.klay.layered.intermediate.GraphCompactionStrategy"
+            class="de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy"
             default="NONE"
             description="Specifies whether and how post-process compaction is applied."
             id="de.cau.cs.kieler.klay.layered.postCompaction"

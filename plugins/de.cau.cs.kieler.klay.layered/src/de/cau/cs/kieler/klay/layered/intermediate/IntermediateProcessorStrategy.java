@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.HorizontalGraphCompactor;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.GreedySwitchProcessor;
 
 /**

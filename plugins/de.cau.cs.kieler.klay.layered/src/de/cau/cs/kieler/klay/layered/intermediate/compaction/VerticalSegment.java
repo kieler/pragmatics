@@ -10,11 +10,13 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klay.layered.compaction;
+package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.klay.layered.compaction.CNode;
+import de.cau.cs.kieler.klay.layered.compaction.CompareFuzzy;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 
 /**

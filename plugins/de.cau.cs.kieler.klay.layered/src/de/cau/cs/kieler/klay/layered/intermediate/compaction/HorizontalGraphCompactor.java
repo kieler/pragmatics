@@ -10,17 +10,13 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klay.layered.intermediate;
+package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.compaction.CLEdge;
-import de.cau.cs.kieler.klay.layered.compaction.CLNode;
-import de.cau.cs.kieler.klay.layered.compaction.LGraphToCGraphTransformer;
 import de.cau.cs.kieler.klay.layered.compaction.OneDimensionalCompactor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
-import de.cau.cs.kieler.klay.layered.p5edges.OrthogonalEdgeRouter;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
@@ -66,7 +62,6 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
         GraphCompactionStrategy strategy = layeredGraph.getProperty(Properties.POST_COMPACTION);
         switch (strategy) {
         case LEFT:
-            // the default direction is LEFT
             odc.compact();
             break;
             
@@ -95,7 +90,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
             break;
         }
         
-        // since changeDirection transforms hitboxes the final direction has to be LEFT again
+        // since changeDirection may transform hitboxes the final direction has to be LEFT again
         odc.changeDirection(Direction.LEFT);
 //           .drawHitboxes("/home/dag/cgraphdebug/junit"+System.nanoTime()+".svg");
         

@@ -25,6 +25,7 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.CLNode;
 
 /**
  * Implements the compaction of a {@link CGraph}.
