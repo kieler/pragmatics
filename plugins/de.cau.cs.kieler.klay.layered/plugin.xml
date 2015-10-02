@@ -470,5 +470,14 @@
                value="BRANDES_KOEPF">
          </dependency>
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="ports"
+            default="false"
+            id="de.cau.cs.kieler.klay.layered.northOrSouthPort"
+            name="North or South Port"
+            description="Specifies that this port can either be placed on the north side of a node or on the south side (if port constraints permit)"
+            type="boolean">
+       </layoutOption>
    </extension>
 </plugin>

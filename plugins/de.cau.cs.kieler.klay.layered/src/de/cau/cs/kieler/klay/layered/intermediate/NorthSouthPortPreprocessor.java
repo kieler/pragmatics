@@ -33,6 +33,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Inserts dummy nodes to cope with northern and southern ports.
@@ -216,8 +217,23 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                     // The dummy nodes form a layout unit identified by the node they were created from.
                     // In addition, northern dummy nodes must appear before the regular node
                     dummy.setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, node);
-                    dummy.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(
-                            successor);
+                    
+                    // If originPort has port constraint NORTH_OR_SOUTH_PORT,
+                    // do not apply successor constraints to the dummy node dummy.
+                    // Their position will be determined according to their barycenter value.
+                    // If originPort does not have the port constraint NORTH_OR_SOUTH_PORT,
+                    // the dummy node dummy needs to appear before the regular node.
+                    
+                    // Each dummy node has only one port
+                    assert dummy.getPorts().size() == 1;
+                    LPort dummyPort = dummy.getPorts().get(0);
+                    // The port the dummy node was created for
+                    LPort originPort = (LPort) dummyPort.getProperty(InternalProperties.ORIGIN);
+                    
+                    if (!originPort.getProperty(Properties.NORTH_OR_SOUTH_PORT)) {
+                        dummy.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(
+                                successor);
+                    }
 
                     if (!USE_NEW_APPROACH) {
                         // The old approach needs the successor to always point to the most recently
@@ -243,8 +259,23 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                     // The dummy nodes form a layout unit identified by the node they were created from.
                     // In addition, southern dummy nodes must appear after the regular node
                     dummy.setProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT, node);
-                    predecessor.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(
-                            dummy);
+                    
+                    // If originPort has port constraint NORTH_OR_SOUTH_PORT,
+                    // do not apply successor constraints to the dummy node dummy.
+                    // Their position will be determined according to their barycenter value.
+                    // If originPort does not have the port constraint NORTH_OR_SOUTH_PORT,
+                    // the dummy node dummy needs to appear before the regular node.
+                    
+                    // Each dummy node has only one port
+                    assert dummy.getPorts().size() == 1;
+                    LPort dummyPort = dummy.getPorts().get(0);
+                    // The port the dummy node was created for
+                    LPort originPort = (LPort) dummyPort.getProperty(InternalProperties.ORIGIN);
+                    
+                    if (!originPort.getProperty(Properties.NORTH_OR_SOUTH_PORT)) {
+                        predecessor.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(
+                                dummy);
+                    }
 
                     if (!USE_NEW_APPROACH) {
                         // The old approach needs the predecessor to always point to the most
