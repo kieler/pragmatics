@@ -223,6 +223,12 @@ public final class Properties {
             new Property<CompactionStrategy>(
                     "de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy",
                     CompactionStrategy.CLASSIC);
+    
+    /**
+     * Property set per port that specifies if ports on north/south side of a node may switch sides.
+     */
+    public static final IProperty<Boolean> NORTH_OR_SOUTH_PORT = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.northOrSouthPort", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
