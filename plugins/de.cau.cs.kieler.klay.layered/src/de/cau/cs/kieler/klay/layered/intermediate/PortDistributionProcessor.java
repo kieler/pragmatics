@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Random;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -29,13 +28,14 @@ import de.cau.cs.kieler.klay.layered.p3order.AbstractPortDistributor;
 import de.cau.cs.kieler.klay.layered.p3order.LayerTotalPortDistributor;
 import de.cau.cs.kieler.klay.layered.p3order.NodeRelativePortDistributor;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * Distributes the ports of nodes without fixed port order and raises the port constraints accordingly.
  * The port order depends on the connected ports in other layers. Also, the actual port distribution
  * mechanism used is determined randomly. 
- * Also handles ports with the {@link Properties#NORTH_OR_SOUTH_PORT} property.
+ * Also handles ports with the 
+ * {@link de.cau.cs.kieler.klay.layered.properties.Properties#NORTH_OR_SOUTH_PORT 
+ * Properties#NORTH_OR_SOUTH_PORT} property.
  * 
  * <dl>
  *   <dt>Preconditions:</dt>
@@ -105,8 +105,8 @@ public class PortDistributionProcessor implements ILayoutProcessor {
     }
 
     /**
-     * Ports on north/south side may switch sides if the node they belong to has port constraint
-     * {@link PortConstraints#NORTH_OR_SOUTH_PORT}.
+     * Ports on north/south side may switch sides if the node they belong to has at most 
+     * port constraint {@link de.cau.cs.kieler.kiml.options.PortConstraints#FIXED_SIDE FIXED_SIDE}.
      * This means that the dummy nodes created for such ports may not have been placed on the 
      * same side as the port. 
      * In such a case, switch the port to the opposite side.  
@@ -123,10 +123,13 @@ public class PortDistributionProcessor implements ILayoutProcessor {
                 LNode origin = node.getProperty(InternalProperties.IN_LAYER_LAYOUT_UNIT);
                 assert origin.getType() == NodeType.NORMAL;
                 
-                // dummyPorts can only contain 1 element
-                assert node.getPorts().size() == 1;
+                // the dummy node has least one port (there may be two if an odd port 
+                // has both an incoming and an outgoing edge, however the origin is the same)
+                assert node.getPorts().size() >= 1;
+                
                 List<LPort> dummyPorts = node.getPorts();
                 LPort dummyPort = dummyPorts.get(0);
+                
                 // the origin of this dummy port is the actual port in the graph 
                 LPort originalPort = (LPort) dummyPort.getProperty(InternalProperties.ORIGIN);
                 

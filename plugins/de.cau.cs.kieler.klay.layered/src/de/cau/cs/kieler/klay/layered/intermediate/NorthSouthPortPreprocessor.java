@@ -224,8 +224,9 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                     // If originPort does not have the port constraint NORTH_OR_SOUTH_PORT,
                     // the dummy node dummy needs to appear before the regular node.
                     
-                    // Each dummy node has only one port
-                    assert dummy.getPorts().size() == 1;
+                    // Each dummy node has least one port (there may be two if an odd port 
+                    // has both an incoming and an outgoing edge, however the origin is the same)
+                    assert dummy.getPorts().size() >= 1;
                     LPort dummyPort = dummy.getPorts().get(0);
                     // The port the dummy node was created for
                     LPort originPort = (LPort) dummyPort.getProperty(InternalProperties.ORIGIN);
@@ -266,8 +267,9 @@ public final class NorthSouthPortPreprocessor implements ILayoutProcessor {
                     // If originPort does not have the port constraint NORTH_OR_SOUTH_PORT,
                     // the dummy node dummy needs to appear before the regular node.
                     
-                    // Each dummy node has only one port
-                    assert dummy.getPorts().size() == 1;
+                    // Each dummy node has at least one port (there may be two if an odd port 
+                    // has both an incoming and an outgoing edge, however the origin is the same)
+                    assert dummy.getPorts().size() >= 1;
                     LPort dummyPort = dummy.getPorts().get(0);
                     // The port the dummy node was created for
                     LPort originPort = (LPort) dummyPort.getProperty(InternalProperties.ORIGIN);
