@@ -33,12 +33,15 @@ import de.cau.cs.kieler.klay.layered.intermediate.compaction.CLNode;
  * @author dag
  */
 public final class OneDimensionalCompactor {
+    
     /** the {@link CGraph}. */
     private CGraph cGraph;
     /** compacting in this direction. */
     private Direction direction = Direction.UNDEFINED;
     /** a function that sets the {@link CNode#reposition} flag according to the direction. */
     private BiFunction<CNode, Direction, Boolean> lockingStrategy;
+    /** flag indicating whether the {@link #finish()} method has been called. */
+    private boolean finished = false;
     
     /**
      * Initializes the fields of the {@link OneDimensionalCompactor}.
@@ -50,6 +53,28 @@ public final class OneDimensionalCompactor {
         this.cGraph = cGraph;
         // the default locking strategy locks CNodes if they are not constrained
         setLockingStrategy((n, d) -> !(n.outDegree == 0));
+        
+        // for any pre-specified groups, deduce the offset of the elements
+        for (CGroup group : cGraph.cGroups) {
+            CNode last = null;
+            for (CNode n : group.cNodes) {
+                if (last == null) {
+                    n.cGroupOffset = 0;
+                    last = n;
+                } else {
+                    n.cGroupOffset = n.getPosition() - last.getPosition();
+                }
+            }
+        }
+        
+        // the compaction operates solely on CGroups, 
+        // thus, we wrap any plain CNodes into a CGroup
+        for (CNode n : cGraph.cNodes) {
+            if (n.cGroup == null) {
+                CGroup group = new CGroup(n);
+                cGraph.cGroups.add(group);
+            }
+        }
     }
     
     /**
@@ -59,6 +84,12 @@ public final class OneDimensionalCompactor {
      *          this instance of {@link OneDimensionalCompactor}
      */
     public OneDimensionalCompactor compact() {
+        
+        if (finished) {
+            throw new IllegalStateException("The " + getClass().getSimpleName()
+                    + " instance has been finished already.");
+        }
+        
         // if no direction was specified the direction defaults to LEFT
         if (direction == Direction.UNDEFINED) {
             changeDirection(Direction.LEFT);
@@ -67,6 +98,19 @@ public final class OneDimensionalCompactor {
         compactCGroups();
         
         return this;
+    }
+    
+    /**
+     * Call this method to indicate to the compacter that the 
+     * compaction is finished now. No further compaction steps are 
+     * allowed. As a result, the direction is changed to the compactors
+     * natural LEFT direction. In other words, if coordinates 
+     * have been mirrored or transposed, they are back to the original
+     * orientation now.
+     */
+    public void finish() {
+        changeDirection(Direction.LEFT);
+        finished = true;
     }
     
     /**
@@ -79,11 +123,16 @@ public final class OneDimensionalCompactor {
      */
     public OneDimensionalCompactor changeDirection(final Direction dir) {
         
+        if (finished) {
+            throw new IllegalStateException("The " + getClass().getSimpleName()
+                    + " instance has been finished already.");
+        }
+        
         // prohibits vertical compaction if the graph has edges, because vertical and horizontal
         // segments would interchange
         if (!cGraph.supports(dir)) {
             throw new RuntimeException(
-                    "Vertical compaction is not permitted on graphs containing edges.");
+                    "The direction " + dir + " is not supported by the CGraph instance.");
         }
         
         // executes required transformations and calculates constraints
@@ -154,7 +203,8 @@ public final class OneDimensionalCompactor {
         case UP:
             switch (dir) {
             case LEFT:
-                mirrorHitboxes(); transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
+                //mirrorHitboxes(); transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
+                transposeHitboxes(); calculateConstraints();
                 break;
                 
             case RIGHT:
@@ -173,7 +223,8 @@ public final class OneDimensionalCompactor {
         case DOWN:
             switch (dir) {
             case LEFT:
-                transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
+                // transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
+                mirrorHitboxes(); transposeHitboxes(); calculateConstraints();
                 break;
                 
             case RIGHT:
@@ -198,15 +249,37 @@ public final class OneDimensionalCompactor {
     }
     
     /**
+     * Sets the function to lock cGraph.cNodes.
+     * 
+     * @param strategy
+     *          a function that returns the required state for the reposition flag of a {@link CNode}
+     *          according to the direction
+     * @return
+     *          this instance of {@link OneDimensionalCompactor}
+     */
+    public OneDimensionalCompactor setLockingStrategy(
+            final BiFunction<CNode, Direction, Boolean> strategy) {
+        lockingStrategy = strategy;
+        return this;
+    }
+
+    
+    //////////////////////////////////////////// PRIVATE API ////////////////////////////////////////////
+    
+    /**
      * Mirrors hitboxes horizontally.
      */
     private void mirrorHitboxes() {
         for (CNode cNode : cGraph.cNodes) {
             cNode.hitbox.x = -cNode.hitbox.x - cNode.hitbox.width;
             // mirroring the offsets inside CGroups
+            // FIXME
             if (cNode.parentNode != null) {
                 cNode.cGroupOffset = -cNode.cGroupOffset + cNode.parentNode.hitbox.width;
+            } else if (cNode.cGroup != null) {
+                cNode.cGroupOffset = -cNode.cGroupOffset;
             }
+            
         }
     }
     
@@ -251,23 +324,9 @@ public final class OneDimensionalCompactor {
                 }
             }
         }
+        
     }
     
-    /**
-     * Sets the function to lock cGraph.cNodes.
-     * 
-     * @param strategy
-     *          a function that returns the required state for the reposition flag of a {@link CNode}
-     *          according to the direction
-     * @return
-     *          this instance of {@link OneDimensionalCompactor}
-     */
-    public OneDimensionalCompactor setLockingStrategy(
-            final BiFunction<CNode, Direction, Boolean> strategy) {
-        lockingStrategy = strategy;
-        return this;
-    }
-
     /**
      * Locks the position of CNodes before a second compaction in opposite direction
      * based on the {@link OneDimensionalCompactor#lockingStrategy locking strategy}.
@@ -396,6 +455,9 @@ public final class OneDimensionalCompactor {
             cNode.applyPosition();
         }
     }
+    
+    
+    //////////////////////////////////////////// DEBUGGING ////////////////////////////////////////////
     
     /**
      * For debugging. Writes hitboxes to svg.
