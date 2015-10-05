@@ -111,14 +111,14 @@ public final class CGroup {
         // member
         if (!cNodes.isEmpty()) {
             CNode firstCNode = cNodes.iterator().next();
-            startPos = firstCNode.startPos - firstCNode.cGroupOffset;
+            startPos = firstCNode.startPos - firstCNode.cGroupOffset.x;
         }
         for (CNode cNode : cNodes) {
-            startPos = Math.max(startPos, cNode.startPos - cNode.cGroupOffset);
+            startPos = Math.max(startPos, cNode.startPos - cNode.cGroupOffset.x);
         }
         // setting the positions of the CGroups members according to their specified offset
         for (CNode cNode : cNodes) {
-            cNode.startPos = startPos + cNode.cGroupOffset;
+            cNode.startPos = startPos + cNode.cGroupOffset.x;
         }
     }
 

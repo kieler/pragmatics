@@ -64,7 +64,7 @@ public final class CLNode extends CNode {
                         + lNode.getMargin().right, lNode.getSize().y + lNode.getMargin().top
                         + lNode.getMargin().bottom);
 
-        cGroupOffset = 0;
+        cGroupOffset.reset();
         
         // locking the node for directions that fewer edges are connected in
         int difference = Iterables.size(lNode.getIncomingEdges())

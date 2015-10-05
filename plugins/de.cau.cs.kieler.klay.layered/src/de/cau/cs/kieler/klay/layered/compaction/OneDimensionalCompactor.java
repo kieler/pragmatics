@@ -59,10 +59,11 @@ public final class OneDimensionalCompactor {
             CNode last = null;
             for (CNode n : group.cNodes) {
                 if (last == null) {
-                    n.cGroupOffset = 0;
+                    n.cGroupOffset.reset();
                     last = n;
                 } else {
-                    n.cGroupOffset = n.getPosition() - last.getPosition();
+                    n.cGroupOffset.x = n.hitbox.x - last.hitbox.x;
+                    n.cGroupOffset.y = n.hitbox.y - last.hitbox.y;
                 }
             }
         }
@@ -101,16 +102,19 @@ public final class OneDimensionalCompactor {
     }
     
     /**
-     * Call this method to indicate to the compacter that the 
-     * compaction is finished now. No further compaction steps are 
-     * allowed. As a result, the direction is changed to the compactors
-     * natural LEFT direction. In other words, if coordinates 
-     * have been mirrored or transposed, they are back to the original
-     * orientation now.
+     * Call this method to indicate to the compacter that the compaction is finished now. No further
+     * compaction steps are allowed. As a result, the direction is changed to the compactors natural
+     * LEFT direction. In other words, if coordinates have been mirrored or transposed, they are
+     * back to the original orientation now.
+     * 
+     * @return this instance of {@link OneDimensionalCompactor}. Note that the only use case after
+     *         this call is to print debug output.
      */
-    public void finish() {
+    public OneDimensionalCompactor finish() {
         changeDirection(Direction.LEFT);
         finished = true;
+        
+        return this;
     }
     
     /**
@@ -275,9 +279,9 @@ public final class OneDimensionalCompactor {
             // mirroring the offsets inside CGroups
             // FIXME
             if (cNode.parentNode != null) {
-                cNode.cGroupOffset = -cNode.cGroupOffset + cNode.parentNode.hitbox.width;
+                cNode.cGroupOffset.x = -cNode.cGroupOffset.x + cNode.parentNode.hitbox.width;
             } else if (cNode.cGroup != null) {
-                cNode.cGroupOffset = -cNode.cGroupOffset;
+                cNode.cGroupOffset.negate();
             }
             
         }
@@ -295,6 +299,9 @@ public final class OneDimensionalCompactor {
             tmp = cNode.hitbox.width;
             cNode.hitbox.width = cNode.hitbox.height;
             cNode.hitbox.height = tmp;
+            tmp = cNode.cGroupOffset.x;
+            cNode.cGroupOffset.x = cNode.cGroupOffset.y;
+            cNode.cGroupOffset.y = tmp;
         }
     }
     

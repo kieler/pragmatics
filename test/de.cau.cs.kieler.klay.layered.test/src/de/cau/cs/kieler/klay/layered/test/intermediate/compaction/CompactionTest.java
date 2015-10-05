@@ -108,6 +108,8 @@ public class CompactionTest {
     }
     
     /**
+     * The connection indicates a grouping, not an edge.
+     * 
      *   +--+         
      *   |  |     +--+
      *   +--+     |  |
@@ -142,6 +144,18 @@ public class CompactionTest {
         assertEquals(10, lowerRight.hitbox.x, EPSILON);
     }
     
+    /**
+     * The connection indicates a grouping, not an edge.
+     * 
+     *   +--+         
+     *   |  |     +--+
+     *   +--+     |  |
+     *     |      +--+
+     *     |          
+     *     +--+  
+     *     |  |  
+     *     +--+ 
+     */
     @Test 
     public void testRightGroupCompaction() {
         
@@ -165,6 +179,78 @@ public class CompactionTest {
         assertEquals(20, left.hitbox.x, EPSILON);
         assertEquals(40, upperRight.hitbox.x, EPSILON);
         assertEquals(30, lowerRight.hitbox.x, EPSILON);
+    }
+    
+    /**
+     * The connection indicates a grouping, not an edge.
+     * 
+     *   +--+         
+     *   |  |     
+     *   +--+     +--+
+     *            |  |
+     *     +--+---+--+ 
+     *     |  |  
+     *     +--+ 
+     */
+    @Test 
+    public void testUpGroupCompaction() {
+        
+        CGraph graph = new CGraph(EnumSet.allOf(Direction.class));
+        
+        CTestNode upperLeft = new CTestNode(new Rectangle(0, 0, 20, 20));
+        graph.cNodes.add(upperLeft);
+        CTestNode lowerLeft = new CTestNode(new Rectangle(5, 40, 20, 20));
+        graph.cNodes.add(lowerLeft);
+        CTestNode right = new CTestNode(new Rectangle(25, 30, 20, 20));
+        graph.cNodes.add(right);
+        
+        CGroup group = new CGroup(lowerLeft, right);
+        graph.cGroups.add(group);
+        
+        compacter(graph)
+                .changeDirection(Direction.UP)
+                .compact()
+                .finish();
+        
+        assertEquals(0, upperLeft.hitbox.y, EPSILON);
+        assertEquals(20, lowerLeft.hitbox.y, EPSILON);
+        assertEquals(10, right.hitbox.y, EPSILON);
+    }
+    
+    /**
+     * The connection indicates a grouping, not an edge.
+     * 
+     *   +--+         
+     *   |  |     
+     *   +--+-----+--+
+     *            |  |
+     *     +--+   +--+ 
+     *     |  |  
+     *     +--+ 
+     */
+    @Test 
+    public void testDownGroupCompaction() {
+        
+        CGraph graph = new CGraph(EnumSet.allOf(Direction.class));
+        
+        CTestNode upperLeft = new CTestNode(new Rectangle(0, 0, 20, 20));
+        graph.cNodes.add(upperLeft);
+        CTestNode lowerLeft = new CTestNode(new Rectangle(5, 40, 20, 20));
+        graph.cNodes.add(lowerLeft);
+        CTestNode right = new CTestNode(new Rectangle(25, 10, 20, 20));
+        graph.cNodes.add(right);
+        
+        CGroup group = new CGroup(upperLeft, right);
+        graph.cGroups.add(group);
+        
+        compacter(graph)
+                .changeDirection(Direction.DOWN)
+                .compact()
+                .finish();
+        
+        assertEquals(20, upperLeft.hitbox.y, EPSILON);
+        assertEquals(40, lowerLeft.hitbox.y, EPSILON);
+        assertEquals(30, right.hitbox.y, EPSILON);
     }
     
     ////////////////////////////////// Internal Convenience API //////////////////////////////////

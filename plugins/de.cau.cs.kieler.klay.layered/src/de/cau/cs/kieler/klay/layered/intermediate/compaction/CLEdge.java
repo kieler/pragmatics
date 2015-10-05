@@ -68,7 +68,7 @@ public final class CLEdge extends CNode {
         juctionPoints = new KVectorChain();
         hitbox = new Rectangle(vSeg.x1, vSeg.y1, 0, vSeg.y2 - vSeg.y1);
         parentNode = vSeg.parentNode;
-        cGroupOffset = vSeg.relativePosition;
+        cGroupOffset.x = vSeg.relativePosition;
         
         addSegment(vSeg);
     }

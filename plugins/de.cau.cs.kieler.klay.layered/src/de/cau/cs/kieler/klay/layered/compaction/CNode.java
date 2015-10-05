@@ -16,6 +16,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 
 /**
@@ -43,7 +44,7 @@ public abstract class CNode {
     /** the area occupied by this element including margins for ports and labels. */
     public Rectangle hitbox;
     /** offset to the root position of the containing {@link CGroup} . */
-    public double cGroupOffset;
+    public KVector cGroupOffset = new KVector();
     /** leftmost possible position for this {@link CNode} to be drawn. 
      *  This position can be intermediate and is increased to its final value by updateStartPos(). */
     public double startPos = Double.NEGATIVE_INFINITY;
