@@ -36,10 +36,4 @@ public interface ICGraphTransformer<T> {
      */
     void applyLayout();
     
-    /**
-     * Getter for the input graph.
-     * 
-     * @return the input graph
-     */
-    T getInputGraph();
 }

@@ -229,11 +229,4 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public LGraph getInputGraph() {
-        return layeredGraph;
-    }
 }
