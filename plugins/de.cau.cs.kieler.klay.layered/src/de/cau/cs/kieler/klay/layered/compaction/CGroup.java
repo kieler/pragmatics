@@ -32,13 +32,15 @@ public final class CGroup {
     /** root position of the {@link CGroup}. */
     private double startPos;
     // Variables are public for convenience reasons since this class is used internally only.
-    // SUPPRESS CHECKSTYLE NEXT 6 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 8 VisibilityModifier
     /** grouped {@link CNode}s. */
     public Set<CNode> cNodes;
     /** constraints pointing from within the {@link CGroup} to CNodes outside the {@link CGroup}. */
     public Set<CNode> incomingConstraints;
     /** number of constraints originating from within the {@link CGroup}. */
     public int outDegree;
+    /** the reference node of this group, i.e. the reference for the group offset of other nodes. */
+    public CNode reference; 
 
     /**
      * The constructor for a {@link CGroup} receives {@link CNode}s to group.
@@ -109,13 +111,11 @@ public final class CGroup {
 
         // finding the required root position for the CGroup that satisfies the constraints of each
         // member
-        if (!cNodes.isEmpty()) {
-            CNode firstCNode = cNodes.iterator().next();
-            startPos = firstCNode.startPos - firstCNode.cGroupOffset.x;
-        }
+        startPos = Double.NEGATIVE_INFINITY;
         for (CNode cNode : cNodes) {
             startPos = Math.max(startPos, cNode.startPos - cNode.cGroupOffset.x);
         }
+        
         // setting the positions of the CGroups members according to their specified offset
         for (CNode cNode : cNodes) {
             cNode.startPos = startPos + cNode.cGroupOffset.x;

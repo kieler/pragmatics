@@ -55,18 +55,7 @@ public final class OneDimensionalCompactor {
         setLockingStrategy((n, d) -> !(n.outDegree == 0));
         
         // for any pre-specified groups, deduce the offset of the elements
-        for (CGroup group : cGraph.cGroups) {
-            CNode last = null;
-            for (CNode n : group.cNodes) {
-                if (last == null) {
-                    n.cGroupOffset.reset();
-                    last = n;
-                } else {
-                    n.cGroupOffset.x = n.hitbox.x - last.hitbox.x;
-                    n.cGroupOffset.y = n.hitbox.y - last.hitbox.y;
-                }
-            }
-        }
+        calculateGroupOffsets();
         
         // the compaction operates solely on CGroups, 
         // thus, we wrap any plain CNodes into a CGroup
@@ -96,6 +85,12 @@ public final class OneDimensionalCompactor {
             changeDirection(Direction.LEFT);
         }
         
+        // reset any previously calculated start positions
+        for (CNode n : cGraph.cNodes) {
+            n.startPos = Double.NEGATIVE_INFINITY;
+        }
+        
+        // perform the actual compaction
         compactCGroups();
         
         return this;
@@ -212,7 +207,8 @@ public final class OneDimensionalCompactor {
                 break;
                 
             case RIGHT:
-                mirrorHitboxes(); transposeHitboxes(); calculateConstraints();
+                // mirrorHitboxes(); transposeHitboxes(); calculateConstraints();
+                transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
                 break;
                 
             case DOWN:
@@ -270,6 +266,21 @@ public final class OneDimensionalCompactor {
     
     //////////////////////////////////////////// PRIVATE API ////////////////////////////////////////////
     
+    private void calculateGroupOffsets() {
+        // for any pre-specified groups, deduce the offset of the elements
+        for (CGroup group : cGraph.cGroups) {
+            for (CNode n : group.cNodes) {
+                if (group.reference == null) {
+                    n.cGroupOffset.reset();
+                    group.reference = n;
+                } else {
+                    n.cGroupOffset.x = n.hitbox.x - group.reference.hitbox.x;
+                    n.cGroupOffset.y = n.hitbox.y - group.reference.hitbox.y;
+                }
+            }
+        }
+    }
+    
     /**
      * Mirrors hitboxes horizontally.
      */
@@ -277,14 +288,13 @@ public final class OneDimensionalCompactor {
         for (CNode cNode : cGraph.cNodes) {
             cNode.hitbox.x = -cNode.hitbox.x - cNode.hitbox.width;
             // mirroring the offsets inside CGroups
-            // FIXME
+            // FIXME do we still require this?!
             if (cNode.parentNode != null) {
                 cNode.cGroupOffset.x = -cNode.cGroupOffset.x + cNode.parentNode.hitbox.width;
-            } else if (cNode.cGroup != null) {
-                cNode.cGroupOffset.negate();
             }
-            
         }
+        
+        calculateGroupOffsets();
     }
     
     /**
@@ -303,6 +313,8 @@ public final class OneDimensionalCompactor {
             cNode.cGroupOffset.x = cNode.cGroupOffset.y;
             cNode.cGroupOffset.y = tmp;
         }
+        
+        calculateGroupOffsets();
     }
     
     /**
@@ -492,9 +504,10 @@ public final class OneDimensionalCompactor {
         try {
             out = new PrintWriter(new FileWriter(name));
 
-            out.println("<svg viewBox=\"" + (topLeft.x) + " "
-                    + (topLeft.y) + " " + size.x + " "
-                    + size.y + "\">");
+            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            out.println("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100%\" height=\"100%\""
+                    + "  viewBox=\"" + (topLeft.x) + " " + (topLeft.y) 
+                    + " " + size.x + " " + size.y + "\">");
 
             for (CNode cNode : cGraph.cNodes) {
                 if (cNode instanceof CLNode) {
