@@ -162,13 +162,19 @@ public final class MinWidthLayerer implements ILayoutPhase {
         outDegree = new int[numOfNodes];
         normSize = new double[numOfNodes];
         int i = 0;
+        avgSize = 0;
         for (LNode node : notInserted) {
             // Warning: LNode.id is being redefined here!
             node.id = i++;
             inDegree[node.id] = countEdgesExceptSelfLoops(node.getIncomingEdges());
             outDegree[node.id] = countEdgesExceptSelfLoops(node.getOutgoingEdges());
-            normSize[node.id] = node.getSize().y / minimumNodeSize;  
+            normSize[node.id] = node.getSize().y / minimumNodeSize;
+            avgSize += normSize[node.id];
         }
+        //normalize dummy size, too:
+        dummySize /= minimumNodeSize;
+        //TODO 4: Node sizes
+        avgSize /= notInserted.size();
 
         // Precalculate the successors of all nodes (as a Set) and put them in a list.
         List<Set<LNode>> nodeSuccessors = precalcSuccessors(notInserted);
@@ -180,7 +186,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
         // minimum width of a layer of maximum size in a computed layering (primary criterion used
         // for comparison, if more than one layering is computed).
-        int minWidth = Integer.MAX_VALUE;
+        //TODO make it double, now chooses on a pixel basis
+        double minWidth = Double.MAX_VALUE;
         // minimum number of layers in a computed layering {@code minWidth} (secondary
         // criterion used for comparison, if more than one layering is computed).
         int minNumOfLayers = Integer.MAX_VALUE;
@@ -210,10 +217,15 @@ public final class MinWidthLayerer implements ILayoutPhase {
         // … Depending on the start- and end-values, this nested for-loop will last for up to 8
         // iterations resulting in one, two, four or eight different layerings.
         for (int ubw = ubwStart; ubw <= ubwEnd; ubw++) {
+            // TODO 5 Play around with avarages
+            //double ubwConsiderSize = ubw * avgSize; 
             for (int c = cStart; c <= cEnd; c++) {
-                Pair<Integer, List<List<LNode>>> result =
+                // TODO here as well
+                //double cConsiderSize = c * avgSize; <--- this doesn't even seem useful
+                // TODO a lot of doubles in the next few lines
+                Pair<Double, List<List<LNode>>> result =
                         computeMinWidthLayering(ubw, c, notInserted, nodeSuccessors);
-                int newWidth = result.getFirst();
+                double newWidth = result.getFirst();
                 List<List<LNode>> layering = result.getSecond();
 
                 // Important if more than one layering is computed: replace the current candidate
@@ -225,6 +237,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
                     minWidth = newWidth;
                     minNumOfLayers = newNumOfLayers;
                     candidateLayering = layering;
+                    //TODO remove these sysos!
                     System.out.println("Chosen Layering #" + index + " of 8 with width " + minWidth
                             + " and height" + minNumOfLayers);
                     System.out.println(candidateLayering);
@@ -281,6 +294,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
     }
 
     /**
+     * TODO 6: adjust comments for consideration of node sizes
+     * 
      * Computes a layering (as a List of Lists) for a given Iterable of {@link LNode} according to
      * the MinWidth-heuristic.
      * 
@@ -300,12 +315,15 @@ public final class MinWidthLayerer implements ILayoutPhase {
      *            {@code nodes}.
      * @return
      */
-    private Pair<Integer, List<List<LNode>>> computeMinWidthLayering(final int upperBoundOnWidth,
+    private Pair<Double, List<List<LNode>>> computeMinWidthLayering(final int upperBoundOnWidth,
             final int compensator, final Iterable<LNode> nodes,
             final List<Set<LNode>> nodeSuccessors) {
 
         List<List<LNode>> layers = Lists.newArrayList();
         Set<LNode> unplacedNodes = Sets.newLinkedHashSet(nodes);
+        
+        //TODO 7: Ubw is now taking  avg size into account.
+        double ubwConsiderSize = upperBoundOnWidth * avgSize;
 
         // in- and out-degree of the currently considered node, see while-loop below
         int inDeg = 0;
@@ -325,12 +343,14 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
         // Initial values for the width of the current layer and the estimated width of the coming
         // layers
-        int widthCurrent = 0;
-        int widthUp = 0;
+        //TODO doubles now
+        double widthCurrent = 0;
+        double widthUp = 0;
 
         // Parameters needed for computing the width of a layering including dummy nodes:
-        int maxWidth = 0;
-        int realWidth = 0;
+        // TO DO These are now doubles
+        double maxWidth = 0;
+        double realWidth = 0;
         // Number of "started" edges that did not "finish" yet
         int currentSpanningEdges = 0;
         int goingOutFromThisLayer = 0;
@@ -349,14 +369,20 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 alreadyPlacedInCurrentLayer.add(currentNode);
 
                 outDeg = this.outDegree[currentNode.id];
-                widthCurrent += 1 - outDeg;
+                //TODO 8 now taking size into account
+                widthCurrent += normSize[currentNode.id] - outDeg * dummySize; //1 - outDeg;
 
                 inDeg = this.inDegree[currentNode.id];
-                widthUp += inDeg;
+                //TODO 9 here as well
+                widthUp += inDeg * dummySize;
 
                 goingOutFromThisLayer += outDeg;
+                
+                //TODO add node to width
+                realWidth += normSize[currentNode.id];
             }
 
+            // TODO 10, Check whether these comments still apply.
             // Go to the next layer if,
             // 1) no current node has been selected,
             // 2) there are no unplaced nodes left (last iteration of the while-loop),
@@ -366,11 +392,12 @@ public final class MinWidthLayerer implements ILayoutPhase {
             // outgoing edges are left for being considered for the current layer; or:
             // 3.2) The estimated width of the not yet determined layers is greater than the
             // scaling factor/compensator times the upper bound on the width.
+            // TODO Check whether new ConditionGoUp suffices
             if (currentNode == null || unplacedNodes.isEmpty()
-                    || (widthCurrent >= upperBoundOnWidth && outDeg < 1)
-                    || widthUp >= compensator * upperBoundOnWidth) {
+                    || (widthCurrent >= ubwConsiderSize && outDeg < 1)
+                    || widthUp >= compensator * ubwConsiderSize) {
                 layers.add(currentLayer);
-                realWidth = currentLayer.size();
+                /* realWidth = currentLayer.size();  TODO problematic in new implementation */
                 currentLayer = Lists.newArrayList();
                 alreadyPlacedInOtherLayers.addAll(alreadyPlacedInCurrentLayer);
                 alreadyPlacedInCurrentLayer.clear();
@@ -380,7 +407,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 currentSpanningEdges -= goingOutFromThisLayer;
                 // … Now we have the actual dummy node count for this layer and can add it to the
                 // real nodes for comparing the width.
-                maxWidth = Math.max(maxWidth, currentSpanningEdges + realWidth);
+                // TODO added factor dummy width
+                maxWidth = Math.max(maxWidth, currentSpanningEdges * dummySize + realWidth);
                 // In the next iteration we have to consider new dummy nodes from edges coming into
                 // the layer we've just finished.
                 currentSpanningEdges += widthUp;
@@ -388,6 +416,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 widthCurrent = widthUp;
                 widthUp = 0;
                 goingOutFromThisLayer = 0;
+                //TODO new
+                realWidth = 0;
             }
         }
 
