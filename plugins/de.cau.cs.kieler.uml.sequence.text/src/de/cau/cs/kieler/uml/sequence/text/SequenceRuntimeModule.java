@@ -7,9 +7,11 @@ import org.eclipse.xtext.conversion.IValueConverterService;
 import org.eclipse.xtext.scoping.IGlobalScopeProvider;
 
 /**
- * Use this class to register components to be used at runtime / without the Equinox extension registry.
+ * Use this class to register components to be used at runtime / without the Equinox extension
+ * registry.
  */
-public class SequenceRuntimeModule extends de.cau.cs.kieler.uml.sequence.text.AbstractSequenceRuntimeModule {
+public class SequenceRuntimeModule extends
+        de.cau.cs.kieler.uml.sequence.text.AbstractSequenceRuntimeModule {
 
     /**
      * {@inheritDoc}
@@ -18,10 +20,13 @@ public class SequenceRuntimeModule extends de.cau.cs.kieler.uml.sequence.text.Ab
     public Class<? extends IValueConverterService> bindIValueConverterService() {
         return SequenceValueConverter.class;
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Class<? extends IGlobalScopeProvider> bindIGlobalScopeProvider() {
-      return NullGlobalScopeProvider.class;
+        return NullGlobalScopeProvider.class;
     }
 
 }

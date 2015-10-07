@@ -23,6 +23,9 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
 
     SequenceGrammarAccess f
 
+    /**
+     * @{inheritDoc}
+     */
     override protected void configureFormatting(FormattingConfig c) {
         f = getGrammarAccess as SequenceGrammarAccess
 
@@ -32,100 +35,105 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
             c.setLinewrap(1).after(bracket.first)
             c.setLinewrap(1).before(bracket.second)
         }
+        
         for (note : findKeywords('sourceNote')) {
             c.setLinewrap(1).before(note)
             c.setIndentationIncrement.before(note)
             c.setIndentationDecrement.after(note)
         }
+        
         for (note : findKeywords('targetNote')) {
             c.setLinewrap(1).before(note)
             c.setIndentationIncrement.before(note)
             c.setIndentationDecrement.after(note)
         }
+        
         for (note : findKeywords('note')) {
             c.setLinewrap(1).before(note)
             c.setIndentationIncrement.before(note)
             c.setIndentationDecrement.after(note)
         }
+        
         for (exec : findKeywords('startExec')) {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
             c.setIndentationDecrement.after(exec)
             c.setLinewrap(1).after(exec)
         }
+        
         for (exec : findKeywords('endExec')) {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
             c.setIndentationDecrement.after(exec)
         }
+        
         for (exec : findKeywords('sourceStartEndExec')) {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
             c.setIndentationDecrement.after(exec)
             c.setLinewrap(1).after(exec)
         }
+        
         for (exec : findKeywords('targetStartEndExec')) {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
             c.setIndentationDecrement.after(exec)
             c.setLinewrap(1).after(exec)
         }
+        
         for (exec : findKeywords('startEndExec')) {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
             c.setIndentationDecrement.after(exec)
             c.setLinewrap(1).after(exec)
         }
+        
         for (exec : findKeywords('targetStartExec')) {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
             c.setIndentationDecrement.after(exec)
             c.setLinewrap(1).after(exec)
         }
+        
         for (exec : findKeywords('sourceStartExec')) {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
             c.setIndentationDecrement.after(exec)
             c.setLinewrap(1).after(exec)
         }
+        
         for (exec : findKeywords('sourceEndExec')) {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
             c.setIndentationDecrement.after(exec)
-//            c.setLinewrap(1).after(exec)
         }
+        
         for (exec : findKeywords('targetEndExec')) {
             c.setLinewrap(1).before(exec)
             c.setIndentationIncrement.before(exec)
             c.setIndentationDecrement.after(exec)
-//            c.setLinewrap(1).after(exec)
         }
+        
         for (comma : findKeywords(',')) {
             c.setNoLinewrap().before(comma)
             c.setNoSpace().before(comma)
         }
-//        for (label : findKeywords('label')) {
-//            c.setLinewrap(1).before(label)
-//            c.setIndentationIncrement.before(label)
-//            c.setIndentationDecrement.after(label)
-//        }
+        
         for (lifelines : findKeywords('lifelines')) {
             c.setLinewrap(1).before(lifelines)
             c.setIndentationIncrement.before(lifelines)
             c.setIndentationDecrement.after(lifelines)
         }
 
-        // Formatting before every Rule
+        // Formatting before every rule
         c.setLinewrap().before(f.getLifelineRule)
         c.setLinewrap().before(f.getTwoLifelineMessageRule)
         c.setLinewrap().before(f.getOneLifelineMessageRule)
         c.setLinewrap().before(f.destroyLifelineEventRule)
         c.setLinewrap().before(f.getOneLifelineNoteRule)
         c.setLinewrap().before(f.selfMessageRule)
-//        c.setLinewrap().before(f.getOneLifelineEndExecRule)
         c.setLinewrap().before(f.getFragmentRule)
         c.setLinewrap().before(f.getRefinementRule)
-//        c.setLinewrap().before(f.getLocalVariableRule)
         
         // Formatting before and after the lifeline/usecase declaration(s)
         c.setLinewrap(2).before(f.getSequenceDiagramAccess.lifelinesAssignment_3.eContents.get(0))

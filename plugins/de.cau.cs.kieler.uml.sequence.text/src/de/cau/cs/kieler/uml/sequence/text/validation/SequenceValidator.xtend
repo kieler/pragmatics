@@ -3,9 +3,14 @@
  */
 package de.cau.cs.kieler.uml.sequence.text.validation
 
+import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
+import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment
 import de.cau.cs.kieler.uml.sequence.text.sequence.Interaction
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage
+import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote
+import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement
+import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage
 import de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage
@@ -14,8 +19,6 @@ import java.util.HashMap
 import java.util.Map
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.validation.Check
-import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
-import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage
 
 /**
  * Custom validation rules. 
@@ -24,59 +27,77 @@ import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage
  */
 class SequenceValidator extends AbstractSequenceValidator {
 
-    private static val EStructuralFeature END_LEFT_COUNT = SequencePackage.Literals.
-        TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT
-    private static val EStructuralFeature END_LEFT = SequencePackage.Literals.TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC
-    private static val EStructuralFeature END_RIGHT_COUNT = SequencePackage.Literals.
-        TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT
-    private static val EStructuralFeature END_RIGHT = SequencePackage.Literals.TWO_LIFELINE_MESSAGE__TARGET_END_EXEC
-    private static val EStructuralFeature ONE_END_COUNT = SequencePackage.Literals.
-        ONE_LIFELINE_MESSAGE__END_EXEC_COUNT
-    private static val EStructuralFeature SELF_END_COUNT = SequencePackage.Literals.
-        SELF_MESSAGE__END_EXEC_COUNT
-    private static val EStructuralFeature ONE_END = SequencePackage.Literals.ONE_LIFELINE_MESSAGE__END_EXEC
+    /** Shorter name. */
+    private static val EStructuralFeature END_LEFT_COUNT = SequencePackage.Literals
+        .TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT
+    /** Shorter name. */
+    private static val EStructuralFeature END_LEFT = SequencePackage.Literals
+        .TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC
+    /** Shorter name. */
+    private static val EStructuralFeature END_RIGHT_COUNT = SequencePackage.Literals
+        .TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT
+    /** Shorter name. */
+    private static val EStructuralFeature END_RIGHT = SequencePackage.Literals
+        .TWO_LIFELINE_MESSAGE__TARGET_END_EXEC
+    /** Shorter name. */
+    private static val EStructuralFeature ONE_END_COUNT = SequencePackage.Literals
+        .ONE_LIFELINE_MESSAGE__END_EXEC_COUNT
+    /** Shorter name. */
+    private static val EStructuralFeature SELF_END_COUNT = SequencePackage.Literals
+        .SELF_MESSAGE__END_EXEC_COUNT
+    /** Shorter name. */
+    private static val EStructuralFeature ONE_END = SequencePackage.Literals
+        .ONE_LIFELINE_MESSAGE__END_EXEC
+    /** Shorter name. */
     private static val EStructuralFeature SELF_END = SequencePackage.Literals.SELF_MESSAGE__END_EXEC
 
+    /**
+     * Validation for lifelines, such that no same identifiers are possible.
+     * 
+     * @param s The whole sequence diagram.
+     */
     @Check
-    def sameLifelineIdName(SequenceDiagram s) {
-        val life = new ArrayList();
+    def sameIdForLifelines(SequenceDiagram s) {
+        val life = new ArrayList()
         for (lifeline : s.lifelines) {
             if (life.contains(lifeline.name)) {
-                error("This Identifier is already used", lifeline, SequencePackage.Literals.LIFELINE__NAME)
+                error("This Identifier is already used", lifeline, SequencePackage.Literals
+                    .LIFELINE__NAME
+                )
             } else {
                 life.add(lifeline.name)
             }
         }
     }
-
-    //TODO check refinement lifeline names not doubled
     
-    //TODO check no messages after destroy
-//    @Check 
-//    def correctUsageOfDestroy(SequenceDiagram s) {
-//        
-//    }
-    
+    /**
+     * Validation for the correct usage of executions, such that no execution can be closed before at 
+     * least one is started.
+     * 
+     * @param s The whole sequence diagram.
+     */
     @Check
     def correctUsageOfExecutions(SequenceDiagram s) {
-        val map = new HashMap<Lifeline, Integer>();
+        val map = new HashMap<Lifeline, Integer>()
         for (interact : s.interactions) {
-            correctUsageOfExecutionsOnMessage(interact, map);
+            correctUsageOfExecutionsOnMessage(interact, map)
         }
-//        if (map.size > 0) {
-//            //TODO display warning (not working)
-//            warning("Not all Blocks are closed", s, SequencePackage.Literals.TWO_LIFELINE_MESSAGE__SOURCE_START_BLOCK)
-//            warning("Not all Blocks are closed", s, SequencePackage.Literals.TWO_LIFELINE_MESSAGE__TARGET_START_BLOCK)
-//            warning("Not all Blocks are closed", s, SequencePackage.Literals.ONE_LIFELINE_MESSAGE__START_BLOCK)
-//        }
     }
 
-    private def dispatch correctUsageOfExecutionsOnMessage(TwoLifelineMessage m, Map<Lifeline, Integer> map) {
+    /**
+     * Validation for the correct usage of executions with a message between two lifelines.
+     * 
+     * @param m The message where the correct usage has to be checked.
+     * @param map Contains the count of started executions for every lifeline.
+     */
+    private def dispatch correctUsageOfExecutionsOnMessage(TwoLifelineMessage m, 
+        Map<Lifeline, Integer> map
+    ) {
         if (m.sourceStartExec) {
-            startExec(m.sourceLifeline, 1, map)
+            startExec(m.sourceLifeline, map)
         }
         if (m.targetStartExec) {
-            startExec(m.targetLifeline, 1, map)
+            startExec(m.targetLifeline, map)
         }
         if (m.sourceEndExec) {
             endExec(m.sourceLifeline, m.sourceEndExecCount, map, END_LEFT, END_LEFT_COUNT, m)
@@ -86,38 +107,108 @@ class SequenceValidator extends AbstractSequenceValidator {
         }
     }
 
-    private def dispatch correctUsageOfExecutionsOnMessage(OneLifelineMessage m, Map<Lifeline, Integer> map) {
+    /**
+     * Validation for the correct usage of executions with a lost of found message.
+     * 
+     * @param m The message where the correct usage has to be checked.
+     * @param map Contains the count of started executions for every lifeline.
+     */
+    private def dispatch correctUsageOfExecutionsOnMessage(OneLifelineMessage m, Map<Lifeline, 
+        Integer> map
+    ) {
         if (m.startExec) {
-            startExec(m.lifeline, 1, map)
+            startExec(m.lifeline, map)
         }
         if (m.endExec) {
             endExec(m.lifeline, m.endExecCount, map, ONE_END, ONE_END_COUNT, m)
         }
     }
     
+    /**
+     * Validation for the correct usage of executions with a self message.
+     * 
+     * @param m The message where the correct usage has to be checked.
+     * @param map Contains the count of started executions for every lifeline.
+     */
     private def dispatch correctUsageOfExecutionsOnMessage(SelfMessage m, Map<Lifeline, Integer> map) {
         if (m.startExec) {
-            startExec(m.lifeline, 1, map)
+            startExec(m.lifeline, map)
         }
         if (m.endExec) {
             endExec(m.lifeline, m.endExecCount, map, SELF_END, SELF_END_COUNT, m)
         }
     }
     
-    // TODO Wegen dispatch muss alles definiert sein?
-    private def dispatch correctUsageOfExecutionsOnMessage(DestroyLifelineEvent d, Map<Lifeline, Integer> map) {
-        
+    /**
+     * Executions can't be used on a destruction-event but dispatch has to be defined for every 
+     * interaction.
+     * 
+     * @param m The message where the correct usage has to be checked.
+     * @param map Contains the count of started executions for every lifeline.
+     */
+    private def dispatch correctUsageOfExecutionsOnMessage(DestroyLifelineEvent d, Map<Lifeline, 
+        Integer> map
+    ) {
+        //do nothing
+    }
+    
+    /**
+     * Executions can't be used on a fragment but dispatch has to be defined for every interaction.
+     * 
+     * @param m The message where the correct usage has to be checked.
+     * @param map Contains the count of started executions for every lifeline.
+     */
+    private def dispatch correctUsageOfExecutionsOnMessage(Fragment f, Map<Lifeline, Integer> map) {
+        //do nothing
+    }
+    
+    /**
+     * Executions can't be used on a note but dispatch has to be defined for every interaction.
+     * 
+     * @param m The message where the correct usage has to be checked.
+     * @param map Contains the count of started executions for every lifeline.
+     */
+    private def dispatch correctUsageOfExecutionsOnMessage(OneLifelineNote n, Map<Lifeline, 
+        Integer> map
+    ) {
+        //do nothing
+    }
+    
+    /**
+     * Executions can't be used on a refinement but dispatch has to be defined for every interaction.
+     * 
+     * @param m The message where the correct usage has to be checked.
+     * @param map Contains the count of started executions for every lifeline.
+     */
+    private def dispatch correctUsageOfExecutionsOnMessage(Refinement r, Map<Lifeline, Integer> map) {
+        //do nothing
     }
 
-    def startExec(Lifeline l, Integer add, Map<Lifeline, Integer> map) {
+    /**
+     * Add the execution to the map or increase the count of executions on the specific lifeline.
+     * 
+     * @param l The lifeline where the execution is started.
+     * @param map Contains the count of started executions for every lifeline.
+     */
+    def startExec(Lifeline l, Map<Lifeline, Integer> map) {
         if (map.containsKey(l)) {
-            var temp = map.get(l) + add
+            var temp = map.get(l) + 1
             map.put(l, temp)
         } else {
             map.put(l, 1)
         }
     }
 
+    /**
+     * Decrease the count of executions on the specific lifeline or remove the lifeline from the map.
+     * 
+     * @param l The lifeline where arbitrary executions end.
+     * @param endExecCount The number of executions that shall be ended.
+     * @param map Contains the count of started executions for every lifeline.
+     * @param feature The rule from the grammar that should cause the error.
+     * @param featureCnt The rule from the grammar that should cause the error.
+     * @param i The interaction that should cause the error.
+     */
     def endExec(Lifeline l, int endExecCount, Map<Lifeline, Integer> map, EStructuralFeature feature,
         EStructuralFeature featureCnt, Interaction i) {
         if (map.containsKey(l)) {
@@ -132,9 +223,13 @@ class SequenceValidator extends AbstractSequenceValidator {
                 map.remove(l)
             } else if (temp < 0) {
                 if (endExecCount > 1) {
-                    error("The number of executions closed is higher than the number of created", i, featureCnt)
+                    error("The number of executions closed is higher than the number of created", i, 
+                        featureCnt
+                    )
                 } else {
-                    error("The number of executions closed is higher than the number of created", i, feature)
+                    error("The number of executions closed is higher than the number of created", i, 
+                        feature
+                    )
                 }
             } else {
                 map.put(l, temp)

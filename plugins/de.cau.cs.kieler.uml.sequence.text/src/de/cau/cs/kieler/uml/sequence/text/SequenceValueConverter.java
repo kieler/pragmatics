@@ -22,16 +22,26 @@ import org.eclipse.xtext.util.Strings;
 
 /**
  * @author dja
- *
  */
 public class SequenceValueConverter extends DefaultTerminalConverters {
 
+    /**
+     * A value converter that will convert the keyword "all" to an integer.
+     * 
+     * @return The new custom value converter.
+     */
     @ValueConverter(rule = "INT_GREATER_ZERO")
     public IValueConverter<Integer> INT_GREATER_ZERO() {
         return new IntGreaterZeroValueConverter();
     }
 
+    /**
+     * @author dja
+     */
     private static class IntGreaterZeroValueConverter implements IValueConverter<Integer> {
+        /**
+         * {@inheritDoc}
+         */
         public Integer toValue(String string, INode node) {
             if (Strings.isEmpty(string)) {
                 throw new ValueConverterException("Couldn't convert empty string to int", node,
@@ -47,6 +57,9 @@ public class SequenceValueConverter extends DefaultTerminalConverters {
             }
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public String toString(Integer value) {
             return ((value == -1) ? "all" : Integer.toString(value));
         }

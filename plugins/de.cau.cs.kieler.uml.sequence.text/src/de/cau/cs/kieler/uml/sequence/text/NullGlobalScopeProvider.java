@@ -22,13 +22,15 @@ import com.google.common.base.Predicate;
 
 /**
  * @author dja
- *
  */
 public class NullGlobalScopeProvider implements IGlobalScopeProvider {
 
-  @Override
-  public IScope getScope(Resource context, EReference reference,
-                Predicate<IEObjectDescription> filter) {
-    return IScope.NULLSCOPE;
-  }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IScope getScope(Resource context, EReference reference,
+            Predicate<IEObjectDescription> filter) {
+        return IScope.NULLSCOPE;
+    }
 }
