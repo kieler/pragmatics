@@ -125,7 +125,6 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             // example to specify external layout option (in this case one of klay layered)
             // remember to add the following import in the head of this class
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.nodeLayering", null),
-            specifyLayoutOption("de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale", ImmutableList.of(0f, 1f)),
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth", ImmutableList.of(-1, 20)),
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", ImmutableList.of(-1, 2)),
             specifyLayoutOption("de.cau.cs.kieler.klay.layered.nodePromotion",null),
