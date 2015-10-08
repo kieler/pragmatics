@@ -228,7 +228,8 @@ public final class OneDimensionalCompactor {
                 break;
                 
             case RIGHT:
-                transposeHitboxes(); calculateConstraints();
+                // mirrorHitboxes(); transposeHitboxes(); calculateConstraints();
+                mirrorHitboxes(); transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
                 break;
                 
             case UP:
