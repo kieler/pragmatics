@@ -36,9 +36,6 @@ import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 
-//TODO: adjust comments, give mad some recognition for thinking about a solution for considering
-//different node sizes. Maybe implement a switch for changing between considering and not considering
-//node sizes.
 /**
  * Implementation of the heuristic MinWidth for solving the NP-hard minimum-width layering problem
  * with consideration of dummy nodes. MinWidth is based on the longest-path algorithm, which finds
@@ -65,6 +62,22 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * haven't been placed yet, but whose maximum width had been (roughly) estimated by the MinWidth
  * algorithm. Compensates for too high estimations. Defaults to -1 (special value for using both 1
  * and 2 as values and choosing the narrowest layering afterwards), lower bound is 1.</li>
+ * </ul>
+ * 
+ * This version of the algorithm, however, differs from the one described in the paper as it
+ * considers the actual size of the nodes of the graph in order to handle real world use cases of
+ * graphs a little bit better. The approach is based on Marc Adolf's version in his implementation
+ * of the heuristic {@link StretchWidthLayerer}. Some changes include:
+ * <ul>
+ * <li>estimating the sizes of dummy nodes by taking the edge spacing of the {@link LGraph} into
+ * account,</li>
+ * <li>finding the narrowest real node of the graph and normalizing all the widths of the nodes of
+ * the graph (real and dummy) in relation to this node,</li>
+ * <li>computing the average size of all real nodes (we don't know the number of dummy nodes in
+ * advance),</li>
+ * <li>using this average as a factor for the ubw-value given by the user in order to adjust the
+ * boundary to our new approach (using the result of this multiplication instead of the given value
+ * of ubw thus changes the condition to start a new layer from the paper slightly).</li>
  * </ul>
  * 
  * <dl>
@@ -94,8 +107,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
     private static final Range<Integer> UPPERBOUND_ON_WIDTH_RANGE = Range.closed(1, 4);
     private static final Range<Integer> COMPENSATOR_RANGE = Range.closed(1, 2);
 
-    // TODO
-    // initialize the dummy size with the spacing properties
+    // Some variables used for considering real node sizes, see below.
     private double dummySize;
     private double minimumNodeSize;
     private double[] normSize;
@@ -104,7 +116,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
     /**
      * Checks whether an edge is a self-loop (i.e. source node == target node). Used internally, as
      * KLay Layered doesn't remove self-loops in its cycle breaking phase, but MinWidth expects only
-     * real directected acyclic graphs (DAGs).
+     * real directed acyclic graphs (DAGs).
      */
     private SelfLoopPredicate isSelfLoopTest = new SelfLoopPredicate();
 
@@ -140,23 +152,24 @@ public final class MinWidthLayerer implements ILayoutPhase {
         final int compensator =
                 layeredGraph.getProperty(Properties.UPPER_LAYER_ESTIMATION_SCALING_FACTOR);
 
-        // TODO 1 Prepare for node sizes
-        // initialize the dummy size with the spacing properties
+        // First step to consider the real size of nodes: Initialize the dummy size with the spacing
+        // properties
         dummySize =
                 layeredGraph.getProperty(InternalProperties.SPACING)
                         * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
 
-        //TODO 2 outsource: Compute minimum node size.
+        // Compute the minimum nodes size (of the real nodes). We're going to use this value in the
+        // next step to normalize the different node sizes.
         double size;
         minimumNodeSize = Double.MAX_VALUE;
         for (LNode node : notInserted) {
             size = node.getSize().y;
             minimumNodeSize = Math.min(minimumNodeSize, size);
         }
-        
-        // We initialize the nodes' id an use it to refer to its in- and out-degree stored each in
-        // an array.
-        // TODO 3: Normalizing nodes
+
+        // We initialize the nodes' id and use it to refer to its in- and out-degree stored each in
+        // an array. We also compute the size of each node in relation to the smallest real node in
+        // the graph (normalized size) and store it in the same way.
         int numOfNodes = notInserted.size();
         inDegree = new int[numOfNodes];
         outDegree = new int[numOfNodes];
@@ -169,12 +182,13 @@ public final class MinWidthLayerer implements ILayoutPhase {
             inDegree[node.id] = countEdgesExceptSelfLoops(node.getIncomingEdges());
             outDegree[node.id] = countEdgesExceptSelfLoops(node.getOutgoingEdges());
             normSize[node.id] = node.getSize().y / minimumNodeSize;
+            // The average size of a node will also be based on the normalized size.
             avgSize += normSize[node.id];
         }
-        //normalize dummy size, too:
+        // normalize dummy size, too:
         dummySize /= minimumNodeSize;
-        //TODO 4: Node sizes
-        avgSize /= notInserted.size();
+        // Divide sum of normalized node sizes by the number of nodes to get an actual mean.
+        avgSize /= numOfNodes;
 
         // Precalculate the successors of all nodes (as a Set) and put them in a list.
         List<Set<LNode>> nodeSuccessors = precalcSuccessors(notInserted);
@@ -185,8 +199,8 @@ public final class MinWidthLayerer implements ILayoutPhase {
         notInserted.sort(Collections.reverseOrder(new MinOutgoingEdgesComparator()));
 
         // minimum width of a layer of maximum size in a computed layering (primary criterion used
-        // for comparison, if more than one layering is computed).
-        //TODO make it double, now chooses on a pixel basis
+        // for comparison, if more than one layering is computed). It's a double as it takes in
+        // account the actual width based on the normalized size of the nodes.
         double minWidth = Double.MAX_VALUE;
         // minimum number of layers in a computed layering {@code minWidth} (secondary
         // criterion used for comparison, if more than one layering is computed).
@@ -213,16 +227,10 @@ public final class MinWidthLayerer implements ILayoutPhase {
             cEnd = COMPENSATOR_RANGE.upperEndpoint();
         }
 
-        int index = 1;
         // … Depending on the start- and end-values, this nested for-loop will last for up to 8
         // iterations resulting in one, two, four or eight different layerings.
         for (int ubw = ubwStart; ubw <= ubwEnd; ubw++) {
-            // TODO 5 Play around with avarages
-            //double ubwConsiderSize = ubw * avgSize; 
             for (int c = cStart; c <= cEnd; c++) {
-                // TODO here as well
-                //double cConsiderSize = c * avgSize; <--- this doesn't even seem useful
-                // TODO a lot of doubles in the next few lines
                 Pair<Double, List<List<LNode>>> result =
                         computeMinWidthLayering(ubw, c, notInserted, nodeSuccessors);
                 double newWidth = result.getFirst();
@@ -237,12 +245,7 @@ public final class MinWidthLayerer implements ILayoutPhase {
                     minWidth = newWidth;
                     minNumOfLayers = newNumOfLayers;
                     candidateLayering = layering;
-                    //TODO remove these sysos!
-                    System.out.println("Chosen Layering #" + index + " of 8 with width " + minWidth
-                            + " and height" + minNumOfLayers);
-                    System.out.println(candidateLayering);
                 }
-                index++;
             }
         }
 
@@ -294,13 +297,15 @@ public final class MinWidthLayerer implements ILayoutPhase {
     }
 
     /**
-     * TODO 6: adjust comments for consideration of node sizes
      * 
      * Computes a layering (as a List of Lists) for a given Iterable of {@link LNode} according to
-     * the MinWidth-heuristic.
+     * the MinWidth-heuristic and considering actual node sizes.
      * 
      * @param upperBoundOnWidth
-     *            Defines a loose upper bound on the width of the MinWidth layerer.
+     *            Defines a loose upper bound on the width of the MinWidth layerer. Uses integer
+     *            values as in the original approach described in the paper, as this bound will
+     *            automatically be multiplied internally with the average normalized node size as
+     *            part of the new approach considering the actual sizes of nodes.
      * @param compensator
      *            Multiplied with {@code upperBoundOnWidth} for defining an upper bound on the width
      *            of layers which haven't been determined yet, but whose maximum width had been
@@ -313,7 +318,9 @@ public final class MinWidthLayerer implements ILayoutPhase {
      * @param nodeSuccessors
      *            precomputed List of Set of successor-nodes of the elements in the Iterable
      *            {@code nodes}.
-     * @return
+     * @return a pair of a double reperesenting the maximum width of the resulting layering
+     *         (normalized by the smallest real node) and the layering itself as a list of list of
+     *         nodes
      */
     private Pair<Double, List<List<LNode>>> computeMinWidthLayering(final int upperBoundOnWidth,
             final int compensator, final Iterable<LNode> nodes,
@@ -321,8 +328,9 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
         List<List<LNode>> layers = Lists.newArrayList();
         Set<LNode> unplacedNodes = Sets.newLinkedHashSet(nodes);
-        
-        //TODO 7: Ubw is now taking  avg size into account.
+
+        // One of the deviations from the paper is, that our upper bound is taking node sizes into
+        // account:
         double ubwConsiderSize = upperBoundOnWidth * avgSize;
 
         // in- and out-degree of the currently considered node, see while-loop below
@@ -343,17 +351,16 @@ public final class MinWidthLayerer implements ILayoutPhase {
 
         // Initial values for the width of the current layer and the estimated width of the coming
         // layers
-        //TODO doubles now
         double widthCurrent = 0;
         double widthUp = 0;
 
         // Parameters needed for computing the width of a layering including dummy nodes:
-        // TO DO These are now doubles
         double maxWidth = 0;
         double realWidth = 0;
-        // Number of "started" edges that did not "finish" yet
-        int currentSpanningEdges = 0;
-        int goingOutFromThisLayer = 0;
+        // Number of "started" edges that did not "finish" yet (now multiplied with the normalized
+        // dummy size to consider actual node sizes)
+        double currentSpanningEdges = 0;
+        double goingOutFromThisLayer = 0;
         // No need for a variable "comingIntoThisLayer" as "widthUp" already gets the job done.
 
         while (!unplacedNodes.isEmpty()) {
@@ -369,35 +376,35 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 alreadyPlacedInCurrentLayer.add(currentNode);
 
                 outDeg = this.outDegree[currentNode.id];
-                //TODO 8 now taking size into account
-                widthCurrent += normSize[currentNode.id] - outDeg * dummySize; //1 - outDeg;
+                // Take node sizes in account: use the normalized size of current node and the
+                // normalized dummy size for each edge
+                widthCurrent += normSize[currentNode.id] - outDeg * dummySize;
 
                 inDeg = this.inDegree[currentNode.id];
-                //TODO 9 here as well
+                // Take node sizes in account: use the normalized normalized dummy size for each
+                // edge
                 widthUp += inDeg * dummySize;
 
-                goingOutFromThisLayer += outDeg;
-                
-                //TODO add node to width
+                goingOutFromThisLayer += outDeg * dummySize;
+
                 realWidth += normSize[currentNode.id];
             }
 
-            // TODO 10, Check whether these comments still apply.
             // Go to the next layer if,
             // 1) no current node has been selected,
             // 2) there are no unplaced nodes left (last iteration of the while-loop),
-            // 3) The conditionGoUp from the paper is satisfied, i.e.
+            // 3) The conditionGoUp from the paper (with the difference of ubw being multiplied with
+            // the
+            // average normalized node size) is satisfied, i.e.
             // 3.1) the width of the current layer is greater than the upper bound on the width and
             // the number of dummy nodes in the layer can't be reduced, as only nodes with no
             // outgoing edges are left for being considered for the current layer; or:
             // 3.2) The estimated width of the not yet determined layers is greater than the
             // scaling factor/compensator times the upper bound on the width.
-            // TODO Check whether new ConditionGoUp suffices
             if (currentNode == null || unplacedNodes.isEmpty()
                     || (widthCurrent >= ubwConsiderSize && outDeg < 1)
                     || widthUp >= compensator * ubwConsiderSize) {
                 layers.add(currentLayer);
-                /* realWidth = currentLayer.size();  TODO problematic in new implementation */
                 currentLayer = Lists.newArrayList();
                 alreadyPlacedInOtherLayers.addAll(alreadyPlacedInCurrentLayer);
                 alreadyPlacedInCurrentLayer.clear();
@@ -405,10 +412,9 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 // Remove all edges from the dummy node count, which are starting at a node placed
                 // in this layer …
                 currentSpanningEdges -= goingOutFromThisLayer;
-                // … Now we have the actual dummy node count for this layer and can add it to the
-                // real nodes for comparing the width.
-                // TODO added factor dummy width
-                maxWidth = Math.max(maxWidth, currentSpanningEdges * dummySize + realWidth);
+                // … Now we have the actual dummy node count (or rather the sum of their widths) for
+                // this layer and can add it to the real nodes for comparing the width.
+                maxWidth = Math.max(maxWidth, currentSpanningEdges + realWidth);
                 // In the next iteration we have to consider new dummy nodes from edges coming into
                 // the layer we've just finished.
                 currentSpanningEdges += widthUp;
@@ -416,7 +422,6 @@ public final class MinWidthLayerer implements ILayoutPhase {
                 widthCurrent = widthUp;
                 widthUp = 0;
                 goingOutFromThisLayer = 0;
-                //TODO new
                 realWidth = 0;
             }
         }
