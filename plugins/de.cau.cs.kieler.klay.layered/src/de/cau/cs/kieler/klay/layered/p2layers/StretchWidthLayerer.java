@@ -24,8 +24,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutPhase;
 import de.cau.cs.kieler.klay.layered.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -180,7 +178,7 @@ public class StretchWidthLayerer implements ILayoutPhase {
                 updateOutGoing(currentLayer);
                 currentLayer = new Layer(currentGraph);
                 currentGraph.getLayers().add(currentLayer);
-                // union of  alreadyPlacedInOtherLayers and alreadyPlacedNodes
+                // union of alreadyPlacedInOtherLayers and alreadyPlacedNodes
                 alreadyPlacedInOtherLayers.addAll(alreadyPlacedNodes);
                 alreadyPlacedNodes.clear();
                 // change width
@@ -235,9 +233,8 @@ public class StretchWidthLayerer implements ILayoutPhase {
      * @return true, if the algorithm should go to the next layer, false otherwise
      */
     private Boolean conditionGoUp() {
-        return ((widthCurrent - (outDegree[selectedNode.id] * dummySize) 
-                + normSize[selectedNode.id]) > maxWidth 
-               || ((widthUp + inDegree[selectedNode.id]
+        return ((widthCurrent - (outDegree[selectedNode.id] * dummySize) + normSize[selectedNode.id]) 
+                    > maxWidth || ((widthUp + inDegree[selectedNode.id]
                 * dummySize) > (maxWidth * upperLayerInfluence)));
     }
 
@@ -387,17 +384,10 @@ public class StretchWidthLayerer implements ILayoutPhase {
     private void computeNormalizedSize() {
 
         // choose which size is the width
-
-        Direction dir = currentGraph.getProperty(LayoutOptions.DIRECTION);
         normSize = new double[sortedLayerlessNodes.size()];
-        if (dir == Direction.DOWN || dir == Direction.UP) {
-            for (LNode node : sortedLayerlessNodes) {
-                normSize[node.id] = node.getSize().x / minimumNodeSize;
-            }
-        } else {
-            for (LNode node : sortedLayerlessNodes) {
-                normSize[node.id] = node.getSize().y / minimumNodeSize;
-            }
+        for (LNode node : sortedLayerlessNodes) {
+            normSize[node.id] = node.getSize().y / minimumNodeSize;
+
         }
     }
 
