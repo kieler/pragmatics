@@ -166,6 +166,11 @@ public final class MinWidthLayerer implements ILayoutPhase {
             size = node.getSize().y;
             minimumNodeSize = Math.min(minimumNodeSize, size);
         }
+        // The minimum nodes size might be zero. If This is the case, then simply don't normalize the
+        // node sizes.
+        if (minimumNodeSize == 0) {
+            minimumNodeSize = 1;
+        }
 
         // We initialize the nodes' id and use it to refer to its in- and out-degree stored each in
         // an array. We also compute the size of each node in relation to the smallest real node in
