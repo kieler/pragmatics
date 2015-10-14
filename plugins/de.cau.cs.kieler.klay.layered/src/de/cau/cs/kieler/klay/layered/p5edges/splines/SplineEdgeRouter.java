@@ -51,12 +51,15 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * Implements a way of routing the edges with splines. Uses the dummy nodes as reference points for
  * a spline calculation, but the dummy nodes do not lay on the edge. They are only approximated.
  * 
- * <dl><dt>Precondition:</dt>
- * <dd>the graph has a proper layering with assigned node and port positions; the size of each layer
- * is correctly set</dd>
- * <dt>Postcondition:</dt>
- * <dd>each node is assigned a horizontal coordinate; the bend points of each edge are set; the
- * width of the whole graph is set</dd></dl>
+ * <dl>
+ *   <dt>Precondition:</dt>
+ *     <dd>the graph has a proper layering with assigned node and port positions</dd>
+ *     <dd>the size of each layer is correctly set</dd>
+ *   <dt>Postcondition:</dt>
+ *     <dd>each node is assigned a horizontal coordinate</dd>
+ *     <dd>the bend points of each edge are set such that they can be interpreted as Bezier splines</dd>
+ *     <dd>the width of the whole graph is set</dd>
+ * </dl>
  * 
  * @author tit
  */
@@ -259,7 +262,7 @@ public final class SplineEdgeRouter implements ILayoutPhase {
                 if (edge.isStraight) {
                     calculateNUBSBendPointStraight(edge, xpos);
                 } else {
-                    calculateNUBSBendPoints(edge, xpos);
+                    calculateNUBSBendPoints(edge, xpos, rightLayersPosition);
                 }
             }
 
@@ -267,6 +270,17 @@ public final class SplineEdgeRouter implements ILayoutPhase {
             // proceed to next layer
             if (rightLayer != null) {
                 xpos = rightLayersPosition + rightLayer.getSize().x + NODE_TO_VERTICAL_SEGMENT_GAP;
+            } else {
+                // When handling the last layer
+                // add spacing for the last routing area after the node
+                // Calculation taken from inter layer spacing calculation
+                int maxRank = -1;
+                for (final SplineHyperEdge edge : hyperEdges) {
+                    maxRank = Math.max(maxRank, edge.rank);
+                }
+                if (maxRank >= 0) {
+                    xpos += (maxRank + 2) * edgeSpacing;
+                }
             }
             leftLayer = rightLayer;
             externalLeftLayer = externalRightLayer;
@@ -1022,27 +1036,53 @@ public final class SplineEdgeRouter implements ILayoutPhase {
      * through the graph. All NubSpline control-points are taken from the edges and the final bezier 
      * bend-points are calculated and added the the last edge part.
      * 
-     * @param hyperEdge The hyper edge, those edges shall be processed.
-     * @param startPos The start x position of current between layer gap.
+     * @param hyperEdge
+     *            The hyper edge, those edges shall be processed.
+     * @param startXPos
+     *            The start x position of current between layer gap.
+     * @param endXPos
+     *            The end x position of current between layer gap.
      */
-    private void calculateNUBSBendPoints(final SplineHyperEdge hyperEdge, final double startPos) {
+    private void calculateNUBSBendPoints(final SplineHyperEdge hyperEdge, final double startXPos,
+            final double endXPos) {
         // the center position is the same for all edges
-        final double centerXPos = startPos + (hyperEdge.rank + 1) * edgeSpacing;
+        final double centerXPos = startXPos + (hyperEdge.rank + 1) * edgeSpacing;
         final double centerYPos = hyperEdge.centerYPos;
         final KVector center = new KVector(centerXPos, centerYPos);
         
         for (final LEdge edge : hyperEdge.edges) {
+            final KVector targetAnchor = edge.getTarget().getAbsoluteAnchor();
+            final KVector sourceAnchor = edge.getSource().getAbsoluteAnchor();
+            
             final KVector sourceVerticalCP = 
-                    new KVector(centerXPos, edge.getSource().getAbsoluteAnchor().y);
+                    new KVector(centerXPos, sourceAnchor.y);
             final KVector targetVerticalCP = 
-                    new KVector(centerXPos, edge.getTarget().getAbsoluteAnchor().y);
+                    new KVector(centerXPos, targetAnchor.y);
+            
+            // Calculate bend points to draw inner layer segments straight
+            // to prevent intersections with big nodes
+            final KVector sourceStraightCP =
+                    new KVector(startXPos - NODE_TO_VERTICAL_SEGMENT_GAP, sourceAnchor.y);
+            final KVector targetStraightCP = new KVector(endXPos, targetAnchor.y);
 
+            // Modify straight CPs to handle inverted edges.
+            if (targetAnchor.x >= endXPos && sourceAnchor.x >= endXPos) {
+                // Inner layer connection on the right layer
+                sourceStraightCP.x = endXPos;
+            }
+            if (targetAnchor.x <= startXPos && sourceAnchor.x <= startXPos) {
+                // Inner layer connection on the right layer
+                targetStraightCP.x = startXPos - NODE_TO_VERTICAL_SEGMENT_GAP;
+            }
+            
             // add the NubSpline control points to the edge, but in revered order!
             if (hyperEdge.edges.size() == 1) {
                 // Special handling of single edges. They don't need a center CP.
-                edge.getBendPoints().addAll(sourceVerticalCP, targetVerticalCP);
+                edge.getBendPoints().addAll(sourceStraightCP, sourceVerticalCP, targetVerticalCP,
+                        targetStraightCP);
             } else {
-                edge.getBendPoints().addAll(sourceVerticalCP, center, targetVerticalCP);
+                edge.getBendPoints().addAll(sourceStraightCP, sourceVerticalCP, center,
+                        targetVerticalCP, targetStraightCP);
             }
         }
     }

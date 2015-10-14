@@ -19,6 +19,7 @@ import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
@@ -31,6 +32,7 @@ import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Status
 import org.eclipse.emf.ecore.EObject
+import org.eclipse.emf.ecore.util.EcoreUtil
 import org.ptolemy.moml.ClassType
 import org.ptolemy.moml.DocumentRoot
 import org.ptolemy.moml.EntityType
@@ -42,7 +44,6 @@ import org.ptolemy.moml.RelationType
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
-import org.eclipse.emf.ecore.util.EcoreUtil
 
 /**
  * Transforms a Ptolemy2 model to a KGraph. This is step one of the Ptolemy model transformation
@@ -419,6 +420,7 @@ class Ptolemy2KGraphTransformation {
      */
     def private create kPort : KimlUtil::createInitializedPort() transform(PortType ptPort) {
         kPort.name = ptPort.name
+        diagramSynthesis.associateWith(kPort, ptPort);
         
         // Add annotation identifying this port as having been created from a Ptolemy port
         kPort.markAsPtolemyElement()
@@ -537,6 +539,8 @@ class Ptolemy2KGraphTransformation {
     def private KNode transformRefinementPort(KPort port) {
         val node = KimlUtil::createInitializedNode()
         node.ports.add(port)
+        
+        reassociate(port, node);
         
         // Mark the node as being a representation of a modal model port
         node.markAsModalModelPort()
@@ -698,7 +702,9 @@ class Ptolemy2KGraphTransformation {
             
             if (existingPort != null) {
                 // A port exists; merge the model port's attributes into the existing port's attributes
+                // and set the association
                 existingPort.annotations.addAll(modelPort.annotations)
+                reassociate(modelPort, existingPort);
             } else {
                 // No port of that name exists, so add it
                 ports.add(modelPort)
@@ -732,5 +738,22 @@ class Ptolemy2KGraphTransformation {
      */
     def List<IStatus> getWarnings() {
         warnings
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Utility Methods
+    
+    /**
+     * Takes the domain model element associated with {@code oldElement} and associates it with
+     * {@code newElement} instead. The old element is associated with {@code null}.
+     * 
+     * @param oldElement the old element that was associated with a domain model element.
+     * @param newElement the new element the domain model element should be associated with instead.
+     */
+    private def void reassociate(KGraphElement oldElement, KGraphElement newElement) {
+        diagramSynthesis.associateWith(newElement,
+            oldElement.layout.getProperty(KlighdInternalProperties.MODEL_ELEMEMT));
+        diagramSynthesis.associateWith(oldElement, null);
     }
 }

@@ -140,7 +140,10 @@ public class LayoutOptionLabelProvider extends LabelProvider {
                 }
                 return builder.substring(2);
             }
+        default:
+            return element.toString();
         }
+        
         return element.toString();
     }
     

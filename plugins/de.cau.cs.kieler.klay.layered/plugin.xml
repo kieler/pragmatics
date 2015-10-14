@@ -196,6 +196,10 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy">
          </knownOption>
+         <knownOption
+               default="NONE"
+               option="de.cau.cs.kieler.klay.layered.postCompaction">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -469,6 +473,25 @@
                option="de.cau.cs.kieler.klay.layered.nodePlace"
                value="BRANDES_KOEPF">
          </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="ports"
+            default="false"
+            id="de.cau.cs.kieler.klay.layered.northOrSouthPort"
+            name="North or South Port"
+            description="Specifies that this port can either be placed on the north side of a node or on the south side (if port constraints permit)"
+            type="boolean">
+       </layoutOption>
+       <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy"
+            default="NONE"
+            description="Specifies whether and how post-process compaction is applied."
+            id="de.cau.cs.kieler.klay.layered.postCompaction"
+            name="Post Compaction"
+            type="enum">
       </layoutOption>
    </extension>
 </plugin>

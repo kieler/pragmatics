@@ -137,7 +137,7 @@ public class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCo
      * @author alan
      *
      */
-    private static class ComparableEdgeAndPort implements Comparable<ComparableEdgeAndPort> {
+    private class ComparableEdgeAndPort implements Comparable<ComparableEdgeAndPort> {
         /** The port. */
         private final LPort port;
         /** The edge connected to it. */
@@ -151,8 +151,13 @@ public class InLayerEdgeTwoNodeCrossingCounter extends InLayerEdgeAllCrossingsCo
             this.portPosition = portPosition;
         }
 
+        @Override
         public int compareTo(final ComparableEdgeAndPort o) {
-            return (portPosition < o.portPosition) ? -1 : ((portPosition == o.portPosition) ? 0 : 1);
+            return portPosition < o.portPosition || portPosition == o.portPosition
+                    && isInLayer(edge) && isInLayer(o.edge)
+                    && positionOf(otherEndOf(edge, port)) > positionOf(otherEndOf(o.edge, o.port)) ? -1
+                    : portPosition == o.portPosition
+                            && otherEndOf(edge, port) == otherEndOf(edge, port) ? 0 : 1;
         }
 
         @Override

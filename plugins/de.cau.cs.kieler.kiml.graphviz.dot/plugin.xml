@@ -16,16 +16,6 @@
           type="graphviz_dot">
       </parser>
   </extension>
-  <extension
-        point="de.cau.cs.kieler.kiml.formats.graphFormats">
-     <handler
-           class="de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotExecutableExtensionFactory:de.cau.cs.kieler.kiml.graphviz.dot.transform.DotFormatHandler"
-           description="The Graphviz Dot format. See http://www.graphviz.org/"
-           extensions="dot,graphviz"
-           id="org.graphviz.dot"
-           name="Dot">
-     </handler>
-  </extension>
 
 
 

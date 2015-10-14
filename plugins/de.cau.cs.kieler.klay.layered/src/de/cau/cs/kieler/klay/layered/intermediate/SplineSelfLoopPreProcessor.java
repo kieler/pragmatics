@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -166,7 +167,7 @@ public final class SplineSelfLoopPreProcessor implements ILayoutProcessor {
             final Set<LEdge> loopEdges, final LNode node) {
         
         final List<ConnectedSelfLoopComponent> components = Lists.newArrayList();
-        final Multimap<LPort, LEdge> portToEdge = ArrayListMultimap.create();
+        final Multimap<LPort, LEdge> portToEdge = LinkedListMultimap.create();
         
         for (final LEdge edge : loopEdges) {
             portToEdge.put(edge.getSource(), edge);

@@ -24,10 +24,12 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.kiml.labels.LabelManagementOptions;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.EdgeRouterFactory;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -285,6 +287,12 @@ final class GraphConfigurator {
                 .addBeforePhase1(IntermediateProcessorStrategy.COMMENT_PREPROCESSOR)
                 .addAfterPhase5(IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
         }
+        
+        // Additional horizontal compaction depends on orthogonal edge routing
+        if (lgraph.getProperty(Properties.POST_COMPACTION) != GraphCompactionStrategy.NONE
+                && lgraph.getProperty(InternalProperties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+            configuration.addAfterPhase5(IntermediateProcessorStrategy.HORIZONTAL_COMPACTOR);
+        } 
 
         return configuration;
     }

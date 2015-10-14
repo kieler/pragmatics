@@ -129,8 +129,6 @@ public class SausageFolding implements ILayoutProcessor {
         // System.out.println("Current AR:" + currentAR);
         // System.out.println("Rows: " + rows);
         
-        // we have to take care not to break at points where there is a long edge dummy
-        
         int nodesPerRow = longestPath / Math.max(1, rows);
         int index = nodesPerRow;
         int newIndex = index;
@@ -140,23 +138,31 @@ public class SausageFolding implements ILayoutProcessor {
 
             Layer l = graph.getLayers().get(index);
 
-            // if the next node should be moved to a new row, check if it is a dummy
-            boolean dummyInvolved = false;
-            for (LNode n : l.getNodes()) {
-                dummyInvolved |= n.getType() != NodeType.NORMAL;
-                
-                for (LEdge e : n.getIncomingEdges()) {
-                    dummyInvolved |= e.getSource().getNode().getType() != NodeType.NORMAL;
-                }
-                
-                for (LEdge e : n.getOutgoingEdges()) {
-                    dummyInvolved |= e.getTarget().getNode().getType() != NodeType.NORMAL;
+            // we only allow to reverse an edge when there is only one pair 
+            // of nodes that is connected by 1 or more edges
+            boolean reversalAllowed = true;
+            LNode n1 = null, n2 = null;
+            check: 
+            for (LNode tgt: l.getNodes()) {
+                for (LEdge e : tgt.getIncomingEdges()) {
+                    // check for different source
+                    if (n1 != null && n1 != tgt) {
+                        reversalAllowed = false;
+                        break check;
+                    }
+                    n1 = tgt;
+                    // check for different target
+                    LNode src = e.getSource().getNode();
+                    if (n2 != null && n2 != src) {
+                        reversalAllowed = false;
+                        break check;
+                    }
+                    n2 = src;
                 }
             }
             
-            
-            // stall the revert if we we face a dummy node
-            if (wannaRevert && !dummyInvolved) {
+            // start new column (unless we are not allowed to)
+            if (wannaRevert && reversalAllowed) {
                 newIndex = 0;
                 wannaRevert = false;
             }
