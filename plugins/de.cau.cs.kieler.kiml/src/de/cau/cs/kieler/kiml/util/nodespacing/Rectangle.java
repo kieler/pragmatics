@@ -109,5 +109,13 @@ public class Rectangle {
         }
         setRect(x1, y1, x2 - x1, y2 - y1);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Rect[x=" + x + ",y=" + y + ",w=" + width + ",h=" + height + "]";
+    }
 
 }
