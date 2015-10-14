@@ -105,11 +105,6 @@ public class SequenceAdapterFactory extends AdapterFactoryImpl
         return createSelfMessageAdapter();
       }
       @Override
-      public Adapter caseOneLifelineNote(OneLifelineNote object)
-      {
-        return createOneLifelineNoteAdapter();
-      }
-      @Override
       public Adapter caseDestroyLifelineEvent(DestroyLifelineEvent object)
       {
         return createDestroyLifelineEventAdapter();
@@ -237,21 +232,6 @@ public class SequenceAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createSelfMessageAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote <em>One Lifeline Note</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote
-   * @generated
-   */
-  public Adapter createOneLifelineNoteAdapter()
   {
     return null;
   }

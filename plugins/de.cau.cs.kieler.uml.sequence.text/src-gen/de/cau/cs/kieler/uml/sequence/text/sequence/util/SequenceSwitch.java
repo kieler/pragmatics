@@ -117,14 +117,6 @@ public class SequenceSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case SequencePackage.ONE_LIFELINE_NOTE:
-      {
-        OneLifelineNote oneLifelineNote = (OneLifelineNote)theEObject;
-        T result = caseOneLifelineNote(oneLifelineNote);
-        if (result == null) result = caseInteraction(oneLifelineNote);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case SequencePackage.DESTROY_LIFELINE_EVENT:
       {
         DestroyLifelineEvent destroyLifelineEvent = (DestroyLifelineEvent)theEObject;
@@ -252,22 +244,6 @@ public class SequenceSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseSelfMessage(SelfMessage object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>One Lifeline Note</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>One Lifeline Note</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseOneLifelineNote(OneLifelineNote object)
   {
     return null;
   }

@@ -21,6 +21,8 @@ import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.util.Strings;
 
 /**
+ * This class is used to map the "INT_GREATER_ZERO_OR_ALL" rule to a value converter.
+ * 
  * @author dja
  */
 public class SequenceValueConverter extends DefaultTerminalConverters {
@@ -30,30 +32,32 @@ public class SequenceValueConverter extends DefaultTerminalConverters {
      * 
      * @return The new custom value converter.
      */
-    @ValueConverter(rule = "INT_GREATER_ZERO")
-    public IValueConverter<Integer> INT_GREATER_ZERO() {
-        return new IntGreaterZeroValueConverter();
+    @ValueConverter(rule = "INT_GREATER_ZERO_OR_ALL")
+    public IValueConverter<Integer> INT_GREATER_ZERO_OR_ALL() {
+        return new convertKeywordAll();
     }
 
     /**
+     * This class is used to convert the keyword "all" to an integer.
+     * 
      * @author dja
      */
-    private static class IntGreaterZeroValueConverter implements IValueConverter<Integer> {
+    private static class convertKeywordAll implements IValueConverter<Integer> {
+        
         /**
          * {@inheritDoc}
          */
         public Integer toValue(String string, INode node) {
             if (Strings.isEmpty(string)) {
-                throw new ValueConverterException("Couldn't convert empty string to int", node,
-                        null);
+                throw new ValueConverterException("Couldn't convert empty string to int", node, null);
             } else if ("all".equals(string.trim())) {
                 return -1;
             }
+            
             try {
                 return Integer.parseInt(string);
             } catch (NumberFormatException e) {
-                throw new ValueConverterException("Couldn't convert '" + string + "' to int", node,
-                        e);
+                throw new ValueConverterException("Couldn't convert '" + string + "' to int", node, e);
             }
         }
 

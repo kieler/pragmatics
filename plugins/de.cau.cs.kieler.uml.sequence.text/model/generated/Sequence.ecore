@@ -35,7 +35,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="Lifeline" eType="#//Lifeline"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageType" eType="#//MessageTypeOne"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="messageTypeLostAndFound"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        eType="#//MessageTypeLostAndFound"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="startEndExec" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="startExec" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
@@ -51,10 +51,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="startExec" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="endExec" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="endExecCount" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="note" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="OneLifelineNote" eSuperTypes="#//Interaction">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="Lifeline" eType="#//Lifeline"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="note" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DestroyLifelineEvent" eSuperTypes="#//Interaction">
@@ -85,5 +81,9 @@
     <eLiterals name="response" value="1" literal="response"/>
     <eLiterals name="sync" value="2" literal="sync"/>
     <eLiterals name="create" value="3" literal="create"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="MessageTypeLostAndFound">
+    <eLiterals name="lost" literal="lost"/>
+    <eLiterals name="found" value="1" literal="found"/>
   </eClassifiers>
 </ecore:EPackage>

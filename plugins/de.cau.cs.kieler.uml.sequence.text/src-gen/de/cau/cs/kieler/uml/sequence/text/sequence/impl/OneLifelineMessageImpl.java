@@ -3,6 +3,7 @@
 package de.cau.cs.kieler.uml.sequence.text.sequence.impl;
 
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
+import de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeLostAndFound;
 import de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage;
@@ -75,7 +76,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * @generated
    * @ordered
    */
-  protected static final String MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT = null;
+  protected static final MessageTypeLostAndFound MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT = MessageTypeLostAndFound.LOST;
 
   /**
    * The cached value of the '{@link #getMessageTypeLostAndFound() <em>Message Type Lost And Found</em>}' attribute.
@@ -85,7 +86,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * @generated
    * @ordered
    */
-  protected String messageTypeLostAndFound = MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT;
+  protected MessageTypeLostAndFound messageTypeLostAndFound = MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT;
 
   /**
    * The default value of the '{@link #getMessage() <em>Message</em>}' attribute.
@@ -299,7 +300,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getMessageTypeLostAndFound()
+  public MessageTypeLostAndFound getMessageTypeLostAndFound()
   {
     return messageTypeLostAndFound;
   }
@@ -309,10 +310,10 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setMessageTypeLostAndFound(String newMessageTypeLostAndFound)
+  public void setMessageTypeLostAndFound(MessageTypeLostAndFound newMessageTypeLostAndFound)
   {
-    String oldMessageTypeLostAndFound = messageTypeLostAndFound;
-    messageTypeLostAndFound = newMessageTypeLostAndFound;
+    MessageTypeLostAndFound oldMessageTypeLostAndFound = messageTypeLostAndFound;
+    messageTypeLostAndFound = newMessageTypeLostAndFound == null ? MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT : newMessageTypeLostAndFound;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND, oldMessageTypeLostAndFound, messageTypeLostAndFound));
   }
@@ -505,7 +506,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
         setMessageType((MessageTypeOne)newValue);
         return;
       case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND:
-        setMessageTypeLostAndFound((String)newValue);
+        setMessageTypeLostAndFound((MessageTypeLostAndFound)newValue);
         return;
       case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE:
         setMessage((String)newValue);
@@ -585,7 +586,7 @@ public class OneLifelineMessageImpl extends InteractionImpl implements OneLifeli
       case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE:
         return messageType != MESSAGE_TYPE_EDEFAULT;
       case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE_TYPE_LOST_AND_FOUND:
-        return MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT == null ? messageTypeLostAndFound != null : !MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT.equals(messageTypeLostAndFound);
+        return messageTypeLostAndFound != MESSAGE_TYPE_LOST_AND_FOUND_EDEFAULT;
       case SequencePackage.ONE_LIFELINE_MESSAGE__MESSAGE:
         return MESSAGE_EDEFAULT == null ? message != null : !MESSAGE_EDEFAULT.equals(message);
       case SequencePackage.ONE_LIFELINE_MESSAGE__START_END_EXEC:

@@ -505,43 +505,6 @@ public interface SequencePackage extends EPackage
   int SELF_MESSAGE_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 8;
 
   /**
-   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineNoteImpl <em>One Lifeline Note</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineNoteImpl
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getOneLifelineNote()
-   * @generated
-   */
-  int ONE_LIFELINE_NOTE = 6;
-
-  /**
-   * The feature id for the '<em><b>Lifeline</b></em>' reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ONE_LIFELINE_NOTE__LIFELINE = INTERACTION_FEATURE_COUNT + 0;
-
-  /**
-   * The feature id for the '<em><b>Note</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ONE_LIFELINE_NOTE__NOTE = INTERACTION_FEATURE_COUNT + 1;
-
-  /**
-   * The number of structural features of the '<em>One Lifeline Note</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ONE_LIFELINE_NOTE_FEATURE_COUNT = INTERACTION_FEATURE_COUNT + 2;
-
-  /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyLifelineEventImpl <em>Destroy Lifeline Event</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -549,7 +512,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getDestroyLifelineEvent()
    * @generated
    */
-  int DESTROY_LIFELINE_EVENT = 7;
+  int DESTROY_LIFELINE_EVENT = 6;
 
   /**
    * The feature id for the '<em><b>Lifeline</b></em>' reference.
@@ -577,7 +540,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getFragment()
    * @generated
    */
-  int FRAGMENT = 8;
+  int FRAGMENT = 7;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -614,7 +577,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getSection()
    * @generated
    */
-  int SECTION = 9;
+  int SECTION = 8;
 
   /**
    * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -651,7 +614,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getRefinement()
    * @generated
    */
-  int REFINEMENT = 10;
+  int REFINEMENT = 9;
 
   /**
    * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -688,7 +651,7 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageTypeOne()
    * @generated
    */
-  int MESSAGE_TYPE_ONE = 11;
+  int MESSAGE_TYPE_ONE = 10;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeTwo <em>Message Type Two</em>}' enum.
@@ -698,7 +661,17 @@ public interface SequencePackage extends EPackage
    * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageTypeTwo()
    * @generated
    */
-  int MESSAGE_TYPE_TWO = 12;
+  int MESSAGE_TYPE_TWO = 11;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeLostAndFound <em>Message Type Lost And Found</em>}' enum.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeLostAndFound
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageTypeLostAndFound()
+   * @generated
+   */
+  int MESSAGE_TYPE_LOST_AND_FOUND = 12;
 
 
   /**
@@ -1169,38 +1142,6 @@ public interface SequencePackage extends EPackage
   EAttribute getSelfMessage_Note();
 
   /**
-   * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote <em>One Lifeline Note</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for class '<em>One Lifeline Note</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote
-   * @generated
-   */
-  EClass getOneLifelineNote();
-
-  /**
-   * Returns the meta object for the reference '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote#getLifeline <em>Lifeline</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the reference '<em>Lifeline</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote#getLifeline()
-   * @see #getOneLifelineNote()
-   * @generated
-   */
-  EReference getOneLifelineNote_Lifeline();
-
-  /**
-   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote#getNote <em>Note</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Note</em>'.
-   * @see de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote#getNote()
-   * @see #getOneLifelineNote()
-   * @generated
-   */
-  EAttribute getOneLifelineNote_Note();
-
-  /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent <em>Destroy Lifeline Event</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1336,6 +1277,16 @@ public interface SequencePackage extends EPackage
    * @generated
    */
   EEnum getMessageTypeTwo();
+
+  /**
+   * Returns the meta object for enum '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeLostAndFound <em>Message Type Lost And Found</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for enum '<em>Message Type Lost And Found</em>'.
+   * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeLostAndFound
+   * @generated
+   */
+  EEnum getMessageTypeLostAndFound();
 
   /**
    * Returns the factory that creates the instances of the model.
@@ -1717,32 +1668,6 @@ public interface SequencePackage extends EPackage
     EAttribute SELF_MESSAGE__NOTE = eINSTANCE.getSelfMessage_Note();
 
     /**
-     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineNoteImpl <em>One Lifeline Note</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.OneLifelineNoteImpl
-     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getOneLifelineNote()
-     * @generated
-     */
-    EClass ONE_LIFELINE_NOTE = eINSTANCE.getOneLifelineNote();
-
-    /**
-     * The meta object literal for the '<em><b>Lifeline</b></em>' reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference ONE_LIFELINE_NOTE__LIFELINE = eINSTANCE.getOneLifelineNote_Lifeline();
-
-    /**
-     * The meta object literal for the '<em><b>Note</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute ONE_LIFELINE_NOTE__NOTE = eINSTANCE.getOneLifelineNote_Note();
-
-    /**
      * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.impl.DestroyLifelineEventImpl <em>Destroy Lifeline Event</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1857,6 +1782,16 @@ public interface SequencePackage extends EPackage
      * @generated
      */
     EEnum MESSAGE_TYPE_TWO = eINSTANCE.getMessageTypeTwo();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeLostAndFound <em>Message Type Lost And Found</em>}' enum.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeLostAndFound
+     * @see de.cau.cs.kieler.uml.sequence.text.sequence.impl.SequencePackageImpl#getMessageTypeLostAndFound()
+     * @generated
+     */
+    EEnum MESSAGE_TYPE_LOST_AND_FOUND = eINSTANCE.getMessageTypeLostAndFound();
 
   }
 

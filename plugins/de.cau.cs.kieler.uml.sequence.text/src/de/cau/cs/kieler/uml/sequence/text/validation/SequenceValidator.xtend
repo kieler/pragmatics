@@ -8,14 +8,13 @@ import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment
 import de.cau.cs.kieler.uml.sequence.text.sequence.Interaction
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage
-import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement
 import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequencePackage
 import de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage
-import java.util.ArrayList
 import java.util.HashMap
+import java.util.HashSet
 import java.util.Map
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.xtext.validation.Check
@@ -27,28 +26,21 @@ import org.eclipse.xtext.validation.Check
  */
 class SequenceValidator extends AbstractSequenceValidator {
 
-    /** Shorter name. */
+    // Shorter names for structural features used for validation. 
     private static val EStructuralFeature END_LEFT_COUNT = SequencePackage.Literals
         .TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC_COUNT
-    /** Shorter name. */
     private static val EStructuralFeature END_LEFT = SequencePackage.Literals
         .TWO_LIFELINE_MESSAGE__SOURCE_END_EXEC
-    /** Shorter name. */
     private static val EStructuralFeature END_RIGHT_COUNT = SequencePackage.Literals
         .TWO_LIFELINE_MESSAGE__TARGET_END_EXEC_COUNT
-    /** Shorter name. */
     private static val EStructuralFeature END_RIGHT = SequencePackage.Literals
         .TWO_LIFELINE_MESSAGE__TARGET_END_EXEC
-    /** Shorter name. */
     private static val EStructuralFeature ONE_END_COUNT = SequencePackage.Literals
         .ONE_LIFELINE_MESSAGE__END_EXEC_COUNT
-    /** Shorter name. */
     private static val EStructuralFeature SELF_END_COUNT = SequencePackage.Literals
         .SELF_MESSAGE__END_EXEC_COUNT
-    /** Shorter name. */
     private static val EStructuralFeature ONE_END = SequencePackage.Literals
         .ONE_LIFELINE_MESSAGE__END_EXEC
-    /** Shorter name. */
     private static val EStructuralFeature SELF_END = SequencePackage.Literals.SELF_MESSAGE__END_EXEC
 
     /**
@@ -57,8 +49,8 @@ class SequenceValidator extends AbstractSequenceValidator {
      * @param s The whole sequence diagram.
      */
     @Check
-    def sameIdForLifelines(SequenceDiagram s) {
-        val life = new ArrayList()
+    def uniqueLifelineIds(SequenceDiagram s) {
+        val life = new HashSet()
         for (lifeline : s.lifelines) {
             if (life.contains(lifeline.name)) {
                 error("This Identifier is already used", lifeline, SequencePackage.Literals
@@ -91,17 +83,19 @@ class SequenceValidator extends AbstractSequenceValidator {
      * @param map Contains the count of started executions for every lifeline.
      */
     private def dispatch correctUsageOfExecutionsOnMessage(TwoLifelineMessage m, 
-        Map<Lifeline, Integer> map
-    ) {
+        Map<Lifeline, Integer> map) {
         if (m.sourceStartExec) {
             startExec(m.sourceLifeline, map)
         }
+        
         if (m.targetStartExec) {
             startExec(m.targetLifeline, map)
         }
+        
         if (m.sourceEndExec) {
             endExec(m.sourceLifeline, m.sourceEndExecCount, map, END_LEFT, END_LEFT_COUNT, m)
         }
+        
         if (m.targetEndExec) {
             endExec(m.targetLifeline, m.targetEndExecCount, map, END_RIGHT, END_RIGHT_COUNT, m)
         }
@@ -113,12 +107,12 @@ class SequenceValidator extends AbstractSequenceValidator {
      * @param m The message where the correct usage has to be checked.
      * @param map Contains the count of started executions for every lifeline.
      */
-    private def dispatch correctUsageOfExecutionsOnMessage(OneLifelineMessage m, Map<Lifeline, 
-        Integer> map
-    ) {
+    private def dispatch correctUsageOfExecutionsOnMessage(OneLifelineMessage m, 
+        Map<Lifeline, Integer> map) {
         if (m.startExec) {
             startExec(m.lifeline, map)
         }
+        
         if (m.endExec) {
             endExec(m.lifeline, m.endExecCount, map, ONE_END, ONE_END_COUNT, m)
         }
@@ -134,6 +128,7 @@ class SequenceValidator extends AbstractSequenceValidator {
         if (m.startExec) {
             startExec(m.lifeline, map)
         }
+        
         if (m.endExec) {
             endExec(m.lifeline, m.endExecCount, map, SELF_END, SELF_END_COUNT, m)
         }
@@ -146,9 +141,8 @@ class SequenceValidator extends AbstractSequenceValidator {
      * @param m The message where the correct usage has to be checked.
      * @param map Contains the count of started executions for every lifeline.
      */
-    private def dispatch correctUsageOfExecutionsOnMessage(DestroyLifelineEvent d, Map<Lifeline, 
-        Integer> map
-    ) {
+    private def dispatch correctUsageOfExecutionsOnMessage(DestroyLifelineEvent d, 
+        Map<Lifeline, Integer> map) {
         //do nothing
     }
     
@@ -159,18 +153,6 @@ class SequenceValidator extends AbstractSequenceValidator {
      * @param map Contains the count of started executions for every lifeline.
      */
     private def dispatch correctUsageOfExecutionsOnMessage(Fragment f, Map<Lifeline, Integer> map) {
-        //do nothing
-    }
-    
-    /**
-     * Executions can't be used on a note but dispatch has to be defined for every interaction.
-     * 
-     * @param m The message where the correct usage has to be checked.
-     * @param map Contains the count of started executions for every lifeline.
-     */
-    private def dispatch correctUsageOfExecutionsOnMessage(OneLifelineNote n, Map<Lifeline, 
-        Integer> map
-    ) {
         //do nothing
     }
     

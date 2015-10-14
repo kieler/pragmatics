@@ -18,9 +18,12 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.scoping.IGlobalScopeProvider;
 import org.eclipse.xtext.scoping.IScope;
+
 import com.google.common.base.Predicate;
 
 /**
+ * This class is used to override the global scope with a scope that is only visible in the current file.
+ * 
  * @author dja
  */
 public class NullGlobalScopeProvider implements IGlobalScopeProvider {

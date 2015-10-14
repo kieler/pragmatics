@@ -1,6 +1,21 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2015 by
+ * + Christian-Albrechts-University of Kiel
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+
 package de.cau.cs.kieler.uml.sequence.klighd
 
 import com.google.common.collect.ImmutableList
+import com.google.common.collect.Lists
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.krendering.Colors
@@ -34,20 +49,26 @@ import de.cau.cs.kieler.papyrus.sequence.properties.SequenceExecutionType
 import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline
+import de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeLostAndFound
+import de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne
+import de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeTwo
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage
-import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement
 import de.cau.cs.kieler.uml.sequence.text.sequence.Section
+import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage
 import de.cau.cs.kieler.uml.sequence.text.sequence.SequenceDiagram
 import de.cau.cs.kieler.uml.sequence.text.sequence.TwoLifelineMessage
 import java.util.ArrayList
 import java.util.HashMap
+import java.util.List
 import java.util.Stack
 import javax.inject.Inject
-import java.util.List
-import com.google.common.collect.Lists
-import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage
 
+/**
+ * This class is used for the transformation of a Sequence Diagram Model into a KGraph.
+ * 
+ * @author dja
+ */
 class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram> {
 
 
@@ -55,8 +76,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     // Synthesis Options
     
     /** Add options to edit the style of the diagram. */
-    private static final val SynthesisOption STYLE = SynthesisOption.createChoiceOption("Style",
-        ImmutableList::of("Black and White", "Stylish", "Hello Kitty"), "Stylish")
+    private static final val SynthesisOption STYLE = SynthesisOption.createChoiceOption
+        ("Style", ImmutableList::of("Black and White", "Stylish", "Hello Kitty"), "Stylish")
 
     /** Add options to change the lifelinesorting algorithm. */
     private static final val SynthesisOption LIFELINESORTING = SynthesisOption.createChoiceOption
@@ -88,18 +109,20 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     // Variables
     
     /** Map of all KNodes that model lifelines in the KGraph. */
-    private val lifelineNodes = new HashMap<String, KNode>
+    private val lifelineNodes = new HashMap<Lifeline, KNode>
     /** The KNode of the surrounding interaction. */
     private var KNode surroundingInteraction
     /** Map with every lifeline as key and a Stack as value. The stack consists of the elementIds 
      * currently used for the executions on such that lifeline.
      */
-    private val elementIdOnLifeline = new HashMap<String, Stack<Integer>>
+    private val elementIdOnLifeline = new HashMap<Lifeline, Stack<Integer>>
     /** Increasing number, such that every element receives a different Id. */
     private var elementId = 0
     /** Stack of all top-level fragments. */
     private var fragmentList = new Stack<Integer>
-    /** The Id of an edge. */
+    /** The elementId of the last created edge, such that it can't accidently happen to increase the 
+     * elementId and use a wrong elementId for an edge. 
+     */
     private var edgeId = 0
     /** Map of the elementId for every lifeline. */
     private var lifelineId = new HashMap<String, Integer>
@@ -121,15 +144,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         // Attach different Properties.
         val surrInteraction = root.createNode().associateWith(model)
         root.children.add(surrInteraction)
-        surrInteraction.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
-        surrInteraction.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, 
-            NodeType.SURROUNDING_INTERACTION
-        )
-        surrInteraction.addLayoutParam(LayoutOptions.BORDER_SPACING, 10f)
-        surrInteraction.addLayoutParam(SequenceDiagramProperties.MESSAGE_SPACING, 65f)
-        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
-        surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 40)
-        surrInteraction.addLayoutParam(SequenceDiagramProperties.AREA_HEADER, 45)
+        surrInteraction.addSurroundingInteractionLayoutOptions()
 
         // Diagramproperties for Lifelinesorting.
         switch LIFELINESORTING.objectValue {
@@ -163,7 +178,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         }
 
         // Coordinates for the Rectangle where the diagram name is inside.
-        val lineCoordinates = new ArrayList<KPosition>
+        val lineCoordinates = new ArrayList<KPosition>(4)
         lineCoordinates.add(createKPosition(LEFT, 0, 0, BOTTOM, 0, 0))
         lineCoordinates.add(createKPosition(RIGHT, 10, 0, BOTTOM, 0, 0))
         lineCoordinates.add(createKPosition(RIGHT, 0, 0, BOTTOM, 10, 0))
@@ -181,7 +196,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         model.lifelines.forEach[s|surrInteraction.children += transformLifeline(s)]
         model.interactions.forEach[s|transformInteraction(s)]
 
-        // Reset global variables.
+        // Reset class variables.
         lifelineNodes.clear()
         surroundingInteraction = null
         elementIdOnLifeline.clear()
@@ -192,6 +207,21 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         fragmentDepths.clear()
 
         return root
+    }
+    
+    /**
+     * Adds the specific Layout Options to the given KNode.
+     * 
+     * @param node The KNode where the layout options shall be applied to.
+     */
+    private def void addSurroundingInteractionLayoutOptions(KNode node) {
+        node.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
+        .addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
+        .addLayoutParam(LayoutOptions.BORDER_SPACING, 10f)
+        .addLayoutParam(SequenceDiagramProperties.MESSAGE_SPACING, 65f)
+        .addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
+        .addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 40)
+        .addLayoutParam(SequenceDiagramProperties.AREA_HEADER, 45)
     }
 
     /**
@@ -248,7 +278,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         }
 
         // Coordinates for the dashed line of the Lifeline.
-        val lineCoordinates = new ArrayList<KPosition>
+        val lineCoordinates = new ArrayList<KPosition>(2)
         lineCoordinates.add(createKPosition(LEFT, 0, 0.5f, TOP, 0, 0))
         lineCoordinates.add(createKPosition(LEFT, 0, 0.5f, BOTTOM, 0, 0))
 
@@ -256,7 +286,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         dashedLine.addPolyline(2, lineCoordinates).setLineStyle(LineStyle.DASH)
         dashedLine.setAreaPlacementData().from(LEFT, 0, 0.5f, TOP, 36, 0).to(LEFT, 0, 0.5f, BOTTOM, 0, 0)
 
-        lifelineNodes.put(lifeline.name, lifelineNode)
+        lifelineNodes.put(lifeline, lifelineNode)
 
         return lifelineNode
     }
@@ -270,7 +300,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      */
     private def dispatch KEdge transformInteraction(TwoLifelineMessage msg) {
         val transEdge = msg.createEdge().associateWith(msg)
-        transEdge.setMessageRendering(msg.messageType.toString)
+        transEdge.setMessageRendering(msg.messageType)
 
         // Create a label.
         val label = KimlUtil.createInitializedLabel(transEdge)
@@ -280,19 +310,17 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         // Set the source and target destination of the message.
         val source = msg.sourceLifeline
         val target = msg.targetLifeline
-        transEdge.source = lifelineNodes.get(source.name)
-        transEdge.target = lifelineNodes.get(target.name)
+        transEdge.source = lifelineNodes.get(source)
+        transEdge.target = lifelineNodes.get(target)
 
-        edgeCount(transEdge)
+        edgeOrder(transEdge)
         
         // Check if different options are used in the textual description.
         if (msg.sourceNote != null) {
-            // transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
             createNote(msg.sourceNote, edgeId)
         }
 
         if (msg.targetNote != null) {
-            // transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
             createNote(msg.targetNote, edgeId)
         }
 
@@ -304,14 +332,14 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             createExecution(target)
         }
 
-        if (elementIdOnLifeline.containsKey(source.name)) {
-            val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(source.name))
+        if (elementIdOnLifeline.containsKey(source)) {
+            val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(source))
 
             transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS, executionList)
         }
 
-        if (elementIdOnLifeline.containsKey(target.name)) {
-            val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(target.name))
+        if (elementIdOnLifeline.containsKey(target)) {
+            val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(target))
 
             transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_IDS, executionList)
         }
@@ -333,12 +361,11 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 if (!fragmentDepths.contains(fragmentList.last)) {
                     fragmentDepths.add(fragmentList.last)
                 }
-                var list = new ArrayList
-                list.addAll(fragmentDepths)
+                var list = new ArrayList(fragmentDepths)
                 transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
                 transEdge.addLayoutParam(SequenceDiagramProperties.PARENT_AREA_ID, fragmentList.last)
             } else {
-                val list = new ArrayList
+                val list = new ArrayList(1)
                 list.add(fragmentList.last)
                 transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
             }
@@ -356,7 +383,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      */
     private def dispatch KEdge transformInteraction(OneLifelineMessage msg) {
         val transEdge = msg.createEdge().associateWith(msg)
-        transEdge.setMessageRendering(msg.messageTypeLostAndFound.toString)
+        transEdge.setMessageRendering(msg.messageTypeLostAndFound)
 
         // Create a label.
         val label = KimlUtil.createInitializedLabel(transEdge)
@@ -369,21 +396,20 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         surroundingInteraction.children.add(dummyNode)
         dummyNode.addEllipse.setBackground(Colors.BLACK)
 
-        if (msg.messageTypeLostAndFound.equals("lost")) {
-            transEdge.source = lifelineNodes.get(msg.lifeline.name)
+        if (msg.messageTypeLostAndFound.equals(MessageTypeLostAndFound.LOST)) {
+            transEdge.source = lifelineNodes.get(msg.lifeline)
             transEdge.target = dummyNode
             dummyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.LOST_MESSAGE_TARGET)
         } else {
             transEdge.source = dummyNode
-            transEdge.target = lifelineNodes.get(msg.lifeline.name)
+            transEdge.target = lifelineNodes.get(msg.lifeline)
             dummyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.FOUND_MESSAGE_SOURCE)
         }
 
-        edgeCount(transEdge)
+        edgeOrder(transEdge)
 
         // Check if different options are used in the textual description.
         if (msg.note != null) {
-            // transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
             createNote(msg.note, edgeId)
         }
 
@@ -391,17 +417,15 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             createExecution(msg.lifeline)
         }
 
-        if (elementIdOnLifeline.containsKey(msg.lifeline.name)) {
-            if (msg.messageTypeLostAndFound.equals("lost")) {
-                val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline
-                    .get(msg.lifeline.name)
-                )
+        if (elementIdOnLifeline.containsKey(msg.lifeline)) {
+            if (msg.messageTypeLostAndFound.equals(MessageTypeLostAndFound.LOST)) {
+                val List<Integer> executionList = Lists
+                .newArrayList(elementIdOnLifeline.get(msg.lifeline))
 
                 transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS, executionList)
             } else {
-                val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline
-                    .get(msg.lifeline.name)
-                )
+                val List<Integer> executionList = Lists
+                .newArrayList(elementIdOnLifeline.get(msg.lifeline))
 
                 transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_IDS, executionList)
             }
@@ -420,12 +444,11 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 if (!fragmentDepths.contains(fragmentList.last)) {
                     fragmentDepths.add(fragmentList.last)
                 }
-                var list = new ArrayList
-                list.addAll(fragmentDepths)
+                var list = new ArrayList(fragmentDepths)
                 transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
                 transEdge.addLayoutParam(SequenceDiagramProperties.PARENT_AREA_ID, fragmentList.last)
             } else {
-                val list = new ArrayList
+                val list = new ArrayList(1)
                 list.add(fragmentList.last)
                 transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
             }
@@ -441,7 +464,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      */
     private def dispatch KEdge transformInteraction(SelfMessage msg) {
         val transEdge = msg.createEdge().associateWith(msg)
-        transEdge.setMessageRendering(msg.messageType.toString)
+        
+        transEdge.setMessageRendering(msg.messageType)
 
         // Create a label.
         val label = KimlUtil.createInitializedLabel(transEdge)
@@ -449,14 +473,13 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
 
         // Set the source and target destination of the message.
-        transEdge.source = lifelineNodes.get(msg.lifeline.name)
-        transEdge.target = lifelineNodes.get(msg.lifeline.name)
+        transEdge.source = lifelineNodes.get(msg.lifeline)
+        transEdge.target = lifelineNodes.get(msg.lifeline)
 
-        edgeCount(transEdge)
+        edgeOrder(transEdge)
 
         // Check if different options are used in the textual description.
         if (msg.note != null) {
-            // transEdge.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, edgeId)
             createNote(msg.note, edgeId)
         }
 
@@ -464,10 +487,9 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             createExecution(msg.lifeline)
         }
 
-        if (elementIdOnLifeline.containsKey(msg.lifeline.name)) {
-            val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline
-                .get(msg.lifeline.name)
-            )
+        if (elementIdOnLifeline.containsKey(msg.lifeline)) {
+            val List<Integer> executionList = Lists
+            .newArrayList(elementIdOnLifeline.get(msg.lifeline))
 
             transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS, executionList)
         }
@@ -485,30 +507,17 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 if (!fragmentDepths.contains(fragmentList.last)) {
                     fragmentDepths.add(fragmentList.last)
                 }
-                var list = new ArrayList
-                list.addAll(fragmentDepths)
+                var list = new ArrayList(fragmentDepths)
                 transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
                 transEdge.addLayoutParam(SequenceDiagramProperties.PARENT_AREA_ID, fragmentList.last)
             } else {
-                val list = new ArrayList
+                val list = new ArrayList(1)
                 list.add(fragmentList.last)
                 transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
             }
         }
 
         return transEdge
-    }
-
-    // TODO maybe remove
-    private def dispatch transformInteraction(OneLifelineNote note) {
-        val noteNode = note.createNode().associateWith(note)
-
-        val id = lifelineId.get(note.lifeline.name)
-
-        // noteNode.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, id)
-        createNote(note.note, id)
-
-        return noteNode
     }
 
     /**
@@ -533,7 +542,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         destroyRect.addPolyline(2).from(LEFT, 0, 0, TOP, 0, 0).to(RIGHT, 0, 0, BOTTOM, 0, 0)
         destroyRect.addPolyline(2).from(RIGHT, 0, 0, TOP, 0, 0).to(LEFT, 0, 0, BOTTOM, 0, 0)
 
-        lifelineNodes.get(destroy.lifeline.name).children.add(destroyNode)
+        lifelineNodes.get(destroy.lifeline).children.add(destroyNode)
 
         return destroyNode
     }
@@ -567,7 +576,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         surroundingInteraction.children.add(fragNode)
 
         // Coordinates for the Rectangle where the fragment name is inside.
-        val lineCoordinates = new ArrayList<KPosition>
+        val lineCoordinates = new ArrayList<KPosition>(4)
         lineCoordinates.add(createKPosition(LEFT, 0, 0, BOTTOM, 0, 0))
         lineCoordinates.add(createKPosition(RIGHT, 10, 0, BOTTOM, 0, 0))
         lineCoordinates.add(createKPosition(RIGHT, 0, 0, BOTTOM, 10, 0))
@@ -628,8 +637,35 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         return refNode
     }
 
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     // Rest
+        
+    /**
+     * Specifies the correct Properties for the different message types. 
+     * 
+     * @param edge The edge to add the message type properties to.
+     * @param type The message type of the message.
+     * @return The given edge.
+     */
+    private def dispatch KEdge setMessageRendering(KEdge edge, MessageTypeOne type) {
+        switch(type) {
+            case MessageTypeOne.SYNC: {
+                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.SYNCHRONOUS)
+                edge.addPolyline(2).addHeadArrowDecorator()
+            }
+            case MessageTypeOne.ASYNC: {
+                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.ASYNCHRONOUS)
+                edge.addPolyline(2).addAssociationArrowDecorator()
+            }
+            case MessageTypeOne.RESPONSE: {
+                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.REPLY)
+                edge.addPolyline(2).setLineStyle(LineStyle.DASH).addAssociationArrowDecorator()
+            }
+        }
+
+        return edge
+    }
     
     /**
      * Specifies the correct Properties for the different message types. 
@@ -638,23 +674,44 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      * @param type The message type of the message.
      * @return The given edge.
      */
-    private def KEdge setMessageRendering(KEdge edge, String type) {
-        if (type.equals("sync")) {
-            edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.SYNCHRONOUS)
-            edge.addPolyline(2).addHeadArrowDecorator()
-        } else if (type.equals("async")) {
-            edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.ASYNCHRONOUS)
-            edge.addPolyline(2).addAssociationArrowDecorator()
-        } else if (type.equals("response")) {
-            edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.REPLY)
-            edge.addPolyline(2).setLineStyle(LineStyle.DASH).addAssociationArrowDecorator()
-        } else if (type.equals("create")) {
-            edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.CREATE)
-            edge.addPolyline(2).setLineStyle(LineStyle.DASH).addAssociationArrowDecorator()
-        } else if (type.equals("lost")) {
-            edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.LOST)
-        } else if (type.equals("found")) {
-            edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.FOUND)
+    private def dispatch KEdge setMessageRendering(KEdge edge, MessageTypeTwo type) {
+        switch(type) {
+            case MessageTypeTwo.SYNC: {
+                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.SYNCHRONOUS)
+                edge.addPolyline(2).addHeadArrowDecorator()
+            }
+            case MessageTypeTwo.ASYNC: {
+                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.ASYNCHRONOUS)
+                edge.addPolyline(2).addAssociationArrowDecorator()
+            }
+            case MessageTypeTwo.RESPONSE: {
+                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.REPLY)
+                edge.addPolyline(2).setLineStyle(LineStyle.DASH).addAssociationArrowDecorator()
+            } 
+            case MessageTypeTwo.CREATE: {
+                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.CREATE)
+                edge.addPolyline(2).setLineStyle(LineStyle.DASH).addAssociationArrowDecorator()
+            }
+        }
+
+        return edge
+    }
+    
+    /**
+     * Specifies the correct Properties for the different message types. 
+     * 
+     * @param edge The edge to add the message type properties to.
+     * @param type The message type of the message.
+     * @return The given edge.
+     */
+    private def dispatch KEdge setMessageRendering(KEdge edge, MessageTypeLostAndFound type) {
+        switch(type) {
+            case MessageTypeLostAndFound.LOST: {
+                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.LOST)
+            }
+            case MessageTypeLostAndFound.FOUND: {
+                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.FOUND)
+            }
         }
 
         return edge
@@ -674,17 +731,17 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         
         /* Check if the execution is already active on the given lifeline, 
         otherwise create a new execution. */ 
-        if (elementIdOnLifeline.containsKey(l.name)) {
-            val stack = elementIdOnLifeline.get(l.name)
+        if (elementIdOnLifeline.containsKey(l)) {
+            val stack = elementIdOnLifeline.get(l)
             stack.push(elementId)
-            elementIdOnLifeline.put(l.name, stack)
+            elementIdOnLifeline.put(l, stack)
         } else {
             val stack = new Stack()
             stack.push(elementId)
-            elementIdOnLifeline.put(l.name, stack)
+            elementIdOnLifeline.put(l, stack)
         }
         execution.addLayoutParam(SequenceDiagramProperties.ELEMENT_ID, elementIdOnLifeline
-            .get(l.name).peek()
+            .get(l).peek()
         )
         execution.addLayoutParam(SequenceDiagramProperties.EXECUTION_TYPE, 
             SequenceExecutionType.EXECUTION
@@ -702,7 +759,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 execution.addRectangle.setBackground(Colors.LIGHT_GRAY)
             }
         }
-        lifelineNodes.get(l.name).children.add(execution)
+        lifelineNodes.get(l).children.add(execution)
 
         return execution
     }
@@ -721,27 +778,27 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
          * close all executions = -1
          */
         if (endExecCount > 0) {
-            val stack = elementIdOnLifeline.get(l.name)
+            val stack = elementIdOnLifeline.get(l)
             for (var i = 0; i < endExecCount; i++) {
                 if (!stack.isEmpty) {
                     stack.pop()
                 }
             }
-            elementIdOnLifeline.put(l.name, stack)
+            elementIdOnLifeline.put(l, stack)
         } else if (endExecCount < 0) {
-            val stack = elementIdOnLifeline.get(l.name)
+            val stack = elementIdOnLifeline.get(l)
             stack.clear()
-            elementIdOnLifeline.put(l.name, stack)
+            elementIdOnLifeline.put(l, stack)
         } else {
-            val stack = elementIdOnLifeline.get(l.name)
+            val stack = elementIdOnLifeline.get(l)
             if (!stack.isEmpty) {
                 stack.pop()
             }
-            elementIdOnLifeline.put(l.name, stack)
+            elementIdOnLifeline.put(l, stack)
         }
-        val stack = elementIdOnLifeline.get(l.name)
+        val stack = elementIdOnLifeline.get(l)
         if (stack.isEmpty) {
-            elementIdOnLifeline.remove(l.name)
+            elementIdOnLifeline.remove(l)
         }
     }
 
@@ -771,14 +828,14 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      * 
      * @param e The edge to add the elementId to.
      */
-    private def edgeCount(KEdge e) {
+    private def edgeOrder(KEdge e) {
         elementId += 1
         edgeId = elementId
 
         // Set a position for a message, so that the algorithm has an increasing order.
         val edgeLayout = e.getData(typeof(KEdgeLayout))
-        edgeLayout.sourcePoint.y = elementId
-        edgeLayout.targetPoint.y = elementId
+        edgeLayout.sourcePoint.y = edgeId
+        edgeLayout.targetPoint.y = edgeId
     }
 
     /**

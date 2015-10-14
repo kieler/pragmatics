@@ -71,7 +71,6 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
       case SequencePackage.TWO_LIFELINE_MESSAGE: return createTwoLifelineMessage();
       case SequencePackage.ONE_LIFELINE_MESSAGE: return createOneLifelineMessage();
       case SequencePackage.SELF_MESSAGE: return createSelfMessage();
-      case SequencePackage.ONE_LIFELINE_NOTE: return createOneLifelineNote();
       case SequencePackage.DESTROY_LIFELINE_EVENT: return createDestroyLifelineEvent();
       case SequencePackage.FRAGMENT: return createFragment();
       case SequencePackage.SECTION: return createSection();
@@ -95,6 +94,8 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
         return createMessageTypeOneFromString(eDataType, initialValue);
       case SequencePackage.MESSAGE_TYPE_TWO:
         return createMessageTypeTwoFromString(eDataType, initialValue);
+      case SequencePackage.MESSAGE_TYPE_LOST_AND_FOUND:
+        return createMessageTypeLostAndFoundFromString(eDataType, initialValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -114,6 +115,8 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
         return convertMessageTypeOneToString(eDataType, instanceValue);
       case SequencePackage.MESSAGE_TYPE_TWO:
         return convertMessageTypeTwoToString(eDataType, instanceValue);
+      case SequencePackage.MESSAGE_TYPE_LOST_AND_FOUND:
+        return convertMessageTypeLostAndFoundToString(eDataType, instanceValue);
       default:
         throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
@@ -183,17 +186,6 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
   {
     SelfMessageImpl selfMessage = new SelfMessageImpl();
     return selfMessage;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public OneLifelineNote createOneLifelineNote()
-  {
-    OneLifelineNoteImpl oneLifelineNote = new OneLifelineNoteImpl();
-    return oneLifelineNote;
   }
 
   /**
@@ -280,6 +272,28 @@ public class SequenceFactoryImpl extends EFactoryImpl implements SequenceFactory
    * @generated
    */
   public String convertMessageTypeTwoToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public MessageTypeLostAndFound createMessageTypeLostAndFoundFromString(EDataType eDataType, String initialValue)
+  {
+    MessageTypeLostAndFound result = MessageTypeLostAndFound.get(initialValue);
+    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    return result;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertMessageTypeLostAndFoundToString(EDataType eDataType, Object instanceValue)
   {
     return instanceValue == null ? null : instanceValue.toString();
   }

@@ -3,11 +3,10 @@
  */
 package de.cau.cs.kieler.uml.sequence.text.formatting
 
-import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter
-import org.eclipse.xtext.formatting.impl.FormattingConfig
-
 import com.google.inject.Inject
 import de.cau.cs.kieler.uml.sequence.text.services.SequenceGrammarAccess
+import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter
+import org.eclipse.xtext.formatting.impl.FormattingConfig
 
 /**
  * This class contains custom formatting description.
@@ -130,7 +129,6 @@ class SequenceFormatter extends AbstractDeclarativeFormatter {
         c.setLinewrap().before(f.getTwoLifelineMessageRule)
         c.setLinewrap().before(f.getOneLifelineMessageRule)
         c.setLinewrap().before(f.destroyLifelineEventRule)
-        c.setLinewrap().before(f.getOneLifelineNoteRule)
         c.setLinewrap().before(f.selfMessageRule)
         c.setLinewrap().before(f.getFragmentRule)
         c.setLinewrap().before(f.getRefinementRule)

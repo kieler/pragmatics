@@ -305,41 +305,31 @@ ruleInteraction returns [EObject current=null]
 
     |
     { 
-        newCompositeNode(grammarAccess.getInteractionAccess().getOneLifelineNoteParserRuleCall_3()); 
+        newCompositeNode(grammarAccess.getInteractionAccess().getSelfMessageParserRuleCall_3()); 
     }
-    this_OneLifelineNote_3=ruleOneLifelineNote
+    this_SelfMessage_3=ruleSelfMessage
     { 
-        $current = $this_OneLifelineNote_3.current; 
+        $current = $this_SelfMessage_3.current; 
         afterParserOrEnumRuleCall();
     }
 
     |
     { 
-        newCompositeNode(grammarAccess.getInteractionAccess().getSelfMessageParserRuleCall_4()); 
+        newCompositeNode(grammarAccess.getInteractionAccess().getDestroyLifelineEventParserRuleCall_4()); 
     }
-    this_SelfMessage_4=ruleSelfMessage
+    this_DestroyLifelineEvent_4=ruleDestroyLifelineEvent
     { 
-        $current = $this_SelfMessage_4.current; 
+        $current = $this_DestroyLifelineEvent_4.current; 
         afterParserOrEnumRuleCall();
     }
 
     |
     { 
-        newCompositeNode(grammarAccess.getInteractionAccess().getDestroyLifelineEventParserRuleCall_5()); 
+        newCompositeNode(grammarAccess.getInteractionAccess().getRefinementParserRuleCall_5()); 
     }
-    this_DestroyLifelineEvent_5=ruleDestroyLifelineEvent
+    this_Refinement_5=ruleRefinement
     { 
-        $current = $this_DestroyLifelineEvent_5.current; 
-        afterParserOrEnumRuleCall();
-    }
-
-    |
-    { 
-        newCompositeNode(grammarAccess.getInteractionAccess().getRefinementParserRuleCall_6()); 
-    }
-    this_Refinement_6=ruleRefinement
-    { 
-        $current = $this_Refinement_6.current; 
+        $current = $this_Refinement_5.current; 
         afterParserOrEnumRuleCall();
     }
 )
@@ -478,9 +468,9 @@ ruleTwoLifelineMessage returns [EObject current=null]
 )
 )(
 (
-		lv_sourceEndExecCount_8_0=RULE_INT_GREATER_ZERO
+		lv_sourceEndExecCount_8_0=RULE_INT_GREATER_ZERO_OR_ALL
 		{
-			newLeafNode(lv_sourceEndExecCount_8_0, grammarAccess.getTwoLifelineMessageAccess().getSourceEndExecCountINT_GREATER_ZEROTerminalRuleCall_5_2_1_0()); 
+			newLeafNode(lv_sourceEndExecCount_8_0, grammarAccess.getTwoLifelineMessageAccess().getSourceEndExecCountINT_GREATER_ZERO_OR_ALLTerminalRuleCall_5_2_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -490,7 +480,7 @@ ruleTwoLifelineMessage returns [EObject current=null]
        			$current, 
        			"sourceEndExecCount",
         		lv_sourceEndExecCount_8_0, 
-        		"INT_GREATER_ZERO");
+        		"INT_GREATER_ZERO_OR_ALL");
 	    }
 
 )
@@ -543,9 +533,9 @@ ruleTwoLifelineMessage returns [EObject current=null]
 )
 )(
 (
-		lv_targetEndExecCount_12_0=RULE_INT_GREATER_ZERO
+		lv_targetEndExecCount_12_0=RULE_INT_GREATER_ZERO_OR_ALL
 		{
-			newLeafNode(lv_targetEndExecCount_12_0, grammarAccess.getTwoLifelineMessageAccess().getTargetEndExecCountINT_GREATER_ZEROTerminalRuleCall_6_2_1_0()); 
+			newLeafNode(lv_targetEndExecCount_12_0, grammarAccess.getTwoLifelineMessageAccess().getTargetEndExecCountINT_GREATER_ZERO_OR_ALLTerminalRuleCall_6_2_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -555,7 +545,7 @@ ruleTwoLifelineMessage returns [EObject current=null]
        			$current, 
        			"targetEndExecCount",
         		lv_targetEndExecCount_12_0, 
-        		"INT_GREATER_ZERO");
+        		"INT_GREATER_ZERO_OR_ALL");
 	    }
 
 )
@@ -657,32 +647,20 @@ ruleOneLifelineMessage returns [EObject current=null]
 )
 )(
 (
-(
-		lv_messageTypeLostAndFound_2_1=	'lost' 
-    {
-        newLeafNode(lv_messageTypeLostAndFound_2_1, grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundLostKeyword_2_0_0());
-    }
- 
-	    {
-	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getOneLifelineMessageRule());
-	        }
-       		setWithLastConsumed($current, "messageTypeLostAndFound", lv_messageTypeLostAndFound_2_1, null);
+		{ 
+	        newCompositeNode(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundMessageTypeLostAndFoundEnumRuleCall_2_0()); 
 	    }
-
-    |		lv_messageTypeLostAndFound_2_2=	'found' 
-    {
-        newLeafNode(lv_messageTypeLostAndFound_2_2, grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundFoundKeyword_2_0_1());
-    }
- 
-	    {
+		lv_messageTypeLostAndFound_2_0=ruleMessageTypeLostAndFound		{
 	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getOneLifelineMessageRule());
+	            $current = createModelElementForParent(grammarAccess.getOneLifelineMessageRule());
 	        }
-       		setWithLastConsumed($current, "messageTypeLostAndFound", lv_messageTypeLostAndFound_2_2, null);
+       		set(
+       			$current, 
+       			"messageTypeLostAndFound",
+        		lv_messageTypeLostAndFound_2_0, 
+        		"MessageTypeLostAndFound");
+	        afterParserOrEnumRuleCall();
 	    }
-
-)
 
 )
 )(
@@ -752,9 +730,9 @@ ruleOneLifelineMessage returns [EObject current=null]
 )
 )(
 (
-		lv_endExecCount_7_0=RULE_INT_GREATER_ZERO
+		lv_endExecCount_7_0=RULE_INT_GREATER_ZERO_OR_ALL
 		{
-			newLeafNode(lv_endExecCount_7_0, grammarAccess.getOneLifelineMessageAccess().getEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_2_1_0()); 
+			newLeafNode(lv_endExecCount_7_0, grammarAccess.getOneLifelineMessageAccess().getEndExecCountINT_GREATER_ZERO_OR_ALLTerminalRuleCall_4_2_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -764,7 +742,7 @@ ruleOneLifelineMessage returns [EObject current=null]
        			$current, 
        			"endExecCount",
         		lv_endExecCount_7_0, 
-        		"INT_GREATER_ZERO");
+        		"INT_GREATER_ZERO_OR_ALL");
 	    }
 
 )
@@ -913,9 +891,9 @@ ruleSelfMessage returns [EObject current=null]
 )
 )(
 (
-		lv_endExecCount_7_0=RULE_INT_GREATER_ZERO
+		lv_endExecCount_7_0=RULE_INT_GREATER_ZERO_OR_ALL
 		{
-			newLeafNode(lv_endExecCount_7_0, grammarAccess.getSelfMessageAccess().getEndExecCountINT_GREATER_ZEROTerminalRuleCall_4_2_1_0()); 
+			newLeafNode(lv_endExecCount_7_0, grammarAccess.getSelfMessageAccess().getEndExecCountINT_GREATER_ZERO_OR_ALLTerminalRuleCall_4_2_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -925,7 +903,7 @@ ruleSelfMessage returns [EObject current=null]
        			$current, 
        			"endExecCount",
         		lv_endExecCount_7_0, 
-        		"INT_GREATER_ZERO");
+        		"INT_GREATER_ZERO_OR_ALL");
 	    }
 
 )
@@ -952,62 +930,6 @@ ruleSelfMessage returns [EObject current=null]
 
 )
 ))?)
-;
-
-
-
-
-
-// Entry rule entryRuleOneLifelineNote
-entryRuleOneLifelineNote returns [EObject current=null] 
-	:
-	{ newCompositeNode(grammarAccess.getOneLifelineNoteRule()); }
-	 iv_ruleOneLifelineNote=ruleOneLifelineNote 
-	 { $current=$iv_ruleOneLifelineNote.current; } 
-	 EOF 
-;
-
-// Rule OneLifelineNote
-ruleOneLifelineNote returns [EObject current=null] 
-    @init { enterRule(); 
-    }
-    @after { leaveRule(); }:
-((
-(
-		{
-			if ($current==null) {
-	            $current = createModelElement(grammarAccess.getOneLifelineNoteRule());
-	        }
-        }
-	otherlv_0=RULE_ID
-	{
-		newLeafNode(otherlv_0, grammarAccess.getOneLifelineNoteAccess().getLifelineLifelineCrossReference_0_0()); 
-	}
-
-)
-)	otherlv_1='note' 
-    {
-    	newLeafNode(otherlv_1, grammarAccess.getOneLifelineNoteAccess().getNoteKeyword_1());
-    }
-(
-(
-		lv_note_2_0=RULE_STRING
-		{
-			newLeafNode(lv_note_2_0, grammarAccess.getOneLifelineNoteAccess().getNoteSTRINGTerminalRuleCall_2_0()); 
-		}
-		{
-	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getOneLifelineNoteRule());
-	        }
-       		setWithLastConsumed(
-       			$current, 
-       			"note",
-        		lv_note_2_0, 
-        		"STRING");
-	    }
-
-)
-))
 ;
 
 
@@ -1355,7 +1277,26 @@ ruleMessageTypeTwo returns [Enumerator current=null]
 
 
 
-RULE_INT_GREATER_ZERO : ('1'..'9' ('0'..'9')*|'all');
+// Rule MessageTypeLostAndFound
+ruleMessageTypeLostAndFound returns [Enumerator current=null] 
+    @init { enterRule(); }
+    @after { leaveRule(); }:
+((	enumLiteral_0='lost' 
+	{
+        $current = grammarAccess.getMessageTypeLostAndFoundAccess().getLostEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
+        newLeafNode(enumLiteral_0, grammarAccess.getMessageTypeLostAndFoundAccess().getLostEnumLiteralDeclaration_0()); 
+    }
+)
+    |(	enumLiteral_1='found' 
+	{
+        $current = grammarAccess.getMessageTypeLostAndFoundAccess().getFoundEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
+        newLeafNode(enumLiteral_1, grammarAccess.getMessageTypeLostAndFoundAccess().getFoundEnumLiteralDeclaration_1()); 
+    }
+));
+
+
+
+RULE_INT_GREATER_ZERO_OR_ALL : ('1'..'9' ('0'..'9')*|'all');
 
 RULE_ID : '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
 

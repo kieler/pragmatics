@@ -6,7 +6,6 @@ import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
-import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Section;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage;
@@ -58,13 +57,6 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 				if(context == grammarAccess.getInteractionRule() ||
 				   context == grammarAccess.getOneLifelineMessageRule()) {
 					sequence_OneLifelineMessage(context, (OneLifelineMessage) semanticObject); 
-					return; 
-				}
-				else break;
-			case SequencePackage.ONE_LIFELINE_NOTE:
-				if(context == grammarAccess.getInteractionRule() ||
-				   context == grammarAccess.getOneLifelineNoteRule()) {
-					sequence_OneLifelineNote(context, (OneLifelineNote) semanticObject); 
 					return; 
 				}
 				else break;
@@ -144,33 +136,14 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *     (
 	 *         Lifeline=[Lifeline|ID] 
 	 *         messageType=MessageTypeOne 
-	 *         (messageTypeLostAndFound='lost' | messageTypeLostAndFound='found') 
+	 *         messageTypeLostAndFound=MessageTypeLostAndFound 
 	 *         message=STRING 
-	 *         (startEndExec?='startEndExec' | startExec?='startExec' | (endExec?='endExec' endExecCount=INT_GREATER_ZERO?))? 
+	 *         (startEndExec?='startEndExec' | startExec?='startExec' | (endExec?='endExec' endExecCount=INT_GREATER_ZERO_OR_ALL?))? 
 	 *         note=STRING?
 	 *     )
 	 */
 	protected void sequence_OneLifelineMessage(EObject context, OneLifelineMessage semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (Lifeline=[Lifeline|ID] note=STRING)
-	 */
-	protected void sequence_OneLifelineNote(EObject context, OneLifelineNote semanticObject) {
-		if(errorAcceptor != null) {
-			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.ONE_LIFELINE_NOTE__LIFELINE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.ONE_LIFELINE_NOTE__LIFELINE));
-			if(transientValues.isValueTransient(semanticObject, SequencePackage.Literals.ONE_LIFELINE_NOTE__NOTE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, SequencePackage.Literals.ONE_LIFELINE_NOTE__NOTE));
-		}
-		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
-		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
-		feeder.accept(grammarAccess.getOneLifelineNoteAccess().getLifelineLifelineIDTerminalRuleCall_0_0_1(), semanticObject.getLifeline());
-		feeder.accept(grammarAccess.getOneLifelineNoteAccess().getNoteSTRINGTerminalRuleCall_2_0(), semanticObject.getNote());
-		feeder.finish();
 	}
 	
 	
@@ -198,7 +171,7 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *         Lifeline=[Lifeline|ID] 
 	 *         messageType=MessageTypeOne 
 	 *         message=STRING 
-	 *         (startEndExec?='startEndExec' | startExec?='startExec' | (endExec?='endExec' endExecCount=INT_GREATER_ZERO?))? 
+	 *         (startEndExec?='startEndExec' | startExec?='startExec' | (endExec?='endExec' endExecCount=INT_GREATER_ZERO_OR_ALL?))? 
 	 *         note=STRING?
 	 *     )
 	 */
@@ -226,12 +199,12 @@ public class SequenceSemanticSequencer extends AbstractDelegatingSemanticSequenc
 	 *         (
 	 *             sourceStartEndExec?='sourceStartEndExec' | 
 	 *             sourceStartExec?='sourceStartExec' | 
-	 *             (sourceEndExec?='sourceEndExec' sourceEndExecCount=INT_GREATER_ZERO?)
+	 *             (sourceEndExec?='sourceEndExec' sourceEndExecCount=INT_GREATER_ZERO_OR_ALL?)
 	 *         )? 
 	 *         (
 	 *             targetStartEndExec?='targetStartEndExec' | 
 	 *             targetStartExec?='targetStartExec' | 
-	 *             (targetEndExec?='targetEndExec' targetEndExecCount=INT_GREATER_ZERO?)
+	 *             (targetEndExec?='targetEndExec' targetEndExecCount=INT_GREATER_ZERO_OR_ALL?)
 	 *         )? 
 	 *         sourceNote=STRING? 
 	 *         targetNote=STRING?

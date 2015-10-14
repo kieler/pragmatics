@@ -6,10 +6,10 @@ import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Interaction;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Lifeline;
+import de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeLostAndFound;
 import de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeOne;
 import de.cau.cs.kieler.uml.sequence.text.sequence.MessageTypeTwo;
 import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineMessage;
-import de.cau.cs.kieler.uml.sequence.text.sequence.OneLifelineNote;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Refinement;
 import de.cau.cs.kieler.uml.sequence.text.sequence.Section;
 import de.cau.cs.kieler.uml.sequence.text.sequence.SelfMessage;
@@ -81,13 +81,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass oneLifelineNoteEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   private EClass destroyLifelineEventEClass = null;
 
   /**
@@ -124,6 +117,13 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * @generated
    */
   private EEnum messageTypeTwoEEnum = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EEnum messageTypeLostAndFoundEEnum = null;
 
   /**
    * Creates an instance of the model <b>Package</b>, registered with
@@ -623,36 +623,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getOneLifelineNote()
-  {
-    return oneLifelineNoteEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getOneLifelineNote_Lifeline()
-  {
-    return (EReference)oneLifelineNoteEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EAttribute getOneLifelineNote_Note()
-  {
-    return (EAttribute)oneLifelineNoteEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getDestroyLifelineEvent()
   {
     return destroyLifelineEventEClass;
@@ -783,6 +753,16 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EEnum getMessageTypeLostAndFound()
+  {
+    return messageTypeLostAndFoundEEnum;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public SequenceFactory getSequenceFactory()
   {
     return (SequenceFactory)getEFactoryInstance();
@@ -857,10 +837,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     createEAttribute(selfMessageEClass, SELF_MESSAGE__END_EXEC_COUNT);
     createEAttribute(selfMessageEClass, SELF_MESSAGE__NOTE);
 
-    oneLifelineNoteEClass = createEClass(ONE_LIFELINE_NOTE);
-    createEReference(oneLifelineNoteEClass, ONE_LIFELINE_NOTE__LIFELINE);
-    createEAttribute(oneLifelineNoteEClass, ONE_LIFELINE_NOTE__NOTE);
-
     destroyLifelineEventEClass = createEClass(DESTROY_LIFELINE_EVENT);
     createEReference(destroyLifelineEventEClass, DESTROY_LIFELINE_EVENT__LIFELINE);
 
@@ -879,6 +855,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     // Create enums
     messageTypeOneEEnum = createEEnum(MESSAGE_TYPE_ONE);
     messageTypeTwoEEnum = createEEnum(MESSAGE_TYPE_TWO);
+    messageTypeLostAndFoundEEnum = createEEnum(MESSAGE_TYPE_LOST_AND_FOUND);
   }
 
   /**
@@ -913,7 +890,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     twoLifelineMessageEClass.getESuperTypes().add(this.getInteraction());
     oneLifelineMessageEClass.getESuperTypes().add(this.getInteraction());
     selfMessageEClass.getESuperTypes().add(this.getInteraction());
-    oneLifelineNoteEClass.getESuperTypes().add(this.getInteraction());
     destroyLifelineEventEClass.getESuperTypes().add(this.getInteraction());
     fragmentEClass.getESuperTypes().add(this.getInteraction());
     refinementEClass.getESuperTypes().add(this.getInteraction());
@@ -950,7 +926,7 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     initEClass(oneLifelineMessageEClass, OneLifelineMessage.class, "OneLifelineMessage", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getOneLifelineMessage_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_MessageType(), this.getMessageTypeOne(), "messageType", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getOneLifelineMessage_MessageTypeLostAndFound(), ecorePackage.getEString(), "messageTypeLostAndFound", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getOneLifelineMessage_MessageTypeLostAndFound(), this.getMessageTypeLostAndFound(), "messageTypeLostAndFound", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_Message(), ecorePackage.getEString(), "message", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_StartEndExec(), ecorePackage.getEBoolean(), "startEndExec", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getOneLifelineMessage_StartExec(), ecorePackage.getEBoolean(), "startExec", null, 0, 1, OneLifelineMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -967,10 +943,6 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     initEAttribute(getSelfMessage_EndExec(), ecorePackage.getEBoolean(), "endExec", null, 0, 1, SelfMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getSelfMessage_EndExecCount(), ecorePackage.getEInt(), "endExecCount", null, 0, 1, SelfMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getSelfMessage_Note(), ecorePackage.getEString(), "note", null, 0, 1, SelfMessage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(oneLifelineNoteEClass, OneLifelineNote.class, "OneLifelineNote", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getOneLifelineNote_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, OneLifelineNote.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getOneLifelineNote_Note(), ecorePackage.getEString(), "note", null, 0, 1, OneLifelineNote.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(destroyLifelineEventEClass, DestroyLifelineEvent.class, "DestroyLifelineEvent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getDestroyLifelineEvent_Lifeline(), this.getLifeline(), null, "Lifeline", null, 0, 1, DestroyLifelineEvent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -998,6 +970,10 @@ public class SequencePackageImpl extends EPackageImpl implements SequencePackage
     addEEnumLiteral(messageTypeTwoEEnum, MessageTypeTwo.RESPONSE);
     addEEnumLiteral(messageTypeTwoEEnum, MessageTypeTwo.SYNC);
     addEEnumLiteral(messageTypeTwoEEnum, MessageTypeTwo.CREATE);
+
+    initEEnum(messageTypeLostAndFoundEEnum, MessageTypeLostAndFound.class, "MessageTypeLostAndFound");
+    addEEnumLiteral(messageTypeLostAndFoundEEnum, MessageTypeLostAndFound.LOST);
+    addEEnumLiteral(messageTypeLostAndFoundEEnum, MessageTypeLostAndFound.FOUND);
 
     // Create resource
     createResource(eNS_URI);

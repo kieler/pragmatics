@@ -41,11 +41,11 @@ public class SequenceParser extends AbstractContentAssistParser {
 					put(grammarAccess.getInteractionAccess().getAlternatives(), "rule__Interaction__Alternatives");
 					put(grammarAccess.getTwoLifelineMessageAccess().getAlternatives_5(), "rule__TwoLifelineMessage__Alternatives_5");
 					put(grammarAccess.getTwoLifelineMessageAccess().getAlternatives_6(), "rule__TwoLifelineMessage__Alternatives_6");
-					put(grammarAccess.getOneLifelineMessageAccess().getMessageTypeLostAndFoundAlternatives_2_0(), "rule__OneLifelineMessage__MessageTypeLostAndFoundAlternatives_2_0");
 					put(grammarAccess.getOneLifelineMessageAccess().getAlternatives_4(), "rule__OneLifelineMessage__Alternatives_4");
 					put(grammarAccess.getSelfMessageAccess().getAlternatives_4(), "rule__SelfMessage__Alternatives_4");
 					put(grammarAccess.getMessageTypeOneAccess().getAlternatives(), "rule__MessageTypeOne__Alternatives");
 					put(grammarAccess.getMessageTypeTwoAccess().getAlternatives(), "rule__MessageTypeTwo__Alternatives");
+					put(grammarAccess.getMessageTypeLostAndFoundAccess().getAlternatives(), "rule__MessageTypeLostAndFound__Alternatives");
 					put(grammarAccess.getSequenceDiagramAccess().getGroup(), "rule__SequenceDiagram__Group__0");
 					put(grammarAccess.getLifelineAccess().getGroup_0(), "rule__Lifeline__Group_0__0");
 					put(grammarAccess.getLifelineAccess().getGroup_1(), "rule__Lifeline__Group_1__0");
@@ -60,7 +60,6 @@ public class SequenceParser extends AbstractContentAssistParser {
 					put(grammarAccess.getSelfMessageAccess().getGroup(), "rule__SelfMessage__Group__0");
 					put(grammarAccess.getSelfMessageAccess().getGroup_4_2(), "rule__SelfMessage__Group_4_2__0");
 					put(grammarAccess.getSelfMessageAccess().getGroup_5(), "rule__SelfMessage__Group_5__0");
-					put(grammarAccess.getOneLifelineNoteAccess().getGroup(), "rule__OneLifelineNote__Group__0");
 					put(grammarAccess.getDestroyLifelineEventAccess().getGroup(), "rule__DestroyLifelineEvent__Group__0");
 					put(grammarAccess.getFragmentAccess().getGroup(), "rule__Fragment__Group__0");
 					put(grammarAccess.getSectionAccess().getGroup(), "rule__Section__Group__0");
@@ -105,8 +104,6 @@ public class SequenceParser extends AbstractContentAssistParser {
 					put(grammarAccess.getSelfMessageAccess().getEndExecAssignment_4_2_0(), "rule__SelfMessage__EndExecAssignment_4_2_0");
 					put(grammarAccess.getSelfMessageAccess().getEndExecCountAssignment_4_2_1(), "rule__SelfMessage__EndExecCountAssignment_4_2_1");
 					put(grammarAccess.getSelfMessageAccess().getNoteAssignment_5_1(), "rule__SelfMessage__NoteAssignment_5_1");
-					put(grammarAccess.getOneLifelineNoteAccess().getLifelineAssignment_0(), "rule__OneLifelineNote__LifelineAssignment_0");
-					put(grammarAccess.getOneLifelineNoteAccess().getNoteAssignment_2(), "rule__OneLifelineNote__NoteAssignment_2");
 					put(grammarAccess.getDestroyLifelineEventAccess().getLifelineAssignment_0(), "rule__DestroyLifelineEvent__LifelineAssignment_0");
 					put(grammarAccess.getFragmentAccess().getNameAssignment_1(), "rule__Fragment__NameAssignment_1");
 					put(grammarAccess.getFragmentAccess().getSectionsAssignment_2(), "rule__Fragment__SectionsAssignment_2");

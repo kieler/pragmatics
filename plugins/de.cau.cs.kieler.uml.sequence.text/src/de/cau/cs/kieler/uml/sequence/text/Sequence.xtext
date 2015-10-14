@@ -37,8 +37,7 @@ Lifeline returns Lifeline:
 
 // All possible interactions.
 Interaction returns Interaction:
-    TwoLifelineMessage | OneLifelineMessage | Fragment | OneLifelineNote
-    | SelfMessage | DestroyLifelineEvent | Refinement;
+    TwoLifelineMessage | OneLifelineMessage | Fragment | SelfMessage | DestroyLifelineEvent | Refinement;
 
 // Definition of a message between two lifelines.
 TwoLifelineMessage returns TwoLifelineMessage:
@@ -50,10 +49,10 @@ TwoLifelineMessage returns TwoLifelineMessage:
     // Options.
     (sourceStartEndExec?='sourceStartEndExec' | sourceStartExec?='sourceStartExec' 
         | sourceEndExec?='sourceEndExec'
-    (sourceEndExecCount=INT_GREATER_ZERO)?)?
+    (sourceEndExecCount=INT_GREATER_ZERO_OR_ALL)?)?
     (targetStartEndExec?='targetStartEndExec' | targetStartExec?='targetStartExec' 
         | targetEndExec?='targetEndExec'
-    (targetEndExecCount=INT_GREATER_ZERO)?)?
+    (targetEndExecCount=INT_GREATER_ZERO_OR_ALL)?)?
     ('sourceNote' sourceNote=STRING)?
     ('targetNote' targetNote=STRING)?;
 
@@ -61,12 +60,11 @@ TwoLifelineMessage returns TwoLifelineMessage:
 OneLifelineMessage returns OneLifelineMessage:
     Lifeline=[Lifeline|ID]
     messageType=MessageTypeOne
-    messageTypeLostAndFound=('lost' | 'found')
+    messageTypeLostAndFound=MessageTypeLostAndFound
     message=STRING
     // Options.
     (startEndExec?='startEndExec' | startExec?='startExec' 
-        | endExec?='endExec' (endExecCount=INT_GREATER_ZERO)?
-    )?
+        | endExec?='endExec' (endExecCount=INT_GREATER_ZERO_OR_ALL)?)?
     ('note' note=STRING)?;
 
 // Definition of a self message.
@@ -77,14 +75,8 @@ SelfMessage returns SelfMessage:
     message=STRING
     // Options.
     (startEndExec?='startEndExec' | startExec?='startExec' 
-        | endExec?='endExec' (endExecCount=INT_GREATER_ZERO)?
-    )?
+        | endExec?='endExec' (endExecCount=INT_GREATER_ZERO_OR_ALL)?)?
     ('note' note=STRING)?;
-
-// A note attached to a lifeline and not a message.
-OneLifelineNote returns OneLifelineNote:
-    Lifeline=[Lifeline|ID]
-    'note' note=STRING;
 
 // Definition of the destruction-event.
 DestroyLifelineEvent returns DestroyLifelineEvent:
@@ -117,9 +109,13 @@ enum MessageTypeOne:
 // MessageType for messages between two lifelines.
 enum MessageTypeTwo:
     async='async' | response='response' | sync='sync' | create='create';
+    
+// Secondary MessageType for lost or found messages.
+enum MessageTypeLostAndFound:
+    lost='lost' | found= 'found';
 
 // DataType for endExec.
-terminal INT_GREATER_ZERO returns ecore::EInt:
+terminal INT_GREATER_ZERO_OR_ALL returns ecore::EInt:
     '1'..'9' ('0'..'9')* | 'all';
 
 // DataType for local variables.
