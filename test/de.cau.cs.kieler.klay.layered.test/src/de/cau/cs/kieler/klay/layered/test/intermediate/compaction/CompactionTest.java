@@ -13,6 +13,7 @@
 package de.cau.cs.kieler.klay.layered.test.intermediate.compaction;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -251,6 +252,65 @@ public class CompactionTest {
         assertEquals(20, upperLeft.hitbox.y, EPSILON);
         assertEquals(40, lowerLeft.hitbox.y, EPSILON);
         assertEquals(30, right.hitbox.y, EPSILON);
+    }
+    
+    
+    /* --------------------------------------------------
+     * Testing subsequent calls with different directions
+     * -------------------------------------------------- */
+    
+    @Test 
+    public void testSubsequentDirectionsCompaction() {
+        
+        CGraph graph = new CGraph(EnumSet.allOf(Direction.class));
+        
+        CTestNode one = new CTestNode(new Rectangle(0, 0, 20, 20));
+        graph.cNodes.add(one);
+        CTestNode two = new CTestNode(new Rectangle(20, 0, 20, 20));
+        graph.cNodes.add(two);
+        CTestNode three = new CTestNode(new Rectangle(0, 20, 20, 20));
+        graph.cNodes.add(three);
+        CTestNode four = new CTestNode(new Rectangle(20, 20, 20, 20));
+        graph.cNodes.add(four);
+        
+        Set<Direction> directions = EnumSet.of(Direction.LEFT, Direction.RIGHT, Direction.UP, Direction.DOWN);
+        
+        // subsequently apply all combinations of four subsequent compaction steps
+        for (Direction d1 : directions) {
+            for (Direction d2 : directions) {
+                for (Direction d3 : directions) {
+                    for (Direction d4 : directions) {
+                        
+                        compacter(graph)
+                            .changeDirection(d1)
+                            .compact()
+                            .changeDirection(d2)
+                            .compact()
+                            .changeDirection(d3)
+                            .compact()
+                            .changeDirection(d4)
+                            .compact()
+                            .finish();
+                
+                        // the way we modeled the graph, every node should stay where it is 
+                        String currentDirections = d1 + " " + d2 + " " + d3 + " " + d4;
+                        assertEquals(currentDirections, 0, one.hitbox.x, EPSILON);
+                        assertEquals(currentDirections, 0, one.hitbox.y, EPSILON);
+                        
+                        assertEquals(currentDirections, 20, two.hitbox.x, EPSILON);
+                        assertEquals(currentDirections, 0, two.hitbox.y, EPSILON);
+                        
+                        assertEquals(currentDirections, 0, three.hitbox.x, EPSILON);
+                        assertEquals(currentDirections, 20, three.hitbox.y, EPSILON);
+                        
+                        assertEquals(currentDirections, 20, four.hitbox.x, EPSILON);
+                        assertEquals(currentDirections, 20, four.hitbox.y, EPSILON);
+                    }
+                }
+            }
+        }
+        
+
     }
     
     ////////////////////////////////// Internal Convenience API //////////////////////////////////

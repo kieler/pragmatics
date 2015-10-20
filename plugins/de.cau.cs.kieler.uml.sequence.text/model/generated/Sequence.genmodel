@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/de.cau.cs.kieler.uml.sequence.text/src-gen" editDirectory="/de.cau.cs.kieler.uml.sequence.text.edit/src"
+    editorDirectory="/de.cau.cs.kieler.uml.sequence.text.editor/src" modelPluginID="de.cau.cs.kieler.uml.sequence.text"
+    forceOverwrite="true" modelName="Sequence" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    complianceLevel="5.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.uml.sequence.text.edit"
+    editorPluginID="de.cau.cs.kieler.uml.sequence.text.editor" runtimeVersion="2.10">
+  <genPackages prefix="Sequence" basePackage="de.cau.cs.kieler.uml.sequence.text"
+      disposableProviderFactory="true" fileExtensions="ksd" ecorePackage="Sequence.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Sequence.ecore#//MessageTypeOne">
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeOne/async"/>
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeOne/response"/>
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeOne/sync"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Sequence.ecore#//MessageTypeTwo">
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeTwo/async"/>
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeTwo/response"/>
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeTwo/sync"/>
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeTwo/create"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Sequence.ecore#//MessageTypeLostAndFound">
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeLostAndFound/lost"/>
+      <genEnumLiterals ecoreEnumLiteral="Sequence.ecore#//MessageTypeLostAndFound/found"/>
+    </genEnums>
+    <genClasses ecoreClass="Sequence.ecore#//SequenceDiagram">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//SequenceDiagram/diagramName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Sequence.ecore#//SequenceDiagram/lifelines"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Sequence.ecore#//SequenceDiagram/interactions"/>
+    </genClasses>
+    <genClasses ecoreClass="Sequence.ecore#//Lifeline">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//Lifeline/caption"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//Lifeline/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//Lifeline/usecaseCaption"/>
+    </genClasses>
+    <genClasses ecoreClass="Sequence.ecore#//Interaction"/>
+    <genClasses ecoreClass="Sequence.ecore#//TwoLifelineMessage">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//TwoLifelineMessage/sourceLifeline"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/messageType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/message"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//TwoLifelineMessage/targetLifeline"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceStartEndExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceStartExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceEndExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceEndExecCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetStartEndExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetStartExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetEndExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetEndExecCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/sourceNote"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//TwoLifelineMessage/targetNote"/>
+    </genClasses>
+    <genClasses ecoreClass="Sequence.ecore#//OneLifelineMessage">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//OneLifelineMessage/Lifeline"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/messageType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/messageTypeLostAndFound"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/message"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/startEndExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/startExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/endExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/endExecCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//OneLifelineMessage/note"/>
+    </genClasses>
+    <genClasses ecoreClass="Sequence.ecore#//SelfMessage">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//SelfMessage/Lifeline"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//SelfMessage/messageType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//SelfMessage/message"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//SelfMessage/startEndExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//SelfMessage/startExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//SelfMessage/endExec"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//SelfMessage/endExecCount"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//SelfMessage/note"/>
+    </genClasses>
+    <genClasses ecoreClass="Sequence.ecore#//DestroyLifelineEvent">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//DestroyLifelineEvent/Lifeline"/>
+    </genClasses>
+    <genClasses ecoreClass="Sequence.ecore#//Fragment">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//Fragment/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Sequence.ecore#//Fragment/sections"/>
+    </genClasses>
+    <genClasses ecoreClass="Sequence.ecore#//Section">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//Section/label"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Sequence.ecore#//Section/interactions"/>
+    </genClasses>
+    <genClasses ecoreClass="Sequence.ecore#//Refinement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Sequence.ecore#//Refinement/label"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Sequence.ecore#//Refinement/lifelines"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

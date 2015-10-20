@@ -1,0 +1,123 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2015 by
+ * + Kiel University
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
+grammar de.cau.cs.kieler.uml.sequence.text.Sequence with org.eclipse.xtext.common.Terminals
+
+generate sequence "http://www.cau.de/cs/kieler/uml/sequence/text/Sequence"
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+/* Definition of the Sequence Diagram starting with the diagramName followed by all lifelines and all
+interactions after that. */
+SequenceDiagram returns SequenceDiagram:
+    {SequenceDiagram}
+    'sequenceDiagram' diagramName=STRING 
+    // Use this and "LocalVariable" and "DataType" below if you wish to support local variables in KIESL
+    //('{' locals+=LocalVariable (locals+=LocalVariable)* '}')?
+    lifelines+=Lifeline*
+    interactions+=Interaction*;
+
+// Use this as described above.
+//LocalVariable returns LocalVariable:
+//    type=DataType name=ID;
+
+// Definition of a lifeline.
+Lifeline returns Lifeline:
+    ('lifeline' caption=STRING 'as' name=ID) |
+    ('usecase' usecaseCaption=STRING 'as' name=ID);
+
+// All possible interactions.
+Interaction returns Interaction:
+    TwoLifelineMessage | OneLifelineMessage | Fragment | SelfMessage | DestroyLifelineEvent | Refinement;
+
+// Definition of a message between two lifelines.
+TwoLifelineMessage returns TwoLifelineMessage:
+    sourceLifeline=[Lifeline|ID]
+    messageType=MessageTypeTwo
+    message=STRING
+    'to'
+    targetLifeline=[Lifeline|ID]
+    // Options.
+    (sourceStartEndExec?='sourceStartEndExec' | sourceStartExec?='sourceStartExec' 
+        | sourceEndExec?='sourceEndExec'
+    (sourceEndExecCount=INT_GREATER_ZERO_OR_ALL)?)?
+    (targetStartEndExec?='targetStartEndExec' | targetStartExec?='targetStartExec' 
+        | targetEndExec?='targetEndExec'
+    (targetEndExecCount=INT_GREATER_ZERO_OR_ALL)?)?
+    ('sourceNote' sourceNote=STRING)?
+    ('targetNote' targetNote=STRING)?;
+
+// Definition of lost or found messages.
+OneLifelineMessage returns OneLifelineMessage:
+    Lifeline=[Lifeline|ID]
+    messageType=MessageTypeOne
+    messageTypeLostAndFound=MessageTypeLostAndFound
+    message=STRING
+    // Options.
+    (startEndExec?='startEndExec' | startExec?='startExec' 
+        | endExec?='endExec' (endExecCount=INT_GREATER_ZERO_OR_ALL)?)?
+    ('note' note=STRING)?;
+
+// Definition of a self message.
+SelfMessage returns SelfMessage:
+    Lifeline=[Lifeline|ID]
+    messageType=MessageTypeOne
+    'self'
+    message=STRING
+    // Options.
+    (startEndExec?='startEndExec' | startExec?='startExec' 
+        | endExec?='endExec' (endExecCount=INT_GREATER_ZERO_OR_ALL)?)?
+    ('note' note=STRING)?;
+
+// Definition of the destruction-event.
+DestroyLifelineEvent returns DestroyLifelineEvent:
+    Lifeline=[Lifeline|ID]
+    'destroy';
+
+// Definition of a fragment.
+Fragment returns Fragment:
+    'fragment'
+    name=STRING
+    sections+=Section (sections+=Section)*;
+
+// The fragment consists of arbitrary sections (also called regions).
+Section returns Section:
+    '{'
+    ('label' label=STRING)?
+    interactions+=Interaction (interactions+=Interaction)*
+    '}';
+
+// Definition of a refinement.
+Refinement returns Refinement:
+    'refinement'
+    'label' label=STRING
+    'lifelines' lifelines+=[Lifeline|ID] (',' lifelines+=[Lifeline|ID])*;
+
+// MessageType for lost, found or self messages.
+enum MessageTypeOne:
+    async='async' | response='response' | sync='sync';
+
+// MessageType for messages between two lifelines.
+enum MessageTypeTwo:
+    async='async' | response='response' | sync='sync' | create='create';
+    
+// Secondary MessageType for lost or found messages.
+enum MessageTypeLostAndFound:
+    lost='lost' | found= 'found';
+
+// DataType for endExec.
+terminal INT_GREATER_ZERO_OR_ALL returns ecore::EInt:
+    '1'..'9' ('0'..'9')* | 'all';
+
+// DataType for local variables.
+//enum DataType:
+//    char='Char' | boolean='Boolean' | integer='Integer' | float='Float';
