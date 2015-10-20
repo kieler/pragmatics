@@ -5,40 +5,40 @@ repositories {
 }
 
 configurations {
-    testFatKlayCompile.extendsFrom      testCompile
-    testFatKlayAllCompile.extendsFrom   testCompile
-    testKlayCompile.extendsFrom         testCompile
-    testJsonCompile.extendsFrom         testCompile
+    testBundledKlayCompile.extendsFrom      testCompile
+    testBundledKlayDepsCompile.extendsFrom  testCompile
+    testKlayCompile.extendsFrom             testCompile
+    testJsonCompile.extendsFrom             testCompile
 }
 
 dependencies {
     testCompile "junit:junit:[4,)"
 
-    testFatKlayCompile fileTree(dir: "${rootProject.buildDir}/$libsA/", include: "klay-${rootProject.version}.jar")
-    testFatKlayCompile klayExtraDeps
+    testBundledKlayCompile files(rootProject.tasks['bundledKlay'].outputs)
+    testBundledKlayCompile klayExternalDeps
 
-    testFatKlayAllCompile fileTree(dir: "${rootProject.buildDir}/$libsA/", include: "klay-${rootProject.version}-all.jar")
+    testBundledKlayDepsCompile files(rootProject.tasks['bundledKlayDeps'].outputs)
 
     testKlayCompile klayDeps
-    testKlayCompile klayExtraDeps
+    testKlayCompile klayExternalDeps
 
     testJsonCompile klayDeps
-    testJsonCompile klayExtraDeps
+    testJsonCompile klayExternalDeps
     testJsonCompile formatsDeps
-    testJsonCompile formatsExtraDeps
+    testJsonCompile formatsExternalDeps
     testJsonCompile jsonDeps
-    testJsonCompile jsonExtraDeps
+    testJsonCompile jsonExternalDeps
     testJsonCompile project(':nonosgi')
 }
 
 sourceSets {
-    testFatKlay {
+    testBundledKlay {
         java {
             srcDirs = ['src']
             include 'PlainJavaTest.java'
         }
     }
-    testFatKlayAll {
+    testBundledKlayDeps {
         java {
             srcDirs = ['src']
             include 'PlainJavaTest.java'
@@ -64,36 +64,36 @@ tasks.withType(Test){task ->
     reports.junitXml.destination = "$buildDir/test-results/${task.name}"
 }
 
-task testFatKlay(type: Test, dependsOn: rootProject.tasks['fatKlay']) {
+task testBundledKlay(type: Test, dependsOn: rootProject.tasks['bundledKlay']) {
     group 'KIELER test'
-    description = 'Test the bundled Klay (which does not include dependencies).'
-    testClassesDir = sourceSets.testFatKlay.output.classesDir
-    classpath = sourceSets.testFatKlay.runtimeClasspath
+    description = 'Tests the bundled Klay (which does not include dependencies).'
+    testClassesDir = sourceSets.testBundledKlay.output.classesDir
+    classpath = sourceSets.testBundledKlay.runtimeClasspath
 }
 
-task testFatKlayAll(type: Test, dependsOn: rootProject.tasks['fatKlayAll']) {
+task testBundledKlayDeps(type: Test, dependsOn: rootProject.tasks['bundledKlayDeps']) {
     group 'KIELER test'
-    description = 'Test the bundled Klay (which does include dependencies).'
-    testClassesDir = sourceSets.testFatKlayAll.output.classesDir
-    classpath = sourceSets.testFatKlayAll.runtimeClasspath
+    description = 'Tests the bundled Klay (which does include dependencies).'
+    testClassesDir = sourceSets.testBundledKlayDeps.output.classesDir
+    classpath = sourceSets.testBundledKlayDeps.runtimeClasspath
 }
 
 task testKlay(type: Test) {
     group 'KIELER test'
-    description = 'Test the Klay plugin collection.'
+    description = 'Tests the Klay plugin collection.'
     testClassesDir = sourceSets.testKlay.output.classesDir
     classpath = sourceSets.testKlay.runtimeClasspath
 }
 
 task testJson(type: Test) {
     group 'KIELER test'
-    description = 'Test the Klay with JSON import plugin collection.'
+    description = 'Tests the Klay with JSON import plugin collection.'
     testClassesDir = sourceSets.testJson.output.classesDir
     classpath = sourceSets.testJson.runtimeClasspath
 }
 
 // Explicitly set task order to prevent the clean task from running after any build task.
-testFatKlay.mustRunAfter clean
-testFatKlayAll.mustRunAfter clean
-testKlay.mustRunAfter clean
-testJson.mustRunAfter clean
+testBundledKlay.mustRunAfter        clean
+testBundledKlayDeps.mustRunAfter    clean
+testKlay.mustRunAfter               clean
+testJson.mustRunAfter               clean

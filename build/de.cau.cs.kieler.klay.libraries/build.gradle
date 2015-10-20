@@ -43,13 +43,24 @@ Run all tests
 ./gradlew clean testAll
 """
 
-group = 'de.cau.cs.kieler'
 ext {
-    packaging = 'jar'
-    libsA = 'fatJar'
-    libsB = 'libs'
-    libsC = 'libsFormats'
+    // Edit these
+    // ----------
 
+    // foldernames for each build part (see PDF slides on http://rtsys.informatik.uni-kiel.de/confluence/pages/viewpage.action?pageId=13763018 for detailed information)
+    libsA = 'bundled_klay'
+    libsB = 'libs'
+    libsC = 'libsFormatsAdditions'
+
+    // archive basename for partA
+    klaybasename = 'klay'
+
+    // archive classifiers for partA
+    klayclassifierNodeps = ''
+    klayclassifierWithdeps = 'deps'
+
+    // Adjust dependencies here
+    // ------------------------
     klayDeps = [
         'de.cau.cs.kieler:de.cau.cs.kieler.core:[0,)',
         'de.cau.cs.kieler:de.cau.cs.kieler.core.kgraph:[0,)',
@@ -58,7 +69,7 @@ ext {
         'de.cau.cs.kieler:de.cau.cs.kieler.klay.layered:[0,)',
         'de.cau.cs.kieler:de.cau.cs.kieler.klay.tree:[0,)'
     ]
-    klayExtraDeps = [
+    klayExternalDeps = [
         // long names on mvn central
         'org.eclipse.emf:org.eclipse.emf.common:[0,)',
         'org.eclipse.emf:org.eclipse.emf.ecore:[0,)',
@@ -69,7 +80,7 @@ ext {
     formatsDeps = [
         'de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)'
     ]
-    formatsExtraDeps = [
+    formatsExternalDeps = [
         // short names on mvn central
         'org.eclipse.equinox:org.eclipse.equinox.app:[0,)',
         'org.eclipse.equinox:org.eclipse.equinox.common:[0,)',
@@ -79,11 +90,16 @@ ext {
     jsonDeps = [
         'de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats.json:[0,)'
     ]
-    jsonExtraDeps = [
+    jsonExternalDeps = [
         'org.eclipse.xtend:org.eclipse.xtend.lib:[0,)',
         'org.eclipse.xtext:org.eclipse.xtext.xbase.lib:[0,)'
     ]
+
+    // Don't edit this
+    // ---------------
+    packaging = 'jar'
 }
+group = 'de.cau.cs.kieler'
 version = project.properties['v'] ?: 'nightly-' + getTimeStamp()
 
 allprojects{
@@ -101,22 +117,22 @@ allprojects{
 
 configurations {
     klay
-    klayExtra
+    klayExternal
     formats
-    formatsExtra
+    formatsExternal
     json
-    jsonExtra
+    jsonExternal
 }
 
 dependencies {
     klay klayDeps
-    klayExtra klayExtraDeps
+    klayExternal klayExternalDeps
 
     formats formatsDeps
-    formatsExtra formatsExtraDeps
+    formatsExternal formatsExternalDeps
 
     json jsonDeps
-    jsonExtra jsonExtraDeps
+    jsonExternal jsonExternalDeps
 }
 
 // Part A: bundled klay
@@ -136,27 +152,27 @@ def theExcludes = [
     'schema/**'
 ]
 
-task fatKlay(type: Jar) {
+task bundledKlay(type: Jar) {
     group 'KIELER build'
     description 'Bundles the core plugins and the three layouters into one jar.'
     destinationDir file("$buildDir/$libsA")
-    baseName = "klay"
-    classifier = ''
+    baseName = klaybasename
+    classifier = klayclassifierNodeps
     from "$rootDir/epl-v10.html"
     from { configurations.klay.collect { it.isDirectory() ? it : zipTree(it) } }
     include theIncludes
     exclude theExcludes
 }
 
-task fatKlayAll(type: Jar) {
+task bundledKlayDeps(type: Jar) {
     group 'KIELER build'
     description 'Bundles the core plugins, the three layouters and all dependencies into one jar.'
     destinationDir file("$buildDir/$libsA")
-    baseName = "klay"
-    classifier = 'all'
+    baseName = klaybasename
+    classifier = klayclassifierWithdeps
     from "$rootDir/epl-v10.html"
     from { configurations.klay.collect { it.isDirectory() ? it : zipTree(it) } }
-    from { configurations.klayExtra.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.klayExternal.collect { it.isDirectory() ? it : zipTree(it) } }
     include theIncludes
     exclude theExcludes
 }
@@ -166,7 +182,7 @@ task fatKlayAll(type: Jar) {
 
 def klayPlugins = [
     configurations.klay,
-    configurations.klayExtra
+    configurations.klayExternal
 ]
 
 task copyKlayPlugins(type: Copy) {
@@ -184,29 +200,27 @@ task zipKlayPlugins(type: Zip) {
     destinationDir buildDir
 }
 
-// Part C: klay plugins with formats & json
+// Part C: formats & json plugins
 // --------------------------------------------------------
 
 def formatsPlugins = [
-    configurations.klay,
-    configurations.klayExtra,
     configurations.formats,
-    configurations.formatsExtra,
+    configurations.formatsExternal,
     configurations.json,
-    configurations.jsonExtra,
+    configurations.jsonExternal,
     tasks.getByPath(':nonosgi:jar')
 ]
 
 task copyFormatsPlugins(type: Copy, dependsOn: ":nonosgi:jar") {
     group 'KIELER build'
-    description 'Gathers all needed jars (including dependencies) to use the layouters and importers like JSON.'
+    description 'Gathers additionally needed jars (including dependencies) to use importers like JSON.'
     from formatsPlugins
     into "$buildDir/$libsC"
 }
 
 task zipFormatsPlugins(type: Zip, dependsOn: ":nonosgi:jar") {
     group 'KIELER build'
-    description 'Zips (for convenient download) all needed jars (including dependencies) to use the layouters and importers like JSON.'
+    description 'Zips (for convenient download) additionally needed jars (including dependencies) to use importers like JSON.'
     archiveName "${libsC}.zip"
     from formatsPlugins
     destinationDir buildDir
@@ -219,8 +233,8 @@ task zipFormatsPlugins(type: Zip, dependsOn: ":nonosgi:jar") {
 // def depFiles = configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.collect{file(it)}}.flatten()
 
 // artifacts {
-//     fatKlayJars fatKlay
-//     fatKlayAllJars fatKlayAll
+//     bundledKlayJars bundledKlay
+//     bundledKlayDepsJars bundledKlayDeps
 //     // klayJars copyKlayPlugins
 //     // formatsJars copyFormatsPlugins
 // }
@@ -290,25 +304,25 @@ task zipFormatsPlugins(type: Zip, dependsOn: ":nonosgi:jar") {
 // --------------------------------------------------------
 
 // Explicitly set task order to prevent the clean task from running after any build task.
-fatKlay.mustRunAfter clean
-fatKlayAll.mustRunAfter clean
-copyKlayPlugins.mustRunAfter clean
+bundledKlay.mustRunAfter        clean
+bundledKlayDeps.mustRunAfter    clean
+copyKlayPlugins.mustRunAfter    clean
 copyFormatsPlugins.mustRunAfter clean
-zipKlayPlugins.mustRunAfter clean
-zipFormatsPlugins.mustRunAfter clean
+zipKlayPlugins.mustRunAfter     clean
+zipFormatsPlugins.mustRunAfter  clean
 
-task buildAll(dependsOn: ['fatKlay', 'fatKlayAll', 'copyKlayPlugins', 'copyFormatsPlugins', 'zipKlayPlugins', 'zipFormatsPlugins']) {
+task buildAll(dependsOn: ['bundledKlay', 'bundledKlayDeps', 'copyKlayPlugins', 'copyFormatsPlugins', 'zipKlayPlugins', 'zipFormatsPlugins']) {
     group 'KIELER build'
-    description 'Bundle and/or gather all artifacts.'
+    description 'Bundles and/or gather all artifacts.'
 }
-task testAll(dependsOn: [':tests:testFatKlay', ':tests:testFatKlayAll', ':tests:testKlay', ':tests:testJson']) {
+task testAll(dependsOn: [':tests:testBundledKlay', ':tests:testBundledKlayDeps', ':tests:testKlay', ':tests:testJson']) {
     group 'KIELER test'
-    description 'Run all tests.'
+    description 'Runs all tests.'
 }
 
 task all(dependsOn: ['clean', 'buildAll', 'testAll']) {
     group 'KIELER build'
-    description 'Clean, build and test all.'
+    description 'Cleans, builds and tests all.'
 }
 
 help.doLast {

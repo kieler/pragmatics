@@ -4,7 +4,7 @@ Use one of these if you are using our KGraph format and want to include a single
 
 klay-nightly-<timestamp>.jar
     Bundle containing layouters klay.force, klay.layered and klay.tree with KIELER dependencies, but no EMF or Google Guava.
-klay-nightly-<timestamp>-all.jar
+klay-nightly-<timestamp>-deps.jar
     Same as above but with EMF and Google Guava.
 
 libs
@@ -16,11 +16,11 @@ libs.zip
 ========
 Zipped libs folder for convenient download.
 
-libsFormats
-===========
-Layouters klay.force, klay.layered, klay.tree, and our JSON importer with all dependencies as separate jars.
-If you are using JSON instead of KGraph as input format, use these.
+libsFormatsAdditions
+====================
+Additionally needed jars to use our JSON importer.
+If you are using JSON instead of KGraph as input format, use these together with the jars from 'libs'.
 
-libsFormats.zip
-===============
-Zipped libsFormats folder for convenient download.
+libsFormatsAdditions.zip
+========================
+Zipped libsFormatsAdditions folder for convenient download.
