@@ -49,6 +49,13 @@
       </controller>
    </extension>
    <extension
+         point="de.cau.cs.kieler.klighd.ui.view.editor">
+      <editor
+            controllerID="de.cau.cs.kieler.klighd.xtext.view.XtextChangeUpdateController"
+            editorID="de.cau.cs.kieler.core.kgraph.text.KGraph">
+      </editor>
+   </extension>
+   <extension
          point="org.eclipse.ui.commands">
       <command
             defaultHandler="de.cau.cs.kieler.klighd.xtext.transformations.OpenGraphDiagramHandler"
