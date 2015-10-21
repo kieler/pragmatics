@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER UML Sequence Diagram KLighD Visualization
+Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Version: 0.0.1.qualifier
+Bundle-SymbolicName: de.cau.cs.kieler.uml.sequence.klighd; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: javax.inject,
+ com.google.guava,
+ com.google.inject,
+ org.eclipse.xtext.xbase.lib,
+ de.cau.cs.kieler.core.krendering,
+ de.cau.cs.kieler.core.krendering.extensions,
+ de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.klay.layered,
+ de.cau.cs.kieler.klighd,
+ de.cau.cs.kieler.klighd.piccolo,
+ de.cau.cs.kieler.klighd.ui,
+ de.cau.cs.kieler.klighd.ui.contrib3x,
+ de.cau.cs.kieler.kiml.graphviz.layouter;resolution:=optional,
+ org.eclipse.ui,
+ org.eclipse.core.resources,
+ org.eclipse.emf,
+ org.eclipse.xtext.ui;resolution:=optional,
+ de.cau.cs.kieler.papyrus.sequence
+Import-Package: de.cau.cs.kieler.uml.sequence.text.sequence
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
