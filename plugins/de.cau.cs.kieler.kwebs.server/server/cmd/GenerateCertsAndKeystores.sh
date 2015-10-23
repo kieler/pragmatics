@@ -30,7 +30,7 @@ echo Generator script for server side self signed certificate and key store
 echo and client side trust store
 echo
 echo Copyright 2011 by Real-Time and Embedded Systems Group, Department
-echo of Computer Science, Kiel University
+echo of Computer Science, Christian-Albrechts-University of Kiel
 echo Published under the EPL v1.0 \(see http://www.eclipse.org/legal/epl-v10.html\)
 echo
 echo If you generate for the secure access of the web service you will have to copy

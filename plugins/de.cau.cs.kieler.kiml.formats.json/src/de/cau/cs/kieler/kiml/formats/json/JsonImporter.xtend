@@ -165,6 +165,9 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         // labels
         jsonObj.transformLabels(edge)
 
+        // properties
+        jsonObj.transformProperties(edge.layout)
+        
         // bend points
         jsonObj.transformEdgeLayout(edge.layout)
     }
