@@ -496,6 +496,7 @@
             type="boolean">
       </layoutOption>
       <layoutOption
+            advanced="true"
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy"
             default="NONE"
