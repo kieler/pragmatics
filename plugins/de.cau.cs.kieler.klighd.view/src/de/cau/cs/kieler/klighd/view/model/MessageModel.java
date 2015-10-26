@@ -111,14 +111,14 @@ public class MessageModel {
      * @return the iconPlugin
      */
     public String getIconPlugin() {
-        return iconPath == null || iconPath.isEmpty() ? null : iconPath;
+        return iconPlugin == null || iconPlugin.isEmpty() ? null : iconPlugin;
     }
 
     /**
      * @return the iconPath
      */
     public String getIconPath() {
-        return iconPlugin == null || iconPlugin.isEmpty() ? null : iconPlugin;
+        return iconPath == null || iconPath.isEmpty() ? null : iconPath;
     }
 
     /**
