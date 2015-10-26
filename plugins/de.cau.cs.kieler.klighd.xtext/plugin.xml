@@ -12,46 +12,17 @@
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.xtext.transformations.GMLDiagramSynthesis"
             id="de.cau.cs.kieler.klighd.xtext.transformations.GMLDiagramSynthesis">
       </diagramSynthesis-->
-      <diagramSynthesis
-            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.xtext.view.syntheses.MessageModelSynthesis"
-            id="de.cau.cs.kieler.klighd.xtext.view.syntheses.MessageModelSynthesis">
-      </diagramSynthesis>
-      <diagramSynthesis
-            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.xtext.view.syntheses.ErrorModelSynthesis"
-            id="de.cau.cs.kieler.klighd.xtext.view.syntheses.ErrorModelSynthesis">
-      </diagramSynthesis>
-      <diagramSynthesis
-            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.xtext.view.syntheses.EcoreModelSynthesis"
-            id="de.cau.cs.kieler.klighd.xtext.view.syntheses.EcoreModelSynthesis">
-      </diagramSynthesis>
    </extension>
    <extension
          point="de.cau.cs.kieler.klighd.extensions">
       <handler
             class="de.cau.cs.kieler.klighd.xtext.XtextModelModificationHandler">
       </handler>
-      <action
-            class="de.cau.cs.kieler.klighd.xtext.view.syntheses.action.ErrorModelShowExceptionAction"
-            id="de.cau.cs.kieler.klighd.xtext.view.syntheses.action.ErrorModelShowExceptionAction">
-      </action>
-      <action
-            class="de.cau.cs.kieler.klighd.xtext.view.syntheses.action.EcoreModelExpandDetailsAction"
-            id="de.cau.cs.kieler.klighd.xtext.view.syntheses.action.EcoreModelExpandDetailsAction">
-      </action>
    </extension>
    <extension
-         point="de.cau.cs.kieler.klighd.ui.view.controller">
-      <controller
-            class="de.cau.cs.kieler.klighd.xtext.view.XtextChangeUpdateController">
-      </controller>
-      <controller
-            class="de.cau.cs.kieler.klighd.xtext.view.EcoreXtextSaveUpdateController">
-      </controller>
-   </extension>
-   <extension
-         point="de.cau.cs.kieler.klighd.ui.view.editor">
+         point="de.cau.cs.kieler.klighd.view.editor">
       <editor
-            controllerID="de.cau.cs.kieler.klighd.xtext.view.XtextChangeUpdateController"
+            controllerID="de.cau.cs.kieler.klighd.view.controllers.XtextChangeUpdateController"
             editorID="de.cau.cs.kieler.core.kgraph.text.KGraph">
       </editor>
    </extension>
