@@ -29,6 +29,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.EdgeRouterFactory;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -288,7 +289,7 @@ final class GraphConfigurator {
         }
         
         // Node-Promotion appliable for improvement of graph
-        if (lgraph.getProperty(Properties.NODE_PROMOTION)) {
+        if (lgraph.getProperty(Properties.NODE_PROMOTION) != NodePromotionStrategy.NONE) {
             configuration
                 .addBeforePhase3(IntermediateProcessorStrategy.NODE_PROMOTION);
         }

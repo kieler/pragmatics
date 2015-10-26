@@ -496,13 +496,13 @@
             type="boolean">
       </layoutOption>
       <layoutOption
-            advanced="true"
             appliesTo="parents"
-            default="false"
+            class="de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy"
+            default="NONE"
             description="Reduces amount of dummy nodes after layering phase."
             id="de.cau.cs.kieler.klay.layered.nodePromotion"
             name="Node Promotion"
-            type="boolean">
+            type="enum">
             class="de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor$CompactionStrategy"
             description="Specifies the compaction strategy when using the Brandes and Koepf node placer."
             id="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy"
@@ -522,14 +522,6 @@
             name="Node Promotion Boundary"
             type="int"
             upperBound="100">
-      </layoutOption>
-      <layoutOption
-            appliesTo="parents"
-            default="false"
-            description="Enables or disables the consideration of the beforehand given maximal width of the layer. If disabled the width of a graph may increase through the node promotion."
-            id="de.cau.cs.kieler.klay.layered.nodePromotionWidthConsideration"
-            name="Node Promotion Width Consideration"
-            type="boolean">
       </layoutOption>
    </extension>
 </plugin>

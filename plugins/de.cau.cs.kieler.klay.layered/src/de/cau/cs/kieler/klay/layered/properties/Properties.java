@@ -17,6 +17,7 @@ import java.util.EnumSet;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
@@ -38,21 +39,17 @@ public final class Properties {
     /**
      * Property to enable or disable node-promotion.
      */
-    public static final IProperty<Boolean> NODE_PROMOTION = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.nodePromotion", false);
+    public static final IProperty<NodePromotionStrategy> NODE_PROMOTION =
+            new Property<NodePromotionStrategy>("de.cau.cs.kieler.klay.layered.nodePromotion",
+                    NodePromotionStrategy.NONE);
 
     /**
-     * Boundary for limiting the number of iterations of the node promotion algorithm.
-     * Delimited by a percentage of the number of nodes of the graph (1% to 70%, 0 sets no boundary).
+     * Boundary for limiting the number of iterations of the node promotion algorithm. Delimited by
+     * a percentage of the number of nodes of the graph or a percentage of how may dummy nodes may
+     * be reduced in the best case (1% to 100%, 0 sets no boundary).
      */
     public static final IProperty<Integer> NODE_PROMOTION_BOUNDARY = new Property<Integer>(
-            "de.cau.cs.kieler.klay.layered.nodePromotionBoundary", 0, 0, 70);
-    
-    /**
-     * TODO
-     */
-    public static final IProperty<Boolean> NODE_PROMOTION_WIDTH_CONSIDERATION = new Property<Boolean>(
-            "de.cau.cs.kieler.klay.layered.nodePromotionWidthConsideration", false);
+            "de.cau.cs.kieler.klay.layered.nodePromotionBoundary", 0, 0, 100);
     
     /**
      * Property to switch one dimensional compaction post-processing on or off.
