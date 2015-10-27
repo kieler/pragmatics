@@ -583,15 +583,21 @@ public final class NetworkSimplexLayerer implements ILayoutPhase {
         
         // determine minimal length of each edge
         for (LEdge edge : edges) {
-            if (layer[edge.getTarget().getNode().id] <= revLayer[edge.getSource().getNode().id]) {
-                minSpan[edge.id] = 1;
-            } else {
-                minSpan[edge.id] = Math.min(layer[edge.getTarget().getNode().id]
-                                - layer[edge.getSource().getNode().id], Math.min(revLayer[edge
-                                .getTarget().getNode().id]
-                                - revLayer[edge.getSource().getNode().id], layer[edge.getTarget()
-                                .getNode().id] - revLayer[edge.getSource().getNode().id]));
-            }
+            
+            // the calculation below is not correct for certain graph structures
+            // and potentially yields a sub-optimal number of dummy nodes
+            
+            //if (layer[edge.getTarget().getNode().id] <= revLayer[edge.getSource().getNode().id]) {
+            //    minSpan[edge.id] = 1;
+            //} else {
+            //    minSpan[edge.id] = Math.min(layer[edge.getTarget().getNode().id]
+            //                    - layer[edge.getSource().getNode().id], Math.min(revLayer[edge
+            //                    .getTarget().getNode().id]
+            //                    - revLayer[edge.getSource().getNode().id], layer[edge.getTarget()
+            //                    .getNode().id] - revLayer[edge.getSource().getNode().id]));
+            //}
+            
+            minSpan[edge.id] = 1;
         }
     }
 
