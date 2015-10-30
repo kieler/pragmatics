@@ -12,8 +12,6 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import de.cau.cs.kieler.klay.layered.properties.Properties;
-
 /**
  * Definitions of strategies for the node promotion heuristic.
  * 
@@ -27,7 +25,7 @@ public enum NodePromotionStrategy {
     NONE,
     /**
      * Strategy for promotion proposed by Nikolov et al. in their paper to keep the layering at a
-     * width that's at worst as wide as the layering of the used layering alforithm.
+     * width that's at worst as wide as the layering of the used layering algorithm.
      */
     NIKOLOV,
     /**
@@ -49,17 +47,18 @@ public enum NodePromotionStrategy {
     NIKOLOV_IMPROVED_PIXEL,
     /**
      * Stops the promotion either if there are no more promotions to make or a certain percentage
-     * (given through {@link Properties#NODE_PROMOTION_BOUNDARY}) of dummy nodes has been reduced
-     * while promoting. If the percentage is reached there will be no more promotions made even if
-     * there are possible promotions left.
+     * (given through {@link de.cau.cs.kieler.klay.layered.properties.Properties
+     * Properties#NODE_PROMOTION_BOUNDARY}) of dummy nodes has been reduced while promoting. If the
+     * percentage is reached there will be no more promotions made even if there are possible
+     * promotions left.
      */
     DUMMYNODE_PERCENTAGE,
     /**
      * Stops the promotion either if there are no more promotions to make or a certain number of
      * promotions were executed. The number is calculated by a percentage of
-     * {@link Properties#NODE_PROMOTION_BOUNDARY} of the number of all nodes in the graph. If the
-     * number is reached there will be no more promotions made even if there are possible promotions
-     * left.
+     * {@link de.cau.cs.kieler.klay.layered.properties.Properties
+     * Properties#NODE_PROMOTION_BOUNDARY} of the number of all nodes in the graph. If the number is
+     * reached there will be no more promotions made even if there are possible promotions left.
      */
     NODECOUNT_PERCENTAGE,
     /** 
