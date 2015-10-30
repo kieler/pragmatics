@@ -46,7 +46,7 @@ public enum IntermediateProcessorStrategy {
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
-    /** Creates connected compontents for the SplineSelfLoopPre- and postprocessor. */
+    /** Creates connected components for the SplineSelfLoopPre- and postprocessor. */
     SPLINE_SELF_LOOP_PREPROCESSOR,
     /** If one of the phases is set to interactive mode, this processor positions external ports. */
     INTERACTIVE_EXTERNAL_PORT_POSITIONER,
@@ -58,6 +58,11 @@ public enum IntermediateProcessorStrategy {
     /** Adds dummy nodes in edges where center labels are present. */
     LABEL_DUMMY_INSERTER,
 
+    
+    // Before Phase 3
+    
+    /** Node-promotion for prettier graphs, especially algorithms like longest-path are prettified. */
+    NODE_PROMOTION,
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
     /** Handles northern and southern hierarchical ports. */
@@ -228,6 +233,9 @@ public enum IntermediateProcessorStrategy {
             
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();
+            
+        case NODE_PROMOTION:
+            return new NodePromotion();
 
         case LAYER_CONSTRAINT_PROCESSOR:
             return new LayerConstraintProcessor();
