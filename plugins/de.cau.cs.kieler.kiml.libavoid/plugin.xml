@@ -11,7 +11,7 @@
             category="de.cau.cs.kieler.kiml.categories.adaptagrams"
             class="de.cau.cs.kieler.kiml.libavoid.LibavoidLayoutProvider"
             description="libavoid is a cross-platform C++ library providing fast, object-avoiding orthogonal and polyline connector routing for use in interactive diagram editors."
-            id="org.adaptagrams.libavoid"
+            id="de.cau.cs.kieler.kiml.libavoid"
             name="Libavoid"
             type="de.cau.cs.kieler.type.edgeRouting">
          <knownOption

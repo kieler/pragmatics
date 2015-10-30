@@ -193,9 +193,6 @@
          <knownOption
                option="de.cau.cs.kieler.portAlignment.east">
          </knownOption>       
-         <knownOption
-               option="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy">
-         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -504,15 +501,6 @@
             id="de.cau.cs.kieler.klay.layered.nodePromotion"
             name="Node Promotion"
             type="enum">
-            class="de.cau.cs.kieler.klay.layered.p4nodes.bk.ICompactor$CompactionStrategy"
-            description="Specifies the compaction strategy when using the Brandes and Koepf node placer."
-            id="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy"
-            name="Compaction Strategy"
-            type="enum">
-         <dependency
-               option="de.cau.cs.kieler.klay.layered.nodePlace"
-               value="BRANDES_KOEPF">
-         </dependency>
       </layoutOption>
       <layoutOption
             appliesTo="parents"

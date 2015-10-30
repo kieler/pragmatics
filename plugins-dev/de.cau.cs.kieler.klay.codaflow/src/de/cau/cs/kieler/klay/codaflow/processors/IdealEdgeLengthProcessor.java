@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -55,8 +55,9 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
      */
     public void process(final CGraph graph, final IKielerProgressMonitor progressMonitor) {
         progressMonitor.begin("Ideal Edge Length Determination", 1);
-        
-        final double idealEdgeLength = graph.getProperty(CodaflowProperties.IDEAL_EDGE_LENGTHS);
+
+        final double idealEdgeLength =
+                graph.getProperty(CodaflowProperties.IDEAL_EDGE_LENGTHS).doubleValue();
 
         // assign the edge lengths for the dummy port edges
         assignDummyPortEdgeLengths(graph);
@@ -121,7 +122,8 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
 
         }
 
-        final double idealEdgeLength = graph.getProperty(CodaflowProperties.IDEAL_EDGE_LENGTHS);
+        final double idealEdgeLength =
+                graph.getProperty(CodaflowProperties.IDEAL_EDGE_LENGTHS).doubleValue();
         // now use this information to determine the edge lengths of all edges
         for (CNode src : graph.getChildren()) {
             // System.out.println("Looking at " + src);
@@ -248,7 +250,7 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
     }
 
     private void limitEdgeLengths(final CGraph graph) {
-        final double spacing = graph.getProperty(CoLaProperties.SPACING);
+        final double spacing = graph.getProperty(CoLaProperties.SPACING).doubleValue();
 
         // find the maximal edge length amongst the 'usual' edges
         // note, that no edge lengths need to be changed if all of them are smaller than the spacing
@@ -285,7 +287,8 @@ public class IdealEdgeLengthProcessor implements ILayoutProcessor {
             neighbours.put(node, neighbourSet);
         }
 
-        final double idealEdgeLength = graph.getProperty(CodaflowProperties.IDEAL_EDGE_LENGTHS);
+        final double idealEdgeLength =
+                graph.getProperty(CodaflowProperties.IDEAL_EDGE_LENGTHS).doubleValue();
         // calc link sizes for each edge
         for (CNode n : graph.getChildren()) {
             for (CEdge e : n.getOutgoingEdges()) {

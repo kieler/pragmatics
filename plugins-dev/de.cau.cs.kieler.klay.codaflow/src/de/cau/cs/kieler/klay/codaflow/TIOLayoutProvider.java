@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -65,7 +65,7 @@ public class TIOLayoutProvider extends AbstractLayoutProvider {
         // always suppress dummy port generation here
         rootLayout.setProperty(CodaflowProperties.PORT_DUMMIES, false);
 
-        moveLimit = rootLayout.getProperty(CodaflowProperties.MOVE_LIMIT);
+        moveLimit = rootLayout.getProperty(CodaflowProperties.MOVE_LIMIT).doubleValue();
 
         // calculate margins of the nodes
         KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);

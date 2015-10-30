@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -18,6 +18,7 @@ import java.util.EnumSet;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
@@ -159,7 +160,7 @@ public final class Properties {
     public static final IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE_SELECTION =
             new Property<EdgeLabelSideSelection>(
                     "de.cau.cs.kieler.klay.layered.edgeLabelSideSelection",
-                    EdgeLabelSideSelection.SMART);
+                    EdgeLabelSideSelection.ALWAYS_DOWN);
 
     /**
      * Property to switch debug mode on or off.
@@ -267,12 +268,27 @@ public final class Properties {
             0.5f, 0.0f, 1.0f);
 
     /**
-     * Specifies the compaction strategy when using the {@link BKNodePlacer}.
+     * Specifies the compaction strategy when using the
+     * {@link de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer BKNodePlacer}.
      */
     public static final IProperty<CompactionStrategy> COMPACTION_STRATEGY =
             new Property<CompactionStrategy>(
                     "de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy",
                     CompactionStrategy.CLASSIC);
+
+    /**
+     * Property set per port that specifies if ports on north/south side of a node may switch sides.
+     */
+    public static final IProperty<Boolean> NORTH_OR_SOUTH_PORT = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.northOrSouthPort", false);
+    
+    /**
+     * Property to choose a one dimensional compaction strategy.
+     */
+    public static final IProperty<GraphCompactionStrategy> POST_COMPACTION =
+            new Property<GraphCompactionStrategy>(
+                    "de.cau.cs.kieler.klay.layered.postCompaction",
+                    GraphCompactionStrategy.NONE);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

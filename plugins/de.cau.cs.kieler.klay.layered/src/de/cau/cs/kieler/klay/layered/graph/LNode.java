@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -88,7 +88,7 @@ public final class LNode extends LShape {
     /** the containing layer. */
     private Layer layer;
     /** the node's node type. */
-    private NodeType nodeType = NodeType.NORMAL;
+    private NodeType type = NodeType.NORMAL;
     /** the ports of the node. */
     private final List<LPort> ports = Lists.newArrayListWithCapacity(6);
     /** this node's labels. */
@@ -230,8 +230,8 @@ public final class LNode extends LShape {
      * 
      * @return the node's node type.
      */
-    public NodeType getNodeType() {
-        return nodeType;
+    public NodeType getType() {
+        return type;
     }
     
     /**
@@ -240,8 +240,8 @@ public final class LNode extends LShape {
      * @param type
      *            the node's new node type.
      */
-    public void setNodeType(final NodeType type) {
-        nodeType = type;
+    public void setType(final NodeType type) {
+        this.type = type;
     }
 
     /**

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -30,6 +30,7 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
@@ -228,9 +229,9 @@ class KGraphImporter {
                         // self loop or connects to a descendant of this node, the edge will be placed in
                         // the graph that represents the node's insides. Otherwise, it will be placed in
                         // the graph that represents the node's parent.
-                        KNode parentKGraph = knode;
-                        if (!KimlUtil.isDescendant(kedge.getTarget(), knode) && !isInsideSelfLoop) {
-                            parentKGraph = knode.getParent();
+                        KNode parentKGraph = knode.getParent();
+                        if (KimlUtil.isDescendant(kedge.getTarget(), knode)  || isInsideSelfLoop) {
+                            parentKGraph = knode;
                         }
                         
                         LGraph parentLGraph = lgraph;
@@ -476,17 +477,31 @@ class KGraphImporter {
      */
     private int calculateNetFlow(final KPort kport) {
         final KNode kgraph = kport.getNode();
+        final boolean insideSelfLoopsEnabled = kgraph.getData(KLayoutData.class).getProperty(
+                LayoutOptions.SELF_LOOP_INSIDE);
         
         int outputPortVote = 0, inputPortVote = 0;
         for (KEdge edge : kport.getEdges()) {
+            final boolean isSelfLoop = edge.getSource() == edge.getTarget();
+            final boolean isInsideSelfLoop = isSelfLoop && insideSelfLoopsEnabled
+                    && edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+            
             if (edge.getSourcePort() == kport) {
-                if (edge.getTarget().getParent() == kgraph || edge.getTarget() == kgraph) {
+                if (isSelfLoop && isInsideSelfLoop) {
+                    inputPortVote++;
+                } else if (isSelfLoop && !isInsideSelfLoop) {
+                    outputPortVote++;
+                } else if (edge.getTarget().getParent() == kgraph || edge.getTarget() == kgraph) {
                     inputPortVote++;
                 } else {
                     outputPortVote++;
                 }
             } else {
-                if (edge.getSource().getParent() == kgraph || edge.getSource() == kgraph) {
+                if (isSelfLoop && isInsideSelfLoop) {
+                    outputPortVote++;
+                } else if (isSelfLoop && isInsideSelfLoop) {
+                    inputPortVote++;
+                } else if (edge.getSource().getParent() == kgraph || edge.getSource() == kgraph) {
                     outputPortVote++;
                 } else {
                     inputPortVote++;

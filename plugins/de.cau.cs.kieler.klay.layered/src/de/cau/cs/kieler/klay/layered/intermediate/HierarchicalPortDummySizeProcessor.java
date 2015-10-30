@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -79,7 +79,7 @@ public final class HierarchicalPortDummySizeProcessor implements ILayoutProcesso
             
             // Collect northern and southern hierarchical port dummies
             for (LNode node : layer) {
-                if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+                if (node.getType() == NodeType.EXTERNAL_PORT) {
                     PortSide side = node.getProperty(InternalProperties.EXT_PORT_SIDE);
                     
                     if (side == PortSide.NORTH) {

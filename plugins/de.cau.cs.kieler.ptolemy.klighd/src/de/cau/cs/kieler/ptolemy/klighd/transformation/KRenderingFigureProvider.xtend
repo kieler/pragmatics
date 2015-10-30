@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -137,12 +137,21 @@ class KRenderingFigureProvider {
     
     /**
      * Renders the given node in a default way, that is, as a simple rectangle.
-     * 
+     *
+     * @param node the node to create the default rendering for.
+     * @param fixSize {@code true} if the node's size should be fixed to a default value of (60, 40);
+     *                {@code false} if the node's size will be determined dynamically later on. 
      * @return the created rendering.
      */
-    def KRendering createDefaultRendering(KNode node) {
+    def KRendering createDefaultRendering(KNode node, boolean fixSize) {
         val rendering = renderingFactory.createKRectangle() => [rect |
             rect.setBackgroundColor(255, 255, 255)
+            
+            if (fixSize) {
+                rect.setAreaPlacementData(
+                    createKPosition(LEFT, 0, 0, TOP, 0, 0),
+                    createKPosition(LEFT, 60, 0, TOP, 40, 0))
+            }
         ]
         
         return rendering
@@ -398,7 +407,7 @@ class KRenderingFigureProvider {
      */
     def KRendering createValueDisplayingNodeRendering(KNode node, String value) {
         // TODO this rendering could be put into the library if its text is kept generic
-        val nodeRendering = createDefaultRendering(node) as KContainerRendering
+        val nodeRendering = createDefaultRendering(node, false) as KContainerRendering
         
         // Add a text field to the default rendering
         nodeRendering.children += renderingFactory.createKText() => [text |
@@ -545,7 +554,7 @@ class KRenderingFigureProvider {
             return addToLibrary(ptRendering, id, library)
         }
         
-        return createDefaultRendering(node)
+        return createDefaultRendering(node, true)
     }
     
     /**

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -45,7 +45,8 @@ import de.cau.cs.kieler.klay.layered.p5edges.splines.LoopSide;
 
 /**
  * Container for property definitions for internal use of the algorithm. These properties should
- * not be accessed from outside.
+ * not be accessed from outside. Some properties here are redefinitions of layout options in
+ * {@link LayoutOptions} to change their defaults.
  *
  * @author msp
  * @author cds
@@ -369,12 +370,6 @@ public final class InternalProperties {
     public static final IProperty<Margins> SPLINE_SELF_LOOP_MARGINS = new Property<Margins>(
             "splineSelfLoopMargins", new Margins());
 
-    /**
-     * List of ports on north/south dummies connected to a north/south port on a normal node.
-     */
-    public static final IProperty<List<LPort>> CONNECTED_NORTH_SOUTH_PORT_DUMMIES =
-            new Property<List<LPort>>("connectedNorthSouthPorts", new ArrayList<LPort>());
-    
     /**
      * Internal container for all possible spacing variations that we support.
      */

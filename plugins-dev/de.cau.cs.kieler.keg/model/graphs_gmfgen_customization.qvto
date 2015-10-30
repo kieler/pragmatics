@@ -18,7 +18,7 @@ main() {
     model.plugin.requiredPlugins += "de.cau.cs.kieler.core.model.gmf";
 	model.plugin.requiredPlugins += "de.cau.cs.kieler.karma";
 	model.plugin.version := "0.2.0.qualifier";
-	model.plugin.provider := "Christian-Albrechts-Universität zu Kiel";
+	model.plugin.provider := "Kiel University";
 	model.plugin.name := "KIELER Graph Diagrams";
 	
 	// use our own category for the "new" wizard

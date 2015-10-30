@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -575,7 +575,7 @@ public final class KlayLayered {
             // (at this point, the graph's nodes are not divided into layers anymore)
             for (LNode node : lgraph.getLayerlessNodes()) {
                 // we're only looking for external port dummies
-                if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+                if (node.getType() == NodeType.EXTERNAL_PORT) {
                     // check which side the external port is on
                     PortSide extPortSide = node.getProperty(InternalProperties.EXT_PORT_SIDE);
                     if (extPortSide == PortSide.EAST) {

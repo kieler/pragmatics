@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -160,7 +160,7 @@ public final class SelfLoopProcessor implements ILayoutProcessor {
         
         // Create a dummy node with an input port and an output port
         LNode dummyNode = new LNode(layeredGraph);
-        dummyNode.setNodeType(NodeType.LONG_EDGE);
+        dummyNode.setType(NodeType.LONG_EDGE);
         
         dummyNode.setProperty(InternalProperties.ORIGIN, edge);
         dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);

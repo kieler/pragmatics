@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.HorizontalGraphCompactor;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.GreedySwitchProcessor;
 
 /**
@@ -47,6 +48,8 @@ public enum IntermediateProcessorStrategy {
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
     /** Creates connected components for the SplineSelfLoopPre- and postprocessor. */
     SPLINE_SELF_LOOP_PREPROCESSOR,
+    /** If one of the phases is set to interactive mode, this processor positions external ports. */
+    INTERACTIVE_EXTERNAL_PORT_POSITIONER,
 
     // Before Phase 2
 
@@ -133,10 +136,10 @@ public enum IntermediateProcessorStrategy {
     /** Removes dummy nodes inserted by the north south side preprocessor and routes edges. */
     NORTH_SOUTH_PORT_POSTPROCESSOR,
     /** Removes dummy nodes which were introduced for center labels. */
-    LABEL_DUMMY_REMOVER,    
-    /** Moves nodes and vertical edge segments in horizontal direction to close some gaps that are wider
-     * than the desired spacing. */
-    ONE_D_COMPACTOR,
+    LABEL_DUMMY_REMOVER,
+    /** Moves nodes and vertical edge segments in horizontal direction to close some gaps that are a
+     * result of the layering. */
+    HORIZONTAL_COMPACTOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
     /** Mirrors the graph to perform a right-to-left drawing. */
@@ -198,6 +201,9 @@ public enum IntermediateProcessorStrategy {
 
         case HIERARCHICAL_PORT_POSITION_PROCESSOR:
             return new HierarchicalPortPositionProcessor();
+            
+        case HORIZONTAL_COMPACTOR:
+            return new HorizontalGraphCompactor();
 
         case HYPEREDGE_DUMMY_MERGER:
             return new HyperedgeDummyMerger();
@@ -207,6 +213,9 @@ public enum IntermediateProcessorStrategy {
 
         case IN_LAYER_CONSTRAINT_PROCESSOR:
             return new InLayerConstraintProcessor();
+            
+        case INTERACTIVE_EXTERNAL_PORT_POSITIONER:
+            return new InteractiveExternalPortPositioner();
 
         case LABEL_AND_NODE_SIZE_PROCESSOR:
             return new LabelAndNodeSizeProcessor();
@@ -254,9 +263,6 @@ public enum IntermediateProcessorStrategy {
         case NORTH_SOUTH_PORT_PREPROCESSOR:
             return new NorthSouthPortPreprocessor();
             
-        case ONE_D_COMPACTOR:
-            return new OneDimensionalCompactor();
-        
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();
 

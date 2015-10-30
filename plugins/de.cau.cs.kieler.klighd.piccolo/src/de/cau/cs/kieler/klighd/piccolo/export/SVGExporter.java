@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -91,7 +91,7 @@ public class SVGExporter extends KlighdCanvasExporter {
         final KlighdAbstractSVGGraphics graphics;
         try {
             graphics = SVGGeneratorManager.createGraphics(
-                data.format, extendedBounds, data.isTextAsShapes, data.isEmbedFonts);
+                data.format, extendedBounds, data.isTextAsShapes, data.isEmbedFonts, data.description);
 
         } catch (final IllegalArgumentException e) {
             final String msg = "KLighD SVG export: Failed to load SVG exporter backend.";

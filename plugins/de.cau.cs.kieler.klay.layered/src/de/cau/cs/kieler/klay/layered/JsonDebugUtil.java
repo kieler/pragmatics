@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -690,7 +690,7 @@ public final class JsonDebugUtil {
      */
     private static String getNodeName(final LNode node, final int layer, final int index) {
         String name = "";
-        if (node.getNodeType() == NodeType.NORMAL) {
+        if (node.getType() == NodeType.NORMAL) {
             // Normal nodes display their name, if any
             if (node.getName() != null) {
                 name = node.getName();
@@ -703,14 +703,14 @@ public final class JsonDebugUtil {
             } else {
                 name = "n_" + node.id;
             }
-            if (node.getNodeType() == NodeType.NORTH_SOUTH_PORT) {
+            if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
                 Object origin = node.getProperty(InternalProperties.ORIGIN);
                 if (origin instanceof LNode) {
                     name += "(" + ((LNode) origin).toString() + ")";
                 }
             }
             name += " (" + layer + "," + index + ")";
-            name += " [ DUMMY: " + node.getNodeType().name() + " ]";
+            name += " [ DUMMY: " + node.getType().name() + " ]";
         }
         return name.replace("\"", "\\\"").replace("\n", "\\n");
     }

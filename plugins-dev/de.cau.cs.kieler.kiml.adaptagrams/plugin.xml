@@ -27,9 +27,9 @@
        - - - - - - - - - - - - - - - - - - - - - - - -->
       <layoutAlgorithm
             category="de.cau.cs.kieler.adaptagrams.category"
-            class="de.cau.cs.kieler.adaptagrams.provider.LibavoidLayoutProvider"
+            class="de.cau.cs.kieler.adaptagrams.provider.SWIGLibavoidLayoutProvider"
             description="libavoid is a cross-platform C++ library providing fast, object-avoiding orthogonal and polyline connector routing for use in interactive diagram editors."
-            id="org.adaptagrams.cola.libavoid"
+            id="de.cau.cs.kieler.kiml.adaptagrams.libavoid"
             name="Libavoid"
             type="de.cau.cs.kieler.type.edgeRouting">
          <knownOption
@@ -265,7 +265,7 @@
             category="de.cau.cs.kieler.adaptagrams.category"
             class="de.cau.cs.kieler.adaptagrams.provider.ConstrainedLayoutProvider"
             description="This method is based on a non-linear gradient projection technique. Conceptually it&apos;s similar to a force directed method like Fruchterman-Reingold—but using a more principled goal function and optimisation techniques. "
-            id="org.adaptagrams.cola.constraintLayout"
+            id="de.cau.cs.kieler.kiml.adaptagrams.constraintLayout"
             name="Constrained Layout"
             type="de.cau.cs.kieler.type.cola">
          <knownOption

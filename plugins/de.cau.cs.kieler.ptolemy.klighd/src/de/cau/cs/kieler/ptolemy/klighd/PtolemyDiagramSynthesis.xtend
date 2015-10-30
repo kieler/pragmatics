@@ -1,15 +1,14 @@
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * http://rtsys.informatik.uni-kiel.de/kieler
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.ptolemy.klighd
 
@@ -20,11 +19,14 @@ import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy
 import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
+import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsExtractor
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
 import org.ptolemy.moml.DocumentRoot
+
+import static de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.*
 
 /**
  * Synthesis for turning Ptolemy models into KGraphs.
@@ -40,12 +42,49 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         "Comments", true)
     public static val SynthesisOption SHOW_RELATIONS = SynthesisOption::createCheckOption(
         "Relations", false)
+    public static val SynthesisOption SHOW_PORT_LABELS = SynthesisOption::createCheckOption(
+        "Port Labels", false)
+    public static val SynthesisOption SHOW_PROPERTIES = SynthesisOption::createCheckOption(
+        "Parameters", true)
+    public static val SynthesisOption SHOW_DIRECTORS = SynthesisOption::createCheckOption(
+        "Directors", true)
     public static val SynthesisOption COMMENT_ATTACHMENT_HEURISTIC =
-        SynthesisOption::createCheckOption("Comment attachment heuristic", true)
+        SynthesisOption::createCheckOption("Comment attachment heuristic", true) 
     public static val SynthesisOption FLATTEN = SynthesisOption::createCheckOption(
         "Flatten Composite Actors", false)
     public static val SynthesisOption COMPOUND_NODE_ALPHA = SynthesisOption::createRangeOption(
         "Nested model darkness", 0f, 255f, 30f)
+    
+    /**
+     * Container class for synthesis options. At the beginning of the 
+     * diagram synthesis's #transform() method, the #capture() method should be 
+     * called in order to cache the current values of the synthesis options.
+     * This class can then be used to retrieve the option values.
+     */
+    public static class Options {
+        
+        public var boolean comments
+        public var boolean relations
+        public var boolean portLabels
+        public var boolean properties
+        public var boolean directors
+        public var boolean attachComments
+        public var boolean flatten
+        public var int compoundNodeAlpha
+        
+        def capture(PtolemyDiagramSynthesis s) {
+            comments = s.getBooleanValue(SHOW_COMMENTS)
+            relations = s.getBooleanValue(SHOW_RELATIONS)
+            portLabels = s.getBooleanValue(SHOW_PORT_LABELS)
+            properties = s.getBooleanValue(SHOW_PROPERTIES)
+            directors = s.getBooleanValue(SHOW_DIRECTORS)
+            attachComments = s.getBooleanValue(COMMENT_ATTACHMENT_HEURISTIC)
+            flatten = s.getBooleanValue(FLATTEN)
+            compoundNodeAlpha = s.getIntValue(COMPOUND_NODE_ALPHA)
+        }
+    }
+    
+    private val options = new Options
     
     // The parts of our transformation
     @Inject Ptolemy2KGraphTransformation transformation
@@ -53,22 +92,25 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     @Inject Ptolemy2KGraphVisualization visualization
     @Inject CommentsExtractor commentsExtractor
     
-    
+   
     override transform(DocumentRoot model) {
+        
+        // Capture options
+        options.capture(this)
+        
         // Transform, optimize, and visualize
         val kgraph = transformation.transform(model, this)
         optimization.optimize(kgraph,
-            !SHOW_RELATIONS.booleanValue,
-            FLATTEN.booleanValue,
-            if (SHOW_COMMENTS.booleanValue) commentsExtractor else null,
+            options,
+            if (options.comments) commentsExtractor else null,
             this
         )
-        visualization.visualize(kgraph, (COMPOUND_NODE_ALPHA.intValue))
+        visualization.visualize(kgraph, options)
         
         // If comments should be shown, we want them to be attached properly. Do that now, because we
         // know the node sizes only after the visualization
-        if (SHOW_COMMENTS.booleanValue) {
-            commentsExtractor.attachComments(COMMENT_ATTACHMENT_HEURISTIC.booleanValue)
+        if (options.comments) {
+            commentsExtractor.attachComments(options.attachComments)
         }
         
         return kgraph
@@ -78,12 +120,16 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
      * Diagram options.
      */
     override getDisplayedSynthesisOptions() {
-        return ImmutableList::of(
-            SHOW_COMMENTS,
+        return ImmutableList.of(
             SHOW_RELATIONS,
+            SHOW_PORT_LABELS,
+            SHOW_DIRECTORS,
+            SHOW_PROPERTIES,
+            SynthesisOption.createSeparator("Comments"),
+            SHOW_COMMENTS,
             COMMENT_ATTACHMENT_HEURISTIC,
             SynthesisOption.createSeparator("Hierarchy"),
-            FLATTEN,
+            FLATTEN, 
             COMPOUND_NODE_ALPHA)
     }
     
@@ -92,9 +138,9 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
      */
     override getDisplayedLayoutOptions() {
         return ImmutableList::of(
-            specifyLayoutOption(Properties::NODE_PLACER,
+            DiagramSyntheses.specifyLayoutOption(Properties::NODE_PLACER,
                 ImmutableList::copyOf(NodePlacementStrategy::values)),
-            specifyLayoutOption(LayoutOptions::SPACING,
+            DiagramSyntheses.specifyLayoutOption(LayoutOptions::SPACING,
                 ImmutableList::of(0, 255))
         )
     }

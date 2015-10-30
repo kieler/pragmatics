@@ -9,6 +9,6 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.6.0";resolution:=optional,
 Bundle-Activator: net.ogdf.bin.OgdfPlugin
 Export-Package: net.ogdf.bin
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University
 Bundle-ClassPath: .
 Eclipse-BundleShape: dir

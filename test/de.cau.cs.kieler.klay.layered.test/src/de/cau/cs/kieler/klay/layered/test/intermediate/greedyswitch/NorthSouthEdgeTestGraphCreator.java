@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -288,7 +288,7 @@ public class NorthSouthEdgeTestGraphCreator extends TestGraphCreator {
 
         eastWestEdgeFromTo(leftNode, middleNodes[0]);
         eastWestEdgeFromTo(middleNodes[0], rightNodes[0]);
-        middleNodes[0].setNodeType(NodeType.LONG_EDGE);
+        middleNodes[0].setType(NodeType.LONG_EDGE);
 
         addNorthSouthEdge(PortSide.SOUTH, middleNodes[1], middleNodes[2], rightNodes[1], false);
 
@@ -316,7 +316,7 @@ public class NorthSouthEdgeTestGraphCreator extends TestGraphCreator {
 
         eastWestEdgeFromTo(leftNode, middleNodes[2]);
         eastWestEdgeFromTo(middleNodes[2], rightNodes[1]);
-        middleNodes[2].setNodeType(NodeType.LONG_EDGE);
+        middleNodes[2].setType(NodeType.LONG_EDGE);
 
         addNorthSouthEdge(PortSide.NORTH, middleNodes[1], middleNodes[0], rightNodes[0], false);
 
@@ -375,7 +375,7 @@ public class NorthSouthEdgeTestGraphCreator extends TestGraphCreator {
 
         eastWestEdgeFromTo(leftNode, middleNodes[0]);
         eastWestEdgeFromTo(middleNodes[0], rightNode);
-        middleNodes[0].setNodeType(NodeType.LONG_EDGE);
+        middleNodes[0].setType(NodeType.LONG_EDGE);
 
         addPortOnSide(middleNodes[1], PortSide.NORTH);
         addPortOnSide(middleNodes[1], PortSide.NORTH);

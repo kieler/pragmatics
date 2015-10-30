@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -208,7 +208,7 @@ public final class NodeMarginCalculator  {
         // Process end labels of edges directly connected to the node
         if (includeEdgeHeadTailLabels) {
             processEdgeHeadTailLabels(boundingBox, node.getOutgoingEdges(), node.getIncomingEdges(),
-                    null, null, null, labelSpacing);
+                    node, null, null, labelSpacing);
         }
         
         // Reset the margin

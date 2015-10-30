@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -22,6 +22,7 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -51,6 +52,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * </dl>
  * 
  * @author jjc
+ * @author cds
  * @kieler.rating yellow proposed cds
  */
 public final class LabelDummyInserter implements ILayoutProcessor {
@@ -72,6 +74,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
         List<LNode> newDummyNodes = Lists.newArrayList();
         
         double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
+        Direction layoutDirection = layeredGraph.getProperty(LayoutOptions.DIRECTION);
 
         for (LNode node : layeredGraph.getLayerlessNodes()) {
             for (LPort port : node.getPorts()) {
@@ -86,7 +89,7 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         
                         // Create dummy node
                         LNode dummyNode = new LNode(layeredGraph);
-                        dummyNode.setNodeType(NodeType.LABEL);
+                        dummyNode.setType(NodeType.LABEL);
                         
                         dummyNode.setProperty(InternalProperties.ORIGIN, edge);
                         dummyNode.setProperty(InternalProperties.REPRESENTED_LABELS, representedLabels);
@@ -100,14 +103,12 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                         // Actually split the edge
                         LongEdgeSplitter.splitEdge(edge, dummyNode);
                         
-                        // Set thickness of the edge
+                        // Set thickness of the edge and place ports at its center
                         float thickness = edge.getProperty(LayoutOptions.THICKNESS);
                         if (thickness < 0) {
                             thickness = 0;
                             edge.setProperty(LayoutOptions.THICKNESS, thickness);
                         }
-                        KVector dummySize = dummyNode.getSize();
-                        dummySize.y = thickness;
                         double portPos = Math.floor(thickness / 2);
 
                         // Apply port positions
@@ -115,7 +116,9 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                             dummyPort.getPosition().y = portPos;
                         }
                         
-                        // Determine label size
+                        // Determine the size of the dummy node and move labels over to it
+                        KVector dummySize = dummyNode.getSize();
+                        
                         ListIterator<LLabel> iterator = edge.getLabels().listIterator();
                         while (iterator.hasNext()) {
                             LLabel label = iterator.next();
@@ -123,13 +126,27 @@ public final class LabelDummyInserter implements ILayoutProcessor {
                             if (label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT)
                                     == EdgeLabelPlacement.CENTER) {
                                 
-                                dummySize.x = Math.max(dummySize.x, label.getSize().x);
-                                dummySize.y += label.getSize().y + labelSpacing;
+                                // The way we stack labels depends on the layout direction
+                                if (layoutDirection.isVertical()) {
+                                    dummySize.x += label.getSize().x + labelSpacing;
+                                    dummySize.y = Math.max(dummySize.y, label.getSize().y);
+                                } else {
+                                    dummySize.x = Math.max(dummySize.x, label.getSize().x);
+                                    dummySize.y += label.getSize().y + labelSpacing;
+                                }
                                 
                                 // Move the label over to the dummy node's REPRESENTED_LABELS property
                                 representedLabels.add(label);
                                 iterator.remove();
                             }
+                        }
+                        
+                        // Determine the final dummy node size
+                        if (layoutDirection.isVertical()) {
+                            dummySize.x -= labelSpacing;
+                            dummySize.y += labelSpacing + thickness;
+                        } else {
+                            dummySize.y += labelSpacing + thickness;
                         }
                     }
                 }

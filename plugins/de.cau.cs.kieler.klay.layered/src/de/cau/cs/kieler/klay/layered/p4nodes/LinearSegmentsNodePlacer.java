@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -476,7 +476,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
      *         added to the given segment.
      */
     private boolean fillSegment(final LNode node, final LinearSegment segment) {
-        NodeType nodeType = node.getNodeType();
+        NodeType nodeType = node.getType();
         
         // handle initial big nodes as big node type
         if (node.getProperty(InternalProperties.BIG_NODE_INITIAL)) {
@@ -511,7 +511,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             for (LPort sourcePort : node.getPorts()) {
                 for (LPort targetPort : sourcePort.getSuccessorPorts()) {
                     LNode targetNode = targetPort.getNode();
-                    NodeType targetNodeType = targetNode.getNodeType();
+                    NodeType targetNodeType = targetNode.getType();
 
                     if (node.getLayer() != targetNode.getLayer()) {
                         if (nodeType == NodeType.BIG_NODE) {
@@ -563,7 +563,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
             // Determine the uppermost placement for the linear segment
             double uppermostPlace = 0.0f;
             for (LNode node : segment.nodes) {
-                NodeType nodeType = node.getNodeType();
+                NodeType nodeType = node.getType();
                 int layerIndex = node.getLayer().getIndex();
                 nodeCount[layerIndex]++;
 
@@ -589,7 +589,7 @@ public final class LinearSegmentsNodePlacer implements ILayoutPhase {
                 layer.getSize().y = uppermostPlace + node.getMargin().top
                         + node.getSize().y + node.getMargin().bottom;
 
-                recentNodeType[layer.getIndex()] = node.getNodeType();
+                recentNodeType[layer.getIndex()] = node.getType();
             }
         }
     }

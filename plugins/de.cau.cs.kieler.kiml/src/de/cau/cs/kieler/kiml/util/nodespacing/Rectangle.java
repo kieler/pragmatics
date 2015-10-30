@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -108,6 +108,14 @@ public class Rectangle {
             y2 = t;
         }
         setRect(x1, y1, x2 - x1, y2 - y1);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Rect[x=" + x + ",y=" + y + ",w=" + width + ",h=" + height + "]";
     }
 
 }

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -194,7 +194,7 @@ public final class DotDebugUtil {
             
             // Label
             options.append("label=\"");
-            if (node.getNodeType() == NodeType.NORMAL) {
+            if (node.getType() == NodeType.NORMAL) {
                 // Normal nodes display their name, if any
                 if (node.getName() != null) {
                     options.append(node.getName().replace("\"", "\\\"") + " ");
@@ -206,7 +206,7 @@ public final class DotDebugUtil {
                 } else {
                     options.append("n_" + node.id + " ");
                 }
-                if (node.getNodeType() == NodeType.NORTH_SOUTH_PORT) {
+                if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
                     Object origin = node.getProperty(InternalProperties.ORIGIN);
                     if (origin instanceof LNode) {
                         options.append("(" + ((LNode) origin).toString() + ")");
@@ -216,12 +216,12 @@ public final class DotDebugUtil {
             options.append("(" + layerNumber + "," + nodeNumber + ")\",");
             
             // Node type
-            if (node.getNodeType() == NodeType.NORMAL) {
+            if (node.getType() == NodeType.NORMAL) {
                 options.append("shape=box,");
             } else {
                 options.append("style=\"rounded,filled\",");
                 
-                String color = node.getNodeType().getColor();
+                String color = node.getType().getColor();
                 if (color != null) {
                     options.append("color=\"" + color + "\",");
                 }

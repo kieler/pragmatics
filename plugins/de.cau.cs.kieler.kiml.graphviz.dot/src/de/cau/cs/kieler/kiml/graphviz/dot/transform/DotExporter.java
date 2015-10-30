@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -34,8 +34,6 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeStatement;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeType;
@@ -54,9 +52,9 @@ import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
-import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -71,7 +69,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
+public class DotExporter {
 
     /** small default value for minimal spacing. */
     public static final float DEF_SPACING_SMALL = 20.0f;
@@ -121,7 +119,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      * 
      * @param transData the transformation data instance
      */
-    public void transform(final TransformationData<KNode, GraphvizModel> transData) {
+    public void transform(final IDotTransformationData<KNode, GraphvizModel> transData) {
         BiMap<String, KGraphElement> graphElems = HashBiMap.create();
         transData.setProperty(GRAPH_ELEMS, graphElems);
         KNode kgraph = transData.getSourceGraph();
@@ -145,7 +143,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      * 
      * @param transData the transformation data instance
      */
-    public void transferLayout(final TransformationData<KNode, GraphvizModel> transData) {
+    public void transferLayout(final IDotTransformationData<KNode, GraphvizModel> transData) {
         float borderSpacing = transData.getSourceGraph().getData(KShapeLayout.class)
                 .getProperty(LayoutOptions.BORDER_SPACING);
         if (borderSpacing < 0) {
@@ -182,7 +180,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      */
     private void transformNodes(final KNode parent, final List<Statement> statements,
             final boolean hierarchy, final KVector offset,
-            final TransformationData<KNode, GraphvizModel> transData) {
+            final IDotTransformationData<KNode, GraphvizModel> transData) {
         // set attributes for the whole graph
         boolean fullExport = transData.getProperty(FULL_EXPORT);
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
@@ -255,7 +253,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      * @param transData transformation data
      */
     private void transformEdges(final KNode parent, final List<Statement> statements,
-            final boolean hierarchy, final TransformationData<KNode, GraphvizModel> transData) {
+            final boolean hierarchy, final IDotTransformationData<KNode, GraphvizModel> transData) {
         boolean fullExport = transData.getProperty(FULL_EXPORT);
         KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
         Direction direction = parentLayout.getProperty(LayoutOptions.DIRECTION);
@@ -367,33 +365,25 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
     /**
      * Sets attributes for the whole graph.
      * 
-     * @param statements the statement list for adding attributes
-     * @param parentLayout the layout data for the parent node
-     * @param transData transformation data
+     * @param statements
+     *            the statement list for adding attributes
+     * @param parentLayout
+     *            the layout data for the parent node
+     * @param transData
+     *            transformation data
      */
     private void setGraphAttributes(final List<Statement> statements,
-            final KGraphData parentLayout, final TransformationData<KNode, GraphvizModel> transData) {
+            final KGraphData parentLayout,
+            final IDotTransformationData<KNode, GraphvizModel> transData) {
+        
         Command command = transData.getProperty(COMMAND);
         AttributeStatement graphAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
         graphAttrStatement.setType(AttributeType.GRAPH);
         List<Attribute> graphAttrs = graphAttrStatement.getAttributes();
         statements.add(graphAttrStatement);
-        
-        // set general node attributes
-        AttributeStatement nodeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
-        nodeAttrStatement.setType(AttributeType.NODE);
-        List<Attribute> nodeAttrs = nodeAttrStatement.getAttributes();
-        statements.add(nodeAttrStatement);
-        nodeAttrs.add(createAttribute(Attributes.SHAPE, "box"));
-        nodeAttrs.add(createAttribute(Attributes.FIXEDSIZE, "true"));
-        
-        // set general edge attributes
-        AttributeStatement edgeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
-        edgeAttrStatement.setType(AttributeType.EDGE);
-        List<Attribute> edgeAttrs = edgeAttrStatement.getAttributes();
-        statements.add(edgeAttrStatement);
-        edgeAttrs.add(createAttribute(Attributes.EDGEDIR, "none"));
-        
+
+        List<Attribute> edgeAttrs = configureGeneralNodeAndEdgeAttributes(statements);
+
         // set minimal spacing
         float minSpacing = parentLayout.getProperty(LayoutOptions.SPACING);
         if (minSpacing < 0) {
@@ -410,7 +400,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                 minSpacing = DEF_SPACING_SMALL;
             }
         }
-        
+
         switch (command) {
         case DOT:
             graphAttrs.add(createAttribute(Attributes.NODESEP, minSpacing / DPI));
@@ -449,15 +439,15 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                 graphAttrs.add(createAttribute(Attributes.COMPOUND, "true"));
             }
             break;
-            
+
         case TWOPI:
             graphAttrs.add(createAttribute(Attributes.RANKSEP, minSpacing / DPI));
             break;
-            
+
         case CIRCO:
             graphAttrs.add(createAttribute(Attributes.MINDIST, minSpacing / DPI));
             break;
-            
+
         case NEATO:
             edgeAttrs.add(createAttribute(Attributes.EDGELEN, minSpacing / DPI));
             // configure initial placement of nodes
@@ -481,12 +471,12 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                 graphAttrs.add(createAttribute(Attributes.NEATO_MODEL, model.literal()));
             }
             break;
-            
+
         case FDP:
             graphAttrs.add(createAttribute(Attributes.SPRING_CONSTANT, minSpacing / DPI));
             break;
         }
-        
+
         if (command == Command.NEATO || command == Command.FDP) {
             // set maximum number of iterations
             int maxiter = parentLayout.getProperty(Attributes.MAXITER_PROP);
@@ -500,8 +490,8 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             OverlapMode mode = parentLayout.getProperty(Attributes.OVERLAP_PROP);
             if (mode != OverlapMode.NONE) {
                 graphAttrs.add(createAttribute(Attributes.OVERLAP, mode.literal()));
-                graphAttrs.add(createAttribute(Attributes.SEP,
-                        "\"+" + Math.round(minSpacing / 2) + "\""));
+                graphAttrs.add(createAttribute(Attributes.SEP, "\"+" + Math.round(minSpacing / 2)
+                        + "\""));
             }
             // enable or disable connected component packing
             Boolean pack = parentLayout.getProperty(LayoutOptions.SEPARATE_CC);
@@ -509,7 +499,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
                 graphAttrs.add(createAttribute(Attributes.PACK, (int) minSpacing));
             }
         }
-        
+
         // configure edge routing
         EdgeRouting edgeRouting = parentLayout.getProperty(LayoutOptions.EDGE_ROUTING);
         String splineMode;
@@ -525,11 +515,33 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
             transData.setProperty(USE_SPLINES, true);
         }
         graphAttrs.add(createAttribute(Attributes.SPLINES, splineMode));
-        
+
         // enable edge concentration
         if (parentLayout.getProperty(Attributes.CONCENTRATE_PROP)) {
             graphAttrs.add(createAttribute(Attributes.CONCENTRATE, "true"));
         }
+    }
+
+    /**
+     * @param statements
+     * @return
+     */
+    private List<Attribute> configureGeneralNodeAndEdgeAttributes(final List<Statement> statements) {
+        // set general node attributes
+        AttributeStatement nodeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
+        nodeAttrStatement.setType(AttributeType.NODE);
+        List<Attribute> nodeAttrs = nodeAttrStatement.getAttributes();
+        statements.add(nodeAttrStatement);
+        nodeAttrs.add(createAttribute(Attributes.SHAPE, "box"));
+        nodeAttrs.add(createAttribute(Attributes.FIXEDSIZE, "true"));
+
+        // set general edge attributes
+        AttributeStatement edgeAttrStatement = DotFactory.eINSTANCE.createAttributeStatement();
+        edgeAttrStatement.setType(AttributeType.EDGE);
+        List<Attribute> edgeAttrs = edgeAttrStatement.getAttributes();
+        statements.add(edgeAttrStatement);
+        edgeAttrs.add(createAttribute(Attributes.EDGEDIR, "none"));
+        return edgeAttrs;
     }
 
     /**
@@ -716,7 +728,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      * @return a unique string used to identify the node
      */
     private String getNodeID(final KNode node, final NodeType type,
-            final TransformationData<KNode, GraphvizModel> transData) {
+            final IDotTransformationData<KNode, GraphvizModel> transData) {
         int id = transData.getProperty(NEXT_NODE_ID);
         transData.setProperty(NEXT_NODE_ID, id + 1);
         String idstring = null;
@@ -745,7 +757,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      * @return a unique string used to identify the edge
      */
     private String getEdgeID(final KEdge edge,
-            final TransformationData<KNode, GraphvizModel> transData) {
+            final IDotTransformationData<KNode, GraphvizModel> transData) {
         int id = transData.getProperty(NEXT_EDGE_ID);
         transData.setProperty(NEXT_EDGE_ID, id + 1);
         String idstring = "edge" + id;
@@ -767,7 +779,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      */
     private void applyLayout(final KNode parentNode, final List<Statement> statements,
             final KVector baseOffset, final float borderSpacing,
-            final TransformationData<KNode, GraphvizModel> transData) {
+            final IDotTransformationData<KNode, GraphvizModel> transData) {
         // process attributes: determine bounding box of the parent node
         float spacing = borderSpacing;
         KVector nodeOffset = new KVector();
@@ -843,7 +855,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      * @param transData transformation data
      */
     private void applyNodeLayout(final NodeStatement nodeStatement, final KVector offset,
-            final float spacing, final TransformationData<KNode, GraphvizModel> transData) {
+            final float spacing, final IDotTransformationData<KNode, GraphvizModel> transData) {
         KNode knode = (KNode) transData.getProperty(GRAPH_ELEMS).get(
                 nodeStatement.getNode().getName());
         if (knode == null) {
@@ -888,7 +900,7 @@ public class DotExporter implements IGraphTransformer<KNode, GraphvizModel> {
      * @param transData transformation data
      */
     private void applyEdgeLayout(final EdgeStatement edgeStatement, final KVector edgeOffset,
-            final float spacing, final TransformationData<KNode, GraphvizModel> transData) {
+            final float spacing, final IDotTransformationData<KNode, GraphvizModel> transData) {
         Map<String, String> attributeMap = createAttributeMap(edgeStatement.getAttributes());
         KEdge kedge = (KEdge) transData.getProperty(GRAPH_ELEMS).get(
                 attributeMap.get(Attributes.COMMENT));

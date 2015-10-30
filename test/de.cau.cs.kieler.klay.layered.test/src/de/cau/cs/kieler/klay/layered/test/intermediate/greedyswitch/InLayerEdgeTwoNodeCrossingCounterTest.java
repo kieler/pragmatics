@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -16,10 +16,10 @@ package de.cau.cs.kieler.klay.layered.test.intermediate.greedyswitch;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.InLayerEdgeTwoNodeCrossingCounter;
 
@@ -29,23 +29,15 @@ import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.InLayerEdgeTwoNod
  * @author alan
  *
  */
-public class InLayerEdgeTwoNodeCrossingCounterTest {
-    private InLayerEdgeTestGraphCreator creator;
+public class InLayerEdgeTwoNodeCrossingCounterTest extends InLayerEdgeTestGraphCreator {
     private InLayerEdgeTwoNodeCrossingCounter counter;
     private int lowerUpperCrossings;
     private int upperLowerCrossings;
     private LNode[] nodeOrder;
 
-    // CHECKSTYLEOFF javadoc
-    // CHECKSTYLEOFF MagicNumber
-    @Before
-    public void setUp() {
-        creator = new InLayerEdgeTestGraphCreator();
-    }
-
     @Test
     public void ignoresInBetweenLayerEdges() {
-        creator.getCrossFormedGraph();
+        getCrossFormedGraph();
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
         assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
@@ -54,7 +46,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void countInLayerEdgeWithNormalEdgeCrossing() {
-        creator.getInLayerEdgesGraph();
+        getInLayerEdgesGraph();
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
         assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
@@ -63,7 +55,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void crossingsWhenSwitched() {
-        creator.getInLayerEdgesGraphWhichResultsInCrossingsWhenSwitched();
+        getInLayerEdgesGraphWhichResultsInCrossingsWhenSwitched();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
 
@@ -73,7 +65,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void inLayerEdgeOnLowerNode() {
-        creator.getInLayerEdgesGraph();
+        getInLayerEdgesGraph();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
@@ -83,7 +75,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void switchNodeOrder() {
-        creator.getInLayerEdgesGraph();
+        getInLayerEdgesGraph();
 
         initCrossingCounterForLayerIndex(1);
         switchOrderAndNotifyCounter(1, 2);
@@ -96,7 +88,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void fixedPortOrderCrossingToInBetweenLayerEdge() {
-        creator.getInLayerEdgesGraphWithCrossingsToBetweenLayerEdgeWithFixedPortOrder();
+        getInLayerEdgesGraphWithCrossingsToBetweenLayerEdgeWithFixedPortOrder();
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
         assertThat("upperLowerCrossings", upperLowerCrossings, is(1));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(2));
@@ -110,7 +102,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void fixedPortOrderCrossingsAndNormalEdgeCrossings() {
-        creator.getInLayerEdgesWithFixedPortOrderAndNormalEdgeCrossings();
+        getInLayerEdgesWithFixedPortOrderAndNormalEdgeCrossings();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
@@ -127,7 +119,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void ignoresSelfLoops() {
-        creator.getCrossWithManySelfLoopsGraph();
+        getCrossWithManySelfLoopsGraph();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
@@ -137,7 +129,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void ignoresCrossingsWhenPortOrderNotSet() {
-        creator.getInLayerEdgesCrossingsButNoFixedOrder();
+        getInLayerEdgesCrossingsButNoFixedOrder();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
@@ -148,7 +140,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLower() {
-        creator.getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLower();
+        getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLower();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
 
@@ -178,7 +170,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
      */
     @Test
     public void ignoresCrossingsWhenPortOrderNotSetNoEdgeBetweenUpperAndLowerLowerUpsideDown() {
-        creator.getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLowerUpsideDown();
+        getInLayerEdgesCrossingsNoFixedOrderNoEdgeBetweenUpperAndLowerUpsideDown();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
 
@@ -189,7 +181,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void crossingsOnBothSides() {
-        creator.getInLayerCrossingsOnBothSides();
+        getInLayerCrossingsOnBothSides();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
@@ -199,7 +191,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void fixedPortOrderInLayerNoCrossings() {
-        creator.getFixedPortOrderInLayerEdgesDontCrossEachOther();
+        getFixedPortOrderInLayerEdgesDontCrossEachOther();
 
         countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
@@ -209,7 +201,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void fixedPortOrderInLayerWithAlwaysRemaingCrossingsAreNotCounted() {
-        creator.getFixedPortOrderInLayerEdgesWithCrossings();
+        getFixedPortOrderInLayerEdgesWithCrossings();
 
         countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
@@ -219,7 +211,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void oneNode() {
-        creator.getOneNodeGraph();
+        getOneNodeGraph();
 
         countCrossingsInLayerForUpperNodeLowerNode(0, 0, 0);
 
@@ -229,7 +221,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void moreComplex() {
-        creator.getMoreComplexInLayerGraph();
+        getMoreComplexInLayerGraph();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
@@ -239,7 +231,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void downwardInLayerEdgesOnLowerNode() {
-        creator.getInLayerEdgesFixedPortOrderInLayerAndInBetweenLayerCrossing();
+        getInLayerEdgesFixedPortOrderInLayerAndInBetweenLayerCrossing();
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
         assertThat("upperLowerCrossings", upperLowerCrossings, is(2));
@@ -248,7 +240,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void oneLayerInLayerCrossingShouldDisappearAfterAnySwitch() {
-        creator.getOneLayerWithInLayerCrossings();
+        getOneLayerWithInLayerCrossings();
 
         countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
@@ -291,7 +283,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void moreThanOneEdgeIntoAPort() {
-        creator.getInLayerEdgesMultipleEdgesIntoSinglePort();
+        getInLayerEdgesMultipleEdgesIntoSinglePort();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 1, 2);
 
@@ -300,8 +292,8 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
     }
 
     @Test
-    public void multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder() {
-        creator.multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder();
+    public void inBetweenLayerEdgesIntoNodeWithNoFixedPortOrder() {
+        multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrder();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
@@ -310,8 +302,8 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
     }
 
     @Test
-    public void multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings() {
-        creator.multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings();
+    public void inBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings() {
+        multipleInBetweenLayerEdgesIntoNodeWithNoFixedPortOrderCauseCrossings();
 
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
 
@@ -326,7 +318,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void inLayerEdgesPassEachOther() {
-        creator.getInLayerOneLayerNoCrossings();
+        getInLayerOneLayerNoCrossings();
         countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
         assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(1));
@@ -340,7 +332,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void noPortOrderConstraintShouldResolveCrossing() {
-        creator.getInLayerEdgesDownwardGraphNoFixedOrder();
+        getInLayerEdgesDownwardGraphNoFixedOrder();
         countCrossingsInLayerForUpperNodeLowerNode(1, 0, 1);
         assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
@@ -348,7 +340,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void fixedPortOrderCrossingToInLayerEdge() {
-        creator.getInLayerEdgesFixedPortOrderInLayerCrossing();
+        getInLayerEdgesFixedPortOrderInLayerCrossing();
 
         countCrossingsInLayerForUpperNodeLowerNode(0, 1, 2);
 
@@ -358,7 +350,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
 
     @Test
     public void fixedPortOrderTwoInLayerEdgesCrossEachOther() {
-        creator.getFixedPortOrderTwoInLayerEdgesCrossEachOther();
+        getFixedPortOrderTwoInLayerEdgesCrossEachOther();
 
         countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
@@ -366,10 +358,31 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
         assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
     }
 
+    /**
+     * <pre>
+     * *------
+     * *---\ |
+     * ___ | |
+     * | |--/
+     * |_|
+     * </pre>
+     */
+    @Test
+    public void multipleEdgesIntoOnePort_ShouldNotCauseCrossing() {
+        LNode[] nodes = addNodesToLayer(3, makeLayer(graph));
+        addInLayerEdge(nodes[0], nodes[2], PortSide.EAST);
+        addInLayerEdge(nodes[1], nodes[2], PortSide.EAST);
+
+        countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
+
+        assertThat("upperLowerCrossings", upperLowerCrossings, is(0));
+        assertThat("lowerUpperCrossings", lowerUpperCrossings, is(0));
+    }
+
     @Ignore
     // this case is not supported by the current algorithm
     public void multipleEdgesIntoOnePortAndFreePortOrderCausesCrossings() {
-        creator.multipleEdgesIntoOnePortAndFreePortOrder();
+        multipleEdgesIntoOnePortAndFreePortOrder();
 
         countCrossingsInLayerForUpperNodeLowerNode(0, 0, 1);
 
@@ -399,7 +412,7 @@ public class InLayerEdgeTwoNodeCrossingCounterTest {
      * @param layerIndex
      */
     private void initCrossingCounterForLayerIndex(final int layerIndex) {
-        LNode[][] currentOrder = creator.getCurrentOrder();
+        LNode[][] currentOrder = getCurrentOrder();
         nodeOrder = currentOrder[layerIndex];
         numberIdsAscendinglyIn(nodeOrder);
         counter = new InLayerEdgeTwoNodeCrossingCounter(nodeOrder);

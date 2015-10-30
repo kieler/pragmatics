@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -13,8 +13,22 @@
  */
 package de.cau.cs.kieler.klay.layered.components;
 
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_SOUTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_SOUTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_WEST;
+
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -68,44 +82,6 @@ public final class ComponentGroup {
     ///////////////////////////////////////////////////////////////////////////////
     // Constants
     
-    // External Port Connection Constants
-    
-    /** Constant for components with connections to no external port. */
-    public static final Set<PortSide> CONN_C = EnumSet.noneOf(PortSide.class);
-    /** Constant for components with connections to external port sides: west. */
-    public static final Set<PortSide> CONN_W = EnumSet.of(PortSide.WEST);
-    /** Constant for components with connections to external port sides: east. */
-    public static final Set<PortSide> CONN_E = EnumSet.of(PortSide.EAST);
-    /** Constant for components with connections to external port sides: north. */
-    public static final Set<PortSide> CONN_N = EnumSet.of(PortSide.NORTH);
-    /** Constant for components with connections to external port sides: south. */
-    public static final Set<PortSide> CONN_S = EnumSet.of(PortSide.SOUTH);
-    /** Constant for components with connections to external port sides: north, south. */
-    public static final Set<PortSide> CONN_NS = EnumSet.of(PortSide.NORTH, PortSide.SOUTH);
-    /** Constant for components with connections to external port sides: east, west. */
-    public static final Set<PortSide> CONN_WE = EnumSet.of(PortSide.EAST, PortSide.WEST);
-    /** Constant for components with connections to external port sides: north, west. */
-    public static final Set<PortSide> CONN_NW = EnumSet.of(PortSide.NORTH, PortSide.WEST);
-    /** Constant for components with connections to external port sides: north, east. */
-    public static final Set<PortSide> CONN_NE = EnumSet.of(PortSide.NORTH, PortSide.EAST);
-    /** Constant for components with connections to external port sides: south, west. */
-    public static final Set<PortSide> CONN_SW = EnumSet.of(PortSide.SOUTH, PortSide.WEST);
-    /** Constant for components with connections to external port sides: south, east. */
-    public static final Set<PortSide> CONN_SE = EnumSet.of(PortSide.SOUTH, PortSide.EAST);
-    /** Constant for components with connections to external port sides: north, west, east. */
-    public static final Set<PortSide> CONN_NWE = EnumSet.of(
-            PortSide.NORTH, PortSide.WEST, PortSide.EAST);
-    /** Constant for components with connections to external port sides: south, west, east. */
-    public static final Set<PortSide> CONN_SWE = EnumSet.of(
-            PortSide.SOUTH, PortSide.WEST, PortSide.EAST);
-    /** Constant for components with connections to external port sides: west, north, south. */
-    public static final Set<PortSide> CONN_WNS = EnumSet.of(
-            PortSide.WEST, PortSide.NORTH, PortSide.SOUTH);
-    /** Constant for components with connections to external port sides: east, north, south. */
-    public static final Set<PortSide> CONN_ENS = EnumSet.of(
-            PortSide.EAST, PortSide.NORTH, PortSide.SOUTH);
-    
-    
     // External Port Connection Constraints
     
     /**
@@ -122,56 +98,56 @@ public final class ComponentGroup {
     
     static {
         // Setup constraints
-        CONSTRAINTS.put(CONN_W, CONN_WNS);
-        CONSTRAINTS.put(CONN_E, CONN_ENS);
-        CONSTRAINTS.put(CONN_N, CONN_NWE);
-        CONSTRAINTS.put(CONN_S, CONN_SWE);
-        CONSTRAINTS.put(CONN_NS, CONN_WE);
-        CONSTRAINTS.put(CONN_NS, CONN_NWE);
-        CONSTRAINTS.put(CONN_NS, CONN_SWE);
-        CONSTRAINTS.put(CONN_WE, CONN_NS);
-        CONSTRAINTS.put(CONN_WE, CONN_WNS);
-        CONSTRAINTS.put(CONN_WE, CONN_ENS);
-        CONSTRAINTS.put(CONN_NW, CONN_NW);
-        CONSTRAINTS.put(CONN_NW, CONN_NWE);
-        CONSTRAINTS.put(CONN_NW, CONN_WNS);
-        CONSTRAINTS.put(CONN_NE, CONN_NE);
-        CONSTRAINTS.put(CONN_NE, CONN_NWE);
-        CONSTRAINTS.put(CONN_NE, CONN_ENS);
-        CONSTRAINTS.put(CONN_SW, CONN_SW);
-        CONSTRAINTS.put(CONN_SW, CONN_SWE);
-        CONSTRAINTS.put(CONN_SW, CONN_WNS);
-        CONSTRAINTS.put(CONN_SE, CONN_SE);
-        CONSTRAINTS.put(CONN_SE, CONN_SWE);
-        CONSTRAINTS.put(CONN_SE, CONN_ENS);
-        CONSTRAINTS.put(CONN_NWE, CONN_N);
-        CONSTRAINTS.put(CONN_NWE, CONN_NS);
-        CONSTRAINTS.put(CONN_NWE, CONN_NW);
-        CONSTRAINTS.put(CONN_NWE, CONN_NE);
-        CONSTRAINTS.put(CONN_NWE, CONN_NWE);
-        CONSTRAINTS.put(CONN_NWE, CONN_WNS);
-        CONSTRAINTS.put(CONN_NWE, CONN_ENS);
-        CONSTRAINTS.put(CONN_SWE, CONN_S);
-        CONSTRAINTS.put(CONN_SWE, CONN_NS);
-        CONSTRAINTS.put(CONN_SWE, CONN_SW);
-        CONSTRAINTS.put(CONN_SWE, CONN_SE);
-        CONSTRAINTS.put(CONN_SWE, CONN_SWE);
-        CONSTRAINTS.put(CONN_SWE, CONN_WNS);
-        CONSTRAINTS.put(CONN_SWE, CONN_ENS);
-        CONSTRAINTS.put(CONN_WNS, CONN_W);
-        CONSTRAINTS.put(CONN_WNS, CONN_WE);
-        CONSTRAINTS.put(CONN_WNS, CONN_NW);
-        CONSTRAINTS.put(CONN_WNS, CONN_SW);
-        CONSTRAINTS.put(CONN_WNS, CONN_NWE);
-        CONSTRAINTS.put(CONN_WNS, CONN_SWE);
-        CONSTRAINTS.put(CONN_WNS, CONN_WNS);
-        CONSTRAINTS.put(CONN_ENS, CONN_E);
-        CONSTRAINTS.put(CONN_ENS, CONN_WE);
-        CONSTRAINTS.put(CONN_ENS, CONN_NE);
-        CONSTRAINTS.put(CONN_ENS, CONN_SE);
-        CONSTRAINTS.put(CONN_ENS, CONN_NWE);
-        CONSTRAINTS.put(CONN_ENS, CONN_SWE);
-        CONSTRAINTS.put(CONN_ENS, CONN_ENS);
+        CONSTRAINTS.put(SIDES_WEST, SIDES_NORTH_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_EAST, SIDES_NORTH_EAST_SOUTH);
+        CONSTRAINTS.put(SIDES_NORTH, SIDES_NORTH_EAST_WEST);
+        CONSTRAINTS.put(SIDES_SOUTH, SIDES_EAST_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_SOUTH, SIDES_EAST_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_SOUTH, SIDES_NORTH_EAST_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_SOUTH, SIDES_EAST_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_EAST_WEST, SIDES_NORTH_SOUTH);
+        CONSTRAINTS.put(SIDES_EAST_WEST, SIDES_NORTH_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_EAST_WEST, SIDES_NORTH_EAST_SOUTH);
+        CONSTRAINTS.put(SIDES_NORTH_WEST, SIDES_NORTH_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_WEST, SIDES_NORTH_EAST_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_WEST, SIDES_NORTH_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST, SIDES_NORTH_EAST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST, SIDES_NORTH_EAST_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST, SIDES_NORTH_EAST_SOUTH);
+        CONSTRAINTS.put(SIDES_SOUTH_WEST, SIDES_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_SOUTH_WEST, SIDES_EAST_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_SOUTH_WEST, SIDES_NORTH_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_EAST_SOUTH, SIDES_EAST_SOUTH);
+        CONSTRAINTS.put(SIDES_EAST_SOUTH, SIDES_EAST_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_EAST_SOUTH, SIDES_NORTH_EAST_SOUTH);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_WEST, SIDES_NORTH);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_WEST, SIDES_NORTH_SOUTH);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_WEST, SIDES_NORTH_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_WEST, SIDES_NORTH_EAST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_WEST, SIDES_NORTH_EAST_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_WEST, SIDES_NORTH_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_WEST, SIDES_NORTH_EAST_SOUTH);
+        CONSTRAINTS.put(SIDES_EAST_SOUTH_WEST, SIDES_SOUTH);
+        CONSTRAINTS.put(SIDES_EAST_SOUTH_WEST, SIDES_NORTH_SOUTH);
+        CONSTRAINTS.put(SIDES_EAST_SOUTH_WEST, SIDES_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_EAST_SOUTH_WEST, SIDES_EAST_SOUTH);
+        CONSTRAINTS.put(SIDES_EAST_SOUTH_WEST, SIDES_EAST_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_EAST_SOUTH_WEST, SIDES_NORTH_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_EAST_SOUTH_WEST, SIDES_NORTH_EAST_SOUTH);
+        CONSTRAINTS.put(SIDES_NORTH_SOUTH_WEST, SIDES_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_SOUTH_WEST, SIDES_EAST_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_SOUTH_WEST, SIDES_NORTH_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_SOUTH_WEST, SIDES_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_SOUTH_WEST, SIDES_NORTH_EAST_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_SOUTH_WEST, SIDES_EAST_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_SOUTH_WEST, SIDES_NORTH_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_SOUTH, SIDES_EAST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_SOUTH, SIDES_EAST_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_SOUTH, SIDES_NORTH_EAST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_SOUTH, SIDES_EAST_SOUTH);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_SOUTH, SIDES_NORTH_EAST_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_SOUTH, SIDES_EAST_SOUTH_WEST);
+        CONSTRAINTS.put(SIDES_NORTH_EAST_SOUTH, SIDES_NORTH_EAST_SOUTH);
     }
     
     
