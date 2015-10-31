@@ -19,6 +19,8 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import de.cau.cs.kieler.kiml.options.Direction;
+
 /**
  * Represents a group of {@link CNode}s whose relative distances to each other are preserved.
  * For instance, when compacting a layered graph, CGroups are used to ensure that vertical edge segments,
@@ -30,9 +32,21 @@ import com.google.common.collect.Sets;
  */
 public final class CGroup {
     /** root position of the {@link CGroup}. */
-    private double startPos;
+    private double startPos = Double.NEGATIVE_INFINITY;
     // Variables are public for convenience reasons since this class is used internally only.
-    // SUPPRESS CHECKSTYLE NEXT 8 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 20 VisibilityModifier
+    /**
+     * The field can be used to determine whether a group has moved during compaction. It has to be
+     * reset externally and is updated during
+     * {@link #compactInnerCNodes(double, ISpacingsHandler, Direction)}
+     */
+    public double delta = 0;
+    /**
+     * Similar to {@link #delta} with the difference that it does not represent the direction-less
+     * sum of a this group's movements but instead considers the compaction direction. Thus, if a
+     * node moves back and forth the same distance this field's value will be zero.
+     */
+    public double deltaNormalized = 0;
     /** grouped {@link CNode}s. */
     public Set<CNode> cNodes;
     /** constraints pointing from within the {@link CGroup} to CNodes outside the {@link CGroup}. */
@@ -53,6 +67,9 @@ public final class CGroup {
         incomingConstraints = Sets.newHashSet();
         outDegree = 0;
         for (CNode cNode : inputCNodes) {
+            if (reference == null) {
+                reference = cNode;
+            }
             addCNode(cNode);
         }
     }
@@ -70,13 +87,21 @@ public final class CGroup {
      * Compacts the grouped {@link CNode}s while maintaining their relative positions.
      * 
      * @param minStartPos
-     *          {@link CNode}s that are not constrained are set to this position
+     *            {@link CNode}s that are not constrained are set to this position.
+     * @param spacingHandler
+     *            {@link ISpacingsHandler} that can be queried for the desired spacing between a
+     *            pair of nodes.
+     * @param compactionDirection
+     *            the actual, untransformed direction of the currently performed compaction.
      */
-    public void compactInnerCNodes(final double minStartPos) {
-        // adding CNodes that are initially sinks to startNodes
+    public void compactInnerCNodes(final double minStartPos,
+            final ISpacingsHandler<? super CNode> spacingHandler,
+            final Direction compactionDirection) {
+
+        // find the sinks of the constraint graph
         Queue<CNode> startNodes = Lists.newLinkedList();
         for (CNode cNode : cNodes) {
-            // a CNode is a sink if all outgoing constraints are processed
+            // a CNode is a sink if all outgoing constraints have been processed
             if (cNode.outDegree == 0) {
                 startNodes.add(cNode);
 
@@ -99,7 +124,7 @@ public final class CGroup {
             for (CNode inc : cNode.constraints) {
                 // process constraints from within the CGroup only
                 if (!incomingConstraints.contains(inc)) {
-                    inc.updateStartPos(cNode);
+                    inc.updateStartPos(cNode, spacingHandler, compactionDirection);
 
                     // adding new sinks to the queue
                     if (inc.outDegree == 0) {
@@ -116,6 +141,19 @@ public final class CGroup {
             startPos = Math.max(startPos, cNode.startPos - cNode.cGroupOffset.x);
         }
         
+        // record the movement of this group during the current compaction
+        // this has to be recorded _before_ the nodes' positions are updated
+        // and care has to be taken about the compaction direction. In certain 
+        // scenarios nodes may move "back-and-forth". To detect this, we associate
+        // a negative delta with two of the compaction directions.
+        double diff = reference.hitbox.x - startPos;
+        delta += diff;
+        if (compactionDirection == Direction.RIGHT || compactionDirection == Direction.DOWN) {
+            deltaNormalized += diff;
+        } else {
+            deltaNormalized -= diff;
+        }
+        
         // setting the positions of the CGroups members according to their specified offset
         for (CNode cNode : cNodes) {
             cNode.startPos = startPos + cNode.cGroupOffset.x;
@@ -126,9 +164,16 @@ public final class CGroup {
      * Propagates starting positions according to the {@link CGroup}s incoming constraints. This
      * method may be called after {@link #compactInnerCNodes()}.
      * 
-     * @return a list of {@link CGroup}s that became {@link #isInnerCompactable() compactable}
+     * @param spacingHandler
+     *            {@link ISpacingsHandler} that can be queried for the desired spacing between a
+     *            pair of nodes.
+     * @param compactionDirection
+     *            the actual, untransformed direction of the currently performed compaction.
+     * @return a list of {@link CGroup}s that became {@link #isInnerCompactable()} compactable.
+     * 
      */
-    public List<CGroup> propagate() {
+    public List<CGroup> propagate(final ISpacingsHandler<? super CNode> spacingHandler,
+            final Direction compactionDirection) {
         List<CGroup> compactables = Lists.newArrayList();
 
         for (CNode cNode : cNodes) {
@@ -136,7 +181,7 @@ public final class CGroup {
                 // processing constraints that refer to CNodes outside of this CGroup
                 if (incomingConstraints.contains(inc)) {
                     // updating the starting position of an incoming constraint
-                    inc.updateStartPos(cNode);
+                    inc.updateStartPos(cNode, spacingHandler, compactionDirection);
                     inc.cGroup.outDegree--;
                     // collecting CGroups of incoming constraints that became compactable
                     if (inc.cGroup.isInnerCompactable()) {
@@ -161,5 +206,22 @@ public final class CGroup {
             throw new RuntimeException("CNode belongs to another CGroup.");
         }
         cNode.cGroup = this;
+    }
+    
+    /**
+     * Removes the passed {@link CNode} from this group and sets the {@link CNode#cGroup} field to
+     * null (if it belongs to this group).
+     * 
+     * @param cNode
+     *            the {@link CNode} to remove.
+     * @return true if this {@link CGroup} actually contained the passed {@link CNode}, false
+     *         otherwise.
+     */
+    public boolean removeCNode(final CNode cNode) {
+        boolean removed = cNodes.remove(cNode);
+        if (removed) {
+            cNode.cGroup = null;
+        }
+        return removed;
     }
 }

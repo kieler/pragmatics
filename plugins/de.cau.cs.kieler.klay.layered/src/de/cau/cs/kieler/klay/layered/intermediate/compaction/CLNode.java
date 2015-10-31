@@ -38,12 +38,13 @@ public final class CLNode extends CNode {
     private LNode lNode;
 
     /**
-     * Constructor, infers hitbox from position, size and margins of the {@link LNode}.
-     * Also sets the {@link CompactionLock} according to the ratio of incoming to outgoing
-     * {@link LEdge}s. {@link NodeType#EXTERNAL_PORT external port dummy nodes} are never locked to
-     * keep the graph size minimal. They are later reset to the border position by the
+     * Constructor, infers hitbox from position, size and margins of the {@link LNode}. Also sets
+     * the {@link de.cau.cs.kieler.klay.layered.compaction.CompactionLock CompactionLock} according
+     * to the ratio of incoming to outgoing {@link de.cau.cs.kieler.klay.layered.graph.LEdge LEdge}
+     * s. {@link NodeType#EXTERNAL_PORT external port dummy nodes} are never locked to keep the
+     * graph size minimal. They are later reset to the border position by the
      * {@link de.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer
-     *  KGraphLayoutTransferrer}
+     * KGraphLayoutTransferrer}
      * 
      * @param lNode
      *            the node
@@ -100,55 +101,48 @@ public final class CLNode extends CNode {
     /**
      * {@inheritDoc}
      * <p>
-     * If the {@link LNode} is an {@link NodeType#EXTERNAL_PORT external port} the returned spacing is 0.
-     * This works because {@link LGraphUtil#getExternalPortPosition(LGraph, LNode, double, double)
-     * LGraphUtil.getExternalPortPosition} is called in 
+     * If the {@link LNode} is an {@link NodeType#EXTERNAL_PORT external port} the returned spacing
+     * is 0. This works because {@link de.cau.cs.kieler.klay.layered.graph.LGraphUtil
+     * LGraphUtil#getExternalPortPosition(LGraph, LNode, double, double)
+     * LGraphUtil.getExternalPortPosition} is called in
      * {@link de.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer#applyLayout(LGraph)
      * KGraphLayoutTransferrer.applyLayout} and resets the position of the
-     * {@link NodeType#EXTERNAL_PORT external port} dummy, which results in the correct border spacing
-     * being used.
+     * {@link NodeType#EXTERNAL_PORT external port} dummy, which results in the correct border
+     * spacing being used.
      * </p>
      */
     @Override
-    public double getSingleHorizontalSpacing() {
+    public double getHorizontalSpacing() {
         if (lNode.getType() == NodeType.EXTERNAL_PORT) {
             return 0;
         }
         return horizontalSpacing;
     }
-    
+
     /**
      * {@inheritDoc}
      * <p>
-     * If the {@link LNode} is an {@link NodeType#EXTERNAL_PORT external port} the returned spacing is 0.
-     * This works because {@link LGraphUtil#getExternalPortPosition(LGraph, LNode, double, double)
-     * LGraphUtil.getExternalPortPosition} is called in 
+     * If the {@link LNode} is an {@link NodeType#EXTERNAL_PORT external port} the returned spacing
+     * is 0. This works because {@link de.cau.cs.kieler.klay.layered.graph.LGraphUtil
+     * LGraphUtil#getExternalPortPosition(LGraph, LNode, double, double)
+     * LGraphUtil.getExternalPortPosition} is called in
      * {@link de.cau.cs.kieler.klay.layered.graph.transform.KGraphLayoutTransferrer#applyLayout(LGraph)
      * KGraphLayoutTransferrer.applyLayout} and resets the position of the
-     * {@link NodeType#EXTERNAL_PORT external port} dummy, which results in the correct border spacing
-     * being used.
+     * {@link NodeType#EXTERNAL_PORT external port} dummy, which results in the correct border
+     * spacing being used.
      * </p>
      */
     @Override
-    public double getSingleVerticalSpacing() {
+    public double getVerticalSpacing() {
         if (lNode.getType() == NodeType.EXTERNAL_PORT) {
             return 0;
         }
         return verticalSpacing;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public double getHorizontalSpacing(final CNode other) {
-      // returning edge spacing if an edge is involved, otherwise object spacing
-      return Math.min(getSingleHorizontalSpacing(), other.getSingleHorizontalSpacing());
-    }
-    
     @Override
     public String toString() {
-        //return lNode.toString();
         return lNode.getProperty(InternalProperties.ORIGIN).toString();
     }
+    
 }
