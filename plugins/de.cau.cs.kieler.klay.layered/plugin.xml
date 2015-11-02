@@ -493,5 +493,28 @@
             name="Post Compaction"
             type="enum">
       </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy"
+            default="NONE"
+            description="Reduces number of dummy nodes after layering phase (if possible)."
+            id="de.cau.cs.kieler.klay.layered.nodePromotion"
+            name="Node Promotion"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="0"
+            description="Limits the number of iterations for node promotion."
+            id="de.cau.cs.kieler.klay.layered.nodePromotionBoundary"
+            lowerBound="0"
+            name="Node Promotion Boundary"
+            type="int"
+            upperBound="100">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodePromotion">
+         </dependency>
+      </layoutOption>
    </extension>
 </plugin>
