@@ -19,10 +19,10 @@ import org.junit.Test;
 
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
-import de.cau.cs.kieler.klay.layered.compaction.CGraph;
-import de.cau.cs.kieler.klay.layered.compaction.CGroup;
-import de.cau.cs.kieler.klay.layered.compaction.CNode;
-import de.cau.cs.kieler.klay.layered.compaction.OneDimensionalCompactor;
+import de.cau.cs.kieler.klay.layered.compaction.oned.CGraph;
+import de.cau.cs.kieler.klay.layered.compaction.oned.CGroup;
+import de.cau.cs.kieler.klay.layered.compaction.oned.CNode;
+import de.cau.cs.kieler.klay.layered.compaction.oned.OneDimensionalCompactor;
 import static org.junit.Assert.*;
 
 /**

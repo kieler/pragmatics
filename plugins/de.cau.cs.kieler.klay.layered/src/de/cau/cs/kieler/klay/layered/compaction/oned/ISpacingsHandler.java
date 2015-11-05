@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klay.layered.compaction;
+package de.cau.cs.kieler.klay.layered.compaction.oned;
 
 /**
  * An implementation of this class is able to report both the vertical and the horizontal spacing

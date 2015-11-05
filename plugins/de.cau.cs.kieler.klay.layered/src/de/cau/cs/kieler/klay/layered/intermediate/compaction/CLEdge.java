@@ -21,7 +21,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
-import de.cau.cs.kieler.klay.layered.compaction.CNode;
+import de.cau.cs.kieler.klay.layered.compaction.oned.CNode;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -75,7 +75,7 @@ public final class CLEdge extends CNode {
 
     /**
      * Adds an intersecting {@link VerticalSegment} to the {@link CLEdge} and merges the hitboxes.
-     * The {@link de.cau.cs.kieler.klay.layered.compaction.CompactionLock CompactionLock} is set for
+     * The {@link de.cau.cs.kieler.klay.layered.compaction.oned.CompactionLock CompactionLock} is set for
      * selfloops and {@link Direction}s that fewer different {@link LPort}s are connected in to
      * avoid prolonging more {@link LEdge}s than shortening.
      * 

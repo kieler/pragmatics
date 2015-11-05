@@ -17,9 +17,9 @@ import com.google.common.collect.Sets;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.compaction.CNode;
-import de.cau.cs.kieler.klay.layered.compaction.ISpacingsHandler;
-import de.cau.cs.kieler.klay.layered.compaction.OneDimensionalCompactor;
+import de.cau.cs.kieler.klay.layered.compaction.oned.CNode;
+import de.cau.cs.kieler.klay.layered.compaction.oned.ISpacingsHandler;
+import de.cau.cs.kieler.klay.layered.compaction.oned.OneDimensionalCompactor;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 

@@ -16,7 +16,7 @@ import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
-import de.cau.cs.kieler.klay.layered.compaction.CNode;
+import de.cau.cs.kieler.klay.layered.compaction.oned.CNode;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
@@ -39,7 +39,7 @@ public final class CLNode extends CNode {
 
     /**
      * Constructor, infers hitbox from position, size and margins of the {@link LNode}. Also sets
-     * the {@link de.cau.cs.kieler.klay.layered.compaction.CompactionLock CompactionLock} according
+     * the {@link de.cau.cs.kieler.klay.layered.compaction.oned.CompactionLock CompactionLock} according
      * to the ratio of incoming to outgoing {@link de.cau.cs.kieler.klay.layered.graph.LEdge LEdge}
      * s. {@link NodeType#EXTERNAL_PORT external port dummy nodes} are never locked to keep the
      * graph size minimal. They are later reset to the border position by the
