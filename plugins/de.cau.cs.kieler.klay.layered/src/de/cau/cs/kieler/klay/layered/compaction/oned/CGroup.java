@@ -141,6 +141,12 @@ public final class CGroup {
             startPos = Math.max(startPos, cNode.startPos - cNode.cGroupOffset.x);
         }
         
+        if (!Double.isFinite(startPos)) {
+            throw new IllegalStateException(
+                    "Couldn't determine initial position during compaction."
+                            + " Maybe the specified spacing is too large.");
+        }
+        
         // record the movement of this group during the current compaction
         // this has to be recorded _before_ the nodes' positions are updated
         // and care has to be taken about the compaction direction. In certain 
