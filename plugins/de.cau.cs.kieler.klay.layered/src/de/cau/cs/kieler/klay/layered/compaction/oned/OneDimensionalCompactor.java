@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klay.layered.compaction;
+package de.cau.cs.kieler.klay.layered.compaction.oned;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,7 +25,6 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.klay.layered.intermediate.compaction.CLNode;
 
 /**
  * Implements the compaction of a {@link CGraph}.
@@ -43,6 +42,8 @@ public final class OneDimensionalCompactor {
     /** flag indicating whether the {@link #finish()} method has been called. */
     private boolean finished = false;
     
+    private ISpacingsHandler<? super CNode> spacingsHandler = ISpacingsHandler.DEFAULT_SPACING_HANDLER;
+    
     /**
      * Initializes the fields of the {@link OneDimensionalCompactor}.
      * 
@@ -50,6 +51,7 @@ public final class OneDimensionalCompactor {
      *          the graph to compact
      */
     public OneDimensionalCompactor(final CGraph cGraph) {
+        
         this.cGraph = cGraph;
         // the default locking strategy locks CNodes if they are not constrained
         setLockingStrategy((n, d) -> !(n.outDegree == 0));
@@ -65,6 +67,19 @@ public final class OneDimensionalCompactor {
                 cGraph.cGroups.add(group);
             }
         }
+    }
+    
+    /**
+     * Sets the spacing handler to the passed handler. Not using this method results in the
+     * {@link ISpacingsHandler#DEFAULT_SPACING_HANDLER} being used.
+     * 
+     * @param handler
+     *            the {@link ISpacingsHandler} to use.
+     * @return this instance of {@link OneDimensionalCompactor}
+     */
+    public OneDimensionalCompactor setSpacingsHandler(final ISpacingsHandler<? super CNode> handler) {
+        this.spacingsHandler = handler;
+        return this;
     }
     
     /**
@@ -92,6 +107,9 @@ public final class OneDimensionalCompactor {
         
         // perform the actual compaction
         compactCGroups();
+        
+        // remove all locks
+        cGraph.cNodes.forEach(n -> n.reposition = true); // SUPPRESS CHECKSTYLE InnerAssignment
         
         return this;
     }
@@ -133,11 +151,14 @@ public final class OneDimensionalCompactor {
             throw new RuntimeException(
                     "The direction " + dir + " is not supported by the CGraph instance.");
         }
+
+        Direction oldDirection = direction;
+        direction = dir;
         
         // executes required transformations and calculates constraints
         // if the graph is compacted in opposing directions the constraints are reversed instead of
         // being recalculated and CNodes are locked
-        switch (direction) {
+        switch (oldDirection) {
         case UNDEFINED:
             switch (dir) {
             case LEFT:
@@ -164,7 +185,7 @@ public final class OneDimensionalCompactor {
         case LEFT:
             switch (dir) {
             case RIGHT:
-                mirrorHitboxes(); reverseConstraints(); lockCNodes(dir);
+                mirrorHitboxes(); reverseConstraints();
                 break;
                 
             case UP:
@@ -183,7 +204,7 @@ public final class OneDimensionalCompactor {
         case RIGHT:
             switch (dir) {
             case LEFT:
-                mirrorHitboxes(); reverseConstraints(); lockCNodes(dir);
+                mirrorHitboxes(); reverseConstraints();
                 break;
                 
             case UP:
@@ -202,17 +223,15 @@ public final class OneDimensionalCompactor {
         case UP:
             switch (dir) {
             case LEFT:
-                //mirrorHitboxes(); transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
                 transposeHitboxes(); calculateConstraints();
                 break;
                 
             case RIGHT:
-                // mirrorHitboxes(); transposeHitboxes(); calculateConstraints();
                 transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
                 break;
                 
             case DOWN:
-                mirrorHitboxes(); reverseConstraints(); lockCNodes(dir);
+                mirrorHitboxes(); reverseConstraints();
                 break;
 
             default:
@@ -223,17 +242,15 @@ public final class OneDimensionalCompactor {
         case DOWN:
             switch (dir) {
             case LEFT:
-                // transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
                 mirrorHitboxes(); transposeHitboxes(); calculateConstraints();
                 break;
                 
             case RIGHT:
-                // mirrorHitboxes(); transposeHitboxes(); calculateConstraints();
                 mirrorHitboxes(); transposeHitboxes(); mirrorHitboxes(); calculateConstraints();
                 break;
                 
             case UP:
-                mirrorHitboxes(); reverseConstraints(); lockCNodes(dir);
+                mirrorHitboxes(); reverseConstraints();
                 break;
 
             default:
@@ -245,31 +262,80 @@ public final class OneDimensionalCompactor {
             break;
         }
         
-        direction = dir;
         return this;
     }
     
     /**
-     * Sets the function to lock cGraph.cNodes.
+     * Sets the function to lock cGraph.cNodes. Does not apply the strategy yet, to do so, call
+     * {@link #applyLockingStrategy(Direction)}.
      * 
      * @param strategy
-     *          a function that returns the required state for the reposition flag of a {@link CNode}
-     *          according to the direction
-     * @return
-     *          this instance of {@link OneDimensionalCompactor}
+     *            a function that returns the required state for the reposition flag of a
+     *            {@link CNode} according to the direction
+     * @return this instance of {@link OneDimensionalCompactor}
      */
     public OneDimensionalCompactor setLockingStrategy(
             final BiFunction<CNode, Direction, Boolean> strategy) {
         lockingStrategy = strategy;
         return this;
     }
+    
+    /**
+     * Locks nodes according to the currently set locking strategy and the current direction. After
+     * the next call to {@link #compact()}, all locks are removed again.
+     * 
+     * @return this instance of {@link OneDimensionalCompactor}
+     * 
+     * @see #setLockingStrategy(BiFunction)
+     */
+    public OneDimensionalCompactor applyLockingStrategy() {
+        applyLockingStrategy(direction);
+        return this;
+    }
 
+    /**
+     * Locks nodes according to the currently set locking strategy and the current direction. After
+     * the next call to {@link #compact()}, all locks are removed again.
+     * 
+     * @param dir
+     *            the {@link Direction} for the locks to be set.
+     * @return this instance of {@link OneDimensionalCompactor}
+     * 
+     * @see #setLockingStrategy(BiFunction)
+     */
+    public OneDimensionalCompactor applyLockingStrategy(final Direction dir) {
+
+        for (CNode cNode : cGraph.cNodes) {
+            cNode.reposition = lockingStrategy.apply(cNode, dir);
+        }
+
+        return this;
+    }
     
-    //////////////////////////////////////////// PRIVATE API ////////////////////////////////////////////
-    
-    private void calculateGroupOffsets() {
+    /**
+     * Initiates a recalculation of all constraints. Usually this method does not have to be called
+     * manually since {@link #changeDirection(Direction)} either recalculates or reversed
+     * constraints as necessary.
+     * 
+     * @return this instance of a {@link OneDimensionalCompactor}.
+     */
+    public OneDimensionalCompactor forceConstraintsRecalculation() {
+        calculateConstraints();
+        return this;
+    }
+
+    /**
+     * For each {@link CGroup} g of the {@link CGroup} to be compacted, calculates the offsets of
+     * g's nodes. It shouldn't be necessary to call this method in the common case since its either
+     * called by the constructor or for certain direction changes in
+     * {@link #changeDirection(Direction)}.
+     * 
+     * @return this instance of a {@link OneDimensionalCompactor}.
+     */
+    public OneDimensionalCompactor calculateGroupOffsets() {
         // for any pre-specified groups, deduce the offset of the elements
         for (CGroup group : cGraph.cGroups) {
+            group.reference = null;
             for (CNode n : group.cNodes) {
                 if (group.reference == null) {
                     n.cGroupOffset.reset();
@@ -280,7 +346,11 @@ public final class OneDimensionalCompactor {
                 }
             }
         }
+        
+        return this;
     }
+
+    //////////////////////////////////////////// PRIVATE API ////////////////////////////////////////////
     
     /**
      * Mirrors hitboxes horizontally.
@@ -307,9 +377,11 @@ public final class OneDimensionalCompactor {
             tmp = cNode.hitbox.x;
             cNode.hitbox.x = cNode.hitbox.y;
             cNode.hitbox.y = tmp;
+            
             tmp = cNode.hitbox.width;
             cNode.hitbox.width = cNode.hitbox.height;
             cNode.hitbox.height = tmp;
+
             tmp = cNode.cGroupOffset.x;
             cNode.cGroupOffset.x = cNode.cGroupOffset.y;
             cNode.cGroupOffset.y = tmp;
@@ -346,19 +418,6 @@ public final class OneDimensionalCompactor {
         }
         
     }
-    
-    /**
-     * Locks the position of CNodes before a second compaction in opposite direction
-     * based on the {@link OneDimensionalCompactor#lockingStrategy locking strategy}.
-     * 
-     * @param dir
-     *          the direction
-     */
-    private void lockCNodes(final Direction dir) {
-        for (CNode cNode : cGraph.cNodes) {
-            cNode.reposition = lockingStrategy.apply(cNode, dir);
-        }
-    }
 
     /**
      * Creates a constraint between CNodes A and B if B collides with the right shadow of A
@@ -374,12 +433,28 @@ public final class OneDimensionalCompactor {
         // inferring constraints from hitbox intersections
         for (CNode cNode1 : cGraph.cNodes) {
             for (CNode cNode2 : cGraph.cNodes) {
-                double spacing = cNode1.getVerticalSpacing(cNode2);
-
+                // no self constraints
+                if (cNode1 == cNode2) {
+                    continue;
+                }
+                // no constraints between nodes of the same group
+                if (cNode1.cGroup != null && cNode1.cGroup == cNode2.cGroup) {
+                    continue;
+                }
+                
+                double spacing;
+                if (direction.isHorizontal()) {
+                    //spacing = Math.min(cNode1.getVerticalSpacing(), cNode2.getVerticalSpacing());
+                    spacing = spacingsHandler.getVerticalSpacing(cNode1, cNode2);
+                } else {
+                    //spacing = Math.min(cNode1.getHorizontalSpacing(), cNode2.getHorizontalSpacing());
+                    spacing = spacingsHandler.getHorizontalSpacing(cNode1, cNode2);
+                }
+                
                 // add constraint if cNode2 is to the right of cNode1 and could collide if moved
                 // horizontally
                 // exclude parentNodes because they don't constrain their north/south segments
-                if (cNode1 != cNode2 && cNode1 != cNode2.parentNode
+                if (cNode1 != cNode2.parentNode
                         // '>' avoids simultaneous constraints A->B and B->A
                         && (cNode2.hitbox.x > cNode1.hitbox.x 
                                 // 
@@ -450,7 +525,7 @@ public final class OneDimensionalCompactor {
         // finding and compacting CGroups that are sinks
         for (CGroup group : cGraph.cGroups) {
             if (group.isInnerCompactable()) {
-                group.compactInnerCNodes(minStartPos);
+                group.compactInnerCNodes(minStartPos, spacingsHandler, direction);
                 sinks.add(group);
             }
         }
@@ -460,11 +535,11 @@ public final class OneDimensionalCompactor {
         while (!sinks.isEmpty()) {
             
             CGroup group = sinks.poll();
-            List<CGroup> compactables = group.propagate();
+            List<CGroup> compactables = group.propagate(spacingsHandler, direction);
             
             // compacting CGroups that became sinks in this iteration
             for (CGroup g : compactables) {
-                g.compactInnerCNodes(minStartPos);
+                g.compactInnerCNodes(minStartPos, spacingsHandler, direction);
                 sinks.add(g);
             }
             compactables.clear();
@@ -511,23 +586,11 @@ public final class OneDimensionalCompactor {
                     + " " + size.x + " " + size.y + "\">");
 
             for (CNode cNode : cGraph.cNodes) {
-                if (cNode instanceof CLNode) {
-                    out.println("<rect x=\"" + cNode.hitbox.x + "\" y=\"" + cNode.hitbox.y
-                            + "\" width=\"" + cNode.hitbox.width + "\" height=\""
-                            + cNode.hitbox.height + "\" fill=\""
-                            + (cNode.reposition ? "green" : "orange")
-                            + "\" stroke=\"black\" opacity=\"0.5\"/>");
-                    out.println("<text x=\"" + (cNode.hitbox.x + 2) 
-                            + "\" y=\"" + (cNode.hitbox.y + 2 * 2 * 2 + 2 + 1) + "\">" 
-                            + "(" + Math.round(cNode.hitbox.x) 
-                            + ", " + Math.round(cNode.hitbox.y) + ")\n" 
-                            + cNode + "</text>");
-                } else {
-                    out.println("<line x1=\"" + cNode.hitbox.x + "\" y1=\"" + cNode.hitbox.y
-                            + "\" x2=\"" + (cNode.hitbox.x + cNode.hitbox.width) + "\" y2=\""
-                            + (cNode.hitbox.y + cNode.hitbox.height) + "\" stroke=\""
-                            + (cNode.reposition ? "blue" : "red") + "\" stroke-width=\"3px\"/>");
-                }
+                
+                // the node's representation
+                out.println(cNode.getDebugSVG());
+
+                // the constraints
                 for (CNode inc : cNode.constraints) {
                     out.println("<line x1=\"" + (cNode.hitbox.x + cNode.hitbox.width / 2)
                             + "\" y1=\"" + (cNode.hitbox.y + cNode.hitbox.height / 2) + "\" x2=\""

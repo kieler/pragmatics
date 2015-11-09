@@ -10,22 +10,24 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klay.layered.compaction;
+package de.cau.cs.kieler.klay.layered.compaction.oned;
 
 import java.util.List;
 
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 
 /**
  * Internal representation of a node in the constraint graph.
  * 
- * For instance his class is extended to handle specific {@link LGraphElement}s.
+ * For instance, this class is extended to handle specific {@link LGraphElement
+ * de.cau.cs.kieler.klay.layered.graph.LGraphElement}s.
  * 
- * @see CLNode
- * @see CLEdge
+ * @see de.cau.cs.kieler.klay.layered.intermediate.compaction.CLNode CLNode
+ * @see de.cau.cs.kieler.klay.layered.intermediate.compaction.CLEdge CLEdge
  * @author dag
  */
 public abstract class CNode {
@@ -57,49 +59,41 @@ public abstract class CNode {
     /**
      * Returns the required horizontal spacing to the specified {@link CNode}.
      * 
-     * @param other
-     *            the other {@link CNode}
      * @return the spacing
      */
-    public abstract double getHorizontalSpacing(final CNode other);
+    public abstract double getHorizontalSpacing();
     
     /**
      * Returns the required vertical spacing to the specified {@link CNode}.
      * 
-     * @param other
-     *            the other {@link CNode}
      * @return the spacing
      */
-    public double getVerticalSpacing(final CNode other) {
-        // returning edge spacing if an edge is involved, otherwise object spacing
-        return Math.min(getSingleVerticalSpacing(), other.getSingleVerticalSpacing());
-    }
+    public abstract double getVerticalSpacing();
 
     /**
-     * Returns the vertical spacing that is associated with the contained {@link LGraphElement}.
-     * 
-     * @return the spacing
-     */
-    public abstract double getSingleHorizontalSpacing();
-    
-    /**
-     * Returns the vertical spacing that is associated with the contained {@link LGraphElement}.
-     * 
-     * @return the spacing
-     */
-    public abstract double getSingleVerticalSpacing();
-
-    /**
-     * Updates the leftmost possible starting position of this {@link CNode} according to
-     * the constraint that outgoingCNode imposes on this {@link CNode}.
+     * Updates the leftmost possible starting position of this {@link CNode} according to the
+     * constraint that outgoingCNode imposes on this {@link CNode}.
      * 
      * @param outgoingCNode
-     *            the {@link CNode} imposing a constraint on this one
+     *            the {@link CNode} imposing a constraint on this one.
+     * @param spacingHandler
+     *            {@link ISpacingsHandler} that can be queried for the desired spacing between a
+     *            pair of nodes.
+     * @param compactionDirection
+     *            the actual, untransformed direction of the currently performed compaction.
      */
-    public void updateStartPos(final CNode outgoingCNode) {
-        // determine if object or edge spacing should be used
-        double spacing = getHorizontalSpacing(outgoingCNode);
+    protected void updateStartPos(final CNode outgoingCNode,
+            final ISpacingsHandler<? super CNode> spacingHandler,
+            final Direction compactionDirection) {
 
+        // determine the required spacing
+        double spacing;
+        if (compactionDirection.isHorizontal()) {
+            spacing = spacingHandler.getHorizontalSpacing(this, outgoingCNode);
+        } else {
+            spacing = spacingHandler.getVerticalSpacing(this, outgoingCNode);
+        }
+        
         // calculating rightmost position according to constraints
         double newStartPos =
                 Math.max(startPos, outgoingCNode.startPos + outgoingCNode.hitbox.width + spacing);
@@ -147,4 +141,19 @@ public abstract class CNode {
      * @return the position
      */
     public abstract double getElementPosition();
+    
+    /**
+     * @return an svg representation of this {@link CNode} to the output for debugging.
+     */
+    protected String getDebugSVG() {
+        StringBuffer sb = new StringBuffer();
+        sb.append("<rect x=\"" + this.hitbox.x + "\" y=\"" + this.hitbox.y + "\" width=\""
+                + Math.max(1, this.hitbox.width) + "\" height=\"" + Math.max(1, this.hitbox.height)
+                + "\" fill=\"" + (this.reposition ? "green" : "orange")
+                + "\" stroke=\"black\" opacity=\"0.5\"/>");
+        sb.append("<text x=\"" + (this.hitbox.x + 2) + "\" y=\""
+                + (this.hitbox.y + 2 * 2 * 2 + 2 + 1) + "\">" + "(" + Math.round(this.hitbox.x)
+                + ", " + Math.round(this.hitbox.y) + ")\n" + this + "</text>");
+        return sb.toString();
+    }
 }

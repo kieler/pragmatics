@@ -15,8 +15,8 @@ package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.klay.layered.compaction.CNode;
-import de.cau.cs.kieler.klay.layered.compaction.CompareFuzzy;
+import de.cau.cs.kieler.klay.layered.compaction.oned.CNode;
+import de.cau.cs.kieler.klay.layered.compaction.oned.CompareFuzzy;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 
 /**
