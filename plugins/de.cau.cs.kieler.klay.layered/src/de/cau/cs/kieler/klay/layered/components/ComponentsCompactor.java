@@ -46,21 +46,41 @@ import de.cau.cs.kieler.klay.layered.graph.LShape;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
+ * Contains implementations of the {@link IConnectedComponents} and {@link IComponent} interfaces
+ * for {@link LGraph}s. As a consequence allows to compact a set of components using one dimensional
+ * compaction.
+ * 
  * @author uru
- *
+ * 
+ * @see OneDimensionalComponentsCompaction
  */
-public class ComponentGroupsCompactor implements IComponentsCompactor {
+public class ComponentsCompactor {
 
+    /** Instance of the compactor we use. */
     private OneDimensionalComponentsCompaction<LNode, LEdge> compactor;
+    /** The size of the graph before compaction. */
     private KVector originalGraphSize;
     
+    /** The offset after compaction has been applied. */
     private KVector yetAnotherOffset;
+    /** The graph size after compaciton. */
     private KVector compactedGraphSize;
     
+    /** Epsilon for double comparisons. */
+    private static final double EPSILON = 0.0001;
+
+    // ------------------------------------------------------------------------------------------------
+    //                                          public API
+    // ------------------------------------------------------------------------------------------------
+    
     /**
-     * 
+     * @param graphs
+     *            the components to be compacted
+     * @param originalGraphsSize
+     *            the size of the overall graph as it is currently
+     * @param spacing
+     *            the desired spacing to be preserved between any pair of components
      */
-    @Override
     public void compact(final List<LGraph> graphs, final KVector originalGraphsSize,
             final double spacing) {
 
@@ -91,18 +111,11 @@ public class ComponentGroupsCompactor implements IComponentsCompactor {
             for (LNode n : cc.getNodes()) {
                 
                 if (n.getType() == NodeType.EXTERNAL_PORT) {
-                    
-                    KVector newPos =
-                            getExternalPortPosition(n.getPosition(),
-                                    n.getProperty(InternalProperties.EXT_PORT_SIDE));
+
+                    KVector newPos = getExternalPortPosition(n.getPosition(), 
+                            n.getProperty(InternalProperties.EXT_PORT_SIDE));
                     
                     n.getPosition().reset().add(newPos);
-                    
-//                    yetAnotherOffset.x = Math.min(yetAnotherOffset.x, n.getPosition().x);
-//                    yetAnotherOffset.y = Math.min(yetAnotherOffset.y, n.getPosition().y);
-//                    
-//                    compactedGraphSize.x = Math.max(compactedGraphSize.x, n.getPosition().x);
-//                    compactedGraphSize.y = Math.max(compactedGraphSize.y, n.getPosition().y);
                 }
             }
         }
@@ -115,10 +128,10 @@ public class ComponentGroupsCompactor implements IComponentsCompactor {
                 vc.add(e.getTarget().getAbsoluteAnchor());
                 
                 vc.stream().reduce((l, c) -> {
-                    if (DoubleMath.fuzzyEquals(l.x, c.x, 0.0001)) {
+                    if (DoubleMath.fuzzyEquals(l.x, c.x, EPSILON)) {
                         yetAnotherOffset.x = Math.min(yetAnotherOffset.x, l.x);
                         compactedGraphSize.x = Math.max(compactedGraphSize.x, l.x);
-                    } else if (DoubleMath.fuzzyEquals(l.y, c.y, 0.0001)) {
+                    } else if (DoubleMath.fuzzyEquals(l.y, c.y, EPSILON)) {
                         yetAnotherOffset.y = Math.min(yetAnotherOffset.y, l.y);
                         compactedGraphSize.y = Math.max(compactedGraphSize.y, l.y);
                     }
@@ -129,12 +142,12 @@ public class ComponentGroupsCompactor implements IComponentsCompactor {
         
         yetAnotherOffset.negate();
         compactedGraphSize.add(yetAnotherOffset);
-        
-        System.out.println(yetAnotherOffset);
-        System.out.println(compactedGraphSize);
-        
     }
     
+    /**
+     * @return the offset by which each component has to be shifted after compaction such that the
+     *         top-left-most point is (0, 0).
+     */
     public KVector getOffset() {
         return yetAnotherOffset;
     }
@@ -145,6 +158,10 @@ public class ComponentGroupsCompactor implements IComponentsCompactor {
     public KVector getGraphSize() {
         return compactedGraphSize;
     }
+    
+    // ------------------------------------------------------------------------------------------------
+    //                                          private API
+    // ------------------------------------------------------------------------------------------------
     
     private KVector getExternalPortPosition(final KVector pos, final PortSide ps) {
         switch (ps) {
@@ -362,7 +379,7 @@ public class ComponentGroupsCompactor implements IComponentsCompactor {
             LEdge edge = exEdge.getEdge();
             List<Point> pts = Lists.newLinkedList();
 
-            // TODO discuss this ... in klay the external ports to not reach "all the way" yet
+            // TODO discuss this ... in klay the external ports do not reach "all the way" yet
 
             KVector s = edge.getSource().getAbsoluteAnchor();
             if (exEdge.externalPort == edge.getSource()) {
