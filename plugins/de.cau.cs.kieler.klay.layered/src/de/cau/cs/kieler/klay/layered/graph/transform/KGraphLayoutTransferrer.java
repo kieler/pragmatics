@@ -254,6 +254,8 @@ class KGraphLayoutTransferrer {
             
             // The node's insets need to be subtracted since edges going into the node's bowels are
             // relative to the top left corner + insets
+            // TODO This line assumes that for a compound node, the insets computed for its LGraph and
+            //      for its representing LNode are the same, which doesn't always seem to be the case
             LInsets sourceInsets = sourcePort.getNode().getInsets();
             sourcePoint.add(-sourceInsets.left, -sourceInsets.top);
             
