@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -33,6 +35,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.labels.LabelManagementOptions;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -292,6 +295,14 @@ class KGraphImporter {
         lgraph.copyProperties(parentLayout);
         if (lgraph.getProperty(LayoutOptions.DIRECTION) == Direction.UNDEFINED) {
             lgraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
+        }
+        
+        // The root may have a label manager installed
+        if (lgraph.getProperty(LabelManagementOptions.LABEL_MANAGER) == null) {
+            KGraphElement root = (KGraphElement) EcoreUtil.getRootContainer(kgraph);
+            KLayoutData layoutData = root.getData(KLayoutData.class);
+            lgraph.setProperty(LabelManagementOptions.LABEL_MANAGER,
+                    layoutData.getProperty(LabelManagementOptions.LABEL_MANAGER));
         }
         
         // Remember the KGraph parent the LGraph was created from

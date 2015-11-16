@@ -318,6 +318,28 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.SplineLengthAnalysis"
+            description="The minimum, average, and maximum spline length and its variance."
+            id="de.cau.cs.kieler.kiml.grana.splineLength"
+            name="Spline Length">
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
+         <component
+               name="Variance">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
             class="de.cau.cs.kieler.kiml.grana.analyses.HyperedgeCrossingsAnalysis"
             description="The number of hyperedge crossings."
             id="de.cau.cs.kieler.kiml.grana.hyperedgeCrossings"
@@ -356,6 +378,25 @@
          </component>
          <component
                name="Product">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.EdgeLabelWidthAnalysis"
+            description="Minimum, maximum, and average width of labels."
+            id="de.cau.cs.kieler.kiml.grana.label.edge.width"
+            name="Edge Label Width">
+         <component
+               abbreviation="Min"
+               name="Minimum Width">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum Width">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
          </component>
       </analysis>
       <analysis
