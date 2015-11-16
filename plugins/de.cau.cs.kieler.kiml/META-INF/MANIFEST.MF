@@ -19,7 +19,8 @@ Export-Package: de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.util,
  de.cau.cs.kieler.kiml.util.adapters,
  de.cau.cs.kieler.kiml.util.labelspacing,
- de.cau.cs.kieler.kiml.util.nodespacing
+ de.cau.cs.kieler.kiml.util.nodespacing,
+ de.cau.cs.kieler.kiml.util.selection
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
