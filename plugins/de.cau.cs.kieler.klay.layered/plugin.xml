@@ -200,6 +200,9 @@
                default="NONE"
                option="de.cau.cs.kieler.klay.layered.postCompaction">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.components.compact">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -514,6 +517,19 @@
             upperBound="100">
          <dependency
                option="de.cau.cs.kieler.klay.layered.nodePromotion">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Tries to further compact components (disconnected sub-graphs)."
+            id="de.cau.cs.kieler.klay.layered.components.compact"
+            name="Compact Components"
+            type="boolean">
+         <dependency
+               option="de.cau.cs.kieler.separateConnComp"
+               value="true">
          </dependency>
       </layoutOption>
    </extension>

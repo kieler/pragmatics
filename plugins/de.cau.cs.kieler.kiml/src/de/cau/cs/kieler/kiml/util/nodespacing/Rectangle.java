@@ -13,6 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.util.nodespacing;
 
+
+import java.util.Objects;
+
+import de.cau.cs.kieler.core.math.KVector;
+
 /**
  * Class resembles basic functionality of {@link java.awt.geom.Rectangle2D}. This way it is possible
  * to avoid awt dependencies in klay layered's code.
@@ -86,6 +91,13 @@ public class Rectangle {
     }
 
     /**
+     * @return the (x,y) position of this rectangle.
+     */
+    public KVector getPosition() {
+        return new KVector(x, y);
+    }
+    
+    /**
      * Unions the receiver and the given <code>Rectangle</code> objects and puts the result into the
      * receiver.
      * 
@@ -118,4 +130,24 @@ public class Rectangle {
         return "Rect[x=" + x + ",y=" + y + ",w=" + width + ",h=" + height + "]";
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null || !(obj instanceof Rectangle)) {
+            return false;
+        }
+        Rectangle other = (Rectangle) obj;
+        return Objects.equals(x, other.x) && Objects.equals(y, other.y)
+                && Objects.equals(width, other.width) && Objects.equals(height, other.height);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, width, height);
+    }
 }

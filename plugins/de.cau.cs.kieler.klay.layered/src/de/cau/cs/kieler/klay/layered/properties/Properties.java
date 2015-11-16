@@ -254,6 +254,13 @@ public final class Properties {
             new Property<GraphCompactionStrategy>(
                     "de.cau.cs.kieler.klay.layered.postCompaction",
                     GraphCompactionStrategy.NONE);
+    
+    /**
+     * Whether the algorithm should try to further compact connected components after they 
+     * have initially been placed by some construction strategy.
+     */
+    public static final IProperty<Boolean> COMPACT_COMPONENTS = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.components.compact", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
