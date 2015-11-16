@@ -206,6 +206,8 @@ class KGraphLayoutTransferrer {
                 for (LLabel label : lport.getLabels()) {
                     KLabel klabel = (KLabel) label.getProperty(InternalProperties.ORIGIN);
                     KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
+                    klabelLayout.setWidth((float) label.getSize().x);
+                    klabelLayout.setHeight((float) label.getSize().y);
                     klabelLayout.applyVector(label.getPosition());
                 }
             }

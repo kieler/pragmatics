@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.List;
+import java.util.Set;
+
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.labels.ILabelManager;
@@ -24,7 +27,9 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
@@ -47,31 +52,31 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 public final class LabelManagementProcessor implements ILayoutProcessor {
 
     /** Minimum width for shortened edge labels. */
-    private static final double MIN_WIDTH = 40;
-    
-    
+    private static final double MIN_WIDTH_EDGE_LABELS = 60;
+    /** Minimum width for shortened port labels. */
+    private static final double MIN_WIDTH_PORT_LABELS = 20;
+
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Label management", 1);
-        
+
         // This processor should actually not be run in the first place if there is no label manager
         // set on the graph, but let's be sure anyway
         ILabelManager labelManager = layeredGraph.getProperty(LabelManagementOptions.LABEL_MANAGER);
         if (labelManager != null) {
             double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
-            
+
             // Iterate over all layers and call our nifty code
             for (Layer layer : layeredGraph) {
                 manageLabels(layer, labelManager, labelSpacing);
             }
         }
-        
+
         monitor.done();
     }
-    
-    
+
     /**
      * Iterates over the nodes labels and invokes the label manager on label dummy nodes. The target
      * width for labels is the width of the widest non-dummy node.
@@ -85,40 +90,55 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
      */
     private void manageLabels(final Layer layer, final ILabelManager labelManager,
             final double labelSpacing) {
-        
+
         assert labelManager != null : "labelManager is null";
-        
-        double maxWidth = Math.max(MIN_WIDTH, findMaxNonDummyNodeWidth(layer));
-        
+
+        double maxWidth = Math.max(MIN_WIDTH_EDGE_LABELS, findMaxNonDummyNodeWidth(layer));
+
         // Apply the maximum width to all label dummy nodes
-        for (LNode labelDummy : layer) {
-            if (labelDummy.getType() == NodeType.LABEL) {
-                LEdge edge = labelDummy.getConnectedEdges().iterator().next();
-                double edgeThickness = edge.getProperty(LayoutOptions.THICKNESS).doubleValue();
+        for (LNode layerNode : layer) {
+            switch (layerNode.getType()) {
+            case NORMAL:
+                // Handle ports
+                List<LPort> ports = layerNode.getPorts();
+                for (LPort port : ports) {
+                    doManageLabels(
+                            labelManager, port.getLabels(), MIN_WIDTH_PORT_LABELS, null, 0);
+                }
+
+                // Selfloop splines
+                final List<ConnectedSelfLoopComponent> components =
+                        layerNode.getProperty(InternalProperties.SPLINE_SELFLOOP_COMPONENTS);
                 
-                final KVector newDummySize = new KVector(0.0, edgeThickness);
-                
-                Iterable<LLabel> labels = labelDummy.getProperty(InternalProperties.REPRESENTED_LABELS);
-                for (LLabel label : labels) {
-                    // If the label has an origin, call the label size modifier
-                    Object origin = label.getProperty(InternalProperties.ORIGIN);
-                    if (origin != null) {
-                        KVector newSize = labelManager.resizeLabelToWidth(origin, maxWidth);
-                        
-                        if (newSize != null) {
-                            label.getSize().x = newSize.x;
-                            label.getSize().y = newSize.y;
-                        }
+                for (ConnectedSelfLoopComponent component : components) {
+                    Set<LEdge> edges = component.getEdges();
+                    for (LEdge edge : edges) {
+                        doManageLabels(
+                                labelManager, edge.getLabels(), maxWidth, null, labelSpacing);
+
                     }
-                    
-                    newDummySize.x = Math.max(newDummySize.x, label.getSize().x);
-                    newDummySize.y += label.getSize().y + labelSpacing;
                 }
                 
+                break;
+
+            case LABEL:
+                LEdge edge = layerNode.getConnectedEdges().iterator().next();
+                double edgeThickness = edge.getProperty(LayoutOptions.THICKNESS).doubleValue();
+
+                KVector newDummySize = new KVector(0.0, edgeThickness);
+
+                Iterable<LLabel> labels = layerNode.getProperty(InternalProperties.REPRESENTED_LABELS);
+
+                newDummySize = doManageLabels(
+                        labelManager, labels, maxWidth, newDummySize, labelSpacing);
+
                 // Apply new dummy node size (we don't bother with the ports here since they will be
                 // meddled with later by the LabelSideSelector anyway)
-                labelDummy.getSize().x = newDummySize.x;
-                labelDummy.getSize().y = newDummySize.y;
+                layerNode.getSize().x = newDummySize.x;
+                layerNode.getSize().y = newDummySize.y;
+                
+                break;
+
             }
         }
     }
@@ -132,14 +152,55 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
      */
     private double findMaxNonDummyNodeWidth(final Layer layer) {
         double maxWidth = 0.0;
-        
+
         for (LNode node : layer) {
             if (node.getType() == NodeType.NORMAL) {
                 maxWidth = Math.max(maxWidth, node.getSize().x);
             }
         }
-        
+
         return maxWidth;
     }
-    
+
+    /**
+     * Manage all the labels according to the labelManager and change the labels size.
+     * 
+     * @param labelManager
+     *            the label manager used to manage labels.
+     * @param labels
+     *            the labels to be passed to the label manager.
+     * @param targetWidth
+     *            the target width.
+     * @param newDummySize
+     *            the new bounding box for the shortened labels. This will normally be {@code null}
+     *            except for when this method is called multiple times for the same bounding box.
+     * @param labelSpacing
+     *            the label spacing.
+     * @return the bounding box passed as {@code newDummySize} or a new size if that was
+     *         {@code null}.
+     */
+    private KVector doManageLabels(final ILabelManager labelManager, final Iterable<LLabel> labels,
+            final double targetWidth, final KVector newDummySize, final double labelSpacing) {
+        
+        for (LLabel label : labels) {
+            // If the label has an origin, call the label size modifier
+            Object origin = label.getProperty(InternalProperties.ORIGIN);
+            if (origin != null) {
+                KVector newSize = labelManager.manageLabelSize(origin, targetWidth);
+
+                if (newSize != null) {
+                    label.getSize().x = newSize.x;
+                    label.getSize().y = newSize.y;
+                }
+            }
+            
+            if (newDummySize != null) {
+                newDummySize.x = Math.max(newDummySize.x, label.getSize().x);
+                newDummySize.y += label.getSize().y + labelSpacing;
+            }
+        }
+        
+        return newDummySize;
+    }
+
 }
