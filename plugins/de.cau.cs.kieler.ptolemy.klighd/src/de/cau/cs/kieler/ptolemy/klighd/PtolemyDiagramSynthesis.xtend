@@ -9,15 +9,18 @@
  *     + Real-Time and Embedded Systems Group
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.ptolemy.klighd
 
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
+import de.cau.cs.kieler.kiml.labels.LabelManagementOptions
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy
 import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.SynthesisOption
+import de.cau.cs.kieler.klighd.labels.ConditionLabelManager
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsExtractor
@@ -27,6 +30,9 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualizatio
 import org.ptolemy.moml.DocumentRoot
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.*
+import com.google.common.base.Predicates
+import de.cau.cs.kieler.klighd.labels.EmfContainerCondition
+import de.cau.cs.kieler.core.kgraph.KPort
 
 /**
  * Synthesis for turning Ptolemy models into KGraphs.
@@ -42,8 +48,12 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         "Comments", true)
     public static val SynthesisOption SHOW_RELATIONS = SynthesisOption::createCheckOption(
         "Relations", false)
-    public static val SynthesisOption SHOW_PORT_LABELS = SynthesisOption::createCheckOption(
-        "Port Labels", false)
+    public static val SynthesisOption SHOW_PORT_LABELS = SynthesisOption::createChoiceOption(
+        "Show Port Labels", ImmutableList::of(
+            PortLabelDisplayStyle.ALL.toString(),
+            PortLabelDisplayStyle.SELECTED_NODE.toString(),
+            PortLabelDisplayStyle.NONE.toString()),
+        PortLabelDisplayStyle.NONE.toString())
     public static val SynthesisOption SHOW_PROPERTIES = SynthesisOption::createCheckOption(
         "Parameters", true)
     public static val SynthesisOption SHOW_DIRECTORS = SynthesisOption::createCheckOption(
@@ -62,10 +72,9 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
      * This class can then be used to retrieve the option values.
      */
     public static class Options {
-        
         public var boolean comments
         public var boolean relations
-        public var boolean portLabels
+        public var PortLabelDisplayStyle portLabels
         public var boolean properties
         public var boolean directors
         public var boolean attachComments
@@ -75,7 +84,8 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         def capture(PtolemyDiagramSynthesis s) {
             comments = s.getBooleanValue(SHOW_COMMENTS)
             relations = s.getBooleanValue(SHOW_RELATIONS)
-            portLabels = s.getBooleanValue(SHOW_PORT_LABELS)
+            portLabels = PortLabelDisplayStyle.fromDisplayString(
+                s.getObjectValue(SHOW_PORT_LABELS).toString())
             properties = s.getBooleanValue(SHOW_PROPERTIES)
             directors = s.getBooleanValue(SHOW_DIRECTORS)
             attachComments = s.getBooleanValue(COMMENT_ATTACHMENT_HEURISTIC)
@@ -94,7 +104,6 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     
    
     override transform(DocumentRoot model) {
-        
         // Capture options
         options.capture(this)
         
@@ -111,6 +120,11 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         // know the node sizes only after the visualization
         if (options.comments) {
             commentsExtractor.attachComments(options.attachComments)
+        }
+        if(SHOW_PORT_LABELS.objectValue.equals("Selected Node")){
+            val labelManager = new ConditionLabelManager(
+                null, Predicates.not(new EmfContainerCondition(typeof(KPort))), true)
+            kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager)
         }
         
         return kgraph

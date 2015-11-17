@@ -21,6 +21,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * A simple graph placer that places components into rows, trying to make the result fit a configurable
@@ -114,7 +115,9 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
                 ypos += highestBox + spacing;
                 highestBox = 0;
             }
-            moveGraph(target, graph, xpos, ypos);
+            KVector offset = graph.getOffset();
+            offsetGraph(graph, xpos + offset.x, ypos + offset.y);
+            offset.reset();
             broadestRow = Math.max(broadestRow, xpos + size.x);
             highestBox = Math.max(highestBox, size.y);
             xpos += size.x + spacing;
@@ -122,6 +125,26 @@ final class SimpleRowGraphPlacer extends AbstractGraphPlacer {
         
         target.getSize().x = broadestRow;
         target.getSize().y = ypos + highestBox;
+        
+        double regularSpacing = target.getProperty(InternalProperties.SPACING).doubleValue();
+        
+        // if compaction is desired, do so!
+        if (firstComponent.getProperty(Properties.COMPACT_COMPONENTS)) {
+            ComponentsCompactor compactor = new ComponentsCompactor();
+            compactor.compact(components, target.getSize(), regularSpacing);
+    
+            // the compaction algorithm places components absolutely,
+            // therefore we have to use the final drawing's offset
+            for (LGraph h : components) {
+                h.getOffset().reset().add(compactor.getOffset());
+            }
+        
+            // set the new graph size
+            target.getSize().reset().add(compactor.getGraphSize());
+        }
+        
+        // finally move the components to the combined graph
+        moveGraphs(target, components, 0, 0);
     }
 
 }

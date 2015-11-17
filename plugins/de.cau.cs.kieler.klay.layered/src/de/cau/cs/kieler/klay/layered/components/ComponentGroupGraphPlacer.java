@@ -38,6 +38,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * A graph placer that tries to place the components of a graph with taking connections to external
@@ -100,7 +101,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         for (ComponentGroup group : componentGroups) {
             // Place the components
             KVector groupSize = placeComponents(group, spacing);
-            moveGraphs(target, group.getComponents(), offset.x, offset.y);
+            offsetGraphs(group.getComponents(), offset.x, offset.y);
             
             // Compute the new offset
             offset.x += groupSize.x;
@@ -111,6 +112,26 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         // on the right and bottom sides which we need to subtract at this point)
         target.getSize().x = offset.x - spacing;
         target.getSize().y = offset.y - spacing;
+        
+        // if compaction is desired, do so!
+        if (firstComponent.getProperty(Properties.COMPACT_COMPONENTS)) {
+            ComponentsCompactor compactor = new ComponentsCompactor();
+            compactor.compact(components, target.getSize(), spacing);
+    
+            // the compaction algorithm places components absolutely,
+            // therefore we have to use the final drawing's offset
+            for (LGraph h : components) {
+                h.getOffset().reset().add(compactor.getOffset());
+            }
+            
+            // set the new graph size
+            target.getSize().reset().add(compactor.getGraphSize());
+        }
+        
+        // finally move the components to the combined graph
+        for (ComponentGroup group : componentGroups) {
+            moveGraphs(target, group.getComponents(), 0, 0);
+        }
     }
     
     

@@ -21,7 +21,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
-import de.cau.cs.kieler.klay.layered.compaction.CNode;
+import de.cau.cs.kieler.klay.layered.compaction.oned.CNode;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -46,7 +46,7 @@ public final class CLEdge extends CNode {
     /** junction points affected by manipulation of this segment. */
     private KVectorChain juctionPoints;
     /** referring to the {@link LEdge}s this segment is a part of. */
-    private Set<LEdge> originalLEdges = Sets.newHashSet();
+    public Set<LEdge> originalLEdges = Sets.newHashSet(); // SUPPRESS CHECKSTYLE VisibilityModifier
 
     /**
      * The constructor adds a {@link VerticalSegment} to the list and appends its bend and junction
@@ -75,8 +75,9 @@ public final class CLEdge extends CNode {
 
     /**
      * Adds an intersecting {@link VerticalSegment} to the {@link CLEdge} and merges the hitboxes.
-     * The {@link CompactionLock} is set for selfloops and {@link Direction}s that fewer different
-     * {@link LPort}s are connected in to avoid prolonging more {@link LEdge}s than shortening.
+     * The {@link de.cau.cs.kieler.klay.layered.compaction.oned.CompactionLock CompactionLock} is set for
+     * selfloops and {@link Direction}s that fewer different {@link LPort}s are connected in to
+     * avoid prolonging more {@link LEdge}s than shortening.
      * 
      * @param vSeg
      *            the single vertical segment
@@ -139,38 +140,31 @@ public final class CLEdge extends CNode {
      * {@inheritDoc}
      */
     @Override
-    public double getSingleHorizontalSpacing() {
-        return horizontalSpacing;
+    public double getHorizontalSpacing() {
+      return horizontalSpacing;
     }
     
     /**
      * {@inheritDoc}
      */
     @Override
-    public double getSingleVerticalSpacing() {
+    public double getVerticalSpacing() {
         return verticalSpacing;
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public double getHorizontalSpacing(final CNode other) {
-        
-      //joining north/south segments that belong to the same edge by setting their spacing to 0
-      if (parentNode != null && other.parentNode != null
-              && (other instanceof CLEdge)
-              // this might seem quite expensive but in most cases the sets contain only one element
-              && !Sets.intersection(originalLEdges, ((CLEdge) other).originalLEdges).isEmpty()) {
-          return 0;
-      }
-
-      // returning edge spacing if an edge is involved, otherwise object spacing
-      return Math.min(getSingleHorizontalSpacing(), other.getSingleHorizontalSpacing());
     }
     
     @Override
     public String toString() {
         return originalLEdges.toString();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getDebugSVG() {
+        return "<line x1=\"" + this.hitbox.x + "\" y1=\"" + this.hitbox.y + "\" x2=\""
+                + (this.hitbox.x + this.hitbox.width) + "\" y2=\""
+                + (this.hitbox.y + this.hitbox.height) + "\" stroke=\""
+                + (this.reposition ? "blue" : "red") + "\" stroke-width=\"3px\"/>";
     }
 }

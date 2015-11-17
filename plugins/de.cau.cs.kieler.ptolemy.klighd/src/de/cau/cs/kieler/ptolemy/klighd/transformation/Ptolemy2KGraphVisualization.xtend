@@ -9,6 +9,7 @@
  *     + Real-Time and Embedded Systems Group
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
@@ -25,7 +26,6 @@ import de.cau.cs.kieler.core.krendering.Trigger
 import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
 import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.core.math.KVector
-import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import de.cau.cs.kieler.kiml.options.Direction
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
@@ -41,6 +41,8 @@ import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption
 import de.cau.cs.kieler.klighd.util.KlighdProperties
+import de.cau.cs.kieler.ptolemy.klighd.PortLabelDisplayStyle
+import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.Options
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
@@ -51,7 +53,7 @@ import java.util.EnumSet
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
-import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.Options
+import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -76,11 +78,9 @@ class Ptolemy2KGraphVisualization {
     /** Utility class that provides renderings. */
     @Inject extension KRenderingFigureProvider
     
-    /** Whether Graphviz is available to be used or not. */
-    val isGraphvizAvailable = GraphvizTool::getDotExecutable(false) != null
-    
     /** User-specified diagram synthesis options. */
     private var Options options
+    
     
     /**
      * Annotates the given KGraph with the information necessary to render it as a Ptolemy model.
@@ -187,6 +187,9 @@ class Ptolemy2KGraphVisualization {
         DiagramSyntheses.addRenderingWithStandardSelectionWrapper(node, collapsedRendering) => [
             it.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
             it.addDoubleClickAction(KlighdConstants::ACTION_COLLAPSE_EXPAND)
+            if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+                it.addSingleClickAction(FocusAndContextAction.ID)
+            }
         ];
         
         //layout.setLayoutSize(collapsedRendering)
@@ -196,6 +199,9 @@ class Ptolemy2KGraphVisualization {
         DiagramSyntheses.addRenderingWithStandardSelectionWrapper(node, expandedRendering) => [
             it.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
             it.addDoubleClickAction(KlighdConstants::ACTION_COLLAPSE_EXPAND)
+            if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+                it.addSingleClickAction(FocusAndContextAction.ID)
+            }
         ];
     }
     
@@ -219,12 +225,18 @@ class Ptolemy2KGraphVisualization {
             val collapsedRendering = createStateNodeRendering(node)
             collapsedRendering.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
             collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
+            if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+                collapsedRendering.addSingleClickAction(FocusAndContextAction.ID)
+            }
             node.data += collapsedRendering
             
             // Create the rendering for the expanded version of this node
             val expandedRendering = createExpandedCompoundNodeRendering(node, options.compoundNodeAlpha)
             expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
             expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
+            if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+                expandedRendering.addSingleClickAction(FocusAndContextAction.ID)
+            }
             node.data += expandedRendering
         }
     }
@@ -241,7 +253,11 @@ class Ptolemy2KGraphVisualization {
         node.labels.clear()
         
         // Create the rendering
-        node.data += createRelationNodeRendering(node)
+        val rendering = createRelationNodeRendering(node)
+        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+            rendering.addSingleClickAction(FocusAndContextAction.ID)
+        }
+        node.data += rendering
         
         // Set size
         layout.height = 10
@@ -298,6 +314,9 @@ class Ptolemy2KGraphVisualization {
         
         // Create the rendering
         val rendering = createParameterNodeRendering(node)
+        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+            rendering.addSingleClickAction(FocusAndContextAction.ID)
+        }
         node.data += rendering
     }
     
@@ -317,6 +336,9 @@ class Ptolemy2KGraphVisualization {
         val className = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
         val value = node.getAnnotationValue(TransformationConstants.VALUE_DISPLAY_MAP.get(className))
         val rendering = createValueDisplayingNodeRendering(node, value ?: "")
+        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+            rendering.addSingleClickAction(FocusAndContextAction.ID)
+        }
         node.data += rendering
     }
     
@@ -335,6 +357,9 @@ class Ptolemy2KGraphVisualization {
         layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
         
         val rendering = createModalModelPortRendering(node)
+        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+            rendering.addSingleClickAction(FocusAndContextAction.ID)
+        }
         node.data += rendering
         
         layout.height = 20
@@ -358,7 +383,12 @@ class Ptolemy2KGraphVisualization {
             case "ptolemy.actor.lib.Accumulator" : createAccumulatorNodeRendering(node)
             default : createRegularNodeRendering(node)
         }
-        DiagramSyntheses.addRenderingWithStandardSelectionWrapper(node, rendering);
+        
+        val selRendering = DiagramSyntheses.addRenderingWithStandardSelectionWrapper(node, rendering);
+        
+        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+            selRendering.addSingleClickAction(FocusAndContextAction.ID)
+        }
         
         // Calculate layout size.
         layout.setLayoutSize(rendering)
@@ -453,8 +483,8 @@ class Ptolemy2KGraphVisualization {
             }
         }
         
-        // Remove the port's label
-        if (!options.portLabels) {
+        // Remove the port's label if necessary
+        if (options.portLabels == PortLabelDisplayStyle.NONE) {
             port.labels.clear()
         }
     }
@@ -641,9 +671,9 @@ class Ptolemy2KGraphVisualization {
     def private void setLayoutAlgorithm(KNode node) {
         val layout = node.layout
         // Check if this is a state machine
-        if (node.markedAsStateMachineContainer && isGraphvizAvailable) {
-            layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.graphviz.dot")
-            layout.setProperty(LayoutOptions::DIRECTION, Direction::RIGHT)
+        if (node.markedAsStateMachineContainer) {
+            layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.klay.layered")
+            layout.setProperty(LayoutOptions::EDGE_ROUTING, EdgeRouting::SPLINES)
         } else {
             layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.klay.layered")
             layout.setProperty(LayoutOptions::EDGE_ROUTING, EdgeRouting::ORTHOGONAL)
