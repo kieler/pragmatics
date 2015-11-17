@@ -83,6 +83,7 @@ import de.cau.cs.kieler.klighd.viewers.ContextViewer;
  * @kieler.rating 2015-06-22 proposed yellow
  *
  */
+@SuppressWarnings("restriction")
 public final class DiagramView extends DiagramViewPart implements ISelectionChangedListener {
 
     // -- CONSTANTS --
@@ -221,12 +222,7 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
 
             @Override
             public void run() {
-                if (!isLinkedWithActiveEditor() && controller != null && editor != null) {
-                    controller.activate(editor);
-                    controller.deactivate();
-                } else {
-                    updateDiagram();
-                }
+                updateDiagram();
             }
         };
         refreshAction.setId("refreshAction");
@@ -261,11 +257,7 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
                     IEditorPart newEditor = getViewSite().getPage().getActiveEditor();
                     if (newEditor != null && newEditor != editor) {
                         setEditor(newEditor);
-                    } else if (controller != null) {
-                        controller.activate(editor);
                     }
-                } else if (controller != null) {
-                    controller.deactivate();
                 }
             }
         };
@@ -739,9 +731,6 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
             // Activate new controller
             if (controller != null) {
                 controller.activate(editor);
-                if (!isLinkedWithActiveEditor()) {
-                    controller.deactivate();
-                }
             } else {
                 // Since no controller is active no model message will be displayed
                 updateDiagram();
