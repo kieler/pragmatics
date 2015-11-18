@@ -1143,7 +1143,8 @@ public final class KimlUtil {
      *            an {@link Iterable} of {@link KEdge KEdges} that shall be checked
      * @return an {@link Iterator} visiting the given {@code kedges} and all (transitively)
      *         connected ones.
-     * @deprecated
+     * @deprecated Use {@link #getConnectedElements(KEdge, SelectionIterator, SelectionIterator)} in
+     *             combination with {@link DefaultSelectionIterator}
      */
     public static Iterator<KEdge> getConnectedEdges(final Iterable<KEdge> kedges) {
         return Iterators.concat(
@@ -1167,7 +1168,8 @@ public final class KimlUtil {
      *            the {@link KEdge} check for connected edges
      * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
      *         almost) breadth first search fashion
-     * @deprecated
+     * @deprecated Use {@link #getConnectedElements(KEdge, SelectionIterator, SelectionIterator)} in
+     *             combination with {@link DefaultSelectionIterator}
      */
     public static Iterator<KEdge> getConnectedEdges(final KEdge kedge) {
         // Default behavior should be to not select the ports
@@ -1189,7 +1191,8 @@ public final class KimlUtil {
      *            flag to determine, whether ports should be added to the selection or not
      * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
      *         almost) breadth first search fashion
-     * @deprecated
+     * @deprecated Use {@link #getConnectedElements(KEdge, SelectionIterator, SelectionIterator)} in
+     *             combination with {@link DefaultSelectionIterator}
      */
     public static Iterator<KGraphElement> getConnectedElements(final KEdge kedge,
             final boolean addPorts) {
