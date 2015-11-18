@@ -16,14 +16,16 @@ import java.util.Iterator;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KPort;
 
 /**
- * The default {@link SelectionIterator} for usage in {@link de.cau.cs.kieler.kiml.util.KimlUtil}.
- * The iterator consists of all edges transitively connected to the initial edge. Optionally the
+ * The default {@link SelectionIterator} for usage in
+ * {@link de.cau.cs.kieler.kiml.util.KimlUtil#getConnectedElements KimlUtil.getConnectedElements()}.
+ * The iterator follows all edges transitively connected to the initial edge. Optionally the
  * iterator can also include the corresponding ports in the selection.
  * 
  * @author nbw
@@ -34,21 +36,24 @@ public class DefaultSelectionIterator extends SelectionIterator {
 
     private boolean addPorts;
 
-    private boolean towardsHead;
+    private boolean followEdgeDirection;
 
     /**
      * Creates a new iterator which can optionally include ports in its selection and can be
      * configured to either iterate towards the tail or the head of the selected {@link KEdge}.
      * 
+     * @param edge
+     *            the {@link KEdge} to start with
      * @param addPorts
      *            flag to determine whether {@link KPorts KPort} should be included in the selection
-     * @param towardsHead
-     *            flag wheter the iterator should iterate towards the head or the tail of the edge
+     * @param followEdgeDirection
+     *            flag whether the iterator should iterate towards the head or the tail of the edge
      */
-    public DefaultSelectionIterator(final boolean addPorts, final boolean towardsHead) {
-        super();
+    public DefaultSelectionIterator(final KEdge edge, final boolean addPorts,
+            final boolean followEdgeDirection) {
+        super(edge);
         this.addPorts = addPorts;
-        this.towardsHead = towardsHead;
+        this.followEdgeDirection = followEdgeDirection;
     }
 
     /**
@@ -56,10 +61,13 @@ public class DefaultSelectionIterator extends SelectionIterator {
      */
     @Override
     protected Iterator<? extends KGraphElement> getChildren(final Object object) {
+        // Ensure that the visited set is properly initialized
+        if (visited == null) {
+            visited = Sets.newHashSet();
+        }
         if (object instanceof KEdge) {
-            final KPort port =
-                    towardsHead ? ((KEdge) object).getTargetPort() : ((KEdge) object)
-                            .getSourcePort();
+            KEdge edge = (KEdge) object;
+            final KPort port = followEdgeDirection ? edge.getTargetPort() : edge.getSourcePort();
 
             if (port == null || visited.contains(port)) {
                 // return an empty iterator if no target/source port is configured
@@ -70,17 +78,14 @@ public class DefaultSelectionIterator extends SelectionIterator {
 
             visited.add(port);
 
-            // for each object (kedge) visited by this iterator check all the edges
-            // connected to
+            // for each object (kedge) visited by this iterator check all the edges connected to
             // 'port' and visit those edges satisfying the criterion stated above
-            // this criterion btw. prevents from visiting 'object' immediately again,
-            // as "port == input.getSourcePort()" implies "object != input"
             Iterator<KEdge> resultEdges =
                     Iterators.filter(port.getEdges().iterator(), new Predicate<KEdge>() {
 
                         public boolean apply(final KEdge input) {
-                            return towardsHead ? port == input.getSourcePort() : port == input
-                                    .getTargetPort();
+                            return followEdgeDirection ? port == input.getSourcePort()
+                                    : port == input.getTargetPort();
                         }
                     });
 

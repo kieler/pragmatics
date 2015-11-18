@@ -1143,6 +1143,7 @@ public final class KimlUtil {
      *            an {@link Iterable} of {@link KEdge KEdges} that shall be checked
      * @return an {@link Iterator} visiting the given {@code kedges} and all (transitively)
      *         connected ones.
+     * @deprecated
      */
     public static Iterator<KEdge> getConnectedEdges(final Iterable<KEdge> kedges) {
         return Iterators.concat(
@@ -1166,6 +1167,7 @@ public final class KimlUtil {
      *            the {@link KEdge} check for connected edges
      * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
      *         almost) breadth first search fashion
+     * @deprecated
      */
     public static Iterator<KEdge> getConnectedEdges(final KEdge kedge) {
         // Default behavior should be to not select the ports
@@ -1187,18 +1189,14 @@ public final class KimlUtil {
      *            flag to determine, whether ports should be added to the selection or not
      * @return an {@link Iterator} visiting the given {@code kedge} and all connected edges in a(n
      *         almost) breadth first search fashion
+     * @deprecated
      */
     public static Iterator<KGraphElement> getConnectedElements(final KEdge kedge,
             final boolean addPorts) {
 
-        final SelectionIterator sourceSideIt =
-                addPorts ? new DefaultSelectionIterator(true, false)
-                        : new DefaultSelectionIterator(false, false);
-        
-        final SelectionIterator targetSideIt =
-                addPorts ? new DefaultSelectionIterator(true, true)
-                        : new DefaultSelectionIterator(false, true);
-                
+        final SelectionIterator sourceSideIt = new DefaultSelectionIterator(kedge, addPorts, false);
+        final SelectionIterator targetSideIt = new DefaultSelectionIterator(kedge, addPorts, true);
+
         return getConnectedElements(kedge, sourceSideIt, targetSideIt);
     }
     
@@ -1235,7 +1233,6 @@ public final class KimlUtil {
         if (sourceSideIt != null) {
             // Configure the iterator
             sourceSideIt.attachVisitedSet(visited);
-            sourceSideIt.setRoot(kedge);
         }
 
         // Grab target iterator if edge has a target
@@ -1244,7 +1241,6 @@ public final class KimlUtil {
         if (targetSideIt != null) {
             // Configure the iterator
             targetSideIt.attachVisitedSet(visited);
-            targetSideIt.setRoot(kedge);
         }
 
         // concatenate the source-sidewise and target-sidewise iterators if present ...

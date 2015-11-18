@@ -16,6 +16,7 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.AbstractTreeIterator;
 
+import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KPort;
 
@@ -25,6 +26,7 @@ import de.cau.cs.kieler.core.kgraph.KPort;
  * connected to a selected edge.
  * 
  * @author nbw
+ * @see DefaultSelectionIterator
  */
 public abstract class SelectionIterator extends AbstractTreeIterator<KGraphElement> {
 
@@ -37,38 +39,17 @@ public abstract class SelectionIterator extends AbstractTreeIterator<KGraphEleme
 
     /**
      * Creates a {@link SelectionIterator} which needs to be configured afterwards by adding the set
-     * of visited nodes and the object to work on. The Iterator won't include the starting object.
-     */
-    public SelectionIterator() {
-        super(null, false);
-    }
-
-    /**
-     * Creates a {@link SelectionIterator} which needs to be configured afterwards by adding the set
      * of visited nodes. The iterator won't include the starting object.
      * 
-     * @param object
+     * @param edge
      *            The object to iterate from
      */
-    public SelectionIterator(final KGraphElement object) {
-        super(object, false);
+    public SelectionIterator(final KEdge edge) {
+        super(edge, false);
     }
 
     /**
-     * Creates a {@link SelectionIterator} which needs to be configured afterwards by adding the set
-     * of visited nodes.
-     * 
-     * @param object
-     *            The object to iterate from
-     * @param includeRoot
-     *            Flag whether the initial {@link KGraphElement} should be included in the iterator.
-     */
-    public SelectionIterator(final KGraphElement object, final boolean includeRoot) {
-        super(object, includeRoot);
-    }
-
-    /**
-     * Attach a set of {@link KNodes KNode} to the iterator to be used as a set of visited nodes.
+     * Attach a set of {@link KPort KPorts} to the iterator to be used as a set of visited ports.
      * Can be used to share a set of nodes across multiple iterators (target and source iterator).
      * 
      * @param visitedSet
@@ -76,15 +57,5 @@ public abstract class SelectionIterator extends AbstractTreeIterator<KGraphEleme
      */
     public void attachVisitedSet(final Set<KPort> visitedSet) {
         this.visited = visitedSet;
-    }
-
-    /**
-     * Sets the root element of the iterator.
-     * 
-     * @param kgraphelement
-     *            the new root element of the iterator
-     */
-    public void setRoot(final KGraphElement kgraphelement) {
-        this.object = kgraphelement;
     }
 }
