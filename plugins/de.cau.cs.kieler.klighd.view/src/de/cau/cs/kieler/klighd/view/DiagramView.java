@@ -30,6 +30,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -459,27 +460,18 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
                         .entrySet()) {
                     SynthesisOption option = optionEntry.getKey();
                     Object value = optionEntry.getValue();
-                    String id = Integer.toString(option.getName().hashCode());
-                    IMemento synthesisMemento = null;
-                    for (ISynthesis synthesis : usedSyntheses) {
-                        if (synthesis.getDisplayedSynthesisOptions().contains(option)) {
-                            synthesisMemento = synthesesMementos.get(synthesis);
-                            break;
-                        }
-                    }
-                    if (synthesisMemento != null) {
-                        try {
-                            if (value instanceof Boolean) {
-                                synthesisMemento.putBoolean("b" + id, (Boolean) value);
-                            } else if (value instanceof Integer) {
-                                synthesisMemento.putInteger("i" + id, (Integer) value);
-                            } else if (value instanceof Float) {
-                                synthesisMemento.putFloat("f" + id, (Float) value);
-                            } else if (value instanceof String) {
-                                synthesisMemento.putString("s" + id, (String) value);
+                    if (value != null && !value.equals(option.getInitialValue())) {
+                        String id = "opt" + option.getName().hashCode();
+                        IMemento synthesisMemento = null;
+                        for (ISynthesis synthesis : usedSyntheses) {
+                            if (synthesis.getDisplayedSynthesisOptions().contains(option)) {
+                                synthesisMemento = synthesesMementos.get(synthesis);
+                                break;
                             }
-                        } catch (Exception e) {
-                            // Do nothing, just skip
+                        }
+                        if (synthesisMemento != null) {
+                            synthesisMemento.putString(id,
+                                    SynthesisOptionsPersistence.serialize(option, value));
                         }
                     }
                 }
@@ -492,8 +484,8 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
                 }
             }
         } catch (Exception e) {
-            StatusManager.getManager().handle(new Status(IStatus.WARNING, KlighdViewPlugin.PLUGIN_ID,
-                    e.getMessage(), e.getCause()), StatusManager.LOG);
+            StatusManager.getManager().handle(new Status(IStatus.WARNING,
+                    KlighdViewPlugin.PLUGIN_ID, "Cannot save view state", e), StatusManager.LOG);
         }
     }
 
@@ -546,33 +538,28 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
             IMemento synthesisOptionsMemento = memento.getChild("recentSynthesisOptions");
             if (synthesisOptionsMemento != null) {
                 for (IMemento synthesisOptionMemento : synthesisOptionsMemento.getChildren()) {
-                    ISynthesis synthesis = KlighdDataManager.getInstance()
-                            .getDiagramSynthesisById(synthesisOptionMemento.getType());
-                    if (synthesis != null) {
-                        usedSyntheses.add(synthesis);
-                        HashMap<Integer, SynthesisOption> optionMap =
-                                new HashMap<Integer, SynthesisOption>(
-                                        synthesis.getDisplayedSynthesisOptions().size());
-                        for (SynthesisOption synthesisOption : synthesis
-                                .getDisplayedSynthesisOptions()) {
-                            optionMap.put(synthesisOption.getName().hashCode(), synthesisOption);
-                        }
-                        for (String key : synthesisOptionMemento.getAttributeKeys()) {
-                            SynthesisOption option =
-                                    optionMap.get(Integer.parseInt(key.substring(1)));
-                            if (option != null) {
-                                Object value = null;
-                                if (key.startsWith("b")) {
-                                    value = synthesisOptionMemento.getBoolean(key);
-                                } else if (key.startsWith("i")) {
-                                    value = synthesisOptionMemento.getInteger(key);
-                                } else if (key.startsWith("f")) {
-                                    value = synthesisOptionMemento.getFloat(key);
-                                } else if (key.startsWith("s")) {
-                                    value = synthesisOptionMemento.getString(key);
-                                }
-                                if (value != null) {
-                                    recentSynthesisOptions.put(option, value);
+                    if (synthesisOptionMemento.getChildren().length != 0
+                            || synthesisOptionMemento.getAttributeKeys().length != 0) {
+                        ISynthesis synthesis = KlighdDataManager.getInstance()
+                                .getDiagramSynthesisById(synthesisOptionMemento.getType());
+                        if (synthesis != null) {
+                            usedSyntheses.add(synthesis);
+                            HashMap<String, SynthesisOption> optionMap =
+                                    new HashMap<String, SynthesisOption>(
+                                            synthesis.getDisplayedSynthesisOptions().size());
+                            for (SynthesisOption synthesisOption : synthesis
+                                    .getDisplayedSynthesisOptions()) {
+                                optionMap.put("opt" + synthesisOption.getName().hashCode(),
+                                        synthesisOption);
+                            }
+                            for (String key : synthesisOptionMemento.getAttributeKeys()) {
+                                SynthesisOption option = optionMap.get(key);
+                                if (option != null) {
+                                    Object value = SynthesisOptionsPersistence.parse(option,
+                                            synthesisOptionMemento.getString(key));
+                                    if (value != null) {
+                                        recentSynthesisOptions.put(option, value);
+                                    }
                                 }
                             }
                         }
@@ -597,9 +584,8 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
                 }
             }
         } catch (Exception e) {
-            StatusManager.getManager().handle(
-                    new Status(IStatus.WARNING, KlighdViewPlugin.PLUGIN_ID, e.getMessage(), e),
-                    StatusManager.LOG);
+            StatusManager.getManager().handle(new Status(IStatus.WARNING,
+                    KlighdViewPlugin.PLUGIN_ID, "Cannot load view state", e), StatusManager.LOG);
         }
     }
 
@@ -738,7 +724,7 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
         }
     }
 
-    // -- Model
+    // -- Options
     // -------------------------------------------------------------------------
 
     /**
@@ -748,21 +734,67 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
         if (this.getViewer() != null && this.getViewer().getViewContext() != null) {
             ViewContext viewContext = this.getViewer().getViewContext();
             HashSet<SynthesisOption> allUsedSyntheisOptions = new HashSet<SynthesisOption>();
-            
-            // Save options
-            usedSyntheses.add(viewContext.getDiagramSynthesis());
-            allUsedSyntheisOptions
-                    .addAll(viewContext.getDiagramSynthesis().getDisplayedSynthesisOptions());
+
+            ISynthesis usedRootSynthesis = viewContext.getDiagramSynthesis();
+
+            // Save used syntheses
+            usedSyntheses.add(usedRootSynthesis);
+
+            // Find all available synthesis options for the currently used syntheses
+            allUsedSyntheisOptions.addAll(usedRootSynthesis.getDisplayedSynthesisOptions());
             for (ViewContext childVC : viewContext.getChildViewContexts(true)) {
                 usedSyntheses.add(childVC.getDiagramSynthesis());
                 allUsedSyntheisOptions
                         .addAll(childVC.getDiagramSynthesis().getDisplayedSynthesisOptions());
             }
-            
-            // Save used syntheses
+
+            // Save used options
             for (SynthesisOption option : allUsedSyntheisOptions) {
                 recentSynthesisOptions.put(option, viewContext.getOptionValue(option));
             }
+
+            // Save only the synthesis options of the root synthesis option as default options for
+            // other unconfigured views
+            IPreferenceStore preferenceStore = KlighdViewPlugin.getDefault().getPreferenceStore();
+            String synthesisIDPrefix =
+                    KlighdDataManager.getInstance().getSynthesisID(usedRootSynthesis) + ".";
+            for (SynthesisOption option : usedRootSynthesis.getDisplayedSynthesisOptions()) {
+                if (recentSynthesisOptions.containsKey(option)) {
+                    Object value = recentSynthesisOptions.get(option);
+                    if (value != null && !value.equals(option.getInitialValue())) {
+                        String id =
+                                synthesisIDPrefix + Integer.toString(option.getName().hashCode());
+                        preferenceStore.putValue(id,
+                                SynthesisOptionsPersistence.serialize(option, value));
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Load default options configuration for the given synthesis if the options are locally
+     * unconfigured.
+     * 
+     * @param synthesisID
+     *            the id of the synthesis the options are loaded for.
+     */
+    private synchronized void loadPreferredSynthesisOptions(final String synthesisID) {
+        ISynthesis synthesis = KlighdDataManager.getInstance().getDiagramSynthesisById(synthesisID);
+        // If unconfigured
+        if (!usedSyntheses.contains(synthesis)) {
+            // Load default configuration form preferences
+            IPreferenceStore preferenceStore = KlighdViewPlugin.getDefault().getPreferenceStore();
+            String synthesisIDPrefix = synthesisID + ".";
+            for (SynthesisOption option : synthesis.getDisplayedSynthesisOptions()) {
+                String id = synthesisIDPrefix + Integer.toString(option.getName().hashCode());
+                Object value =
+                        SynthesisOptionsPersistence.parse(option, preferenceStore.getString(id));
+                if (value != null) {
+                    recentSynthesisOptions.put(option, value);
+                }
+            }
+            usedSyntheses.add(synthesis);
         }
     }
 
@@ -878,6 +910,8 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
 
             // Save previous synthesis options to restore later
             storeCurrentSynthesisOptions();
+            // Load preferred synthesis options
+            loadPreferredSynthesisOptions(synthesisID);
 
             // configure options
             properties.configureSynthesisOptionValues(recentSynthesisOptions);
@@ -968,7 +1002,8 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
                         usedController, sourceEditor, true);
             } else {
                 StatusManager.getManager().handle(new Status(IStatus.WARNING,
-                        KlighdViewPlugin.PLUGIN_ID, e.getLocalizedMessage(), e), StatusManager.SHOW);
+                        KlighdViewPlugin.PLUGIN_ID, e.getLocalizedMessage(), e),
+                        StatusManager.SHOW);
             }
 
         }
