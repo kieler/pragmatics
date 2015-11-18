@@ -38,6 +38,6 @@
     return result.id === 'root';
   },
   error_msg: function(result) {
-    return 'Valid graph should be successfullylayouted.\nError was: ' + result.type;
+    return 'Valid graph should be successfully layouted.\nError was: ' + result.type;
   }
 }

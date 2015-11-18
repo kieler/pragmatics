@@ -30,7 +30,7 @@ Tests are configured in ```./src/tests```. For each test, there has to be a .js 
 
 ```javascript
 {
-  // Whether the test should be executed.
+  // Whether the test should be executed (Can be omitted, defaults to true).
   active: true,
   // Name of the test.
   name: 'ValidLayoutTest',

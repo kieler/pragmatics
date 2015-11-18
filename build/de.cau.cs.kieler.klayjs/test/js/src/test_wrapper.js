@@ -4,7 +4,8 @@ if (typeof tests === 'undefined') {
 }
 
 tests.forEach(function(config){
-  if (config.active) {
+  // Execute test if active flag is not present or true.
+  if (typeof config.active === 'undefined' || config.active) {
     // browser context
     if (typeof document !== 'undefined') {
       testInBrowser(config);
@@ -12,19 +13,11 @@ tests.forEach(function(config){
     // nodejs context
     else if (module && module.exports) {
       // Parse cmdline paramters for given context
-      // console.log('before:');
-      // console.log(process.argv);
       var args = process.argv.reduce(function(result, element) {
         var v = element.split('=');
-        // console.log('split:');
-        // console.log(v);
         result[v[0]] = v[1];
         return result;
       }, {});
-      // console.log('after:');
-      // console.log(process.argv);
-      // console.log('args:');
-      // console.log(args);
       switch (args.context) {
         case 'webworker':
           testInWebworker(config);
