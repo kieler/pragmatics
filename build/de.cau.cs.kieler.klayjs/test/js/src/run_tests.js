@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 var reporter = require('nodeunit').reporters.junit;
-reporter.run(['src/webworker'],{
+reporter.run(['src/test_wrapper.js'],{
     output: 'build/test-reports',
     //defaults from node_modules/bin/nodeunit.json
     "error_prefix": "\u001B[31m",

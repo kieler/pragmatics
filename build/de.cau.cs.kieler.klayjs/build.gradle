@@ -94,10 +94,23 @@ task unzipKlayJs(type: Copy, dependsOn: plainjslinker) {
     into 'test/js/src'
 }
 
+task concatenateTestConfigs() {
+    description 'Gathers all javascript test configurations and concatenates them into one temporary file.'
+    ext.headerFile = file('test/js/src/tests_template_header.js')
+    ext.footerFile = file('test/js/src/tests_template_footer.js')
+    ext.tests = fileTree(dir: 'test/js/src/tests', include: '*.js')
+    ext.destFile = new File('test/js/src/tests.js')
+    inputs.files tests + files(headerFile, footerFile)
+    outputs.file destFile
+    doLast {
+        destFile.text = headerFile.getText() + tests.collect{it.getText()}.join(',\n') + footerFile.getText()
+    }
+}
+
 // Testing
 // --------------------------------------------------------
 
-task testBrowser(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
+task testBrowser(type: Exec, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
     group 'KIELER test'
     description 'Tests KlayJs via plain javascript loading inside an html file.'
     workingDir 'test/js'
@@ -105,20 +118,20 @@ task testBrowser(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
     args = ['test']
 }
 
-task testNodejs(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
+task testNodejs(type: Exec, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
     group 'KIELER test'
     description 'Tests KlayJs via nodejs.'
     workingDir 'test/js'
     executable 'node'
-    args = ['src/nodejs/run_tests.js']
+    args = ['src/run_tests.js', 'context=nodejs']
 }
 
-task testWebworker(type: Exec, dependsOn: [npmInstall, unzipKlayJs]) {
+task testWebworker(type: Exec, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
     group 'KIELER test'
     description 'Tests KlayJs via webworker.'
     workingDir 'test/js'
     executable 'node'
-    args = ['src/webworker/run_tests.js']
+    args = ['src/run_tests.js', 'context=webworker']
 }
 
 // Cleanup
@@ -131,6 +144,7 @@ task cleanJs(type: Delete) {
     delete 'test/js/node_modules'
     delete 'test/js/build'
     delete 'test/js/src/klay.js'
+    delete 'test/js/src/tests.js'
 }
 clean.dependsOn cleanJs
 
