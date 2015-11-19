@@ -94,7 +94,7 @@
 
     return valid;
   },
-  error_msg: function(result) {
+  errorMsg: function(result) {
     return 'Positions of nodes and edge bendpoints should remain the same!';
   }
 }

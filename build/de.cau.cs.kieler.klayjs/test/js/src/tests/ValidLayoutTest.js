@@ -37,7 +37,7 @@
   check: function(result) {
     return result.id === 'root';
   },
-  error_msg: function(result) {
+  errorMsg: function(result) {
     return 'Valid graph should be successfully layouted.\nError was: ' + result.type;
   }
 }

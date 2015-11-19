@@ -37,7 +37,7 @@
   check: function(result) {
     return result.type === 'de.cau.cs.kieler.klay.gwt.client.layout.UnsupportedJsonGraphException';
   },
-  error_msg: function(result) {
+  errorMsg: function(result) {
     return 'Invalid graph should not be successful layouted!';
   }
 }

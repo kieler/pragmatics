@@ -1,12 +1,12 @@
 {
   active: true,
-  name: 'SpikeyBeziersLayoutTest',
+  name: 'SpikeyBeziersTest',
   options: {
     "edgeRouting": "SPLINES",
     "thoroughness": 1000,
     "debugMode": true,
     "aspectRatio": 0.2,
-    "intCoordinates": true,
+    "intCoordinates": false,
     "edgeSpacingFactor": 1.2,
     "spacing": 10,
     "direction": "DOWN",
@@ -181,30 +181,20 @@
       "id": "e5"
     }]
   },
-  expected: {
-    e3: {
-      bendPointCount: 14
-    },
-    e4: {
-      bendPointCount: 8
-    },
-    e5: {
-      bendPointCount: 17
-    }
-  },
   check: function(result) {
     if (typeof result.id === 'undefined' || result.id != 'root') {
       return false;
     }
-    var expected = this.expected;
     var valid = true;
     result.edges.forEach(function(edge) {
-      valid &= edge.bendPoints.length == expected[edge.id].bendPointCount;
+      // Each bezier edge curve needs 1 + (3 * n) control points.
+      // Subtracting the source and target point, the number ofbendpoints must satisfy the folling condition:
+      valid &= edge.bendPoints.length % 3 == 2;
     });
 
     return valid;
   },
-  error_msg: function(result) {
+  errorMsg: function(result) {
     return 'Positions of nodes and edge bendpoints should remain the same!';
   }
 }

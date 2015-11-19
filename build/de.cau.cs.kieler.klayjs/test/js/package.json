@@ -2,7 +2,7 @@
   "name": "klayJStest",
   "version": "0.0.0",
   "description": "Testsuite for JavaScript compiled KLay Layered",
-  "main": "klay_test.js",
+  "main": "src/run_tests.js",
   "author": "Carsten Sprung",
   "license": "EPL",
   "scripts": {
