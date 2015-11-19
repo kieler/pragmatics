@@ -18,6 +18,10 @@ tests.forEach(function(config){
         result[v[0]] = v[1];
         return result;
       }, {});
+      if (typeof args.test !== 'undefined' && args.test != config.name) {
+        // If explicit test is given but doesn't match the current config name, skip this test.
+        return;
+      }
       switch (args.context) {
         case 'webworker':
           testInWebworker(config);
