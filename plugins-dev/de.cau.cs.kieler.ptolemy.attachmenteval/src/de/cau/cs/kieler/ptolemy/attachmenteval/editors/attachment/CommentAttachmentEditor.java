@@ -1013,10 +1013,12 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         }
         
         // Retrieve the URI fragments of the two nodes in the source model
-        String commentURIFragment = currentResource.getURIFragment(
-                (EObject) klighdViewContext.getSourceElement(commentNode));
-        String actorURIFragment = currentResource.getURIFragment(
-                (EObject) klighdViewContext.getSourceElement(actorNode));
+        EObject commentElement = (EObject) klighdViewContext.getSourceElement(commentNode);
+        EObject actorElement = (EObject) klighdViewContext.getSourceElement(actorNode);
+        
+        String commentURIFragment = currentResource.getURIFragment(commentElement);
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        String actorURIFragment = currentResource.getURIFragment(actorElement);
         
         // Add the association
         currentAssociations.put(commentNode, actorNode);
@@ -1314,7 +1316,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         }
         
         // Evaluate the data
-        DataEvaluator evaluator = DataEvaluator.createFor(attachmentData, otherData, false);
+        DataEvaluator evaluator = DataEvaluator.createFor(attachmentData, otherData, true);
         evaluator.printCSV(System.out);
     }
     
