@@ -13,8 +13,9 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
+import com.google.common.collect.Multimap
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KEdge 
+import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
 import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.core.util.Pair
@@ -77,11 +78,16 @@ public class Ptolemy2KGraphOptimization {
      *                          comments should be extracted.
      * @param diagramSynthesis the diagram synthesis that uses this classes. Used to map Ptolemy model
      *                         objects to KGraph model objects.
+     * @return the list of nodes created during the comment extraction or {@code null} if no comments 
+     *         were added
      */
-    def void optimize(KNode kGraph, Options options,
+    def Multimap<KNode, KNode> optimize(KNode kGraph, Options options,
         CommentsExtractor commentsExtractor, AbstractDiagramSynthesis<?> diagramSynthesis) {
         
         this.options = options
+        
+        // Comment nodes that are created in the extraction process
+        val addComments = commentsExtractor != null;
         
         // Infer edge directions
         inferEdgeDirections(kGraph)
@@ -97,17 +103,21 @@ public class Ptolemy2KGraphOptimization {
         makeStatesPortless(kGraph)
         
         // Convert special annotations into nodes
-        convertAnnotationsToNodes(kGraph, diagramSynthesis)
+        convertAnnotationsToNodes(kGraph, addComments, diagramSynthesis)
         
         // Convert comments into nodes
-        if (commentsExtractor != null) {
-            commentsExtractor.extractComments(kGraph, diagramSynthesis)
-        }
+        val createdCommentNodes =
+            if (addComments)
+                commentsExtractor.extractComments(kGraph, diagramSynthesis)
+            else
+                null
         
         // Flatten
         if (options.flatten) {
             flattener.flatten(kGraph);
         }
+        
+        return createdCommentNodes
     }
     
     
@@ -666,15 +676,17 @@ public class Ptolemy2KGraphOptimization {
     // Transformation of Certain Annotations into Nodes
     
     /**
-     * Converts certain annotations into nodes of their own right. In particular, Ptolemy directors
-     * are persisted as annotations in Ptolemy models, but need to be nodes in KGraph models to be
-     * correctly displayed.
+     * Converts certain annotations into nodes of their own right. In particular, Ptolemy directors and
+     *  parameters are persisted as annotations in Ptolemy models, but need to be nodes in KGraph 
+     * models to be correctly displayed.
      * 
      * @param root root element of the model to look for convertible annotations in.
-     * @param diagramSynthesis the diagram synthesis that uses this classes. Used to map Ptolemy model
-     *                         objects to KGraph model objects.
+     * @param addTitleElement {@code true} if any title annotations should be converted into
+     *                        corresponding comment nodes; {@code false} if such an annotation should
+     *                        simply be ignored.
+     * @param diagramSynthesis 
      */
-    def private void convertAnnotationsToNodes(KNode root,
+    def private void convertAnnotationsToNodes(KNode root, boolean addTitleElement, 
         AbstractDiagramSynthesis<?> diagramSynthesis) {
             
         // Only consider nodes that were not themselves created from annotations
@@ -690,23 +702,116 @@ public class Ptolemy2KGraphOptimization {
             val annotation = annotationsIterator.next()
             
             // Check if the annotation denotes a Ptolemy director
-            if (annotation.class_ != null && annotation.class_.endsWith("Director") && options.directors) {
+            if (annotation.class_ != null && annotation.class_.endsWith("Director")
+                && options.directors) {
+                
                 // Create a new node for it
                 val directorNode = KimlUtil::createInitializedNode()
                 diagramSynthesis.associateWith(directorNode, annotation);
                 
-                // Set the name, add language annotation and mark it as having been created from
-                // an annotation
+                // Set the name and mark it as a Ptolemy element, as a director and as having been 
+                //created from an annotation node
                 directorNode.name = annotation.name
                 directorNode.markAsPtolemyElement()
                 directorNode.markAsDirector()
                 directorNode.markAsFormerAnnotationNode()
                 
+                //Try to retrieve the location from the annotations
+                if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {  
+                directorNode.layout.setProperty(PT_LOCATION, 
+                                                annotation.getAnnotation(ANNOTATION_LOCATION).value)   
+                }
+            
                 // Add the new node to the root element
                 root.children += directorNode
+                
             } else if (annotation.class_ == ANNOTATION_TYPE_PARAMETER && !annotation.value.nullOrEmpty) {
+                // It's a model parameter
                 parameterList.add(annotation)
-            }
+            
+            } else if (annotation.class_ == ANNOTATION_TYPE_DOCUMENTATION) {
+                // It's a documentation attribute
+
+                // Create a new node for it
+                val documentationNode = KimlUtil::createInitializedNode()
+                diagramSynthesis.associateWith(documentationNode, annotation);
+
+                // Mark it as a Ptolemy element, as a documentation node and as having been 
+                //created from an annotation node
+                documentationNode.markAsPtolemyElement()
+                documentationNode.markAsFormerAnnotationNode()
+                documentationNode.markAsDocumentationNode()
+
+                //Try to retrieve the location from the annotations
+                if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {
+                    documentationNode.layout.setProperty(PT_LOCATION, 
+                                                    annotation.getAnnotation(ANNOTATION_LOCATION).value)
+                }
+
+                // Add the new node to the root element
+                root.children += documentationNode
+                
+            } else if (addTitleElement 
+                && (annotation.class_ == ANNOTATION_TYPE_TITLE || 
+                    annotation.class_ == ANNOTATION_TYPE_HTML_TITLE) 
+                && !annotation.value.nullOrEmpty) {
+                
+                // It's a title element
+                
+                // Create a node for it
+                val titleNode = KimlUtil.createInitializedNode();
+                diagramSynthesis.associateWith(titleNode, annotation);
+                
+                // Set the name, add language annotation and mark it as having been created from an 
+                //annotation and as a comment, specifically as a title node
+                titleNode.markAsPtolemyElement();
+                titleNode.markAsFormerAnnotationNode();
+                titleNode.markAsComment();
+                titleNode.markAsTitleNode();
+                titleNode.layout.setProperty(COMMENT_TEXT, annotation.value);
+                
+                //Try to retrieve the location from the annotations
+                if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {
+                    titleNode.layout.setProperty(PT_LOCATION, 
+                                                 annotation.getAnnotation(ANNOTATION_LOCATION).value)
+                }
+                
+                //Finds out whether the default font size of titles was changed and if so stores the new
+                //value. Otherwise, the default value is stored.
+                if (annotation.getAnnotation(ANNOTATION_FONT_SIZE) != null) {
+                    titleNode.layout.setProperty(COMMENT_FONT_SIZE, Integer.parseInt(
+                                                 annotation.getAnnotationValue(ANNOTATION_FONT_SIZE)))
+                } else {
+                    titleNode.layout.setProperty(COMMENT_FONT_SIZE, 24)
+                }
+                   
+                // Add the new node to the root element
+                root.children += titleNode;
+                
+            } else if (annotation.class_ != null && annotation.class_.startsWith(
+                ANNOTATION_TYPE_LATTICE_ONTOLOGY_SOLVER)){
+                
+                //It's a lattice ontology solver
+                
+                //Create a node for it
+                val solverNode = KimlUtil.createInitializedNode();
+                diagramSynthesis.associateWith(solverNode, annotation);
+                
+                // Set the name, add language annotation and mark it as having been created from
+                // an annotation
+                solverNode.name = annotation.name
+                solverNode.markAsPtolemyElement();
+                solverNode.markAsFormerAnnotationNode();
+                
+                //Try to retrieve the location from the annotations
+                if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {
+                    solverNode.layout.setProperty(PT_LOCATION, 
+                                                  annotation.getAnnotation(ANNOTATION_LOCATION).value)
+                }
+                
+                // Add the new node to the root element
+                root.children += solverNode;  
+            } 
         }
         
         // Check if we need to create a parameter node
@@ -732,7 +837,7 @@ public class Ptolemy2KGraphOptimization {
         
         // Recurse into child nodes
         for (child : root.children) {
-            convertAnnotationsToNodes(child, diagramSynthesis);
+            convertAnnotationsToNodes(child, addTitleElement, diagramSynthesis)
         }
     }
 }
