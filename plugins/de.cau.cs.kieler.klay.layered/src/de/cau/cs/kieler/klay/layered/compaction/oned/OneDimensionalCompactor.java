@@ -15,16 +15,21 @@ package de.cau.cs.kieler.klay.layered.compaction.oned;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.TreeSet;
 import java.util.function.BiFunction;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.klay.layered.compaction.recthull.Scanline;
+import de.cau.cs.kieler.klay.layered.compaction.recthull.Scanline.EventHandler;
 
 /**
  * Implements the compaction of a {@link CGraph}.
@@ -151,7 +156,7 @@ public final class OneDimensionalCompactor {
             throw new RuntimeException(
                     "The direction " + dir + " is not supported by the CGraph instance.");
         }
-
+        
         Direction oldDirection = direction;
         direction = dir;
         
@@ -418,12 +423,176 @@ public final class OneDimensionalCompactor {
         }
         
     }
+    
+    private void calculateConstraints() {
+
+        calculateConstraints2();
+
+    }
+    
+    /* -----------------------------------------------------------------------------------------------
+     * Scanline-procedure to calculate the constraint graph in O(nlogn) time, n being the number of
+     * rectangles.
+     * 
+     * The implementation is based on the section 10.2.2.1.1.1 of the following book:
+     * Lengauer, T. (1990). Combinatorial algorithms for integrated circuit layout. John Wiley & Sons.
+     * -----------------------------------------------------------------------------------------------
+     */
+    
+    /**
+     * A timestamp in the sense of the scanline algorithm to determine the constraints of the
+     * compaction graph. The scanline traverses the plane from top (negative infinity) to bottom
+     * (positive infinity). Every timestamp (or point) it encounters either represents the upper (y)
+     * or lower (y+height) border of a rectangle. Note that y is also denoted as "low" and y+height
+     * as "high".
+     */
+    private class Timestamp {
+        private boolean low;
+        private CNode node;
+
+        public Timestamp(final CNode node, final boolean low) {
+            this.node = node;
+            this.low = low;
+        }
+    }
+  
+    /**
+     * Can be used to sort the passed {@link Timestamp}s either based on their 
+     * {@link CNode}'s y-coordinate (low) or y-coordinate plus height (high).
+     * If two positions are equal, the "low" value is sorted before the "high" value.
+     */
+    private static final Comparator<Timestamp> CONSTRAINTS_SCANLINE_COMPARATOR = (p1, p2) ->  {
+        
+        // chose the right coordinate
+        double y1 = p1.node.hitbox.y;
+        if (!p1.low) {
+            y1 += p1.node.hitbox.height;
+        }
+        double y2 = p2.node.hitbox.y;
+        if (!p2.low) {
+            y2 += p2.node.hitbox.height;
+        }
+
+        // compare them ...
+        int cmp = Double.compare(y1 , y2);
+        
+        // ... and if they are equal, sort low->high
+        if (cmp == 0) {
+            if (!p1.low && p2.low) {
+                return 1;
+             } else if (!p2.low && p1.low) {
+                 return -1;
+             }    
+        } 
+        return cmp;
+    };
+    
+    /**
+     * Implements the scanline procedure as discussed by Lengauer.
+     */
+    private class ConstraintsScanlineHandler implements EventHandler<OneDimensionalCompactor.Timestamp> {
+
+        /**
+         * Sorted set of intervals that allows to query for the left and right neighbor of
+         * an interval. Sorted by the x coordinate of a {@link CNode}'s hitbox.
+         */
+        private TreeSet<CNode> intervals = Sets.newTreeSet((c1, c2) -> Double.compare(
+                c1.hitbox.x, c2.hitbox.x));
+        /** Candidate array with possible constraints. */
+        private CNode[] cand;
+
+        /** 
+         * Resets the internal data structures.
+         */
+        public void reset() {
+            intervals.clear();
+            cand = new CNode[cGraph.cNodes.size()];
+            int index = 0;
+            for (CNode n : cGraph.cNodes) {
+                n.id = index++;
+            }
+        }
+
+        @Override
+        public void handle(final Timestamp p) {
+            // System.out.println((p.low ? "insert " : "delete ") + " " + p.node.hitbox);
+            if (p.low) {
+                insert(p);
+            } else {
+                delete(p);
+            }
+        }
+
+        private void insert(final Timestamp p) {
+            intervals.add(p.node);
+
+            cand[p.node.id] = intervals.lower(p.node);
+
+            CNode right = intervals.higher(p.node);
+            if (right != null) {
+                cand[right.id] = p.node; 
+            }
+        }
+
+        private void delete(final Timestamp p) {
+
+            CNode left = intervals.lower(p.node);
+            if (left != null && left == cand[p.node.id]) {
+                // different groups?
+                if (left.cGroup != null && left.cGroup != p.node.cGroup) {
+                    left.constraints.add(p.node);
+                    p.node.outDegree++;
+                }
+            }
+
+            CNode right = intervals.higher(p.node);
+            if (right != null && cand[right.id] == p.node) {
+                // different groups?
+                if (right.cGroup != null && right.cGroup != p.node.cGroup) {
+                    p.node.constraints.add(right);
+                    right.outDegree++;
+                }
+            }
+
+            // we are done with you!
+            intervals.remove(p.node);
+        }
+    }
+    
+    /** This compactor's instance of the scanline handler. */
+    private final ConstraintsScanlineHandler constraintsScanlineHandler =
+            new ConstraintsScanlineHandler();
+
+    private void calculateConstraints2() {
+        
+        // resetting constraints
+        for (CNode cNode : cGraph.cNodes) {
+            cNode.constraints.clear();
+            cNode.outDegree = 0;
+        }
+        
+        // add all nodes twice (once for the lower, once for the upper border)
+        List<Timestamp> points = Lists.newArrayList();
+        for (CNode n : cGraph.cNodes) {
+            points.add(new Timestamp(n, true));
+            points.add(new Timestamp(n, false));
+        }
+        
+        // reset internal state
+        constraintsScanlineHandler.reset();
+        
+        // execute the scanline
+        Scanline.execute(points, CONSTRAINTS_SCANLINE_COMPARATOR, constraintsScanlineHandler);
+        
+        // update the "external" constraints of the groups
+        calculateConstraintsForCGroups();
+    }
 
     /**
      * Creates a constraint between CNodes A and B if B collides with the right shadow of A
      * considering vertical spacing.
      */
-    private void calculateConstraints() {
+    private void calculateConstraints3() {
         // resetting constraints
         for (CNode cNode : cGraph.cNodes) {
             cNode.constraints.clear();
@@ -483,6 +652,7 @@ public final class OneDimensionalCompactor {
      * another compaction.
      */
     private void reverseConstraints() {
+//        calculateConstraints();
         // maps CNodes to temporary lists of incoming constraints
         Map<CNode, List<CNode>> incMap = Maps.newHashMap();
         for (CNode cNode : cGraph.cNodes) {

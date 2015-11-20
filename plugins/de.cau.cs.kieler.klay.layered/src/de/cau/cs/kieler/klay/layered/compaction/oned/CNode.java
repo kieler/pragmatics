@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
  */
 public abstract class CNode {
     // Variables are public for convenience reasons since this class is used internally only.
-    // SUPPRESS CHECKSTYLE NEXT 22 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 24 VisibilityModifier
     /** containing {@link CGroup}. */
     public CGroup cGroup;
     /** refers to the parent node of a north/south segment. */
@@ -55,6 +55,8 @@ public abstract class CNode {
     /** a 4 tuple stating if the {@link CNode} should locked in a particular direction based on
      *  conditions defined in an extended class. */
     public CompactionLock lock = new CompactionLock();
+    /** An id for public use. There is no warranty, use at your own risk. */
+    public int id;
 
     /**
      * Returns the required horizontal spacing to the specified {@link CNode}.
