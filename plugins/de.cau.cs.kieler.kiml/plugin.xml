@@ -684,6 +684,15 @@
            type="boolean"
            variance="0">
      </layoutOption>
+     <layoutOption
+           appliesTo="nodes"
+           class="de.cau.cs.kieler.kiml.options.HierarchyHandling"
+           default="INHERIT"
+           description="Determines whether the cancestors should be layouted separately or in one layout run"
+           id="de.cau.cs.kieler.hierarchyHandling"
+           name="Hierarchy Handling"
+           type="enum">
+     </layoutOption>
    </extension>
    
    <extension
