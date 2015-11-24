@@ -26,7 +26,7 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.intermediate.PartitionConstraintProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.PartitionPostprocessor;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
@@ -69,7 +69,7 @@ public class PartitionConstraintProcessorTest extends AbstractLayeredProcessorTe
      */
     @Before
     public void runUntil() {
-        layered.runLayoutTestUntil(PartitionConstraintProcessor.class, state);
+        layered.runLayoutTestUntil(PartitionPostprocessor.class, state);
     }
 
     /**

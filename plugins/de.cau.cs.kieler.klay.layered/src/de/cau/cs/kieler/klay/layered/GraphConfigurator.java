@@ -300,6 +300,12 @@ final class GraphConfigurator {
                 && lgraph.getProperty(InternalProperties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
             configuration.addAfterPhase5(IntermediateProcessorStrategy.HORIZONTAL_COMPACTOR);
         } 
+        
+        if (graphProperties.contains(GraphProperties.PARTITIONS)) {
+            configuration.addBeforePhase1(IntermediateProcessorStrategy.PARTITION_PREPROCESSOR);
+            configuration.addBeforePhase3(IntermediateProcessorStrategy.PARTITION_POSTPROCESSOR);
+            
+        }
 
         return configuration;
     }

@@ -684,6 +684,15 @@
            type="boolean"
            variance="0">
      </layoutOption>
+     <layoutOption
+           advanced="true"
+           appliesTo="nodes"
+           description="Describes, which partition of a partitioned graph a node belongs to"
+           id="de.cau.cs.kieler.partition"
+           lowerBound="0"
+           name="Partition"
+           type="int">
+     </layoutOption>
    </extension>
    
    <extension

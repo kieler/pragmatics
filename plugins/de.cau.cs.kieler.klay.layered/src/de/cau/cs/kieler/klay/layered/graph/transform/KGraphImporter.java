@@ -557,10 +557,15 @@ class KGraphImporter {
             lnode.setProperty(InternalProperties.COMPOUND_NODE, true);
         }
 
-        // port constraints and sides cannot be undefined
         Set<GraphProperties> graphProperties = lgraph.getProperty(
                 InternalProperties.GRAPH_PROPERTIES);
         
+        // If any node has a partition, the whole graph is assumed to be partitioned.
+        if (lnode.getProperty(LayoutOptions.PARTITION) != null) {
+            graphProperties.add(GraphProperties.PARTITIONS);
+        }
+        
+        // port constraints and sides cannot be undefined
         PortConstraints portConstraints = lnode.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         if (portConstraints == PortConstraints.UNDEFINED) {
             lnode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);

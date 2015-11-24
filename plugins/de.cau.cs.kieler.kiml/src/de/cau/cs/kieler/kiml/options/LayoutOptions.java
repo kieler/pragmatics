@@ -465,6 +465,13 @@ public final class LayoutOptions {
             -1f, 0f);
 
     /**
+     * Partition to which the node belongs to. If any node has a partition set, all nodes are excepted to
+     * have a partition.
+     */
+    public static final IProperty<Integer> PARTITION =
+            new Property<Integer>("de.cau.cs.kieler.partition");
+
+    /**
      * Hide constructor to avoid instantiation.
      */
     private LayoutOptions() {
