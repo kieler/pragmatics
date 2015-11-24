@@ -104,7 +104,7 @@ class EcoreModelSynthesis extends AbstractDiagramSynthesis<EObject> {
                 createEdge => [
                     it.source = container.translateEObject;
                     it.target = child;
-                    it.addPolyline.addArrowDecorator;
+                    it.addPolyline.addHeadArrowDecorator;
                 ]
             }
             return child;

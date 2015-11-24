@@ -26,19 +26,18 @@ import org.eclipse.ui.IMemento;
 import de.cau.cs.kieler.klighd.KlighdDataManager;
 import de.cau.cs.kieler.klighd.internal.ISynthesis;
 import de.cau.cs.kieler.klighd.view.DiagramView;
-import de.cau.cs.kieler.klighd.view.controller.ViewUpdateControllerFactory;
 
 /**
  * This sub-menu handles different available synthesis for models including general syntheses
  * implementing {@link ISelectableGeneralSynthesis}.
  * <p>
  * {@link ISelectableGeneralSynthesis} are defined in extension point evaluated by
- * {@link ViewUpdateControllerFactory}
+ * {@link de.cau.cs.kieler.klighd.view.controller.ViewUpdateControllerFactory
+ * ViewUpdateControllerFactory}
  * 
  * @author als
  * @kieler.design 2015-06-22 proposed
  * @kieler.rating 2015-06-22 proposed yellow
- *
  */
 @SuppressWarnings("restriction")
 public class SynthesisSelectionMenu extends MenuManager {
