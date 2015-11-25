@@ -66,7 +66,8 @@ public class PartitionPreprocessor implements ILayoutProcessor {
         for (LNode node : lGraph.getLayerlessNodes()) {
             Integer index = node.getProperty(LayoutOptions.PARTITION);
             // We assume every node has a partition set.
-            assert index != null;
+            assert index != null : "Missing partition property at "
+                    + node.getProperty(InternalProperties.ORIGIN).toString();
             retrievePartition(index).add(node);
         }
 

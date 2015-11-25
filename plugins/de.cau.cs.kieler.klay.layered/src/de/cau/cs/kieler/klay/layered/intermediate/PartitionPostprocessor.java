@@ -67,7 +67,8 @@ public class PartitionPostprocessor implements ILayoutProcessor {
                             while (edges.hasNext()) {
                                 LEdge edge = edges.next();
                                 // Only partition constraint edges should be connected to this port.
-                                assert edge.getProperty(InternalProperties.PARTITION_CONSTRAINT);
+                                assert edge.getProperty(InternalProperties.PARTITION_CONSTRAINT)
+                                    : "Non-constraint edge found at constraint port!";
                                 // Remove the edge explicitly from the iterator to prevent
                                 // ConcurrentModificationExceptions.
                                 edges.remove();
