@@ -25,6 +25,7 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.PartitionPostprocessor;
 import de.cau.cs.kieler.klay.layered.test.AbstractLayeredProcessorTest;
@@ -73,39 +74,40 @@ public class PartitionConstraintProcessorTest extends AbstractLayeredProcessorTe
     }
 
     /**
-     * For each node, all nodes with smaller partition are layered to the left and all with greater
-     * partition to the right.
-     */
-    @Test
-    public void testPartitionOrder() {
-        for (LGraph g : state.getGraphs()) {
-            for (Layer layer : g.getLayers()) {
-                for (LNode node : layer) {
-                    for (Layer otherLayer : g.getLayers()) {
-                        for (LNode otherNode : otherLayer) {
-                            final int partition = node.getProperty(LayoutOptions.PARTITION);
-                            final int otherPartition =
-                                    otherNode.getProperty(LayoutOptions.PARTITION);
-                            if (partition < otherPartition) {
-                                assertTrue(layer.getIndex() < otherLayer.getIndex());
-                            } else if (otherPartition < partition) {
-                                assertTrue(otherLayer.getIndex() < layer.getIndex());
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    /**
      * After constraint processing no empty layers should be left behind.
      */
     @Test
     public void noEmptyLayerTest() {
         for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
+                assertTrue(layer.getNodes() != null);
                 assertTrue(!layer.getNodes().isEmpty());
+            }
+        }
+    }
+
+    /**
+     * For each layer, every node in this layer has the same partition and and this partition is greater
+     * or equal to the partition of the next left layer.
+     */
+    @Test
+    public void testPartitionOrder() {
+        int currentPartition = 0;
+        for (LGraph g : state.getGraphs()) {
+            for (Layer layer : g.getLayers()) {
+                // Set to invalid partition
+                int layerPartition = -1;
+                for (LNode node : layer) {
+                    if (node.getType() == NodeType.NORMAL) {
+                        int nodePartition = node.getProperty(LayoutOptions.PARTITION);
+                        if (layerPartition == -1) {
+                            layerPartition = nodePartition;
+                        }
+                        assertTrue(layerPartition == nodePartition);
+                    }
+                }
+                assertTrue(currentPartition <= layerPartition);
+                currentPartition = layerPartition;
             }
         }
     }
