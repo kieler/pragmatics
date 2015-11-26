@@ -688,7 +688,7 @@
            appliesTo="nodes"
            class="de.cau.cs.kieler.kiml.options.HierarchyHandling"
            default="INHERIT"
-           description="Determines whether the cancestors should be layouted separately or in one layout run"
+           description="Determines whether the descendants should be layouted separately or together with their parents. If the root node is set to inherit (or not set at all), the property is assumed as SEPARATE_CHILDREN."
            id="de.cau.cs.kieler.hierarchyHandling"
            name="Hierarchy Handling"
            type="enum">

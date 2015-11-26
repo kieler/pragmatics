@@ -25,6 +25,7 @@ import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.GraphFeature;
@@ -140,10 +141,14 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                             LayoutOptions.HIERARCHY_HANDLING) == HierarchyHandling.SEPARATE_CHILDREN;
 
                     if (stopHierarchy || !getAlgorithm(knode).equals(algorithmData)) {
-                        // Hierarchical layout is stopped by explicit disabling or switching
-                        // algorithm
-                        // Separate recursive call is used for child nodes
-                        childrenInsideSelfLoops.addAll(layoutRecursively(knode, progressMonitor));
+                        // Hierarchical layout is stopped by explicitly disabling or switching
+                        // algorithm. Separate recursive call is used for child nodes
+                        List<KEdge> childLayoutSelfLoops = layoutRecursively(knode, progressMonitor);
+                        childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
+                        // Explicitly disable hierarchical layout for the child node. Simplifies the
+                        // handling of switching algorithms in the layouter.
+                        knodeLayout.setProperty(LayoutOptions.HIERARCHY_HANDLING,
+                                HierarchyHandling.SEPARATE_CHILDREN);
 
                         // apply the LayoutOptions.SCALE_FACTOR if present
                         KimlUtil.applyConfiguredNodeScaling(knode);
@@ -157,7 +162,8 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
                 // layout each compound node contained in this node separately
                 nodeCount = layoutNode.getChildren().size();
                 for (KNode child : layoutNode.getChildren()) {
-                    childrenInsideSelfLoops.addAll(layoutRecursively(child, progressMonitor));
+                    List<KEdge> childLayoutSelfLoops = layoutRecursively(child, progressMonitor); 
+                    childrenInsideSelfLoops.addAll(childLayoutSelfLoops);
                     
                     // apply the LayoutOptions.SCALE_FACTOR if present
                     KimlUtil.applyConfiguredNodeScaling(child);
@@ -250,18 +256,18 @@ public class RecursiveGraphLayoutEngine implements IGraphLayoutEngine {
     // Hierarchy Handling
     
     /**
-     * Evaluates one level of inheritance for property {@link LayoutOptions#HierarchyHandling}.
+     * Evaluates one level of inheritance for property {@link LayoutOptions#HIERARCHY_HANDLING}.
      * Additionally provides legacy support for property {@link LayoutOptions#LAYOUT_HIERARCHY} and
      * replaces it with the new property. If the root node is evaluated and it is set to inherit (or
-     * not set at all) the handling is set to not handle multiple layers.
+     * not set at all) the property is set to {@link HierarchyHandling#SEPARATE_CHILDREN}.
      * 
      * @param layoutNode
      *            The current node which should be evaluated
      */
     private void evaluateHierarchyHandlingInheritance(final KNode layoutNode) {
-        KShapeLayout layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
-        // Pre-process the hierarchy handling by replacing the deprecated Layout_Hierarchy
-        // property with the new Hierarchy Handling Property
+        KLayoutData layoutNodeShapeLayout = layoutNode.getData(KShapeLayout.class);
+        // Pre-process the hierarchy handling by replacing the deprecated LAYOUT_HIERARCHY
+        // property with the new hierarchy handling property
         @SuppressWarnings("deprecation")
         boolean hasLayoutHierarchy =
                 layoutNodeShapeLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY);

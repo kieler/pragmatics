@@ -16,28 +16,33 @@ package de.cau.cs.kieler.kiml.options;
  * Options for setting how children of nodes should be handled in the current layout run. There are
  * three options for this:
  * <ul>
- * <li>INHERIT: The current node should implement the same behaviour as the parent node.</li>
+ * <li>INHERIT: The current node should implement the same behaviour as the parent node. If the root
+ * node is evaluated and it is set to inherit (or not set at all) the property is set to
+ * {@link #SEPARATE_CHILDREN}.</li>
  * <li>INCLUDE_CHILDREN: The children of the current node should be included in the current layout
  * run. This enables edges to be routed across the boundary of hierarchy layers.</li>
  * <li>SEPARATE_CHILDREN: The children of the current node are layouted independently from their
  * parent node. The resulting layout information is then used to layout the parent node.</li>
  * </ul>
  * <p>
- * The inclusion of child layers can be disabled by setting the option back to SEPARATE_CHILDREN at
- * lower levels. For this option to have any effect, the option needs to be set to at least to
+ * The inclusion of further children can be disabled by setting the option back to SEPARATE_CHILDREN
+ * at lower levels. For this option to have any effect, the option needs to be set to at least two
  * successive levels of hierarchy.
  * </p>
- *
  * <p>
- * <i>Note:</i> Layout algorithms only need to support INCLUDE_CHILDREN and SEPARATE_CHILDREN as the
- * inheritance is evaluated by KIML.
+ * If the layout algorithm doesn't support hierarchical layout, this property is ignored and the
+ * layout is calculated separately for each child hierarchy.
+ * </p>
+ * <p>
+ * <i>Note:</i> Layout algorithms only need to differentiate between INCLUDE_CHILDREN and
+ * SEPARATE_CHILDREN as the inheritance is evaluated by KIML.
  * </p>
  *
  * @author nbw
  */
 public enum HierarchyHandling {
     /**
-     * Inherit the behaviour from the parent node. If set on the root node SEPARATE_CHILDREN is
+     * Inherit the behaviour from the parent node. If set on the root node, SEPARATE_CHILDREN is
      * assumed.
      */
     INHERIT,

@@ -31,8 +31,6 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.config.DefaultLayoutConfig;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
@@ -202,8 +200,7 @@ class KGraphImporter {
                 boolean hasInsideSelfLoops = hasInsideSelfLoops(knode);
                 boolean hasHierarchyHandlingEnabled = 
                         knodeLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING) 
-                            == HierarchyHandling.INCLUDE_CHILDREN
-                        && getAlgorithm(knode).equals(getAlgorithm(knode.getParent())); 
+                            == HierarchyHandling.INCLUDE_CHILDREN; 
                 
                 if (hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
                     LGraph nestedGraph = createLGraph(knode);
@@ -260,25 +257,6 @@ class KGraphImporter {
             }
         }
     }
-    
-    /**
-     * Returns the most appropriate layout provider for the given node.
-     * 
-     * @param layoutNode node for which a layout provider is requested
-     * @return a layout provider instance that fits the layout hints for the given node
-     */
-    private LayoutAlgorithmData getAlgorithm(final KNode layoutNode) {
-        KShapeLayout nodeLayout = layoutNode.getData(KShapeLayout.class);
-        String layoutHint = nodeLayout.getProperty(LayoutOptions.ALGORITHM);
-        String diagramType = nodeLayout.getProperty(LayoutOptions.DIAGRAM_TYPE);
-        LayoutAlgorithmData algorithmData = DefaultLayoutConfig.getLayouterData(
-                layoutHint, diagramType);
-        if (algorithmData == null) {
-            throw new IllegalStateException("No registered layout algorithm is available.");
-        }
-        return algorithmData;
-    }
-    
     
     /**
      * Checks if the given node has any inside self loops.

@@ -232,8 +232,8 @@ public final class LayoutOptions {
      * & labels to be sized and placed accordingly after the layout of that node has been determined
      * (and before the node itself and its siblings get arranged). The scaling is not reverted
      * afterwards, so the resulting layout graph contains the adjusted size and position data. This
-     * option is currently not supported if {@link #HIERARCHY_HANDLING} is set to include child
-     * graphs.
+     * option is currently not supported if {@link #HIERARCHY_HANDLING} is set to
+     * {@link HierarchyHandling#INCLUDE_CHILDREN INCLUDE_CHILDREN}.
      */
     public static final IProperty<Float> SCALE_FACTOR = new Property<Float>(
             "de.cau.cs.kieler.scaleFactor", 1f);
@@ -348,7 +348,8 @@ public final class LayoutOptions {
      * 
      * @see GraphFeature#COMPOUND
      * @deprecated Use {@link #HIERARCHY_HANDLING} for finer control and the option to only layout a
-     *             certain slice of the layout tree
+     *             certain slice of the layout tree. The previous behaviour is available by setting
+     *             {@link HierarchyHandling#INCLUDE_CHILDREN} on the same node as this property.
      */
     public static final IProperty<Boolean> LAYOUT_HIERARCHY = new Property<Boolean>(
             "de.cau.cs.kieler.layoutHierarchy", false);
