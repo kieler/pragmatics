@@ -106,6 +106,9 @@
                option="de.cau.cs.kieler.layoutHierarchy">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.hierarchyHandling">
+         </knownOption>
+         <knownOption
                default="true"
                option="de.cau.cs.kieler.separateConnComp">
          </knownOption>
@@ -338,6 +341,10 @@
          <dependency
                option="de.cau.cs.kieler.layoutHierarchy"
                value="true">
+         </dependency>
+         <dependency
+               option="de.cau.cs.kieler.hierarchyHandling"
+               value="INCLUDE_CHILDREN">
          </dependency>
       </layoutOption>
       <layoutOption
