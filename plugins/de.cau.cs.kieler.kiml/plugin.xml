@@ -687,7 +687,7 @@
      <layoutOption
            advanced="true"
            appliesTo="nodes"
-           description="Describes, which partition of a partitioned graph a node belongs to"
+           description="Describes which partition of a partitioned graph a node belongs to."
            id="de.cau.cs.kieler.partition"
            lowerBound="0"
            name="Partition"

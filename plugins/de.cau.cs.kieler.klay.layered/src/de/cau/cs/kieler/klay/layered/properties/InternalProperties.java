@@ -381,7 +381,7 @@ public final class InternalProperties {
      * Specifies if the corresponding LGraph element was added by the
      * {@link de.cau.cs.kieler.klay.layered.intermediate.PartitionPreprocessor}.
      */
-    public static final IProperty<Boolean> PARTITION_CONSTRAINT = new Property<Boolean>(
+    public static final IProperty<Boolean> PARTITION_DUMMY = new Property<Boolean>(
             "partitionConstraint", false);
 
     // /////////////////////////////////////////////////////////////////////////////

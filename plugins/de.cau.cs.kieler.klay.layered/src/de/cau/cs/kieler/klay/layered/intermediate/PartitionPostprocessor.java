@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -17,9 +17,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.Iterator;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
-import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -42,6 +40,7 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * </dl>
  *
  * @author csp
+ * @see PartitionPreprocessor
  */
 public class PartitionPostprocessor implements ILayoutProcessor {
 
@@ -57,25 +56,11 @@ public class PartitionPostprocessor implements ILayoutProcessor {
                 final Iterator<LPort> ports = node.getPorts().iterator();
                 while (ports.hasNext()) {
                     LPort port = ports.next();
-                    if (port.getProperty(InternalProperties.PARTITION_CONSTRAINT)) {
+                    if (port.getProperty(InternalProperties.PARTITION_DUMMY)) {
                         // Remove the port explicitly from the iterator to prevent
-                        // ConcurrentModificationExceptions.
+                        // ConcurrentModificationExceptions. This removes the port from the underlying
+                        // collection and thus from the node's list of ports.
                         ports.remove();
-                        port.setNode(null);
-                        if (port.getSide() == PortSide.WEST) {
-                            Iterator<LEdge> edges = port.getOutgoingEdges().iterator();
-                            while (edges.hasNext()) {
-                                LEdge edge = edges.next();
-                                // Only partition constraint edges should be connected to this port.
-                                assert edge.getProperty(InternalProperties.PARTITION_CONSTRAINT)
-                                    : "Non-constraint edge found at constraint port!";
-                                // Remove the edge explicitly from the iterator to prevent
-                                // ConcurrentModificationExceptions.
-                                edges.remove();
-                                edge.setSource(null);
-                                edge.setTarget(null);
-                            }
-                        }
                     }
                 }
             }

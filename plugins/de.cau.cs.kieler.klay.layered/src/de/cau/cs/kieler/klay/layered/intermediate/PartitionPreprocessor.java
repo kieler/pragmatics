@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import com.google.common.collect.Lists;
 
@@ -29,9 +29,10 @@ import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
+ * Add constraint edges between partitions. </br>
  * In partitioned graphs, each node has a assigned partition. For every node holds, that every other node
  * with a smaller partition is placed left to it. This is accomplished by adding partition constraint
- * edges. For each node, we add a edge to every node in the next greater partition. These edges get a
+ * edges. For each node, we add an edge to every node in the next greater partition. These edges get a
  * high priority assigned such that during cycle breaking, none of these constraint edges gets reversed.
  * During layering, the constraint edges assure the aforementioned condition.
  * The constraint edges are removed later by the {@link PartitionPostprocessor}.
@@ -48,12 +49,15 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
  * </dl>
  *
  * @author csp
+ * @see PartitionPostprocessor
  */
 public class PartitionPreprocessor implements ILayoutProcessor {
 
+    /** The priority to set on added constraint edges. */
     private static final int PARTITION_CONSTRAINT_EDGE_PRIORITY = 20;
 
-    private ArrayList<LinkedList<LNode>> partitions;
+    /** The nodes of the currently processed graph, sorted into partitions. */
+    private List<List<LNode>> partitions;
 
     /**
      * {@inheritDoc}
@@ -66,8 +70,7 @@ public class PartitionPreprocessor implements ILayoutProcessor {
         for (LNode node : lGraph.getLayerlessNodes()) {
             Integer index = node.getProperty(LayoutOptions.PARTITION);
             // We assume every node has a partition set.
-            assert index != null : "Missing partition property at "
-                    + node.getProperty(InternalProperties.ORIGIN).toString();
+            assert index != null : "Missing partition property at " + node.toString();
             retrievePartition(index).add(node);
         }
 
@@ -77,14 +80,16 @@ public class PartitionPreprocessor implements ILayoutProcessor {
                 LPort sourcePort = new LPort();
                 sourcePort.setNode(node);
                 sourcePort.setSide(PortSide.EAST);
-                sourcePort.setProperty(InternalProperties.PARTITION_CONSTRAINT, true);
+                sourcePort.setProperty(InternalProperties.PARTITION_DUMMY, true);
+                
                 for (LNode otherNode : partitions.get(i + 1)) {
                     LPort targetPort = new LPort();
                     targetPort.setNode(otherNode);
                     targetPort.setSide(PortSide.WEST);
-                    targetPort.setProperty(InternalProperties.PARTITION_CONSTRAINT, true);
+                    targetPort.setProperty(InternalProperties.PARTITION_DUMMY, true);
+                    
                     LEdge edge = new LEdge();
-                    edge.setProperty(InternalProperties.PARTITION_CONSTRAINT, true);
+                    edge.setProperty(InternalProperties.PARTITION_DUMMY, true);
                     edge.setProperty(LayoutOptions.PRIORITY, PARTITION_CONSTRAINT_EDGE_PRIORITY);
                     edge.setSource(sourcePort);
                     edge.setTarget(targetPort);
@@ -103,12 +108,9 @@ public class PartitionPreprocessor implements ILayoutProcessor {
      *            the index of the partition to retrieve.
      * @return the existing or newly created partition.
      */
-    private LinkedList<LNode> retrievePartition(final int index) {
-        if (partitions.size() <= index) {
-            // fill list with empty partitions
-            for (int i = partitions.size(); i <= index; i++) {
-                partitions.add(new LinkedList<LNode>());
-            }
+    private List<LNode> retrievePartition(final int index) {
+        while (index >= partitions.size()) {
+            partitions.add(new LinkedList<LNode>());
         }
         return partitions.get(index);
     }
