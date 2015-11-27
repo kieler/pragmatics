@@ -193,6 +193,11 @@ public final class DataEvaluator {
         
         // Include annotations unattached in the base data?
         if (includeUnattached) {
+            if( baseData == null){
+                System.out.println("baseData is null");
+            } else if (baseData.getAnnotationCounts() == null){
+                System.out.println("annotationCounts is null");
+            }
             // Annotations count must be reset
             data.annotations = baseData.getAnnotationCounts().get(file);            
             

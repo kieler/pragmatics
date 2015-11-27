@@ -55,6 +55,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
+import de.cau.cs.kieler.kiml.options.HierarchyHandling;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
@@ -129,7 +130,8 @@ public class DotExporter {
         graphvizModel.getGraphs().add(graph);
         Command command = transData.getProperty(COMMAND);
         boolean layoutHierarchy = transData.getProperty(FULL_EXPORT)
-                || kgraph.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)
+                || kgraph.getData(KShapeLayout.class).getProperty(LayoutOptions.HIERARCHY_HANDLING) 
+                    == HierarchyHandling.INCLUDE_CHILDREN
                 && (command == Command.DOT || command == Command.FDP);
         transformNodes(kgraph, graph.getStatements(), layoutHierarchy, new KVector(), transData);
         transformEdges(kgraph, graph.getStatements(), layoutHierarchy, transData);
@@ -435,7 +437,8 @@ public class DotExporter {
                 }
             }
             // enable compound mode
-            if (parentLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+            if (parentLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING) 
+                    == HierarchyHandling.INCLUDE_CHILDREN) {
                 graphAttrs.add(createAttribute(Attributes.COMPOUND, "true"));
             }
             break;

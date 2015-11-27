@@ -154,7 +154,7 @@ class Ptolemy2KGraphTransformation {
     def private create kNode : KimlUtil::createInitializedNode() transform(EntityType ptEntity) {
         diagramSynthesis.associateWith(kNode, ptEntity)
         kNode.name = ptEntity.name
-        
+       
         // Add annotations identifying this node as having been created from a Ptolemy entity
         kNode.markAsPtolemyElement()
         kNode.addAnnotation(ANNOTATION_PTOLEMY_CLASS, ptEntity.class1)

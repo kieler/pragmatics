@@ -55,6 +55,7 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.Transformation
 import static extension com.google.common.base.Strings.*
 import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
 
+
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
  * necessary to properly display the model. This is the final step of the Ptolemy model import process.
@@ -80,6 +81,7 @@ class Ptolemy2KGraphVisualization {
     
     /** User-specified diagram synthesis options. */
     private var Options options
+    
     
     
     /**
@@ -130,6 +132,9 @@ class Ptolemy2KGraphVisualization {
             } else if (child.markedAsParameterNode) {
                 // We have a parameter node that displays model parameters
                 child.addParameterNodeRendering()
+            } else if (child.markedAsDocumentationNode){
+                //We have a documentation attribute node
+                child.addDocumentationNodeRendering()    
             } else if (child.markedAsValueDisplayingActor) {
                 // We have a value displaying actor whose rendering is a bit special
                 child.addValueDisplayingNodeRendering()
@@ -152,7 +157,7 @@ class Ptolemy2KGraphVisualization {
             for (edge : child.outgoingEdges) {
                 edge.addEdgeRendering()
                 edge.addLabelRendering()
-            }
+            }    
             
             // Add label rendering
             child.addLabelRendering()
@@ -304,11 +309,22 @@ class Ptolemy2KGraphVisualization {
     }
     
     /**
+     * Renders the given node as a documentation node.
+     * 
+     * @param node the node to attach the rendering information to.
+     */
+    def private void addDocumentationNodeRendering(KNode node) {
+        // Create the rendering
+        val rendering = createDocumentationNodeRendering(node)
+        node.data += rendering
+    }
+    
+    /**
      * Renders the given node as a parameter node.
      * 
      * @param node the node to attach the rendering information to.
      */
-    def private void addParameterNodeRendering(KNode node) {
+    def private void addParameterNodeRendering(KNode node) {   
         val layout = node.layout as KShapeLayout
         layout.setProperty(LayoutOptions::PRIORITY, 800)
         

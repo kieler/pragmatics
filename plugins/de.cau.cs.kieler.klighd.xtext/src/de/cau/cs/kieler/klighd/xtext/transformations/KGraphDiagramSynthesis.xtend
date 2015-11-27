@@ -101,28 +101,34 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     private static final IProperty<Boolean> DEFAULTS_PROPERTY = new Property<Boolean>(
         "de.cau.cs.kieler.kgraphsynthesis.defaults", false)
-
+    
     private static val DEFAULTS_AS_IN_MODEL = "As in Model"
     private static val DEFAULTS_ON = "On"
     private static val DEFAULTS_OFF = "Off"
-
     /**
      * Synthesis option specifying whether default values should be used. Default values are, eg, node
      * size if not specified and port ids as labels if no labels exist.
      */
     private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption("Default Values",
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
-
-    /** Synthesis option specifying the styling to be used for nodes. */
-    private static val SynthesisOption STYLE = SynthesisOption::createChoiceOption("Style",
-        ImmutableList::of("Boring", "Stylish", "Hello Kitty"), "Boring")
-
-    /** Synthesis option specifying whether to install a label shortening strategy or not. */
-    private static val SynthesisOption SHORTEN_LABELS_LEVELS = SynthesisOption::createRangeOption(
-        "Shorten Labels", 0, 4, 1, 4)
-    /** Synthesis option specifying how much labels should be shortened. */
-    private static val SynthesisOption TARGET_WIDTH_LEVELS = SynthesisOption::createRangeOption(
-        "Shortening Width", 0, 200, 2, 200)
+    
+    private static val STYLE_BORING = "Boring";
+    private static val STYLE_STYLISH = "Stylish";
+    private static val STYLE_HELLO_KITTY = "Hello Kitty";
+    /** The style to be used when drawing the KGraphs. */
+    private static val SynthesisOption STYLE = SynthesisOption::createChoiceOption(
+        "Style",
+        ImmutableList::of(STYLE_BORING, STYLE_STYLISH, STYLE_HELLO_KITTY),
+        STYLE_STYLISH);
+    
+    private static val LABELS_NO_LABELS = "No Labels";
+    private static val LABELS_TRUNCATE = "Truncate";
+    private static val LABELS_SOFT_WORD_WRAP = "Soft Word Wrapping";
+    private static val LABELS_FULL = "Full Labels";
+    private static val SynthesisOption LABEL_SHORTENING_STRATEGY = SynthesisOption.createChoiceOption(
+        "Label Shortening Strategy",
+        ImmutableList::of(LABELS_NO_LABELS, LABELS_TRUNCATE, LABELS_SOFT_WORD_WRAP, LABELS_FULL),
+        LABELS_FULL);
 
     /**
      * {@inheritDoc} 
@@ -147,8 +153,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         return ImmutableList::of(
             DEFAULTS,
             STYLE,
-            SHORTEN_LABELS_LEVELS,
-            TARGET_WIDTH_LEVELS
+            LABEL_SHORTENING_STRATEGY
         )
     }
 
@@ -220,8 +225,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         }
 
         switch STYLE.objectValue {
-            case "Stylish": library.initStylishFactory
-            case "Hello Kitty": library.initHelloKittyFactory
+            case STYLE_STYLISH: library.initStylishFactory
+            case STYLE_HELLO_KITTY: library.initHelloKittyFactory
             default: library.initBoringFactory // boring 
         }
 
@@ -245,24 +250,18 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         var labelManager = null as AbstractKlighdLabelManager;
 
         // Evaluate the label shortening property
-        switch SHORTEN_LABELS_LEVELS.intValue {
-            case 0: {
+        switch LABEL_SHORTENING_STRATEGY.objectValue {
+            case LABELS_NO_LABELS: {
                 labelManager = new ConditionLabelManager(null, new FilterAllCondition(), true)
             }
-            case 1: {
+            case LABELS_TRUNCATE: {
                 labelManager = new TruncatingLabelManager();
-                labelManager.fixTargetWidth(TARGET_WIDTH_LEVELS.intValue);
             }
-            case 2: {
+            case LABELS_SOFT_WORD_WRAP: {
                 labelManager = new HardWrappingLabelManager()
-                labelManager.fixTargetWidth(TARGET_WIDTH_LEVELS.intValue);
             }
-            case 3: {
+            case LABELS_FULL: {
                 labelManager = new SoftWrappingLabelManager()
-                labelManager.fixTargetWidth(TARGET_WIDTH_LEVELS.intValue);
-            }
-            case 4: {
-                //original Text
             }
         }
         
