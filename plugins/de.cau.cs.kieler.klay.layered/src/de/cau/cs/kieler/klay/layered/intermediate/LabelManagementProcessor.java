@@ -140,7 +140,15 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
                 break;
 
             }
+            
+            // Edges can have edge and tail labels that need to be managed as well (note that at this
+            // point, only head and tail labels remain)
+            for (LEdge edge : layerNode.getOutgoingEdges()) {
+                doManageLabels(
+                        labelManager, edge.getLabels(), MIN_WIDTH_EDGE_LABELS, null, 0);
+            }
         }
+        
     }
 
     /**
