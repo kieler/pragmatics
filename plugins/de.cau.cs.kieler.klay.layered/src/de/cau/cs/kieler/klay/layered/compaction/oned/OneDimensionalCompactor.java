@@ -34,7 +34,23 @@ import de.cau.cs.kieler.klay.layered.compaction.recthull.Scanline.EventHandler;
 /**
  * Implements the compaction of a {@link CGraph}.
  * 
+ * <h2>Constraint Graph Creation</h2>
+ * Scanline-procedure to calculate the constraint graph in O(nlogn) time, n being the number of
+ * rectangles.
+ * 
+ * The implementation is based on the Section 10.2.2.1.1.1 of the following book: 
+ * <ul>
+ *   <li>Lengauer, T. (1990). 
+ *       Combinatorial algorithms for integrated circuit layout. John Wiley & Sons.
+ *   </li>
+ * </ul>
+ * 
+ * <h2>Constraint Graph Compaction</h2>
+ * Compacts the previously calculated constraint graph by using a technique similar to 
+ * a longest path layering. 
+ * 
  * @author dag
+ * @author uru
  */
 public final class OneDimensionalCompactor {
     
@@ -110,8 +126,20 @@ public final class OneDimensionalCompactor {
             n.startPos = Double.NEGATIVE_INFINITY;
         }
         
+        // prepare compaction by setting initial outDegree value for groups
+        // iterates once over all constraints
+        for (CGroup g : cGraph.cGroups) {
+            g.outDegree = 0;
+        }
+        for (CNode n : cGraph.cNodes) {
+            for (CNode incN : n.constraints) {
+                incN.cGroup.outDegree++;
+            }
+        }
+        
         // perform the actual compaction
-        compactCGroups();
+        // compactCGroups();
+        compactCGroups2();
         
         // remove all locks
         cGraph.cNodes.forEach(n -> n.reposition = true); // SUPPRESS CHECKSTYLE InnerAssignment
@@ -155,6 +183,11 @@ public final class OneDimensionalCompactor {
         if (!cGraph.supports(dir)) {
             throw new RuntimeException(
                     "The direction " + dir + " is not supported by the CGraph instance.");
+        }
+
+        // short-circuit if nothing todo
+        if (dir == direction) {
+            return this;
         }
         
         Direction oldDirection = direction;
@@ -331,9 +364,13 @@ public final class OneDimensionalCompactor {
 
     /**
      * For each {@link CGroup} g of the {@link CGroup} to be compacted, calculates the offsets of
-     * g's nodes. It shouldn't be necessary to call this method in the common case since its either
+     * g's nodes. It shouldn't be necessary to call this method in the common case since it's either
      * called by the constructor or for certain direction changes in
      * {@link #changeDirection(Direction)}.
+     * 
+     * The method assures that a groups {@link CGroup#reference} is always the left-most
+     * element (i.e. the one with the lowest x-coordinate). As a consequence, all offsets
+     * (in x) are positive. 
      * 
      * @return this instance of a {@link OneDimensionalCompactor}.
      */
@@ -341,14 +378,19 @@ public final class OneDimensionalCompactor {
         // for any pre-specified groups, deduce the offset of the elements
         for (CGroup group : cGraph.cGroups) {
             group.reference = null;
+
+            // find left-most element
             for (CNode n : group.cNodes) {
-                if (group.reference == null) {
-                    n.cGroupOffset.reset();
+                n.cGroupOffset.reset();
+                if (group.reference == null || n.hitbox.x < group.reference.hitbox.x) {
                     group.reference = n;
-                } else {
-                    n.cGroupOffset.x = n.hitbox.x - group.reference.hitbox.x;
-                    n.cGroupOffset.y = n.hitbox.y - group.reference.hitbox.y;
                 }
+            }
+            
+            // calculate offsets
+            for (CNode n : group.cNodes) {
+                n.cGroupOffset.x = n.hitbox.x - group.reference.hitbox.x;
+                n.cGroupOffset.y = n.hitbox.y - group.reference.hitbox.y;
             }
         }
         
@@ -430,13 +472,11 @@ public final class OneDimensionalCompactor {
 
     }
     
-    /* -----------------------------------------------------------------------------------------------
-     * Scanline-procedure to calculate the constraint graph in O(nlogn) time, n being the number of
-     * rectangles.
+    /* -----------------------------
      * 
-     * The implementation is based on the section 10.2.2.1.1.1 of the following book:
-     * Lengauer, T. (1990). Combinatorial algorithms for integrated circuit layout. John Wiley & Sons.
-     * -----------------------------------------------------------------------------------------------
+     *  Constraint Graph Creation
+     *
+     * -----------------------------
      */
     
     /**
@@ -679,6 +719,100 @@ public final class OneDimensionalCompactor {
         calculateConstraintsForCGroups();
     }
 
+    /* ------------------------------
+     * 
+     *  Constraint Graph Compaction
+     *
+     * ------------------------------
+     */
+    
+    /**
+     * Compacts CGroups and the CNodes inside.
+     * 
+     */
+    private void compactCGroups2() {
+        
+        // calculating the left-most position of any element 
+        // this will be our starting point for the compaction
+        double minStartPos = Double.POSITIVE_INFINITY;
+        for (CNode cNode : cGraph.cNodes) {
+            minStartPos = Math.min(minStartPos, cNode.cGroup.reference.hitbox.x + cNode.cGroupOffset.x);
+        }
+        
+        // finding the sinks of the constraint graph
+        Queue<CGroup> sinks = Lists.newLinkedList();
+        for (CGroup group : cGraph.cGroups) {
+            group.startPos = minStartPos;
+            if (group.outDegree == 0) {
+                sinks.add(group);
+            }
+        }
+        
+        // process sinks until every node in the constraint graph was handled
+        while (!sinks.isEmpty()) {
+            
+            CGroup group = sinks.poll();
+            
+            // ------------------------------------------
+            // #1 final positions for this group's nodes
+            // ------------------------------------------
+            for (CNode node : group.cNodes) {
+                
+                // CNodes can be locked in place to avoid pulling clusters apart
+                double suggestedX = group.startPos + node.cGroupOffset.x;
+                if (node.reposition
+                        // does the "fixed" position violate the constraints?
+                        || (node.getPosition() < suggestedX)) {
+                    node.startPos = suggestedX;
+                } else {
+                    // leave the node where it was!
+                    node.startPos = node.hitbox.x;
+                }
+            }
+            
+            // ---------------------------------------------------
+            // #2 propagate start positions to constrained groups
+            // ---------------------------------------------------
+            for (CNode node : group.cNodes) {
+                for (CNode incNode : node.constraints) {
+                    // determine the required spacing
+                    double spacing;
+                    if (direction.isHorizontal()) {
+                        spacing = spacingsHandler.getHorizontalSpacing(node, incNode);
+                    } else {
+                        spacing = spacingsHandler.getVerticalSpacing(node, incNode);
+                    }
+                    
+                    incNode.cGroup.startPos = Math.max(incNode.cGroup.startPos, 
+                                                       node.startPos + node.hitbox.width + spacing 
+                                                       // respect the other group's node's offset
+                                                       - incNode.cGroupOffset.x);
+                    
+                    // FIXME
+                    if (!incNode.reposition) {
+                        incNode.cGroup.startPos =
+                                Math.max(incNode.cGroup.startPos, incNode.getPosition()
+                                        - incNode.cGroupOffset.x);
+                    }
+                    
+                    incNode.outDegree--; // TODO i think group outdegree is enough
+                    incNode.cGroup.outDegree--;
+                    if (incNode.cGroup.outDegree == 0) {
+                       sinks.add(incNode.cGroup); 
+                    }
+                }
+            }
+        }
+        
+        // ------------------------------------------------------
+        // #3 setting hitbox positions to new starting positions
+        // ------------------------------------------------------
+        for (CNode cNode : cGraph.cNodes) {
+            cNode.applyPosition();
+        }
+    }
+    
+    
     /**
      * Compacts CGroups and the CNodes inside.
      */

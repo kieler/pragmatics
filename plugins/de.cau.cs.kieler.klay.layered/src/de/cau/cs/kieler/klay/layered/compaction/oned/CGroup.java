@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.options.Direction;
  */
 public final class CGroup {
     /** root position of the {@link CGroup}. */
-    private double startPos = Double.NEGATIVE_INFINITY;
+    public double startPos = Double.NEGATIVE_INFINITY;
     // Variables are public for convenience reasons since this class is used internally only.
     // SUPPRESS CHECKSTYLE NEXT 20 VisibilityModifier
     /**
