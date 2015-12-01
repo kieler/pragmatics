@@ -43,12 +43,18 @@ cli:
 ./gradlew -Dorg.gradle.daemon=false -D...=... <tasks>
 """
 
+apply plugin: 'base'
+
 repositories {
     mavenCentral()
+    maven {
+      url "https://oss.sonatype.org/content/repositories/google-snapshots/"
+    }
 }
 
 configurations {
     junitAnt
+    gwt
 }
 
 dependencies {
@@ -59,12 +65,19 @@ dependencies {
     junitAnt('org.apache.ant:ant-junit4:1.9.2') {
         transitive = false
     }
+    gwt group: "com.google.gwt", name: "gwt", version: "2.7+", changing: true
+    gwt group: "com.google.gwt", name: "gwt-dev", version: "2.7+", changing: true
+    gwt group: "com.google.gwt", name: "gwt-user", version: "2.7+", changing: true
+    gwt group: "com.google.gwt", name: "gwt-servlet", version: "2.7+", changing: true
 }
 
 // Importing ant build.xml
 // --------------------------------------------------------
 
 ant.taskdef(name: 'junit', classname: 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTask', classpath: configurations.junitAnt.asPath)
+if (System.getenv()['GWT_SDK'] == null) {
+    ant.properties['system.GWT_SDK'] = "$buildDir/gwt/"
+}
 ant.importBuild 'build.xml'
 
 clean.group 'KIELER build'
@@ -76,79 +89,48 @@ dist.description 'Compiles and bundles the klay layered algortihm as js.'
 buildall.group 'KIELER build'
 buildall.description 'Clean and dist.'
 
-
-// Prepare testing
+// gwt download
 // --------------------------------------------------------
 
-task npmInstall(type: Exec) {
-    description 'Installs all required nodejs modules.'
-    workingDir 'test/js'
-    executable 'npm'
-    args 'install'
+task getGWT(type: Copy) {
+    from configurations.gwt
+    into "$buildDir/gwt"
+    rename 'gwt(-.*)?-[0-9]+.[0-9]+.[0-9]+(-SNAPSHOT)?.jar', 'gwt$1.jar'
 }
+clean.dependsOn cleanGetGWT
+// Setting gwt dependencies on every build task may seem a bit verbose, but otherwise it won't work.
+// When migrating to gradle completely this becomes superflous anyway.
+libs.dependsOn getGWT
+gwtc.dependsOn getGWT
+stdlinker.dependsOn getGWT
+customlinker.dependsOn getGWT
+webworkerlinker.dependsOn getGWT
+plainjslinker.dependsOn getGWT
 
-task unzipKlayJs(type: Copy, dependsOn: plainjslinker) {
-    description 'Extracts the latest KlayJs build for testing.'
-    from zipTree('target/klay_layered_js_plainjslinker_nightly_latest.zip')
-    include 'klay.js'
-    into 'test/js/src'
-}
-
-task concatenateTestConfigs() {
-    description 'Gathers all javascript test configurations and concatenates them into one temporary file.'
-    ext.headerFile = file('test/js/src/tests_template_header.js')
-    ext.footerFile = file('test/js/src/tests_template_footer.js')
-    ext.tests = fileTree(dir: 'test/js/src/tests', include: '*.js')
-    ext.destFile = new File('test/js/src/tests.js')
-    inputs.files tests + files(headerFile, footerFile)
-    outputs.file destFile
-    doLast {
-        destFile.text = headerFile.getText() + tests.collect{it.getText()}.join(',\n') + footerFile.getText()
-    }
-}
-
-// Testing
+// Convenience tasks
 // --------------------------------------------------------
 
-task testBrowser(type: Exec, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
+// Explicitly set task order to prevent the clean task from running after any build task.
+getGWT.mustRunAfter clean
+buildall.mustRunAfter clean
+
+// TBD when migrating ant to gradle
+// task buildAll(dependsOn: []) {
+//     group 'KIELER build'
+//     description 'Bundle and/or gather all artifacts.'
+// }
+task testAll(dependsOn: [test, ':test/js:testBrowser', ':test/js:testNodejs', ':test/js:testWebworker']) {
     group 'KIELER test'
-    description 'Tests KlayJs via plain javascript loading inside an html file.'
-    workingDir 'test/js'
-    executable 'npm'
-    args = ['test']
+    description 'Run all tests.'
 }
-
-task testNodejs(type: Exec, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
-    group 'KIELER test'
-    description 'Tests KlayJs via nodejs.'
-    workingDir 'test/js'
-    executable 'node'
-    args = ['src/run_tests.js', 'context=nodejs']
-}
-
-task testWebworker(type: Exec, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
-// deactivated, currently not terminating (but tests are succeding)
-enabled = false
-    group 'KIELER test'
-    description 'Tests KlayJs via webworker.'
-    workingDir 'test/js'
-    executable 'node'
-    args = ['src/run_tests.js', 'context=webworker']
-}
-
-// Cleanup
-// --------------------------------------------------------
-
-task cleanJs(type: Delete) {
+task all(dependsOn: [clean, buildall, testAll]) {
     group 'KIELER build'
-    description 'Deletes build directories and installed modules.'
-    delete 'build'
-    delete 'test/js/node_modules'
-    delete 'test/js/build'
-    delete 'test/js/src/klay.js'
-    delete 'test/js/src/tests.js'
+    description 'Clean, build and test all.'
 }
-clean.dependsOn cleanJs
+
+help.doLast {
+    println helpMsg
+}
 
 // Utilities
 // --------------------------------------------------------
@@ -182,34 +164,6 @@ task runSuperDevMode(type:Exec, dependsOn: javac) {
             throw new InvalidUserDataException("No GWT_SDK was specified!")
         }
     }
-}
-
-
-// Convenience tasks
-// --------------------------------------------------------
-
-// Explicitly set task order to prevent the clean task from running after any build task.
-testBrowser.mustRunAfter cleanJs
-testNodejs.mustRunAfter cleanJs
-testWebworker.mustRunAfter cleanJs
-buildall.mustRunAfter clean
-
-// TBD when migrating ant to gradle
-// task buildAll(dependsOn: []) {
-//     group 'KIELER build'
-//     description 'Bundle and/or gather all artifacts.'
-// }
-task testAll(dependsOn: [test, testBrowser, testNodejs, testWebworker]) {
-    group 'KIELER test'
-    description 'Run all tests.'
-}
-task all(dependsOn: [clean, cleanJs, buildall, testAll]) {
-    group 'KIELER build'
-    description 'Clean, build and test all.'
-}
-
-help.doLast {
-    println helpMsg
 }
 
 // Extra args to execute stuff on windows

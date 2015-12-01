@@ -144,7 +144,7 @@
 	<target name="libs" description="Copy libs to WEB-INF/lib">
 		<mkdir dir="war/WEB-INF/lib" />
 		<copy todir="war/WEB-INF/lib" file="${gwt.sdk}/gwt-servlet.jar" />
-		<copy todir="war/WEB-INF/lib" file="${gwt.sdk}/gwt-servlet-deps.jar" />
+		<!-- <copy todir="war/WEB-INF/lib" file="${gwt.sdk}/gwt-servlet-deps.jar" /> -->
 		<!-- Add any additional server libs that need to be copied -->
 	</target>
 
@@ -168,6 +168,7 @@
 				<!-- Several jar files. -->
 				<pathelement location="${gwt.sdk}/gwt-user.jar" />
 				<fileset dir="${gwt.sdk}" includes="gwt-dev*.jar" />
+				<fileset dir="${gwt.sdk}" includes="asm*.jar" />
 				<fileset dir="war/WEB-INF/lib" includes="**/*.jar" />
 				<pathelement location="war/WEB-INF/classes" />
 				<pathelement location="${gwt.sdk}/validation-api-1.0.0.GA.jar" />

@@ -1,0 +1,95 @@
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+
+  dependencies {
+    classpath 'com.moowork.gradle:gradle-node-plugin:0.11'
+    classpath 'com.moowork.gradle:gradle-grunt-plugin:0.11'
+  }
+}
+
+apply plugin: 'com.moowork.node'
+apply plugin: 'com.moowork.grunt'
+
+// Configure node
+// --------------------------------------------------------
+
+node {
+    version = '0.10.25'
+    npmVersion = '1.3.10'
+    // always download project-local node
+    download = true
+}
+
+// Prepare testing
+// --------------------------------------------------------
+
+task unzipKlayJs(type: Copy, dependsOn: rootProject.tasks['plainjslinker']) {
+    description 'Extracts the latest KlayJs build for testing.'
+    from zipTree("${rootProject.projectDir}/target/klay_layered_js_plainjslinker_nightly_latest.zip")
+    include 'klay.js'
+    into 'src'
+}
+
+task concatenateTestConfigs() {
+    description 'Gathers all javascript test configurations and concatenates them into one temporary file.'
+    ext.headerFile = file("$projectDir/src/tests_template_header.js")
+    ext.footerFile = file("$projectDir/src/tests_template_footer.js")
+    ext.tests = fileTree(dir: "$projectDir/src/tests", include: '*.js')
+    ext.destFile = new File("$projectDir/src/tests.js")
+    inputs.files tests + files(headerFile, footerFile)
+    outputs.file destFile
+    doLast {
+        destFile.text = headerFile.getText() + tests.collect{it.getText()}.join(',\n') + footerFile.getText()
+    }
+}
+
+// Testing
+// --------------------------------------------------------
+
+task testBrowser(type: GruntTask, dependsOn: [npmInstall, installGrunt, unzipKlayJs, concatenateTestConfigs]) {
+    group 'KIELER test'
+    description 'Tests KlayJs via plain javascript loading inside an html file.'
+    args = ['test']
+}
+
+task testNodejs(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
+    group 'KIELER test'
+    description 'Tests KlayJs via nodejs.'
+    script = file("$projectDir/src/run_tests.js")
+    args = ['context=nodejs']
+}
+
+task testWebworker(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
+// deactivated, currently not terminating (but tests are succeding)
+enabled = false
+    group 'KIELER test'
+    description 'Tests KlayJs via webworker.'
+    script = file("$projectDir/src/run_tests.js")
+    args = ['context=webworker']
+}
+
+// Cleanup
+// --------------------------------------------------------
+
+task clean(type: Delete) {
+    group 'KIELER build'
+    description 'Deletes build directories and installed modules.'
+    delete "$projectDir/build"
+    delete "$projectDir/node_modules"
+    delete "$projectDir/src/klay.js"
+    delete "$projectDir/src/tests.js"
+    delete "$projectDir/npm-debug.log"
+}
+// rootProject.tasks['clean'].dependsOn cleanJs
+
+// Convenience tasks
+// --------------------------------------------------------
+
+// Explicitly set task order to prevent the clean task from running after any build task.
+testBrowser.mustRunAfter clean
+testNodejs.mustRunAfter clean
+testWebworker.mustRunAfter clean

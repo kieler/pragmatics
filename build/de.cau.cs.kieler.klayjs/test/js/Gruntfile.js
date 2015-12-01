@@ -18,6 +18,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-qunit-junit');
 
   // Default task(s).
-  grunt.registerTask('default', ['qunit_junit', 'qunit']);
+  grunt.registerTask('test', ['qunit_junit', 'qunit']);
 
 };
