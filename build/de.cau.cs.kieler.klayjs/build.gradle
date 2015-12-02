@@ -4,28 +4,20 @@ Gradle script for building Klay JavaScript version.
 Requirements
 ============
 
-environment variables
----------------------
-GWT_SDK=/path/to/gwt-sdk
-
-software (for running the tests)
---------------------------------
-nodejs
-    https://nodejs.org/download/
-.NET Framework Software Development Kit (SDK) version 2.0
-    http://www.microsoft.com/en-us/download/details.aspx?id=19988
+Task 'getGWT' has to be called explicitly as dependency resolving won't work properly
+with imported ant-tasks.
 
 Build and test all
 ==================
-./gradlew all
+./gradlew getGWT all
 
 Build complete nightlies
 ========================
-./gradlew clean buildall
+./gradlew clean getGWT buildall
 
 Run all tests
 =============
-./gradlew clean testAll
+./gradlew clean getGWT testAll
 
 Available tasks
 ===============
@@ -101,17 +93,11 @@ task getGWT(type: Copy) {
     from configurations.gwt
     into "$buildDir/gwt"
     outputs.files fileTree(dir: "$buildDir/gwt")
-    rename 'gwt(-.*)?-[0-9]+.[0-9]+.[0-9]+(-SNAPSHOT)?.jar', 'gwt$1.jar'
+    // rename 'gwt(-.*)?-[0-9]+.[0-9]+.[0-9]+(-SNAPSHOT)?.jar', 'gwt$1.jar'
 }
 clean.dependsOn cleanGetGWT
-// Setting gwt dependencies on every build task may seem a bit verbose, but otherwise it won't work.
-// When fully migrating to gradle this becomes superflous anyway.
-javac.dependsOn getGWT
-// stdlinker.dependsOn getGWT
-// customlinker.dependsOn getGWT
-// webworkerlinker.dependsOn getGWT
-// plainjslinker.dependsOn getGWT
-// buildall.dependsOn getGWT
+// TODO it seems that this task-dependency doesn't work. 
+javac.dependsOn(getGWT)
 
 // Convenience tasks
 // --------------------------------------------------------
@@ -150,9 +136,7 @@ task runSuperDevMode(type:Exec, dependsOn: [javac, getGWT]) {
     args = [
         "-cp",
         [ // windows and unix require different path separators
-         "$gwt_sdk/gwt-dev.jar",
          "$gwt_sdk/*",
-         "war/WEB-INF/lib/*",
          "src",
          "src-external"].join(File.pathSeparator),
         "com.google.gwt.dev.DevMode",
@@ -162,13 +146,6 @@ task runSuperDevMode(type:Exec, dependsOn: [javac, getGWT]) {
         "KlayJsExample.html",
         "de.cau.cs.kieler.klay.gwt.KlayGWT"
     ]
-
-    doFirst {
-        // run check only when task is actually executed
-        if (!gwt) {
-            throw new InvalidUserDataException("No GWT_SDK was specified!")
-        }
-    }
 }
 
 // Extra args to execute stuff on windows
