@@ -533,8 +533,11 @@ public final class OneDimensionalCompactor {
     private class ConstraintsScanlineHandler implements EventHandler<OneDimensionalCompactor.Timestamp> {
 
         /**
-         * Sorted set of intervals that allows to query for the left and right neighbor of
-         * an interval. Sorted by the x coordinate of a {@link CNode}'s hitbox.
+         * Sorted set of intervals that allows to query for the left and right neighbor of an
+         * interval. Sorted by the x coordinate of a {@link CNode}'s hitbox.
+         * 
+         * Note: the methods to query for neighbor elements (e.g., {@link TreeSet#lower(Object)})
+         * are not constant time.
          */
         private TreeSet<CNode> intervals = Sets.newTreeSet((c1, c2) -> Double.compare(
                 c1.hitbox.x, c2.hitbox.x));
