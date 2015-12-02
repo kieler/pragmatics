@@ -76,7 +76,10 @@ dependencies {
 
 ant.taskdef(name: 'junit', classname: 'org.apache.tools.ant.taskdefs.optional.junit.JUnitTask', classpath: configurations.junitAnt.asPath)
 if (System.getenv()['GWT_SDK'] == null) {
+    ext.gwt_sdk = "$buildDir/gwt/"
     ant.properties['system.GWT_SDK'] = "$buildDir/gwt/"
+} else {
+    ext.gwt_sdk = System.getenv()['GWT_SDK']
 }
 ant.importBuild 'build.xml'
 
@@ -119,7 +122,7 @@ buildall.mustRunAfter clean
 //     group 'KIELER build'
 //     description 'Bundle and/or gather all artifacts.'
 // }
-task testAll(dependsOn: [test, ':test/js:testBrowser', ':test/js:testNodejs', ':test/js:testWebworker']) {
+task testAll(dependsOn: [':test/java:test', ':test/js:testBrowser', ':test/js:testNodejs', ':test/js:testWebworker']) {
     group 'KIELER test'
     description 'Run all tests.'
 }

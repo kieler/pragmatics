@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "Testsuite for JavaScript compiled KLay Layered",
   "main": "src/run_tests.js",
-  "author": "Carsten Sprung",
+  "author": "Kiel University, Dep. of Computer Science, Real-Time and Embedded Systems Group",
   "license": "EPL",
   "devDependencies": {
     "grunt": "~0.4.5",
