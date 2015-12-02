@@ -65,10 +65,12 @@ dependencies {
     junitAnt('org.apache.ant:ant-junit4:1.9.2') {
         transitive = false
     }
-    gwt group: "com.google.gwt", name: "gwt", version: "2.7+", changing: true
-    gwt group: "com.google.gwt", name: "gwt-dev", version: "2.7+", changing: true
-    gwt group: "com.google.gwt", name: "gwt-user", version: "2.7+", changing: true
-    gwt group: "com.google.gwt", name: "gwt-servlet", version: "2.7+", changing: true
+    gwt 'com.google.guava:guava:15.0+'
+    gwt 'com.google.guava:guava-gwt:15.0+'
+    gwt('com.google.gwt:gwt:2.7+'){ changing = true }
+    gwt('com.google.gwt:gwt-dev:2.7+'){ changing = true }
+    gwt('com.google.gwt:gwt-user:2.7+'){ changing = true }
+    gwt('com.google.gwt:gwt-servlet:2.7+'){ changing = true }
 }
 
 // Importing ant build.xml
@@ -98,17 +100,18 @@ buildall.description 'Clean and dist.'
 task getGWT(type: Copy) {
     from configurations.gwt
     into "$buildDir/gwt"
+    outputs.files fileTree(dir: "$buildDir/gwt")
     rename 'gwt(-.*)?-[0-9]+.[0-9]+.[0-9]+(-SNAPSHOT)?.jar', 'gwt$1.jar'
 }
 clean.dependsOn cleanGetGWT
 // Setting gwt dependencies on every build task may seem a bit verbose, but otherwise it won't work.
-// When migrating to gradle completely this becomes superflous anyway.
-libs.dependsOn getGWT
-gwtc.dependsOn getGWT
-stdlinker.dependsOn getGWT
-customlinker.dependsOn getGWT
-webworkerlinker.dependsOn getGWT
-plainjslinker.dependsOn getGWT
+// When fully migrating to gradle this becomes superflous anyway.
+javac.dependsOn getGWT
+// stdlinker.dependsOn getGWT
+// customlinker.dependsOn getGWT
+// webworkerlinker.dependsOn getGWT
+// plainjslinker.dependsOn getGWT
+// buildall.dependsOn getGWT
 
 // Convenience tasks
 // --------------------------------------------------------
@@ -138,18 +141,17 @@ help.doLast {
 // Utilities
 // --------------------------------------------------------
 
-task runSuperDevMode(type:Exec, dependsOn: javac) {
+task runSuperDevMode(type:Exec, dependsOn: [javac, getGWT]) {
     group 'KIELER misc'
     description 'Starts the SuperDevMode code server.'
-    def gwt = System.getenv('GWT_SDK')
 
     workingDir '.'
     executable 'java'
     args = [
         "-cp",
         [ // windows and unix require different path separators
-         "$gwt/gwt-dev.jar",
-         "$gwt/*",
+         "$gwt_sdk/gwt-dev.jar",
+         "$gwt_sdk/*",
          "war/WEB-INF/lib/*",
          "src",
          "src-external"].join(File.pathSeparator),

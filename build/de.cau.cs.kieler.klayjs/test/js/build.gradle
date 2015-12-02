@@ -65,7 +65,7 @@ task testNodejs(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenate
 }
 
 task testWebworker(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
-// deactivated, currently not terminating (but tests are succeding)
+// deactivated, currently not terminating with more than 2 tests (but tests are succeding)
 enabled = false
     group 'KIELER test'
     description 'Tests KlayJs via webworker.'
@@ -85,7 +85,6 @@ task clean(type: Delete) {
     delete "$projectDir/src/tests.js"
     delete "$projectDir/npm-debug.log"
 }
-// rootProject.tasks['clean'].dependsOn cleanJs
 
 // Convenience tasks
 // --------------------------------------------------------

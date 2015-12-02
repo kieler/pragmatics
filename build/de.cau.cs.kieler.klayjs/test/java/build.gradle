@@ -9,9 +9,7 @@ dependencies {
 
     // According to classpath in build.xml, to be adjusted when fully migrating to gradle
     testCompile files("${rootProject.projectDir}/war/WEB-INF/classes")
-    testCompile files("${rootProject.gwt_sdk}/gwt-user.jar")
-    testCompile fileTree(dir: "${rootProject.gwt_sdk}", include: 'gwt-dev*.jar')
-    testCompile fileTree(dir: "${rootProject.projectDir}/war/WEB-INF/lib", include: '**/*.jar')
+    testCompile fileTree(dir: "${rootProject.gwt_sdk}", include: '*.jar')
 }
 
 sourceSets {
