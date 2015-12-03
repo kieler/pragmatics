@@ -18,9 +18,8 @@ apply plugin: 'com.moowork.grunt'
 // --------------------------------------------------------
 
 node {
-    // Versions known to work for now
-    version = '0.10.25'
-    npmVersion = '1.3.10'
+    // LTS version
+    version = '4.2.2'
     // always download project-local node
     download = true
 }
@@ -28,7 +27,7 @@ node {
 // Prepare testing
 // --------------------------------------------------------
 
-task unzipKlayJs(type: Copy, dependsOn: rootProject.tasks['plainjslinker']) {
+task unzipKlayJs(type: Copy/*, dependsOn: rootProject.tasks['plainjslinker']*/) {
     description 'Extracts the latest KlayJs build for testing.'
     from zipTree("${rootProject.projectDir}/target/klay_layered_js_plainjslinker_nightly_latest.zip")
     include 'klay.js'
@@ -65,8 +64,6 @@ task testNodejs(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenate
 }
 
 task testWebworker(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
-// deactivated, currently not terminating with more than 2 tests (but tests are succeding)
-enabled = false
     group 'KIELER test'
     description 'Tests KlayJs via webworker.'
     script = file("$projectDir/src/run_tests.js")

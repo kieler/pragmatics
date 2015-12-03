@@ -43,19 +43,15 @@ function testInNodejs(config) {
 
 function testInWebworker(config) {
   exports['[webworker]' + config.name] = function(assert) {
-    var Worker = require('webworker-threads').Worker;
-    var worker = new Worker('src/klay.js');
     assert.expect(1);
 
     var timeout = setTimeout(function() {
-      worker.terminate();
       assert.done();
-    }, 10000);
+    }, 5000);
 
     worker.addEventListener('message', function (e) {
       var result = e.data;
       assert.ok(config.check(result), config.errorMsg(result));
-      worker.terminate();
       clearTimeout(timeout);
       assert.done();
     });
@@ -76,6 +72,7 @@ if (typeof tests === 'undefined') {
 }
 var testInContext;
 var args;
+var worker;
 
 // browser context
 if (typeof document !== 'undefined') {
@@ -94,6 +91,8 @@ else if (module && module.exports) {
   switch (args.context) {
     case 'webworker':
       testInContext = testInWebworker;
+      var Worker = require('webworker-threads').Worker;
+      worker = new Worker('src/klay.js');
       break;
     case 'nodejs':
       testInContext = testInNodejs;
@@ -119,3 +118,12 @@ tests.forEach(function(config){
     }
   }
 });
+
+if (worker) {
+  setTimeout(function() {
+    console.log('Global webworker timeout reached!');
+    console.log('This is intended. If this results in unexpected test failures, increase the timeout in');
+    console.log('    /build/de.cau.cs.kieler.klayjs/test/js/src/test_wrapper.js');
+    worker.terminate();
+  }, 10000);
+}
