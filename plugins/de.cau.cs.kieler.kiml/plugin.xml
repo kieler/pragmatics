@@ -686,6 +686,15 @@
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="parents"
+           default="false"
+           description="Whether to activate partitioned layout."
+           id="de.cau.cs.kieler.layoutPartitions"
+           name="Layout Partitions"
+           type="boolean">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
            appliesTo="nodes"
            description="Describes which partition of a partitioned graph a node belongs to."
            id="de.cau.cs.kieler.partition"

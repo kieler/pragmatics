@@ -477,8 +477,14 @@ public final class LayoutOptions {
             -1f, 0f);
 
     /**
-     * Partition to which the node belongs to. If any node has a partition set, all nodes are excepted to
-     * have a partition.
+     * Property choosing whether partitions of nodes should be respected during layout.
+     */
+    public static final IProperty<Boolean> LAYOUT_PARTITIONS =
+            new Property<Boolean>("de.cau.cs.kieler.layoutPartitions", false);
+
+    /**
+     * Partition to which the node belongs to. If {@link LayoutOptions#LAYOUT_PARTITIONS} is true,
+     * all nodes are expected to have a partition.
      */
     public static final IProperty<Integer> PARTITION =
             new Property<Integer>("de.cau.cs.kieler.partition");

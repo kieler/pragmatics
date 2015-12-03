@@ -97,6 +97,10 @@ class KGraphImporter {
             }
         }
         
+        if (topLevelGraph.getProperty(LayoutOptions.LAYOUT_PARTITIONS)) {
+            graphProperties.add(GraphProperties.PARTITIONS);
+        }
+        
         // Import the graph either with or without multiple nested levels of hierarchy
         if (kgraph.getData(KShapeLayout.class).getProperty(LayoutOptions.HIERARCHY_HANDLING) 
                 == HierarchyHandling.INCLUDE_CHILDREN) {
@@ -564,11 +568,6 @@ class KGraphImporter {
 
         Set<GraphProperties> graphProperties = lgraph.getProperty(
                 InternalProperties.GRAPH_PROPERTIES);
-        
-        // If any node has a partition, the whole graph is assumed to be partitioned.
-        if (lnode.getProperty(LayoutOptions.PARTITION) != null) {
-            graphProperties.add(GraphProperties.PARTITIONS);
-        }
         
         // port constraints and sides cannot be undefined
         PortConstraints portConstraints = lnode.getProperty(LayoutOptions.PORT_CONSTRAINTS);
