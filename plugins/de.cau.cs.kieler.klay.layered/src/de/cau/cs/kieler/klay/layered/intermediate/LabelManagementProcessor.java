@@ -140,7 +140,15 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
                 break;
 
             }
+            
+            // Edges can have edge and tail labels that need to be managed as well (note that at this
+            // point, only head and tail labels remain)
+            for (LEdge edge : layerNode.getOutgoingEdges()) {
+                doManageLabels(
+                        labelManager, edge.getLabels(), MIN_WIDTH_EDGE_LABELS, null, 0);
+            }
         }
+        
     }
 
     /**
@@ -155,6 +163,14 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
 
         for (LNode node : layer) {
             if (node.getType() == NodeType.NORMAL) {
+                /* It would be nice to include the node's margins here, but we don't know the margins
+                 * at the time the label management processor is invoked. It would seem that the
+                 * solution is to execute label management after node margin calculation. But there's a
+                 * chicken-and-egg problem right there: if we execute node margin calculation first, it
+                 * won't know about shortened edge end labels and port labels. If we execute label
+                 * management first, it won't include node margins in the space usable for center edge
+                 * labels. Damn!
+                 */
                 maxWidth = Math.max(maxWidth, node.getSize().x);
             }
         }

@@ -42,8 +42,6 @@ import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.labels.AbstractKlighdLabelManager
 import de.cau.cs.kieler.klighd.labels.ConditionLabelManager
-import de.cau.cs.kieler.klighd.labels.FilterAllCondition
-import de.cau.cs.kieler.klighd.labels.HardWrappingLabelManager
 import de.cau.cs.kieler.klighd.labels.SoftWrappingLabelManager
 import de.cau.cs.kieler.klighd.labels.TruncatingLabelManager
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
@@ -52,6 +50,8 @@ import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
 import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
+import de.cau.cs.kieler.klighd.labels.LabelPredicates
+import de.cau.cs.kieler.klighd.labels.IdentLabelManager
 
 /**
  * Synthesizes a copy of the given {@code KNode} and adds default stuff.
@@ -101,28 +101,34 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     private static final IProperty<Boolean> DEFAULTS_PROPERTY = new Property<Boolean>(
         "de.cau.cs.kieler.kgraphsynthesis.defaults", false)
-
+    
     private static val DEFAULTS_AS_IN_MODEL = "As in Model"
     private static val DEFAULTS_ON = "On"
     private static val DEFAULTS_OFF = "Off"
-
     /**
      * Synthesis option specifying whether default values should be used. Default values are, eg, node
      * size if not specified and port ids as labels if no labels exist.
      */
     private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption("Default Values",
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
-
-    /** Synthesis option specifying the styling to be used for nodes. */
-    private static val SynthesisOption STYLE = SynthesisOption::createChoiceOption("Style",
-        ImmutableList::of("Boring", "Stylish", "Hello Kitty"), "Boring")
-
-    /** Synthesis option specifying whether to install a label shortening strategy or not. */
-    private static val SynthesisOption SHORTEN_LABELS_LEVELS = SynthesisOption::createRangeOption(
-        "Shorten Labels", 0, 4, 1, 4)
-    /** Synthesis option specifying how much labels should be shortened. */
-    private static val SynthesisOption TARGET_WIDTH_LEVELS = SynthesisOption::createRangeOption(
-        "Shortening Width", 0, 200, 2, 200)
+    
+    private static val STYLE_BORING = "Boring";
+    private static val STYLE_STYLISH = "Stylish";
+    private static val STYLE_HELLO_KITTY = "Hello Kitty";
+    /** The style to be used when drawing the KGraphs. */
+    private static val SynthesisOption STYLE = SynthesisOption::createChoiceOption(
+        "Style",
+        ImmutableList::of(STYLE_BORING, STYLE_STYLISH, STYLE_HELLO_KITTY),
+        STYLE_STYLISH);
+    
+    private static val LABELS_NO_LABELS = "No Labels";
+    private static val LABELS_TRUNCATE = "Truncate";
+    private static val LABELS_SOFT_WORD_WRAP = "Soft Word Wrapping";
+    private static val LABELS_FULL = "Full Labels";
+    private static val SynthesisOption LABEL_SHORTENING_STRATEGY = SynthesisOption.createChoiceOption(
+        "Label Shortening Strategy",
+        ImmutableList::of(LABELS_NO_LABELS, LABELS_TRUNCATE, LABELS_SOFT_WORD_WRAP, LABELS_FULL),
+        LABELS_FULL);
 
     /**
      * {@inheritDoc} 
@@ -130,13 +136,13 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     override getDisplayedLayoutOptions() {
         return ImmutableList::of( 
             // example to specify external layout option (in this case one of klay layered)
-        // remember to add the following import in the head of this class
-        //   import static de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
-        // specifyLayoutOption("de.cau.cs.kieler.klay.layered.edgeSpacingFactor", ImmutableList.of(0f,1f))
-        // These values are annoying :)
-        //specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
-        //  ImmutableList::copyOf(PortConstraints::values)),
-        //specifyLayoutOption(LayoutOptions::SPACING, ImmutableList::of(0, 255))
+            // remember to add the following import in the head of this class
+            //   import static de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
+            // specifyLayoutOption("de.cau.cs.kieler.klay.layered.edgeSpacingFactor", ImmutableList.of(0f,1f))
+            // These values are annoying :)
+            //specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
+            //  ImmutableList::copyOf(PortConstraints::values)),
+            //specifyLayoutOption(LayoutOptions::SPACING, ImmutableList::of(0, 255))
         )
     }
 
@@ -147,8 +153,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         return ImmutableList::of(
             DEFAULTS,
             STYLE,
-            SHORTEN_LABELS_LEVELS,
-            TARGET_WIDTH_LEVELS
+            LABEL_SHORTENING_STRATEGY
         )
     }
 
@@ -209,7 +214,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             //  as value.
         }
 
-        //Enable label management
+        // Enable label management
         addLabelManager(result)
                
         // Create a rendering library for reuse of renderings
@@ -220,8 +225,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         }
 
         switch STYLE.objectValue {
-            case "Stylish": library.initStylishFactory
-            case "Hello Kitty": library.initHelloKittyFactory
+            case STYLE_STYLISH: library.initStylishFactory
+            case STYLE_HELLO_KITTY: library.initHelloKittyFactory
             default: library.initBoringFactory // boring 
         }
 
@@ -245,24 +250,27 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         var labelManager = null as AbstractKlighdLabelManager;
 
         // Evaluate the label shortening property
-        switch SHORTEN_LABELS_LEVELS.intValue {
-            case 0: {
-                labelManager = new ConditionLabelManager(null, new FilterAllCondition(), true)
+        switch LABEL_SHORTENING_STRATEGY.objectValue {
+            case LABELS_NO_LABELS: {
+                labelManager = new ConditionLabelManager(
+                    null,
+                    LabelPredicates.matchNone,
+                    true);
             }
-            case 1: {
-                labelManager = new TruncatingLabelManager();
-                labelManager.fixTargetWidth(TARGET_WIDTH_LEVELS.intValue);
+            case LABELS_TRUNCATE: {
+                labelManager = new ConditionLabelManager(
+                    new TruncatingLabelManager(),
+                    LabelPredicates.centerEdgeLabel,
+                    false);
             }
-            case 2: {
-                labelManager = new HardWrappingLabelManager()
-                labelManager.fixTargetWidth(TARGET_WIDTH_LEVELS.intValue);
+            case LABELS_SOFT_WORD_WRAP: {
+                labelManager = new ConditionLabelManager(
+                    new SoftWrappingLabelManager(),
+                    LabelPredicates.centerEdgeLabel,
+                    false);
             }
-            case 3: {
-                labelManager = new SoftWrappingLabelManager()
-                labelManager.fixTargetWidth(TARGET_WIDTH_LEVELS.intValue);
-            }
-            case 4: {
-                //original Text
+            case LABELS_FULL: {
+                labelManager = new IdentLabelManager()
             }
         }
         
@@ -357,7 +365,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         KimlUtil.configureWithDefaultValues(node)
 
         // add a rendering to the node
-        node.addRenderingRef(defaultNodeRendering).addSingleClickAction(FocusAndContextAction.ID)
+        val rendering = node.addRenderingRef(defaultNodeRendering)
+        rendering.addSingleClickAction(FocusAndContextAction.ID)
     }
 
     /**
@@ -418,8 +427,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         if (!label.hasRendering) {
             renderingFactory.createKText() => [ text |
                 label.data += text
-                text.addSingleClickAction("de.cau.cs.kieler.klighd.actions.FocusAndContextAction")
                 text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
+                text.addSingleClickAction(FocusAndContextAction.ID)
                 
                 // Port labels should have a smaller font size
                 if (label.eContainer instanceof KPort) {
@@ -449,6 +458,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      * @return {@code true} if default stuff should be added, {@code false} otherwise.
      */
     def private boolean defaultsEnabled() {
-        return DEFAULTS.objectValue == DEFAULTS_ON || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults)
+        return DEFAULTS.objectValue == DEFAULTS_ON
+            || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults);
     }
 }
