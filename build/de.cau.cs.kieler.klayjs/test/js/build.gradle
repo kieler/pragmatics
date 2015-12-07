@@ -64,6 +64,8 @@ task testNodejs(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenate
 }
 
 task testWebworker(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
+    // Disabled due to outdated g++ version on build server (required for building webworker-plugin, version installed: 4.6, required: >=4.7)
+    enabled = false
     group 'KIELER test'
     description 'Tests KlayJs via webworker.'
     script = file("$projectDir/src/run_tests.js")
