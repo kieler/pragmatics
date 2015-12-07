@@ -47,9 +47,15 @@ public enum NodePlacementStrategy implements ILayoutPhaseFactory {
     /**
      * Node placement which groups nodes to blocks which result in straight edges.
      */
-    BRANDES_KOEPF;
+    BRANDES_KOEPF,
     
-
+    /**
+     * Using an auxiliary graph and the
+     * {@link de.cau.cs.kieler.klay.layered.networksimplex.NetworkSimplex NetworkSimplex} algorithm
+     * to calculate a balanced placement with straight long edges.
+     */
+    NETWORK_SIMPLEX;
+    
     /**
      * {@inheritDoc}
      */
@@ -66,6 +72,9 @@ public enum NodePlacementStrategy implements ILayoutPhaseFactory {
             
         case BRANDES_KOEPF:
             return new BKNodePlacer();
+            
+        case NETWORK_SIMPLEX:
+            return new NetworkSimplexPlacer();
             
         default:
             throw new IllegalArgumentException(

@@ -83,6 +83,13 @@ public class SimplePhaseLayoutConfigurator implements ILayoutConfigurator {
     /**
      * @return the strategy
      */
+    public Object getStrategy() {
+        return strategy;
+    }
+    
+    /**
+     * @return the strategy
+     */
     public Class<? extends ILayoutProcessor> getStrategyImpl() {
         return strategyImpl;
     }
@@ -94,6 +101,7 @@ public class SimplePhaseLayoutConfigurator implements ILayoutConfigurator {
         String phaseName = phase.toString();
         String simplePhaseName =
                 phaseName.substring(phaseName.lastIndexOf('.') + 1, phaseName.length());
-        return "-" + simplePhaseName + ", " + strategy.toString() + "";
+        return "-" + simplePhaseName + ", " + (strategy != null ? strategy.toString() : "SPECIAL")
+                + "";
     }
 }

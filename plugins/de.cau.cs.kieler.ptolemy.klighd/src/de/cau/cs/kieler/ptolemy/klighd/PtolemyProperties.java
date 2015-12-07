@@ -44,12 +44,29 @@ public final class PtolemyProperties {
     public static final IProperty<String> COMMENT_TEXT = new Property<String>("comment.text", null);
     
     /**
+     * The location of a property that is transformed into a node.
+     */
+    public static final IProperty<String> PT_LOCATION = new Property<String>("property.location", null);
+    
+    /**
+     * The text size configured for a comment inside Ptolemy. Ptolemy's standard font size is 14.
+     */
+    public static final IProperty<Integer> COMMENT_FONT_SIZE = new Property<Integer>(
+            "comment.fontSize", 14);
+    
+    /**
      * The parameters a parameter node should display. This is a list of pairs of Strings, each
      * containing the name and the value of a parameter.
      */
     public static final IProperty<List<Pair<String, String>>> PT_PARAMETERS =
             new Property<List<Pair<String, String>>>("ptolemy.parameters", null);
     
+    /**
+     * The parameters a parameter node should display. Those parameters are its name and value.
+     */
+    public static final IProperty<Pair<String,String>> PARAMETER_PAIR = 
+            new Property<Pair<String,String>>("ptolemy.parameter", null);
+  
     
     /**
      * This class is not to be instantiated.
