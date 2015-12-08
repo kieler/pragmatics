@@ -93,6 +93,7 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
 
         assert labelManager != null : "labelManager is null";
 
+        boolean verticalLayout = layer.getGraph().getProperty(LayoutOptions.DIRECTION).isVertical();
         double maxWidth = Math.max(MIN_WIDTH_EDGE_LABELS, findMaxNonDummyNodeWidth(layer));
 
         // Apply the maximum width to all label dummy nodes
@@ -102,8 +103,8 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
                 // Handle ports
                 List<LPort> ports = layerNode.getPorts();
                 for (LPort port : ports) {
-                    doManageLabels(
-                            labelManager, port.getLabels(), MIN_WIDTH_PORT_LABELS, null, 0);
+                    doManageLabels(labelManager, port.getLabels(), MIN_WIDTH_PORT_LABELS,
+                            null, 0, verticalLayout);
                 }
 
                 // Selfloop splines
@@ -113,8 +114,8 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
                 for (ConnectedSelfLoopComponent component : components) {
                     Set<LEdge> edges = component.getEdges();
                     for (LEdge edge : edges) {
-                        doManageLabels(
-                                labelManager, edge.getLabels(), maxWidth, null, labelSpacing);
+                        doManageLabels(labelManager, edge.getLabels(), maxWidth,
+                                null, labelSpacing, verticalLayout);
 
                     }
                 }
@@ -129,8 +130,8 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
 
                 Iterable<LLabel> labels = layerNode.getProperty(InternalProperties.REPRESENTED_LABELS);
 
-                newDummySize = doManageLabels(
-                        labelManager, labels, maxWidth, newDummySize, labelSpacing);
+                newDummySize = doManageLabels(labelManager, labels, maxWidth,
+                        newDummySize, labelSpacing, verticalLayout);
 
                 // Apply new dummy node size (we don't bother with the ports here since they will be
                 // meddled with later by the LabelSideSelector anyway)
@@ -144,21 +145,27 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
             // Edges can have edge and tail labels that need to be managed as well (note that at this
             // point, only head and tail labels remain)
             for (LEdge edge : layerNode.getOutgoingEdges()) {
-                doManageLabels(
-                        labelManager, edge.getLabels(), MIN_WIDTH_EDGE_LABELS, null, 0);
+                doManageLabels(labelManager, edge.getLabels(), MIN_WIDTH_EDGE_LABELS,
+                        null, 0, verticalLayout);
             }
         }
         
     }
 
     /**
-     * Finds the maximum width of non-dummy nodes in the given layer.
+     * Finds the maximum width of non-dummy nodes in the given layer. If the graph is laid out in a
+     * vertical direction, the maximum non-dummy node width doesn't mean anything since the labels are
+     * narrow, but very high. So in that case, we simply return the minimum edge label width.
      * 
      * @param layer
      *            the layer to iterate over.
      * @return the maximum width of non-dummy nodes. If there are none, {@code 0.0} is returned.
      */
     private double findMaxNonDummyNodeWidth(final Layer layer) {
+        if (layer.getGraph().getProperty(LayoutOptions.DIRECTION).isVertical()) {
+            return MIN_WIDTH_EDGE_LABELS;
+        }
+        
         double maxWidth = 0.0;
 
         for (LNode node : layer) {
@@ -192,11 +199,15 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
      *            except for when this method is called multiple times for the same bounding box.
      * @param labelSpacing
      *            the label spacing.
+     * @param verticalLayout
+     *            {@code true} if the graph is laid out downwards or upwards. In these cases, the
+     *            new label dimensions returned by the label manager need to be turned 90 degrees.
      * @return the bounding box passed as {@code newDummySize} or a new size if that was
      *         {@code null}.
      */
     private KVector doManageLabels(final ILabelManager labelManager, final Iterable<LLabel> labels,
-            final double targetWidth, final KVector newDummySize, final double labelSpacing) {
+            final double targetWidth, final KVector newDummySize, final double labelSpacing,
+            final boolean verticalLayout) {
         
         for (LLabel label : labels) {
             // If the label has an origin, call the label size modifier
@@ -205,8 +216,14 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
                 KVector newSize = labelManager.manageLabelSize(origin, targetWidth);
 
                 if (newSize != null) {
-                    label.getSize().x = newSize.x;
-                    label.getSize().y = newSize.y;
+                    if (verticalLayout) {
+                        // Our labels are turned 90 degrees
+                        label.getSize().x = newSize.y;
+                        label.getSize().y = newSize.x;
+                    } else {
+                        label.getSize().x = newSize.x;
+                        label.getSize().y = newSize.y;
+                    }
                 }
             }
             
