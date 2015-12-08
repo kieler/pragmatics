@@ -204,11 +204,15 @@ class CommentsAttachor {
      */
     private def boolean isAuthorComment(KNode commentNode) {
         val commentContents = commentNode.layout.getProperty(COMMENT_TEXT).trim
-
-        return commentContents
-            .substring(0, AUTHOR_COMMENT_PREFIX.length)
-            .toLowerCase
-            .equals(AUTHOR_COMMENT_PREFIX);
+        
+        if (commentContents.length < AUTHOR_COMMENT_PREFIX.length) {
+            return false;
+        } else {
+            return commentContents
+                .substring(0, AUTHOR_COMMENT_PREFIX.length)
+                .toLowerCase
+                .equals(AUTHOR_COMMENT_PREFIX);
+        }
     }
 
 
