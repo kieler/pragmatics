@@ -232,7 +232,8 @@ public final class LayoutOptions {
      * & labels to be sized and placed accordingly after the layout of that node has been determined
      * (and before the node itself and its siblings get arranged). The scaling is not reverted
      * afterwards, so the resulting layout graph contains the adjusted size and position data. This
-     * option is currently not supported if {@link #LAYOUT_HIERARCHY} is set.
+     * option is currently not supported if {@link #HIERARCHY_HANDLING} is set to
+     * {@link HierarchyHandling#INCLUDE_CHILDREN INCLUDE_CHILDREN}.
      */
     public static final IProperty<Float> SCALE_FACTOR = new Property<Float>(
             "de.cau.cs.kieler.scaleFactor", 1f);
@@ -318,6 +319,14 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.expandNodes", false);
 
     /**
+     * Whether the children of the node should be handled with the current layout run or if the 
+     * children should be preprocessed and then appear as a "black-box" to the current layout run.
+     */
+    public static final IProperty<HierarchyHandling> HIERARCHY_HANDLING =
+            new Property<HierarchyHandling>("de.cau.cs.kieler.hierarchyHandling",
+                    HierarchyHandling.INHERIT);
+    
+    /**
      * Whether the algorithm should be run in interactive mode for the content of a parent node.
      * What this means exactly depends on how the specific algorithm interprets this option. Usually
      * in the interactive mode algorithms try to modify the current layout as little as possible.
@@ -338,6 +347,9 @@ public final class LayoutOptions {
      * hierarchy levels that are contained in the associated parent node.
      * 
      * @see GraphFeature#COMPOUND
+     * @deprecated Use {@link #HIERARCHY_HANDLING} for finer control and the option to only layout a
+     *             certain slice of the layout tree. The previous behaviour is available by setting
+     *             {@link HierarchyHandling#INCLUDE_CHILDREN} on the same node as this property.
      */
     public static final IProperty<Boolean> LAYOUT_HIERARCHY = new Property<Boolean>(
             "de.cau.cs.kieler.layoutHierarchy", false);
@@ -463,6 +475,19 @@ public final class LayoutOptions {
      */
     public static final IProperty<Float> SPACING = new Property<Float>("de.cau.cs.kieler.spacing",
             -1f, 0f);
+
+    /**
+     * Property choosing whether partitions of nodes should be respected during layout.
+     */
+    public static final IProperty<Boolean> LAYOUT_PARTITIONS =
+            new Property<Boolean>("de.cau.cs.kieler.layoutPartitions", false);
+
+    /**
+     * Partition to which the node belongs to. If {@link LayoutOptions#LAYOUT_PARTITIONS} is true,
+     * all nodes are expected to have a partition.
+     */
+    public static final IProperty<Integer> PARTITION =
+            new Property<Integer>("de.cau.cs.kieler.partition");
 
     /**
      * Hide constructor to avoid instantiation.

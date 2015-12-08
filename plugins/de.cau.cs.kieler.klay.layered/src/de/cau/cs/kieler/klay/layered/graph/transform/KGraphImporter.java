@@ -38,6 +38,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.labels.LabelManagementOptions;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
+import de.cau.cs.kieler.kiml.options.HierarchyHandling;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
@@ -96,8 +97,13 @@ class KGraphImporter {
             }
         }
         
-        // Import the graph either with or without all nested levels of hierarchy
-        if (kgraph.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+        if (topLevelGraph.getProperty(LayoutOptions.LAYOUT_PARTITIONS)) {
+            graphProperties.add(GraphProperties.PARTITIONS);
+        }
+        
+        // Import the graph either with or without multiple nested levels of hierarchy
+        if (kgraph.getData(KShapeLayout.class).getProperty(LayoutOptions.HIERARCHY_HANDLING) 
+                == HierarchyHandling.INCLUDE_CHILDREN) {
             importHierarchicalGraph(kgraph, topLevelGraph);
         } else {
             importFlatGraph(kgraph, topLevelGraph);
@@ -196,8 +202,11 @@ class KGraphImporter {
                 // children or inside self-loops)
                 boolean hasChildren = !knode.getChildren().isEmpty();
                 boolean hasInsideSelfLoops = hasInsideSelfLoops(knode);
+                boolean hasHierarchyHandlingEnabled = 
+                        knodeLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING) 
+                            == HierarchyHandling.INCLUDE_CHILDREN; 
                 
-                if (hasChildren || hasInsideSelfLoops) {
+                if (hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
                     LGraph nestedGraph = createLGraph(knode);
                     lnode.setProperty(InternalProperties.NESTED_LGRAPH, nestedGraph);
                     nestedGraph.setProperty(InternalProperties.PARENT_LNODE, lnode);
@@ -557,10 +566,10 @@ class KGraphImporter {
             lnode.setProperty(InternalProperties.COMPOUND_NODE, true);
         }
 
-        // port constraints and sides cannot be undefined
         Set<GraphProperties> graphProperties = lgraph.getProperty(
                 InternalProperties.GRAPH_PROPERTIES);
         
+        // port constraints and sides cannot be undefined
         PortConstraints portConstraints = lnode.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         if (portConstraints == PortConstraints.UNDEFINED) {
             lnode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);

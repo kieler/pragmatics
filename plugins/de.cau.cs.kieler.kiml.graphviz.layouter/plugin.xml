@@ -97,6 +97,9 @@
                option="de.cau.cs.kieler.layoutHierarchy">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.hierarchyHandling">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.graphviz.concentrate">
          </knownOption>
          <knownOption
@@ -266,6 +269,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.hierarchyHandling">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.graphviz.concentrate">

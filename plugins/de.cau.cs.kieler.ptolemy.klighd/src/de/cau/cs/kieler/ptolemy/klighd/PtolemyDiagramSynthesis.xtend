@@ -13,17 +13,15 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd
 
-import com.google.common.base.Predicates
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KPort
 import de.cau.cs.kieler.kiml.labels.LabelManagementOptions
 import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy
 import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.labels.ConditionLabelManager
-import de.cau.cs.kieler.klighd.labels.EmfContainerCondition
+import de.cau.cs.kieler.klighd.labels.LabelPredicates
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsAttachor
@@ -116,8 +114,8 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         // Install a label manager for port labels
         if (SHOW_PORT_LABELS.objectValue.equals("Selected Node")) {
             val labelManager = new ConditionLabelManager(
-                null, Predicates.not(new EmfContainerCondition(typeof(KPort))), true)
-            kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager)
+                null, LabelPredicates.portLabel.negate, true);
+            kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager);
         }
         
         return kgraph
@@ -154,9 +152,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     
     
     /**
-     * Container class for synthesis options. At the beginning of the diagram synthesis's #transform()
-     * method, the #capture() method should be called in order to cache the current values of the
-     * synthesis options. This class can then be used to retrieve the option values.
+     * Container class for synthesis options.
      */
     public static final class Options {
         public var boolean comments
