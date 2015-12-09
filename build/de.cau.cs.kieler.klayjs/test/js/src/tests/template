@@ -1,0 +1,9 @@
+{
+  active: true,
+  name: 'Template',
+  options: { ... },
+  graph: { ... },
+  expected: { ... },
+  check: function(result) { ... },
+  errorMsg: function(result) { ... }  // a string
+}
