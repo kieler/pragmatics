@@ -10,7 +10,9 @@
     "grunt-contrib-qunit": ">=0.7.0",
     "grunt-qunit-junit": ">=0.3.1",
     "qunitjs": ">=1.18.0",
-    "nodeunit": ">=0.9.1",
+    "nodeunit": ">=0.9.1"
+  },
+  "optionalDependencies": {
     "node-gyp": ">=2.0.2",
     "webworker-threads": ">=0.5.6"
   }

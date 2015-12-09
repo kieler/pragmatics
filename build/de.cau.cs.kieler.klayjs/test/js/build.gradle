@@ -27,7 +27,7 @@ node {
 // Prepare testing
 // --------------------------------------------------------
 
-task unzipKlayJs(type: Copy/*, dependsOn: rootProject.tasks['plainjslinker']*/) {
+task unzipKlayJs(type: Copy, dependsOn: rootProject.tasks['plainjslinker']) {
     description 'Extracts the latest KlayJs build for testing.'
     from zipTree("${rootProject.projectDir}/target/klay_layered_js_plainjslinker_nightly_latest.zip")
     include 'klay.js'
@@ -53,21 +53,21 @@ task concatenateTestConfigs() {
 task testBrowser(type: GruntTask, dependsOn: [npmInstall, installGrunt, unzipKlayJs, concatenateTestConfigs]) {
     group 'KIELER test'
     description 'Tests KlayJs via plain javascript loading inside an html file.'
-    args = ['test']
+    args = [ (testReporter == 'junit') ? 'testJUnit' : 'testCmdLine']
 }
 
 task testNodejs(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
     group 'KIELER test'
     description 'Tests KlayJs via nodejs.'
     script = file("$projectDir/src/run_tests.js")
-    args = ['context=nodejs']
+    args = ['context=nodejs', "testReporter=$testReporter"]
 }
 
 task testWebworker(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
     group 'KIELER test'
     description 'Tests KlayJs via webworker.'
     script = file("$projectDir/src/run_tests.js")
-    args = ['context=webworker']
+    args = ['context=webworker', "testReporter=$testReporter"]
 }
 
 // Cleanup
