@@ -53,21 +53,21 @@ task concatenateTestConfigs() {
 task testBrowser(type: GruntTask, dependsOn: [npmInstall, installGrunt, unzipKlayJs, concatenateTestConfigs]) {
     group 'KIELER test'
     description 'Tests KlayJs via plain javascript loading inside an html file.'
-    args = [ (testReporter == 'junit') ? 'testJUnit' : 'testCmdLine']
+    args = [ (project.hasProperty('testReporter') && testReporter == 'junit') ? 'testJUnit' : 'testCmdLine']
 }
 
 task testNodejs(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
     group 'KIELER test'
     description 'Tests KlayJs via nodejs.'
     script = file("$projectDir/src/run_tests.js")
-    args = ['context=nodejs', "testReporter=$testReporter"]
+    args = ['context=nodejs', project.hasProperty('special') ? "testReporter=$testReporter" : ""]
 }
 
 task testWebworker(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
     group 'KIELER test'
     description 'Tests KlayJs via webworker.'
     script = file("$projectDir/src/run_tests.js")
-    args = ['context=webworker', "testReporter=$testReporter"]
+    args = ['context=webworker', project.hasProperty('special') ? "testReporter=$testReporter" : ""]
 }
 
 // Cleanup
