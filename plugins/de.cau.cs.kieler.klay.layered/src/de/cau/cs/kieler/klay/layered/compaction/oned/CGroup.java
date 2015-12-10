@@ -31,10 +31,10 @@ import de.cau.cs.kieler.kiml.options.Direction;
  * @author dag
  */
 public final class CGroup {
+    // Variables are public for convenience reasons since this class is used internally only.
+    // SUPPRESS CHECKSTYLE NEXT 30 VisibilityModifier
     /** root position of the {@link CGroup}. */
     public double startPos = Double.NEGATIVE_INFINITY;
-    // Variables are public for convenience reasons since this class is used internally only.
-    // SUPPRESS CHECKSTYLE NEXT 20 VisibilityModifier
     /**
      * The field can be used to determine whether a group has moved during compaction. It has to be
      * reset externally and is updated during
@@ -55,6 +55,8 @@ public final class CGroup {
     public int outDegree;
     /** the reference node of this group, i.e. the reference for the group offset of other nodes. */
     public CNode reference; 
+    /** An id for public use. There is no warranty, use at your own risk. */
+    public int id;
 
     /**
      * The constructor for a {@link CGroup} receives {@link CNode}s to group.
