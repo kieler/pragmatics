@@ -42,8 +42,6 @@ import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.labels.AbstractKlighdLabelManager
 import de.cau.cs.kieler.klighd.labels.ConditionLabelManager
-import de.cau.cs.kieler.klighd.labels.FilterAllCondition
-import de.cau.cs.kieler.klighd.labels.HardWrappingLabelManager
 import de.cau.cs.kieler.klighd.labels.SoftWrappingLabelManager
 import de.cau.cs.kieler.klighd.labels.TruncatingLabelManager
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
@@ -52,6 +50,8 @@ import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
 import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
+import de.cau.cs.kieler.klighd.labels.LabelPredicates
+import de.cau.cs.kieler.klighd.labels.IdentLabelManager
 
 /**
  * Synthesizes a copy of the given {@code KNode} and adds default stuff.
@@ -136,13 +136,13 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     override getDisplayedLayoutOptions() {
         return ImmutableList::of( 
             // example to specify external layout option (in this case one of klay layered)
-        // remember to add the following import in the head of this class
-        //   import static de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
-        // specifyLayoutOption("de.cau.cs.kieler.klay.layered.edgeSpacingFactor", ImmutableList.of(0f,1f))
-        // These values are annoying :)
-        //specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
-        //  ImmutableList::copyOf(PortConstraints::values)),
-        //specifyLayoutOption(LayoutOptions::SPACING, ImmutableList::of(0, 255))
+            // remember to add the following import in the head of this class
+            //   import static de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
+            // specifyLayoutOption("de.cau.cs.kieler.klay.layered.edgeSpacingFactor", ImmutableList.of(0f,1f))
+            // These values are annoying :)
+            //specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
+            //  ImmutableList::copyOf(PortConstraints::values)),
+            //specifyLayoutOption(LayoutOptions::SPACING, ImmutableList::of(0, 255))
         )
     }
 
@@ -214,7 +214,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             //  as value.
         }
 
-        //Enable label management
+        // Enable label management
         addLabelManager(result)
                
         // Create a rendering library for reuse of renderings
@@ -252,16 +252,25 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         // Evaluate the label shortening property
         switch LABEL_SHORTENING_STRATEGY.objectValue {
             case LABELS_NO_LABELS: {
-                labelManager = new ConditionLabelManager(null, new FilterAllCondition(), true)
+                labelManager = new ConditionLabelManager(
+                    null,
+                    LabelPredicates.matchNone,
+                    true);
             }
             case LABELS_TRUNCATE: {
-                labelManager = new TruncatingLabelManager();
+                labelManager = new ConditionLabelManager(
+                    new TruncatingLabelManager(),
+                    LabelPredicates.centerEdgeLabel,
+                    false);
             }
             case LABELS_SOFT_WORD_WRAP: {
-                labelManager = new HardWrappingLabelManager()
+                labelManager = new ConditionLabelManager(
+                    new SoftWrappingLabelManager(),
+                    LabelPredicates.centerEdgeLabel,
+                    false);
             }
             case LABELS_FULL: {
-                labelManager = new SoftWrappingLabelManager()
+                labelManager = new IdentLabelManager()
             }
         }
         
@@ -356,7 +365,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         KimlUtil.configureWithDefaultValues(node)
 
         // add a rendering to the node
-        node.addRenderingRef(defaultNodeRendering).addSingleClickAction(FocusAndContextAction.ID)
+        val rendering = node.addRenderingRef(defaultNodeRendering)
+        rendering.addSingleClickAction(FocusAndContextAction.ID)
     }
 
     /**
@@ -417,8 +427,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         if (!label.hasRendering) {
             renderingFactory.createKText() => [ text |
                 label.data += text
-                text.addSingleClickAction("de.cau.cs.kieler.klighd.actions.FocusAndContextAction")
                 text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
+                text.addSingleClickAction(FocusAndContextAction.ID)
                 
                 // Port labels should have a smaller font size
                 if (label.eContainer instanceof KPort) {
@@ -448,6 +458,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      * @return {@code true} if default stuff should be added, {@code false} otherwise.
      */
     def private boolean defaultsEnabled() {
-        return DEFAULTS.objectValue == DEFAULTS_ON || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults)
+        return DEFAULTS.objectValue == DEFAULTS_ON
+            || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults);
     }
 }

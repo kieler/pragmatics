@@ -50,6 +50,8 @@ public enum IntermediateProcessorStrategy {
     SPLINE_SELF_LOOP_PREPROCESSOR,
     /** If one of the phases is set to interactive mode, this processor positions external ports. */
     INTERACTIVE_EXTERNAL_PORT_POSITIONER,
+    /** Add constraint edges to respect partitioning of nodes. */
+    PARTITION_PREPROCESSOR,
 
     // Before Phase 2
 
@@ -58,9 +60,10 @@ public enum IntermediateProcessorStrategy {
     /** Adds dummy nodes in edges where center labels are present. */
     LABEL_DUMMY_INSERTER,
 
-    
     // Before Phase 3
-    
+
+    /** Remove partition constraint edges. */
+    PARTITION_POSTPROCESSOR,
     /** Node-promotion for prettier graphs, especially algorithms like longest-path are prettified. */
     NODE_PROMOTION,
     /** Makes sure that layer constraints are taken care of. */
@@ -264,6 +267,12 @@ public enum IntermediateProcessorStrategy {
 
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();
+
+        case PARTITION_POSTPROCESSOR:
+            return new PartitionPostprocessor();
+
+        case PARTITION_PREPROCESSOR:
+            return new PartitionPreprocessor();
 
         case PORT_DISTRIBUTER:
             return new PortDistributionProcessor();

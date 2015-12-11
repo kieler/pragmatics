@@ -93,8 +93,10 @@ class Ptolemy2KGraphVisualization {
     def void visualize(KNode kGraph, Options options) {
         this.options = options
         
-        // Set the layout lagorithm for the graph
+        // Set the layout lagorithm for the graph and install a basic rendering to be able to install
+        // the focus and context action
         kGraph.setLayoutAlgorithm()
+        addRootRendering(kGraph)
         
         // Recurse into subnodes
         visualizeRecursively(kGraph)
@@ -170,6 +172,20 @@ class Ptolemy2KGraphVisualization {
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Rendering of Nodes
+    
+    /**
+     * Renders the given node as a compound node.
+     * 
+     * @param node the node to attach the rendering information to.
+     */
+    def private void addRootRendering(KNode node) {
+        val rendering = node.createDefaultRendering(false);
+        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+            rendering.addSingleClickAction(FocusAndContextAction.ID)
+        }
+        
+        node.data += rendering;
+    }
     
     /**
      * Renders the given node as a compound node.
