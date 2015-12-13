@@ -25,7 +25,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
  * The way normalization is performed can be controlled through a bunch of configuration methods
  * that are protected to be accessed by subclasses only. Subclasses will probably want to offer
  * specialized configuration methods that call the configuration methods in this class as
- * appropriate.
+ * appropriate, but may also increase the visibility of the provided methods.
  * </p>
  * 
  * @author cds
@@ -40,7 +40,9 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
     public enum NormalizationFunction {
         
         /** Interpolates linearly between the worst and best value. */
-        LINEAR;
+        LINEAR,
+        /** Normalizes everything up to the worst value to 1, everything beyond to 0. */
+        BINARY;
         
     }
     
@@ -63,31 +65,61 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
      *            the raw value at which the normalized value will become 0.
      * @param bestRawVal
      *            the raw value at which the normalized value will become 1.
+     * @return this object for method chaining.
      * @throws IllegalArgumentException
      *             if {@code worstRawValue == bestRawValue}.
      */
-    protected final void setBounds(final double worstRawVal, final double bestRawVal) {
+    protected AbstractNormalizedHeuristic setBounds(final double worstRawVal, final double bestRawVal) {
         if (worstRawVal == bestRawVal) {
             throw new IllegalArgumentException("Worst and best raw values must not be equal.");
         }
         
         this.worstRawValue = worstRawVal;
         this.bestRawValue = bestRawVal;
+        
+        return this;
     }
     
     /**
      * Sets how exactly raw values between the bounds are normalized.
      * 
-     * @param normalizationFunction
+     * @param function
      *            the function to use for normalization.
+     * @return this object for method chaining.
      * @throws IllegalArgumentException if the normalization function is {@code null}.
      */
-    protected final void setNormalizationFunction(final NormalizationFunction normalizationFunction) {
-        if (normalizationFunction == null) {
+    protected AbstractNormalizedHeuristic setNormalizationFunction(
+            final NormalizationFunction function) {
+        
+        if (function == null) {
             throw new IllegalArgumentException("Normalization function cannot be null.");
         }
         
-        this.normalizationFunction = normalizationFunction;
+        this.normalizationFunction = function;
+        
+        return this;
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Getters
+    
+    /**
+     * Returns the raw value at and beyond which raw values are normalized to 0.
+     * 
+     * @return best raw value.
+     */
+    public double getWorstRawValue() {
+        return worstRawValue;
+    }
+    
+    /**
+     * Returns the raw value at and beyond which raw values are normalized to 1.
+     * 
+     * @return best raw value.
+     */
+    public double getBestRawValue() {
+        return bestRawValue;
     }
 
     
@@ -104,6 +136,8 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
         switch (normalizationFunction) {
         case LINEAR:
             return normalizeLinear(rawValue);
+        case BINARY:
+            return normalizeBinary(rawValue);
         default:
             assert false;
             return 0;
@@ -138,6 +172,25 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
             } else {
                 return 1 - (raw - bestRawValue) / (worstRawValue - bestRawValue);
             }
+        } else {
+            assert false;
+            return -1;
+        }
+    }
+    
+    /**
+     * Normalizes the given raw value by mapping everything up to the worst possible value to 1, and
+     * everything beyond the worst value to 0.
+     * 
+     * @param raw
+     *            the raw value.
+     * @return the normalized value.
+     */
+    protected final double normalizeBinary(final double raw) {
+        if (worstRawValue < bestRawValue) {
+            return raw <= worstRawValue ? 0 : 1;
+        } else if (bestRawValue < worstRawValue) {
+            return raw >= worstRawValue ? 0 : 1;
         } else {
             assert false;
             return -1;
