@@ -18,11 +18,8 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KNode;
 
 /**
- * A heuristic based on the distance between nodes. The maximum distance at which an attachment is
- * not considered anymore must be configured by calling
- * {@link #withMaximumAttachmentDistance(double)}. By default, the heuristic uses the position and
- * size information in the {@link de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout KShapeLayout} of
- * nodes. However, that behaviour can be customized by installing a custom {@link IBoundsProvider}.
+ * A heuristic based on the distance between nodes. Use the methods named {@code withXXX} to
+ * configure the heuristic.
  * 
  * @see IBoundsProvider
  * @author cds
@@ -49,7 +46,7 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
         }
         
         // We don't want to use a square root later, so square the distance
-        super.setBounds(distance * distance, 0);
+        super.withBounds(distance * distance, 0);
         return this;
     }
     
@@ -78,10 +75,10 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
      * {@inheritDoc}
      */
     @Override
-    public DistanceHeuristic setNormalizationFunction(
+    public DistanceHeuristic withNormalizationFunction(
             final NormalizationFunction normalizationFunction) {
         
-        super.setNormalizationFunction(normalizationFunction);
+        super.withNormalizationFunction(normalizationFunction);
         return this;
     }
     

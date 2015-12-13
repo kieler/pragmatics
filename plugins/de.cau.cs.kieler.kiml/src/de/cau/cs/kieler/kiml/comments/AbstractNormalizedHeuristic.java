@@ -69,7 +69,7 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
      * @throws IllegalArgumentException
      *             if {@code worstRawValue == bestRawValue}.
      */
-    protected AbstractNormalizedHeuristic setBounds(final double worstRawVal, final double bestRawVal) {
+    protected AbstractNormalizedHeuristic withBounds(final double worstRawVal, final double bestRawVal) {
         if (worstRawVal == bestRawVal) {
             throw new IllegalArgumentException("Worst and best raw values must not be equal.");
         }
@@ -88,7 +88,7 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
      * @return this object for method chaining.
      * @throws IllegalArgumentException if the normalization function is {@code null}.
      */
-    protected AbstractNormalizedHeuristic setNormalizationFunction(
+    protected AbstractNormalizedHeuristic withNormalizationFunction(
             final NormalizationFunction function) {
         
         if (function == null) {
