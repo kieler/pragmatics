@@ -100,7 +100,7 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
             double squaredDistance = squaredDistance(commentBounds, nodeBounds);
             return squaredDistance == -1 ? getWorstRawValue() : squaredDistance;
         } else {
-            return 0;
+            return getWorstRawValue();
         }
     }
     
