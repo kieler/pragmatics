@@ -14,9 +14,11 @@ package de.cau.cs.kieler.kiml.comments;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
@@ -59,7 +61,7 @@ public final class CommentAttacher {
     /** List of attachment heuristics. */
     private List<IHeuristic> heuristics = Lists.newArrayList();
     /** The attachment decider. */
-    private IAttachmentDecider attachmentDecider = (a) -> IAttachmentDecider.NO_ATTACHMENT;
+    private IAttachmentDecider attachmentDecider = (a) -> null;
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -363,28 +365,22 @@ public final class CommentAttacher {
             return null;
         }
         
-        // For each comment-candidate-pair, collect the heuristic results in this array
-        double[][] results = new double[candidates.size()][heuristics.size()];
+        // Collect the heuristic results in this map, indexed by attachment target, then indexed by
+        // the heuristic
+        Map<KGraphElement, Map<IHeuristic, Double>> results = Maps.newHashMap();
         
-        for (int candidate = 0; candidate < candidates.size(); candidate++) {
-            // Run the normalized heuristics and collect their results in an array
-            for (int heuristic = 0; heuristic < heuristics.size(); heuristic++) {
-                results[candidate][heuristic] = heuristics.get(heuristic).normalized(
-                        comment, candidates.get(candidate));
-            }
+        for (KGraphElement candidate : candidates) {
+            Map<IHeuristic, Double> candidateResults = Maps.newHashMap();
+            results.put(candidate, candidateResults);
             
+            // Run the normalized heuristics and collect their results in an array
+            for (IHeuristic heuristic : heuristics) {
+                candidateResults.put(heuristic, heuristic.normalized(comment, candidate));
+            }
         }
         
         // Decide which attachment target to attach the comment to
-        int chosenCandidate = attachmentDecider.makeAttachmentDecision(results);
-        assert chosenCandidate == IAttachmentDecider.NO_ATTACHMENT
-                || (chosenCandidate >= 0 && chosenCandidate < candidates.size());
-        
-        if (chosenCandidate != IAttachmentDecider.NO_ATTACHMENT) {
-            return null;
-        } else {
-            return candidates.get(chosenCandidate);
-        }
+        return attachmentDecider.makeAttachmentDecision(results);
     }
     
     /**
