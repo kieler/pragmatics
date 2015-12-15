@@ -322,18 +322,6 @@ public final class CommentAttacher {
     }
 
     /**
-     * Checks whether the given node is a comment.
-     * 
-     * @param node
-     *            the node to check.
-     * @return {@code true} if the node is a comment.
-     */
-    private boolean isComment(final KNode node) {
-        KLayoutData layoutData = node.getData(KLayoutData.class);
-        return layoutData.getProperty(LayoutOptions.COMMENT_BOX);
-    }
-
-    /**
      * Checks whether the given comment is eligible for heuristically finding attachment targets.
      * 
      * @param comment
@@ -458,6 +446,22 @@ public final class CommentAttacher {
         targetProvider.cleanup();
         eligibilityFilters.stream().forEach((f) -> f.cleanup());
         heuristics.stream().forEach((h) -> h.cleanup());
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Utilities
+
+    /**
+     * Checks whether the given node is a comment.
+     * 
+     * @param node
+     *            the node to check.
+     * @return {@code true} if the node is a comment.
+     */
+    public static boolean isComment(final KNode node) {
+        KLayoutData layoutData = node.getData(KLayoutData.class);
+        return layoutData.getProperty(LayoutOptions.COMMENT_BOX);
     }
     
 }
