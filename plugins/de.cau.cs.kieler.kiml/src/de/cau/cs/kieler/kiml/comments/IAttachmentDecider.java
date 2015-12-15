@@ -36,6 +36,6 @@ public interface IAttachmentDecider {
      *         unattached.
      */
     KGraphElement makeAttachmentDecision(
-            Map<KGraphElement, Map<IHeuristic, Double>> normalizedHeuristics);
+            Map<KGraphElement, Map<Class<? extends IHeuristic>, Double>> normalizedHeuristics);
     
 }

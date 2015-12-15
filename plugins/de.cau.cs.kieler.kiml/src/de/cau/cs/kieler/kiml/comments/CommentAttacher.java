@@ -355,15 +355,15 @@ public final class CommentAttacher {
         
         // Collect the heuristic results in this map, indexed by attachment target, then indexed by
         // the heuristic
-        Map<KGraphElement, Map<IHeuristic, Double>> results = Maps.newHashMap();
+        Map<KGraphElement, Map<Class<? extends IHeuristic>, Double>> results = Maps.newHashMap();
         
         for (KGraphElement candidate : candidates) {
-            Map<IHeuristic, Double> candidateResults = Maps.newHashMap();
+            Map<Class<? extends IHeuristic>, Double> candidateResults = Maps.newHashMap();
             results.put(candidate, candidateResults);
             
             // Run the normalized heuristics and collect their results in an array
             for (IHeuristic heuristic : heuristics) {
-                candidateResults.put(heuristic, heuristic.normalized(comment, candidate));
+                candidateResults.put(heuristic.getClass(), heuristic.normalized(comment, candidate));
             }
         }
         
