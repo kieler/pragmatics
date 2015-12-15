@@ -31,7 +31,8 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentDecider {
     
     /** Aggregator used to aggregate heuristics results. */
-    private ToDoubleFunction<Collection<Double>> aggregator = (a) -> -1.0;
+    private ToDoubleFunction<Collection<Double>> aggregator =
+            AggregatedHeuristicsAttachmentDecider::max;
     /** The minimum aggregate result for a comment to be attached to anything. */
     private double lowerBoundary = 0.0;
     
@@ -43,7 +44,7 @@ public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentD
      * Configures the attachment decider to use the given function to aggregate heuristic results.
      * 
      * <p>
-     * If this method is not called, no comment will be attached to anything.
+     * If this method is not called, the {@link #max(Collection) maximum aggregator} will be used.
      * </p>
      * 
      * @param f
@@ -132,6 +133,9 @@ public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentD
      * @return the maximum result.
      */
     public static double max(final Collection<Double> values) {
+        // DEBUG START
+        System.out.println(values);
+        // DEBUG END
         return Collections.max(values);
     }
     

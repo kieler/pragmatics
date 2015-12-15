@@ -61,7 +61,7 @@ public final class CommentAttacher {
     /** List of attachment heuristics. */
     private List<IHeuristic> heuristics = Lists.newArrayList();
     /** The attachment decider. */
-    private IAttachmentDecider attachmentDecider = (a) -> null;
+    private IAttachmentDecider attachmentDecider = new AggregatedHeuristicsAttachmentDecider();
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////

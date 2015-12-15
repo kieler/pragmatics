@@ -30,8 +30,16 @@ import de.cau.cs.kieler.core.util.Pair;
  * A binary heuristic that checks if node names are mentioned in comment texts. This can either be the
  * case or not, hence the term <em>binary heuristic</em>. Indeed, the heuristic will always output
  * either 0 or 1. It will only output 1 if a node's name appears in a comment's text, and if no other
- * node's name appears in it. The heuristic can operate in two modes: a strict and a fuzzy mode.
+ * node's name appears in it. The following configuration methods have to be called before using this
+ * heuristic:
+ * <ul>
+ *   <li>{@link #withCommentTextFunction(Function)}</li>
+ *   <li>{@link #withNodeNameFunction(Function)}</li>
+ * </ul>
  * 
+ * <p>
+ * The heuristic can operate in two modes: a strict and a fuzzy mode.
+ * </p>
  * 
  * <h3>Strict Mode</h3>
  * <p>
@@ -53,9 +61,9 @@ import de.cau.cs.kieler.core.util.Pair;
 public class MentionedInCommentTextHeuristic implements IHeuristic {
     
     /** Function used to retrieve a comment's text. */
-    private Function<KNode, String> commentTextFunction = c -> "";
+    private Function<KNode, String> commentTextFunction = null;
     /** Function used to retrieve a node's name. */
-    private Function<KNode, String> nodeNameFunction = n -> "";
+    private Function<KNode, String> nodeNameFunction = null;
     /** Whether to use fuzzy mode when looking for occurrences of a node's name in a comment's text. */
     private boolean fuzzy = false;
     /** The comment-node attachments we've found during preprocessing. */
@@ -122,6 +130,22 @@ public class MentionedInCommentTextHeuristic implements IHeuristic {
         return this;
     }
     
+    /**
+     * Checks whether the current configuration is valid.
+     * 
+     * @throws IllegalStateException
+     *             if the configuration is invalid.
+     */
+    private void checkConfiguration() {
+        if (commentTextFunction == null) {
+            throw new IllegalStateException("A comment text function is required.");
+        }
+        
+        if (nodeNameFunction == null) {
+            throw new IllegalStateException("A node name function is required.");
+        }
+    }
+    
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     // IHeuristic
@@ -131,6 +155,8 @@ public class MentionedInCommentTextHeuristic implements IHeuristic {
      */
     @Override
     public void preprocess(final KNode graph, final boolean includeHierarchy) {
+        checkConfiguration();
+        
         // Build up maps of comment texts and node names
         List<Pair<KNode, String>> commentTexts = Lists.newArrayList();
         List<Pair<KNode, String>> nodeNames = Lists.newArrayList();
