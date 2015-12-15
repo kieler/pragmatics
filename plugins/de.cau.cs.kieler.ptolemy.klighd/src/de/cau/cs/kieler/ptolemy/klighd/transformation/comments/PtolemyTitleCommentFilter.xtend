@@ -44,6 +44,20 @@ final class PtolemyTitleCommentFilter implements IEligibilityFilter {
         
         // Iterate over all the comments
         for (node : graph.children) {
+            if (node == null) {
+                System.out.println("NODE IS NULL ====================================")
+            }
+            
+            val nodeLayout = node.layout;
+            if (nodeLayout == null) {
+                System.out.println("NODE LAYOUT IS NULL =============================")
+            }
+            
+            val property = nodeLayout.getProperty(LayoutOptions.COMMENT_BOX);
+            if (property == null) {
+                System.out.println("PROPERTY IS NULL ================================")
+            }
+            
             // Make sure the node is a comment
             if (node.layout.getProperty(LayoutOptions.COMMENT_BOX)) {
                 val fontSize = node.layout.getProperty(COMMENT_FONT_SIZE);

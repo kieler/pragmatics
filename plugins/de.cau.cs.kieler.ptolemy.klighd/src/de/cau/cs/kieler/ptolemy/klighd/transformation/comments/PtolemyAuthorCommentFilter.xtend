@@ -40,9 +40,9 @@ final class PtolemyAuthorCommentFilter implements IEligibilityFilter {
         val commentContents = comment.layout.getProperty(COMMENT_TEXT).trim
         
         if (commentContents.length < AUTHOR_COMMENT_PREFIX.length) {
-            return false;
+            return true;
         } else {
-            return commentContents
+            return !commentContents
                 .substring(0, AUTHOR_COMMENT_PREFIX.length)
                 .toLowerCase
                 .equals(AUTHOR_COMMENT_PREFIX);
