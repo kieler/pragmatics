@@ -29,18 +29,79 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
- * GENERAL DESCRIPTION.
+ * Main class of the comment attachment framework. Comment attachment infers the relation between nodes
+ * marked as representing comments (through the {@link LayoutOptions#COMMENT_BOX} property) and nodes
+ * they refer to. Running the framework results in edges being introduced between these pairs of nodes,
+ * which allows layout algorithms to place them close to each other. Not doing this would usually lead
+ * to comments and nodes not being placed close to each other, thereby breaking the visual link between
+ * them.
  * 
- * DETAILS ON WHAT COMPONENTS THERE ARE TO COMMENT ATTACHMENT.
+ * <p>
+ * The comment attachment framework mainly consists of this class and the following interfaces to make
+ * the framework customizable to each use case:
+ * </p>
+ * <ul>
+ *   <li>
+ *     {@link IExplicitAttachmentProvider}<br/>
+ *     Some visual languages allow developers to establish explicit attachments between comments and
+ *     nodes. An {@link IExplicitAttachmentProvider} knows how to retrieve such explicit attachments.
+ *     Clients can configure whether the presence of explicit attachments in a diagram should disable
+ *     heuristic attachments. After all, if the developer already defined some explicit attachments,
+ *     chances are he wanted the other comments to be unattached.
+ *   </li>
+ *   <li>
+ *     {@link IBoundsProvider}<br/>
+ *     Comment attachment often includes looking at the size and position of comments. A bounds provider
+ *     knows how to provide these information for comments and nodes.
+ *   </li>
+ *   <li>
+ *     {@link IAttachmentTargetProvider}<br/>
+ *     By default, all non-comment siblings of a comment are considered as possible attachment targets.
+ *     However, implementations of this interface can be used to limit the considered attachment targets
+ *     to a smaller number to achieve speedups or things. Clients usually won't need to provide a
+ *     custom implementation.
+ *   </li>
+ *   <li>
+ *     {@link IEligibilityFilter}<br/>
+ *     Some comments clearly refer to a diagram as a whole. Eligibility filters filter these out to
+ *     keep them from being attached to anything. Examples are comments that identify the authors of
+ *     a diagram.
+ *   </li>
+ *   <li>
+ *     {@link IHeuristic}<br/>
+ *     Heuristics provide a heuristic assessment as to whether a given comment-node pair is likely to
+ *     be attached or not. Heuristics can be based on a lot of different metrics, but have to provide
+ *     a way of normalizing their results to {@code [0, 1]}. Attachment decisions are based on the
+ *     values computed by heuristics.
+ *   </li>
+ *   <li>
+ *     {@link IAttachmentDecider}<br/>
+ *     Attachment deciders have the final say on which attachment target a comment will be attached to.
+ *   </li>
+ * </ul>
  * 
- * CONFIGURATION.
- * 
- * MINIMAL LIST OF CONFIGURATION METHODS YOU PROBABLY WANT TO CALL.
- * {@link #withAttachmentDecider(IAttachmentDecider)}
- * {@link #addEligibilityFilter(IEligibilityFilter)}
- * {@link #addHeuristic(IHeuristic)}
- * 
- * DETAILS ON EXPLICIT HEURISTICS.
+ * <h3>Configuration</h3>
+ * <p>
+ * All of the different aspects of comment attachment can be configured through the configuration
+ * methods provided by this class. Each configuration method documents the default used if it is not
+ * called. Most aspects provide sensible defaults, but you will want to at least take a look at the
+ * following configuration methods:
+ * </p>
+ * <ul>
+ *   <li>
+ *     {@link #withExplicitAttachmentProvider(IExplicitAttachmentProvider)}<br/>
+ *     Even if no heuristics are configured, explicit attachments may be of interest.
+ *   </li>
+ *   <li>
+ *     {@link #addEligibilityFilter(IEligibilityFilter)}<br/>
+ *     Filtering out standalone comments will probably be of interest.
+ *   </li>
+ *   <li>
+ *     {@link #addHeuristic(IHeuristic)}<br/>
+ *     Heuristics are the backbone of the comment attachment framework. Unless you only want to add
+ *     explicit attachments, you will want to add heuristics to base attachment decisions on.
+ *   </li>
+ * </ul>
  * 
  * @author cds
  */

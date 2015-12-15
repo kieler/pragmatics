@@ -133,9 +133,6 @@ public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentD
      * @return the maximum result.
      */
     public static double max(final Collection<Double> values) {
-        // DEBUG START
-        System.out.println(values);
-        // DEBUG END
         return Collections.max(values);
     }
     
