@@ -42,6 +42,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     
     public static val ID = "de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis"
     
+    
     //////////////////////////////////////////////////////////////////////////////////////
     // Transformation Options
     
@@ -95,20 +96,13 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         
         // Transform, optimize, and visualize
         val kgraph = transformation.transform(model, this)
-        
-        val createdCommentNodes = optimization.optimize(
-            kgraph,
-            options,
-            if (options.comments) commentsExtractor else null,
-            this
-        )
-        
+        optimization.optimize(kgraph, options, if (options.comments) commentsExtractor else null, this)
         visualization.visualize(kgraph, options)
         
         // If comments should be shown, we want them to be attached properly. Do that now, because we
         // know the node sizes only after the visualization
         if (options.attachComments) {
-            commentsAttachor.attachComments(options.attachComments, createdCommentNodes)
+            commentsAttachor.attachComments(kgraph)
         }
         
         // Install a label manager for port labels
