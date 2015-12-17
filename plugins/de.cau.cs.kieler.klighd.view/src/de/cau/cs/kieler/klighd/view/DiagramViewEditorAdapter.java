@@ -92,6 +92,10 @@ class DiagramViewEditorAdapter implements IPartListener2 {
      */
     @Override
     public void partClosed(final IWorkbenchPartReference partRef) {
+        IWorkbenchPart part = partRef.getPart(false);
+        if (diagramView.getEditor() == part) {
+            diagramView.setEditor(null);
+        }
     }
 
     /**
