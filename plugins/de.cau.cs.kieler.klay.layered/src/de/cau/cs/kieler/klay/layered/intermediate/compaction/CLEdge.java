@@ -22,6 +22,7 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 import de.cau.cs.kieler.klay.layered.compaction.oned.CNode;
+import de.cau.cs.kieler.klay.layered.compaction.oned.CompareFuzzy;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -115,6 +116,19 @@ public final class CLEdge extends CNode {
         }
     }
 
+    /**
+     * Checks whether this edge representation intersects another vertical segment.
+     * 
+     * @param vSeg
+     *            the other segment
+     * @return {@code true} if the segments intersect
+     */
+    public boolean intersects(final VerticalSegment vSeg) {
+        return CompareFuzzy.eq(this.hitbox.x, vSeg.x1)
+                && !(CompareFuzzy.lt(hitbox.y + hitbox.height, vSeg.y1) 
+                     || CompareFuzzy.lt(vSeg.y2, hitbox.y));
+    }
+    
     /**
      * {@inheritDoc}
      */

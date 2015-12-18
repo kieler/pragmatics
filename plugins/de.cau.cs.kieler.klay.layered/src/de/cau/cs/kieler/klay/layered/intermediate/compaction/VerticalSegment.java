@@ -105,8 +105,8 @@ public final class VerticalSegment implements Comparable<VerticalSegment> {
      * @return {@code true} if the segments intersect
      */
     public boolean intersects(final VerticalSegment o) {
-        return CompareFuzzy.eq(this.x1, o.x1) && CompareFuzzy.ge(this.y2, o.y1)
-                && CompareFuzzy.le(this.y1, o.y2);
+        return CompareFuzzy.eq(this.x1, o.x1)
+                && !(CompareFuzzy.lt(this.y2, o.y1) || CompareFuzzy.lt(o.y2, this.y1));
     }
 
     /**

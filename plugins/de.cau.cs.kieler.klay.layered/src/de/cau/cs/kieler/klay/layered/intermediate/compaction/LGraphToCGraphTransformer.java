@@ -150,7 +150,7 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
 
                 VerticalSegment verticalSegment = verticalSegments.get(i);
 
-                if (verticalSegment.intersects(last)) {
+                if (c.intersects(verticalSegment)) {
                     c.addSegment(verticalSegment);
                 } else {
                     cGraph.cNodes.add(c);
