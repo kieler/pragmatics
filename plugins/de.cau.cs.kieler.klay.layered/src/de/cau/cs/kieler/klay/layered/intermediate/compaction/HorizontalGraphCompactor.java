@@ -12,8 +12,10 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -75,12 +77,11 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor progressMonitor) {
 
-        progressMonitor.begin("Horizontal Compaction", 1);
-        
         GraphCompactionStrategy strategy = layeredGraph.getProperty(Properties.POST_COMPACTION);
         if (strategy == GraphCompactionStrategy.NONE) {
             return;
         }
+        progressMonitor.begin("Horizontal Compaction", 1);
         
         this.lGraph = layeredGraph;
         
@@ -164,7 +165,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
                     // one element
                     && !Sets.intersection(((CLEdge) cNode2).originalLEdges,
                             ((CLEdge) cNode2).originalLEdges).isEmpty()) {
-//                return 0;
+                return 0;
             }
             
             
@@ -179,6 +180,12 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
             if (cNode2 instanceof CLNode) {
                 node2 = ((CLNode) cNode2).getlNode();
             } 
+            
+            
+            if ((node1 != null && node1.getType() == NodeType.EXTERNAL_PORT)
+                    || (node2 != null && node2.getType() == NodeType.EXTERNAL_PORT)) {
+                return 0;
+            }
             
             Spacings spacings = lGraph.getProperty(InternalProperties.SPACINGS);
             
@@ -299,6 +306,10 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
                         LNode lNode = ((CLNode) cNode).getlNode();
                         for (LEdge lEdge : lNode.getOutgoingEdges()) {
                             
+                            if (lEdge.isSelfLoop() ) {
+                                continue;
+                            }
+                            
                             if (PortSide.SIDES_NORTH_SOUTH.contains(lEdge.getSource().getSide())
                                     || PortSide.SIDES_NORTH_SOUTH.contains(lEdge.getTarget().getSide())) {
                                 continue;
@@ -318,6 +329,28 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
                     }
                 }
                 
+                // network simplex does not allow disconnected graphs
+                // so we make it connected!
+                List<NNode> sources = Lists.newLinkedList();
+                for (NNode n : networkSimplexGraph.nodes) {
+                    if (n.getIncomingEdges().isEmpty()) {
+                        sources.add(n);
+                    }
+                }
+                if (sources.size() > 1) {
+                    NNode dummySource = NNode.of()
+                            .id(index++)
+                            .create(networkSimplexGraph);
+                    
+                   for (NNode src : sources) {
+                       NEdge.of()
+                           .delta(1)
+                           .weight(0)
+                           .source(dummySource)
+                           .target(src)
+                           .create();
+                   }
+                }
                 
                 // #4 execute network simplex
                 NetworkSimplex.forGraph(networkSimplexGraph)
