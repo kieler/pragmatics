@@ -1152,6 +1152,10 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
         try {
             progressService.busyCursorWhile(algorithmJob);
+            
+            System.out.println("Selected models: " + attachmentData.getSelectedFiles().size());
+            System.out.println("Annotations: " + attachmentData.getAnnotationCountsSum());
+            System.out.println("Associations: " + attachmentData.getAssociationCountsSum());
         } catch (InvocationTargetException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

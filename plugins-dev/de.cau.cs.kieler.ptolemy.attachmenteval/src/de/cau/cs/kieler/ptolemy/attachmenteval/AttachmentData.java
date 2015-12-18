@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -243,5 +244,30 @@ public class AttachmentData {
 
     public Map<String, Map<String, String>> getAssociations() {
         return rawAssociations;
+    }
+
+    
+    ////////////////////////////////////////////////////////////////////
+    // Statistics
+    
+    /**
+     * Returns the sum of all registered annotation counts. This of course requires that the annotation
+     * counts have been set correctly.
+     * 
+     * @return number of annotations.
+     */
+    public int getAnnotationCountsSum() {
+        return annotationCounts.entrySet().stream().collect(
+                Collectors.summingInt((entry) -> entry.getValue()));
+    }
+    
+    /**
+     * Returns the number of registered associations.
+     * 
+     * @return number of registered associations.
+     */
+    public int getAssociationCountsSum() {
+        return rawAssociations.values().stream().collect(
+                Collectors.summingInt((map) -> map.size()));
     }
 }
