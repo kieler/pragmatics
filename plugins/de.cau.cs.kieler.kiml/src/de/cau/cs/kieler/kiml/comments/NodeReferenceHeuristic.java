@@ -27,7 +27,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.util.Pair;
 
 /**
- * A binary heuristic that checks if node names are mentioned in comment texts. This can either be the
+ * A binary heuristic that checks if node names are referenced in comment texts. This can either be the
  * case or not, hence the term <em>binary heuristic</em>. Indeed, the heuristic will always output
  * either 0 or 1. It will only output 1 if a node's name appears in a comment's text, and if no other
  * node's name appears in it. The following configuration methods have to be called before using this
@@ -58,7 +58,7 @@ import de.cau.cs.kieler.core.util.Pair;
  * 
  * @author cds
  */
-public class MentionedInCommentTextHeuristic implements IHeuristic {
+public class NodeReferenceHeuristic implements IHeuristic {
     
     /** Function used to retrieve a comment's text. */
     private Function<KNode, String> commentTextFunction = null;
@@ -84,7 +84,7 @@ public class MentionedInCommentTextHeuristic implements IHeuristic {
      *            the function to use.
      * @return this object for method chaining.
      */
-    public MentionedInCommentTextHeuristic withCommentTextFunction(final Function<KNode, String> f) {
+    public NodeReferenceHeuristic withCommentTextFunction(final Function<KNode, String> f) {
         if (f == null) {
             throw new IllegalArgumentException("Comment text function cannot be null.");
         }
@@ -105,7 +105,7 @@ public class MentionedInCommentTextHeuristic implements IHeuristic {
      *            the function to use.
      * @return this object for method chaining.
      */
-    public MentionedInCommentTextHeuristic withNodeNameFunction(final Function<KNode, String> f) {
+    public NodeReferenceHeuristic withNodeNameFunction(final Function<KNode, String> f) {
         if (f == null) {
             throw new IllegalArgumentException("Node name function cannot be null.");
         }
@@ -125,7 +125,7 @@ public class MentionedInCommentTextHeuristic implements IHeuristic {
      * 
      * @return this object for method chaining.
      */
-    public MentionedInCommentTextHeuristic withFuzzyMatching() {
+    public NodeReferenceHeuristic withFuzzyMatching() {
         fuzzy = true;
         return this;
     }
