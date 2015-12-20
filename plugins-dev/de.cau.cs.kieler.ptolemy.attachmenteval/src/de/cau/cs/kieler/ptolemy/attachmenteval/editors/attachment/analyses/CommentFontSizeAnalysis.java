@@ -121,11 +121,6 @@ public class CommentFontSizeAnalysis implements IAttachmentAnalysis {
                     histogram.put(fontSize, 1);
                 }
             }
-            // We don't recurse into nested diagrams because the font size heuristic also only
-            // considers font sizes on the top level
-//            else if (!child.getChildren().isEmpty()) {
-//                fillHistogram(child, histogram);
-//            }
         }
         
         return histogram;
