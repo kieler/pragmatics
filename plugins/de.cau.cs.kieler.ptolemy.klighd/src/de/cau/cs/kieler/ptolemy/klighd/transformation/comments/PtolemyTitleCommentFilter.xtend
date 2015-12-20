@@ -34,6 +34,26 @@ final class PtolemyTitleCommentFilter implements IEligibilityFilter {
     
     /** The comment with the largest font size in the current graph. */
     var KNode largestFontSizeComment = null;
+    /** Whether to decide only based on the font size, even if a comment is marked as title. */
+    var decideBasedOnFontSizeOnly = false;
+    
+    
+    /**
+     * Once this method is called, the filter will disregard whether a comment is marked as title and
+     * only regard comments as title based on their font size. This should really only be necessary
+     * for evaluations.
+     */
+    def void decideBasedOnFontSizeOnly() {
+        decideBasedOnFontSizeOnly = true;
+    }
+    
+    /**
+     * Returns the comment determined by the filter to be the title comment. Can only be non-null
+     * between calls to {@code preprocess(...)} and {@code cleanup()}.
+     */
+    def KNode getChosenComment() {
+        return largestFontSizeComment;
+    }
     
     
     /**
@@ -44,20 +64,6 @@ final class PtolemyTitleCommentFilter implements IEligibilityFilter {
         
         // Iterate over all the comments
         for (node : graph.children) {
-            if (node == null) {
-                System.out.println("NODE IS NULL ====================================")
-            }
-            
-            val nodeLayout = node.layout;
-            if (nodeLayout == null) {
-                System.out.println("NODE LAYOUT IS NULL =============================")
-            }
-            
-            val property = nodeLayout.getProperty(LayoutOptions.COMMENT_BOX);
-            if (property == null) {
-                System.out.println("PROPERTY IS NULL ================================")
-            }
-            
             // Make sure the node is a comment
             if (node.layout.getProperty(LayoutOptions.COMMENT_BOX)) {
                 val fontSize = node.layout.getProperty(COMMENT_FONT_SIZE);
@@ -79,7 +85,8 @@ final class PtolemyTitleCommentFilter implements IEligibilityFilter {
      * {@inheritDoc}
      */
     override eligibleForAttachment(KNode comment) {
-        return comment != largestFontSizeComment && !comment.markedAsTitleNode;
+        return comment != largestFontSizeComment
+            && (decideBasedOnFontSizeOnly || !comment.markedAsTitleNode);
     }
     
     /**
