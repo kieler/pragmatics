@@ -34,7 +34,7 @@ public class SizeEligibilityFilter implements IEligibilityFilter {
     // Configuration
     
     /**
-     * Configures the heuristic to consider comments up to the given are to be attachable.
+     * Configures the filter to consider comments up to the given are to be attachable.
      * 
      * <p>
      * If this method is not called, no comment is considered eligible for attachment.
@@ -55,7 +55,7 @@ public class SizeEligibilityFilter implements IEligibilityFilter {
     }
     
     /**
-     * Configures the heuristic to use the given bounds provider to determine the bounds of
+     * Configures the filter to use the given bounds provider to determine the bounds of
      * comments.
      * 
      * <p>

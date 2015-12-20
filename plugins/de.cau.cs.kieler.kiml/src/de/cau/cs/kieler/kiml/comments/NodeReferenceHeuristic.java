@@ -77,7 +77,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
      * Configures the heuristic to use the given function to obtain the text for a comment.
      * 
      * <p>
-     * If this method is not called, no comment will be attached to anything.
+     * If this method is not called, the heuristic will throw an exception during preprocessing.
      * </p>
      * 
      * @param f
@@ -98,7 +98,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
      * Configures the heuristic to use the given function to obtain the name of a node.
      * 
      * <p>
-     * If this method is not called, no comment will be attached to anything.
+     * If this method is not called, the heuristic will throw an exception during preprocessing.
      * </p>
      * 
      * @param f
