@@ -20,12 +20,20 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExten
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
+import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties
 
 /**
  * Passes judgement on a comment's eligibility for attachment based on whether it is considered a title
  * comment or not. There are two ways to be considered a title comment. First, the comment is a type
- * of title comment in Ptolemy. And second, it is the single comment with the largest font size in the
- * whole graph. We only expect the latter to appear on the graph's top level.
+ * of title comment in Ptolemy. And second, it has the largest font size of all comments. We only
+ * expect the latter to appear on the graph's top level.
+ * 
+ * <p>
+ * The largest font size thing probably deserves a bit more details. To be considered a title comment
+ * based on the font size, a comment must match a few conditions. First, it must have the largest font
+ * size. Second, it has to be the only comment with that font size. Third, it must not be the only
+ * comment. And finally, its font size needs to be larger than the default font size.
+ * </p>
  */
 final class PtolemyTitleCommentFilter implements IEligibilityFilter {
     
@@ -60,12 +68,15 @@ final class PtolemyTitleCommentFilter implements IEligibilityFilter {
      * {@inheritDoc}
      */
     override void preprocess(KNode graph, boolean includeHierarchy) {
-        var int largestFontSize = 0;
+        // We require title comments to have a font size larger than the default font size
+        var int largestFontSize = PtolemyProperties.COMMENT_FONT_SIZE.^default;
+        var int numberOfComments = 0;
         
         // Iterate over all the comments
         for (node : graph.children) {
             // Make sure the node is a comment
             if (node.layout.getProperty(LayoutOptions.COMMENT_BOX)) {
+                numberOfComments++;
                 val fontSize = node.layout.getProperty(COMMENT_FONT_SIZE);
                 
                 if (fontSize > largestFontSize) {
@@ -78,6 +89,11 @@ final class PtolemyTitleCommentFilter implements IEligibilityFilter {
                     largestFontSizeComment = null;
                 }
             }
+        }
+        
+        // If we only encountered a single comment, we don't consider it a title comment
+        if (numberOfComments == 1) {
+            largestFontSizeComment = null;
         }
     }
     
