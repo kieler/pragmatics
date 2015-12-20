@@ -22,10 +22,12 @@ import de.cau.cs.kieler.kiml.comments.AlignmentHeuristic
 import de.cau.cs.kieler.kiml.comments.CommentAttacher
 import de.cau.cs.kieler.kiml.comments.DistanceHeuristic
 import de.cau.cs.kieler.kiml.comments.SizeEligibilityFilter
+import de.cau.cs.kieler.kiml.comments.TextPrefixFilter
+import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.ExplicitPtolemyAttachmentProvider
-import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyAuthorCommentFilter
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyBoundsProvider
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyTitleCommentFilter
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 
 /**
  * Tries to infer the attachments between comment nodes and the elements they are supposed to describe.
@@ -49,8 +51,8 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyTitleComme
  */
 class CommentsAttachor {
 
-    /** Utility class for attaching the correct rendering to comment edges. */
     @Inject extension KRenderingFigureProvider
+    @Inject extension AnnotationExtensions
 
     /** Maximum distance for two objects to be considered close enough for attachment. */
     val double maxAttachmentDistance = 500.0;
@@ -72,7 +74,6 @@ class CommentsAttachor {
         val basicBoundsProvider = injector.getInstance(typeof(PtolemyBoundsProvider));
         val boundsProvider = basicBoundsProvider.cached();
         val explicitAttachmentProvider = injector.getInstance(typeof(ExplicitPtolemyAttachmentProvider));
-        val authorCommentFilter = injector.getInstance(typeof(PtolemyAuthorCommentFilter));
         val titleCommentFilter = injector.getInstance(typeof(PtolemyTitleCommentFilter));
         
         // Configure comment attachment
@@ -81,8 +82,12 @@ class CommentsAttachor {
             .withExplicitAttachmentProvider(explicitAttachmentProvider)
             .withAttachmentDecider(new AggregatedHeuristicsAttachmentDecider())
             
-            .addEligibilityFilter(authorCommentFilter)
             .addEligibilityFilter(titleCommentFilter)
+            .addEligibilityFilter(new TextPrefixFilter()
+                .withCommentTextProvider(c | c.layout.getProperty(PtolemyProperties.COMMENT_TEXT))
+                .addPrefix("Author")  // Also matches "Authors"
+                .addPrefix("Demo created by")
+            )
             .addEligibilityFilter(new SizeEligibilityFilter()
                 .withBoundsProvider(boundsProvider)
                 .withMaximumArea(maxCommentArea)
