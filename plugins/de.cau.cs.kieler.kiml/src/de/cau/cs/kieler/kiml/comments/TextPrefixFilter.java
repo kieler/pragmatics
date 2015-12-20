@@ -110,7 +110,7 @@ public class TextPrefixFilter implements IEligibilityFilter {
             throw new IllegalArgumentException("Prefix cannot be null or empty. Wouldn't make sense.");
         }
         
-        prefixes.add(caseSensitive ? prefix : prefix.toLowerCase());
+        prefixes.add(prefix);
         
         return this;
     }
@@ -151,15 +151,20 @@ public class TextPrefixFilter implements IEligibilityFilter {
         String commentText = commentTextProvider.apply(comment);
 
         if (commentText != null) {
-            if (!caseSensitive) {
-                commentText = commentText.toLowerCase();
-            }
-
             for (String prefix : prefixes) {
-                if (commentText.startsWith(prefix)) {
-                    // If we reject a comment once it matches a prefix, we now need to return false. If
-                    // we require comments to match a prefix, we now need to return true
-                    return !rejectCommentOnPrefixMatch;
+                // We can only have a match if the comment is as least as long as the prefix
+                if (commentText.length() >= prefix.length()) {
+                    String commentPrefix = commentText.substring(0, prefix.length());
+                    
+                    boolean startsWithPrefix = caseSensitive
+                            ? commentPrefix.equals(prefix)
+                            : commentPrefix.equalsIgnoreCase(prefix);
+                    
+                    if (startsWithPrefix) {
+                        // If we reject a comment once it matches a prefix, we now need to return false.
+                        // If we require comments to match a prefix, we now need to return true
+                        return !rejectCommentOnPrefixMatch;
+                    }
                 }
             }
         }
