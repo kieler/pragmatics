@@ -113,6 +113,8 @@ import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import de.cau.cs.kieler.ptolemy.attachmenteval.AttachmentData;
 import de.cau.cs.kieler.ptolemy.attachmenteval.DataEvaluator;
 import de.cau.cs.kieler.ptolemy.attachmenteval.PtolemyAttachmentEvalPlugin;
+import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses.CommentFontSizeAnalysis;
+import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses.IAttachmentAnalysis;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis;
 
 /**
@@ -169,7 +171,8 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     private AttachmentData attachmentData = null;
     
     /**
-     * The raw associations for the currently displayed file.
+     * The raw associations for the currently displayed file. These come directly from the attachment
+     * data. Thus, changes here are immediately reflect in the attachment data.
      */
     private Map<String, String> currentRawAssociations = null;
     
@@ -306,27 +309,27 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         runAlgorithmAction.setToolTipText("Run Attachment Heuristic");
         tbm.add(runAlgorithmAction);
         
-        Action countAnnotationsAction = new Action() {
+        Action runStatisticsAction = new Action() {
             @Override
             public void run() {
-                countAnnotations();
+                runStatistics();
             }
         };
-        countAnnotationsAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
+        runStatisticsAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
                 "icons/count.gif"));
-        countAnnotationsAction.setToolTipText("Count Annotations");
-        tbm.add(countAnnotationsAction);
+        runStatisticsAction.setToolTipText("Run Staistics");
+        tbm.add(runStatisticsAction);
         
-        Action analyzeDiagramsAction = new Action() {
+        Action runGraphAnalysesAction = new Action() {
             @Override
             public void run() {
-                analyzeDiagrams();
+                runGraphAnalysisOnDiagrams();
             }
         };
-        analyzeDiagramsAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
+        runGraphAnalysesAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
                 "icons/analyzediagrams.gif"));
-        analyzeDiagramsAction.setToolTipText("Analyze Selected Diagrams");
-        tbm.add(analyzeDiagramsAction);
+        runGraphAnalysesAction.setToolTipText("Analyze Selected Diagrams");
+        tbm.add(runGraphAnalysesAction);
         
         Action compareAttachmentsAction = new Action() {
             @Override
@@ -1110,10 +1113,14 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     /**
      * Updates the annotations count on each model.
      */
-    private void countAnnotations() {
+    private void runStatistics() {
         // Reset attachments and retrieve selected elements
         attachmentData.getAnnotationCounts().clear();
         final Object[] checkedElements = modelTreeViewer.getCheckedElements();
+        
+        // The analysis to run on the model files, in addition to the annotation counting which is
+        // always done
+        final IAttachmentAnalysis analysis = null;
         
         // A control for accessing the display
         final Control control = modelTreeViewer.getControl();
@@ -1124,6 +1131,10 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
                 
                 // Iterate over each selected model file
                 for (Object selectedObject : checkedElements) {
+                    if (monitor.isCanceled()) {
+                        break;
+                    }
+                    
                     if (selectedObject instanceof IFile) {
                         final IFile selectedFile = (IFile) selectedObject;
                         monitor.subTask(selectedFile.getName());
@@ -1132,17 +1143,32 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
                         control.getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 loadModel(selectedFile, false);
-                                if (klighdViewContext != null) {
-                                    int count = countAnnotations(klighdViewContext.getViewModel());
-                                    attachmentData.getAnnotationCounts().put(
-                                            getRelativeModelPath(selectedFile),
-                                            count);
-                                }
                             }
                         });
+                        
+                        // Run statistics on the model in non-UI thread
+                        if (klighdViewContext != null) {
+                            // Run analysis for this model
+                            if (analysis != null) {
+                                analysis.process(klighdViewContext.getViewModel(),
+                                        getRelativeModelPath(selectedFile),
+                                        attachmentData);
+                            }
+                            
+                            // Count annotations
+                            int count = countAnnotations(klighdViewContext.getViewModel());
+                            attachmentData.getAnnotationCounts().put(
+                                    getRelativeModelPath(selectedFile),
+                                    count);
+                        }
                     }
                     
                     monitor.worked(1);
+                }
+                
+                // Tell the analysis to finish
+                if (analysis != null) {
+                    analysis.finish();
                 }
                 
                 monitor.done();
@@ -1191,7 +1217,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
      * Invokes GrAna to analyze the selected diagrams. The results are saved in a CSV file named just
      * like the file opened in the editor.
      */
-    private void analyzeDiagrams() {
+    private void runGraphAnalysisOnDiagrams() {
         // Show the analysis selection dialog so that the user can choose which analyses he wants
         AnalysisSelectionDialog dialog = new AnalysisSelectionDialog(
                 this.getSite().getShell(),
@@ -1366,7 +1392,6 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     // DIAGRAM WORKBENCH PART STUFF
 
     public String getPartId() {
-        // TODO Auto-generated method stub
         return null;
     }
 
