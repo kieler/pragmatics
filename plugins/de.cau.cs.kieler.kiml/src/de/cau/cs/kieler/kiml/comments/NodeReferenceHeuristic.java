@@ -33,8 +33,8 @@ import de.cau.cs.kieler.core.util.Pair;
  * node's name appears in it. The following configuration methods have to be called before using this
  * heuristic:
  * <ul>
- *   <li>{@link #withCommentTextFunction(Function)}</li>
- *   <li>{@link #withNodeNameFunction(Function)}</li>
+ *   <li>{@link #withCommentTextProvider(Function)}</li>
+ *   <li>{@link #withNodeNameProvider(Function)}</li>
  * </ul>
  * 
  * <p>
@@ -84,7 +84,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
      *            the function to use.
      * @return this object for method chaining.
      */
-    public NodeReferenceHeuristic withCommentTextFunction(final Function<KNode, String> f) {
+    public NodeReferenceHeuristic withCommentTextProvider(final Function<KNode, String> f) {
         if (f == null) {
             throw new IllegalArgumentException("Comment text function cannot be null.");
         }
@@ -105,7 +105,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
      *            the function to use.
      * @return this object for method chaining.
      */
-    public NodeReferenceHeuristic withNodeNameFunction(final Function<KNode, String> f) {
+    public NodeReferenceHeuristic withNodeNameProvider(final Function<KNode, String> f) {
         if (f == null) {
             throw new IllegalArgumentException("Node name function cannot be null.");
         }
@@ -187,6 +187,8 @@ public class NodeReferenceHeuristic implements IHeuristic {
         } else {
             goFindStrictMatches(commentTexts, nodeNames);
         }
+        
+        commentTexts = null;
     }
 
     /**
@@ -310,7 +312,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
             for (Pair<KNode, Pattern> nodeRegexpPair : nodeRegexps) {
                 Matcher matcher = nodeRegexpPair.getSecond().matcher(commentTextPair.getSecond());
                 
-                if (matcher.matches()) {
+                if (matcher.find()) {
                     // We only want to establish associations if a node is the only one mentioned in a
                     // comment
                     if (foundNode == null) {
@@ -339,30 +341,55 @@ public class NodeReferenceHeuristic implements IHeuristic {
     private static Pattern fuzzyRegexpFor(final String nodeName) {
         String trimmedNodeName = nodeName.trim();
         StringBuffer regexp = new StringBuffer(nodeName.length() * 2);
+        StringBuffer currentSegment = new StringBuffer(nodeName.length());
         
         for (int i = 0; i < trimmedNodeName.length(); i++) {
             char currC = trimmedNodeName.charAt(i);
             
             if (Character.isUpperCase(currC)) {
-                // If the previous character was lower-case, insert whitespace placeholders
+                // If the previous character was lower-case, end the current segment and insert
+                // whitespace placeholders
                 if (i > 0 && Character.isLowerCase(trimmedNodeName.charAt(i - 1))) {
+                    regexp.append(Pattern.quote(currentSegment.toString()));
+                    currentSegment = new StringBuffer(nodeName.length());
+                    
                     regexp.append("[\\h\\v]*");
                 }
                 
-                regexp.append(currC);
+                currentSegment.append(currC);
             } else if (Character.isWhitespace(currC)) {
                 // The first of a series of whitespace characters must be replaced by whitespace
-                // placeholders in the regular expression
+                // placeholders in the regular expression, and the current segment ends
                 if (i > 0 && !Character.isWhitespace(trimmedNodeName.charAt(i - 1))) {
+                    regexp.append(Pattern.quote(currentSegment.toString()));
+                    currentSegment = new StringBuffer(nodeName.length());
+                    
                     regexp.append("[\\h\\v]*");
                 }
             } else {
-                // It's neither upper-case, nor whitespace, so just add it to the regular expression
-                regexp.append(currC);
+                // It's neither upper-case, nor whitespace, so just add it to the current segment
+                currentSegment.append(currC);
             }
         }
         
+        regexp.append(Pattern.quote(currentSegment.toString()));
+        
         return Pattern.compile(regexp.toString(), Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+    }
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Accessors
+    
+    /**
+     * Returns a map that maps comments to nodes they were attached to by this heuristic. The returned
+     * map is meaningful only if it is called between calls to {@link #preprocess(KNode, boolean)} and
+     * {@link #cleanup()}. Comments that are not attached to anything don't appear in the map.
+     * 
+     * @return mapping of comments to nodes.
+     */
+    public Map<KNode, KNode> getAttachments() {
+        return foundAttachments;
     }
 
 }

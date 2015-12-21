@@ -150,7 +150,7 @@ public class TextPrefixFilter implements IEligibilityFilter {
     public boolean eligibleForAttachment(final KNode comment) {
         String commentText = commentTextProvider.apply(comment);
 
-        if (commentText != null) {
+        if (!Strings.isNullOrEmpty(commentText)) {
             for (String prefix : prefixes) {
                 // We can only have a match if the comment is as least as long as the prefix
                 if (commentText.length() >= prefix.length()) {
