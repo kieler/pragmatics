@@ -245,7 +245,7 @@ public class AttachmentData {
     public Map<String, Map<String, String>> getAssociations() {
         return rawAssociations;
     }
-
+    
     
     ////////////////////////////////////////////////////////////////////
     // Statistics

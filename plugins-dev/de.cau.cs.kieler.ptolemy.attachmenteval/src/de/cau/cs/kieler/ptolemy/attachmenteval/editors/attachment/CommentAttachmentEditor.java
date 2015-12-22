@@ -1152,7 +1152,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
                             if (analysis != null) {
                                 analysis.process(klighdViewContext.getViewModel(),
                                         getRelativeModelPath(selectedFile),
-                                        attachmentData);
+                                        CommentAttachmentEditor.this);
                             }
                             
                             // Count annotations
@@ -1406,4 +1406,21 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     public ViewContext getViewContext() {
         return klighdViewContext;
     }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // UTILITY METHODS FOR ANALYSES
+    
+    /**
+     * Returns the node the given comment node is attached to in the currently loaded model. This is
+     * a utility function to be used by analyses.
+     * 
+     * @param viewModelComment
+     *            comment node from the view model.
+     * @return the node the comment is attached to, or {@code null} if it is unattached.
+     */
+    public KNode getAttachmentTarget(final KNode viewModelComment) {
+        return currentAssociations.get(viewModelComment);
+    }
+    
 }

@@ -32,10 +32,11 @@ public interface IAttachmentAnalysis {
      *            the model to analyze.
      * @param modelFilePath
      *            the relative path to the file the model was loaded from.
-     * @param attachmentData
-     *            the attachment data.
+     * @param editor
+     *            the comment attachment editor that invokes this analysis. Can be used to get
+     *            access to stuff.
      */
-    void process(KNode model, String modelFilePath, AttachmentData attachmentData);
+    void process(KNode model, String modelFilePath, CommentAttachmentEditor editor);
     
     /**
      * Called once every model file has been processed.

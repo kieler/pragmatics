@@ -20,7 +20,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.comments.CommentAttacher;
 import de.cau.cs.kieler.kiml.comments.TextPrefixFilter;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.ptolemy.attachmenteval.AttachmentData;
+import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.CommentAttachmentEditor;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties;
 
 /**
@@ -58,7 +58,7 @@ public class AuthorCommentAnalysis implements IAttachmentAnalysis {
      * {@inheritDoc}
      */
     @Override
-    public void process(KNode model, String modelFilePath, AttachmentData attachmentData) {
+    public void process(KNode model, String modelFilePath, CommentAttachmentEditor editor) {
         authorCommentFilter.preprocess(model, true);
         
         Map<String, Boolean> comments = Maps.newTreeMap();
