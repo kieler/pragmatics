@@ -43,8 +43,8 @@ import de.cau.cs.kieler.core.util.Pair;
  * 
  * <h3>Strict Mode</h3>
  * <p>
- * In strict mode, node names have to appear exactly as they are in the text of a comment, apart from
- * the case of letters.
+ * In strict mode, node names have to appear exactly as they are in the text of a comment, as a
+ * separate word.
  * </p>
  * 
  * 
@@ -181,12 +181,8 @@ public class NodeReferenceHeuristic implements IHeuristic {
             }
         }
         
-        // Go find matches!
-        if (fuzzy) {
-            goFindFuzzyMatches(commentTexts, nodeNames);
-        } else {
-            goFindStrictMatches(commentTexts, nodeNames);
-        }
+        // Go find matches! See also: We Didn't Start the Fire by Billy Joel
+        goFindFuzzyMatches(commentTexts, nodeNames);
         
         commentTexts = null;
     }
@@ -221,73 +217,14 @@ public class NodeReferenceHeuristic implements IHeuristic {
     // Matching
     
     /**
-     * Runs off and finds strict matches between comments and nodes. A node and a comment match if
-     * the node's text is exactly contained in the comment's text (apart from capitalization), and
-     * if no other node is mentioned in the comment's text. Matches are recorded in
-     * {@link #foundAttachments}.
+     * Runs off and finds matches between comments and nodes. Depending on whether fuzzy mode is on
+     * or off, this method uses different kinds of regular expressions to find node names in
+     * comments. A node and a comment match if the node's text is contained in the comment's text,
+     * and if no other node is mentioned in the comment's text.
      * 
-     * @param commentTexts
-     *            list of pairs of comments and their text. The text is expected to not be
-     *            {@code null}.
-     * @param nodeNames
-     *            list of pairs of nodes and their names. The name is expected to not be
-     *            {@code null}.
-     */
-    private void goFindStrictMatches(final List<Pair<KNode, String>> commentTexts,
-            final List<Pair<KNode, String>> nodeNames) {
-        
-        // Lower-case everything
-        for (Pair<KNode, String> commentTextPair : commentTexts) {
-            commentTextPair.setSecond(commentTextPair.getSecond().toLowerCase());
-        }
-        
-        for (Pair<KNode, String> nodeNamePair : nodeNames) {
-            nodeNamePair.setSecond(nodeNamePair.getSecond().toLowerCase());
-        }
-        
-        // Check each pair of comment and node
-        for (Pair<KNode, String> commentTextPair : commentTexts) {
-            KNode foundNode = null;
-            
-            for (Pair<KNode, String> nodeNamePair : nodeNames) {
-                if (commentTextPair.getSecond().contains(nodeNamePair.getSecond())) {
-                    // We only want to establish associations if a node is the only one mentioned in a
-                    // comment
-                    if (foundNode == null) {
-                        foundNode = nodeNamePair.getFirst();
-                    } else {
-                        foundNode = null;
-                        break;
-                    }
-                }
-            }
-            
-            // Record the match, if any
-            if (foundNode != null) {
-                foundAttachments.put(commentTextPair.getFirst(), foundNode);
-            }
-        }
-    }
-    
-    /**
-     * Runs off and finds fuzzy matches between comments and nodes. A node and a comment match if
-     * the node's text is fuzzily contained in the comment's text, and if no other node is mentioned
-     * in the comment's text. Fuzzy containation (I so much want that word to exist) is (fuzzily)
-     * defined as follows:
-     * <ul>
-     *   <li>
-     *     a space character in the node name can be represented by one or more whitespace and line
-     *     break characters in the comment text.
-     *   </li>
-     *   <li>
-     *     if the node name is camelCased, each upper-case character preceded by a lower-case character
-     *     can be prefixed by one or more whitespace and line break characters in the comment text.
-     *   </li>
-     * </ul>
-     * A node and a comment match if the node's text is fuzzily contained in the comment's text, and
-     * if no other node is mentioned in the comment's text.
-     * 
+     * <p>
      * Matches are recorded in {@link #foundAttachments}.
+     * </p>
      * 
      * @param commentTexts
      *            list of pairs of comments and their text. The text is expected to not be
@@ -302,7 +239,10 @@ public class NodeReferenceHeuristic implements IHeuristic {
         // Produce regular expression patterns for all node names
         List<Pair<KNode, Pattern>> nodeRegexps = Lists.newArrayListWithCapacity(nodeNames.size());
         for (Pair<KNode, String> nodeNamePair : nodeNames) {
-            nodeRegexps.add(Pair.of(nodeNamePair.getFirst(), fuzzyRegexpFor(nodeNamePair.getSecond())));
+            Pattern regexp = fuzzy
+                    ? fuzzyRegexpFor(nodeNamePair.getSecond())
+                    : strictRegexpFor(nodeNamePair.getSecond());
+            nodeRegexps.add(Pair.of(nodeNamePair.getFirst(), regexp));
         }
         
         // Check each pair of comment and node
@@ -332,7 +272,18 @@ public class NodeReferenceHeuristic implements IHeuristic {
     }
     
     /**
-     * Produces a regular expression pattern for the given node name.
+     * Produces a fuzzy regular expression pattern for the given node name. The pattern matches the
+     * following appearances of the node name:
+     * <ul>
+     *   <li>
+     *     a space character in the node name can be represented by one or more whitespace and line
+     *     break characters in the comment text.
+     *   </li>
+     *   <li>
+     *     if the node name is camelCased, each upper-case character preceded by a lower-case character
+     *     can be prefixed by one or more whitespace and line break characters in the comment text.
+     *   </li>
+     * </ul>
      * 
      * @param nodeName
      *            the node name.
@@ -374,7 +325,20 @@ public class NodeReferenceHeuristic implements IHeuristic {
         
         regexp.append(Pattern.quote(currentSegment.toString()));
         
-        return Pattern.compile(regexp.toString(), Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+        return Pattern.compile("\\b" + regexp.toString() + "\\b",
+                Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+    }
+    
+    /**
+     * Produces a strict regular expression pattern for the given node name. The pattern matches the
+     * node name if it's not part of a longer word.
+     * 
+     * @param nodeName
+     *            the node name.
+     * @return regular expression pattern for strict containation.
+     */
+    private static Pattern strictRegexpFor(final String nodeName) {
+        return Pattern.compile("\\b" + Pattern.quote(nodeName) + "\\b", Pattern.DOTALL);
     }
     
     
