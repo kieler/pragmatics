@@ -34,12 +34,13 @@ public final class NNode {
     public String type = "";
 
     /**
-     * The layer that this node is (currently) assigned to. May change during execution of the
-     * network simplex algorithm.
+     * The layer each node is currently assigned to. Note that during layerer execution, the lowest
+     * layer is not necessary the zeroth layer. To fulfill this characteristic, a final call of
+     * {@link NetworkSimplex#normalize()} has to be performed.
      */
     public int layer;
     
-    // In addition to a nodes incoming and outgoing edges we cache a list of 
+    // In addition to a node's incoming and outgoing edges we cache a list of 
     // the union of these two. To be able to tell when we have to update this list,
     // we listen (sort of) to changes to the two underlying lists. 
     private ChangeAwareArrayList<NEdge> outgoingEdges = new ChangeAwareArrayList<>();
