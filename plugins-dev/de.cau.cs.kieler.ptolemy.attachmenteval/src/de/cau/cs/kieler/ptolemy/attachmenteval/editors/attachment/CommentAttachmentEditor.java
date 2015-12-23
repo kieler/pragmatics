@@ -113,7 +113,7 @@ import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import de.cau.cs.kieler.ptolemy.attachmenteval.AttachmentData;
 import de.cau.cs.kieler.ptolemy.attachmenteval.DataEvaluator;
 import de.cau.cs.kieler.ptolemy.attachmenteval.PtolemyAttachmentEvalPlugin;
-import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses.CommentFontSizeAnalysis;
+import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses.CommentAlignmentAnalysis;
 import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses.IAttachmentAnalysis;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis;
 
@@ -451,14 +451,28 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         // Event Listeners
         modelTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
+                // DEBUG START
+                System.out.println("Starting onSelectionChanged");
+                // DEBUG END
+                
                 Object element = ((ITreeSelection) event.getSelection()).getFirstElement();
                 
                 // We can only display files
                 if (element instanceof IFile) {
+                    // DEBUG START
+                    System.out.println("====> Showing model...");
+                    // DEBUG END
                     showModel((IFile) element, false);
+                    // DEBUG START
+                    System.out.println("====> ...done!");
+                    // DEBUG END
                 } else {
                     showModel(null, false);
                 }
+
+                // DEBUG START
+                System.out.println("Finished onSelectionChanged");
+                // DEBUG END
             }
         });
         modelTreeViewer.addCheckStateListener(new ICheckStateListener() {
@@ -793,14 +807,26 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
             return;
         }
         
+        // DEBUG START
+        System.out.println("Calling loadModel...");
+        // DEBUG END
         loadModel(modelFile, enableHeuristic);
+        // DEBUG START
+        System.out.println("Finished loadModel...");
+        // DEBUG END
         
+        // DEBUG START
+        System.out.println("Starting layout...");
+        // DEBUG END
         if (klighdViewContext != null) {
             klighdViewer.setModel(klighdViewContext);
             LightDiagramServices.layoutDiagram(klighdViewContext, false);
         } else {
             klighdViewer.setModel("No valid model selected.", false);
         }
+        // DEBUG START
+        System.out.println("Finished layout...");
+        // DEBUG END
 
         // Update the input of the attachment viewer
         attachmentsTreeViewer.setInput(klighdViewContext);
@@ -1120,7 +1146,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         
         // The analysis to run on the model files, in addition to the annotation counting which is
         // always done
-        final IAttachmentAnalysis analysis = null;
+        final IAttachmentAnalysis analysis = new CommentAlignmentAnalysis();
         
         // A control for accessing the display
         final Control control = modelTreeViewer.getControl();
