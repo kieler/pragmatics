@@ -14,8 +14,6 @@ package de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses;
 
 import java.util.Map;
 
-import org.eclipse.emf.ecore.resource.Resource;
-
 import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -23,7 +21,6 @@ import com.google.inject.Injector;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.comments.CommentAttacher;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.ptolemy.attachmenteval.AttachmentData;
 import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.CommentAttachmentEditor;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties;
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyTitleCommentFilter;
