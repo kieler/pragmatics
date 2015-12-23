@@ -14,18 +14,14 @@ package de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses;
 
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.comments.CommentAttacher;
-import de.cau.cs.kieler.kiml.comments.DistanceHeuristic;
 import de.cau.cs.kieler.kiml.comments.IBoundsProvider;
-import de.cau.cs.kieler.kiml.comments.NodeReferenceHeuristic;
 import de.cau.cs.kieler.kiml.comments.TextPrefixFilter;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.CommentAttachmentEditor;
