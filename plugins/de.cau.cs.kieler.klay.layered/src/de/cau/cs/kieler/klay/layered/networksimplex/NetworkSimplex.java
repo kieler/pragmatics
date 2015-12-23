@@ -16,7 +16,9 @@ package de.cau.cs.kieler.klay.layered.networksimplex;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -58,6 +60,8 @@ public final class NetworkSimplex  {
     private boolean balance = false;
     /** A limit on the number of iterations. */
     private int iterationLimit = Integer.MAX_VALUE;
+    /** Empirically determined threshold when removing subtrees pays off. */
+    private static final int REMOVE_SUBTREES_THRESH = 40;
     
     /** Use {@link #forGraph(NGraph)}. */
     private NetworkSimplex() {
@@ -134,25 +138,6 @@ public final class NetworkSimplex  {
     private List<NNode> sources;
 
     /**
-     * A {@code LinkedList} containing all sink nodes of the graph, i.e. all nodes that have no
-     * incident outgoing edges.
-     */
-    private List<NNode> sinks;
-
-    /** The number of incoming edges incident to each node. */
-    private int[] inDegree;
-
-    /** The number of outgoing edges incident to each node. */
-    private int[] outDegree;
-
-    /**
-     * The layer each node is currently assigned to. Note that during layerer execution, the lowest
-     * layer is not necessary the zeroth layer. To fulfill this characteristic, a final call of
-     * {@code normalize()} has to be performed.
-     */
-    private int[] layer;
-
-    /**
      * A flag indicating whether a specified edge has been visited during DFS-traversal. This array
      * has to be filled with {@code false} each time, before a DFS-based method is invoked.
      */
@@ -192,6 +177,15 @@ public final class NetworkSimplex  {
      * @see #cutvalues()
      */
     private double[] cutvalue;
+    
+    /**
+     * Nodes that are part of subtrees of the graph. They will be removed prior to the actual
+     * execution of the network simplex since positioning them with minimal edge length is trivial.
+     * 
+     * @see #removeSubtrees()
+     * @see #reattachSubtrees()
+     */
+    private Stack<Pair<NNode, NEdge>> subtreeNodes;
 
     // =============================== Initialization Methods =====================================
 
@@ -207,43 +201,21 @@ public final class NetworkSimplex  {
     private void initialize() {
         // initialize node attributes
         int numNodes = graph.nodes.size();
-        inDegree = new int[numNodes];
-        outDegree = new int[numNodes];
-        layer = new int[numNodes];
         graph.nodes.forEach(n -> n.treeNode = false); // SUPPRESS CHECKSTYLE InnerAssignment
         poID = new int[numNodes];
         lowestPoID = new int[numNodes];
-        
-        Arrays.fill(layer, 0);
         sources = Lists.newArrayList();
-        sinks = Lists.newArrayList();
 
         // determine edges and re-index nodes
         int index = 0;
         List<NEdge> theEdges = Lists.newArrayList();
         for (NNode node : graph.nodes) {
             node.id = index++;
-            for (NEdge edge : node.getOutgoingEdges()) {
-                // ignore self loops
-                if (edge.getSource() != edge.getTarget()) {
-                    theEdges.add(edge);
-                    outDegree[node.id]++;
-                }
-            }
-
-            for (NEdge edge : node.getIncomingEdges()) {
-                // ignore self loops
-                if (edge.getSource() != edge.getTarget()) {
-                    inDegree[node.id]++;
-                }
-            }
             // add node to sinks, resp. sources
-            if (outDegree[node.id] == 0) {
-                sinks.add(node);
-            }
-            if (inDegree[node.id] == 0) {
+            if (node.getIncomingEdges().size() == 0) {
                 sources.add(node);
             }
+            theEdges.addAll(node.getOutgoingEdges());
         }
         // re-index edges
         int counter = 0;
@@ -274,13 +246,10 @@ public final class NetworkSimplex  {
         this.edges = null;
         this.treeEdges = null;
         this.edgeVisited = null;
-        this.inDegree = null;
-        this.layer = null;
         this.lowestPoID = null;
-        this.outDegree = null;
         this.poID = null;
-        this.sinks = null;
         this.sources = null;
+        this.subtreeNodes = null;
     }
 
     // ============================== Network-Simplex Algorithm ===================================
@@ -304,7 +273,19 @@ public final class NetworkSimplex  {
             monitor.done();
             return;
         }
+        
+        // reset any old layering
+        for (NNode node : graph.nodes) {
+            node.layer = 0;
+        }
+        
+        // remove leafs
+        boolean removeSubtrees = graph.nodes.size() >= REMOVE_SUBTREES_THRESH;
+        if (removeSubtrees) {
+            removeSubtrees();
+        }
 
+        // init all the data structures we use
         initialize();
         // determine an initial feasible layering
         feasibleTree();
@@ -317,22 +298,96 @@ public final class NetworkSimplex  {
             e = leaveEdge();
             iter++;
         }
+
+        // re-attach leafs
+        if (removeSubtrees) {
+            reattachSubtrees();
+        }
         
         // normalize and, if desired, balance
+        //   both methods must work on the NNode#layer field
         if (balance) {
             balance(normalize());
         } else {
             normalize();
         }
-
-        // put nodes into their assigned layers
-        for (NNode node : graph.nodes) {
-            node.layer = layer[node.id];
-        }
-
+        
         // release the created resources
         dispose();
         monitor.done();
+    }
+    
+    
+    /**
+     * Recursively removes subtrees. In other words, removes leafs from the graph until no more
+     * leafs are present.
+     */
+    private void removeSubtrees() {
+        
+        subtreeNodes = new Stack<>();
+        
+        // find initial leafs
+        Queue<NNode> leafs = Lists.newLinkedList();
+        for (NNode node : graph.nodes) {
+            if (node.getConnectedEdges().size() == 1) {
+                leafs.add(node);
+            }
+        }
+        
+        // remove them from the graph like there's no tomorrow
+        while (!leafs.isEmpty()) {
+            NNode node = leafs.poll();
+            // was the edge already removed?
+            if (node.getConnectedEdges().size() == 0) {
+                continue;
+            }
+            NEdge edge = node.getConnectedEdges().get(0);
+            boolean isOutEdge = node.getOutgoingEdges().size() > 0;
+            
+            NNode other = edge.getOther(node);
+            if (isOutEdge) {
+                other.getIncomingEdges().remove(edge);
+            } else {
+                other.getOutgoingEdges().remove(edge);
+            }
+            
+            if (other.getConnectedEdges().size() == 1) {
+                leafs.add(other);
+            }
+            
+            Pair<NNode, NEdge> leafy = Pair.of(node, edge);
+            subtreeNodes.push(leafy);
+            // remove the node from the graph's nodes
+            graph.nodes.remove(node);
+        }
+        
+    }
+    
+    /**
+     * Re-attaches the previously removed tree nodes. It is important that 
+     * the nodes are re-attached in the opposite order than they were removed.  
+     */
+    private void reattachSubtrees() {
+        
+        while (!subtreeNodes.isEmpty()) {
+            
+            Pair<NNode, NEdge> leafy = subtreeNodes.pop();
+            NNode node = leafy.getFirst();
+            NEdge edge = leafy.getSecond();
+            
+            NNode placed = edge.getOther(node);
+            
+            if (edge.target == node) {
+                placed.getOutgoingEdges().add(edge);
+                node.layer = placed.layer + edge.delta;
+            } else {
+                placed.getIncomingEdges().add(edge);
+                node.layer = placed.layer - edge.delta;
+            }
+            
+            graph.nodes.add(node);
+        }
+        
     }
 
     /**
@@ -360,7 +415,7 @@ public final class NetworkSimplex  {
             while (tightTreeDFS(graph.nodes.iterator().next()) < graph.nodes.size()) {
                 // some nodes are still not part of the tree
                 NEdge e = minimalSlack();
-                int slack = layer[e.getTarget().id] - layer[e.getSource().id] - e.delta;
+                int slack = e.getTarget().layer - e.getSource().layer - e.delta;
                 if (e.getTarget().treeNode) {
                     slack = -slack;
                 }
@@ -368,7 +423,7 @@ public final class NetworkSimplex  {
                 // update tree
                 for (NNode node : graph.nodes) {
                     if (node.treeNode) {
-                        layer[node.id] += slack;
+                        node.layer += slack;
                     }
                 }
                 Arrays.fill(edgeVisited, false);
@@ -406,7 +461,7 @@ public final class NetworkSimplex  {
             
             for (NEdge edge : node.getOutgoingEdges()) {
                 NNode target = edge.getTarget();
-                layer[target.id] = Math.max(layer[target.id], layer[node.id] + edge.delta);
+                target.layer = Math.max(target.layer, node.layer + edge.delta);
                 incident[target.id]--;
                 if (incident[target.id] == 0) {
                     roots.add(target);
@@ -433,7 +488,7 @@ public final class NetworkSimplex  {
         int currentSpan;
 
         for (NEdge edge : node.getConnectedEdges()) {
-            currentSpan = layer[edge.getTarget().id] - layer[edge.getSource().id];
+            currentSpan = edge.getTarget().layer - edge.getSource().layer;
             if (edge.getTarget() == node && currentSpan < minSpanIn) {
                 minSpanIn = currentSpan;
             } else if (currentSpan < minSpanOut) {
@@ -476,8 +531,8 @@ public final class NetworkSimplex  {
                     // edge is a tree edge already: follow this path
                     nodeCount += tightTreeDFS(opposite);
                 } else if (!opposite.treeNode
-                        && edge.delta == layer[edge.getTarget().id]
-                                - layer[edge.getSource().id]) {
+                        && edge.delta == edge.getTarget().layer
+                                - edge.getSource().layer) {
                     // edge is a tight non-tree edge
                     edge.treeEdge = true;
                     treeEdges.add(edge);
@@ -505,7 +560,7 @@ public final class NetworkSimplex  {
         for (NEdge edge : edges) {
             if (edge.getSource().treeNode ^ edge.getTarget().treeNode) {
                 // edge is non-tree edge and incident on the tree
-                curSlack = layer[edge.getTarget().id] - layer[edge.getSource().id] - edge.delta;
+                curSlack = edge.getTarget().layer - edge.getSource().layer - edge.delta;
                 if (curSlack < minSlack) {
                     minSlack = curSlack;
                     minSlackEdge = edge;
@@ -704,7 +759,7 @@ public final class NetworkSimplex  {
             target = edge.getTarget();
             if (isInHead(source, leave) && !isInHead(target, leave)) {
                 // edge is to consider
-                slack = layer[target.id] - layer[source.id] - edge.delta;
+                slack = target.layer - source.layer - edge.delta;
                 if (slack < repSlack) {
                     repSlack = slack;
                     replace = edge;
@@ -743,14 +798,13 @@ public final class NetworkSimplex  {
         treeEdges.remove(leave);
         enter.treeEdge = true;
         treeEdges.add(enter);
-        int delta =
-                layer[enter.getTarget().id] - layer[enter.getSource().id] - enter.delta;
+        int delta = enter.getTarget().layer - enter.getSource().layer - enter.delta;
         if (!isInHead(enter.getTarget(), leave)) {
             delta = -delta;
         }
         for (NNode node : graph.nodes) {
             if (!isInHead(node, leave)) {
-                layer[node.id] += delta;
+                node.layer += delta;
             }
         }
         
@@ -776,19 +830,16 @@ public final class NetworkSimplex  {
         // determine lowest assigned layer and layer count
         int highest = Integer.MIN_VALUE;
         int lowest = Integer.MAX_VALUE;
-        for (NNode node : sources) {
-            lowest = Math.min(lowest, layer[node.id]);
+        for (NNode node : graph.nodes) {
+            lowest = Math.min(lowest, node.layer);
+            highest = Math.max(highest, node.layer);
         }
-        for (NNode node : sinks) {
-            highest = Math.max(highest, layer[node.id]);
-        }
-        
         // normalize and determine layer filling
         int layerID = 0;
         int[] filling = new int[highest - lowest + 1];
         for (NNode node : graph.nodes) {
-            layer[node.id] -= lowest;
-            filling[layer[node.id]]++;
+            node.layer -= lowest;
+            filling[node.layer]++;
         }
         
         // also consider nodes of already layered connected components
@@ -818,21 +869,21 @@ public final class NetworkSimplex  {
         int newLayer;
         Pair<Integer, Integer> range = null;
         for (NNode node : graph.nodes) {
-            if (inDegree[node.id] == outDegree[node.id]) {
+            if (node.getIncomingEdges().size() == node.getOutgoingEdges().size()) {
                 // node might get shifted
-                newLayer = layer[node.id];
+                newLayer = node.layer;
                 range = minimalSpan(node);
-                for (int i = layer[node.id] - range.getFirst() + 1; i < layer[node.id]
+                for (int i = node.layer - range.getFirst() + 1; i < node.layer
                         + range.getSecond(); i++) {
                     if (filling[i] < filling[newLayer]) {
                         newLayer = i;
                     }
                 }
                 // assign new layer
-                if (filling[newLayer] < filling[layer[node.id]]) {
-                    filling[layer[node.id]]--;
+                if (filling[newLayer] < filling[node.layer]) {
+                    filling[node.layer]--;
                     filling[newLayer]++;
-                    layer[node.id] = newLayer;
+                    node.layer = newLayer;
                 }
             }
         }
