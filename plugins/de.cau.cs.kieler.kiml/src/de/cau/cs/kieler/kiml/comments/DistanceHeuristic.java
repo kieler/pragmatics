@@ -204,6 +204,20 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
             return distance * distance;
         }
         
+        // At this point we know that the outcodes are not what we expect and that the two bounds don't
+        // intersect. They may be touching...
+        if (bounds2.x <= bounds1.x + bounds1.width && bounds2.x + bounds2.width >= bounds1.x) {
+            // They overlap horizontally, check if their borders touch
+            if (bounds2.y + bounds2.height == bounds1.y || bounds2.y == bounds1.y + bounds1.height) {
+                return 0;
+            }
+        } else if (bounds2.y <= bounds1.y + bounds1.height && bounds2.y + bounds2.height >= bounds1.y) {
+            // They overlap vertically, check if their borders touch
+            if (bounds2.x + bounds2.width == bounds1.x || bounds2.x == bounds1.x + bounds1.width) {
+                return 0;
+            }
+        }
+        
         // At this point, all hope is lost...
         return -1;
     }
