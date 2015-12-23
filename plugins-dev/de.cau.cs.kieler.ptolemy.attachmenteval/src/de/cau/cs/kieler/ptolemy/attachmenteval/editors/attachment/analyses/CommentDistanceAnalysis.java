@@ -23,8 +23,12 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.comments.CommentAttacher;
 import de.cau.cs.kieler.kiml.comments.DistanceHeuristic;
 import de.cau.cs.kieler.kiml.comments.IBoundsProvider;
+import de.cau.cs.kieler.kiml.comments.TextPrefixFilter;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.CommentAttachmentEditor;
+import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties;
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyBoundsProvider;
+import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyTitleCommentFilter;
 
 /**
  * Analyses the distances between comments and nodes and stuff.
@@ -35,12 +39,21 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
     
     /** Bounds provider used to find the node nearest to a comment. */
     private IBoundsProvider boundsProvider = null;
+    /** The author comment filter. */
+    private TextPrefixFilter authorCommentFilter = null;
+    /** The title comment filter. */
+    private PtolemyTitleCommentFilter titleCommentFilter = null;
     /** Distances between a comments and the nodes they are attached to in the reference function. */
     private List<Double> attachedNodeDistances = Lists.newArrayList();
     /** Distance between a comment that's attached to something and its nearest node. */
     private List<Double> nearestNodeToAttachedCommentDistances = Lists.newArrayList();
     /** Distance between a comment that's not attached to anything and its nearest node. */
     private List<Double> nearestNodeToUnattachedCommentDistances = Lists.newArrayList();
+    /**
+     * Distance between a comment that's not attached, but eligible for attachment and its nearest
+     * node.
+     */
+    private List<Double> nearestNodeToUnattachedFilteredCommentDistances = Lists.newArrayList();
     /** Number of attached comments. */
     private int attachedComments = 0;
     /** Number of attached comments that are attached to the node nearest to them. */
@@ -50,7 +63,17 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
      * Creates a new instance.
      */
     public CommentDistanceAnalysis() {
+        authorCommentFilter = new TextPrefixFilter()
+            .withCommentTextProvider((comment) ->
+                comment.getData(KLayoutData.class).getProperty(PtolemyProperties.COMMENT_TEXT))
+            .addPrefix("Author")  // Also matches "Authors"
+            .addPrefix("Demo created by");
+        
         Injector injector = Guice.createInjector();
+    
+        titleCommentFilter = injector.getInstance(PtolemyTitleCommentFilter.class);
+        titleCommentFilter.decideBasedOnFontSizeOnly();
+        
         boundsProvider = injector.getInstance(PtolemyBoundsProvider.class);
         boundsProvider = boundsProvider.cached();
     }
@@ -63,7 +86,13 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
      */
     @Override
     public void process(KNode model, String modelFilePath, CommentAttachmentEditor editor) {
+        authorCommentFilter.preprocess(model, true);
+        titleCommentFilter.preprocess(model, true);
+        
         recursivelyProcess(model, editor);
+        
+        authorCommentFilter.cleanup();
+        titleCommentFilter.cleanup();
     }
 
     /**
@@ -79,12 +108,15 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
                 + commentsAttachedToNearestNode);
         
         // Distance Histograms
-        System.out.println("------ Distances between comments and their attached nodes");
+        System.out.println("------ Comments and their attached nodes");
         attachedNodeDistances.stream().forEach((dist) -> System.out.println(dist));
-        System.out.println("------ Distances between attached comments and their closest nodes");
+        System.out.println("------ Attached comments and their closest nodes");
         nearestNodeToAttachedCommentDistances.stream().forEach((dist) -> System.out.println(dist));
-        System.out.println("------ Distances between unattached comments and their closest nodes");
+        System.out.println("------ Unattached comments and their closest nodes");
         nearestNodeToUnattachedCommentDistances.stream().forEach((dist) -> System.out.println(dist));
+        System.out.println("------ Filtered unattached comments and their closest nodes");
+        nearestNodeToUnattachedFilteredCommentDistances.stream()
+            .forEach((dist) -> System.out.println(dist));
         
         System.out.println("<===== End Comment Distance Analysis Results");
     }
@@ -104,6 +136,12 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
                             boundsProvider.boundsFor(child),
                             boundsProvider.boundsFor(nearestNode)));
                     nearestNodeToUnattachedCommentDistances.add(nearestNodeDistance);
+                    
+                    if (authorCommentFilter.eligibleForAttachment(child)
+                            && titleCommentFilter.eligibleForAttachment(child)) {
+                        
+                        nearestNodeToUnattachedFilteredCommentDistances.add(nearestNodeDistance);
+                    }
                 } else {
                     // The comment is attached to a node
                     attachedComments++;
