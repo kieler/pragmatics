@@ -160,18 +160,35 @@ public final class AlignmentHeuristic extends AbstractNormalizedHeuristic {
                 // The shapes intersect, so use the minimum of the horizontal and vertical alignment
                 return Math.min(horizontalAlignmentOffset, verticalAlignmentOffset);
                 
-            } else if ((bottomRightOutcode & TOP) != 0 || (topLeftOutcode & BOTTOM) != 0) {
-                // The shapes are above / below, so use the vertical alignment
-                return horizontalAlignmentOffset;
+            } else  {
+                // There are more cases here than we'd expect. The first two cover the cases where the
+                // two bounds are not touching. Once that is out of the way, we check if they in fact
+                // do touch
                 
-            } else if ((bottomRightOutcode & LEFT) != 0 || (topLeftOutcode & RIGHT) != 0) {
-                // The shapes are left / right, so use the vertical alignment
-                return verticalAlignmentOffset;
-                
-            } else {
-                // Actually, this case shouldn't happen, but well... better be safe.
-                return -1;
+                if ((bottomRightOutcode & TOP) != 0 || (topLeftOutcode & BOTTOM) != 0) {
+                    // The shapes are above / below, so use the vertical alignment
+                    return horizontalAlignmentOffset;
+                    
+                } else if ((bottomRightOutcode & LEFT) != 0 || (topLeftOutcode & RIGHT) != 0) {
+                    // The shapes are left / right, so use the vertical alignment
+                    return verticalAlignmentOffset;
+                    
+                } else if (bounds1.y == bounds2.y + bounds2.height
+                        || bounds1.y + bounds1.height == bounds2.y) {
+                    
+                    // The shapes are top / bottom, so use the vertical alignment
+                    return horizontalAlignmentOffset;
+                    
+                } else if (bounds1.x == bounds2.x + bounds2.width
+                        || bounds1.x + bounds1.width == bounds2.x) {
+                    
+                    // The shapes are left / right, so use the vertical alignment
+                    return verticalAlignmentOffset;
+                }
             }
+            
+            // Actually, this case shouldn't happen, but well... better be safe.
+            return -1;
         }
     }
     
