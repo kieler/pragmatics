@@ -55,6 +55,6 @@ public interface ISpacingsHandler<T extends CNode> {
         @Override
         public double getVerticalSpacing(final CNode cNode1, final CNode cNode2) {
             return Math.max(cNode1.getVerticalSpacing(), cNode2.getVerticalSpacing());
-        };
+        }
     };
 }

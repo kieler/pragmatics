@@ -101,11 +101,14 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
                         KVector bend1 = bends.next();
 
                         // get segment of source n/s port
-                        if (edge.getSource().getSide() == PortSide.NORTH
-                                || edge.getSource().getSide() == PortSide.SOUTH) {
-
-                            verticalSegments.add(new VerticalSegment(bend1, edge.getSource()
-                                    .getAbsoluteAnchor(), cNode, edge));
+                        if (edge.getSource().getSide() == PortSide.NORTH) {
+                            verticalSegments.add(new VerticalSegment(bend1, new KVector(bend1.x,
+                                    cNode.hitbox.y), cNode, edge));
+                        }
+                        
+                        if (edge.getSource().getSide() == PortSide.SOUTH) {
+                            verticalSegments.add(new VerticalSegment(bend1, new KVector(bend1.x,
+                                    cNode.hitbox.y + cNode.hitbox.height), cNode, edge));
                         }
 
                         // get regular segments
@@ -125,18 +128,22 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
                     if (!edge.getBendPoints().isEmpty()) {
 
                         // get segment of target n/s port
-                        if (edge.getTarget().getSide() == PortSide.NORTH
-                                || edge.getTarget().getSide() == PortSide.SOUTH) {
-
-                            KVector bend1 = edge.getBendPoints().getLast();
-                            verticalSegments.add(new VerticalSegment(bend1, edge.getTarget()
-                                    .getAbsoluteAnchor(), cNode, edge));
+                        KVector bend1 = edge.getBendPoints().getLast();
+                        if (edge.getTarget().getSide() == PortSide.NORTH) {
+                            verticalSegments.add(new VerticalSegment(bend1, new KVector(bend1.x,
+                                    cNode.hitbox.y), cNode, edge));
                         }
+                        
+                        if (edge.getTarget().getSide() == PortSide.SOUTH) {
+                            verticalSegments.add(new VerticalSegment(bend1, new KVector(bend1.x,
+                                    cNode.hitbox.y + cNode.hitbox.height), cNode, edge));
+                        }
+                        
                     }
                 }
             }
         }
-
+        
         // 2. combining intersecting segments in CLEdges to process them as one
         if (!verticalSegments.isEmpty()) {
             // sorting the segments by position in ascending order
@@ -221,7 +228,9 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
     }
     
     /**
-     * Applies the compacted positions to the {@link LGraphElement}s represented by {@link CNode}s.
+     * Applies the compacted positions to the
+     * {@link de.cau.cs.kieler.klay.layered.graph.LGraphElement LGraphElement}s represented by
+     * {@link CNode}s.
      */
     private void applyNodePositions() {
         for (CNode cNode : cGraph.cNodes) {

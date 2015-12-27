@@ -57,6 +57,8 @@ public final class CGroup {
     public CNode reference; 
     /** An id for public use. There is no warranty, use at your own risk. */
     public int id;
+    /** flags this group to be repositioned in the case of left/right balanced compaction. */
+    public boolean reposition = true;
 
     /**
      * The constructor for a {@link CGroup} receives {@link CNode}s to group.

@@ -15,45 +15,45 @@ package de.cau.cs.kieler.klay.layered.compaction.oned;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
-import java.util.TreeSet;
 import java.util.function.BiFunction;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.klay.layered.compaction.recthull.Scanline;
-import de.cau.cs.kieler.klay.layered.compaction.recthull.Scanline.EventHandler;
+import de.cau.cs.kieler.klay.layered.compaction.oned.algs.ICompactionAlgorithm;
+import de.cau.cs.kieler.klay.layered.compaction.oned.algs.IConstraintCalculationAlgorithm;
+import de.cau.cs.kieler.klay.layered.compaction.oned.algs.LongestPathCompaction;
+import de.cau.cs.kieler.klay.layered.compaction.oned.algs.QuadraticConstraintCalculation;
+import de.cau.cs.kieler.klay.layered.compaction.oned.algs.ScanlineConstraintCalculator;
 
 /**
- * Implements the compaction of a {@link CGraph}.
- * 
- * <h2>Constraint Graph Creation</h2>
- * Scanline-procedure to calculate the constraint graph in O(nlogn) time, n being the number of
- * rectangles.
- * 
- * The implementation is based on the Section 10.2.2.1.1.1 of the following book: 
- * <ul>
- *   <li>Lengauer, T. (1990). 
- *       Combinatorial algorithms for integrated circuit layout. John Wiley & Sons.
- *   </li>
- * </ul>
- * 
- * <h2>Constraint Graph Compaction</h2>
- * Compacts the previously calculated constraint graph by using a technique similar to 
- * a longest path layering. 
+ * Implements the compaction of a {@link CGraph}. This includes the creation of a constraint graph
+ * and its subsequent compaction.
  * 
  * @author dag
  * @author uru
  */
 public final class OneDimensionalCompactor {
     
+    /** Longest path-based compaction strategy. */
+    public static final ICompactionAlgorithm LONGEST_PATH_COMPACTION = new LongestPathCompaction();
+    /** Currently used compaction algorithm. */
+    private ICompactionAlgorithm compactionAlgorithm = LONGEST_PATH_COMPACTION;
+
+    /** Constraint calculation using a scanline technique. */
+    public static final IConstraintCalculationAlgorithm SCANLINE_CONSTRAINTS =
+            new ScanlineConstraintCalculator();
+    /** Constraint calculation by pair-wise comparison of CNodes. */
+    public static final IConstraintCalculationAlgorithm QUADRATIC_CONSTRAINTS =
+            new QuadraticConstraintCalculation();
+    /** Currently used instance of the constraint calculation algorithm. */
+    private IConstraintCalculationAlgorithm constraintAlgorithm = SCANLINE_CONSTRAINTS;
+
+    // SUPPRESS CHECKSTYLE NEXT 20 VisibilityModifier
     /** the {@link CGraph}. */
     public CGraph cGraph;
     /** compacting in this direction. */
@@ -62,11 +62,7 @@ public final class OneDimensionalCompactor {
     private BiFunction<CNode, Direction, Boolean> lockingStrategy;
     /** flag indicating whether the {@link #finish()} method has been called. */
     private boolean finished = false;
-    
-    private IConstraintCalculationAlgorithm constraintAlgorithm;
-    private ICompactionAlgorithm compactionAlgorithm = LONGEST_PATH_COMPACTION;
-    
-    
+    /** How spacings are determined. */
     public ISpacingsHandler<? super CNode> spacingsHandler = ISpacingsHandler.DEFAULT_SPACING_HANDLER;
     
     /**
@@ -106,9 +102,25 @@ public final class OneDimensionalCompactor {
         this.spacingsHandler = handler;
         return this;
     }
-    
+
+    /**
+     * @param compactor
+     *            the compaction algorithm to be used.
+     * @return this instance of {@link OneDimensionalCompactor}
+     */
     public OneDimensionalCompactor setCompactionAlgorithm(final ICompactionAlgorithm compactor) {
         this.compactionAlgorithm = compactor;
+        return this;
+    }
+    
+    /**
+     * @param theConstraintAlgorithm
+     *            the constraintAlgorithm to set.
+     * @return this instance of {@link OneDimensionalCompactor}.
+     */
+    public OneDimensionalCompactor setConstraintAlgorithm(
+            final IConstraintCalculationAlgorithm theConstraintAlgorithm) {
+        this.constraintAlgorithm = theConstraintAlgorithm;
         return this;
     }
     
@@ -130,17 +142,16 @@ public final class OneDimensionalCompactor {
             changeDirection(Direction.LEFT);
         }
         
-        // reset any previously calculated start positions
-        for (CNode n : cGraph.cNodes) {
-            n.startPos = Double.NEGATIVE_INFINITY;
-        }
-        
         // prepare compaction by setting initial outDegree value for groups
         // iterates once over all constraints
         for (CGroup g : cGraph.cGroups) {
             g.outDegree = 0;
         }
+
         for (CNode n : cGraph.cNodes) {
+            // reset any previously calculated start positions
+            n.startPos = Double.NEGATIVE_INFINITY;
+            
             for (CNode incN : n.constraints) {
                 incN.cGroup.outDegree++;
             }
@@ -150,7 +161,9 @@ public final class OneDimensionalCompactor {
         compactionAlgorithm.compact(this);
         
         // remove all locks
-        cGraph.cNodes.forEach(n -> n.reposition = true); // SUPPRESS CHECKSTYLE InnerAssignment
+        for (CNode node : cGraph.cNodes) {
+            node.reposition = true;
+        }
         
         return this;
     }
@@ -351,10 +364,16 @@ public final class OneDimensionalCompactor {
      */
     public OneDimensionalCompactor applyLockingStrategy(final Direction dir) {
 
+        for (CGroup cGroup : cGraph.cGroups) {
+            cGroup.reposition = true;
+        }
+        
         for (CNode cNode : cGraph.cNodes) {
             cNode.reposition = lockingStrategy.apply(cNode, dir);
+            
+            cNode.cGroup.reposition &= lockingStrategy.apply(cNode, dir);
         }
-
+        
         return this;
     }
     
@@ -445,6 +464,20 @@ public final class OneDimensionalCompactor {
         calculateGroupOffsets();
     }
     
+    private void calculateConstraints() {
+        
+        // resetting constraints
+        for (CNode cNode : cGraph.cNodes) {
+            cNode.constraints.clear();
+            cNode.outDegree = 0;
+        }
+        
+        constraintAlgorithm.calculateConstraints(this);
+        
+        // update the "external" constraints of the groups
+        calculateConstraintsForCGroups();
+    }
+    
     /**
      * Sets the constraints of {@link CGroup}s according to the constraints of the included
      * {@link CNode}s.
@@ -474,236 +507,13 @@ public final class OneDimensionalCompactor {
         
     }
     
-    private void calculateConstraints() {
-
-        calculateConstraints2();
-
-    }
-    
-    /* -----------------------------
-     * 
-     *  Constraint Graph Creation
-     *
-     * -----------------------------
-     */
-    
-    /**
-     * A timestamp in the sense of the scanline algorithm to determine the constraints of the
-     * compaction graph. The scanline traverses the plane from top (negative infinity) to bottom
-     * (positive infinity). Every timestamp (or point) it encounters either represents the upper (y)
-     * or lower (y+height) border of a rectangle. Note that y is also denoted as "low" and y+height
-     * as "high".
-     */
-    private class Timestamp {
-        private boolean low;
-        private CNode node;
-
-        public Timestamp(final CNode node, final boolean low) {
-            this.node = node;
-            this.low = low;
-        }
-    }
-  
-    /**
-     * Can be used to sort the passed {@link Timestamp}s either based on their 
-     * {@link CNode}'s y-coordinate (low) or y-coordinate plus height (high).
-     * If two positions are equal, the "low" value is sorted before the "high" value.
-     */
-    private static final Comparator<Timestamp> CONSTRAINTS_SCANLINE_COMPARATOR = (p1, p2) ->  {
-        
-        // chose the right coordinate
-        double y1 = p1.node.hitbox.y;
-        if (!p1.low) {
-            y1 += p1.node.hitbox.height;
-        }
-        double y2 = p2.node.hitbox.y;
-        if (!p2.low) {
-            y2 += p2.node.hitbox.height;
-        }
-
-        // compare them ...
-        int cmp = Double.compare(y1 , y2);
-        
-        // ... and if they are equal, sort low->high
-        if (cmp == 0) {
-            if (!p1.low && p2.low) {
-                return 1;
-             } else if (!p2.low && p1.low) {
-                 return -1;
-             }    
-        } 
-        return cmp;
-    };
-    
-    /**
-     * Implements the scanline procedure as discussed by Lengauer.
-     */
-    private class ConstraintsScanlineHandler implements EventHandler<OneDimensionalCompactor.Timestamp> {
-
-        /**
-         * Sorted set of intervals that allows to query for the left and right neighbor of an
-         * interval. Sorted by the x coordinate of a {@link CNode}'s hitbox.
-         * 
-         * Note: the methods to query for neighbor elements (e.g., {@link TreeSet#lower(Object)})
-         * are not constant time.
-         */
-        private TreeSet<CNode> intervals = Sets.newTreeSet((c1, c2) -> Double.compare(
-                c1.hitbox.x, c2.hitbox.x));
-        /** Candidate array with possible constraints. */
-        private CNode[] cand;
-
-        /** 
-         * Resets the internal data structures.
-         */
-        public void reset() {
-            intervals.clear();
-            cand = new CNode[cGraph.cNodes.size()];
-            int index = 0;
-            for (CNode n : cGraph.cNodes) {
-                n.id = index++;
-            }
-        }
-
-        @Override
-        public void handle(final Timestamp p) {
-            // System.out.println((p.low ? "insert " : "delete ") + " " + p.node.hitbox);
-            if (p.low) {
-                insert(p);
-            } else {
-                delete(p);
-            }
-        }
-
-        private void insert(final Timestamp p) {
-            intervals.add(p.node);
-
-            cand[p.node.id] = intervals.lower(p.node);
-
-            CNode right = intervals.higher(p.node);
-            if (right != null) {
-                cand[right.id] = p.node; 
-            }
-        }
-
-        private void delete(final Timestamp p) {
-
-            CNode left = intervals.lower(p.node);
-            if (left != null && left == cand[p.node.id]) {
-                // different groups?
-                if (left.cGroup != null && left.cGroup != p.node.cGroup) {
-                    left.constraints.add(p.node);
-                    p.node.outDegree++;
-                }
-            }
-
-            CNode right = intervals.higher(p.node);
-            if (right != null && cand[right.id] == p.node) {
-                // different groups?
-                if (right.cGroup != null && right.cGroup != p.node.cGroup) {
-                    p.node.constraints.add(right);
-                    right.outDegree++;
-                }
-            }
-
-            // we are done with you!
-            intervals.remove(p.node);
-        }
-    }
-    
-    /** This compactor's instance of the scanline handler. */
-    private final ConstraintsScanlineHandler constraintsScanlineHandler =
-            new ConstraintsScanlineHandler();
-
-    private void calculateConstraints2() {
-        
-        // resetting constraints
-        for (CNode cNode : cGraph.cNodes) {
-            cNode.constraints.clear();
-            cNode.outDegree = 0;
-        }
-        
-        // add all nodes twice (once for the lower, once for the upper border)
-        List<Timestamp> points = Lists.newArrayList();
-        for (CNode n : cGraph.cNodes) {
-            points.add(new Timestamp(n, true));
-            points.add(new Timestamp(n, false));
-        }
-        
-        // reset internal state
-        constraintsScanlineHandler.reset();
-        
-        // execute the scanline
-        Scanline.execute(points, CONSTRAINTS_SCANLINE_COMPARATOR, constraintsScanlineHandler);
-        
-        // update the "external" constraints of the groups
-        calculateConstraintsForCGroups();
-    }
-
-    /**
-     * Creates a constraint between CNodes A and B if B collides with the right shadow of A
-     * considering vertical spacing.
-     */
-    private void calculateConstraints3() {
-        // resetting constraints
-        for (CNode cNode : cGraph.cNodes) {
-            cNode.constraints.clear();
-            cNode.outDegree = 0;
-        }
-        
-        // inferring constraints from hitbox intersections
-        for (CNode cNode1 : cGraph.cNodes) {
-            for (CNode cNode2 : cGraph.cNodes) {
-                // no self constraints
-                if (cNode1 == cNode2) {
-                    continue;
-                }
-                // no constraints between nodes of the same group
-                if (cNode1.cGroup != null && cNode1.cGroup == cNode2.cGroup) {
-                    continue;
-                }
-                
-                double spacing;
-                if (direction.isHorizontal()) {
-                    //spacing = Math.min(cNode1.getVerticalSpacing(), cNode2.getVerticalSpacing());
-                    spacing = spacingsHandler.getVerticalSpacing(cNode1, cNode2);
-                } else {
-                    //spacing = Math.min(cNode1.getHorizontalSpacing(), cNode2.getHorizontalSpacing());
-                    spacing = spacingsHandler.getHorizontalSpacing(cNode1, cNode2);
-                }
-                
-                // add constraint if cNode2 is to the right of cNode1 and could collide if moved
-                // horizontally
-                // exclude parentNodes because they don't constrain their north/south segments
-                if (cNode1 != cNode2.parentNode
-                        // '>' avoids simultaneous constraints A->B and B->A
-                        && (cNode2.hitbox.x > cNode1.hitbox.x 
-                                // 
-                                || (cNode1.hitbox.x == cNode2.hitbox.x 
-                                    && cNode1.hitbox.width < cNode2.hitbox.width))
-
-                        && CompareFuzzy.gt(cNode2.hitbox.y + cNode2.hitbox.height + spacing,
-                                cNode1.hitbox.y)
-
-                        && CompareFuzzy.lt(cNode2.hitbox.y, cNode1.hitbox.y + cNode1.hitbox.height
-                                + spacing)) {
-
-                    cNode1.constraints.add(cNode2);
-                    cNode2.outDegree++;
-                }
-            }
-        }
-
-        // resetting constraints for CGroups
-        calculateConstraintsForCGroups();
-    }
-
     /**
      * If the graph is compacted twice in opposing directions, the constraints can be reversed to
      * avoid recalculating them. Also the {@link CNode}s' starting position is reset to be ready for
      * another compaction.
      */
     private void reverseConstraints() {
-//        calculateConstraints();
+
         // maps CNodes to temporary lists of incoming constraints
         Map<CNode, List<CNode>> incMap = Maps.newHashMap();
         for (CNode cNode : cGraph.cNodes) {
@@ -729,101 +539,10 @@ public final class OneDimensionalCompactor {
         // resetting constraints for CGroups
         calculateConstraintsForCGroups();
     }
-
-    /* ------------------------------
-     * 
-     *  Constraint Graph Compaction
-     *
-     * ------------------------------
-     */
     
-    /**
-     * Compacts CGroups and the CNodes inside.
-     * 
-     */
-    private void compactCGroups2() {
-        
-        // calculating the left-most position of any element 
-        // this will be our starting point for the compaction
-        double minStartPos = Double.POSITIVE_INFINITY;
-        for (CNode cNode : cGraph.cNodes) {
-            minStartPos = Math.min(minStartPos, cNode.cGroup.reference.hitbox.x + cNode.cGroupOffset.x);
-        }
-        
-        // finding the sinks of the constraint graph
-        Queue<CGroup> sinks = Lists.newLinkedList();
-        for (CGroup group : cGraph.cGroups) {
-            group.startPos = minStartPos;
-            if (group.outDegree == 0) {
-                sinks.add(group);
-            }
-        }
-        
-        // process sinks until every node in the constraint graph was handled
-        while (!sinks.isEmpty()) {
-            
-            CGroup group = sinks.poll();
-            
-            // ------------------------------------------
-            // #1 final positions for this group's nodes
-            // ------------------------------------------
-            for (CNode node : group.cNodes) {
-                
-                // CNodes can be locked in place to avoid pulling clusters apart
-                double suggestedX = group.startPos + node.cGroupOffset.x;
-                if (node.reposition
-                        // does the "fixed" position violate the constraints?
-                        || (node.getPosition() < suggestedX)) {
-                    node.startPos = suggestedX;
-                } else {
-                    // leave the node where it was!
-                    node.startPos = node.hitbox.x;
-                }
-            }
-            
-            // ---------------------------------------------------
-            // #2 propagate start positions to constrained groups
-            // ---------------------------------------------------
-            for (CNode node : group.cNodes) {
-                for (CNode incNode : node.constraints) {
-                    // determine the required spacing
-                    double spacing;
-                    if (direction.isHorizontal()) {
-                        spacing = spacingsHandler.getHorizontalSpacing(node, incNode);
-                    } else {
-                        spacing = spacingsHandler.getVerticalSpacing(node, incNode);
-                    }
-                    
-                    incNode.cGroup.startPos = Math.max(incNode.cGroup.startPos, 
-                                                       node.startPos + node.hitbox.width + spacing 
-                                                       // respect the other group's node's offset
-                                                       - incNode.cGroupOffset.x);
-                    
-                    // FIXME
-                    if (!incNode.reposition) {
-                        incNode.cGroup.startPos =
-                                Math.max(incNode.cGroup.startPos, incNode.getPosition()
-                                        - incNode.cGroupOffset.x);
-                    }
-                    
-                    incNode.outDegree--; // TODO i think group outdegree is enough
-                    incNode.cGroup.outDegree--;
-                    if (incNode.cGroup.outDegree == 0) {
-                       sinks.add(incNode.cGroup); 
-                    }
-                }
-            }
-        }
-        
-        // ------------------------------------------------------
-        // #3 setting hitbox positions to new starting positions
-        // ------------------------------------------------------
-        for (CNode cNode : cGraph.cNodes) {
-            cNode.applyPosition();
-        }
-    }   
-    
-    //////////////////////////////////////////// DEBUGGING ////////////////////////////////////////////
+    /* -----------------------------------------------------------------------------------------------
+     * ////////////////////////////////////////// DEBUGGING //////////////////////////////////////////
+     * ----------------------------------------------------------------------------------------------- */
     
     /**
      * For debugging. Writes hitboxes to svg.
@@ -887,159 +606,4 @@ public final class OneDimensionalCompactor {
         return this;
     }
     
-    /* -----------------------------------------------------------------------------------------------
-     *                               Constraint graph calculation.
-     * ----------------------------------------------------------------------------------------------- */
-    
-    
-    @FunctionalInterface
-    public interface ICompactionAlgorithm {
-        void compact(final OneDimensionalCompactor comactor);
-    }
-    
-    
-    /* -----------------------------------------------------------------------------------------------
-     *                       Compaction interface and longest path implementation.
-     * ----------------------------------------------------------------------------------------------- */
-    
-    @FunctionalInterface
-    public interface IConstraintCalculationAlgorithm {
-        void calculateConstraints(final OneDimensionalCompactor compactor);
-    }
-    
-    /**
-     * Longest path based compaction strategy.
-     */
-    public static final ICompactionAlgorithm LONGEST_PATH_COMPACTION = 
-            compactor -> {
-                // calculating the left-most position of any element 
-                // this will be our starting point for the compaction
-                double minStartPos = Double.POSITIVE_INFINITY;
-                for (CNode cNode : compactor.cGraph.cNodes) {
-                    minStartPos = Math.min(minStartPos, 
-                                           cNode.cGroup.reference.hitbox.x + cNode.cGroupOffset.x);
-                }
-                
-                // finding the sinks of the constraint graph
-                Queue<CGroup> sinks = Lists.newLinkedList();
-                for (CGroup group : compactor.cGraph.cGroups) {
-                    group.startPos = minStartPos;
-                    if (group.outDegree == 0) {
-                        sinks.add(group);
-                    }
-                }
-                
-                // process sinks until every node in the constraint graph was handled
-                while (!sinks.isEmpty()) {
-                    
-                    CGroup group = sinks.poll();
-                    
-                    // ------------------------------------------
-                    // #1 final positions for this group's nodes
-                    // ------------------------------------------
-                    for (CNode node : group.cNodes) {
-                        
-                        // CNodes can be locked in place to avoid pulling clusters apart
-                        double suggestedX = group.startPos + node.cGroupOffset.x;
-                        if (node.reposition
-                                // does the "fixed" position violate the constraints?
-                                || (node.getPosition() < suggestedX)) {
-                            node.startPos = suggestedX;
-                        } else {
-                            // leave the node where it was!
-                            node.startPos = node.hitbox.x;
-                        }
-                    }
-                    
-                    // ---------------------------------------------------
-                    // #2 propagate start positions to constrained groups
-                    // ---------------------------------------------------
-                    for (CNode node : group.cNodes) {
-                        for (CNode incNode : node.constraints) {
-                            // determine the required spacing
-                            double spacing;
-                            if (compactor.direction.isHorizontal()) {
-                                spacing = compactor.spacingsHandler.getHorizontalSpacing(node, incNode);
-                            } else {
-                                spacing = compactor.spacingsHandler.getVerticalSpacing(node, incNode);
-                            }
-                            
-                            incNode.cGroup.startPos = Math.max(incNode.cGroup.startPos, 
-                                                           node.startPos + node.hitbox.width + spacing 
-                                                           // respect the other group's node's offset
-                                                           - incNode.cGroupOffset.x);
-                            
-                            System.out.println("Distance between " + node + " " + incNode + " " +(node.startPos + node.hitbox.width + spacing 
-                                                           // respect the other group's node's offset
-                                                           - incNode.cGroupOffset.x));
-                            
-                            // FIXME
-                            if (!incNode.reposition) {
-                                incNode.cGroup.startPos =
-                                        Math.max(incNode.cGroup.startPos, incNode.getPosition()
-                                                - incNode.cGroupOffset.x);
-                            }
-                            
-                            incNode.outDegree--; // TODO i think group outdegree is enough
-                            incNode.cGroup.outDegree--;
-                            if (incNode.cGroup.outDegree == 0) {
-                               sinks.add(incNode.cGroup); 
-                            }
-                        }
-                    }
-                }
-                
-                // ------------------------------------------------------
-                // #3 setting hitbox positions to new starting positions
-                // ------------------------------------------------------
-                for (CNode cNode : compactor.cGraph.cNodes) {
-                    cNode.applyPosition();
-                }
-            };
-            
-    /**
-     * The old implementation by dag.
-     */
-    private static final ICompactionAlgorithm OLD_COMPACTION = 
-            compactor -> {
-             // calculating the leftmost position to compact against
-                double minStartPos = Double.POSITIVE_INFINITY;
-                for (CNode cNode : compactor.cGraph.cNodes) {
-                    minStartPos = Math.min(minStartPos, cNode.getPosition());
-                }
-                
-                // queues CGroups whose outgoing constraints are processed
-                Queue<CGroup> sinks = Lists.newLinkedList();
-                
-                // finding and compacting CGroups that are sinks
-                for (CGroup group : compactor.cGraph.cGroups) {
-                    if (group.isInnerCompactable()) {
-                        group.compactInnerCNodes(minStartPos,
-                                compactor.spacingsHandler, compactor.direction);
-                        sinks.add(group);
-                    }
-                }
-                
-                // propagating the positions of sinks to set new starting positions for 
-                // constrained CNodes and CGroups
-                while (!sinks.isEmpty()) {
-                    
-                    CGroup group = sinks.poll();
-                    List<CGroup> compactables = group.propagate(compactor.spacingsHandler, 
-                            compactor.direction);
-                    
-                    // compacting CGroups that became sinks in this iteration
-                    for (CGroup g : compactables) {
-                        g.compactInnerCNodes(minStartPos, compactor.spacingsHandler, 
-                                compactor.direction);
-                        sinks.add(g);
-                    }
-                    compactables.clear();
-                }
-                
-                // setting hitbox positions to new starting positions
-                for (CNode cNode : compactor.cGraph.cNodes) {
-                    cNode.applyPosition();
-                }  
-            };
 }

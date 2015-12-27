@@ -53,6 +53,25 @@ public class CompactionTest {
         assertEquals(25, right.hitbox.x, EPSILON);
     }
     
+    @Test 
+    public void testLeftCompactionEqualCoordinate() {
+        CGraph graph = new CGraph(EnumSet.allOf(Direction.class));
+        
+        CTestNode top = new CTestNodeSpacing(new Rectangle(0, 0, 20, 20), 0d, 0d);
+        graph.cNodes.add(top);
+        CTestNode bot = new CTestNodeSpacing(new Rectangle(30, 20, 20, 20), 0d, 0d);
+        graph.cNodes.add(bot);
+        
+        compacter(graph)
+                .setConstraintAlgorithm(OneDimensionalCompactor.SCANLINE_CONSTRAINTS)
+                 .changeDirection(Direction.LEFT)
+                 .compact()
+                 .finish();
+        
+        assertEquals(0, top.hitbox.x, EPSILON);
+        assertEquals(0, bot.hitbox.x, EPSILON);
+    }
+    
     @Test
     public void testLeftCompactionSpacingAware() {
         
@@ -542,7 +561,10 @@ public class CompactionTest {
     ////////////////////////////////// Internal Convenience API //////////////////////////////////
     
     private OneDimensionalCompactor compacter(final CGraph graph) {
-        return new OneDimensionalCompactor(graph);
+        return new OneDimensionalCompactor(graph)
+            .setConstraintAlgorithm(OneDimensionalCompactor.QUADRATIC_CONSTRAINTS);
+        
+        // TODO test the other constraint algorithm as well
     }
     
     public static class CTestNode extends CNode {
