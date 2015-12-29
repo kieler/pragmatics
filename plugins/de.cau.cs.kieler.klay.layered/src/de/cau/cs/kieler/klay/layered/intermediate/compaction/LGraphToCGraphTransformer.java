@@ -16,12 +16,17 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.compaction.oned.CGraph;
 import de.cau.cs.kieler.klay.layered.compaction.oned.CGroup;
@@ -40,19 +45,24 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
  * @author dag
  */
 public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGraph> {
+    
     /** the output CGraph. */
     private CGraph cGraph;
     /** the layered graph. */
     private LGraph layeredGraph;
     /** flags the input graph if it has edges. */
     private boolean hasEdges;
-
+    /** remember comment boxes as we neglect them during compaction and offset them afterwards. */
+    private Map<LNode, Pair<LNode, KVector>> commentOffsets = Maps.newHashMap();
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public CGraph transform(final LGraph inputGraph) {
+    
         layeredGraph = inputGraph;
+        commentOffsets.clear();
         
         // checking if the graph has edges and possibly prohibiting vertical compaction
         hasEdges = layeredGraph.getLayers().stream()
@@ -64,7 +74,6 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
             supportedDirections.add(Direction.UP);
             supportedDirections.add(Direction.DOWN);
         }
-        
         
         // initializing fields
         cGraph = new CGraph(supportedDirections);
@@ -87,6 +96,22 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
         // 1. collecting positions of graph elements
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
+                
+                // comment boxes are part of a node's margins 
+                //  hence we can neglect them here without the risk 
+                // of other nodes overlapping them after compaction
+                if (node.getProperty(LayoutOptions.COMMENT_BOX)) {
+                    LEdge e = Iterables.get(node.getConnectedEdges(), 0);
+                    LNode other = e.getSource().getNode();
+                    if (other == node) {
+                        other = e.getTarget().getNode();
+                    }
+                    Pair<LNode, KVector> p =
+                            Pair.of(other, node.getPosition().clone().sub(other.getPosition()));
+                    commentOffsets.put(node, p);
+                    continue;
+                }
+                
                 // add all nodes
                 CLNode cNode = new CLNode(node, layeredGraph);
                 cGraph.cNodes.add(cNode);
@@ -210,6 +235,9 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
         // applying the compacted positions
         applyNodePositions();
         
+        // adjust comment boxes
+        applyCommentPositions();
+        
         // calculating new graph size and offset
         KVector topLeft = new KVector(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
         KVector bottomRight = new KVector(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
@@ -235,6 +263,15 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
     private void applyNodePositions() {
         for (CNode cNode : cGraph.cNodes) {
             cNode.applyElementPosition();
+        }
+    }
+
+    private void applyCommentPositions() {
+        for (Entry<LNode, Pair<LNode, KVector>> e : commentOffsets.entrySet()) {
+            LNode comment = e.getKey();
+            LNode other = e.getValue().getFirst();
+            KVector offset = e.getValue().getSecond();
+            comment.getPosition().reset().add(other.getPosition().clone().add(offset));
         }
     }
 
