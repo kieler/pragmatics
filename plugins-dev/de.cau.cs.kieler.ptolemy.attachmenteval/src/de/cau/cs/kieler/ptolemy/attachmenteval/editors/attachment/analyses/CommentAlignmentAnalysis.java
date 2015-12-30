@@ -22,6 +22,7 @@ import com.google.inject.Injector;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.comments.AlignmentHeuristic;
 import de.cau.cs.kieler.kiml.comments.CommentAttacher;
+import de.cau.cs.kieler.kiml.comments.DistanceHeuristic;
 import de.cau.cs.kieler.kiml.comments.IBoundsProvider;
 import de.cau.cs.kieler.kiml.comments.TextPrefixFilter;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
@@ -129,11 +130,11 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
     private void recursivelyProcess(final KNode graph, CommentAttachmentEditor editor) {
         for (KNode child : graph.getChildren()) {
             if (CommentAttacher.isComment(child)) {
-                KNode bestAlignedNode = findBestAlignedNode(child);
                 KNode attachedNode = editor.getAttachmentTarget(child);
                 
                 if (attachedNode == null) {
                     // The comment is not attached to anything
+                    KNode bestAlignedNode = findBestAlignedNode(child, false);
                     if  (bestAlignedNode != null) {
                         double bestAlignment = AlignmentHeuristic.alignment(
                                 boundsProvider.boundsFor(child),
@@ -155,6 +156,7 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
                             boundsProvider.boundsFor(attachedNode));
                     attachedNodeAlignments.add(attachedNodeAlignment);
                     
+                    KNode bestAlignedNode = findBestAlignedNode(child, false);
                     if (bestAlignedNode == attachedNode) {
                         // The attached node is the node best aligned to the comment
                         commentsAttachedToBestAlignedNode++;
@@ -177,19 +179,25 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
         }
     }
 
-    private KNode findBestAlignedNode(KNode comment) {
+    private KNode findBestAlignedNode(final KNode comment, final boolean upToMaxDistance) {
         Rectangle2D.Double commentBounds = boundsProvider.boundsFor(comment);
         double bestAlignment = Double.MAX_VALUE;
         KNode bestAlignedSibling = null;
         
         for (KNode sibling : comment.getParent().getChildren()) {
             if (!CommentAttacher.isComment(sibling)) {
-                double alignment = AlignmentHeuristic.alignment(
-                        commentBounds, boundsProvider.boundsFor(sibling));
+                Rectangle2D.Double siblingBounds = boundsProvider.boundsFor(sibling);
                 
-                if (alignment >= 0 && alignment < bestAlignment) {
-                    bestAlignment = alignment;
-                    bestAlignedSibling = sibling;
+                // Make sure the node is in the comment's vicinity
+                if (!upToMaxDistance
+                        || DistanceHeuristic.squaredDistance(commentBounds, siblingBounds) <= 40 * 40) {
+                    
+                    double alignment = AlignmentHeuristic.alignment(commentBounds, siblingBounds);
+                    
+                    if (alignment >= 0 && alignment < bestAlignment) {
+                        bestAlignment = alignment;
+                        bestAlignedSibling = sibling;
+                    }
                 }
             }
         }
