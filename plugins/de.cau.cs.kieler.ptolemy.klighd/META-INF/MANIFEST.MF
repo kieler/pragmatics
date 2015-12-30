@@ -24,4 +24,5 @@ Require-Bundle: com.google.guava;bundle-version="10.0.0",
  org.ptolemy,
  org.ptolemy.moml,
  de.cau.cs.kieler.klighd.ui;bundle-version="0.3.0";resolution:=optional
-Export-Package: de.cau.cs.kieler.ptolemy.klighd
+Export-Package: de.cau.cs.kieler.ptolemy.klighd,
+ de.cau.cs.kieler.ptolemy.klighd.transformation.comments

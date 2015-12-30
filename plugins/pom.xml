@@ -69,6 +69,7 @@
     <module>de.cau.cs.kieler.klighd.ui.contrib3x</module>
     <module>de.cau.cs.kieler.klighd.ui.emf</module>
     <module>de.cau.cs.kieler.klighd.ui.wizard</module>
+    <module>de.cau.cs.kieler.klighd.view</module>
     <module>de.cau.cs.kieler.ksbase</module>
     <module>de.cau.cs.kieler.ksbase.ui</module>
     <module>de.cau.cs.kieler.kwebs.server</module>
