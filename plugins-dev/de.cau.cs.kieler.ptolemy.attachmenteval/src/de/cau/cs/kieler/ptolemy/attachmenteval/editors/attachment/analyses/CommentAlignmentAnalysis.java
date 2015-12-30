@@ -190,7 +190,7 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
                 
                 // Make sure the node is in the comment's vicinity
                 if (!upToMaxDistance
-                        || DistanceHeuristic.squaredDistance(commentBounds, siblingBounds) <= 40 * 40) {
+                        || DistanceHeuristic.distance(commentBounds, siblingBounds) <= 40) {
                     
                     double alignment = AlignmentHeuristic.alignment(commentBounds, siblingBounds);
                     

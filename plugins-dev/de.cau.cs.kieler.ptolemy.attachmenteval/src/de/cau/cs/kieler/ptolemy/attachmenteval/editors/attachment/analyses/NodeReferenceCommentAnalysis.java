@@ -187,7 +187,7 @@ public class NodeReferenceCommentAnalysis implements IAttachmentAnalysis {
         
         for (KNode sibling : comment.getParent().getChildren()) {
             if (!CommentAttacher.isComment(sibling)) {
-                double distance = DistanceHeuristic.squaredDistance(
+                double distance = DistanceHeuristic.distance(
                         commentBounds, boundsProvider.boundsFor(sibling));
                 
                 if (distance >= 0 && distance < nearestDistance) {
