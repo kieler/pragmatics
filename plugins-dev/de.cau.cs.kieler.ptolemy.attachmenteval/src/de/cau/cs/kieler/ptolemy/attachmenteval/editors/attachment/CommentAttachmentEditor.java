@@ -1093,6 +1093,8 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     private void runAlgorithm() {
         // Reset attachments and retrieve selected elements
         attachmentData.getAssociations().clear();
+        setDirty(true);
+        
         final Object[] checkedElements = modelTreeViewer.getCheckedElements();
         
         // A control for accessing the display
