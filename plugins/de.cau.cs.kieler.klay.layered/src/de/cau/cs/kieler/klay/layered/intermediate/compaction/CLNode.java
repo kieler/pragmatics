@@ -60,10 +60,11 @@ public final class CLNode extends CNode {
         // calculating the necessary hitbox dimensions
         this.lNode = lNode;
         hitbox =
-                new Rectangle(lNode.getPosition().x - lNode.getMargin().left, lNode.getPosition().y
-                        - lNode.getMargin().top, lNode.getSize().x + lNode.getMargin().left
-                        + lNode.getMargin().right, lNode.getSize().y + lNode.getMargin().top
-                        + lNode.getMargin().bottom);
+                new Rectangle(
+                        lNode.getPosition().x - lNode.getMargin().left, 
+                        lNode.getPosition().y - lNode.getMargin().top, 
+                        lNode.getSize().x + lNode.getMargin().left + lNode.getMargin().right, 
+                        lNode.getSize().y + lNode.getMargin().top + lNode.getMargin().bottom);
 
         cGroupOffset.reset();
         
@@ -80,6 +81,13 @@ public final class CLNode extends CNode {
         if (lNode.getType() == NodeType.EXTERNAL_PORT) {
             lock.set(false, false, false, false);
         }
+    }
+    
+    /**
+     * @return the lNode
+     */
+    public LNode getlNode() {
+        return lNode;
     }
 
     /**

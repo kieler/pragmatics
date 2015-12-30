@@ -29,5 +29,9 @@ public enum GraphCompactionStrategy {
     /** compacts left, locks {@link CNode}s based on their {@link CompactionLock}, compacts right.
      *  Yields better results for average edge length because {@link CNode}s are locked in the
      *  direction of fewer connections. */
-    LEFT_RIGHT_CONNECTION_LOCKING;
+    LEFT_RIGHT_CONNECTION_LOCKING,
+    /** compacts as much as possible, however instead of minimizing the width it minimizes edge
+     *  length.
+     */
+    EDGE_LENGTH;
 }

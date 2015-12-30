@@ -77,7 +77,8 @@ public class HorizontalGraphCompactorTest extends AbstractLayeredProcessorTest {
                 Config.of(GraphCompactionStrategy.LEFT), 
                 Config.of(GraphCompactionStrategy.RIGHT),
                 Config.of(GraphCompactionStrategy.LEFT_RIGHT_CONNECTION_LOCKING),
-                Config.of(GraphCompactionStrategy.LEFT_RIGHT_CONSTRAINT_LOCKING));
+                Config.of(GraphCompactionStrategy.LEFT_RIGHT_CONSTRAINT_LOCKING),
+                Config.of(GraphCompactionStrategy.EDGE_LENGTH));
     }
     
     /**
