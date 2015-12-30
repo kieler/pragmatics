@@ -41,8 +41,8 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
      * @return this object for method chaining.
      */
     public DistanceHeuristic withMaximumAttachmentDistance(final double distance) {
-        if (distance <= 0) {
-            throw new IllegalArgumentException("Maximum attachment distance must be > 0.");
+        if (distance < 0) {
+            throw new IllegalArgumentException("Maximum attachment distance must be >= 0.");
         }
         
         // We don't want to use a square root later, so square the distance

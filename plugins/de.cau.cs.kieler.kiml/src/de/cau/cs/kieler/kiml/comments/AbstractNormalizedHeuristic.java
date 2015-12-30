@@ -18,8 +18,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 /**
  * Provides a basic and configurable implementation of a normalized heuristic. Clients have to
  * implement {@link #raw(KNode, KGraphElement)}, the rest is done by this implementation. The actual
- * normalization is done through instances of {@link NormalizationFunction}. This class exposes a
- * number of such functions to subclasses.
+ * normalization is controlled through {@link NormalizationFunction}.
  * 
  * <p>
  * The way normalization is performed can be controlled through a bunch of configuration methods
@@ -59,21 +58,16 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
     
     /**
      * Sets the raw values at which the normalized value will become 0 and 1. There is no
-     * restriction on which of the two is the larger value. However, the two must not be equal.
+     * restriction on which of the two is the larger value. If the two are equal, the normalized value
+     * will be 1 if the raw value matches the two, and 0 otherwise.
      * 
      * @param worstRawVal
      *            the raw value at which the normalized value will become 0.
      * @param bestRawVal
      *            the raw value at which the normalized value will become 1.
      * @return this object for method chaining.
-     * @throws IllegalArgumentException
-     *             if {@code worstRawValue == bestRawValue}.
      */
     protected AbstractNormalizedHeuristic withBounds(final double worstRawVal, final double bestRawVal) {
-        if (worstRawVal == bestRawVal) {
-            throw new IllegalArgumentException("Worst and best raw values must not be equal.");
-        }
-        
         this.worstRawValue = worstRawVal;
         this.bestRawValue = bestRawVal;
         
@@ -173,8 +167,7 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
                 return 1 - (raw - bestRawValue) / (worstRawValue - bestRawValue);
             }
         } else {
-            assert false;
-            return -1;
+            return raw == bestRawValue ? 1 : 0;
         }
     }
     
@@ -192,8 +185,7 @@ public abstract class AbstractNormalizedHeuristic implements IHeuristic {
         } else if (bestRawValue < worstRawValue) {
             return raw >= worstRawValue ? 0 : 1;
         } else {
-            assert false;
-            return -1;
+            return raw == bestRawValue ? 1 : 0;
         }
     }
 
