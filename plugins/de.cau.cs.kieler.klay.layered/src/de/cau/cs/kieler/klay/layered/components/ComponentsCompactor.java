@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -127,16 +126,21 @@ public class ComponentsCompactor {
                 vc.add(0, e.getSource().getAbsoluteAnchor());
                 vc.add(e.getTarget().getAbsoluteAnchor());
                 
-                vc.stream().reduce((l, c) -> {
-                    if (DoubleMath.fuzzyEquals(l.x, c.x, EPSILON)) {
-                        yetAnotherOffset.x = Math.min(yetAnotherOffset.x, l.x);
-                        compactedGraphSize.x = Math.max(compactedGraphSize.x, l.x);
-                    } else if (DoubleMath.fuzzyEquals(l.y, c.y, EPSILON)) {
-                        yetAnotherOffset.y = Math.min(yetAnotherOffset.y, l.y);
-                        compactedGraphSize.y = Math.max(compactedGraphSize.y, l.y);
+                KVector last = null;
+                for (KVector v : vc) {
+                    if (last == null) {
+                        last = v;
+                        continue;
                     }
-                    return c; // irrelevant
-                });
+                    if (DoubleMath.fuzzyEquals(last.x, v.x, EPSILON)) {
+                        yetAnotherOffset.x = Math.min(yetAnotherOffset.x, last.x);
+                        compactedGraphSize.x = Math.max(compactedGraphSize.x, last.x);
+                    } else if (DoubleMath.fuzzyEquals(last.y, v.y, EPSILON)) {
+                        yetAnotherOffset.y = Math.min(yetAnotherOffset.y, last.y);
+                        compactedGraphSize.y = Math.max(compactedGraphSize.y, last.y);
+                    }
+                    last = v;
+                }
             }
         }
         
@@ -285,7 +289,11 @@ public class ComponentsCompactor {
          */
         @Override
         public List<LEdge> getExternalEdges() {
-            return externalEdges.stream().map(e -> e.getEdge()).collect(Collectors.toList());
+            List<LEdge> edges = Lists.newArrayList();
+            for (IExternalEdge<LEdge> ee : externalEdges) {
+                edges.add(ee.getEdge());
+            }
+            return edges;
         }
         
         @Override
@@ -315,12 +323,12 @@ public class ComponentsCompactor {
             // hull of the cc's external edges
             if (externalEdgeHulls == null) {
                 externalEdgeHulls = Maps.newLinkedHashMap();
-                externalEdges.forEach((e) -> {
-                        RectilinearConvexHull rch = 
+                for (IExternalEdge<LEdge> e : externalEdges) {
+                    RectilinearConvexHull rch = 
                             RectilinearConvexHull
                                     .of(createExternalEdgePointSet((InternalExternalEdge) e));
                     externalEdgeHulls.put(e, rch.splitIntoRectangles());
-                });
+                }
             }
         }
         
@@ -342,10 +350,10 @@ public class ComponentsCompactor {
                         continue;
                     }
                     
-                    edge.getBendPoints().forEach(bp -> {
+                    for (KVector bp : edge.getBendPoints()) {
                         KVector absolute = bp;
                         pts.add(new Point(absolute.x, absolute.y));   
-                    });
+                    }
                 }
                 
                 // laaaabel
@@ -390,10 +398,10 @@ public class ComponentsCompactor {
             pts.add(start);
             pts.add(start);
             
-            edge.getBendPoints().forEach((v) -> {
+            for (KVector v : edge.getBendPoints()) {
                 pts.add(Point.from(v));
                 pts.add(Point.from(v));
-            });
+            }
              
             KVector e = edge.getTarget().getAbsoluteAnchor();
             if (exEdge.externalPort == edge.getTarget()) {

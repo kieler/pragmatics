@@ -201,7 +201,9 @@ public final class NetworkSimplex  {
     private void initialize() {
         // initialize node attributes
         int numNodes = graph.nodes.size();
-        graph.nodes.forEach(n -> n.treeNode = false); // SUPPRESS CHECKSTYLE InnerAssignment
+        for (NNode n : graph.nodes) {
+            n.treeNode = false;
+        }
         poID = new int[numNodes];
         lowestPoID = new int[numNodes];
         sources = Lists.newArrayList();

@@ -13,6 +13,7 @@
 package de.cau.cs.kieler.klay.layered.compaction.recthull;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -78,11 +79,13 @@ public final class Scanline<T> {
     private void go() {
 
         // sort
-        points.sort(comparator);
+        Collections.sort(points, comparator);
 
         // now move scanline
         for (T p : points) {
-            eventHandlers.forEach((h) -> h.handle(p));
+            for (EventHandler<T> h : eventHandlers) {
+                h.handle(p);
+            }
         }
 
     }

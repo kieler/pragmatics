@@ -65,9 +65,15 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
         commentOffsets.clear();
         
         // checking if the graph has edges and possibly prohibiting vertical compaction
-        hasEdges = layeredGraph.getLayers().stream()
-                    .flatMap(l -> l.getNodes().stream())
-                    .anyMatch(n -> !Iterables.isEmpty(n.getConnectedEdges()));
+        hasEdges = false;
+        outer: for (Layer l : layeredGraph) {
+            for (LNode n : l) {
+                if (!Iterables.isEmpty(n.getConnectedEdges())) {
+                    hasEdges = true;
+                    break outer;
+                }
+            }
+        }
         EnumSet<Direction> supportedDirections =
                 EnumSet.of(Direction.UNDEFINED, Direction.LEFT, Direction.RIGHT);
         if (!hasEdges) {

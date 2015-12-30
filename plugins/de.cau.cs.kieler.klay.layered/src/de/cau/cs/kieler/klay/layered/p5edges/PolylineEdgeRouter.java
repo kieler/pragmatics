@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klay.layered.p5edges;
 
 import java.util.ListIterator;
 import java.util.Set;
-import java.util.stream.StreamSupport;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -335,14 +334,14 @@ public final class PolylineEdgeRouter implements ILayoutPhase {
                     port.getOutgoingEdges().size() + port.getIncomingEdges().size() > 1;
             
             // Iterate over the edges and add bend (and possibly junction) points
-            StreamSupport.stream(port.getConnectedEdges().spliterator(), false)
+            for (LEdge e : port.getConnectedEdges()) {
+                LPort otherPort = e.getSource() == port ? e.getTarget() : e.getSource();
                 // Only route an edge if it isn't (nearly) straight anyway
-                .filter(e -> {
-                    LPort otherPort = e.getSource() == port ? e.getTarget() : e.getSource();
-                    return Math.abs(otherPort.getAbsoluteAnchor().y - bendPoint.y) > MIN_VERT_DIFF;
-                })
-                // Insert bend point
-                .forEach(e -> addBendPoint(e, bendPoint, addJunctionPoint, port));
+                if (Math.abs(otherPort.getAbsoluteAnchor().y - bendPoint.y) > MIN_VERT_DIFF) {
+                    // Insert bend point
+                    addBendPoint(e, bendPoint, addJunctionPoint, port);
+                }
+            }
         }
     }
 

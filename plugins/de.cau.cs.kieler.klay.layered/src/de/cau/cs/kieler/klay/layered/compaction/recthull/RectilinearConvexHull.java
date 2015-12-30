@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klay.layered.compaction.recthull;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.ListIterator;
@@ -247,7 +248,7 @@ public final class RectilinearConvexHull {
             switch (quadrant) {
             case Q1: 
             case Q2: 
-                compare = DBL_CMP.reversed();
+                compare = Collections.reverseOrder(DBL_CMP);
                 maximalY = Double.POSITIVE_INFINITY;
                 break;
             case Q3:

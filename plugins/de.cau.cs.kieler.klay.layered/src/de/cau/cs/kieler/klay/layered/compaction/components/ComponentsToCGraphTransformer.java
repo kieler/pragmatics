@@ -28,7 +28,9 @@ import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_SOUTH_WEST;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_WEST;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
@@ -153,19 +155,20 @@ public class ComponentsToCGraphTransformer<N, E> implements
             }
 
             // now prepare the additional hull elements for external edges
-            // they can be added to the CGraph on demand later on 
-            comp.getExternalEdgeHulls().forEach((edge, rects) -> {
-                rects.forEach(r ->  {
+            // they can be added to the CGraph on demand later on
+            for (Entry<IExternalEdge<E>, List<Rectangle>> entry : comp.getExternalEdgeHulls()
+                    .entrySet()) {
+                for (Rectangle r : entry.getValue()) {
                     CRectNode rectNode = new CRectNode(r);
                     setLock(rectNode, comp.getExternalPortSides());
-                    
-                    if (edge.isVertical()) {
-                        verticalExternalEdges.put(group, rectNode); 
+
+                    if (entry.getKey().isVertical()) {
+                        verticalExternalEdges.put(group, rectNode);
                     } else {
                         horizontalExternalEdges.put(group, rectNode);
                     }
-                });
-            });            
+                }
+            }
         }
 
         return cGraph;

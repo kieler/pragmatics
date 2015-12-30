@@ -12,6 +12,9 @@
  */
 package de.cau.cs.kieler.klay.layered.compaction.components;
 
+import java.util.Collection;
+import java.util.Map.Entry;
+
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -83,7 +86,7 @@ public final class OneDimensionalComponentsCompaction<N, E> {
         // node in the "opposite" shadow we do not move it away
         // remember do execute an initial unlocked compaction 
         // in #compact() first, though
-        compactor.setLockingStrategy((n, d) -> n.outDegree != 0);
+        compactor.setLockingStrategy((pair) -> pair.getFirst().outDegree != 0);
 
         // now execute compaction until no improvement is made or we hit the maximum number of iterations
         int run = 0;
@@ -94,7 +97,8 @@ public final class OneDimensionalComponentsCompaction<N, E> {
         } while (delta > EPSILON && run < MAX_ITERATION);
 
         // "align" the compaction top left
-        compactor.setLockingStrategy((n, d) -> n.lock.get(d) || (n.outDegree != 0 && n.lock.get(d)));
+        compactor.setLockingStrategy((pair) -> pair.getFirst().lock.get(pair.getSecond())
+                || (pair.getFirst().outDegree != 0 && pair.getFirst().lock.get(pair.getSecond())));
         compact();
         
         // finish it!
@@ -115,10 +119,10 @@ public final class OneDimensionalComponentsCompaction<N, E> {
         double delta = 0;
         
         // reset all groups' deltas
-        compactionGraph.cGroups.forEach(g -> {
+        for (CGroup g : compactionGraph.cGroups) {
             g.delta = 0;
             g.deltaNormalized = 0;
-        });
+        }
         
         // ----------------------------------------------------
         // #1 We want to perform horizontal compaction first.
@@ -153,9 +157,12 @@ public final class OneDimensionalComponentsCompaction<N, E> {
 
         // .. and offset the horizontal external edges (that will be added next)
         // according to the just finished horizontal compaction
-        transformer.getHorizontalExternalEdges().asMap().forEach((group, nodes) -> {
-            nodes.forEach(n -> n.hitbox.x -= group.delta); // SUPPRESS CHECKSTYLE InnerAssignment
-        });
+        for (Entry<CGroup, Collection<CNode>> entry : transformer.getHorizontalExternalEdges()
+                .asMap().entrySet()) {
+            for (CNode n : entry.getValue()) {
+                n.hitbox.x -= entry.getKey().delta;
+            }
+        }
         
         // ----------------------------------------------------
         // #2 We want to perform vertical compaction.
@@ -169,10 +176,10 @@ public final class OneDimensionalComponentsCompaction<N, E> {
             delta += Math.abs(g.deltaNormalized);
         }
         // reset all groups' deltas
-        compactionGraph.cGroups.forEach(g -> {
+        for (CGroup g : compactionGraph.cGroups) {
             g.delta = 0;
             g.deltaNormalized = 0;
-        });
+        }
 
         // compact vertically
         compactor
@@ -195,10 +202,13 @@ public final class OneDimensionalComponentsCompaction<N, E> {
         removeExternalEdgeRepresentations(transformer.getHorizontalExternalEdges());
         // ... offset the vertical external edges 
         // (which have been excluded during the last compaction)
-        transformer.getVerticalExternalEdges().asMap().forEach((group, nodes) -> {
-            nodes.forEach(n -> n.hitbox.y -= group.delta); // SUPPRESS CHECKSTYLE InnerAssignment
-         });
-        
+        for (Entry<CGroup, Collection<CNode>> entry : transformer.getVerticalExternalEdges()
+                .asMap().entrySet()) {
+            for (CNode n : entry.getValue()) {
+                n.hitbox.y -= entry.getKey().delta;
+            }
+        }
+
         compactor.forceConstraintsRecalculation();
         
         // ... and the delta from vertical compaction
@@ -236,24 +246,24 @@ public final class OneDimensionalComponentsCompaction<N, E> {
      * Adds the passed external edges to the {@link #compactionGraph}.
      */
     private void addExternalEdgeRepresentations(final Multimap<CGroup, CNode> ees) {
-        ees.asMap().forEach((group, nodes) -> { 
-            nodes.forEach(node -> {
+        for (Entry<CGroup, Collection<CNode>> entry : ees.asMap().entrySet()) {
+            for (CNode node : entry.getValue()) {
                 compactionGraph.cNodes.add(node); 
-                group.addCNode(node);
-            });
-        });
+                entry.getKey().addCNode(node);
+            }
+        }
     }
     
     /**
      * Remove the passed external edges from the {@link #compactionGraph}. 
      */
     private void removeExternalEdgeRepresentations(final Multimap<CGroup, CNode> ees) {
-        ees.asMap().forEach((group, nodes) -> { 
-            nodes.forEach(node -> {
+        for (Entry<CGroup, Collection<CNode>> entry : ees.asMap().entrySet()) {
+            for (CNode node : entry.getValue()) {
                 compactionGraph.cNodes.remove(node); 
-                group.removeCNode(node);
-            });
-        });
+                entry.getKey().removeCNode(node);
+            }
+        }
     }
     
 }

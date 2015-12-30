@@ -12,17 +12,21 @@
  */
 package de.cau.cs.kieler.klay.layered.compaction.oned;
 
+// GWTExcludeStart
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+// GWTExcludeEnd
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.klay.layered.compaction.oned.algs.ICompactionAlgorithm;
 import de.cau.cs.kieler.klay.layered.compaction.oned.algs.IConstraintCalculationAlgorithm;
@@ -59,7 +63,7 @@ public final class OneDimensionalCompactor {
     /** compacting in this direction. */
     public Direction direction = Direction.UNDEFINED;
     /** a function that sets the {@link CNode#reposition} flag according to the direction. */
-    private BiFunction<CNode, Direction, Boolean> lockingStrategy;
+    private Function<Pair<CNode, Direction>, Boolean> lockingStrategy;
     /** flag indicating whether the {@link #finish()} method has been called. */
     private boolean finished = false;
     /** How spacings are determined. */
@@ -75,7 +79,7 @@ public final class OneDimensionalCompactor {
         
         this.cGraph = cGraph;
         // the default locking strategy locks CNodes if they are not constrained
-        setLockingStrategy((n, d) -> !(n.outDegree == 0));
+        setLockingStrategy((pair) -> !(pair.getFirst().outDegree == 0));
         
         // for any pre-specified groups, deduce the offset of the elements
         calculateGroupOffsets();
@@ -334,7 +338,7 @@ public final class OneDimensionalCompactor {
      * @return this instance of {@link OneDimensionalCompactor}
      */
     public OneDimensionalCompactor setLockingStrategy(
-            final BiFunction<CNode, Direction, Boolean> strategy) {
+            final Function<Pair<CNode, Direction>, Boolean> strategy) {
         lockingStrategy = strategy;
         return this;
     }
@@ -369,9 +373,9 @@ public final class OneDimensionalCompactor {
         }
         
         for (CNode cNode : cGraph.cNodes) {
-            cNode.reposition = lockingStrategy.apply(cNode, dir);
+            cNode.reposition = lockingStrategy.apply(Pair.of(cNode, dir));
             
-            cNode.cGroup.reposition &= lockingStrategy.apply(cNode, dir);
+            cNode.cGroup.reposition &= lockingStrategy.apply(Pair.of(cNode, dir));
         }
         
         return this;
@@ -544,6 +548,7 @@ public final class OneDimensionalCompactor {
      * ////////////////////////////////////////// DEBUGGING //////////////////////////////////////////
      * ----------------------------------------------------------------------------------------------- */
     
+    // GWTExcludeStart
     /**
      * For debugging. Writes hitboxes to svg.
      * 
@@ -605,5 +610,6 @@ public final class OneDimensionalCompactor {
         }
         return this;
     }
+    // GWTExcludeEnd
     
 }

@@ -113,7 +113,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
             // then compacting right to shorten unnecessary long edges
             odc.compact()
                .changeDirection(Direction.RIGHT)
-               .setLockingStrategy((n, d) -> !n.lock.get(d))
+               .setLockingStrategy((pair) -> !pair.getFirst().lock.get(pair.getSecond()))
                .applyLockingStrategy()
                .compact();
             break;

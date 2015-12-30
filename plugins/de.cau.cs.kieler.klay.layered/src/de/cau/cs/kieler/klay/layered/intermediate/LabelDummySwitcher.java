@@ -14,8 +14,8 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import java.util.List;
-import java.util.function.Function;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -132,8 +132,12 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
         }
 
         // Execute the swapping and reset long edge source / target information
-        nodesToSwap.stream().forEach(swapPair -> swapNodes(swapPair.getFirst(), swapPair.getSecond()));
-        labelDummies.stream().forEach(labelDummy -> updateLongEdgeSourceTargetInfo(labelDummy));
+        for (Pair<LNode, LNode> swapPair : nodesToSwap) {
+            swapNodes(swapPair.getFirst(), swapPair.getSecond());
+        }
+        for (LNode labelDummy : labelDummies) {
+            updateLongEdgeSourceTargetInfo(labelDummy);
+        }
         
         monitor.done();
     }

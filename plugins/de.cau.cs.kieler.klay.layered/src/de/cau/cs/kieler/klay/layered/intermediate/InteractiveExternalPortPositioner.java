@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
-import java.util.Optional;
-import java.util.function.Function;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
@@ -95,7 +95,7 @@ public class InteractiveExternalPortPositioner implements ILayoutProcessor {
                         // it's a WEST port
                         node.getPosition().x = minX - ARBITRARY_SPACING;
                         findYCoordinate(node, (e) -> e.getTarget().getNode())
-                            .map((d) -> node.getPosition().y = d);
+                            .transform((d) -> node.getPosition().y = d);
                         break;
                     }
                     
@@ -103,21 +103,21 @@ public class InteractiveExternalPortPositioner implements ILayoutProcessor {
                         // it's a EAST port
                         node.getPosition().x = maxX + ARBITRARY_SPACING;
                         findYCoordinate(node, (e) -> e.getSource().getNode())
-                            .map((d) -> node.getPosition().y = d);
+                            .transform((d) -> node.getPosition().y = d);
                         break;
                     }
 
                     InLayerConstraint ilc = node.getProperty(InternalProperties.IN_LAYER_CONSTRAINT);
                     if (ilc == InLayerConstraint.TOP) {
                         findNorthSouthPortXCoordinate(node)
-                            .map((x) -> node.getPosition().x = x + ARBITRARY_SPACING);
+                            .transform((x) -> node.getPosition().x = x + ARBITRARY_SPACING);
                         node.getPosition().y = minY - ARBITRARY_SPACING;
                         break;
                     }
                     
                     if (ilc == InLayerConstraint.BOTTOM) {
                         findNorthSouthPortXCoordinate(node)
-                            .map((x) -> node.getPosition().x = x + ARBITRARY_SPACING);
+                            .transform((x) -> node.getPosition().x = x + ARBITRARY_SPACING);
                         node.getPosition().y = maxY + ARBITRARY_SPACING;
                         break;
                     }
@@ -138,7 +138,7 @@ public class InteractiveExternalPortPositioner implements ILayoutProcessor {
             return Optional.of(other.getPosition().y + other.getSize().y / 2);
         }
 
-        return Optional.empty();
+        return Optional.absent();
     }
     
     private Optional<Double> findNorthSouthPortXCoordinate(final LNode dummy) {
@@ -155,25 +155,27 @@ public class InteractiveExternalPortPositioner implements ILayoutProcessor {
         
         if (!port.getOutgoingEdges().isEmpty()) {
             // find the minimum position
-            return port.getOutgoingEdges().stream()
-              .map((e) -> e.getTarget().getNode())
-              .map((n) -> {
-                  Margins margins = n.getProperty(LayoutOptions.MARGINS);
-                  return n.getPosition().x - margins.left; 
-              }).min(Double::compare);
+            double min = Double.POSITIVE_INFINITY;
+            for (LEdge e : port.getOutgoingEdges()) {
+                LNode n = e.getTarget().getNode();
+                Margins margins = n.getProperty(LayoutOptions.MARGINS);
+                min = Math.min(min, n.getPosition().x - margins.left);
+            }
+            return Optional.of(min);
         }
         
         if (!port.getIncomingEdges().isEmpty()) {
             // find the maximum value
-            return port.getIncomingEdges().stream()
-              .map((e) -> e.getSource().getNode()) 
-              .map((n) -> {
-                  Margins margins = n.getProperty(LayoutOptions.MARGINS);
-                  return n.getPosition().x + n.getSize().x + margins.right;
-              }).max(Double::compare);
+            double max = Double.NEGATIVE_INFINITY;
+            for (LEdge e : port.getIncomingEdges()) {
+                LNode n = e.getSource().getNode();
+                Margins margins = n.getProperty(LayoutOptions.MARGINS);
+                max = Math.max(max, n.getPosition().x + n.getSize().x + margins.right);
+            }
+            return Optional.of(max);
         }
         
         // we should never reach here
-        return Optional.empty();
+        return Optional.absent();
     }
 }

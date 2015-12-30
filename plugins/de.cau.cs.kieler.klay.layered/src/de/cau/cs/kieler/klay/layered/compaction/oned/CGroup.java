@@ -145,7 +145,7 @@ public final class CGroup {
             startPos = Math.max(startPos, cNode.startPos - cNode.cGroupOffset.x);
         }
         
-        if (!Double.isFinite(startPos)) {
+        if ((Math.abs(startPos) <= Double.MAX_VALUE)) {
             throw new IllegalStateException(
                     "Couldn't determine initial position during compaction."
                             + " Maybe the specified spacing is too large.");

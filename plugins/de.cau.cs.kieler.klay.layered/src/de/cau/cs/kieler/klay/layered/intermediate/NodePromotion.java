@@ -13,10 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.BiFunction;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -149,7 +150,7 @@ public class NodePromotion implements ILayoutProcessor {
         int promoteUntil = masterGraph.getProperty(Properties.NODE_PROMOTION_BOUNDARY).intValue();
 
         // Dummy function that's got no other choice but to say "it's true".
-        BiFunction<Integer, Integer, Boolean> funFunction = (doctor, master) -> true;
+        Function<Pair<Integer, Integer>, Boolean> funFunction = (pair) -> true;
 
         switch (promotionStrategy) {
         case NIKOLOV:
@@ -194,7 +195,7 @@ public class NodePromotion implements ILayoutProcessor {
             // number is never reached.)
             // SUPPRESS CHECKSTYLE NEXT MagicNumber
             int promoteUntilN = (int) Math.ceil(layers.length * promoteUntil / 100.0); 
-            promotionMagic((dummy, iterationCount) -> iterationCount < promoteUntilN);
+            promotionMagic(pair -> pair.getSecond() < promoteUntilN);
             break;
         case DUMMYNODE_PERCENTAGE:
             // Calculate number of dummy nodes the algorithm shall ideally reduce until it's forced
@@ -203,7 +204,7 @@ public class NodePromotion implements ILayoutProcessor {
             // reached.)
             // SUPPRESS CHECKSTYLE NEXT MagicNumber
             int promoteUntilD = (int) Math.ceil(dummyNodeCount * promoteUntil / 100.0);
-            promotionMagic((dummiesReduced, dummy) -> dummiesReduced < promoteUntilD);
+            promotionMagic(pair -> pair.getFirst() < promoteUntilD);
             break;
         default:
             promotionMagic(funFunction);
@@ -312,13 +313,13 @@ public class NodePromotion implements ILayoutProcessor {
      *            iteration of the algorithm. If there is a boundary given it potentially stops the
      *            promotion before there are no more iterations possible.
      */
-    private void promotionMagic(final BiFunction<Integer, Integer, Boolean> funky) {
+    private void promotionMagic(final Function<Pair<Integer, Integer>, Boolean> funky) {
         int promotions; // Indicator if there have been promotions applied in a run.
         boolean promotionFlag;
         int iterationCounter = 0; // Counts the number of iterations over all nodes.
         int reducedDummies = 0; // Counts the number of already exterminated dummy nodes.
 
-        int[] layeringBackup = layers.clone(); // Setting up backups..
+        int[] layeringBackup = Arrays.copyOf(layers, layers.length); // Setting up backups..
         int dummyBackup = dummyNodeCount;
         int heightBackup = maxHeight;
         List<Integer> currentWidthBackup = currentWidth;
@@ -342,7 +343,7 @@ public class NodePromotion implements ILayoutProcessor {
                 // Promotion is valid and will be applied.
                 if (promotionPair.getFirst() < 0 && apply) {
                     promotions++;
-                    layeringBackup = layers.clone();
+                    layeringBackup = Arrays.copyOf(layers, layers.length);
                     dummyNodeCount = dummyNodeCount + promotionPair.getFirst();
                     reducedDummies += dummyBackup - dummyNodeCount;
                     dummyBackup = dummyNodeCount + promotionPair.getFirst();
@@ -350,7 +351,7 @@ public class NodePromotion implements ILayoutProcessor {
                     currentWidthBackup = Lists.newArrayList(currentWidth);
                     currentWidthPixelBackup = Lists.newArrayList(currentWidthPixel);
                 } else { // Promotion is invalid and the last valid state will be restored.
-                    layers = layeringBackup.clone();
+                    layers = Arrays.copyOf(layeringBackup, layeringBackup.length);
                     dummyNodeCount = dummyBackup;
                     currentWidth = Lists.newArrayList(currentWidthBackup);
                     currentWidthPixel = Lists.newArrayList(currentWidthPixelBackup);
@@ -359,10 +360,12 @@ public class NodePromotion implements ILayoutProcessor {
             }
             iterationCounter++;
             promotionFlag = promotions != 0 && // Stopping criterium of Nikolov et al..
-                    funky.apply(reducedDummies, iterationCounter); // Added criterion for earlier
-                                                                   // stopping depending on reduced
-                                                                   // dummies or number of
-                                                                   // iterations..
+                    // Added criterion for earlier
+                    // stopping depending on reduced
+                    // dummies or number of
+                    // iterations..
+                    funky.apply(Pair.of(reducedDummies, iterationCounter)); 
+            
         } while (promotionFlag);
 
     }

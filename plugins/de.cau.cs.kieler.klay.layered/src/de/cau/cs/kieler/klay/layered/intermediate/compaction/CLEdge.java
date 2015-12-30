@@ -100,12 +100,13 @@ public final class CLEdge extends CNode {
         }
         // segments belonging to multiple edges should be locked in the direction that fewer different
         // ports are connected in
-        Set<LPort> inc = Sets.newHashSet(originalLEdges.stream()
-                                                .map(e -> e.getSource())
-                                                .collect(Collectors.toSet()));
-        Set<LPort> out = Sets.newHashSet(originalLEdges.stream()
-                                                .map(e -> e.getTarget())
-                                                .collect(Collectors.toSet()));
+        Set<LPort> inc = Sets.newHashSet();
+        Set<LPort> out = Sets.newHashSet();
+        for (LEdge e : originalLEdges) {
+            inc.add(e.getSource());
+            out.add(e.getTarget());
+        }
+        
         int difference = inc.size() - out.size();
         if (difference < 0) {
             lock.set(true, Direction.LEFT);
