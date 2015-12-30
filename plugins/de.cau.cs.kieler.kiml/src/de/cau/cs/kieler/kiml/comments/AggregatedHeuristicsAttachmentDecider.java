@@ -22,9 +22,10 @@ import de.cau.cs.kieler.core.kgraph.KGraphElement;
 
 /**
  * Selects the attachment target with the best aggregated heuristic result. The attachment heuristic
- * results are first aggregated using a configurable aggregation function. Then, the attachment target
- * with the highest result is selected, provided that it is at least as high as a configurable lower
- * bound. The class provides a number of pre-defined aggregation functions.
+ * results are first aggregated using a configurable aggregation function. Then, the attachment
+ * target with the highest result is selected, provided that it is at least as high as or higher
+ * than a configurable lower bound. The class provides a number of pre-defined aggregation
+ * functions.
  * 
  * @author cds
  */
@@ -35,6 +36,8 @@ public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentD
             AggregatedHeuristicsAttachmentDecider::max;
     /** The minimum aggregate result for a comment to be attached to anything. */
     private double lowerBoundary = 0.0;
+    /** Whether an attachment is accepted if the aggregate value is exactly the lower boundary. */
+    private boolean includeLowerBoundary = false;
     
     
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,6 +94,25 @@ public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentD
         return this;
     }
     
+    /**
+     * Configures the attachment decider to allow attachments already if the highest aggregated result
+     * is exactly the lower boundary.
+     * 
+     * <p>
+     * If this method is not called, the decider requires the highest aggregated result to be strictly
+     * greater than the lower boundary.
+     * </p>
+     * 
+     * @param include
+     *            the lower boundary, {@code >= 0}.
+     * @return this object for method chaining.
+     */
+    public AggregatedHeuristicsAttachmentDecider withLowerBoundaryIncluded(final boolean include) {
+        includeLowerBoundary = include;
+        
+        return this;
+    }
+    
     
     /////////////////////////////////////////////////////////////////////////////////////////////
     // IAttachmentDecider
@@ -119,7 +141,11 @@ public final class AggregatedHeuristicsAttachmentDecider implements IAttachmentD
             }
         }
         
-        return max >= lowerBoundary ? maxElement : null;
+        if (includeLowerBoundary) {
+            return max >= lowerBoundary ? maxElement : null;
+        } else {
+            return max > lowerBoundary ? maxElement : null;
+        }
     }
     
     

@@ -338,7 +338,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         };
         compareAttachmentsAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
                 "icons/compare.gif"));
-        compareAttachmentsAction.setToolTipText("Compare Attachment Data Against...");
+        compareAttachmentsAction.setToolTipText("Compare Attachment Data With Reference Attachment...");
         tbm.add(compareAttachmentsAction);
         
         tbm.update(true);
@@ -1093,6 +1093,8 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     private void runAlgorithm() {
         // Reset attachments and retrieve selected elements
         attachmentData.getAssociations().clear();
+        setDirty(true);
+        
         final Object[] checkedElements = modelTreeViewer.getCheckedElements();
         
         // A control for accessing the display
@@ -1344,7 +1346,8 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
             }
         });
         dialog.setTitle("Select File");
-        dialog.setMessage("Select the attachment evaluation file that is to be compared to this file.");
+        dialog.setMessage("Select the attachment evaluation that contains the reference attachment "
+                + "this file will be compared to.");
         if (dialog.open() != Dialog.OK) {
             return;
         }
@@ -1371,7 +1374,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         }
         
         // Evaluate the data
-        DataEvaluator evaluator = DataEvaluator.createFor(attachmentData, otherData, true);
+        DataEvaluator evaluator = DataEvaluator.createFor(otherData, attachmentData, true);
         evaluator.printCSV(System.out);
     }
     

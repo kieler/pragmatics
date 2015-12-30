@@ -132,9 +132,9 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
                 
                 if (attachedNode == null) {
                     // The comment is not attached to anything
-                    double nearestNodeDistance = Math.sqrt(DistanceHeuristic.squaredDistance(
+                    double nearestNodeDistance = DistanceHeuristic.distance(
                             boundsProvider.boundsFor(child),
-                            boundsProvider.boundsFor(nearestNode)));
+                            boundsProvider.boundsFor(nearestNode));
                     nearestNodeToUnattachedCommentDistances.add(nearestNodeDistance);
                     
                     if (authorCommentFilter.eligibleForAttachment(child)
@@ -146,9 +146,9 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
                     // The comment is attached to a node
                     attachedComments++;
                     
-                    double attachedNodeDistance = Math.sqrt(DistanceHeuristic.squaredDistance(
+                    double attachedNodeDistance = DistanceHeuristic.distance(
                             boundsProvider.boundsFor(child),
-                            boundsProvider.boundsFor(attachedNode)));
+                            boundsProvider.boundsFor(attachedNode));
                     attachedNodeDistances.add(attachedNodeDistance);
                     
                     if (nearestNode == attachedNode) {
@@ -157,9 +157,9 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
                         nearestNodeToAttachedCommentDistances.add(attachedNodeDistance);
                     } else {
                         // The attached node is not the node closest to the comment
-                        double nearestNodeDistance = Math.sqrt(DistanceHeuristic.squaredDistance(
+                        double nearestNodeDistance = DistanceHeuristic.distance(
                                 boundsProvider.boundsFor(child),
-                                boundsProvider.boundsFor(nearestNode)));
+                                boundsProvider.boundsFor(nearestNode));
                         nearestNodeToAttachedCommentDistances.add(nearestNodeDistance);
                     }
                 }
@@ -178,7 +178,7 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
         
         for (KNode sibling : comment.getParent().getChildren()) {
             if (!CommentAttacher.isComment(sibling)) {
-                double distance = DistanceHeuristic.squaredDistance(
+                double distance = DistanceHeuristic.distance(
                         commentBounds, boundsProvider.boundsFor(sibling));
                 
                 if (distance >= 0 && distance < nearestDistance) {

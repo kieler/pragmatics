@@ -41,12 +41,11 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
      * @return this object for method chaining.
      */
     public DistanceHeuristic withMaximumAttachmentDistance(final double distance) {
-        if (distance <= 0) {
-            throw new IllegalArgumentException("Maximum attachment distance must be > 0.");
+        if (distance < 0) {
+            throw new IllegalArgumentException("Maximum attachment distance must be >= 0.");
         }
         
-        // We don't want to use a square root later, so square the distance
-        super.withBounds(distance * distance, 0);
+        super.withBounds(distance, 0);
         return this;
     }
     
@@ -97,8 +96,8 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
             Rectangle2D.Double commentBounds = boundsProvider.boundsFor(comment);
             Rectangle2D.Double nodeBounds = boundsProvider.boundsFor(node);
             
-            double squaredDistance = squaredDistance(commentBounds, nodeBounds);
-            return squaredDistance == -1 ? getWorstRawValue() : squaredDistance;
+            double distance = distance(commentBounds, nodeBounds);
+            return distance == -1 ? getWorstRawValue() : distance;
         } else {
             return getWorstRawValue();
         }
@@ -129,9 +128,7 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
      * @return the squared distance between the two shapes, or {@code -1} if the distance could not
      *         be determined.
      */
-    public static double squaredDistance(
-            final Rectangle2D.Double bounds1, final Rectangle2D.Double bounds2) {
-        
+    public static double distance(final Rectangle2D.Double bounds1, final Rectangle2D.Double bounds2) {
         // Check if the bounds intersect
         if (bounds1.intersects(bounds2)) {
             return 0;
@@ -147,7 +144,7 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
                 && (bottomRightOutcode & TOP_LEFT) == TOP_LEFT) {
             
             // Return distance between shape1.bottomRight and shape2.topLeft
-            return squaredDistance(
+            return distance(
                     bounds1.x + bounds1.width, bounds1.y + bounds1.height,
                     bounds2.x, bounds2.y);
             
@@ -155,7 +152,7 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
                 && (bottomRightOutcode & BOTTOM_LEFT) == BOTTOM_LEFT) {
             
             // Return distance between shape1.topRight and shape2.bottomLeft
-            return squaredDistance(
+            return distance(
                 bounds1.x + bounds1.width, bounds1.y,
                 bounds2.x, bounds2.y + bounds2.height);
                 
@@ -163,7 +160,7 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
                 && (bottomRightOutcode & TOP_RIGHT) == TOP_RIGHT) {
 
             // Return distance between shape1.bottomLeft and shape2.topRight
-            return squaredDistance(
+            return distance(
                 bounds1.x, bounds1.y + bounds1.height,
                 bounds2.x + bounds2.width, bounds2.y);
                 
@@ -171,7 +168,7 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
                 && (bottomRightOutcode & BOTTOM_RIGHT) == BOTTOM_RIGHT) {
 
             // Return distance between shape1.topLeft and shape2.bottomRight
-            return squaredDistance(
+            return distance(
                 bounds1.x, bounds1.y,
                 bounds2.x + bounds2.width, bounds2.y + bounds2.height);
                 
@@ -180,28 +177,28 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
 
             // Return distance between shape1.right and shape2.left
             double distance = bounds1.x + bounds1.width - bounds2.x;
-            return distance * distance;
+            return distance;
             
         } else if ((topLeftOutcode & RIGHT) != 0
                 && (bottomRightOutcode & RIGHT) != 0) {
 
             // Return distance between shape1.left and shape2.right
             double distance = bounds1.x - bounds2.x - bounds2.width;
-            return distance * distance;
+            return distance;
             
         } else if ((topLeftOutcode & TOP) != 0
                 && (bottomRightOutcode & TOP) != 0) {
 
             // Return distance between shape1.bottom and shape2.top
             double distance = bounds1.y + bounds1.height - bounds2.y;
-            return distance * distance;
+            return distance;
             
         } else if ((topLeftOutcode & BOTTOM) != 0
                 && (bottomRightOutcode & BOTTOM) != 0) {
 
             // Return distance between shape1.top and shape2.bottom
             double distance = bounds1.y - bounds2.y - bounds2.height;
-            return distance * distance;
+            return distance;
         }
         
         // At this point we know that the outcodes are not what we expect and that the two bounds don't
@@ -223,7 +220,7 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
     }
     
     /**
-     * Returns the square of the distance between the two points defined by the given coordinates.
+     * Returns the distance between the two points defined by the given coordinates.
      *
      * @param x1
      *            x coordinate of the first point.
@@ -233,15 +230,15 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
      *            x coordinate of the second point.
      * @param y2
      *            y coordinate of the second point.
-     * @return the squared distance between the two points.
+     * @return the distance between the two points.
      */
-    private static double squaredDistance(
+    private static double distance(
             final double x1, final double y1, final double x2, final double y2) {
         
         double deltaX = x2 - x1;
         double deltaY = y2 - y1;
         
-        return deltaX * deltaX + deltaY * deltaY;
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
     
 }
