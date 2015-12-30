@@ -88,6 +88,7 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
                 new OneDimensionalCompactor(transformer.transform(layeredGraph));
         
         odc.setSpacingsHandler(specialSpacingsHandler);
+        odc.setConstraintAlgorithm(OneDimensionalCompactor.QUADRATIC_CONSTRAINTS);
         
         switch (strategy) {
         case LEFT:
