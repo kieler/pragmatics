@@ -340,8 +340,8 @@ public final class CommentAttacher {
                     // We'll use the explicit attachment
                     explicitAttachments.add(Pair.of(node, explicitAttachment));
                     
-                } else if (isEligibleForHeuristicAttachment(node)
-                        && (explicitAttachments.isEmpty() || !explicitAttachmentsDisableHeuristics)) {
+                } else if ((explicitAttachments.isEmpty() || !explicitAttachmentsDisableHeuristics)
+                        && isEligibleForHeuristicAttachment(node)) {
                     
                     // We don't even bother calculating the heuristics if they are disabled by explicit
                     // attachments anyway. If that's not the case, let's roll!
