@@ -206,6 +206,9 @@ public class NEdge {
          * {@link NNode}.
          * 
          * @return the newly created {@link NEdge}.
+         * 
+         * @throws IllegalStateException
+         *             if either no source or target was specified, or if source equals target.
          */
         public NEdge create() {
             
@@ -214,6 +217,12 @@ public class NEdge {
                         + " must have a source and target " + NNode.class.getSimpleName()
                         + " specified.");
             }
+            
+            if (edge.source == edge.target) {
+                throw new IllegalStateException("Network simplex does not support self-loops: "
+                        + edge + " " + edge.source + " " + edge.target);
+            }
+            
             edge.source.getOutgoingEdges().add(edge);
             edge.target.getIncomingEdges().add(edge);
             
