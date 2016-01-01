@@ -176,7 +176,7 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
                 && (bottomRightOutcode & LEFT) != 0) {
 
             // Return distance between shape1.right and shape2.left
-            double distance = bounds1.x + bounds1.width - bounds2.x;
+            double distance = bounds2.x - bounds1.x + bounds1.width;
             return distance;
             
         } else if ((topLeftOutcode & RIGHT) != 0
@@ -190,7 +190,7 @@ public final class DistanceHeuristic extends AbstractNormalizedHeuristic {
                 && (bottomRightOutcode & TOP) != 0) {
 
             // Return distance between shape1.bottom and shape2.top
-            double distance = bounds1.y + bounds1.height - bounds2.y;
+            double distance = bounds2.y - bounds1.y + bounds1.height;
             return distance;
             
         } else if ((topLeftOutcode & BOTTOM) != 0
