@@ -28,7 +28,7 @@ import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties;
  * 
  * @author cds
  */
-public class AuthorCommentAnalysis implements IAttachmentAnalysis {
+public class CommentPrefixAnalysis implements IAttachmentAnalysis {
     
     /** The author comment filter put to the test here. */
     private TextPrefixFilter authorCommentFilter = null;
@@ -37,17 +37,26 @@ public class AuthorCommentAnalysis implements IAttachmentAnalysis {
      * not.
      */
     private Map<String, Map<String, Boolean>> modelComments = Maps.newTreeMap();
+    /** Number of comments that are filtered out. */
+    private int filtered = 0;
+    /** Number of comments that are filtered out, but are attached in the reference attachment. */
+    private int falsePositives = 0;
     
     
     /**
      * Creates a new instance.
      */
-    public AuthorCommentAnalysis() {
+    public CommentPrefixAnalysis() {
         authorCommentFilter = new TextPrefixFilter()
             .withCommentTextProvider((comment) ->
                 comment.getData(KLayoutData.class).getProperty(PtolemyProperties.COMMENT_TEXT))
             .addPrefix("Author")  // Also matches "Authors"
-            .addPrefix("Demo created by");
+            .addPrefix("Demo created by")
+            .addPrefix("This model ")
+            .addPrefix("This submodel ")
+            .addPrefix("This example ")
+            .addPrefix("This demo ")
+            .addPrefix("Model of ");
     }
     
     
@@ -62,7 +71,7 @@ public class AuthorCommentAnalysis implements IAttachmentAnalysis {
         authorCommentFilter.preprocess(model, true);
         
         Map<String, Boolean> comments = Maps.newTreeMap();
-        recursivelyFillCommentTextMap(model, comments);
+        recursivelyFillCommentTextMap(model, comments, editor);
         modelComments.put(modelFilePath, comments);
         
         authorCommentFilter.cleanup();
@@ -88,6 +97,10 @@ public class AuthorCommentAnalysis implements IAttachmentAnalysis {
                 }
             }
         }
+
+        System.out.println("------ Statistics");
+        System.out.println("  Filtered: " + filtered);
+        System.out.println("  False positives: " + falsePositives);
         
         System.out.println("<===== End Author Comment Analysis Results");
     }
@@ -96,18 +109,26 @@ public class AuthorCommentAnalysis implements IAttachmentAnalysis {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Analysis
     
-    private void recursivelyFillCommentTextMap(
-            final KNode model, final Map<String, Boolean> modelComments) {
+    private void recursivelyFillCommentTextMap(final KNode model,
+            final Map<String, Boolean> modelComments, CommentAttachmentEditor editor) {
         
         for (KNode child : model.getChildren()) {
             if (CommentAttacher.isComment(child)) {
                 // A comment is an author comment if the filter wants it to not be attached to anything
-                boolean isAuthorComment = !authorCommentFilter.eligibleForAttachment(child);
-                modelComments.put(getCommentText(child), isAuthorComment);
+                boolean filterOut = !authorCommentFilter.eligibleForAttachment(child);
+                modelComments.put(getCommentText(child), filterOut);
+                
+                if (filterOut) {
+                    filtered++;
+                    
+                    if (editor.getAttachmentTarget(child) != null) {
+                        falsePositives++;
+                    }
+                }
             }
             
             if (!child.getChildren().isEmpty()) {
-                recursivelyFillCommentTextMap(child, modelComments);
+                recursivelyFillCommentTextMap(child, modelComments, editor);
             }
         }
     }
