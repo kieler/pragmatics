@@ -24,14 +24,14 @@ import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.CommentAttachm
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties;
 
 /**
- * Displays the results of the author comment heuristic.
+ * Displays the results of the text prefix heuristic.
  * 
  * @author cds
  */
 public class CommentPrefixAnalysis implements IAttachmentAnalysis {
     
-    /** The author comment filter put to the test here. */
-    private TextPrefixFilter authorCommentFilter = null;
+    /** The text prefix filter put to the test here. */
+    private TextPrefixFilter textPrefixFilter = null;
     /**
      * Map from model file names to comment texts and whether they are considerd author comments or
      * not.
@@ -47,7 +47,11 @@ public class CommentPrefixAnalysis implements IAttachmentAnalysis {
      * Creates a new instance.
      */
     public CommentPrefixAnalysis() {
-        authorCommentFilter = new TextPrefixFilter()
+        textPrefixFilter = createTextPrefixFilter();
+    }
+    
+    public static TextPrefixFilter createTextPrefixFilter() {
+        return new TextPrefixFilter()
             .withCommentTextProvider((comment) ->
                 comment.getData(KLayoutData.class).getProperty(PtolemyProperties.COMMENT_TEXT))
             .addPrefix("Author")  // Also matches "Authors"
@@ -68,13 +72,13 @@ public class CommentPrefixAnalysis implements IAttachmentAnalysis {
      */
     @Override
     public void process(KNode model, String modelFilePath, CommentAttachmentEditor editor) {
-        authorCommentFilter.preprocess(model, true);
+        textPrefixFilter.preprocess(model, true);
         
         Map<String, Boolean> comments = Maps.newTreeMap();
         recursivelyFillCommentTextMap(model, comments, editor);
         modelComments.put(modelFilePath, comments);
         
-        authorCommentFilter.cleanup();
+        textPrefixFilter.cleanup();
     }
 
     /**
@@ -115,7 +119,7 @@ public class CommentPrefixAnalysis implements IAttachmentAnalysis {
         for (KNode child : model.getChildren()) {
             if (CommentAttacher.isComment(child)) {
                 // A comment is an author comment if the filter wants it to not be attached to anything
-                boolean filterOut = !authorCommentFilter.eligibleForAttachment(child);
+                boolean filterOut = !textPrefixFilter.eligibleForAttachment(child);
                 modelComments.put(getCommentText(child), filterOut);
                 
                 if (filterOut) {

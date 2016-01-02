@@ -13,6 +13,8 @@
 package de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses;
 
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
 import com.google.inject.Guice;
@@ -35,7 +37,7 @@ public class CommentFontSizeAnalysis implements IAttachmentAnalysis {
     /** The title comment filter put to the test here. */
     private PtolemyTitleCommentFilter titleCommentFilter = null;
     /** Map from model file names to statistics on how often a given font size appears in a model. */
-    private Map<String, Map<Integer, Integer>> histograms = Maps.newTreeMap();
+    private Map<String, TreeMap<Integer, Integer>> histograms = Maps.newTreeMap();
     /** Font sizes of title comments as determined by the title comment filter. */
     private Map<String, Integer> titleComments = Maps.newTreeMap();
     
@@ -44,9 +46,15 @@ public class CommentFontSizeAnalysis implements IAttachmentAnalysis {
      * Creates a new instance.
      */
     public CommentFontSizeAnalysis() {
+        titleCommentFilter = createTitleCommentFilter();
+    }
+    
+    public static PtolemyTitleCommentFilter createTitleCommentFilter() {
         Injector injector = Guice.createInjector();
-        titleCommentFilter = injector.getInstance(PtolemyTitleCommentFilter.class);
-        titleCommentFilter.decideBasedOnFontSizeOnly();
+        PtolemyTitleCommentFilter filter = injector.getInstance(PtolemyTitleCommentFilter.class);
+        filter.decideBasedOnFontSizeOnly();
+        
+        return filter;
     }
     
     
@@ -59,7 +67,7 @@ public class CommentFontSizeAnalysis implements IAttachmentAnalysis {
     @Override
     public void process(KNode model, String modelFilePath, CommentAttachmentEditor editor) {
         // Generate a font size histogram for this model
-        Map<Integer, Integer> histogram = createHistogram(model);
+        TreeMap<Integer, Integer> histogram = createHistogram(model);
         histograms.put(modelFilePath, histogram);
         
         // Let the heuristic do its work
@@ -86,6 +94,28 @@ public class CommentFontSizeAnalysis implements IAttachmentAnalysis {
             }
         }
         
+        
+        System.out.println("------ Models with a single comment with the largest font size");
+        System.out.println("       (largest font size, number of comments on top level, "
+                + "whether the filter found a title comment, model file");
+        
+        for (String modelFile : histograms.keySet()) {
+            Map.Entry<Integer, Integer> largestFontOccurrences = histograms.get(modelFile).lastEntry();
+            
+            // If there is a single comment with largest font size, print it out
+            if (largestFontOccurrences != null && largestFontOccurrences.getValue() == 1) {
+                // Count the number of comments in the model
+                int comments = (int) histograms.get(modelFile).values().stream()
+                        .collect(Collectors.summarizingInt((v) -> v)).getSum();
+                
+                System.out.println(largestFontOccurrences.getKey()
+                        + " " + comments
+                        + " " + (titleComments.containsKey(modelFile) ? "Yes" : "No ")
+                        + " " + modelFile);
+            }
+        }
+        
+        
         System.out.println("------ Title comments found by PtolemyTitleCommentFilter");
         
         for (String modelFile : titleComments.keySet()) {
@@ -106,8 +136,8 @@ public class CommentFontSizeAnalysis implements IAttachmentAnalysis {
      *            the model.
      * @return map from font sizes to the number of comments with the font size.
      */
-    private Map<Integer, Integer> createHistogram(final KNode model) {
-        Map<Integer, Integer> histogram = Maps.newTreeMap();
+    private TreeMap<Integer, Integer> createHistogram(final KNode model) {
+        TreeMap<Integer, Integer> histogram = Maps.newTreeMap();
         
         for (KNode child : model.getChildren()) {
             if (CommentAttacher.isComment(child)) {

@@ -23,9 +23,7 @@ import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.comments.CommentAttacher;
 import de.cau.cs.kieler.kiml.comments.IBoundsProvider;
 import de.cau.cs.kieler.kiml.comments.TextPrefixFilter;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.CommentAttachmentEditor;
-import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties;
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyBoundsProvider;
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyTitleCommentFilter;
 
@@ -34,21 +32,20 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyTitleComme
  * 
  * @author cds
  */
-public class CommentSizeAnalysis implements IAttachmentAnalysis {
+public class CommentAreaAnalysis implements IAttachmentAnalysis {
     
     /** Bounds provider used to find the node nearest to a comment. */
     private IBoundsProvider boundsProvider = null;
     /** The author comment filter. */
-    private TextPrefixFilter authorCommentFilter = null;
+    private TextPrefixFilter textPrefixFilter = null;
     /** The title comment filter. */
     private PtolemyTitleCommentFilter titleCommentFilter = null;
-    /** Sizes of comments that are unattached in the reference function. */
-    private List<Long> unattachedCommentSizes = Lists.newArrayList();
-    /**
-     * Sizes of comments that are unattached in the reference function and that are neither author
-     * comments nor title comments.
-     */
-    private List<Long> unattachedFilteredCommentSizes = Lists.newArrayList();
+    /** Sizes of all comments. */
+    private List<Long> allCommentSizes = Lists.newArrayList();
+    /** Sizes of comments that are neither author comments nor title comments (attached or not). */
+    private List<Long> filteredCommentSizes = Lists.newArrayList();
+    /** Sizes of comments that are neither author comments nor title comments and not attached. */
+    private List<Long> filteredUnattachedCommentSizes = Lists.newArrayList();
     /** Sizes of comments that are attached in the reference function. */
     private List<Long> attachedCommentSizes = Lists.newArrayList();
     
@@ -56,18 +53,11 @@ public class CommentSizeAnalysis implements IAttachmentAnalysis {
     /**
      * Creates a new instance.
      */
-    public CommentSizeAnalysis() {
-        authorCommentFilter = new TextPrefixFilter()
-            .withCommentTextProvider((comment) ->
-                comment.getData(KLayoutData.class).getProperty(PtolemyProperties.COMMENT_TEXT))
-            .addPrefix("Author")  // Also matches "Authors"
-            .addPrefix("Demo created by");
+    public CommentAreaAnalysis() {
+        textPrefixFilter = CommentPrefixAnalysis.createTextPrefixFilter();
+        titleCommentFilter = CommentFontSizeAnalysis.createTitleCommentFilter();
         
         Injector injector = Guice.createInjector();
-
-        titleCommentFilter = injector.getInstance(PtolemyTitleCommentFilter.class);
-        titleCommentFilter.decideBasedOnFontSizeOnly();
-        
         boundsProvider = injector.getInstance(PtolemyBoundsProvider.class);
         boundsProvider = boundsProvider.cached();
     }
@@ -80,12 +70,12 @@ public class CommentSizeAnalysis implements IAttachmentAnalysis {
      */
     @Override
     public void process(KNode model, String modelFilePath, CommentAttachmentEditor editor) {
-        authorCommentFilter.preprocess(model, true);
+        textPrefixFilter.preprocess(model, true);
         titleCommentFilter.preprocess(model, true);
         
         recursivelyProcess(model, editor);
         
-        authorCommentFilter.cleanup();
+        textPrefixFilter.cleanup();
         titleCommentFilter.cleanup();
     }
 
@@ -96,11 +86,14 @@ public class CommentSizeAnalysis implements IAttachmentAnalysis {
     public void finish() {
         System.out.println("=====> Start Node Size Analysis Results");
 
-        System.out.println("------ Unattached Comments");
-        unattachedCommentSizes.stream().forEach((area) -> System.out.println(area));
+        System.out.println("------ All Comments");
+        allCommentSizes.stream().forEach((area) -> System.out.println(area));
+        
+        System.out.println("------ Filtered Comments");
+        filteredCommentSizes.stream().forEach((area) -> System.out.println(area));
         
         System.out.println("------ Filtered Unattached Comments");
-        unattachedFilteredCommentSizes.stream().forEach((area) -> System.out.println(area));
+        filteredUnattachedCommentSizes.stream().forEach((area) -> System.out.println(area));
         
         System.out.println("------ Attached Comments");
         attachedCommentSizes.stream().forEach((area) -> System.out.println(area));
@@ -118,17 +111,23 @@ public class CommentSizeAnalysis implements IAttachmentAnalysis {
                 Rectangle2D.Double bounds = boundsProvider.boundsFor(child);
                 long area = (long) (bounds.height * bounds.width);
                 
-                if (editor.getAttachmentTarget(child) == null) {
-                    // The comment is unattached
-                    unattachedCommentSizes.add(area);
+                // Record size in list of all comment sizes
+                allCommentSizes.add(area);
+                
+                // Record size if it's not filtered out by the other filters
+                if (textPrefixFilter.eligibleForAttachment(child)
+                        && titleCommentFilter.eligibleForAttachment(child)) {
                     
-                    if (authorCommentFilter.eligibleForAttachment(child)
-                            && titleCommentFilter.eligibleForAttachment(child)) {
-                        
-                        unattachedFilteredCommentSizes.add(area);
+                    filteredCommentSizes.add(area);
+                    
+                    // Record size if it is unattached in the reference function
+                    if (editor.getAttachmentTarget(child) == null) {
+                        filteredUnattachedCommentSizes.add(area);
                     }
-                } else {
-                    // The comment is attached
+                }
+                
+                // Record size if it is attached in the reference function
+                if (editor.getAttachmentTarget(child) != null) {
                     attachedCommentSizes.add(area);
                 }
             }

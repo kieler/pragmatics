@@ -113,8 +113,6 @@ import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import de.cau.cs.kieler.ptolemy.attachmenteval.AttachmentData;
 import de.cau.cs.kieler.ptolemy.attachmenteval.DataEvaluator;
 import de.cau.cs.kieler.ptolemy.attachmenteval.PtolemyAttachmentEvalPlugin;
-import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses.CommentDistanceAnalysis;
-import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses.CommentPrefixAnalysis;
 import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses.IAttachmentAnalysis;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis;
 
@@ -1123,7 +1121,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         
         // The analysis to run on the model files, in addition to the annotation counting which is
         // always done
-        final IAttachmentAnalysis analysis = new CommentPrefixAnalysis();
+        final IAttachmentAnalysis analysis = null;
         
         // A control for accessing the display
         final Control control = modelTreeViewer.getControl();
