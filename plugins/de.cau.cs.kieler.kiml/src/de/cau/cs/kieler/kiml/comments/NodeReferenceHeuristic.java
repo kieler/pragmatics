@@ -182,7 +182,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
         }
         
         // Go find matches! See also: We Didn't Start the Fire by Billy Joel
-        goFindFuzzyMatches(commentTexts, nodeNames);
+        goFindMatches(commentTexts, nodeNames);
         
         commentTexts = null;
     }
@@ -233,7 +233,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
      *            list of pairs of nodes and their names. The name is expected to not be
      *            {@code null}.
      */
-    private void goFindFuzzyMatches(final List<Pair<KNode, String>> commentTexts,
+    private void goFindMatches(final List<Pair<KNode, String>> commentTexts,
             final List<Pair<KNode, String>> nodeNames) {
         
         // Produce regular expression patterns for all node names
