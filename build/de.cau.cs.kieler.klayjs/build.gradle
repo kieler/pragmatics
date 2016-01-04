@@ -59,10 +59,10 @@ dependencies {
     }
     gwt 'com.google.guava:guava:15.0+'
     gwt 'com.google.guava:guava-gwt:15.0+'
-    gwt('com.google.gwt:gwt:2.7+'){ changing = true }
-    gwt('com.google.gwt:gwt-dev:2.7+'){ changing = true }
-    gwt('com.google.gwt:gwt-user:2.7+'){ changing = true }
-    gwt('com.google.gwt:gwt-servlet:2.7+'){ changing = true }
+    gwt('com.google.gwt:gwt:2.8+'){ changing = true }
+    gwt('com.google.gwt:gwt-dev:2.8+'){ changing = true }
+    gwt('com.google.gwt:gwt-user:2.8+'){ changing = true }
+    gwt('com.google.gwt:gwt-servlet:2.8+'){ changing = true }
 }
 
 // Importing ant build.xml
@@ -96,7 +96,7 @@ task getGWT(type: Copy) {
     // rename 'gwt(-.*)?-[0-9]+.[0-9]+.[0-9]+(-SNAPSHOT)?.jar', 'gwt$1.jar'
 }
 clean.dependsOn cleanGetGWT
-// TODO it seems that this task-dependency doesn't work. 
+// TODO it seems that this task-dependency doesn't work.
 javac.dependsOn(getGWT)
 
 // Convenience tasks

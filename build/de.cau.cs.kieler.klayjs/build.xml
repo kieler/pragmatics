@@ -1,18 +1,18 @@
 <project name="Build KLay Layered for JavaScript" default="buildall">
-	<!-- This is the build file that builds the KLay layout library as a 
+	<!-- This is the build file that builds the KLay layout library as a
 		 JavaScript library. To use this build file, run Ant from the directory
          containing the file and make sure the following environment variables are
          set correctly:
-         
+
             GWT_SDK			   The system's path to the GWT SDK.
-         
+
          This build file provides the following targets:
-         
+
             clean        Deletes the target directory with all of its contents.
             copySrc		 Copies klay's java sources from the main repository.
 			dist 		 Compiles and bundles the klay layered alg as js.
 			buildall	 clean + dist
-         
+
          The output produced by the build file will be placed in a folder called
          "target", which makes it somewhat similar to what the Maven builds do.
     -->
@@ -74,8 +74,10 @@
 						<contains text=", KNode " />
 					</not>
 					<exclude name="de/cau/cs/kieler/kiml/klayoutdata/**" />
+					<exclude name="de/cau/cs/kieler/kiml/comments/**" />
 					<exclude name="de/cau/cs/kieler/kiml/config/**" />
 					<exclude name="de/cau/cs/kieler/kiml/util/*" />
+					<exclude name="de/cau/cs/kieler/kiml/util/selection/*" />
 					<exclude name="**/LayoutAlgorithmData.java" />
 					<exclude name="**/LayoutConfigService.java" />
 					<exclude name="**/LayoutMetaDataService.java" />
@@ -95,10 +97,10 @@
 	<target name="clean" description="Cleans this project.">
 
 		<antcall target="cleancompilation" />
-		
+
 		<!-- target folder -->
 		<delete dir="${outputFolder}" />
-		
+
 		<!-- Remove the klay layered sources which are copied from the original plugins -->
 		<delete failonerror="false">
 			<fileset dir="src-external">
@@ -110,12 +112,12 @@
 			</fileset>
 		</delete>
 	</target>
-	
+
 	<!-- TARGET cleancompilation - does not remove targets, only compilation units -->
 	<target name="cleancompilation" description="Cleans this project's compilation units.">
-		
+
 		<delete dir="${outputFolder.tmp}" />
-		
+
 		<delete dir="war/WEB-INF/classes" failonerror="false" />
 		<delete dir="war/WEB-INF/deploy" failonerror="false" />
 		<delete dir="war/klay" failonerror="false" />
@@ -140,10 +142,10 @@
 
 	<target name="javac" depends="copySrc" description="Compile java source to bytecode">
 		<mkdir dir="war/WEB-INF/classes" />
-		<javac srcdir="src-external" includes="**" encoding="utf-8" destdir="war/WEB-INF/classes" source="1.5" target="1.5" nowarn="true" debug="true" debuglevel="lines,vars,source">
+		<javac srcdir="src-external" includes="**" encoding="utf-8" destdir="war/WEB-INF/classes" source="1.8" target="1.8" nowarn="true" debug="true" debuglevel="lines,vars,source">
 			<classpath refid="project.class.path" />
 		</javac>
-		<javac srcdir="src" includes="**" encoding="utf-8" destdir="war/WEB-INF/classes" source="1.5" target="1.5" nowarn="true" debug="true" debuglevel="lines,vars,source">
+		<javac srcdir="src" includes="**" encoding="utf-8" destdir="war/WEB-INF/classes" source="1.8" target="1.8" nowarn="true" debug="true" debuglevel="lines,vars,source">
 			<classpath refid="project.class.path" />
 		</javac>
 		<copy todir="war/WEB-INF/classes">
@@ -177,7 +179,7 @@
 	<target name="compile" depends="copySrc, gwtc" description="Combiles to js" />
 
 
-	
+
 	<!-- TARGET Dist -->
 	<target name="dist" depends="compile" description="Copy the compiled js files to the target folder.">
 		<mkdir dir="${outputFolder}" />
@@ -190,7 +192,7 @@
 				<!--exclude name="hosted.html" /-->
 			</fileset>
 		</copy>
-		
+
 		<!-- copy the license file -->
 		<copy todir="${outputFolder.tmp}" file="${licenseFile}" />
 
@@ -221,7 +223,7 @@
 		</antcall>
 	</target>
 
-    <!-- Uses a WebWorker linker based on gwtwwlinker which generates a just one 
+    <!-- Uses a WebWorker linker based on gwtwwlinker which generates a just one
          permutation for a Web Worker called klayjs_worker.js. -->
 	<target name="webworkerlinker">
 		<antcall target="dist">
@@ -229,7 +231,7 @@
 			<param name="gwt.module.suffix" value="_webworkerlinker" />
 		</antcall>
 	</target>
-	
+
 	<target name="plainjslinker">
 		<antcall target="dist">
 			<param name="gwt.module" value="de.cau.cs.kieler.klay.gwt.KlayGWTPlainJS" />
