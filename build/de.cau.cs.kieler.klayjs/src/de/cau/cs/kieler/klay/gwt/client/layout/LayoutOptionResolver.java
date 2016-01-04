@@ -60,6 +60,7 @@ import static de.cau.cs.kieler.klay.layered.properties.InternalProperties.PRIORI
 import static de.cau.cs.kieler.klay.layered.properties.InternalProperties.SPACING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.ADD_UNNECESSARY_BENDPOINTS;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.COMPACTION_STRATEGY;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.COMPACT_COMPONENTS;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CONTENT_ALIGNMENT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CROSS_MIN;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.CYCLE_BREAKING;
@@ -77,7 +78,11 @@ import static de.cau.cs.kieler.klay.layered.properties.Properties.MERGE_EDGES;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.MERGE_HIERARCHICAL_EDGES;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_LAYERING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_PLACER;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_PROMOTION;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_PROMOTION_BOUNDARY;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.NORTH_OR_SOUTH_PORT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING_IN_LAYER_FACTOR;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.POST_COMPACTION;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.RANDOM_SEED;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.SAUSAGE_FOLDING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.SPLINE_SELF_LOOP_PLACEMENT;
@@ -114,6 +119,8 @@ import de.cau.cs.kieler.kiml.options.SizeConstraint;
 import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
+import de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
@@ -151,7 +158,8 @@ public final class LayoutOptionResolver {
             FONT_SIZE,
             // klay
             PRIORITY,
-            THOROUGHNESS
+            THOROUGHNESS,
+            NODE_PROMOTION_BOUNDARY
             );
     
     @SuppressWarnings("deprecation")
@@ -172,7 +180,9 @@ public final class LayoutOptionResolver {
             MERGE_EDGES,
             FEEDBACK_EDGES,
             MERGE_HIERARCHICAL_EDGES,
-            SAUSAGE_FOLDING
+            SAUSAGE_FOLDING,
+            NORTH_OR_SOUTH_PORT,
+            COMPACT_COMPONENTS
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> FLOAT_TYPES = createTypesSet(
@@ -212,9 +222,11 @@ public final class LayoutOptionResolver {
             EDGE_LABEL_SIDE_SELECTION,
             CROSS_MIN,
             NODE_PLACER,
+            NODE_PROMOTION,
             FIXED_ALIGNMENT,
             GREEDY_SWITCH_TYPE,
             LAYER_CONSTRAINT,
+            POST_COMPACTION,
             SPLINE_SELF_LOOP_PLACEMENT,
             WIDE_NODES_ON_MULTIPLE_LAYERS,
             INTERACTIVE_REFERENCE_POINT
@@ -404,8 +416,12 @@ public final class LayoutOptionResolver {
                     enumeration = CompactionStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(CROSS_MIN, id)) {
                     enumeration = CrossingMinimizationStrategy.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(NODE_PROMOTION, id)) {
+                    enumeration = NodePromotionStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(NODE_PLACER, id)) {
                     enumeration = NodePlacementStrategy.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(POST_COMPACTION, id)) {
+                    enumeration = GraphCompactionStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(FIXED_ALIGNMENT, id)) {
                     enumeration = FixedAlignment.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(GREEDY_SWITCH_TYPE, id)) {

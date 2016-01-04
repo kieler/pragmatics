@@ -18,14 +18,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+// GWTExcludeStart
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+// GWTExcludeEnd
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+// GWTExcludeStart
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -33,6 +36,7 @@ import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+// GWTExcludeEnd
 
 /**
  * A graph structure used by the {@link NetworkSimplex} algorithm.
@@ -46,6 +50,7 @@ public class NGraph {
     /** The nodes of the network simplex graph. */
     public List<NNode> nodes = Lists.newArrayList();
     
+    // GWTExcludeStart
     /**
      * Converts this {@link NGraph} to a KGraph and writes it to the specified filed.
      * 
@@ -88,7 +93,7 @@ public class NGraph {
             e.printStackTrace();
         }
     }
-
+    
     /**
      * Creates a topological ordering and checks for back edges.
      * 
@@ -143,4 +148,6 @@ public class NGraph {
         
         return true;
     }
+    
+    // GWTExcludeEnd
 }
