@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -30,10 +32,13 @@ import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
+import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.labels.LabelManagementOptions;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
+import de.cau.cs.kieler.kiml.options.HierarchyHandling;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
 import de.cau.cs.kieler.kiml.options.PortLabelPlacement;
@@ -92,8 +97,13 @@ class KGraphImporter {
             }
         }
         
-        // Import the graph either with or without all nested levels of hierarchy
-        if (kgraph.getData(KShapeLayout.class).getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+        if (topLevelGraph.getProperty(LayoutOptions.LAYOUT_PARTITIONS)) {
+            graphProperties.add(GraphProperties.PARTITIONS);
+        }
+        
+        // Import the graph either with or without multiple nested levels of hierarchy
+        if (kgraph.getData(KShapeLayout.class).getProperty(LayoutOptions.HIERARCHY_HANDLING) 
+                == HierarchyHandling.INCLUDE_CHILDREN) {
             importHierarchicalGraph(kgraph, topLevelGraph);
         } else {
             importFlatGraph(kgraph, topLevelGraph);
@@ -192,8 +202,11 @@ class KGraphImporter {
                 // children or inside self-loops)
                 boolean hasChildren = !knode.getChildren().isEmpty();
                 boolean hasInsideSelfLoops = hasInsideSelfLoops(knode);
+                boolean hasHierarchyHandlingEnabled = 
+                        knodeLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING) 
+                            == HierarchyHandling.INCLUDE_CHILDREN; 
                 
-                if (hasChildren || hasInsideSelfLoops) {
+                if (hasHierarchyHandlingEnabled && (hasChildren || hasInsideSelfLoops)) {
                     LGraph nestedGraph = createLGraph(knode);
                     lnode.setProperty(InternalProperties.NESTED_LGRAPH, nestedGraph);
                     nestedGraph.setProperty(InternalProperties.PARENT_LNODE, lnode);
@@ -228,9 +241,9 @@ class KGraphImporter {
                         // self loop or connects to a descendant of this node, the edge will be placed in
                         // the graph that represents the node's insides. Otherwise, it will be placed in
                         // the graph that represents the node's parent.
-                        KNode parentKGraph = knode;
-                        if (!KimlUtil.isDescendant(kedge.getTarget(), knode) && !isInsideSelfLoop) {
-                            parentKGraph = knode.getParent();
+                        KNode parentKGraph = knode.getParent();
+                        if (KimlUtil.isDescendant(kedge.getTarget(), knode)  || isInsideSelfLoop) {
+                            parentKGraph = knode;
                         }
                         
                         LGraph parentLGraph = lgraph;
@@ -291,6 +304,14 @@ class KGraphImporter {
         lgraph.copyProperties(parentLayout);
         if (lgraph.getProperty(LayoutOptions.DIRECTION) == Direction.UNDEFINED) {
             lgraph.setProperty(LayoutOptions.DIRECTION, LGraphUtil.getDirection(lgraph));
+        }
+        
+        // The root may have a label manager installed
+        if (lgraph.getProperty(LabelManagementOptions.LABEL_MANAGER) == null) {
+            KGraphElement root = (KGraphElement) EcoreUtil.getRootContainer(kgraph);
+            KLayoutData layoutData = root.getData(KLayoutData.class);
+            lgraph.setProperty(LabelManagementOptions.LABEL_MANAGER,
+                    layoutData.getProperty(LabelManagementOptions.LABEL_MANAGER));
         }
         
         // Remember the KGraph parent the LGraph was created from
@@ -476,17 +497,31 @@ class KGraphImporter {
      */
     private int calculateNetFlow(final KPort kport) {
         final KNode kgraph = kport.getNode();
+        final boolean insideSelfLoopsEnabled = kgraph.getData(KLayoutData.class).getProperty(
+                LayoutOptions.SELF_LOOP_INSIDE);
         
         int outputPortVote = 0, inputPortVote = 0;
         for (KEdge edge : kport.getEdges()) {
+            final boolean isSelfLoop = edge.getSource() == edge.getTarget();
+            final boolean isInsideSelfLoop = isSelfLoop && insideSelfLoopsEnabled
+                    && edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.SELF_LOOP_INSIDE);
+            
             if (edge.getSourcePort() == kport) {
-                if (edge.getTarget().getParent() == kgraph || edge.getTarget() == kgraph) {
+                if (isSelfLoop && isInsideSelfLoop) {
+                    inputPortVote++;
+                } else if (isSelfLoop && !isInsideSelfLoop) {
+                    outputPortVote++;
+                } else if (edge.getTarget().getParent() == kgraph || edge.getTarget() == kgraph) {
                     inputPortVote++;
                 } else {
                     outputPortVote++;
                 }
             } else {
-                if (edge.getSource().getParent() == kgraph || edge.getSource() == kgraph) {
+                if (isSelfLoop && isInsideSelfLoop) {
+                    outputPortVote++;
+                } else if (isSelfLoop && isInsideSelfLoop) {
+                    inputPortVote++;
+                } else if (edge.getSource().getParent() == kgraph || edge.getSource() == kgraph) {
                     outputPortVote++;
                 } else {
                     inputPortVote++;
@@ -531,10 +566,10 @@ class KGraphImporter {
             lnode.setProperty(InternalProperties.COMPOUND_NODE, true);
         }
 
-        // port constraints and sides cannot be undefined
         Set<GraphProperties> graphProperties = lgraph.getProperty(
                 InternalProperties.GRAPH_PROPERTIES);
         
+        // port constraints and sides cannot be undefined
         PortConstraints portConstraints = lnode.getProperty(LayoutOptions.PORT_CONSTRAINTS);
         if (portConstraints == PortConstraints.UNDEFINED) {
             lnode.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -658,9 +658,17 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         ExternalPort externalPort = defaultExternalPort;
         if (externalPort == null || !mergeExternalPorts || parentEndPort != null) {
             // create a dummy node that will represent the external port
-            PortSide externalPortSide = parentEndPort != null
-                    ? parentEndPort.getSide()
-                    : PortSide.UNDEFINED;
+            PortSide externalPortSide = PortSide.UNDEFINED;
+            if (parentEndPort != null) {
+                externalPortSide = parentEndPort.getSide();
+            } else {
+                // We try to infer the port side from the port type if its node has its port constraints
+                // set to at least FIXED_SIDE; this may produce strange effects, so the safest thing is
+                // for people to set compound node port constraints to FREE
+                if (parentNode.getProperty(LayoutOptions.PORT_CONSTRAINTS).isSideFixed()) {
+                    externalPortSide = portType == PortType.INPUT ? PortSide.WEST : PortSide.EAST;
+                }
+            }
             LNode dummyNode = createExternalPortDummy(
                     graph, parentNode, portType, externalPortSide, origEdge);
             

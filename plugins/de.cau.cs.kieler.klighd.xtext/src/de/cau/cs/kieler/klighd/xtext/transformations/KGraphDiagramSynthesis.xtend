@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -40,12 +40,18 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
+import de.cau.cs.kieler.klighd.labels.AbstractKlighdLabelManager
+import de.cau.cs.kieler.klighd.labels.ConditionLabelManager
+import de.cau.cs.kieler.klighd.labels.SoftWrappingLabelManager
 import de.cau.cs.kieler.klighd.labels.TruncatingLabelManager
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
+import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
+import de.cau.cs.kieler.klighd.labels.LabelPredicates
+import de.cau.cs.kieler.klighd.labels.IdentLabelManager
 
 /**
  * Synthesizes a copy of the given {@code KNode} and adds default stuff.
@@ -66,28 +72,25 @@ import org.eclipse.emf.ecore.util.EcoreUtil.Copier
  * @author uru
  */
 class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
-    
+
     /**
      * ID this synthesis is registered with KLighD with.
      */
-    public static String TRANSFORMATION_ID =
-         "de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
-    
+    public static val String TRANSFORMATION_ID =
+        "de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
+
     // The next two definitions are used to load possibly persisted klighd information
     //  that is ignored by kiml, e.g. the expansion state of nodes
-    private static val PREDICATE_IS_KGRAPHDATA  =  new Predicate<EMapPropertyHolder>() {
+    private static val PREDICATE_IS_KGRAPHDATA = new Predicate<EMapPropertyHolder>() {
         override apply(EMapPropertyHolder input) {
             return input instanceof KGraphData;
         }
     }
-    private static val KNOWN_PROPS = ImmutableList.of(
-        KlighdProperties.EXPAND,
-        KlighdProperties.EXPANDED_RENDERING, 
-        KlighdProperties.COLLAPSED_RENDERING,
-        KlighdProperties.TOOLTIP,
-        KlighdProperties.NOT_SELECTABLE);
-    
-    
+    private static val KNOWN_PROPS = ImmutableList.of(KlighdProperties.EXPAND,
+        KlighdProperties.EXPANDED_RENDERING, KlighdProperties.COLLAPSED_RENDERING,
+        KlighdProperties.TOOLTIP, KlighdProperties.NOT_SELECTABLE);
+
+
     ///////////////////////////////////////////////////////////////////////////////
     // SYNTHESIS OPTIONS
     
@@ -96,63 +99,64 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      * KIML, and has to be loaded explicitly by the 
      * {@link de.cau.cs.kieler.core.kgraph.text.KGraphResource KGraphResource}. 
      */
-    private static final IProperty<Boolean> DEFAULTS_PROPERTY = 
-        new Property<Boolean>("de.cau.cs.kieler.kgraphsynthesis.defaults", false)
-        
+    private static final IProperty<Boolean> DEFAULTS_PROPERTY = new Property<Boolean>(
+        "de.cau.cs.kieler.kgraphsynthesis.defaults", false)
+    
     private static val DEFAULTS_AS_IN_MODEL = "As in Model"
     private static val DEFAULTS_ON = "On"
     private static val DEFAULTS_OFF = "Off"
-    
     /**
      * Synthesis option specifying whether default values should be used. Default values are, eg, node
      * size if not specified and port ids as labels if no labels exist.
      */
-    private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption(
-        "Default Values", 
+    private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption("Default Values",
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
     
-    /**
-     * Synthesis option specifying the styling to be used for nodes.
-     */
+    private static val STYLE_BORING = "Boring";
+    private static val STYLE_STYLISH = "Stylish";
+    private static val STYLE_HELLO_KITTY = "Hello Kitty";
+    /** The style to be used when drawing the KGraphs. */
     private static val SynthesisOption STYLE = SynthesisOption::createChoiceOption(
-        "Style", 
-        ImmutableList::of("Boring", "Stylish", "Hello Kitty"), "Boring")
+        "Style",
+        ImmutableList::of(STYLE_BORING, STYLE_STYLISH, STYLE_HELLO_KITTY),
+        STYLE_STYLISH);
     
-    /**
-     * Synthesis option specifying whether to install a label shortening strategy or not.
-     */
-    private static val SynthesisOption SHORTEN_LABELS = SynthesisOption::createCheckOption(
-        "Shorten Labels",
-        false)
-    
+    private static val LABELS_NO_LABELS = "No Labels";
+    private static val LABELS_TRUNCATE = "Truncate";
+    private static val LABELS_SOFT_WORD_WRAP = "Soft Word Wrapping";
+    private static val LABELS_FULL = "Full Labels";
+    private static val SynthesisOption LABEL_SHORTENING_STRATEGY = SynthesisOption.createChoiceOption(
+        "Label Shortening Strategy",
+        ImmutableList::of(LABELS_NO_LABELS, LABELS_TRUNCATE, LABELS_SOFT_WORD_WRAP, LABELS_FULL),
+        LABELS_FULL);
+
     /**
      * {@inheritDoc} 
      */
     override getDisplayedLayoutOptions() {
-        return ImmutableList::of(
+        return ImmutableList::of( 
             // example to specify external layout option (in this case one of klay layered)
             // remember to add the following import in the head of this class
             //   import static de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
-            
             // specifyLayoutOption("de.cau.cs.kieler.klay.layered.edgeSpacingFactor", ImmutableList.of(0f,1f))
-            
             // These values are annoying :)
             //specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
             //  ImmutableList::copyOf(PortConstraints::values)),
             //specifyLayoutOption(LayoutOptions::SPACING, ImmutableList::of(0, 255))
         )
     }
-    
+
     /**
      * {@inheritDoc} 
      */
     override getDisplayedSynthesisOptions() {
         return ImmutableList::of(
-            DEFAULTS, STYLE, SHORTEN_LABELS
+            DEFAULTS,
+            STYLE,
+            LABEL_SHORTENING_STRATEGY
         )
     }
-    
-    
+
     ///////////////////////////////////////////////////////////////////////////////
     // VARIABLES
     
@@ -160,23 +164,26 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     @Inject extension KRenderingExtensions
     @Inject extension KColorExtensions
     @Inject extension KLibraryExtensions
-    
+
     /** Rendering factory used to create KRendering model instances. */
     static KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
-    
+
     /** The value for the defaults property as specified in the model. */
     private boolean defaults = false
+
     /** Default rendering for nodes. */
     private var KRendering defaultNodeRendering;
+
     /** Default rendering for polyline edges. */
     private var KRendering defaultPolylineRendering;
+
     /** Default rendering for spline edges. */
     private var KRendering defaultSplineRendering;
-    
-    
+
+
     ///////////////////////////////////////////////////////////////////////////////
     // TRANSFORMATION
-
+    
     /**
      * Transforms the given graph into an equivalent graph that may be enriched with additional
      * rendering information.
@@ -186,18 +193,18 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     override KNode transform(KNode graph) {
         usedContext.setProperty(KlighdSynthesisProperties.SUPPRESS_EDGE_ADJUSTMENT, true)
-        
+
         // 3 lines are more or less copied from EcoreUtil.copy()
         val copier = new Copier()
         val KNode result = copier.copy(graph) as KNode
         copier.copyReferences()
-        
+
         // Persistent entries of the original graph are already loaded in the KGraphResource
         //  but until now nobody knows about any persisted entries that originate from KLighD.
         // First, this might be the expansion state of nodes. Second, also KRendering elements
         //  may carry persisted entries that have to be parsed before we build the view model.
         KimlUtil.loadDataElements(result, PREDICATE_IS_KGRAPHDATA, KNOWN_PROPS)
-        
+
         // Evaluate the defaults property
         try {
             defaults = graph.getData(typeof(KLayoutData)).getProperty(DEFAULTS_PROPERTY)
@@ -206,37 +213,73 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             //  possibly yielding a class cast exception if neither 'true' nor 'false' are specified
             //  as value.
         }
-        
-        // Evaluate the label shortening property
-        if (SHORTEN_LABELS.booleanValue) {
-            result.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, new TruncatingLabelManager())
-        }
-        
+
+        // Enable label management
+        addLabelManager(result)
+               
         // Create a rendering library for reuse of renderings
         var library = result.getData(typeof(KRenderingLibrary))
         if (library == null) {
             library = renderingFactory.createKRenderingLibrary
             result.data += library
         }
-        
+
         switch STYLE.objectValue {
-            case "Stylish": library.initStylishFactory
-            case "Hello Kitty": library.initHelloKittyFactory
+            case STYLE_STYLISH: library.initStylishFactory
+            case STYLE_HELLO_KITTY: library.initHelloKittyFactory
             default: library.initBoringFactory // boring 
         }
-        
+
         // Associate original objects with transformed objects
         for (entry : copier.entrySet()) {
             entry.value.associateWith(entry.key)
         }
-        
+
         // Enrich the rendering
         recursivelyEnrichRendering(result)
-        
+
         return result
     }
     
+    /**
+     * Configures the appropriate label manager for the given KGraph.
+     * 
+     * @param kgraph the graph to configure the label manager for.
+     */
+    def addLabelManager(KNode kgraph) {
+        var labelManager = null as AbstractKlighdLabelManager;
+
+        // Evaluate the label shortening property
+        switch LABEL_SHORTENING_STRATEGY.objectValue {
+            case LABELS_NO_LABELS: {
+                labelManager = new ConditionLabelManager(
+                    null,
+                    LabelPredicates.matchNone,
+                    true);
+            }
+            case LABELS_TRUNCATE: {
+                labelManager = new ConditionLabelManager(
+                    new TruncatingLabelManager(),
+                    LabelPredicates.centerEdgeLabel,
+                    false);
+            }
+            case LABELS_SOFT_WORD_WRAP: {
+                labelManager = new ConditionLabelManager(
+                    new SoftWrappingLabelManager(),
+                    LabelPredicates.centerEdgeLabel,
+                    false);
+            }
+            case LABELS_FULL: {
+                labelManager = new IdentLabelManager()
+            }
+        }
+        
+        if (labelManager != null) {
+            kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager)
+        }
+    }
     
+
     ///////////////////////////////////////////////////////////////////////////////
     // RENDERING INITIALIZATION
     
@@ -248,7 +291,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             it.addJunctionPointDecorator
         ];
         library.renderings += defaultPolylineRendering
-        
+
         // Create a common rendering for splines
         defaultSplineRendering = renderingFactory.createKSpline => [
             it.id = "SplineEdgeRendering"
@@ -256,7 +299,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         ];
         library.renderings += defaultSplineRendering
     }
-    
+
     private def initBoringFactory(KRenderingLibrary library) {
         library.initEdgeRenderings
         defaultNodeRendering = renderingFactory.createKRectangle => [
@@ -264,7 +307,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         ]
         library.renderings += defaultNodeRendering
     }
-    
+
     private def initStylishFactory(KRenderingLibrary library) {
         library.initEdgeRenderings
         defaultNodeRendering = renderingFactory.createKRoundedRectangle => [
@@ -275,7 +318,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         ]
         library.renderings += defaultNodeRendering
     }
-    
+
     private def initHelloKittyFactory(KRenderingLibrary library) {
         library.initEdgeRenderings
         defaultNodeRendering = renderingFactory.createKEllipse => [
@@ -284,7 +327,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         ]
         library.renderings += defaultNodeRendering
     }
-    
+
+
     ///////////////////////////////////////////////////////////////////////////////
     // RENDERINGS ENRICHMENT CENTER
     //   "Thank you for helping us help you help us all."
@@ -296,9 +340,9 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     def private void recursivelyEnrichRendering(EObject o) {
         enrichRendering(o)
-        o.eContents.forEach[child | recursivelyEnrichRendering(child)]
+        o.eContents.forEach[child|recursivelyEnrichRendering(child)]
     }
-    
+
     /**
      * Fallback metchod that does not add any rendering information to the given object.
      * 
@@ -306,7 +350,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     def private dispatch void enrichRendering(EObject o) {
     }
-    
+
     /**
      * Make sure the node has a valid size and a label (if defaults are switched on).
      * 
@@ -317,13 +361,14 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         if (!defaultsEnabled()) {
             return;
         }
-        
+
         KimlUtil.configureWithDefaultValues(node)
-        
+
         // add a rendering to the node
-        node.addRenderingRef(defaultNodeRendering) 
+        val rendering = node.addRenderingRef(defaultNodeRendering)
+        rendering.addSingleClickAction(FocusAndContextAction.ID)
     }
-    
+
     /**
      * Make sure the port has a valid size and a label (if defaults are switched on).
      * 
@@ -334,10 +379,10 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         if (!defaultsEnabled()) {
             return;
         }
-        
+
         KimlUtil.configureWithDefaultValues(port)
     }
-    
+
     /**
      * Possibly adds a proper rendering to the given edge. If no rendering is associated with the edge
      * yet, a default rendering with an arrowhead is added to it.
@@ -346,8 +391,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     def private dispatch void enrichRendering(KEdge edge) {
         if (!edge.hasRendering) {
-            val parent = 
-                if (KimlUtil.isDescendant(edge.target, edge.source))
+            val parent = if (KimlUtil.isDescendant(edge.target, edge.source))
                     edge.source
                 else
                     edge.source?.parent
@@ -358,17 +402,19 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
                 } else {
                     it.rendering = defaultPolylineRendering
                 }
+                
+                it.addSingleClickAction(FocusAndContextAction.ID)
             ]
         }
-        
+
         // If defaults are switched off, don't bother
         if (!defaultsEnabled()) {
             return;
         }
-        
+
         KimlUtil.configureWithDefaultValues(edge)
     }
-    
+
     /**
      * Possibly adds a proper rendering to the given label. If no rendering is associated with the label
      * yet, a default text rendering with a predefined font size is added to it. Also, makes sure that
@@ -379,9 +425,10 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     def private dispatch void enrichRendering(KLabel label) {
         // We do this in any case, whether defaults are turned on or not
         if (!label.hasRendering) {
-            renderingFactory.createKText() => [text |
+            renderingFactory.createKText() => [ text |
                 label.data += text
                 text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
+                text.addSingleClickAction(FocusAndContextAction.ID)
                 
                 // Port labels should have a smaller font size
                 if (label.eContainer instanceof KPort) {
@@ -389,10 +436,9 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
                 }
             ]
         }
-        
     }
-    
-    
+
+
     ///////////////////////////////////////////////////////////////////////////////
     // UTILITY METHODS
     
@@ -405,7 +451,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     def private boolean hasRendering(KGraphElement e) {
         e.data.exists[it instanceof KRendering]
     }
- 
+
     /**
      * Returns whether or not default stuff should be added or not.
      * 
@@ -413,6 +459,6 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     def private boolean defaultsEnabled() {
         return DEFAULTS.objectValue == DEFAULTS_ON
-            || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults)
+            || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults);
     }
 }

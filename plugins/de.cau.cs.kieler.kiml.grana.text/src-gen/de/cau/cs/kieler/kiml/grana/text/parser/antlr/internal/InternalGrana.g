@@ -798,7 +798,7 @@ ruleIntRangeValues returns [EObject current=null]
 	    }
 
 )
-)))
+))*)
 ;
 
 

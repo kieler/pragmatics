@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -45,6 +45,41 @@ public final class SynthesisOption {
      */
     public static SynthesisOption createSeparator() {
         return new SynthesisOption("", TransformationOptionType.SEPARATOR, true);
+    }
+    
+    /**
+     * Static factory method providing a 'Category' pseudo {@link SynthesisOption}.<br>
+     * 
+     * This option has no semantic meaning, it will result in a collapsable section in the options
+     * view, containing all other {@link SynthesisOption} configured with this category.<br>
+     * 
+     * The section will display the given label and the given initial expansion state.
+     * 
+     * @param label
+     *            the label text of the category.
+     * @param initiallyExpanded
+     *            the initial expansion state
+     * @return a 'Category' {@link SynthesisOption}.
+     */
+    public static SynthesisOption createCategory(final String label,
+            final boolean initiallyExpanded) {
+        return new SynthesisOption(label, TransformationOptionType.CATEGORY, initiallyExpanded);
+    }
+
+    /**
+     * Static factory method providing a 'Category' pseudo {@link SynthesisOption}.<br>
+     * 
+     * This option has no semantic meaning, it will result in a collapsable section in the options
+     * view, containing all other {@link SynthesisOption} configured with this category.<br>
+     * 
+     * The section will display the given label and will be initially expanded.
+     * 
+     * @param label
+     *            the label text of the category.
+     * @return a 'Category' {@link SynthesisOption}.
+     */
+    public static SynthesisOption createCategory(final String label) {
+        return new SynthesisOption(label, TransformationOptionType.CATEGORY, true);
     }
     
     /**
@@ -216,7 +251,9 @@ public final class SynthesisOption {
         /** Options of this type provide a range of possible continuous values. */
         RANGE,
         /** Pseudo option representing a separator. */
-        SEPARATOR;
+        SEPARATOR,
+        /** Pseudo option representing a container for other options. */
+        CATEGORY;
     }
     
     private final String name;    
@@ -227,6 +264,10 @@ public final class SynthesisOption {
     private Number stepSize;
     private Boolean animateUpdate = null;
     private String updateStrategy = null;
+    /** The action id of the optional actions handler. */
+    private String updateAction = null;
+    /** The optional category option. */
+    private SynthesisOption category = null;
     
     /**
      * Constructor.
@@ -271,6 +312,13 @@ public final class SynthesisOption {
      */
     public boolean isSeparator() {
         return type.equals(TransformationOptionType.SEPARATOR);
+    }
+    
+    /**
+     * @return the type
+     */
+    public boolean isCategory() {
+        return type.equals(TransformationOptionType.CATEGORY);
     }
 
     /**
@@ -350,6 +398,34 @@ public final class SynthesisOption {
         this.updateStrategy = strategyId;
         return this;
     }
+    
+    /**
+     * Returns the update action id.
+     * 
+     * @return the id of the {@link IAction} which handles updating of the view model when this
+     *         {@link SynthesisOption} changed, or <code>null</code> if no dedicated action is
+     *         configured (default case)
+     */
+    public String getUpdateAction() {
+        return this.updateAction;
+    }
+
+    /**
+     * Sets the id of the update action handling model updates when this {@link SynthesisOption}
+     * changed.
+     * <p>
+     * If set non <code>null</code> the action will replace the behavior of the related
+     * {@link IUpdateStrategy}.
+     * 
+     * @param actionId
+     *            the id of the {@link IAction} which handles updating of the view model when this
+     *            {@link SynthesisOption} changed
+     * @return <code>this</code> {@link SynthesisOption} for convenience
+     */
+    public SynthesisOption setUpdateAction(final String actionId) {
+        this.updateAction = actionId;
+        return this;
+    }
 
     /**
      * @param values the optionValues to set
@@ -388,5 +464,27 @@ public final class SynthesisOption {
                     "KLighD transformation registry: The step size is only allowed for"
                     + " 'range' options.");
         }
+    }
+
+    /**
+     * @return the category or <code>null</code> if no category is configured (default case)
+     */
+    public SynthesisOption getCategory() {
+        return category;
+    }
+
+    /**
+     * Sets the category for this option.
+     * 
+     * @param newCategory
+     *            the new category for this option or <code>null</code> to unset the category.
+     * @return <code>this</code> {@link SynthesisOption} for convenience
+     */
+    public SynthesisOption setCategory(final SynthesisOption newCategory) {
+        if (newCategory != null && !newCategory.isCategory()) {
+            throw new IllegalArgumentException("The given synthesis option is not a category");
+        }
+        this.category = newCategory;
+        return this;
     }
 }

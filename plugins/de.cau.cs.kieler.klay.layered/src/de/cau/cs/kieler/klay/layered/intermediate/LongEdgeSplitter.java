@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -94,15 +94,8 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
                             // If there is no next layer, something is wrong
                             assert layerIter.hasNext();
                             
-                            // Create dummy node
-                            LNode dummyNode = new LNode(layeredGraph);
-                            dummyNode.setNodeType(NodeType.LONG_EDGE);
-                            dummyNode.setProperty(InternalProperties.ORIGIN, edge);
-                            dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
-                                    PortConstraints.FIXED_POS);
-                            dummyNode.setLayer(nextLayer);
-                            
-                            splitEdge(edge, dummyNode);
+                            // Split the edge
+                            splitEdge(edge, createDummyNode(layeredGraph, nextLayer, edge));
                         }
                     }
                 }
@@ -111,7 +104,30 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
         
         monitor.done();
     }
-    
+
+    /**
+     * Creates a long edge dummy node to split the given edge at the given layer and adds it to the
+     * layer.
+     * 
+     * @param layeredGraph the graph.
+     * @param targetLayer the layer the dummy node will be inserted into.
+     * @param edgeToSplit the edge that will later be split by the dummy node. The edge will be set as
+     *                    the dummy node's {@link InternalProperties#ORIGIN ORIGIN}.
+     * @return the created dummy node.
+     */
+    private LNode createDummyNode(final LGraph layeredGraph, final Layer targetLayer,
+            final LEdge edgeToSplit) {
+        
+        LNode dummyNode = new LNode(layeredGraph);
+        
+        dummyNode.setType(NodeType.LONG_EDGE);
+        dummyNode.setProperty(InternalProperties.ORIGIN, edgeToSplit);
+        dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
+                PortConstraints.FIXED_POS);
+        dummyNode.setLayer(targetLayer);
+        
+        return dummyNode;
+    }
 
     /**
      * Does the actual work of splitting a given edge by rerouting it to the given dummy node and
@@ -156,37 +172,40 @@ public final class LongEdgeSplitter implements ILayoutProcessor {
         dummyEdge.setSource(dummyOutput);
         dummyEdge.setTarget(oldEdgeTarget);
         
-        setDummyProperties(dummyNode, edge, dummyEdge);
+        setDummyNodeProperties(dummyNode, edge, dummyEdge);
         moveHeadLabels(edge, dummyEdge);
         
         return dummyEdge;
     }
     
     /**
-     * Sets the source and target properties on the given dummy node.
+     * Sets the {@link InternalProperties#LONG_EDGE_SOURCE LONG_EDGE_SOURCE} and
+     * {@link InternalProperties#LONG_EDGE_TARGET LONG_EDGE_TARGET} properties on the given dummy node.
      * 
-     * @param dummy
+     * @param dummyNode
      *            the dummy node.
      * @param inEdge
      *            the edge going into the dummy node.
      * @param outEdge
      *            the edge going out of the dummy node.
      */
-    private static void setDummyProperties(final LNode dummy, final LEdge inEdge, final LEdge outEdge) {
+    private static void setDummyNodeProperties(final LNode dummyNode, final LEdge inEdge,
+            final LEdge outEdge) {
+        
         LNode inEdgeSourceNode = inEdge.getSource().getNode();
         
-        if (inEdgeSourceNode.getNodeType() == NodeType.LONG_EDGE) {
+        if (inEdgeSourceNode.getType() == NodeType.LONG_EDGE) {
             // The incoming edge originates from a long edge dummy node, so we can
             // just copy its properties
-            dummy.setProperty(InternalProperties.LONG_EDGE_SOURCE,
+            dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE,
                     inEdgeSourceNode.getProperty(InternalProperties.LONG_EDGE_SOURCE));
-            dummy.setProperty(InternalProperties.LONG_EDGE_TARGET,
+            dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET,
                     inEdgeSourceNode.getProperty(InternalProperties.LONG_EDGE_TARGET));
         } else {
             // The source is the input edge's source port, the target is the output
             // edge's target port
-            dummy.setProperty(InternalProperties.LONG_EDGE_SOURCE, inEdge.getSource());
-            dummy.setProperty(InternalProperties.LONG_EDGE_TARGET, outEdge.getTarget());
+            dummyNode.setProperty(InternalProperties.LONG_EDGE_SOURCE, inEdge.getSource());
+            dummyNode.setProperty(InternalProperties.LONG_EDGE_TARGET, outEdge.getTarget());
         }
     }
     

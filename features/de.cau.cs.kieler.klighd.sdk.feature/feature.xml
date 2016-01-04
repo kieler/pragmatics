@@ -3,15 +3,15 @@
       id="de.cau.cs.kieler.klighd.sdk.feature"
       label="KIELER Lightweight Diagrams - Developer Resources &amp; Examples"
       version="0.7.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel"
-      plugin="de.cau.cs.kieler.klighd.examples">
+      provider-name="Kiel University"
+      plugin="de.cau.cs.kieler.klighd.ui.wizard">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
-      This feature provides diagram synthesis examples for automatically creating class diagrams from a given Ecore specification (or a selected subset) as well as for UML2 UseCase diagrams. We suggest to also install the related source feature in order to be able to import the source code into your workspace and read it.
+      This feature contributes a wizard creating for plug-in projects containing a KLighD diagram synthesis implementation stub enabling a simplified startup in creating diagrams with KLighD. Besides, diagram synthesis examples are contained demonstrating the creation of UML2 UseCase diagrams, class diagrams from a given Ecore specification (or a selected subset), and circuit diagrams based on a custom circuit DSL. Finally, some convenient UI contributions are offered, like an &apos;IEditorPart&apos;-based diagram viewer implementation and the KLighD preference page.
    </description>
 
    <copyright>
-      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Kiel University
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

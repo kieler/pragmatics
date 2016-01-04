@@ -283,7 +283,7 @@
           </property>
           <property
                 name="aboutText"
-                value="KIELER - Kiel Integrated Environment for Layout (Eclipse Rich Client)&#x0D;&#x0A;A research project on enhancing the model-based design of complex systems&#x0D;&#x0A;&#x0D;&#x0A;&#x0D;&#x0A;For more information, visit our website:&#x0D;&#x0A;http://www.informatik.uni-kiel.de/rtsys/kieler/&#x0D;&#x0A;&#x0D;&#x0A;Copyright 2013 by Christian-Albrechts-University of Kiel, Department of Computer Science, Real-Time and Embedded Systems Group">
+                value="KIELER - Kiel Integrated Environment for Layout (Eclipse Rich Client)&#x0D;&#x0A;A research project on enhancing the model-based design of complex systems&#x0D;&#x0A;&#x0D;&#x0A;&#x0D;&#x0A;For more information, visit our website:&#x0D;&#x0A;http://www.informatik.uni-kiel.de/rtsys/kieler/&#x0D;&#x0A;&#x0D;&#x0A;Copyright 2013 by Kiel University, Department of Computer Science, Real-Time and Embedded Systems Group">
           </property>
       </product>
    </extension>

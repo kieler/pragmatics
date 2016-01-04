@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -113,6 +113,7 @@ import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 import de.cau.cs.kieler.ptolemy.attachmenteval.AttachmentData;
 import de.cau.cs.kieler.ptolemy.attachmenteval.DataEvaluator;
 import de.cau.cs.kieler.ptolemy.attachmenteval.PtolemyAttachmentEvalPlugin;
+import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses.IAttachmentAnalysis;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis;
 
 /**
@@ -169,7 +170,8 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     private AttachmentData attachmentData = null;
     
     /**
-     * The raw associations for the currently displayed file.
+     * The raw associations for the currently displayed file. These come directly from the attachment
+     * data. Thus, changes here are immediately reflect in the attachment data.
      */
     private Map<String, String> currentRawAssociations = null;
     
@@ -306,27 +308,27 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         runAlgorithmAction.setToolTipText("Run Attachment Heuristic");
         tbm.add(runAlgorithmAction);
         
-        Action countAnnotationsAction = new Action() {
+        Action runStatisticsAction = new Action() {
             @Override
             public void run() {
-                countAnnotations();
+                runStatistics();
             }
         };
-        countAnnotationsAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
+        runStatisticsAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
                 "icons/count.gif"));
-        countAnnotationsAction.setToolTipText("Count Annotations");
-        tbm.add(countAnnotationsAction);
+        runStatisticsAction.setToolTipText("Run Staistics");
+        tbm.add(runStatisticsAction);
         
-        Action analyzeDiagramsAction = new Action() {
+        Action runGraphAnalysesAction = new Action() {
             @Override
             public void run() {
-                analyzeDiagrams();
+                runGraphAnalysisOnDiagrams();
             }
         };
-        analyzeDiagramsAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
+        runGraphAnalysesAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
                 "icons/analyzediagrams.gif"));
-        analyzeDiagramsAction.setToolTipText("Analyze Selected Diagrams");
-        tbm.add(analyzeDiagramsAction);
+        runGraphAnalysesAction.setToolTipText("Analyze Selected Diagrams");
+        tbm.add(runGraphAnalysesAction);
         
         Action compareAttachmentsAction = new Action() {
             @Override
@@ -336,7 +338,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         };
         compareAttachmentsAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
                 "icons/compare.gif"));
-        compareAttachmentsAction.setToolTipText("Compare Attachment Data Against...");
+        compareAttachmentsAction.setToolTipText("Compare Attachment Data With Reference Attachment...");
         tbm.add(compareAttachmentsAction);
         
         tbm.update(true);
@@ -448,14 +450,28 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         // Event Listeners
         modelTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
+                // DEBUG START
+                System.out.println("Starting onSelectionChanged");
+                // DEBUG END
+                
                 Object element = ((ITreeSelection) event.getSelection()).getFirstElement();
                 
                 // We can only display files
                 if (element instanceof IFile) {
+                    // DEBUG START
+                    System.out.println("====> Showing model...");
+                    // DEBUG END
                     showModel((IFile) element, false);
+                    // DEBUG START
+                    System.out.println("====> ...done!");
+                    // DEBUG END
                 } else {
                     showModel(null, false);
                 }
+
+                // DEBUG START
+                System.out.println("Finished onSelectionChanged");
+                // DEBUG END
             }
         });
         modelTreeViewer.addCheckStateListener(new ICheckStateListener() {
@@ -790,14 +806,26 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
             return;
         }
         
+        // DEBUG START
+        System.out.println("Calling loadModel...");
+        // DEBUG END
         loadModel(modelFile, enableHeuristic);
+        // DEBUG START
+        System.out.println("Finished loadModel...");
+        // DEBUG END
         
+        // DEBUG START
+        System.out.println("Starting layout...");
+        // DEBUG END
         if (klighdViewContext != null) {
             klighdViewer.setModel(klighdViewContext);
             LightDiagramServices.layoutDiagram(klighdViewContext, false);
         } else {
             klighdViewer.setModel("No valid model selected.", false);
         }
+        // DEBUG START
+        System.out.println("Finished layout...");
+        // DEBUG END
 
         // Update the input of the attachment viewer
         attachmentsTreeViewer.setInput(klighdViewContext);
@@ -1013,10 +1041,12 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         }
         
         // Retrieve the URI fragments of the two nodes in the source model
-        String commentURIFragment = currentResource.getURIFragment(
-                (EObject) klighdViewContext.getSourceElement(commentNode));
-        String actorURIFragment = currentResource.getURIFragment(
-                (EObject) klighdViewContext.getSourceElement(actorNode));
+        EObject commentElement = (EObject) klighdViewContext.getSourceElement(commentNode);
+        EObject actorElement = (EObject) klighdViewContext.getSourceElement(actorNode);
+        
+        String commentURIFragment = currentResource.getURIFragment(commentElement);
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        String actorURIFragment = currentResource.getURIFragment(actorElement);
         
         // Add the association
         currentAssociations.put(commentNode, actorNode);
@@ -1063,6 +1093,8 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     private void runAlgorithm() {
         // Reset attachments and retrieve selected elements
         attachmentData.getAssociations().clear();
+        setDirty(true);
+        
         final Object[] checkedElements = modelTreeViewer.getCheckedElements();
         
         // A control for accessing the display
@@ -1108,10 +1140,14 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     /**
      * Updates the annotations count on each model.
      */
-    private void countAnnotations() {
+    private void runStatistics() {
         // Reset attachments and retrieve selected elements
         attachmentData.getAnnotationCounts().clear();
         final Object[] checkedElements = modelTreeViewer.getCheckedElements();
+        
+        // The analysis to run on the model files, in addition to the annotation counting which is
+        // always done
+        final IAttachmentAnalysis analysis = null;
         
         // A control for accessing the display
         final Control control = modelTreeViewer.getControl();
@@ -1122,6 +1158,10 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
                 
                 // Iterate over each selected model file
                 for (Object selectedObject : checkedElements) {
+                    if (monitor.isCanceled()) {
+                        break;
+                    }
+                    
                     if (selectedObject instanceof IFile) {
                         final IFile selectedFile = (IFile) selectedObject;
                         monitor.subTask(selectedFile.getName());
@@ -1130,17 +1170,32 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
                         control.getDisplay().syncExec(new Runnable() {
                             public void run() {
                                 loadModel(selectedFile, false);
-                                if (klighdViewContext != null) {
-                                    int count = countAnnotations(klighdViewContext.getViewModel());
-                                    attachmentData.getAnnotationCounts().put(
-                                            getRelativeModelPath(selectedFile),
-                                            count);
-                                }
                             }
                         });
+                        
+                        // Run statistics on the model in non-UI thread
+                        if (klighdViewContext != null) {
+                            // Run analysis for this model
+                            if (analysis != null) {
+                                analysis.process(klighdViewContext.getViewModel(),
+                                        getRelativeModelPath(selectedFile),
+                                        CommentAttachmentEditor.this);
+                            }
+                            
+                            // Count annotations
+                            int count = countAnnotations(klighdViewContext.getViewModel());
+                            attachmentData.getAnnotationCounts().put(
+                                    getRelativeModelPath(selectedFile),
+                                    count);
+                        }
                     }
                     
                     monitor.worked(1);
+                }
+                
+                // Tell the analysis to finish
+                if (analysis != null) {
+                    analysis.finish();
                 }
                 
                 monitor.done();
@@ -1150,6 +1205,10 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
         try {
             progressService.busyCursorWhile(algorithmJob);
+            
+            System.out.println("Selected models: " + attachmentData.getSelectedFiles().size());
+            System.out.println("Annotations: " + attachmentData.getAnnotationCountsSum());
+            System.out.println("Associations: " + attachmentData.getAssociationCountsSum());
         } catch (InvocationTargetException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -1185,7 +1244,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
      * Invokes GrAna to analyze the selected diagrams. The results are saved in a CSV file named just
      * like the file opened in the editor.
      */
-    private void analyzeDiagrams() {
+    private void runGraphAnalysisOnDiagrams() {
         // Show the analysis selection dialog so that the user can choose which analyses he wants
         AnalysisSelectionDialog dialog = new AnalysisSelectionDialog(
                 this.getSite().getShell(),
@@ -1287,7 +1346,8 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
             }
         });
         dialog.setTitle("Select File");
-        dialog.setMessage("Select the attachment evaluation file that is to be compared to this file.");
+        dialog.setMessage("Select the attachment evaluation that contains the reference attachment "
+                + "this file will be compared to.");
         if (dialog.open() != Dialog.OK) {
             return;
         }
@@ -1314,7 +1374,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         }
         
         // Evaluate the data
-        DataEvaluator evaluator = DataEvaluator.createFor(attachmentData, otherData, false);
+        DataEvaluator evaluator = DataEvaluator.createFor(otherData, attachmentData, true);
         evaluator.printCSV(System.out);
     }
     
@@ -1360,7 +1420,6 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     // DIAGRAM WORKBENCH PART STUFF
 
     public String getPartId() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -1375,4 +1434,21 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     public ViewContext getViewContext() {
         return klighdViewContext;
     }
+    
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    // UTILITY METHODS FOR ANALYSES
+    
+    /**
+     * Returns the node the given comment node is attached to in the currently loaded model. This is
+     * a utility function to be used by analyses.
+     * 
+     * @param viewModelComment
+     *            comment node from the view model.
+     * @return the node the comment is attached to, or {@code null} if it is unattached.
+     */
+    public KNode getAttachmentTarget(final KNode viewModelComment) {
+        return currentAssociations.get(viewModelComment);
+    }
+    
 }

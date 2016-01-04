@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -1113,9 +1113,25 @@ public class RandomGraphGenerator {
                 edge.setTargetPort(targetPort);
             }
         }
+        
+        if (options.getProperty(GeneratorOptions.EDGE_LABELS)) {
+            addEdgeLabel(edge);
+        }
+        
         return edge;
     }
     
+    /**
+     * Creates a {@link KLabel} with random text and adds it to the edge.
+     * 
+     * @param edge the edge to add the label to.
+     */
+    private void addEdgeLabel(final KEdge edge) {
+        KLabel label = KimlUtil.createInitializedLabel(edge);
+        label.setText(Blindtext.getRandomText());
+        edge.getLabels().add(label);
+    }
+
     /**
      * Retrieves a port for a new edge to connect to the given node through. This can either be a newly
      * created port, or an existing one. Which one it is depends on the chance of ports to be reused.

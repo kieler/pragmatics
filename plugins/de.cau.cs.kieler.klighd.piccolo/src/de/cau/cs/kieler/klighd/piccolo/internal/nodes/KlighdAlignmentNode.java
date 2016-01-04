@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -193,14 +193,19 @@ public class KlighdAlignmentNode extends KlighdNode.KlighdFigureNode<KRendering>
         final PAffineTransform transform = child.getTransformReference(true);
 
         final double x;
-        switch (halignment) {
-        case LEFT:
-            x = 0;
-            break;
-        case RIGHT:
-            x = thisBounds.width - childBounds.width;
-            break;
-        default /* CENTER */:
+        
+        if (halignment != null) {
+            switch (halignment) {
+            case LEFT:
+                x = 0;
+                break;
+            case RIGHT:
+                x = thisBounds.width - childBounds.width;
+                break;
+            default /* CENTER */:
+                x = (thisBounds.width - childBounds.width) / 2;
+            }
+        } else {
             x = (thisBounds.width - childBounds.width) / 2;
         }
 

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -33,5 +33,27 @@ public enum EdgeLabelSideSelection {
     DIRECTION_DOWN,
     /** A heuristic is used to determine the side. */
     SMART;
+    
+    
+    /**
+     * Transposes this label side selection strategy and returns the result. Downward selections are
+     * turned upwards while upward selections are turned downwards. The smart selection stays smart.
+     * 
+     * @return the transformed edge label side selection.
+     */
+    public EdgeLabelSideSelection transpose() {
+        switch (this) {
+        case ALWAYS_UP:
+            return ALWAYS_DOWN;
+        case ALWAYS_DOWN:
+            return ALWAYS_UP;
+        case DIRECTION_UP:
+            return DIRECTION_DOWN;
+        case DIRECTION_DOWN:
+            return DIRECTION_UP;
+        default:
+            return SMART;
+        }
+    }
     
 }

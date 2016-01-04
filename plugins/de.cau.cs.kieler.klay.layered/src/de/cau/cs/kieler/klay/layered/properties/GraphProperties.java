@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -48,6 +48,8 @@ public enum GraphProperties {
     /** The graph contains node labels. */
     CENTER_LABELS,
     /** The graph contains head or tail edge labels. */
-    END_LABELS;
+    END_LABELS,
+    /** The graph's nodes are partitioned. */
+    PARTITIONS;
     
 }

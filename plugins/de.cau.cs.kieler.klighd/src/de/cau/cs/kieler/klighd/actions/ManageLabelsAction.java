@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -57,7 +57,8 @@ public final class ManageLabelsAction implements IAction {
         
         // We are looking for AbstractKlighdLabelManager instances...
         if (labelManager instanceof AbstractKlighdLabelManager) {
-            ((AbstractKlighdLabelManager) labelManager).toggleActive();
+            AbstractKlighdLabelManager akLabelManager = (AbstractKlighdLabelManager) labelManager;
+            akLabelManager.setActive(!akLabelManager.isActive());
             actuallyDidStuff = true;
         }
         

@@ -106,6 +106,9 @@
                option="de.cau.cs.kieler.layoutHierarchy">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.hierarchyHandling">
+         </knownOption>
+         <knownOption
                default="true"
                option="de.cau.cs.kieler.separateConnComp">
          </knownOption>
@@ -195,6 +198,13 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy">
+         </knownOption>
+         <knownOption
+               default="NONE"
+               option="de.cau.cs.kieler.klay.layered.postCompaction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.components.compact">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -332,6 +342,10 @@
                option="de.cau.cs.kieler.layoutHierarchy"
                value="true">
          </dependency>
+         <dependency
+               option="de.cau.cs.kieler.hierarchyHandling"
+               value="INCLUDE_CHILDREN">
+         </dependency>
       </layoutOption>
       <layoutOption
             advanced="true"
@@ -393,7 +407,7 @@
       <layoutOption
             appliesTo="parents"
             class="de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection"
-            default="SMART"
+            default="ALWAYS_DOWN"
             description="Method to decide on edge label sides."
             id="de.cau.cs.kieler.klay.layered.edgeLabelSideSelection"
             name="Edge Label Side Selection"
@@ -468,6 +482,61 @@
          <dependency
                option="de.cau.cs.kieler.klay.layered.nodePlace"
                value="BRANDES_KOEPF">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="ports"
+            default="false"
+            id="de.cau.cs.kieler.klay.layered.northOrSouthPort"
+            name="North or South Port"
+            description="Specifies that this port can either be placed on the north side of a node or on the south side (if port constraints permit)"
+            type="boolean">
+       </layoutOption>
+       <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy"
+            default="NONE"
+            description="Specifies whether and how post-process compaction is applied."
+            id="de.cau.cs.kieler.klay.layered.postCompaction"
+            name="Post Compaction"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy"
+            default="NONE"
+            description="Reduces number of dummy nodes after layering phase (if possible)."
+            id="de.cau.cs.kieler.klay.layered.nodePromotion"
+            name="Node Promotion"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            appliesTo="parents"
+            default="0"
+            description="Limits the number of iterations for node promotion."
+            id="de.cau.cs.kieler.klay.layered.nodePromotionBoundary"
+            lowerBound="0"
+            name="Node Promotion Boundary"
+            type="int"
+            upperBound="100">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodePromotion">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            default="false"
+            description="Tries to further compact components (disconnected sub-graphs)."
+            id="de.cau.cs.kieler.klay.layered.components.compact"
+            name="Compact Components"
+            type="boolean">
+         <dependency
+               option="de.cau.cs.kieler.separateConnComp"
+               value="true">
          </dependency>
       </layoutOption>
    </extension>

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -17,6 +17,7 @@ import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import de.cau.cs.kieler.kiml.options.HierarchyHandling;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.transform.IGraphTransformer;
@@ -60,7 +61,8 @@ public final class LayeredLayoutProvider extends AbstractLayoutProvider {
 
         // Check if hierarchy handling for a compound graph is requested
         KShapeLayout kgraphLayout = kgraph.getData(KShapeLayout.class);
-        if (kgraphLayout.getProperty(LayoutOptions.LAYOUT_HIERARCHY)) {
+        if (kgraphLayout.getProperty(LayoutOptions.HIERARCHY_HANDLING) 
+                == HierarchyHandling.INCLUDE_CHILDREN) {
 
             // Layout for all hierarchy levels is requested
             klayLayered.doCompoundLayout(layeredGraph, progressMonitor);

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -206,7 +206,7 @@ public final class DiagramViewManager implements IPartListener {
         }
 
         // update the view context
-        if (!LightDiagramServices.updateDiagram(viewContext)) {
+        if (!LightDiagramServices.updateDiagram(viewContext, model, properties)) {
             return null;
         }
 

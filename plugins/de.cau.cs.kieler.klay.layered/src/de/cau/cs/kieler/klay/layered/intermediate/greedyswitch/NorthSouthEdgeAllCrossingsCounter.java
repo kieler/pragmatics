@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -14,11 +14,11 @@
 package de.cau.cs.kieler.klay.layered.intermediate.greedyswitch;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -43,6 +43,7 @@ public class NorthSouthEdgeAllCrossingsCounter {
     private int numberOfNorthSouthEdges;
     private int numberOfLongEdgeDummies;
     private boolean northOfCurrentOriginNode = true;
+    private final boolean usesOrthogonalCounter;
 
     /**
      * Creates counter.
@@ -56,6 +57,8 @@ public class NorthSouthEdgeAllCrossingsCounter {
         portPositions = Maps.newHashMap();
         northCardinalities = Maps.newHashMap();
         southCardinalities = Maps.newHashMap();
+        usesOrthogonalCounter =
+                layer[0].getGraph().getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL;
         initPositionsAndCardinalities();
     }
 
@@ -175,15 +178,15 @@ public class NorthSouthEdgeAllCrossingsCounter {
     }
 
     private boolean isNormal(final LNode node) {
-        return node.getNodeType() == NodeType.NORMAL;
+        return node.getType() == NodeType.NORMAL;
     }
 
     private boolean isLongEdgeDummy(final LNode node) {
-        return node.getNodeType() == NodeType.LONG_EDGE;
+        return node.getType() == NodeType.LONG_EDGE;
     }
 
     private boolean isNorthSouth(final LNode node) {
-        return node.getNodeType() == NodeType.NORTH_SOUTH_PORT;
+        return node.getType() == NodeType.NORTH_SOUTH_PORT;
     }
 
     private int getCrossingsOnSide(final LNode node, final PortSide side) {
@@ -204,18 +207,20 @@ public class NorthSouthEdgeAllCrossingsCounter {
     }
 
     private boolean hasConnectedEdge(final LPort port) {
-        return !getConnectedNorthSouthDummies(port).isEmpty()
-                || port.getConnectedEdges().iterator().hasNext();
+        return getConnectedNorthSouthDummy(port) != null;
     }
 
     private int numberOfWesternCrossings(final LNode node, final LPort port,
             final LNode northSouthDummy, final PortSide side) {
-        return Math.min(positionOf(port), nearnessBetween(node, northSouthDummy));
+        int factor = usesOrthogonalCounter ? 1 : northSouthDummy.getPorts().get(0).getDegree();
+        return factor * Math.min(positionOf(port), nearnessBetween(node, northSouthDummy));
     }
 
     private int numberOfEasternCrossings(final LNode node, final LPort port,
             final LNode northSouthDummy, final PortSide side) {
-        return Math.min(cardinalityOnSide(node, side) - 1 - positionOf(port),
+        int factor = usesOrthogonalCounter ? 1 : northSouthDummy.getPorts().get(0).getDegree();
+        return factor
+                * Math.min(cardinalityOnSide(node, side) - 1 - positionOf(port),
                 nearnessBetween(node, northSouthDummy));
     }
 
@@ -228,12 +233,7 @@ public class NorthSouthEdgeAllCrossingsCounter {
     }
 
     private LNode getConnectedNorthSouthDummy(final LPort port) {
-        List<LPort> connectedNSDummies = getConnectedNorthSouthDummies(port);
-        return connectedNSDummies.get(0).getNode();
-    }
-
-    private List<LPort> getConnectedNorthSouthDummies(final LPort port) {
-        return port.getProperty(InternalProperties.CONNECTED_NORTH_SOUTH_PORT_DUMMIES);
+        return port.getProperty(InternalProperties.PORT_DUMMY);
     }
 
     private int nearnessBetween(final LNode node, final LNode northSouthDummy) {

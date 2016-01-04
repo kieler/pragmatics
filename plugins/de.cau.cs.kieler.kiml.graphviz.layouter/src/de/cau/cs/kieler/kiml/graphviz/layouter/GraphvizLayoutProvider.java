@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2008 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -31,20 +31,18 @@ import com.google.inject.Injector;
 import de.cau.cs.kieler.core.WrappedException;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.ForkedOutputStream;
-import de.cau.cs.kieler.core.util.ForwardingInputStream;
 import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.formats.GraphFormatData;
-import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
-import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
-import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.Command;
 import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotExporter;
-import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotFormatHandler;
+import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotResourceSetProvider;
+import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotTransformationData;
+import de.cau.cs.kieler.kiml.graphviz.dot.transform.IDotTransformationData;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool.Cleanup;
 import de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizLayouterPreferenceStoreAccess;
+import de.cau.cs.kieler.kiml.graphviz.layouter.util.ForkedOutputStream;
+import de.cau.cs.kieler.kiml.graphviz.layouter.util.ForwardingInputStream;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
@@ -72,10 +70,10 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
     /** the Graphviz process pool. */
     private GraphvizTool graphvizTool;
     /** the Graphviz Dot format handler. */
-    private DotFormatHandler dotHandler;
+    private DotResourceSetProvider dotResourceSetProvider;
     /** the call number for the current execution. */
     private int myCallNo;
-    /** lazily created injector for creating required format handlers if running outside of Eclipse. */
+    /** lazily created injector for creating required resource set creators. */
     private Injector injector;
 
     /**
@@ -89,22 +87,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         // the dot format handler is indirectly fetched in order to ensure proper injection (if we're
         // inside Eclipse, use the GraphFormatsService to retrieve the handler; otherwise, use an
         // injector to retrieve an instance)
-        IGraphFormatHandler<?> handler = null;
-        if (EclipseRuntimeDetector.isEclipseRunning()) {
-            GraphFormatData formatData = GraphFormatsService.getInstance().getFormatData(
-                    DotFormatHandler.ID);
-            if (formatData != null) {
-                handler = formatData.getHandler();
-            }
-            
-            if (handler instanceof DotFormatHandler) {
-                dotHandler = (DotFormatHandler) handler;
-            } else {
-                throw new IllegalStateException("The Graphviz Dot language support is not available.");
-            }
-        } else {
-            dotHandler = getInjector().getInstance(DotFormatHandler.class);
-        }
+        dotResourceSetProvider = getInjector().getInstance(DotResourceSetProvider.class);
     }
 
     /**
@@ -132,8 +115,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode parentNode,
-            final IKielerProgressMonitor progressMonitor) {
+    public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
         if (command == Command.INVALID) {
             throw new IllegalStateException("The Graphviz layout provider is not initialized.");
         }
@@ -151,16 +133,19 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
         graphvizTool.initialize();
 
         // create an Xtext resource set for parsing and serialization
-        XtextResourceSet resourceSet = (XtextResourceSet) dotHandler.createResourceSet();
+        XtextResourceSet resourceSet = (XtextResourceSet) dotResourceSetProvider.createResourceSet();
+        
+        // create the dot exporter we'll be using
+        DotExporter dotExporter = new DotExporter();
 
         // translate the KGraph to Graphviz and write to the process
-        TransformationData<KNode, GraphvizModel> transData
-                = new TransformationData<KNode, GraphvizModel>();
+        IDotTransformationData<KNode, GraphvizModel> transData
+                = new DotTransformationData<KNode, GraphvizModel>();
         transData.setSourceGraph(parentNode);
         transData.setProperty(DotExporter.USE_EDGE_IDS, true);
         transData.setProperty(DotExporter.FULL_EXPORT, false);
         transData.setProperty(DotExporter.COMMAND, command);
-        dotHandler.getExporter().transform(transData);
+        dotExporter.transform(transData);
         GraphvizModel graphvizInput = transData.getTargetGraphs().get(0);
         writeDotGraph(graphvizInput, progressMonitor.subTask(1), debugMode, resourceSet);
 
@@ -169,7 +154,7 @@ public class GraphvizLayoutProvider extends AbstractLayoutProvider {
             GraphvizModel graphvizOutput = readDotGraph(progressMonitor.subTask(1),
                     debugMode, resourceSet);
             transData.getTargetGraphs().set(0, graphvizOutput);
-            dotHandler.getExporter().transferLayout(transData);
+            dotExporter.transferLayout(transData);
         } finally {
             boolean reuseProcess =
                     GraphvizLayouterPreferenceStoreAccess.getUISaveBoolean(

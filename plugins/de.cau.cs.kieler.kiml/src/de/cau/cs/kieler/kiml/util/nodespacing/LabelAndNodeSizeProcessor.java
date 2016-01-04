@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -70,7 +70,7 @@ public class LabelAndNodeSizeProcessor {
      * {@inheritDoc}
      */
     public void process(final GraphAdapter<?> layeredGraph) {
-        final double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING);
+        final double labelSpacing = layeredGraph.getProperty(LayoutOptions.LABEL_SPACING).doubleValue();
 
         // Iterate over all the graph's nodes
         for (final NodeAdapter<?> node : layeredGraph.getNodes()) {
@@ -82,7 +82,7 @@ public class LabelAndNodeSizeProcessor {
              */
             final NodeData data = new NodeData(node);
             data.labelSpacing = labelSpacing;
-            data.portSpacing = node.getProperty(LayoutOptions.PORT_SPACING);
+            data.portSpacing = node.getProperty(LayoutOptions.PORT_SPACING).doubleValue();
 
             /*
              * PHASE 1 (SAD DUCK):
@@ -600,8 +600,8 @@ public class LabelAndNodeSizeProcessor {
 
         // Respect minimum size
         if (sizeConstraint.contains(SizeConstraint.MINIMUM_SIZE)) {
-            double minWidth = data.node.getProperty(LayoutOptions.MIN_WIDTH);
-            double minHeight = data.node.getProperty(LayoutOptions.MIN_HEIGHT);
+            double minWidth = data.node.getProperty(LayoutOptions.MIN_WIDTH).doubleValue();
+            double minHeight = data.node.getProperty(LayoutOptions.MIN_HEIGHT).doubleValue();
 
             // If we are to use default minima, check if the values are properly set
             if (sizeOptions.contains(SizeOptions.DEFAULT_MINIMUM_SIZE)) {

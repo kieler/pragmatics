@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -12,6 +12,22 @@
  * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.klay.layered.components;
+
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NONE;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_SOUTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_SOUTH_WEST;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_WEST;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,6 +38,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
+import de.cau.cs.kieler.klay.layered.properties.Properties;
 
 /**
  * A graph placer that tries to place the components of a graph with taking connections to external
@@ -84,7 +101,7 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         for (ComponentGroup group : componentGroups) {
             // Place the components
             KVector groupSize = placeComponents(group, spacing);
-            moveGraphs(target, group.getComponents(), offset.x, offset.y);
+            offsetGraphs(group.getComponents(), offset.x, offset.y);
             
             // Compute the new offset
             offset.x += groupSize.x;
@@ -95,6 +112,26 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         // on the right and bottom sides which we need to subtract at this point)
         target.getSize().x = offset.x - spacing;
         target.getSize().y = offset.y - spacing;
+        
+        // if compaction is desired, do so!
+        if (firstComponent.getProperty(Properties.COMPACT_COMPONENTS)) {
+            ComponentsCompactor compactor = new ComponentsCompactor();
+            compactor.compact(components, target.getSize(), spacing);
+    
+            // the compaction algorithm places components absolutely,
+            // therefore we have to use the final drawing's offset
+            for (LGraph h : components) {
+                h.getOffset().reset().add(compactor.getOffset());
+            }
+            
+            // set the new graph size
+            target.getSize().reset().add(compactor.getGraphSize());
+        }
+        
+        // finally move the components to the combined graph
+        for (ComponentGroup group : componentGroups) {
+            moveGraphs(target, group.getComponents(), 0, 0);
+        }
     }
     
     
@@ -146,35 +183,35 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         // Place the different sector components and remember the amount of space their placement uses.
         // In this phase, we pretend that no other components are in the component group.
         KVector sizeC = placeComponentsInRows(
-                group.getComponents(ComponentGroup.CONN_C), spacing);
+                group.getComponents(SIDES_NONE), spacing);
         KVector sizeN = placeComponentsHorizontally(
-                group.getComponents(ComponentGroup.CONN_N), spacing);
+                group.getComponents(SIDES_NORTH), spacing);
         KVector sizeS = placeComponentsHorizontally(
-                group.getComponents(ComponentGroup.CONN_S), spacing);
+                group.getComponents(SIDES_SOUTH), spacing);
         KVector sizeW = placeComponentsVertically(
-                group.getComponents(ComponentGroup.CONN_W), spacing);
+                group.getComponents(SIDES_WEST), spacing);
         KVector sizeE = placeComponentsVertically(
-                group.getComponents(ComponentGroup.CONN_E), spacing);
+                group.getComponents(SIDES_EAST), spacing);
         KVector sizeNW = placeComponentsHorizontally(
-                group.getComponents(ComponentGroup.CONN_NW), spacing);
+                group.getComponents(SIDES_NORTH_WEST), spacing);
         KVector sizeNE = placeComponentsHorizontally(
-                group.getComponents(ComponentGroup.CONN_NE), spacing);
+                group.getComponents(SIDES_NORTH_EAST), spacing);
         KVector sizeSW = placeComponentsHorizontally(
-                group.getComponents(ComponentGroup.CONN_SW), spacing);
+                group.getComponents(SIDES_SOUTH_WEST), spacing);
         KVector sizeSE = placeComponentsHorizontally(
-                group.getComponents(ComponentGroup.CONN_SE), spacing);
+                group.getComponents(SIDES_EAST_SOUTH), spacing);
         KVector sizeWE = placeComponentsVertically(
-                group.getComponents(ComponentGroup.CONN_WE), spacing);
+                group.getComponents(SIDES_EAST_WEST), spacing);
         KVector sizeNS = placeComponentsHorizontally(
-                group.getComponents(ComponentGroup.CONN_NS), spacing);
+                group.getComponents(SIDES_NORTH_SOUTH), spacing);
         KVector sizeNWE = placeComponentsHorizontally(
-                group.getComponents(ComponentGroup.CONN_NWE), spacing);
+                group.getComponents(SIDES_NORTH_EAST_WEST), spacing);
         KVector sizeSWE = placeComponentsHorizontally(
-                group.getComponents(ComponentGroup.CONN_SWE), spacing);
+                group.getComponents(SIDES_EAST_SOUTH_WEST), spacing);
         KVector sizeWNS = placeComponentsVertically(
-                group.getComponents(ComponentGroup.CONN_WNS), spacing);
+                group.getComponents(SIDES_NORTH_SOUTH_WEST), spacing);
         KVector sizeENS = placeComponentsVertically(
-                group.getComponents(ComponentGroup.CONN_ENS), spacing);
+                group.getComponents(SIDES_NORTH_EAST_SOUTH), spacing);
         
         // Find the maximum height of the three rows and the maximum width of the three columns the
         // component group is divided into (we're adding a fourth row for WE components and a fourth
@@ -191,40 +228,40 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         // With the individual placements computed, we now move the components to their final place,
         // taking the size of other component placements into account (the NW, NWE, and WNS components
         // stay at coordinates (0,0) and thus don't need to be moved around)
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_C),
+        offsetGraphs(group.getComponents(SIDES_NONE),
                 colLeftWidth + colNsWidth,
                 rowTopHeight + rowWeHeight);
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_N),
+        offsetGraphs(group.getComponents(SIDES_NORTH),
                 colLeftWidth + colNsWidth,
                 0.0);
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_S),
+        offsetGraphs(group.getComponents(SIDES_SOUTH),
                 colLeftWidth + colNsWidth,
                 rowTopHeight + rowWeHeight + rowMidHeight);
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_W),
+        offsetGraphs(group.getComponents(SIDES_WEST),
                 0.0,
                 rowTopHeight + rowWeHeight);
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_E),
+        offsetGraphs(group.getComponents(SIDES_EAST),
                 colLeftWidth + colNsWidth + colMidWidth,
                 rowTopHeight + rowWeHeight);
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_NE),
+        offsetGraphs(group.getComponents(SIDES_NORTH_EAST),
                 colLeftWidth + colNsWidth + colMidWidth,
                 0.0);
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_SW),
+        offsetGraphs(group.getComponents(SIDES_SOUTH_WEST),
                 0.0,
                 rowTopHeight + rowWeHeight + rowMidHeight);
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_SE),
+        offsetGraphs(group.getComponents(SIDES_EAST_SOUTH),
                 colLeftWidth + colNsWidth + colMidWidth,
                 rowTopHeight + rowWeHeight + rowMidHeight);
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_WE),
+        offsetGraphs(group.getComponents(SIDES_EAST_WEST),
                 0.0,
                 rowTopHeight);
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_NS),
+        offsetGraphs(group.getComponents(SIDES_NORTH_SOUTH),
                 colLeftWidth,
                 0.0);
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_SWE),
+        offsetGraphs(group.getComponents(SIDES_EAST_SOUTH_WEST),
                 0.0,
                 rowTopHeight + rowWeHeight + rowMidHeight);
-        offsetGraphs(group.getComponents(ComponentGroup.CONN_ENS),
+        offsetGraphs(group.getComponents(SIDES_NORTH_EAST_SOUTH),
                 colLeftWidth + colNsWidth + colMidWidth,
                 0.0);
         

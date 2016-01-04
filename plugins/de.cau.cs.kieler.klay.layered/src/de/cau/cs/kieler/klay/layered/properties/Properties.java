@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -17,6 +17,8 @@ import java.util.EnumSet;
 
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
@@ -35,6 +37,21 @@ import de.cau.cs.kieler.klay.layered.p4nodes.bk.CompactionStrategy;
  */
 public final class Properties {
 
+    /**
+     * Property to enable or disable node-promotion.
+     */
+    public static final IProperty<NodePromotionStrategy> NODE_PROMOTION =
+            new Property<NodePromotionStrategy>("de.cau.cs.kieler.klay.layered.nodePromotion",
+                    NodePromotionStrategy.NONE);
+
+    /**
+     * Boundary for limiting the number of iterations of the node promotion algorithm. Delimited by
+     * a percentage of the number of nodes of the graph or a percentage of how may dummy nodes may
+     * be reduced in the best case (1% to 100%, 0 sets no boundary).
+     */
+    public static final IProperty<Integer> NODE_PROMOTION_BOUNDARY = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.nodePromotionBoundary", 0, 0, 100);
+    
     /**
      * A pre-defined seed for pseudo-random number generators.
      * We redefine the property here to set its default value to 1.
@@ -132,7 +149,7 @@ public final class Properties {
     public static final IProperty<EdgeLabelSideSelection> EDGE_LABEL_SIDE_SELECTION =
             new Property<EdgeLabelSideSelection>(
                     "de.cau.cs.kieler.klay.layered.edgeLabelSideSelection",
-                    EdgeLabelSideSelection.SMART);
+                    EdgeLabelSideSelection.ALWAYS_UP);
 
     /**
      * Property to switch debug mode on or off.
@@ -223,6 +240,27 @@ public final class Properties {
             new Property<CompactionStrategy>(
                     "de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy",
                     CompactionStrategy.CLASSIC);
+    
+    /**
+     * Property set per port that specifies if ports on north/south side of a node may switch sides.
+     */
+    public static final IProperty<Boolean> NORTH_OR_SOUTH_PORT = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.northOrSouthPort", false);
+    
+    /**
+     * Property to choose a one dimensional compaction strategy.
+     */
+    public static final IProperty<GraphCompactionStrategy> POST_COMPACTION =
+            new Property<GraphCompactionStrategy>(
+                    "de.cau.cs.kieler.klay.layered.postCompaction",
+                    GraphCompactionStrategy.NONE);
+    
+    /**
+     * Whether the algorithm should try to further compact connected components after they 
+     * have initially been placed by some construction strategy.
+     */
+    public static final IProperty<Boolean> COMPACT_COMPONENTS = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.components.compact", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

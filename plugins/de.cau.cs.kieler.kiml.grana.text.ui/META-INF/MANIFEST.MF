@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Graph Analysis Text UI
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-Vendor: Kiel University
 Bundle-Version: 0.1.2.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.grana.text.ui; singleton:=true
 Bundle-ActivationPolicy: lazy
@@ -20,7 +20,7 @@ Require-Bundle: de.cau.cs.kieler.kiml.grana.text;visibility:=reexport,
  org.eclipse.xtext.xbase.lib
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Export-Package: de.cau.cs.kieler.kiml.grana.text.ui.contentassist,
  de.cau.cs.kieler.kiml.grana.text.ui.contentassist.antlr,
  de.cau.cs.kieler.kiml.grana.text.ui.quickfix

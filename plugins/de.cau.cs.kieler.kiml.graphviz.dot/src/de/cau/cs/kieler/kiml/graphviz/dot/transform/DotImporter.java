@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -33,8 +33,6 @@ import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.core.properties.MapPropertyHolder;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.Attribute;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeStatement;
 import de.cau.cs.kieler.kiml.graphviz.dot.dot.AttributeType;
@@ -65,7 +63,7 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
+public class DotImporter {
     
     /** map of Graphviz node identifiers to their KNode instances. */
     private static final IProperty<Map<String, KNode>> NODE_ID_MAP
@@ -88,9 +86,13 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
             "dotTransformer.defHeight");
     
     /**
-     * {@inheritDoc}
+     * Transform the GraphViz model into a KGraph.
+     * 
+     * @param transData
+     *            the transformation data instance that holds the source graph and is enriched with
+     *            the new target graphs
      */
-    public void transform(final TransformationData<GraphvizModel, KNode> transData) {
+    public void transform(final IDotTransformationData<GraphvizModel, KNode> transData) {
         for (Graph graph : transData.getSourceGraph().getGraphs()) {
             KNode parent = KimlUtil.createInitializedNode();
             Map<String, KNode> nodeIdMap = Maps.newHashMap();
@@ -105,9 +107,13 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
     }
 
     /**
-     * {@inheritDoc}
+     * Apply the layout of the target KGraphs to the original GraphViz model. This may only be used
+     * on target graphs that were created by the same transformation class.
+     * 
+     * @param transData
+     *            the transformation data instance
      */
-    public void transferLayout(final TransformationData<GraphvizModel, KNode> transData) {
+    public void transferLayout(final IDotTransformationData<GraphvizModel, KNode> transData) {
         for (KNode layoutNode : transData.getTargetGraphs()) {
             applyLayout(layoutNode, new KVector(),
                     layoutNode.getData(KShapeLayout.class).getProperty(PROP_GRAPH));
@@ -116,27 +122,33 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
     
     
     /*---------- Transformation Dot to KGraph ----------*/
-    
+
     /**
      * Transform a Dot graph to a KNode.
      * 
-     * @param statements a list of Dot statements
-     * @param parent a KNode
-     * @param transData transformation data instance
-     * @param nodeProps properties that are applied to all nodes
-     * @param edgeProps properties that are applied to all edges
+     * @param statements
+     *            a list of Dot statements
+     * @param parent
+     *            a KNode
+     * @param transData
+     *            transformation data instance
+     * @param nodeProps
+     *            properties that are applied to all nodes
+     * @param edgeProps
+     *            properties that are applied to all edges
      */
     private void transform(final List<Statement> statements, final KNode parent,
-            final TransformationData<GraphvizModel, KNode> transData, final IPropertyHolder nodeProps,
-            final IPropertyHolder edgeProps) {
+            final IDotTransformationData<GraphvizModel, KNode> transData,
+            final IPropertyHolder nodeProps, final IPropertyHolder edgeProps) {
+        
         final KShapeLayout parentLayout = parent.getData(KShapeLayout.class);
         DotSwitch<Object> statementSwitch = new DotSwitch<Object>() {
-            
+
             public Object caseNodeStatement(final NodeStatement statement) {
                 transformNode(statement, parent, transData, nodeProps);
                 return null;
             }
-            
+
             public Object caseEdgeStatement(final EdgeStatement statement) {
                 transformEdge(statement, parent, transData, edgeProps);
                 return null;
@@ -148,8 +160,8 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
                     subKNode = transformNode(subgraph.getName(), parent, transData);
                     KShapeLayout nodeLayout = subKNode.getData(KShapeLayout.class);
                     if (nodeLayout.getProperty(PROP_STATEMENT) != null) {
-                        transData.log("Discarding cluster subgraph \""
-                                + subgraph.getName() + "\" since its id is already used.");
+                        transData.log("Discarding cluster subgraph \"" + subgraph.getName()
+                                + "\" since its id is already used.");
                         return null;
                     } else {
                         // the subgraph inherits all settings of its parent
@@ -233,7 +245,7 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
      * @param transData transformation data
      */
     private void transformAttribute(final IPropertyHolder target, final Attribute attribute,
-            final TransformationData<GraphvizModel, KNode> transData) {
+            final IDotTransformationData<GraphvizModel, KNode> transData) {
         String name = attribute.getName();
         String value = trimValue(attribute);
         try {
@@ -345,7 +357,7 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
      * @param defaultProps default values for node options
      */
     private void transformNode(final NodeStatement statement, final KNode parent,
-            final TransformationData<GraphvizModel, KNode> transData,
+            final IDotTransformationData<GraphvizModel, KNode> transData,
             final IPropertyHolder defaultProps) {
         KNode knode = transformNode(statement.getNode().getName(), parent, transData);
         KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
@@ -410,7 +422,7 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
      * @return a KNode instance
      */
     private KNode transformNode(final String nodeId, final KNode parent,
-            final TransformationData<GraphvizModel, KNode> transData) {
+            final IDotTransformationData<GraphvizModel, KNode> transData) {
         Map<String, KNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
         KNode knode = nodeIdMap.get(nodeId);
         if (knode == null) {
@@ -436,7 +448,7 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
      * @return a KPort instance
      */
     private KPort transformPort(final String portId, final KNode node,
-            final TransformationData<GraphvizModel, KNode> transData) {
+            final IDotTransformationData<GraphvizModel, KNode> transData) {
         Map<Pair<KNode, String>, KPort> portIdMap = transData.getProperty(PORT_ID_MAP);
         Pair<KNode, String> key = new Pair<KNode, String>(node, portId);
         KPort kport = portIdMap.get(key);
@@ -459,7 +471,7 @@ public class DotImporter implements IGraphTransformer<GraphvizModel, KNode> {
      * @param defaultProps default values for edge options
      */
     private void transformEdge(final EdgeStatement statement, final KNode parent,
-            final TransformationData<GraphvizModel, KNode> transData,
+            final IDotTransformationData<GraphvizModel, KNode> transData,
             final IPropertyHolder defaultProps) {
         String sourceName = statement.getSourceNode().getName();
         KNode source = transformNode(sourceName, parent, transData);

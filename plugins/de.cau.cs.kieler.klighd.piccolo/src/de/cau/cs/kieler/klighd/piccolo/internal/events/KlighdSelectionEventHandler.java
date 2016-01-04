@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -19,6 +19,7 @@ import static de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdMouseEventLi
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.Set;
 
@@ -28,7 +29,10 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.kgraph.KEdge;
+import de.cau.cs.kieler.core.kgraph.KGraphElement;
+import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.util.selection.DefaultSelectionIterator;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKNodeNode;
@@ -44,8 +48,8 @@ import edu.umd.cs.piccolo.util.PStack;
 /**
  * A simple selection event handler supporting click-based selections (no rubber band selection).<br>
  * It supports the selection of multiple elements if the CTRL/COMMAND key is pressed.<br>
- * In order to not interfere with the diagram panning the selection is done on mouse up events
- * (this is in contrast to the usual selection) if and only if the mouse pointer has not been moved
+ * In order to not interfere with the diagram panning the selection is done on mouse up events (this
+ * is in contrast to the usual selection) if and only if the mouse pointer has not been moved
  * between mouse down and mouse up.
  *
  * @author chsch
@@ -247,17 +251,8 @@ public class KlighdSelectionEventHandler extends KlighdBasicInputEventHandler {
             if (viewModelElement instanceof KEdge) {
                 // in case a KEdge has been identified that edge might occlude another one that
                 //  shall be selected as well (mostly happens if edges are routed in orthogonal fashion);
+                selectedElements = performEdgeSelection(selectedElements, (KEdge) viewModelElement);
 
-                if (selectedElements == null) {
-                    selectedElements = Sets.newHashSet();
-                }
-
-                // add the currently found edge and its connected ones
-                // to the set of elements to be selected,
-                // adding ports if selected by KlighdProperty...
-                Iterators.addAll(selectedElements,
-                        KimlUtil.getConnectedEdges(
-                                (KEdge) viewModelElement, includePortsWithinConnectedEdges));
                 // ... start a new "pick" run ('nextPickedNode' takes care
                 // about ignoring the previously found ones), ...
                 pickPath.nextPickedNode();
@@ -272,8 +267,16 @@ public class KlighdSelectionEventHandler extends KlighdBasicInputEventHandler {
                 //  that is not a KEdge so we have to stop and ignore 'viewModelElement' here
                 break;
 
+            } else if (viewModelElement instanceof KNode) {
+                // We selected a KNode. By default this should be the only selected Node,
+                // but certain circumstances might require to specialize the selection behaviour.
+                selectedElements = performNodeSelection((KNode) viewModelElement);
+
+                // Stop the loop after handling the node
+                break;
+
             } else {
-                // we identified a selectable view model element not being a KEdge, and
+                // we identified a selectable view model element not being a KEdge or KNode, and
                 //  the current loop iteration must be the first one since 'selectedElemets' is 'null'
                 // we just initialize 'selectedElements', put 'viewModelElement' in there, ...
                 selectedElements = Collections.singleton(viewModelElement);
@@ -290,4 +293,52 @@ public class KlighdSelectionEventHandler extends KlighdBasicInputEventHandler {
             this.viewer.resetSelectionToDiagramElements(selectedElements);
         }
     }
+
+    /**
+     * Handles the selection of a single edge.
+     * 
+     * @param selectedElements
+     *            The set of already selected elements
+     * @param edge
+     *            The selected edge
+     * @return The updated set of selected elements
+     */
+    protected Set<EObject> performEdgeSelection(final Set<EObject> selectedElements,
+            final KEdge edge) {
+        final Set<EObject> returnedElements =
+                selectedElements == null ? Sets.newHashSet() : selectedElements;
+
+        // add the currently found edge and its connected ones
+        // to the set of elements to be selected,
+        // adding ports if selected by KlighdProperty...
+        Iterators.addAll(returnedElements, getConnectedElements(edge));
+        return returnedElements;
+    }
+
+    /**
+     * Provides an iterator for all {@link KGraphElement KGraphElements} connected to the selected
+     * edge. Can be overridden to use own customized
+     * {@link de.cau.cs.kieler.kiml.util.selection.SelectionIterator SelectionIterators}.
+     * 
+     * @param edge
+     *            the selected edge
+     * @return the iterator
+     */
+    protected Iterator<KGraphElement> getConnectedElements(final KEdge edge) {
+        return KimlUtil.getConnectedElements(edge, new DefaultSelectionIterator(edge, 
+                includePortsWithinConnectedEdges, false), new DefaultSelectionIterator(edge, 
+                includePortsWithinConnectedEdges, true));
+    }
+
+    /**
+     * Handles the selection of a single node.
+     * 
+     * @param node
+     *            The selected node
+     * @return The updated set of selected elements
+     */
+    protected Set<EObject> performNodeSelection(final KNode node) {
+        return Collections.singleton(node);
+    }
+
 }

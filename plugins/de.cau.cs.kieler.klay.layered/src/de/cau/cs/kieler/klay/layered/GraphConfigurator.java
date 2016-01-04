@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -24,10 +24,13 @@ import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.kiml.labels.LabelManagementOptions;
 import de.cau.cs.kieler.kiml.options.Direction;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p5edges.EdgeRouterFactory;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
@@ -284,6 +287,24 @@ final class GraphConfigurator {
             configuration
                 .addBeforePhase1(IntermediateProcessorStrategy.COMMENT_PREPROCESSOR)
                 .addAfterPhase5(IntermediateProcessorStrategy.COMMENT_POSTPROCESSOR);
+        }
+        
+        // Node-Promotion appliable for improvement of graph
+        if (lgraph.getProperty(Properties.NODE_PROMOTION) != NodePromotionStrategy.NONE) {
+            configuration
+                .addBeforePhase3(IntermediateProcessorStrategy.NODE_PROMOTION);
+        }
+
+        // Additional horizontal compaction depends on orthogonal edge routing
+        if (lgraph.getProperty(Properties.POST_COMPACTION) != GraphCompactionStrategy.NONE
+                && lgraph.getProperty(InternalProperties.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+            configuration.addAfterPhase5(IntermediateProcessorStrategy.HORIZONTAL_COMPACTOR);
+        } 
+        
+        if (graphProperties.contains(GraphProperties.PARTITIONS)) {
+            configuration.addBeforePhase1(IntermediateProcessorStrategy.PARTITION_PREPROCESSOR);
+            configuration.addBeforePhase3(IntermediateProcessorStrategy.PARTITION_POSTPROCESSOR);
+            
         }
 
         return configuration;

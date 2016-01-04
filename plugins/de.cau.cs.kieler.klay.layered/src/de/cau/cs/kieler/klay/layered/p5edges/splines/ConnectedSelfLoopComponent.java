@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -413,9 +413,12 @@ public final class ConnectedSelfLoopComponent {
      * 
      * @return A string representation.
      */
+    @Override
     public String toString() {
         final StringBuilder retVal = new StringBuilder();
-        retVal.append(this.getLoopSide().toString()).append(": ");
+        if (this.getLoopSide() != null) {
+            retVal.append(this.getLoopSide().toString()).append(": ");
+        }
         for (final LPort port : this.getHidablePorts()) {
             retVal.append(port.toString()).append(' ').append(port.getSide().toString()).append(" / ");
         }

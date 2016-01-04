@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -16,12 +16,14 @@ package de.cau.cs.kieler.klay.layered.test.intermediate.greedyswitch;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
-import org.junit.Before;
 import org.junit.Test;
 
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
+import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
+import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.NorthSouthEdgeAllCrossingsCounter;
 
 /**
@@ -30,20 +32,15 @@ import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.NorthSouthEdgeAll
  * @author alan
  *
  */
-public class NorthSouthEdgeAllCrossingsCounterTest {
-    private NorthSouthEdgeTestGraphCreator creator;
+public class NorthSouthEdgeAllCrossingsCounterTest extends NorthSouthEdgeTestGraphCreator {
     private NorthSouthEdgeAllCrossingsCounter counter;
 
     // CHECKSTYLEOFF javadoc
     // CHECKSTYLEOFF MagicNumber
-    @Before
-    public void setUp() {
-        creator = new NorthSouthEdgeTestGraphCreator();
-    }
 
     @Test
     public void northernNorthSouthNodeSingleCrossing() {
-        creator.getNorthSouthUpwardCrossingGraph();
+        getNorthSouthUpwardCrossingGraph();
         initCounterForLayerWithIndex(0);
 
         int crossingCount = counter.countCrossings();
@@ -53,7 +50,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void northernNorthSouthNodeMultipleCrossings() {
-        creator.getNorthSouthUpwardMultipleCrossingGraph();
+        getNorthSouthUpwardMultipleCrossingGraph();
         initCounterForLayerWithIndex(0);
 
         int crossingCount = counter.countCrossings();
@@ -63,7 +60,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void southernTowEdgeEastCrossing() {
-        creator.getNorthSouthDownwardCrossingGraph();
+        getNorthSouthDownwardCrossingGraph();
         initCounterForLayerWithIndex(0);
 
         int crossingCount = counter.countCrossings();
@@ -73,7 +70,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void southernNorthSouthMultipleNodeCrossing() {
-        creator.getNorthSouthDownwardMultipleCrossingGraph();
+        getNorthSouthDownwardMultipleCrossingGraph();
         initCounterForLayerWithIndex(0);
 
         int crossingCount = counter.countCrossings();
@@ -83,7 +80,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void southernTwoWesternEdges() {
-        creator.getNorthSouthSouthernTwoWesternEdges();
+        getNorthSouthSouthernTwoWesternEdges();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -93,7 +90,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void southernThreeWesternEdges() {
-        creator.getNorthSouthSouthernThreeWesternEdges();
+        getNorthSouthSouthernThreeWesternEdges();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -103,7 +100,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void northSouthEdgesComeFromBothSidesDontCross() {
-        creator.getSouthernNorthSouthGraphEdgesFromEastAndWestNoCrossings();
+        getSouthernNorthSouthGraphEdgesFromEastAndWestNoCrossings();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -113,7 +110,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void southernNorthSouthEdgesBothToEastDontCross() {
-        creator.getSouthernNorthSouthEdgesBothToEast();
+        getSouthernNorthSouthEdgesBothToEast();
         initCounterForLayerWithIndex(0);
 
         int crossingCount = counter.countCrossings();
@@ -123,7 +120,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void northSouthEdgesComeFromBothSidesDoCross() {
-        creator.getNorthSouthEdgesFromEastAndWestAndCross();
+        getNorthSouthEdgesFromEastAndWestAndCross();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -133,7 +130,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void northernBothEdgesWestern() {
-        creator.getNorthSouthNorthernWesternEdges();
+        getNorthSouthNorthernWesternEdges();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -143,7 +140,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void northernEasternPortToWestWesternPortToEast() {
-        creator.getNorthSouthNorthernEasternPortToWestWesternPortToEast();
+        getNorthSouthNorthernEasternPortToWestWesternPortToEast();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -153,7 +150,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void allSidesMultipleCrossings() {
-        creator.getNorthSouthAllSidesMultipleCrossings();
+        getNorthSouthAllSidesMultipleCrossings();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -163,8 +160,8 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void noFixedOrderConstraint() {
-        creator.getNorthSouthDownwardCrossingGraph();
-        creator.getCurrentOrder()[0][0].setProperty(LayoutOptions.PORT_CONSTRAINTS,
+        getNorthSouthDownwardCrossingGraph();
+        getCurrentOrder()[0][0].setProperty(LayoutOptions.PORT_CONSTRAINTS,
                 PortConstraints.FIXED_SIDE);
         initCounterForLayerWithIndex(0);
 
@@ -175,7 +172,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void oneEdgeDummyIsCrossedByOneSouthernNorthSouthPortEdge() {
-        creator.getSouthernNorthSouthDummyEdgeCrossingGraph();
+        getSouthernNorthSouthDummyEdgeCrossingGraph();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -185,7 +182,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void oneEdgeDummyIsCrossedByTwoSouthernNorthSouthPortEdges() {
-        creator.getSouthernNorthSouthDummyEdgeTwoCrossingGraph();
+        getSouthernNorthSouthDummyEdgeTwoCrossingGraph();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -195,7 +192,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void southernTwoDummyEdgeAndTwoNorthSouthShouldCrossFourTimes() {
-        creator.getSouthernTwoDummyEdgeAndNorthSouthCrossingGraph();
+        getSouthernTwoDummyEdgeAndNorthSouthCrossingGraph();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -205,7 +202,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void normalNodesNorthSouthEdgesHaveCrossingsToLongEdgeDummyOnBothSides() {
-        creator.getMultipleNorthSouthAndLongEdgeDummiesOnBothSides();
+        getMultipleNorthSouthAndLongEdgeDummiesOnBothSides();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -215,7 +212,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void ignoresUnconnectedPortsForNormalNodeAndLongEdgeDummies() {
-        creator.getLongEdgeDummyAndNormalNodeWithUnusedPortsOnSouthernSide();
+        getLongEdgeDummyAndNormalNodeWithUnusedPortsOnSouthernSide();
         initCounterForLayerWithIndex(1);
 
         int crossingCount = counter.countCrossings();
@@ -225,7 +222,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void noNorthSouthNode() {
-        creator.getCrossFormedGraph();
+        getCrossFormedGraph();
         initCounterForLayerWithIndex(0);
 
         int crossingCount = counter.countCrossings();
@@ -235,15 +232,51 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
 
     @Test
     public void northSouthCrossingRemovedAfterSwitch() {
-        creator.getNorthSouthUpwardCrossingGraph();
+        getNorthSouthUpwardCrossingGraph();
         initCounterForLayerWithIndex(0);
-        LNode[] layer = creator.getCurrentOrder()[0];
+        LNode[] layer = getCurrentOrder()[0];
 
         switchNodes(layer, 0, 1);
         counter.notifyNodeSwitch(layer[0], layer[1]);
         int crossingCount = counter.countCrossings();
 
         assertThat(crossingCount, is(0));
+    }
+
+    /**
+     * <pre>
+     * 
+     * *----
+     *    /+--* 
+     *   --+--*
+     *   | |
+     *  _|_|_
+     *  |   |
+     *  |___|
+     *  .
+     * </pre>
+     * 
+     */
+    @Test
+    public void givenPolylineRoutingWhenMoreThanOneEdgeIntoNSNode_countsTheseToo() {
+        LNode leftNode = addNodeToLayer(makeLayer());
+        LNode[] middleNodes = addNodesToLayer(3, makeLayer());
+        LNode[] rightNodes = addNodesToLayer(2, makeLayer());
+
+        setFixedOrderConstraint(middleNodes[2]);
+
+        // ports are added in clockwise fashion!
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[2], middleNodes[1], rightNodes[0], false);
+        addNorthSouthEdge(PortSide.NORTH, middleNodes[2], middleNodes[0], leftNode, true);
+        // second edge on middle node
+        LPort middleNodePort = middleNodes[1].getPorts().get(0);
+        eastWestEdgeFromTo(middleNodePort, rightNodes[1]);
+        getGraph().setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
+
+        initCounterForLayerWithIndex(1);
+        int crossingCount = counter.countCrossings();
+
+        assertThat(crossingCount, is(2));
     }
 
     private void switchNodes(final LNode[] layer, final int i, final int j) {
@@ -253,7 +286,7 @@ public class NorthSouthEdgeAllCrossingsCounterTest {
     }
 
     private void initCounterForLayerWithIndex(final int layerIndex) {
-        LNode[] layer = creator.getCurrentOrder()[layerIndex];
+        LNode[] layer = getCurrentOrder()[layerIndex];
         counter = new NorthSouthEdgeAllCrossingsCounter(layer);
     }
 

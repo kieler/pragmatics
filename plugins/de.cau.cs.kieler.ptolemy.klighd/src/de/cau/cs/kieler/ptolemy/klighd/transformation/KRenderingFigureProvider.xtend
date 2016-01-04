@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -72,6 +72,8 @@ class KRenderingFigureProvider {
     /** Rendering factory used to instantiate KRendering instances. */
     val renderingFactory = KRenderingFactory::eINSTANCE
     
+   
+    
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Node Renderings
@@ -137,12 +139,21 @@ class KRenderingFigureProvider {
     
     /**
      * Renders the given node in a default way, that is, as a simple rectangle.
-     * 
+     *
+     * @param node the node to create the default rendering for.
+     * @param fixSize {@code true} if the node's size should be fixed to a default value of (60, 40);
+     *                {@code false} if the node's size will be determined dynamically later on. 
      * @return the created rendering.
      */
-    def KRendering createDefaultRendering(KNode node) {
+    def KRendering createDefaultRendering(KNode node, boolean fixSize) {
         val rendering = renderingFactory.createKRectangle() => [rect |
             rect.setBackgroundColor(255, 255, 255)
+            
+            if (fixSize) {
+                rect.setAreaPlacementData(
+                    createKPosition(LEFT, 0, 0, TOP, 0, 0),
+                    createKPosition(LEFT, 60, 0, TOP, 40, 0))
+            }
         ]
         
         return rendering
@@ -246,14 +257,58 @@ class KRenderingFigureProvider {
             rec.setLineWidth(0)
         ]
         
-        // Add the comment's text
-        rectangle.children += renderingFactory.createKText() => [text |
-            text.text = node.layout.getProperty(COMMENT_TEXT)
-            text.setSurroundingSpace(5, 0)
-        ]
+        if(node.markedAsTitleNode){
+            // Add the title's text
+            rectangle.children += renderingFactory.createKText() => [text |
+                text.fontSize = 18
+                text.text = node.layout.getProperty(COMMENT_TEXT)
+                text.setSurroundingSpace(5, 0)
+            ]   
+        } else {
+           // Add the comment's text
+            rectangle.children += renderingFactory.createKText() => [text |
+                text.fontSize = node.layout.getProperty(COMMENT_FONT_SIZE) - 2
+                text.text = node.layout.getProperty(COMMENT_TEXT)
+                text.setSurroundingSpace(5, 0)
+            ]
+        }
         
         return rectangle
     }
+    
+    /**
+     * Creates a rendering for a documentation attribute node.
+     * 
+     * @param node the node to create the rendering information for.
+     * @return the rendering.
+     */
+    def KRendering createDocumentationNodeRendering(KNode node) {
+        //look whether the rendering can be found in the library
+        val library = getLibrary(node)
+        val rendering = getFromLibrary("ren_documentation", library)
+        if (rendering != null) {
+            return rendering
+        }
+        
+        //Otherwise, create a rendering
+        val rectangle = renderingFactory.createKRectangle() => [rec |
+            rec.background = "yellow".color
+            rec.foreground = "black".color
+        ]
+        
+        //Add the node's text
+        rectangle.children += renderingFactory.createKText() => [text |
+            text.fontSize = 8
+            text.text = "Documentation"
+            text.setSurroundingSpace(5, 0)
+        ]
+        
+        //Add the new rendering to the library
+        addToLibrary(rectangle, "ren_documentation", library)
+        
+        return rectangle
+    }
+    
     
     /**
      * Creates a rendering for a parameter node. Parameter nodes display model parameters in a grid-like
@@ -276,7 +331,7 @@ class KRenderingFigureProvider {
         
         // Visualize each parameter
         for (parameter : parameters) {
-            val circle = renderingFactory.createKEllipse() => [ell |
+                val circle = renderingFactory.createKEllipse() => [ell |
                 ell.background = GraphicsUtils::lookupColor("blue")
                 ell.setGridPlacementData(
                     15,
@@ -317,6 +372,7 @@ class KRenderingFigureProvider {
                     createKPosition(RIGHT, 5, 0, BOTTOM, 3, 0))
             ]
             rectangle.children += valueText
+            
         }
         
         return rectangle
@@ -398,7 +454,7 @@ class KRenderingFigureProvider {
      */
     def KRendering createValueDisplayingNodeRendering(KNode node, String value) {
         // TODO this rendering could be put into the library if its text is kept generic
-        val nodeRendering = createDefaultRendering(node) as KContainerRendering
+        val nodeRendering = createDefaultRendering(node, false) as KContainerRendering
         
         // Add a text field to the default rendering
         nodeRendering.children += renderingFactory.createKText() => [text |
@@ -533,19 +589,22 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createRegularNodeRendering(KNode node) {
-        val id = "ren_" + node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).replace('.', '')
-        val library = getLibrary(node)
-        val rendering = getFromLibrary(id, library)
-        if (rendering != null) {
-            return rendering
+        if (node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) != null) {
+            val id = "ren_" + node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).replace('.', '')
+            val library = getLibrary(node)
+            val rendering = getFromLibrary(id, library)
+            if (rendering != null) {
+                return rendering
+            }
+        
+            val ptRendering = createPtolemyFigureRendering(
+                node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS))
+            if (ptRendering != null) {
+                return addToLibrary(ptRendering, id, library)
+            }
         }
         
-        val ptRendering = createPtolemyFigureRendering(node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS))
-        if (ptRendering != null) {
-            return addToLibrary(ptRendering, id, library)
-        }
-        
-        return createDefaultRendering(node)
+        return createDefaultRendering(node, true)
     }
     
     /**
@@ -594,7 +653,6 @@ class KRenderingFigureProvider {
             }
 
             spline.addHeadArrowDecorator() => [
-    
                 // in case the 'reset' flag of the transition is 'false' ...
                 if (!edge.getAnnotationBooleanValue(ANNOTATION_RESET_TRANSITION)) {
 
@@ -623,8 +681,6 @@ class KRenderingFigureProvider {
             ]
         ]
     }
-
-    
     
     /**
      * Creates a rendering for an edge that represents a data flow buffer.

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -17,10 +17,12 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.ptolemy.moml.EntityType;
+import org.ptolemy.moml.PropertyType;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import de.cau.cs.kieler.ptolemy.attachmenteval.PtolemyAttachmentEvalPlugin;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties;
 
 /**
@@ -32,6 +34,10 @@ final class AttachmentLabelProvider implements ITableLabelProvider {
     
     /** The editor that uses this label provider. */
     private CommentAttachmentEditor editor = null;
+    /** Image used for compound actors. */
+    private Image containerIcon = null;
+    /** Image used for comment nodes. */
+    private Image commentIcon = null;
     
     
     /**
@@ -41,6 +47,11 @@ final class AttachmentLabelProvider implements ITableLabelProvider {
      */
     public AttachmentLabelProvider(final CommentAttachmentEditor editor) {
         this.editor = editor;
+        
+        containerIcon = PtolemyAttachmentEvalPlugin
+                .getImageDescriptor("icons/compoundActor.gif").createImage();
+        commentIcon = PtolemyAttachmentEvalPlugin
+                .getImageDescriptor("icons/comment.gif").createImage();
     }
     
 
@@ -82,6 +93,8 @@ final class AttachmentLabelProvider implements ITableLabelProvider {
                         
                         if (sourceElement instanceof EntityType) {
                             return ((EntityType) sourceElement).getName();
+                        } else if (sourceElement instanceof PropertyType) {
+                            return ((PropertyType) sourceElement).getName();
                         }
                     } else {
                         // No attachment
@@ -101,6 +114,19 @@ final class AttachmentLabelProvider implements ITableLabelProvider {
      * {@inheritDoc}
      */
     public Image getColumnImage(Object element, int columnIndex) {
+        if (element instanceof KNode) {
+            KNode knode = (KNode) element;
+            KLayoutData layoutData = knode.getData(KLayoutData.class);
+            
+            if (columnIndex == 0) {
+                if (layoutData.getProperty(LayoutOptions.COMMENT_BOX)) {
+                    return commentIcon;
+                } else {
+                    return containerIcon;
+                }
+            }
+        }
+        
         return null;
     }
 
@@ -127,6 +153,13 @@ final class AttachmentLabelProvider implements ITableLabelProvider {
      * {@inheritDoc}
      */
     public void dispose() {
+        if (containerIcon != null && !containerIcon.isDisposed()) {
+            containerIcon.dispose();
+        }
+
+        if (commentIcon != null && !commentIcon.isDisposed()) {
+            commentIcon.dispose();
+        }
     }
     
 }

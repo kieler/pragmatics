@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -345,7 +345,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
      */
     private void addSeparationToAllRegularNodes(final CPort p, final CGraph cgraph, final int dim,
             final boolean leftTop) {
-        final double borderSpacing = cgraph.getProperty(CodaflowProperties.BORDER_SPACING);
+        final double borderSpacing = cgraph.getProperty(CodaflowProperties.BORDER_SPACING).doubleValue();
         for (CNode n : cgraph.getChildren()) {
             double gap =
                     dim == Dim.XDIM ? (p.getRectSizeRaw().x / 2f + n.getRectSizeRaw().x / 2f) : (p

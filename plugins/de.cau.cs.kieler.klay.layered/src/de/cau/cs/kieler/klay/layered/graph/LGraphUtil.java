@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -13,9 +13,11 @@
  */
 package de.cau.cs.kieler.klay.layered.graph;
 
+import java.util.Collection;
 import java.util.Set;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.kiml.options.Alignment;
 import de.cau.cs.kieler.kiml.options.Direction;
@@ -127,6 +129,54 @@ public final class LGraphUtil {
         node.setProperty(LayoutOptions.SIZE_CONSTRAINT, SizeConstraint.fixed());
     }
     
+    ///////////////////////////////////////////////////////////////////////////////
+    // Graph Offsetting
+    
+    /**
+     * Offsets the given graphs by a given offset without moving their nodes to another graph. The order
+     * of the graphs in the collection must not depend on their hash values. Otherwise, subsequent
+     * layout calls will most likely produce different results. 
+     * 
+     * @param graphs the graph to offset.
+     * @param offsetx x coordinate offset.
+     * @param offsety y coordinate offset.
+     */
+    public static void offsetGraphs(final Collection<LGraph> graphs, final double offsetx,
+            final double offsety) {
+        
+        for (LGraph graph : graphs) {
+            offsetGraph(graph, offsetx, offsety);
+        }
+    }
+    
+    /**
+     * Offsets the given graph by a given offset without moving its nodes to another graph. This
+     * method can be called as many times as required on a given graph: it does not take the graph's
+     * offset into account.
+     * 
+     * @param graph the graph to offset.
+     * @param offsetx x coordinate offset.
+     * @param offsety y coordinate offset.
+     */
+    public static void offsetGraph(final LGraph graph, final double offsetx, final double offsety) {
+        KVector graphOffset = new KVector(offsetx, offsety);
+        
+        for (LNode node : graph.getLayerlessNodes()) {
+            node.getPosition().add(graphOffset);
+            for (LPort port : node.getPorts()) {
+                for (LEdge edge : port.getOutgoingEdges()) {
+                    edge.getBendPoints().offset(graphOffset);
+                    KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
+                    if (junctionPoints != null) {
+                        junctionPoints.offset(graphOffset);
+                    }
+                    for (LLabel label : edge.getLabels()) {
+                        label.getPosition().add(graphOffset);
+                    }
+                }
+            }
+        }
+    }
     
     ///////////////////////////////////////////////////////////////////////////////
     // Node Placement
@@ -139,7 +189,7 @@ public final class LGraphUtil {
      * @param layer the layer in which to place the nodes
      * @param xoffset horizontal offset for layer placement
      */
-    public static void placeNodes(final Layer layer, final double xoffset) {
+    public static void placeNodesHorizontally(final Layer layer, final double xoffset) {
         // determine maximal left and right margin
         double maxLeftMargin = 0, maxRightMargin = 0;
         for (LNode node : layer.getNodes()) {
@@ -234,7 +284,7 @@ public final class LGraphUtil {
             } else if (node.getProperty(LayoutOptions.HYPERNODE)) {
                 props.add(GraphProperties.HYPERNODES);
                 props.add(GraphProperties.HYPEREDGES);
-            } else if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+            } else if (node.getType() == NodeType.EXTERNAL_PORT) {
                 props.add(GraphProperties.EXTERNAL_PORTS);
             }
             
@@ -672,7 +722,7 @@ public final class LGraphUtil {
         
         // Create the dummy with one port
         LNode dummy = new LNode(layeredGraph);
-        dummy.setNodeType(NodeType.EXTERNAL_PORT);
+        dummy.setType(NodeType.EXTERNAL_PORT);
         dummy.setProperty(InternalProperties.EXT_PORT_SIZE, portSize);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
         dummy.setProperty(InternalProperties.OFFSET, propertyHolder.getProperty(LayoutOptions.OFFSET));

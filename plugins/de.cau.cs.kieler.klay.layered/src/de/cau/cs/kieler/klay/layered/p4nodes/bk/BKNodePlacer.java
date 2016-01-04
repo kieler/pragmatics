@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -484,11 +484,11 @@ public final class BKNodePlacer implements ILayoutPhase {
      */
     private boolean incidentToInnerSegment(final LNode node, final int layer1, final int layer2) {
         // consider that big nodes include their respective start and end node.
-        if (node.getNodeType() == NodeType.BIG_NODE) {
+        if (node.getType() == NodeType.BIG_NODE) {
             // all nodes should be placed straightly
             for (LEdge edge : node.getIncomingEdges()) {
                 LNode source = edge.getSource().getNode();
-                if ((source.getNodeType() == NodeType.BIG_NODE
+                if ((source.getType() == NodeType.BIG_NODE
                         || source.getProperty(InternalProperties.BIG_NODE_INITIAL))
                         && ni.layerIndex[edge.getSource().getNode().getLayer().id] == layer2
                         && ni.layerIndex[node.getLayer().id] == layer1) {
@@ -498,9 +498,9 @@ public final class BKNodePlacer implements ILayoutPhase {
             }
         }
         
-        if (node.getNodeType() == NodeType.LONG_EDGE) {
+        if (node.getType() == NodeType.LONG_EDGE) {
             for (LEdge edge : node.getIncomingEdges()) {
-                NodeType sourceNodeType = edge.getSource().getNode().getNodeType();
+                NodeType sourceNodeType = edge.getSource().getNode().getType();
                 
                 if (sourceNodeType == NodeType.LONG_EDGE
                         && ni.layerIndex[edge.getSource().getNode().getLayer().id] == layer2
@@ -557,7 +557,7 @@ public final class BKNodePlacer implements ILayoutPhase {
     }
 
     /**
-     * Finds all classes of a given layout.
+     * Finds all classes of a given layout. Only used for debug output.
      * 
      * @param bal The layout whose classes to find
      * @return The classes of the given layout
@@ -568,6 +568,10 @@ public final class BKNodePlacer implements ILayoutPhase {
         // We need to enumerate all block roots
         Set<LNode> roots = Sets.newLinkedHashSet(Arrays.asList(bal.root));
         for (LNode root : roots) {
+            if (root == null) {
+                System.out.println("There are no classes in a balanced layout.");
+                break;
+            }
             LNode sink = bal.sink[root.id];
             List<LNode> classContents = classes.get(sink);
             

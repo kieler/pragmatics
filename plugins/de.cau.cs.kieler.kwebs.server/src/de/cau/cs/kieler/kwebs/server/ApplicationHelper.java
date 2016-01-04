@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -28,7 +28,7 @@ public final class ApplicationHelper {
         "KWebS - KIELER Layout Web Service (v$VERSION$)\n",
         "",
         "Copyright 2014 by Real-Time and Embedded Systems Group, Department",
-        "of Computer Science, Christian-Albrechts-University of Kiel",
+        "of Computer Science, Kiel University",
         "Published under the EPL v1.0 (see http://www.eclipse.org/legal/epl-v10.html)",
         "",
     };

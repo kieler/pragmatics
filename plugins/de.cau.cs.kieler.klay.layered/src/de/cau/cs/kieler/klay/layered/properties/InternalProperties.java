@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -39,13 +39,15 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.intermediate.PartitionPreprocessor;
 import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 import de.cau.cs.kieler.klay.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import de.cau.cs.kieler.klay.layered.p5edges.splines.LoopSide;
 
 /**
  * Container for property definitions for internal use of the algorithm. These properties should
- * not be accessed from outside.
+ * not be accessed from outside. Some properties here are redefinitions of layout options in
+ * {@link LayoutOptions} to change their defaults.
  *
  * @author msp
  * @author cds
@@ -370,16 +372,17 @@ public final class InternalProperties {
             "splineSelfLoopMargins", new Margins());
 
     /**
-     * List of ports on north/south dummies connected to a north/south port on a normal node.
-     */
-    public static final IProperty<List<LPort>> CONNECTED_NORTH_SOUTH_PORT_DUMMIES =
-            new Property<List<LPort>>("connectedNorthSouthPorts", new ArrayList<LPort>());
-    
-    /**
      * Internal container for all possible spacing variations that we support.
      */
     public static final IProperty<Spacings> SPACINGS =
             new Property<Spacings>("spacings");
+    
+    /**
+     * Specifies if the corresponding LGraph element was added by the
+     * {@link de.cau.cs.kieler.klay.layered.intermediate.PartitionPreprocessor}.
+     */
+    public static final IProperty<Boolean> PARTITION_DUMMY = new Property<Boolean>(
+            "partitionConstraint", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // OVERWRITTEN PROPERTIES

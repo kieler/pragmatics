@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -129,8 +129,6 @@ public class SausageFolding implements ILayoutProcessor {
         // System.out.println("Current AR:" + currentAR);
         // System.out.println("Rows: " + rows);
         
-        // we have to take care not to break at points where there is a long edge dummy
-        
         int nodesPerRow = longestPath / Math.max(1, rows);
         int index = nodesPerRow;
         int newIndex = index;
@@ -140,23 +138,31 @@ public class SausageFolding implements ILayoutProcessor {
 
             Layer l = graph.getLayers().get(index);
 
-            // if the next node should be moved to a new row, check if it is a dummy
-            boolean dummyInvolved = false;
-            for (LNode n : l.getNodes()) {
-                dummyInvolved |= n.getNodeType() != NodeType.NORMAL;
-                
-                for (LEdge e : n.getIncomingEdges()) {
-                    dummyInvolved |= e.getSource().getNode().getNodeType() != NodeType.NORMAL;
-                }
-                
-                for (LEdge e : n.getOutgoingEdges()) {
-                    dummyInvolved |= e.getTarget().getNode().getNodeType() != NodeType.NORMAL;
+            // we only allow to reverse an edge when there is only one pair 
+            // of nodes that is connected by 1 or more edges
+            boolean reversalAllowed = true;
+            LNode n1 = null, n2 = null;
+            check: 
+            for (LNode tgt: l.getNodes()) {
+                for (LEdge e : tgt.getIncomingEdges()) {
+                    // check for different source
+                    if (n1 != null && n1 != tgt) {
+                        reversalAllowed = false;
+                        break check;
+                    }
+                    n1 = tgt;
+                    // check for different target
+                    LNode src = e.getSource().getNode();
+                    if (n2 != null && n2 != src) {
+                        reversalAllowed = false;
+                        break check;
+                    }
+                    n2 = src;
                 }
             }
             
-            
-            // stall the revert if we we face a dummy node
-            if (wannaRevert && !dummyInvolved) {
+            // start new column (unless we are not allowed to)
+            if (wannaRevert && reversalAllowed) {
                 newIndex = 0;
                 wannaRevert = false;
             }
@@ -253,7 +259,7 @@ public class SausageFolding implements ILayoutProcessor {
             
             // Create dummy node
             LNode dummyNode = new LNode(layeredGraph);
-            dummyNode.setNodeType(NodeType.LONG_EDGE);
+            dummyNode.setType(NodeType.LONG_EDGE);
             
             dummyNode.setProperty(InternalProperties.ORIGIN, edge);
             dummyNode.setProperty(LayoutOptions.PORT_CONSTRAINTS,
@@ -310,7 +316,7 @@ public class SausageFolding implements ILayoutProcessor {
     private void setDummyProperties(final LNode dummy, final LEdge inEdge, final LEdge outEdge) {
         LNode inEdgeSourceNode = inEdge.getSource().getNode();
         
-        if (inEdgeSourceNode.getNodeType() == NodeType.LONG_EDGE) {
+        if (inEdgeSourceNode.getType() == NodeType.LONG_EDGE) {
             // The incoming edge originates from a long edge dummy node, so we can
             // just copy its properties
             dummy.setProperty(InternalProperties.LONG_EDGE_SOURCE,
@@ -347,7 +353,7 @@ public class SausageFolding implements ILayoutProcessor {
         
         // Dummy node in the same layer
         LNode dummy = new LNode(layeredGraph);
-        dummy.setNodeType(NodeType.LONG_EDGE);
+        dummy.setType(NodeType.LONG_EDGE);
         
         dummy.setProperty(InternalProperties.ORIGIN, edge);
         dummy.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
@@ -397,11 +403,11 @@ public class SausageFolding implements ILayoutProcessor {
         // There's exactly one edge connected to the input and output port
         LPort sourcePort = dummyInputPort.getIncomingEdges().get(0).getSource();
         LNode sourceNode = sourcePort.getNode();
-        NodeType sourceNodeType = sourceNode.getNodeType();
+        NodeType sourceNodeType = sourceNode.getType();
         
         LPort targetPort = dummyOutputPort.getOutgoingEdges().get(0).getTarget();
         LNode targetNode = targetPort.getNode();
-        NodeType targetNodeType = targetNode.getNodeType();
+        NodeType targetNodeType = targetNode.getType();
         
         // Set the LONG_EDGE_SOURCE property
         if (sourceNodeType == NodeType.LONG_EDGE) {

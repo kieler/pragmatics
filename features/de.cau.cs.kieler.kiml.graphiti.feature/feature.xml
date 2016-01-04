@@ -3,7 +3,7 @@
       id="de.cau.cs.kieler.kiml.graphiti.feature"
       label="KIELER Layout for Graphiti"
       version="0.13.0.qualifier"
-      provider-name="Christian-Albrechts-Universität zu Kiel"
+      provider-name="Kiel University"
       plugin="de.cau.cs.kieler.kiml.graphiti">
 
    <description url="http://rtsys.informatik.uni-kiel.de/confluence/x/jgEF">
@@ -13,7 +13,7 @@ The generic bridge can be extended to support special features and settings of c
    </description>
 
    <copyright>
-      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Christian-Albrechts-University of Kiel
+      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Kiel University
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">

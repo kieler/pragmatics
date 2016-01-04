@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -89,7 +89,7 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         Rectangle.setYBorder(spacing);
 
         // further options
-        double idealEdgeLength = rootLayout.getProperty(CoLaProperties.IDEAL_EDGE_LENGTHS);
+        double idealEdgeLength = rootLayout.getProperty(CoLaProperties.IDEAL_EDGE_LENGTHS).doubleValue();
         boolean avoidOverlaps = rootLayout.getProperty(CoLaProperties.AVOID_OVERLAPS);
         borderSpacing = rootLayout.getProperty(LayoutOptions.BORDER_SPACING);
 
