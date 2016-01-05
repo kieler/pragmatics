@@ -26,17 +26,20 @@ import static de.cau.cs.kieler.kiml.options.LayoutOptions.EDGE_TYPE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.EXPAND_NODES;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.FONT_NAME;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.FONT_SIZE;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.HIERARCHY_HANDLING;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.HYPERNODE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.INTERACTIVE;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.JUNCTION_POINTS;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.LABEL_SPACING;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.LAYOUT_HIERARCHY;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.LAYOUT_PARTITIONS;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.MARGINS;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.MIN_HEIGHT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.MIN_WIDTH;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.NODE_LABEL_PLACEMENT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.NO_LAYOUT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.OFFSET;
+import static de.cau.cs.kieler.kiml.options.LayoutOptions.PARTITION;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_ALIGNMENT;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_ALIGNMENT_EAST;
 import static de.cau.cs.kieler.kiml.options.LayoutOptions.PORT_ALIGNMENT_NORTH;
@@ -110,6 +113,7 @@ import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.EdgeRouting;
 import de.cau.cs.kieler.kiml.options.EdgeType;
+import de.cau.cs.kieler.kiml.options.HierarchyHandling;
 import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
 import de.cau.cs.kieler.kiml.options.PortAlignment;
 import de.cau.cs.kieler.kiml.options.PortConstraints;
@@ -153,6 +157,7 @@ public final class LayoutOptionResolver {
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> INT_TYPES = createTypesSet(
+    		PARTITION,
             PORT_INDEX,
             RANDOM_SEED,
             FONT_SIZE,
@@ -170,6 +175,7 @@ public final class LayoutOptionResolver {
             EXPAND_NODES,
             INTERACTIVE,
             LAYOUT_HIERARCHY,
+            LAYOUT_PARTITIONS,
             SELF_LOOP_INSIDE,
             SEPARATE_CC,
             HYPERNODE,
@@ -208,6 +214,7 @@ public final class LayoutOptionResolver {
             EDGE_ROUTING,
             EDGE_LABEL_PLACEMENT,
             EDGE_TYPE,
+            HIERARCHY_HANDLING,
             PORT_ALIGNMENT,
             PORT_ALIGNMENT_EAST,
             PORT_ALIGNMENT_NORTH,
@@ -391,6 +398,8 @@ public final class LayoutOptionResolver {
                     enumeration = Direction.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(EDGE_ROUTING, id)) {
                     enumeration = EdgeRouting.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(HIERARCHY_HANDLING, id)) {
+                    enumeration = HierarchyHandling.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(PORT_ALIGNMENT, id)
                         || equalsIdOrSuffix(PORT_ALIGNMENT_EAST, id)
                         || equalsIdOrSuffix(PORT_ALIGNMENT_NORTH, id)
