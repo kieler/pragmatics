@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
  */
 public abstract class CNode {
     // Variables are public for convenience reasons since this class is used internally only.
-    // SUPPRESS CHECKSTYLE NEXT 24 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 26 VisibilityModifier
     /** containing {@link CGroup}. */
     public CGroup cGroup;
     /** refers to the parent node of a north/south segment. */
@@ -52,9 +52,11 @@ public abstract class CNode {
     public double startPos = Double.NEGATIVE_INFINITY;
     /** flags a {@link CNode} to be repositioned in the case of left/right balanced compaction. */
     public boolean reposition = true;
-    /** a 4 tuple stating if the {@link CNode} should locked in a particular direction based on
+    /** a 4-tuple stating if the {@link CNode} should locked in a particular direction based on
      *  conditions defined in an extended class. */
-    public CompactionLock lock = new CompactionLock();
+    public Quadruplet lock = new Quadruplet();
+    /** . */
+    public Quadruplet spacingIgnore = new Quadruplet();
     /** An id for public use. There is no warranty, use at your own risk. */
     public int id;
 

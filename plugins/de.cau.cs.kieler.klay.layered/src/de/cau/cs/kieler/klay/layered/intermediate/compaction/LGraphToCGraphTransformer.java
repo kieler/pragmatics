@@ -100,6 +100,7 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
         cGraph.cNodes.clear();
 
         // 1. collecting positions of graph elements
+        Map<LNode, CNode> nodeMap = Maps.newHashMap();
         for (Layer layer : layeredGraph) {
             for (LNode node : layer) {
                 
@@ -121,35 +122,81 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
                 // add all nodes
                 CLNode cNode = new CLNode(node, layeredGraph);
                 cGraph.cNodes.add(cNode);
+                nodeMap.put(node, cNode);
+            }
+        }
 
+        for (Layer layer : layeredGraph) {
+            for (LNode node : layer) {
+                final CNode cNode = nodeMap.get(node);
+                
                 // add vertical edge segments
                 for (LEdge edge : node.getOutgoingEdges()) {
 
                     Iterator<KVector> bends = edge.getBendPoints().iterator();
 
+                    boolean first = true;
+                    VerticalSegment lastSegment = null;
                     // infer vertical segments from positions of bendpoints
                     if (bends.hasNext()) {
                         KVector bend1 = bends.next();
+                        KVector bend2 = null;
 
                         // get segment of source n/s port
                         if (edge.getSource().getSide() == PortSide.NORTH) {
-                            verticalSegments.add(new VerticalSegment(bend1, new KVector(bend1.x,
-                                    cNode.hitbox.y), cNode, edge));
+                            VerticalSegment vs = new VerticalSegment(bend1, new KVector(bend1.x,
+                                    cNode.hitbox.y), cNode, edge);
+                            vs.blockBottomSpacing = true;
+                            verticalSegments.add(vs);
                         }
                         
                         if (edge.getSource().getSide() == PortSide.SOUTH) {
-                            verticalSegments.add(new VerticalSegment(bend1, new KVector(bend1.x,
-                                    cNode.hitbox.y + cNode.hitbox.height), cNode, edge));
+                            VerticalSegment vs = new VerticalSegment(bend1, new KVector(bend1.x,
+                                    cNode.hitbox.y + cNode.hitbox.height), cNode, edge);
+                            vs.blockTopSpacing = true;
+                            verticalSegments.add(vs);
                         }
 
                         // get regular segments
                         while (bends.hasNext()) {
-                            KVector bend2 = bends.next();
+                            bend2 = bends.next();
                             if (!CompareFuzzy.eq(bend1.y, bend2.y)) {
-                                verticalSegments.add(new VerticalSegment(bend1, bend2, null, edge));
+                                lastSegment = new VerticalSegment(bend1, bend2, null, edge);
+                                verticalSegments.add(lastSegment);
+
+                                // the first vertical segment of an outgoing edge
+                                if (first) {
+                                   first = false;
+                                   
+                                   if (bend2.y < cNode.hitbox.y) {
+                                       lastSegment.blockBottomSpacing = true;
+                                   } else if (bend2.y > cNode.hitbox.y + cNode.hitbox.height) {
+                                       lastSegment.blockTopSpacing = true;
+                                   } else {
+                                       // completely surrounded
+                                       lastSegment.blockTopSpacing = true;
+                                       lastSegment.blockBottomSpacing = true;
+                                   }
+                                }
                             }
 
-                            bend1 = bend2;
+                            if (bends.hasNext()) {
+                                bend1 = bend2;
+                            }
+                        }
+                        
+                        // handle last vertical segment
+                        if (lastSegment != null) {
+                            CNode cTargetNode = nodeMap.get(edge.getTarget().getNode());
+                            if (bend1.y < cTargetNode.hitbox.y) {
+                                lastSegment.blockBottomSpacing = true;
+                            } else if (bend1.y > cTargetNode.hitbox.y + cTargetNode.hitbox.height) {
+                                lastSegment.blockTopSpacing = true;
+                            } else {
+                                // completely surrounded
+                                lastSegment.blockTopSpacing = true;
+                                lastSegment.blockBottomSpacing = true;
+                            }
                         }
                     }
                 }
@@ -161,13 +208,17 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
                         // get segment of target n/s port
                         KVector bend1 = edge.getBendPoints().getLast();
                         if (edge.getTarget().getSide() == PortSide.NORTH) {
-                            verticalSegments.add(new VerticalSegment(bend1, new KVector(bend1.x,
-                                    cNode.hitbox.y), cNode, edge));
+                            VerticalSegment vs = new VerticalSegment(bend1, new KVector(bend1.x,
+                                    cNode.hitbox.y), cNode, edge);
+                            vs.blockBottomSpacing = true;
+                            verticalSegments.add(vs);
                         }
                         
                         if (edge.getTarget().getSide() == PortSide.SOUTH) {
-                            verticalSegments.add(new VerticalSegment(bend1, new KVector(bend1.x,
-                                    cNode.hitbox.y + cNode.hitbox.height), cNode, edge));
+                            VerticalSegment vs = new VerticalSegment(bend1, new KVector(bend1.x,
+                                    cNode.hitbox.y + cNode.hitbox.height), cNode, edge);
+                            vs.blockTopSpacing = true;
+                            verticalSegments.add(vs);
                         }
                         
                     }

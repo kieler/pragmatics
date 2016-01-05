@@ -15,19 +15,20 @@ package de.cau.cs.kieler.klay.layered.compaction.oned;
 import de.cau.cs.kieler.kiml.options.Direction;
 
 /**
- * Internal class representing a 4 tuple that states for a {@link CNode} if the compaction should
- * be locked in a particular direction.
+ * Internal class representing a 4-tuple that, in one application as a 'compaction lock', states for
+ * a {@link CNode} if the compaction should be locked in a particular direction.
  * 
  * @author dag
  */
-public final class CompactionLock {
-    /** directional locks. */
-    private boolean left, right, up, down;
+public final class Quadruplet {
+    
+    /** Locking values. */
+    public boolean left, right, up, down;
     
     /**
      * The lock defaults to false.
      */
-    public CompactionLock() {
+    public Quadruplet() {
         set(false, false, false, false);
     }
     
@@ -39,7 +40,7 @@ public final class CompactionLock {
      * @param u up
      * @param d down
      */
-    public CompactionLock(final boolean l, final boolean r, final boolean u, final boolean d) {
+    public Quadruplet(final boolean l, final boolean r, final boolean u, final boolean d) {
         set(l, r, u, d);
     }
     
