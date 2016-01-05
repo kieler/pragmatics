@@ -460,16 +460,6 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
             return;
         }
 
-        // for edges also check if the edge label placement is UNDEFINED
-        if (ele instanceof LEdge) {
-            String edgeLabPlace = LayoutOptions.EDGE_LABEL_PLACEMENT.getId();
-            if (jLabel.containsKey(edgeLabPlace)
-                    && jLabel.get(edgeLabPlace).isString().stringValue()
-                            .equals(EdgeLabelPlacement.UNDEFINED.name())) {
-                return;
-            }
-        }
-
         // check for text property
         JSONValue val = jLabel.get("text");
         if (val == null) {
@@ -506,27 +496,27 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
             EdgeLabelPlacement labelPlacement =
                     label.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
 
-            if (labelPlacement != EdgeLabelPlacement.UNDEFINED) {
-                // dimensions of the label
-                transformDimensions(jLabel, label);
-                label.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, labelPlacement);
+            // dimensions of the label
+            transformDimensions(jLabel, label);
+            label.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, labelPlacement);
 
-                Set<GraphProperties> graphProperties =
-                        graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
-                switch (labelPlacement) {
-                case CENTER:
-                    // Add annotation if graph contains labels which shall be placed
-                    // in the middle of an edge
-                    graphProperties.add(GraphProperties.CENTER_LABELS);
-                    break;
-                case HEAD:
-                case TAIL:
-                    // Add annotation if graph contains labels which shall be placed
-                    // in the middle of an edge
-                    graphProperties.add(GraphProperties.END_LABELS);
-                default:
-                    break;
-                }
+            Set<GraphProperties> graphProperties =
+            		graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
+            
+            // Depending on the label placement, we want to set graph properties and make sure the
+            // edge label placement is actually properly defined
+            switch (labelPlacement) {
+            case HEAD:
+            case TAIL:
+                graphProperties.add(GraphProperties.END_LABELS);
+
+            case CENTER:
+            case UNDEFINED:
+                graphProperties.add(GraphProperties.CENTER_LABELS);
+                label.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT, EdgeLabelPlacement.CENTER);
+                break;
+            default:
+                break;
             }
         }
     }

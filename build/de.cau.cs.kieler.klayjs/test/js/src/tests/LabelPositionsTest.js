@@ -1,5 +1,5 @@
 {
-  active: false, /* currently there is a bug ... */
+  active: true,
   name: 'LabelPositionTest',
   options: { },
   graph: {
@@ -55,7 +55,6 @@
     }
     // check if there are positions
     var valid = true;
-
     // in this example every label has to have a position different from (0, 0)
     result.children.forEach(function(child) {
       if (child.labels) {
