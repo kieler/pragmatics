@@ -165,7 +165,7 @@
 				<pathelement location="src-external" />
 				<pathelement location="src-external/de/cau/cs/kieler/emul" />
 			</classpath>
-			<jvmarg value="-Xmx512m" />
+			<jvmarg value="-Xmx2g" />
 			<arg line="-war" />
 			<arg value="war" />
 			<!-- Additional arguments like -style PRETTY or -logLevel DEBUG -->
