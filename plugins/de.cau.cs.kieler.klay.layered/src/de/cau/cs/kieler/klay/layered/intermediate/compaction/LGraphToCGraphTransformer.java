@@ -108,15 +108,17 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
                 //  hence we can neglect them here without the risk 
                 // of other nodes overlapping them after compaction
                 if (node.getProperty(LayoutOptions.COMMENT_BOX)) {
-                    LEdge e = Iterables.get(node.getConnectedEdges(), 0);
-                    LNode other = e.getSource().getNode();
-                    if (other == node) {
-                        other = e.getTarget().getNode();
+                    if (!Iterables.isEmpty(node.getConnectedEdges())) {
+                        LEdge e = Iterables.get(node.getConnectedEdges(), 0);
+                        LNode other = e.getSource().getNode();
+                        if (other == node) {
+                            other = e.getTarget().getNode();
+                        }
+                        Pair<LNode, KVector> p =
+                                Pair.of(other, node.getPosition().clone().sub(other.getPosition()));
+                        commentOffsets.put(node, p);
+                        continue;
                     }
-                    Pair<LNode, KVector> p =
-                            Pair.of(other, node.getPosition().clone().sub(other.getPosition()));
-                    commentOffsets.put(node, p);
-                    continue;
                 }
                 
                 // add all nodes
