@@ -42,6 +42,7 @@ repositories {
     maven {
       url "https://oss.sonatype.org/content/repositories/google-snapshots/"
     }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
 }
 
 configurations {
@@ -57,8 +58,8 @@ dependencies {
     junitAnt('org.apache.ant:ant-junit4:1.9.2') {
         transitive = false
     }
-    gwt 'com.google.guava:guava:18.0+'
-    gwt 'com.google.guava:guava-gwt:18.0+'
+    gwt 'com.google.guava:guava:20.0-SNAPSHOT+'
+    gwt 'com.google.guava:guava-gwt:20.0-SNAPSHOT+'
     gwt('com.google.gwt:gwt:2.8+'){ changing = true }
     gwt('com.google.gwt:gwt-dev:2.8+'){ changing = true }
     gwt('com.google.gwt:gwt-user:2.8+'){ changing = true }
