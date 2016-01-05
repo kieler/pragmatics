@@ -13,7 +13,9 @@
  */
 package de.cau.cs.kieler.klay.gwt.client.layout;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -800,7 +802,9 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
     private void transferLayout(final LGraph parentGraph) {
         
         // now the child nodes
-        KVector offset = parentGraph.getOffset();
+        KVector offset = new KVector(parentGraph.getOffset());
+        List<LEdge> edges = new ArrayList<LEdge>();
+        
         for (LNode n : parentGraph.getLayerlessNodes()) {
             JSONObject jNode = nodeJsonMap.get(n);
             
@@ -835,8 +839,35 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
                     }
                 }
     
-                // edges
+                // Collect edges, except if they go into a nested subgraph (those edges need to
+                // be processed during one of the recursive calls so that any additional offsets
+                // are applied
+                // correctly)
                 for (LEdge e : n.getOutgoingEdges()) {
+                    if (!LGraphUtil.isDescendant(e.getTarget().getNode(), n)) {
+                        edges.add(e);
+                    }
+                }
+            
+            } else {
+                // it's an external port dummy
+                // TODO
+            }
+        }
+        
+        // Collect edges that go from the current graph's representing LNode down into
+        // its descendants
+        LNode parentLNode = parentGraph.getProperty(InternalProperties.PARENT_LNODE);
+        if (parentLNode != null) {
+            for (LEdge e : parentLNode.getOutgoingEdges()) {
+                if (LGraphUtil.isDescendant(e.getTarget().getNode(), parentLNode)) {
+                    edges.add(e);
+                }
+            }
+        }
+
+        // edges
+        for (LEdge e : edges) {
                     JSONObject jEdge = edgeJsonMap.get(e);
                     transferLayout(e, jEdge, offset);
     
@@ -848,12 +879,6 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
     
                 }
             
-            } else {
-                // it's an external port dummy
-                // TODO
-            }
-        }
-        
         KVector actualGraphSize = parentGraph.getActualSize();
         // transfer to origin LNode 
         // this is necessary for processing higher graph levels properly
@@ -921,20 +946,31 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         // Source Point
         KVector src;
         if (LGraphUtil.isDescendant(edge.getTarget().getNode(), edge.getSource().getNode())) {
+            // The external port's anchor position, relative to the node's top left corner
             LPort sourcePort = edge.getSource();
             src = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
+            
+            // The node's insets need to be subtracted since edges going into the node's bowels are
+            // relative to the top left corner + insets
+            // TODO This line assumes that for a compound node, the insets computed for its LGraph and
+            //      for its representing LNode are the same, which doesn't always seem to be the case
             LInsets sourceInsets = sourcePort.getNode().getInsets();
             src.add(-sourceInsets.left, -sourceInsets.top);
-            LGraph nestedGraph = sourcePort.getNode().getProperty(InternalProperties.NESTED_LGRAPH);
-            if (nestedGraph != null) {
-                edgeOffset = nestedGraph.getOffset();
-            }
+           
+            // The source point will later have the passed offset added to it, which it doesn't actually
+            // need, so we subtract it now
             src.sub(edgeOffset);
+            
+            // TODO
+            // What it does need, however, is any additional insets that may be present, so we
+            // explicitly add them here
+            //src.add(additionalInsets);
+            
         } else {
             src = edge.getSource().getAbsoluteAnchor();
         }
         
-        src.add(offset.x, offset.y);
+        src.add(edgeOffset);
         JSONObject srcPnt = new JSONObject();
         setJsNumber(srcPnt, "x", src.x);
         setJsNumber(srcPnt, "y", src.y);
@@ -946,7 +982,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
             tgt.add(edge.getProperty(InternalProperties.TARGET_OFFSET));
         }
         
-        tgt.add(offset.x, offset.y);
+        tgt.add(edgeOffset);
         JSONObject tgtPnt = new JSONObject();
         setJsNumber(tgtPnt, "x", tgt.x);
         setJsNumber(tgtPnt, "y", tgt.y);
