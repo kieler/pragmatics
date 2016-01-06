@@ -190,5 +190,49 @@ public final class NNode {
         private int getModCnt() {
             return modCount;
         }
+        
+        // GWT's List implementations do not increment the 'modCount' variable
+        // hence we have to do it by hand
+        @Override
+        public boolean add(E e) {
+            modCount++;
+            return super.add(e);
+        }
+        @Override
+        public void add(int index, E element) {
+            modCount++;
+            super.add(index, element);
+        }
+        @Override
+        public boolean addAll(Collection<? extends E> c) {
+            modCount++;
+            return super.addAll(c);
+        }
+        @Override
+        public boolean addAll(int index, Collection<? extends E> c) {
+            modCount++;
+            return super.addAll(index, c);
+        }
+        @Override
+        public E remove(int index) {
+            modCount++;
+            return super.remove(index);
+        }
+        @Override
+        public boolean remove(Object o) {
+            modCount++;
+            return super.remove(o);
+        }
+        @Override
+        public boolean removeAll(Collection<?> c) {
+            modCount++;
+            return super.removeAll(c);
+        }
+        @Override
+        public void clear() {
+            modCount++;
+            super.clear();
+        }
+        
     }
 }
