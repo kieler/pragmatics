@@ -17,17 +17,18 @@ import com.google.inject.Guice
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.KEdge
 import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.kiml.comments.AggregatedHeuristicsAttachmentDecider
-import de.cau.cs.kieler.kiml.comments.AlignmentHeuristic
 import de.cau.cs.kieler.kiml.comments.CommentAttacher
 import de.cau.cs.kieler.kiml.comments.DistanceHeuristic
+import de.cau.cs.kieler.kiml.comments.NodeReferenceHeuristic
 import de.cau.cs.kieler.kiml.comments.SizeEligibilityFilter
 import de.cau.cs.kieler.kiml.comments.TextPrefixFilter
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.ExplicitPtolemyAttachmentProvider
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyBoundsProvider
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyTitleCommentFilter
+import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.ReferencePreferringAttachmentDecider
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 
 /**
  * Tries to infer the attachments between comment nodes and the elements they are supposed to describe.
@@ -53,13 +54,14 @@ class CommentsAttachor {
 
     @Inject extension KRenderingFigureProvider
     @Inject extension AnnotationExtensions
+    @Inject extension LabelExtensions
 
     /** Maximum distance for two objects to be considered close enough for attachment. */
-    val double maxAttachmentDistance = 500.0;
-    /** Maximum distance for two objects to be considered to be aligned. */
-    val double maxAlignmentDistance = 2001;
+    val double maxAttachmentDistance = 50;
     /** The maximum area of a comment to still be considered attacheable. */
-    val double maxCommentArea = 20000;
+    val double maxCommentArea = 62000;
+//    /** Maximum distance for two objects to be considered to be aligned. */
+//    val double maxAlignmentDistance = 2001;
 
 
     /**
@@ -80,27 +82,38 @@ class CommentsAttachor {
         val attacher = new CommentAttacher()
             .withBoundsProvider(boundsProvider)
             .withExplicitAttachmentProvider(explicitAttachmentProvider)
-            .withAttachmentDecider(new AggregatedHeuristicsAttachmentDecider())
+            .withAttachmentDecider(new ReferencePreferringAttachmentDecider())
             
+            // Filters
             .addEligibilityFilter(titleCommentFilter)
             .addEligibilityFilter(new TextPrefixFilter()
                 .withCommentTextProvider(c | c.layout.getProperty(PtolemyProperties.COMMENT_TEXT))
                 .addPrefix("Author")  // Also matches "Authors"
                 .addPrefix("Demo created by")
+                .addPrefix("This model ")
+                .addPrefix("This submodel ")
+                .addPrefix("This example ")
+                .addPrefix("This demo ")
+                .addPrefix("Model of ")
             )
             .addEligibilityFilter(new SizeEligibilityFilter()
                 .withBoundsProvider(boundsProvider)
                 .withMaximumArea(maxCommentArea)
             )
             
+            // Heuristics
+            .addHeuristic(new NodeReferenceHeuristic()
+                .withCommentTextProvider(c | c.layout.getProperty(PtolemyProperties.COMMENT_TEXT))
+                .withNodeNameProvider(n | n.name)
+            )
             .addHeuristic(new DistanceHeuristic()
                 .withBoundsProvider(boundsProvider)
                 .withMaximumAttachmentDistance(maxAttachmentDistance)
             )
-            .addHeuristic(new AlignmentHeuristic()
-                .withBoundsProvider(boundsProvider)
-                .withMaximumAlignmentOffset(maxAlignmentDistance)
-            )
+//            .addHeuristic(new AlignmentHeuristic()
+//                .withBoundsProvider(boundsProvider)
+//                .withMaximumAlignmentOffset(maxAlignmentDistance)
+//            )
         
         // Run comment attachment
         val edges = attacher.attachComments(graph);
