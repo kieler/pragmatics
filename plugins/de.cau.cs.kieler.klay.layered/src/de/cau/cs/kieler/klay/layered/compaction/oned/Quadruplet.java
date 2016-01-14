@@ -22,6 +22,7 @@ import de.cau.cs.kieler.kiml.options.Direction;
  */
 public final class Quadruplet {
     
+    // SUPPRESS CHECKSTYLE NEXT 2 VisibilityModifier
     /** Locking values. */
     public boolean left, right, up, down;
     

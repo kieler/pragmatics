@@ -176,10 +176,10 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
             // constraints between regular nodes
             sweep(n -> n instanceof CLNode, defaultSpacingFun);
 
-            // with a minimum spacing,
+            // find the minimum spacing
             double minSpacing = Double.POSITIVE_INFINITY;
             for (CNode n : compactor.cGraph.cNodes) {
-                minSpacing = Math.min(minSpacing, n.getVerticalSpacing());
+                minSpacing = Math.min(minSpacing, defaultSpacingFun.apply(n));
             }
             final double finalMinSpacing = minSpacing;
             // constraints between nodes and vertical segments

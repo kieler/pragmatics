@@ -13,7 +13,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 

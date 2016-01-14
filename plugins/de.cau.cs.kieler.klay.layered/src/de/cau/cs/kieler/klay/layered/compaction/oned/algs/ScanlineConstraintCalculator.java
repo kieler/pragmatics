@@ -12,7 +12,6 @@
  */
 package de.cau.cs.kieler.klay.layered.compaction.oned.algs;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
@@ -83,8 +82,6 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
             }
         }
         
-        Collections.sort(points, constraintsScanlineComparator);
-        
         // reset internal state
         constraintsScanlineHandler.reset();
         
@@ -113,7 +110,7 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
                 }
                 if (!(compactor.direction.isHorizontal() && n.spacingIgnore.down) 
                         && !(compactor.direction.isVertical() && n.spacingIgnore.right)) {
-                    n.hitbox.height += spacing - 2 * EPSILON;
+                    n.hitbox.height += Math.max(0, spacing - 2 * EPSILON);
                 }
             }
         }
@@ -250,7 +247,6 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
                 // different groups?
                 if (left.cGroup != null && left.cGroup != p.node.cGroup) {
                     left.constraints.add(p.node);
-                    p.node.outDegree++;
                 }
             }
 
@@ -259,7 +255,6 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
                 // different groups?
                 if (right.cGroup != null && right.cGroup != p.node.cGroup) {
                     p.node.constraints.add(right);
-                    right.outDegree++;
                 }
             }
 

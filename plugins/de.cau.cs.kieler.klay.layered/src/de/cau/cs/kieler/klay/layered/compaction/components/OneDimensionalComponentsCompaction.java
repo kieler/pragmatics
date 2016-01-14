@@ -86,7 +86,7 @@ public final class OneDimensionalComponentsCompaction<N, E> {
         // node in the "opposite" shadow we do not move it away
         // remember do execute an initial unlocked compaction 
         // in #compact() first, though
-        compactor.setLockingStrategy((pair) -> pair.getFirst().outDegree != 0);
+        compactor.setLockingStrategy((pair) -> pair.getFirst().cGroup.outDegree != 0);
 
         // now execute compaction until no improvement is made or we hit the maximum number of iterations
         int run = 0;
@@ -98,7 +98,7 @@ public final class OneDimensionalComponentsCompaction<N, E> {
 
         // "align" the compaction top left
         compactor.setLockingStrategy((pair) -> pair.getFirst().lock.get(pair.getSecond())
-                || (pair.getFirst().outDegree != 0 && pair.getFirst().lock.get(pair.getSecond())));
+                || (pair.getFirst().cGroup.outDegree != 0 && pair.getFirst().lock.get(pair.getSecond())));
         compact();
         
         // finish it!

@@ -19,7 +19,6 @@ import java.io.PrintWriter;
 // GWTExcludeEnd
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -79,7 +78,7 @@ public final class OneDimensionalCompactor {
         
         this.cGraph = cGraph;
         // the default locking strategy locks CNodes if they are not constrained
-        setLockingStrategy((pair) -> !(pair.getFirst().outDegree == 0));
+        setLockingStrategy((pair) -> !(pair.getFirst().cGroup.outDegree == 0));
         
         // for any pre-specified groups, deduce the offset of the elements
         calculateGroupOffsets();
@@ -349,7 +348,7 @@ public final class OneDimensionalCompactor {
      * 
      * @return this instance of {@link OneDimensionalCompactor}
      * 
-     * @see #setLockingStrategy(BiFunction)
+     * @see #setLockingStrategy(Function)
      */
     public OneDimensionalCompactor applyLockingStrategy() {
         applyLockingStrategy(direction);
@@ -364,7 +363,7 @@ public final class OneDimensionalCompactor {
      *            the {@link Direction} for the locks to be set.
      * @return this instance of {@link OneDimensionalCompactor}
      * 
-     * @see #setLockingStrategy(BiFunction)
+     * @see #setLockingStrategy(Function)
      */
     public OneDimensionalCompactor applyLockingStrategy(final Direction dir) {
 
@@ -473,7 +472,6 @@ public final class OneDimensionalCompactor {
         // resetting constraints
         for (CNode cNode : cGraph.cNodes) {
             cNode.constraints.clear();
-            cNode.outDegree = 0;
         }
         
         constraintAlgorithm.calculateConstraints(this);
@@ -527,9 +525,7 @@ public final class OneDimensionalCompactor {
         // resetting fields of CNodes and reversing constraints
         for (CNode cNode : cGraph.cNodes) {
             cNode.startPos = Double.NEGATIVE_INFINITY;
-            cNode.outDegree = 0;
             for (CNode inc : cNode.constraints) {
-                cNode.outDegree++;
                 incMap.get(inc).add(cNode);
             }
         }

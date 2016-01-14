@@ -149,10 +149,16 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
 
                 if (!isVerticalSegmentsOfSameEdge(cNode, incNode)) {
                     
+                    // it looks nicer if the initial segment is close to the node
+                    double weight = SEPARATION_WEIGHT;
+                    if ((cNode instanceof CLEdge && incNode instanceof CLNode)
+                            || (incNode instanceof CLEdge && cNode instanceof CLNode)) {
+                        weight = 2;
+                    }
                     // add a single edge, i.e. constraint to the network simplex graph
                     NEdge.of()
                         .delta((int) delta)
-                        .weight(SEPARATION_WEIGHT) // small weight here, it only preserves separations
+                        .weight(weight) // small weight here, it only preserves separations
                         .source(nNodes[cNode.cGroup.id])
                         .target(nNodes[incNode.cGroup.id])
                         .create();
@@ -193,9 +199,13 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
      * Add edges to the network simplex graph that represent the original {@link LEdge}s of the
      * graph. Give them a larger weight such that they are kept short.
      * 
-     * There are two special cases:
+     * There are two additional special cases:
+     *  - directly connected north + south port
+     *    (they are already handled by the {@link #addSeparationConstraints()} method.
+     *     Note that this is only possible because the spacings handler that is specified 
+     *     in {@link HorizontalGraphCompactor} adds a single pixel to each of the 
+     *     vertical segments, thus enforcing a constraint)
      *  - inverted ports
-     *  - edges from east/west ports to north/south ports
      */
     private void addEdgeConstraints() {
 
@@ -228,7 +238,7 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
                     LPort tgtPort = lEdge.getTarget();
                     
                     // they may be connected "directly"
-                    // if one of them is north or south we still want to pull the node close
+                    // if one of them is north or south however, we still want to pull the node close
                     if (PortSide.SIDES_NORTH_SOUTH.contains(lEdge.getSource().getSide())
                           && PortSide.SIDES_NORTH_SOUTH.contains(lEdge.getTarget().getSide())) {
                         continue;
@@ -244,17 +254,20 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
                         .create();
                     
                     // keep vertical segments close to the node if they are inverted ports
-                    // also true for edges that have one 90° bend from east to north port for
-                    // instance
                     if (srcPort.getSide() == PortSide.WEST && LPort.OUTPUT_PREDICATE.apply(srcPort)) {
 
                         for (CNode n : lEdgeMap.get(lEdge)) {
                             if (n.hitbox.x < cNode.hitbox.x) {
+                                NNode src = nNodes[n.cGroup.id];
+                                NNode tgt = nNodes[cNode.cGroup.id];
+                                if (src == tgt) {
+                                    continue;
+                                }
                                 NEdge.of()
                                     .delta(1)
                                     .weight(EDGE_WEIGHT)
-                                    .source(nNodes[n.cGroup.id])
-                                    .target(nNodes[cNode.cGroup.id])
+                                    .source(src)
+                                    .target(tgt)
                                     .create();
                             }
                         }
@@ -264,11 +277,16 @@ public class NetworkSimplexCompaction implements ICompactionAlgorithm {
 
                         for (CNode n : lEdgeMap.get(lEdge)) {
                             if (n.hitbox.x > cNode.hitbox.x) {
+                                NNode src = nNodes[cNode.cGroup.id];
+                                NNode tgt = nNodes[n.cGroup.id];
+                                if (src == tgt) {
+                                    continue;
+                                }
                                 NEdge.of()
                                     .delta(1)
                                     .weight(EDGE_WEIGHT)
-                                    .source(nNodes[cNode.cGroup.id])
-                                    .target(nNodes[n.cGroup.id])
+                                    .source(src)
+                                    .target(tgt)
                                     .create();
                             }
                         }
