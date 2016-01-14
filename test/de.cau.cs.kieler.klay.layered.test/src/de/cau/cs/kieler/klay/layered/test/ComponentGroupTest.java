@@ -14,6 +14,7 @@ a * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
 package de.cau.cs.kieler.klay.layered.test;
 
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_SOUTH_WEST;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH_WEST;
@@ -85,6 +86,14 @@ public class ComponentGroupTest {
         assertTrue(group.add(generateGraph(SIDES_SOUTH)));
         assertTrue(group.add(generateGraph(SIDES_NONE)));
         assertTrue(group.add(generateGraph(SIDES_NONE)));
+        
+        // A connected component connected to all four port sides allows corner components
+        group = new ComponentGroup();
+        assertTrue(group.add(generateGraph(SIDES_NORTH_EAST_SOUTH_WEST)));
+        assertTrue(group.add(generateGraph(SIDES_NORTH_WEST)));
+        assertTrue(group.add(generateGraph(SIDES_NORTH_EAST)));
+        assertTrue(group.add(generateGraph(SIDES_SOUTH_WEST)));
+        assertTrue(group.add(generateGraph(SIDES_EAST_SOUTH)));
     }
     
     /**
@@ -116,6 +125,19 @@ public class ComponentGroupTest {
         assertFalse(group.add(generateGraph(SIDES_NORTH_EAST_WEST)));
         assertFalse(group.add(generateGraph(SIDES_EAST_SOUTH_WEST)));
         assertFalse(group.add(generateGraph(SIDES_NORTH_SOUTH_WEST)));
+        
+        // A connected component connected to all four port sides collides with everything
+        // except for corners
+        group = new ComponentGroup();
+        assertTrue(group.add(generateGraph(SIDES_NORTH_EAST_SOUTH_WEST)));
+        assertFalse(group.add(generateGraph(SIDES_NONE)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_SOUTH)));
+        assertFalse(group.add(generateGraph(SIDES_EAST_WEST)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_EAST_SOUTH)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_EAST_WEST)));
+        assertFalse(group.add(generateGraph(SIDES_EAST_SOUTH_WEST)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_SOUTH_WEST)));
+        assertFalse(group.add(generateGraph(SIDES_NORTH_EAST_SOUTH_WEST)));
     }
     
     

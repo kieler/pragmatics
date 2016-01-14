@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.components;
 
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_SOUTH;
+import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_NORTH_EAST_SOUTH_WEST;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_EAST_SOUTH_WEST;
@@ -212,16 +213,18 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
                 group.getComponents(SIDES_NORTH_SOUTH_WEST), spacing);
         KVector sizeENS = placeComponentsVertically(
                 group.getComponents(SIDES_NORTH_EAST_SOUTH), spacing);
+        KVector sizeNESW = placeComponentsHorizontally(
+                group.getComponents(SIDES_NORTH_EAST_SOUTH_WEST), spacing);
         
         // Find the maximum height of the three rows and the maximum width of the three columns the
         // component group is divided into (we're adding a fourth row for WE components and a fourth
         // column for NS components to make the placement easier later)
         double colLeftWidth = KielerMath.maxd(sizeNW.x, sizeW.x, sizeSW.x, sizeWNS.x);
-        double colMidWidth = KielerMath.maxd(sizeN.x, sizeC.x, sizeS.x);
+        double colMidWidth = KielerMath.maxd(sizeN.x, sizeC.x, sizeS.x, sizeNESW.x);
         double colNsWidth = sizeNS.x;
         double colRightWidth = KielerMath.maxd(sizeNE.x, sizeE.x, sizeSE.x, sizeENS.x);
         double rowTopHeight = KielerMath.maxd(sizeNW.y, sizeN.y, sizeNE.y, sizeNWE.y);
-        double rowMidHeight = KielerMath.maxd(sizeW.y, sizeC.y, sizeE.y);
+        double rowMidHeight = KielerMath.maxd(sizeW.y, sizeC.y, sizeE.y, sizeNESW.y);
         double rowWeHeight = sizeWE.y;
         double rowBottomHeight = KielerMath.maxd(sizeSW.y, sizeS.y, sizeSE.y, sizeSWE.y);
         
@@ -229,6 +232,9 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         // taking the size of other component placements into account (the NW, NWE, and WNS components
         // stay at coordinates (0,0) and thus don't need to be moved around)
         offsetGraphs(group.getComponents(SIDES_NONE),
+                colLeftWidth + colNsWidth,
+                rowTopHeight + rowWeHeight);
+        offsetGraphs(group.getComponents(SIDES_NORTH_EAST_SOUTH_WEST),
                 colLeftWidth + colNsWidth,
                 rowTopHeight + rowWeHeight);
         offsetGraphs(group.getComponents(SIDES_NORTH),
