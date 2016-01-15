@@ -105,6 +105,7 @@ class CommentsAttachor {
             .addHeuristic(new NodeReferenceHeuristic()
                 .withCommentTextProvider(c | c.layout.getProperty(PtolemyProperties.COMMENT_TEXT))
                 .withNodeNameProvider(n | n.name)
+                .withBoundsProvider(boundsProvider)
             )
             .addHeuristic(new DistanceHeuristic()
                 .withBoundsProvider(boundsProvider)
