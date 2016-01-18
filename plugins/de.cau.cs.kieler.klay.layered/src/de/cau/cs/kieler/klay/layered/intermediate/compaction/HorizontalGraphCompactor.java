@@ -95,13 +95,13 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
         
         odc.setSpacingsHandler(specialSpacingsHandler);
         
-        
         // ---
         // select constraint algorithm
         // - 
         switch (layeredGraph.getProperty(Properties.POST_COMPACTION_COSTRAINTS)) {
             case SCANLINE:
                 odc.setConstraintAlgorithm(EDGE_AWARE_SCANLINE_CONSTRAINTS);
+                break;
             default:
                 odc.setConstraintAlgorithm(OneDimensionalCompactor.QUADRATIC_CONSTRAINTS);
         }
@@ -179,7 +179,16 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
             // find the minimum spacing
             double minSpacing = Double.POSITIVE_INFINITY;
             for (CNode n : compactor.cGraph.cNodes) {
+                // ignore external ports since their spacing is internally set to 0
+                if (n instanceof CLNode
+                        && ((CLNode) n).getlNode().getType() == NodeType.EXTERNAL_PORT) {
+                    continue;
+                }
                 minSpacing = Math.min(minSpacing, defaultSpacingFun.apply(n));
+            }
+            // solitary external edges may exist ... 
+            if (minSpacing == Double.POSITIVE_INFINITY) {
+                minSpacing = 0;
             }
             final double finalMinSpacing = minSpacing;
             // constraints between nodes and vertical segments

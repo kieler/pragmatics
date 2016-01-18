@@ -37,6 +37,8 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
+import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
  * Manages the transformation of {@link LNode}s and {@link LEdge}s from an {@link LGraph} into
@@ -309,6 +311,8 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
         layeredGraph.getOffset().reset().add(topLeft.clone().negate());
         layeredGraph.getSize().reset().add(bottomRight.clone().sub(topLeft));
         
+        applyExternalPortPositions(topLeft, bottomRight);
+        
         // resetting lists
         cGraph.cGroups.clear();
         cGraph.cNodes.clear();
@@ -331,6 +335,35 @@ public final class LGraphToCGraphTransformer implements ICGraphTransformer<LGrap
             LNode other = e.getValue().getFirst();
             KVector offset = e.getValue().getSecond();
             comment.getPosition().reset().add(other.getPosition().clone().add(offset));
+        }
+    }
+    
+    private void applyExternalPortPositions(final KVector topLeft, final KVector bottomRight) {
+        
+        double borderSpacing = layeredGraph.getProperty(LayoutOptions.BORDER_SPACING).doubleValue();
+        
+        for (CNode cNode : cGraph.cNodes) {
+            if (cNode instanceof CLNode) {
+                LNode lNode = ((CLNode) cNode).getlNode();
+                if (lNode.getType() == NodeType.EXTERNAL_PORT) {
+                    switch (lNode.getProperty(InternalProperties.EXT_PORT_SIDE)) {
+                    case WEST:
+                        lNode.getPosition().x = topLeft.x - borderSpacing;
+                        break;
+                    case EAST:
+                        lNode.getPosition().x = bottomRight.x + borderSpacing
+                                - (lNode.getSize().x + lNode.getMargin().right); 
+                        break;
+                    case NORTH: 
+                        lNode.getPosition().y = topLeft.y - borderSpacing;
+                        break;
+                    case SOUTH:
+                        lNode.getPosition().y = bottomRight.y + borderSpacing
+                                - (lNode.getSize().y + lNode.getMargin().bottom);
+                        break;
+                    }
+                }
+            }
         }
     }
 
