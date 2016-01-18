@@ -98,6 +98,34 @@ public class Rectangle {
     }
     
     /**
+     * @return the top left coordinate (x,y).
+     */
+    public KVector getTopLeft() {
+        return getPosition();
+    }
+
+    /**
+     * @return the top right coordinate (x+w,y).
+     */
+    public KVector getTopRight() {
+        return new KVector(x + width, y);
+    }
+
+    /**
+     * @return the bottom left coordinate (x,y+h).
+     */
+    public KVector getBottomLeft() {
+        return new KVector(x, y + height);
+    }
+
+    /**
+     * @return the bottom right coordinate (x+w,y+h).
+     */
+    public KVector getBottomRight() {
+        return new KVector(x + width, y + height);
+    }
+    
+    /**
      * Unions the receiver and the given <code>Rectangle</code> objects and puts the result into the
      * receiver.
      * 
