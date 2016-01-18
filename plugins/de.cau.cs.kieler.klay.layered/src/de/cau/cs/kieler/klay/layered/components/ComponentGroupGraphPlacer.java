@@ -37,6 +37,8 @@ import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KielerMath;
+import de.cau.cs.kieler.kiml.options.EdgeRouting;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
@@ -115,7 +117,16 @@ final class ComponentGroupGraphPlacer extends AbstractGraphPlacer {
         target.getSize().y = offset.y - spacing;
         
         // if compaction is desired, do so!
-        if (firstComponent.getProperty(Properties.COMPACT_COMPONENTS)) {
+        if (firstComponent.getProperty(Properties.COMPACT_COMPONENTS)
+                // the compaction only supports orthogonally routed edges 
+                && firstComponent.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.ORTHOGONAL) {
+            
+            // apply graph offsets (which we reset later on)
+            // since the compaction works in a common coordinate system
+            for (LGraph h : components) {
+                offsetGraph(h, h.getOffset().x, h.getOffset().y);
+            }
+            
             ComponentsCompactor compactor = new ComponentsCompactor();
             compactor.compact(components, target.getSize(), spacing);
     
