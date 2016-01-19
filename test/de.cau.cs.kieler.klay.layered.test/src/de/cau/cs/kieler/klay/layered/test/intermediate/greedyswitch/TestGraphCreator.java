@@ -13,7 +13,10 @@
  */
 package de.cau.cs.kieler.klay.layered.test.intermediate.greedyswitch;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import com.google.common.collect.Lists;
 
@@ -28,6 +31,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.p3order.constraints.IConstraintResolver;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
@@ -54,6 +58,7 @@ public class TestGraphCreator {
     }
 
     private int edgeId = 0;
+    protected MockRandom random;
 
     /**
      * Makes a fancy test graph creator.
@@ -61,6 +66,8 @@ public class TestGraphCreator {
     public TestGraphCreator() {
         graph = new LGraph();
         graph.setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
+        random = new MockRandom();
+        graph.setProperty(InternalProperties.RANDOM, random);
     }
 
     /**
@@ -87,8 +94,10 @@ public class TestGraphCreator {
         return graph;
     }
 
-    private void setUpIds() {
+    protected void setUpIds() {
+        int lId = 0;
         for (Layer l : graph) {
+            l.id = lId++;
             int i = 0;
             for (LNode n : l) {
                 n.id = i++;
@@ -734,8 +743,6 @@ public class TestGraphCreator {
         return graph;
     }
 
-
-
     /**
      * <pre>
      * ----*
@@ -968,7 +975,6 @@ public class TestGraphCreator {
         PortSide targetNodePortSide = direction == PortSide.WEST ? PortSide.EAST : PortSide.WEST;
         LPort normalNodePort = addPortOnSide(nodeWithEastWestPorts, targetNodePortSide);
 
-
         LPort dummyNodePort = addPortOnSide(northSouthDummy, direction);
 
         if (nodeWithEastWestPortsIsOrigin) {
@@ -985,14 +991,30 @@ public class TestGraphCreator {
         LPort originPort = addPortOnSide(nodeWithNSPorts, side);
         dummyNodePort.setProperty(InternalProperties.ORIGIN, originPort);
         originPort.setProperty(InternalProperties.PORT_DUMMY, northSouthDummy);
+
+        List<LNode> baryAssoc = Lists.newArrayList(northSouthDummy);
+
+        List<LNode> otherBaryAssocs =
+                nodeWithNSPorts.getProperty(InternalProperties.BARYCENTER_ASSOCIATES);
+        if (otherBaryAssocs == null) {
+            nodeWithNSPorts.setProperty(InternalProperties.BARYCENTER_ASSOCIATES, baryAssoc);
+        } else {
+            otherBaryAssocs.addAll(baryAssoc);
+        }
+
+        if (side == PortSide.NORTH) {
+            northSouthDummy.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(
+                    nodeWithNSPorts);
+        } else {
+            nodeWithNSPorts.getProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS).add(
+                    northSouthDummy);
+        }
     }
 
     protected void setInLayerOrderConstraint(final LNode thisNode, final LNode beforeThisNode) {
         List<LNode> scndNodeAsList = Lists.newArrayList(beforeThisNode);
         thisNode.setProperty(InternalProperties.IN_LAYER_SUCCESSOR_CONSTRAINTS, scndNodeAsList);
     }
-
-
 
     protected void setAsLongEdgeDummy(final LNode node) {
         node.setType(NodeType.LONG_EDGE);
@@ -1131,6 +1153,84 @@ public class TestGraphCreator {
         addInLayerEdge(rightNodes[0], rightNodes[2], PortSide.WEST);
         setUpIds();
         return graph;
+    }
+
+    protected final class MockRandom extends Random {
+        private static final long serialVersionUID = 1L;
+        private boolean nextBoolean = true;
+        private double changeBy = 0.01;
+        private double currentDouble = 0.01;
+
+        public MockRandom() {
+        }
+
+        @Override
+        public boolean nextBoolean() {
+            return nextBoolean;
+        }
+
+        @Override
+        public double nextDouble() {
+            return currentDouble += changeBy;
+        }
+
+        @Override
+        public float nextFloat() {
+            return (float) nextDouble();
+        }
+
+        public void setNextBoolean(final boolean b) {
+            nextBoolean = b;
+        }
+
+        public void setChangeBy(final double d) {
+            changeBy = d;
+        }
+    }
+
+    protected <T> List<T> getListInIndexOrder(final List<T> li, final int... is) {
+        List<T> list = new ArrayList<>();
+        for (int i : is) {
+            list.add(li.get(i));
+        }
+        return list;
+    }
+
+    protected <T> T[] getArrayInIndexOrder(final T[] arr, final int... is) {
+        T[] copy = Arrays.copyOf(arr, arr.length);
+        int j = 0;
+        for (int i : is) {
+            copy[j++] = arr[i];
+        }
+        return copy;
+    }
+
+    protected <T> List<T> switchOrderInList(final int i, final int j, final List<T> list) {
+        List<T> listCopy = new ArrayList<T>(list);
+        T first = listCopy.get(i);
+        T second = listCopy.get(j);
+        listCopy.set(i, second);
+        listCopy.set(j, first);
+        return listCopy;
+    }
+
+    protected <T> T[] switchOrderInArray(final int i, final int j, final T[] arr) {
+        T[] copy = Arrays.copyOf(arr, arr.length);
+        T first = arr[i];
+        T snd = arr[j];
+        copy[j] = first;
+        copy[i] = snd;
+        return copy;
+    }
+
+    protected class MockConstraintResolver implements IConstraintResolver {
+
+        public MockConstraintResolver() {
+        }
+
+        @Override
+        public void processConstraints(List<LNode> nodes) {
+        }
     }
 
 }
