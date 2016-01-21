@@ -18,7 +18,8 @@ import java.util.List;
 /**
  * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
  * minimizes edge crossings between the given free layer and a neighboring layer with fixed node
- * order. Given constraints are to be respected, possibly by the use of an {@link IConstraintResolver}.
+ * order. Given constraints are to be respected, possibly by the use of an
+ * {@link de.cau.cs.kieler.klay.layered.p3order.constraints.IConstraintResolver IConstraintResolver}.
  * 
  * @author cds
  * @author ima

@@ -20,6 +20,7 @@ import java.util.Random;
 
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
+import de.cau.cs.kieler.klay.layered.p3order.constraints.IConstraintResolver;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
