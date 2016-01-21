@@ -21,7 +21,6 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 
 /**
  * A very efficient crossings counter that assumes all edges to be drawn as straight lines.
@@ -71,13 +70,12 @@ public class BarthJuengerMutzelCrossingsCounter extends AbstractCrossingsCounter
      * @return the number of edge crossings
      */
     @Override
-    public int countCrossings(final NodeGroup[] leftLayer, final NodeGroup[] rightLayer) {
+    public int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer) {
         // Assign index values to the ports of the right layer
         int targetCount = 0, edgeCount = 0;
-        Layer leftLayerRef = leftLayer[0].getNode().getLayer();
-        Layer rightLayerRef = rightLayer[0].getNode().getLayer();
-        for (NodeGroup nodeGroup : rightLayer) {
-            LNode node = nodeGroup.getNode();
+        Layer leftLayerRef = leftLayer[0].getLayer();
+        Layer rightLayerRef = rightLayer[0].getLayer();
+        for (LNode node : rightLayer) {
             assert node.getLayer() == rightLayerRef;
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Determine how many input ports there are on the north side
@@ -140,8 +138,7 @@ public class BarthJuengerMutzelCrossingsCounter extends AbstractCrossingsCounter
         // Determine the sequence of edge target positions sorted by source and target index
         int[] southSequence = new int[edgeCount];
         int i = 0;
-        for (NodeGroup nodeGroup : leftLayer) {
-            LNode node = nodeGroup.getNode();
+        for (LNode node : leftLayer) {
             assert node.getLayer() == leftLayerRef;
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Iterate output ports in their natural order, that is north - east - south - west

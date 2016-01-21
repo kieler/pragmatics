@@ -29,7 +29,6 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 
 /**
  * Crossings counter implementation specialized for hyperedges. It also works for normal edges,
@@ -158,11 +157,10 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
      */
     // SUPPRESS CHECKSTYLE NEXT 1 MethodLength
     @Override
-    public int countCrossings(final NodeGroup[] leftLayer, final NodeGroup[] rightLayer) {
+    public int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer) {
         // Assign index values to the ports of the left layer
         int sourceCount = 0;
-        for (NodeGroup nodeGroup : leftLayer) {
-            LNode node = nodeGroup.getNode();
+        for (LNode node : leftLayer) {
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Assign index values in the order north - east - south - west
                 for (LPort port : node.getPorts()) {
@@ -196,8 +194,7 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
         
         // Assign index values to the ports of the right layer
         int targetCount = 0;
-        for (NodeGroup nodeGroup : rightLayer) {
-            LNode node = nodeGroup.getNode();
+        for (LNode node : rightLayer) {
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 // Determine how many input ports there are on the north side
                 // (note that the standard port order is north - east - south - west)
@@ -257,8 +254,7 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
         // Gather hyperedges
         Map<LPort, Hyperedge> port2HyperedgeMap = Maps.newHashMap();
         Set<Hyperedge> hyperedgeSet = Sets.newLinkedHashSet();
-        for (NodeGroup nodeGroup : leftLayer) {
-            LNode node = nodeGroup.getNode();
+        for (LNode node : leftLayer) {
             for (LPort sourcePort : node.getPorts()) {
                 for (LEdge edge : sourcePort.getOutgoingEdges()) {
                     LPort targetPort = edge.getTarget();
@@ -299,8 +295,8 @@ public class HyperedgeCrossingsCounter extends AbstractCrossingsCounter {
         
         // Determine top and bottom positions for each hyperedge
         Hyperedge[] hyperedges = hyperedgeSet.toArray(new Hyperedge[hyperedgeSet.size()]);
-        Layer leftLayerRef = leftLayer[0].getNode().getLayer();
-        Layer rightLayerRef = rightLayer[0].getNode().getLayer();
+        Layer leftLayerRef = leftLayer[0].getLayer();
+        Layer rightLayerRef = rightLayer[0].getLayer();
         for (Hyperedge he : hyperedges) {
             he.upperLeft = sourceCount;
             he.upperRight = targetCount;

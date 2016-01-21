@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klay.layered.p3order.constraints;
 
 import java.util.List;
 
-import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
+import de.cau.cs.kieler.klay.layered.graph.LNode;
 
 /**
  * Detects and resolves violated constraints.
@@ -31,9 +31,9 @@ public interface IConstraintResolver {
     /**
      * Detects and resolves violated constraints.
      * 
-     * @param nodeGroups
-     *            the single-node vertices sorted by their barycenter values
+     * @param nodes
+     *            the nodes sorted by their barycenter values
      */
-    void processConstraints(final List<NodeGroup> nodeGroups);
+    void processConstraints(final List<LNode> nodes);
 
 }

@@ -24,7 +24,6 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 
 /**
@@ -68,7 +67,7 @@ public abstract class AbstractCrossingsCounter {
      * @param rightLayer the right layer
      * @return the number of crossings between edges going from the left layer to the right layer
      */
-    public abstract int countCrossings(final NodeGroup[] leftLayer, final NodeGroup[] rightLayer);
+    public abstract int countCrossings(final LNode[] leftLayer, final LNode[] rightLayer);
     
     /**
      * Count the in-layer crossings of the given layer. This includes crossings of in-layer edges
@@ -78,7 +77,7 @@ public abstract class AbstractCrossingsCounter {
      * @param index the index of the layer inside the layered graph
      * @return the number of in-layer crossings of the given layer
      */
-    public final int countCrossings(final NodeGroup[] layer, final int index) {
+    public final int countCrossings(final LNode[] layer, final int index) {
         int c = 0;
         if (inLayerEdgeCount[index] > 0) {
             c += countInLayerEdgeCrossings(layer);
@@ -131,7 +130,7 @@ public abstract class AbstractCrossingsCounter {
      *            the layer whose in-layer crossings and north/south dummy crossings to estimate.
      * @return the worst possible number of crossings
      */
-    private int countInLayerEdgeCrossings(final NodeGroup[] layer) {
+    private int countInLayerEdgeCrossings(final LNode[] layer) {
         int eastWestCrossings = 0;
         int northSouthCrossings = 0;
 
@@ -152,8 +151,7 @@ public abstract class AbstractCrossingsCounter {
         boolean northernSide = true;
         boolean layerLayoutUnitsSet = true;
 
-        for (NodeGroup nodeGroup : layer) {
-            LNode node = nodeGroup.getNode();
+        for (LNode node : layer) {
             
             // Part 1 of the crossing counting algorithm
             for (LPort port : node.getPorts()) {
@@ -224,8 +222,7 @@ public abstract class AbstractCrossingsCounter {
             int dummyCount = 0;
             northernSide = true;
 
-            for (NodeGroup nodeGroup : layer) {
-                LNode node = nodeGroup.getNode();
+            for (LNode node : layer) {
                 NodeType nodeType = node.getType();
 
                 switch (nodeType) {
@@ -270,7 +267,7 @@ public abstract class AbstractCrossingsCounter {
      * @param westernMap
      *            map to put the western ports' indices in.
      */
-    private void numberEastWestPorts(final NodeGroup[] layer, final Map<LPort, Integer> easternMap,
+    private void numberEastWestPorts(final LNode[] layer, final Map<LPort, Integer> easternMap,
             final Map<LPort, Integer> westernMap) {
 
         int currentEasternNumber = 0;
@@ -278,7 +275,7 @@ public abstract class AbstractCrossingsCounter {
 
         // Assign numbers to eastern ports, top-down
         for (int nodeIndex = 0; nodeIndex < layer.length; nodeIndex++) {
-            LNode node = layer[nodeIndex].getNode();
+            LNode node = layer[nodeIndex];
 
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 for (LPort easternPort : node.getPorts(PortSide.EAST)) {
@@ -304,7 +301,7 @@ public abstract class AbstractCrossingsCounter {
 
         // Assign indices to western ports, bottom-up
         for (int nodeIndex = layer.length - 1; nodeIndex >= 0; nodeIndex--) {
-            LNode node = layer[nodeIndex].getNode();
+            LNode node = layer[nodeIndex];
 
             if (node.getProperty(LayoutOptions.PORT_CONSTRAINTS).isOrderFixed()) {
                 for (LPort westernPort : node.getPorts(PortSide.WEST)) {
@@ -377,14 +374,14 @@ public abstract class AbstractCrossingsCounter {
      * @param layer the layer whose north / south port related crossings to count.
      * @return the number of crossings caused by edges connected to northern or southern ports.
      */
-    private int countNorthSouthPortCrossings(final NodeGroup[] layer) {
+    private int countNorthSouthPortCrossings(final LNode[] layer) {
         int crossings = 0;
         boolean northernSide = true;
         LNode recentNormalNode = null;
         
         // Iterate through the layer's nodes
         for (int i = 0; i < layer.length; i++) {
-            LNode node = layer[i].getNode();
+            LNode node = layer[i];
             NodeType nodeType = node.getType();
             
             if (nodeType == NodeType.NORMAL) {
@@ -433,7 +430,7 @@ public abstract class AbstractCrossingsCounter {
                 // Iterate over the next nodes until we find a north / south port dummy belonging to a
                 // new normal node or until we find our current normal node
                 for (int j = i + 1; j < layer.length; j++) {
-                    LNode node2 = layer[j].getNode();
+                    LNode node2 = layer[j];
                     NodeType node2Type = node2.getType();
                     
                     if (node2Type == NodeType.NORMAL) {
