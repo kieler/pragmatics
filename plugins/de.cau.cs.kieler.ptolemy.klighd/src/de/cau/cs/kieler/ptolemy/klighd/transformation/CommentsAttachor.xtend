@@ -58,6 +58,8 @@ class CommentsAttachor {
 
     /** Maximum distance for two objects to be considered close enough for attachment. */
     val double maxAttachmentDistance = 50;
+    /** Maximum attachment distance used by the node reference heuristic. */
+    val double maxAttachmentDistanceForReferenceHeuristic = 30;
     /** The maximum area of a comment to still be considered attacheable. */
     val double maxCommentArea = 62000;
 //    /** Maximum distance for two objects to be considered to be aligned. */
@@ -106,6 +108,7 @@ class CommentsAttachor {
                 .withCommentTextProvider(c | c.layout.getProperty(PtolemyProperties.COMMENT_TEXT))
                 .withNodeNameProvider(n | n.name)
                 .withBoundsProvider(boundsProvider)
+                .withMaximumAttachmentDistance(maxAttachmentDistanceForReferenceHeuristic)
             )
             .addHeuristic(new DistanceHeuristic()
                 .withBoundsProvider(boundsProvider)
