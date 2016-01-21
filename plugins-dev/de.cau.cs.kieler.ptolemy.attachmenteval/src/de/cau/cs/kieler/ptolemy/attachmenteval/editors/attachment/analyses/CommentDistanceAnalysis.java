@@ -43,6 +43,8 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
     private PtolemyTitleCommentFilter titleCommentFilter = null;
     /** Distances between a comments and the nodes they are attached to in the reference function. */
     private List<Double> attachedNodeDistances = Lists.newArrayList();
+    /** Distance between any comment and its nearest node. */
+    private List<Double> closestToAnyDistances = Lists.newArrayList();
     /** Distance between a comment that's attached to something and its nearest node. */
     private List<Double> closestToAttachedDistances = Lists.newArrayList();
     /** Distance between a filtered comment its nearest node. */
@@ -99,6 +101,8 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
         // Distance Histograms
         System.out.println("------ Comments and their attached nodes");
         attachedNodeDistances.stream().forEach((dist) -> System.out.println(dist));
+        System.out.println("------ Closest node to any comment");
+        closestToAnyDistances.stream().forEach((dist) -> System.out.println(dist));
         System.out.println("------ Closest node to attached comment");
         closestToAttachedDistances.stream().forEach((dist) -> System.out.println(dist));
         System.out.println("------ Closest node to filtered comment");
@@ -121,6 +125,8 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
                 double nearestNodeDistance = DistanceHeuristic.distance(
                         boundsProvider.boundsFor(child),
                         boundsProvider.boundsFor(nearestNode));
+                
+                closestToAnyDistances.add(nearestNodeDistance);
                 
                 if (attachedNode == null) {
                     // Check if the comment is filtered out
