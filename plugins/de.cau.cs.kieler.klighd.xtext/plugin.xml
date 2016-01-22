@@ -20,9 +20,9 @@
       </handler>
    </extension>
    <extension
-         point="de.cau.cs.kieler.klighd.view.editor">
+         point="de.cau.cs.kieler.klighd.ui.view.editor">
       <editor
-            controllerID="de.cau.cs.kieler.klighd.view.controllers.XtextChangeUpdateController"
+            controllerID="de.cau.cs.kieler.klighd.ui.view.controllers.XtextChangeUpdateController"
             editorID="de.cau.cs.kieler.core.kgraph.text.KGraph">
       </editor>
    </extension>
