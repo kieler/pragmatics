@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="de.cau.cs.kieler.klighd.feature"
-      label="KIELER Lightweight Diagrams Runtime"
-      version="0.9.0.qualifier"
+      id="de.cau.cs.kieler.klighd.view.feature"
+      label="KIELER Lightweight Diagrams Generic Diagram View"
+      version="0.1.0.qualifier"
       provider-name="Kiel University"
-      plugin="de.cau.cs.kieler.klighd">
+      plugin="de.cau.cs.kieler.klighd.ui.view">
 
    <description url="http://www.informatik.uni-kiel.de/rtsys/kieler">
-      The KLighD project contributes infrastructure for easy and fast synthesis of graphical model representations in form of node-link-diagrams.
+      The KLighD Generic Diagram View offers an Eclipse view that displays
+the active editor&apos;s content as a diagram, if a proper diagram synthesis
+is installed.
    </description>
 
    <copyright>
-      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Kiel University
+      Copyright 2016 by Real-Time and Embedded Systems Group, Department
+of Computer Science, Kiel University
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
@@ -218,57 +221,11 @@ litigation.
    </url>
 
    <requires>
-      <import feature="org.eclipse.platform" version="3.8.0" match="greaterOrEqual"/>
-      <import feature="org.eclipse.xtext.xbase.lib" version="2.7.2" match="greaterOrEqual"/>
-      <import feature="de.cau.cs.kieler.kiml.feature"/>
-      <import plugin="com.google.guava" version="11.0.0" match="greaterOrEqual"/>
-      <import plugin="com.google.inject" version="3.0.0" match="greaterOrEqual"/>
+      <import feature="de.cau.cs.kieler.klighd.feature" version="0.9.0.qualifier"/>
    </requires>
 
    <plugin
-         id="de.cau.cs.kieler.klighd"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klighd.piccolo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="edu.umd.cs.piccolo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.krendering"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.krendering.extensions"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.klighd.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core"
+         id="de.cau.cs.kieler.klighd.ui.view"
          download-size="0"
          install-size="0"
          version="0.0.0"

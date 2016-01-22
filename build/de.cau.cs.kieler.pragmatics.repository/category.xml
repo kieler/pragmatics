@@ -58,7 +58,7 @@
    <feature url="features/de.cau.cs.kieler.kiml.graphviz.source_0.9.0.qualifier.jar" id="de.cau.cs.kieler.kiml.graphviz.feature.source" version="0.9.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
-   
+
    <feature url="features/de.cau.cs.kieler.kiml.ogdf_0.7.0.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature" version="0.7.0.qualifier">
       <category name="kieler-layout"/>
    </feature>
@@ -96,6 +96,13 @@
       <category name="kieler-klighd"/>
    </feature>
    <feature url="features/de.cau.cs.kieler.klighd.sdk.feature.source_0.7.0.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature.source" version="0.7.0.qualifier">
+      <category name="kieler-sources"/>
+   </feature>
+
+   <feature url="features/de.cau.cs.kieler.klighd.view.feature_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature" version="0.1.0.qualifier">
+      <category name="kieler-klighd"/>
+   </feature>
+   <feature url="features/de.cau.cs.kieler.klighd.view.feature.source_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature.source" version="0.1.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
 

@@ -245,6 +245,10 @@ litigation.
          id="net.ogdf.bin.feature"
          version="0.0.0"/>
 
+   <includes
+         id="de.cau.cs.kieler.klighd.view.feature"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="org.eclipse.ui.ide"/>
       <import plugin="org.eclipse.ui.ide.application"/>
