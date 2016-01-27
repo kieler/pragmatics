@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.layered.intermediate;
 import java.util.List;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -24,6 +25,7 @@ import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
@@ -32,8 +34,9 @@ import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
- * Processor that tries to move label dummy nodes into the center of their long edges. This is done
- * by switching the order of long edge dummies and label dummies.
+ * Processor that tries to move label dummy nodes into an "optimal" layer their long edges crosses. This
+ * is done by switching the order of long edge dummies and label dummies. There are different strategies
+ * available to determine the "optimal" layer. See {@link EdgeLabelPacementStrategy}.
  * 
  * <p>
  * If this is the only thing we did we could end up in situations where multiple edges forming a
@@ -75,29 +78,40 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  * @kieler.rating yellow proposed cds
  */
 public final class LabelDummySwitcher implements ILayoutProcessor {
+    
+    /** Available strategies to place long edge center labels. */
+    private enum EdgeLabelPacementStrategy {
+        /** Place long edge labels in the center layer their edge crosses. */
+        CENTER,
+        /** Place long edge labels in the widest layer their edge crosses. */
+        WIDEST_LAYER
+    }
+    
+    /** Selected placement strategy. */
+    private static final EdgeLabelPacementStrategy STRATEGY = EdgeLabelPacementStrategy.CENTER;
 
     /**
      * {@inheritDoc}
      */
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Label dummy switching", 1);
-        
-        // List of label dummies we encounter and list of label dummies and long edge dummies that need
-        // to be swapped
+
+        // List of label dummies we encounter
         List<LNode> labelDummies = Lists.newArrayList();
+        // List of label dummies and long edge dummies that need to be swapped
         List<Pair<LNode, LNode>> nodesToSwap = Lists.newArrayList();
-        
+
         // Iterate over the graph and gather all label dummies that need to be swapped
         List<LNode> leftLongEdgeDummies = Lists.newArrayList();
         List<LNode> rightLongEdgeDummies = Lists.newArrayList();
-        
+
         for (Layer layer : layeredGraph) {
             for (LNode node : layer.getNodes()) {
                 if (node.getType() == NodeType.LABEL) {
                     labelDummies.add(node);
                     leftLongEdgeDummies.clear();
                     rightLongEdgeDummies.clear();
-                    
+
                     // Gather long edge dummies left of the label dummy
                     LNode source = node;
                     do {
@@ -106,7 +120,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
                             leftLongEdgeDummies.add(source);
                         }
                     } while (source.getType() == NodeType.LONG_EDGE);
-                    
+
                     // Gather long edge dummies right of the label dummy
                     LNode target = node;
                     do {
@@ -115,17 +129,17 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
                             rightLongEdgeDummies.add(target);
                         }
                     } while (target.getType() == NodeType.LONG_EDGE);
-                    
-                    // Check whether the label dummy should be switched
-                    int leftSize = leftLongEdgeDummies.size();
-                    int rightSize = rightLongEdgeDummies.size();
-                    
-                    if (leftSize > rightSize + 1) {
-                        int pos = (leftSize + rightSize) / 2;
-                        nodesToSwap.add(new Pair<LNode, LNode>(node, leftLongEdgeDummies.get(pos)));
-                    } else if (rightSize > leftSize + 1) {
-                        int pos = (rightSize - leftSize) / 2 - 1;
-                        nodesToSwap.add(new Pair<LNode, LNode>(node, rightLongEdgeDummies.get(pos)));
+
+                    // Determine the nodes to swap according to the given strategy
+                    switch (STRATEGY) {
+                    case WIDEST_LAYER:
+                        findSwapCandidateForWidestLayer(node, leftLongEdgeDummies,
+                                rightLongEdgeDummies, nodesToSwap);
+                        break;
+                    case CENTER:
+                    default:
+                        findSwapCandidateCenter(node, leftLongEdgeDummies, rightLongEdgeDummies,
+                                nodesToSwap);
                     }
                 }
             }
@@ -138,8 +152,72 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
         for (LNode labelDummy : labelDummies) {
             updateLongEdgeSourceTargetInfo(labelDummy);
         }
-        
+
         monitor.done();
+    }
+
+    /**
+     * Find a long edge dummy and add it to the list of nodes to swap to move the given node in the
+     * widest layer the edge crosses.
+     * 
+     * @param node
+     *            the dummy node to move.
+     * @param leftLongEdgeDummies
+     *            long edge dummies to the left.
+     * @param rightLongEdgeDummies
+     *            long edge dummies to the right.
+     * @param nodesToSwap
+     *            list of nodes to swap.
+     */
+    private void findSwapCandidateForWidestLayer(final LNode node,
+            final List<LNode> leftLongEdgeDummies, final List<LNode> rightLongEdgeDummies,
+            final List<Pair<LNode, LNode>> nodesToSwap) {
+
+        // Find the widest layer and the corresponding swap candidate
+        double maxWidth = 0.0;
+        LNode swapCandidate = null;
+        for (LNode dummy : Iterables.concat(rightLongEdgeDummies, leftLongEdgeDummies)) {
+            // TODO cache the layer width in hashmap or something
+            double width = LGraphUtil.findMaxNonDummyNodeWidth(dummy.getLayer(), false);
+            if (width > maxWidth) {
+                maxWidth = width;
+                swapCandidate = dummy;
+            }
+        }
+
+        if (swapCandidate != null) {
+            nodesToSwap.add(new Pair<LNode, LNode>(node, swapCandidate));
+        }
+    }
+
+    /**
+     * Find a long edge dummy and add it to the list of nodes to swap to move the given node in the
+     * center layer the edge crosses.
+     * 
+     * @param node
+     *            the dummy node to move.
+     * @param leftLongEdgeDummies
+     *            long edge dummies to the left.
+     * @param rightLongEdgeDummies
+     *            long edge dummies to the right.
+     * @param nodesToSwap
+     *            list of nodes to swap.
+     */
+    private void findSwapCandidateCenter(final LNode node,
+            final List<LNode> leftLongEdgeDummies, final List<LNode> rightLongEdgeDummies,
+            final List<Pair<LNode, LNode>> nodesToSwap) {
+
+        // Check whether the label dummy should be switched
+        int leftSize = leftLongEdgeDummies.size();
+        int rightSize = rightLongEdgeDummies.size();
+
+        if (leftSize > rightSize + 1) {
+            int pos = (leftSize + rightSize) / 2;
+            nodesToSwap.add(new Pair<LNode, LNode>(node, leftLongEdgeDummies.get(pos)));
+        } else if (rightSize > leftSize + 1) {
+            int pos = (rightSize - leftSize) / 2 - 1;
+            nodesToSwap.add(new Pair<LNode, LNode>(node, rightLongEdgeDummies.get(pos)));
+        }
     }
 
     /**
