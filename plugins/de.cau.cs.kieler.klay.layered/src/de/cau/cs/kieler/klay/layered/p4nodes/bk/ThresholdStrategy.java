@@ -41,6 +41,11 @@ public abstract class ThresholdStrategy {
     protected BKAlignedLayout bal;
     
     /**
+     * The precalculated neighborhood information.
+     */
+    protected NeighborhoodInformation ni;
+    
+    /**
      * We keep track of which blocks have been completely finished.
      */
     protected Set<LNode> blockFinished = Sets.newHashSet();
@@ -55,9 +60,12 @@ public abstract class ThresholdStrategy {
      * 
      * @param theBal
      *            The currently processed layout with its iteration directions.
+     * @param theNi
+     *            The precalculated neighborhood information of the graph.
      */
-    public void init(final BKAlignedLayout theBal) {
+    public void init(final BKAlignedLayout theBal, final NeighborhoodInformation theNi) {
         this.bal = theBal;
+        this.ni = theNi;
         blockFinished.clear();
         postProcessables.clear();
     }
@@ -229,6 +237,13 @@ public abstract class ThresholdStrategy {
             
             boolean hasEdges = false;
             for (LEdge e : edges) {
+                
+                // ignore in-layer edges
+                if (ni.layerIndex[e.getSource().getNode().getLayer().id] 
+                        == ni.layerIndex[e.getTarget().getNode().getLayer().id]) {
+                    continue;
+                }
+                
                 hasEdges = true;
                 
                 // if the other node does not have a position yet, ignore this edge

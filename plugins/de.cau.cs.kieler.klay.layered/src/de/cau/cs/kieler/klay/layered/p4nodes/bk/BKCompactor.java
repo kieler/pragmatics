@@ -104,7 +104,7 @@ public class BKCompactor implements ICompactor {
         }
 
         // init threshold strategy
-        threshStrategy.init(bal);
+        threshStrategy.init(bal, ni);
         // mark all blocks as unplaced
         Arrays.fill(bal.y, null);
         
