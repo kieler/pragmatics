@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -39,13 +39,13 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 import de.cau.cs.kieler.klay.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import de.cau.cs.kieler.klay.layered.p5edges.splines.LoopSide;
 
 /**
  * Container for property definitions for internal use of the algorithm. These properties should
- * not be accessed from outside.
+ * not be accessed from outside. Some properties here are redefinitions of layout options in
+ * {@link LayoutOptions} to change their defaults.
  *
  * @author msp
  * @author cds
@@ -192,11 +192,6 @@ public final class InternalProperties {
      * all ports that have dummy nodes created for them.
      */
     public static final IProperty<LNode> PORT_DUMMY = new Property<LNode>("portDummy");
-
-    /**
-     * The node group of an LNode as used in the crossing minimization phase.
-     */
-    public static final IProperty<NodeGroup> NODE_GROUP = new Property<NodeGroup>("nodeGroup");
 
     /**
      * Crossing hint used for in-layer cross counting with northern and southern port dummies. This
@@ -370,10 +365,18 @@ public final class InternalProperties {
             "splineSelfLoopMargins", new Margins());
 
     /**
-     * List of ports on north/south dummies connected to a north/south port on a normal node.
+     * Internal container for all possible spacing variations that we support.
      */
-    public static final IProperty<List<LPort>> CONNECTED_NORTH_SOUTH_PORT_DUMMIES =
-            new Property<List<LPort>>("connectedNorthSouthPorts", new ArrayList<LPort>());
+    public static final IProperty<Spacings> SPACINGS =
+            new Property<Spacings>("spacings");
+    
+    /**
+     * Specifies if the corresponding LGraph element was added by the
+     * {@link de.cau.cs.kieler.klay.layered.intermediate.PartitionPreprocessor
+     * PartitionPreprocessor}.
+     */
+    public static final IProperty<Boolean> PARTITION_DUMMY = new Property<Boolean>(
+            "partitionConstraint", false);
 
     // /////////////////////////////////////////////////////////////////////////////
     // OVERWRITTEN PROPERTIES
@@ -388,38 +391,37 @@ public final class InternalProperties {
     /**
      * Minimal spacing between objects.
      */
-    public static final Property<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
+    public static final IProperty<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
             20.0f, 1.0f);
 
     /**
      * Minimal spacing between ports.
      */
-    public static final Property<Float> PORT_SPACING = new Property<Float>(LayoutOptions.PORT_SPACING,
+    public static final IProperty<Float> PORT_SPACING = new Property<Float>(LayoutOptions.PORT_SPACING,
             10.0f, 1.0f);
 
     /**
      * Spacing to the border of the drawing.
      */
-    public static final Property<Float> BORDER_SPACING = new Property<Float>(
+    public static final IProperty<Float> BORDER_SPACING = new Property<Float>(
             LayoutOptions.BORDER_SPACING, 12.0f, 0.0f);
 
     /**
      * Priority of elements. controls how much single edges are emphasized.
      */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
+    public static final IProperty<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY, 0);
 
     /**
      * The aspect ratio for packing connected components.
      */
-    public static final Property<Float> ASPECT_RATIO = new Property<Float>(
+    public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
             LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
 
     /**
      * How to route edges.
      */
-    public static final Property<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
+    public static final IProperty<EdgeRouting> EDGE_ROUTING = new Property<EdgeRouting>(
             LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
-
 
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR

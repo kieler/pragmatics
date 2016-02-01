@@ -2,13 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: de.cau.cs.kieler.kiml;singleton:=true
-Bundle-Version: 0.17.0.qualifier
+Bundle-Version: 0.18.0.qualifier
 Bundle-Localization: plugin
 Eclipse-BuddyPolicy: registered
 Require-Bundle: com.google.guava;bundle-version="10.0.0",
+ org.eclipse.emf.ecore,
  de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph
 Export-Package: de.cau.cs.kieler.kiml,
+ de.cau.cs.kieler.kiml.comments,
  de.cau.cs.kieler.kiml.config,
  de.cau.cs.kieler.kiml.klayoutdata,
  de.cau.cs.kieler.kiml.klayoutdata.impl,
@@ -18,7 +20,8 @@ Export-Package: de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.kiml.util,
  de.cau.cs.kieler.kiml.util.adapters,
  de.cau.cs.kieler.kiml.util.labelspacing,
- de.cau.cs.kieler.kiml.util.nodespacing
+ de.cau.cs.kieler.kiml.util.nodespacing,
+ de.cau.cs.kieler.kiml.util.selection
 Bundle-Vendor: %providerName
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -23,7 +23,7 @@ import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.intermediate.IntermediateProcessorStrategy;
 import de.cau.cs.kieler.klay.layered.properties.GraphProperties;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.Spacings;
 
 /**
  * A node placer that keeps the pre-existing y coordinates of nodes. As far as dummy nodes are
@@ -66,6 +66,9 @@ public final class InteractiveNodePlacer implements ILayoutPhase {
             return null;
         }
     }
+    
+    /** Spacing values. */
+    private Spacings spacings;
 
     /**
      * {@inheritDoc}
@@ -73,14 +76,11 @@ public final class InteractiveNodePlacer implements ILayoutPhase {
     public void process(final LGraph layeredGraph, final IKielerProgressMonitor monitor) {
         monitor.begin("Interactive node placement", 1);
 
-        float normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING)
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
-        float smallSpacing = normalSpacing
-                * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
+        spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
         
         // Place the nodes in each layer
         for (Layer layer : layeredGraph) {
-            placeNodes(layer, normalSpacing, smallSpacing);
+            placeNodes(layer);
         }
         
         // TODO Compute a graph offset?
@@ -92,10 +92,8 @@ public final class InteractiveNodePlacer implements ILayoutPhase {
      * Places the nodes in the given layer.
      * 
      * @param layer the layer whose nodes to place.
-     * @param spacing spacing between regular nodes.
-     * @param smallSpacing spacing between dummy nodes.
      */
-    private void placeNodes(final Layer layer, final double spacing, final double smallSpacing) {
+    private void placeNodes(final Layer layer) {
         // The minimum value for the next valid y coordinate
         double minValidY = Double.NEGATIVE_INFINITY;
         
@@ -104,7 +102,7 @@ public final class InteractiveNodePlacer implements ILayoutPhase {
         
         for (LNode node : layer) {
             // Check which kind of node it is
-            NodeType nodeType = node.getNodeType();
+            NodeType nodeType = node.getType();
             if (nodeType != NodeType.NORMAL) {
                 // While normal nodes have their original position already in them, with dummy nodes
                 // it's more complicated. Check if the interactive crossing minimizer has calculated
@@ -116,22 +114,21 @@ public final class InteractiveNodePlacer implements ILayoutPhase {
                     // Make sure that the minimum valid Y position is usable
                     minValidY = Math.max(minValidY, 0.0);
                     
-                    node.getPosition().y = minValidY
-                            + (prevNodeType == NodeType.NORMAL ? spacing : smallSpacing);
+                    node.getPosition().y =
+                            minValidY + spacings.getVerticalSpacing(nodeType, prevNodeType);
                 } else {
                     node.getPosition().y = originalYCoordinate;
                 }
             }
             
             // If the node extends into nodes we already placed above, we need to move it down
-            if (node.getPosition().y < minValidY) {
-                node.getPosition().y = minValidY 
-                        + (prevNodeType == NodeType.NORMAL || nodeType == NodeType.NORMAL
-                           ? spacing : smallSpacing);
+            float spacing = spacings.getVerticalSpacing(nodeType, prevNodeType);
+            if (node.getPosition().y < minValidY + spacing + node.getMargin().top) {
+                node.getPosition().y = minValidY + spacing + node.getMargin().top;
             }
             
             // Update minimum valid y coordinate and remember node type
-            minValidY = node.getPosition().y + node.getSize().y;
+            minValidY = node.getPosition().y + node.getSize().y + node.getMargin().bottom;
             prevNodeType = nodeType;
         }
     }

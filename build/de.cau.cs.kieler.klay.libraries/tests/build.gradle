@@ -1,0 +1,99 @@
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    testBundledKlayCompile.extendsFrom      testCompile
+    testBundledKlayDepsCompile.extendsFrom  testCompile
+    testKlayCompile.extendsFrom             testCompile
+    testJsonCompile.extendsFrom             testCompile
+}
+
+dependencies {
+    testCompile "junit:junit:[4,)"
+
+    testBundledKlayCompile files(rootProject.tasks['bundledKlay'].outputs)
+    testBundledKlayCompile klayExternalDeps
+
+    testBundledKlayDepsCompile files(rootProject.tasks['bundledKlayDeps'].outputs)
+
+    testKlayCompile klayDeps
+    testKlayCompile klayExternalDeps
+
+    testJsonCompile klayDeps
+    testJsonCompile klayExternalDeps
+    testJsonCompile formatsDeps
+    testJsonCompile formatsExternalDeps
+    testJsonCompile jsonDeps
+    testJsonCompile jsonExternalDeps
+    testJsonCompile project(':nonosgi')
+}
+
+sourceSets {
+    testBundledKlay {
+        java {
+            srcDirs = ['src']
+            include 'PlainJavaTest.java'
+        }
+    }
+    testBundledKlayDeps {
+        java {
+            srcDirs = ['src']
+            include 'PlainJavaTest.java'
+        }
+    }
+    testKlay {
+        java {
+            srcDirs = ['src']
+            include 'PlainJavaTest.java'
+        }
+    }
+    testJson {
+        java {
+            srcDirs = ['src']
+            include 'JsonTest.java'
+        }
+    }
+}
+
+tasks.withType(Test){task ->
+    useJUnit()
+    reports.html.enabled = false
+    reports.junitXml.destination = "$buildDir/test-results/${task.name}"
+}
+
+task testBundledKlay(type: Test, dependsOn: rootProject.tasks['bundledKlay']) {
+    group 'KIELER test'
+    description = 'Tests the bundled Klay (which does not include dependencies).'
+    testClassesDir = sourceSets.testBundledKlay.output.classesDir
+    classpath = sourceSets.testBundledKlay.runtimeClasspath
+}
+
+task testBundledKlayDeps(type: Test, dependsOn: rootProject.tasks['bundledKlayDeps']) {
+    group 'KIELER test'
+    description = 'Tests the bundled Klay (which does include dependencies).'
+    testClassesDir = sourceSets.testBundledKlayDeps.output.classesDir
+    classpath = sourceSets.testBundledKlayDeps.runtimeClasspath
+}
+
+task testKlay(type: Test) {
+    group 'KIELER test'
+    description = 'Tests the Klay plugin collection.'
+    testClassesDir = sourceSets.testKlay.output.classesDir
+    classpath = sourceSets.testKlay.runtimeClasspath
+}
+
+task testJson(type: Test) {
+    group 'KIELER test'
+    description = 'Tests the Klay with JSON import plugin collection.'
+    testClassesDir = sourceSets.testJson.output.classesDir
+    classpath = sourceSets.testJson.runtimeClasspath
+}
+
+// Explicitly set task order to prevent the clean task from running after any build task.
+testBundledKlay.mustRunAfter        clean
+testBundledKlayDeps.mustRunAfter    clean
+testKlay.mustRunAfter               clean
+testJson.mustRunAfter               clean

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -107,26 +107,6 @@ public abstract class AbstractPortDistributor {
             consumedRank += calculatePortRanks(layer[nodeIx], consumedRank, portType);
         }
     }
-    
-    /**
-     * Determine ranks for all ports of specific type in the given layer. Entries that
-     * contain multiple nodes are ignored. The ranks are written to the {@link #getPortRanks()} array.
-     * 
-     * @param layer
-     *            a layer as node group array
-     * @param portType
-     *            the port type to consider
-     */
-    public final void calculatePortRanks(final NodeGroup[] layer, final PortType portType) {
-        float consumedRank = 0;
-        for (int nodeIx = 0; nodeIx < layer.length; nodeIx++) {
-            NodeGroup nodeGroup = layer[nodeIx];
-            if (nodeGroup.getNodes().length == 1) {
-                consumedRank += calculatePortRanks(nodeGroup.getNode(), consumedRank, portType);
-            }
-        }
-    }
-    
     
     // /////////////////////////////////////////////////////////////////////////////
     // Port Distribution

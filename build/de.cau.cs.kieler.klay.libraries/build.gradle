@@ -1,0 +1,344 @@
+plugins {
+    id 'signing'
+    id 'maven'
+}
+
+def helpMsg = """
+Gradle script for building and publishing Klay as bundled jar with and without dependencies.
+
+Build and test all
+==================
+./gradlew all
+
+Available tasks
+===============
+./gradlew tasks
+Relevant tasks are grouped in 'KIELER build tasks' and 'KIELER test tasks'.
+
+Extra parameters via properties-file and/or cmd-line parameter
+==============================================================
+~/.gradle/gradle.properties:
+----------------------------
+org.gradle.daemon=false
+signing.keyId=<keyId>
+signing.password=<pw>
+signing.secretKeyRingFile=/home/<user>/.gnupg/secring.gpg
+sonatypeUsername=<username>
+sonatypePassword=<password>
+
+cli:
+----
+./gradlew -Dorg.gradle.daemon=false -D...=... <tasks>
+
+Specifying release versions (TBD)
+===========================
+./gradlew -Pv=<version> ... uploadArchives
+
+Build complete nightlies
+========================
+./gradlew clean buildAll
+
+Run all tests
+=============
+./gradlew clean testAll
+"""
+
+ext {
+    // Edit these
+    // ----------
+
+    // foldernames for each build part (see PDF slides on http://rtsys.informatik.uni-kiel.de/confluence/pages/viewpage.action?pageId=13763018 for detailed information)
+    libsA = 'bundled_klay'
+    libsB = 'libs'
+    libsC = 'libsFormatsAdditions'
+
+    // archive basename for partA
+    klaybasename = 'klay'
+
+    // archive classifiers for partA
+    klayclassifierNodeps = ''
+    klayclassifierWithdeps = 'deps'
+
+    // Adjust dependencies here
+    // ------------------------
+    klayDeps = [
+        'de.cau.cs.kieler:de.cau.cs.kieler.core:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.core.kgraph:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.kiml:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.klay.force:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.klay.layered:[0,)',
+        'de.cau.cs.kieler:de.cau.cs.kieler.klay.tree:[0,)'
+    ]
+    klayExternalDeps = [
+        // long names on mvn central
+        'org.eclipse.emf:org.eclipse.emf.common:[0,)',
+        'org.eclipse.emf:org.eclipse.emf.ecore:[0,)',
+        'org.eclipse.emf:org.eclipse.emf.ecore.xmi:[0,)',
+        // short name on mvn central
+        'com.google.guava:com.google.guava:[0,)'
+    ]
+    formatsDeps = [
+        'de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)'
+    ]
+    formatsExternalDeps = [
+        // short names on mvn central
+        'org.eclipse.equinox:org.eclipse.equinox.app:[0,)',
+        'org.eclipse.equinox:org.eclipse.equinox.common:[0,)',
+        'org.eclipse.equinox:org.eclipse.equinox.registry:[0,)',
+        'org.eclipse:org.eclipse.osgi:[0,)'
+    ]
+    jsonDeps = [
+        'de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats.json:[0,)'
+    ]
+    jsonExternalDeps = [
+        'org.eclipse.xtend:org.eclipse.xtend.lib:[0,)',
+        'org.eclipse.xtext:org.eclipse.xtext.xbase.lib:[0,)'
+    ]
+
+    // Don't edit this
+    // ---------------
+    packaging = 'jar'
+}
+group = 'de.cau.cs.kieler'
+version = project.properties['v'] ?: 'nightly-' + getTimeStamp()
+
+allprojects{
+    repositories {
+        ivy {
+            ivyPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/artifacts.jar/artifacts.xml'
+            artifactPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/plugins/[artifact](.[classifier])_[revision].jar'
+        }
+        ivy {
+            ivyPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/artifacts.jar/artifacts.xml'
+            artifactPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/plugins/[artifact](.[classifier])_[revision].jar'
+        }
+    }
+}
+
+configurations {
+    klay
+    klayExternal
+    formats
+    formatsExternal
+    json
+    jsonExternal
+}
+
+dependencies {
+    klay klayDeps
+    klayExternal klayExternalDeps
+
+    formats formatsDeps
+    formatsExternal formatsExternalDeps
+
+    json jsonDeps
+    jsonExternal jsonExternalDeps
+}
+
+// Part A: bundled klay
+// --------------------------------------------------------
+
+def theIncludes = [
+    '**/*.class',
+    'META-INF/MANIFEST.MF',
+    'epl-v10.html'
+]
+
+def theExcludes = [
+    'images/**',
+    'java/**',
+    'javax/**',
+    'model/**',
+    'schema/**'
+]
+
+task bundledKlay(type: Jar) {
+    group 'KIELER build'
+    description 'Bundles the core plugins and the three layouters into one jar.'
+    destinationDir file("$buildDir/$libsA")
+    baseName = klaybasename
+    classifier = klayclassifierNodeps
+    from "$rootDir/epl-v10.html"
+    from { configurations.klay.collect { it.isDirectory() ? it : zipTree(it) } }
+    include theIncludes
+    exclude theExcludes
+}
+
+task bundledKlayDeps(type: Jar) {
+    group 'KIELER build'
+    description 'Bundles the core plugins, the three layouters and all dependencies into one jar.'
+    destinationDir file("$buildDir/$libsA")
+    baseName = klaybasename
+    classifier = klayclassifierWithdeps
+    from "$rootDir/epl-v10.html"
+    from { configurations.klay.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { configurations.klayExternal.collect { it.isDirectory() ? it : zipTree(it) } }
+    include theIncludes
+    exclude theExcludes
+}
+
+// Part B: klay plugins
+// --------------------------------------------------------
+
+def klayPlugins = [
+    configurations.klay,
+    configurations.klayExternal
+]
+
+task copyKlayPlugins(type: Copy) {
+    group 'KIELER build'
+    description 'Gathers all needed jars (including dependencies) to use the layouters.'
+    from klayPlugins
+    into "$buildDir/$libsB"
+}
+
+task zipKlayPlugins(type: Zip) {
+    group 'KIELER build'
+    description 'Zips (for convenient download) all needed jars (including dependencies) to use the layouters.'
+    archiveName "${libsB}.zip"
+    from klayPlugins
+    destinationDir buildDir
+}
+
+// Part C: formats & json plugins
+// --------------------------------------------------------
+
+def formatsPlugins = [
+    configurations.formats,
+    configurations.formatsExternal,
+    configurations.json,
+    configurations.jsonExternal,
+    tasks.getByPath(':nonosgi:jar')
+]
+
+task copyFormatsPlugins(type: Copy, dependsOn: ":nonosgi:jar") {
+    group 'KIELER build'
+    description 'Gathers additionally needed jars (including dependencies) to use importers like JSON.'
+    from formatsPlugins
+    into "$buildDir/$libsC"
+}
+
+task zipFormatsPlugins(type: Zip, dependsOn: ":nonosgi:jar") {
+    group 'KIELER build'
+    description 'Zips (for convenient download) additionally needed jars (including dependencies) to use importers like JSON.'
+    archiveName "${libsC}.zip"
+    from formatsPlugins
+    destinationDir buildDir
+}
+
+// Publishing klay to maven central (TBD)
+// --------------------------------------------------------
+
+// def deps = configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.dependencies.collect()}.flatten()
+// def depFiles = configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.collect{file(it)}}.flatten()
+
+// artifacts {
+//     bundledKlayJars bundledKlay
+//     bundledKlayDepsJars bundledKlayDeps
+//     // klayJars copyKlayPlugins
+//     // formatsJars copyFormatsPlugins
+// }
+
+// artifacts {
+//     depFiles.each{archives it}
+//     // archives configurations.findAll{it.name =~ /^(klay|formats|json)$/}.collect{it.collect{file(it)}}.flatten()
+//     // archives sourcesJar
+//     // archives javadocJar
+// }
+
+// signing {
+//     sign configurations.archives
+// }
+
+// uploadArchives {
+//     repositories {
+//         mavenDeployer {
+//             beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+//             repository(url: "file://${project.rootProject.buildDir}/repo") {
+//               // authentication(userName: sonatypeUsername, password: sonatypePassword)
+//             }
+
+//             println "publishing:"
+//             deps.eachWithIndex{dep, i ->
+//                 println "dep: $dep"
+//                 println "i:   $i"
+//                 addFilter(dep.name) { artifact, file ->
+//                     println artifact
+//                     println file
+//                 }
+//                 // def manif = "${depFiles[i]}/META-INF/MANIFEST.MF"
+//                 def manif = new java.util.jar.JarFile(depFiles[i]).manifest
+//                 manif.mainAttributes.entrySet().each {details ->
+//                     switch (details.key) {
+//                         case ~/Bundle-Name/:
+//                             pom(dep.name).name = details.value
+//                             break
+//                         case ~/Bundle-Version/:
+//                             pom(dep.name).version = details.value
+//                             break
+//                     }
+//                 }
+//                 //     }
+//                 // } else {
+//                 //     pom(dep.name).name = dep.name
+//                 // }
+//             }
+
+//             pom.project {
+//                 packaging 'jar'
+//                 url 'http://rtsys.informatik.uni-kiel.de/kieler'
+
+//                 licenses {
+//                     license {
+//                         name 'Eclipse Public License - v 1.0'
+//                         url 'http://www.eclipse.org/org/documents/epl-v10.html'
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+
+// Convenience tasks
+// --------------------------------------------------------
+
+// Explicitly set task order to prevent the clean task from running after any build task.
+bundledKlay.mustRunAfter        clean
+bundledKlayDeps.mustRunAfter    clean
+copyKlayPlugins.mustRunAfter    clean
+copyFormatsPlugins.mustRunAfter clean
+zipKlayPlugins.mustRunAfter     clean
+zipFormatsPlugins.mustRunAfter  clean
+
+task buildAll(dependsOn: ['bundledKlay', 'bundledKlayDeps', 'copyKlayPlugins', 'copyFormatsPlugins', 'zipKlayPlugins', 'zipFormatsPlugins']) {
+    group 'KIELER build'
+    description 'Bundles and/or gather all artifacts.'
+}
+task testAll(dependsOn: [':tests:testBundledKlay', ':tests:testBundledKlayDeps', ':tests:testKlay', ':tests:testJson']) {
+    group 'KIELER test'
+    description 'Runs all tests.'
+}
+
+task all(dependsOn: ['clean', 'buildAll', 'testAll']) {
+    group 'KIELER build'
+    description 'Cleans, builds and tests all.'
+}
+
+help.doLast {
+    println helpMsg
+}
+
+// Utility stuff
+// --------------------------------------------------------
+
+def getTimeStamp() {
+    return new Date().format('yyyyMMddHHmmss')
+}
+
+def dep(coords, javadoc = false, source = false) {
+    def result = [dependencies.create(coords)]
+    if (javadoc) result << dependencies.create("$coords:javadoc")
+    if (source) result << dependencies.create("$coords:source")
+    result
+}

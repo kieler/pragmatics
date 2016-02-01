@@ -2,26 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.core.kivi.combinations">
-      <combination
-            active="false"
-            class="de.cau.cs.kieler.klighd.xtext.UpdateXtextModelKLighDCombination"
-            description="Updates the KlighD view if a model change in an Xtext editor happens"
-            name="Create graphical views of textual specifications">
-      </combination>
-      <combination
-            active="true"
-            class="de.cau.cs.kieler.klighd.xtext.VisualizeKGraphCombination"
-            description="Provides and updates graphical representations of textually formulated KGraphs"
-            name="Graphical representations of textually formulated KGraphs">
-      </combination>
-      <combination
-            active="true"
-            class="de.cau.cs.kieler.klighd.xtext.HighlightChosenElementInXtextEditorCombination"
-            name="Highlight the (Xtext-)definitions of selected elements in KLighD diagrams">
-      </combination>
-   </extension>
-   <extension
          point="de.cau.cs.kieler.klighd.diagramSyntheses">
       <diagramSynthesis
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
@@ -38,6 +18,13 @@
       <handler
             class="de.cau.cs.kieler.klighd.xtext.XtextModelModificationHandler">
       </handler>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.ui.view.editor">
+      <editor
+            controllerID="de.cau.cs.kieler.klighd.ui.view.controllers.XtextChangeUpdateController"
+            editorID="de.cau.cs.kieler.core.kgraph.text.KGraph">
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -84,6 +71,19 @@
             properties="graphFormatIsSupported"
             type="org.eclipse.core.resources.IFile">
       </propertyTester>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.ui.view.editor">
+      <editor
+            editorID="org.eclipse.ui.DefaultTextEditor"
+            controllerID="de.cau.cs.kieler.klighd.ui.view.controllers.GraphUpdateController">
+      </editor>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.ui.view.controller">
+      <controller
+            class="de.cau.cs.kieler.klighd.xtext.transformations.GraphUpdateController">
+      </controller>
    </extension>
 
 </plugin>

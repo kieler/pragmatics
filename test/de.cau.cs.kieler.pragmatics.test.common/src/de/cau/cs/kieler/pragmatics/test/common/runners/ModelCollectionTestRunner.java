@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -327,19 +327,20 @@ public class ModelCollectionTestRunner extends Suite {
     
     // --------------------------------------------------------------------
 
+    private final List<Runner> childRunners;
 
     /**
      * Constructor.
      * 
      * @param clazz the tests class
-     * @throws Throwable if something unexpeced happens
+     * @throws Throwable if something unexpected happens
      */
     public ModelCollectionTestRunner(final Class<?> clazz) throws Throwable {
-        super(clazz, Lists.<Runner>newLinkedList());
+        super(clazz, Collections.emptyList());
 
         // make sure kiml.service is loaded
         KimlServicePlugin.getDefault();
-        
+
         // try to obtain the test models by means of a method annotated with 'Models'
         List<?> models = Lists.newLinkedList(getModelsByModelsMethod());
 
@@ -365,15 +366,26 @@ public class ModelCollectionTestRunner extends Suite {
         // for each of the revealed model objects determine a name (the fragmentURI in case of
         //  EObjects) and create a related child test runner
         
+        final List<Runner> childRunners = Lists.newLinkedList();
         for (Object o : models) {
-            String modelName = o.toString();
+
+            final String modelName;
             if (o instanceof EObject && ((EObject) o).eResource() != null) {
-                URI uri = EcoreUtil.getURI((EObject) o);
+                final URI uri = EcoreUtil.getURI((EObject) o);
                 modelName = uri.path() + uri.fragment();
+            } else {
+                modelName = o.toString();
             }
-            this.getChildren().add(
+
+            childRunners.add(
                     new SingleModelTestRunner(getTestClass().getJavaClass(), o, modelName));
         }
+        
+        this.childRunners = Collections.unmodifiableList(childRunners);
+    }
+
+    protected List<Runner> getChildren() {
+        return childRunners;
     }
 
     // --------------------------------------------------------------------

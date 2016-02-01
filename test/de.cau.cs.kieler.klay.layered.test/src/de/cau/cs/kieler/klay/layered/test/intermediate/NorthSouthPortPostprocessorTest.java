@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -80,7 +80,7 @@ public class NorthSouthPortPostprocessorTest extends AbstractLayeredProcessorTes
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
                     noOverallNodes++;
-                    if (node.getNodeType() == NodeType.NORTH_SOUTH_PORT) {
+                    if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
                         noTypeNodes++;
                     }
                 }
@@ -100,7 +100,7 @@ public class NorthSouthPortPostprocessorTest extends AbstractLayeredProcessorTes
         for (LGraph g : state.getGraphs()) {
             for (Layer layer : g.getLayers()) {
                 for (LNode node : layer.getNodes()) {
-                    assertTrue(node.getNodeType() != NodeType.NORTH_SOUTH_PORT);
+                    assertTrue(node.getType() != NodeType.NORTH_SOUTH_PORT);
                     noNodesAfter++;
                 }
             }

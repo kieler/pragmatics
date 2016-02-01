@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * This code is provided under the terms of the Eclipse Public License (EPL).
@@ -113,6 +113,32 @@ public abstract class KlighdNode extends PNode implements IKlighdNode {
     public KlighdNode() {
         this.addPropertyChangeListener(NodeDisposeListener.DISPOSE, new NodeDisposeListener(this));
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public final PNode asPNode() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addChild(final IKlighdNode child) {
+        addChild(child.asPNode());
+    }
+
+    /**
+     * Convenience method avoiding ambiguous call errors (IKlighdNode vs. PNode).
+     * 
+     * @param child the child to by added
+     */
+    public void addChild(final KlighdNode child) {
+        addChild(child.asPNode());
+    }
+
 
     /**
      * Sets zoom scale dependent visibility bounds of <code>this</code> {@link KlighdNode}.<br>
@@ -467,6 +493,8 @@ public abstract class KlighdNode extends PNode implements IKlighdNode {
      * This class cares about tracking the corresponding {@link KRendering} element, contributing
      * semantic model data into drawn (vector graphic) images, and determining the visibility the
      * figure wrt. the diagram zoom scale while drawing the diagram.
+     * 
+     * @param <T> the concrete type describing the depicted figure
      */
     public static class KlighdFigureNode<T extends KRendering> extends KlighdNode implements
             IKlighdFigureNode {

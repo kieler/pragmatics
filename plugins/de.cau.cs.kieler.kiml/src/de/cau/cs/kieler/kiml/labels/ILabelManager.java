@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -42,6 +42,6 @@ public interface ILabelManager {
      * @return the label's dimensions after shortening or {@code null} if the label has not been
      *         shortened.
      */
-    KVector resizeLabelToWidth(Object label, double targetWidth);
+    KVector manageLabelSize(Object label, double targetWidth);
     
 }

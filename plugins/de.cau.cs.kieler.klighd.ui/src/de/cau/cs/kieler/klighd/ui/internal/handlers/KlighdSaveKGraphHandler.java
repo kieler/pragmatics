@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -88,7 +88,7 @@ import de.cau.cs.kieler.klighd.util.ModelingUtil;
 public class KlighdSaveKGraphHandler extends AbstractHandler {
 
     private static final String TYPE_PARAMETER_ID =
-            "de.cau.cs.kieler.klighd.ui.contrib3x.savekgraphParameter";
+            "de.cau.cs.kieler.klighd.ui.view.savekgraphParameter";
     private static final String EXPORT_TYPE_SINGLE = "single";
     private static final String EXPORT_TYPE_CHUNKY = "chunky";
     

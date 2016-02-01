@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Graph Export
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.export;singleton:=true
-Bundle-Version: 0.4.1.qualifier
+Bundle-Version: 0.4.2.qualifier
 Bundle-Activator: de.cau.cs.kieler.kiml.export.ExportPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
@@ -13,8 +13,8 @@ Require-Bundle: org.eclipse.ui,
  de.cau.cs.kieler.kiml.formats,
  de.cau.cs.kieler.kiml.service
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Vendor: Christian-Albrechts-Universität zu Kiel
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-Vendor: Kiel University
 Import-Package: org.eclipse.core.resources,
  org.eclipse.emf.ecore.xmi,
  org.eclipse.ui.dialogs,

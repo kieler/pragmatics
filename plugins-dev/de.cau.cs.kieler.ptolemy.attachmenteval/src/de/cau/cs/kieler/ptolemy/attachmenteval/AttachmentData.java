@@ -8,8 +8,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -243,5 +243,40 @@ public class AttachmentData {
 
     public Map<String, Map<String, String>> getAssociations() {
         return rawAssociations;
+    }
+    
+    
+    ////////////////////////////////////////////////////////////////////
+    // Statistics
+    
+    /**
+     * Returns the sum of all registered annotation counts. This of course requires that the annotation
+     * counts have been set correctly.
+     * 
+     * @return number of annotations.
+     */
+    public int getAnnotationCountsSum() {
+        int sum = 0;
+        
+        for (String file : selectedFiles) {
+            sum += annotationCounts.get(file);
+        }
+        
+        return sum;
+    }
+    
+    /**
+     * Returns the number of registered associations.
+     * 
+     * @return number of registered associations.
+     */
+    public int getAssociationCountsSum() {
+        int sum = 0;
+        
+        for (String file : selectedFiles) {
+            sum += rawAssociations.get(file).size();
+        }
+        
+        return sum;
     }
 }

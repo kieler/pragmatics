@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -13,7 +13,6 @@
  */
 package net.ogdf.bin.preferences;
 
-import net.ogdf.bin.OgdfPlugin;
 import net.ogdf.bin.OgdfServer;
 
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
@@ -31,7 +30,7 @@ public class OgdfPreferenceInitializer extends AbstractPreferenceInitializer {
      */
     @Override
     public void initializeDefaultPreferences() {
-        IPreferenceStore store = OgdfPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore store = OgdfPreferenceStore.getInstance().getPreferenceStore();
         store.setDefault(OgdfServer.PREF_TIMEOUT, OgdfServer.PROCESS_DEF_TIMEOUT);
     }
 }

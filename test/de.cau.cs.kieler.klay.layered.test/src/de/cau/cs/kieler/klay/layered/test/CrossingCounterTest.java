@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -29,11 +29,10 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
-import de.cau.cs.kieler.klay.layered.p3order.BarthJuengerMutzelCrossingsCounter;
 import de.cau.cs.kieler.klay.layered.p3order.CrossingMinimizationStrategy;
-import de.cau.cs.kieler.klay.layered.p3order.HyperedgeCrossingsCounter;
 import de.cau.cs.kieler.klay.layered.p3order.LayerSweepCrossingMinimizer;
-import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
+import de.cau.cs.kieler.klay.layered.p3order.counting.BarthJuengerMutzelCrossingsCounter;
+import de.cau.cs.kieler.klay.layered.p3order.counting.HyperedgeCrossingsCounter;
 import de.cau.cs.kieler.klay.layered.properties.Properties;
 import de.cau.cs.kieler.klay.layered.test.phases.SimplePhaseLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
@@ -107,12 +106,12 @@ public class CrossingCounterTest extends AbstractLayeredProcessorTest {
     @Test
     public void testEqualCrossingCounts() {
         for (LGraph g : state.getGraphs()) {
+            LNode[][] nodeOrder = g.toNodeArray();
             try {
                 initializeCrossingCounters(g);
-                List<Layer> layers = g.getLayers();
-                for (int i = 0; i < layers.size() - 1; i++) {
-                    NodeGroup[] leftLayer = layerToNodegroup(layers.get(i));
-                    NodeGroup[] rightLayer = layerToNodegroup(layers.get(i + 1));
+                for (int i = 0; i < nodeOrder.length - 1; i++) {
+                    LNode[] leftLayer = nodeOrder[i];
+                    LNode[] rightLayer = nodeOrder[i + 1];
                     int sl = normalCrossingsCounter.countCrossings(leftLayer, rightLayer);
                     int he = hyperedgeCrossingsCounter.countCrossings(leftLayer, rightLayer);
                     assertTrue("Straightline count: " + sl + " Hyperedge count: " + he, sl == he);
@@ -125,23 +124,6 @@ public class CrossingCounterTest extends AbstractLayeredProcessorTest {
         }
     }
     
-    /**
-     * Creates an array of {@link NodeGroup}s for the given layer. Each node of the layer is
-     * contained in its own {@code NodeGroup}.
-     * 
-     * @param layer
-     *            the layer to create {@code NodeGroup}s for.
-     * @return the array of {@code NodeGroup}s.
-     */
-    private NodeGroup[] layerToNodegroup(final Layer layer) {
-        List<LNode> nodes = layer.getNodes();
-        NodeGroup[] nodeGroups = new NodeGroup[nodes.size()];
-        for (int i = 0; i < nodes.size(); i++) {
-            nodeGroups[i] = new NodeGroup(nodes.get(i));
-        }
-        return nodeGroups;
-    }
-
     /**
      * Initialize the crossing counter modules with the given graph.
      *
@@ -189,7 +171,7 @@ public class CrossingCounterTest extends AbstractLayeredProcessorTest {
                 }
                 
                 // Count north/south dummy nodes
-                if (node.getNodeType() == NodeType.NORTH_SOUTH_PORT) {
+                if (node.getType() == NodeType.NORTH_SOUTH_PORT) {
                     inLayerEdgeCount[layerIndex]++;
                     hasNorthSouthPorts[layerIndex] = true;
                 }

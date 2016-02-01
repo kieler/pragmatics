@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -47,7 +47,7 @@ import edu.umd.cs.piccolo.util.PBounds;
  */
 class KGEShapeLayoutPNodeUpdater extends LimitedKGraphContentAdapter {
 
-    public KGEShapeLayoutPNodeUpdater(final PNode theRepNode, final DiagramController theController) {
+    KGEShapeLayoutPNodeUpdater(final PNode theRepNode, final DiagramController theController) {
         super(KShapeLayout.class);
         this.controller = theController;
         this.nodeRep = theRepNode;

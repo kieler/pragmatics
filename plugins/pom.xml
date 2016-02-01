@@ -30,6 +30,7 @@
     <module>de.cau.cs.kieler.kiml.config.text.ui</module>
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.formats</module>
+    <module>de.cau.cs.kieler.kiml.formats.dot</module>
     <module>de.cau.cs.kieler.kiml.formats.gml</module>
     <module>de.cau.cs.kieler.kiml.formats.graphml</module>
     <module>de.cau.cs.kieler.kiml.formats.json</module>
@@ -67,6 +68,7 @@
     <module>de.cau.cs.kieler.klighd.ui</module>
     <module>de.cau.cs.kieler.klighd.ui.contrib3x</module>
     <module>de.cau.cs.kieler.klighd.ui.emf</module>
+    <module>de.cau.cs.kieler.klighd.ui.view</module>
     <module>de.cau.cs.kieler.klighd.ui.wizard</module>
     <module>de.cau.cs.kieler.ksbase</module>
     <module>de.cau.cs.kieler.ksbase.ui</module>

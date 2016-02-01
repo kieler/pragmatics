@@ -430,10 +430,10 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValuesNATURALTerminalRuleCall_2_1_0 = (RuleCall)cValuesAssignment_2_1.eContents().get(0);
 		
 		//IntRangeValues:
-		//	"intvalues" values+=NATURAL ("," values+=NATURAL);
+		//	"intvalues" values+=NATURAL ("," values+=NATURAL)*;
 		public ParserRule getRule() { return rule; }
 
-		//"intvalues" values+=NATURAL ("," values+=NATURAL)
+		//"intvalues" values+=NATURAL ("," values+=NATURAL)*
 		public Group getGroup() { return cGroup; }
 
 		//"intvalues"
@@ -445,7 +445,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//NATURAL
 		public RuleCall getValuesNATURALTerminalRuleCall_1_0() { return cValuesNATURALTerminalRuleCall_1_0; }
 
-		//"," values+=NATURAL
+		//("," values+=NATURAL)*
 		public Group getGroup_2() { return cGroup_2; }
 
 		//","
@@ -1048,7 +1048,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IntRangeValues:
-	//	"intvalues" values+=NATURAL ("," values+=NATURAL);
+	//	"intvalues" values+=NATURAL ("," values+=NATURAL)*;
 	public IntRangeValuesElements getIntRangeValuesAccess() {
 		return pIntRangeValues;
 	}
@@ -1213,8 +1213,8 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 	/// * Terminals * / terminal TFLOAT returns ecore::EFloat:
 	//	("+" | "-") ("0".."9"+ ("." "0".."9"*)? (("e" | "E") ("+" | "-")? "0".."9"+)? | "." "0".."9"+ (("e" | "E") ("+" |
-	//	"-")? "0".."9"+)?) | "0".."9"+ "." "0".."9"* (("e" | "E") ("+" | "-")? "0".."9"+)? | "." "0".."9"+ (("e" | "E") ("+"
-	//	| "-")? "0".."9"+)? | "0".."9"+ ("e" | "E") ("+" | "-")? "0".."9"+;
+	//	"-")? "0".."9"+)?) | "0".."9"+ "." "0".."9"* (("e" | "E") ("+" | "-")? "0".."9"+)? | "." "0".."9"+ (("e" | "E") ("+" |
+	//	"-")? "0".."9"+)? | "0".."9"+ ("e" | "E") ("+" | "-")? "0".."9"+;
 	public TerminalRule getTFLOATRule() {
 		return tTFLOAT;
 	} 

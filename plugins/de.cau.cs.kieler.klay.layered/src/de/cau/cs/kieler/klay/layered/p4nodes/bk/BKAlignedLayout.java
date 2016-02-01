@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -15,11 +15,10 @@ package de.cau.cs.kieler.klay.layered.p4nodes.bk;
 
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
-import de.cau.cs.kieler.klay.layered.properties.Properties;
+import de.cau.cs.kieler.klay.layered.properties.Spacings;
 
 /**
  * Class which holds all information about a layout in one of the four direction
@@ -53,12 +52,8 @@ public final class BKAlignedLayout {
 
     /** The graph to process. */
     LGraph layeredGraph;
-    /** Basic spacing between nodes, determined by layout options. */
-    private float normalSpacing;
-    /** Spacing between dummy nodes, determined by layout options. */
-    private float smallSpacing;
-    /** Spacing between external ports, determined by layout options. */
-    private float externalPortSpacing;
+    /** Spacing values. */
+    Spacings spacings;
     
     /**
      * Basic constructor for a layout.
@@ -77,10 +72,7 @@ public final class BKAlignedLayout {
 
         this.layeredGraph = layeredGraph;
         // Initialize spacing value from layout options.
-        normalSpacing = layeredGraph.getProperty(InternalProperties.SPACING) 
-                * layeredGraph.getProperty(Properties.OBJ_SPACING_IN_LAYER_FACTOR);
-        smallSpacing = normalSpacing * layeredGraph.getProperty(Properties.EDGE_SPACING_FACTOR);
-        externalPortSpacing = layeredGraph.getProperty(InternalProperties.PORT_SPACING);
+        spacings = layeredGraph.getProperty(InternalProperties.SPACINGS);
         
         root = new LNode[nodeCount];
         blockSize = new Double[nodeCount];
@@ -195,7 +187,8 @@ public final class BKAlignedLayout {
                 // minimal position at which the current block node could validly be placed
                 availableSpace =
                         Math.min(availableSpace,
-                                minYCurrent - (maxYNeighbor + getSpacing(current, neighbor)));
+                                minYCurrent 
+                                - (maxYNeighbor + spacings.getVerticalSpacing(current, neighbor)));
             }
             // until we wrap around
         } while (rootNode != current);
@@ -231,30 +224,14 @@ public final class BKAlignedLayout {
                 double minYNeighbor = getMinY(neighbor);
 
                 // minimal position at which the current block node could validly be placed
-                availableSpace =
-                        Math.min(availableSpace,
-                                minYNeighbor - (maxYCurrent + getSpacing(current, neighbor)));
+                availableSpace = Math.min(availableSpace,
+                                minYNeighbor 
+                                - (maxYCurrent + spacings.getVerticalSpacing(current, neighbor)));
             }
             // until we wrap around
         } while (rootNode != current);
 
         return availableSpace;
-    }
-    
-    /**
-     * Determines the required spacing between the two nodes {@code n1} and {@code n2} based on the
-     * two nodes' type.
-     */
-    private float getSpacing(final LNode n1, final LNode n2) {
-        float spacing;
-        if (n1.getNodeType() == NodeType.EXTERNAL_PORT || n2.getNodeType() == NodeType.EXTERNAL_PORT) {
-            spacing = externalPortSpacing;
-        } else if (n1.getNodeType() != NodeType.NORMAL && n2.getNodeType() != NodeType.NORMAL) {
-           spacing = smallSpacing; 
-        } else {
-            spacing = normalSpacing;
-        }
-        return spacing;
     }
     
     /**

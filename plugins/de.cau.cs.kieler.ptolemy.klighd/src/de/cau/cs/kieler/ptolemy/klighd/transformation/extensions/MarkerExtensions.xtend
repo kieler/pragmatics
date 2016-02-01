@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -222,6 +222,26 @@ class MarkerExtensions {
     }
     
     /**
+     * Marks the given node as being a title node. A title node is a special node that contains the 
+     * title of a diagram.
+     * 
+     * @param node the node to be marked
+     */
+    def void markAsTitleNode(KNode node){
+        node.addAnnotation("_titleNode")
+    }
+    
+    /**
+     * Checks if the given node is marked as being a title node. A title node is a special node that
+     * contains the title of a diagram.
+     * 
+     * @param node the node to check
+     */ 
+    def boolean isMarkedAsTitleNode(KNode node){
+        return node.hasAnnotation("_titleNode")
+    }
+    
+    /**
      * Marks the given node as being a parameter node that displays model parameters.
      * 
      * @param node the node to be marked.
@@ -238,6 +258,25 @@ class MarkerExtensions {
      */
     def boolean isMarkedAsParameterNode(KNode node) {
         return node.hasAnnotation("_parameters")
+    }
+    
+    /**
+     * Marks the given node as being a documentation attribute node that contains documentation.
+     * 
+     * @param node the node to be marked.
+     */
+    def void markAsDocumentationNode(KNode node) {
+        node.addAnnotation("_documentation")
+    }
+    
+     /**
+     * Checks if the given node is marked as being a documentation attribute node.
+     * 
+     * @param node the node to check.
+     * @return {@code true} if the node is a documentation attribute node.
+     */
+    def boolean isMarkedAsDocumentationNode(KNode node) {
+        return node.hasAnnotation("_documentation")
     }
     
     /**

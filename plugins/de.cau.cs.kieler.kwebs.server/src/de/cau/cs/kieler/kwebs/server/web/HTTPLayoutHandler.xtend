@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -28,6 +28,7 @@ import org.json.JSONException
 import org.json.JSONObject
 
 import sun.misc.BASE64Encoder
+import java.net.URLEncoder
 
 /**
  * Handles layout requests at the /layout/[*] context. Expects the graph and configuration options as
@@ -110,6 +111,7 @@ class HTTPLayoutHandler implements HttpHandler {
      */
      def handleLayout(HttpExchange http) {
         
+        // the data we receive is 'application/x-www-form-urlencoded' encoded
         var decoded = "";
         try {
           decoded = switch http.requestMethod.toUpperCase {
@@ -168,9 +170,12 @@ class HTTPLayoutHandler implements HttpHandler {
         if (outformat.equals("org.w3.svg")) {
             outGraph = fixSvg(outGraph)
         }
+        
+        // encode the data again
+        outGraph = URLEncoder.encode(outGraph, "UTF-8");
 
         // send the result graph
-        http.responseHeaders.add("Content-Type", "text/plain")
+        http.responseHeaders.add("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
         http.sendResponseHeaders(HTTP_OK, outGraph.length)
         val os = http.responseBody
         os.write(outGraph.bytes)

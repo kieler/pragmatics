@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -117,6 +117,7 @@ public final class TransformationConstants {
     /** Class of an entity that is a Trig Function actor. */
     public static final String ENTITY_CLASS_TRIG_FUNTION = "ptolemy.actor.lib.TrigFunction";
     
+    
     // ENTITY NAMES
     
     /** Name of the entity that contains the modal model states. */
@@ -138,6 +139,19 @@ public final class TransformationConstants {
     /** Type of annotations that define parameters of models. */
     public static final String ANNOTATION_TYPE_PARAMETER = "ptolemy.data.expr.Parameter";
     
+    /** Type of annotations that define diagram titles. */
+    public static final String ANNOTATION_TYPE_TITLE = "ptolemy.vergil.basic.export.web.Title";
+    
+    /** Type of annotations that define diagram html-titles. */
+    public static final String ANNOTATION_TYPE_HTML_TITLE = "ptolemy.vergil.basic.export.html.Title";
+    
+    /** Type of annotations that define lattice ontology solvers*/
+    public static final String ANNOTATION_TYPE_LATTICE_ONTOLOGY_SOLVER = 
+            "ptolemy.data.ontologies.lattice";
+    
+    /** Type of annotations that define documentation attributes. */
+    public static final String ANNOTATION_TYPE_DOCUMENTATION = 
+            "ptolemy.vergil.kernel.attributes.DocumentationAttribute";
     
     // ANNOTATION NAMES
     
@@ -171,6 +185,9 @@ public final class TransformationConstants {
     
     /** Name of the annotation that holds the text of a comment. */
     public static final String ANNOTATION_COMMENT_TEXT = "text";
+    
+    /** Name of the annotation that holds the font size of a comment. */
+    public static final String ANNOTATION_FONT_SIZE = "textSize";
     
     /** Name of the annotation that holds an element's location. */
     public static final String ANNOTATION_LOCATION = "_location";

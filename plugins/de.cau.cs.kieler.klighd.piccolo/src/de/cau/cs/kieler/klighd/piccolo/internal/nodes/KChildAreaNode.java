@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -67,6 +67,24 @@ public class KChildAreaNode extends KlighdDisposingLayer implements IKlighdNode.
         this.parentNodeNode = parentNodeNode;
         this.edgesFirst = edgesFirst;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PNode asPNode() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addChild(final IKlighdNode child) {
+        throw new UnsupportedOperationException(
+                "Adding child nodes to a KChildAreaNode is not permitted.");
+    }
+
 
     /**
      * Get the EdgeLayer.

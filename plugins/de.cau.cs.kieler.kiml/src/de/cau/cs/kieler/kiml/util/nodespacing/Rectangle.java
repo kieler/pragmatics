@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -12,6 +12,11 @@
  * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.kiml.util.nodespacing;
+
+
+import java.util.Objects;
+
+import de.cau.cs.kieler.core.math.KVector;
 
 /**
  * Class resembles basic functionality of {@link java.awt.geom.Rectangle2D}. This way it is possible
@@ -86,6 +91,41 @@ public class Rectangle {
     }
 
     /**
+     * @return the (x,y) position of this rectangle.
+     */
+    public KVector getPosition() {
+        return new KVector(x, y);
+    }
+    
+    /**
+     * @return the top left coordinate (x,y).
+     */
+    public KVector getTopLeft() {
+        return getPosition();
+    }
+
+    /**
+     * @return the top right coordinate (x+w,y).
+     */
+    public KVector getTopRight() {
+        return new KVector(x + width, y);
+    }
+
+    /**
+     * @return the bottom left coordinate (x,y+h).
+     */
+    public KVector getBottomLeft() {
+        return new KVector(x, y + height);
+    }
+
+    /**
+     * @return the bottom right coordinate (x+w,y+h).
+     */
+    public KVector getBottomRight() {
+        return new KVector(x + width, y + height);
+    }
+    
+    /**
      * Unions the receiver and the given <code>Rectangle</code> objects and puts the result into the
      * receiver.
      * 
@@ -109,5 +149,33 @@ public class Rectangle {
         }
         setRect(x1, y1, x2 - x1, y2 - y1);
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "Rect[x=" + x + ",y=" + y + ",w=" + width + ",h=" + height + "]";
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null || !(obj instanceof Rectangle)) {
+            return false;
+        }
+        Rectangle other = (Rectangle) obj;
+        return Objects.equals(x, other.x) && Objects.equals(y, other.y)
+                && Objects.equals(width, other.width) && Objects.equals(height, other.height);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, width, height);
+    }
 }

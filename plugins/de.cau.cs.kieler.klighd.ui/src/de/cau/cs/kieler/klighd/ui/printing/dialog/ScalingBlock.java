@@ -15,7 +15,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -74,7 +74,6 @@ final class ScalingBlock {
     private static final int BUTTONS_GROUP_COLUMNS = 3;
     private static final int PAGES_GROUP_COLUMNS = 5;
     private static final int SCALING_GROUP_COLUMNS = 4;
-    private static final int SPINNER_WIDTH = 20;
 
     /**
      * Creates the 'Scaling' block contents.
@@ -134,12 +133,12 @@ final class ScalingBlock {
         DialogUtil.label(pagesGroup, KlighdUIPrintingMessages.PrintDialog_Scaling_lbl_printTo);
 
         final Spinner spinnerWide = DialogUtil.spinner(pagesGroup, 1, MAX_PAGES);
-        DialogUtil.layoutWidth(spinnerWide, SPINNER_WIDTH);
+        DialogUtil.layoutWidth(spinnerWide, spinnerWide.computeSize(SWT.DEFAULT, SWT.DEFAULT).x);
 
         DialogUtil.label(pagesGroup, KlighdUIPrintingMessages.PrintDialog_Scaling_lbl_pagesWide);
 
         final Spinner spinnerTall = DialogUtil.spinner(pagesGroup, 1, MAX_PAGES);
-        DialogUtil.layoutWidth(spinnerTall, SPINNER_WIDTH);
+        DialogUtil.layoutWidth(spinnerTall, spinnerTall.computeSize(SWT.DEFAULT, SWT.DEFAULT).x);
 
         DialogUtil.label(pagesGroup, KlighdUIPrintingMessages.PrintDialog_Scaling_lbl_pagesTall);
 
@@ -151,7 +150,7 @@ final class ScalingBlock {
 
                 @Override
                 public void widgetSelected(final SelectionEvent e) {
-                    dOptions.setScaleFactor(1);
+                    scaleOneToOne(dOptions);
                 }
             });
 
@@ -159,20 +158,7 @@ final class ScalingBlock {
 
                 @Override
                 public void widgetSelected(final SelectionEvent e) {
-                    // Calculate the minimum of necessary horizontal and vertical scale factors
-                    //  required to fit the whole diagram on the selected amount of pages.
-
-                    final PrintExporter exporter = dOptions.getExporter();
-                    final Dimension2D diagramBounds = exporter.getDiagramBoundsIncludingTrim();
-                    final Dimension2D trimmedPrinterBounds = exporter.getTrimmedTileBounds(dOptions);
-
-                    final double scaleX = trimmedPrinterBounds.getWidth() * dOptions.getPagesWide()
-                            / diagramBounds.getWidth();
-
-                    final double scaleY = trimmedPrinterBounds.getHeight() * dOptions.getPagesTall()
-                            / diagramBounds.getHeight();
-
-                    dOptions.setScaleFactor(Math.min(scaleX, scaleY));
+                    fitToPages(dOptions);
                 }
             });
 
@@ -240,5 +226,40 @@ final class ScalingBlock {
         }
 
         return result;
+    }
+
+    /**
+     * Calculates the needed scaling to fit the diagram to the number of pages, currently set.
+     *
+     * @param dOptions
+     *            The {@link DiagramPrintOptions} which contain the current printer settings
+     */
+    public static void fitToPages(final DiagramPrintOptions dOptions) {
+        // Calculate the minimum of necessary horizontal and vertical scale factors
+        // required to fit the whole diagram on the selected amount of pages.
+
+        final PrintExporter exporter = dOptions.getExporter();
+        final Dimension2D diagramBounds = exporter.getDiagramBoundsIncludingTrim();
+        final Dimension2D trimmedPrinterBounds = exporter.getTrimmedTileBounds(dOptions);
+
+        final double scaleX =
+                trimmedPrinterBounds.getWidth() * dOptions.getPagesWide()
+                        / diagramBounds.getWidth();
+
+        final double scaleY =
+                trimmedPrinterBounds.getHeight() * dOptions.getPagesTall()
+                        / diagramBounds.getHeight();
+
+        dOptions.setScaleFactor(Math.min(scaleX, scaleY));
+    }
+
+    /**
+     * Sets the current scaling to 100%.
+     *
+     * @param dOptions
+     *            The {@link DiagramPrintOptions} which contain the current printer settings
+     */
+    public static void scaleOneToOne(final DiagramPrintOptions dOptions) {
+        dOptions.setScaleFactor(1);
     }
 }

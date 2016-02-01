@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -31,7 +31,6 @@ import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.klay.layered.DebugUtil;
-import de.cau.cs.kieler.klay.layered.JsonDebugUtil;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
@@ -598,7 +597,7 @@ public final class OrthogonalRoutingGenerator {
 
         // write the acyclic dependency graph to an output file
         if (debugPrefix != null) {
-            JsonDebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0
+            DebugUtil.writeDebugGraph(layeredGraph, sourceLayerNodes == null ? 0
                     : sourceLayerIndex + 1, hyperNodes, debugPrefix, "acyclic");
         }
         

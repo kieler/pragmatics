@@ -14,7 +14,7 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
       <initializer
-            class="de.cau.cs.kieler.kiml.graphviz.layouter.preferences.PreferenceInitializer">
+            class="de.cau.cs.kieler.kiml.graphviz.layouter.preferences.GraphvizLayouterPreferenceInitializer">
       </initializer>
    </extension>
    <extension
@@ -95,6 +95,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.hierarchyHandling">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.graphviz.concentrate">
@@ -269,6 +272,9 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.layoutHierarchy">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.hierarchyHandling">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.graphviz.concentrate">

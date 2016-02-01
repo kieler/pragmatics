@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -47,7 +47,7 @@ public class KNodeTopNode extends KNodeAbstractNode {
 
         // add the child area immediately to the children list,
         //  this is not done in the super constructor as it must not be done in KNodeNode
-        this.addChild(childArea);
+        this.addChild(childArea.asPNode());
     }
 
     /**

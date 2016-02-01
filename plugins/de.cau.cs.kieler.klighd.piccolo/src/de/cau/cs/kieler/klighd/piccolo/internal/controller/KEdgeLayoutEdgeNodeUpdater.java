@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2014 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -50,7 +50,7 @@ import de.cau.cs.kieler.klighd.util.LimitedKGraphContentAdapter;
  */
 class KEdgeLayoutEdgeNodeUpdater extends LimitedKGraphContentAdapter {
 
-    public KEdgeLayoutEdgeNodeUpdater(final KEdgeNode theEdgeRep,
+    KEdgeLayoutEdgeNodeUpdater(final KEdgeNode theEdgeRep,
             final DiagramController theController) {
         super(KEdgeLayout.class);
         this.controller = theController;

@@ -13,7 +13,7 @@ A research project on enhancing the model-based design of complex systems
 For more information, visit our website:
 http://www.informatik.uni-kiel.de/rtsys/kieler/
 
-Copyright 2014 by Christian-Albrechts-University of Kiel, Department of Computer Science, Real-Time and Embedded Systems Group
+Copyright 2014 by Kiel University, Department of Computer Science, Real-Time and Embedded Systems Group
       </text>
    </aboutInfo>
 
@@ -154,6 +154,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="de.cau.cs.kieler.klighd"/>
       <plugin id="de.cau.cs.kieler.klighd.piccolo"/>
       <plugin id="de.cau.cs.kieler.klighd.ui"/>
+      <plugin id="de.cau.cs.kieler.klighd.ui.contrib3x"/>
       <plugin id="de.cau.cs.kieler.ptolemy.klighd"/>
       <plugin id="de.cau.cs.kieler.ptolemy.rcp"/>
       <plugin id="edu.umd.cs.piccolo"/>

@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -522,6 +522,7 @@ public final class PlacementUtil {
                 // in case of no placement definition calculate the size of each child rendering and
                 // find the biggest rendering in width and height
                 final Bounds maxSize = new Bounds(givenBounds);
+
                 for (final KRendering child : container.getChildren()) {
                     final KPlacementData pd = getPlacementData(child);
 
@@ -547,6 +548,11 @@ public final class PlacementUtil {
                     } else {
                         Bounds.max(maxSize, childSize);
                     }
+                }
+
+                if (container instanceof KPolyline) {
+                    final Bounds pb = evaluatePolylineBounds((KPolyline) rendering, maxSize);
+                    Bounds.max(maxSize, pb);
                 }
                 return maxSize;
             }
@@ -915,20 +921,7 @@ public final class PlacementUtil {
         final Display display = Display.getCurrent();
         final Bounds textBounds;
         
-        // if no display is available fallback to awt metrics
-        if (display == null) {
-
-            fmg.setFont(new java.awt.Font(fontData.getName(), KTextUtil.swtFontStyle2Awt(fontData
-                    .getStyle()), fontData.getHeight()));
-            final FontMetrics fm = fmg.getFontMetrics();
-
-            if (Strings.isNullOrEmpty(text)) {
-                textBounds = new Bounds(fm.getStringBounds(" ", fmg));
-            } else {
-                textBounds = new Bounds(fm.getStringBounds(text, fmg));
-            }
-
-        } else {
+        if (gc != null || display != null) {
 
             // In order to estimate the required size of a given string according to the determined
             // font, style, and size a GC is instantiated, configured, and queried.
@@ -950,6 +943,20 @@ public final class PlacementUtil {
             } else {
                 textBounds = new Bounds(gc.textExtent(text));
             }
+            
+        } else {
+            // if no display is available fallback to awt metrics
+
+            fmg.setFont(new java.awt.Font(fontData.getName(), KTextUtil.swtFontStyle2Awt(fontData
+                    .getStyle()), fontData.getHeight()));
+            final FontMetrics fm = fmg.getFontMetrics();
+
+            if (Strings.isNullOrEmpty(text)) {
+                textBounds = new Bounds(fm.getStringBounds(" ", fmg));
+            } else {
+                textBounds = new Bounds(fm.getStringBounds(text, fmg));
+            }
+
         }
         
         return textBounds;
@@ -1455,31 +1462,35 @@ public final class PlacementUtil {
      */
     private static Bounds evaluatePolylineBounds(final KPolyline line, final Bounds givenBounds) {
         if (line == null || line.getPoints().isEmpty()) {
-            return new Bounds(0, 0, givenBounds.width, givenBounds.height);
+            return Bounds.of(givenBounds.width, givenBounds.height);
         }
 
         // evaluate the points of the polyline inside the parent bounds to compute the bounding box
-        float minX = Float.MAX_VALUE;
+
+// chsch: considering the implementation of Bounds.max(...) determining the minimal x & y
+//         doesn't make any sense, does it?
+
+//        float minX = Float.MAX_VALUE;
         float maxX = Float.MIN_VALUE;
-        float minY = Float.MAX_VALUE;
+//        float minY = Float.MAX_VALUE;
         float maxY = Float.MIN_VALUE;
         for (final KPosition polylinePoint : line.getPoints()) {
             final Point point = evaluateKPosition(polylinePoint, givenBounds, true);
-            if (point.x < minX) {
-                minX = point.x;
-            }
+//            if (point.x < minX) {
+//                minX = point.x;
+//            }
             if (point.x > maxX) {
                 maxX = point.x;
             }
-            if (point.y < minY) {
-                minY = point.y;
-            }
+//            if (point.y < minY) {
+//                minY = point.y;
+//            }
             if (point.y > maxY) {
                 maxY = point.y;
             }
         }
 
-        return new Bounds(minX, minY, givenBounds.width - maxX, givenBounds.height - maxY);
+        return Bounds.max(Bounds.of(maxX, maxY), givenBounds);
     }
 
 

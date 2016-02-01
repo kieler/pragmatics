@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2012 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -137,7 +137,7 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                 graph = (KNode) content;
             }
             // assure that properties, stored in the model file, are loaded properly 
-            KimlUtil.loadDataElements(graph);
+            KimlUtil.loadDataElements(graph, true);
             
             if (layoutBeforeAnalysis) {
                 if (configurator != null) {

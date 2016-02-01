@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2010 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.klay.layered.intermediate;
 
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.HorizontalGraphCompactor;
 import de.cau.cs.kieler.klay.layered.intermediate.greedyswitch.GreedySwitchProcessor;
 
 /**
@@ -45,8 +46,12 @@ public enum IntermediateProcessorStrategy {
     COMMENT_PREPROCESSOR,
     /** Makes sure nodes with layer constraints have only incoming or only outgoing edges. */
     EDGE_AND_LAYER_CONSTRAINT_EDGE_REVERSER,
-    /** Creates connected compontents for the SplineSelfLoopPre- and postprocessor. */
+    /** Creates connected components for the SplineSelfLoopPre- and postprocessor. */
     SPLINE_SELF_LOOP_PREPROCESSOR,
+    /** If one of the phases is set to interactive mode, this processor positions external ports. */
+    INTERACTIVE_EXTERNAL_PORT_POSITIONER,
+    /** Add constraint edges to respect partitioning of nodes. */
+    PARTITION_PREPROCESSOR,
 
     // Before Phase 2
 
@@ -55,6 +60,12 @@ public enum IntermediateProcessorStrategy {
     /** Adds dummy nodes in edges where center labels are present. */
     LABEL_DUMMY_INSERTER,
 
+    // Before Phase 3
+
+    /** Remove partition constraint edges. */
+    PARTITION_POSTPROCESSOR,
+    /** Node-promotion for prettier graphs, especially algorithms like longest-path are prettified. */
+    NODE_PROMOTION,
     /** Makes sure that layer constraints are taken care of. */
     LAYER_CONSTRAINT_PROCESSOR,
     /** Handles northern and southern hierarchical ports. */
@@ -128,6 +139,9 @@ public enum IntermediateProcessorStrategy {
     NORTH_SOUTH_PORT_POSTPROCESSOR,
     /** Removes dummy nodes which were introduced for center labels. */
     LABEL_DUMMY_REMOVER,
+    /** Moves nodes and vertical edge segments in horizontal direction to close some gaps that are a
+     * result of the layering. */
+    HORIZONTAL_COMPACTOR,
     /** Takes the reversed edges of a graph and restores their original direction. */
     REVERSED_EDGE_RESTORER,
     /** Mirrors the graph to perform a right-to-left drawing. */
@@ -189,6 +203,9 @@ public enum IntermediateProcessorStrategy {
 
         case HIERARCHICAL_PORT_POSITION_PROCESSOR:
             return new HierarchicalPortPositionProcessor();
+            
+        case HORIZONTAL_COMPACTOR:
+            return new HorizontalGraphCompactor();
 
         case HYPEREDGE_DUMMY_MERGER:
             return new HyperedgeDummyMerger();
@@ -198,6 +215,9 @@ public enum IntermediateProcessorStrategy {
 
         case IN_LAYER_CONSTRAINT_PROCESSOR:
             return new InLayerConstraintProcessor();
+            
+        case INTERACTIVE_EXTERNAL_PORT_POSITIONER:
+            return new InteractiveExternalPortPositioner();
 
         case LABEL_AND_NODE_SIZE_PROCESSOR:
             return new LabelAndNodeSizeProcessor();
@@ -216,6 +236,9 @@ public enum IntermediateProcessorStrategy {
             
         case LABEL_SIDE_SELECTOR:
             return new LabelSideSelector();
+            
+        case NODE_PROMOTION:
+            return new NodePromotion();
 
         case LAYER_CONSTRAINT_PROCESSOR:
             return new LayerConstraintProcessor();
@@ -244,6 +267,12 @@ public enum IntermediateProcessorStrategy {
 
         case INVERTED_PORT_PROCESSOR:
             return new InvertedPortProcessor();
+
+        case PARTITION_POSTPROCESSOR:
+            return new PartitionPostprocessor();
+
+        case PARTITION_PREPROCESSOR:
+            return new PartitionPreprocessor();
 
         case PORT_DISTRIBUTER:
             return new PortDistributionProcessor();

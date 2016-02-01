@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -89,7 +89,7 @@ public class NodePlacer implements ILayoutPhase {
         progressMonitor.begin("Processor order nodes", 2);
 
         /** set the spacing according to the user inputs */
-        spacing = tGraph.getProperty(Properties.SPACING);
+        spacing = tGraph.getProperty(Properties.SPACING).doubleValue();
 
         /** find the root node of this component */
         LinkedList<TNode> roots = new LinkedList<TNode>();

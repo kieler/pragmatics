@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2009 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -33,4 +33,43 @@ public enum Direction {
     /** upward vertical layout. */
     UP;
     
+    
+    /**
+     * Checks if this layout direction is horizontal. (that is, left or right) An undefined layout
+     * direction is not horizontal.
+     * 
+     * @return {@code trure} if the layout direction is horizontal.
+     */
+    public boolean isHorizontal() {
+        return this == LEFT || this == RIGHT;
+    }
+
+    /**
+     * Checks if this layout direction is vertical. (that is, up or down) An undefined layout
+     * direction is not vertical.
+     * 
+     * @return {@code trure} if the layout direction is vertical.
+     */
+    public boolean isVertical() {
+        return this == UP || this == DOWN;
+    }
+    
+    /**
+     * @return the opposite direction of {@code this}. For instance, if this is {@link #LEFT},
+     *         return {@link #RIGHT}.
+     */
+    public Direction opposite() {
+        switch (this) {
+        case LEFT:
+            return RIGHT;
+        case RIGHT:
+            return LEFT;
+        case UP:
+            return DOWN;
+        case DOWN:
+            return UP;
+        default:
+            return UNDEFINED;
+        }
+    }
 }

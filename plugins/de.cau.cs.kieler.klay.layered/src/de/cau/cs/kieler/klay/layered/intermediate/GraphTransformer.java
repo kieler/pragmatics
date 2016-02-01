@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2011 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -34,6 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
+import de.cau.cs.kieler.klay.layered.properties.EdgeLabelSideSelection;
 import de.cau.cs.kieler.klay.layered.properties.InLayerConstraint;
 import de.cau.cs.kieler.klay.layered.properties.InternalProperties;
 import de.cau.cs.kieler.klay.layered.properties.LayerConstraint;
@@ -92,6 +93,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             break;
         case TRANSPOSE:
             transpose(nodes);
+            transposeEdgeLabelPlacement(layeredGraph);
             transpose(layeredGraph.getOffset());
             transpose(layeredGraph.getSize());
             break;
@@ -99,6 +101,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             mirrorX(nodes, layeredGraph);
             mirrorY(nodes, layeredGraph);
             transpose(nodes);
+            transposeEdgeLabelPlacement(layeredGraph);
             transpose(layeredGraph.getOffset());
             transpose(layeredGraph.getSize());
             break;
@@ -190,7 +193,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             }
             
             // External port dummy?
-            if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+            if (node.getType() == NodeType.EXTERNAL_PORT) {
                 mirrorExternalPortSideX(node);
                 mirrorLayerConstraintX(node);
             }
@@ -367,7 +370,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             }
             
             // External port dummy?
-            if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+            if (node.getType() == NodeType.EXTERNAL_PORT) {
                 mirrorExternalPortSideY(node);
                 mirrorInLayerConstraintY(node);
             }
@@ -520,7 +523,7 @@ public final class GraphTransformer implements ILayoutProcessor {
             }
             
             // External port dummy?
-            if (node.getNodeType() == NodeType.EXTERNAL_PORT) {
+            if (node.getType() == NodeType.EXTERNAL_PORT) {
                 transposeExternalPortSide(node);
                 transposeLayerConstraint(node);
             }
@@ -590,6 +593,19 @@ public final class GraphTransformer implements ILayoutProcessor {
         
         // Apply new placement
         node.setProperty(LayoutOptions.NODE_LABEL_PLACEMENT, newPlacement);
+    }
+    
+    /**
+     * Transpose the placement of edge labels in the graph.
+     * 
+     * @param graph the complete graph
+     */
+    private void transposeEdgeLabelPlacement(final LGraph graph) {
+        EdgeLabelSideSelection oldSide = graph.getProperty(Properties.EDGE_LABEL_SIDE_SELECTION);
+        if (oldSide != null) {
+            graph.setProperty(Properties.EDGE_LABEL_SIDE_SELECTION, oldSide.transpose());
+        }
+
     }
     
     /**

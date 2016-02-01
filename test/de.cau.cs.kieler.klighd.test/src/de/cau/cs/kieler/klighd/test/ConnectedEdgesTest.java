@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2015 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  *
@@ -47,7 +47,6 @@ import de.cau.cs.kieler.pragmatics.test.common.runners.ModelCollectionTestRunner
 
 /**
  * @author mkr
- *
  */
 @RunWith(ModelCollectionTestRunner.class)
 @BundleId("de.cau.cs.kieler.klighd.test")
@@ -55,7 +54,7 @@ import de.cau.cs.kieler.pragmatics.test.common.runners.ModelCollectionTestRunner
 @ModelFilter("*.kgt")
 public class ConnectedEdgesTest {
     /**
-     *
+     * The model to be tested.
      */
     private KNode model;
 

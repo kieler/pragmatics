@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2009 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
@@ -52,7 +52,7 @@ public interface IKielerProgressMonitor {
 
     /**
      * Notifies that the given number of work units has been completed. This
-     * method will have no effect is the monitor is closed.
+     * method will have no effect if the monitor is closed.
      * 
      * @param work number of work units
      */

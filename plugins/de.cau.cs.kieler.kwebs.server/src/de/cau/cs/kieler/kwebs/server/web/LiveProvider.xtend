@@ -4,7 +4,7 @@
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  *
  * Copyright 2013 by
- * + Christian-Albrechts-University of Kiel
+ * + Kiel University
  *     + Department of Computer Science
  *         + Real-Time and Embedded Systems Group
  *
@@ -189,7 +189,8 @@ class LiveProvider extends AbstractProvider {
 					
 					$.ajax({
 						type: 'POST',
-						url: '/layout', 
+						url: '/layout',
+						contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
 						data: {
 							graph: graph,
 							config: config,
@@ -197,6 +198,9 @@ class LiveProvider extends AbstractProvider {
 							oFormat: oFormat
 						}, 
 						success: function(svggraph) {
+						    
+						    // answer is application/x-www-form-urlencoded
+							svggraph = decodeURIComponent(svggraph.replace(/\+/g, '%20'));
 							
 							// if not svg, surround with pretty print
 							if (oFormat != "org.w3.svg") {
@@ -205,7 +209,7 @@ class LiveProvider extends AbstractProvider {
 			                  // make it look nice 
 			                  svggraph = "<pre class='pre-scrollable prettyprint'>" + svggraph + "</pre>";
 							}
-							
+
 							svg.html(svggraph);
 							
 							// center the graph horizontally
@@ -227,10 +231,14 @@ class LiveProvider extends AbstractProvider {
 							// hide the graph section
 							$('#resGraph').hide();
 							// show errorDiv
-							var errorJson = JSON.parse(error.responseText);
-							var errorPre = "<h4>Error:</h4> " + errorJson.message;
-							if (errorJson.throwable) {
-							    errorPre += "<br /><br /><pre>" + errorJson.throwable + "</pre>";    
+							try {
+							    var errorJson = JSON.parse(error.responseText);
+							    var errorPre = "<h4>Error:</h4> " + errorJson.message;
+							    if (errorJson.throwable) {
+							        errorPre += "<br /><br /><pre>" + errorJson.throwable + "</pre>";    
+							    }
+							} catch (err) {
+							    var errorPre =  "<h4>Unknown Error.</h4>";
 							}
 							$('#errorDiv').html(errorPre);
 							$('#errorDiv').show();	
