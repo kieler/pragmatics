@@ -107,7 +107,7 @@ public class BasicHtmlVisualizer implements IVisualizer<String, Object> {
             // Visualization result
             Visualization visualization =
                 VisualizationService.getInstance().getVisualization("text", results[i]);
-            builder.append(visualization.get(analysis, results[i]));
+            builder.append(visualization.get(analysis, results[i]).toString());
             
             // Component name
             builder.append(" <em>(" + analysis.getComponents().get(i).getFirst() + ")</em>");
