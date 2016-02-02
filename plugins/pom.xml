@@ -56,10 +56,6 @@
     <module>de.cau.cs.kieler.klighd</module>
     <module>de.cau.cs.kieler.klighd.examples</module>
     <module>de.cau.cs.kieler.klighd.kivi</module>
-<!--
-    KLighD Incremental is disabled as long as it doesn't work with the Kepler/Luna version of EMF Compare.
-    <module>de.cau.cs.kieler.klighd.incremental</module>
--->
     <module>de.cau.cs.kieler.klighd.piccolo</module>
     <module>de.cau.cs.kieler.klighd.piccolo.batik</module>
     <module>de.cau.cs.kieler.klighd.piccolo.draw2d</module>
