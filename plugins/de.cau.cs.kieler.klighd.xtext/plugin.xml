@@ -20,9 +20,9 @@
       </handler>
    </extension>
    <extension
-         point="de.cau.cs.kieler.klighd.view.editor">
+         point="de.cau.cs.kieler.klighd.ui.view.editor">
       <editor
-            controllerID="de.cau.cs.kieler.klighd.view.controllers.XtextChangeUpdateController"
+            controllerID="de.cau.cs.kieler.klighd.ui.view.controllers.XtextChangeUpdateController"
             editorID="de.cau.cs.kieler.core.kgraph.text.KGraph">
       </editor>
    </extension>
@@ -71,6 +71,19 @@
             properties="graphFormatIsSupported"
             type="org.eclipse.core.resources.IFile">
       </propertyTester>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.ui.view.editor">
+      <editor
+            editorID="org.eclipse.ui.DefaultTextEditor"
+            controllerID="de.cau.cs.kieler.klighd.ui.view.controllers.GraphUpdateController">
+      </editor>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.ui.view.controller">
+      <controller
+            class="de.cau.cs.kieler.klighd.xtext.transformations.GraphUpdateController">
+      </controller>
    </extension>
 
 </plugin>

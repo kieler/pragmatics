@@ -17,32 +17,28 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
 
 /**
  * Internal representation of a node in the constraint graph.
  * 
- * For instance, this class is extended to handle specific {@link LGraphElement
- * de.cau.cs.kieler.klay.layered.graph.LGraphElement}s.
+ * For instance, this class is extended to handle specific
+ * {@link de.cau.cs.kieler.klay.layered.graph.LGraphElement LGraphElement}s.
  * 
  * @see de.cau.cs.kieler.klay.layered.intermediate.compaction.CLNode CLNode
  * @see de.cau.cs.kieler.klay.layered.intermediate.compaction.CLEdge CLEdge
  * @author dag
  */
 public abstract class CNode {
+    
     // Variables are public for convenience reasons since this class is used internally only.
-    // SUPPRESS CHECKSTYLE NEXT 24 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 28 VisibilityModifier
     /** containing {@link CGroup}. */
     public CGroup cGroup;
     /** refers to the parent node of a north/south segment. */
     public CNode parentNode = null;
-    
     /** representation of constraints. */
     public List<CNode> constraints = Lists.newArrayList();
-    /** number of {@link CNode}s imposing a constraint on this one. */
-    public int outDegree = 0;
-    
     /** the area occupied by this element including margins for ports and labels. */
     public Rectangle hitbox;
     /** offset to the root position of the containing {@link CGroup} . */
@@ -52,9 +48,11 @@ public abstract class CNode {
     public double startPos = Double.NEGATIVE_INFINITY;
     /** flags a {@link CNode} to be repositioned in the case of left/right balanced compaction. */
     public boolean reposition = true;
-    /** a 4 tuple stating if the {@link CNode} should locked in a particular direction based on
+    /** a 4-tuple stating if the {@link CNode} should locked in a particular direction based on
      *  conditions defined in an extended class. */
-    public CompactionLock lock = new CompactionLock();
+    public Quadruplet lock = new Quadruplet();
+    /** Whether no spacing should be applied to a certain side of this node. */
+    public Quadruplet spacingIgnore = new Quadruplet();
     /** An id for public use. There is no warranty, use at your own risk. */
     public int id;
 
@@ -71,49 +69,6 @@ public abstract class CNode {
      * @return the spacing
      */
     public abstract double getVerticalSpacing();
-
-    /**
-     * Updates the leftmost possible starting position of this {@link CNode} according to the
-     * constraint that outgoingCNode imposes on this {@link CNode}.
-     * 
-     * @param outgoingCNode
-     *            the {@link CNode} imposing a constraint on this one.
-     * @param spacingHandler
-     *            {@link ISpacingsHandler} that can be queried for the desired spacing between a
-     *            pair of nodes.
-     * @param compactionDirection
-     *            the actual, untransformed direction of the currently performed compaction.
-     */
-    protected void updateStartPos(final CNode outgoingCNode,
-            final ISpacingsHandler<? super CNode> spacingHandler,
-            final Direction compactionDirection) {
-
-        // determine the required spacing
-        double spacing;
-        if (compactionDirection.isHorizontal()) {
-            spacing = spacingHandler.getHorizontalSpacing(this, outgoingCNode);
-        } else {
-            spacing = spacingHandler.getVerticalSpacing(this, outgoingCNode);
-        }
-        
-        // calculating rightmost position according to constraints
-        double newStartPos =
-                Math.max(startPos, outgoingCNode.startPos + outgoingCNode.hitbox.width + spacing);
-        double currentPos = getPosition();
-
-        // decrementing the number of constraints that still have to be processed for this CNode
-        outDegree--;
-
-        // setting new position if the CNode is flagged to be repositioned
-        if (reposition) {
-            startPos = newStartPos;
-        } else {
-            startPos = currentPos;
-            // preventing unnecessary iterations if CNode is locked
-            outDegree = 0;
-        }
-
-    }
 
     /**
      * Getter for the position.

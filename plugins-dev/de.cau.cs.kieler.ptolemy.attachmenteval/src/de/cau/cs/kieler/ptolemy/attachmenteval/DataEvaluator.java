@@ -172,10 +172,6 @@ public final class DataEvaluator {
             otherAttachments = Maps.newHashMap();
         }
         
-        // Find out how many annotations are unattached
-//        int unattached = baseData.getAnnotationCounts().get(file) - baseAttachments.size();
-        data.annotations = baseAttachments.size();
-        
         // Iterate over the attachments found in the base attachment data; outcome is the number of
         // lost, changed, and correct attachments, not including annotations that are not attached
         // to anything
@@ -193,13 +189,9 @@ public final class DataEvaluator {
         
         // Include annotations unattached in the base data?
         if (includeUnattached) {
-            if( baseData == null){
-                System.out.println("baseData is null");
-            } else if (baseData.getAnnotationCounts() == null){
+            if (baseData.getAnnotationCounts() == null) {
                 System.out.println("annotationCounts is null");
             }
-            // Annotations count must be reset
-            data.annotations = baseData.getAnnotationCounts().get(file);            
             
             // Found attachments
             for (Entry<String, String> otherAttachmentEntry : otherAttachments.entrySet()) {
@@ -210,9 +202,15 @@ public final class DataEvaluator {
                 }
             }
             
+            // We're counting all annotations in the model, not just the attached ones
+            data.annotations = baseData.getAnnotationCounts().get(file);
+            
             // Correct attachments need to be corrected for the annotations unattached in both data
             data.correctAttachments = data.annotations - data.foundAttachments - data.lostAttachments
                     - data.changedAttachments;
+        } else {
+            // We're only counting annotations attached in the base data
+            data.annotations = baseAttachments.size();
         }
     }
     

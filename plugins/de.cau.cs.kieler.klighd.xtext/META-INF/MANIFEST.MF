@@ -13,6 +13,7 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="3.8.0",
  de.cau.cs.kieler.klighd,
  de.cau.cs.kieler.klighd.kivi,
  de.cau.cs.kieler.klighd.ui,
+ de.cau.cs.kieler.klighd.ui.view,
  de.cau.cs.kieler.kiml.formats,
  de.cau.cs.kieler.kiml.formats.gml
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

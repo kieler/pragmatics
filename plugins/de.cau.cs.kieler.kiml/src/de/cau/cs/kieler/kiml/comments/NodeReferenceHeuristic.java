@@ -12,6 +12,7 @@
  */
 package de.cau.cs.kieler.kiml.comments;
 
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -36,10 +37,15 @@ import de.cau.cs.kieler.core.util.Pair;
  *   <li>{@link #withCommentTextProvider(Function)}</li>
  *   <li>{@link #withNodeNameProvider(Function)}</li>
  * </ul>
+ * <p>
+ * The heuristic can optionally be configured to only consider matches to be matches if the distance
+ * between a comment and a matching node does not exceed a configurable threshold.
+ * </p>
  * 
  * <p>
  * The heuristic can operate in two modes: a strict and a fuzzy mode.
  * </p>
+ * 
  * 
  * <h3>Strict Mode</h3>
  * <p>
@@ -64,6 +70,10 @@ public class NodeReferenceHeuristic implements IHeuristic {
     private Function<KNode, String> commentTextFunction = null;
     /** Function used to retrieve a node's name. */
     private Function<KNode, String> nodeNameFunction = null;
+    /** The bounds provider to use. */
+    private IBoundsProvider boundsProvider = new ShapeLayoutBoundsProvider();
+    /** The maixmum distance attached comments may be away from each other. */
+    private double maxDistance = -1;
     /** Whether to use fuzzy mode when looking for occurrences of a node's name in a comment's text. */
     private boolean fuzzy = false;
     /** The comment-node attachments we've found during preprocessing. */
@@ -131,6 +141,44 @@ public class NodeReferenceHeuristic implements IHeuristic {
     }
     
     /**
+     * Configures the heuristic to use the given maximum attachment distance. A comment is only attached
+     * to a referenced node if the distance between the two doesn't exceed this distance.
+     * 
+     * <p>
+     * If this method is not called, the heuristic does not impose a distance restriction.
+     * </p>
+     * 
+     * @param distance
+     *            the maximum possible distance. Negative values disable the distance restriction.
+     * @return this object for method chaining.
+     */
+    public NodeReferenceHeuristic withMaximumAttachmentDistance(final double distance) {
+        this.maxDistance = distance;
+        return this;
+    }
+    
+    /**
+     * Configures the heuristic to use the given bounds provider to determine the bounds of
+     * comments.
+     * 
+     * <p>
+     * If this method is not called, the {@link ShapeLayoutBoundsProvider} is used by default.
+     * </p>
+     * 
+     * @param provider
+     *            the bounds provider to use.
+     * @return this object for method chaining.
+     */
+    public NodeReferenceHeuristic withBoundsProvider(final IBoundsProvider provider) {
+        if (provider == null) {
+            throw new IllegalArgumentException("Bounds provider must not be null.");
+        }
+        
+        this.boundsProvider = provider;
+        return this;
+    }
+    
+    /**
      * Checks whether the current configuration is valid.
      * 
      * @throws IllegalStateException
@@ -181,8 +229,8 @@ public class NodeReferenceHeuristic implements IHeuristic {
             }
         }
         
-        // Go find matches! See also: We Didn't Start the Fire by Billy Joel
-        goFindFuzzyMatches(commentTexts, nodeNames);
+        // Go find matches!
+        goFindMatches(commentTexts, nodeNames);
         
         commentTexts = null;
     }
@@ -233,7 +281,7 @@ public class NodeReferenceHeuristic implements IHeuristic {
      *            list of pairs of nodes and their names. The name is expected to not be
      *            {@code null}.
      */
-    private void goFindFuzzyMatches(final List<Pair<KNode, String>> commentTexts,
+    private void goFindMatches(final List<Pair<KNode, String>> commentTexts,
             final List<Pair<KNode, String>> nodeNames) {
         
         // Produce regular expression patterns for all node names
@@ -264,9 +312,21 @@ public class NodeReferenceHeuristic implements IHeuristic {
                 }
             }
             
-            // Record the match, if any
+            // Record the match, if any and if the maximum attachment distance allows
             if (foundNode != null) {
-                foundAttachments.put(commentTextPair.getFirst(), foundNode);
+                if (maxDistance < 0) {
+                    // There is no distance restriction
+                    foundAttachments.put(commentTextPair.getFirst(), foundNode);
+                } else {
+                    // Calculate the distance between the node and the comment
+                    Rectangle2D.Double commentBounds = boundsProvider.boundsFor(
+                            commentTextPair.getFirst());
+                    Rectangle2D.Double nodeBounds = boundsProvider.boundsFor(foundNode);
+                    
+                    if (DistanceHeuristic.distance(commentBounds, nodeBounds) <= maxDistance) {
+                        foundAttachments.put(commentTextPair.getFirst(), foundNode);
+                    }
+                }
             }
         }
     }

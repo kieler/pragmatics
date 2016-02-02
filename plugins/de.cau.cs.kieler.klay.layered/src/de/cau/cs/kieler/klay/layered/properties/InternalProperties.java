@@ -39,8 +39,6 @@ import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
-import de.cau.cs.kieler.klay.layered.intermediate.PartitionPreprocessor;
-import de.cau.cs.kieler.klay.layered.p3order.NodeGroup;
 import de.cau.cs.kieler.klay.layered.p5edges.splines.ConnectedSelfLoopComponent;
 import de.cau.cs.kieler.klay.layered.p5edges.splines.LoopSide;
 
@@ -194,11 +192,6 @@ public final class InternalProperties {
      * all ports that have dummy nodes created for them.
      */
     public static final IProperty<LNode> PORT_DUMMY = new Property<LNode>("portDummy");
-
-    /**
-     * The node group of an LNode as used in the crossing minimization phase.
-     */
-    public static final IProperty<NodeGroup> NODE_GROUP = new Property<NodeGroup>("nodeGroup");
 
     /**
      * Crossing hint used for in-layer cross counting with northern and southern port dummies. This
@@ -379,7 +372,8 @@ public final class InternalProperties {
     
     /**
      * Specifies if the corresponding LGraph element was added by the
-     * {@link de.cau.cs.kieler.klay.layered.intermediate.PartitionPreprocessor}.
+     * {@link de.cau.cs.kieler.klay.layered.intermediate.PartitionPreprocessor
+     * PartitionPreprocessor}.
      */
     public static final IProperty<Boolean> PARTITION_DUMMY = new Property<Boolean>(
             "partitionConstraint", false);

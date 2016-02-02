@@ -31,7 +31,7 @@ import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.util.KRenderingSwitch;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
-import edu.umd.cs.piccolo.PNode;
+import de.cau.cs.kieler.klighd.piccolo.IKlighdNode;
 
 /**
  * @author chsch
@@ -45,14 +45,13 @@ class PNodeConstructionKRenderingSwitch extends KRenderingSwitch<PNodeController
      *            the controller that uses this switch and that is delegated to while calling
      *            further methods
      */
-    public PNodeConstructionKRenderingSwitch(
-            final AbstractKGERenderingController<?, ?> theController) {
+    PNodeConstructionKRenderingSwitch(final AbstractKGERenderingController<?, ?> theController) {
         this.controller = theController;
     }
 
     private AbstractKGERenderingController<?, ?> controller;
     private List<KStyle> childPropagatedStyles = null;
-    private PNode parent = null;
+    private IKlighdNode parent = null;
     private Bounds initialBounds = null;
 
     /**
@@ -61,11 +60,11 @@ class PNodeConstructionKRenderingSwitch extends KRenderingSwitch<PNodeController
      * @param theChildPropagatedStyles
      *            propagated style definitions
      * @param theParent
-     *            the parent {@link PNode} to attach the created children to
+     *            the parent {@link IKlighdNode} to attach the created children to
      * @param theInitialBounds
-     *            the available area to be covered by the child {@link PNode}
+     *            the available area to be covered by the child {@link IKlighdNode.IKlighdFigureNode}
      */
-    public void configure(final List<KStyle> theChildPropagatedStyles, final PNode theParent,
+    public void configure(final List<KStyle> theChildPropagatedStyles, final IKlighdNode theParent,
             final Bounds theInitialBounds) {
         this.childPropagatedStyles = theChildPropagatedStyles;
         this.parent = theParent;

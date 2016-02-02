@@ -16,6 +16,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
@@ -39,30 +41,103 @@ import de.cau.cs.kieler.klay.layered.compaction.recthull.Scanline.EventHandler;
  */
 public class ScanlineConstraintCalculator implements IConstraintCalculationAlgorithm {
 
-    private OneDimensionalCompactor compactor;
+    private static final double EPSILON = .5;
+    
+    // SUPPRESS CHECKSTYLE NEXT 2 VisibilityModifier
+    /** The surrounding compactor object. */
+    protected OneDimensionalCompactor compactor;
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void calculateConstraints(final OneDimensionalCompactor theCompactor) {
-        
         this.compactor = theCompactor;
+        
+        // consider all nodes, do not add spacing
+        sweep(n -> true, n -> 0.0);
+    }
+
+    /**
+     * Executes a single sweep of the scanline, using {@link CNode}s that fulfill
+     * <code>filterFun</code>.
+     * 
+     * @param filterFun
+     *            a predicate determining for a node n whether it should be included
+     * @param spacingFun
+     *            a function returning a spacing value s for a node n.
+     */
+    protected void sweep(
+            final Predicate<CNode> filterFun, 
+            final Function<CNode, Double> spacingFun) {
+        
+        blowUpHitboxes(filterFun, spacingFun);
         
         // add all nodes twice (once for the lower, once for the upper border)
         List<Timestamp> points = Lists.newArrayList();
         for (CNode n : compactor.cGraph.cNodes) {
-            points.add(new Timestamp(n, true));
-            points.add(new Timestamp(n, false));
+            if (filterFun.apply(n)) {
+                points.add(new Timestamp(n, true));
+                points.add(new Timestamp(n, false));
+            }
         }
         
         // reset internal state
         constraintsScanlineHandler.reset();
         
         // execute the scanline
-        Scanline.execute(points, CONSTRAINTS_SCANLINE_COMPARATOR, constraintsScanlineHandler);
+        Scanline.execute(points, constraintsScanlineComparator, constraintsScanlineHandler);
         
+        normalizeHitboxes(filterFun, spacingFun);
     }
+    
+    private void blowUpHitboxes(
+            final Predicate<CNode> filter, 
+            final Function<CNode, Double> spacingFun) {
 
+        for (CNode n : compactor.cGraph.cNodes) {
+        
+            if (!filter.apply(n)) {
+                continue;
+            }
+            
+            double spacing = spacingFun.apply(n);
+            
+            if (spacing > 0) {
+                if (!(compactor.direction.isHorizontal() && n.spacingIgnore.up)
+                        && !(compactor.direction.isVertical() && n.spacingIgnore.left)) {
+                    n.hitbox.y -= Math.max(0, spacing / 2 - EPSILON);
+                }
+                if (!(compactor.direction.isHorizontal() && n.spacingIgnore.down) 
+                        && !(compactor.direction.isVertical() && n.spacingIgnore.right)) {
+                    n.hitbox.height += Math.max(0, spacing - 2 * EPSILON);
+                }
+            }
+        }
+    }
+    
+    private void normalizeHitboxes(final Predicate<CNode> filter, 
+            final Function<CNode, Double> spacingFun) {
+        for (CNode n : compactor.cGraph.cNodes) {
+            
+            if (!filter.apply(n)) {
+                continue;
+            }
+            
+            double spacing = spacingFun.apply(n);
+            
+            if (spacing > 0) {
+                if (!(compactor.direction.isHorizontal() && n.spacingIgnore.up)
+                        && !(compactor.direction.isVertical() && n.spacingIgnore.left)) {
+                    n.hitbox.y += Math.max(0, spacing / 2 - EPSILON);
+                }
+                if (!(compactor.direction.isHorizontal() && n.spacingIgnore.down) 
+                        && !(compactor.direction.isVertical() && n.spacingIgnore.right)) {
+                    n.hitbox.height -= spacing - 2 * EPSILON;
+                }
+            }
+        }
+    }
 
     /**
      * A timestamp in the sense of the scanline algorithm to determine the constraints of the
@@ -88,7 +163,7 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
      * This implicates that <strong>no</strong> constraint is generated 
      * for element that barely share a common y-value.
      */
-    private static final Comparator<Timestamp> CONSTRAINTS_SCANLINE_COMPARATOR = (p1, p2) ->  {
+    private final Comparator<Timestamp> constraintsScanlineComparator = (p1, p2) ->  {
         
         // chose the right coordinate
         double y1 = p1.node.hitbox.y;
@@ -127,10 +202,10 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
          * are not constant time.
          */
         private TreeSet<CNode> intervals = Sets.newTreeSet((c1, c2) -> Double.compare(
-                c1.hitbox.x, c2.hitbox.x));
+                (c1.hitbox.x + c1.hitbox.width) / 2, (c2.hitbox.x + c2.hitbox.width) / 2));
         /** Candidate array with possible constraints. */
         private CNode[] cand;
-
+        
         /** 
          * Resets the internal data structures.
          */
@@ -146,6 +221,7 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
         @Override
         public void handle(final Timestamp p) {
             // System.out.println((p.low ? "insert " : "delete ") + " " + p.node.hitbox);
+            
             if (p.low) {
                 insert(p);
             } else {
@@ -171,7 +247,6 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
                 // different groups?
                 if (left.cGroup != null && left.cGroup != p.node.cGroup) {
                     left.constraints.add(p.node);
-                    p.node.outDegree++;
                 }
             }
 
@@ -180,7 +255,6 @@ public class ScanlineConstraintCalculator implements IConstraintCalculationAlgor
                 // different groups?
                 if (right.cGroup != null && right.cGroup != p.node.cGroup) {
                     p.node.constraints.add(right);
-                    right.outDegree++;
                 }
             }
 

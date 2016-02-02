@@ -34,7 +34,7 @@ import de.cau.cs.kieler.klay.layered.graph.LEdge;
  * @author dag
  */
 public final class VerticalSegment implements Comparable<VerticalSegment> {
-    // SUPPRESS CHECKSTYLE NEXT 12 VisibilityModifier
+    // SUPPRESS CHECKSTYLE NEXT 16 VisibilityModifier
     /** the node a north/south segment is connected to, otherwise null. */
     public CNode parentNode;
     /** offset to the parent node. */
@@ -47,6 +47,10 @@ public final class VerticalSegment implements Comparable<VerticalSegment> {
     public double x1, y1, y2;
     /** the parent {@link LEdge}. */
     public LEdge lEdge;
+    /** Whether the edge spacing to the top should be ignored during constraint calculation. */
+    public boolean blockTopSpacing = true;
+    /** Whether the edge spacing to the bottom should be ignored during constraint calculation. */
+    public boolean blockBottomSpacing = false;
 
     /**
      * Creates a new instance setting all fields.

@@ -25,9 +25,7 @@ import de.cau.cs.kieler.kiml.comments.CommentAttacher;
 import de.cau.cs.kieler.kiml.comments.DistanceHeuristic;
 import de.cau.cs.kieler.kiml.comments.IBoundsProvider;
 import de.cau.cs.kieler.kiml.comments.TextPrefixFilter;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.CommentAttachmentEditor;
-import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties;
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyBoundsProvider;
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyTitleCommentFilter;
 
@@ -41,20 +39,17 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
     /** Bounds provider used to find the node nearest to a comment. */
     private IBoundsProvider boundsProvider = null;
     /** The author comment filter. */
-    private TextPrefixFilter authorCommentFilter = null;
+    private TextPrefixFilter textPrefixFilter = null;
     /** The title comment filter. */
     private PtolemyTitleCommentFilter titleCommentFilter = null;
     /** Alignments between a comments and the nodes they are attached to in the reference function. */
     private List<Double> attachedNodeAlignments = Lists.newArrayList();
     /** Alignments between a comment that's attached to something and its best aligned node. */
-    private List<Double> bestAlignedNodeToAttachedCommentAlignments = Lists.newArrayList();
-    /** Alignments between a comment that's not attached to anything and its best aligned node. */
-    private List<Double> bestAlignedNodeToUnattachedCommentAlignments = Lists.newArrayList();
-    /**
-     * Alignments between a comment that's not attached, but eligible for attachment and its best
-     * aligned node.
-     */
-    private List<Double> bestAlignedNodeToUnattachedFilteredCommentDistances = Lists.newArrayList();
+    private List<Double> bestAlignedToAttachedAlignments = Lists.newArrayList();
+    /** Alignments between a comment that's not filtered out and its best aligned node. */
+    private List<Double> bestAlignedToFilteredAllAlignments = Lists.newArrayList();
+    /** Alignments between an unattached comment that's not filtered out and its best aligned node. */
+    private List<Double> bestAlignedToFilteredUnattachedAlignments = Lists.newArrayList();
     /** Number of attached comments. */
     private int attachedComments = 0;
     /** Number of attached comments that are attached to the node they are best aligned to. */
@@ -65,17 +60,11 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
      * Creates a new instance.
      */
     public CommentAlignmentAnalysis() {
-        authorCommentFilter = new TextPrefixFilter()
-            .withCommentTextProvider((comment) ->
-                comment.getData(KLayoutData.class).getProperty(PtolemyProperties.COMMENT_TEXT))
-            .addPrefix("Author")  // Also matches "Authors"
-            .addPrefix("Demo created by");
+        textPrefixFilter = CommentPrefixAnalysis.createTextPrefixFilter();
+        titleCommentFilter = CommentFontSizeAnalysis.createTitleCommentFilter();
         
         Injector injector = Guice.createInjector();
     
-        titleCommentFilter = injector.getInstance(PtolemyTitleCommentFilter.class);
-        titleCommentFilter.decideBasedOnFontSizeOnly();
-        
         boundsProvider = injector.getInstance(PtolemyBoundsProvider.class);
         boundsProvider = boundsProvider.cached();
     }
@@ -89,12 +78,12 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
      */
     @Override
     public void process(KNode model, String modelFilePath, CommentAttachmentEditor editor) {
-        authorCommentFilter.preprocess(model, true);
+        textPrefixFilter.preprocess(model, true);
         titleCommentFilter.preprocess(model, true);
         
         recursivelyProcess(model, editor);
         
-        authorCommentFilter.cleanup();
+        textPrefixFilter.cleanup();
         titleCommentFilter.cleanup();
     }
 
@@ -113,12 +102,12 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
         // Distance Histograms
         System.out.println("------ Comments and their attached nodes");
         attachedNodeAlignments.stream().forEach((dist) -> System.out.println(dist));
-        System.out.println("------ Attached comments and their best aligned nodes");
-        bestAlignedNodeToAttachedCommentAlignments.stream().forEach((dist) -> System.out.println(dist));
-        System.out.println("------ Unattached comments and their best aligned nodes");
-        bestAlignedNodeToUnattachedCommentAlignments.stream().forEach((dist) -> System.out.println(dist));
-        System.out.println("------ Filtered unattached comments and their best aligned nodes");
-        bestAlignedNodeToUnattachedFilteredCommentDistances.stream()
+        System.out.println("------ Best alignment to attached comment");
+        bestAlignedToAttachedAlignments.stream().forEach((dist) -> System.out.println(dist));
+        System.out.println("------ Best alignment to filtered comment");
+        bestAlignedToFilteredAllAlignments.stream().forEach((dist) -> System.out.println(dist));
+        System.out.println("------ Best alignment to filtered unattached comment");
+        bestAlignedToFilteredUnattachedAlignments.stream()
             .forEach((dist) -> System.out.println(dist));
         
         System.out.println("<===== End Comment Alignment Analysis Results");
@@ -139,12 +128,12 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
                         double bestAlignment = AlignmentHeuristic.alignment(
                                 boundsProvider.boundsFor(child),
                                 boundsProvider.boundsFor(bestAlignedNode));
-                        bestAlignedNodeToUnattachedCommentAlignments.add(bestAlignment);
                         
-                        if (authorCommentFilter.eligibleForAttachment(child)
+                        if (textPrefixFilter.eligibleForAttachment(child)
                                 && titleCommentFilter.eligibleForAttachment(child)) {
                             
-                            bestAlignedNodeToUnattachedFilteredCommentDistances.add(bestAlignment);
+                            bestAlignedToFilteredAllAlignments.add(bestAlignment);
+                            bestAlignedToFilteredUnattachedAlignments.add(bestAlignment);
                         }
                     }
                 } else {
@@ -160,14 +149,16 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
                     if (bestAlignedNode == attachedNode) {
                         // The attached node is the node best aligned to the comment
                         commentsAttachedToBestAlignedNode++;
-                        bestAlignedNodeToAttachedCommentAlignments.add(attachedNodeAlignment);
+                        bestAlignedToAttachedAlignments.add(attachedNodeAlignment);
+                        bestAlignedToFilteredAllAlignments.add(attachedNodeAlignment);
                     } else {
                         // The attached node is not the node best aligned to the comment
                         if (bestAlignedNode != null) {
                             double bestNodeAlignment = AlignmentHeuristic.alignment(
                                     boundsProvider.boundsFor(child),
                                     boundsProvider.boundsFor(bestAlignedNode));
-                            bestAlignedNodeToAttachedCommentAlignments.add(bestNodeAlignment);
+                            bestAlignedToAttachedAlignments.add(bestNodeAlignment);
+                            bestAlignedToFilteredAllAlignments.add(bestNodeAlignment);
                         }
                     }
                 }
@@ -190,7 +181,7 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
                 
                 // Make sure the node is in the comment's vicinity
                 if (!upToMaxDistance
-                        || DistanceHeuristic.distance(commentBounds, siblingBounds) <= 40) {
+                        || DistanceHeuristic.distance(commentBounds, siblingBounds) <= 20) {
                     
                     double alignment = AlignmentHeuristic.alignment(commentBounds, siblingBounds);
                     

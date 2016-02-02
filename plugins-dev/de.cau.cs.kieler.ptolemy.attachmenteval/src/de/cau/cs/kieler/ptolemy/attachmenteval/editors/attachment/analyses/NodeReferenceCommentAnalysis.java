@@ -13,8 +13,10 @@
 package de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses;
 
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -45,6 +47,10 @@ public class NodeReferenceCommentAnalysis implements IAttachmentAnalysis {
     private NodeReferenceHeuristic referenceHeuristic = null;
     /** Bounds provider used to find the node nearest to a comment. */
     private IBoundsProvider boundsProvider = null;
+    /** Distances between a comment and its referenced node if the attachment is correct. */
+    private List<Double> correctAttachmentNodeDistances = Lists.newArrayList();
+    /** Distances between a comment and its referenced node if the attachment is wrong. */
+    private List<Double> wrongAttachmentNodeDistances = Lists.newArrayList();
     /**
      * Map from model file names to comment texts recognized by the heuristic and whether they are
      * attached in the reference function or not.
@@ -134,6 +140,11 @@ public class NodeReferenceCommentAnalysis implements IAttachmentAnalysis {
         System.out.println("      --> Nearest: " + commentsAttachedToReferenceNodeThatAreNearest);
         System.out.println("  --> Different reference attachment: " + commentsAttachedToDifferentNode);
         
+        System.out.println("------ Distances between comments and correctly attached nodes");
+        correctAttachmentNodeDistances.stream().forEach((dist) -> System.out.println(dist));
+        System.out.println("------ Distances between comments and incorrectly attached nodes");
+        wrongAttachmentNodeDistances.stream().forEach((dist) -> System.out.println(dist));
+        
         System.out.println("<===== End Node Reference Analysis Results");
     }
 
@@ -147,13 +158,26 @@ public class NodeReferenceCommentAnalysis implements IAttachmentAnalysis {
             if (CommentAttacher.isComment(child)) {
                 comments++;
                 
-                // Check if the heuristic has attached a node to the comment
+                // Find the heuristically attached node and the node attached in the reference
+                // attachment
+                KNode attachedNode = editor.getAttachmentTarget(child);
                 KNode heuristicAttachment = referenceHeuristic.getAttachments().get(child);
-
+                
                 if (heuristicAttachment == null) {
                     references.put(getCommentText(child), NO_REFERENCE);
                 } else {
                     commentsWithSingleNodeReference++;
+                    
+                    // Find the distance between comment and node
+                    double referencedNodeDistance = DistanceHeuristic.distance(
+                            boundsProvider.boundsFor(child),
+                            boundsProvider.boundsFor(heuristicAttachment));
+                    
+                    if (attachedNode == heuristicAttachment) {
+                        correctAttachmentNodeDistances.add(referencedNodeDistance);
+                    } else {
+                        wrongAttachmentNodeDistances.add(referencedNodeDistance);
+                    }
                     
                     // Find out if this is also the attachment in the reference attachment function
                     KNode referenceAttachment = editor.getAttachmentTarget(child);

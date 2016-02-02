@@ -13,7 +13,6 @@
 package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.collect.Sets;
 
@@ -76,7 +75,7 @@ public final class CLEdge extends CNode {
 
     /**
      * Adds an intersecting {@link VerticalSegment} to the {@link CLEdge} and merges the hitboxes.
-     * The {@link de.cau.cs.kieler.klay.layered.compaction.oned.CompactionLock CompactionLock} is set for
+     * The {@link de.cau.cs.kieler.klay.layered.compaction.oned.Quadruplet CompactionLock} is set for
      * selfloops and {@link Direction}s that fewer different {@link LPort}s are connected in to
      * avoid prolonging more {@link LEdge}s than shortening.
      * 
@@ -86,6 +85,9 @@ public final class CLEdge extends CNode {
     public void addSegment(final VerticalSegment vSeg) {
         bends.addAll(vSeg.bend1, vSeg.bend2);
         juctionPoints.addAll(vSeg.junctionPoints);
+        
+        spacingIgnore.up |= vSeg.blockTopSpacing;
+        spacingIgnore.down |= vSeg.blockBottomSpacing;
 
         // updating the hitbox to span over the new segment
         double newY1 = Math.min(hitbox.y, vSeg.y1);

@@ -200,8 +200,10 @@
                option="de.cau.cs.kieler.klay.layered.nodeplace.compactionStrategy">
          </knownOption>
          <knownOption
-               default="NONE"
                option="de.cau.cs.kieler.klay.layered.postCompaction">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.postCompaction.constraints">
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.components.compact">
@@ -501,6 +503,16 @@
             description="Specifies whether and how post-process compaction is applied."
             id="de.cau.cs.kieler.klay.layered.postCompaction"
             name="Post Compaction"
+            type="enum">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="parents"
+            class="de.cau.cs.kieler.klay.layered.intermediate.compaction.ConstraintCalculationStrategy"
+            default="SCANLINE"
+            description="Specifies whether and how post-process compaction is applied."
+            id="de.cau.cs.kieler.klay.layered.postCompaction.constraints"
+            name="Post Compaction Constraint Calculation"
             type="enum">
       </layoutOption>
       <layoutOption

@@ -81,7 +81,7 @@ public final class HtmlResultGenerator {
                     .append("<TD VALIGN='TOP' CLASS='analysisName'>")
                     .append(visualization.getAnalysis().getName())
                     .append("</TD><TD VALIGN='TOP'>")
-                    .append(visualization.get())
+                    .append(visualization.get().toString())
                     .append("</TD></TR>");
             
             rowIndex++;

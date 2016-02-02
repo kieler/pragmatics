@@ -47,7 +47,6 @@ import de.cau.cs.kieler.pragmatics.test.common.runners.ModelCollectionTestRunner
 
 /**
  * @author mkr
- *
  */
 @RunWith(ModelCollectionTestRunner.class)
 @BundleId("de.cau.cs.kieler.klighd.test")
@@ -55,7 +54,7 @@ import de.cau.cs.kieler.pragmatics.test.common.runners.ModelCollectionTestRunner
 @ModelFilter("*.kgt")
 public class ConnectedEdgesTest {
     /**
-     *
+     * The model to be tested.
      */
     private KNode model;
 

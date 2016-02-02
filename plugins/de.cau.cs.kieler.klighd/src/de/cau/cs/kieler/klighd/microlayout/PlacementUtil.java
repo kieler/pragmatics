@@ -368,6 +368,40 @@ public final class PlacementUtil {
     /**
      * Returns the bounds for a point placement data in given parent bounds.
      * 
+     * @param rendering
+     *            the {@link KRendering} to be evaluated
+     * @param ppd
+     *            the {@link KPointPlacementData} to apply
+     * @param parentBounds
+     *            the parent bounds
+     * @return the resulting bounds of the figure described by {@link KRendering} 
+     */
+    public static Bounds evaluatePointPlacement(final KRendering rendering,
+            final KPointPlacementData ppd, final Rectangle2D parentBounds) {
+        return evaluatePointPlacement(
+                rendering, ppd, Bounds.of(parentBounds));
+    }
+
+    /**
+     * Returns the bounds for a point placement data in given parent bounds.
+     * 
+     * @param rendering
+     *            the {@link KRendering} to be evaluated
+     * @param ppd
+     *            the {@link KPointPlacementData} to apply
+     * @param parentBounds
+     *            the parent bounds
+     * @return the resulting bounds of the figure described by {@link KRendering} 
+     */
+    public static Bounds evaluatePointPlacement(final KRendering rendering,
+            final KPointPlacementData ppd, final Bounds parentBounds) {
+        return evaluatePointPlacement(
+                ppd, basicEstimateSize(rendering, Bounds.of(0, 0)), parentBounds);
+    }
+    
+    /**
+     * Returns the bounds for a point placement data in given parent bounds.
+     * 
      * @param ppd
      *            the point placement data
      * @param ownBounds
@@ -405,8 +439,9 @@ public final class PlacementUtil {
         final Point refPoint;
         
         if (ref == null) {
-            // if the reference point is missing, assume the center as reference
-            refPoint = new Point(parentBounds.getWidth() / 2, parentBounds.getHeight() / 2);
+            // if the reference point is missing, assume the top left corner as reference
+            //  as requested by KIPRA-1785
+            refPoint = new Point(0, 0);
         } else {
             refPoint = evaluateKPosition(ref, parentBounds, true);
         }
@@ -474,13 +509,55 @@ public final class PlacementUtil {
      * constraints.
      * 
      * @param rendering
-     *            the KRenderings to be evaluated
+     *            the {@link KRendering} to be evaluated
      * @param givenBounds
      *            the size that is currently assigned to 'rendering's container or the related
-     *            KShapeLayout respectively
+     *            {@link KShapeLayout} respectively
      * @return the minimal size
      */
     public static Bounds estimateSize(final KRendering rendering, final Bounds givenBounds) {
+        final KPlacementData placementData = getPlacementData(rendering);
+        
+        final Bounds bounds;
+        final int placementDataType = placementData != null
+                ? placementData.eClass().getClassifierID() : -1;                
+        
+        switch (placementDataType) {
+        case KRenderingPackage.KAREA_PLACEMENT_DATA:
+            bounds = estimateAreaPlacedChildSize(rendering, (KAreaPlacementData) placementData,
+                    givenBounds);
+            break;
+
+        case KRenderingPackage.KPOINT_PLACEMENT_DATA:
+            bounds = estimatePointPlacedChildSize(rendering, (KPointPlacementData) placementData);
+            break;
+
+        default:
+            bounds = basicEstimateSize(rendering, givenBounds);
+        }
+
+        if (rendering instanceof KImage) {
+            final Bounds imageSize = estimateImageSize((KImage) rendering, bounds);
+            return imageSize;
+        } else {
+            return bounds;
+        }        
+    }
+
+    /**
+     * Estimates the pure minimal size of a {@link KRendering} without evaluating its
+     * {@link KPlacementData} w.r.t. minimal size constraints.<br>
+     * The previous determined size is incorporated while resolving relative placement/size
+     * constraints.
+     * 
+     * @param rendering
+     *            the {@link KRendering} to be evaluated
+     * @param givenBounds
+     *            the size that is currently assigned to 'rendering's container or the related
+     *            {@link KShapeLayout} respectively
+     * @return the minimal size
+     */
+    public static Bounds basicEstimateSize(final KRendering rendering, final Bounds givenBounds) {
         // determine the type of the rendering
         final int id = KRENDERING_PACKAGE.getKText().isInstance(rendering) ? KRenderingPackage.KTEXT
             : KRENDERING_PACKAGE.getKContainerRendering().isInstance(rendering) 
@@ -504,7 +581,7 @@ public final class PlacementUtil {
 
         case KRenderingPackage.KRENDERING_REF:
             // calculate the size of the referenced Rendering instead
-            return estimateSize(((KRenderingRef) rendering).getRendering(), givenBounds);
+            return basicEstimateSize(((KRenderingRef) rendering).getRendering(), givenBounds);
 
         case KRenderingPackage.KCONTAINER_RENDERING:
 
@@ -522,31 +599,15 @@ public final class PlacementUtil {
                 // in case of no placement definition calculate the size of each child rendering and
                 // find the biggest rendering in width and height
                 final Bounds maxSize = new Bounds(givenBounds);
+
                 for (final KRendering child : container.getChildren()) {
-                    final KPlacementData pd = getPlacementData(child);
+                    final Bounds childSize = estimateSize(child, givenBounds);
+                    Bounds.max(maxSize, childSize);
+                }
 
-                    final Bounds childSize; 
-                    if (pd instanceof KPointPlacementData) {
-                        childSize = estimatePointPlacedChildSize(child, (KPointPlacementData) pd);
-
-                    } else if (pd instanceof KAreaPlacementData) {
-                        childSize = estimateAreaPlacedChildSize(child, (KAreaPlacementData) pd,
-                                givenBounds);
-
-                    } else {
-                        // in case no valid placement data are given we assume the size of the
-                        // parent by the size of the child
-                        Bounds.max(maxSize, estimateSize(child, givenBounds));
-                        continue;
-                    }
-
-                    if (child instanceof KImage) {
-                        final Bounds imageSize = estimateImageSize((KImage) child, childSize);
-                        Bounds.max(maxSize, imageSize);
-                        
-                    } else {
-                        Bounds.max(maxSize, childSize);
-                    }
+                if (container instanceof KPolyline) {
+                    final Bounds pb = evaluatePolylineBounds((KPolyline) rendering, maxSize);
+                    Bounds.max(maxSize, pb);
                 }
                 return maxSize;
             }
@@ -971,7 +1032,7 @@ public final class PlacementUtil {
         // determine minimal needed size of the child
         // for point-based placement the parent size does not matter for the size!
         final Bounds minimalSize = Bounds.of(ppd.getMinWidth(), ppd.getMinHeight());
-        final Bounds cSize = Bounds.max(minimalSize, estimateSize(rendering, minimalSize));
+        final Bounds cSize = Bounds.max(minimalSize, basicEstimateSize(rendering, minimalSize));
 
         final float requiredWidth = getHorizontalSize(ppd, cSize.getWidth());
         final float requiredHeight = getVerticalSize(ppd, cSize.getHeight());
@@ -1075,7 +1136,7 @@ public final class PlacementUtil {
 
         final Bounds cSize = evaluateAreaPlacement(apd, initialSize);
         // determine minimal needed size of the child
-        final Bounds containerMinSize = estimateSize(rendering, cSize);
+        final Bounds containerMinSize = basicEstimateSize(rendering, cSize);
 
         final KPosition tL = apd.getTopLeft();
         final KPosition bR = apd.getBottomRight();
@@ -1456,31 +1517,35 @@ public final class PlacementUtil {
      */
     private static Bounds evaluatePolylineBounds(final KPolyline line, final Bounds givenBounds) {
         if (line == null || line.getPoints().isEmpty()) {
-            return new Bounds(0, 0, givenBounds.width, givenBounds.height);
+            return Bounds.of(givenBounds.width, givenBounds.height);
         }
 
         // evaluate the points of the polyline inside the parent bounds to compute the bounding box
-        float minX = Float.MAX_VALUE;
+
+// chsch: considering the implementation of Bounds.max(...) determining the minimal x & y
+//         doesn't make any sense, does it?
+
+//        float minX = Float.MAX_VALUE;
         float maxX = Float.MIN_VALUE;
-        float minY = Float.MAX_VALUE;
+//        float minY = Float.MAX_VALUE;
         float maxY = Float.MIN_VALUE;
         for (final KPosition polylinePoint : line.getPoints()) {
             final Point point = evaluateKPosition(polylinePoint, givenBounds, true);
-            if (point.x < minX) {
-                minX = point.x;
-            }
+//            if (point.x < minX) {
+//                minX = point.x;
+//            }
             if (point.x > maxX) {
                 maxX = point.x;
             }
-            if (point.y < minY) {
-                minY = point.y;
-            }
+//            if (point.y < minY) {
+//                minY = point.y;
+//            }
             if (point.y > maxY) {
                 maxY = point.y;
             }
         }
 
-        return new Bounds(minX, minY, givenBounds.width - maxX, givenBounds.height - maxY);
+        return Bounds.max(Bounds.of(maxX, maxY), givenBounds);
     }
 
 

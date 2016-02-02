@@ -15,10 +15,13 @@ package de.cau.cs.kieler.klay.layered.p3order;
 
 import java.util.List;
 
+import de.cau.cs.kieler.klay.layered.graph.LNode;
+
 /**
  * Determines the node order of a given free layer. Uses heuristic methods to find an ordering that
  * minimizes edge crossings between the given free layer and a neighboring layer with fixed node
- * order. Given constraints are to be respected, possibly by the use of an {@link IConstraintResolver}.
+ * order. Given constraints are to be respected, possibly by the use of an
+ * {@link de.cau.cs.kieler.klay.layered.p3order.constraints.IConstraintResolver IConstraintResolver}.
  * 
  * @author cds
  * @author ima
@@ -43,7 +46,7 @@ public interface ICrossingMinimizationHeuristic {
      * @param forward
      *            whether the free layer is after the fixed layer.
      */
-    void minimizeCrossings(List<NodeGroup> layer, boolean preOrdered, boolean randomize,
+    void minimizeCrossings(List<LNode> layer, boolean preOrdered, boolean randomize,
             boolean forward);
 
 }

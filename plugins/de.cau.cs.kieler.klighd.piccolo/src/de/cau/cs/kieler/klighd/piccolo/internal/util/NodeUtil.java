@@ -163,7 +163,7 @@ public final class NodeUtil {
      *            the {@link Bounds}
      */
     public static void applyBounds(final PNodeController<?> controller, final Bounds bounds) {
-        controller.getTransformedNode().setBounds(0, 0,  bounds.getWidth(), bounds.getHeight());
+        controller.getTransformedPNode().setBounds(0, 0,  bounds.getWidth(), bounds.getHeight());
 
         applyTranslation(controller, bounds);
     }
@@ -178,7 +178,7 @@ public final class NodeUtil {
      *            the {@link Bounds}
      */
     public static void applyTranslation(final PNodeController<?> controller, final Bounds bounds) {
-        final PNode transformedNode = controller.getTransformedNode();
+        final PNode transformedNode = controller.getTransformedPNode();
 
         // reset the current affine transform
         transformedNode.getTransformReference(true).setToIdentity();
@@ -425,7 +425,7 @@ public final class NodeUtil {
 
         private PNode node;
 
-        public ParentIterator(final PNode child, final boolean includingSelf) {
+        ParentIterator(final PNode child, final boolean includingSelf) {
             if (child == null) {
                 throw new IllegalArgumentException("Class ParentIterator:"
                         + "Constructor of ParentIterator requires a non-null input.");
@@ -474,7 +474,7 @@ public final class NodeUtil {
 
         private IKNodeNode node;
 
-        public ParentINodeIterator(final IKNodeNode child, final boolean includingSelf) {
+        ParentINodeIterator(final IKNodeNode child, final boolean includingSelf) {
             if (child == null) {
                 throw new IllegalArgumentException("Class ParentINodeIterator:"
                         + "Constructor of ParentINodeIterator requires a non-null input.");

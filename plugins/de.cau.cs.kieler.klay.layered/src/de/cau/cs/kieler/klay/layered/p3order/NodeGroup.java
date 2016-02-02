@@ -53,12 +53,12 @@ public final class NodeGroup implements Comparable<NodeGroup> {
     /**
      * The number of incoming constraints.
      */
-    int incomingConstraintsCount;
+    public int incomingConstraintsCount;
 
     /**
      * Whether the node group has been visited in some traversing algorithm.
      */
-    boolean visited;
+    public boolean visited;
 
     // CHECKSTYLEON VisibilityModifier
 

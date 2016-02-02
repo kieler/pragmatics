@@ -31,8 +31,8 @@ public interface IConnectedComponents<N, E> extends Iterable<IComponent<N, E>> {
     List<IComponent<N, E>> getComponents();
 
     /**
-     * @return whether any of the components contains external ports 
+     * @return whether any of the components contains external extensions
      */
-    boolean isContainsExternalPorts();
+    boolean isContainsExternalExtensions();
 
 }

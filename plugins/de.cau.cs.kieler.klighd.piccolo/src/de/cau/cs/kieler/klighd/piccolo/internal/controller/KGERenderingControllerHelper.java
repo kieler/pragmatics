@@ -47,7 +47,6 @@ import de.cau.cs.kieler.core.krendering.KRenderingRef;
 import de.cau.cs.kieler.core.krendering.KRenderingUtil;
 import de.cau.cs.kieler.core.krendering.KRoundedBendsPolyline;
 import de.cau.cs.kieler.core.krendering.KRoundedRectangle;
-import de.cau.cs.kieler.core.krendering.KSpline;
 import de.cau.cs.kieler.core.krendering.KStyle;
 import de.cau.cs.kieler.core.krendering.KText;
 import de.cau.cs.kieler.core.krendering.VerticalAlignment;
@@ -55,19 +54,20 @@ import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.krendering.KCustomRenderingWrapperFactory;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
+import de.cau.cs.kieler.klighd.piccolo.IKlighdNode;
+import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKlighdFigureNode;
 import de.cau.cs.kieler.klighd.piccolo.KlighdNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KCustomConnectionFigureNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KCustomFigureNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KEdgeNode;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdAlignmentNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdImage;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdPath;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdStyledText;
-import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdAlignmentNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.PiccoloPlacementUtil;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.PolylineUtil;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.Styles;
-import edu.umd.cs.piccolo.PNode;
 
 /**
  * Collection of KRendering-related figure creation methods.<br>
@@ -104,7 +104,7 @@ final class KGERenderingControllerHelper {
      */
     static PNodeController<KlighdPath> createEllipse(
             final AbstractKGERenderingController<?, ?> controller, final KEllipse ellipse,
-            final List<KStyle> propagatedStyles, final PNode parent, final Bounds initialBounds) {
+            final List<KStyle> propagatedStyles, final IKlighdNode parent, final Bounds initialBounds) {
 
         final KlighdPath path = new KlighdPath(ellipse);
         path.setPathToEllipse(0, 0, initialBounds.getWidth(), initialBounds.getHeight());
@@ -149,7 +149,7 @@ final class KGERenderingControllerHelper {
      */
     static PNodeController<KlighdPath> createRectangle(
             final AbstractKGERenderingController<?, ?> controller, final KRectangle rect,
-            final List<KStyle> propagatedStyles, final PNode parent, final Bounds initialBounds) {
+            final List<KStyle> propagatedStyles, final IKlighdNode parent, final Bounds initialBounds) {
         // create the rectangle
         final KlighdPath path = new KlighdPath(rect);
         path.setPathToRectangle(0, 0, initialBounds.getWidth(), initialBounds.getHeight());
@@ -194,7 +194,7 @@ final class KGERenderingControllerHelper {
      */
     static PNodeController<KlighdPath> createRoundedRectangle(
             final AbstractKGERenderingController<?, ?> controller, final KRoundedRectangle rect,
-            final List<KStyle> propagatedStyles, final PNode parent, final Bounds initialBounds) {
+            final List<KStyle> propagatedStyles, final IKlighdNode parent, final Bounds initialBounds) {
         final float cornerWidth = 2 * rect.getCornerWidth();
         final float cornerHeight = 2 * rect.getCornerHeight();
 
@@ -244,7 +244,7 @@ final class KGERenderingControllerHelper {
      */
     static PNodeController<KlighdPath> createArc(
             final AbstractKGERenderingController<?, ?> controller, final KArc arc,
-            final List<KStyle> propagatedStyles, final PNode parent, final Bounds initialBounds) {
+            final List<KStyle> propagatedStyles, final IKlighdNode parent, final Bounds initialBounds) {
 
         // create the arc
         final KlighdPath path = new KlighdPath(arc);
@@ -292,7 +292,7 @@ final class KGERenderingControllerHelper {
      */
     static PNodeController<KlighdStyledText> createText(
             final AbstractKGERenderingController<?, ?> controller, final KText text,
-            final List<KStyle> propagatedStyles, final PNode parent, final Bounds initialBounds) {
+            final List<KStyle> propagatedStyles, final IKlighdNode parent, final Bounds initialBounds) {
 
         // create the text
         final KlighdStyledText textNode = new KlighdStyledText(text);
@@ -310,7 +310,7 @@ final class KGERenderingControllerHelper {
         return new KlighdTextController(textNode) {
 
             @Override
-            public PNode getTransformedNode() {
+            public IKlighdFigureNode getTransformedNode() {
                 return alignmentNode;
             }
 
@@ -352,27 +352,11 @@ final class KGERenderingControllerHelper {
      */
     static PNodeController<KlighdPath> createLine(
             final AbstractKGERenderingController<?, ?> controller, final KPolyline line,
-            final List<KStyle> propagatedStyles, final PNode parent, final Bounds initialBounds) {
+            final List<KStyle> propagatedStyles, final IKlighdNode parent, final Bounds initialBounds) {
 
         final KlighdPath path = new KlighdPath(line);
-        final Point2D[] points = PiccoloPlacementUtil.evaluatePolylinePlacement(line, initialBounds);
 
-        // use the additional variable while updating the line later on in order to avoid 'instanceof'
-        final int type;
-
-        if (line instanceof KSpline) {
-            // create the spline
-            path.setPathToSpline(points);
-            type = KRenderingPackage.KSPLINE;
-        } else if (line instanceof KRoundedBendsPolyline) {
-            // create the rounded bends polyline
-            path.setPathToRoundedBendPolyline(points, ((KRoundedBendsPolyline) line).getBendRadius());
-            type = KRenderingPackage.KROUNDED_BENDS_POLYLINE;
-        } else {
-            // create the polyline
-            path.setPathToPolyline(points);
-            type = KRenderingPackage.KPOLYLINE;
-        }
+        setPathToLine(path, line, initialBounds);
 
         path.translate(initialBounds.getX(), initialBounds.getY());
         parent.addChild(path);
@@ -413,24 +397,35 @@ final class KGERenderingControllerHelper {
             @Override
             public void setBounds(final Bounds bounds) {
                 // apply the bounds
-
-                final Point2D[] points = PiccoloPlacementUtil.evaluatePolylinePlacement(line, bounds);
-
-                if (type == KRenderingPackage.KSPLINE) {
-                    // update spline
-                    getNode().setPathToSpline(points);
-                } else if (type == KRenderingPackage.KROUNDED_BENDS_POLYLINE) {
-                    // update rounded bend polyline
-                    getNode().setPathToRoundedBendPolyline(points,
-                            ((KRoundedBendsPolyline) line).getBendRadius());
-                } else {
-                    // update polyline
-                    getNode().setPathToPolyline(points);
-                }
+                setPathToLine(path, line, bounds);
 
                 NodeUtil.applyTranslation(this, bounds);
             }
         };
+    }
+
+    private static void setPathToLine(final KlighdPath path, final KPolyline line, final Bounds bounds) {
+        
+        final Point2D[] points = PiccoloPlacementUtil.evaluatePolylinePlacement(line, bounds);
+        final int type = line.eClass().getClassifierID();
+
+        switch (type) {
+        case KRenderingPackage.KSPLINE:
+            path.setPathToSpline(bounds.toRectangle2D(), points);
+            break;
+            
+        case KRenderingPackage.KROUNDED_BENDS_POLYLINE:
+            path.setPathToRoundedBendPolyline(bounds.toRectangle2D(), points,
+                    ((KRoundedBendsPolyline) line).getBendRadius());
+            break;
+            
+        case KRenderingPackage.KPOLYGON:
+            path.setPathToPolygon(bounds.toRectangle2D(), points);
+            break;
+            
+        default:
+            path.setPathToPolyline(bounds.toRectangle2D(), points);
+        }
     }
 
     /**
@@ -453,11 +448,12 @@ final class KGERenderingControllerHelper {
      */
     static PNodeController<KlighdPath> createPolygon(
             final AbstractKGERenderingController<?, ?> controller, final KPolygon polygon,
-            final List<KStyle> propagatedStyles, final PNode parent, final Bounds initialBounds) {
+            final List<KStyle> propagatedStyles, final IKlighdNode parent, final Bounds initialBounds) {
 
-        // create the polygon
         final KlighdPath path = new KlighdPath(polygon);
-        path.setPathToPolygon(PiccoloPlacementUtil.evaluatePolylinePlacement(polygon, initialBounds));
+
+        setPathToLine(path, polygon, initialBounds);
+
         path.translate(initialBounds.getX(), initialBounds.getY());
         parent.addChild(path);
 
@@ -497,8 +493,8 @@ final class KGERenderingControllerHelper {
             @Override
             public void setBounds(final Bounds bounds) {
                 // apply the bounds
-                getNode().setPathToPolygon(
-                        (PiccoloPlacementUtil.evaluatePolylinePlacement(polygon, bounds)));
+                setPathToLine(path, polygon, bounds);
+
                 NodeUtil.applyTranslation(this, bounds);
             }
         };
@@ -523,7 +519,7 @@ final class KGERenderingControllerHelper {
     static PNodeController<?> createRenderingReference(
             final AbstractKGERenderingController<?, ?> controller,
             final KRenderingRef renderingReference, final List<KStyle> propagatedStyles,
-            final PNode parent, final Bounds initialBounds) {
+            final IKlighdNode parent, final Bounds initialBounds) {
 
         final KRendering rendering = renderingReference.getRendering();
         if (rendering == null) {
@@ -545,7 +541,7 @@ final class KGERenderingControllerHelper {
         controller.addPNodeController(rendering, pnodeController);
 
         // return a controller for the reference which sets the bounds of the referenced node
-        return new PNodeController<PNode>(pnodeController.getNode()) {
+        return new PNodeController<IKlighdFigureNode>(pnodeController.getNode()) {
 
             @Override
             public void applyChanges(final Styles styles) {
@@ -579,7 +575,7 @@ final class KGERenderingControllerHelper {
      * @return the controller for the created Piccolo node
      */
     static PNodeController<?> createImage(final AbstractKGERenderingController<?, ?> controller,
-            final KImage image, final List<KStyle> propagatedStyles, final PNode parent,
+            final KImage image, final List<KStyle> propagatedStyles, final IKlighdNode parent,
             final Bounds initialBounds) {
 
         final KlighdImage imageNode;
@@ -696,9 +692,7 @@ final class KGERenderingControllerHelper {
         final Bounds bounds;
 
         if (ppd != null) {
-            bounds = PlacementUtil.evaluatePointPlacement(ppd,
-                    PlacementUtil.estimateSize(clipRendering, Bounds.of(0, 0)),
-                    imageBounds);
+            bounds = PlacementUtil.evaluatePointPlacement(clipRendering, ppd, imageBounds);
 
         } else if (apd != null) {
             bounds = PlacementUtil.evaluateAreaPlacement(apd, imageBounds);
@@ -749,7 +743,7 @@ final class KGERenderingControllerHelper {
     static PNodeController<?> createCustomRendering(
             final AbstractKGERenderingController<?, ?> controller,
             final KCustomRendering customRendering, final List<KStyle> propagatedStyles,
-            final PNode parent, final Bounds initialBounds) {
+            final IKlighdNode parent, final Bounds initialBounds) {
 
         // get a wrapping PNode containing the actual figure by means of the
         //  KCustomRenderingWrapperFactory
@@ -811,11 +805,11 @@ final class KGERenderingControllerHelper {
      *            the initial bounds
      * @return the controller for the created Piccolo node
      */
-    static PNodeController<?> createDummy(final PNode parent, final Bounds initialBounds) {
-        final PNode dummyChild = new KlighdNode.KlighdFigureNode<KRendering>();
-        NodeUtil.applyBounds(dummyChild, initialBounds);
+    static PNodeController<?> createDummy(final IKlighdNode parent, final Bounds initialBounds) {
+        final IKlighdFigureNode dummyChild = new KlighdNode.KlighdFigureNode<KRendering>();
+        NodeUtil.applyBounds(dummyChild.asPNode(), initialBounds);
         parent.addChild(dummyChild);
-        return new PNodeController<PNode>(dummyChild) {
+        return new PNodeController<IKlighdFigureNode>(dummyChild) {
 
             @Override
             public void setBounds(final Bounds bounds) {

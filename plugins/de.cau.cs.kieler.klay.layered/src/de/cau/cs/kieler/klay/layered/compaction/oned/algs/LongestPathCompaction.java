@@ -16,6 +16,7 @@ import java.util.Queue;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.klay.layered.compaction.oned.CGroup;
 import de.cau.cs.kieler.klay.layered.compaction.oned.CNode;
 import de.cau.cs.kieler.klay.layered.compaction.oned.OneDimensionalCompactor;
@@ -58,6 +59,13 @@ public class LongestPathCompaction implements ICompactionAlgorithm {
             
             CGroup group = sinks.poll();
             
+            // record the movement of this group during the current compaction
+            // this has to be recorded _before_ the nodes' positions are updated
+            // and care has to be taken about the compaction direction. In certain 
+            // scenarios nodes may move "back-and-forth". To detect this, we associate
+            // a negative delta with two of the compaction directions.
+            double diff = group.reference.hitbox.x;
+            
             // ------------------------------------------
             // #1 final positions for this group's nodes
             // ------------------------------------------
@@ -73,6 +81,16 @@ public class LongestPathCompaction implements ICompactionAlgorithm {
                     node.startPos = node.hitbox.x;
                 }
             }
+            
+            diff -= group.reference.startPos;
+            
+            group.delta += diff;
+            if (compactor.direction == Direction.RIGHT || compactor.direction == Direction.DOWN) {
+                group.deltaNormalized += diff;
+            } else {
+                group.deltaNormalized -= diff;
+            }
+            
             
             // ---------------------------------------------------
             // #2 propagate start positions to constrained groups
@@ -99,7 +117,6 @@ public class LongestPathCompaction implements ICompactionAlgorithm {
                                         - incNode.cGroupOffset.x);
                     }
                     
-                    incNode.outDegree--; // TODO i think group outdegree is enough
                     incNode.cGroup.outDegree--;
                     if (incNode.cGroup.outDegree == 0) {
                        sinks.add(incNode.cGroup); 

@@ -18,6 +18,7 @@ import java.util.EnumSet;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.ConstraintCalculationStrategy;
 import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
@@ -255,6 +256,14 @@ public final class Properties {
                     "de.cau.cs.kieler.klay.layered.postCompaction",
                     GraphCompactionStrategy.NONE);
     
+    /**
+     * Specifies with which method the constraint graph should be constructed.
+     */
+    public static final IProperty<ConstraintCalculationStrategy> POST_COMPACTION_COSTRAINTS =
+            new Property<ConstraintCalculationStrategy>(
+                    "de.cau.cs.kieler.klay.layered.postCompaction.constraints",
+                    ConstraintCalculationStrategy.SCANLINE);
+
     /**
      * Whether the algorithm should try to further compact connected components after they 
      * have initially been placed by some construction strategy.

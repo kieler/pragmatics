@@ -12,6 +12,7 @@
  */
 package de.cau.cs.kieler.klay.layered.intermediate.compaction;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
@@ -21,6 +22,8 @@ import de.cau.cs.kieler.klay.layered.compaction.oned.CNode;
 import de.cau.cs.kieler.klay.layered.compaction.oned.ISpacingsHandler;
 import de.cau.cs.kieler.klay.layered.compaction.oned.OneDimensionalCompactor;
 import de.cau.cs.kieler.klay.layered.compaction.oned.algs.ICompactionAlgorithm;
+import de.cau.cs.kieler.klay.layered.compaction.oned.algs.IConstraintCalculationAlgorithm;
+import de.cau.cs.kieler.klay.layered.compaction.oned.algs.ScanlineConstraintCalculator;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
 import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
@@ -67,6 +70,9 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
     public static final ICompactionAlgorithm NETWORK_SIMPLEX_COMPACTION =
             new NetworkSimplexCompaction();
     
+    private static final IConstraintCalculationAlgorithm EDGE_AWARE_SCANLINE_CONSTRAINTS =
+            new EdgeAwareScanlineConstraintCalculation();
+    
     private LGraph lGraph;
     
     /**
@@ -88,8 +94,21 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
                 new OneDimensionalCompactor(transformer.transform(layeredGraph));
         
         odc.setSpacingsHandler(specialSpacingsHandler);
-        odc.setConstraintAlgorithm(OneDimensionalCompactor.QUADRATIC_CONSTRAINTS);
         
+        // ---
+        // select constraint algorithm
+        // - 
+        switch (layeredGraph.getProperty(Properties.POST_COMPACTION_COSTRAINTS)) {
+            case SCANLINE:
+                odc.setConstraintAlgorithm(EDGE_AWARE_SCANLINE_CONSTRAINTS);
+                break;
+            default:
+                odc.setConstraintAlgorithm(OneDimensionalCompactor.QUADRATIC_CONSTRAINTS);
+        }
+
+        // ---
+        // select compaction strategy
+        // - 
         switch (strategy) {
         case LEFT:
             odc.compact();
@@ -136,6 +155,45 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
         transformer.applyLayout();
         
         progressMonitor.done();
+    }
+    
+    /**
+     * An extended scanline procedure that is able to properly handle different spacing values
+     * between nodes and edges.
+     */
+    private static final class EdgeAwareScanlineConstraintCalculation extends
+            ScanlineConstraintCalculator {
+
+        private final Function<CNode, Double> defaultSpacingFun = n -> compactor.direction
+                .isHorizontal() ? n.getVerticalSpacing() : n.getHorizontalSpacing();
+
+        public void calculateConstraints(final OneDimensionalCompactor theCompactor) {
+
+            this.compactor = theCompactor;
+
+            // constraints between vertical segments
+            sweep(n -> n instanceof CLEdge, defaultSpacingFun);
+            // constraints between regular nodes
+            sweep(n -> n instanceof CLNode, defaultSpacingFun);
+
+            // find the minimum spacing
+            double minSpacing = Double.POSITIVE_INFINITY;
+            for (CNode n : compactor.cGraph.cNodes) {
+                // ignore external ports since their spacing is internally set to 0
+                if (n instanceof CLNode
+                        && ((CLNode) n).getlNode().getType() == NodeType.EXTERNAL_PORT) {
+                    continue;
+                }
+                minSpacing = Math.min(minSpacing, defaultSpacingFun.apply(n));
+            }
+            // solitary external edges may exist ... 
+            if (minSpacing == Double.POSITIVE_INFINITY) {
+                minSpacing = 0;
+            }
+            final double finalMinSpacing = minSpacing;
+            // constraints between nodes and vertical segments
+            sweep(n -> true, n -> finalMinSpacing);
+        }
     }
     
     /**
@@ -208,9 +266,10 @@ public class HorizontalGraphCompactor implements ILayoutProcessor {
          *         {@link de.cau.cs.kieler.klay.layered.graph.LEdge LEdge}.
          */
         private boolean isVerticalSegmentsOfSameEdge(final CNode cNode1, final CNode cNode2) {
-            return cNode1.parentNode != null
-                    && cNode2.parentNode != null
-                    && (cNode1 instanceof CLEdge && cNode2 instanceof CLEdge)
+            return 
+                    // if we only want north/south segments we could use the following
+                    // cNode1.parentNode != null && cNode2.parentNode != null
+                    (cNode1 instanceof CLEdge && cNode2 instanceof CLEdge)
                     // this might seem quite expensive but in most cases the sets 
                     // contain only one element
                     && !Sets.intersection(((CLEdge) cNode1).originalLEdges,

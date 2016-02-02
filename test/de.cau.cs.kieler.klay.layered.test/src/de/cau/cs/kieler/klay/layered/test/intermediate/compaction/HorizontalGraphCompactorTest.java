@@ -54,6 +54,10 @@ import static org.junit.Assert.*;
  * Since the processor only supports {@link EdgeRouting#ORTHOGONAL}, the test configures the passed
  * graphs such that orthogonal edge routing is applied.
  * 
+ * Note that this test may fail when spacings are selected unfortunate. For instance, when the
+ * {@link Properties#EDGE_NODE_SPACING_FACTOR} is below 0.5 it is possible that two nodes are closer
+ * to each other that {@link LayoutOptions#SPACING} if an edge is in between.
+ * 
  * @author uru
  */
 public class HorizontalGraphCompactorTest extends AbstractLayeredProcessorTest {
@@ -238,7 +242,7 @@ public class HorizontalGraphCompactorTest extends AbstractLayeredProcessorTest {
         boolean ok = DoubleMath.fuzzyCompare(top + spacing, bottom, TOLERANCE) <= 0;
 
         assertTrue("Sufficient spacing of " + spacing + " between nodes " + n1 + " and " + n2
-                , ok);
+                + ". Was " + (Math.abs(top - bottom)), ok);
     }
     
     /**
@@ -281,6 +285,7 @@ public class HorizontalGraphCompactorTest extends AbstractLayeredProcessorTest {
 
         @Override
         public void applyConfiguration(KNode root) {
+            // root.getData(KLayoutData.class).setProperty(Properties.EDGE_NODE_SPACING_FACTOR, 0.4f);
             root.getData(KLayoutData.class).setProperty(Properties.POST_COMPACTION, s);
             root.getData(KLayoutData.class).setProperty(LayoutOptions.EDGE_ROUTING, EdgeRouting.ORTHOGONAL);
         }

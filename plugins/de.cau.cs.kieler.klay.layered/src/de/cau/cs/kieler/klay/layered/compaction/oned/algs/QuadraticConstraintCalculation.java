@@ -33,7 +33,6 @@ public class QuadraticConstraintCalculation implements IConstraintCalculationAlg
         // resetting constraints
         for (CNode cNode : compactor.cGraph.cNodes) {
             cNode.constraints.clear();
-            cNode.outDegree = 0;
         }
         
         // inferring constraints from hitbox intersections
@@ -74,7 +73,6 @@ public class QuadraticConstraintCalculation implements IConstraintCalculationAlg
                                                 cNode1.hitbox.y + cNode1.hitbox.height + spacing)) {
                     
                     cNode1.constraints.add(cNode2);
-                    cNode2.outDegree++;
                 }
             }
         }

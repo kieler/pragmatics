@@ -28,9 +28,7 @@ import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_SOUTH_WEST;
 import static de.cau.cs.kieler.kiml.options.PortSide.SIDES_WEST;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.common.collect.HashMultimap;
@@ -38,6 +36,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import de.cau.cs.kieler.core.math.KVector;
+import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.options.Direction;
 import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.nodespacing.Rectangle;
@@ -45,6 +44,7 @@ import de.cau.cs.kieler.klay.layered.compaction.oned.CGraph;
 import de.cau.cs.kieler.klay.layered.compaction.oned.CGroup;
 import de.cau.cs.kieler.klay.layered.compaction.oned.CNode;
 import de.cau.cs.kieler.klay.layered.compaction.oned.ICGraphTransformer;
+import de.cau.cs.kieler.klay.layered.compaction.oned.ISpacingsHandler;
 
 /**
  * Transforms {@link IConnectedComponents} into a representing {@link CGraph} which can be passed to
@@ -73,9 +73,9 @@ public class ComponentsToCGraphTransformer<N, E> implements
     private KVector globalOffset;
     private KVector graphSize;
 
-    
-    private Multimap<CGroup, CNode> verticalExternalEdges = HashMultimap.create();
-    private Multimap<CGroup, CNode> horizontalExternalEdges = HashMultimap.create();
+    // maps the external extension to the CNodes by which they are represented
+    private Map<IExternalExtension<E>, Pair<CGroup, CNode>> externalExtensions = Maps.newHashMap();
+    private Multimap<Direction, Pair<CGroup, CNode>> externalPlaceholder = HashMultimap.create();
     
     /**
      * @param spacing required spacing between connected IComponents.
@@ -109,17 +109,17 @@ public class ComponentsToCGraphTransformer<N, E> implements
     }
     
     /**
-     * @return the horizontalExternalEdges
+     * @return the externalExtensions
      */
-    public Multimap<CGroup, CNode> getHorizontalExternalEdges() {
-        return horizontalExternalEdges;
+    public Map<IExternalExtension<E>, Pair<CGroup, CNode>> getExternalExtensions() {
+        return externalExtensions;
     }
     
     /**
-     * @return the verticalExternalEdges
+     * @return the externalPlaceholder
      */
-    public Multimap<CGroup, CNode> getVerticalExternalEdges() {
-        return verticalExternalEdges;
+    public Multimap<Direction, Pair<CGroup, CNode>> getExternalPlaceholder() {
+        return externalPlaceholder;
     }
     
     /* -----------------------------------------------------------
@@ -143,7 +143,7 @@ public class ComponentsToCGraphTransformer<N, E> implements
             for (Rectangle rect : comp.getHull()) {
 
                 CRectNode rectNode = new CRectNode(rect);
-                setLock(rectNode, comp.getExternalPortSides());
+                setLock(rectNode, comp.getExternalExtensionSides());
                 
                 if (!oldPosition.containsKey(comp)) {
                     oldPosition.put(comp, new KVector(rect.x, rect.y));
@@ -154,19 +154,20 @@ public class ComponentsToCGraphTransformer<N, E> implements
                 group.addCNode(rectNode);
             }
 
-            // now prepare the additional hull elements for external edges
+            // now prepare the rectangles for the external extensions
             // they can be added to the CGraph on demand later on
-            for (Entry<IExternalEdge<E>, List<Rectangle>> entry : comp.getExternalEdgeHulls()
-                    .entrySet()) {
-                for (Rectangle r : entry.getValue()) {
-                    CRectNode rectNode = new CRectNode(r);
-                    setLock(rectNode, comp.getExternalPortSides());
-
-                    if (entry.getKey().isVertical()) {
-                        verticalExternalEdges.put(group, rectNode);
-                    } else {
-                        horizontalExternalEdges.put(group, rectNode);
-                    }
+            for (IExternalExtension<E> ee : comp.getExternalExtensions()) {
+                CRectNode rectNode = new CRectNode(ee.getRepresentor());
+                externalExtensions.put(ee, Pair.of(group, rectNode));
+                setLock(rectNode, comp.getExternalExtensionSides());
+                
+                // placeholder
+                if (ee.getPlaceholder() != null) {
+                    CRectNode rectPlaceholder = new CRectNode(ee.getPlaceholder(), 1d);
+                    setLock(rectPlaceholder, comp.getExternalExtensionSides());
+                    CGroup dummyGroup = new CGroup();
+                    dummyGroup.addCNode(rectPlaceholder);
+                    externalPlaceholder.put(ee.getDirection(), Pair.of(group, rectPlaceholder));
                 }
             }
         }
@@ -265,6 +266,16 @@ public class ComponentsToCGraphTransformer<N, E> implements
             bottomRight.y = Math.max(bottomRight.y, cNode.hitbox.y + cNode.hitbox.height);
         }
         
+        // note that placeholdes "can move" during compaction and are _not_ fixed to the boundary
+        // which allows to use them to determine the maximum position
+        for (Pair<CGroup, CNode> placeholder : externalPlaceholder.values()) {
+            CNode cNode = placeholder.getSecond();
+            topLeft.x = Math.min(topLeft.x, cNode.hitbox.x);
+            topLeft.y = Math.min(topLeft.y, cNode.hitbox.y);
+            bottomRight.x = Math.max(bottomRight.x, cNode.hitbox.x + cNode.hitbox.width);
+            bottomRight.y = Math.max(bottomRight.y, cNode.hitbox.y + cNode.hitbox.height);
+        }
+        
         globalOffset = topLeft.clone().negate();
         graphSize = bottomRight.clone().sub(topLeft);
 
@@ -280,10 +291,16 @@ public class ComponentsToCGraphTransformer<N, E> implements
     private final class CRectNode extends CNode {
 
         private Rectangle rect;
+        private Double individualSpacing;
 
         private CRectNode(final Rectangle rect) {
+            this(rect, null);
+        }
+        
+        private CRectNode(final Rectangle rect, final Double spacing) {
             this.rect = rect;
-            hitbox = new Rectangle(rect.x, rect.y, rect.width, rect.height);
+            this.hitbox = new Rectangle(rect.x, rect.y, rect.width, rect.height);
+            this.individualSpacing = spacing;
         }
 
         /**
@@ -291,7 +308,7 @@ public class ComponentsToCGraphTransformer<N, E> implements
          */
         @Override
         public double getHorizontalSpacing() {
-            return spacing;
+            return individualSpacing != null ? individualSpacing : spacing;
         }
         
         /**
@@ -299,7 +316,7 @@ public class ComponentsToCGraphTransformer<N, E> implements
          */
         @Override
         public double getVerticalSpacing() {
-            return spacing;
+           return individualSpacing != null ? individualSpacing : spacing;
         }
         
         /**
@@ -330,4 +347,20 @@ public class ComponentsToCGraphTransformer<N, E> implements
         }
     }
     
+    /**
+     * Component compaction-specific spacing handler that can cope with placeholders.
+     * During compaction a placeholder can be moved right next to an adjacent rectangle;
+     * no spacing has to be preserved.
+     */
+    public static final ISpacingsHandler<? super CNode> SPACING_HANDLER = new ISpacingsHandler<CNode>() {
+        @Override
+        public double getHorizontalSpacing(final CNode cNode1, final CNode cNode2) {
+            return Math.min(cNode1.getHorizontalSpacing(), cNode2.getHorizontalSpacing());
+        }
+
+        @Override
+        public double getVerticalSpacing(final CNode cNode1, final CNode cNode2) {
+            return Math.min(cNode1.getVerticalSpacing(), cNode2.getVerticalSpacing());
+        }
+    };
 }

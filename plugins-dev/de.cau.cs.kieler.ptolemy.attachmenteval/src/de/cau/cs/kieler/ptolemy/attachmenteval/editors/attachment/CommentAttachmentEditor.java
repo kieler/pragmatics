@@ -316,7 +316,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         };
         runStatisticsAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
                 "icons/count.gif"));
-        runStatisticsAction.setToolTipText("Run Staistics");
+        runStatisticsAction.setToolTipText("Run Statistics");
         tbm.add(runStatisticsAction);
         
         Action runGraphAnalysesAction = new Action() {
@@ -333,7 +333,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         Action compareAttachmentsAction = new Action() {
             @Override
             public void run() {
-                compareAttachments();
+                runAttachmentComparison();
             }
         };
         compareAttachmentsAction.setImageDescriptor(PtolemyAttachmentEvalPlugin.getImageDescriptor(
@@ -450,28 +450,14 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         // Event Listeners
         modelTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
             public void selectionChanged(SelectionChangedEvent event) {
-                // DEBUG START
-                System.out.println("Starting onSelectionChanged");
-                // DEBUG END
-                
                 Object element = ((ITreeSelection) event.getSelection()).getFirstElement();
                 
                 // We can only display files
                 if (element instanceof IFile) {
-                    // DEBUG START
-                    System.out.println("====> Showing model...");
-                    // DEBUG END
                     showModel((IFile) element, false);
-                    // DEBUG START
-                    System.out.println("====> ...done!");
-                    // DEBUG END
                 } else {
                     showModel(null, false);
                 }
-
-                // DEBUG START
-                System.out.println("Finished onSelectionChanged");
-                // DEBUG END
             }
         });
         modelTreeViewer.addCheckStateListener(new ICheckStateListener() {
@@ -806,26 +792,14 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
             return;
         }
         
-        // DEBUG START
-        System.out.println("Calling loadModel...");
-        // DEBUG END
         loadModel(modelFile, enableHeuristic);
-        // DEBUG START
-        System.out.println("Finished loadModel...");
-        // DEBUG END
         
-        // DEBUG START
-        System.out.println("Starting layout...");
-        // DEBUG END
         if (klighdViewContext != null) {
             klighdViewer.setModel(klighdViewContext);
             LightDiagramServices.layoutDiagram(klighdViewContext, false);
         } else {
             klighdViewer.setModel("No valid model selected.", false);
         }
-        // DEBUG START
-        System.out.println("Finished layout...");
-        // DEBUG END
 
         // Update the input of the attachment viewer
         attachmentsTreeViewer.setInput(klighdViewContext);
@@ -1327,7 +1301,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
     /**
      * Allows the user to compare a selectable attachment data file to this editor's attachment data.
      */
-    private void compareAttachments() {
+    private void runAttachmentComparison() {
         // Ask the user what to compare the current evaluation data with
         ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(
                 this.getSite().getShell(),

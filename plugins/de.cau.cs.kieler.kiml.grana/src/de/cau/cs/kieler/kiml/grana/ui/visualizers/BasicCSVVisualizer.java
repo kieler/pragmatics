@@ -57,7 +57,7 @@ public class BasicCSVVisualizer extends AbstractSimpleVisualizer<String> {
                     if (visualization == null) {
                         str.append(results[i].toString());
                     } else {
-                        str.append(visualization.get(analysis, results[i]));
+                        str.append(visualization.get(analysis, results[i]).toString());
                     }
                 }
             } else {
@@ -78,7 +78,7 @@ public class BasicCSVVisualizer extends AbstractSimpleVisualizer<String> {
                 if (visualization == null) {
                     str.append(result.toString());
                 } else {
-                    str.append(visualization.get(analysis, result));
+                    str.append(visualization.get(analysis, result).toString());
                 }
             }
         }
