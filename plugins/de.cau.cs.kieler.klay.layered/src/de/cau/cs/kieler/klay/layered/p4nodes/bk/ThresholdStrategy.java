@@ -19,6 +19,7 @@ import java.util.Stack;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.google.common.math.DoubleMath;
 
 import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
@@ -33,7 +34,9 @@ import de.cau.cs.kieler.klay.layered.p4nodes.bk.BKAlignedLayout.VDirection;
 public abstract class ThresholdStrategy {
 
     // TODO make this an option?!
-    private static final double THRESHOLD = Double.MAX_VALUE; 
+    private static final double THRESHOLD = Double.MAX_VALUE;
+    
+    private static final double EPSILON = 0.0001d; 
     
     // SUPPRESS CHECKSTYLE NEXT 24 VisibilityModifier
     /**
@@ -385,7 +388,7 @@ public abstract class ThresholdStrategy {
             if (delta > 0 && delta < THRESHOLD) {
                 // target y larger than source y --> shift upwards?
                 double availableSpace = bal.checkSpaceAbove(block.getNode(), delta);
-                assert availableSpace >= 0;
+                assert DoubleMath.fuzzyEquals(availableSpace, 0, EPSILON) || availableSpace >= 0;
                 bal.shiftBlock(block.getNode(), -availableSpace);
                 
                 return availableSpace > 0;
@@ -394,7 +397,7 @@ public abstract class ThresholdStrategy {
                 // direction is up, we possibly shifted some blocks too far upward 
                 // for an edge to be straight, so check if we can shift down again
                 double availableSpace = bal.checkSpaceBelow(block.getNode(), -delta);
-                assert availableSpace >= 0;
+                assert DoubleMath.fuzzyEquals(availableSpace, 0, EPSILON) || availableSpace >= 0;
                 bal.shiftBlock(block.getNode(), availableSpace);
                 
                 return availableSpace > 0;
