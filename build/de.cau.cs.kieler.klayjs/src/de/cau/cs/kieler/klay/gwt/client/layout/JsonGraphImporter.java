@@ -145,7 +145,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         // as cross hierarchy edges are possible and we have to assure that
         // all source and target nodes already exist
         // for port-less edges, new ports will be created
-        transformEdges(json, rootGraph);
+        transformEdges(json);
 
         return rootGraph;
     }
@@ -527,14 +527,12 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
     /**
      * Transforms all edges specified on this hierarchy level.
      * 
-     * Remark: make sure the WHOLE hierarchy of nodes is already transformed
+     * Remark: make sure the WHOLE hierarchy of nodes has already been transformed
      * 
      * @param parent
      *            a compound node in json format.
-     * @param graph
-     *            the {@link LGraph} created for this compound node.
      */
-    private void transformEdges(final JSONObject parent, final LGraph graph) {
+    private void transformEdges(final JSONObject parent) {
 
         
         // then transform the edges (important that the nodes and ports are already known)
@@ -553,7 +551,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
                             "All elements of the 'edges' property must be objects.", edgeVal,
                             parent);
                 }
-                transformEdge(edgeVal.isObject(), graph);
+                transformEdge(edgeVal.isObject());
             }
         }
         
@@ -562,10 +560,10 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         if (parent.containsKey("children")) {
            // the json should be proper, otherwise 'transformNodes' already threw an exception  
            JSONArray children = parent.get("children").isArray();
+           
            for (int i = 0; i < children.size(); ++i) {
                JSONObject child = children.get(i).isObject();
-               LGraph childGraph = jsonLGraphMap.get(child);
-               transformEdges(child, childGraph);
+               transformEdges(child);
            }
         }
     }
@@ -577,9 +575,8 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
      * connects the edge to these. In case no ports are specified, new ones will be created.
      * 
      * @param jEdge
-     * @param graph
      */
-    private void transformEdge(final JSONObject jEdge, final LGraph graph) {
+    private void transformEdge(final JSONObject jEdge) {
 
         checkForId(jEdge);
 
@@ -649,6 +646,13 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
             }
         }
         
+        if (sourceNode == null || targetNode == null) {
+            throw new UnsupportedJsonGraphException("An edge's source or target "
+                    + "node could not be resolved.", jEdge);
+        }
+        
+        LGraph parentLGraph = sourceNode.getGraph();
+        
         // create a layered edge
         LEdge edge = new LEdge();
         edge.setProperty(InternalProperties.ORIGIN, jEdge);
@@ -662,11 +666,11 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         transformProperties(jEdge, edge);
 
         // labels
-        transformLabels(jEdge, edge, graph);
+        transformLabels(jEdge, edge, parentLGraph);
 
-        Set<GraphProperties> graphProperties = graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
+        Set<GraphProperties> graphProperties =
+                parentLGraph.getProperty(InternalProperties.GRAPH_PROPERTIES);
 
-        if (sourceNode != null && targetNode != null) {
             // if we have a self-loop, set the appropriate graph property
             if (sourceNode == targetNode) {
                 graphProperties.add(GraphProperties.SELF_LOOPS);
@@ -675,24 +679,20 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
             // create source and target ports if they do not exist yet
             if (sourcePort == null) {
                 sourcePort =
-                        LGraphUtil.createPort(sourceNode, new KVector(), PortType.OUTPUT, graph);
+                    LGraphUtil.createPort(sourceNode, new KVector(), PortType.OUTPUT, parentLGraph);
             } else if (sourcePort.getNode() != sourceNode) {
                 throw new UnsupportedJsonGraphException("Inconsistent source port reference found.");
             }
 
             if (targetPort == null) {
                 targetPort =
-                        LGraphUtil.createPort(targetNode, new KVector(), PortType.INPUT, graph);
+                    LGraphUtil.createPort(targetNode, new KVector(), PortType.INPUT, parentLGraph);
             } else if (targetPort.getNode() != targetNode) {
                 throw new UnsupportedJsonGraphException("Inconsistent target port reference found.");
             }
 
             edge.setSource(sourcePort);
             edge.setTarget(targetPort);
-        } else {
-            throw new UnsupportedJsonGraphException("An edge's source or target "
-                    + "node could not be resolved.", jEdge);
-        }
 
         // find out if there are hyperedges, that is a set of edges connected to the same port
         if (Iterables.size(sourcePort.getConnectedEdges()) > 1
@@ -701,7 +701,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         }
 
         // copy the bend points of the edge if they are needed by anyone
-        if (graph.getProperty(Properties.CROSS_MIN) == CrossingMinimizationStrategy.INTERACTIVE
+        if (parentLGraph.getProperty(Properties.CROSS_MIN) == CrossingMinimizationStrategy.INTERACTIVE
                 && !jEdge.containsKey("bendPoints")) {
             KVectorChain bendpoints = new KVectorChain();
 
@@ -841,8 +841,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
     
                 // Collect edges, except if they go into a nested subgraph (those edges need to
                 // be processed during one of the recursive calls so that any additional offsets
-                // are applied
-                // correctly)
+                // are applied correctly)
                 for (LEdge e : n.getOutgoingEdges()) {
                     if (!LGraphUtil.isDescendant(e.getTarget().getNode(), n)) {
                         edges.add(e);
@@ -1029,7 +1028,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
     /**
      * Tests if the object contains a valid 'id' property.
      * 
-     * @throws UnsupportedGraphException
+     * @throws UnsupportedJsonGraphException
      *             in case the 'id' property is not existent or is invalid.
      */
     private void checkForId(final JSONObject obj) {

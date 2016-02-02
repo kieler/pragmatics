@@ -1,7 +1,13 @@
+
+/*
+ * WARNING: the following debug methods are only valid if edges are specified
+ *          for the container of their source and target node. No hierarchy is supported!
+ */
+
 genSvg = function(graph) {
 
-	var svg = '<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" w="'
-			+ graph.width + '" h="' + graph.height + '">\n';
+	var svg = '<svg xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" width="'
+			+ graph.width + '" height="' + graph.height + '">\n';
 
 	if (graph.children) {
 		for (var i = 0; i < graph.children.length; i++) {
