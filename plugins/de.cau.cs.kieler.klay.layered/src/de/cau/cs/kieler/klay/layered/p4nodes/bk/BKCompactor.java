@@ -95,6 +95,8 @@ public class BKCompactor implements ICompactor {
                         ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY;
             }
         }
+        // clear any previous sinks
+        sinkNodes.clear();
 
         // If the horizontal direction is LEFT, the layers are traversed from right to left, thus
         // a reverse iterator is needed (note that this does not change the original list of layers)
