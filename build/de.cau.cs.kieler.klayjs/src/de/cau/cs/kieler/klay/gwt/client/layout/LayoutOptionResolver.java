@@ -86,6 +86,7 @@ import static de.cau.cs.kieler.klay.layered.properties.Properties.NODE_PROMOTION
 import static de.cau.cs.kieler.klay.layered.properties.Properties.NORTH_OR_SOUTH_PORT;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.OBJ_SPACING_IN_LAYER_FACTOR;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.POST_COMPACTION;
+import static de.cau.cs.kieler.klay.layered.properties.Properties.POST_COMPACTION_COSTRAINTS;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.RANDOM_SEED;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.SAUSAGE_FOLDING;
 import static de.cau.cs.kieler.klay.layered.properties.Properties.SPLINE_SELF_LOOP_PLACEMENT;
@@ -124,6 +125,7 @@ import de.cau.cs.kieler.kiml.options.SizeOptions;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 import de.cau.cs.kieler.klay.layered.graph.LGraphElement;
 import de.cau.cs.kieler.klay.layered.intermediate.NodePromotionStrategy;
+import de.cau.cs.kieler.klay.layered.intermediate.compaction.ConstraintCalculationStrategy;
 import de.cau.cs.kieler.klay.layered.intermediate.compaction.GraphCompactionStrategy;
 import de.cau.cs.kieler.klay.layered.p1cycles.CycleBreakingStrategy;
 import de.cau.cs.kieler.klay.layered.p2layers.LayeringStrategy;
@@ -157,7 +159,7 @@ public final class LayoutOptionResolver {
             );
     
     private static final Pair<Set<String>, Map<String, IProperty<?>>> INT_TYPES = createTypesSet(
-    		PARTITION,
+            PARTITION,
             PORT_INDEX,
             RANDOM_SEED,
             FONT_SIZE,
@@ -234,6 +236,7 @@ public final class LayoutOptionResolver {
             GREEDY_SWITCH_TYPE,
             LAYER_CONSTRAINT,
             POST_COMPACTION,
+            POST_COMPACTION_COSTRAINTS,
             SPLINE_SELF_LOOP_PLACEMENT,
             WIDE_NODES_ON_MULTIPLE_LAYERS,
             INTERACTIVE_REFERENCE_POINT
@@ -431,6 +434,8 @@ public final class LayoutOptionResolver {
                     enumeration = NodePlacementStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(POST_COMPACTION, id)) {
                     enumeration = GraphCompactionStrategy.valueOf(enumValue);
+                } else if (equalsIdOrSuffix(POST_COMPACTION_COSTRAINTS, id)) {
+                    enumeration = ConstraintCalculationStrategy.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(FIXED_ALIGNMENT, id)) {
                     enumeration = FixedAlignment.valueOf(enumValue);
                 } else if (equalsIdOrSuffix(GREEDY_SWITCH_TYPE, id)) {
