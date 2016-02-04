@@ -6,4 +6,3 @@ bin/
 xtend-gen/
 target/
 *.pdf
-build/de.cau.cs.kieler.klay.layered.gwt/test/js/src/klay.js
