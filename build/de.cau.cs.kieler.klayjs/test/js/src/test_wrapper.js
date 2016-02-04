@@ -112,8 +112,8 @@ tests.forEach(function(config){
   // Execute test if active flag is not present or true.
   if (typeof config.active === 'undefined' || config.active) {
     // If explicit test is given only execute test if name matches.
-    if (typeof args === 'undefined' || typeof args.test === 'undefined'
-        || args.test == config.name) {
+    if (typeof args === 'undefined' || typeof args.singleTest === 'undefined'
+        || args.singleTest == config.name) {
       testInContext(config);
     }
   }

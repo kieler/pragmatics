@@ -50,6 +50,10 @@ task concatenateTestConfigs() {
 // Testing
 // --------------------------------------------------------
 
+ext.args = []
+if (project.hasProperty('testReporter')) { ext.args += "testReporter=$testReporter"}
+if (project.hasProperty('singleTest')) { ext.args += "singleTest=$singleTest"}
+
 task testBrowser(type: GruntTask, dependsOn: [npmInstall, installGrunt, unzipKlayJs, concatenateTestConfigs]) {
     group 'KIELER test'
     description 'Tests KlayJs via plain javascript loading inside an html file.'
@@ -60,14 +64,14 @@ task testNodejs(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenate
     group 'KIELER test'
     description 'Tests KlayJs via nodejs.'
     script = file("$projectDir/src/run_tests.js")
-    args = ['context=nodejs', project.hasProperty('special') ? "testReporter=$testReporter" : ""]
+    args = ['context=nodejs'] + project.ext.args
 }
 
 task testWebworker(type: NodeTask, dependsOn: [npmInstall, unzipKlayJs, concatenateTestConfigs]) {
     group 'KIELER test'
     description 'Tests KlayJs via webworker.'
     script = file("$projectDir/src/run_tests.js")
-    args = ['context=webworker', project.hasProperty('special') ? "testReporter=$testReporter" : ""]
+    args = ['context=webworker'] + project.ext.args
 }
 
 // Cleanup
