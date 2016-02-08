@@ -55,6 +55,9 @@
                option="de.cau.cs.kieler.noLayout">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.edgeLabelPlacementStrategy">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption

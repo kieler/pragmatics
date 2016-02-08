@@ -22,6 +22,8 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.util.Pair;
+import de.cau.cs.kieler.kiml.options.EdgeLabelPlacementStrategy;
+import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
@@ -36,7 +38,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
 /**
  * Processor that tries to move label dummy nodes into an "optimal" layer their long edges crosses. This
  * is done by switching the order of long edge dummies and label dummies. There are different strategies
- * available to determine the "optimal" layer. See {@link EdgeLabelPacementStrategy}.
+ * available to determine the "optimal" layer. See {@link EdgeLabelPlacementStrategy}.
  * 
  * <p>
  * If this is the only thing we did we could end up in situations where multiple edges forming a
@@ -79,16 +81,8 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  */
 public final class LabelDummySwitcher implements ILayoutProcessor {
     
-    /** Available strategies to place long edge center labels. */
-    private enum EdgeLabelPacementStrategy {
-        /** Place long edge labels in the center layer their edge crosses. */
-        CENTER,
-        /** Place long edge labels in the widest layer their edge crosses. */
-        WIDEST_LAYER
-    }
-    
-    /** Selected placement strategy. */
-    private static final EdgeLabelPacementStrategy STRATEGY = EdgeLabelPacementStrategy.CENTER;
+    /** Width of all layers. */
+    private double[] layerWidths;
 
     /**
      * {@inheritDoc}
@@ -104,6 +98,17 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
         // Iterate over the graph and gather all label dummies that need to be swapped
         List<LNode> leftLongEdgeDummies = Lists.newArrayList();
         List<LNode> rightLongEdgeDummies = Lists.newArrayList();
+
+        EdgeLabelPlacementStrategy strategy =
+                layeredGraph.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT_STRATEGY);
+        if (strategy == EdgeLabelPlacementStrategy.WIDEST_LAYER) {
+            // Gather all layer widths if required
+            final List<Layer> layers = layeredGraph.getLayers();
+            layerWidths = new double[layers.size()];
+            for (int i = 0; i < layers.size(); i++) {
+                layerWidths[i] = LGraphUtil.findMaxNonDummyNodeWidth(layers.get(i), false);
+            }
+        }
 
         for (Layer layer : layeredGraph) {
             for (LNode node : layer.getNodes()) {
@@ -131,7 +136,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
                     } while (target.getType() == NodeType.LONG_EDGE);
 
                     // Determine the nodes to swap according to the given strategy
-                    switch (STRATEGY) {
+                    switch (strategy) {
                     case WIDEST_LAYER:
                         findSwapCandidateForWidestLayer(node, leftLongEdgeDummies,
                                 rightLongEdgeDummies, nodesToSwap);
@@ -140,6 +145,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
                     default:
                         findSwapCandidateCenter(node, leftLongEdgeDummies, rightLongEdgeDummies,
                                 nodesToSwap);
+                        break;
                     }
                 }
             }
@@ -153,6 +159,7 @@ public final class LabelDummySwitcher implements ILayoutProcessor {
             updateLongEdgeSourceTargetInfo(labelDummy);
         }
 
+        layerWidths = null;
         monitor.done();
     }
 
