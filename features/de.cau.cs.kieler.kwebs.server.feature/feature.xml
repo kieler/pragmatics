@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kwebs.server.feature"
       label="KIELER Layout Web Server"
-      version="0.5.0.qualifier"
+      version="0.6.0.qualifier"
       provider-name="Kiel University">
 
    <description url="http://rtsys.informatik.uni-kiel.de/confluence/x/nQEF">

@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kiml.gmf.feature"
       label="KIELER Layout for GMF"
-      version="0.13.0.qualifier"
+      version="0.14.0.qualifier"
       provider-name="Kiel University"
       plugin="de.cau.cs.kieler.kiml.gmf">
 
