@@ -24,9 +24,9 @@ import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.layered.ILayoutProcessor;
 import de.cau.cs.kieler.klay.layered.graph.LEdge;
 import de.cau.cs.kieler.klay.layered.graph.LGraph;
+import de.cau.cs.kieler.klay.layered.graph.LGraphUtil;
 import de.cau.cs.kieler.klay.layered.graph.LLabel;
 import de.cau.cs.kieler.klay.layered.graph.LNode;
-import de.cau.cs.kieler.klay.layered.graph.LNode.NodeType;
 import de.cau.cs.kieler.klay.layered.graph.LPort;
 import de.cau.cs.kieler.klay.layered.graph.Layer;
 import de.cau.cs.kieler.klay.layered.p5edges.splines.ConnectedSelfLoopComponent;
@@ -94,7 +94,8 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
         assert labelManager != null : "labelManager is null";
 
         boolean verticalLayout = layer.getGraph().getProperty(LayoutOptions.DIRECTION).isVertical();
-        double maxWidth = Math.max(MIN_WIDTH_EDGE_LABELS, findMaxNonDummyNodeWidth(layer));
+        double maxWidth =
+                Math.max(MIN_WIDTH_EDGE_LABELS, LGraphUtil.findMaxNonDummyNodeWidth(layer, false));
 
         // Apply the maximum width to all label dummy nodes
         for (LNode layerNode : layer) {
@@ -150,39 +151,6 @@ public final class LabelManagementProcessor implements ILayoutProcessor {
             }
         }
         
-    }
-
-    /**
-     * Finds the maximum width of non-dummy nodes in the given layer. If the graph is laid out in a
-     * vertical direction, the maximum non-dummy node width doesn't mean anything since the labels are
-     * narrow, but very high. So in that case, we simply return the minimum edge label width.
-     * 
-     * @param layer
-     *            the layer to iterate over.
-     * @return the maximum width of non-dummy nodes. If there are none, {@code 0.0} is returned.
-     */
-    private double findMaxNonDummyNodeWidth(final Layer layer) {
-        if (layer.getGraph().getProperty(LayoutOptions.DIRECTION).isVertical()) {
-            return MIN_WIDTH_EDGE_LABELS;
-        }
-        
-        double maxWidth = 0.0;
-
-        for (LNode node : layer) {
-            if (node.getType() == NodeType.NORMAL) {
-                /* It would be nice to include the node's margins here, but we don't know the margins
-                 * at the time the label management processor is invoked. It would seem that the
-                 * solution is to execute label management after node margin calculation. But there's a
-                 * chicken-and-egg problem right there: if we execute node margin calculation first, it
-                 * won't know about shortened edge end labels and port labels. If we execute label
-                 * management first, it won't include node margins in the space usable for center edge
-                 * labels. Damn!
-                 */
-                maxWidth = Math.max(maxWidth, node.getSize().x);
-            }
-        }
-
-        return maxWidth;
     }
 
     /**
