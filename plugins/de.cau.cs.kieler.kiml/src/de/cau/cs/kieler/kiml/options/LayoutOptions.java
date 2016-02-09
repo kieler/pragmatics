@@ -304,7 +304,7 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.direction", Direction.UNDEFINED);
 
     /**
-     * How respectively in which layer long edge labels should be placed.
+     * How/in which layer long edge labels should be placed.
      */
     public static final IProperty<EdgeLabelPlacementStrategy> EDGE_LABEL_PLACEMENT_STRATEGY =
             new Property<EdgeLabelPlacementStrategy>("de.cau.cs.kieler.edgeLabelPlacementStrategy",

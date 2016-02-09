@@ -37,8 +37,8 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
  * Processor that tries to move label dummy nodes into an "optimal" layer their long edges crosses. This
- * is done by switching the order of long edge dummies and label dummies. There are different strategies
- * available to determine the "optimal" layer. See {@link EdgeLabelPlacementStrategy}.
+ * is done by switching the order of long edge dummies and label dummies. There are
+ * {@link EdgeLabelPlacementStrategy different strategies} available to determine the "optimal" layer.
  * 
  * <p>
  * If this is the only thing we did we could end up in situations where multiple edges forming a
@@ -75,6 +75,7 @@ import de.cau.cs.kieler.klay.layered.properties.PortType;
  *     <dd>{@link LongEdgeSplitter}</dd>
  * </dl>
  * 
+ * @see EdgeLabelPlacementStrategy
  * @author jjc
  * @author cds
  * @kieler.rating yellow proposed cds
