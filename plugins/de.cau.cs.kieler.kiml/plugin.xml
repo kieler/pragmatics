@@ -483,6 +483,16 @@
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="parents"
+           default="CENTER"
+           description="Determines in which layer center labels of long edges should be placed."
+           id="de.cau.cs.kieler.edgeLabelPlacementStrategy"
+           name="Edge Label Placement Strategy"
+           class="de.cau.cs.kieler.kiml.options.EdgeLabelPlacementStrategy"
+           type="enum">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
            appliesTo="nodes,labels"
            class="de.cau.cs.kieler.kiml.options.NodeLabelPlacement"
            description="Hints for where node labels are to be placed; if empty, the node label&apos;s position is not modified."

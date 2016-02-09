@@ -304,6 +304,13 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.direction", Direction.UNDEFINED);
 
     /**
+     * How/in which layer long edge labels should be placed.
+     */
+    public static final IProperty<EdgeLabelPlacementStrategy> EDGE_LABEL_PLACEMENT_STRATEGY =
+            new Property<EdgeLabelPlacementStrategy>("de.cau.cs.kieler.edgeLabelPlacementStrategy",
+                    EdgeLabelPlacementStrategy.CENTER);
+
+    /**
      * What kind of edge routing style should be applied for the content of a parent node.
      * Algorithms may also set this option to single edges in order to mark them as splines. The
      * bend point list of edges with this option set to {@link EdgeRouting#SPLINES} must be
