@@ -211,6 +211,15 @@
          <knownOption
                option="de.cau.cs.kieler.klay.layered.components.compact">
          </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.highDegreeNode.treatment">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.highDegreeNode.threshold">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight">
+         </knownOption>
       </layoutAlgorithm>
       <layoutOption
             advanced="true"
@@ -551,6 +560,41 @@
             type="boolean">
          <dependency
                option="de.cau.cs.kieler.separateConnComp"
+               value="true">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="nodes"
+            default="false"
+            description="Makes room around high degree nodes to place leafs and trees."
+            id="de.cau.cs.kieler.klay.layered.highDegreeNode.treatment"
+            name="High Degree Node Treatment"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="nodes"
+            default="16"
+            description="Whether a node is considered to have a high degree."
+            id="de.cau.cs.kieler.klay.layered.highDegreeNode.threshold"
+            name="High Degree Node Threshold"
+            type="int">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.highDegreeNode.treatment"
+               value="true">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="nodes"
+            default="5"
+            description="Maximum height of a subtree connected to a high degree node to be moved to separate layers."
+            id="de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight"
+            name="High Degree Node Maximum Tree Height"
+            type="int">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.highDegreeNode.treatment"
                value="true">
          </dependency>
       </layoutOption>
