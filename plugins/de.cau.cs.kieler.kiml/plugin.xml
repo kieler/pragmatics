@@ -713,7 +713,7 @@
            type="int">
      </layoutOption>
      <layoutOption
-           appliesTo="nodes"
+           appliesTo="nodes,parents"
            class="de.cau.cs.kieler.kiml.options.HierarchyHandling"
            default="INHERIT"
            description="Determines whether the descendants should be layouted separately or together with their parents. If the root node is set to inherit (or not set at all), the property is assumed as SEPARATE_CHILDREN."
