@@ -270,7 +270,25 @@ public final class Properties {
      */
     public static final IProperty<Boolean> COMPACT_COMPONENTS = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.components.compact", false);
+    
+    /**
+     * Whether trees around high degree nodes should be placed in separate layers.
+     */
+    public static final IProperty<Boolean> HIGHDEGREENODE_TREATMENT = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.highDegreeNode.treatment", false);
 
+    /**
+     * Whether a node is considered to have a high degree.
+     */
+    public static final IProperty<Integer> HIGHDEGREENODE_THRESHOLD = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.highDegreeNode.threshold", 16);
+    
+    /** 
+     * The maximal height of a subtree for it to be moved to separate layers.
+     */
+    public static final IProperty<Integer> HIGHDEGREENODE_TREEHEIGHT = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight", 5);
+    
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
 
