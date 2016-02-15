@@ -306,6 +306,12 @@ final class GraphConfigurator {
             configuration.addBeforePhase3(IntermediateProcessorStrategy.PARTITION_POSTPROCESSOR);
             
         }
+        
+        // Move trees of high degree nodes to separate layers
+        if (lgraph.getProperty(Properties.HIGHDEGREENODE_TREATMENT)) {
+            configuration
+                    .addBeforePhase3(IntermediateProcessorStrategy.HIGH_DEGREE_NODE_LAYER_PROCESSOR);
+        }
 
         return configuration;
     }

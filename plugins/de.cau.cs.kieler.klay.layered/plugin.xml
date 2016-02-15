@@ -55,6 +55,9 @@
                option="de.cau.cs.kieler.noLayout">
          </knownOption>
          <knownOption
+               option="de.cau.cs.kieler.edgeLabelPlacementStrategy">
+         </knownOption>
+         <knownOption
                option="de.cau.cs.kieler.klay.layered.edgeSpacingFactor">
          </knownOption>
          <knownOption
@@ -207,6 +210,15 @@
          </knownOption>
          <knownOption
                option="de.cau.cs.kieler.klay.layered.components.compact">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.highDegreeNode.treatment">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.highDegreeNode.threshold">
+         </knownOption>
+         <knownOption
+               option="de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight">
          </knownOption>
       </layoutAlgorithm>
       <layoutOption
@@ -487,6 +499,34 @@
          </dependency>
       </layoutOption>
       <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            default="4"
+            description="Defines a loose upper bound on the width of the MinWidth layerer."
+            id="de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth"
+            lowerBound="1"
+            name="Upper Bound On Width [MinWidth Layerer]"
+            type="int">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodeLayering"
+               value="EXP_MIN_WIDTH">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="false"
+            appliesTo="parents"
+            default="2"
+            description="Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which haven&apos;t been determined yet, but whose maximum width had been (roughly) estimated by the MinWidth algorithm. Compensates for too high estimations."
+            id="de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor"
+            lowerBound="1"
+            name="Upper Layer Estimation Scaling Factor [MinWidth Layerer]"
+            type="int">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.nodeLayering"
+               value="EXP_MIN_WIDTH">
+         </dependency>
+      </layoutOption>
+      <layoutOption
             advanced="true"
             appliesTo="ports"
             default="false"
@@ -548,6 +588,41 @@
             type="boolean">
          <dependency
                option="de.cau.cs.kieler.separateConnComp"
+               value="true">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="nodes"
+            default="false"
+            description="Makes room around high degree nodes to place leafs and trees."
+            id="de.cau.cs.kieler.klay.layered.highDegreeNode.treatment"
+            name="High Degree Node Treatment"
+            type="boolean">
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="nodes"
+            default="16"
+            description="Whether a node is considered to have a high degree."
+            id="de.cau.cs.kieler.klay.layered.highDegreeNode.threshold"
+            name="High Degree Node Threshold"
+            type="int">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.highDegreeNode.treatment"
+               value="true">
+         </dependency>
+      </layoutOption>
+      <layoutOption
+            advanced="true"
+            appliesTo="nodes"
+            default="5"
+            description="Maximum height of a subtree connected to a high degree node to be moved to separate layers."
+            id="de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight"
+            name="High Degree Node Maximum Tree Height"
+            type="int">
+         <dependency
+               option="de.cau.cs.kieler.klay.layered.highDegreeNode.treatment"
                value="true">
          </dependency>
       </layoutOption>

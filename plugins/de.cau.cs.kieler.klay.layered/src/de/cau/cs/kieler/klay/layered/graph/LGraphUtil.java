@@ -179,7 +179,7 @@ public final class LGraphUtil {
     }
     
     ///////////////////////////////////////////////////////////////////////////////
-    // Node Placement
+    // Layer Things
     
     /**
      * Determines a horizontal placement for all nodes of a layer. The size of the layer is assumed
@@ -254,6 +254,51 @@ public final class LGraphUtil {
             
             node.getPosition().x = xoffset + xpos;
         }
+    }
+
+    /**
+     * Finds the maximum width of non-dummy nodes in the given layer.
+     * <p>
+     * If the graph is laid out in a vertical direction, the maximum non-dummy node width doesn't
+     * mean anything since the labels are narrow, but very high. So in that case, {@code 0.0} is
+     * returned.
+     * </p>
+     * <p>
+     * When calling the function prior to node margin calculation, the node margins are
+     * unknown/invalid. One may set the {@code respectNodeMargins} flag accordingly.It would seem
+     * that the solution is to execute label management after node margin calculation. But there's a
+     * chicken-and-egg problem right there: if we execute node margin calculation first, it won't
+     * know about shortened edge end labels and port labels. If we execute label management first,
+     * it won't include node margins in the space usable for center edge labels. Damn!
+     * </p>
+     * 
+     * @param layer
+     *            the layer to iterate over.
+     * @param respectNodeMargins
+     *            whether to include node margins in width calculation.
+     * @return the maximum width of non-dummy nodes. If there are none or the layout direction is
+     *         vertical, {@code 0.0} is returned.
+     */
+    public static double findMaxNonDummyNodeWidth(final Layer layer,
+            final boolean respectNodeMargins) {
+
+        if (layer.getGraph().getProperty(LayoutOptions.DIRECTION).isVertical()) {
+            return 0.0;
+        }
+
+        double maxWidth = 0.0;
+
+        for (LNode node : layer) {
+            if (node.getType() == NodeType.NORMAL) {
+                double width = node.getSize().x;
+                if (respectNodeMargins) {
+                    width += node.getMargin().left + node.getMargin().right;
+                }
+                maxWidth = Math.max(maxWidth, width);
+            }
+        }
+
+        return maxWidth;
     }
     
     

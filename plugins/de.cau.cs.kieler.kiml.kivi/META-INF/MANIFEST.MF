@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Layout for View Management
 Bundle-SymbolicName: de.cau.cs.kieler.kiml.kivi;singleton:=true
-Bundle-Version: 0.3.1.qualifier
+Bundle-Version: 0.4.0.qualifier
 Bundle-Vendor: Kiel University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy

@@ -240,6 +240,17 @@
             variance="1.0">
       </layoutOption>
       <layoutOption
+            advanced="true"
+            appliesTo="nodes"
+            class="de.cau.cs.kieler.kiml.util.nodespacing.Spacing$Insets"
+            default="[top=0,left=0,bottom=0,right=0]"
+            description="Define an inset for node labels that are placed inside of a node."
+            id="de.cau.cs.kieler.nodeLabelInset"
+            name="Node Label Insets"
+            type="object"
+            variance="1.0">
+      </layoutOption>
+      <layoutOption
             appliesTo="nodes"
             default="-1.0"
             description="Spacing between ports of a given node."
@@ -483,6 +494,16 @@
      </layoutOption>
      <layoutOption
            advanced="true"
+           appliesTo="parents"
+           default="CENTER"
+           description="Determines in which layer center labels of long edges should be placed."
+           id="de.cau.cs.kieler.edgeLabelPlacementStrategy"
+           name="Edge Label Placement Strategy"
+           class="de.cau.cs.kieler.kiml.options.EdgeLabelPlacementStrategy"
+           type="enum">
+     </layoutOption>
+     <layoutOption
+           advanced="true"
            appliesTo="nodes,labels"
            class="de.cau.cs.kieler.kiml.options.NodeLabelPlacement"
            description="Hints for where node labels are to be placed; if empty, the node label&apos;s position is not modified."
@@ -703,7 +724,7 @@
            type="int">
      </layoutOption>
      <layoutOption
-           appliesTo="nodes"
+           appliesTo="nodes,parents"
            class="de.cau.cs.kieler.kiml.options.HierarchyHandling"
            default="INHERIT"
            description="Determines whether the descendants should be layouted separately or together with their parents. If the root node is set to inherit (or not set at all), the property is assumed as SEPARATE_CHILDREN."

@@ -19,6 +19,7 @@ import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.core.properties.IProperty;
 import de.cau.cs.kieler.core.properties.Property;
+import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
 
 /**
@@ -304,6 +305,13 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.direction", Direction.UNDEFINED);
 
     /**
+     * How/in which layer long edge labels should be placed.
+     */
+    public static final IProperty<EdgeLabelPlacementStrategy> EDGE_LABEL_PLACEMENT_STRATEGY =
+            new Property<EdgeLabelPlacementStrategy>("de.cau.cs.kieler.edgeLabelPlacementStrategy",
+                    EdgeLabelPlacementStrategy.CENTER);
+
+    /**
      * What kind of edge routing style should be applied for the content of a parent node.
      * Algorithms may also set this option to single edges in order to mark them as splines. The
      * bend point list of edges with this option set to {@link EdgeRouting#SPLINES} must be
@@ -335,7 +343,7 @@ public final class LayoutOptions {
             "de.cau.cs.kieler.interactive", false);
 
     /**
-     * Determines the amount of space to be left around labels.
+     * Globally determines the amount of space to be left around labels.
      */
     public static final IProperty<Float> LABEL_SPACING = new Property<Float>(
             "de.cau.cs.kieler.labelSpacing", 3.0f, 0.0f);
@@ -360,6 +368,12 @@ public final class LayoutOptions {
     public static final IProperty<EnumSet<NodeLabelPlacement>> NODE_LABEL_PLACEMENT =
             new Property<EnumSet<NodeLabelPlacement>>("de.cau.cs.kieler.nodeLabelPlacement",
                     NodeLabelPlacement.fixed());
+
+    /**
+     * Determines the individual amount of space to be left around node labels of a single node.
+     */
+    public static final IProperty<Insets> NODE_LABEL_INSET = new Property<Insets>(
+            "de.cau.cs.kieler.nodeLabelInset", new Insets());
 
     /**
      * The constraints on port positions for the associated node.

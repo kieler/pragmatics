@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kgraph.rcp.feature"
       label="KIELER KGraph Editor"
-      version="0.5.0.qualifier"
+      version="0.6.0.qualifier"
       provider-name="Kiel University"
       plugin="de.cau.cs.kieler.core.kgraph.rcp">
 

@@ -210,7 +210,7 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
                         break;
                     
                     case CENTER:
-                        targetDummyEdgeIndex = edgeSegments.size() / 2;
+                        targetDummyEdgeIndex = getShallowestEdgeSegment(edgeSegments);
                         break;
                         
                     case TAIL:
@@ -242,6 +242,38 @@ public class CompoundGraphPreprocessor implements ILayoutProcessor {
         }
     }
     
+    /**
+     * Determines the index of the shallowest edge segment in a {@link CrossHierarchyEdge}. The
+     * shallowest segment is the last edge segement with type set to {@link PortType.OUTPUT}. If no
+     * such element exists, the first segment is the shallowest segment.
+     *
+     * @param edgeSegments
+     *            The sorted list of all edge segments in the {@link CrossHierarchyEdge}
+     * @return The index of the shallowest edge segment
+     */
+    private int getShallowestEdgeSegment(final List<CrossHierarchyEdge> edgeSegments) {
+        int result = -1;
+        int index = 0;
+
+        for (CrossHierarchyEdge crossHierarchyEdge : edgeSegments) {
+            if (crossHierarchyEdge.getType().equals(PortType.INPUT)) {
+                // We have an edge pointing downwards here.
+                // If this is the first segment we take this element.
+                // If there was a segement before, we take that one
+                result = index == 0 ? 0 : index - 1;
+                break;
+            } else if (index == edgeSegments.size() - 1) {
+                // If this is the last segment and we didn't find a descending edge,
+                // This edge is always ascending. Place the label at the last
+                // segment here.
+                result = index;
+            }
+            index += 1;
+        }
+
+        return result;
+    }
+
     
     ////////////////////////////////////////////////////////////////////////////////////////////
     // Inner Hierarchical Edge Segment Processing

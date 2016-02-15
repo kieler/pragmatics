@@ -234,6 +234,29 @@ public final class Properties {
                     SelfLoopPlacement.NORTH_STACKED);
 
     /**
+     * Defines a loose upper bound on the width of the MinWidth layerer.
+     */
+    public static final IProperty<Integer> UPPER_BOUND_ON_WIDTH = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.minWidthUpperBoundOnWidth", -1, 1);
+    /**
+     * Multiplied with Upper Bound On Width for defining an upper bound on the width of layers which
+     * haven't been determined yet, but whose maximum width had been (roughly) estimated by the
+     * MinWidth algorithm. Compensates for too high estimations.
+     */
+    public static final IProperty<Integer> UPPER_LAYER_ESTIMATION_SCALING_FACTOR =
+            new Property<Integer>(
+                    "de.cau.cs.kieler.klay.layered.minWidthUpperLayerEstimationScalingFactor", -1, 1);
+
+    /**
+     * Defines the added Scale for the upper layer Weight (wdithUp) in the condition that decides if
+     * a new layer should be used or not it Ranges from 0 to 1, with 0 being very similar to a
+     * one-node-layerer and 1 being the longest-path-layerer.
+     */
+    public static final IProperty<Float> UPPER_LAYER_SCALE = new Property<Float>(
+            "de.cau.cs.kieler.klay.layered.stretchWidthUpperLayerScale",
+            0.5f, 0.0f, 1.0f);
+
+    /**
      * Specifies the compaction strategy when using the
      * {@link de.cau.cs.kieler.klay.layered.p4nodes.bk.BKNodePlacer BKNodePlacer}.
      */
@@ -270,7 +293,25 @@ public final class Properties {
      */
     public static final IProperty<Boolean> COMPACT_COMPONENTS = new Property<Boolean>(
             "de.cau.cs.kieler.klay.layered.components.compact", false);
+    
+    /**
+     * Whether trees around high degree nodes should be placed in separate layers.
+     */
+    public static final IProperty<Boolean> HIGHDEGREENODE_TREATMENT = new Property<Boolean>(
+            "de.cau.cs.kieler.klay.layered.highDegreeNode.treatment", false);
 
+    /**
+     * Whether a node is considered to have a high degree.
+     */
+    public static final IProperty<Integer> HIGHDEGREENODE_THRESHOLD = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.highDegreeNode.threshold", 16);
+    
+    /** 
+     * The maximal height of a subtree for it to be moved to separate layers.
+     */
+    public static final IProperty<Integer> HIGHDEGREENODE_TREEHEIGHT = new Property<Integer>(
+            "de.cau.cs.kieler.klay.layered.highDegreeNode.treeHeight", 5);
+    
     // /////////////////////////////////////////////////////////////////////////////
     // CONSTRUCTOR
 

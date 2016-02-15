@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.kiml.graphiti.feature"
       label="KIELER Layout for Graphiti"
-      version="0.13.0.qualifier"
+      version="0.14.0.qualifier"
       provider-name="Kiel University"
       plugin="de.cau.cs.kieler.kiml.graphiti">
 

@@ -62,6 +62,8 @@ public enum IntermediateProcessorStrategy {
 
     // Before Phase 3
 
+    /** Moves trees of high degree nodes to separate layers. */
+    HIGH_DEGREE_NODE_LAYER_PROCESSOR,
     /** Remove partition constraint edges. */
     PARTITION_POSTPROCESSOR,
     /** Node-promotion for prettier graphs, especially algorithms like longest-path are prettified. */
@@ -158,6 +160,7 @@ public enum IntermediateProcessorStrategy {
      * 
      * @return the layout processor.
      */
+    // SUPPRESS CHECKSTYLE NEXT MethodLength
     public ILayoutProcessor create() {
         switch (this) {
 
@@ -203,6 +206,9 @@ public enum IntermediateProcessorStrategy {
 
         case HIERARCHICAL_PORT_POSITION_PROCESSOR:
             return new HierarchicalPortPositionProcessor();
+
+        case HIGH_DEGREE_NODE_LAYER_PROCESSOR:
+            return new HighDegreeNodeLayeringProcessor();
             
         case HORIZONTAL_COMPACTOR:
             return new HorizontalGraphCompactor();
