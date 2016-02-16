@@ -1,10 +1,10 @@
-fatJar
-======
+bundled_klay
+============
 Use one of these if you are using our KGraph format and want to include a single jar.
 
-klay-nightly-<timestamp>.jar
+klay-VERSION.jar
     Bundle containing layouters klay.force, klay.layered and klay.tree with KIELER dependencies, but no EMF or Google Guava.
-klay-nightly-<timestamp>-deps.jar
+klay-VERSION-deps.jar
     Same as above but with EMF and Google Guava.
 
 libs
