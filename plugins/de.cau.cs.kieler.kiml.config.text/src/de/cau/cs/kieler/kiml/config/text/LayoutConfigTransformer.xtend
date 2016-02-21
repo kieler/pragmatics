@@ -2,12 +2,13 @@ package de.cau.cs.kieler.kiml.config.text
 
 import com.google.common.collect.Lists
 import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.kiml.LayoutMetaDataService
-import de.cau.cs.kieler.kiml.LayoutOptionData
-import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig
 import java.util.List
 import org.eclipse.emf.ecore.resource.Resource
 import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier
+import org.eclipse.elk.core.LayoutConfigurator
+import org.eclipse.elk.core.service.LayoutMetaDataService
+import org.eclipse.elk.core.data.LayoutOptionData
+import org.eclipse.elk.graph.KGraphElement
 
 /**
  * Utility class for transformaing textually specified layout configurations
@@ -27,9 +28,9 @@ final class LayoutConfigTransformer {
 	 * @return a list of {@link VolatileLayoutConfig}s that represent 
 	 * 		   the configurations specified in the passed resource. 
 	 */
-    public static def List<VolatileLayoutConfig> from(Resource resource, Pair<String, Number>... additionalOptions) {
+    public static def List<LayoutConfigurator> from(Resource resource, Pair<String, Number>... additionalOptions) {
 
-        val List<VolatileLayoutConfig> volatileConfigs = Lists.newLinkedList
+        val List<LayoutConfigurator> volatileConfigs = Lists.newLinkedList
         val dataService = LayoutMetaDataService.getInstance()
 
         // these are no actual KNodes, we just use them as containers
@@ -50,7 +51,7 @@ final class LayoutConfigTransformer {
                     if (optData != null) {
                         val value = optData.parseValue(opt.value.toString)
                         if (value != null) {
-                            currentConfig.setValue(optData, value)
+                            currentConfig.configure(KGraphElement).setProperty(optData, value)
                         }
                     }
                 ]
@@ -62,7 +63,7 @@ final class LayoutConfigTransformer {
 
     def static transformConfig(KIdentifier cfg) {
 
-        val currentConfig = new VolatileLayoutConfig
+        val currentConfig = new LayoutConfigurator
 
         // add all textually specified layout options
         cfg.persistentEntries.forEach [ entry |
@@ -71,7 +72,7 @@ final class LayoutConfigTransformer {
             if (optData != null) {
                 val value = optData.parseValue(entry.value)
                 if (value != null) {
-                    currentConfig.setValue(optData, value)
+                    currentConfig.configure(KGraphElement).setProperty(optData, value)
                 }
             }
         ]

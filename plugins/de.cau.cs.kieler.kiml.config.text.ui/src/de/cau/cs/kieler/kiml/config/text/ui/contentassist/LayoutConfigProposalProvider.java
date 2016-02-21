@@ -13,6 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.config.text.ui.contentassist;
 
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.data.LayoutOptionData.Visibility;
+import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
@@ -25,13 +31,7 @@ import org.eclipse.xtext.util.Strings;
 import com.google.inject.Inject;
 
 import de.cau.cs.kieler.core.kgraph.PersistentEntry;
-import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutMetaDataService;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutOptionData.Type;
 import de.cau.cs.kieler.kiml.config.text.services.LayoutConfigGrammarAccess;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.LayoutOptionLabelProvider;
 
 /**
  * Basically copied from the
@@ -66,7 +66,7 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
         for (LayoutOptionData optionData : layoutServices.getOptionData()) {
             StyledString displayString =
                     new StyledString(optionData.toString(),
-                            (optionData.isAdvanced()) ? StyledString.COUNTER_STYLER : null);
+                            (optionData.getVisibility() == Visibility.ADVANCED) ? StyledString.COUNTER_STYLER : null);
             displayString.append(" (" + optionData.getId() + ")", StyledString.QUALIFIER_STYLER);
 
             String proposal =
@@ -124,8 +124,9 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
                     optionData = layoutServices.getOptionData("de.cau.cs.kieler." + annotationName);
                 }
                 
-                Type theType = (optionData != null) ? optionData.getType() : Type.UNDEFINED;
-                String proposal = null;
+				LayoutOptionData.Type theType = (optionData != null) ? optionData.getType()
+						: LayoutOptionData.Type.UNDEFINED;
+				String proposal = null;
 
                 switch (theType) {
                 // show the available choices for boolean and enumeration/

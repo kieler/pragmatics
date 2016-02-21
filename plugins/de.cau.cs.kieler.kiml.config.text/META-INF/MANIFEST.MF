@@ -15,10 +15,9 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  org.eclipse.xtext.util,
  org.antlr.runtime,
  org.eclipse.xtext.common.types,
- de.cau.cs.kieler.core,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.core.kgraph.text,
- de.cau.cs.kieler.kiml
+ org.eclipse.elk.core.service
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
