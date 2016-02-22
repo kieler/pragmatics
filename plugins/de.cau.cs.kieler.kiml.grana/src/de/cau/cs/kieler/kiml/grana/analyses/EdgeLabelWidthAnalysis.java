@@ -15,7 +15,8 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 
 import java.util.LinkedList;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
@@ -40,7 +41,7 @@ public class EdgeLabelWidthAnalysis implements IAnalysis {
      */
     @Override
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         
         progressMonitor.begin("Label analysis", 1);
 

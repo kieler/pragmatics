@@ -18,10 +18,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
@@ -31,8 +34,6 @@ import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -134,7 +135,7 @@ public class LayersAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode,
             final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Layers Analysis", 1);
 
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(

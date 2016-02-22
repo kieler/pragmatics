@@ -18,7 +18,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
@@ -45,7 +46,7 @@ public class LongestPathAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Longest path analysis", 1);
         
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(

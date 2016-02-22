@@ -17,9 +17,9 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
@@ -38,7 +38,7 @@ public class CompoundNodeChildCountAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Compound node child count analysis", 1);
         
         int minimum = Integer.MAX_VALUE;

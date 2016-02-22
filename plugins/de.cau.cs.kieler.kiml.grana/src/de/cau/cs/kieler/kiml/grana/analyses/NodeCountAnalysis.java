@@ -16,7 +16,8 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
@@ -42,7 +43,7 @@ public class NodeCountAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode,
             final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Number of nodes analysis", 1);
         
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(

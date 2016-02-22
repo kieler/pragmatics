@@ -18,10 +18,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
@@ -67,7 +68,7 @@ public class BendsAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode,
             final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Number of Bends analysis", 1);
         
         // The set of unique bend points

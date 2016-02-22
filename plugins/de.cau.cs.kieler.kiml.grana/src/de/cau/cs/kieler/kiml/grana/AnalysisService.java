@@ -27,14 +27,14 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.util.DefaultFactory;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.IFactory;
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.core.util.WrappedException;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.alg.DefaultFactory;
-import de.cau.cs.kieler.core.alg.IFactory;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.dependency.Dependency;
 import de.cau.cs.kieler.kiml.grana.dependency.DependencyGraph;
 
@@ -384,7 +384,7 @@ public final class AnalysisService {
      * @return the analysis result value
      */
     public Object analyze(final KNode graph, final String analysisId,
-            final IKielerProgressMonitor monitor, final AnalysisContext context) {
+            final IElkProgressMonitor monitor, final AnalysisContext context) {
         AnalysisData analysis = analysisIdMapping.get(analysisId);
         if (analysis != null) {
             Object result = context.getResult(analysisId);
@@ -407,7 +407,7 @@ public final class AnalysisService {
      * @return the analysis result value
      */
     public Object analyze(final KNode graph, final AnalysisData primalAnalysisData,
-            final IKielerProgressMonitor monitor, final AnalysisContext context) {
+            final IElkProgressMonitor monitor, final AnalysisContext context) {
         List<AnalysisData> analysesSequence = getExecutionOrder(primalAnalysisData);
         doAnalyze(graph, analysesSequence, monitor, context);
         return context.getResult(primalAnalysisData.getId());
@@ -423,7 +423,7 @@ public final class AnalysisService {
      * @return the analyses results
      */
     public AnalysisContext analyze(final KNode graph, final Collection<AnalysisData> analyses,
-            final IKielerProgressMonitor monitor) {
+            final IElkProgressMonitor monitor) {
         List<AnalysisData> analysesSequence = getExecutionOrder(analyses);
         AnalysisContext context = new AnalysisContext();
         doAnalyze(graph, analysesSequence, monitor, context);
@@ -440,7 +440,7 @@ public final class AnalysisService {
      * @return the analyses results
      */
     public AnalysisContext analyzePresorted(final KNode graph, final List<AnalysisData> analyses,
-            final IKielerProgressMonitor monitor) {
+            final IElkProgressMonitor monitor) {
         AnalysisContext context = new AnalysisContext();
         doAnalyze(graph, analyses, monitor, context);
         return context;
@@ -455,7 +455,7 @@ public final class AnalysisService {
      * @param resultCache the result cache with stored values
      */
     private void doAnalyze(final KNode graph, final List<AnalysisData> analysesSequence,
-            final IKielerProgressMonitor monitor, final AnalysisContext context) {
+            final IElkProgressMonitor monitor, final AnalysisContext context) {
         monitor.begin("Graph analyses", analysesSequence.size());
         
         // create a context object

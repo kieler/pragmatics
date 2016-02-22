@@ -13,7 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.grana;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 
 /**
@@ -40,6 +41,6 @@ public interface IAnalysis {
      * @return the analysis results
      */
     Object doAnalysis(KNode parentNode, AnalysisContext context,
-            IKielerProgressMonitor progressMonitor);
+            IElkProgressMonitor progressMonitor);
 
 }

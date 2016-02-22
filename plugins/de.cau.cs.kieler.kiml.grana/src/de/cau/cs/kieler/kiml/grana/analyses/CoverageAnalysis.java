@@ -16,9 +16,9 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 
 import java.awt.geom.Rectangle2D;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
@@ -45,7 +45,7 @@ public class CoverageAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         
         progressMonitor.begin("Node Coverage Analysis", 1);
 

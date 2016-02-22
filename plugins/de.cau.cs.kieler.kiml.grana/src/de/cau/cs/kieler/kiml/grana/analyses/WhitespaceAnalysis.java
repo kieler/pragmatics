@@ -19,13 +19,14 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -47,7 +48,7 @@ public class WhitespaceAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Whitespace Analysis", 1);
 

@@ -25,6 +25,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.service.util.ProgressMonitorAdapter;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl;
@@ -38,13 +43,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.ui.batch.wizard.BatchWizard;
-import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter;
 
 /**
  * The handler which is responsible for setting up an analysis batch run by launching the
@@ -96,7 +96,7 @@ public class BatchHandler extends AbstractHandler {
             try {
                 IRunnableWithProgress runnable = new IRunnableWithProgress() {
                     public void run(final IProgressMonitor uiMonitor) {
-                        IKielerProgressMonitor monitor = new ProgressMonitorAdapter(uiMonitor);
+                    	IElkProgressMonitor monitor = new ProgressMonitorAdapter(uiMonitor);
                         monitor.begin("Starting analysis batch", WORK_ALL);
                         try {
                             // create the batch

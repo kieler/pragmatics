@@ -21,21 +21,22 @@ import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.service.IDiagramLayoutConnector;
+import org.eclipse.elk.core.service.LayoutConfigurationManager;
+import org.eclipse.elk.core.service.LayoutConnectorsService;
+import org.eclipse.elk.core.service.LayoutMapping;
+import org.eclipse.elk.core.service.util.MonitoredOperation;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.gef.EditPart;
 import org.eclipse.ui.IEditorPart;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
-import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.LayoutManagersService;
-import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.service.LayoutMapping;
-import de.cau.cs.kieler.kiml.service.util.MonitoredOperation;
 
 /**
  * This class provides static methods to start an analysis of a given diagram.
@@ -48,6 +49,9 @@ public final class DiagramAnalyzer {
     /** the executor service for analysis operations. */
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor(); 
 
+    @Inject
+    private static LayoutConfigurationManager configManager;
+    
     /**
      * This class is an utility class and should not be instantiated.
      */
@@ -96,37 +100,45 @@ public final class DiagramAnalyzer {
     public static Map<String, Object> analyze(final IEditorPart editorPart,
             final EditPart editPart, final List<AnalysisData> analyses,
             final boolean progressBar) {
-        final IDiagramLayoutManager<?> manager = LayoutManagersService.getInstance().getManager(
-                editorPart, editPart);
+		final IDiagramLayoutConnector manager = LayoutConnectorsService.getInstance()
+				.getConnector(editorPart,editPart);
         if (manager == null) {
             return Collections.emptyMap();
         }
         
-        final Maybe<LayoutMapping<?>> layoutMapping = new Maybe<LayoutMapping<?>>();
+        final Maybe<LayoutMapping> layoutMapping = new Maybe<LayoutMapping>();
         final Maybe<Map<String, Object>> result = new Maybe<Map<String, Object>>();
+        
         final MonitoredOperation monitoredOperation = new MonitoredOperation(EXECUTOR_SERVICE) {
-            // first phase: build the graph
-            protected void preUIexec() {
+        	// first phase: build the graph
+        	@Override
+        	protected void preUIexec() {
                 layoutMapping.set(manager.buildLayoutGraph(editorPart, editPart));
             }
-
-            // second phase: analyze the graph
-            protected IStatus execute(final IKielerProgressMonitor monitor) {
-                monitor.begin("Diagram analysis", TOTAL_WORK);
+            
+        	// second phase: analyze the graph
+			@Override
+			protected IStatus execute(IElkProgressMonitor monitor) {
+				monitor.begin("Diagram analysis", TOTAL_WORK);
                 // configure the layout graph to set proper layout options
-                DiagramLayoutEngine.INSTANCE.getOptionManager().configure(layoutMapping.get(),
-                        monitor.subTask(CONFIGURE_WORK));
+                configManager.createConfigurator(layoutMapping.get());
+                
                 // perform analyses on the graph
-                KNode graph = layoutMapping.get().getLayoutGraph();
-                result.set(AnalysisService.getInstance().analyze(graph, analyses,
+                org.eclipse.elk.graph.KNode graph = layoutMapping.get().getLayoutGraph();
+                
+                // FIXME elkMigrate convert elk graph to kieler graph
+                KNode transformedGraph = null;
+                
+                result.set(AnalysisService.getInstance().analyze(transformedGraph, analyses,
                         monitor.subTask(ANALYSIS_WORK)).getResults());
                 if (monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
                 } else {
                     return Status.OK_STATUS;
                 }
-            }
-        };
+			}
+		};
+        
 
         if (progressBar) {
             // perform analysis with a progress bar

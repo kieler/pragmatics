@@ -19,6 +19,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.elk.core.LayoutConfigurator;
+import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -44,15 +50,7 @@ import org.eclipse.ui.dialogs.ListDialog;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.LayoutMetaDataService;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
-import de.cau.cs.kieler.kiml.ui.Messages;
+
 
 /**
  * This page allows to configure the layout that is applied to each graph.
@@ -242,10 +240,10 @@ public class LayoutConfigurationPage extends WizardPage {
      * 
      * @return a layout configurator
      */
-    public VolatileLayoutConfig getConfig() {
-        VolatileLayoutConfig config = new VolatileLayoutConfig();
+    public LayoutConfigurator getConfig() {
+    	LayoutConfigurator config = new LayoutConfigurator();
         for (Pair<LayoutOptionData, Object> pair : optionEntries) {
-            config.setValue(pair.getFirst(), pair.getSecond());
+        	config.configure(KGraphElement.class).setProperty(pair.getFirst(), pair.getSecond());
         }
         return config;
     }

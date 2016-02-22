@@ -20,6 +20,12 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.elk.core.service.DiagramLayoutEngine;
+import org.eclipse.elk.core.service.IDiagramLayoutConnector;
+import org.eclipse.elk.core.service.LayoutConnectorsService;
+import org.eclipse.elk.core.service.LayoutMapping;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -28,13 +34,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.LayoutManagersService;
-import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.service.LayoutMapping;
 
 /**
  * The KGraph provider that retrieves a KGraph by opening a diagram file in an
@@ -61,14 +61,14 @@ public class EditorKGraphProvider implements IKGraphProvider<IPath> {
      * {@inheritDoc}
      */
     public KNode getKGraph(final IPath parameter,
-            final IKielerProgressMonitor monitor) {
+            final IElkProgressMonitor monitor) {
         monitor.begin("Retrieving KGraph from " + parameter.toString(), 1);
         
         // get the diagram file
         final IFile diagramFile =
                 ResourcesPlugin.getWorkspace().getRoot().getFile(parameter);
         final Maybe<Throwable> wrappedException = new Maybe<Throwable>();
-        final Maybe<KNode> graph = new Maybe<KNode>();
+        final Maybe<org.eclipse.elk.graph.KNode> graph = new Maybe<>();
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 IWorkbenchPage page =
@@ -102,9 +102,8 @@ public class EditorKGraphProvider implements IKGraphProvider<IPath> {
                 }
                 
                 // get the layout manager for the editor
-                IDiagramLayoutManager<?> layoutManager =
-                        LayoutManagersService.getInstance().getManager(
-                                editorPart, null);
+                IDiagramLayoutConnector layoutManager = 
+                		LayoutConnectorsService.getInstance().getConnector(editorPart, null);
                 if (layoutManager == null) {
                     if (!initialEditors.contains(editorPart)) {
                         page.closeEditor(editorPart, false);
@@ -114,13 +113,12 @@ public class EditorKGraphProvider implements IKGraphProvider<IPath> {
                 }
                 
                 // build the graph
-                LayoutMapping<?> mapping = layoutManager.buildLayoutGraph(editorPart, null);
+                LayoutMapping mapping = layoutManager.buildLayoutGraph(editorPart, null);
                 graph.set(mapping.getLayoutGraph());
                 
                 // layout if the option is set
                 if (layoutBeforeAnalysis) {
-                    DiagramLayoutEngine layoutEngine = DiagramLayoutEngine.INSTANCE;
-                    IStatus status = layoutEngine.layout(mapping, monitor.subTask(1));
+                    IStatus status = new DiagramLayoutEngine().layout(mapping, monitor.subTask(1));
                     if (!status.isOK()) {
                         if (!initialEditors.contains(editorPart)) {
                             page.closeEditor(editorPart, false);
@@ -142,7 +140,11 @@ public class EditorKGraphProvider implements IKGraphProvider<IPath> {
         } else if (wrappedException.get() != null) {
             throw new RuntimeException(wrappedException.get());
         }
-        return graph.get();
+        
+        // FIXME elkMigrate convert graph
+        // graph.get()
+        KNode transformedNode = null;
+        return transformedNode;
     }
 
     /**

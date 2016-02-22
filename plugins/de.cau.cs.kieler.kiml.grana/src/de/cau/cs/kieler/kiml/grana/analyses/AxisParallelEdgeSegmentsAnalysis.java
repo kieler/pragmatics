@@ -16,24 +16,24 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.EdgeRouting;
+import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.ImmutableSet;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.EdgeRouting;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -78,7 +78,7 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
 
         // check that the precondition is met
         KLayoutData ld = parentNode.getData(KLayoutData.class);

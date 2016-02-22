@@ -21,24 +21,25 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.EdgeRouting;
+import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.EdgeRouting;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -62,7 +63,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Hyperedge crossings analysis", 1);
         
         // Collect all hyperedge segments, merge them and count crossings
@@ -121,7 +122,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                 // transform spline control points to approximated bend points
                 if (edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.EDGE_ROUTING)
                         == EdgeRouting.SPLINES) {
-                    chain = KielerMath.approximateBezierSpline(chain);
+                    chain = ElkMath.approximateBezierSpline(chain);
                 }
                 
                 chains.add(chain);

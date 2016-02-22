@@ -15,7 +15,8 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 
 /**
@@ -39,7 +40,7 @@ public interface IBatchJob<T> {
      * @throws Exception
      *             any exception
      */
-    BatchJobResult<T> execute(List<AnalysisData> analyses, IKielerProgressMonitor monitor)
+    BatchJobResult<T> execute(List<AnalysisData> analyses, IElkProgressMonitor monitor)
             throws Exception;
 
     /**

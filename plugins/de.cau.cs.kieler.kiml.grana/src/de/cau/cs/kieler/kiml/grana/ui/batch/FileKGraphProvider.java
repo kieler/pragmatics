@@ -24,6 +24,18 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.elk.core.IGraphLayoutEngine;
+import org.eclipse.elk.core.LayoutConfigurator;
+import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.service.DiagramLayoutEngine;
+import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
+import org.eclipse.elk.core.service.IDiagramLayoutConnector;
+import org.eclipse.elk.core.service.LayoutConfigurationManager;
+import org.eclipse.elk.core.service.LayoutConnectorsService;
+import org.eclipse.elk.core.service.LayoutMapping;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Maybe;
+import org.eclipse.elk.core.util.WrappedException;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -38,26 +50,15 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 
-import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kgraph.KLabel;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.config.ILayoutConfig;
-import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.service.LayoutManagersService;
-import de.cau.cs.kieler.kiml.service.LayoutMapping;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The KGraph provider that derives a graph from a file. It uses GMF services to open a
@@ -77,14 +78,20 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
     /** whether to measure the execution times. */
     private boolean executionTimeAnalysis;
     /** the layout configurator to apply to each graph. */
-    private ILayoutConfig configurator;
+    private Parameters parameters;
+    /**
+     * @Deprecated use {@link #parameters} TODO elkMigrate
+     */
+    private LayoutConfigurator configurator;
+    
+    @Inject LayoutConfigurationManager configManager;
     
     private static final int NO_EXEC_TIME_RUNS = 5;
     
     /**
      * {@inheritDoc}
      */
-    public KNode getKGraph(final IPath parameter, final IKielerProgressMonitor monitor) {
+    public KNode getKGraph(final IPath parameter, final IElkProgressMonitor monitor) {
         monitor.begin("Retrieving KGraph from " + parameter.toString(), 2);
         
         // try to load the file as a kgraph 
@@ -136,8 +143,9 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
             if (graph == null) {
                 graph = (KNode) content;
             }
-            // assure that properties, stored in the model file, are loaded properly 
-            KimlUtil.loadDataElements(graph, true);
+            // assure that properties, stored in the model file, are loaded properly
+            // FIXME elkMigrate
+//            KimlUtil.loadDataElements(graph, true);
             
             if (layoutBeforeAnalysis) {
                 if (configurator != null) {
@@ -156,19 +164,19 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                     for (int j = 0; j < NO_EXEC_TIME_RUNS; j++) {
                         System.gc();
                         
-                        IKielerProgressMonitor recLayoutMonitor = monitor.subTask(1);
+                        IElkProgressMonitor recLayoutMonitor = monitor.subTask(1);
                         layoutEngine.layout(graph, recLayoutMonitor);
 
                         if (!recLayoutMonitor.getSubMonitors().isEmpty()) {
                             // we are interested in the top level progress monitor of the recursive
                             // layout engine
-                            IKielerProgressMonitor layoutMonitor =
+                        	IElkProgressMonitor layoutMonitor =
                                     recLayoutMonitor.getSubMonitors().get(0);
                             double time = layoutMonitor.getExecutionTime();
                             
                             if (time < minTime) {
                                 minTime = time;
-                                for (IKielerProgressMonitor task : layoutMonitor.getSubMonitors()) {
+                                for (IElkProgressMonitor task : layoutMonitor.getSubMonitors()) {
                                     minPhaseTimes.put(task.getTaskName(), task.getExecutionTime());
                                 }
                             }
@@ -221,9 +229,13 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
      * 
      * @param configuratorOption the layout configurator
      */
-    public void setLayoutConfigurator(final ILayoutConfig configuratorOption) {
+    public void setLayoutConfigurator(final LayoutConfigurator configuratorOption) {
         this.configurator = configuratorOption;
     }
+    
+    public void setLayoutParameters(Parameters parameters) {
+		this.parameters = parameters;
+	}
     
     /**
      * Retrieve a graph from a GMF diagram.
@@ -234,7 +246,7 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
      * @return the contained graph
      */
     private KNode retrieveGmfGraph(final Diagram diagram, final ResourceSet resourceSet,
-            final IKielerProgressMonitor monitor) {
+            final IElkProgressMonitor monitor) {
         monitor.begin("Retrieve KGraph from GMF diagram", 2);
         // create a diagram edit part
         TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain(resourceSet);
@@ -256,18 +268,19 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
         monitor.worked(1);
         
         // retrieve a kgraph representation of the diagram
-        IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance()
-                .getManager(null, editPart.get());
+        IDiagramLayoutConnector layoutManager = LayoutConnectorsService.getInstance()
+                .getConnector(null, editPart.get());
         if (layoutManager == null) {
             throw new RuntimeException("No layout manager could be retrieved for the selected file.");
         }
-        LayoutMapping<?> mapping = layoutManager.buildLayoutGraph(null, editPart.get());
-        KNode inputGraph = mapping.getLayoutGraph();
+        LayoutMapping mapping = layoutManager.buildLayoutGraph(null, editPart.get());
+        org.eclipse.elk.graph.KNode inputGraph = mapping.getLayoutGraph();
         if (layoutBeforeAnalysis) {
             if (configurator != null) {
                 mapping.getLayoutConfigs().add(configurator);
+                configManager.createConfigurator(mapping).c
             }
-            IStatus status = DiagramLayoutEngine.INSTANCE.layout(mapping, monitor.subTask(1));
+            IStatus status = new DiagramLayoutEngine().layout(mapping, monitor.subTask(1));
             if (!status.isOK()) {
                 StatusManager.getManager().handle(status);
             }
@@ -276,14 +289,14 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
         monitor.done();
         return inputGraph;
     }
-    
+        
     /**
      * Configure all elements contained in the given node.
      * 
      * @param node a node from the layout graph
      * @param config a layout configurator
      */
-    private void recursiveConf(final KNode node, final ILayoutConfig config) {
+    private void recursiveConf(final KNode node, final LayoutConfigurator config) {
         // configure the node and its label
         configure(node, config);
         for (KLabel label : node.getLabels()) {
@@ -318,7 +331,7 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
      * @param graphElement a graph element
      * @param config a layout configurator
      */
-    private void configure(final KGraphElement graphElement, final ILayoutConfig config) {
+    private void configure(final KGraphElement graphElement, final LayoutConfigurator config) {
         // create a layout context for the current graph element
         LayoutContext context = new LayoutContext();
         context.setProperty(LayoutContext.GRAPH_ELEM, graphElement);

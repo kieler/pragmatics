@@ -16,7 +16,8 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
@@ -40,7 +41,7 @@ public class EdgeLabelCountAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge label count analysis", 1);
         
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(

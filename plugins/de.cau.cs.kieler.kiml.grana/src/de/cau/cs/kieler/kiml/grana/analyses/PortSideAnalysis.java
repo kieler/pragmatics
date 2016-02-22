@@ -16,16 +16,17 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortSide;
 import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
@@ -42,7 +43,7 @@ public class PortSideAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode,
             final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Port side analysis", 1);
         
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(

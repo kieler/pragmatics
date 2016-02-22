@@ -18,18 +18,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KielerMath;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
@@ -84,7 +85,7 @@ public class StressAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Stress analysis", 1);
 
         final boolean hierarchy =
@@ -310,10 +311,10 @@ public class StressAnalysis implements IAnalysis {
 
         double centerToCenterDist = u.distance(v);
 
-        KVector uToBorder = KielerMath.clipVector(v.clone().sub(u), ul.getWidth(), ul.getHeight());
+        KVector uToBorder = ElkMath.clipVector(v.clone().sub(u), ul.getWidth(), ul.getHeight());
         double uToBorderDist = uToBorder.length();
 
-        KVector vToBorder = KielerMath.clipVector(u.clone().sub(v), vl.getWidth(), vl.getHeight());
+        KVector vToBorder = ElkMath.clipVector(u.clone().sub(v), vl.getWidth(), vl.getHeight());
         double vToBorderDist = vToBorder.length();
 
         double borderToBorderDist = centerToCenterDist - uToBorderDist - vToBorderDist;

@@ -16,11 +16,11 @@ package de.cau.cs.kieler.kiml.grana.util;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.util.Pair;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.LayoutMetaDataService;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;

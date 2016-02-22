@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.io.OutputStream;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 
 /**
  * The interface for all classes which implement a serializer for batch results.
@@ -38,6 +38,6 @@ public interface IBatchResultSerializer {
      *             any kind of exception
      */
     void serialize(final OutputStream outputStream,
-            final BatchResult batchResult, final IKielerProgressMonitor monitor)
+            final BatchResult batchResult, final IElkProgressMonitor monitor)
             throws Exception;
 }

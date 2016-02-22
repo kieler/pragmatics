@@ -20,9 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import com.google.common.collect.Iterables;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.core.kgraph.KEdge;
 import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
@@ -61,7 +62,7 @@ public class DirectedCycleApproximationAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Approximate directed cycle count", 1);
         
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
