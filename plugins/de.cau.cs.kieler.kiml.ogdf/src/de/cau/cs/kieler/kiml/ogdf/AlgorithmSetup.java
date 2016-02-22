@@ -17,14 +17,17 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
-import net.ogdf.bin.OgdfServer;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.UnsupportedGraphException;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.UnsupportedGraphException;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.EdgeRouting;
+import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
+
 import de.cau.cs.kieler.kiml.ogdf.options.AcyclicSubgraphModule;
 import de.cau.cs.kieler.kiml.ogdf.options.AttractionFormula;
 import de.cau.cs.kieler.kiml.ogdf.options.Costs;
@@ -38,9 +41,7 @@ import de.cau.cs.kieler.kiml.ogdf.options.Orientation;
 import de.cau.cs.kieler.kiml.ogdf.options.QualityVsSpeed;
 import de.cau.cs.kieler.kiml.ogdf.options.RankingModule;
 import de.cau.cs.kieler.kiml.ogdf.options.Speed;
-import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.EdgeRouting;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import net.ogdf.bin.OgdfServer;
 
 /**
  * Setup for OGDF layout algorithm configurations.
@@ -349,7 +350,7 @@ public final class AlgorithmSetup {
             boolean transpose = parentLayout.getProperty(TRANSPOSE);
             comm.addOption(OgdfServer.OPTION_TRANSPOSE, transpose);
             // arrange connected components
-            Boolean arrangeCCs = parentLayout.getProperty(LayoutOptions.SEPARATE_CC);
+            Boolean arrangeCCs = parentLayout.getProperty(LayoutOptions.SEPARATE_CONN_COMP);
             comm.addOption(OgdfServer.OPTION_ARRANGE_CC,
                     arrangeCCs != null && arrangeCCs.booleanValue());
             // minimal distance of connected components

@@ -1,0 +1,813 @@
+/*******************************************************************************
+ * Copyright (c) 2016 Kiel University and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Kiel University - initial API and implementation
+ *******************************************************************************/
+ 
+/**
+ * Declarations for the OGDF layouters and properties.
+ */
+package de.cau.cs.kieler.kiml.ogdf
+
+import de.cau.cs.kieler.kiml.ogdf.OgdfLayoutProvider
+import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.EdgeRouting
+
+bundle {
+    label = "OGDF"
+    class = options.OgdfOptions 
+}
+ 
+category planar { 
+    label = "Planar"
+    description =  
+        "Algorithms that require a planar or upward planar graph. Most of these algorithms are 
+        theoretically interesting, but not practically usable."
+}
+
+algorithm sugiyama(OgdfLayoutProvider#SUGIYAMA) {
+    label = "Sugiyama"
+    description = 
+        "Sugiyama&apos;s layout algorithm, based on Gansner et al. 1993 and Sander 1996. 
+        This method emphasizes the direction of edges by reversing as few edges as possible. 
+        Nodes are arranged in horizontal layers."
+    category = org.eclipse.elk.layered
+    features = multi_edges, edge_labels, disconnected
+    preview = images/sugiyama.png 
+    supports org.eclipse.elk.spacing = 16
+    supports org.eclipse.elk.borderSpacing = 15
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports org.eclipse.elk.randomSeed = 1
+    supports fails
+    supports runs = 15 
+    supports transpose
+    supports org.eclipse.elk.separateConnComp = false
+    supports minDistCC
+    supports minDistLevel
+    supports org.eclipse.elk.aspectRatio = 1.3f
+    supports org.eclipse.elk.sizeConstraint
+    supports org.eclipse.elk.sizeOptions
+    supports placeLabels
+    supports acyclicSubgraph
+    supports ranking
+    supports width
+    supports crossMin
+    supports adaptPortPositions
+}
+
+algorithm planarization(OgdfLayoutProvider#PLANARIZATION) {
+    label = "Planarization"
+    description = 
+        "A planarization-based algorithm based on Gutwenger and Mutzel '04. The main emphasis is put 
+        on the minimization of the number of edge crossings. Edges are routed orthogonally, 
+        which is achieved through the &quot;topology-shape-metrics&quot; 
+        approach by Batini, Nardelli and Tamassia '86. The algorithm also contains special treatment 
+        for mixed-upward drawings in order to support UML class diagrams, where generalizations 
+        need to be handled differently from other edge types."
+    category = org.eclipse.elk.orthogonal
+    preview = images/planarization.png
+    features = multi_edges, edge_labels, disconnected
+    supports org.eclipse.elk.direction = Direction.UP
+    supports org.eclipse.elk.spacing = 20
+    supports org.eclipse.elk.randomSeed = 1
+    supports org.eclipse.elk.borderSpacing = 15
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports org.eclipse.elk.aspectRatio = 1.3f
+    supports preprocessCliques
+    supports minCliqueSize
+    supports costAssoc
+    supports costGen
+    supports org.eclipse.elk.sizeConstraint
+    supports org.eclipse.elk.sizeOptions
+    supports placeLabels
+    supports runs
+    supports edgeInsertion
+    supports embedder
+    supports adaptPortPositions
+} 
+
+
+algorithm fmmm(OgdfLayoutProvider#FMMM) {
+    label = "FMMM"
+    description = 
+        "The fast multipole multilevel layout algorithm, after Hachul and Juenger 2004. 
+        This force-directed drawing method is suited also for very large graphs. 
+        It is based on a combination of an efficient multilevel scheme and a strategy for approximating 
+        the repusive forces in the system by rapidly evaluating potential fields."
+    category = org.eclipse.elk.force
+    preview = images/fmmm.png
+    features = multi_edges, edge_labels, disconnected
+    supports qualityVsSpeed
+    supports newInitialPlacement
+    supports org.eclipse.elk.borderSpacing = 15
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports org.eclipse.elk.sizeConstraint
+    supports org.eclipse.elk.sizeOptions
+    supports placeLabels
+    supports adaptPortPositions
+}
+
+algorithm davidsonHarel(OgdfLayoutProvider#DAVIDSON_HAREL) {
+    label = "Davidson-Harel"
+    description = 
+        "Force-based algorithm after Davidson and Harel 1996, applying the paradigm of 
+        simulated annealing. This is applicable for undirected graphs with straight-line connections."
+    category = org.eclipse.elk.force
+    preview = images/davidson_harel.png
+    features = multi_edges, edge_labels, disconnected
+    supports org.eclipse.elk.spacing = 80
+    supports org.eclipse.elk.borderSpacing = 15
+    supports costs
+    supports speed
+    supports labelMarginDistance
+    supports labelEdgeDistance
+    supports org.eclipse.elk.sizeConstraint
+    supports org.eclipse.elk.sizeOptions
+    supports placeLabels
+    supports adaptPortPositions
+}
+
+algorithm fruchtermanReingold(OgdfLayoutProvider#FRUCHTERMAN_REINGOLD) {
+    label = "Fruchterman-Reingold"
+    description = 
+        "Force-based algorithm after Fruchterman and Reingold 1991. This is a modification of the 
+        spring-embedder model of Eades for undirected graphs with straight edges. The heuristic 
+        strives for uniform edge lengths, and is developed in analogy to forces in natural systems."
+    category = org.eclipse.elk.force
+    preview = images/fruchterman_reingold.png
+    features = multi_edges, edge_labels, disconnected
+    supports org.eclipse.elk.borderSpacing = 15
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports iterations = 400
+    supports fineness
+    supports noise
+    supports org.eclipse.elk.spacing = 20
+    supports org.eclipse.elk.aspectRatio = 1.3f
+    supports org.eclipse.elk.sizeConstraint 
+    supports org.eclipse.elk.sizeOptions
+    supports placeLabels
+    supports scaleFunctionFactor
+    supports adaptPortPositions
+}
+
+
+algorithm gem(OgdfLayoutProvider#GEM) {
+    label = "GEM"
+    description = "Energy-based &quot;Graph Embedder&quot; algorithm after Frick, Ludwig, 
+        and Mehldau 1995. The method is based on the spring-embedder paradigm and contains 
+        several heuristics to improve the convergence, including local temperatures, gravitational 
+        forces, and the detection of rotations and oscillations."
+    category = org.eclipse.elk.force
+    preview = images/gem.png
+    features = multi_edges, edge_labels, disconnected
+    supports org.eclipse.elk.borderSpacing
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports org.eclipse.elk.aspectRatio = 1.3f
+    supports org.eclipse.elk.spacing = 30
+    supports numberOfRounds
+    supports minimalTemperature
+    supports initialTemperature
+    supports gravitationalConstant
+    supports maximalDisturbance
+    supports rotationAngle
+    supports oscillationAngle
+    supports rotationSensitivity
+    supports oscillationSensitivity
+    supports attractionFormula
+    supports minDistCC
+    supports org.eclipse.elk.sizeConstraint
+    supports org.eclipse.elk.sizeOptions
+    supports placeLabels
+    supports adaptPortPositions
+}
+
+algorithm circular(OgdfLayoutProvider#CIRCULAR) {
+    label = "Circular"
+    description=
+        "Circular layout after Dogrusoz, Madden and Madden 1997. The layouts emphasize natural 
+        group structures inherent in a graph&apos;s topology, which is well suited for ring and star 
+        network topologies. The nodes are clustered by biconnectivity or node degree and are 
+        positioned on radiating circles."
+    category = org.eclipse.elk.circle
+    preview = images/circular.png
+    features = multi_edges, edge_labels, disconnected
+    supports org.eclipse.elk.borderSpacing = 15
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports org.eclipse.elk.spacing = 20
+    supports subtreeDistance
+    supports minDistLevel
+    supports minDistCC
+    supports org.eclipse.elk.aspectRatio = 1.3f
+    supports org.eclipse.elk.sizeConstraint
+    supports org.eclipse.elk.sizeOptions
+    supports placeLabels
+    supports adaptPortPositions
+}
+
+algorithm tree(OgdfLayoutProvider#TREE) {
+    label = "Tree"    
+    description = 
+        "Specialized algorithm for trees, after Buchheim, Juenger and Leipert '06. 
+        The branches of the tree are arranged in a given direction."
+    category = org.eclipse.elk.tree
+    preview = images/tree.png
+    features = edge_labels, disconnected
+    supports org.eclipse.elk.borderSpacing = 15
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports org.eclipse.elk.direction = Direction.RIGHT
+    supports org.eclipse.elk.edgeRouting = EdgeRouting.POLYLINE
+    supports org.eclipse.elk.spacing=  20
+    supports minDistLevel
+    supports subtreeDistance
+    supports minDistCC
+    supports org.eclipse.elk.sizeConstraint
+    supports org.eclipse.elk.sizeOptions
+    supports placeLabels
+    supports adaptPortPositions
+}
+
+algorithm radialTree(OgdfLayoutProvider#RADIAL_TREE) {
+    label = "Radial Tree"
+    description="Specialized algorithm for trees. Nodes are arranged radially around the root."
+    category = org.eclipse.elk.tree
+    preview = images/radial_tree.png
+    features = edge_labels
+    supports org.eclipse.elk.spacing = 50
+    supports org.eclipse.elk.borderSpacing = 15
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports minDistCC = 1.0f
+    supports org.eclipse.elk.sizeConstraint
+    supports org.eclipse.elk.sizeOptions
+    supports placeLabels
+    supports adaptPortPositions
+}
+
+algorithm upwardPlanarization(OgdfLayoutProvider#UPWARD_PLANARIZATION) {
+    label = "Upward-Planarization"
+    description="Upward planarization layout by Chimani, Gutwenger, Mutzel and Wong '10. While usual layer-based methods first determine a layering and then minimize crossings, this approach aims at directly computing an upward planar representation (UPR), where edge crossings are represented by dummy vertices. A layering is then derived from this UPR, which also induces a node order in each layer. This leads to significantly less edge crossings compared to former methods, while the overall edge direction is still preserved. The input graph must be connected."
+    category = org.eclipse.elk.layered
+    preview = images/upward.png
+    features = multi_edges, edge_labels
+    supports org.eclipse.elk.borderSpacing = 15
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports minDistLevel = 16 
+    supports org.eclipse.elk.spacing = 16
+    supports org.eclipse.elk.sizeConstraint
+    supports org.eclipse.elk.sizeOptions
+    supports placeLabels
+    supports runs
+    supports org.eclipse.elk.randomSeed = 1
+    supports adaptPortPositions
+}
+
+algorithm fastMultipole(OgdfLayoutProvider#FAST_MULTIPOLE) {
+    label = "Fast Multipole"
+    description="The Fast-Multipole-Embedder layout algorithm."
+    category = org.eclipse.elk.force
+    preview = images/fast_mp.png
+    features = multi_edges, edge_labels, disconnected
+    supports multipolePrec
+    supports iterations = 100
+    supports org.eclipse.elk.interactive
+    supports org.eclipse.elk.randomSeed = 1
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports adaptPortPositions
+}
+
+algorithm fastMultipoleMultilevel(OgdfLayoutProvider#FAST_MULTIPOLE_MULTILEVEL) {
+    label = "Fast Multipole Multilevel"
+    description="The Fast-Multipole-Multilevel-Embedder layout algorithm."
+    category = org.eclipse.elk.force
+    preview = images/fast_mp_ml.png
+    features = multi_edges, edge_labels, disconnected
+    supports org.eclipse.elk.randomSeed = 1
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports adaptPortPositions
+}
+
+algorithm kamadaKawai(OgdfLayoutProvider#KAMADA_KAWAI) {
+    label = "Kamada-Kawai"
+    description = 
+        "The spring-embedder layout algorithm after Kamada and Kawai 1989. The input graph 
+        must be connected."
+    category = org.eclipse.elk.force
+    preview = images/kamada_kawai.png
+    features = multi_edges, edge_labels
+    supports org.eclipse.elk.spacing = 30
+    supports stopTolerance
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports adaptPortPositions
+}
+
+algorithm stressMajorization(OgdfLayoutProvider#STRESS_MAJORIZATION) {
+    label = "Stress Majorization"
+    description = 
+        "Stress majorization layout that allows radial constraints based on shortest path distances. 
+        The implementation is based on Brandes and Pich 2009. The input graph must be connected."
+    category = org.eclipse.elk.force
+    preview = images/stress_majorization.png
+    features = multi_edges, edge_labels
+    supports iterations = 300
+    supports stopTolerance
+    supports upward
+    supports radial
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports adaptPortPositions
+}
+
+algorithm dominance(OgdfLayoutProvider#DOMINANCE) {
+    label = "Dominance"
+    description = "Dominance layout method. The input graph must be connected."
+    category = planar
+    preview = images/dominance.png
+    features = multi_edges, edge_labels 
+    supports org.eclipse.elk.spacing = 10
+    supports org.eclipse.elk.randomSeed = 1
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports runs
+    supports adaptPortPositions
+}
+
+algorithm visibility(OgdfLayoutProvider#VISIBILITY) {
+    label = "Visibility"
+    description = "Visibility layout method. The input graph must be connected."
+    category = planar
+    preview = images/visibility.png
+    features = multi_edges, edge_labels
+    supports org.eclipse.elk.spacing = 10
+    supports org.eclipse.elk.randomSeed = 1
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports runs
+    supports adaptPortPositions
+}
+
+algorithm fraysseixPachPollack(OgdfLayoutProvider#FRAYSSEIX_PACH_POLLACK) {
+    label = "Fraysseix-Pach-Pollack"
+    description = 
+        "The layout algorithm by de Fraysseix, Pach, and Pollack 1990. This algorithm draws 
+        a planar graph straight-line without crossings. The algorithm runs in three phases. 
+        In the ﬁrst phase, the graph is augmented by adding new artiﬁcial edges to get a triangulated 
+        plane graph. Then, a so-called shelling order (also called canonical ordering) for 
+        triangulated planar graphs is computed. In the third phase the vertices are placed 
+        incrementally according to the shelling order. The input graph must be planar and connected 
+        and must not contain multi-edges."
+    category = planar
+    preview = images/fpp.png
+    features = edge_labels
+    supports org.eclipse.elk.spacing = 30
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports adaptPortPositions
+}
+
+algorithm schnyder(OgdfLayoutProvider#SCHNYDER) {
+    label = "Schnyder"
+    description = 
+        "The layout algorithm by Schnyder 1990. This algorithm draws a planar graph straight-line 
+        without crossings. The algorithm runs in three phases. In the ﬁrst phase, the graph 
+        is augmented by adding new artiﬁcial edges to get a triangulated plane graph. Then, 
+        a partition of the set of interior edges in three trees (also called Schnyder trees) with 
+        special orientation properties is derived. In the third step, the actual coordinates 
+        are computed. The input graph must be planar and connected and must not contain multi-edges."
+    category = planar
+    preview = images/schnyder.png
+    features = edge_labels
+    supports org.eclipse.elk.spacing = 30
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+}
+
+algorithm canonicalOrder(OgdfLayoutProvider#CANONICAL_ORDER) {
+    label = "Canonical Order"
+    description = 
+        "A straight-line drawing algorithm for planar graphs after Kant 1996. 
+        The algorithm runs in several phases. In the first phase, the graph is augmented by 
+        adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). 
+        Then, a shelling order of the the resulting graph is computed. The input graph must be 
+        planar and must not contain multi-edges."
+    category = planar
+    preview = images/canonical_order.png
+    features = edge_labels, disconnected
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports baseRatio
+    supports embedder
+    supports org.eclipse.elk.spacing = 30
+    supports adaptPortPositions
+}
+
+algorithm mixedModel(OgdfLayoutProvider#MIXED_MODEL) {
+    label = "Mixed Model"
+    description = 
+        "The Mixed-Model layout algorithm by Gutwenger and Mutzel 1998, 
+        which is based upon ideas by Kant. In particular, Kant&apos;s algorithm has been changed 
+        concerning the placement phase and the vertex boxes, and it has been generalized to work 
+        for connected planar graphs. This algorithm draws a d-planar graph on a grid such that 
+        every edge has at most three bends and the minimum angle between two edges is
+        at least 2/d radians. The algorithm runs in several phases. In the preprocessing phase, 
+        vertices with degree one are temporarily deleted and the graph is being augmented to 
+        a biconnected planar graph using a planar biconnectivity augmentation module. 
+        Then, a shelling order for biconnected plane graphs is computed. In the next step, 
+        boxes around each vertex are defined in such a way that the incident edges appear 
+        regularly along the box. Finally, the coordinates of the vertex boxes are computed 
+        taking the degree-one vertices into account. The input graph must not contain multi-edges."
+    category = org.eclipse.elk.orthogonal
+    preview = images/mixed_model.png
+    features = edge_labels, disconnected
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports org.eclipse.elk.spacing = 30
+    supports runs
+    supports org.eclipse.elk.randomSeed = 1
+    supports edgeInsertion
+    supports embedder
+    supports crossingBeautifier
+    supports org.eclipse.elk.aspectRatio = 1.3f
+    supports adaptPortPositions
+}
+
+algorithm convexGrid(OgdfLayoutProvider#CONVEX_GRID) {
+    label = "Convex Grid"
+    description = 
+        "A straight-line drawing algorithm for planar graphs after Chrobak and Kant 1997. 
+        The algorithm runs in several phases. In the first phase, the graph is augmented by adding 
+        edges to achieve a certain connectivity (e.g., biconnected or triconnected). 
+        Then, a shelling order of the the resulting graph is computed. The input graph must be 
+        planar and must not contain multi-edges."
+    category = planar
+    preview = images/convex_grid.png
+    features = edge_labels, disconnected
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports baseRatio
+    supports embedder
+    supports org.eclipse.elk.spacing = 30
+    supports adaptPortPositions
+}
+
+algorithm balloon(OgdfLayoutProvider#BALLOON) {
+    label = "Balloon"
+    preview = images/balloon.png
+    features = multi_edges, edge_labels, disconnected
+    supports placeLabels
+    supports labelEdgeDistance
+    supports labelMarginDistance
+    supports adaptPortPositions
+}
+
+//------- LAYOUT OPTIONS  
+
+advanced property iterations: int {
+    label = "Iterations"
+    description = "The number of iterations performed by the algorithm"
+    targets = parents
+}
+
+property labelMarginDistance: float {
+    label = "Label Distance"
+    description = "Distance of edge labels to the nodes"
+    default = 15
+    targets = parents
+    
+}
+
+property labelEdgeDistance: float {
+    label = "Label Spacing"
+    description = "Spacing of edge labels to the edge"
+    default = 15
+    targets = parents
+    requires placeLabels == true
+}
+
+advanced property costs: Costs {
+    label = "Costs"
+    description = "Defines the costs used in the algorithm"
+    default = Costs.STANDARD
+    targets = parents
+}
+
+advanced property fails: int {
+    label = "Fails"
+    description = 
+       "The number of times that the number of crossings may not decrease after a complete 
+        top-down bottom-up traversal, before a run is terminated"
+    default = 4
+    targets = parents
+}
+
+advanced property fineness: float {
+    label = "Fineness"
+    description = "The fineness option used in the algorithm"
+    default = 0.51f
+    targets = parents
+}
+
+advanced property initialTemperature: float {
+    label = "Initial Temperature"
+    description = "The initial temperature"
+    default = 10.0f
+    targets = parents
+}
+
+advanced property minCliqueSize: int {
+    label = "Minimum Clique Size"
+    description = 
+       "If preprocessing of cliques is enabled, this option determines the minimal size 
+        of cliques to search for"
+    default = 10
+    targets = parents
+    requires preprocessCliques == true
+}
+
+property newInitialPlacement: boolean {
+    label = "New Initial Placement"
+    description = "Sets whether the initial placement is different on every algorithm call"
+    default = false
+    targets = parents
+}
+
+advanced property preprocessCliques: boolean {
+    label = "Preprocess Cliques"
+    description = 
+       "If set to true, a preprocessing for cliques (complete subgraphs) is performed and cliques 
+        will be laid out in a special form (straight-line, not orthogonal). The preprocessing 
+        may reduce running time and improve layout quality if the input graphs contains dense subgraphs."
+    default = false
+    targets = parents
+}
+
+property qualityVsSpeed: QualityVsSpeed {
+    label = "Quality vs Speed"
+    description = "Specifies whether the algorithm prioritizes quality or speed"
+    default = QualityVsSpeed.BEAUTIFULANDFAST
+    targets = parents
+}
+
+advanced property minDistCC: float {
+    label = "Component Spacing Factor"
+    description = "Factor for the spacing between connected components"
+    default = 1.0f
+    targets = parents
+}
+
+advanced property costAssoc: int {
+    label = "Cost for Association Edges"
+    description = "Defines the costs for association edges"
+    default = 1
+    targets = parents
+}
+
+advanced property costGen: int { 
+    label = "Cost for Generalization Edges"
+    description = "Defines the costs for generalization edges"
+    default = 4
+    targets = parents
+}
+
+advanced property runs: int {
+    label = "Runs"
+    description = 
+       "Determines how many times the crossing minimization phase (Sugiyama) 
+        or planar subgraph phase (Planarization) is repeated."
+    default = 0
+    targets = parents
+}
+
+property speed: Speed {
+    label = "Speed"
+    description = "Defines the temperature and the number of iterations"
+    default = Speed.MEDIUM
+    targets = parents
+}
+
+advanced property rotationAngle: float {
+    label = "Rotation Angle"
+    description = "The opening angle for rotations in radians (between 0 and pi/2)"
+    default = 1.047f
+    targets = parents
+}
+
+advanced property rotationSensitivity: float {
+    label = "Rotation Sensitivity"
+    description = "The rotation sensitivity (between 0 and 1)"
+    default = 0.01f
+    targets = parents
+}
+
+advanced property transpose: boolean {
+    label = "Transpose"
+    description = 
+       "Determines whether the transpose step is performed after each 2-layer crossing minimization; 
+       this step tries to reduce the number of crossings by switching neighbored nodes on a layer"
+    default = true
+    targets = parents
+}
+
+property attractionFormula: AttractionFormula {
+    label = "Attraction Formula"
+    description = "The used formula for attraction"
+    default = AttractionFormula.FRUCHTERMAN_REINGOLD
+    targets = parents
+}
+
+advanced property minDistLevel: float {
+    label = "Level Spacing Factor"
+    description = "Factor for the minimal distance between father and child components"
+    default = 1.0f
+    targets = parents
+}
+
+advanced property numberOfRounds: int {
+    label = "Number Of Rounds"
+    targets = parents
+    default = 20000
+    description = "The maximal number of rounds per node"
+}
+
+advanced property oscillationAngle: float {
+    label = "Oscillation Angle"
+    description = "The opening angle for oscillations in radians (between 0 and pi/2)"
+    default = 1.57f
+    targets = parents
+}
+
+advanced property oscillationSensitivity: float {
+    label = "Oscillation Sensitivity"
+    description = "The oscillation sensitivity (between 0 and 1)"
+    default = 0.3f
+    targets = parents
+}
+
+advanced property minimalTemperature: float {
+    label = "Minimal Temperature"
+    description = "The minimal temperature"
+    default = 0.005f
+    targets = parents
+}
+
+advanced property maximalDisturbance: float {
+    label = "Maximal Disturbance"
+    description = "The maximal disturbance."
+    default = 0.0f
+    targets = parents
+}
+
+advanced property gravitationalConstant: float {
+    label = "Gravitational Constant"
+    description = "The gravitational constant"
+    default = 0.0625f
+    targets = parents
+}
+
+advanced property subtreeDistance: float {
+    label = "Subtree Spacing Factor"
+    description = "Factor for the horizontal spacing between adjacent subtrees"
+    default = 1.0f
+    targets = parents
+}
+
+advanced property noise: boolean {
+    label = "Noise"
+    description = "If set to true, small random perturbations are performed"
+    default = true
+    targets = parents
+}
+
+property placeLabels: boolean {
+    label = "Place Labels"
+    description = "Whether edge labels shall be processed"
+    default = true
+    targets = parents
+}
+
+advanced property multipolePrec: int {
+    label = "Precision"
+    description = "The number of coefficients for expansions"
+    default = 4
+    targets = parents
+}
+
+advanced property stopTolerance: float {
+    label = "Stop Tolerance"
+    description = "Tolerance below which the system is regarded stable and the optimization is stopped"
+    default = 0.001f
+    targets = parents
+}
+
+property upward: boolean {
+    label = "Upward"
+    description = "Add upward constraints"
+    default = true
+    targets = parents
+}
+
+property radial: boolean {
+    label = "Radial"
+    description = "Add radial constraints"
+    default = false
+    targets = parents
+}
+
+advanced property baseRatio: float {
+    label = "Base Ratio"
+    description = 
+       "Ratio of the nodes on the external face giving a limit 
+       for the number of nodes placed on the base line"
+    default = 0.33f
+    targets = parents
+}
+
+property acyclicSubgraph: AcyclicSubgraphModule {
+    label = "Acyclic Subgraph Module"
+    description = "The module for finding an acyclic subgraph"
+    default = AcyclicSubgraphModule.DFS
+    targets = parents
+}
+
+property ranking: RankingModule {
+    label = "Layering Module"
+    description = "The module for computing a layering (ranking) of the graph"
+    default = RankingModule.LONGEST_PATH
+    targets = parents
+}
+
+advanced property width: int {
+    targets = parents
+    default = 7
+    description = "The maximal width of the Coffman-Graham layering"
+    label = "Layering Width"
+    requires de.cau.cs.kieler.kiml.ogdf.ranking == RankingModule.COFFMAN_GRAHAM
+}
+
+property crossMin: CrossMinModule {
+    label = "Crossing Min. Module"
+    description = "The module for crossing minimization used in the layer-sweep method"
+    default = CrossMinModule.BARYCENTER
+    targets = parents
+}
+
+property edgeInsertion: EdgeInsertionModule {
+    label = "Edge Insertion Module"
+    description = "The module for edge insertion used for planarization"
+    default = EdgeInsertionModule.FIXED_EMB
+    targets = parents
+}
+
+property embedder: EmbedderModule {
+    label = "Embedder Module"
+    description = "The module for choosing an embedding for the graph"
+    default = EmbedderModule.SIMPLE
+    targets = parents
+}
+
+advanced property scaleFunctionFactor: float {
+    label = "Scale Factor"
+    description = "Factor for scaling the bounding box of the initial layout"
+    default = 8.0f
+    targets = parents
+}
+
+advanced property crossingBeautifier: CrossBeautifModule {
+    label = "Crossing Beautifier"
+    description = "The module for crossing beautification"
+    default = CrossBeautifModule.LOCAL_STRETCH
+    targets = parents
+}
+
+advanced property adaptPortPositions: boolean {
+    targets = parents
+    default = true
+    description = "Whether ports should be moved to the point where edges cross the node&apos;s bounds."
+    label = "Adapt Port Positions"
+}

@@ -13,12 +13,13 @@
  */
 package de.cau.cs.kieler.kiml.ogdf;
 
+import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KNode;
+
+import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
 import net.ogdf.bin.OgdfServer;
 import net.ogdf.bin.OgdfServerPool;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
 
 /**
  * The OGDF layout provider, that is the entry class used by KIML to call individual layout
@@ -52,9 +53,8 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public void doLayout(final KNode layoutNode,
-            final IKielerProgressMonitor progressMonitor) {
+	@Override
+	public void layout(KNode layoutNode, IElkProgressMonitor progressMonitor) {
         if (layoutAlgorithm == null) {
             throw new IllegalStateException("The OGDF layout algorithm is not configured correctly."
                     + " Please check the parameter in the extension point");
@@ -68,6 +68,7 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         comm.requestLayout(layoutNode, progressMonitor, ogdfServer);
         // if everything worked well, release the used process instance
         OgdfServerPool.INSTANCE.release(ogdfServer);
-    }
+		
+	}
     
 }

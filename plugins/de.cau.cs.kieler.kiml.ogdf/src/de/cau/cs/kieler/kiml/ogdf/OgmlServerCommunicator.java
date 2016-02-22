@@ -24,6 +24,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KInsets;
+import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.EdgeLabelPlacement;
+import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.WrappedException;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -51,22 +66,6 @@ import net.ogdf.ogml.StructureType;
 import net.ogdf.ogml.StylesType;
 import net.ogdf.ogml.impl.OgmlFactoryImpl;
 import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
-
-import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Communication with the OGDF server process using the OGML format.
@@ -130,7 +129,7 @@ public class OgmlServerCommunicator {
      * @param ogdfServer
      *            the OGDF server process interface
      */
-    public void requestLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor,
+    public void requestLayout(final KNode layoutNode, final IElkProgressMonitor progressMonitor,
             final OgdfServer ogdfServer) {
         progressMonitor.begin("OGDF Layout", LAYOUT_WORK);
         // if the graph is empty there is no need to layout
@@ -163,7 +162,7 @@ public class OgmlServerCommunicator {
 
         } catch (IOException exception) {
             ogdfServer.cleanup(Cleanup.ERROR);
-            throw new WrappedException(exception, "Failed to communicate with the OGDF process.");
+            throw new WrappedException("Failed to communicate with the OGDF process.", exception);
         } finally {
             progressMonitor.done();
             reset();
@@ -204,7 +203,7 @@ public class OgmlServerCommunicator {
      * @return an OGML graph
      */
     private DocumentRoot transformGraph(final KNode parentNode,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Transform KGraph to OGML", 1);
         boolean umlGraph = false;
         
@@ -242,7 +241,7 @@ public class OgmlServerCommunicator {
             location.setX(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
             location.setY(nodeLayout.getYpos() + nodeLayout.getHeight() / 2);
             ogmlNodeLayout.setLocation(location);
-            KimlUtil.resizeNode(node);
+            ElkUtil.resizeNode(node);
             ShapeType1 shape = factory.createShapeType1();
             shape.setWidth(BigInteger.valueOf(Math.round(nodeLayout.getWidth())));
             shape.setHeight(BigInteger.valueOf(Math.round(nodeLayout.getHeight())));
@@ -311,7 +310,7 @@ public class OgmlServerCommunicator {
                     }
                     
                     // detect an uml-graph
-                    de.cau.cs.kieler.kiml.options.EdgeType edgeType =
+                    org.eclipse.elk.core.options.EdgeType edgeType =
                             edgeLayout.getProperty(LayoutOptions.EDGE_TYPE);
                     switch (edgeType) {
                     case ASSOCIATION:
@@ -419,7 +418,7 @@ public class OgmlServerCommunicator {
      */
     private void applyLayout(final KNode parentNode,
             final Map<String, KVectorChain> layoutInformation,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Apply layout", 1);
         
         // get the border spacing
@@ -559,7 +558,7 @@ public class OgmlServerCommunicator {
         if (!(Double.isNaN(boundingBoxWidth) || Double.isNaN(boundingBoxHeight))) {
             float width = boundingBoxWidth + 2 * borderSpacing + insets.getLeft() + insets.getRight();
             float height = boundingBoxHeight + 2 * borderSpacing + insets.getTop() + insets.getBottom();
-            KimlUtil.resizeNode(parentNode, width, height, false, true);
+            ElkUtil.resizeNode(parentNode, width, height, false, true);
         }
         progressMonitor.done();
     }
@@ -578,7 +577,7 @@ public class OgmlServerCommunicator {
      * @throws IOException if writing to the process fails
      */
     private void writeOgmlGraph(final DocumentRoot root, final OutputStream outputStream,
-            final IKielerProgressMonitor progressMonitor, final OgdfServer ogdfServer)
+            final IElkProgressMonitor progressMonitor, final OgdfServer ogdfServer)
             throws IOException {
         progressMonitor.begin("Serialize OGML graph", 1);
         ResourceSet resourceSet = new ResourceSetImpl();
@@ -629,7 +628,7 @@ public class OgmlServerCommunicator {
      * @return a map of layout information
      */
     private Map<String, KVectorChain> readLayoutInformation(final OgdfServer ogdfServer,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Read output from OGDF", 1);
         Map<String, String> outputData = ogdfServer.readOutputData();
         if (outputData == null) {
