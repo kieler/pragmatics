@@ -828,7 +828,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Iterations",
         "The number of iterations performed by the algorithm",
         null,
-        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -838,7 +837,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Label Distance",
         "Distance of edge labels to the nodes",
         LABEL_MARGIN_DISTANCE_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -848,7 +846,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Label Spacing",
         "Spacing of edge labels to the edge",
         LABEL_EDGE_DISTANCE_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -863,7 +860,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Costs",
         "Defines the costs used in the algorithm",
         COSTS_DEFAULT,
-        LayoutOptionData.Type.ENUM,
         Costs.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -873,7 +869,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Fails",
         "The number of times that the number of crossings may not decrease after a complete top-down bottom-up traversal, before a run is terminated",
         FAILS_DEFAULT,
-        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -883,7 +878,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Fineness",
         "The fineness option used in the algorithm",
         FINENESS_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -893,7 +887,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Initial Temperature",
         "The initial temperature",
         INITIAL_TEMPERATURE_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -903,7 +896,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Minimum Clique Size",
         "If preprocessing of cliques is enabled, this option determines the minimal size of cliques to search for",
         MIN_CLIQUE_SIZE_DEFAULT,
-        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -918,7 +910,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "New Initial Placement",
         "Sets whether the initial placement is different on every algorithm call",
         NEW_INITIAL_PLACEMENT_DEFAULT,
-        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -928,7 +919,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Preprocess Cliques",
         "If set to true, a preprocessing for cliques (complete subgraphs) is performed and cliques will be laid out in a special form (straight-line, not orthogonal). The preprocessing may reduce running time and improve layout quality if the input graphs contains dense subgraphs.",
         PREPROCESS_CLIQUES_DEFAULT,
-        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -938,7 +928,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Quality vs Speed",
         "Specifies whether the algorithm prioritizes quality or speed",
         QUALITY_VS_SPEED_DEFAULT,
-        LayoutOptionData.Type.ENUM,
         QualityVsSpeed.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -948,7 +937,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Component Spacing Factor",
         "Factor for the spacing between connected components",
         MIN_DIST_C_C_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -958,7 +946,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Cost for Association Edges",
         "Defines the costs for association edges",
         COST_ASSOC_DEFAULT,
-        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -968,7 +955,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Cost for Generalization Edges",
         "Defines the costs for generalization edges",
         COST_GEN_DEFAULT,
-        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -978,7 +964,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Runs",
         "Determines how many times the crossing minimization phase (Sugiyama) or planar subgraph phase (Planarization) is repeated.",
         RUNS_DEFAULT,
-        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -988,7 +973,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Speed",
         "Defines the temperature and the number of iterations",
         SPEED_DEFAULT,
-        LayoutOptionData.Type.ENUM,
         Speed.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -998,7 +982,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Rotation Angle",
         "The opening angle for rotations in radians (between 0 and pi/2)",
         ROTATION_ANGLE_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1008,7 +991,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Rotation Sensitivity",
         "The rotation sensitivity (between 0 and 1)",
         ROTATION_SENSITIVITY_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1018,7 +1000,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Transpose",
         "Determines whether the transpose step is performed after each 2-layer crossing minimization; this step tries to reduce the number of crossings by switching neighbored nodes on a layer",
         TRANSPOSE_DEFAULT,
-        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1028,7 +1009,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Attraction Formula",
         "The used formula for attraction",
         ATTRACTION_FORMULA_DEFAULT,
-        LayoutOptionData.Type.ENUM,
         AttractionFormula.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -1038,7 +1018,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Level Spacing Factor",
         "Factor for the minimal distance between father and child components",
         MIN_DIST_LEVEL_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1048,7 +1027,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Number Of Rounds",
         "The maximal number of rounds per node",
         NUMBER_OF_ROUNDS_DEFAULT,
-        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1058,7 +1036,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Oscillation Angle",
         "The opening angle for oscillations in radians (between 0 and pi/2)",
         OSCILLATION_ANGLE_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1068,7 +1045,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Oscillation Sensitivity",
         "The oscillation sensitivity (between 0 and 1)",
         OSCILLATION_SENSITIVITY_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1078,7 +1054,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Minimal Temperature",
         "The minimal temperature",
         MINIMAL_TEMPERATURE_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1088,7 +1063,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Maximal Disturbance",
         "The maximal disturbance.",
         MAXIMAL_DISTURBANCE_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1098,7 +1072,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Gravitational Constant",
         "The gravitational constant",
         GRAVITATIONAL_CONSTANT_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1108,7 +1081,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Subtree Spacing Factor",
         "Factor for the horizontal spacing between adjacent subtrees",
         SUBTREE_DISTANCE_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1118,7 +1090,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Noise",
         "If set to true, small random perturbations are performed",
         NOISE_DEFAULT,
-        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1128,7 +1099,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Place Labels",
         "Whether edge labels shall be processed",
         PLACE_LABELS_DEFAULT,
-        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -1138,7 +1108,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Precision",
         "The number of coefficients for expansions",
         MULTIPOLE_PREC_DEFAULT,
-        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1148,7 +1117,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Stop Tolerance",
         "Tolerance below which the system is regarded stable and the optimization is stopped",
         STOP_TOLERANCE_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1158,7 +1126,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Upward",
         "Add upward constraints",
         UPWARD_DEFAULT,
-        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -1168,7 +1135,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Radial",
         "Add radial constraints",
         RADIAL_DEFAULT,
-        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -1178,7 +1144,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Base Ratio",
         "Ratio of the nodes on the external face giving a limit for the number of nodes placed on the base line",
         BASE_RATIO_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1188,7 +1153,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Acyclic Subgraph Module",
         "The module for finding an acyclic subgraph",
         ACYCLIC_SUBGRAPH_DEFAULT,
-        LayoutOptionData.Type.ENUM,
         AcyclicSubgraphModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -1198,7 +1162,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Layering Module",
         "The module for computing a layering (ranking) of the graph",
         RANKING_DEFAULT,
-        LayoutOptionData.Type.ENUM,
         RankingModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -1208,7 +1171,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Layering Width",
         "The maximal width of the Coffman-Graham layering",
         WIDTH_DEFAULT,
-        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1223,7 +1185,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Crossing Min. Module",
         "The module for crossing minimization used in the layer-sweep method",
         CROSS_MIN_DEFAULT,
-        LayoutOptionData.Type.ENUM,
         CrossMinModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -1233,7 +1194,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Edge Insertion Module",
         "The module for edge insertion used for planarization",
         EDGE_INSERTION_DEFAULT,
-        LayoutOptionData.Type.ENUM,
         EdgeInsertionModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -1243,7 +1203,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Embedder Module",
         "The module for choosing an embedding for the graph",
         EMBEDDER_DEFAULT,
-        LayoutOptionData.Type.ENUM,
         EmbedderModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -1253,7 +1212,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Scale Factor",
         "Factor for scaling the bounding box of the initial layout",
         SCALE_FUNCTION_FACTOR_DEFAULT,
-        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1263,7 +1221,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Crossing Beautifier",
         "The module for crossing beautification",
         CROSSING_BEAUTIFIER_DEFAULT,
-        LayoutOptionData.Type.ENUM,
         CrossBeautifModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1273,7 +1230,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Adapt Port Positions",
         "Whether ports should be moved to the point where edges cross the node&apos;s bounds.",
         ADAPT_PORT_POSITIONS_DEFAULT,
-        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED

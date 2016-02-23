@@ -31,7 +31,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import de.cau.cs.kieler.core.ui.util.TreeViewerCheckStateHandler;
 import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 
@@ -184,7 +183,7 @@ public class AnalysisSelectionViewer extends Composite implements ISelectionChan
          * @param analysisCategories
          *            the analysis categories
          */
-        public AnalysisContentProvider(final Collection<AnalysisCategory> analysisCategories) {
+        AnalysisContentProvider(final Collection<AnalysisCategory> analysisCategories) {
             super();
             // map analyses on their parents
             for (AnalysisCategory category : analysisCategories) {

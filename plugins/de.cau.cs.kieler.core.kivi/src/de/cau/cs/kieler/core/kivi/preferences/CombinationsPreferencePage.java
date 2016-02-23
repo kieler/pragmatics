@@ -37,8 +37,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import de.cau.cs.kieler.core.kivi.CombinationParameter;
 import de.cau.cs.kieler.core.kivi.CombinationDescriptor;
 import de.cau.cs.kieler.core.kivi.KiVi;
-import de.cau.cs.kieler.core.ui.util.DoubleFieldEditor;
-import de.cau.cs.kieler.core.ui.util.FloatFieldEditor;
 
 /**
  * Displays all available preferences for all registered combinations.

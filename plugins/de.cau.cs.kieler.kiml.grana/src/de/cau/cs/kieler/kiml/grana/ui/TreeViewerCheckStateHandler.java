@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.core.ui.util;
+package de.cau.cs.kieler.kiml.grana.ui;
 
 import java.util.Collection;
 

@@ -11,13 +11,11 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.core.ui.util;
+package de.cau.cs.kieler.core.kivi.preferences;
 
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-
-import de.cau.cs.kieler.core.ui.Messages;
 
 /**
  * Field editor for input of double values.
@@ -58,10 +56,11 @@ public class DoubleFieldEditor extends StringFieldEditor {
      */
     public void setValidRange(final double thelowerBound,
             final double theupperBound) {
+        
         this.lowerBound = thelowerBound;
         this.upperBound = theupperBound;
-        setErrorMessage(Messages.DoubleFieldEditor_doubleBounds
-                + thelowerBound + "," + theupperBound + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        setErrorMessage("Double Field requires double in the bounds ["
+                + thelowerBound + "," + theupperBound + "]");
     }
 
     /**

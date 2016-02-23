@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.core.ui.wizards;
+package de.cau.cs.kieler.kiml.export.wizards;
 
 import java.io.File;
 

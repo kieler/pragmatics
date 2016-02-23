@@ -34,7 +34,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import de.cau.cs.kieler.core.ui.wizards.WorkspaceResourcesPage;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 

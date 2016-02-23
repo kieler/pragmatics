@@ -7,10 +7,10 @@ Bundle-Activator: de.cau.cs.kieler.kiml.export.ExportPlugin
 Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide,
  org.eclipse.core.runtime,
- de.cau.cs.kieler.core.ui,
  de.cau.cs.kieler.core.kgraph,
  de.cau.cs.kieler.kiml.formats,
- org.eclipse.elk.core.service
+ org.eclipse.elk.core.service,
+ com.google.guava;bundle-version="15.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Kiel University

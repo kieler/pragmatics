@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.core.ui.wizards;
+package de.cau.cs.kieler.kiml.export.wizards;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,9 +37,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
-
-import de.cau.cs.kieler.core.ui.Messages;
-import de.cau.cs.kieler.core.ui.util.ComboHistoryHandler;
 
 
 /**

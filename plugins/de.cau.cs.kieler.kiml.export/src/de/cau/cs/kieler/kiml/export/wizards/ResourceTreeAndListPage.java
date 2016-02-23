@@ -12,7 +12,7 @@
  * See the file epl-v10.html for the license text.
  */
 
-package de.cau.cs.kieler.core.ui.wizards;
+package de.cau.cs.kieler.kiml.export.wizards;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,8 +58,6 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-
-import de.cau.cs.kieler.core.ui.Messages;
 
 
 /**
