@@ -16,12 +16,10 @@ package de.cau.cs.kieler.core.kivi;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.swt.graphics.RGB;
-
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 
 /**
  * Describes a parameter of a combination.
@@ -185,17 +183,25 @@ public class CombinationParameter<T> implements IProperty<T> {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public Comparable<T> getLowerBound() {
-        return (Comparable<T>) Property.NEGATIVE_INFINITY;
+        return new Comparable<T>() {
+            public int compareTo(final T other) {
+                // Ignore FindBugs warning
+                return -1;
+            }
+        };
     }
 
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     public Comparable<T> getUpperBound() {
-        return (Comparable<T>) Property.POSITIVE_INFINITY;
+        return new Comparable<T>() {
+            public int compareTo(final T other) {
+                // Ignore FindBugs warning
+                return 1;
+            }
+        };
     }
 
     /**

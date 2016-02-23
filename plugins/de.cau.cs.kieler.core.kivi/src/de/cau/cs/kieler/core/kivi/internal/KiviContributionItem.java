@@ -289,7 +289,7 @@ IWorkbenchContribution {
          * 
          * @param item
          */
-        public ContributionItemUpdater(final IContributionItem item) {
+        ContributionItemUpdater(final IContributionItem item) {
             this.item = item;
         }
 
