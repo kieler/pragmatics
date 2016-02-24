@@ -32,7 +32,7 @@ import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.EdgeLabelPlacement;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.WrappedException;
@@ -284,7 +284,7 @@ public class OgmlServerCommunicator {
                         for (KLabel label : edge.getLabels()) {
                             KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                             EdgeLabelPlacement placement =
-                                    labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+                                    labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
                             int labelType = OgdfServer.LABEL_TYPE_NAME;
                             switch (placement) {
                             case HEAD:
@@ -311,7 +311,7 @@ public class OgmlServerCommunicator {
                     
                     // detect an uml-graph
                     org.eclipse.elk.core.options.EdgeType edgeType =
-                            edgeLayout.getProperty(LayoutOptions.EDGE_TYPE);
+                            edgeLayout.getProperty(CoreOptions.EDGE_TYPE);
                     switch (edgeType) {
                     case ASSOCIATION:
                         umlGraph = true;
@@ -423,7 +423,7 @@ public class OgmlServerCommunicator {
         
         // get the border spacing
         KShapeLayout parentNodeLayout = parentNode.getData(KShapeLayout.class);
-        float borderSpacing = parentNodeLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        float borderSpacing = parentNodeLayout.getProperty(CoreOptions.SPACING_BORDER);
         if (borderSpacing < 0) {
             borderSpacing = DEF_BORDER_SPACING;
         }
@@ -520,7 +520,7 @@ public class OgmlServerCommunicator {
                 for (KLabel label : kedge.getLabels()) {
                     KShapeLayout labelLayout = label.getData(KShapeLayout.class);
                     EdgeLabelPlacement placement =
-                            labelLayout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT);
+                            labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
                     int labelType = OgdfServer.LABEL_TYPE_NAME;
                     switch (placement) {
                     case HEAD:

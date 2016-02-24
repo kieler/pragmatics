@@ -53,8 +53,8 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
     /**
      * {@inheritDoc}
      */
-	@Override
-	public void layout(KNode layoutNode, IElkProgressMonitor progressMonitor) {
+    @Override
+    public void layout(final KNode layoutNode, final IElkProgressMonitor progressMonitor) {
         if (layoutAlgorithm == null) {
             throw new IllegalStateException("The OGDF layout algorithm is not configured correctly."
                     + " Please check the parameter in the extension point");
@@ -68,7 +68,7 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
         comm.requestLayout(layoutNode, progressMonitor, ogdfServer);
         // if everything worked well, release the used process instance
         OgdfServerPool.INSTANCE.release(ogdfServer);
-		
-	}
+
+    }
     
 }

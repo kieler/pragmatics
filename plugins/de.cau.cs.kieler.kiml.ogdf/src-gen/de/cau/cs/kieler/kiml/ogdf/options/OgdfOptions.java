@@ -573,14 +573,14 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static RankingModule WIDTH_DEP_RANKING = RankingModule.COFFMAN_GRAHAM;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Sugiyama".
+   * Default value for {@link #SPACING_NODE} with algorithm "Sugiyama".
    */
-  private final static float SUGIYAMA_SUP_SPACING = 16;
+  private final static float SUGIYAMA_SUP_SPACING_NODE = 16;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "Sugiyama".
+   * Default value for {@link #SPACING_BORDER} with algorithm "Sugiyama".
    */
-  private final static float SUGIYAMA_SUP_BORDER_SPACING = 15;
+  private final static float SUGIYAMA_SUP_SPACING_BORDER = 15;
   
   /**
    * Default value for {@link #RANDOM_SEED} with algorithm "Sugiyama".
@@ -593,9 +593,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static int SUGIYAMA_SUP_RUNS = 15;
   
   /**
-   * Default value for {@link #SEPARATE_CONN_COMP} with algorithm "Sugiyama".
+   * Default value for {@link #SEPARATE_CONNECTED_COMPONENTS} with algorithm "Sugiyama".
    */
-  private final static boolean SUGIYAMA_SUP_SEPARATE_CONN_COMP = false;
+  private final static boolean SUGIYAMA_SUP_SEPARATE_CONNECTED_COMPONENTS = false;
   
   /**
    * Default value for {@link #ASPECT_RATIO} with algorithm "Sugiyama".
@@ -608,9 +608,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static Direction PLANARIZATION_SUP_DIRECTION = Direction.UP;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Planarization".
+   * Default value for {@link #SPACING_NODE} with algorithm "Planarization".
    */
-  private final static float PLANARIZATION_SUP_SPACING = 20;
+  private final static float PLANARIZATION_SUP_SPACING_NODE = 20;
   
   /**
    * Default value for {@link #RANDOM_SEED} with algorithm "Planarization".
@@ -618,9 +618,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static int PLANARIZATION_SUP_RANDOM_SEED = 1;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "Planarization".
+   * Default value for {@link #SPACING_BORDER} with algorithm "Planarization".
    */
-  private final static float PLANARIZATION_SUP_BORDER_SPACING = 15;
+  private final static float PLANARIZATION_SUP_SPACING_BORDER = 15;
   
   /**
    * Default value for {@link #ASPECT_RATIO} with algorithm "Planarization".
@@ -628,24 +628,24 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static float PLANARIZATION_SUP_ASPECT_RATIO = 1.3f;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "FMMM".
+   * Default value for {@link #SPACING_BORDER} with algorithm "FMMM".
    */
-  private final static float FMMM_SUP_BORDER_SPACING = 15;
+  private final static float FMMM_SUP_SPACING_BORDER = 15;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Davidson-Harel".
+   * Default value for {@link #SPACING_NODE} with algorithm "Davidson-Harel".
    */
-  private final static float DAVIDSON_HAREL_SUP_SPACING = 80;
+  private final static float DAVIDSON_HAREL_SUP_SPACING_NODE = 80;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "Davidson-Harel".
+   * Default value for {@link #SPACING_BORDER} with algorithm "Davidson-Harel".
    */
-  private final static float DAVIDSON_HAREL_SUP_BORDER_SPACING = 15;
+  private final static float DAVIDSON_HAREL_SUP_SPACING_BORDER = 15;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "Fruchterman-Reingold".
+   * Default value for {@link #SPACING_BORDER} with algorithm "Fruchterman-Reingold".
    */
-  private final static float FRUCHTERMAN_REINGOLD_SUP_BORDER_SPACING = 15;
+  private final static float FRUCHTERMAN_REINGOLD_SUP_SPACING_BORDER = 15;
   
   /**
    * Default value for {@link #ITERATIONS} with algorithm "Fruchterman-Reingold".
@@ -653,9 +653,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static int FRUCHTERMAN_REINGOLD_SUP_ITERATIONS = 400;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Fruchterman-Reingold".
+   * Default value for {@link #SPACING_NODE} with algorithm "Fruchterman-Reingold".
    */
-  private final static float FRUCHTERMAN_REINGOLD_SUP_SPACING = 20;
+  private final static float FRUCHTERMAN_REINGOLD_SUP_SPACING_NODE = 20;
   
   /**
    * Default value for {@link #ASPECT_RATIO} with algorithm "Fruchterman-Reingold".
@@ -668,19 +668,19 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static float GEM_SUP_ASPECT_RATIO = 1.3f;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "GEM".
+   * Default value for {@link #SPACING_NODE} with algorithm "GEM".
    */
-  private final static float GEM_SUP_SPACING = 30;
+  private final static float GEM_SUP_SPACING_NODE = 30;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "Circular".
+   * Default value for {@link #SPACING_BORDER} with algorithm "Circular".
    */
-  private final static float CIRCULAR_SUP_BORDER_SPACING = 15;
+  private final static float CIRCULAR_SUP_SPACING_BORDER = 15;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Circular".
+   * Default value for {@link #SPACING_NODE} with algorithm "Circular".
    */
-  private final static float CIRCULAR_SUP_SPACING = 20;
+  private final static float CIRCULAR_SUP_SPACING_NODE = 20;
   
   /**
    * Default value for {@link #ASPECT_RATIO} with algorithm "Circular".
@@ -688,9 +688,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static float CIRCULAR_SUP_ASPECT_RATIO = 1.3f;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "Tree".
+   * Default value for {@link #SPACING_BORDER} with algorithm "Tree".
    */
-  private final static float TREE_SUP_BORDER_SPACING = 15;
+  private final static float TREE_SUP_SPACING_BORDER = 15;
   
   /**
    * Default value for {@link #DIRECTION} with algorithm "Tree".
@@ -703,19 +703,19 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static EdgeRouting TREE_SUP_EDGE_ROUTING = EdgeRouting.POLYLINE;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Tree".
+   * Default value for {@link #SPACING_NODE} with algorithm "Tree".
    */
-  private final static float TREE_SUP_SPACING = 20;
+  private final static float TREE_SUP_SPACING_NODE = 20;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Radial Tree".
+   * Default value for {@link #SPACING_NODE} with algorithm "Radial Tree".
    */
-  private final static float RADIAL_TREE_SUP_SPACING = 50;
+  private final static float RADIAL_TREE_SUP_SPACING_NODE = 50;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "Radial Tree".
+   * Default value for {@link #SPACING_BORDER} with algorithm "Radial Tree".
    */
-  private final static float RADIAL_TREE_SUP_BORDER_SPACING = 15;
+  private final static float RADIAL_TREE_SUP_SPACING_BORDER = 15;
   
   /**
    * Default value for {@link #MIN_DIST_C_C} with algorithm "Radial Tree".
@@ -723,9 +723,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static float RADIAL_TREE_SUP_MIN_DIST_C_C = 1.0f;
   
   /**
-   * Default value for {@link #BORDER_SPACING} with algorithm "Upward-Planarization".
+   * Default value for {@link #SPACING_BORDER} with algorithm "Upward-Planarization".
    */
-  private final static float UPWARD_PLANARIZATION_SUP_BORDER_SPACING = 15;
+  private final static float UPWARD_PLANARIZATION_SUP_SPACING_BORDER = 15;
   
   /**
    * Default value for {@link #MIN_DIST_LEVEL} with algorithm "Upward-Planarization".
@@ -733,9 +733,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static float UPWARD_PLANARIZATION_SUP_MIN_DIST_LEVEL = 16;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Upward-Planarization".
+   * Default value for {@link #SPACING_NODE} with algorithm "Upward-Planarization".
    */
-  private final static float UPWARD_PLANARIZATION_SUP_SPACING = 16;
+  private final static float UPWARD_PLANARIZATION_SUP_SPACING_NODE = 16;
   
   /**
    * Default value for {@link #RANDOM_SEED} with algorithm "Upward-Planarization".
@@ -758,9 +758,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static int FAST_MULTIPOLE_MULTILEVEL_SUP_RANDOM_SEED = 1;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Kamada-Kawai".
+   * Default value for {@link #SPACING_NODE} with algorithm "Kamada-Kawai".
    */
-  private final static float KAMADA_KAWAI_SUP_SPACING = 30;
+  private final static float KAMADA_KAWAI_SUP_SPACING_NODE = 30;
   
   /**
    * Default value for {@link #ITERATIONS} with algorithm "Stress Majorization".
@@ -768,9 +768,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static int STRESS_MAJORIZATION_SUP_ITERATIONS = 300;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Dominance".
+   * Default value for {@link #SPACING_NODE} with algorithm "Dominance".
    */
-  private final static float DOMINANCE_SUP_SPACING = 10;
+  private final static float DOMINANCE_SUP_SPACING_NODE = 10;
   
   /**
    * Default value for {@link #RANDOM_SEED} with algorithm "Dominance".
@@ -778,9 +778,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static int DOMINANCE_SUP_RANDOM_SEED = 1;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Visibility".
+   * Default value for {@link #SPACING_NODE} with algorithm "Visibility".
    */
-  private final static float VISIBILITY_SUP_SPACING = 10;
+  private final static float VISIBILITY_SUP_SPACING_NODE = 10;
   
   /**
    * Default value for {@link #RANDOM_SEED} with algorithm "Visibility".
@@ -788,24 +788,24 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static int VISIBILITY_SUP_RANDOM_SEED = 1;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Fraysseix-Pach-Pollack".
+   * Default value for {@link #SPACING_NODE} with algorithm "Fraysseix-Pach-Pollack".
    */
-  private final static float FRAYSSEIX_PACH_POLLACK_SUP_SPACING = 30;
+  private final static float FRAYSSEIX_PACH_POLLACK_SUP_SPACING_NODE = 30;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Schnyder".
+   * Default value for {@link #SPACING_NODE} with algorithm "Schnyder".
    */
-  private final static float SCHNYDER_SUP_SPACING = 30;
+  private final static float SCHNYDER_SUP_SPACING_NODE = 30;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Canonical Order".
+   * Default value for {@link #SPACING_NODE} with algorithm "Canonical Order".
    */
-  private final static float CANONICAL_ORDER_SUP_SPACING = 30;
+  private final static float CANONICAL_ORDER_SUP_SPACING_NODE = 30;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Mixed Model".
+   * Default value for {@link #SPACING_NODE} with algorithm "Mixed Model".
    */
-  private final static float MIXED_MODEL_SUP_SPACING = 30;
+  private final static float MIXED_MODEL_SUP_SPACING_NODE = 30;
   
   /**
    * Default value for {@link #RANDOM_SEED} with algorithm "Mixed Model".
@@ -818,34 +818,40 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
   private final static float MIXED_MODEL_SUP_ASPECT_RATIO = 1.3f;
   
   /**
-   * Default value for {@link #SPACING} with algorithm "Convex Grid".
+   * Default value for {@link #SPACING_NODE} with algorithm "Convex Grid".
    */
-  private final static float CONVEX_GRID_SUP_SPACING = 30;
+  private final static float CONVEX_GRID_SUP_SPACING_NODE = 30;
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.iterations",
+        "",
         "Iterations",
         "The number of iterations performed by the algorithm",
         null,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.labelMarginDistance",
+        "",
         "Label Distance",
         "Distance of edge labels to the nodes",
         LABEL_MARGIN_DISTANCE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.labelEdgeDistance",
+        "",
         "Label Spacing",
         "Spacing of edge labels to the edge",
         LABEL_EDGE_DISTANCE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
@@ -857,45 +863,55 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.costs",
+        "",
         "Costs",
         "Defines the costs used in the algorithm",
         COSTS_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         Costs.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.fails",
+        "",
         "Fails",
         "The number of times that the number of crossings may not decrease after a complete top-down bottom-up traversal, before a run is terminated",
         FAILS_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.fineness",
+        "",
         "Fineness",
         "The fineness option used in the algorithm",
         FINENESS_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.initialTemperature",
+        "",
         "Initial Temperature",
         "The initial temperature",
         INITIAL_TEMPERATURE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.minCliqueSize",
+        "",
         "Minimum Clique Size",
         "If preprocessing of cliques is enabled, this option determines the minimal size of cliques to search for",
         MIN_CLIQUE_SIZE_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -907,270 +923,330 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.newInitialPlacement",
+        "",
         "New Initial Placement",
         "Sets whether the initial placement is different on every algorithm call",
         NEW_INITIAL_PLACEMENT_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.preprocessCliques",
+        "",
         "Preprocess Cliques",
         "If set to true, a preprocessing for cliques (complete subgraphs) is performed and cliques will be laid out in a special form (straight-line, not orthogonal). The preprocessing may reduce running time and improve layout quality if the input graphs contains dense subgraphs.",
         PREPROCESS_CLIQUES_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.qualityVsSpeed",
+        "",
         "Quality vs Speed",
         "Specifies whether the algorithm prioritizes quality or speed",
         QUALITY_VS_SPEED_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         QualityVsSpeed.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.minDistCC",
+        "",
         "Component Spacing Factor",
         "Factor for the spacing between connected components",
         MIN_DIST_C_C_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.costAssoc",
+        "",
         "Cost for Association Edges",
         "Defines the costs for association edges",
         COST_ASSOC_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.costGen",
+        "",
         "Cost for Generalization Edges",
         "Defines the costs for generalization edges",
         COST_GEN_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.runs",
+        "",
         "Runs",
         "Determines how many times the crossing minimization phase (Sugiyama) or planar subgraph phase (Planarization) is repeated.",
         RUNS_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.speed",
+        "",
         "Speed",
         "Defines the temperature and the number of iterations",
         SPEED_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         Speed.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.rotationAngle",
+        "",
         "Rotation Angle",
         "The opening angle for rotations in radians (between 0 and pi/2)",
         ROTATION_ANGLE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.rotationSensitivity",
+        "",
         "Rotation Sensitivity",
         "The rotation sensitivity (between 0 and 1)",
         ROTATION_SENSITIVITY_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.transpose",
+        "",
         "Transpose",
         "Determines whether the transpose step is performed after each 2-layer crossing minimization; this step tries to reduce the number of crossings by switching neighbored nodes on a layer",
         TRANSPOSE_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.attractionFormula",
+        "",
         "Attraction Formula",
         "The used formula for attraction",
         ATTRACTION_FORMULA_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         AttractionFormula.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.minDistLevel",
+        "",
         "Level Spacing Factor",
         "Factor for the minimal distance between father and child components",
         MIN_DIST_LEVEL_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.numberOfRounds",
+        "",
         "Number Of Rounds",
         "The maximal number of rounds per node",
         NUMBER_OF_ROUNDS_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.oscillationAngle",
+        "",
         "Oscillation Angle",
         "The opening angle for oscillations in radians (between 0 and pi/2)",
         OSCILLATION_ANGLE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.oscillationSensitivity",
+        "",
         "Oscillation Sensitivity",
         "The oscillation sensitivity (between 0 and 1)",
         OSCILLATION_SENSITIVITY_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.minimalTemperature",
+        "",
         "Minimal Temperature",
         "The minimal temperature",
         MINIMAL_TEMPERATURE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.maximalDisturbance",
+        "",
         "Maximal Disturbance",
         "The maximal disturbance.",
         MAXIMAL_DISTURBANCE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.gravitationalConstant",
+        "",
         "Gravitational Constant",
         "The gravitational constant",
         GRAVITATIONAL_CONSTANT_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.subtreeDistance",
+        "",
         "Subtree Spacing Factor",
         "Factor for the horizontal spacing between adjacent subtrees",
         SUBTREE_DISTANCE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.noise",
+        "",
         "Noise",
         "If set to true, small random perturbations are performed",
         NOISE_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.placeLabels",
+        "",
         "Place Labels",
         "Whether edge labels shall be processed",
         PLACE_LABELS_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.multipolePrec",
+        "",
         "Precision",
         "The number of coefficients for expansions",
         MULTIPOLE_PREC_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.stopTolerance",
+        "",
         "Stop Tolerance",
         "Tolerance below which the system is regarded stable and the optimization is stopped",
         STOP_TOLERANCE_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.upward",
+        "",
         "Upward",
         "Add upward constraints",
         UPWARD_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.radial",
+        "",
         "Radial",
         "Add radial constraints",
         RADIAL_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.baseRatio",
+        "",
         "Base Ratio",
         "Ratio of the nodes on the external face giving a limit for the number of nodes placed on the base line",
         BASE_RATIO_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.acyclicSubgraph",
+        "",
         "Acyclic Subgraph Module",
         "The module for finding an acyclic subgraph",
         ACYCLIC_SUBGRAPH_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         AcyclicSubgraphModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.ranking",
+        "",
         "Layering Module",
         "The module for computing a layering (ranking) of the graph",
         RANKING_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         RankingModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.width",
+        "",
         "Layering Width",
         "The maximal width of the Coffman-Graham layering",
         WIDTH_DEFAULT,
+        LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1182,54 +1258,66 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.crossMin",
+        "",
         "Crossing Min. Module",
         "The module for crossing minimization used in the layer-sweep method",
         CROSS_MIN_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         CrossMinModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.edgeInsertion",
+        "",
         "Edge Insertion Module",
         "The module for edge insertion used for planarization",
         EDGE_INSERTION_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         EdgeInsertionModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.embedder",
+        "",
         "Embedder Module",
         "The module for choosing an embedding for the graph",
         EMBEDDER_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         EmbedderModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.scaleFunctionFactor",
+        "",
         "Scale Factor",
         "Factor for scaling the bounding box of the initial layout",
         SCALE_FUNCTION_FACTOR_DEFAULT,
+        LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.crossingBeautifier",
+        "",
         "Crossing Beautifier",
         "The module for crossing beautification",
         CROSSING_BEAUTIFIER_DEFAULT,
+        LayoutOptionData.Type.ENUM,
         CrossBeautifModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
     registry.register(new LayoutOptionData(
         "de.cau.cs.kieler.kiml.ogdf.adaptPortPositions",
+        "",
         "Adapt Port Positions",
         "Whether ports should be moved to the point where edges cross the node&apos;s bounds.",
         ADAPT_PORT_POSITIONS_DEFAULT,
+        LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
@@ -1251,13 +1339,13 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.sugiyama",
-        "org.eclipse.elk.spacing",
-        SUGIYAMA_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        SUGIYAMA_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.sugiyama",
-        "org.eclipse.elk.borderSpacing",
-        SUGIYAMA_SUP_BORDER_SPACING
+        "org.eclipse.elk.spacing.border",
+        SUGIYAMA_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.sugiyama",
@@ -1291,8 +1379,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.sugiyama",
-        "org.eclipse.elk.separateConnComp",
-        SUGIYAMA_SUP_SEPARATE_CONN_COMP
+        "org.eclipse.elk.separateConnectedComponents",
+        SUGIYAMA_SUP_SEPARATE_CONNECTED_COMPONENTS
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.sugiyama",
@@ -1311,12 +1399,12 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.sugiyama",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.sugiyama",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
@@ -1366,8 +1454,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.planarization",
-        "org.eclipse.elk.spacing",
-        PLANARIZATION_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        PLANARIZATION_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.planarization",
@@ -1376,8 +1464,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.planarization",
-        "org.eclipse.elk.borderSpacing",
-        PLANARIZATION_SUP_BORDER_SPACING
+        "org.eclipse.elk.spacing.border",
+        PLANARIZATION_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.planarization",
@@ -1416,12 +1504,12 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.planarization",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.planarization",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
@@ -1471,8 +1559,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fmmm",
-        "org.eclipse.elk.borderSpacing",
-        FMMM_SUP_BORDER_SPACING
+        "org.eclipse.elk.spacing.border",
+        FMMM_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fmmm",
@@ -1486,12 +1574,12 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fmmm",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fmmm",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
@@ -1516,13 +1604,13 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.davidsonHarel",
-        "org.eclipse.elk.spacing",
-        DAVIDSON_HAREL_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        DAVIDSON_HAREL_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.davidsonHarel",
-        "org.eclipse.elk.borderSpacing",
-        DAVIDSON_HAREL_SUP_BORDER_SPACING
+        "org.eclipse.elk.spacing.border",
+        DAVIDSON_HAREL_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.davidsonHarel",
@@ -1546,12 +1634,12 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.davidsonHarel",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.davidsonHarel",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
@@ -1576,8 +1664,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fruchtermanReingold",
-        "org.eclipse.elk.borderSpacing",
-        FRUCHTERMAN_REINGOLD_SUP_BORDER_SPACING
+        "org.eclipse.elk.spacing.border",
+        FRUCHTERMAN_REINGOLD_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fruchtermanReingold",
@@ -1606,8 +1694,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fruchtermanReingold",
-        "org.eclipse.elk.spacing",
-        FRUCHTERMAN_REINGOLD_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        FRUCHTERMAN_REINGOLD_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fruchtermanReingold",
@@ -1616,12 +1704,12 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fruchtermanReingold",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fruchtermanReingold",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
@@ -1651,7 +1739,7 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.gem",
-        "org.eclipse.elk.borderSpacing",
+        "org.eclipse.elk.spacing.border",
         null
     );
     registry.addOptionSupport(
@@ -1671,8 +1759,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.gem",
-        "org.eclipse.elk.spacing",
-        GEM_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        GEM_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.gem",
@@ -1731,12 +1819,12 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.gem",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.gem",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
@@ -1761,8 +1849,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.circular",
-        "org.eclipse.elk.borderSpacing",
-        CIRCULAR_SUP_BORDER_SPACING
+        "org.eclipse.elk.spacing.border",
+        CIRCULAR_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.circular",
@@ -1776,8 +1864,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.circular",
-        "org.eclipse.elk.spacing",
-        CIRCULAR_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        CIRCULAR_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.circular",
@@ -1801,12 +1889,12 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.circular",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.circular",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
@@ -1831,8 +1919,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.tree",
-        "org.eclipse.elk.borderSpacing",
-        TREE_SUP_BORDER_SPACING
+        "org.eclipse.elk.spacing.border",
+        TREE_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.tree",
@@ -1856,8 +1944,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.tree",
-        "org.eclipse.elk.spacing",
-        TREE_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        TREE_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.tree",
@@ -1876,12 +1964,12 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.tree",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.tree",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
@@ -1906,13 +1994,13 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.radialTree",
-        "org.eclipse.elk.spacing",
-        RADIAL_TREE_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        RADIAL_TREE_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.radialTree",
-        "org.eclipse.elk.borderSpacing",
-        RADIAL_TREE_SUP_BORDER_SPACING
+        "org.eclipse.elk.spacing.border",
+        RADIAL_TREE_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.radialTree",
@@ -1931,12 +2019,12 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.radialTree",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.radialTree",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
@@ -1961,8 +2049,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.upwardPlanarization",
-        "org.eclipse.elk.borderSpacing",
-        UPWARD_PLANARIZATION_SUP_BORDER_SPACING
+        "org.eclipse.elk.spacing.border",
+        UPWARD_PLANARIZATION_SUP_SPACING_BORDER
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.upwardPlanarization",
@@ -1981,17 +2069,17 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.upwardPlanarization",
-        "org.eclipse.elk.spacing",
-        UPWARD_PLANARIZATION_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        UPWARD_PLANARIZATION_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.upwardPlanarization",
-        "org.eclipse.elk.sizeConstraint",
+        "org.eclipse.elk.nodeSize.constraints",
         null
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.upwardPlanarization",
-        "org.eclipse.elk.sizeOptions",
+        "org.eclipse.elk.nodeSize.options",
         null
     );
     registry.addOptionSupport(
@@ -2111,8 +2199,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.kamadaKawai",
-        "org.eclipse.elk.spacing",
-        KAMADA_KAWAI_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        KAMADA_KAWAI_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.kamadaKawai",
@@ -2201,8 +2289,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.dominance",
-        "org.eclipse.elk.spacing",
-        DOMINANCE_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        DOMINANCE_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.dominance",
@@ -2246,8 +2334,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.visibility",
-        "org.eclipse.elk.spacing",
-        VISIBILITY_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        VISIBILITY_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.visibility",
@@ -2291,8 +2379,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fraysseixPachPollack",
-        "org.eclipse.elk.spacing",
-        FRAYSSEIX_PACH_POLLACK_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        FRAYSSEIX_PACH_POLLACK_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.fraysseixPachPollack",
@@ -2326,8 +2414,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     ));
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.schnyder",
-        "org.eclipse.elk.spacing",
-        SCHNYDER_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        SCHNYDER_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.schnyder",
@@ -2381,8 +2469,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.canonicalOrder",
-        "org.eclipse.elk.spacing",
-        CANONICAL_ORDER_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        CANONICAL_ORDER_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.canonicalOrder",
@@ -2416,8 +2504,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.mixedModel",
-        "org.eclipse.elk.spacing",
-        MIXED_MODEL_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        MIXED_MODEL_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.mixedModel",
@@ -2491,8 +2579,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.convexGrid",
-        "org.eclipse.elk.spacing",
-        CONVEX_GRID_SUP_SPACING
+        "org.eclipse.elk.spacing.node",
+        CONVEX_GRID_SUP_SPACING_NODE
     );
     registry.addOptionSupport(
         "de.cau.cs.kieler.kiml.ogdf.convexGrid",
