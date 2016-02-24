@@ -14,8 +14,7 @@
 package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-
-import de.cau.cs.kieler.core.kgraph.KNode;
+import org.eclipse.elk.graph.KNode;
 
 /**
  * The interface for KGraph providers.

@@ -14,8 +14,7 @@
 package de.cau.cs.kieler.kiml.grana;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-
-import de.cau.cs.kieler.core.kgraph.KNode;
+import org.eclipse.elk.graph.KNode;
 
 /**
  * The interface all graph analysis algorithms have to implement.

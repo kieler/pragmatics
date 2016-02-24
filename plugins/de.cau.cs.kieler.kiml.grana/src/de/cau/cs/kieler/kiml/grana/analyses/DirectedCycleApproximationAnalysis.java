@@ -20,16 +20,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
 
 import com.google.common.collect.Iterables;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
  * Analysis for approximate directed cycle count, that is the number of back edges determined by a

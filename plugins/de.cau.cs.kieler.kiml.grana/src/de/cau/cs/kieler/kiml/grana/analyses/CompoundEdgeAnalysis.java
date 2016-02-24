@@ -17,9 +17,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 

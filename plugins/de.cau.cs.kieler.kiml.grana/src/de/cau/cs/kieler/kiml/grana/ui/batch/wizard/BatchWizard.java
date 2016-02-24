@@ -18,6 +18,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -119,8 +120,8 @@ public class BatchWizard extends Wizard {
         GranaUtil.setAnalysesSelection(PREFERENCE_SELECTED_ANALYSES, selectedAnalyses);
         LayoutConfigurator batchLayoutConfig = layoutConfigurationPage.getConfig();
         layoutConfig = batchLayoutConfig;
-        GranaUtil.setConfiguration(PREFERENCE_LAYOUT_CONFIG,
-                Pair.fromMap(batchLayoutConfig.getGlobalValues()));
+		GranaUtil.setConfiguration(PREFERENCE_LAYOUT_CONFIG,
+				Pair.fromMap(batchLayoutConfig.getProperties(KGraphElement.class).getAllProperties()));
         return true;
     }
 

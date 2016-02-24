@@ -16,15 +16,15 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 
 import java.awt.geom.Rectangle2D;
 
+import org.eclipse.elk.core.klayoutdata.KInsets;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.common.util.EList;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
  * A drawing analysis that computes the percentage of the drawing area that is covered by

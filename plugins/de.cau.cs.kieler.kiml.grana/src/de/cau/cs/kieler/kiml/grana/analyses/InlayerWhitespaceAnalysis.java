@@ -19,18 +19,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KNode;
 
 import com.google.common.collect.ImmutableSet;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.kiml.grana.analyses.LayersAnalysis.Layer;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
  * @author uru
@@ -70,7 +70,7 @@ public class InlayerWhitespaceAnalysis implements IAnalysis {
         
         List<Layer> layers;
         KLayoutData ld = parent.getData(KLayoutData.class);
-        final Direction direction = ld.getProperty(LayoutOptions.DIRECTION);
+        final Direction direction = ld.getProperty(CoreOptions.DIRECTION);
         if (LEFT_TO_RIGHT.contains(direction)) {
             layers = layerAnalysis.getAllVerticalLayers().get(parent);
         } else {

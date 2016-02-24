@@ -18,18 +18,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that counts the number of bendpoints. Returns a four-component
@@ -104,10 +104,10 @@ public class BendsAnalysis implements IAnalysis {
                     // convert bendpoint to a common, global coordinate system
                     KVector local = bendPoint.createVector();
                     KVector global;
-                    if (KimlUtil.isDescendant(edge.getTarget(), edge.getSource())) {
-                        global = KimlUtil.toAbsolute(local, edge.getSource());
+                    if (ElkUtil.isDescendant(edge.getTarget(), edge.getSource())) {
+                        global = ElkUtil.toAbsolute(local, edge.getSource());
                     } else {
-                        global = KimlUtil.toAbsolute(local, edge.getSource().getParent());
+                        global = ElkUtil.toAbsolute(local, edge.getSource().getParent());
                     }
                     
                     uniqueBendPoints.add(global);

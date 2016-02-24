@@ -32,9 +32,9 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.IFactory;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.core.util.WrappedException;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.dependency.Dependency;
 import de.cau.cs.kieler.kiml.grana.dependency.DependencyGraph;
 

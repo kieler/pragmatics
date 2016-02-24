@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutConfigurationManager;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
@@ -49,9 +50,6 @@ public final class DiagramAnalyzer {
     /** the executor service for analysis operations. */
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor(); 
 
-    @Inject
-    private static LayoutConfigurationManager configManager;
-    
     /**
      * This class is an utility class and should not be instantiated.
      */
@@ -121,7 +119,7 @@ public final class DiagramAnalyzer {
 			protected IStatus execute(IElkProgressMonitor monitor) {
 				monitor.begin("Diagram analysis", TOTAL_WORK);
                 // configure the layout graph to set proper layout options
-                configManager.createConfigurator(layoutMapping.get());
+                DiagramLayoutEngine.configManager.createConfigurator(layoutMapping.get());
                 
                 // perform analyses on the graph
                 org.eclipse.elk.graph.KNode graph = layoutMapping.get().getLayoutGraph();

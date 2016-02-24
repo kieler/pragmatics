@@ -18,22 +18,22 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that computes the number of edge crossings. It assumes that
@@ -155,15 +155,15 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
                 
                 // translate the bend point coordinates to absolute
                 KNode parent = node;
-                if (!KimlUtil.isDescendant(edge.getTarget(), parent)) {
+                if (!ElkUtil.isDescendant(edge.getTarget(), parent)) {
                     parent = node.getParent();
                 }
                 KVector referencePoint = new KVector();
-                KimlUtil.toAbsolute(referencePoint, parent);
+                ElkUtil.toAbsolute(referencePoint, parent);
                 chain.offset(referencePoint);
                 
                 // transform spline control points to approximated bend points
-                if (edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.EDGE_ROUTING)
+                if (edge.getData(KEdgeLayout.class).getProperty(CoreOptions.EDGE_ROUTING)
                         == EdgeRouting.SPLINES) {
                     chain = ElkMath.approximateBezierSpline(chain);
                 }
@@ -202,9 +202,9 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
                         && (sourcePort1.equals(sourcePort2) || sourcePort1.equals(targetPort2));
                 samePort |= targetPort1 != null
                         && (targetPort1.equals(targetPort2) || targetPort1.equals(sourcePort2));
-                samePort |= sourceLayout1.getProperty(LayoutOptions.HYPERNODE)
+                samePort |= sourceLayout1.getProperty(CoreOptions.HYPERNODE)
                         && (source1.equals(source2) || source1.equals(target2));
-                samePort |= targetLayout1.getProperty(LayoutOptions.HYPERNODE)
+                samePort |= targetLayout1.getProperty(CoreOptions.HYPERNODE)
                         && (target1.equals(target2) || target1.equals(source2));
                 if (!samePort) {
                     KVectorChain chain2 = chains.get(j);

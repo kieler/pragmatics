@@ -21,26 +21,26 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A special edge crossings analysis for hyperedges. Works best with data flow diagrams.
@@ -112,15 +112,15 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
                 
                 // translate the bend point coordinates to absolute
                 KNode parent = node;
-                if (!KimlUtil.isDescendant(edge.getTarget(), parent)) {
+                if (!ElkUtil.isDescendant(edge.getTarget(), parent)) {
                     parent = node.getParent();
                 }
                 KVector referencePoint = new KVector();
-                KimlUtil.toAbsolute(referencePoint, parent);
+                ElkUtil.toAbsolute(referencePoint, parent);
                 chain.offset(referencePoint);
                 
                 // transform spline control points to approximated bend points
-                if (edge.getData(KEdgeLayout.class).getProperty(LayoutOptions.EDGE_ROUTING)
+                if (edge.getData(KEdgeLayout.class).getProperty(CoreOptions.EDGE_ROUTING)
                         == EdgeRouting.SPLINES) {
                     chain = ElkMath.approximateBezierSpline(chain);
                 }

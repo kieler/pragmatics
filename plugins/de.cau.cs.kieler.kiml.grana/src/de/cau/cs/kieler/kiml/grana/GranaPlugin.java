@@ -15,7 +15,6 @@ package de.cau.cs.kieler.kiml.grana;
 
 import java.util.List;
 
-import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.ILayoutListener;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.service.LayoutMapping;
@@ -23,8 +22,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.grana.ui.AnalysisEffect;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
 

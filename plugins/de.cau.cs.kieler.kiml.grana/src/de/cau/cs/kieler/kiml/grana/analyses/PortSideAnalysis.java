@@ -16,18 +16,18 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.options.LayoutOptions;
 import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A graph analysis that computes the number of ports on each of the four sides.
@@ -57,14 +57,14 @@ public class PortSideAnalysis implements IAnalysis {
             Direction direction = Direction.UNDEFINED;
             if (node.getParent() != null) {
                 direction = node.getParent().getData(KShapeLayout.class).getProperty(
-                        LayoutOptions.DIRECTION);
+                        CoreOptions.DIRECTION);
             }
             
             for (KPort port : node.getPorts()) {
                 KShapeLayout portLayout = port.getData(KShapeLayout.class);
-                PortSide portSide = portLayout.getProperty(LayoutOptions.PORT_SIDE);
+                PortSide portSide = portLayout.getProperty(CoreOptions.PORT_SIDE);
                 if (portSide == PortSide.UNDEFINED) {
-                    portSide = KimlUtil.calcPortSide(port, direction);
+                    portSide = ElkUtil.calcPortSide(port, direction);
                 }
                 switch (portSide) {
                 case NORTH:

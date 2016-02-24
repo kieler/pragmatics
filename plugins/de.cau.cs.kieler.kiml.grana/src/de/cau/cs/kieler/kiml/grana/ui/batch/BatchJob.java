@@ -16,13 +16,13 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KNode;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * The class which represents an analysis batch job.

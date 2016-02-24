@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
-import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
@@ -36,6 +36,11 @@ import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.elk.core.util.WrappedException;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -52,13 +57,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 
 /**
  * The KGraph provider that derives a graph from a file. It uses GMF services to open a
@@ -153,7 +152,8 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                 }
                 
                 if (layoutEngine == null) {
-                    layoutEngine = new RecursiveGraphLayoutEngine();
+                	// FIXME elkMigrate
+//                    layoutEngine = LayoutConfigurationManager.GraphLayoutEngine;
                 }
                 
                 // shall we perform execution time analysis?
@@ -277,8 +277,9 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
         org.eclipse.elk.graph.KNode inputGraph = mapping.getLayoutGraph();
         if (layoutBeforeAnalysis) {
             if (configurator != null) {
-                mapping.getLayoutConfigs().add(configurator);
-                configManager.createConfigurator(mapping).c
+            	// FIXME elkMigrate
+                //mapping.getLayoutConfigs().add(configurator);
+                //configManager.createConfigurator(mapping).c // TODO
             }
             IStatus status = new DiagramLayoutEngine().layout(mapping, monitor.subTask(1));
             if (!status.isOK()) {
@@ -332,9 +333,6 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
      * @param config a layout configurator
      */
     private void configure(final KGraphElement graphElement, final LayoutConfigurator config) {
-        // create a layout context for the current graph element
-        LayoutContext context = new LayoutContext();
-        context.setProperty(LayoutContext.GRAPH_ELEM, graphElement);
         
         // transfer the options from the layout configuration
         KLayoutData layoutData = graphElement.getData(KLayoutData.class);
