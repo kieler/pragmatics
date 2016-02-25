@@ -14,7 +14,7 @@
 
 package de.cau.cs.kieler.kiml.formats;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
+import org.eclipse.elk.graph.KNode;
 
 /**
  * Interface for handlers of graph format transformations.

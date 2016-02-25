@@ -13,11 +13,11 @@
  */
 package de.cau.cs.kieler.kiml.formats.json;
 
+import org.eclipse.elk.graph.KNode;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;

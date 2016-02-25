@@ -17,6 +17,20 @@ import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
+
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
 import net.ogdf.ogml.DocumentRoot;
 import net.ogdf.ogml.EdgeLayoutType;
 import net.ogdf.ogml.EdgeType;
@@ -33,19 +47,6 @@ import net.ogdf.ogml.ShapeType1;
 import net.ogdf.ogml.SourceTargetType;
 import net.ogdf.ogml.StructureType;
 import net.ogdf.ogml.StylesType;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Graph exporter for OGML.
@@ -127,7 +128,7 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
             nodeList.add(ogmlNode);
             
             // transform node layout
-            if (!knodeLayout.getProperty(LayoutOptions.NO_LAYOUT) && (knodeLayout.getXpos() != 0
+            if (!knodeLayout.getProperty(CoreOptions.NO_LAYOUT) && (knodeLayout.getXpos() != 0
                     || knodeLayout.getYpos() != 0 || knodeLayout.getWidth() != 0
                     || knodeLayout.getHeight() != 0)) {
                 NodeLayoutType ogmlNodeLayout = OgmlFactory.eINSTANCE.createNodeLayoutType();
@@ -172,7 +173,7 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
                 // transform edge
                 KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
                 KVector edgeOffset = offset;
-                if (KimlUtil.isDescendant(kedge.getTarget(), knode)) {
+                if (ElkUtil.isDescendant(kedge.getTarget(), knode)) {
                     KShapeLayout sourceLayout = knode.getData(KShapeLayout.class);
                     edgeOffset = new KVector(offset).add(sourceLayout.getXpos(),
                             sourceLayout.getYpos());
@@ -193,7 +194,7 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
                 // transform edge layout
                 KPoint sourcePoint = kedgeLayout.getSourcePoint();
                 KPoint targetPoint = kedgeLayout.getTargetPoint();
-                if (!kedgeLayout.getProperty(LayoutOptions.NO_LAYOUT)
+                if (!kedgeLayout.getProperty(CoreOptions.NO_LAYOUT)
                         && (kedgeLayout.getBendPoints().size() > 0
                         || sourcePoint.getX() != 0 || sourcePoint.getY() != 0
                         || targetPoint.getY() != 0 || targetPoint.getY() != 0)) {

@@ -18,21 +18,23 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.PortConstraints;
+import org.eclipse.elk.core.service.util.ElkServiceUtil;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
+
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Graph importer for the GML format.
@@ -61,7 +63,7 @@ public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
         GMLModel gmlModel = data.getSourceGraph();
         for (Element element : gmlModel.getElements()) {
             if ("graph".equalsIgnoreCase(element.getKey())) {
-                KNode parent = KimlUtil.createInitializedNode();
+                KNode parent = ElkUtil.createInitializedNode();
                 Map<String, KNode> nodeIdMap = Maps.newHashMap();
                 data.setProperty(NODE_ID_MAP, nodeIdMap);
                 transformGraph(element, parent, data);
@@ -105,7 +107,7 @@ public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
                     if ("graph".equalsIgnoreCase(e.getKey())) {
                         transformGraph(e, knode, transData);
                     } else if ("label".equalsIgnoreCase(e.getKey())) {
-                        KLabel label = KimlUtil.createInitializedLabel(knode);
+                        KLabel label = ElkUtil.createInitializedLabel(knode);
                         label.setText(e.getValue());
                     } else if ("graphics".equalsIgnoreCase(e.getKey())) {
                         for (Element f : GmlFormatHandler.getElements(element)) {
@@ -124,7 +126,7 @@ public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
                             }
                         }
                     } else {
-                        KimlUtil.setOption(nodeLayout, e.getKey(), e.getValue());
+                        ElkServiceUtil.setOption(nodeLayout, e.getKey(), e.getValue());
                     }
                 }
             } else if ("edge".equalsIgnoreCase(element.getKey())) {
@@ -140,22 +142,22 @@ public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
                 if (sourceid != null && targetid != null) {
                     KNode source = transformNode(sourceid, parent, transData);
                     KNode target = transformNode(targetid, parent, transData);
-                    KEdge kedge = KimlUtil.createInitializedEdge();
+                    KEdge kedge = ElkUtil.createInitializedEdge();
                     kedge.setSource(source);
                     kedge.setTarget(target);
                     KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                     edgeLayout.setProperty(PROP_ELEM, element);
                     for (Element e : GmlFormatHandler.getElements(element)) {
                         if ("label".equalsIgnoreCase(e.getKey())) {
-                            KLabel label = KimlUtil.createInitializedLabel(kedge);
+                            KLabel label = ElkUtil.createInitializedLabel(kedge);
                             label.setText(e.getValue());
                         } else {
-                            KimlUtil.setOption(edgeLayout, e.getKey(), e.getValue());
+                            ElkServiceUtil.setOption(edgeLayout, e.getKey(), e.getValue());
                         }
                     }
                 }
             } else if ("label".equalsIgnoreCase(element.getKey())) {
-                KLabel klabel = KimlUtil.createInitializedLabel(parent);
+                KLabel klabel = ElkUtil.createInitializedLabel(parent);
                 klabel.setText(element.getValue());
             }
         }
@@ -173,9 +175,9 @@ public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
         Map<String, KNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
         KNode knode = nodeIdMap.get(nodeId);
         if (knode == null) {
-            knode = KimlUtil.createInitializedNode();
+            knode = ElkUtil.createInitializedNode();
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
+            nodeLayout.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
             knode.setParent(parent);
             if (nodeId != null) {
                 nodeIdMap.put(nodeId, knode);

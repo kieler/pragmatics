@@ -16,20 +16,20 @@ package de.cau.cs.kieler.kiml.formats.dot;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.alg.graphviz.dot.GraphvizDotStandaloneSetup;
+import org.eclipse.elk.alg.graphviz.dot.dot.GraphvizModel;
+import org.eclipse.elk.alg.graphviz.dot.transform.DotExporter;
+import org.eclipse.elk.alg.graphviz.dot.transform.DotImporter;
+import org.eclipse.elk.alg.graphviz.dot.transform.DotResourceSetProvider;
+import org.eclipse.elk.alg.graphviz.dot.transform.IDotTransformationData;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
 import de.cau.cs.kieler.kiml.formats.AbstractEmfHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.graphviz.dot.GraphvizDotStandaloneSetup;
-import de.cau.cs.kieler.kiml.graphviz.dot.dot.GraphvizModel;
-import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotExporter;
-import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotImporter;
-import de.cau.cs.kieler.kiml.graphviz.dot.transform.DotResourceSetProvider;
-import de.cau.cs.kieler.kiml.graphviz.dot.transform.IDotTransformationData;
 
 /**
  * A graph format handler for Graphviz Dot.

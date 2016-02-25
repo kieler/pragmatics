@@ -12,19 +12,10 @@
       </handler>
    </extension>
    <extension
-         point="de.cau.cs.kieler.kiml.layoutProviders">
-      <layoutOption
-            default="1.0"
-            id="de.cau.cs.kieler.svg.scale"
-            name="SVG Rendering Scale"
-            type="float">
-      </layoutOption>
-      <layoutOption
-            default="false"
-            id="de.cau.cs.kieler.svg.css"
-            name="Use CSS in SVG Output"
-            type="boolean">
-      </layoutOption>
+         point="org.eclipse.elk.core.layoutProviders">
+      <provider
+            class="de.cau.cs.kieler.kiml.formats.svg.SvgOptions">
+      </provider>
    </extension>
 
 </plugin>

@@ -16,17 +16,18 @@ package de.cau.cs.kieler.kiml.formats.matrix;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
+
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Importer for matrices into the KGraph format.
@@ -50,11 +51,11 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
      */
     public void transform(final TransformationData<Matrix, KNode> transData) {
         Matrix matrix = transData.getSourceGraph();
-        KNode parent = KimlUtil.createInitializedNode();
+        KNode parent = ElkUtil.createInitializedNode();
         int nodec = Math.max(matrix.getRows(), matrix.getColumns());
         KNode[] nodes = new KNode[nodec];
         for (int i = 0; i < nodec; i++) {
-            nodes[i] = KimlUtil.createInitializedNode();
+            nodes[i] = ElkUtil.createInitializedNode();
             nodes[i].setParent(parent);
             nodes[i].getData(KShapeLayout.class).setProperty(NODE_INDEX, i + 1);
         }
@@ -66,7 +67,7 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
             for (int i = 0; i < matrix.getRows(); i++) {
                 for (int j = 0; j < matrix.getColumns(); j++) {
                     if (m[i][j] != 0) {
-                        KEdge kedge = KimlUtil.createInitializedEdge();
+                        KEdge kedge = ElkUtil.createInitializedEdge();
                         edgeList.add(kedge);
                         if (m[i][j] > 0) {
                             kedge.setSource(nodes[i]);
@@ -85,7 +86,7 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
         if (list != null) {
             for (Matrix.Entry entry : list) {
                 if (entry.i < nodec && entry.j < nodec && entry.value != 0) {
-                    KEdge kedge = KimlUtil.createInitializedEdge();
+                    KEdge kedge = ElkUtil.createInitializedEdge();
                     edgeList.add(kedge);
                     if (entry.value > 0) {
                         kedge.setSource(nodes[entry.i]);

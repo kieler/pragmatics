@@ -14,17 +14,17 @@
 package de.cau.cs.kieler.kiml.formats.json
 
 import com.google.common.collect.Maps
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
-import java.util.Map
-import org.json.JSONArray
-import org.json.JSONObject
-import de.cau.cs.kieler.core.kgraph.KLabel
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer
 import de.cau.cs.kieler.kiml.formats.TransformationData
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
+import java.util.Map
+import org.eclipse.elk.core.klayoutdata.KLayoutData
+import org.eclipse.elk.core.klayoutdata.KShapeLayout
+import org.eclipse.elk.graph.KEdge
+import org.eclipse.elk.graph.KLabel
+import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.graph.KPort
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  * Exporter from KNode to json.

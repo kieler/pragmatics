@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kiml.formats;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 /**
  * A transformation data object that can be arbitrarily extended using the properties mechanism.

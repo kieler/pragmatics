@@ -33,11 +33,23 @@ import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KInsets;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeRouting;
+import org.eclipse.elk.core.options.NodeLabelPlacement;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.krendering.HorizontalAlignment;
 import de.cau.cs.kieler.core.krendering.KArc;
 import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
@@ -81,19 +93,7 @@ import de.cau.cs.kieler.core.krendering.KYPosition;
 import de.cau.cs.kieler.core.krendering.LineCap;
 import de.cau.cs.kieler.core.krendering.LineStyle;
 import de.cau.cs.kieler.core.krendering.VerticalAlignment;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.math.KielerMath;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.EdgeRouting;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.NodeLabelPlacement;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Renderer for KGraph and KRendering models on AWT graphics.
@@ -103,10 +103,6 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
  * @kieler.rating proposed yellow by msp
  */
 public class KAwtRenderer {
-
-    /** property for output scaling, to be put in parent node's shape layout. */
-    public static final IProperty<Float> SCALE = new Property<Float>(
-            "de.cau.cs.kieler.svg.scale", 1.0f);
 
     /** default font size for nodes. */
     private static final int NODE_FONT_SIZE = 9;
@@ -155,7 +151,7 @@ public class KAwtRenderer {
     public KVector renderGraph(final KNode parentNode) {
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         // set the scale factor
-        scale = parentLayout.getProperty(SCALE);
+        scale = parentLayout.getProperty(SvgOptions.SCALE);
         if (scale <= 0) {
             scale = 1;
         }
@@ -312,8 +308,9 @@ public class KAwtRenderer {
             // retrieve the alignment
             HorizontalAlignment hAlign = HorizontalAlignment.LEFT;
             VerticalAlignment vAlign = VerticalAlignment.CENTER;
-            EnumSet<NodeLabelPlacement> placement = labelLayout.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT); 
-            if(placement != null) {
+            EnumSet<NodeLabelPlacement> placement =
+                    labelLayout.getProperty(CoreOptions.NODE_LABELS_PLACEMENT); 
+            if (placement != null) {
                 // horizontal
                 if (placement.contains(NodeLabelPlacement.H_LEFT)) {
                     hAlign = HorizontalAlignment.LEFT;
@@ -351,15 +348,15 @@ public class KAwtRenderer {
      * @param edge the edge to paint
      */
     private void renderEdge(final KNode graph, final KEdge edge) {
-        if (!KimlUtil.isDescendant(edge.getSource(), graph)
-                || !KimlUtil.isDescendant(edge.getTarget(), graph)) {
+        if (!ElkUtil.isDescendant(edge.getSource(), graph)
+                || !ElkUtil.isDescendant(edge.getTarget(), graph)) {
             // the edge points to some node outside of the rendered subgraph
             return;
         }
         
         // calculate an offset for edge coordinates
         KNode parent = edge.getSource();
-        if (!KimlUtil.isDescendant(edge.getTarget(), parent)) {
+        if (!ElkUtil.isDescendant(edge.getTarget(), parent)) {
             parent = parent.getParent();
         }
         KNode node = parent;
@@ -380,7 +377,7 @@ public class KAwtRenderer {
         KVectorChain bendPoints = edgeLayout.createVectorChain();
         bendPoints.scale(scale);
 
-        boolean isSpline = edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES;
+        boolean isSpline = edgeLayout.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES;
         KRendering edgeRendering = edge.getData(KRendering.class);
         if (edgeRendering == null) {
             // paint a polyline following the edge bend points
@@ -926,7 +923,7 @@ public class KAwtRenderer {
             // approximate the spline for more accurate decorator placement
             KVectorChain referencePoints = points;
             if (isSpline || rendering instanceof KSpline) {
-                referencePoints = KielerMath.approximateBezierSpline(points);
+                referencePoints = ElkMath.approximateBezierSpline(points);
             }
             
             // handle the decorator placement of the contained children

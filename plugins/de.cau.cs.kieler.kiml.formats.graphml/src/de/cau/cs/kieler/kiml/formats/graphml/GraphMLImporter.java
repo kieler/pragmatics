@@ -16,6 +16,19 @@ package de.cau.cs.kieler.kiml.formats.graphml;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.PortConstraints;
+import org.eclipse.elk.core.service.util.ElkServiceUtil;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 import org.graphdrawing.graphml.DataType;
 import org.graphdrawing.graphml.DocumentRoot;
@@ -34,20 +47,8 @@ import org.graphdrawing.graphml.PortType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * A transformer for GraphML.
@@ -82,7 +83,7 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
     public void transform(final TransformationData<DocumentRoot, KNode> transData) {
         GraphmlType graphml = transData.getSourceGraph().getGraphml();
         for (GraphType graph : graphml.getGraph()) {
-            KNode parent = KimlUtil.createInitializedNode();
+            KNode parent = ElkUtil.createInitializedNode();
             Map<String, KNode> nodeIdMap = Maps.newHashMap();
             transData.setProperty(NODE_ID_MAP, nodeIdMap);
             Map<Pair<KNode, String>, KPort> portIdMap = Maps.newHashMap();
@@ -142,7 +143,7 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
             final TransformationData<DocumentRoot, KNode> transData) {
         // transform layout options
         for (DataType data : graph.getData()) {
-            KimlUtil.setOption(parent.getData(KShapeLayout.class), data.getKey(), getValue(data));
+            ElkServiceUtil.setOption(parent.getData(KShapeLayout.class), data.getKey(), getValue(data));
         }
         
         // transform nodes
@@ -151,14 +152,14 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             nodeLayout.setProperty(PROP_NODE, node);
             for (DataType data : node.getData()) {
-                KimlUtil.setOption(nodeLayout, data.getKey(), getValue(data));
+                ElkServiceUtil.setOption(nodeLayout, data.getKey(), getValue(data));
             }
             // transform ports
             for (PortType port : node.getPort()) {
                 KPort kport = transformPort(port.getName(), knode, transData);
                 KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                 for (DataType data : port.getData()) {
-                    KimlUtil.setOption(portLayout, data.getKey(), getValue(data));
+                    ElkServiceUtil.setOption(portLayout, data.getKey(), getValue(data));
                 }
             }
             // transform subgraph
@@ -171,7 +172,7 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
         for (EdgeType edge : graph.getEdge()) {
             KNode source = transformNode(edge.getSource(), parent, transData);
             KNode target = transformNode(edge.getTarget(), parent, transData);
-            KEdge kedge = KimlUtil.createInitializedEdge();
+            KEdge kedge = ElkUtil.createInitializedEdge();
             KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
             edgeLayout.setProperty(PROP_EDGE, edge);
             kedge.setSource(source);
@@ -185,18 +186,18 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
                 kedge.setTargetPort(port);
             }
             for (DataType data : edge.getData()) {
-                KimlUtil.setOption(edgeLayout, data.getKey(), getValue(data));
+                ElkServiceUtil.setOption(edgeLayout, data.getKey(), getValue(data));
             }
         }
         
         // transform hyperedges
         for (HyperedgeType hyperedge : graph.getHyperedge()) {
-            KNode hypernode = KimlUtil.createInitializedNode();
+            KNode hypernode = ElkUtil.createInitializedNode();
             hypernode.setParent(parent);
-            hypernode.getData(KShapeLayout.class).setProperty(LayoutOptions.HYPERNODE, true);
+            hypernode.getData(KShapeLayout.class).setProperty(CoreOptions.HYPERNODE, true);
             for (EndpointType endpoint : hyperedge.getEndpoint()) {
                 KNode epnode = transformNode(endpoint.getNode(), parent, transData);
-                KEdge kedge = KimlUtil.createInitializedEdge();
+                KEdge kedge = ElkUtil.createInitializedEdge();
                 kedge.setSource(epnode);
                 kedge.setTarget(hypernode);
                 if (endpoint.getPort() != null) {
@@ -219,9 +220,9 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
         Map<String, KNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
         KNode knode = nodeIdMap.get(nodeId);
         if (knode == null) {
-            knode = KimlUtil.createInitializedNode();
+            knode = ElkUtil.createInitializedNode();
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            nodeLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
+            nodeLayout.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
             knode.setParent(parent);
             if (nodeId != null) {
                 nodeIdMap.put(nodeId, knode);
@@ -243,7 +244,7 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
         Pair<KNode, String> key = new Pair<KNode, String>(node, portId);
         KPort kport = portIdMap.get(key);
         if (kport == null) {
-            kport = KimlUtil.createInitializedPort();
+            kport = ElkUtil.createInitializedPort();
             kport.setNode(node);
             if (portId != null) {
                 portIdMap.put(key, kport);

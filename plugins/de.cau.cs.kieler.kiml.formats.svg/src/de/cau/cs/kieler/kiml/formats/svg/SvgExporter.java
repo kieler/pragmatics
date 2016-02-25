@@ -17,11 +17,11 @@ import java.awt.Dimension;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.graph.KNode;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
 

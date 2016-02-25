@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.math.KVectorChain;
+import org.eclipse.elk.core.math.KVectorChain;
+
 import de.cau.cs.kieler.kiml.formats.TransformationException;
 
 /**

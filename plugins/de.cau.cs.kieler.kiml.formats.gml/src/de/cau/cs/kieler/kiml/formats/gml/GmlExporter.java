@@ -15,18 +15,19 @@ package de.cau.cs.kieler.kiml.formats.gml;
 
 import java.util.LinkedList;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
+
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Graph exporter for the GML format.
@@ -148,7 +149,7 @@ public class GmlExporter implements IGraphTransformer<KNode, GMLModel> {
      * @param parentElement the parent element to which the layout is added
      */
     private void transform(final KShapeLayout shapeLayout, final Element parentElement) {
-        if (!shapeLayout.getProperty(LayoutOptions.NO_LAYOUT) && (shapeLayout.getXpos() != 0
+        if (!shapeLayout.getProperty(CoreOptions.NO_LAYOUT) && (shapeLayout.getXpos() != 0
                 || shapeLayout.getYpos() != 0 || shapeLayout.getWidth() != 0
                 || shapeLayout.getHeight() != 0)) {
             CollectionElement graphics = new CollectionElement(parentElement, "graphics");
@@ -177,7 +178,7 @@ public class GmlExporter implements IGraphTransformer<KNode, GMLModel> {
     private void transform(final KEdgeLayout edgeLayout, final Element parentElement) {
         KPoint sourcePoint = edgeLayout.getSourcePoint();
         KPoint targetPoint = edgeLayout.getTargetPoint();
-        if (!edgeLayout.getProperty(LayoutOptions.NO_LAYOUT)
+        if (!edgeLayout.getProperty(CoreOptions.NO_LAYOUT)
                 && (edgeLayout.getBendPoints().size() > 0
                 || sourcePoint.getX() != 0 || sourcePoint.getY() != 0
                 || targetPoint.getX() != 0 || targetPoint.getY() != 0)) {
