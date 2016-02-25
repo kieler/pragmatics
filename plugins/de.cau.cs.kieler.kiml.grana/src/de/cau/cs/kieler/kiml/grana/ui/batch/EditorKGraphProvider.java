@@ -26,6 +26,7 @@ import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Maybe;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -33,8 +34,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-
-import de.cau.cs.kieler.core.kgraph.KNode;
 
 /**
  * The KGraph provider that retrieves a KGraph by opening a diagram file in an
@@ -103,7 +102,7 @@ public class EditorKGraphProvider implements IKGraphProvider<IPath> {
                 
                 // get the layout manager for the editor
                 IDiagramLayoutConnector layoutManager = 
-                		LayoutConnectorsService.getInstance().getConnector(editorPart, null);
+                        LayoutConnectorsService.getInstance().getConnector(editorPart, null);
                 if (layoutManager == null) {
                     if (!initialEditors.contains(editorPart)) {
                         page.closeEditor(editorPart, false);
@@ -141,10 +140,7 @@ public class EditorKGraphProvider implements IKGraphProvider<IPath> {
             throw new RuntimeException(wrappedException.get());
         }
         
-        // FIXME elkMigrate convert graph
-        // graph.get()
-        KNode transformedNode = null;
-        return transformedNode;
+        return graph.get();
     }
 
     /**

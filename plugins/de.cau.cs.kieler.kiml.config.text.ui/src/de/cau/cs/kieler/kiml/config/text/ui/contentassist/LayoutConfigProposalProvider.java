@@ -14,10 +14,10 @@
 package de.cau.cs.kieler.kiml.config.text.ui.contentassist;
 
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.data.LayoutOptionData.Visibility;
-import org.eclipse.elk.core.options.LayoutOptions;
-import org.eclipse.elk.core.service.LayoutMetaDataService;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -143,7 +143,7 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
                 // corresponding default value
 
                 case STRING:
-                    if (annotationName.equals(LayoutOptions.ALGORITHM.getId())) {
+                    if (annotationName.equals(CoreOptions.ALGORITHM.getId())) {
                         String displayString = null;
                         for (LayoutAlgorithmData data : layoutServices.getAlgorithmData()) {
                             //proposal = '"' + data.getId() + '"';
