@@ -8,6 +8,7 @@ import org.eclipse.xtext.parser.antlr.IAntlrTokenFileProvider;
 
 public class GranaAntlrTokenFileProvider implements IAntlrTokenFileProvider {
 	
+	@Override
 	public InputStream getAntlrTokenFile() {
 		ClassLoader classLoader = getClass().getClassLoader();
     	return classLoader.getResourceAsStream("de/cau/cs/kieler/kiml/grana/text/parser/antlr/internal/InternalGrana.tokens");

@@ -3,9 +3,9 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/de.cau.cs.kieler.kiml.grana.text/src-gen" editDirectory="/de.cau.cs.kieler.kiml.grana.text.edit/src"
     editorDirectory="/de.cau.cs.kieler.kiml.grana.text.editor/src" modelPluginID="de.cau.cs.kieler.kiml.grana.text"
     forceOverwrite="true" modelName="Grana" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
-    complianceLevel="5.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.kiml.grana.text.edit"
-    editorPluginID="de.cau.cs.kieler.kiml.grana.text.editor" runtimeVersion="2.10"
-    usedGenPackages="platform:/resource/de.cau.cs.kieler.kiml/model/klayoutdata.genmodel#//klayoutdata">
+    complianceLevel="6.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.kiml.grana.text.edit"
+    editorPluginID="de.cau.cs.kieler.kiml.grana.text.editor" runtimeVersion="2.11"
+    usedGenPackages="platform:/resource/org.eclipse.elk.core/model/klayoutdata.genmodel#//klayoutdata platform:/resource/org.eclipse.elk.graph/model/kgraph.genmodel#//graph">
   <genPackages prefix="Grana" basePackage="de.cau.cs.kieler.kiml.grana.text" disposableProviderFactory="true"
       fileExtensions="grana" ecorePackage="Grana.ecore#/">
     <genClasses ecoreClass="Grana.ecore#//Grana">

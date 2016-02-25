@@ -8,9 +8,9 @@ import de.cau.cs.kieler.kiml.grana.text.grana.Job;
 import de.cau.cs.kieler.kiml.grana.text.grana.Output;
 import de.cau.cs.kieler.kiml.grana.text.grana.Resource;
 
-import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
-
 import java.util.Collection;
+
+import org.eclipse.elk.core.klayoutdata.KIdentifier;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;

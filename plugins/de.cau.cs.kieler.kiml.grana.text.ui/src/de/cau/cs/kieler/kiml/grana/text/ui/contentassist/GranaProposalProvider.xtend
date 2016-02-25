@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.kiml.grana.text.ui.contentassist
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.PersistentEntry
 import de.cau.cs.kieler.kiml.grana.AnalysisService
 import de.cau.cs.kieler.kiml.grana.text.grana.RangeJob
 import de.cau.cs.kieler.kiml.grana.text.services.GranaGrammarAccess
@@ -26,6 +25,7 @@ import org.eclipse.elk.core.data.LayoutOptionData.Type
 import org.eclipse.elk.core.data.LayoutOptionData.Visibility
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.ui.LayoutOptionLabelProvider
+import org.eclipse.elk.graph.PersistentEntry
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.jface.viewers.StyledString
 import org.eclipse.swt.graphics.Image
