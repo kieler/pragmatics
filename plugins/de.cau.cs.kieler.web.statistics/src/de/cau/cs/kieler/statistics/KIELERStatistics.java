@@ -22,17 +22,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.properties.IProperty;
+
 import com.google.common.collect.Maps;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 import com.mongodb.WriteResult;
-
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * A convenience class to gather certain statistic values, e.g. usages of web services.
@@ -175,7 +175,7 @@ public final class KIELERStatistics {
 
         // if it is klay layered, get some more insight into the configuration
         KLayoutData data = graph.getData(KLayoutData.class);
-        String alg = data.getProperty(LayoutOptions.ALGORITHM);
+        String alg = data.getProperty(CoreOptions.ALGORITHM);
 
         // get the exact property list
         if (alg != null && alg.equals(ID_KLAY_LAYERED)) {

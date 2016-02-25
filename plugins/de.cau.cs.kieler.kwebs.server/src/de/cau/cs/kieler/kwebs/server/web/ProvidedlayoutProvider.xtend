@@ -15,11 +15,6 @@
 package de.cau.cs.kieler.kwebs.server.web
 
 import com.google.common.base.Strings
-import de.cau.cs.kieler.kiml.LayoutAlgorithmData
-import de.cau.cs.kieler.kiml.LayoutMetaDataService
-import de.cau.cs.kieler.kiml.LayoutOptionData
-import de.cau.cs.kieler.kiml.options.GraphFeature
-import de.cau.cs.kieler.kiml.options.LayoutOptions
 import de.cau.cs.kieler.kwebs.server.Application
 import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService
 import de.cau.cs.kieler.kwebs.server.logging.Logger
@@ -31,6 +26,10 @@ import de.cau.cs.kieler.kwebs.server.servicedata.SupportedFormat
 import de.cau.cs.kieler.kwebs.server.util.Resources
 import java.util.List
 import java.util.Map
+import org.eclipse.elk.core.data.LayoutAlgorithmData
+import org.eclipse.elk.core.data.LayoutMetaDataService
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.GraphFeature
 
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.
@@ -220,7 +219,6 @@ class ProvidedlayoutProvider
                             <tr>
                                 <td>«feature.name»</td>
                                 <td>«feature.description»</td>
-                                <td>«algorithmData.getSupportedFeatureDescription(feature)»</td>
                             </tr>
                             '''
                             } else {
@@ -279,7 +277,7 @@ class ProvidedlayoutProvider
                 </p>
                 <div style="text-align: center;">
                 <div class="alert alert-info center" style="text-align: left;">
-                    «generateForOption(processingExchange, LayoutOptions::ALGORITHM.id, true)»
+                    «generateForOption(processingExchange, CoreOptions::ALGORITHM.id, true)»
                 </div>
                 </div>
                 <p>
@@ -357,11 +355,7 @@ class ProvidedlayoutProvider
                                 «features.map(feature | {
                                     '''<td>
                                     «IF (algorithmData.supportsFeature(feature))»
-                                        <img height="20" src="«IMAGE_CHECK»"
-                                        «IF !Strings.isNullOrEmpty(algorithmData.getSupportedFeatureDescription(feature))»
-                                            data-toggle="tooltip" title="«algorithmData.getSupportedFeatureDescription(feature)»"
-                                        «ENDIF»
-                                        />
+                                        <img height="20" src="«IMAGE_CHECK»" />
                                     «ELSE»
                                         <div class="imgPlaceholder"></div>
                                     «ENDIF»
@@ -413,7 +407,7 @@ class ProvidedlayoutProvider
         }
         val String type         = option.type
         val String defaultValue =
-            if (id.equals(LayoutOptions::ALGORITHM.getId())) DEFAULT_ALGORITHM_ID
+            if (id.equals(CoreOptions::ALGORITHM.getId())) DEFAULT_ALGORITHM_ID
             else if (option.^default != null && option.^default.trim.length > 0) option.^default.trim
             else "&lt;NONE&gt;"
  
@@ -425,8 +419,8 @@ class ProvidedlayoutProvider
                 <dt>Name:</dt><dd>«option.name»</dd>
                 <dt>Identifier:</dt><dd>«option.id»</dd>
                 <dt>Type:</dt><dd>«type»</dd>
-                «if (type.equals(LayoutOptionData::ENUM_LITERAL)
-                    || type.equals(LayoutOptionData::ENUMSET_LITERAL)) {
+                «if (type.equals("enum")
+                    || type.equals("enumset")) {
                     '''
                     <dt>Possible Values:</dt><dd>«option.remoteEnum.values.join(", ")»</dd>
                     '''
@@ -444,7 +438,7 @@ class ProvidedlayoutProvider
             </p>
             '''
             }»
-            «if (type.equals(LayoutOptionData::ENUMSET_LITERAL)) 
+            «if (type.equals("enumset")) 
             '''
             <div class="alert alert-info">
              To textually specify enumsets pass a string with the desired values separated by a whitespace.  
