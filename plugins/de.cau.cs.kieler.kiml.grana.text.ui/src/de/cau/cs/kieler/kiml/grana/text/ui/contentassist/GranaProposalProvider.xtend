@@ -15,15 +15,17 @@ package de.cau.cs.kieler.kiml.grana.text.ui.contentassist
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.core.kgraph.PersistentEntry
-import de.cau.cs.kieler.kiml.LayoutMetaDataService
-import de.cau.cs.kieler.kiml.LayoutOptionData.Type
 import de.cau.cs.kieler.kiml.grana.AnalysisService
+import de.cau.cs.kieler.kiml.grana.text.grana.RangeJob
 import de.cau.cs.kieler.kiml.grana.text.services.GranaGrammarAccess
-import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.kiml.ui.LayoutOptionLabelProvider
 import java.io.File
 import org.eclipse.core.resources.IContainer
 import org.eclipse.core.resources.ResourcesPlugin
+import org.eclipse.elk.core.data.LayoutMetaDataService
+import org.eclipse.elk.core.data.LayoutOptionData.Type
+import org.eclipse.elk.core.data.LayoutOptionData.Visibility
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.ui.LayoutOptionLabelProvider
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.jface.viewers.StyledString
 import org.eclipse.swt.graphics.Image
@@ -31,7 +33,6 @@ import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.RuleCall
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
-import de.cau.cs.kieler.kiml.grana.text.grana.RangeJob
 
 /**
  * see http://www.eclipse.org/Xtext/documentation.html#contentAssist on how to customize content assistant
@@ -74,7 +75,7 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
         // create and register the completion proposal for every element in the list
         for (optionData : LayoutMetaDataService.instance.optionData) {
             val displayString = new StyledString(optionData.toString(),
-                            if (optionData.isAdvanced()) StyledString.COUNTER_STYLER else null)
+                            if (optionData.visibility == Visibility.ADVANCED) StyledString.COUNTER_STYLER else null)
                             
             displayString.append(" (" + optionData.getId() + ")", StyledString.QUALIFIER_STYLER)
 
@@ -180,7 +181,7 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
 
                 // for string, float, integer and object show the type of the value and give a
                 //  corresponding default value
-                case theType == Type.STRING && annotationName.equals(LayoutOptions.ALGORITHM.getId()): {
+                case theType == Type.STRING && annotationName.equals(CoreOptions.ALGORITHM.getId()): {
                     var String displayString = null;
                     for (data : layoutServices.getAlgorithmData()) {
                         proposal = '"' + data.getId() + '"';
