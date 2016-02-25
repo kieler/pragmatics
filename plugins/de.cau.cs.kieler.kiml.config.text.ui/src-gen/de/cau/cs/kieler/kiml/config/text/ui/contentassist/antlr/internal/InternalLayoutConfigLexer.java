@@ -12,19 +12,19 @@ import java.util.ArrayList;
 
 @SuppressWarnings("all")
 public class InternalLayoutConfigLexer extends Lexer {
-    public static final int RULE_BOOLEAN=4;
-    public static final int RULE_ID=8;
-    public static final int RULE_STRING=5;
-    public static final int T__15=15;
-    public static final int T__12=12;
-    public static final int T__14=14;
-    public static final int T__13=13;
-    public static final int RULE_NATURAL=7;
-    public static final int RULE_WS=11;
-    public static final int RULE_SL_COMMENT=10;
-    public static final int EOF=-1;
     public static final int RULE_TFLOAT=6;
+    public static final int RULE_ID=8;
+    public static final int RULE_WS=11;
+    public static final int RULE_BOOLEAN=4;
+    public static final int RULE_STRING=5;
+    public static final int RULE_SL_COMMENT=10;
+    public static final int T__15=15;
+    public static final int RULE_NATURAL=7;
     public static final int RULE_ML_COMMENT=9;
+    public static final int T__12=12;
+    public static final int T__13=13;
+    public static final int T__14=14;
+    public static final int EOF=-1;
 
     // delegates
     // delegators
@@ -37,15 +37,15 @@ public class InternalLayoutConfigLexer extends Lexer {
         super(input,state);
 
     }
-    public String getGrammarFileName() { return "../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g"; }
+    public String getGrammarFileName() { return "InternalLayoutConfig.g"; }
 
     // $ANTLR start "T__12"
     public final void mT__12() throws RecognitionException {
         try {
             int _type = T__12;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:11:7: ( '{' )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:11:9: '{'
+            // InternalLayoutConfig.g:11:7: ( '{' )
+            // InternalLayoutConfig.g:11:9: '{'
             {
             match('{'); 
 
@@ -64,8 +64,8 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = T__13;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:12:7: ( '}' )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:12:9: '}'
+            // InternalLayoutConfig.g:12:7: ( '}' )
+            // InternalLayoutConfig.g:12:9: '}'
             {
             match('}'); 
 
@@ -84,8 +84,8 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = T__14;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:13:7: ( ':' )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:13:9: ':'
+            // InternalLayoutConfig.g:13:7: ( ':' )
+            // InternalLayoutConfig.g:13:9: ':'
             {
             match(':'); 
 
@@ -104,8 +104,8 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = T__15;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:14:7: ( '.' )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:14:9: '.'
+            // InternalLayoutConfig.g:14:7: ( '.' )
+            // InternalLayoutConfig.g:14:9: '.'
             {
             match('.'); 
 
@@ -124,15 +124,15 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_TFLOAT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:13: ( ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // InternalLayoutConfig.g:880:13: ( ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ ) )
+            // InternalLayoutConfig.g:880:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // InternalLayoutConfig.g:880:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
             int alt24=4;
             alt24 = dfa24.predict(input);
             switch (alt24) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:16: ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
+                    // InternalLayoutConfig.g:880:16: ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
                     {
                     if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
                         input.consume();
@@ -143,7 +143,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                         recover(mse);
                         throw mse;}
 
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:26: ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
+                    // InternalLayoutConfig.g:880:26: ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
                     int alt11=2;
                     int LA11_0 = input.LA(1);
 
@@ -161,9 +161,9 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     switch (alt11) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:27: ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                            // InternalLayoutConfig.g:880:27: ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                             {
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:27: ( '0' .. '9' )+
+                            // InternalLayoutConfig.g:880:27: ( '0' .. '9' )+
                             int cnt1=0;
                             loop1:
                             do {
@@ -177,7 +177,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                                 switch (alt1) {
                             	case 1 :
-                            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:28: '0' .. '9'
+                            	    // InternalLayoutConfig.g:880:28: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -193,7 +193,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                                 cnt1++;
                             } while (true);
 
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:39: ( '.' ( '0' .. '9' )* )?
+                            // InternalLayoutConfig.g:880:39: ( '.' ( '0' .. '9' )* )?
                             int alt3=2;
                             int LA3_0 = input.LA(1);
 
@@ -202,10 +202,10 @@ public class InternalLayoutConfigLexer extends Lexer {
                             }
                             switch (alt3) {
                                 case 1 :
-                                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:40: '.' ( '0' .. '9' )*
+                                    // InternalLayoutConfig.g:880:40: '.' ( '0' .. '9' )*
                                     {
                                     match('.'); 
-                                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:44: ( '0' .. '9' )*
+                                    // InternalLayoutConfig.g:880:44: ( '0' .. '9' )*
                                     loop2:
                                     do {
                                         int alt2=2;
@@ -218,7 +218,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                                         switch (alt2) {
                                     	case 1 :
-                                    	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:45: '0' .. '9'
+                                    	    // InternalLayoutConfig.g:880:45: '0' .. '9'
                                     	    {
                                     	    matchRange('0','9'); 
 
@@ -236,7 +236,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                             }
 
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:58: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                            // InternalLayoutConfig.g:880:58: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                             int alt6=2;
                             int LA6_0 = input.LA(1);
 
@@ -245,7 +245,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                             }
                             switch (alt6) {
                                 case 1 :
-                                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:59: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+                                    // InternalLayoutConfig.g:880:59: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
                                     {
                                     if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                         input.consume();
@@ -256,7 +256,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                                         recover(mse);
                                         throw mse;}
 
-                                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:69: ( '+' | '-' )?
+                                    // InternalLayoutConfig.g:880:69: ( '+' | '-' )?
                                     int alt4=2;
                                     int LA4_0 = input.LA(1);
 
@@ -265,7 +265,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                                     }
                                     switch (alt4) {
                                         case 1 :
-                                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:
+                                            // InternalLayoutConfig.g:
                                             {
                                             if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
                                                 input.consume();
@@ -282,7 +282,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                                     }
 
-                                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:80: ( '0' .. '9' )+
+                                    // InternalLayoutConfig.g:880:80: ( '0' .. '9' )+
                                     int cnt5=0;
                                     loop5:
                                     do {
@@ -296,7 +296,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                                         switch (alt5) {
                                     	case 1 :
-                                    	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:81: '0' .. '9'
+                                    	    // InternalLayoutConfig.g:880:81: '0' .. '9'
                                     	    {
                                     	    matchRange('0','9'); 
 
@@ -322,10 +322,10 @@ public class InternalLayoutConfigLexer extends Lexer {
                             }
                             break;
                         case 2 :
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:94: '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                            // InternalLayoutConfig.g:880:94: '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                             {
                             match('.'); 
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:98: ( '0' .. '9' )+
+                            // InternalLayoutConfig.g:880:98: ( '0' .. '9' )+
                             int cnt7=0;
                             loop7:
                             do {
@@ -339,7 +339,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                                 switch (alt7) {
                             	case 1 :
-                            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:99: '0' .. '9'
+                            	    // InternalLayoutConfig.g:880:99: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -355,7 +355,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                                 cnt7++;
                             } while (true);
 
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:110: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                            // InternalLayoutConfig.g:880:110: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                             int alt10=2;
                             int LA10_0 = input.LA(1);
 
@@ -364,7 +364,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                             }
                             switch (alt10) {
                                 case 1 :
-                                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:111: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+                                    // InternalLayoutConfig.g:880:111: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
                                     {
                                     if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                         input.consume();
@@ -375,7 +375,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                                         recover(mse);
                                         throw mse;}
 
-                                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:121: ( '+' | '-' )?
+                                    // InternalLayoutConfig.g:880:121: ( '+' | '-' )?
                                     int alt8=2;
                                     int LA8_0 = input.LA(1);
 
@@ -384,7 +384,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                                     }
                                     switch (alt8) {
                                         case 1 :
-                                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:
+                                            // InternalLayoutConfig.g:
                                             {
                                             if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
                                                 input.consume();
@@ -401,7 +401,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                                     }
 
-                                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:132: ( '0' .. '9' )+
+                                    // InternalLayoutConfig.g:880:132: ( '0' .. '9' )+
                                     int cnt9=0;
                                     loop9:
                                     do {
@@ -415,7 +415,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                                         switch (alt9) {
                                     	case 1 :
-                                    	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:133: '0' .. '9'
+                                    	    // InternalLayoutConfig.g:880:133: '0' .. '9'
                                     	    {
                                     	    matchRange('0','9'); 
 
@@ -447,9 +447,9 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:147: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // InternalLayoutConfig.g:880:147: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     {
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:147: ( '0' .. '9' )+
+                    // InternalLayoutConfig.g:880:147: ( '0' .. '9' )+
                     int cnt12=0;
                     loop12:
                     do {
@@ -463,7 +463,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                         switch (alt12) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:148: '0' .. '9'
+                    	    // InternalLayoutConfig.g:880:148: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -480,7 +480,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                     } while (true);
 
                     match('.'); 
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:163: ( '0' .. '9' )*
+                    // InternalLayoutConfig.g:880:163: ( '0' .. '9' )*
                     loop13:
                     do {
                         int alt13=2;
@@ -493,7 +493,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                         switch (alt13) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:164: '0' .. '9'
+                    	    // InternalLayoutConfig.g:880:164: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -505,7 +505,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                         }
                     } while (true);
 
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:175: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // InternalLayoutConfig.g:880:175: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     int alt16=2;
                     int LA16_0 = input.LA(1);
 
@@ -514,7 +514,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     switch (alt16) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:176: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+                            // InternalLayoutConfig.g:880:176: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -525,7 +525,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                                 recover(mse);
                                 throw mse;}
 
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:186: ( '+' | '-' )?
+                            // InternalLayoutConfig.g:880:186: ( '+' | '-' )?
                             int alt14=2;
                             int LA14_0 = input.LA(1);
 
@@ -534,7 +534,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                             }
                             switch (alt14) {
                                 case 1 :
-                                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:
+                                    // InternalLayoutConfig.g:
                                     {
                                     if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
                                         input.consume();
@@ -551,7 +551,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                             }
 
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:197: ( '0' .. '9' )+
+                            // InternalLayoutConfig.g:880:197: ( '0' .. '9' )+
                             int cnt15=0;
                             loop15:
                             do {
@@ -565,7 +565,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                                 switch (alt15) {
                             	case 1 :
-                            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:198: '0' .. '9'
+                            	    // InternalLayoutConfig.g:880:198: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -591,10 +591,10 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:211: '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // InternalLayoutConfig.g:880:211: '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     {
                     match('.'); 
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:215: ( '0' .. '9' )+
+                    // InternalLayoutConfig.g:880:215: ( '0' .. '9' )+
                     int cnt17=0;
                     loop17:
                     do {
@@ -608,7 +608,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                         switch (alt17) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:216: '0' .. '9'
+                    	    // InternalLayoutConfig.g:880:216: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -624,7 +624,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                         cnt17++;
                     } while (true);
 
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:227: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // InternalLayoutConfig.g:880:227: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
                     int alt20=2;
                     int LA20_0 = input.LA(1);
 
@@ -633,7 +633,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     switch (alt20) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:228: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+                            // InternalLayoutConfig.g:880:228: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
                             {
                             if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                                 input.consume();
@@ -644,7 +644,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                                 recover(mse);
                                 throw mse;}
 
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:238: ( '+' | '-' )?
+                            // InternalLayoutConfig.g:880:238: ( '+' | '-' )?
                             int alt18=2;
                             int LA18_0 = input.LA(1);
 
@@ -653,7 +653,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                             }
                             switch (alt18) {
                                 case 1 :
-                                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:
+                                    // InternalLayoutConfig.g:
                                     {
                                     if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
                                         input.consume();
@@ -670,7 +670,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                             }
 
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:249: ( '0' .. '9' )+
+                            // InternalLayoutConfig.g:880:249: ( '0' .. '9' )+
                             int cnt19=0;
                             loop19:
                             do {
@@ -684,7 +684,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                                 switch (alt19) {
                             	case 1 :
-                            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:250: '0' .. '9'
+                            	    // InternalLayoutConfig.g:880:250: '0' .. '9'
                             	    {
                             	    matchRange('0','9'); 
 
@@ -710,9 +710,9 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:263: ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+                    // InternalLayoutConfig.g:880:263: ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
                     {
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:263: ( '0' .. '9' )+
+                    // InternalLayoutConfig.g:880:263: ( '0' .. '9' )+
                     int cnt21=0;
                     loop21:
                     do {
@@ -726,7 +726,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                         switch (alt21) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:264: '0' .. '9'
+                    	    // InternalLayoutConfig.g:880:264: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -751,7 +751,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                         recover(mse);
                         throw mse;}
 
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:285: ( '+' | '-' )?
+                    // InternalLayoutConfig.g:880:285: ( '+' | '-' )?
                     int alt22=2;
                     int LA22_0 = input.LA(1);
 
@@ -760,7 +760,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     switch (alt22) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:
+                            // InternalLayoutConfig.g:
                             {
                             if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
                                 input.consume();
@@ -777,7 +777,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                     }
 
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:296: ( '0' .. '9' )+
+                    // InternalLayoutConfig.g:880:296: ( '0' .. '9' )+
                     int cnt23=0;
                     loop23:
                     do {
@@ -791,7 +791,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                         switch (alt23) {
                     	case 1 :
-                    	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:880:297: '0' .. '9'
+                    	    // InternalLayoutConfig.g:880:297: '0' .. '9'
                     	    {
                     	    matchRange('0','9'); 
 
@@ -829,10 +829,10 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_NATURAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:882:14: ( ( '0' .. '9' )+ )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:882:16: ( '0' .. '9' )+
+            // InternalLayoutConfig.g:882:14: ( ( '0' .. '9' )+ )
+            // InternalLayoutConfig.g:882:16: ( '0' .. '9' )+
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:882:16: ( '0' .. '9' )+
+            // InternalLayoutConfig.g:882:16: ( '0' .. '9' )+
             int cnt25=0;
             loop25:
             do {
@@ -846,7 +846,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                 switch (alt25) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:882:17: '0' .. '9'
+            	    // InternalLayoutConfig.g:882:17: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -878,10 +878,10 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_BOOLEAN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:884:14: ( ( 'true' | 'false' ) )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:884:16: ( 'true' | 'false' )
+            // InternalLayoutConfig.g:884:14: ( ( 'true' | 'false' ) )
+            // InternalLayoutConfig.g:884:16: ( 'true' | 'false' )
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:884:16: ( 'true' | 'false' )
+            // InternalLayoutConfig.g:884:16: ( 'true' | 'false' )
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -899,7 +899,7 @@ public class InternalLayoutConfigLexer extends Lexer {
             }
             switch (alt26) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:884:17: 'true'
+                    // InternalLayoutConfig.g:884:17: 'true'
                     {
                     match("true"); 
 
@@ -907,7 +907,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:884:24: 'false'
+                    // InternalLayoutConfig.g:884:24: 'false'
                     {
                     match("false"); 
 
@@ -933,11 +933,11 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:886:13: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:886:15: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+            // InternalLayoutConfig.g:886:13: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' )
+            // InternalLayoutConfig.g:886:15: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
             {
             match('\"'); 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:886:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
+            // InternalLayoutConfig.g:886:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
             loop27:
             do {
                 int alt27=3;
@@ -953,7 +953,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                 switch (alt27) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:886:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' )
+            	    // InternalLayoutConfig.g:886:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' )
             	    {
             	    match('\\'); 
             	    if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
@@ -969,7 +969,7 @@ public class InternalLayoutConfigLexer extends Lexer {
             	    }
             	    break;
             	case 2 :
-            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:886:65: ~ ( ( '\\\\' | '\"' ) )
+            	    // InternalLayoutConfig.g:886:65: ~ ( ( '\\\\' | '\"' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1006,10 +1006,10 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:888:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:888:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalLayoutConfig.g:888:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalLayoutConfig.g:888:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:888:11: ( '^' )?
+            // InternalLayoutConfig.g:888:11: ( '^' )?
             int alt28=2;
             int LA28_0 = input.LA(1);
 
@@ -1018,7 +1018,7 @@ public class InternalLayoutConfigLexer extends Lexer {
             }
             switch (alt28) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:888:11: '^'
+                    // InternalLayoutConfig.g:888:11: '^'
                     {
                     match('^'); 
 
@@ -1036,7 +1036,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:888:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalLayoutConfig.g:888:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop29:
             do {
                 int alt29=2;
@@ -1049,7 +1049,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                 switch (alt29) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:
+            	    // InternalLayoutConfig.g:
             	    {
             	    if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z') ) {
             	        input.consume();
@@ -1085,12 +1085,12 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:890:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:890:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalLayoutConfig.g:890:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalLayoutConfig.g:890:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:890:24: ( options {greedy=false; } : . )*
+            // InternalLayoutConfig.g:890:24: ( options {greedy=false; } : . )*
             loop30:
             do {
                 int alt30=2;
@@ -1115,7 +1115,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                 switch (alt30) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:890:52: .
+            	    // InternalLayoutConfig.g:890:52: .
             	    {
             	    matchAny(); 
 
@@ -1145,12 +1145,12 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:892:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:892:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalLayoutConfig.g:892:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalLayoutConfig.g:892:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:892:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalLayoutConfig.g:892:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop31:
             do {
                 int alt31=2;
@@ -1163,7 +1163,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                 switch (alt31) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:892:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalLayoutConfig.g:892:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1183,7 +1183,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                 }
             } while (true);
 
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:892:40: ( ( '\\r' )? '\\n' )?
+            // InternalLayoutConfig.g:892:40: ( ( '\\r' )? '\\n' )?
             int alt33=2;
             int LA33_0 = input.LA(1);
 
@@ -1192,9 +1192,9 @@ public class InternalLayoutConfigLexer extends Lexer {
             }
             switch (alt33) {
                 case 1 :
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:892:41: ( '\\r' )? '\\n'
+                    // InternalLayoutConfig.g:892:41: ( '\\r' )? '\\n'
                     {
-                    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:892:41: ( '\\r' )?
+                    // InternalLayoutConfig.g:892:41: ( '\\r' )?
                     int alt32=2;
                     int LA32_0 = input.LA(1);
 
@@ -1203,7 +1203,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     switch (alt32) {
                         case 1 :
-                            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:892:41: '\\r'
+                            // InternalLayoutConfig.g:892:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1235,10 +1235,10 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:894:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:894:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalLayoutConfig.g:894:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalLayoutConfig.g:894:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:894:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalLayoutConfig.g:894:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt34=0;
             loop34:
             do {
@@ -1252,7 +1252,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                 switch (alt34) {
             	case 1 :
-            	    // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:
+            	    // InternalLayoutConfig.g:
             	    {
             	    if ( (input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ' ) {
             	        input.consume();
@@ -1288,89 +1288,89 @@ public class InternalLayoutConfigLexer extends Lexer {
     // $ANTLR end "RULE_WS"
 
     public void mTokens() throws RecognitionException {
-        // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:8: ( T__12 | T__13 | T__14 | T__15 | RULE_TFLOAT | RULE_NATURAL | RULE_BOOLEAN | RULE_STRING | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS )
+        // InternalLayoutConfig.g:1:8: ( T__12 | T__13 | T__14 | T__15 | RULE_TFLOAT | RULE_NATURAL | RULE_BOOLEAN | RULE_STRING | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS )
         int alt35=12;
         alt35 = dfa35.predict(input);
         switch (alt35) {
             case 1 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:10: T__12
+                // InternalLayoutConfig.g:1:10: T__12
                 {
                 mT__12(); 
 
                 }
                 break;
             case 2 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:16: T__13
+                // InternalLayoutConfig.g:1:16: T__13
                 {
                 mT__13(); 
 
                 }
                 break;
             case 3 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:22: T__14
+                // InternalLayoutConfig.g:1:22: T__14
                 {
                 mT__14(); 
 
                 }
                 break;
             case 4 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:28: T__15
+                // InternalLayoutConfig.g:1:28: T__15
                 {
                 mT__15(); 
 
                 }
                 break;
             case 5 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:34: RULE_TFLOAT
+                // InternalLayoutConfig.g:1:34: RULE_TFLOAT
                 {
                 mRULE_TFLOAT(); 
 
                 }
                 break;
             case 6 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:46: RULE_NATURAL
+                // InternalLayoutConfig.g:1:46: RULE_NATURAL
                 {
                 mRULE_NATURAL(); 
 
                 }
                 break;
             case 7 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:59: RULE_BOOLEAN
+                // InternalLayoutConfig.g:1:59: RULE_BOOLEAN
                 {
                 mRULE_BOOLEAN(); 
 
                 }
                 break;
             case 8 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:72: RULE_STRING
+                // InternalLayoutConfig.g:1:72: RULE_STRING
                 {
                 mRULE_STRING(); 
 
                 }
                 break;
             case 9 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:84: RULE_ID
+                // InternalLayoutConfig.g:1:84: RULE_ID
                 {
                 mRULE_ID(); 
 
                 }
                 break;
             case 10 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:92: RULE_ML_COMMENT
+                // InternalLayoutConfig.g:1:92: RULE_ML_COMMENT
                 {
                 mRULE_ML_COMMENT(); 
 
                 }
                 break;
             case 11 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:108: RULE_SL_COMMENT
+                // InternalLayoutConfig.g:1:108: RULE_SL_COMMENT
                 {
                 mRULE_SL_COMMENT(); 
 
                 }
                 break;
             case 12 :
-                // ../de.cau.cs.kieler.kiml.config.text.ui/src-gen/de/cau/cs/kieler/kiml/config/text/ui/contentassist/antlr/internal/InternalLayoutConfig.g:1:124: RULE_WS
+                // InternalLayoutConfig.g:1:124: RULE_WS
                 {
                 mRULE_WS(); 
 
@@ -1439,25 +1439,19 @@ public class InternalLayoutConfigLexer extends Lexer {
         }
     }
     static final String DFA35_eotS =
-        "\4\uffff\1\15\1\uffff\1\16\2\12\6\uffff\2\12\2\uffff\2\12\1\27"+
-        "\1\12\1\uffff\1\27";
+        "\4\uffff\1\15\1\uffff\1\16\2\12\6\uffff\2\12\2\uffff\2\12\1\27\1\12\1\uffff\1\27";
     static final String DFA35_eofS =
         "\31\uffff";
     static final String DFA35_minS =
-        "\1\11\3\uffff\1\60\1\uffff\1\56\1\162\1\141\2\uffff\1\52\3\uffff"+
-        "\1\165\1\154\2\uffff\1\145\1\163\1\60\1\145\1\uffff\1\60";
+        "\1\11\3\uffff\1\60\1\uffff\1\56\1\162\1\141\2\uffff\1\52\3\uffff\1\165\1\154\2\uffff\1\145\1\163\1\60\1\145\1\uffff\1\60";
     static final String DFA35_maxS =
-        "\1\175\3\uffff\1\71\1\uffff\1\145\1\162\1\141\2\uffff\1\57\3\uffff"+
-        "\1\165\1\154\2\uffff\1\145\1\163\1\172\1\145\1\uffff\1\172";
+        "\1\175\3\uffff\1\71\1\uffff\1\145\1\162\1\141\2\uffff\1\57\3\uffff\1\165\1\154\2\uffff\1\145\1\163\1\172\1\145\1\uffff\1\172";
     static final String DFA35_acceptS =
-        "\1\uffff\1\1\1\2\1\3\1\uffff\1\5\3\uffff\1\10\1\11\1\uffff\1\14"+
-        "\1\4\1\6\2\uffff\1\12\1\13\4\uffff\1\7\1\uffff";
+        "\1\uffff\1\1\1\2\1\3\1\uffff\1\5\3\uffff\1\10\1\11\1\uffff\1\14\1\4\1\6\2\uffff\1\12\1\13\4\uffff\1\7\1\uffff";
     static final String DFA35_specialS =
         "\31\uffff}>";
     static final String[] DFA35_transitionS = {
-            "\2\14\2\uffff\1\14\22\uffff\1\14\1\uffff\1\11\10\uffff\1\5"+
-            "\1\uffff\1\5\1\4\1\13\12\6\1\3\6\uffff\32\12\3\uffff\2\12\1"+
-            "\uffff\5\12\1\10\15\12\1\7\6\12\1\1\1\uffff\1\2",
+            "\2\14\2\uffff\1\14\22\uffff\1\14\1\uffff\1\11\10\uffff\1\5\1\uffff\1\5\1\4\1\13\12\6\1\3\6\uffff\32\12\3\uffff\2\12\1\uffff\5\12\1\10\15\12\1\7\6\12\1\1\1\uffff\1\2",
             "",
             "",
             "",

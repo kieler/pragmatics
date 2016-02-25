@@ -1,14 +1,14 @@
 package de.cau.cs.kieler.kiml.config.text
 
 import com.google.common.collect.Lists
-import de.cau.cs.kieler.core.kgraph.KNode
 import java.util.List
-import org.eclipse.emf.ecore.resource.Resource
-import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier
 import org.eclipse.elk.core.LayoutConfigurator
-import org.eclipse.elk.core.service.LayoutMetaDataService
+import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.data.LayoutOptionData
+import org.eclipse.elk.core.klayoutdata.KIdentifier
 import org.eclipse.elk.graph.KGraphElement
+import org.eclipse.elk.graph.KNode
+import org.eclipse.emf.ecore.resource.Resource
 
 /**
  * Utility class for transformaing textually specified layout configurations

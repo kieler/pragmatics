@@ -19,6 +19,7 @@ import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.data.LayoutOptionData.Visibility;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
+import org.eclipse.elk.graph.PersistentEntry;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
@@ -30,7 +31,6 @@ import org.eclipse.xtext.util.Strings;
 
 import com.google.inject.Inject;
 
-import de.cau.cs.kieler.core.kgraph.PersistentEntry;
 import de.cau.cs.kieler.kiml.config.text.services.LayoutConfigGrammarAccess;
 
 /**
