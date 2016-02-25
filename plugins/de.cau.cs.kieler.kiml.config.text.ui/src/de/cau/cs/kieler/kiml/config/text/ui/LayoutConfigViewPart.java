@@ -22,7 +22,7 @@ import java.util.UUID;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.LayoutConfigurator;
-import org.eclipse.elk.core.options.LayoutOptions;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
@@ -449,9 +449,9 @@ public class LayoutConfigViewPart extends ViewPart {
         }
 
         ((LayoutConfigurator) layoutConfigs[0]).configure(KGraphElement.class)
-        		.setProperty(LayoutOptions.ANIMATE, animation)
-                .setProperty(LayoutOptions.PROGRESS_BAR, progressDialog)
-                .setProperty(LayoutOptions.ZOOM_TO_FIT, zoomToFit);
+        		.setProperty(CoreOptions.ANIMATE, animation)
+                .setProperty(CoreOptions.PROGRESS_BAR, progressDialog)
+                .setProperty(CoreOptions.ZOOM_TO_FIT, zoomToFit);
 
         Parameters params = new Parameters();
         for (LayoutConfigurator lc : layoutConfigs) {

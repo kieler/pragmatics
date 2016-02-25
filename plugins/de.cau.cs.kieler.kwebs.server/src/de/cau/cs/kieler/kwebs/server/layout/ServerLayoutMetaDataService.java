@@ -21,10 +21,15 @@ import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.elk.core.data.ILayoutMetaData;
+import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutCategoryData;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.data.LayoutOptionData.Target;
+import org.eclipse.elk.core.data.LayoutOptionData.Visibility;
 
-import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutMetaDataService;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kwebs.server.Application;
@@ -38,7 +43,6 @@ import de.cau.cs.kieler.kwebs.server.servicedata.LayoutType;
 import de.cau.cs.kieler.kwebs.server.servicedata.RemoteEnum;
 import de.cau.cs.kieler.kwebs.server.servicedata.ServiceData;
 import de.cau.cs.kieler.kwebs.server.servicedata.ServiceDataFactory;
-import de.cau.cs.kieler.kwebs.server.servicedata.SupportedDiagram;
 import de.cau.cs.kieler.kwebs.server.servicedata.SupportedFormat;
 import de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataFactoryImpl;
 import de.cau.cs.kieler.kwebs.server.servicedata.util.ServiceDataXmiTransformer;
@@ -50,7 +54,7 @@ import de.cau.cs.kieler.kwebs.server.util.Resources;
  *
  * @author swe
  */
-public final class ServerLayoutMetaDataService extends AbstractExtensionLayoutMetaDataService {
+public final class ServerLayoutMetaDataService {
 
     /** Caching the layout service meta data. */
     private static String serviceDataXMI;
@@ -67,25 +71,63 @@ public final class ServerLayoutMetaDataService extends AbstractExtensionLayoutMe
     /**
      * Create the server layout data service.
      */
-    public ServerLayoutMetaDataService() {
+    private ServerLayoutMetaDataService() {
         // Read extensions for the extension point
         super();
-        // Build the meta data model
+        // Regularly load the extension point with all its specified 
+        // meta data providers
+        loadLayoutProviders();
+        // Build the meta data model for the layout service
         createServiceData();
     }
+    
+    // The following constants and the #loadLayoutProviders() method is 
+    // duplicated from org.eclipse.elk.service.ElkServicePlugin
+    /** identifier of the extension point for layout providers. */
+    protected static final String EXTP_ID_LAYOUT_PROVIDERS = "org.eclipse.elk.core.layoutProviders";
+    /** name of the 'provider' element in the 'layout providers' extension point. */
+    protected static final String ELEMENT_PROVIDER = "provider";
+    /** name of the 'class' attribute in the extension points. */
+    protected static final String ATTRIBUTE_CLASS = "class";
+    
+    /**
+     * Creates a new instance, loading the extension point information in the process.
+     */
+    private void loadLayoutProviders() {
+        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
+                .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
+        LayoutMetaDataService service = LayoutMetaDataService.getInstance();
+        
+        for (IConfigurationElement element : extensions) {
+            try {
+                if (ELEMENT_PROVIDER.equals(element.getName())) {
+                    ILayoutMetaDataProvider provider = (ILayoutMetaDataProvider)
+                            element.createExecutableExtension(ATTRIBUTE_CLASS);
+                    
+                    if (provider != null) {
+                        service.registerLayoutMetaDataProvider(provider);
+                    }
+                }
+            } catch (CoreException exception) {
+                reportError(exception);
+            }
+        }
+    }
+    
+    private static ServerLayoutMetaDataService instance = null;
     
     /**
      * Returns the singleton instance of {@code ServerLayoutDataService}.
      *
      * @return the singleton instance, or {@code null} if {@code ServerLayoutDataService}
      *         has not been registered yet
+        @Deprecated use {@link LayoutMetaDataService#getInstance()}
      */
     public static ServerLayoutMetaDataService getInstance() {
-        LayoutMetaDataService service = LayoutMetaDataService.getInstance();
-        if (service instanceof ServerLayoutMetaDataService) {
-            return (ServerLayoutMetaDataService) service;
+        if (instance == null) {
+            instance = new ServerLayoutMetaDataService();
         }
-        return null;
+        return instance;
     }
 
     /**
@@ -121,28 +163,18 @@ public final class ServerLayoutMetaDataService extends AbstractExtensionLayoutMe
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected LayoutAlgorithmData createLayoutAlgorithmData(final IConfigurationElement element) {
-        return new LayoutAlgorithmData();
-    }
-
-    /**
      * Creates the model instance and the XMI representation of the services meta data.
      */
     private void createServiceData() {
         ServiceDataFactory factory = ServiceDataFactoryImpl.init();
         serviceData = factory.createServiceData();      
         serviceData.setVersion(Application.getVersion());
-        IConfigurationElement[] extensions = null;
-        extensions =
-            Platform.getExtensionRegistry()
-                .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);        
-        readExtensionCategories(factory, extensions);
-        readExtensionLayoutTypes(factory, extensions);
-        readExtensionLayoutOptions(factory, extensions);
-        readExtensionLayoutAlgorithms(factory, extensions);
+        
+        LayoutMetaDataService metaDataService = LayoutMetaDataService.getInstance();
+        
+        readExtensionLayoutTypes(factory, metaDataService);
+        readExtensionLayoutOptions(factory, metaDataService);
+        readExtensionLayoutAlgorithms(factory, metaDataService);
         // Add transformation to the service meta data
         for (GraphFormatData data : GraphFormatsService.getInstance().getFormatData()) {
             SupportedFormat format = factory.createSupportedFormat();
@@ -156,82 +188,63 @@ public final class ServerLayoutMetaDataService extends AbstractExtensionLayoutMe
     }
         
     /**
-     * 
      * @param factory
-     * @param extensions
-     */
-    private void readExtensionCategories(final ServiceDataFactory factory, 
-        final IConfigurationElement[] extensions) {
-        for (IConfigurationElement element : extensions) {
-            if (element.getName().equals(ELEMENT_CATEGORY)) {
-                Category category = factory.createCategory();
-                category.setId(element.getAttribute(ATTRIBUTE_ID));
-                category.setName(element.getAttribute(ATTRIBUTE_NAME));
-                serviceData.getCategories().add(category);
-            }
-        }
-    }
-
-    /**
-     * 
-     * @param factory
-     * @param extensions
+     * @param metaDataService
      */
     private void readExtensionLayoutTypes(final ServiceDataFactory factory, 
-        final IConfigurationElement[] extensions) {
-        for (IConfigurationElement element : extensions) {
-            if (element.getName().equals(ELEMENT_LAYOUT_TYPE)) {
-                LayoutType type = factory.createLayoutType();
-                type.setId(element.getAttribute(ATTRIBUTE_ID));
-                type.setName(element.getAttribute(ATTRIBUTE_NAME));
-                type.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
-                serviceData.getLayoutTypes().add(type);
-            }
+        final LayoutMetaDataService metaDataService) {
+        for (LayoutCategoryData element : metaDataService.getCategoryData()) {
+            Category type = factory.createCategory();
+            type.setId(element.getId());
+            type.setName(element.getName());
+            type.setDescription(element.getDescription());
+            serviceData.getCategories().add(type);
         }
     }
 
     /**
-     * 
      * @param factory
      * @param extensions
      */
     private void readExtensionLayoutOptions(final ServiceDataFactory factory, 
-        final IConfigurationElement[] extensions) {
-        for (IConfigurationElement element : extensions) {
-            if (element.getName().equals(ELEMENT_LAYOUT_OPTION)) {
-                LayoutOption option = factory.createLayoutOption();
-                option.setId(element.getAttribute(ATTRIBUTE_ID));
-                option.setName(element.getAttribute(ATTRIBUTE_NAME));
-                option.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
-                option.setAppliesTo(element.getAttribute(ATTRIBUTE_APPLIESTO));
-                option.setDefault(element.getAttribute(ATTRIBUTE_DEFAULT));
-                option.setImplementation(element.getAttribute(ATTRIBUTE_CLASS));
-                option.setAdvanced(Boolean.parseBoolean(element.getAttribute(ATTRIBUTE_ADVANCED)));
-                String type = element.getAttribute(ATTRIBUTE_TYPE);
-                option.setType(type);
-                if (type.equals(LayoutOptionData.ENUM_LITERAL)
-                        || type.equals(LayoutOptionData.ENUMSET_LITERAL)) {
-                    try {
-                        String className = element.getAttribute(ATTRIBUTE_CLASS);
-                        if (className == null || className.length() == 0) {
-                            throw new IllegalArgumentException(
-                                "Class name of enum layout option is not defined");
-                        }
-                        @SuppressWarnings("rawtypes")
-                        Class<? extends Enum> classInstance 
-                            = Platform.getBundle(element.getContributor().getName()).
-                                loadClass(className).asSubclass(Enum.class);       
-                        RemoteEnum remoteEnum = factory.createRemoteEnum();
-                        for (Enum<?> enumInstance : (Enum<?>[]) classInstance.getEnumConstants()) {
-                            remoteEnum.getValues().add(enumInstance.toString());
-                        }
-                        option.setRemoteEnum(remoteEnum);
-                    } catch (Exception exception) {
-                        reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);
-                    }
-                }
-                serviceData.getLayoutOptions().add(option);
+        final LayoutMetaDataService metaDataService) {
+        for (LayoutOptionData element : metaDataService.getOptionData()) {
+
+            LayoutOption option = factory.createLayoutOption();
+            option.setId(element.getId());
+            option.setName(element.getName());
+            option.setDescription(element.getDescription());
+            String appliesTo = "";
+            for (Target target : element.getTargets()) {
+                appliesTo += (appliesTo.isEmpty() ? "" : ", ") + target.toString();
             }
+            option.setAppliesTo(appliesTo);
+            option.setDefault(element.getDefault().toString());
+            option.setImplementation(element.getOptionClass().getCanonicalName());
+            option.setAdvanced(element.getVisibility() == Visibility.ADVANCED);
+            String type = element.getType().toString().toLowerCase();
+            option.setType(type);
+            if (type.equals("enum")
+                    || type.equals("enumset")) {
+                try {
+                    String className = element.getClass().getCanonicalName();
+                    if (className == null || className.length() == 0) {
+                        throw new IllegalArgumentException(
+                            "Class name of enum layout option is not defined");
+                    }
+                    @SuppressWarnings({ "rawtypes", "unchecked" })
+                    Class<? extends Enum> classInstance 
+                        = (Class<? extends Enum>) element.getOptionClass().newInstance();       
+                    RemoteEnum remoteEnum = factory.createRemoteEnum();
+                    for (Enum<?> enumInstance : (Enum<?>[]) classInstance.getEnumConstants()) {
+                        remoteEnum.getValues().add(enumInstance.toString());
+                    }
+                    option.setRemoteEnum(remoteEnum);
+                } catch (Exception exception) {
+                    reportError(EXTP_ID_LAYOUT_PROVIDERS, element, ATTRIBUTE_CLASS, exception);
+                }
+            }
+            serviceData.getLayoutOptions().add(option);
         }
     }
 
@@ -244,84 +257,74 @@ public final class ServerLayoutMetaDataService extends AbstractExtensionLayoutMe
      * @param extensions
      */
     private void readExtensionLayoutAlgorithms(final ServiceDataFactory factory, 
-        final IConfigurationElement[] extensions) {
-        for (IConfigurationElement element : extensions) {
-            if (element.getName().equals(ELEMENT_LAYOUT_ALGORITHM)) {
-                LayoutAlgorithm algorithm = factory.createLayoutAlgorithm();
+            final LayoutMetaDataService metaDataService) {
+        
+        for (LayoutAlgorithmData element : metaDataService.getAlgorithmData()) {
+
+            LayoutAlgorithm algorithm = factory.createLayoutAlgorithm();
+            
+            int lastDotIndex = element.getId().lastIndexOf('.');
+            String pluginId = element.getId().substring(0, lastDotIndex);
+            
+            try {
+                algorithm.setVersion(
+                    Platform.getBundle(pluginId).getVersion().toString());
+            } catch (Exception e) {
+                // Possible missing version number is not so bad
+            }
+            
+            String preview = element.getPreviewImagePath();
+            if (preview != null) {
                 try {
-                    algorithm.setVersion(
-                        Platform.getBundle(element.getContributor().getName()).getVersion().toString()
+                    byte[] data = Resources.readStreamAsByteArray(
+                        Resources.getResourceStream(pluginId, preview)
                     );
+                    String previewImageName = Integer.toHexString((pluginId + preview).hashCode()) 
+                                              + "/" + new File(preview).getName();
+                    String previewImagePath = previewImageName;
+                    previewImages.put(previewImageName, data);
+                    algorithm.setPreviewImagePath(previewImagePath);  
                 } catch (Exception e) {
-                    // Possible missing version number is not so bad
+                    Logger.log(Severity.WARNING,
+                        "Could not load preview image ("
+                        + "contributor=" + pluginId
+                        + ", algorithm=" + element.getId()
+                        + ", preview=" + preview + ")",
+                        e
+                    );
                 }
-                String pluginId = element.getContributor().getName();
-                String preview = element.getAttribute(ATTRIBUTE_PREVIEW);
-                if (preview != null) {
-                    try {
-                        byte[] data = Resources.readStreamAsByteArray(
-                            Resources.getResourceStream(pluginId, preview)
+            }
+            algorithm.setId(element.getId());
+            algorithm.setName(element.getName());
+            Category category = getCategory(element.getCategoryId());
+            if (category != null) {
+                algorithm.setCategory(category);
+            }
+            algorithm.setDescription(element.getDescription());
+            serviceData.getLayoutAlgorithms().add(algorithm);
+            
+            for (LayoutOptionData anOption : metaDataService.getOptionData()) {
+                if (element.knowsOption(anOption)) {
+                    KnownOption knownOption = factory.createKnownOption();
+                    LayoutOption option = getLayoutOption(anOption.getId());
+                    if (option == null) {
+                        Logger.log(
+                            Severity.FAILURE,
+                            "Option for layout algorithm not found, "
+                            + " algorithm=" + algorithm.getId() 
+                            + ", option=" + anOption.getId()
                         );
-                        String previewImageName = Integer.toHexString((pluginId + preview).hashCode()) 
-                                                  + "/" + new File(preview).getName();
-                        String previewImagePath = previewImageName;
-                        previewImages.put(previewImageName, data);
-                        algorithm.setPreviewImagePath(previewImagePath);  
-                    } catch (Exception e) {
-                        Logger.log(Severity.WARNING,
-                            "Could not load preview image ("
-                            + "contributor=" + pluginId
-                            + ", algorithm=" + element.getAttribute(ATTRIBUTE_ID)
-                            + ", preview=" + preview + ")",
-                            e
-                        );
+                        continue;
                     }
-                }
-                algorithm.setId(element.getAttribute(ATTRIBUTE_ID));
-                algorithm.setName(element.getAttribute(ATTRIBUTE_NAME));
-                Category category = getCategory(element.getAttribute(ATTRIBUTE_CATEGORY));
-                if (category != null) {
-                    algorithm.setCategory(category);
-                }
-                LayoutType type = getLayoutType(element.getAttribute(ATTRIBUTE_TYPE));
-                if (type != null) {
-                    algorithm.setType(type);
-                }
-                algorithm.setDescription(element.getAttribute(ATTRIBUTE_DESCRIPTION));
-                serviceData.getLayoutAlgorithms().add(algorithm); 
-                for (IConfigurationElement child : element.getChildren()) {
-                    if (child.getName().equals(ELEMENT_KNOWN_OPTION)) {
-                        KnownOption knownOption = factory.createKnownOption();
-                        LayoutOption option = getLayoutOption(child.getAttribute(ATTRIBUTE_OPTION));
-                        if (option == null) {
-                            Logger.log(
-                                Severity.FAILURE,
-                                "Option for layout algorithm not found, "
-                                + " algorithm=" + algorithm.getId() 
-                                + ", option=" + child.getAttribute("option")
-                            );
-                            continue;
-                        }
-                        knownOption.setOption(option);
-                        knownOption.setDefault(child.getAttribute(ATTRIBUTE_DEFAULT));
-                        algorithm.getKnownOptions().add(knownOption);
-                    } else if (child.getName().equals(ELEMENT_SUPPORTED_DIAGRAM)) {
-                        SupportedDiagram diagram = factory.createSupportedDiagram();
-                        diagram.setType(child.getAttribute(ATTRIBUTE_TYPE));
-                        diagram.setPriority(Integer.parseInt(child.getAttribute(ATTRIBUTE_PRIORITY)));
-                        algorithm.getSupportedDiagrams().add(diagram);                        
-                    }
+                    knownOption.setOption(option);
+                    knownOption.setDefault(element.getDefaultValue(anOption).toString());
+                    algorithm.getKnownOptions().add(knownOption);
                 }
             }
         }
     }
 
-    /** */
-    private static final String ATTRIBUTE_DESCRIPTION
-        = "description";
-
     /**
-     * 
      * @param id
      * @return
      */
@@ -329,20 +332,6 @@ public final class ServerLayoutMetaDataService extends AbstractExtensionLayoutMe
         for (Category category : serviceData.getCategories()) {
             if (category.getId().equals(id)) {
                 return category;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 
-     * @param type
-     * @return
-     */
-    private LayoutType getLayoutType(final String type) {
-        for (LayoutType tmpType : serviceData.getLayoutTypes()) {
-            if (tmpType.getId().equals(type)) {
-                return tmpType;
             }
         }
         return null;
@@ -365,9 +354,8 @@ public final class ServerLayoutMetaDataService extends AbstractExtensionLayoutMe
     /**
      * {@inheritDoc}
      */
-    @Override
     protected void reportError(final String extensionPoint,
-        final IConfigurationElement element, final String attribute,
+        final ILayoutMetaData element, final String attribute,
         final Throwable exception) {
         Logger.log(
             Severity.FAILURE, 
@@ -382,7 +370,6 @@ public final class ServerLayoutMetaDataService extends AbstractExtensionLayoutMe
     /**
      * {@inheritDoc}
      */
-    @Override
     protected void reportError(final CoreException exception) {
         reportError(null, null, null, exception);
     }

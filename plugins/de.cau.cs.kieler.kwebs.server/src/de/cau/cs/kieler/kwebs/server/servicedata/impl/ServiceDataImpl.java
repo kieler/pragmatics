@@ -32,15 +32,14 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataImpl#getLayoutAlgorithms <em>Layout Algorithms</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataImpl#getLayoutTypes <em>Layout Types</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataImpl#getLayoutOptions <em>Layout Options</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataImpl#getCategories <em>Categories</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataImpl#getVersion <em>Version</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataImpl#getSupportedFormats <em>Supported Formats</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -54,16 +53,6 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
      * @ordered
      */
     protected EList<LayoutAlgorithm> layoutAlgorithms;
-
-    /**
-     * The cached value of the '{@link #getLayoutTypes() <em>Layout Types</em>}' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getLayoutTypes()
-     * @generated
-     * @ordered
-     */
-    protected EList<LayoutType> layoutTypes;
 
     /**
      * The cached value of the '{@link #getLayoutOptions() <em>Layout Options</em>}' containment reference list.
@@ -151,18 +140,6 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList<LayoutType> getLayoutTypes() {
-        if (layoutTypes == null) {
-            layoutTypes = new EObjectContainmentEList<LayoutType>(LayoutType.class, this, ServiceDataPackage.SERVICE_DATA__LAYOUT_TYPES);
-        }
-        return layoutTypes;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EList<LayoutOption> getLayoutOptions() {
         if (layoutOptions == null) {
             layoutOptions = new EObjectContainmentEList<LayoutOption>(LayoutOption.class, this, ServiceDataPackage.SERVICE_DATA__LAYOUT_OPTIONS);
@@ -225,8 +202,6 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
         switch (featureID) {
             case ServiceDataPackage.SERVICE_DATA__LAYOUT_ALGORITHMS:
                 return ((InternalEList<?>)getLayoutAlgorithms()).basicRemove(otherEnd, msgs);
-            case ServiceDataPackage.SERVICE_DATA__LAYOUT_TYPES:
-                return ((InternalEList<?>)getLayoutTypes()).basicRemove(otherEnd, msgs);
             case ServiceDataPackage.SERVICE_DATA__LAYOUT_OPTIONS:
                 return ((InternalEList<?>)getLayoutOptions()).basicRemove(otherEnd, msgs);
             case ServiceDataPackage.SERVICE_DATA__CATEGORIES:
@@ -247,8 +222,6 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
         switch (featureID) {
             case ServiceDataPackage.SERVICE_DATA__LAYOUT_ALGORITHMS:
                 return getLayoutAlgorithms();
-            case ServiceDataPackage.SERVICE_DATA__LAYOUT_TYPES:
-                return getLayoutTypes();
             case ServiceDataPackage.SERVICE_DATA__LAYOUT_OPTIONS:
                 return getLayoutOptions();
             case ServiceDataPackage.SERVICE_DATA__CATEGORIES:
@@ -273,10 +246,6 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
             case ServiceDataPackage.SERVICE_DATA__LAYOUT_ALGORITHMS:
                 getLayoutAlgorithms().clear();
                 getLayoutAlgorithms().addAll((Collection<? extends LayoutAlgorithm>)newValue);
-                return;
-            case ServiceDataPackage.SERVICE_DATA__LAYOUT_TYPES:
-                getLayoutTypes().clear();
-                getLayoutTypes().addAll((Collection<? extends LayoutType>)newValue);
                 return;
             case ServiceDataPackage.SERVICE_DATA__LAYOUT_OPTIONS:
                 getLayoutOptions().clear();
@@ -308,9 +277,6 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
             case ServiceDataPackage.SERVICE_DATA__LAYOUT_ALGORITHMS:
                 getLayoutAlgorithms().clear();
                 return;
-            case ServiceDataPackage.SERVICE_DATA__LAYOUT_TYPES:
-                getLayoutTypes().clear();
-                return;
             case ServiceDataPackage.SERVICE_DATA__LAYOUT_OPTIONS:
                 getLayoutOptions().clear();
                 return;
@@ -337,8 +303,6 @@ public class ServiceDataImpl extends EObjectImpl implements ServiceData {
         switch (featureID) {
             case ServiceDataPackage.SERVICE_DATA__LAYOUT_ALGORITHMS:
                 return layoutAlgorithms != null && !layoutAlgorithms.isEmpty();
-            case ServiceDataPackage.SERVICE_DATA__LAYOUT_TYPES:
-                return layoutTypes != null && !layoutTypes.isEmpty();
             case ServiceDataPackage.SERVICE_DATA__LAYOUT_OPTIONS:
                 return layoutOptions != null && !layoutOptions.isEmpty();
             case ServiceDataPackage.SERVICE_DATA__CATEGORIES:

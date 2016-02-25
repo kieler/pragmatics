@@ -13,18 +13,16 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getId <em>Id</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getName <em>Name</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getDescription <em>Description</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getKnownOptions <em>Known Options</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getSupportedDiagrams <em>Supported Diagrams</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getCategory <em>Category</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getType <em>Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getVersion <em>Version</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getPreviewImagePath <em>Preview Image Path</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.cau.cs.kieler.kwebs.server.servicedata.ServiceDataPackage#getLayoutAlgorithm()
  * @model
@@ -126,22 +124,6 @@ public interface LayoutAlgorithm extends EObject {
     EList<KnownOption> getKnownOptions();
 
     /**
-     * Returns the value of the '<em><b>Supported Diagrams</b></em>' containment reference list.
-     * The list contents are of type {@link de.cau.cs.kieler.kwebs.server.servicedata.SupportedDiagram}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Supported Diagrams</em>' containment reference list isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Supported Diagrams</em>' containment reference list.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.ServiceDataPackage#getLayoutAlgorithm_SupportedDiagrams()
-     * @model containment="true"
-     * @generated
-     */
-    EList<SupportedDiagram> getSupportedDiagrams();
-
-    /**
      * Returns the value of the '<em><b>Category</b></em>' reference.
      * <!-- begin-user-doc -->
      * <p>
@@ -166,32 +148,6 @@ public interface LayoutAlgorithm extends EObject {
      * @generated
      */
     void setCategory(Category value);
-
-    /**
-     * Returns the value of the '<em><b>Type</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Type</em>' reference isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Type</em>' reference.
-     * @see #setType(LayoutType)
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.ServiceDataPackage#getLayoutAlgorithm_Type()
-     * @model
-     * @generated
-     */
-    LayoutType getType();
-
-    /**
-     * Sets the value of the '{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getType <em>Type</em>}' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param value the new value of the '<em>Type</em>' reference.
-     * @see #getType()
-     * @generated
-     */
-    void setType(LayoutType value);
 
     /**
      * Returns the value of the '<em><b>Version</b></em>' attribute.

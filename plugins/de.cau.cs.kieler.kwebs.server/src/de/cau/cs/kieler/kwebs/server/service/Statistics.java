@@ -17,9 +17,9 @@ package de.cau.cs.kieler.kwebs.server.service;
 import java.lang.reflect.Field;
 import java.util.StringTokenizer;
 
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.IDataObject;
+import org.eclipse.elk.core.util.IDataObject;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 
 /**
  * Class for holding measured statistical data about a layout process. The measurement is a shared

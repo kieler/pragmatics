@@ -120,8 +120,8 @@ public class BatchWizard extends Wizard {
         GranaUtil.setAnalysesSelection(PREFERENCE_SELECTED_ANALYSES, selectedAnalyses);
         LayoutConfigurator batchLayoutConfig = layoutConfigurationPage.getConfig();
         layoutConfig = batchLayoutConfig;
-		GranaUtil.setConfiguration(PREFERENCE_LAYOUT_CONFIG,
-				Pair.fromMap(batchLayoutConfig.getProperties(KGraphElement.class).getAllProperties()));
+        GranaUtil.setConfiguration(PREFERENCE_LAYOUT_CONFIG, Pair
+                .fromMap(batchLayoutConfig.getProperties(KGraphElement.class).getAllProperties()));
         return true;
     }
 

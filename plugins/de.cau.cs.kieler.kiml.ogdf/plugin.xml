@@ -2,10 +2,9 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="org.eclipse.elk.core.service.layoutProviders">
+         point="org.eclipse.elk.core.layoutProviders">
       <provider
             class="de.cau.cs.kieler.kiml.ogdf.options.OgdfOptions">
       </provider>
    </extension>
-
 </plugin>

@@ -21,21 +21,17 @@ import java.util.concurrent.Executors;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
-import org.eclipse.elk.core.service.LayoutConfigurationManager;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.service.util.MonitoredOperation;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Maybe;
-import org.eclipse.gef.EditPart;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.ui.IEditorPart;
 
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 
@@ -62,18 +58,15 @@ public final class DiagramAnalyzer {
      * @param editorPart
      *            the editor the analysis is performed on, or {@code null} if the diagram is not
      *            part of an editor
-     * @param editPart
-     *            the edit part the analysis is performed on, or {@code null} if the whole diagram
-     *            shall be analyzed
      * @param analysis
      *            the analysis to perform
      * @param progressBar
      *            if true, a progress bar is displayed
      * @return the analysis result
      */
-    public static Object analyze(final IEditorPart editorPart, final EditPart editPart,
+    public static Object analyze(final IEditorPart editorPart,
             final AnalysisData analysis, final boolean progressBar) {
-        return analyze(editorPart, editPart, Lists.newArrayList(analysis), progressBar);
+        return analyze(editorPart, Lists.newArrayList(analysis), progressBar);
     }
     
     private static final float CONFIGURE_WORK = 1;
@@ -86,9 +79,6 @@ public final class DiagramAnalyzer {
      * @param editorPart
      *            the editor the analysis is performed on, or {@code null} if the diagram is not
      *            part of an editor
-     * @param editPart
-     *            the edit part the analysis is performed on, or {@code null} if the whole diagram
-     *            shall be analyzed
      * @param analyses
      *            the analyses to perform
      * @param progressBar
@@ -96,47 +86,43 @@ public final class DiagramAnalyzer {
      * @return the analyses results
      */
     public static Map<String, Object> analyze(final IEditorPart editorPart,
-            final EditPart editPart, final List<AnalysisData> analyses,
-            final boolean progressBar) {
-		final IDiagramLayoutConnector manager = LayoutConnectorsService.getInstance()
-				.getConnector(editorPart,editPart);
+            final List<AnalysisData> analyses, final boolean progressBar) {
+        final IDiagramLayoutConnector manager =
+                LayoutConnectorsService.getInstance().getConnector(editorPart, null);
         if (manager == null) {
             return Collections.emptyMap();
         }
         
         final Maybe<LayoutMapping> layoutMapping = new Maybe<LayoutMapping>();
         final Maybe<Map<String, Object>> result = new Maybe<Map<String, Object>>();
-        
         final MonitoredOperation monitoredOperation = new MonitoredOperation(EXECUTOR_SERVICE) {
-        	// first phase: build the graph
-        	@Override
-        	protected void preUIexec() {
-                layoutMapping.set(manager.buildLayoutGraph(editorPart, editPart));
+            // first phase: build the graph
+            protected void preUIexec() {
+                layoutMapping.set(manager.buildLayoutGraph(editorPart, null));
             }
-            
-        	// second phase: analyze the graph
-			@Override
-			protected IStatus execute(IElkProgressMonitor monitor) {
-				monitor.begin("Diagram analysis", TOTAL_WORK);
+
+            // second phase: analyze the graph
+            protected IStatus execute(final IElkProgressMonitor monitor) {
+                monitor.begin("Diagram analysis", TOTAL_WORK);
                 // configure the layout graph to set proper layout options
-                DiagramLayoutEngine.configManager.createConfigurator(layoutMapping.get());
+                // MIGRATE do we still require this?
+                // DiagramLayoutEngine.INSTANCE.getOptionManager().configure(layoutMapping.get(),
+                //        monitor.subTask(CONFIGURE_WORK));
+
+                // take a look at DiagramLayoutEngine#addDiagramConfig
+                // LayoutConfigurator diagramConfig = configManager.createConfigurator(layoutMapping);
                 
                 // perform analyses on the graph
-                org.eclipse.elk.graph.KNode graph = layoutMapping.get().getLayoutGraph();
-                
-                // FIXME elkMigrate convert elk graph to kieler graph
-                KNode transformedGraph = null;
-                
-                result.set(AnalysisService.getInstance().analyze(transformedGraph, analyses,
+                KNode graph = layoutMapping.get().getLayoutGraph();
+                result.set(AnalysisService.getInstance().analyze(graph, analyses,
                         monitor.subTask(ANALYSIS_WORK)).getResults());
                 if (monitor.isCanceled()) {
                     return Status.CANCEL_STATUS;
                 } else {
                     return Status.OK_STATUS;
                 }
-			}
-		};
-        
+            }
+        };
 
         if (progressBar) {
             // perform analysis with a progress bar

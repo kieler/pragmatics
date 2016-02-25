@@ -45,11 +45,10 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
-import org.eclipse.elk.core.service.LayoutMetaDataService
+import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.service.util.ProgressMonitorAdapter
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
-import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters
 
 /**
  * Utility class to convert textually specified grana executions to 
@@ -222,11 +221,18 @@ final class GranaTextToBatchJob {
         }
     
         // set the layout options
-        val params = new Parameters
-        for (cfg : job.layoutOptions) {
-            params.addLayoutRun(LayoutConfigTransformer.transformConfig(cfg))
+        if (!job.layoutOptions.isEmpty) {
+            provider.layoutConfigurator = 
+                LayoutConfigTransformer.transformConfig(job.layoutOptions.head)
         }
-        provider.setLayoutConfigurator(params)
+        
+        // TODO it shold be possible to add multiple layout runs
+        if (job.layoutOptions.size > 1) 
+            throw new UnsupportedOperationException("Multiple layout runs are not yet supported.")
+        //val params = new Parameters
+        //for (cfg : job.layoutOptions) {
+        //    params.addLayoutRun(LayoutConfigTransformer.transformConfig(cfg))
+        //}
         
         // the batch executer expects a workspace relative path
         val batchJob = switch (job) {

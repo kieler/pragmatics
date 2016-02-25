@@ -47,13 +47,6 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * <!-- end-user-doc -->
      * @generated
      */
-    private EClass layoutTypeEClass = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     private EClass layoutOptionEClass = null;
 
     /**
@@ -69,13 +62,6 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * @generated
      */
     private EClass knownOptionEClass = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    private EClass supportedDiagramEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -175,7 +161,7 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getServiceData_LayoutTypes() {
+    public EReference getServiceData_LayoutOptions() {
         return (EReference)serviceDataEClass.getEStructuralFeatures().get(1);
     }
 
@@ -184,7 +170,7 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getServiceData_LayoutOptions() {
+    public EReference getServiceData_Categories() {
         return (EReference)serviceDataEClass.getEStructuralFeatures().get(2);
     }
 
@@ -193,17 +179,8 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getServiceData_Categories() {
-        return (EReference)serviceDataEClass.getEStructuralFeatures().get(3);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EAttribute getServiceData_Version() {
-        return (EAttribute)serviceDataEClass.getEStructuralFeatures().get(4);
+        return (EAttribute)serviceDataEClass.getEStructuralFeatures().get(3);
     }
 
     /**
@@ -212,7 +189,7 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * @generated
      */
     public EReference getServiceData_SupportedFormats() {
-        return (EReference)serviceDataEClass.getEStructuralFeatures().get(5);
+        return (EReference)serviceDataEClass.getEStructuralFeatures().get(4);
     }
 
     /**
@@ -265,7 +242,7 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getLayoutAlgorithm_SupportedDiagrams() {
+    public EReference getLayoutAlgorithm_Category() {
         return (EReference)layoutAlgorithmEClass.getEStructuralFeatures().get(4);
     }
 
@@ -274,26 +251,8 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getLayoutAlgorithm_Category() {
-        return (EReference)layoutAlgorithmEClass.getEStructuralFeatures().get(5);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EReference getLayoutAlgorithm_Type() {
-        return (EReference)layoutAlgorithmEClass.getEStructuralFeatures().get(6);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EAttribute getLayoutAlgorithm_Version() {
-        return (EAttribute)layoutAlgorithmEClass.getEStructuralFeatures().get(7);
+        return (EAttribute)layoutAlgorithmEClass.getEStructuralFeatures().get(5);
     }
 
     /**
@@ -302,43 +261,7 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * @generated
      */
     public EAttribute getLayoutAlgorithm_PreviewImagePath() {
-        return (EAttribute)layoutAlgorithmEClass.getEStructuralFeatures().get(8);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EClass getLayoutType() {
-        return layoutTypeEClass;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getLayoutType_Id() {
-        return (EAttribute)layoutTypeEClass.getEStructuralFeatures().get(0);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getLayoutType_Name() {
-        return (EAttribute)layoutTypeEClass.getEStructuralFeatures().get(1);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getLayoutType_Description() {
-        return (EAttribute)layoutTypeEClass.getEStructuralFeatures().get(2);
+        return (EAttribute)layoutAlgorithmEClass.getEStructuralFeatures().get(6);
     }
 
     /**
@@ -463,6 +386,15 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      * <!-- end-user-doc -->
      * @generated
      */
+    public EAttribute getCategory_Description() {
+        return (EAttribute)categoryEClass.getEStructuralFeatures().get(2);
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getKnownOption() {
         return knownOptionEClass;
     }
@@ -483,33 +415,6 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
      */
     public EReference getKnownOption_Option() {
         return (EReference)knownOptionEClass.getEStructuralFeatures().get(1);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EClass getSupportedDiagram() {
-        return supportedDiagramEClass;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getSupportedDiagram_Type() {
-        return (EAttribute)supportedDiagramEClass.getEStructuralFeatures().get(0);
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getSupportedDiagram_Priority() {
-        return (EAttribute)supportedDiagramEClass.getEStructuralFeatures().get(1);
     }
 
     /**
@@ -596,7 +501,6 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
         // Create classes and their features
         serviceDataEClass = createEClass(SERVICE_DATA);
         createEReference(serviceDataEClass, SERVICE_DATA__LAYOUT_ALGORITHMS);
-        createEReference(serviceDataEClass, SERVICE_DATA__LAYOUT_TYPES);
         createEReference(serviceDataEClass, SERVICE_DATA__LAYOUT_OPTIONS);
         createEReference(serviceDataEClass, SERVICE_DATA__CATEGORIES);
         createEAttribute(serviceDataEClass, SERVICE_DATA__VERSION);
@@ -607,16 +511,9 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
         createEAttribute(layoutAlgorithmEClass, LAYOUT_ALGORITHM__NAME);
         createEAttribute(layoutAlgorithmEClass, LAYOUT_ALGORITHM__DESCRIPTION);
         createEReference(layoutAlgorithmEClass, LAYOUT_ALGORITHM__KNOWN_OPTIONS);
-        createEReference(layoutAlgorithmEClass, LAYOUT_ALGORITHM__SUPPORTED_DIAGRAMS);
         createEReference(layoutAlgorithmEClass, LAYOUT_ALGORITHM__CATEGORY);
-        createEReference(layoutAlgorithmEClass, LAYOUT_ALGORITHM__TYPE);
         createEAttribute(layoutAlgorithmEClass, LAYOUT_ALGORITHM__VERSION);
         createEAttribute(layoutAlgorithmEClass, LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH);
-
-        layoutTypeEClass = createEClass(LAYOUT_TYPE);
-        createEAttribute(layoutTypeEClass, LAYOUT_TYPE__ID);
-        createEAttribute(layoutTypeEClass, LAYOUT_TYPE__NAME);
-        createEAttribute(layoutTypeEClass, LAYOUT_TYPE__DESCRIPTION);
 
         layoutOptionEClass = createEClass(LAYOUT_OPTION);
         createEAttribute(layoutOptionEClass, LAYOUT_OPTION__ID);
@@ -632,14 +529,11 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
         categoryEClass = createEClass(CATEGORY);
         createEAttribute(categoryEClass, CATEGORY__ID);
         createEAttribute(categoryEClass, CATEGORY__NAME);
+        createEAttribute(categoryEClass, CATEGORY__DESCRIPTION);
 
         knownOptionEClass = createEClass(KNOWN_OPTION);
         createEAttribute(knownOptionEClass, KNOWN_OPTION__DEFAULT);
         createEReference(knownOptionEClass, KNOWN_OPTION__OPTION);
-
-        supportedDiagramEClass = createEClass(SUPPORTED_DIAGRAM);
-        createEAttribute(supportedDiagramEClass, SUPPORTED_DIAGRAM__TYPE);
-        createEAttribute(supportedDiagramEClass, SUPPORTED_DIAGRAM__PRIORITY);
 
         remoteEnumEClass = createEClass(REMOTE_ENUM);
         createEAttribute(remoteEnumEClass, REMOTE_ENUM__VALUES);
@@ -682,7 +576,6 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
         // Initialize classes and features; add operations and parameters
         initEClass(serviceDataEClass, ServiceData.class, "ServiceData", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEReference(getServiceData_LayoutAlgorithms(), this.getLayoutAlgorithm(), null, "layoutAlgorithms", null, 0, -1, ServiceData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getServiceData_LayoutTypes(), this.getLayoutType(), null, "layoutTypes", null, 0, -1, ServiceData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServiceData_LayoutOptions(), this.getLayoutOption(), null, "layoutOptions", null, 0, -1, ServiceData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getServiceData_Categories(), this.getCategory(), null, "categories", null, 0, -1, ServiceData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getServiceData_Version(), ecorePackage.getEString(), "version", null, 0, 1, ServiceData.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -693,16 +586,9 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
         initEAttribute(getLayoutAlgorithm_Name(), ecorePackage.getEString(), "name", null, 1, 1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getLayoutAlgorithm_Description(), ecorePackage.getEString(), "description", null, 0, 1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getLayoutAlgorithm_KnownOptions(), this.getKnownOption(), null, "knownOptions", null, 0, -1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getLayoutAlgorithm_SupportedDiagrams(), this.getSupportedDiagram(), null, "supportedDiagrams", null, 0, -1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getLayoutAlgorithm_Category(), this.getCategory(), null, "category", null, 0, 1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEReference(getLayoutAlgorithm_Type(), this.getLayoutType(), null, "type", null, 0, 1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getLayoutAlgorithm_Version(), ecorePackage.getEString(), "version", null, 0, 1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getLayoutAlgorithm_PreviewImagePath(), ecorePackage.getEString(), "previewImagePath", null, 0, 1, LayoutAlgorithm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-        initEClass(layoutTypeEClass, LayoutType.class, "LayoutType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getLayoutType_Id(), ecorePackage.getEString(), "id", null, 1, 1, LayoutType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getLayoutType_Name(), ecorePackage.getEString(), "name", null, 1, 1, LayoutType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getLayoutType_Description(), ecorePackage.getEString(), "description", null, 0, 1, LayoutType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(layoutOptionEClass, LayoutOption.class, "LayoutOption", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getLayoutOption_Id(), ecorePackage.getEString(), "id", null, 1, 1, LayoutOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -718,14 +604,11 @@ public class ServiceDataPackageImpl extends EPackageImpl implements ServiceDataP
         initEClass(categoryEClass, Category.class, "Category", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getCategory_Id(), ecorePackage.getEString(), "id", null, 1, 1, Category.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEAttribute(getCategory_Name(), ecorePackage.getEString(), "name", null, 1, 1, Category.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+        initEAttribute(getCategory_Description(), ecorePackage.getEString(), "description", null, 0, 1, Category.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(knownOptionEClass, KnownOption.class, "KnownOption", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getKnownOption_Default(), ecorePackage.getEString(), "default", null, 0, 1, KnownOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
         initEReference(getKnownOption_Option(), this.getLayoutOption(), null, "option", null, 1, 1, KnownOption.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-        initEClass(supportedDiagramEClass, SupportedDiagram.class, "SupportedDiagram", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-        initEAttribute(getSupportedDiagram_Type(), ecorePackage.getEString(), "type", null, 1, 1, SupportedDiagram.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-        initEAttribute(getSupportedDiagram_Priority(), ecorePackage.getEInt(), "priority", null, 0, 1, SupportedDiagram.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
         initEClass(remoteEnumEClass, RemoteEnum.class, "RemoteEnum", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
         initEAttribute(getRemoteEnum_Values(), ecorePackage.getEString(), "values", null, 0, -1, RemoteEnum.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

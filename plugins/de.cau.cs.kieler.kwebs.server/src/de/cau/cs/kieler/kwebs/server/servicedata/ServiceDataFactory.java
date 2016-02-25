@@ -40,15 +40,6 @@ public interface ServiceDataFactory extends EFactory {
     LayoutAlgorithm createLayoutAlgorithm();
 
     /**
-     * Returns a new object of class '<em>Layout Type</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>Layout Type</em>'.
-     * @generated
-     */
-    LayoutType createLayoutType();
-
-    /**
      * Returns a new object of class '<em>Layout Option</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -74,15 +65,6 @@ public interface ServiceDataFactory extends EFactory {
      * @generated
      */
     KnownOption createKnownOption();
-
-    /**
-     * Returns a new object of class '<em>Supported Diagram</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return a new object of class '<em>Supported Diagram</em>'.
-     * @generated
-     */
-    SupportedDiagram createSupportedDiagram();
 
     /**
      * Returns a new object of class '<em>Remote Enum</em>'.

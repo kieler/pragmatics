@@ -16,7 +16,8 @@ package de.cau.cs.kieler.kwebs.server.service.filter;
 
 import java.util.List;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
+import org.eclipse.elk.graph.KNode;
+
 import de.cau.cs.kieler.kwebs.server.alg.Message;
 import de.cau.cs.kieler.kwebs.server.alg.Message.Severity;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
