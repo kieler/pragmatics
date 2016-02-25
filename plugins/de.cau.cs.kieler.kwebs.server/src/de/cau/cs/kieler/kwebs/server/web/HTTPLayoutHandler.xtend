@@ -284,7 +284,6 @@ class HTTPLayoutHandler implements HttpHandler {
                      "description": «a.description.quote»,
                      "version": «a.version.quote»,
                      "category": «a.category?.id?.quote»,
-                     "type": "«a.type?.id»",
                      "previewImagePath": «a.previewImagePath.quote»,
                      "knownOptions": [
                         «

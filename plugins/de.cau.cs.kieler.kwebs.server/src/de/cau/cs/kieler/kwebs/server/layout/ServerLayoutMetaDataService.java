@@ -194,11 +194,11 @@ public final class ServerLayoutMetaDataService {
     private void readExtensionLayoutTypes(final ServiceDataFactory factory, 
         final LayoutMetaDataService metaDataService) {
         for (LayoutCategoryData element : metaDataService.getCategoryData()) {
-            LayoutType type = factory.createLayoutType();
+            Category type = factory.createCategory();
             type.setId(element.getId());
             type.setName(element.getName());
             type.setDescription(element.getDescription());
-            serviceData.getLayoutTypes().add(type);
+            serviceData.getCategories().add(type);
         }
     }
 

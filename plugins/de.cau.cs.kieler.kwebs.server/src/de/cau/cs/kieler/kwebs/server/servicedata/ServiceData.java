@@ -13,15 +13,14 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.ServiceData#getLayoutAlgorithms <em>Layout Algorithms</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.ServiceData#getLayoutTypes <em>Layout Types</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.ServiceData#getLayoutOptions <em>Layout Options</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.ServiceData#getCategories <em>Categories</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.ServiceData#getVersion <em>Version</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.ServiceData#getSupportedFormats <em>Supported Formats</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.cau.cs.kieler.kwebs.server.servicedata.ServiceDataPackage#getServiceData()
  * @model
@@ -43,22 +42,6 @@ public interface ServiceData extends EObject {
      * @generated
      */
     EList<LayoutAlgorithm> getLayoutAlgorithms();
-
-    /**
-     * Returns the value of the '<em><b>Layout Types</b></em>' containment reference list.
-     * The list contents are of type {@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutType}.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Layout Types</em>' containment reference list isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Layout Types</em>' containment reference list.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.ServiceDataPackage#getServiceData_LayoutTypes()
-     * @model containment="true"
-     * @generated
-     */
-    EList<LayoutType> getLayoutTypes();
 
     /**
      * Returns the value of the '<em><b>Layout Options</b></em>' containment reference list.

@@ -75,22 +75,13 @@ public interface ServiceDataPackage extends EPackage {
     int SERVICE_DATA__LAYOUT_ALGORITHMS = 0;
 
     /**
-     * The feature id for the '<em><b>Layout Types</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SERVICE_DATA__LAYOUT_TYPES = 1;
-
-    /**
      * The feature id for the '<em><b>Layout Options</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int SERVICE_DATA__LAYOUT_OPTIONS = 2;
+    int SERVICE_DATA__LAYOUT_OPTIONS = 1;
 
     /**
      * The feature id for the '<em><b>Categories</b></em>' containment reference list.
@@ -99,7 +90,7 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_DATA__CATEGORIES = 3;
+    int SERVICE_DATA__CATEGORIES = 2;
 
     /**
      * The feature id for the '<em><b>Version</b></em>' attribute.
@@ -108,7 +99,7 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_DATA__VERSION = 4;
+    int SERVICE_DATA__VERSION = 3;
 
     /**
      * The feature id for the '<em><b>Supported Formats</b></em>' containment reference list.
@@ -117,7 +108,7 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_DATA__SUPPORTED_FORMATS = 5;
+    int SERVICE_DATA__SUPPORTED_FORMATS = 4;
 
     /**
      * The number of structural features of the '<em>Service Data</em>' class.
@@ -126,7 +117,7 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int SERVICE_DATA_FEATURE_COUNT = 6;
+    int SERVICE_DATA_FEATURE_COUNT = 5;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutAlgorithmImpl <em>Layout Algorithm</em>}' class.
@@ -175,31 +166,13 @@ public interface ServiceDataPackage extends EPackage {
     int LAYOUT_ALGORITHM__KNOWN_OPTIONS = 3;
 
     /**
-     * The feature id for the '<em><b>Supported Diagrams</b></em>' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LAYOUT_ALGORITHM__SUPPORTED_DIAGRAMS = 4;
-
-    /**
      * The feature id for the '<em><b>Category</b></em>' reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int LAYOUT_ALGORITHM__CATEGORY = 5;
-
-    /**
-     * The feature id for the '<em><b>Type</b></em>' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LAYOUT_ALGORITHM__TYPE = 6;
+    int LAYOUT_ALGORITHM__CATEGORY = 4;
 
     /**
      * The feature id for the '<em><b>Version</b></em>' attribute.
@@ -208,7 +181,7 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int LAYOUT_ALGORITHM__VERSION = 7;
+    int LAYOUT_ALGORITHM__VERSION = 5;
 
     /**
      * The feature id for the '<em><b>Preview Image Path</b></em>' attribute.
@@ -217,7 +190,7 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH = 8;
+    int LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH = 6;
 
     /**
      * The number of structural features of the '<em>Layout Algorithm</em>' class.
@@ -226,53 +199,7 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      * @ordered
      */
-    int LAYOUT_ALGORITHM_FEATURE_COUNT = 9;
-
-    /**
-     * The meta object id for the '{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutTypeImpl <em>Layout Type</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutTypeImpl
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataPackageImpl#getLayoutType()
-     * @generated
-     */
-    int LAYOUT_TYPE = 2;
-
-    /**
-     * The feature id for the '<em><b>Id</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LAYOUT_TYPE__ID = 0;
-
-    /**
-     * The feature id for the '<em><b>Name</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LAYOUT_TYPE__NAME = 1;
-
-    /**
-     * The feature id for the '<em><b>Description</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LAYOUT_TYPE__DESCRIPTION = 2;
-
-    /**
-     * The number of structural features of the '<em>Layout Type</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int LAYOUT_TYPE_FEATURE_COUNT = 3;
+    int LAYOUT_ALGORITHM_FEATURE_COUNT = 7;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutOptionImpl <em>Layout Option</em>}' class.
@@ -282,7 +209,7 @@ public interface ServiceDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataPackageImpl#getLayoutOption()
      * @generated
      */
-    int LAYOUT_OPTION = 3;
+    int LAYOUT_OPTION = 2;
 
     /**
      * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -382,7 +309,7 @@ public interface ServiceDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataPackageImpl#getCategory()
      * @generated
      */
-    int CATEGORY = 4;
+    int CATEGORY = 3;
 
     /**
      * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -403,13 +330,22 @@ public interface ServiceDataPackage extends EPackage {
     int CATEGORY__NAME = 1;
 
     /**
+     * The feature id for the '<em><b>Description</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int CATEGORY__DESCRIPTION = 2;
+
+    /**
      * The number of structural features of the '<em>Category</em>' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int CATEGORY_FEATURE_COUNT = 2;
+    int CATEGORY_FEATURE_COUNT = 3;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.KnownOptionImpl <em>Known Option</em>}' class.
@@ -419,7 +355,7 @@ public interface ServiceDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataPackageImpl#getKnownOption()
      * @generated
      */
-    int KNOWN_OPTION = 5;
+    int KNOWN_OPTION = 4;
 
     /**
      * The feature id for the '<em><b>Default</b></em>' attribute.
@@ -449,43 +385,6 @@ public interface ServiceDataPackage extends EPackage {
     int KNOWN_OPTION_FEATURE_COUNT = 2;
 
     /**
-     * The meta object id for the '{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.SupportedDiagramImpl <em>Supported Diagram</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.SupportedDiagramImpl
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataPackageImpl#getSupportedDiagram()
-     * @generated
-     */
-    int SUPPORTED_DIAGRAM = 6;
-
-    /**
-     * The feature id for the '<em><b>Type</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SUPPORTED_DIAGRAM__TYPE = 0;
-
-    /**
-     * The feature id for the '<em><b>Priority</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SUPPORTED_DIAGRAM__PRIORITY = 1;
-
-    /**
-     * The number of structural features of the '<em>Supported Diagram</em>' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int SUPPORTED_DIAGRAM_FEATURE_COUNT = 2;
-
-    /**
      * The meta object id for the '{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.RemoteEnumImpl <em>Remote Enum</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -493,7 +392,7 @@ public interface ServiceDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataPackageImpl#getRemoteEnum()
      * @generated
      */
-    int REMOTE_ENUM = 7;
+    int REMOTE_ENUM = 5;
 
     /**
      * The feature id for the '<em><b>Values</b></em>' attribute list.
@@ -521,7 +420,7 @@ public interface ServiceDataPackage extends EPackage {
      * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataPackageImpl#getSupportedFormat()
      * @generated
      */
-    int SUPPORTED_FORMAT = 8;
+    int SUPPORTED_FORMAT = 6;
 
     /**
      * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -580,17 +479,6 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      */
     EReference getServiceData_LayoutAlgorithms();
-
-    /**
-     * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kwebs.server.servicedata.ServiceData#getLayoutTypes <em>Layout Types</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Layout Types</em>'.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.ServiceData#getLayoutTypes()
-     * @see #getServiceData()
-     * @generated
-     */
-    EReference getServiceData_LayoutTypes();
 
     /**
      * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kwebs.server.servicedata.ServiceData#getLayoutOptions <em>Layout Options</em>}'.
@@ -691,17 +579,6 @@ public interface ServiceDataPackage extends EPackage {
     EReference getLayoutAlgorithm_KnownOptions();
 
     /**
-     * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getSupportedDiagrams <em>Supported Diagrams</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Supported Diagrams</em>'.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getSupportedDiagrams()
-     * @see #getLayoutAlgorithm()
-     * @generated
-     */
-    EReference getLayoutAlgorithm_SupportedDiagrams();
-
-    /**
      * Returns the meta object for the reference '{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getCategory <em>Category</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -711,17 +588,6 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      */
     EReference getLayoutAlgorithm_Category();
-
-    /**
-     * Returns the meta object for the reference '{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getType <em>Type</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the reference '<em>Type</em>'.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getType()
-     * @see #getLayoutAlgorithm()
-     * @generated
-     */
-    EReference getLayoutAlgorithm_Type();
 
     /**
      * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutAlgorithm#getVersion <em>Version</em>}'.
@@ -744,49 +610,6 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      */
     EAttribute getLayoutAlgorithm_PreviewImagePath();
-
-    /**
-     * Returns the meta object for class '{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutType <em>Layout Type</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Layout Type</em>'.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.LayoutType
-     * @generated
-     */
-    EClass getLayoutType();
-
-    /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutType#getId <em>Id</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Id</em>'.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.LayoutType#getId()
-     * @see #getLayoutType()
-     * @generated
-     */
-    EAttribute getLayoutType_Id();
-
-    /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutType#getName <em>Name</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Name</em>'.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.LayoutType#getName()
-     * @see #getLayoutType()
-     * @generated
-     */
-    EAttribute getLayoutType_Name();
-
-    /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutType#getDescription <em>Description</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Description</em>'.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.LayoutType#getDescription()
-     * @see #getLayoutType()
-     * @generated
-     */
-    EAttribute getLayoutType_Description();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kwebs.server.servicedata.LayoutOption <em>Layout Option</em>}'.
@@ -930,6 +753,17 @@ public interface ServiceDataPackage extends EPackage {
     EAttribute getCategory_Name();
 
     /**
+     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.server.servicedata.Category#getDescription <em>Description</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Description</em>'.
+     * @see de.cau.cs.kieler.kwebs.server.servicedata.Category#getDescription()
+     * @see #getCategory()
+     * @generated
+     */
+    EAttribute getCategory_Description();
+
+    /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kwebs.server.servicedata.KnownOption <em>Known Option</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -960,38 +794,6 @@ public interface ServiceDataPackage extends EPackage {
      * @generated
      */
     EReference getKnownOption_Option();
-
-    /**
-     * Returns the meta object for class '{@link de.cau.cs.kieler.kwebs.server.servicedata.SupportedDiagram <em>Supported Diagram</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for class '<em>Supported Diagram</em>'.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.SupportedDiagram
-     * @generated
-     */
-    EClass getSupportedDiagram();
-
-    /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.server.servicedata.SupportedDiagram#getType <em>Type</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Type</em>'.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.SupportedDiagram#getType()
-     * @see #getSupportedDiagram()
-     * @generated
-     */
-    EAttribute getSupportedDiagram_Type();
-
-    /**
-     * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kwebs.server.servicedata.SupportedDiagram#getPriority <em>Priority</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Priority</em>'.
-     * @see de.cau.cs.kieler.kwebs.server.servicedata.SupportedDiagram#getPriority()
-     * @see #getSupportedDiagram()
-     * @generated
-     */
-    EAttribute getSupportedDiagram_Priority();
 
     /**
      * Returns the meta object for class '{@link de.cau.cs.kieler.kwebs.server.servicedata.RemoteEnum <em>Remote Enum</em>}'.
@@ -1098,14 +900,6 @@ public interface ServiceDataPackage extends EPackage {
         EReference SERVICE_DATA__LAYOUT_ALGORITHMS = eINSTANCE.getServiceData_LayoutAlgorithms();
 
         /**
-         * The meta object literal for the '<em><b>Layout Types</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference SERVICE_DATA__LAYOUT_TYPES = eINSTANCE.getServiceData_LayoutTypes();
-
-        /**
          * The meta object literal for the '<em><b>Layout Options</b></em>' containment reference list feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1180,28 +974,12 @@ public interface ServiceDataPackage extends EPackage {
         EReference LAYOUT_ALGORITHM__KNOWN_OPTIONS = eINSTANCE.getLayoutAlgorithm_KnownOptions();
 
         /**
-         * The meta object literal for the '<em><b>Supported Diagrams</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference LAYOUT_ALGORITHM__SUPPORTED_DIAGRAMS = eINSTANCE.getLayoutAlgorithm_SupportedDiagrams();
-
-        /**
          * The meta object literal for the '<em><b>Category</b></em>' reference feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
         EReference LAYOUT_ALGORITHM__CATEGORY = eINSTANCE.getLayoutAlgorithm_Category();
-
-        /**
-         * The meta object literal for the '<em><b>Type</b></em>' reference feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference LAYOUT_ALGORITHM__TYPE = eINSTANCE.getLayoutAlgorithm_Type();
 
         /**
          * The meta object literal for the '<em><b>Version</b></em>' attribute feature.
@@ -1218,40 +996,6 @@ public interface ServiceDataPackage extends EPackage {
          * @generated
          */
         EAttribute LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH = eINSTANCE.getLayoutAlgorithm_PreviewImagePath();
-
-        /**
-         * The meta object literal for the '{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutTypeImpl <em>Layout Type</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutTypeImpl
-         * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataPackageImpl#getLayoutType()
-         * @generated
-         */
-        EClass LAYOUT_TYPE = eINSTANCE.getLayoutType();
-
-        /**
-         * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute LAYOUT_TYPE__ID = eINSTANCE.getLayoutType_Id();
-
-        /**
-         * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute LAYOUT_TYPE__NAME = eINSTANCE.getLayoutType_Name();
-
-        /**
-         * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute LAYOUT_TYPE__DESCRIPTION = eINSTANCE.getLayoutType_Description();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutOptionImpl <em>Layout Option</em>}' class.
@@ -1362,6 +1106,14 @@ public interface ServiceDataPackage extends EPackage {
         EAttribute CATEGORY__NAME = eINSTANCE.getCategory_Name();
 
         /**
+         * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute CATEGORY__DESCRIPTION = eINSTANCE.getCategory_Description();
+
+        /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.KnownOptionImpl <em>Known Option</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1386,32 +1138,6 @@ public interface ServiceDataPackage extends EPackage {
          * @generated
          */
         EReference KNOWN_OPTION__OPTION = eINSTANCE.getKnownOption_Option();
-
-        /**
-         * The meta object literal for the '{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.SupportedDiagramImpl <em>Supported Diagram</em>}' class.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.SupportedDiagramImpl
-         * @see de.cau.cs.kieler.kwebs.server.servicedata.impl.ServiceDataPackageImpl#getSupportedDiagram()
-         * @generated
-         */
-        EClass SUPPORTED_DIAGRAM = eINSTANCE.getSupportedDiagram();
-
-        /**
-         * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute SUPPORTED_DIAGRAM__TYPE = eINSTANCE.getSupportedDiagram_Type();
-
-        /**
-         * The meta object literal for the '<em><b>Priority</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute SUPPORTED_DIAGRAM__PRIORITY = eINSTANCE.getSupportedDiagram_Priority();
 
         /**
          * The meta object literal for the '{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.RemoteEnumImpl <em>Remote Enum</em>}' class.

@@ -171,7 +171,6 @@ class ProvidedlayoutProvider
         
         '''
         <h3>«algorithm.category?.name» - «algorithm.name»</h3>
-        <p>Type: «algorithm.type?.name»<br/></p>
         <p>Identifier: «algorithm.id»<br/></p>
         «if (algorithm.description != null) {
             '''<p>«generateHypertext(algorithm.description)»</p>'''
@@ -247,7 +246,7 @@ class ProvidedlayoutProvider
     ) 
     {
         val List<LayoutAlgorithm> algorithms = serviceData.layoutAlgorithms.sortBy[
-            '''«it.category?.name»/«it.type?.name»/«it.name»'''.toString
+            '''«it.category?.name»/«it.name»'''.toString
         ]
         val List<SupportedFormat> formats     = serviceData.supportedFormats
         val List<GraphFeature> features = GraphFeature.values().sortBy[it.name]
@@ -289,13 +288,9 @@ class ProvidedlayoutProvider
                     <tbody>
                         «algorithms.map(algorithm | {    
                             var String category = algorithm.category?.name
-                            var String type     = algorithm.type?.name
                             var String version  = algorithm.version
                             if (Strings.isNullOrEmpty(category)) {
                                 category = "&nbsp;"
-                            }
-                            if (Strings.isNullOrEmpty(type)) {
-                                type = "&nbsp;"
                             }
                             if (Strings.isNullOrEmpty(version)) {
                                 version = "&nbsp;"
@@ -306,7 +301,6 @@ class ProvidedlayoutProvider
                                 algorithm.id
                                 »";'>«algorithm.name»</td>
                                 <td>«category»</td>
-                                <td>«type»</td>
                                 <td>«algorithm.id»</td>
                                 <td>«version»</td>
                             </tr>'''

@@ -58,11 +58,9 @@ public class ServiceDataFactoryImpl extends EFactoryImpl implements ServiceDataF
         switch (eClass.getClassifierID()) {
             case ServiceDataPackage.SERVICE_DATA: return createServiceData();
             case ServiceDataPackage.LAYOUT_ALGORITHM: return createLayoutAlgorithm();
-            case ServiceDataPackage.LAYOUT_TYPE: return createLayoutType();
             case ServiceDataPackage.LAYOUT_OPTION: return createLayoutOption();
             case ServiceDataPackage.CATEGORY: return createCategory();
             case ServiceDataPackage.KNOWN_OPTION: return createKnownOption();
-            case ServiceDataPackage.SUPPORTED_DIAGRAM: return createSupportedDiagram();
             case ServiceDataPackage.REMOTE_ENUM: return createRemoteEnum();
             case ServiceDataPackage.SUPPORTED_FORMAT: return createSupportedFormat();
             default:
@@ -95,16 +93,6 @@ public class ServiceDataFactoryImpl extends EFactoryImpl implements ServiceDataF
      * <!-- end-user-doc -->
      * @generated
      */
-    public LayoutType createLayoutType() {
-        LayoutTypeImpl layoutType = new LayoutTypeImpl();
-        return layoutType;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public LayoutOption createLayoutOption() {
         LayoutOptionImpl layoutOption = new LayoutOptionImpl();
         return layoutOption;
@@ -128,16 +116,6 @@ public class ServiceDataFactoryImpl extends EFactoryImpl implements ServiceDataF
     public KnownOption createKnownOption() {
         KnownOptionImpl knownOption = new KnownOptionImpl();
         return knownOption;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public SupportedDiagram createSupportedDiagram() {
-        SupportedDiagramImpl supportedDiagram = new SupportedDiagramImpl();
-        return supportedDiagram;
     }
 
     /**

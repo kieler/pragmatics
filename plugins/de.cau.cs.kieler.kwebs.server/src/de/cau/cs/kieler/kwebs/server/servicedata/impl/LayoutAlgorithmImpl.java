@@ -31,18 +31,16 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutAlgorithmImpl#getId <em>Id</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutAlgorithmImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutAlgorithmImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutAlgorithmImpl#getKnownOptions <em>Known Options</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutAlgorithmImpl#getSupportedDiagrams <em>Supported Diagrams</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutAlgorithmImpl#getCategory <em>Category</em>}</li>
- *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutAlgorithmImpl#getType <em>Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutAlgorithmImpl#getVersion <em>Version</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kwebs.server.servicedata.impl.LayoutAlgorithmImpl#getPreviewImagePath <em>Preview Image Path</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -118,16 +116,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
     protected EList<KnownOption> knownOptions;
 
     /**
-     * The cached value of the '{@link #getSupportedDiagrams() <em>Supported Diagrams</em>}' containment reference list.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getSupportedDiagrams()
-     * @generated
-     * @ordered
-     */
-    protected EList<SupportedDiagram> supportedDiagrams;
-
-    /**
      * The cached value of the '{@link #getCategory() <em>Category</em>}' reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -136,16 +124,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
      * @ordered
      */
     protected Category category;
-
-    /**
-     * The cached value of the '{@link #getType() <em>Type</em>}' reference.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #getType()
-     * @generated
-     * @ordered
-     */
-    protected LayoutType type;
 
     /**
      * The default value of the '{@link #getVersion() <em>Version</em>}' attribute.
@@ -286,18 +264,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
      * <!-- end-user-doc -->
      * @generated
      */
-    public EList<SupportedDiagram> getSupportedDiagrams() {
-        if (supportedDiagrams == null) {
-            supportedDiagrams = new EObjectContainmentEList<SupportedDiagram>(SupportedDiagram.class, this, ServiceDataPackage.LAYOUT_ALGORITHM__SUPPORTED_DIAGRAMS);
-        }
-        return supportedDiagrams;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public Category getCategory() {
         if (category != null && category.eIsProxy()) {
             InternalEObject oldCategory = (InternalEObject)category;
@@ -329,44 +295,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
         category = newCategory;
         if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET, ServiceDataPackage.LAYOUT_ALGORITHM__CATEGORY, oldCategory, category));
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public LayoutType getType() {
-        if (type != null && type.eIsProxy()) {
-            InternalEObject oldType = (InternalEObject)type;
-            type = (LayoutType)eResolveProxy(oldType);
-            if (type != oldType) {
-                if (eNotificationRequired())
-                    eNotify(new ENotificationImpl(this, Notification.RESOLVE, ServiceDataPackage.LAYOUT_ALGORITHM__TYPE, oldType, type));
-            }
-        }
-        return type;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public LayoutType basicGetType() {
-        return type;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setType(LayoutType newType) {
-        LayoutType oldType = type;
-        type = newType;
-        if (eNotificationRequired())
-            eNotify(new ENotificationImpl(this, Notification.SET, ServiceDataPackage.LAYOUT_ALGORITHM__TYPE, oldType, type));
     }
 
     /**
@@ -421,8 +349,6 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
         switch (featureID) {
             case ServiceDataPackage.LAYOUT_ALGORITHM__KNOWN_OPTIONS:
                 return ((InternalEList<?>)getKnownOptions()).basicRemove(otherEnd, msgs);
-            case ServiceDataPackage.LAYOUT_ALGORITHM__SUPPORTED_DIAGRAMS:
-                return ((InternalEList<?>)getSupportedDiagrams()).basicRemove(otherEnd, msgs);
         }
         return super.eInverseRemove(otherEnd, featureID, msgs);
     }
@@ -443,14 +369,9 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
                 return getDescription();
             case ServiceDataPackage.LAYOUT_ALGORITHM__KNOWN_OPTIONS:
                 return getKnownOptions();
-            case ServiceDataPackage.LAYOUT_ALGORITHM__SUPPORTED_DIAGRAMS:
-                return getSupportedDiagrams();
             case ServiceDataPackage.LAYOUT_ALGORITHM__CATEGORY:
                 if (resolve) return getCategory();
                 return basicGetCategory();
-            case ServiceDataPackage.LAYOUT_ALGORITHM__TYPE:
-                if (resolve) return getType();
-                return basicGetType();
             case ServiceDataPackage.LAYOUT_ALGORITHM__VERSION:
                 return getVersion();
             case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH:
@@ -481,15 +402,8 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
                 getKnownOptions().clear();
                 getKnownOptions().addAll((Collection<? extends KnownOption>)newValue);
                 return;
-            case ServiceDataPackage.LAYOUT_ALGORITHM__SUPPORTED_DIAGRAMS:
-                getSupportedDiagrams().clear();
-                getSupportedDiagrams().addAll((Collection<? extends SupportedDiagram>)newValue);
-                return;
             case ServiceDataPackage.LAYOUT_ALGORITHM__CATEGORY:
                 setCategory((Category)newValue);
-                return;
-            case ServiceDataPackage.LAYOUT_ALGORITHM__TYPE:
-                setType((LayoutType)newValue);
                 return;
             case ServiceDataPackage.LAYOUT_ALGORITHM__VERSION:
                 setVersion((String)newValue);
@@ -521,14 +435,8 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
             case ServiceDataPackage.LAYOUT_ALGORITHM__KNOWN_OPTIONS:
                 getKnownOptions().clear();
                 return;
-            case ServiceDataPackage.LAYOUT_ALGORITHM__SUPPORTED_DIAGRAMS:
-                getSupportedDiagrams().clear();
-                return;
             case ServiceDataPackage.LAYOUT_ALGORITHM__CATEGORY:
                 setCategory((Category)null);
-                return;
-            case ServiceDataPackage.LAYOUT_ALGORITHM__TYPE:
-                setType((LayoutType)null);
                 return;
             case ServiceDataPackage.LAYOUT_ALGORITHM__VERSION:
                 setVersion(VERSION_EDEFAULT);
@@ -556,12 +464,8 @@ public class LayoutAlgorithmImpl extends EObjectImpl implements LayoutAlgorithm 
                 return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
             case ServiceDataPackage.LAYOUT_ALGORITHM__KNOWN_OPTIONS:
                 return knownOptions != null && !knownOptions.isEmpty();
-            case ServiceDataPackage.LAYOUT_ALGORITHM__SUPPORTED_DIAGRAMS:
-                return supportedDiagrams != null && !supportedDiagrams.isEmpty();
             case ServiceDataPackage.LAYOUT_ALGORITHM__CATEGORY:
                 return category != null;
-            case ServiceDataPackage.LAYOUT_ALGORITHM__TYPE:
-                return type != null;
             case ServiceDataPackage.LAYOUT_ALGORITHM__VERSION:
                 return VERSION_EDEFAULT == null ? version != null : !VERSION_EDEFAULT.equals(version);
             case ServiceDataPackage.LAYOUT_ALGORITHM__PREVIEW_IMAGE_PATH:
