@@ -27,8 +27,8 @@ import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.service.util.ElkServiceUtil;
 import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.WrappedException;
 import org.eclipse.elk.graph.KNode;
@@ -120,7 +120,7 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                 graph = (KNode) content;
             }
             // assure that properties, stored in the model file, are loaded properly 
-            ElkServiceUtil.loadDataElements(graph, true);
+            GraphDataUtil.loadDataElements(graph, true);
             
             if (layoutBeforeAnalysis) {
                 if (configurator != null) {
