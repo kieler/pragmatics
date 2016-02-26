@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.4"?>
-<plugin>
-   <extension-point id="de.cau.cs.kieler.ksbase.configurations" name="KSBasE Configurations" schema="schema/de.cau.cs.kieler.ksbase.configurations.exsd"/>
-   <extension-point id="de.cau.cs.kieler.ksbase.activator" name="KSBasE project loader" schema="schema/de.cau.cs.kieler.ksbase.activator.exsd"/>
-
-</plugin>
