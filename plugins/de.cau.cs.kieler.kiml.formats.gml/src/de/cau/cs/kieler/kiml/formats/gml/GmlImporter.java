@@ -23,8 +23,8 @@ import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
-import org.eclipse.elk.core.service.util.ElkServiceUtil;
 import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KLabel;
 import org.eclipse.elk.graph.KNode;
@@ -126,7 +126,7 @@ public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
                             }
                         }
                     } else {
-                        ElkServiceUtil.setOption(nodeLayout, e.getKey(), e.getValue());
+                        GraphDataUtil.setOption(nodeLayout, e.getKey(), e.getValue());
                     }
                 }
             } else if ("edge".equalsIgnoreCase(element.getKey())) {
@@ -152,7 +152,7 @@ public class GmlImporter implements IGraphTransformer<GMLModel, KNode> {
                             KLabel label = ElkUtil.createInitializedLabel(kedge);
                             label.setText(e.getValue());
                         } else {
-                            ElkServiceUtil.setOption(edgeLayout, e.getKey(), e.getValue());
+                            GraphDataUtil.setOption(edgeLayout, e.getKey(), e.getValue());
                         }
                     }
                 }

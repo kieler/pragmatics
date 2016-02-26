@@ -9,6 +9,5 @@ Require-Bundle: com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.kiml.formats,
  org.graphdrawing.graphml,
  org.eclipse.elk.graph,
- org.eclipse.elk.core,
- org.eclipse.elk.core.service
+ org.eclipse.elk.core
 Bundle-ActivationPolicy: lazy

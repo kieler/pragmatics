@@ -21,8 +21,8 @@ import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
-import org.eclipse.elk.core.service.util.ElkServiceUtil;
 import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
@@ -143,7 +143,7 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
             final TransformationData<DocumentRoot, KNode> transData) {
         // transform layout options
         for (DataType data : graph.getData()) {
-            ElkServiceUtil.setOption(parent.getData(KShapeLayout.class), data.getKey(), getValue(data));
+            GraphDataUtil.setOption(parent.getData(KShapeLayout.class), data.getKey(), getValue(data));
         }
         
         // transform nodes
@@ -152,14 +152,14 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             nodeLayout.setProperty(PROP_NODE, node);
             for (DataType data : node.getData()) {
-                ElkServiceUtil.setOption(nodeLayout, data.getKey(), getValue(data));
+                GraphDataUtil.setOption(nodeLayout, data.getKey(), getValue(data));
             }
             // transform ports
             for (PortType port : node.getPort()) {
                 KPort kport = transformPort(port.getName(), knode, transData);
                 KShapeLayout portLayout = kport.getData(KShapeLayout.class);
                 for (DataType data : port.getData()) {
-                    ElkServiceUtil.setOption(portLayout, data.getKey(), getValue(data));
+                    GraphDataUtil.setOption(portLayout, data.getKey(), getValue(data));
                 }
             }
             // transform subgraph
@@ -186,7 +186,7 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
                 kedge.setTargetPort(port);
             }
             for (DataType data : edge.getData()) {
-                ElkServiceUtil.setOption(edgeLayout, data.getKey(), getValue(data));
+                GraphDataUtil.setOption(edgeLayout, data.getKey(), getValue(data));
             }
         }
         

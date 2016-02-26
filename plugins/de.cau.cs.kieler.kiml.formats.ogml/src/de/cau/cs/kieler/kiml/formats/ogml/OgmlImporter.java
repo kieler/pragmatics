@@ -22,8 +22,8 @@ import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.service.util.ElkServiceUtil;
 import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KGraphData;
 import org.eclipse.elk.graph.KLabel;
@@ -453,7 +453,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
     private void convertLayoutOption(final KGraphData layout, final DataType option) {
         String[] splittedOption = option.getValue().split("=");
         if (splittedOption.length == 2) {
-            ElkServiceUtil.setOption(layout, splittedOption[0], splittedOption[1]);
+            GraphDataUtil.setOption(layout, splittedOption[0], splittedOption[1]);
         }
     }
 

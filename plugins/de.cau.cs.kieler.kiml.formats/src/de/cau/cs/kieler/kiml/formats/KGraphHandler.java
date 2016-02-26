@@ -17,8 +17,8 @@ package de.cau.cs.kieler.kiml.formats;
 import java.util.Map;
 
 import org.eclipse.elk.core.klayoutdata.KLayoutDataPackage;
-import org.eclipse.elk.core.service.util.ElkServiceUtil;
 import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.graph.KGraphPackage;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.ecore.EPackage;
@@ -60,7 +60,7 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
         super.deserialize(serializedGraph, transData);
         if (transData.getSourceGraph() != null) {
             // load layout options from their serialized form
-            ElkServiceUtil.loadDataElements(transData.getSourceGraph(), true);
+            GraphDataUtil.loadDataElements(transData.getSourceGraph(), true);
         }
     }
 

@@ -25,8 +25,8 @@ import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory
 import org.eclipse.elk.core.klayoutdata.KShapeLayout
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.EdgeLabelPlacement
-import org.eclipse.elk.core.service.util.ElkServiceUtil
 import org.eclipse.elk.core.util.ElkUtil
+import org.eclipse.elk.core.util.GraphDataUtil
 import org.eclipse.elk.graph.KEdge
 import org.eclipse.elk.graph.KLabel
 import org.eclipse.elk.graph.KLabeledGraphElement
@@ -211,7 +211,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         jsonObject.optJSONObject("properties") => [ props |
             props?.keys.emptyIfNull.forEach [ key |
                 val value = props.optString(key as String)
-                ElkServiceUtil.loadDataElement(metaService, layoutData, key as String, value)
+                GraphDataUtil.loadDataElement(metaService, layoutData, key as String, value)
             ]
         ]
     }
