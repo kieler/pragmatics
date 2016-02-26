@@ -480,11 +480,13 @@ public abstract class AbstractService {
 
                 // we log all user specified layout options
                 for (GraphLayoutOption opt : options) {
-                    String fullId =
-                            LayoutMetaDataService.getInstance().getOptionDataBySuffix(opt.getId())
-                                    .getId();
-                    stats.incCounter(Logger.STATS_KWEBS, STATS_OPTION, fullId, opt.getValue(),
-                            Granularity.DAY);
+                    LayoutOptionData data =
+                            LayoutMetaDataService.getInstance().getOptionDataBySuffix(opt.getId());
+                    if (data != null) {
+                        String fullId = data.getId();
+                        stats.incCounter(Logger.STATS_KWEBS, STATS_OPTION, fullId, opt.getValue(),
+                                Granularity.DAY);
+                    }
                 }
 
                 int nodes = 0;

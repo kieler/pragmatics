@@ -4,7 +4,6 @@ Bundle-Name: KIELER Layout Web Service Server Components
 Bundle-SymbolicName: de.cau.cs.kieler.kwebs.server;singleton:=true
 Bundle-Version: 0.5.0.qualifier
 Require-Bundle: com.google.inject;bundle-version="3.0.0",
- javax.xml.ws;bundle-version="2.1.0",
  org.apache.log4j;bundle-version="1.2.0",
  org.eclipse.core.runtime,
  org.eclipse.emf.ecore;bundle-version="2.7.0",
