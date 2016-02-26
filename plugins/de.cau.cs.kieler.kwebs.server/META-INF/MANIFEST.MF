@@ -10,7 +10,7 @@ Require-Bundle: com.google.inject;bundle-version="3.0.0",
  org.eclipse.emf.ecore;bundle-version="2.7.0",
  org.eclipse.emf.ecore.xmi;bundle-version="2.7.0",
  org.eclipse.xtend.lib;bundle-version="2.4.0",
- org.eclipse.elk.core.service,
+ org.eclipse.elk.core,
  org.eclipse.elk.graph,
  de.cau.cs.kieler.kiml.formats,
  de.cau.cs.kieler.web.statistics
