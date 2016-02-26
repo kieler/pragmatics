@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.xtext;
 
+import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.resource.XtextResource;
@@ -22,7 +23,6 @@ import org.osgi.framework.BundleContext;
 
 import com.google.common.base.Function;
 
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.klighd.ISourceProxy;
 
 /**

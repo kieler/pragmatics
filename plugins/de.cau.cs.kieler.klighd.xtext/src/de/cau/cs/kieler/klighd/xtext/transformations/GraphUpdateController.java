@@ -16,6 +16,7 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -24,7 +25,6 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IMemento;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.klighd.ui.view.controller.AbstractViewUpdateController;
 import de.cau.cs.kieler.klighd.ui.view.controllers.EditorSaveAdapter;
