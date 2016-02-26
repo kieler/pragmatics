@@ -21,6 +21,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.service.DiagramLayoutEngine;
+import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -29,7 +32,6 @@ import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.KiVi;
 import de.cau.cs.kieler.core.kivi.menu.ButtonTrigger.ButtonState;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
-import de.cau.cs.kieler.kiml.kivi.LayoutEffect;
 import de.cau.cs.kieler.klighd.IModelModificationHandler;
 import de.cau.cs.kieler.klighd.ui.modifymodel.ModelModificationHandlerProvider;
 import de.cau.cs.kieler.ksbase.core.EditorTransformationSettings;
@@ -265,13 +267,11 @@ public class KSBasECombination extends AbstractCombination implements ITransform
      */
     private void evokeLayout(final List<EObject> selectionList, final EObject rootObject,
             final IEditorPart editor) {
-        LayoutEffect layout = null;
-        if (selectionList.get(0) == rootObject) {
-            layout = new LayoutEffect(editor, rootObject, false);
-        } else {
-            layout = new LayoutEffect(editor, rootObject, false);
-        }
-        layout.schedule();
+
+        Parameters params = new Parameters();
+        params.getGlobalSettings()
+            .setProperty(CoreOptions.ZOOM_TO_FIT, false);
+        DiagramLayoutEngine.invokeLayout(editor, rootObject, null);
     }
 
     /**
