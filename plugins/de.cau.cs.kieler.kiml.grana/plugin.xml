@@ -7,7 +7,7 @@
    <extension
          point="org.eclipse.ui.commands">
       <command
-            categoryId="de.cau.cs.kieler.layout"
+            categoryId="org.eclipse.elk.core.layout"
             defaultHandler="de.cau.cs.kieler.kiml.grana.ui.batch.BatchHandler"
             id="de.cau.cs.kieler.kiml.grana.command.setupBatch"
             name="Setup Batch">
@@ -37,7 +37,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="false"
-            category="de.cau.cs.kieler.layout"
+            category="org.eclipse.elk.core.layout"
             class="de.cau.cs.kieler.kiml.grana.ui.views.AnalysisResultViewPart"
             icon="icons/menu16/analyzediagram.gif"
             id="de.cau.cs.kieler.kiml.grana.views.analysisResults"

@@ -59,6 +59,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditor;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditorFactory;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditorModelAccess;
@@ -168,7 +169,7 @@ public class LayoutConfigViewPart extends ViewPart {
         public XtextResource createResource() {
             try {
                 LayoutConfigStandaloneSetup.doSetup();
-                ResourceSet resourceSet = new ResourceSetImpl();
+                ResourceSet resourceSet = new XtextResourceSet();
                 resource = resourceSet.createResource(URI.createURI("dummy.lc"));
 
                 return (XtextResource) resource;
@@ -247,7 +248,7 @@ public class LayoutConfigViewPart extends ViewPart {
 
         // add a button that allows to perform the specified layout
         final IAction layoutAction = new Action("Layout", ElkUiPlugin.getImageDescriptor(
-        		"icons/menu16/kieler-arrange.gif")) {
+        		"icons/menu16/arrange.gif")) {
             public void run() {
                 if (lastActiveEditor != null) {
                     performLayout();
