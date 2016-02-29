@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import com.google.common.collect.ObjectArrays;
+import com.google.common.io.CharStreams;
 import com.google.common.io.Files;
 
 /**
@@ -81,10 +82,15 @@ public final class ModelRunner {
         }
 
         Process process = Runtime.getRuntime().exec(args);
+        String output = 
+                CharStreams.toString(new InputStreamReader(process.getInputStream()));
+        // note that it's important to read the input stream before #waitFor is called.
+        // if a process writes too much to stdout without it being read, waitFor never 
+        // terminates.
         process.waitFor();
 
         // #3 read input and return
-        R result = model.parseResult(process.getInputStream());
+        R result = model.parseResult(output.toString());
 
         if (result == null) {
             readErrorStream(process);

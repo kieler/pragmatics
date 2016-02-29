@@ -58,12 +58,12 @@ public interface ISolverModel<I, R> {
     /**
      * Parse the output of the solver and return the desired result.
      * 
-     * @param is
-     *            the input stream to which the solver's results are written.
+     * @param result
+     *            everything that was written to stdout by the model's process.
      * @return the parsed result of {@code null} if unsuccessful
      * @throws IOException
      *             if the {@link InputStream} cannot be read.
      */
-    R parseResult(final InputStream is) throws IOException;
+    R parseResult(final String result) throws IOException;
 
 }
