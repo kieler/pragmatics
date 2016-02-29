@@ -379,7 +379,7 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Only route the edges without touching the node&apos;s positions."
     ));
     registry.register(new LayoutAlgorithmData(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "Libavoid",
         "libavoid is a cross-platform C++ library providing fast, object-avoiding orthogonal and polyline connector routing for use in interactive diagram editors.",
         new AlgorithmFactory(LibavoidLayoutProvider.class, ""),
@@ -389,82 +389,82 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         null
     ));
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "org.eclipse.elk.direction",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "org.eclipse.elk.edgeRouting",
         LIBAVOID_SUP_EDGE_ROUTING
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.segmentPenalty",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.anglePenalty",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.crossingPenalty",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.clusterCrossingPenalty",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.fixedSharedPathPenalty",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.portDirectionPenalty",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.shapeBufferDistance",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.idealNudgingDistance",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalSegmentsConnectedToShapes",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingJunctions",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.penaliseOrthogonalSharedPathsAtConnEnds",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep",
         null
     );
     registry.addOptionSupport(
-        "de.cau.cs.kieler.kiml.libavoid.libavoid",
+        "de.cau.cs.kieler.kiml.libavoid",
         "de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions",
         null
     );
