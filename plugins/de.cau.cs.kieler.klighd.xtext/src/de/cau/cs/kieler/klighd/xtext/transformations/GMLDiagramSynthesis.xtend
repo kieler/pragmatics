@@ -157,7 +157,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
             }
             case "y": {
                 hasPositions = true
-                val v = node.layout.getProperty(LayoutOptions::POSITION)
+                val v = node.layout.getProperty(CoreOptions::POSITION)
                 v.y = e.value.toFloat
             }
             case "w" : node.width = e.value.toFloat
