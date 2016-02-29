@@ -14,29 +14,29 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.core.krendering.HorizontalAlignment
-import de.cau.cs.kieler.core.krendering.KContainerRendering
-import de.cau.cs.kieler.core.krendering.KDecoratorPlacementData
-import de.cau.cs.kieler.core.krendering.KPolyline
-import de.cau.cs.kieler.core.krendering.KRendering
-import de.cau.cs.kieler.core.krendering.KRenderingFactory
-import de.cau.cs.kieler.core.krendering.KRenderingLibrary
-import de.cau.cs.kieler.core.krendering.KRenderingRef
-import de.cau.cs.kieler.core.krendering.LineStyle
-import de.cau.cs.kieler.core.krendering.VerticalAlignment
-import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.KlighdConstants
+import de.cau.cs.kieler.klighd.krendering.HorizontalAlignment
+import de.cau.cs.kieler.klighd.krendering.KContainerRendering
+import de.cau.cs.kieler.klighd.krendering.KDecoratorPlacementData
+import de.cau.cs.kieler.klighd.krendering.KPolyline
+import de.cau.cs.kieler.klighd.krendering.KRendering
+import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
+import de.cau.cs.kieler.klighd.krendering.KRenderingLibrary
+import de.cau.cs.kieler.klighd.krendering.KRenderingRef
+import de.cau.cs.kieler.klighd.krendering.LineStyle
+import de.cau.cs.kieler.klighd.krendering.VerticalAlignment
+import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
+import org.eclipse.elk.graph.KEdge
+import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.graph.KPort
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*

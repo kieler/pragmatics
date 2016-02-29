@@ -13,12 +13,8 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
+import com.google.common.base.Strings
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KGraphElement
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
@@ -31,6 +27,11 @@ import java.util.List
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Status
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.util.ElkUtil
+import org.eclipse.elk.graph.KGraphElement
+import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.graph.KPort
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil
 import org.ptolemy.moml.ClassType
@@ -42,8 +43,6 @@ import org.ptolemy.moml.PropertyType
 import org.ptolemy.moml.RelationType
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-
-import static extension com.google.common.base.Strings.*
 
 /**
  * Transforms a Ptolemy2 model to a KGraph. This is step one of the Ptolemy model transformation
@@ -142,7 +141,7 @@ class Ptolemy2KGraphTransformation {
             return kClassNode
         }
         
-        return KimlUtil::createInitializedNode
+        return ElkUtil::createInitializedNode
     }
     
     /**
@@ -151,7 +150,7 @@ class Ptolemy2KGraphTransformation {
      * @param ptEntity the Ptolemy entity to transform.
      * @return the KGraph node.
      */
-    def private create kNode : KimlUtil::createInitializedNode() transform(EntityType ptEntity) {
+    def private create kNode : ElkUtil::createInitializedNode() transform(EntityType ptEntity) {
         diagramSynthesis.associateWith(kNode, ptEntity)
         kNode.name = ptEntity.name
        
@@ -206,8 +205,8 @@ class Ptolemy2KGraphTransformation {
                 kNode.annotations += transformedRefinement.annotations
                 
                 // Check if the refinement is itself a state machine
-                val refinementClass = transformedRefinement.getAnnotationValue(
-                    ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+                val refinementClass = Strings.nullToEmpty(transformedRefinement.getAnnotationValue(
+                    ANNOTATION_PTOLEMY_CLASS))
                 
                 if (refinementClass.equals(ENTITY_CLASS_MODEL_CONTROLLER)
                     || refinementClass.equals(ENTITY_CLASS_FSM_MODEL_CONTROLLER)) {
@@ -234,7 +233,7 @@ class Ptolemy2KGraphTransformation {
      * @param ptClass the Ptolemy class to transform.
      * @return the KGraph node.
      */
-    def private create kNode : KimlUtil::createInitializedNode() transform(ClassType ptClass) {
+    def private create kNode : ElkUtil::createInitializedNode() transform(ClassType ptClass) {
         kNode.name = ptClass.name
         
         // Add annotations identifying this node as having been created from a Ptolemy entity
@@ -294,8 +293,8 @@ class Ptolemy2KGraphTransformation {
                 kNode.annotations += transformedRefinement.annotations
                 
                 // Check if the refinement is itself a state machine
-                val refinementClass = transformedRefinement.getAnnotationValue(
-                    ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+                val refinementClass = Strings.nullToEmpty(transformedRefinement.getAnnotationValue(
+                    ANNOTATION_PTOLEMY_CLASS))
                 
                 if (refinementClass.equals(ENTITY_CLASS_MODEL_CONTROLLER)
                     || refinementClass.equals(ENTITY_CLASS_FSM_MODEL_CONTROLLER)) {
@@ -318,7 +317,7 @@ class Ptolemy2KGraphTransformation {
      * @param ptRelation the Ptolemy relation to transform.
      * @return the KGraph node.
      */
-    def private create kNode : KimlUtil::createInitializedNode() transform(RelationType ptRelation) {
+    def private create kNode : ElkUtil::createInitializedNode() transform(RelationType ptRelation) {
         diagramSynthesis.associateWith(kNode, ptRelation)
         kNode.name = ptRelation.name
         
@@ -351,7 +350,7 @@ class Ptolemy2KGraphTransformation {
      * @param kaomParent the link's parent entity, with relations already transformed.
      * @return the transformed KAOM link.
      */
-    def private create kEdge : KimlUtil::createInitializedEdge() transform(
+    def private create kEdge : ElkUtil::createInitializedEdge() transform(
         LinkType ptLink, KNode kParent) {
         
         // Fetch the relations and ports this link connects (since we cannot always get reliable port
@@ -418,7 +417,7 @@ class Ptolemy2KGraphTransformation {
      * @param ptPort the Ptolemy port to transform.
      * @return the KPort.
      */
-    def private create kPort : KimlUtil::createInitializedPort() transform(PortType ptPort) {
+    def private create kPort : ElkUtil::createInitializedPort() transform(PortType ptPort) {
         kPort.name = ptPort.name
         diagramSynthesis.associateWith(kPort, ptPort);
         
@@ -513,8 +512,8 @@ class Ptolemy2KGraphTransformation {
      */
     def private KPort createPort(KNode kNode, String name, int index) {
         // Create a new port
-        val result = KimlUtil::createInitializedPort()
-        result.layout.setProperty(LayoutOptions::PORT_INDEX, index)
+        val result = ElkUtil::createInitializedPort()
+        result.layout.setProperty(CoreOptions::PORT_INDEX, index)
         
         // Assign name and language annotation
         result.name = name
@@ -537,7 +536,7 @@ class Ptolemy2KGraphTransformation {
      * @return the node with the port attached.
      */
     def private KNode transformRefinementPort(KPort port) {
-        val node = KimlUtil::createInitializedNode()
+        val node = ElkUtil::createInitializedNode()
         node.ports.add(port)
         
         reassociate(port, node);
@@ -695,7 +694,7 @@ class Ptolemy2KGraphTransformation {
         var index = ports.size;
         for (modelPort : modelPorts) {
             // Set the index (here we assume the original port order found in the MoML is preserved)
-            modelPort.layout.setProperty(LayoutOptions::PORT_INDEX, index);
+            modelPort.layout.setProperty(CoreOptions::PORT_INDEX, index);
             
             // Check if a port of the same name already exists
             val existingPort = ports.findFirst(p | p.name.equals(modelPort.name))

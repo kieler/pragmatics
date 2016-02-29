@@ -14,9 +14,9 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.krendering.KRendering
-import de.cau.cs.kieler.core.krendering.KRenderingFactory
-import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
+import de.cau.cs.kieler.klighd.krendering.KRendering
+import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
+import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 import diva.canvas.CanvasUtilities
 import diva.canvas.Figure

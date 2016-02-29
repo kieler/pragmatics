@@ -13,10 +13,10 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation.comments
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.kiml.comments.IExplicitAttachmentProvider
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
+import org.eclipse.elk.core.comments.IExplicitAttachmentProvider
+import org.eclipse.elk.graph.KNode
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 

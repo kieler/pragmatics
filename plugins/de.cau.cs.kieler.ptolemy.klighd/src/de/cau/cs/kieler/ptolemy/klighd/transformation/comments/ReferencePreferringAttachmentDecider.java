@@ -14,11 +14,11 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation.comments;
 
 import java.util.Map;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.kiml.comments.DistanceHeuristic;
-import de.cau.cs.kieler.kiml.comments.IAttachmentDecider;
-import de.cau.cs.kieler.kiml.comments.IHeuristic;
-import de.cau.cs.kieler.kiml.comments.NodeReferenceHeuristic;
+import org.eclipse.elk.core.comments.DistanceHeuristic;
+import org.eclipse.elk.core.comments.IAttachmentDecider;
+import org.eclipse.elk.core.comments.IHeuristic;
+import org.eclipse.elk.core.comments.NodeReferenceHeuristic;
+import org.eclipse.elk.graph.KGraphElement;
 
 /**
  * An attachment decider that prefers to attach comments to nodes they mention.

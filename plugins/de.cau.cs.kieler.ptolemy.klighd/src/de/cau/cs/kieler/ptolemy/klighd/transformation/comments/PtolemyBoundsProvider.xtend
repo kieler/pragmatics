@@ -13,12 +13,12 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation.comments
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.kiml.comments.IBoundsProvider
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 import java.awt.geom.Rectangle2D
+import org.eclipse.elk.core.comments.IBoundsProvider
+import org.eclipse.elk.graph.KNode
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*

@@ -15,10 +15,6 @@ package de.cau.cs.kieler.ptolemy.klighd
 
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
-import de.cau.cs.kieler.kiml.labels.LabelManagementOptions
-import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.klay.layered.p4nodes.NodePlacementStrategy
-import de.cau.cs.kieler.klay.layered.properties.Properties
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.labels.ConditionLabelManager
 import de.cau.cs.kieler.klighd.labels.LabelPredicates
@@ -29,9 +25,11 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsExtractor
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
+import org.eclipse.elk.alg.layered.p4nodes.NodePlacementStrategy
+import org.eclipse.elk.alg.layered.properties.LayeredOptions
+import org.eclipse.elk.core.labels.LabelManagementOptions
+import org.eclipse.elk.core.options.CoreOptions
 import org.ptolemy.moml.DocumentRoot
-
-import static de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.*
 
 /**
  * Synthesis for turning Ptolemy models into KGraphs.
@@ -137,9 +135,9 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
      */
     override getDisplayedLayoutOptions() {
         return ImmutableList::of(
-            DiagramSyntheses.specifyLayoutOption(Properties::NODE_PLACER,
+            DiagramSyntheses.specifyLayoutOption(LayeredOptions.NODE_PLACEMENT,
                 ImmutableList::copyOf(NodePlacementStrategy::values)),
-            DiagramSyntheses.specifyLayoutOption(LayoutOptions::SPACING,
+            DiagramSyntheses.specifyLayoutOption(CoreOptions::SPACING_NODE,
                 ImmutableList::of(0, 255))
         )
     }

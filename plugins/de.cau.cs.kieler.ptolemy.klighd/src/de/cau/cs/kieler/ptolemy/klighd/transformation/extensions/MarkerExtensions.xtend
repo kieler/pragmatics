@@ -14,15 +14,14 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation.extensions
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KGraphElement
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.kiml.options.LayoutOptions
+import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.graph.KEdge
+import org.eclipse.elk.graph.KGraphElement
+import org.eclipse.elk.graph.KNode
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-
-import static extension com.google.common.base.Strings.*
-import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
+import com.google.common.base.Strings
 
 /**
  * Utility methods used to mark elements by the Ptolemy to KGraph transformation.
@@ -150,7 +149,7 @@ class MarkerExtensions {
      * @param node the node to be marked.
      */
     def void markAsHypernode(KNode node) {
-        node.safeLayout.setProperty(LayoutOptions::HYPERNODE, true)
+        node.safeLayout.setProperty(CoreOptions::HYPERNODE, true)
     }
     
     /**
@@ -160,7 +159,7 @@ class MarkerExtensions {
      * @return {@code true} if the node is marked as being a hypernode, {@code false} otherwise.
      */
     def boolean isMarkedAsHypernode(KNode node) {
-        return node.safeLayout.getProperty(LayoutOptions::HYPERNODE)
+        return node.safeLayout.getProperty(CoreOptions::HYPERNODE)
     }
     
     /**
@@ -169,7 +168,7 @@ class MarkerExtensions {
      * @param node the node to be marked.
      */
     def void markAsComment(KNode node) {
-        node.safeLayout.setProperty(LayoutOptions::COMMENT_BOX, true)
+        node.safeLayout.setProperty(CoreOptions::COMMENT_BOX, true)
     }
     
     /**
@@ -179,7 +178,7 @@ class MarkerExtensions {
      * @return {@code true} if the node is marked as being a comment node, {@code false} otherwise.
      */
     def boolean isMarkedAsComment(KNode node) {
-        return node.safeLayout.getProperty(LayoutOptions::COMMENT_BOX)
+        return node.safeLayout.getProperty(CoreOptions::COMMENT_BOX)
     }
     
     /**
@@ -296,7 +295,7 @@ class MarkerExtensions {
      * @return {@code true} if the node represents a value displaying actor.
      */
     def boolean isMarkedAsValueDisplayingActor(KNode node) {
-        val propertyValue = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+        val propertyValue = Strings.nullToEmpty(node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS))
         return TransformationConstants.VALUE_DISPLAY_MAP.keySet().contains(propertyValue)
     }
     
@@ -307,7 +306,7 @@ class MarkerExtensions {
      * @return {@code true} if the node represents a state.
      */
     def boolean isMarkedAsState(KNode node) {
-        val propertyValue = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+        val propertyValue = Strings.nullToEmpty(node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS))
         return propertyValue.equals(ENTITY_CLASS_STATE) || propertyValue.equals(ENTITY_CLASS_FSM_STATE)
     }
     
@@ -328,7 +327,7 @@ class MarkerExtensions {
      * @return {@code true} if the element represents a modal model port.
      */
     def boolean isMarkedAsModalModelPort(KGraphElement element) {
-        val propertyValue = element.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+        val propertyValue = Strings.nullToEmpty(element.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS))
         return propertyValue.equals(PORT_CLASS_REFINEMENT_PORT)
             || propertyValue.equals(PORT_CLASS_FSM_REFINEMENT_PORT)
     }

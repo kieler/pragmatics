@@ -16,11 +16,10 @@ package de.cau.cs.kieler.ptolemy.klighd;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 import org.ptolemy.moml.PropertyType;
-
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.Pair;
 
 /**
  * Properties used when representing Ptolemy models as KGraphs.
