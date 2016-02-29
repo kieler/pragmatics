@@ -20,14 +20,8 @@ import org.eclipse.elk.core.options.EdgeRouting
 
 bundle {   
     label "OGDF" 
-    class options.OgdfOptions   
-} 
-
-category planar { 
-    label "Planar"
-    description  
-        "Algorithms that require a planar or upward planar graph. Most of these algorithms are 
-        theoretically interesting, but not practically usable."
+    class options.OgdfOptions
+    idPrefix de.cau.cs.kieler.kiml.ogdf
 }
 
 algorithm sugiyama(OgdfLayoutProvider#SUGIYAMA) {
@@ -347,7 +341,7 @@ algorithm stressMajorization(OgdfLayoutProvider#STRESS_MAJORIZATION) {
 algorithm dominance(OgdfLayoutProvider#DOMINANCE) {
     label "Dominance"
     description "Dominance layout method. The input graph must be connected."
-    category planar
+    category org.eclipse.elk.planar
     preview images/dominance.png
     features multi_edges, edge_labels 
     supports org.eclipse.elk.spacing.node = 10
@@ -362,7 +356,7 @@ algorithm dominance(OgdfLayoutProvider#DOMINANCE) {
 algorithm visibility(OgdfLayoutProvider#VISIBILITY) {
     label "Visibility"
     description "Visibility layout method. The input graph must be connected."
-    category planar
+    category org.eclipse.elk.planar
     preview images/visibility.png
     features multi_edges, edge_labels
     supports org.eclipse.elk.spacing.node = 10
@@ -384,7 +378,7 @@ algorithm fraysseixPachPollack(OgdfLayoutProvider#FRAYSSEIX_PACH_POLLACK) {
         triangulated planar graphs is computed. In the third phase the vertices are placed 
         incrementally according to the shelling order. The input graph must be planar and connected 
         and must not contain multi-edges."
-    category planar
+    category org.eclipse.elk.planar
     preview images/fpp.png
     features edge_labels
     supports org.eclipse.elk.spacing.node = 30
@@ -403,7 +397,7 @@ algorithm schnyder(OgdfLayoutProvider#SCHNYDER) {
         a partition of the set of interior edges in three trees (also called Schnyder trees) with 
         special orientation properties is derived. In the third step, the actual coordinates 
         are computed. The input graph must be planar and connected and must not contain multi-edges."
-    category planar
+    category org.eclipse.elk.planar
     preview images/schnyder.png
     features edge_labels
     supports org.eclipse.elk.spacing.node = 30
@@ -420,7 +414,7 @@ algorithm canonicalOrder(OgdfLayoutProvider#CANONICAL_ORDER) {
         adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). 
         Then, a shelling order of the the resulting graph is computed. The input graph must be 
         planar and must not contain multi-edges."
-    category planar
+    category org.eclipse.elk.planar
     preview images/canonical_order.png
     features edge_labels, disconnected
     supports placeLabels
@@ -471,7 +465,7 @@ algorithm convexGrid(OgdfLayoutProvider#CONVEX_GRID) {
         edges to achieve a certain connectivity (e.g., biconnected or triconnected). 
         Then, a shelling order of the the resulting graph is computed. The input graph must be 
         planar and must not contain multi-edges."
-    category planar
+    category org.eclipse.elk.planar
     preview images/convex_grid.png
     features edge_labels, disconnected
     supports placeLabels

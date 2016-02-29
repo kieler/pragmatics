@@ -17,7 +17,6 @@ import de.cau.cs.kieler.kiml.ogdf.options.Speed;
 import java.util.EnumSet;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
-import org.eclipse.elk.core.data.LayoutCategoryData;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
@@ -1322,11 +1321,6 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
-    registry.register(new LayoutCategoryData(
-        "de.cau.cs.kieler.kiml.ogdf.planar",
-        "Planar",
-        "Algorithms that require a planar or upward planar graph. Most of these algorithms are theoretically interesting, but not practically usable."
-    ));
     registry.register(new LayoutAlgorithmData(
         "de.cau.cs.kieler.kiml.ogdf.sugiyama",
         "Sugiyama",
@@ -2282,7 +2276,7 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Dominance",
         "Dominance layout method. The input graph must be connected.",
         new AlgorithmFactory(OgdfLayoutProvider.class, "DOMINANCE"),
-        "de.cau.cs.kieler.kiml.ogdf.planar",
+        "org.eclipse.elk.planar",
         "OGDF",
         "images/dominance.png",
         EnumSet.of(GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS)
@@ -2327,7 +2321,7 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Visibility",
         "Visibility layout method. The input graph must be connected.",
         new AlgorithmFactory(OgdfLayoutProvider.class, "VISIBILITY"),
-        "de.cau.cs.kieler.kiml.ogdf.planar",
+        "org.eclipse.elk.planar",
         "OGDF",
         "images/visibility.png",
         EnumSet.of(GraphFeature.MULTI_EDGES, GraphFeature.EDGE_LABELS)
@@ -2372,7 +2366,7 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Fraysseix-Pach-Pollack",
         "The layout algorithm by de Fraysseix, Pach, and Pollack 1990. This algorithm draws a planar graph straight-line without crossings. The algorithm runs in three phases. In the \uFB01rst phase, the graph is augmented by adding new arti\uFB01cial edges to get a triangulated plane graph. Then, a so-called shelling order (also called canonical ordering) for triangulated planar graphs is computed. In the third phase the vertices are placed incrementally according to the shelling order. The input graph must be planar and connected and must not contain multi-edges.",
         new AlgorithmFactory(OgdfLayoutProvider.class, "FRAYSSEIX_PACH_POLLACK"),
-        "de.cau.cs.kieler.kiml.ogdf.planar",
+        "org.eclipse.elk.planar",
         "OGDF",
         "images/fpp.png",
         EnumSet.of(GraphFeature.EDGE_LABELS)
@@ -2407,7 +2401,7 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Schnyder",
         "The layout algorithm by Schnyder 1990. This algorithm draws a planar graph straight-line without crossings. The algorithm runs in three phases. In the \uFB01rst phase, the graph is augmented by adding new arti\uFB01cial edges to get a triangulated plane graph. Then, a partition of the set of interior edges in three trees (also called Schnyder trees) with special orientation properties is derived. In the third step, the actual coordinates are computed. The input graph must be planar and connected and must not contain multi-edges.",
         new AlgorithmFactory(OgdfLayoutProvider.class, "SCHNYDER"),
-        "de.cau.cs.kieler.kiml.ogdf.planar",
+        "org.eclipse.elk.planar",
         "OGDF",
         "images/schnyder.png",
         EnumSet.of(GraphFeature.EDGE_LABELS)
@@ -2437,7 +2431,7 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Canonical Order",
         "A straight-line drawing algorithm for planar graphs after Kant 1996. The algorithm runs in several phases. In the first phase, the graph is augmented by adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). Then, a shelling order of the the resulting graph is computed. The input graph must be planar and must not contain multi-edges.",
         new AlgorithmFactory(OgdfLayoutProvider.class, "CANONICAL_ORDER"),
-        "de.cau.cs.kieler.kiml.ogdf.planar",
+        "org.eclipse.elk.planar",
         "OGDF",
         "images/canonical_order.png",
         EnumSet.of(GraphFeature.EDGE_LABELS, GraphFeature.DISCONNECTED)
@@ -2547,7 +2541,7 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Convex Grid",
         "A straight-line drawing algorithm for planar graphs after Chrobak and Kant 1997. The algorithm runs in several phases. In the first phase, the graph is augmented by adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). Then, a shelling order of the the resulting graph is computed. The input graph must be planar and must not contain multi-edges.",
         new AlgorithmFactory(OgdfLayoutProvider.class, "CONVEX_GRID"),
-        "de.cau.cs.kieler.kiml.ogdf.planar",
+        "org.eclipse.elk.planar",
         "OGDF",
         "images/convex_grid.png",
         EnumSet.of(GraphFeature.EDGE_LABELS, GraphFeature.DISCONNECTED)
