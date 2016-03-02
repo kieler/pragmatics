@@ -135,7 +135,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
      */
     override getDisplayedLayoutOptions() {
         return ImmutableList::of(
-            DiagramSyntheses.specifyLayoutOption(LayeredOptions.NODE_PLACEMENT,
+            DiagramSyntheses.specifyLayoutOption(LayeredOptions.NODE_PLACEMENT_STRATEGY,
                 ImmutableList::copyOf(NodePlacementStrategy::values)),
             DiagramSyntheses.specifyLayoutOption(CoreOptions::SPACING_NODE,
                 ImmutableList::of(0, 255))
