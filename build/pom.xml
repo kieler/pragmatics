@@ -24,18 +24,9 @@
     <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
 
     <!-- definitions of our repositories -->
-    <kieler.targetplatform>
-      http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/
-    </kieler.targetplatform>
-    <kieler.targetplatform.delta>
-      http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441_delta/
-    </kieler.targetplatform.delta>
     <kieler.pragmatics.nightly>
       http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/
     </kieler.pragmatics.nightly>
-    <kieler.ptolemy>
-      http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/
-    </kieler.ptolemy>
   </properties>
 
   <!-- Define one profile for each output target we have.
@@ -55,30 +46,8 @@
         <activeByDefault>true</activeByDefault>
       </activation>
 
-      <repositories>
-        <!-- eclipse base installation --> 
-        <repository>
-          <id>p2.targetPlatform</id>
-          <layout>p2</layout>
-          <url>${kieler.targetplatform}</url>
-        </repository>
-
-        <!-- eclipse delta packs -->
-        <repository>
-          <id>p2.targetPlatformDelta</id>
-          <layout>p2</layout>
-          <url>${kieler.targetplatform.delta}</url>
-        </repository>
-
-        <!-- ptolemy runtime -->
-        <repository>
-          <id>p2.ptolemy</id>
-          <layout>p2</layout>
-          <url>${kieler.ptolemy}</url>
-        </repository>
-      </repositories>
-
       <modules>
+        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../plugins</module>
         <module>../features</module>
         <module>de.cau.cs.kieler.pragmatics.repository</module>
@@ -90,20 +59,6 @@
       <id>kgraph-rcp</id>
       
       <repositories>
-        <!-- eclipse base installation --> 
-        <repository>
-          <id>p2.targetPlatform</id>
-          <layout>p2</layout>
-          <url>${kieler.targetplatform}</url>
-        </repository>
-
-        <!-- eclipse delta packs -->
-        <repository>
-          <id>p2.targetPlatformDelta</id>
-          <layout>p2</layout>
-          <url>${kieler.targetplatform.delta}</url>
-        </repository>
-
         <!-- kieler pragmatics runtime -->
         <repository>
           <id>p2.nightly_pragmatics</id>
@@ -113,6 +68,7 @@
       </repositories>
       
       <modules>
+        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../products/de.cau.cs.kieler.core.kgraph.rcp</module>
         <module>../features/de.cau.cs.kieler.kgraph.rcp.feature</module>
         <module>de.cau.cs.kieler.kgraph.rcp.repository</module>
@@ -124,20 +80,6 @@
       <id>kwebs</id>
       
       <repositories>
-        <!-- eclipse base installation -->
-        <repository>
-          <id>p2.targetPlatform</id>
-          <layout>p2</layout>
-          <url>${kieler.targetplatform}</url>
-        </repository>
-
-        <!-- eclipse delta packs -->
-        <repository>
-          <id>p2.targetPlatformDelta</id>
-          <layout>p2</layout>
-          <url>${kieler.targetplatform.delta}</url>
-        </repository>
-
         <!-- kieler pragmatics runtime -->
         <repository>
           <id>p2.nightly_pragmatics</id>
@@ -147,6 +89,7 @@
       </repositories>
       
       <modules>
+        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../plugins/de.cau.cs.kieler.web.statistics</module>
         <module>../plugins/de.cau.cs.kieler.kwebs.server</module>
         <module>../features/de.cau.cs.kieler.kwebs.server.feature</module>
@@ -159,36 +102,16 @@
       <id>ptolemy-rcp</id>
       
       <repositories>
-        <!-- eclipse base installation --> 
-        <repository>
-          <id>p2.targetPlatform</id>
-          <layout>p2</layout>
-          <url>${kieler.targetplatform}</url>
-        </repository>
-
-        <!-- eclipse delta packs -->
-        <repository>
-          <id>p2.targetPlatformDelta</id>
-          <layout>p2</layout>
-          <url>${kieler.targetplatform.delta}</url>
-        </repository>
-
         <!-- kieler pragmatics runtime -->
         <repository>
           <id>p2.nightly_pragmatics</id>
           <layout>p2</layout>
           <url>${kieler.pragmatics.nightly}</url>
         </repository>
-
-        <!-- ptolemy runtime -->
-        <repository>
-          <id>p2.ptolemy</id>
-          <layout>p2</layout>
-          <url>${kieler.ptolemy}</url>
-        </repository>
       </repositories>
       
       <modules>
+        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../products/de.cau.cs.kieler.ptolemy.rcp</module>
         <module>de.cau.cs.kieler.ptolemy.rcp.repository</module>
       </modules>
@@ -208,11 +131,6 @@
       <id>jboss-releases</id>
       <name>JBoss Releases Maven Repository</name>
       <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
-<!--
-      <releases>
-        <enabled>true</enabled>
-      </releases>
--->
     </pluginRepository>
   </pluginRepositories>
 
@@ -253,49 +171,6 @@
         </configuration>
       </plugin>
 
-<!-- chsch: deactivated all the code assessment plugins,
-            we didn't execute them as they slowed down the build process
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.9.1</version>
-        <configuration>
-          <configLocation>checks.xml</configLocation>
-          <sourceDirectory>src</sourceDirectory>
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-pmd-plugin</artifactId>
-        <version>2.7.1</version>
-        <configuration>
-          <targetJdk>1.5</targetJdk>
-          <format>xml</format>
-          <!-  <aggregate>true</aggregate> ->
-        </configuration>
-      </plugin>
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>2.4.0</version>
-        <configuration>
-          <xmlOutput>true</xmlOutput>
-          <failOnError>false</failOnError>
-          <maxHeap>1024</maxHeap>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>check</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
--->
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -311,18 +186,6 @@
           <additionalJOption>-p pragmatics -d ./rating</additionalJOption>
           <excludedocfilessubdir>xtend-gen</excludedocfilessubdir>
         </configuration>
-
-<!--
-        <executions>
-          <execution>
-            <id>aggregate</id>
-            <goals>
-              <goal>aggregate</goal>
-            </goals>
-            <phase>integration-test</phase>
-          </execution>
-        </executions>
--->
       </plugin>
 
 
@@ -332,16 +195,15 @@
         <artifactId>target-platform-configuration</artifactId>
         <version>${tycho-version}</version>
         <configuration>
-<!--
+
           <target>
             <artifact>
               <groupId>de.cau.cs.kieler</groupId>
-              <artifactId>de.cau.cs.kieler.target</artifactId>
-              <version>0.0.1-SNAPSHOT</version>
-              <classifier>indigo</classifier>
+              <artifactId>de.cau.cs.kieler.pragmatics.targetplatform</artifactId>
+              <version>0.1.0-SNAPSHOT</version>
             </artifact>
           </target>
--->
+
           <environments>
             <environment>
               <os>linux</os>
@@ -362,11 +224,6 @@
               <os>win32</os>
               <ws>win32</ws>
               <arch>x86_64</arch>
-            </environment>
-            <environment>
-              <os>macosx</os>
-              <ws>cocoa</ws>
-              <arch>x86</arch>
             </environment>
             <environment>
               <os>macosx</os>
