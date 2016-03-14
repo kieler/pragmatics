@@ -16,6 +16,7 @@
 
   <!-- all plugins need to be listed as module -->
   <modules>
+    <module>../build/de.cau.cs.kieler.pragmatics.targetplatform</module>
     <module>../test</module>
     <module>de.cau.cs.kieler.core</module>
     <module>de.cau.cs.kieler.core.kgraph</module>

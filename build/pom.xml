@@ -11,7 +11,7 @@
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
     <tycho-version>0.21.0</tycho-version>
-    <targetJdk>1.5</targetJdk>
+    <targetJdk>1.8</targetJdk>
     
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
     <!-- Non-breakable space, as normal spaces are trimmed. -->
@@ -47,7 +47,6 @@
       </activation>
 
       <modules>
-        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../plugins</module>
         <module>../features</module>
         <module>de.cau.cs.kieler.pragmatics.repository</module>
@@ -68,7 +67,6 @@
       </repositories>
       
       <modules>
-        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../products/de.cau.cs.kieler.core.kgraph.rcp</module>
         <module>../features/de.cau.cs.kieler.kgraph.rcp.feature</module>
         <module>de.cau.cs.kieler.kgraph.rcp.repository</module>
@@ -89,7 +87,6 @@
       </repositories>
       
       <modules>
-        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../plugins/de.cau.cs.kieler.web.statistics</module>
         <module>../plugins/de.cau.cs.kieler.kwebs.server</module>
         <module>../features/de.cau.cs.kieler.kwebs.server.feature</module>
@@ -111,7 +108,6 @@
       </repositories>
       
       <modules>
-        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../products/de.cau.cs.kieler.ptolemy.rcp</module>
         <module>de.cau.cs.kieler.ptolemy.rcp.repository</module>
       </modules>
