@@ -67,6 +67,7 @@
       </repositories>
       
       <modules>
+        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../products/de.cau.cs.kieler.core.kgraph.rcp</module>
         <module>../features/de.cau.cs.kieler.kgraph.rcp.feature</module>
         <module>de.cau.cs.kieler.kgraph.rcp.repository</module>
@@ -87,6 +88,7 @@
       </repositories>
       
       <modules>
+        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../plugins/de.cau.cs.kieler.web.statistics</module>
         <module>../plugins/de.cau.cs.kieler.kwebs.server</module>
         <module>../features/de.cau.cs.kieler.kwebs.server.feature</module>
@@ -108,6 +110,7 @@
       </repositories>
       
       <modules>
+        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../products/de.cau.cs.kieler.ptolemy.rcp</module>
         <module>de.cau.cs.kieler.ptolemy.rcp.repository</module>
       </modules>
