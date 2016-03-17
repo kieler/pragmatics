@@ -31,7 +31,9 @@ public class SvgOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SCALE = new Property<Float>(
             "de.cau.cs.kieler.kiml.formats.svg.scale",
-            SCALE_DEFAULT);
+            SCALE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #USE_CSS}.
@@ -43,7 +45,9 @@ public class SvgOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> USE_CSS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.formats.svg.useCss",
-            USE_CSS_DEFAULT);
+            USE_CSS_DEFAULT,
+            null,
+            null);
   
   public void apply(final ILayoutMetaDataProvider.Registry registry) {
     registry.register(new LayoutOptionData(
@@ -52,6 +56,8 @@ public class SvgOptions implements ILayoutMetaDataProvider {
         "SVG Rendering Scale",
         "Property for output scaling, to be put in parent node\'s shape layout.",
         SCALE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -64,6 +70,8 @@ public class SvgOptions implements ILayoutMetaDataProvider {
         "Use CSS in SVG output",
         "Whether to use CSS style properties in SVG output, as opposed to plain attributes.",
         USE_CSS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         null,

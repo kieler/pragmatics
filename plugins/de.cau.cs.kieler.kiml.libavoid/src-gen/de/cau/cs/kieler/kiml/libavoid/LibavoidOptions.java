@@ -35,7 +35,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SEGMENT_PENALTY = new Property<Float>(
             "de.cau.cs.kieler.kiml.libavoid.segmentPenalty",
-            SEGMENT_PENALTY_DEFAULT);
+            SEGMENT_PENALTY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #ANGLE_PENALTY}.
@@ -51,7 +53,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> ANGLE_PENALTY = new Property<Float>(
             "de.cau.cs.kieler.kiml.libavoid.anglePenalty",
-            ANGLE_PENALTY_DEFAULT);
+            ANGLE_PENALTY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #CROSSING_PENALTY}.
@@ -65,7 +69,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> CROSSING_PENALTY = new Property<Float>(
             "de.cau.cs.kieler.kiml.libavoid.crossingPenalty",
-            CROSSING_PENALTY_DEFAULT);
+            CROSSING_PENALTY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #CLUSTER_CROSSING_PENALTY}.
@@ -77,7 +83,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> CLUSTER_CROSSING_PENALTY = new Property<Float>(
             "de.cau.cs.kieler.kiml.libavoid.clusterCrossingPenalty",
-            CLUSTER_CROSSING_PENALTY_DEFAULT);
+            CLUSTER_CROSSING_PENALTY_DEFAULT,
+            null,
+            null);
   
   /**
    * This penalty is applied whenever a connector path shares some segments with an immovable
@@ -98,7 +106,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> PORT_DIRECTION_PENALTY = new Property<Float>(
             "de.cau.cs.kieler.kiml.libavoid.portDirectionPenalty",
-            PORT_DIRECTION_PENALTY_DEFAULT);
+            PORT_DIRECTION_PENALTY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SHAPE_BUFFER_DISTANCE}.
@@ -113,7 +123,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SHAPE_BUFFER_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.libavoid.shapeBufferDistance",
-            SHAPE_BUFFER_DISTANCE_DEFAULT);
+            SHAPE_BUFFER_DISTANCE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #IDEAL_NUDGING_DISTANCE}.
@@ -127,7 +139,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> IDEAL_NUDGING_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.libavoid.idealNudgingDistance",
-            IDEAL_NUDGING_DISTANCE_DEFAULT);
+            IDEAL_NUDGING_DISTANCE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NUDGE_ORTHOGONAL_SEGMENTS_CONNECTED_TO_SHAPES}.
@@ -141,7 +155,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> NUDGE_ORTHOGONAL_SEGMENTS_CONNECTED_TO_SHAPES = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalSegmentsConnectedToShapes",
-            NUDGE_ORTHOGONAL_SEGMENTS_CONNECTED_TO_SHAPES_DEFAULT);
+            NUDGE_ORTHOGONAL_SEGMENTS_CONNECTED_TO_SHAPES_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #IMPROVE_HYPEREDGE_ROUTES_MOVING_JUNCTIONS}.
@@ -155,7 +171,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> IMPROVE_HYPEREDGE_ROUTES_MOVING_JUNCTIONS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingJunctions",
-            IMPROVE_HYPEREDGE_ROUTES_MOVING_JUNCTIONS_DEFAULT);
+            IMPROVE_HYPEREDGE_ROUTES_MOVING_JUNCTIONS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PENALISE_ORTHOGONAL_SHARED_PATHS_AT_CONN_ENDS}.
@@ -171,7 +189,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> PENALISE_ORTHOGONAL_SHARED_PATHS_AT_CONN_ENDS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.libavoid.penaliseOrthogonalSharedPathsAtConnEnds",
-            PENALISE_ORTHOGONAL_SHARED_PATHS_AT_CONN_ENDS_DEFAULT);
+            PENALISE_ORTHOGONAL_SHARED_PATHS_AT_CONN_ENDS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NUDGE_ORTHOGONAL_TOUCHING_COLINEAR_SEGMENTS}.
@@ -185,7 +205,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> NUDGE_ORTHOGONAL_TOUCHING_COLINEAR_SEGMENTS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.libavoid.nudgeOrthogonalTouchingColinearSegments",
-            NUDGE_ORTHOGONAL_TOUCHING_COLINEAR_SEGMENTS_DEFAULT);
+            NUDGE_ORTHOGONAL_TOUCHING_COLINEAR_SEGMENTS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PERFORM_UNIFYING_NUDGING_PREPROCESSING_STEP}.
@@ -199,7 +221,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> PERFORM_UNIFYING_NUDGING_PREPROCESSING_STEP = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.libavoid.performUnifyingNudgingPreprocessingStep",
-            PERFORM_UNIFYING_NUDGING_PREPROCESSING_STEP_DEFAULT);
+            PERFORM_UNIFYING_NUDGING_PREPROCESSING_STEP_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #IMPROVE_HYPEREDGE_ROUTES_MOVING_ADDING_AND_DELETING_JUNCTIONS}.
@@ -211,7 +235,9 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> IMPROVE_HYPEREDGE_ROUTES_MOVING_ADDING_AND_DELETING_JUNCTIONS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.libavoid.improveHyperedgeRoutesMovingAddingAndDeletingJunctions",
-            IMPROVE_HYPEREDGE_ROUTES_MOVING_ADDING_AND_DELETING_JUNCTIONS_DEFAULT);
+            IMPROVE_HYPEREDGE_ROUTES_MOVING_ADDING_AND_DELETING_JUNCTIONS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #EDGE_ROUTING} with algorithm "Libavoid".
@@ -225,6 +251,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Segment Penalty",
         "This penalty is applied for each segment in the connector path beyond the first. This should always normally be set when doing orthogonal routing to prevent step-like connector paths.",
         SEGMENT_PENALTY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -236,6 +264,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Angle Penalty",
         "This penalty is applied in its full amount to tight acute bends in the connector path. A smaller portion of the penalty is applied for slight bends, i.e., where the bend is close to 180 degrees. This is useful for polyline routing where there is some evidence that tighter corners are worse for readability, but that slight bends might not be so bad, especially when smoothed by curves.",
         ANGLE_PENALTY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -247,6 +277,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Crossing Penalty",
         "This penalty is applied whenever a connector path crosses another connector path. It takes shared paths into consideration and the penalty is only applied if there is an actual crossing.",
         CROSSING_PENALTY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -258,6 +290,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Cluster Crossing Penalty",
         "This penalty is applied whenever a connector path crosses a cluster boundary.",
         CLUSTER_CROSSING_PENALTY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -268,6 +302,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "",
         "Fixed Shared Path Penalty",
         "This penalty is applied whenever a connector path shares some segments with an immovable portion of an existing connector route (such as the first or last segment of a connector).",
+        null,
+        null,
         null,
         LayoutOptionData.Type.FLOAT,
         float.class,
@@ -280,6 +316,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Port Direction Penalty",
         "This penalty is applied to port selection choice when the other end of the connector being routed does not appear in any of the 90 degree visibility cones centered on the visibility directions for the port.",
         PORT_DIRECTION_PENALTY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -291,6 +329,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Shape Buffer Distance",
         "This parameter defines the spacing distance that will be added to the sides of each shape when determining obstacle sizes for routing. This controls how closely connectors pass shapes, and can be used to prevent connectors overlapping with shape boundaries. By default, this distance is set to a value of 4.",
         SHAPE_BUFFER_DISTANCE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -302,6 +342,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Ideal Nudging Distance",
         "This parameter defines the spacing distance that will be used for nudging apart overlapping corners and line segments of connectors. By default, this distance is set to a value of 4.",
         IDEAL_NUDGING_DISTANCE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -313,6 +355,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Nudge Orthogonal Segments",
         "This option causes the final segments of connectors, which are attached to shapes, to be nudged apart. Usually these segments are fixed, since they are considered to be attached to ports. This option is not set by default.",
         NUDGE_ORTHOGONAL_SEGMENTS_CONNECTED_TO_SHAPES_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -324,6 +368,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Improve Hyperedge Routes",
         "This option causes hyperedge routes to be locally improved fixing obviously bad paths. As part of this process libavoid will effectively move junctions, setting new ideal positions ( JunctionRef::recommendedPosition() ) for each junction.",
         IMPROVE_HYPEREDGE_ROUTES_MOVING_JUNCTIONS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -335,6 +381,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Shape Buffer Distance",
         "This option penalises and attempts to reroute orthogonal shared connector paths terminating at a common junction or shape connection pin. When multiple connector paths enter or leave the same side of a junction (or shape pin), the router will attempt to reroute these to different sides of the junction or different shape pins. This option depends on the fixedSharedPathPenalty penalty having been set.",
         PENALISE_ORTHOGONAL_SHARED_PATHS_AT_CONN_ENDS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -346,6 +394,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Shape Buffer Distance",
         "This option can be used to control whether colinear line segments that touch just at their ends will be nudged apart. The overlap will usually be resolved in the other dimension, so this is not usually required and is not set by default.",
         NUDGE_ORTHOGONAL_TOUCHING_COLINEAR_SEGMENTS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -357,6 +407,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Shape Buffer Distance",
         "This option can be used to control whether the router performs a preprocessing step before orthogonal nudging where is tries to unify segments and centre them in free space. This generally results in better quality ordering and nudging.",
         PERFORM_UNIFYING_NUDGING_PREPROCESSING_STEP_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -368,6 +420,8 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "Improve Hyperedge Routes Add Delete",
         "This option causes hyperedge routes to be locally improved fixing obviously bad paths.",
         IMPROVE_HYPEREDGE_ROUTES_MOVING_ADDING_AND_DELETING_JUNCTIONS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),

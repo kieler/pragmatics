@@ -43,7 +43,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> LABEL_MARGIN_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.labelMarginDistance",
-            LABEL_MARGIN_DISTANCE_DEFAULT);
+            LABEL_MARGIN_DISTANCE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #LABEL_EDGE_DISTANCE}.
@@ -55,7 +57,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> LABEL_EDGE_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.labelEdgeDistance",
-            LABEL_EDGE_DISTANCE_DEFAULT);
+            LABEL_EDGE_DISTANCE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #COSTS}.
@@ -67,7 +71,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Costs> COSTS = new Property<Costs>(
             "de.cau.cs.kieler.kiml.ogdf.costs",
-            COSTS_DEFAULT);
+            COSTS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #FAILS}.
@@ -80,7 +86,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> FAILS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.fails",
-            FAILS_DEFAULT);
+            FAILS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #FINENESS}.
@@ -92,7 +100,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> FINENESS = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.fineness",
-            FINENESS_DEFAULT);
+            FINENESS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #INITIAL_TEMPERATURE}.
@@ -104,7 +114,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> INITIAL_TEMPERATURE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.initialTemperature",
-            INITIAL_TEMPERATURE_DEFAULT);
+            INITIAL_TEMPERATURE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #MIN_CLIQUE_SIZE}.
@@ -117,7 +129,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> MIN_CLIQUE_SIZE = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.minCliqueSize",
-            MIN_CLIQUE_SIZE_DEFAULT);
+            MIN_CLIQUE_SIZE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NEW_INITIAL_PLACEMENT}.
@@ -129,7 +143,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> NEW_INITIAL_PLACEMENT = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.newInitialPlacement",
-            NEW_INITIAL_PLACEMENT_DEFAULT);
+            NEW_INITIAL_PLACEMENT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PREPROCESS_CLIQUES}.
@@ -143,7 +159,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> PREPROCESS_CLIQUES = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.preprocessCliques",
-            PREPROCESS_CLIQUES_DEFAULT);
+            PREPROCESS_CLIQUES_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #QUALITY_VS_SPEED}.
@@ -155,7 +173,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<QualityVsSpeed> QUALITY_VS_SPEED = new Property<QualityVsSpeed>(
             "de.cau.cs.kieler.kiml.ogdf.qualityVsSpeed",
-            QUALITY_VS_SPEED_DEFAULT);
+            QUALITY_VS_SPEED_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #MIN_DIST_C_C}.
@@ -167,7 +187,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> MIN_DIST_C_C = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.minDistCC",
-            MIN_DIST_C_C_DEFAULT);
+            MIN_DIST_C_C_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #COST_ASSOC}.
@@ -179,7 +201,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> COST_ASSOC = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.costAssoc",
-            COST_ASSOC_DEFAULT);
+            COST_ASSOC_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #COST_GEN}.
@@ -191,7 +215,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> COST_GEN = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.costGen",
-            COST_GEN_DEFAULT);
+            COST_GEN_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #RUNS}.
@@ -204,7 +230,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> RUNS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.runs",
-            RUNS_DEFAULT);
+            RUNS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SPEED}.
@@ -216,7 +244,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Speed> SPEED = new Property<Speed>(
             "de.cau.cs.kieler.kiml.ogdf.speed",
-            SPEED_DEFAULT);
+            SPEED_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #ROTATION_ANGLE}.
@@ -228,7 +258,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> ROTATION_ANGLE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.rotationAngle",
-            ROTATION_ANGLE_DEFAULT);
+            ROTATION_ANGLE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #ROTATION_SENSITIVITY}.
@@ -240,7 +272,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> ROTATION_SENSITIVITY = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.rotationSensitivity",
-            ROTATION_SENSITIVITY_DEFAULT);
+            ROTATION_SENSITIVITY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #TRANSPOSE}.
@@ -253,7 +287,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> TRANSPOSE = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.transpose",
-            TRANSPOSE_DEFAULT);
+            TRANSPOSE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #ATTRACTION_FORMULA}.
@@ -265,7 +301,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<AttractionFormula> ATTRACTION_FORMULA = new Property<AttractionFormula>(
             "de.cau.cs.kieler.kiml.ogdf.attractionFormula",
-            ATTRACTION_FORMULA_DEFAULT);
+            ATTRACTION_FORMULA_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #MIN_DIST_LEVEL}.
@@ -277,7 +315,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> MIN_DIST_LEVEL = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.minDistLevel",
-            MIN_DIST_LEVEL_DEFAULT);
+            MIN_DIST_LEVEL_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NUMBER_OF_ROUNDS}.
@@ -289,7 +329,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> NUMBER_OF_ROUNDS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.numberOfRounds",
-            NUMBER_OF_ROUNDS_DEFAULT);
+            NUMBER_OF_ROUNDS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #OSCILLATION_ANGLE}.
@@ -301,7 +343,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> OSCILLATION_ANGLE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.oscillationAngle",
-            OSCILLATION_ANGLE_DEFAULT);
+            OSCILLATION_ANGLE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #OSCILLATION_SENSITIVITY}.
@@ -313,7 +357,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> OSCILLATION_SENSITIVITY = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.oscillationSensitivity",
-            OSCILLATION_SENSITIVITY_DEFAULT);
+            OSCILLATION_SENSITIVITY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #MINIMAL_TEMPERATURE}.
@@ -325,7 +371,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> MINIMAL_TEMPERATURE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.minimalTemperature",
-            MINIMAL_TEMPERATURE_DEFAULT);
+            MINIMAL_TEMPERATURE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #MAXIMAL_DISTURBANCE}.
@@ -337,7 +385,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> MAXIMAL_DISTURBANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.maximalDisturbance",
-            MAXIMAL_DISTURBANCE_DEFAULT);
+            MAXIMAL_DISTURBANCE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #GRAVITATIONAL_CONSTANT}.
@@ -349,7 +399,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> GRAVITATIONAL_CONSTANT = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.gravitationalConstant",
-            GRAVITATIONAL_CONSTANT_DEFAULT);
+            GRAVITATIONAL_CONSTANT_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SUBTREE_DISTANCE}.
@@ -361,7 +413,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SUBTREE_DISTANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.subtreeDistance",
-            SUBTREE_DISTANCE_DEFAULT);
+            SUBTREE_DISTANCE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #NOISE}.
@@ -373,7 +427,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> NOISE = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.noise",
-            NOISE_DEFAULT);
+            NOISE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PLACE_LABELS}.
@@ -385,7 +441,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> PLACE_LABELS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.placeLabels",
-            PLACE_LABELS_DEFAULT);
+            PLACE_LABELS_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #MULTIPOLE_PREC}.
@@ -397,7 +455,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> MULTIPOLE_PREC = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.multipolePrec",
-            MULTIPOLE_PREC_DEFAULT);
+            MULTIPOLE_PREC_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #STOP_TOLERANCE}.
@@ -409,7 +469,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> STOP_TOLERANCE = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.stopTolerance",
-            STOP_TOLERANCE_DEFAULT);
+            STOP_TOLERANCE_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #UPWARD}.
@@ -421,7 +483,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> UPWARD = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.upward",
-            UPWARD_DEFAULT);
+            UPWARD_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #RADIAL}.
@@ -433,7 +497,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> RADIAL = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.radial",
-            RADIAL_DEFAULT);
+            RADIAL_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #BASE_RATIO}.
@@ -446,7 +512,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> BASE_RATIO = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.baseRatio",
-            BASE_RATIO_DEFAULT);
+            BASE_RATIO_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #ACYCLIC_SUBGRAPH}.
@@ -458,7 +526,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<AcyclicSubgraphModule> ACYCLIC_SUBGRAPH = new Property<AcyclicSubgraphModule>(
             "de.cau.cs.kieler.kiml.ogdf.acyclicSubgraph",
-            ACYCLIC_SUBGRAPH_DEFAULT);
+            ACYCLIC_SUBGRAPH_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #RANKING}.
@@ -470,7 +540,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<RankingModule> RANKING = new Property<RankingModule>(
             "de.cau.cs.kieler.kiml.ogdf.ranking",
-            RANKING_DEFAULT);
+            RANKING_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #WIDTH}.
@@ -482,7 +554,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Integer> WIDTH = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.width",
-            WIDTH_DEFAULT);
+            WIDTH_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #CROSS_MIN}.
@@ -494,7 +568,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<CrossMinModule> CROSS_MIN = new Property<CrossMinModule>(
             "de.cau.cs.kieler.kiml.ogdf.crossMin",
-            CROSS_MIN_DEFAULT);
+            CROSS_MIN_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #EDGE_INSERTION}.
@@ -506,7 +582,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EdgeInsertionModule> EDGE_INSERTION = new Property<EdgeInsertionModule>(
             "de.cau.cs.kieler.kiml.ogdf.edgeInsertion",
-            EDGE_INSERTION_DEFAULT);
+            EDGE_INSERTION_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #EMBEDDER}.
@@ -518,7 +596,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<EmbedderModule> EMBEDDER = new Property<EmbedderModule>(
             "de.cau.cs.kieler.kiml.ogdf.embedder",
-            EMBEDDER_DEFAULT);
+            EMBEDDER_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #SCALE_FUNCTION_FACTOR}.
@@ -530,7 +610,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Float> SCALE_FUNCTION_FACTOR = new Property<Float>(
             "de.cau.cs.kieler.kiml.ogdf.scaleFunctionFactor",
-            SCALE_FUNCTION_FACTOR_DEFAULT);
+            SCALE_FUNCTION_FACTOR_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #CROSSING_BEAUTIFIER}.
@@ -542,7 +624,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<CrossBeautifModule> CROSSING_BEAUTIFIER = new Property<CrossBeautifModule>(
             "de.cau.cs.kieler.kiml.ogdf.crossingBeautifier",
-            CROSSING_BEAUTIFIER_DEFAULT);
+            CROSSING_BEAUTIFIER_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #ADAPT_PORT_POSITIONS}.
@@ -554,7 +638,9 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
    */
   public final static IProperty<Boolean> ADAPT_PORT_POSITIONS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.adaptPortPositions",
-            ADAPT_PORT_POSITIONS_DEFAULT);
+            ADAPT_PORT_POSITIONS_DEFAULT,
+            null,
+            null);
   
   /**
    * Required value for dependency between {@link #LABEL_EDGE_DISTANCE} and {@link #PLACE_LABELS}.
@@ -828,6 +914,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Iterations",
         "The number of iterations performed by the algorithm",
         null,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -839,6 +927,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Label Distance",
         "Distance of edge labels to the nodes",
         LABEL_MARGIN_DISTANCE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -850,6 +940,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Label Spacing",
         "Spacing of edge labels to the edge",
         LABEL_EDGE_DISTANCE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -866,6 +958,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Costs",
         "Defines the costs used in the algorithm",
         COSTS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         Costs.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -877,6 +971,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Fails",
         "The number of times that the number of crossings may not decrease after a complete top-down bottom-up traversal, before a run is terminated",
         FAILS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -888,6 +984,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Fineness",
         "The fineness option used in the algorithm",
         FINENESS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -899,6 +997,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Initial Temperature",
         "The initial temperature",
         INITIAL_TEMPERATURE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -910,6 +1010,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Minimum Clique Size",
         "If preprocessing of cliques is enabled, this option determines the minimal size of cliques to search for",
         MIN_CLIQUE_SIZE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -926,6 +1028,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "New Initial Placement",
         "Sets whether the initial placement is different on every algorithm call",
         NEW_INITIAL_PLACEMENT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -937,6 +1041,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Preprocess Cliques",
         "If set to true, a preprocessing for cliques (complete subgraphs) is performed and cliques will be laid out in a special form (straight-line, not orthogonal). The preprocessing may reduce running time and improve layout quality if the input graphs contains dense subgraphs.",
         PREPROCESS_CLIQUES_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -948,6 +1054,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Quality vs Speed",
         "Specifies whether the algorithm prioritizes quality or speed",
         QUALITY_VS_SPEED_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         QualityVsSpeed.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -959,6 +1067,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Component Spacing Factor",
         "Factor for the spacing between connected components",
         MIN_DIST_C_C_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -970,6 +1080,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Cost for Association Edges",
         "Defines the costs for association edges",
         COST_ASSOC_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -981,6 +1093,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Cost for Generalization Edges",
         "Defines the costs for generalization edges",
         COST_GEN_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -992,6 +1106,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Runs",
         "Determines how many times the crossing minimization phase (Sugiyama) or planar subgraph phase (Planarization) is repeated.",
         RUNS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1003,6 +1119,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Speed",
         "Defines the temperature and the number of iterations",
         SPEED_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         Speed.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1014,6 +1132,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Rotation Angle",
         "The opening angle for rotations in radians (between 0 and pi/2)",
         ROTATION_ANGLE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1025,6 +1145,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Rotation Sensitivity",
         "The rotation sensitivity (between 0 and 1)",
         ROTATION_SENSITIVITY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1036,6 +1158,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Transpose",
         "Determines whether the transpose step is performed after each 2-layer crossing minimization; this step tries to reduce the number of crossings by switching neighbored nodes on a layer",
         TRANSPOSE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1047,6 +1171,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Attraction Formula",
         "The used formula for attraction",
         ATTRACTION_FORMULA_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         AttractionFormula.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1058,6 +1184,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Level Spacing Factor",
         "Factor for the minimal distance between father and child components",
         MIN_DIST_LEVEL_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1069,6 +1197,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Number Of Rounds",
         "The maximal number of rounds per node",
         NUMBER_OF_ROUNDS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1080,6 +1210,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Oscillation Angle",
         "The opening angle for oscillations in radians (between 0 and pi/2)",
         OSCILLATION_ANGLE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1091,6 +1223,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Oscillation Sensitivity",
         "The oscillation sensitivity (between 0 and 1)",
         OSCILLATION_SENSITIVITY_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1102,6 +1236,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Minimal Temperature",
         "The minimal temperature",
         MINIMAL_TEMPERATURE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1113,6 +1249,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Maximal Disturbance",
         "The maximal disturbance.",
         MAXIMAL_DISTURBANCE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1124,6 +1262,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Gravitational Constant",
         "The gravitational constant",
         GRAVITATIONAL_CONSTANT_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1135,6 +1275,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Subtree Spacing Factor",
         "Factor for the horizontal spacing between adjacent subtrees",
         SUBTREE_DISTANCE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1146,6 +1288,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Noise",
         "If set to true, small random perturbations are performed",
         NOISE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1157,6 +1301,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Place Labels",
         "Whether edge labels shall be processed",
         PLACE_LABELS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1168,6 +1314,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Precision",
         "The number of coefficients for expansions",
         MULTIPOLE_PREC_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1179,6 +1327,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Stop Tolerance",
         "Tolerance below which the system is regarded stable and the optimization is stopped",
         STOP_TOLERANCE_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1190,6 +1340,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Upward",
         "Add upward constraints",
         UPWARD_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1201,6 +1353,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Radial",
         "Add radial constraints",
         RADIAL_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1212,6 +1366,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Base Ratio",
         "Ratio of the nodes on the external face giving a limit for the number of nodes placed on the base line",
         BASE_RATIO_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1223,6 +1379,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Acyclic Subgraph Module",
         "The module for finding an acyclic subgraph",
         ACYCLIC_SUBGRAPH_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         AcyclicSubgraphModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1234,6 +1392,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Layering Module",
         "The module for computing a layering (ranking) of the graph",
         RANKING_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         RankingModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1245,6 +1405,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Layering Width",
         "The maximal width of the Coffman-Graham layering",
         WIDTH_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.INT,
         int.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1261,6 +1423,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Crossing Min. Module",
         "The module for crossing minimization used in the layer-sweep method",
         CROSS_MIN_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         CrossMinModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1272,6 +1436,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Edge Insertion Module",
         "The module for edge insertion used for planarization",
         EDGE_INSERTION_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         EdgeInsertionModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1283,6 +1449,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Embedder Module",
         "The module for choosing an embedding for the graph",
         EMBEDDER_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         EmbedderModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1294,6 +1462,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Scale Factor",
         "Factor for scaling the bounding box of the initial layout",
         SCALE_FUNCTION_FACTOR_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.FLOAT,
         float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1305,6 +1475,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Crossing Beautifier",
         "The module for crossing beautification",
         CROSSING_BEAUTIFIER_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.ENUM,
         CrossBeautifModule.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
@@ -1316,6 +1488,8 @@ public class OgdfOptions implements ILayoutMetaDataProvider {
         "Adapt Port Positions",
         "Whether ports should be moved to the point where edges cross the node&apos;s bounds.",
         ADAPT_PORT_POSITIONS_DEFAULT,
+        null,
+        null,
         LayoutOptionData.Type.BOOLEAN,
         boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
