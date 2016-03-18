@@ -181,11 +181,6 @@ public final class NodeUtil {
         final PNode transformedNode = controller.getTransformedPNode();
         final PAffineTransform transform = transformedNode.getTransformReference(true);
 
-        if (transform.getTranslateX() == bounds.getX()
-                && transform.getTranslateY() == bounds.getY()) {
-            return;
-        }
-
         // reset the current affine transform,
         //  this is required to ignore the previously configured rotation
         transform.setToIdentity();
