@@ -28,11 +28,9 @@ import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
-import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -449,12 +447,12 @@ public class LayoutConfigViewPart extends ViewPart {
             return;
         }
 
-        ((LayoutConfigurator) layoutConfigs[0]).configure(KGraphElement.class)
-        		.setProperty(CoreOptions.ANIMATE, animation)
-                .setProperty(CoreOptions.PROGRESS_BAR, progressDialog)
-                .setProperty(CoreOptions.ZOOM_TO_FIT, zoomToFit);
-
         Parameters params = new Parameters();
+        params.getGlobalSettings()
+            .setProperty(CoreOptions.ANIMATE, animation)
+            .setProperty(CoreOptions.PROGRESS_BAR, progressDialog)
+            .setProperty(CoreOptions.ZOOM_TO_FIT, zoomToFit);
+        
         for (LayoutConfigurator lc : layoutConfigs) {
         	params.addLayoutRun(lc);
         }

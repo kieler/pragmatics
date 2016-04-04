@@ -9,6 +9,9 @@ import org.eclipse.elk.core.klayoutdata.KIdentifier
 import org.eclipse.elk.graph.KGraphElement
 import org.eclipse.elk.graph.KNode
 import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.elk.graph.KEdge
+import org.eclipse.elk.graph.KPort
+import org.eclipse.elk.graph.KLabel
 
 /**
  * Utility class for transformaing textually specified layout configurations
@@ -72,7 +75,20 @@ final class LayoutConfigTransformer {
             if (optData != null) {
                 val value = optData.parseValue(entry.value)
                 if (value != null) {
-                    currentConfig.configure(KGraphElement).setProperty(optData, value)
+                    
+                    if (optData.targets.contains(LayoutOptionData.Target.NODES) 
+                        || optData.targets.contains(LayoutOptionData.Target.PARENTS))
+                        currentConfig.configure(KNode).setProperty(optData, value)
+                    
+                    if (optData.targets.contains(LayoutOptionData.Target.EDGES))
+                        currentConfig.configure(KEdge).setProperty(optData, value)
+                        
+                    if (optData.targets.contains(LayoutOptionData.Target.PORTS))
+                        currentConfig.configure(KPort).setProperty(optData, value)
+                        
+                    if (optData.targets.contains(LayoutOptionData.Target.LABELS))
+                        currentConfig.configure(KLabel).setProperty(optData, value)    
+                        
                 }
             }
         ]
