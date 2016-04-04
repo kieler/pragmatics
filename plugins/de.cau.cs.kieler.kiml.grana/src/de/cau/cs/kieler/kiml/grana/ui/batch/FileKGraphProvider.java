@@ -17,6 +17,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -27,10 +28,11 @@ import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.WrappedException;
+import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -38,6 +40,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
@@ -124,7 +127,7 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
             
             if (layoutBeforeAnalysis) {
                 if (configurator != null) {
-                    ElkUtil.applyVisitors(graph, configurator);
+                    applyVisitors(graph, configurator);
                 }
                 
                 if (layoutEngine == null) {
@@ -204,4 +207,21 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
         this.configurator = configuratorOption;
     }
 
+    /**
+     * Apply the given graph element visitors to the content of the given graph.
+     */
+    private static void applyVisitors(final KNode graph, final IGraphElementVisitor... visitors) {
+        for (int i = 0; i < visitors.length; i++) {
+            visitors[i].visit(graph);
+        }
+        Iterator<KGraphElement> allElements =
+                Iterators.filter(graph.eAllContents(), KGraphElement.class);
+        while (allElements.hasNext()) {
+            KGraphElement element = allElements.next();
+            for (int i = 0; i < visitors.length; i++) {
+                visitors[i].visit(element);
+            }
+        }
+    }
+    
 }

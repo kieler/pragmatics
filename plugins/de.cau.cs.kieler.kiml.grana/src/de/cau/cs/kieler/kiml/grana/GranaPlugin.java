@@ -18,10 +18,12 @@ import java.util.List;
 import org.eclipse.elk.core.service.ILayoutListener;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.service.LayoutMapping;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import de.cau.cs.kieler.kiml.grana.ui.AnalysisEffect;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
 import de.cau.cs.kieler.kiml.grana.util.GranaUtil;
 
@@ -55,24 +57,21 @@ public class GranaPlugin extends AbstractUIPlugin {
         
         // Register a listener for analysis after layout
         LayoutConnectorsService.getInstance().addLayoutListener(new ILayoutListener() {
-			
-			@Override
-			public void layoutDone(LayoutMapping mapping) {
-				org.eclipse.elk.graph.KNode layoutGraph = mapping.getLayoutGraph();
-				
-				// FIXME elkMigrate to perform an analysis here, we have to convert the 
-				// elk graph into a kieler graph
-				
-				if (VisualizationService.getInstance().findActiveMethod(true)) {
+            @Override
+            public void layoutDone(final LayoutMapping mapping) {
+                KNode layoutGraph = mapping.getLayoutGraph();
+
+                if (VisualizationService.getInstance().findActiveMethod(true)) {
                     List<AnalysisData> analyses = GranaUtil.getLastAnalysesSelection();
-                    // new AnalysisEffect(layoutGraph, analyses).schedule();
+                    new AnalysisEffect(layoutGraph, analyses).schedule();
                 }
-			}
-			
-			@Override
-			public void layoutAboutToStart(LayoutMapping mapping) {
-			}
-		});
+            }
+
+            @Override
+            public void layoutAboutToStart(final LayoutMapping mapping) {
+                // nothing to do here
+            }
+        });
     }
 
     /**
