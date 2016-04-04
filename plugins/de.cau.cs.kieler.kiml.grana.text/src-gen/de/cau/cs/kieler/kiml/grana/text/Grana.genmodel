@@ -5,7 +5,7 @@
     forceOverwrite="true" modelName="Grana" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="6.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.kiml.grana.text.edit"
     editorPluginID="de.cau.cs.kieler.kiml.grana.text.editor" runtimeVersion="2.11"
-    usedGenPackages="platform:/resource/org.eclipse.elk.core/model/klayoutdata.genmodel#//klayoutdata platform:/resource/org.eclipse.elk.graph/model/kgraph.genmodel#//graph">
+    usedGenPackages="platform:/resource/org.eclipse.elk.core/model/klayoutdata.genmodel#//klayoutdata">
   <genPackages prefix="Grana" basePackage="de.cau.cs.kieler.kiml.grana.text" disposableProviderFactory="true"
       fileExtensions="grana" ecorePackage="Grana.ecore#/">
     <genClasses ecoreClass="Grana.ecore#//Grana">
