@@ -76,6 +76,7 @@ import de.cau.cs.kieler.klighd.piccolo.internal.controller.AbstractKGERenderingC
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.IInternalKGraphElementNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KChildAreaNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KEdgeNode;
+import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KGraphElementNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KLabelNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeAbstractNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KNodeNode;
@@ -841,7 +842,7 @@ public class DiagramController {
                 final KEdgeNode edgeNode = (KEdgeNode) recordedChange.getKey();
                 shapeNode = edgeNode;
 
-                // the following case is still to be implemented!
+                // TODO the following case is still to be implemented!
                 // if (recordedChange.getValue() == KlighdLayoutManager.LAYOUT_DATA_UNCHANGED_VALUE) {
 
                 @SuppressWarnings("unchecked")
@@ -853,6 +854,21 @@ public class DiagramController {
                 if (!edgeNode.getVisible()) {
                     // the visibility is set to false for newly introduced edges in #addEdge
                     //  for avoiding unnecessary flickering and indicating to fade it in
+                    // Alternatively the edge could be set to be initially hidden. Need to 
+                    //  check ACTIVE-Property to decide if the fade in should be triggered.
+                    final RenderingContextData renderingContext;
+                    if (shapeNode instanceof KGraphElementNode<?>) {
+                        renderingContext = RenderingContextData
+                            .get(((KGraphElementNode<?>) shapeNode).getViewModelElement());
+                    } else {
+                        renderingContext = null;
+                    }
+
+                    if (renderingContext != null 
+                            && !renderingContext.getProperty(KlighdInternalProperties.ACTIVE)) {
+                        continue;
+                    }
+
                     activity = new FadeEdgeInActivity(edgeNode, bends, junctions,
                             animationTime > 0 ? animationTime : 1);
                 } else {
@@ -888,6 +904,21 @@ public class DiagramController {
                     // the visibility is set to false for newly introduced elements in #addNode,
                     //  #addPort, and #addLabel for avoiding unnecessary flickering and indicating
                     //  to fade it in
+                    // Alternatively the node is set to initially be hidden. Need to check
+                    //  KlighdInternalProperty.ACTIVE state to determine if the activity is needed.
+                    final RenderingContextData renderingContext;
+                    if (shapeNode instanceof KGraphElementNode<?>) {
+                        renderingContext = RenderingContextData
+                            .get(((KGraphElementNode<?>) shapeNode).getViewModelElement());
+                    } else {
+                        renderingContext = null;
+                    }
+
+                    if (renderingContext != null 
+                            && !renderingContext.getProperty(KlighdInternalProperties.ACTIVE)) {
+                        continue;
+                    }
+
                     // note the special behavior of FadeNodeInActivity if 'bounds' is 'null',
                     //  i.e. 'LAYOUT_DATA_UNCHANGED_VALUE' was notified
                     activity = new FadeNodeInActivity(shapeNode, bounds,
