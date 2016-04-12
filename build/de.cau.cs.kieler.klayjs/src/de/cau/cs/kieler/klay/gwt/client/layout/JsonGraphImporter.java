@@ -59,7 +59,7 @@ import de.cau.cs.kieler.klay.layered.properties.Properties;
  * {@link Properties#CHILD_LGRAPH}s reference the child graphs of compound {@link LNode}s.
  * Furthermore the graph can contain cross hierarchy edges, where the source {@link LNode} of an
  * edge has a different parent than the target {@link LNode} of this edge.
- * 
+ *
  * @author uru
  */
 public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
@@ -69,7 +69,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
      */
     /**
      * When writing coordinates back to the json object, int values are written
-     * instead of double values. No rounding is involved, the decimal places 
+     * instead of double values. No rounding is involved, the decimal places
      * are just cut off.
      */
     public static final IProperty<Boolean> INT_COORDINATES = new Property<Boolean>(
@@ -79,7 +79,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
      * Internal Properties
      */
     private static final IProperty<JSONObject> JSON_OBJECT = new Property<JSONObject>("jsonObject");
-    
+
     private Map<String, LNode> nodeIdMap = Maps.newHashMap();
     private Map<String, LEdge> edgeIdMap = Maps.newHashMap();
     private Map<String, LPort> portIdMap = Maps.newHashMap();
@@ -92,16 +92,16 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
     // Remark: the following maps can only be used during the transformation
     // process as new LGraphs may be created during the layout process,
     // hence, after layout the mappings are invalid.
-    
+
     /** Holds for each compound node the {@link LGraph} created for a json node. */
     private Map<JSONObject, LGraph> jsonLGraphMap = Maps.newHashMap();
 
     /** Global options being applied to every compound graph. */
     private JSONObject globalOptions = null;
-    
+
     /** Whether to export coordinates as integers. */
     private boolean exportIntegerCoordinates = false;
-    
+
     private Boolean layoutHierarchy = null;
 
     private void reset() {
@@ -113,7 +113,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         edgeJsonMap.clear();
         portJsonMap.clear();
         labelJsonMap.clear();
-        
+
         jsonLGraphMap.clear();
     }
 
@@ -125,15 +125,15 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
      * {@inheritDoc}
      */
     public LGraph importGraph(final JSONObject json) {
-        
+
         reset();
-        
+
         // retrieve some klay.js specific options
         if (globalOptions != null) {
             JSONValue val = globalOptions.get(INT_COORDINATES.getId());
             if (val != null && val.isBoolean() != null) {
                 exportIntegerCoordinates = val.isBoolean().booleanValue();
-            } 
+            }
         }
 
         // first we transform all nodes of all hierarchy levels
@@ -153,7 +153,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
     /**
      * Sets the json object containing global layout options. The specified options will be added to
      * every {@link LGraph} in the hierarchy during the import.
-     * 
+     *
      * @param globalOptions
      *            an {@link JSONObject} containing the desired global layout options.
      */
@@ -168,7 +168,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
      * children have been transformed to {@link LNode}s with the respective {@link LNode} as
      * {@code parentNode}. The {@link LGraph} that is created for the child node will be added to
      * the {@code parentNode} via the {@link Properties#CHILD_LGRAPH} property.
-     * 
+     *
      * @param jparent
      *            a node in JSON format
      * @param parentNode
@@ -182,18 +182,18 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         LGraph graph = new LGraph();
         graph.setProperty(JSON_OBJECT, jparent);
         jsonLGraphMap.put(jparent, graph);
-        
+
         graph.setProperty(InternalProperties.PARENT_LNODE, parentNode);
-        
+
         // global layout options are applied first, hence possibly overwritten
         if (globalOptions != null) {
             // do not override more specific options set on single graph elements
             transformPropertiesObj(globalOptions, graph, false);
         }
-        
+
         // properties on a certain node serve as layout options for this graph
         transformProperties(jparent, graph);
-        
+
         // copy the insets to the layered graph
         if (jparent.containsKey("padding")) {
             LInsets linsets = graph.getInsets();
@@ -219,7 +219,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         // the graph properties discovered during the transformations
         EnumSet<GraphProperties>  graphProperties = EnumSet.noneOf(GraphProperties.class);
         graph.setProperty(InternalProperties.GRAPH_PROPERTIES, graphProperties);
-        
+
         // for the top level node check if we wanna layout hierarchy
         if (layoutHierarchy == null) {
             // as opposed to the java version of klay layered,
@@ -240,7 +240,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
 
             // if there actually are children specified, transform them too
             if (children.size() > 0) {
-                
+
                 // as there are children, this node is a compound node and will have a nested graph
                 if (parentNode != null) {
                     // set this LGraph as child of the parent LNode
@@ -277,17 +277,17 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
 
         return graph;
     }
-    
+
     /**
-     * Transforms a single node in JSON format to an {@link LNode} and adds it to 
-     * the layerless nodes of the {@link LGraph}. 
+     * Transforms a single node in JSON format to an {@link LNode} and adds it to
+     * the layerless nodes of the {@link LGraph}.
      *
-     * This includes: dimensions, properties, ports, labels 
+     * This includes: dimensions, properties, ports, labels
      */
     private LNode transformNode(final JSONObject jNode, final LGraph graph) {
 
         checkForId(jNode);
-        Set<GraphProperties> graphProperties = 
+        Set<GraphProperties> graphProperties =
                 graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
 
         LNode node = new LNode(graph);
@@ -348,20 +348,20 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
             graphProperties.add(GraphProperties.HYPEREDGES);
             node.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
         }
-        
+
         return node;
     }
 
     /**
      * Transforms a single port in JSON format to an {@link LPort} and adds it to the
      * passed {@link LNode} {@code node}.
-     * 
+     *
      * This includes: dimensions, properties, labels
      */
     private void transformPort(final JSONObject jPort, final LNode node, final LGraph graph) {
 
         checkForId(jPort);
-        Set<GraphProperties> graphProperties = 
+        Set<GraphProperties> graphProperties =
                 graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
 
         // should we include this port into the layout?
@@ -429,7 +429,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
     }
 
     /**
-     * Transforms the labels of the json element.     
+     * Transforms the labels of the json element.
      */
     private void transformLabels(final JSONObject jElement, final LGraphElement element,
             final LGraph graph) {
@@ -480,7 +480,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
 
         // dimensions
         transformDimensions(jLabel, label);
-        
+
         // properties
         transformProperties(jLabel, label);
 
@@ -504,7 +504,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
 
             Set<GraphProperties> graphProperties =
             		graph.getProperty(InternalProperties.GRAPH_PROPERTIES);
-            
+
             // Depending on the label placement, we want to set graph properties and make sure the
             // edge label placement is actually properly defined
             switch (labelPlacement) {
@@ -522,19 +522,19 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
             }
         }
     }
-    
+
 
     /**
      * Transforms all edges specified on this hierarchy level.
-     * 
+     *
      * Remark: make sure the WHOLE hierarchy of nodes has already been transformed
-     * 
+     *
      * @param parent
      *            a compound node in json format.
      */
     private void transformEdges(final JSONObject parent) {
 
-        
+
         // then transform the edges (important that the nodes and ports are already known)
         if (parent.containsKey("edges")) {
             JSONValue val = parent.get("edges");
@@ -554,13 +554,13 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
                 transformEdge(edgeVal.isObject());
             }
         }
-        
-        
+
+
         // continue with edges of the children
         if (parent.containsKey("children")) {
-           // the json should be proper, otherwise 'transformNodes' already threw an exception  
+           // the json should be proper, otherwise 'transformNodes' already threw an exception
            JSONArray children = parent.get("children").isArray();
-           
+
            for (int i = 0; i < children.size(); ++i) {
                JSONObject child = children.get(i).isObject();
                transformEdges(child);
@@ -570,10 +570,10 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
 
     /**
      * Transforms a single edge in json format to an {@link LEdge}.
-     * 
-     * Finds the source and target {@link LNode}s, as well as the {@link LPort}s and 
+     *
+     * Finds the source and target {@link LNode}s, as well as the {@link LPort}s and
      * connects the edge to these. In case no ports are specified, new ones will be created.
-     * 
+     *
      * @param jEdge
      */
     private void transformEdge(final JSONObject jEdge) {
@@ -586,7 +586,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
                 && jEdge.get(noLayoutId).isBoolean().booleanValue()) {
             return;
         }
-        
+
         JSONValue jSourceNode = jEdge.get("source");
         JSONValue jSourcePort = jEdge.get("sourcePort");
         JSONValue jTargetNode = jEdge.get("target");
@@ -617,14 +617,14 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         LPort sourcePort = null;
         LNode targetNode = null;
         LPort targetPort = null;
-        
+
         try {
             // get the source node
             sourceNode = nodeIdMap.get(jSourceNode.isString().stringValue());
             if (jSourcePort != null && jSourcePort.isString() != null) {
                 sourcePort = portIdMap.get(jSourcePort.isString().stringValue());
             }
-    
+
             // get the target node
             targetNode = nodeIdMap.get(jTargetNode.isString().stringValue());
             if (jTargetPort != null && jTargetPort.isString() != null) {
@@ -634,7 +634,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
             throw new UnsupportedJsonGraphException("An edge's 'source', 'target', 'sourcePort', "
                     + "and 'targetPort' properties have to be strings.", jEdge);
         }
-        
+
         // exclude edges that pass hierarchy bounds if layoutHierarchy is switched off
         if (!layoutHierarchy) {
             if (sourceNode == null || targetNode == null) {
@@ -645,23 +645,23 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
                 return;
             }
         }
-        
+
         if (sourceNode == null || targetNode == null) {
             throw new UnsupportedJsonGraphException("An edge's source or target "
                     + "node could not be resolved.", jEdge);
         }
-        
+
         LGraph parentLGraph = sourceNode.getGraph();
-        
+
         // create a layered edge
         LEdge edge = new LEdge();
         edge.setProperty(InternalProperties.ORIGIN, jEdge);
-        
+
         // id and register
         JSONString id = (JSONString) jEdge.get("id");
         edgeIdMap.put(id.stringValue(), edge);
         edgeJsonMap.put(edge, jEdge);
-        
+
         // properties
         transformProperties(jEdge, edge);
 
@@ -746,12 +746,12 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
             JSONNumber height = (JSONNumber) jsonEle.get("height");
             ele.getSize().y = height.doubleValue();
         }
-        
+
     }
-    
+
     /**
-     * Transforms the properties of an element, using the {@link LayoutOptionResolver} for the 
-     * id->type mapping. 
+     * Transforms the properties of an element, using the {@link LayoutOptionResolver} for the
+     * id->type mapping.
      */
     private void transformProperties(final JSONObject jsonEle, final LGraphElement ele) {
         if (jsonEle.containsKey("properties")) {
@@ -763,7 +763,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
             transformPropertiesObj(val.isObject(), ele);
         }
     }
-    
+
     /**
      * Adds all properties of the passed json object to the graph element. This method overrides any
      * existing properties. For the opposite case use
@@ -772,8 +772,8 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
     private void transformPropertiesObj(final JSONObject properties, final LGraphElement ele) {
         transformPropertiesObj(properties, ele, true);
     }
-    
-    private void transformPropertiesObj(final JSONObject properties, final LGraphElement ele, 
+
+    private void transformPropertiesObj(final JSONObject properties, final LGraphElement ele,
             final boolean override) {
         if (properties != null) {
             for (String key : properties.keySet()) {
@@ -793,52 +793,54 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
      * {@inheritDoc}
      */
     public void applyLayout(final LGraph layeredGraph) {
-        
+
         // transfer the layout information back to the json objects
         // and positions and dimension of all other elements
         transferLayout(layeredGraph);
     }
 
     private void transferLayout(final LGraph parentGraph) {
-        
+
         // now the child nodes
         KVector offset = new KVector(parentGraph.getOffset());
         List<LEdge> edges = new ArrayList<LEdge>();
-        
+
         for (LNode n : parentGraph.getLayerlessNodes()) {
             JSONObject jNode = nodeJsonMap.get(n);
-            
+
             if (jNode != null) {
                 // it's a usual node
                 transferLayout(n, jNode, offset);
-    
+
                 // ports
                 for (LPort p : n.getPorts()) {
                     JSONObject jPort = portJsonMap.get(p);
                     if (jPort != null) {
                         // dummy ports for port-less edges are not contained in the map
-                        transferLayout(p, jPort, new KVector());
+                        transferLayout(p, jPort, ZERO_VECTOR);
                         setJsProperty(jPort, LayoutOptions.PORT_SIDE, new JSONString(p
                                 .getSide().name()));
                     }
-    
-                    // labels
+
+                    // port labels
                     if (n.getProperty(LayoutOptions.PORT_LABEL_PLACEMENT) != PortLabelPlacement.FIXED) {
                         for (LLabel l : p.getLabels()) {
                             JSONObject jLabel = labelJsonMap.get(l);
-                            transferLayout(l, jLabel, offset);
+                            // are relative to the port, thus no offset
+                            transferLayout(l, jLabel, ZERO_VECTOR);
                         }
                     }
                 }
-    
-                // labels
+
+                // node labels
                 if (!n.getProperty(LayoutOptions.NODE_LABEL_PLACEMENT).isEmpty()) {
                     for (LLabel l : n.getLabels()) {
                         JSONObject jLabel = labelJsonMap.get(l);
-                        transferLayout(l, jLabel, offset);
+                        // are relative to the node, thus no offset
+                        transferLayout(l, jLabel, ZERO_VECTOR);
                     }
                 }
-    
+
                 // Collect edges, except if they go into a nested subgraph (those edges need to
                 // be processed during one of the recursive calls so that any additional offsets
                 // are applied correctly)
@@ -847,13 +849,13 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
                         edges.add(e);
                     }
                 }
-            
+
             } else {
                 // it's an external port dummy
                 // TODO
             }
         }
-        
+
         // Collect edges that go from the current graph's representing LNode down into
         // its descendants
         LNode parentLNode = parentGraph.getProperty(InternalProperties.PARENT_LNODE);
@@ -867,19 +869,20 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
 
         // edges
         for (LEdge e : edges) {
-                    JSONObject jEdge = edgeJsonMap.get(e);
-                    transferLayout(e, jEdge, offset);
-    
-                    // labels
-                    for (LLabel l : e.getLabels()) {
-                        JSONObject jLabel = labelJsonMap.get(l);
-                        transferLayout(l, jLabel, offset);
-                    }
-    
-                }
-            
+            JSONObject jEdge = edgeJsonMap.get(e);
+            transferLayout(e, jEdge, offset);
+
+            // edge labels
+            for (LLabel l : e.getLabels()) {
+                JSONObject jLabel = labelJsonMap.get(l);
+                // be sure to apply an offset,
+                //  edge labels are relative to the source node's parent node
+                transferLayout(l, jLabel, offset);
+            }
+        }
+
         KVector actualGraphSize = parentGraph.getActualSize();
-        // transfer to origin LNode 
+        // transfer to origin LNode
         // this is necessary for processing higher graph levels properly
         LNode graphNode = parentGraph.getProperty(InternalProperties.PARENT_LNODE);
         if (graphNode != null) {
@@ -887,12 +890,12 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
             graphNode.getSize().x = actualGraphSize.x;
             graphNode.getSize().y = actualGraphSize.y;
         }
-        
+
         // transfer to json
         JSONObject graphJson = parentGraph.getProperty(JSON_OBJECT);
         setJsNumber(graphJson, "width", actualGraphSize.x);
         setJsNumber(graphJson, "height", actualGraphSize.y);
-        
+
 
         // Process nested subgraphs
         for (LNode n : parentGraph.getLayerlessNodes()) {
@@ -903,19 +906,12 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         }
     }
 
-    private void transferLayout(final LShape shape, final JSONObject json, final KVector parentOffset) {
-        KVector offset = new KVector();
-
-        // offset is only used for nodes
-        if (shape instanceof LNode) {
-            offset = parentOffset;
-        }
-
+    private void transferLayout(final LShape shape, final JSONObject json, final KVector offset) {
         setJsNumber(json, "x", shape.getPosition().x + offset.x);
         setJsNumber(json, "y", shape.getPosition().y + offset.y);
         setJsNumber(json, "width", shape.getSize().x);
         setJsNumber(json, "height", shape.getSize().y);
-        
+
         // padding
         if (shape instanceof LNode) {
             // set node insets, if requested
@@ -939,36 +935,36 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
     private void transferLayout(final LEdge edge, final JSONObject json, final KVector offset) {
         checkForNonNull(json, "The origin of an edge could not be determined, this might "
                 + "be due to an inconsistency within the internal element mappings.");
-        
+
         KVector edgeOffset = offset;
-        
+
         // Source Point
         KVector src;
         if (LGraphUtil.isDescendant(edge.getTarget().getNode(), edge.getSource().getNode())) {
             // The external port's anchor position, relative to the node's top left corner
             LPort sourcePort = edge.getSource();
             src = KVector.sum(sourcePort.getPosition(), sourcePort.getAnchor());
-            
+
             // The node's insets need to be subtracted since edges going into the node's bowels are
             // relative to the top left corner + insets
             // TODO This line assumes that for a compound node, the insets computed for its LGraph and
             //      for its representing LNode are the same, which doesn't always seem to be the case
             LInsets sourceInsets = sourcePort.getNode().getInsets();
             src.add(-sourceInsets.left, -sourceInsets.top);
-           
+
             // The source point will later have the passed offset added to it, which it doesn't actually
             // need, so we subtract it now
             src.sub(edgeOffset);
-            
+
             // TODO
             // What it does need, however, is any additional insets that may be present, so we
             // explicitly add them here
             //src.add(additionalInsets);
-            
+
         } else {
             src = edge.getSource().getAbsoluteAnchor();
         }
-        
+
         src.add(edgeOffset);
         JSONObject srcPnt = new JSONObject();
         setJsNumber(srcPnt, "x", src.x);
@@ -980,7 +976,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         if (edge.getProperty(InternalProperties.TARGET_OFFSET) != null) {
             tgt.add(edge.getProperty(InternalProperties.TARGET_OFFSET));
         }
-        
+
         tgt.add(edgeOffset);
         JSONObject tgtPnt = new JSONObject();
         setJsNumber(tgtPnt, "x", tgt.x);
@@ -1002,7 +998,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         } else {
             json.put("bendPoints", null);
         }
-        
+
         // Junction Points
         KVectorChain junctionPoints = edge.getProperty(LayoutOptions.JUNCTION_POINTS);
         index = 0;
@@ -1027,7 +1023,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
 
     /**
      * Tests if the object contains a valid 'id' property.
-     * 
+     *
      * @throws UnsupportedJsonGraphException
      *             in case the 'id' property is not existent or is invalid.
      */
@@ -1041,17 +1037,17 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
                     + obj.get("id").getClass(), obj);
         }
     }
-    
+
     private void checkForNonNull(final Object obj, final String additionalMsg) {
         if (obj == null) {
-           throw new UnsupportedJsonGraphException("An element is null. " + additionalMsg); 
+           throw new UnsupportedJsonGraphException("An element is null. " + additionalMsg);
         }
     }
-    
+
     private void setJsProperty(final JSONObject obj, final IProperty<?> prop, final JSONValue value) {
         setJsProperty(obj, prop.getId(), value);
     }
-    
+
     private void setJsProperty(final JSONObject obj, final String name, final JSONValue value) {
         JSONValue props = obj.get("properties");
         if (props == null) {
@@ -1060,7 +1056,7 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         }
         props.isObject().put(name, value);
     }
-    
+
     /**
      * Sets the value of the passed key to be a {@link JSONNumber} of {@code value}.
      * Obeys to the value of {@code exportIntegerCoordinates} and does a simple cast to
@@ -1073,7 +1069,9 @@ public class JsonGraphImporter implements IGraphTransformer<JSONObject> {
         } else {
             n = new JSONNumber((int) value);
         }
-        
+
         obj.put(key, n);
     }
+
+    private static final KVector ZERO_VECTOR = new KVector(0, 0);
 }
