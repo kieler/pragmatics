@@ -13,14 +13,14 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation.comments
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.kiml.comments.IEligibilityFilter
-import de.cau.cs.kieler.kiml.options.LayoutOptions
+import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
+import org.eclipse.elk.core.comments.IEligibilityFilter
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.graph.KNode
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
-import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties
 
 /**
  * Passes judgement on a comment's eligibility for attachment based on whether it is considered a title
@@ -75,7 +75,7 @@ final class PtolemyTitleCommentFilter implements IEligibilityFilter {
         // Iterate over all the comments
         for (node : graph.children) {
             // Make sure the node is a comment
-            if (node.layout.getProperty(LayoutOptions.COMMENT_BOX)) {
+            if (node.layout.getProperty(CoreOptions.COMMENT_BOX)) {
                 numberOfComments++;
                 val fontSize = node.layout.getProperty(COMMENT_FONT_SIZE);
                 

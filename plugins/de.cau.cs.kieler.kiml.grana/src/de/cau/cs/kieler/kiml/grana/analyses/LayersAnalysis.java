@@ -18,22 +18,23 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * An analysis for the number of horizontal and vertical layers. Also analyzes 
@@ -134,7 +135,7 @@ public class LayersAnalysis implements IAnalysis {
      */
     public Object doAnalysis(final KNode parentNode,
             final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Layers Analysis", 1);
 
         boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
@@ -185,7 +186,7 @@ public class LayersAnalysis implements IAnalysis {
         
         // analyze the number of dummy nodes (only valid for a layer-based layout)
         int dummyCount = 0;
-        Direction dir = parentNode.getData(KLayoutData.class).getProperty(LayoutOptions.DIRECTION);
+        Direction dir = parentNode.getData(KLayoutData.class).getProperty(CoreOptions.DIRECTION);
         
         // collect the edges we want to check
         final List<KEdge> edges = Lists.newArrayList();
@@ -194,7 +195,7 @@ public class LayersAnalysis implements IAnalysis {
         }
         // edges of the parent's external ports
         for (KEdge e : parentNode.getOutgoingEdges()) {
-            if (KimlUtil.isDescendant(e.getTarget(), parentNode)) {
+            if (ElkUtil.isDescendant(e.getTarget(), parentNode)) {
                 edges.add(e);
             }
         }

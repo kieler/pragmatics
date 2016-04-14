@@ -14,25 +14,26 @@
 package de.cau.cs.kieler.kiml.formats.json
 
 import com.google.common.collect.Maps
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
-import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
-import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.kiml.util.KimlUtil
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer
+import de.cau.cs.kieler.kiml.formats.TransformationData
+import de.cau.cs.kieler.kiml.formats.TransformationException
 import java.util.Map
+import org.eclipse.elk.core.data.LayoutMetaDataService
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout
+import org.eclipse.elk.core.klayoutdata.KLayoutData
+import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory
+import org.eclipse.elk.core.klayoutdata.KShapeLayout
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.EdgeLabelPlacement
+import org.eclipse.elk.core.util.ElkUtil
+import org.eclipse.elk.core.util.GraphDataUtil
+import org.eclipse.elk.graph.KEdge
+import org.eclipse.elk.graph.KLabel
+import org.eclipse.elk.graph.KLabeledGraphElement
+import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.graph.KPort
 import org.json.JSONArray
 import org.json.JSONObject
-import de.cau.cs.kieler.core.kgraph.KLabel
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer
-import de.cau.cs.kieler.kiml.formats.TransformationException
-import de.cau.cs.kieler.kiml.formats.TransformationData
-import de.cau.cs.kieler.kiml.LayoutMetaDataService
 
 /**
  * Importer for graphs in the json format.
@@ -98,7 +99,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     private def KNode transformNode(JSONObject jsonNode, KNode parent) {
 
         // create a KNode and add it to the parent
-        val node = KimlUtil.createInitializedNode.register(jsonNode)
+        val node = ElkUtil.createInitializedNode.register(jsonNode)
         
         if (parent != null) {
             parent.children += node
@@ -146,7 +147,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     private def transformEdge(JSONObject jsonObj) {
 
         // Create KEdge
-        val edge = KimlUtil.createInitializedEdge.register(jsonObj)
+        val edge = ElkUtil.createInitializedEdge.register(jsonObj)
 
         // sources
         edge.source = nodeIdMap.get(jsonObj.optString("source"))
@@ -210,7 +211,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
         jsonObject.optJSONObject("properties") => [ props |
             props?.keys.emptyIfNull.forEach [ key |
                 val value = props.optString(key as String)
-                KimlUtil.loadDataElement(metaService, layoutData, key as String, value)
+                GraphDataUtil.loadDataElement(metaService, layoutData, key as String, value)
             ]
         ]
     }
@@ -221,7 +222,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
                 for (i : 0 ..< labels.length) {
                     val jsonLabel = labels.optJSONObject(i)
                     if (jsonLabel != null) {
-                        val label = KimlUtil.createInitializedLabel(element)
+                        val label = ElkUtil.createInitializedLabel(element)
                         labelJsonMap.put(label, jsonLabel) 
                         
                         label.text = jsonLabel.optString("text")
@@ -231,9 +232,9 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
                         jsonLabel.transformProperties(label.layout)
                         
                         // by default center the label
-                        if (label.layout.getProperty(LayoutOptions.EDGE_LABEL_PLACEMENT) 
+                        if (label.layout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT) 
                                 == EdgeLabelPlacement.UNDEFINED) {
-                            label.layout.setProperty(LayoutOptions.EDGE_LABEL_PLACEMENT,
+                            label.layout.setProperty(CoreOptions.EDGE_LABELS_PLACEMENT,
                                     EdgeLabelPlacement.CENTER)
                         }
                     }
@@ -255,7 +256,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, KNode> {
     private def transformPort(JSONObject jsonPort, KNode parent) {
 
         // create KPort
-        val port = KimlUtil.createInitializedPort.register(jsonPort)
+        val port = ElkUtil.createInitializedPort.register(jsonPort)
         parent.ports += port
 
         // position and dimension

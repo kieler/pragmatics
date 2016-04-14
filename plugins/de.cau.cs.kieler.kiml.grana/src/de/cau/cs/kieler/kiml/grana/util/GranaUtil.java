@@ -16,11 +16,12 @@ package de.cau.cs.kieler.kiml.grana.util;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.jface.preference.IPreferenceStore;
 
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.LayoutMetaDataService;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
@@ -143,11 +144,11 @@ public final class GranaUtil {
      *            the configuration
      */
     public static void setConfiguration(final String preferenceKey,
-            final List<Pair<LayoutOptionData, Object>> layoutConfig) {
+            final List<Pair<IProperty<?>, Object>> layoutConfig) {
         IPreferenceStore preferenceStore = GranaPlugin.getDefault().getPreferenceStore();
         // serialize the layout options
         StringBuilder optionsSerialized = new StringBuilder();
-        for (Pair<LayoutOptionData, Object> entry : layoutConfig) {
+        for (Pair<IProperty<?>, Object> entry : layoutConfig) {
             optionsSerialized.append(entry.getFirst().getId()).append("=")
                     .append(entry.getSecond().toString()).append(";");
         }

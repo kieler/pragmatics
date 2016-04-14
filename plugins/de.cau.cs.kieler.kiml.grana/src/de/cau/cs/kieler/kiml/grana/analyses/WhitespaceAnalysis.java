@@ -19,14 +19,15 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KNode;
+
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Analyses the whitespace of a diagram, i.e. the area of the drawing that is not occupied by nodes.
@@ -47,7 +48,7 @@ public class WhitespaceAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Whitespace Analysis", 1);
 
@@ -159,13 +160,13 @@ public class WhitespaceAnalysis implements IAnalysis {
         if (node.getParent() != null) {
             KVector pos = node.getData(KShapeLayout.class).createVector();
             absoluteOffset.sub(pos);
-            absoluteOffset.add(KimlUtil.toAbsolute(pos, node.getParent()));
+            absoluteOffset.add(ElkUtil.toAbsolute(pos, node.getParent()));
         }
 
         // TODO consider some spacing around the node
         float spacing = Math.max(0,
                             node.getParent().getData(KShapeLayout.class)
-                                .getProperty(LayoutOptions.SPACING));
+                                .getProperty(CoreOptions.SPACING_NODE));
         
         // assure that we stay within the image's boundaries (the spacing might reach out further)
         int minX = (int) Math.max(0, rect.getMinX() - spacing + absoluteOffset.x);

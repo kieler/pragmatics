@@ -20,20 +20,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * Counts orthogonal crossings. This is done by:
@@ -56,7 +57,7 @@ public class OrthogonalCrossingsAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Orthogonal crossings analysis", 1);
 
         int crossings = countCrossings(parentNode);
@@ -147,11 +148,11 @@ public class OrthogonalCrossingsAnalysis implements IAnalysis {
         private void addJunctionPointsOnEdgesConnectedTo(final KNode node) {
             for (KEdge edge : node.getIncomingEdges()) {
                 junctionPoints.addAll(edge.getData(KEdgeLayout.class).getProperty(
-                        LayoutOptions.JUNCTION_POINTS));
+                        CoreOptions.JUNCTION_POINTS));
             }
             for (KEdge edge : node.getOutgoingEdges()) {
                 junctionPoints.addAll(edge.getData(KEdgeLayout.class).getProperty(
-                        LayoutOptions.JUNCTION_POINTS));
+                        CoreOptions.JUNCTION_POINTS));
             }
         }
 

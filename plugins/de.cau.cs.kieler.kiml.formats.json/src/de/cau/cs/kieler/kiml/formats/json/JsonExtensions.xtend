@@ -14,13 +14,13 @@
 package de.cau.cs.kieler.kiml.formats.json
 
 import com.google.common.collect.Iterators
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KLabel
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
 import java.util.Iterator
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout
+import org.eclipse.elk.core.klayoutdata.KShapeLayout
+import org.eclipse.elk.graph.KEdge
+import org.eclipse.elk.graph.KLabel
+import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.graph.KPort
 
 /**
  * Some convenience.

@@ -21,34 +21,34 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.data.LayoutAlgorithmData;
+import org.eclipse.elk.core.data.LayoutCategoryData;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.data.LayoutOptionData.Target;
+import org.eclipse.elk.core.klayoutdata.KIdentifier;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.klayoutdata.impl.KLayoutDataFactoryImpl;
+import org.eclipse.elk.core.klayoutdata.impl.KLayoutDataPackageImpl;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.core.util.DefaultFactory;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KGraphData;
+import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
-import de.cau.cs.kieler.core.alg.DefaultFactory;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphData;
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.kiml.LayoutAlgorithmData;
-import de.cau.cs.kieler.kiml.LayoutMetaDataService;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.LayoutOptionData.Target;
-import de.cau.cs.kieler.kiml.LayoutTypeData;
-import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataFactoryImpl;
-import de.cau.cs.kieler.kiml.klayoutdata.impl.KLayoutDataPackageImpl;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.kwebs.server.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.layout.ServerGraphFormatsService;
@@ -94,10 +94,18 @@ public abstract class AbstractService {
      * Protected constructor. Initializes the layout data services.
      */
     protected AbstractService() {
-        LayoutMetaDataService.setInstanceFactory(new DefaultFactory<LayoutMetaDataService>(
-                ServerLayoutMetaDataService.class));
+        
+        // make sure the meta data service is loaded
+        // note that ServerLayoutMetaDataService's constructor implicitly 
+        // starts up the regular LayoutMetaDataService as well
+        ServerLayoutMetaDataService.getInstance();
+        
+        // this stays as it is
         GraphFormatsService.setInstanceFactory(new DefaultFactory<GraphFormatsService>(
                 ServerGraphFormatsService.class));
+        
+        
+        
         initFilters();
     }
 
@@ -341,9 +349,9 @@ public abstract class AbstractService {
 
         // Actually do the layout on the structure
         double layoutTime = 0;
-        if (!inTransData.getProperty(LayoutOptions.NO_LAYOUT)) {
+        if (!inTransData.getProperty(CoreOptions.NO_LAYOUT)) {
             for (KNode layout : graphs) {
-                IKielerProgressMonitor layoutMonitor = new BasicProgressMonitor();
+                IElkProgressMonitor layoutMonitor = new BasicProgressMonitor();
                 layoutEngine.layout(layout, layoutMonitor);
                 layoutTime += layoutMonitor.getExecutionTime() * NANO_FACT;
             }
@@ -363,7 +371,7 @@ public abstract class AbstractService {
 
         String serializedResult;
         if (outhandler == null) {
-            if (!inTransData.getProperty(LayoutOptions.NO_LAYOUT)) {
+            if (!inTransData.getProperty(CoreOptions.NO_LAYOUT)) {
                 // Apply the calculated layout back to the graph instance
                 inhandler.getImporter().transferLayout(inTransData);
             }
@@ -472,11 +480,13 @@ public abstract class AbstractService {
 
                 // we log all user specified layout options
                 for (GraphLayoutOption opt : options) {
-                    String fullId =
-                            LayoutMetaDataService.getInstance().getOptionDataBySuffix(opt.getId())
-                                    .getId();
-                    stats.incCounter(Logger.STATS_KWEBS, STATS_OPTION, fullId, opt.getValue(),
-                            Granularity.DAY);
+                    LayoutOptionData data =
+                            LayoutMetaDataService.getInstance().getOptionDataBySuffix(opt.getId());
+                    if (data != null) {
+                        String fullId = data.getId();
+                        stats.incCounter(Logger.STATS_KWEBS, STATS_OPTION, fullId, opt.getValue(),
+                                Granularity.DAY);
+                    }
                 }
 
                 int nodes = 0;
@@ -487,9 +497,9 @@ public abstract class AbstractService {
                 // we wanna know which algorithm is used
                 for (KNode graph : layoutGraphs) {
                     KLayoutData data = graph.getData(KLayoutData.class);
-                    String alg = data.getProperty(LayoutOptions.ALGORITHM);
+                    String alg = data.getProperty(CoreOptions.ALGORITHM);
                     stats.incCounter(Logger.STATS_KWEBS, STATS_ALG,
-                            LayoutOptions.ALGORITHM.getId(), alg, Granularity.DAY);
+                            CoreOptions.ALGORITHM.getId(), alg, Granularity.DAY);
 
                     // if its klay we wanna know even more :) Just to make everything better!
                     stats.recordKlayLayeredStats(graph);
@@ -563,16 +573,16 @@ public abstract class AbstractService {
                     if (optionData.getTargets().isEmpty()
                             || optionData.getTargets().contains(Target.PARENTS)) {
                         // special support for algorithm ids and layout type ids
-                        if (optionData.equals(LayoutOptions.ALGORITHM)) {
+                        if (optionData.equals(CoreOptions.ALGORITHM)) {
                             LayoutAlgorithmData algoData = dataService.getAlgorithmDataBySuffix(
                                     (String) optionValue);
                             if (algoData != null) {
                                 optionValue = algoData.getId();
                             } else {
-                                LayoutTypeData typeData = dataService.getTypeDataBySuffix(
+                                LayoutCategoryData categoryData = dataService.getCategoryData(
                                         (String) optionValue);
-                                if (typeData != null) {
-                                    optionValue = typeData.getId();
+                                if (categoryData != null) {
+                                    optionValue = categoryData.getId();
                                 }
                             }
                         }

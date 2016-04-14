@@ -16,16 +16,16 @@ package de.cau.cs.kieler.kiml.formats;
 
 import java.util.Map;
 
+import org.eclipse.elk.core.klayoutdata.KLayoutDataPackage;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.GraphDataUtil;
+import org.eclipse.elk.graph.KGraphPackage;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-
-import de.cau.cs.kieler.core.kgraph.KGraphPackage;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Transformer for the KGraph model and XMI serialization.
@@ -45,7 +45,7 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
     @Override
     public String serialize(final TransformationData<KNode, KNode> transData) {
         for (KNode graph : transData.getTargetGraphs()) {
-            KimlUtil.persistDataElements(graph);
+            ElkUtil.persistDataElements(graph);
         }
         return super.serialize(transData);
     }
@@ -60,7 +60,7 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
         super.deserialize(serializedGraph, transData);
         if (transData.getSourceGraph() != null) {
             // load layout options from their serialized form
-            KimlUtil.loadDataElements(transData.getSourceGraph(), true);
+            GraphDataUtil.loadDataElements(transData.getSourceGraph(), true);
         }
     }
 
@@ -94,7 +94,7 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
         public void transform(final TransformationData<KNode, KNode> data) {
             KNode graph = data.getSourceGraph();        
             // Make sure all graph elements are configured according to specifications
-            KimlUtil.validate(graph);
+            ElkUtil.validate(graph);
             // Forward the validated graph as layout graph
             data.getTargetGraphs().add(graph);
         }

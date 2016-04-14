@@ -29,14 +29,13 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.util.DefaultFactory;
+import org.eclipse.elk.core.util.IFactory;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.collect.Maps;
-
-import de.cau.cs.kieler.core.alg.DefaultFactory;
-import de.cau.cs.kieler.core.alg.IFactory;
-import de.cau.cs.kieler.core.kgraph.KNode;
 
 /**
  * Service class for graph formats.

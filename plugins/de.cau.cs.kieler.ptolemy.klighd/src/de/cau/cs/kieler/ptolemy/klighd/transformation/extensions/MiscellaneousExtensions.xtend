@@ -14,17 +14,17 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation.extensions
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KGraphElement
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.core.krendering.KPosition
-import de.cau.cs.kieler.core.krendering.KRenderingFactory
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
+import de.cau.cs.kieler.klighd.krendering.KPosition
+import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import java.util.List
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout
+import org.eclipse.elk.core.klayoutdata.KLayoutData
+import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory
+import org.eclipse.elk.core.klayoutdata.KShapeLayout
+import org.eclipse.elk.graph.KEdge
+import org.eclipse.elk.graph.KGraphElement
+import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.graph.KPort
 import org.eclipse.emf.ecore.EObject
 import org.ptolemy.moml.ClassType
 import org.ptolemy.moml.EntityType

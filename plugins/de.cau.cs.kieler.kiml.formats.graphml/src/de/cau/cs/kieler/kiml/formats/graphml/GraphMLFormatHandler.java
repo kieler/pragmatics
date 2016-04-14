@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.formats.graphml;
 
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -20,7 +21,6 @@ import org.graphdrawing.graphml.DocumentRoot;
 import org.graphdrawing.graphml.GraphMLPackage;
 import org.graphdrawing.graphml.util.GraphMLResourceFactoryImpl;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.formats.AbstractEmfHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 

@@ -21,10 +21,16 @@ import java.util.UUID;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.LayoutConfigurator;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.service.DiagramLayoutEngine;
+import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
+import org.eclipse.elk.core.service.IDiagramLayoutConnector;
+import org.eclipse.elk.core.service.LayoutConnectorsService;
+import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -51,6 +57,7 @@ import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditor;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditorFactory;
 import org.eclipse.xtext.ui.editor.embedded.EmbeddedEditorModelAccess;
@@ -62,15 +69,9 @@ import com.google.common.base.Predicate;
 import com.google.common.io.Files;
 import com.google.inject.Injector;
 
-import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.config.text.LayoutConfigStandaloneSetup;
 import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer;
 import de.cau.cs.kieler.kiml.config.text.ui.internal.LayoutConfigActivator;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.service.LayoutManagersService;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 
 /**
  * A view that allows to specify (top level or global) layout options textually.
@@ -108,8 +109,8 @@ public class LayoutConfigViewPart extends ViewPart {
     private Predicate<IWorkbenchPart> isLayoutableEditor = new Predicate<IWorkbenchPart>() {
 
         public boolean apply(IWorkbenchPart part) {
-            IDiagramLayoutManager<?> layoutManager =
-                    LayoutManagersService.getInstance().getManager(part, null);
+            IDiagramLayoutConnector layoutManager =
+                    LayoutConnectorsService.getInstance().getConnector(part, null);
             return layoutManager != null;
         }
     };
@@ -166,7 +167,7 @@ public class LayoutConfigViewPart extends ViewPart {
         public XtextResource createResource() {
             try {
                 LayoutConfigStandaloneSetup.doSetup();
-                ResourceSet resourceSet = new ResourceSetImpl();
+                ResourceSet resourceSet = new XtextResourceSet();
                 resource = resourceSet.createResource(URI.createURI("dummy.lc"));
 
                 return (XtextResource) resource;
@@ -244,8 +245,8 @@ public class LayoutConfigViewPart extends ViewPart {
         final IToolBarManager toolBar = getViewSite().getActionBars().getToolBarManager();
 
         // add a button that allows to perform the specified layout
-        final IAction layoutAction = new Action("Layout", KimlUiPlugin
-                .getImageDescriptor("icons/menu16/kieler-arrange.gif")) {
+        final IAction layoutAction = new Action("Layout", ElkUiPlugin.getImageDescriptor(
+        		"icons/menu16/arrange.gif")) {
             public void run() {
                 if (lastActiveEditor != null) {
                     performLayout();
@@ -433,25 +434,31 @@ public class LayoutConfigViewPart extends ViewPart {
         }
 
         // fetch general settings from preferences
-        IPreferenceStore preferenceStore = KimlUiPlugin.getDefault().getPreferenceStore();
+        IPreferenceStore preferenceStore = ElkUiPlugin.getInstance().getPreferenceStore();
         boolean animation = preferenceStore.getBoolean(PREF_ANIMATION);
         boolean zoomToFit = preferenceStore.getBoolean(PREF_ZOOM);
         boolean progressDialog = preferenceStore.getBoolean(PREF_PROGRESS);
  
         @SuppressWarnings("unchecked")
-        List<VolatileLayoutConfig> cfgs = LayoutConfigTransformer.from(resource, scaleAddition);
-        VolatileLayoutConfig[] layoutConfigs = cfgs.toArray(new VolatileLayoutConfig[cfgs.size()]);
+        List<LayoutConfigurator> cfgs = LayoutConfigTransformer.from(resource, scaleAddition);
+        LayoutConfigurator[] layoutConfigs = cfgs.toArray(new LayoutConfigurator[cfgs.size()]);
 
         if (layoutConfigs.length == 0) {
             return;
         }
 
-        ((VolatileLayoutConfig) layoutConfigs[0]).setValue(LayoutOptions.ANIMATE, animation)
-                .setValue(LayoutOptions.PROGRESS_BAR, progressDialog)
-                .setValue(LayoutOptions.ZOOM_TO_FIT, zoomToFit);
-
+        Parameters params = new Parameters();
+        params.getGlobalSettings()
+            .setProperty(CoreOptions.ANIMATE, animation)
+            .setProperty(CoreOptions.PROGRESS_BAR, progressDialog)
+            .setProperty(CoreOptions.ZOOM_TO_FIT, zoomToFit);
+        
+        for (LayoutConfigurator lc : layoutConfigs) {
+        	params.addLayoutRun(lc);
+        }
+        
         // get the active editor, which is expected to contain the diagram for applying layout
         // perform layout on the whole diagram
-        DiagramLayoutEngine.INSTANCE.layout(lastActiveEditor, null, layoutConfigs);
+        DiagramLayoutEngine.invokeLayout(lastActiveEditor, null, params);
     }
 }

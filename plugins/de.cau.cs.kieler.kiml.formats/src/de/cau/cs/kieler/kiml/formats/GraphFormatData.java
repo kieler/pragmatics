@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.formats;
 
-import de.cau.cs.kieler.kiml.ILayoutMetaData;
+import org.eclipse.elk.core.data.ILayoutMetaData;
 
 /**
  * Data type used to store information for a graph format.

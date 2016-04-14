@@ -13,13 +13,16 @@
  */
 package de.cau.cs.kieler.kiml.grana.text
 
+import com.google.common.collect.ContiguousSet
+import com.google.common.collect.DiscreteDomain
 import com.google.common.collect.Lists
 import com.google.common.collect.Range
-import de.cau.cs.kieler.kiml.config.CompoundLayoutConfig
 import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer
 import de.cau.cs.kieler.kiml.grana.AnalysisService
+import de.cau.cs.kieler.kiml.grana.text.grana.FloatRange
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana
 import de.cau.cs.kieler.kiml.grana.text.grana.IntRangeRange
+import de.cau.cs.kieler.kiml.grana.text.grana.IntRangeValues
 import de.cau.cs.kieler.kiml.grana.text.grana.Job
 import de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput
 import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource
@@ -33,7 +36,6 @@ import de.cau.cs.kieler.kiml.grana.ui.batch.BatchRangeJob
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchResult
 import de.cau.cs.kieler.kiml.grana.ui.batch.CSVResultSerializer
 import de.cau.cs.kieler.kiml.grana.ui.batch.FileKGraphProvider
-import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
@@ -43,13 +45,10 @@ import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
+import org.eclipse.elk.core.data.LayoutMetaDataService
+import org.eclipse.elk.core.service.util.ProgressMonitorAdapter
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
-import com.google.common.collect.ContiguousSet
-import com.google.common.collect.DiscreteDomain
-import de.cau.cs.kieler.kiml.grana.text.grana.IntRangeValues
-import de.cau.cs.kieler.kiml.grana.text.grana.FloatRange
-import de.cau.cs.kieler.kiml.LayoutMetaDataService
 
 /**
  * Utility class to convert textually specified grana executions to 
@@ -222,11 +221,18 @@ final class GranaTextToBatchJob {
         }
     
         // set the layout options
-        val clc = new CompoundLayoutConfig
-        for (cfg : job.layoutOptions) {
-            clc.add(LayoutConfigTransformer.transformConfig(cfg))
+        if (!job.layoutOptions.isEmpty) {
+            provider.layoutConfigurator = 
+                LayoutConfigTransformer.transformConfig(job.layoutOptions.head)
         }
-        provider.setLayoutConfigurator(clc)
+        
+        // TODO it shold be possible to add multiple layout runs
+        if (job.layoutOptions.size > 1) 
+            throw new UnsupportedOperationException("Multiple layout runs are not yet supported.")
+        //val params = new Parameters
+        //for (cfg : job.layoutOptions) {
+        //    params.addLayoutRun(LayoutConfigTransformer.transformConfig(cfg))
+        //}
         
         // the batch executer expects a workspace relative path
         val batchJob = switch (job) {

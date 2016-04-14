@@ -21,34 +21,33 @@ import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
 import org.adaptagrams.libavoid.LibavoidServer;
-import org.adaptagrams.libavoid.LibavoidServerException;
 import org.adaptagrams.libavoid.LibavoidServer.Cleanup;
+import org.adaptagrams.libavoid.LibavoidServerException;
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KInsets;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.EdgeRouting;
+import org.eclipse.elk.core.options.PortConstraints;
+import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.WrappedException;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-
-import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.EdgeRouting;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Performs the actual communication with the libabvoid-server. The graph to layout is send to the
@@ -126,7 +125,7 @@ public class LibavoidServerCommunicator {
      * @param lvServer
      *            an instance of the libavoid server.
      */
-    public void requestLayout(final KNode layoutNode, final IKielerProgressMonitor progressMonitor,
+    public void requestLayout(final KNode layoutNode, final IElkProgressMonitor progressMonitor,
             final LibavoidServer lvServer) {
         progressMonitor.begin("Libavoid Layout", LAYOUT_WORK);
         // if the graph is empty there is no need to layout
@@ -159,8 +158,7 @@ public class LibavoidServerCommunicator {
 
         } catch (IOException exception) {
             lvServer.cleanup(Cleanup.ERROR);
-            throw new WrappedException(exception,
-                    "Failed to communicate with the Libavoid process.");
+            throw new WrappedException("Failed to communicate with the Libavoid process.", exception);
         } finally {
             progressMonitor.done();
             reset();
@@ -179,7 +177,7 @@ public class LibavoidServerCommunicator {
      */
     private void applyLayout(final KNode parentNode,
             final Map<String, KVectorChain> layoutInformation,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Apply layout", SUBTASK_WORK);
 
         // Libavoid only routes edges, hence we only have to apply the new edge information
@@ -224,8 +222,8 @@ public class LibavoidServerCommunicator {
     private void calculateJunctionPoints(final KNode graph) {
         for (KNode n : graph.getChildren()) {
             for (KEdge edge : n.getOutgoingEdges()) {
-                KVectorChain junctionPoints = KimlUtil.determineJunctionPoints(edge);
-                edge.getData(KLayoutData.class).setProperty(LayoutOptions.JUNCTION_POINTS,
+                KVectorChain junctionPoints = ElkUtil.determineJunctionPoints(edge);
+                edge.getData(KLayoutData.class).setProperty(CoreOptions.JUNCTION_POINTS,
                         junctionPoints);
             }
         }
@@ -241,7 +239,7 @@ public class LibavoidServerCommunicator {
      * @return a map of layout information
      */
     private Map<String, KVectorChain> readLayoutInformation(final LibavoidServer libavoidServer,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Read output from Libavoid", 1);
         Map<String, String> outputData = libavoidServer.readOutputData();
         if (outputData == null) {
@@ -289,8 +287,7 @@ public class LibavoidServerCommunicator {
             // write it to the stream
             stream.write(sb.toString().getBytes());
         } catch (IOException e) {
-            throw new WrappedException(e,
-                    "Could not write to the outputstream of the libavoid server.");
+            throw new WrappedException("Could not write to the outputstream of the libavoid server.", e);
         }
     }
 
@@ -304,76 +301,78 @@ public class LibavoidServerCommunicator {
         // IMPORTANT: the edge routing option has to be passed first!
         // The information is required to initialize the libavoid router properly
         // before the router can be configured with additional options
-        EdgeRouting edgeRouting = nodeLayout.getProperty(LayoutOptions.EDGE_ROUTING);
-        addOption(LayoutOptions.EDGE_ROUTING.getId(), edgeRouting);
+        EdgeRouting edgeRouting = nodeLayout.getProperty(CoreOptions.EDGE_ROUTING);
+        addOption(CoreOptions.EDGE_ROUTING.getId(), edgeRouting);
 
-        Direction direction = nodeLayout.getProperty(LayoutOptions.DIRECTION);
+        Direction direction = nodeLayout.getProperty(CoreOptions.DIRECTION);
         currentDirection = direction;
-        addOption(LayoutOptions.DIRECTION.getId(), direction);
+        addOption(CoreOptions.DIRECTION.getId(), direction);
 
         /*
          * Penalties
          */
-        float segmentPenalty = nodeLayout.getProperty(LibavoidProperties.SEGMENT_PENALTY);
-        addPenalty(LibavoidProperties.SEGMENT_PENALTY.getId(), segmentPenalty);
+        float segmentPenalty = nodeLayout.getProperty(LibavoidOptions.SEGMENT_PENALTY);
+        addPenalty(LibavoidOptions.SEGMENT_PENALTY.getId(), segmentPenalty);
 
-        float anglePenalty = nodeLayout.getProperty(LibavoidProperties.ANGLE_PENALTY);
-        addPenalty(LibavoidProperties.ANGLE_PENALTY.getId(), anglePenalty);
+        float anglePenalty = nodeLayout.getProperty(LibavoidOptions.ANGLE_PENALTY);
+        addPenalty(LibavoidOptions.ANGLE_PENALTY.getId(), anglePenalty);
 
-        float crossingPenalty = nodeLayout.getProperty(LibavoidProperties.CROSSING_PENALTY);
-        addPenalty(LibavoidProperties.CROSSING_PENALTY.getId(), crossingPenalty);
+        float crossingPenalty = nodeLayout.getProperty(LibavoidOptions.CROSSING_PENALTY);
+        addPenalty(LibavoidOptions.CROSSING_PENALTY.getId(), crossingPenalty);
 
         float clusterCrossingPenalty =
-                nodeLayout.getProperty(LibavoidProperties.CLUSTER_CROSSING_PENALTY);
-        addPenalty(LibavoidProperties.CLUSTER_CROSSING_PENALTY.getId(), clusterCrossingPenalty);
+                nodeLayout.getProperty(LibavoidOptions.CLUSTER_CROSSING_PENALTY);
+        addPenalty(LibavoidOptions.CLUSTER_CROSSING_PENALTY.getId(), clusterCrossingPenalty);
 
         float fixedSharedPathPenalty =
-                nodeLayout.getProperty(LibavoidProperties.FIXED_SHARED_PATH_PENALTY);
-        addPenalty(LibavoidProperties.FIXED_SHARED_PATH_PENALTY.getId(), fixedSharedPathPenalty);
+                nodeLayout.getProperty(LibavoidOptions.FIXED_SHARED_PATH_PENALTY);
+        addPenalty(LibavoidOptions.FIXED_SHARED_PATH_PENALTY.getId(), fixedSharedPathPenalty);
 
         float portDirectionPenalty =
-                nodeLayout.getProperty(LibavoidProperties.PORT_DIRECTION_PENALTY);
-        addPenalty(LibavoidProperties.PORT_DIRECTION_PENALTY.getId(), portDirectionPenalty);
+                nodeLayout.getProperty(LibavoidOptions.PORT_DIRECTION_PENALTY);
+        addPenalty(LibavoidOptions.PORT_DIRECTION_PENALTY.getId(), portDirectionPenalty);
 
         float shapeBufferDistance =
-                nodeLayout.getProperty(LibavoidProperties.SHAPE_BUFFER_DISTANCE);
-        addPenalty(LibavoidProperties.SHAPE_BUFFER_DISTANCE.getId(), shapeBufferDistance);
+                nodeLayout.getProperty(LibavoidOptions.SHAPE_BUFFER_DISTANCE);
+        addPenalty(LibavoidOptions.SHAPE_BUFFER_DISTANCE.getId(), shapeBufferDistance);
 
         float idealNudgingDistance =
-                nodeLayout.getProperty(LibavoidProperties.IDEAL_NUDGING_DISTANCE);
-        addPenalty(LibavoidProperties.IDEAL_NUDGING_DISTANCE.getId(), idealNudgingDistance);
+                nodeLayout.getProperty(LibavoidOptions.IDEAL_NUDGING_DISTANCE);
+        addPenalty(LibavoidOptions.IDEAL_NUDGING_DISTANCE.getId(), idealNudgingDistance);
 
         /*
          * Routing options
          */
         boolean nudgeOrthogonalSegmentsConnectedToShapes =
-                nodeLayout.getProperty(LibavoidProperties.NUDGE_ORTHOGONAL_SEGMENTS);
-        addRoutingOption(LibavoidProperties.NUDGE_ORTHOGONAL_SEGMENTS.getId(),
+                nodeLayout.getProperty(LibavoidOptions.NUDGE_ORTHOGONAL_SEGMENTS_CONNECTED_TO_SHAPES);
+        addRoutingOption(LibavoidOptions.NUDGE_ORTHOGONAL_SEGMENTS_CONNECTED_TO_SHAPES.getId(),
                 nudgeOrthogonalSegmentsConnectedToShapes);
 
         boolean improveHyperedgeRoutesMovingJunctions =
-                nodeLayout.getProperty(LibavoidProperties.IMPROVE_HYPEREDGES);
-        addRoutingOption(LibavoidProperties.IMPROVE_HYPEREDGES.getId(),
+                nodeLayout.getProperty(LibavoidOptions.IMPROVE_HYPEREDGE_ROUTES_MOVING_JUNCTIONS);
+        addRoutingOption(LibavoidOptions.IMPROVE_HYPEREDGE_ROUTES_MOVING_JUNCTIONS.getId(),
                 improveHyperedgeRoutesMovingJunctions);
 
         boolean penaliseOrthogonalSharedPathsAtConnEnds =
-                nodeLayout.getProperty(LibavoidProperties.PENALISE_ORTH_SHATE_PATHS);
-        addRoutingOption(LibavoidProperties.PENALISE_ORTH_SHATE_PATHS.getId(),
+                nodeLayout.getProperty(LibavoidOptions.PENALISE_ORTHOGONAL_SHARED_PATHS_AT_CONN_ENDS);
+        addRoutingOption(LibavoidOptions.PENALISE_ORTHOGONAL_SHARED_PATHS_AT_CONN_ENDS.getId(),
                 penaliseOrthogonalSharedPathsAtConnEnds);
 
         boolean nudgeOrthogonalTouchingColinearSegments =
-                nodeLayout.getProperty(LibavoidProperties.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS);
-        addRoutingOption(LibavoidProperties.NUDGE_ORTHOGONAL_COLINEAR_SEGMENTS.getId(),
+                nodeLayout.getProperty(LibavoidOptions.NUDGE_ORTHOGONAL_TOUCHING_COLINEAR_SEGMENTS);
+        addRoutingOption(LibavoidOptions.NUDGE_ORTHOGONAL_TOUCHING_COLINEAR_SEGMENTS.getId(),
                 nudgeOrthogonalTouchingColinearSegments);
 
         boolean performUnifyingNudgingPreprocessingStep =
-                nodeLayout.getProperty(LibavoidProperties.NUDGE_PREPROCESSING);
-        addRoutingOption(LibavoidProperties.NUDGE_PREPROCESSING.getId(),
+                nodeLayout.getProperty(LibavoidOptions.PERFORM_UNIFYING_NUDGING_PREPROCESSING_STEP);
+        addRoutingOption(LibavoidOptions.PERFORM_UNIFYING_NUDGING_PREPROCESSING_STEP.getId(),
                 performUnifyingNudgingPreprocessingStep);
 
-        boolean improveHyperedgeRoutesMovingAddingAndDeletingJunctions =
-                nodeLayout.getProperty(LibavoidProperties.IMPROVE_HYPEREDGES_ADD_DELETE);
-        addRoutingOption(LibavoidProperties.IMPROVE_HYPEREDGES_ADD_DELETE.getId(),
+        boolean improveHyperedgeRoutesMovingAddingAndDeletingJunctions = nodeLayout.getProperty(
+                LibavoidOptions.IMPROVE_HYPEREDGE_ROUTES_MOVING_ADDING_AND_DELETING_JUNCTIONS);
+        addRoutingOption(
+                LibavoidOptions.IMPROVE_HYPEREDGE_ROUTES_MOVING_ADDING_AND_DELETING_JUNCTIONS
+                        .getId(),
                 improveHyperedgeRoutesMovingAddingAndDeletingJunctions);
 
     }
@@ -452,7 +451,7 @@ public class LibavoidServerCommunicator {
         KShapeLayout shape = parent.getData(KShapeLayout.class);
 
         // offset each side by the shape buffer distance to let edges route properly
-        float bufferDistance = shape.getProperty(LibavoidProperties.SHAPE_BUFFER_DISTANCE);
+        float bufferDistance = shape.getProperty(LibavoidOptions.SHAPE_BUFFER_DISTANCE);
         // top
         libavoidNode(parent, NODE_COMPOUND_NORTH, 0, 0 - SURROUNDING_RECT_SIZE - bufferDistance,
                 shape.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);
@@ -506,7 +505,7 @@ public class LibavoidServerCommunicator {
 
         // gather information
         KShapeLayout portLayout = port.getData(KShapeLayout.class);
-        PortSide side = KimlUtil.calcPortSide(port, currentDirection);
+        PortSide side = ElkUtil.calcPortSide(port, currentDirection);
 
         // get center point of port
         float centerX = portLayout.getXpos() + portLayout.getWidth() / 2;
@@ -556,7 +555,7 @@ public class LibavoidServerCommunicator {
                 portLessIncomingEdges, portLessOutgoingEdges);
 
         // transfer port constraints
-        PortConstraints pc = shape.getProperty(LayoutOptions.PORT_CONSTRAINTS);
+        PortConstraints pc = shape.getProperty(CoreOptions.PORT_CONSTRAINTS);
         sb.append("NODEOPTION " + nodeIdCounter + " " + pc);
         sb.append("\n");
 
@@ -633,7 +632,7 @@ public class LibavoidServerCommunicator {
     }
 
     private int determineHierarchicalNodeId(final KPort port) {
-        PortSide ps = KimlUtil.calcPortSide(port, currentDirection);
+        PortSide ps = ElkUtil.calcPortSide(port, currentDirection);
         int nodeId = 0;
         switch (ps) {
         case NORTH:

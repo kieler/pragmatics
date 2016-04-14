@@ -13,18 +13,18 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation.extensions
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties
 import java.util.List
+import org.eclipse.elk.core.klayoutdata.KLayoutData
+import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory
+import org.eclipse.elk.core.klayoutdata.KShapeLayout
+import org.eclipse.elk.graph.KGraphElement
+import org.eclipse.elk.graph.KNode
 import org.eclipse.emf.ecore.EObject
+import org.ptolemy.moml.ClassType
+import org.ptolemy.moml.EntityType
 import org.ptolemy.moml.MomlFactory
 import org.ptolemy.moml.PropertyType
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData
-import org.ptolemy.moml.EntityType
-import org.ptolemy.moml.ClassType
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataFactory
 
 /**
  * Utility methods regarding annotations used by the Ptolemy to KGraph transformation.

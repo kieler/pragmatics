@@ -23,7 +23,7 @@
          point="de.cau.cs.kieler.klighd.ui.view.editor">
       <editor
             controllerID="de.cau.cs.kieler.klighd.ui.view.controllers.XtextChangeUpdateController"
-            editorID="de.cau.cs.kieler.core.kgraph.text.KGraph">
+            editorID="de.cau.cs.kieler.kgraph.text.KGraph">
       </editor>
    </extension>
    <extension

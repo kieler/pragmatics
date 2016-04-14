@@ -2,7 +2,7 @@
  */
 package de.cau.cs.kieler.kiml.grana.text.grana;
 
-import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
+import org.eclipse.elk.core.klayoutdata.KIdentifier;
 
 import org.eclipse.emf.common.util.EList;
 
@@ -74,7 +74,7 @@ public interface Job extends EObject
 
   /**
    * Returns the value of the '<em><b>Layout Options</b></em>' containment reference list.
-   * The list contents are of type {@link de.cau.cs.kieler.kiml.klayoutdata.KIdentifier}.
+     * The list contents are of type {@link org.eclipse.elk.core.klayoutdata.KIdentifier}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Layout Options</em>' containment reference list isn't clear,

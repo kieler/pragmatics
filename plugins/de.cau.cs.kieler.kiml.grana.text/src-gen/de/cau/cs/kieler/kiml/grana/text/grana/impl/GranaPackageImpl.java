@@ -23,7 +23,7 @@ import de.cau.cs.kieler.kiml.grana.text.grana.RegularJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.Resource;
 import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference;
 
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutDataPackage;
+import org.eclipse.elk.core.klayoutdata.KLayoutDataPackage;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;

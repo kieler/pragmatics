@@ -13,20 +13,20 @@
  */
 package de.cau.cs.kieler.kiml.formats.ogml;
 
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
+import de.cau.cs.kieler.kiml.formats.AbstractEmfHandler;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import net.ogdf.ogml.DocumentRoot;
 import net.ogdf.ogml.OgmlFactory;
 import net.ogdf.ogml.OgmlPackage;
 import net.ogdf.ogml.PointType;
 import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.formats.AbstractEmfHandler;
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 
 /**
  * Transformer for OGML.

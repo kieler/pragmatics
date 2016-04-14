@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kiml.grana;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.kiml.ILayoutMetaData;
+import org.eclipse.elk.core.data.ILayoutMetaData;
 
 /**
  * An analysis category. Objects of this class are defined through the

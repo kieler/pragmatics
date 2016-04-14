@@ -13,16 +13,15 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation.util
 
-import de.cau.cs.kieler.klighd.IStyleModifier
-import de.cau.cs.kieler.klighd.IStyleModifier.StyleModificationContext
-import de.cau.cs.kieler.core.krendering.KRotation
-import de.cau.cs.kieler.core.krendering.KStyle
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
-import de.cau.cs.kieler.kiml.options.PortSide
 import com.google.inject.Guice
-import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
+import de.cau.cs.kieler.klighd.IStyleModifier
+import de.cau.cs.kieler.klighd.krendering.KRotation
+import de.cau.cs.kieler.klighd.krendering.KStyle
 import de.cau.cs.kieler.klighd.util.KlighdProperties
+import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
+import org.eclipse.elk.core.klayoutdata.KShapeLayout
+import org.eclipse.elk.core.options.PortSide
+import org.eclipse.elk.graph.KPort
 
 /**
  * KlighD style modifier for port renderings. The "direction" 

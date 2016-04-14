@@ -17,8 +17,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
+import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 
 /**
@@ -125,7 +126,7 @@ public class Batch {
      *            the monitor
      * @return the batch result
      */
-    public BatchResult execute(final IKielerProgressMonitor monitor) {
+    public BatchResult execute(final IElkProgressMonitor monitor) {
         monitor.begin("Executing analysis batch", batchJobs.size());
         BatchResult batchResult = new BatchResult(this, analyses);
         for (IBatchJob<?> batchJob : batchJobs) {

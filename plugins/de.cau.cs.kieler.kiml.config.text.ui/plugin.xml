@@ -396,7 +396,7 @@
          point="org.eclipse.ui.views">
       <view
             allowMultiple="true"
-            category="de.cau.cs.kieler.layout"
+            category="org.eclipse.elk.core.layout"
             class="de.cau.cs.kieler.kiml.config.text.ui.LayoutConfigViewPart"
             icon="icons/layout.gif"
             id="de.cau.cs.kieler.kiml.config.text.ui.LayoutConfigEditor"

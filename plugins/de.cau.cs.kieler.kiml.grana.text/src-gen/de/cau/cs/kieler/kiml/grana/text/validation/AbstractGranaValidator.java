@@ -13,8 +13,8 @@ public class AbstractGranaValidator extends org.eclipse.xtext.validation.Abstrac
 	protected List<EPackage> getEPackages() {
 	    List<EPackage> result = new ArrayList<EPackage>();
 	    result.add(de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage.eINSTANCE);
-	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://kieler.cs.cau.de/KLayoutData"));
-	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://kieler.cs.cau.de/KGraph"));
+	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://elk.eclipse.org/KLayoutData"));
+	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://elk.eclipse.org/KGraph"));
 		return result;
 	}
 }

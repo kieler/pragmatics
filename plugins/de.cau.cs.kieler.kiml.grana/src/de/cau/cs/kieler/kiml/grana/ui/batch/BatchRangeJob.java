@@ -15,15 +15,18 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.util.List;
 
+import org.eclipse.elk.core.LayoutConfigurator;
+import org.eclipse.elk.core.service.DiagramLayoutEngine;
+import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.KNode;
+
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
-import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 
 /**
  * The class which represents an analysis batch job.
@@ -84,7 +87,7 @@ public class BatchRangeJob<T> implements IBatchJob<T> {
      *             any kind of exception
      */
     public BatchJobResult<T> execute(final List<AnalysisData> analyses,
-            final IKielerProgressMonitor monitor) throws Exception {
+            final IElkProgressMonitor monitor) throws Exception {
         monitor.begin("Executing analysis batch job: " + parameter, WORK);
 
         // execute regular analyses as requested ...
@@ -94,16 +97,17 @@ public class BatchRangeJob<T> implements IBatchJob<T> {
         
         List<Object> rangeResults = Lists.newArrayList();
         // now layout with the range or whatever it is layout option
-        VolatileLayoutConfig vlc = new VolatileLayoutConfig();
+        LayoutConfigurator lc = new LayoutConfigurator();
         for (Number n : batch.getRangeValues()) {
             Object value = batch.getRangeOption().parseValue(n.toString());
             if (value == null) {
                 throw new IllegalArgumentException("Value " + n
                         + " is not valid for layout option " + batch.getRangeOption());
             }
-            vlc.setValue(batch.getRangeOption(), value);
-
-            DiagramLayoutEngine.INSTANCE.layout(null, graph, vlc);
+            lc.configure(KGraphElement.class).setProperty(batch.getRangeOption(), value);
+            Parameters params = new Parameters();
+            params.addLayoutRun(lc);
+            DiagramLayoutEngine.invokeLayout(null, graph, params);
 
             AnalysisContext tmp = new AnalysisContext();
             AnalysisService.getInstance().analyze(graph, batch.getRangeAnalysis(),

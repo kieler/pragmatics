@@ -17,6 +17,24 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.GraphDataUtil;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KGraphData;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
+
+import com.google.common.collect.Maps;
+
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
+import de.cau.cs.kieler.kiml.formats.TransformationData;
 import net.ogdf.ogml.DataType;
 import net.ogdf.ogml.DocumentRoot;
 import net.ogdf.ogml.EdgeLayoutType;
@@ -32,23 +50,6 @@ import net.ogdf.ogml.OgmlFactory;
 import net.ogdf.ogml.ShapeType1;
 import net.ogdf.ogml.SourceTargetType;
 import net.ogdf.ogml.StylesType;
-
-import com.google.common.collect.Maps;
-
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphData;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Transformer for OGML.
@@ -139,7 +140,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             nodeLayout.setProperty(PROP_NODE, node);
             for (LabelType label : node.getLabel()) {
-                KLabel klabel = KimlUtil.createInitializedLabel(knode);
+                KLabel klabel = ElkUtil.createInitializedLabel(knode);
                 klabel.setText(label.getContent());
             }
             // transform layout options
@@ -162,7 +163,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
      */
     private void transformGraph(final GraphType graph,
             final TransformationData<DocumentRoot, KNode> transData) {
-        KNode parent = KimlUtil.createInitializedNode();
+        KNode parent = ElkUtil.createInitializedNode();
         // transform layout options
         for (DataType data : graph.getData()) {
             convertLayoutOption(parent.getData(KShapeLayout.class), data);
@@ -178,7 +179,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
             if (edge.getSource().size() == 1 && edge.getTarget().size() == 1) {
                 KNode source = transformNode(edge.getSource().get(0).getIdRef(), parent, transData);
                 KNode target = transformNode(edge.getTarget().get(0).getIdRef(), parent, transData);
-                KEdge kedge = KimlUtil.createInitializedEdge();
+                KEdge kedge = ElkUtil.createInitializedEdge();
                 KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
                 edgeIdMap.put(edge.getId(), kedge);
                 edgeLayout.setProperty(PROP_EDGE, edge);
@@ -190,7 +191,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
                 }
                 // transform edge labels
                 for (LabelType label : edge.getLabel()) {
-                    KLabel klabel = KimlUtil.createInitializedLabel(kedge);
+                    KLabel klabel = ElkUtil.createInitializedLabel(kedge);
                     KShapeLayout labelLayout = klabel.getData(KShapeLayout.class);
                     labelIdMap.put(label.getId(), klabel);
                     labelLayout.setProperty(PROP_LABEL, label);
@@ -203,23 +204,23 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
 
                 // transform hyperedges
             } else if (edge.getSource().size() > 1 || edge.getTarget().size() > 1) {
-                KNode hypernode = KimlUtil.createInitializedNode();
+                KNode hypernode = ElkUtil.createInitializedNode();
                 hypernode.setParent(parent);
-                hypernode.getData(KShapeLayout.class).setProperty(LayoutOptions.HYPERNODE, true);
+                hypernode.getData(KShapeLayout.class).setProperty(CoreOptions.HYPERNODE, true);
                 for (SourceTargetType sourceref : edge.getSource()) {
                     KNode source = transformNode(sourceref.getIdRef(), parent, transData);
-                    KEdge kedge = KimlUtil.createInitializedEdge();
+                    KEdge kedge = ElkUtil.createInitializedEdge();
                     kedge.setSource(source);
                     kedge.setTarget(hypernode);
                 }
                 for (SourceTargetType targetref : edge.getTarget()) {
                     KNode target = transformNode(targetref.getIdRef(), parent, transData);
-                    KEdge kedge = KimlUtil.createInitializedEdge();
+                    KEdge kedge = ElkUtil.createInitializedEdge();
                     kedge.setSource(hypernode);
                     kedge.setTarget(target);
                 }
                 for (LabelType label : edge.getLabel()) {
-                    KLabel klabel = KimlUtil.createInitializedLabel(hypernode);
+                    KLabel klabel = ElkUtil.createInitializedLabel(hypernode);
                     klabel.setText(label.getContent());
                 }
             }
@@ -255,7 +256,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
         Map<String, KNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
         KNode knode = nodeIdMap.get(nodeId);
         if (knode == null) {
-            knode = KimlUtil.createInitializedNode();
+            knode = ElkUtil.createInitializedNode();
             KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
             nodeLayout.setWidth(DEF_WIDTH);
             nodeLayout.setHeight(DEF_WIDTH);
@@ -390,7 +391,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
 
             for (KEdge kedge : knode.getOutgoingEdges()) {
                 KVector edgeOffset = offset;
-                if (KimlUtil.isDescendant(kedge.getTarget(), knode)) {
+                if (ElkUtil.isDescendant(kedge.getTarget(), knode)) {
                     edgeOffset = new KVector(offset).add(knodeLayout.getXpos(),
                             knodeLayout.getYpos());
                 }
@@ -452,7 +453,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, KNode> {
     private void convertLayoutOption(final KGraphData layout, final DataType option) {
         String[] splittedOption = option.getValue().split("=");
         if (splittedOption.length == 2) {
-            KimlUtil.setOption(layout, splittedOption[0], splittedOption[1]);
+            GraphDataUtil.setOption(layout, splittedOption[0], splittedOption[1]);
         }
     }
 

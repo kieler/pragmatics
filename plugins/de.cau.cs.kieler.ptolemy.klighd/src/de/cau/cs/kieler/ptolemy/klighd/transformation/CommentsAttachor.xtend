@@ -15,13 +15,6 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Guice
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.kiml.comments.CommentAttacher
-import de.cau.cs.kieler.kiml.comments.DistanceHeuristic
-import de.cau.cs.kieler.kiml.comments.NodeReferenceHeuristic
-import de.cau.cs.kieler.kiml.comments.SizeEligibilityFilter
-import de.cau.cs.kieler.kiml.comments.TextPrefixFilter
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.ExplicitPtolemyAttachmentProvider
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyBoundsProvider
@@ -29,6 +22,13 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyTitleComme
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.ReferencePreferringAttachmentDecider
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
+import org.eclipse.elk.core.comments.CommentAttacher
+import org.eclipse.elk.core.comments.DistanceHeuristic
+import org.eclipse.elk.core.comments.NodeReferenceHeuristic
+import org.eclipse.elk.core.comments.SizeEligibilityFilter
+import org.eclipse.elk.core.comments.TextPrefixFilter
+import org.eclipse.elk.graph.KEdge
+import org.eclipse.elk.graph.KNode
 
 /**
  * Tries to infer the attachments between comment nodes and the elements they are supposed to describe.

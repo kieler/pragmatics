@@ -18,21 +18,20 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.eclipse.elk.core.klayoutdata.KIdentifier;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.impl.KEdgeImpl;
+import org.eclipse.elk.graph.impl.KLabelImpl;
+import org.eclipse.elk.graph.impl.KNodeImpl;
+import org.eclipse.elk.graph.impl.KPortImpl;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.impl.KEdgeImpl;
-import de.cau.cs.kieler.core.kgraph.impl.KLabelImpl;
-import de.cau.cs.kieler.core.kgraph.impl.KNodeImpl;
-import de.cau.cs.kieler.core.kgraph.impl.KPortImpl;
-import de.cau.cs.kieler.kiml.klayoutdata.KIdentifier;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * Utility class for duplicating layout information between structurally identical graphs. Every
@@ -135,7 +134,7 @@ public final class Graphs {
         while (identifier.hasNext()) {
             EObject eObject = identifier.next();
             if (eObject instanceof KGraphElement) {
-                KimlUtil.createIdentifier((KGraphElement) eObject);
+                ElkUtil.createIdentifier((KGraphElement) eObject);
             }
         }
     }

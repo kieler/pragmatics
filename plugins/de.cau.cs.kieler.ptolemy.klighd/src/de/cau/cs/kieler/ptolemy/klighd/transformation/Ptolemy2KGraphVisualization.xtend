@@ -13,30 +13,16 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
+import com.google.common.base.Strings
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KGraphElement
-import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.core.krendering.KAreaPlacementData
-import de.cau.cs.kieler.core.krendering.KRendering
-import de.cau.cs.kieler.core.krendering.KRenderingRef
-import de.cau.cs.kieler.core.krendering.Trigger
-import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
-import de.cau.cs.kieler.core.math.KVector
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout
-import de.cau.cs.kieler.kiml.options.Direction
-import de.cau.cs.kieler.kiml.options.EdgeLabelPlacement
-import de.cau.cs.kieler.kiml.options.EdgeRouting
-import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.kiml.options.NodeLabelPlacement
-import de.cau.cs.kieler.kiml.options.PortConstraints
-import de.cau.cs.kieler.kiml.options.PortLabelPlacement
-import de.cau.cs.kieler.kiml.options.PortSide
-import de.cau.cs.kieler.kiml.options.SizeConstraint
 import de.cau.cs.kieler.klighd.KlighdConstants
+import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
+import de.cau.cs.kieler.klighd.krendering.KAreaPlacementData
+import de.cau.cs.kieler.klighd.krendering.KRendering
+import de.cau.cs.kieler.klighd.krendering.KRenderingRef
+import de.cau.cs.kieler.klighd.krendering.Trigger
+import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption
@@ -49,12 +35,25 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtension
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
 import java.util.EnumSet
+import org.eclipse.elk.core.klayoutdata.KShapeLayout
+import org.eclipse.elk.core.math.KVector
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.EdgeLabelPlacement
+import org.eclipse.elk.core.options.EdgeRouting
+import org.eclipse.elk.core.options.NodeLabelPlacement
+import org.eclipse.elk.core.options.PortConstraints
+import org.eclipse.elk.core.options.PortLabelPlacement
+import org.eclipse.elk.core.options.PortSide
+import org.eclipse.elk.core.options.SizeConstraint
+import org.eclipse.elk.graph.KEdge
+import org.eclipse.elk.graph.KGraphElement
+import org.eclipse.elk.graph.KLabeledGraphElement
+import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.graph.KPort
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-
-import static extension com.google.common.base.Strings.*
-import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
-
+import org.eclipse.elk.alg.layered.LayeredLayoutProvider
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -195,11 +194,11 @@ class Ptolemy2KGraphVisualization {
     def private void addCompoundNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
         layout.setProperty(KlighdProperties::EXPAND, false)
-        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+        layout.setProperty(CoreOptions::NODE_LABELS_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
-        ExpansionAwareLayoutOption::setProperty(layout, LayoutOptions::PORT_CONSTRAINTS,
+        ExpansionAwareLayoutOption::setProperty(layout, CoreOptions::PORT_CONSTRAINTS,
             PortConstraints::FIXED_ORDER, PortConstraints::FREE)
-        layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, SizeConstraint::fixed)
+        layout.setProperty(CoreOptions::NODE_SIZE_CONSTRAINTS, SizeConstraint::fixed)
         
         node.setLayoutAlgorithm()
         
@@ -238,7 +237,7 @@ class Ptolemy2KGraphVisualization {
         } else {
             val layout = node.layout as KShapeLayout
             layout.setProperty(KlighdProperties::EXPAND, false)
-            layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, SizeConstraint::fixed)
+            layout.setProperty(CoreOptions::NODE_SIZE_CONSTRAINTS, SizeConstraint::fixed)
             
             node.setLayoutAlgorithm()
             
@@ -292,9 +291,9 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addDirectorNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+        layout.setProperty(CoreOptions::NODE_LABELS_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
-        layout.setProperty(LayoutOptions::PRIORITY, 1000)
+        layout.setProperty(CoreOptions::PRIORITY, 1000)
         
         // Create the rendering
         val rendering = createDirectorNodeRendering(node)
@@ -342,7 +341,7 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addParameterNodeRendering(KNode node) {   
         val layout = node.layout as KShapeLayout
-        layout.setProperty(LayoutOptions::PRIORITY, 800)
+        layout.setProperty(CoreOptions::PRIORITY, 800)
         
         // Create the rendering
         val rendering = createParameterNodeRendering(node)
@@ -359,13 +358,13 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addValueDisplayingNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+        layout.setProperty(CoreOptions::NODE_LABELS_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
-        layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
-        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
+        layout.setProperty(CoreOptions::PORT_LABELS_PLACEMENT, PortLabelPlacement::OUTSIDE)
+        layout.setProperty(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
         
         // Create the rendering
-        val className = node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).nullToEmpty()
+        val className = Strings.nullToEmpty(node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS))
         val value = node.getAnnotationValue(TransformationConstants.VALUE_DISPLAY_MAP.get(className))
         val rendering = createValueDisplayingNodeRendering(node, value ?: "")
         if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
@@ -386,7 +385,7 @@ class Ptolemy2KGraphVisualization {
         val layout = node.layout as KShapeLayout
 //        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
 //            NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
-        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
+        layout.setProperty(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
         
         val rendering = createModalModelPortRendering(node)
         if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
@@ -405,10 +404,10 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addRegularNodeRendering(KNode node) {
         val layout = node.layout as KShapeLayout
-        layout.setProperty(LayoutOptions::NODE_LABEL_PLACEMENT, EnumSet::of(
+        layout.setProperty(CoreOptions::NODE_LABELS_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
-        layout.setProperty(LayoutOptions::PORT_LABEL_PLACEMENT, PortLabelPlacement::OUTSIDE)
-        layout.setProperty(LayoutOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
+        layout.setProperty(CoreOptions::PORT_LABELS_PLACEMENT, PortLabelPlacement::OUTSIDE)
+        layout.setProperty(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_ORDER)
         
         // Some kinds of nodes require special treatment
         val KRendering rendering = switch node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) {
@@ -464,30 +463,30 @@ class Ptolemy2KGraphVisualization {
             }
         }
         
-        layout.setProperty(LayoutOptions::PORT_SIDE, portSide)
+        layout.setProperty(CoreOptions::PORT_SIDE, portSide)
         
         // Set port properties depending on the port side
-        val index = layout.getProperty(LayoutOptions::PORT_INDEX)
+        val index = layout.getProperty(CoreOptions::PORT_INDEX)
         switch portSide {
             case PortSide::NORTH: {
-                layout.setProperty(LayoutOptions::OFFSET, 0f)
+                layout.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0f)
             }
             case PortSide::SOUTH: {
-                layout.setProperty(LayoutOptions::OFFSET, 0f)
-                layout.setProperty(LayoutOptions::PORT_INDEX, -index);
+                layout.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0f)
+                layout.setProperty(CoreOptions::PORT_INDEX, -index);
             }
             case PortSide::EAST: {
-                layout.setProperty(LayoutOptions::OFFSET, 0f)
+                layout.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0f)
                 if (!port.markedAsModalModelPort) {
-                    layout.setProperty(LayoutOptions::PORT_ANCHOR, new KVector(7, 3.5))
+                    layout.setProperty(CoreOptions::PORT_ANCHOR, new KVector(7, 3.5))
                 }
             }
             case PortSide::WEST: {
-                layout.setProperty(LayoutOptions::OFFSET, 0f)
+                layout.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0f)
                 if (!port.markedAsModalModelPort) {
-                    layout.setProperty(LayoutOptions::PORT_ANCHOR, new KVector(0, 3.5))
+                    layout.setProperty(CoreOptions::PORT_ANCHOR, new KVector(0, 3.5))
                 }
-                layout.setProperty(LayoutOptions::PORT_INDEX, -index);
+                layout.setProperty(CoreOptions::PORT_INDEX, -index);
             }
             case PortSide::UNDEFINED: {
                 // We don't know what to do
@@ -561,7 +560,7 @@ class Ptolemy2KGraphVisualization {
                 edge.name = labelText.substring(1)
                 
                 val layout = edge.labels.get(0).layout
-                layout.setProperty(LayoutOptions::EDGE_LABEL_PLACEMENT, EdgeLabelPlacement::CENTER)
+                layout.setProperty(CoreOptions::EDGE_LABELS_PLACEMENT, EdgeLabelPlacement::CENTER)
             }
             
             // Now finally add an edge rendering, which in turn depends on additional stuff...
@@ -691,7 +690,9 @@ class Ptolemy2KGraphVisualization {
         } else {
             // Use a default minimum size
             layout.setProperty(KlighdProperties::MINIMAL_NODE_SIZE, new KVector(60, 40))
-            layout.setProperty(LayoutOptions::SIZE_CONSTRAINT, EnumSet::of(SizeConstraint::MINIMUM_SIZE))
+            layout.setProperty(CoreOptions::NODE_SIZE_CONSTRAINTS,
+                EnumSet::of(SizeConstraint::MINIMUM_SIZE)
+            )
         }
     }
     
@@ -704,15 +705,15 @@ class Ptolemy2KGraphVisualization {
         val layout = node.layout
         // Check if this is a state machine
         if (node.markedAsStateMachineContainer) {
-            layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.klay.layered")
-            layout.setProperty(LayoutOptions::EDGE_ROUTING, EdgeRouting::SPLINES)
+            layout.setProperty(CoreOptions::ALGORITHM, LayeredLayoutProvider.ID)
+            layout.setProperty(CoreOptions::EDGE_ROUTING, EdgeRouting::SPLINES)
         } else {
-            layout.setProperty(LayoutOptions::ALGORITHM, "de.cau.cs.kieler.klay.layered")
-            layout.setProperty(LayoutOptions::EDGE_ROUTING, EdgeRouting::ORTHOGONAL)
+            layout.setProperty(CoreOptions::ALGORITHM, LayeredLayoutProvider.ID)
+            layout.setProperty(CoreOptions::EDGE_ROUTING, EdgeRouting::ORTHOGONAL)
             
             // explicitly set a layout direction as we do not want the diagram layouted 
             // top-down due to direction inference of klay layered (almost always looks ugly)
-            layout.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT)
+            layout.setProperty(CoreOptions.DIRECTION, Direction.RIGHT)
         }
     }
 }

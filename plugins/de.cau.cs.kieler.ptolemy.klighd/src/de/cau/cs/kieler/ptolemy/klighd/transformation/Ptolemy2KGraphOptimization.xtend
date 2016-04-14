@@ -15,11 +15,6 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.common.collect.Multimap
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.core.util.Pair
-import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.Options
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
@@ -29,6 +24,11 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousEx
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.PortExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.util.HyperedgeGatherer
 import java.util.List
+import org.eclipse.elk.core.util.ElkUtil
+import org.eclipse.elk.core.util.Pair
+import org.eclipse.elk.graph.KEdge
+import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.graph.KPort
 import org.ptolemy.moml.PropertyType
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
@@ -580,7 +580,7 @@ public class Ptolemy2KGraphOptimization {
                 // Add new edges
                 for (sourceNode : hyperedge.sourceNodes) {
                     for (targetNode : hyperedge.targetNodes) {
-                        val newEdge = KimlUtil::createInitializedEdge()
+                        val newEdge = ElkUtil::createInitializedEdge()
                         newEdge.annotations += relationAnnotations
                         
                         newEdge.source = sourceNode
@@ -589,7 +589,7 @@ public class Ptolemy2KGraphOptimization {
                     }
                     
                     for (targetPort : hyperedge.targetPorts) {
-                        val newEdge = KimlUtil::createInitializedEdge()
+                        val newEdge = ElkUtil::createInitializedEdge()
                         newEdge.annotations += relationAnnotations
                         
                         newEdge.source = sourceNode
@@ -601,7 +601,7 @@ public class Ptolemy2KGraphOptimization {
                 
                 for (sourcePort : hyperedge.sourcePorts) {
                     for (targetNode : hyperedge.targetNodes) {
-                        val newEdge = KimlUtil::createInitializedEdge()
+                        val newEdge = ElkUtil::createInitializedEdge()
                         newEdge.annotations += relationAnnotations
                         
                         newEdge.source = sourcePort.node
@@ -611,7 +611,7 @@ public class Ptolemy2KGraphOptimization {
                     }
                     
                     for (targetPort : hyperedge.targetPorts) {
-                        val newEdge = KimlUtil::createInitializedEdge()
+                        val newEdge = ElkUtil::createInitializedEdge()
                         newEdge.annotations += relationAnnotations
                         
                         newEdge.source = sourcePort.node
@@ -706,7 +706,7 @@ public class Ptolemy2KGraphOptimization {
                 && options.directors) {
                 
                 // Create a new node for it
-                val directorNode = KimlUtil::createInitializedNode()
+                val directorNode = ElkUtil::createInitializedNode()
                 diagramSynthesis.associateWith(directorNode, annotation);
                 
                 // Set the name and mark it as a Ptolemy element, as a director and as having been 
@@ -733,7 +733,7 @@ public class Ptolemy2KGraphOptimization {
                 // It's a documentation attribute
 
                 // Create a new node for it
-                val documentationNode = KimlUtil::createInitializedNode()
+                val documentationNode = ElkUtil::createInitializedNode()
                 diagramSynthesis.associateWith(documentationNode, annotation);
 
                 // Mark it as a Ptolemy element, as a documentation node and as having been 
@@ -759,7 +759,7 @@ public class Ptolemy2KGraphOptimization {
                 // It's a title element
                 
                 // Create a node for it
-                val titleNode = KimlUtil.createInitializedNode();
+                val titleNode = ElkUtil.createInitializedNode();
                 diagramSynthesis.associateWith(titleNode, annotation);
                 
                 // Set the name, add language annotation and mark it as having been created from an 
@@ -794,7 +794,7 @@ public class Ptolemy2KGraphOptimization {
                 //It's a lattice ontology solver
                 
                 //Create a node for it
-                val solverNode = KimlUtil.createInitializedNode();
+                val solverNode = ElkUtil.createInitializedNode();
                 diagramSynthesis.associateWith(solverNode, annotation);
                 
                 // Set the name, add language annotation and mark it as having been created from
@@ -823,7 +823,7 @@ public class Ptolemy2KGraphOptimization {
             }
             
             // Create a new node for it
-            val parameterNode = KimlUtil::createInitializedNode()
+            val parameterNode = ElkUtil::createInitializedNode()
             
             // TODO Mark as parameter node and tell it about the parameters it should display
             parameterNode.markAsPtolemyElement()

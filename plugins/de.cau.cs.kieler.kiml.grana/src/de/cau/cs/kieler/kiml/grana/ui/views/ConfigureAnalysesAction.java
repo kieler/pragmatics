@@ -86,7 +86,7 @@ public class ConfigureAnalysesAction extends Action {
                 if (activeEditorPart != null) {
                     // Analyze the diagram and visualize the results
                     Map<String, Object> results = DiagramAnalyzer.analyze(
-                            activeEditorPart, null, analyses, false);
+                            activeEditorPart, analyses, false);
                     VisualizationService.getInstance().visualize(analyses, results, true);
                 }
             }

@@ -16,10 +16,11 @@ package de.cau.cs.kieler.kiml.grana;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.IFactory;
-import de.cau.cs.kieler.core.alg.InstancePool;
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.ILayoutMetaData;
+import org.eclipse.elk.core.data.ILayoutMetaData;
+import org.eclipse.elk.core.util.IFactory;
+import org.eclipse.elk.core.util.InstancePool;
+import org.eclipse.elk.core.util.Pair;
+
 import de.cau.cs.kieler.kiml.grana.dependency.Dependency;
 import de.cau.cs.kieler.kiml.grana.dependency.IDepending;
 

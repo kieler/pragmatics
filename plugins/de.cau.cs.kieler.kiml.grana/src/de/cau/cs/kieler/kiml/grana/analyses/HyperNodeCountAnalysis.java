@@ -17,13 +17,14 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KNode;
+
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * A graph analysis that counts the number of hyper nodes. Returns a single-component
@@ -39,7 +40,7 @@ public class HyperNodeCountAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Hypernodes analysis", 1);
         
         int hyperNodes = 0;
@@ -53,7 +54,7 @@ public class HyperNodeCountAnalysis implements IAnalysis {
             KNode node = nodeQueue.remove(0);
             
             // Check if this is a hyper node
-            if (node.getData(KShapeLayout.class).getProperty(LayoutOptions.HYPERNODE)) {
+            if (node.getData(KShapeLayout.class).getProperty(CoreOptions.HYPERNODE)) {
                 hyperNodes++;
             }
             

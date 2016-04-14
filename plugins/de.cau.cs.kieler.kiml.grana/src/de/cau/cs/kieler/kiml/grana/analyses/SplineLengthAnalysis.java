@@ -17,17 +17,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KielerMath;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 
 /**
  * Analysis the length of spline edges.
@@ -47,7 +48,7 @@ public class SplineLengthAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         
         progressMonitor.begin("Edge length analysis", 1);
 
@@ -152,7 +153,7 @@ public class SplineLengthAnalysis implements IAnalysis {
         double edgeLength = 0;
         for (KVector[] vectorArray : vectorList) {
             // add Points to Spline
-            KVector[] splinePoints = KielerMath.approximateBezierSegment(ACCURACY, vectorArray);
+            KVector[] splinePoints = ElkMath.approximateBezierSegment(ACCURACY, vectorArray);
 
             edgeLength += vectorArray[0].distance(splinePoints[0]);
             // add up size

@@ -19,8 +19,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.elk.core.LayoutConfigurator;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.ui.AlgorithmSelectionDialog;
+import org.eclipse.elk.core.ui.ElkUiPlugin;
+import org.eclipse.elk.core.ui.LayoutOptionValidator;
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.layout.LayoutConstants;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -44,15 +54,7 @@ import org.eclipse.ui.dialogs.ListDialog;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.LayoutMetaDataService;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.config.VolatileLayoutConfig;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.ui.AlgorithmSelectionDialog;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
-import de.cau.cs.kieler.kiml.ui.LayoutOptionValidator;
-import de.cau.cs.kieler.kiml.ui.Messages;
+
 
 /**
  * This page allows to configure the layout that is applied to each graph.
@@ -130,7 +132,7 @@ public class LayoutConfigurationPage extends WizardPage {
         
         // add button to remove an option
         final Button removeButton = new Button(buttonComposite, SWT.PUSH | SWT.CENTER);
-        removeButton.setText(Messages.getString("kiml.ui.22")); //$NON-NLS-1$
+        removeButton.setText("Remove"); //$NON-NLS-1$
         removeButton.setEnabled(false);
         removeButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(final SelectionEvent event) {
@@ -242,10 +244,10 @@ public class LayoutConfigurationPage extends WizardPage {
      * 
      * @return a layout configurator
      */
-    public VolatileLayoutConfig getConfig() {
-        VolatileLayoutConfig config = new VolatileLayoutConfig();
+    public LayoutConfigurator getConfig() {
+        LayoutConfigurator config = new LayoutConfigurator();
         for (Pair<LayoutOptionData, Object> pair : optionEntries) {
-            config.setValue(pair.getFirst(), pair.getSecond());
+            config.configure(KGraphElement.class).setProperty(pair.getFirst(), pair.getSecond());
         }
         return config;
     }
@@ -258,7 +260,7 @@ public class LayoutConfigurationPage extends WizardPage {
      */
     private void showEditDialog(final Shell shell, final Pair<LayoutOptionData, Object> entry) {
         LayoutOptionData optionData = entry.getFirst();
-        if (optionData.equals(LayoutOptions.ALGORITHM)) {
+        if (optionData.equals(CoreOptions.ALGORITHM)) {
             // show a selection dialog for a layouter hint
             AlgorithmSelectionDialog dialog = new AlgorithmSelectionDialog(shell, null);
             if (dialog.open() == AlgorithmSelectionDialog.OK) {
@@ -341,23 +343,23 @@ public class LayoutConfigurationPage extends WizardPage {
                 value = optionData.getDefaultDefault();
             }
             if (optionData != null) {
-                KimlUiPlugin.Images images = KimlUiPlugin.getDefault().getImages();
+                ImageRegistry imageRegistry = ElkUiPlugin.getInstance().getImageRegistry();
                 switch (optionData.getType()) {
                 case STRING:
-                    return images.getPropText();
+                    return imageRegistry.get(ElkUiPlugin.IMG_TEXT);
                 case BOOLEAN:
                     if (value == null || (Boolean) value) {
-                        return images.getPropTrue();
+                        return imageRegistry.get(ElkUiPlugin.IMG_TRUE);
                     } else {
-                        return images.getPropFalse();
+                        return imageRegistry.get(ElkUiPlugin.IMG_FALSE);
                     }
                 case ENUM:
                 case ENUMSET:
-                    return images.getPropChoice();
+                    return imageRegistry.get(ElkUiPlugin.IMG_CHOICE);
                 case INT:
-                    return images.getPropInt();
+                    return imageRegistry.get(ElkUiPlugin.IMG_INT);
                 case FLOAT:
-                    return images.getPropFloat();
+                    return imageRegistry.get(ElkUiPlugin.IMG_FLOAT);
                 }
             }
             return null;

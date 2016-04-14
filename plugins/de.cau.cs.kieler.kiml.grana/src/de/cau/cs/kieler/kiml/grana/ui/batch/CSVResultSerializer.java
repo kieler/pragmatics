@@ -19,10 +19,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
+
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.Visualization;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
@@ -42,7 +43,7 @@ public class CSVResultSerializer implements IBatchResultSerializer {
      * {@inheritDoc}
      */
     public void serialize(final OutputStream outputStream,
-            final BatchResult batchResult, final IKielerProgressMonitor monitor)
+            final BatchResult batchResult, final IElkProgressMonitor monitor)
             throws Exception {
         monitor.begin("Serialize batch result as CSV", 1);
         // create a stream writer

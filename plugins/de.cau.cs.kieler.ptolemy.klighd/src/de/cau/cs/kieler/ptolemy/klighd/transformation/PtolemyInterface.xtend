@@ -14,9 +14,6 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.core.kgraph.KPort
-import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
@@ -27,6 +24,9 @@ import java.util.List
 import org.eclipse.core.runtime.CoreException
 import org.eclipse.core.runtime.IStatus
 import org.eclipse.core.runtime.Status
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.util.ElkUtil
+import org.eclipse.elk.graph.KPort
 import org.eclipse.emf.ecore.EObject
 import org.ptolemy.moml.ClassType
 import org.ptolemy.moml.EntityType
@@ -93,10 +93,10 @@ class PtolemyInterface {
             for (port : ptActor.portList) {
                 if (port instanceof IOPort) {
                     val IOPort ptPort = port as IOPort
-                    val KPort kPort = KimlUtil::createInitializedPort()
+                    val KPort kPort = ElkUtil::createInitializedPort()
                     
                     // Set the index
-                    kPort.layout.setProperty(LayoutOptions::PORT_INDEX, index)
+                    kPort.layout.setProperty(CoreOptions::PORT_INDEX, index)
                     
                     // Set the name
                     kPort.name = ptPort.name

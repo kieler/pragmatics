@@ -17,47 +17,33 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.elk.core.IGraphLayoutEngine;
+import org.eclipse.elk.core.LayoutConfigurator;
+import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.util.GraphDataUtil;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.IGraphElementVisitor;
+import org.eclipse.elk.core.util.WrappedException;
+import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.gmf.runtime.diagram.ui.OffscreenEditPartFactory;
-import org.eclipse.gmf.runtime.diagram.ui.editparts.DiagramEditPart;
-import org.eclipse.gmf.runtime.notation.Diagram;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.util.Maybe;
-import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.config.ILayoutConfig;
-import de.cau.cs.kieler.kiml.config.LayoutContext;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
-import de.cau.cs.kieler.kiml.service.IDiagramLayoutManager;
-import de.cau.cs.kieler.kiml.service.LayoutManagersService;
-import de.cau.cs.kieler.kiml.service.LayoutMapping;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 
 /**
  * The KGraph provider that derives a graph from a file. It uses GMF services to open a
@@ -77,14 +63,14 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
     /** whether to measure the execution times. */
     private boolean executionTimeAnalysis;
     /** the layout configurator to apply to each graph. */
-    private ILayoutConfig configurator;
+    private LayoutConfigurator configurator;
     
     private static final int NO_EXEC_TIME_RUNS = 5;
     
     /**
      * {@inheritDoc}
      */
-    public KNode getKGraph(final IPath parameter, final IKielerProgressMonitor monitor) {
+    public KNode getKGraph(final IPath parameter, final IElkProgressMonitor monitor) {
         monitor.begin("Retrieving KGraph from " + parameter.toString(), 2);
         
         // try to load the file as a kgraph 
@@ -137,11 +123,11 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                 graph = (KNode) content;
             }
             // assure that properties, stored in the model file, are loaded properly 
-            KimlUtil.loadDataElements(graph, true);
+            GraphDataUtil.loadDataElements(graph, true);
             
             if (layoutBeforeAnalysis) {
                 if (configurator != null) {
-                    recursiveConf(graph, configurator);
+                    applyVisitors(graph, configurator);
                 }
                 
                 if (layoutEngine == null) {
@@ -156,19 +142,19 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                     for (int j = 0; j < NO_EXEC_TIME_RUNS; j++) {
                         System.gc();
                         
-                        IKielerProgressMonitor recLayoutMonitor = monitor.subTask(1);
+                        IElkProgressMonitor recLayoutMonitor = monitor.subTask(1);
                         layoutEngine.layout(graph, recLayoutMonitor);
 
                         if (!recLayoutMonitor.getSubMonitors().isEmpty()) {
                             // we are interested in the top level progress monitor of the recursive
                             // layout engine
-                            IKielerProgressMonitor layoutMonitor =
+                            IElkProgressMonitor layoutMonitor =
                                     recLayoutMonitor.getSubMonitors().get(0);
                             double time = layoutMonitor.getExecutionTime();
                             
                             if (time < minTime) {
                                 minTime = time;
-                                for (IKielerProgressMonitor task : layoutMonitor.getSubMonitors()) {
+                                for (IElkProgressMonitor task : layoutMonitor.getSubMonitors()) {
                                     minPhaseTimes.put(task.getTaskName(), task.getExecutionTime());
                                 }
                             }
@@ -187,10 +173,6 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                 }
             }
             
-            monitor.done();
-            return graph;
-        } else if (content instanceof Diagram) {
-            graph = retrieveGmfGraph((Diagram) content, resourceSet, monitor.subTask(1));
             monitor.done();
             return graph;
         } else {
@@ -221,111 +203,25 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
      * 
      * @param configuratorOption the layout configurator
      */
-    public void setLayoutConfigurator(final ILayoutConfig configuratorOption) {
+    public void setLayoutConfigurator(final LayoutConfigurator configuratorOption) {
         this.configurator = configuratorOption;
     }
-    
+
     /**
-     * Retrieve a graph from a GMF diagram.
-     * 
-     * @param diagram a diagram
-     * @param resourceSet the resource set
-     * @param monitor a progress monitor
-     * @return the contained graph
+     * Apply the given graph element visitors to the content of the given graph.
      */
-    private KNode retrieveGmfGraph(final Diagram diagram, final ResourceSet resourceSet,
-            final IKielerProgressMonitor monitor) {
-        monitor.begin("Retrieve KGraph from GMF diagram", 2);
-        // create a diagram edit part
-        TransactionalEditingDomain.Factory.INSTANCE.createEditingDomain(resourceSet);
-        final Maybe<DiagramEditPart> editPart = new Maybe<DiagramEditPart>();
-        final Maybe<RuntimeException> wrappedException = new Maybe<RuntimeException>();
-        Display.getDefault().syncExec(new Runnable() {
-            public void run() {
-                try {
-                    OffscreenEditPartFactory offscreenFactory = OffscreenEditPartFactory.getInstance();
-                    editPart.set(offscreenFactory.createDiagramEditPart(diagram, new Shell()));
-                } catch (RuntimeException re) {
-                    wrappedException.set(re);
-                }
-            }
-        });
-        if (wrappedException.get() != null) {
-            throw wrappedException.get();
+    private static void applyVisitors(final KNode graph, final IGraphElementVisitor... visitors) {
+        for (int i = 0; i < visitors.length; i++) {
+            visitors[i].visit(graph);
         }
-        monitor.worked(1);
-        
-        // retrieve a kgraph representation of the diagram
-        IDiagramLayoutManager<?> layoutManager = LayoutManagersService.getInstance()
-                .getManager(null, editPart.get());
-        if (layoutManager == null) {
-            throw new RuntimeException("No layout manager could be retrieved for the selected file.");
-        }
-        LayoutMapping<?> mapping = layoutManager.buildLayoutGraph(null, editPart.get());
-        KNode inputGraph = mapping.getLayoutGraph();
-        if (layoutBeforeAnalysis) {
-            if (configurator != null) {
-                mapping.getLayoutConfigs().add(configurator);
-            }
-            IStatus status = DiagramLayoutEngine.INSTANCE.layout(mapping, monitor.subTask(1));
-            if (!status.isOK()) {
-                StatusManager.getManager().handle(status);
+        Iterator<KGraphElement> allElements =
+                Iterators.filter(graph.eAllContents(), KGraphElement.class);
+        while (allElements.hasNext()) {
+            KGraphElement element = allElements.next();
+            for (int i = 0; i < visitors.length; i++) {
+                visitors[i].visit(element);
             }
         }
-        
-        monitor.done();
-        return inputGraph;
     }
     
-    /**
-     * Configure all elements contained in the given node.
-     * 
-     * @param node a node from the layout graph
-     * @param config a layout configurator
-     */
-    private void recursiveConf(final KNode node, final ILayoutConfig config) {
-        // configure the node and its label
-        configure(node, config);
-        for (KLabel label : node.getLabels()) {
-            configure(label, config);
-        }
-
-        // configure ports
-        for (KPort port : node.getPorts()) {
-            configure(port, config);
-            for (KLabel label : port.getLabels()) {
-                configure(label, config);
-            }
-        }
-
-        // configure outgoing edges
-        for (KEdge edge : node.getOutgoingEdges()) {
-            configure(edge, config);
-            for (KLabel label : edge.getLabels()) {
-                configure(label, config);
-            }
-        }
-
-        // configure child nodes
-        for (KNode child : node.getChildren()) {
-            recursiveConf(child, config);
-        }
-    }
-
-    /**
-     * Configure a graph element.
-     * 
-     * @param graphElement a graph element
-     * @param config a layout configurator
-     */
-    private void configure(final KGraphElement graphElement, final ILayoutConfig config) {
-        // create a layout context for the current graph element
-        LayoutContext context = new LayoutContext();
-        context.setProperty(LayoutContext.GRAPH_ELEM, graphElement);
-        
-        // transfer the options from the layout configuration
-        KLayoutData layoutData = graphElement.getData(KLayoutData.class);
-        DiagramLayoutEngine.INSTANCE.getOptionManager().transferValues(layoutData, config, context);
-    }
-
 }

@@ -18,16 +18,17 @@ import java.io.ByteArrayInputStream;
 import java.security.KeyStore;
 import java.security.SecureRandom;
 
-import de.cau.cs.kieler.core.alg.IFactory;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManagerFactory;
+
+import org.eclipse.elk.core.util.IFactory;
+
 import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.configuration.Configuration;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.util.Resources;
-
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
 
 /**
  * A factory that creates the server wide necessary SSL context depending

@@ -15,13 +15,12 @@ package de.cau.cs.kieler.kiml.libavoid;
 
 import org.adaptagrams.libavoid.LibavoidServer;
 import org.adaptagrams.libavoid.LibavoidServerPool;
-
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
-import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
-import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
+import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.adapters.KGraphAdapters;
+import org.eclipse.elk.core.util.adapters.KGraphAdapters.KGraphAdapter;
+import org.eclipse.elk.core.util.nodespacing.KimlNodeDimensionCalculation;
+import org.eclipse.elk.graph.KNode;
 
 /**
  * A layout provider for KIML that performs layout using the Libavoid connector routing library. See
@@ -37,7 +36,7 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
+    public void layout(final KNode parentNode, final IElkProgressMonitor progressMonitor) {
 
         // calculate node margins
         KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);

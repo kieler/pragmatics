@@ -15,6 +15,13 @@ package de.cau.cs.kieler.kiml.formats.graphml;
 
 import java.util.LinkedList;
 
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 import org.graphdrawing.graphml.DocumentRoot;
 import org.graphdrawing.graphml.EdgeType;
 import org.graphdrawing.graphml.GraphMLFactory;
@@ -23,15 +30,8 @@ import org.graphdrawing.graphml.GraphmlType;
 import org.graphdrawing.graphml.NodeType;
 import org.graphdrawing.graphml.PortType;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
  * Graph exporter for GraphML.

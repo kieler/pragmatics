@@ -56,7 +56,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
 import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.ui.util.DragDropScrollHandler;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
 import de.cau.cs.kieler.kiml.util.KimlUtil;

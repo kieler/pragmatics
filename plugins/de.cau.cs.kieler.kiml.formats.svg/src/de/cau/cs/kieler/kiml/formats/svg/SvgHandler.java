@@ -17,12 +17,10 @@ import java.io.StringWriter;
 
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
+import org.eclipse.elk.graph.KNode;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
+import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.formats.TransformationException;
 
@@ -44,10 +42,6 @@ public class SvgHandler implements IGraphFormatHandler<SVGGraphics2D> {
     /** the identifier of the SVG format. */
     public static final String ID = "org.w3.svg";
     
-    /** whether to use CSS style properties in SVG output, as opposed to plain attributes. */
-    public static final IProperty<Boolean> USE_CSS = new Property<Boolean>(
-            "de.cau.cs.kieler.svg.css", false);
-
     /**
      * {@inheritDoc}
      */
@@ -61,7 +55,7 @@ public class SvgHandler implements IGraphFormatHandler<SVGGraphics2D> {
      */
     public String serialize(final TransformationData<KNode, SVGGraphics2D> transData) {
         StringWriter writer = new StringWriter();
-        boolean useCss = transData.getProperty(USE_CSS);
+        boolean useCss = transData.getProperty(SvgOptions.USE_CSS);
         try {
             for (SVGGraphics2D graphics : transData.getTargetGraphs()) {
                 graphics.stream(writer, useCss);

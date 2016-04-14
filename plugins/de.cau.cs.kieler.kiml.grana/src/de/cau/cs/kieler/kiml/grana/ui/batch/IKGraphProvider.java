@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.grana.ui.batch;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KNode;
 
 /**
  * The interface for KGraph providers.
@@ -36,6 +36,6 @@ public interface IKGraphProvider<T> {
      * @throws Exception
      *             any kind of exception
      */
-    KNode getKGraph(final T parameter, final IKielerProgressMonitor monitor)
+    KNode getKGraph(final T parameter, final IElkProgressMonitor monitor)
             throws Exception;
 }

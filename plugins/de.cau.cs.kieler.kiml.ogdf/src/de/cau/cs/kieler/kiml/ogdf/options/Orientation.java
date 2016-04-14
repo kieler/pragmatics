@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.ogdf.options;
 
-import de.cau.cs.kieler.kiml.options.Direction;
+import org.eclipse.elk.core.options.Direction;
 
 /**
  * Definition of orientation of a layouter.

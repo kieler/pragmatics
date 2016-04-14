@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.util.Pair;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -30,8 +31,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
-import de.cau.cs.kieler.core.ui.util.TreeViewerCheckStateHandler;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.kiml.grana.AnalysisCategory;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 
@@ -184,7 +183,7 @@ public class AnalysisSelectionViewer extends Composite implements ISelectionChan
          * @param analysisCategories
          *            the analysis categories
          */
-        public AnalysisContentProvider(final Collection<AnalysisCategory> analysisCategories) {
+        AnalysisContentProvider(final Collection<AnalysisCategory> analysisCategories) {
             super();
             // map analyses on their parents
             for (AnalysisCategory category : analysisCategories) {

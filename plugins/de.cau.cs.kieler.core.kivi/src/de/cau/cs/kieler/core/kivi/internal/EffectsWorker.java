@@ -24,6 +24,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
@@ -32,7 +33,6 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import de.cau.cs.kieler.core.kivi.IEffect;
 import de.cau.cs.kieler.core.kivi.KiViPlugin;
 import de.cau.cs.kieler.core.kivi.UndoEffect;
-import de.cau.cs.kieler.core.util.Maybe;
 
 /**
  * Worker thread that handles the execution of effects.
@@ -122,7 +122,7 @@ public class EffectsWorker extends Thread {
      */
     private void executeWithMonitor(final IEffect startEffect, final MonitorContext context)
             throws Throwable {
-        final Maybe<Throwable> exception = new Maybe<Throwable>();
+        final Maybe<Throwable> exception = new Maybe<>();
         Display.getDefault().syncExec(new Runnable() {
             public void run() {
                 try {

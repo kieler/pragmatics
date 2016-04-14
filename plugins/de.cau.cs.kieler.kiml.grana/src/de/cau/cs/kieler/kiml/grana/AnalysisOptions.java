@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.kiml.grana;
 
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 
 /**
  * Static definitions of options for graph analysis.

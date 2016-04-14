@@ -65,7 +65,7 @@ public class AnalyzeAction extends Action {
                         // Analyze the diagram and visualize the results
                         List<AnalysisData> analyses = GranaUtil.getLastAnalysesSelection();
                         Map<String, Object> results = DiagramAnalyzer.analyze(
-                                activeEditorPart, null, analyses, false);
+                                activeEditorPart, analyses, false);
                         VisualizationService.getInstance().visualize(analyses, results, true);
                     }
                 });

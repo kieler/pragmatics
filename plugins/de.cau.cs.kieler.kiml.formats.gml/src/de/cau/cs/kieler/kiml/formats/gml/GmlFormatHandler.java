@@ -19,13 +19,14 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
+import org.eclipse.elk.core.klayoutdata.KPoint;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KNode;
+
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.kiml.formats.TransformationException;
-import de.cau.cs.kieler.kiml.klayoutdata.KPoint;
 
 /**
  * Formats handler for the gml format.

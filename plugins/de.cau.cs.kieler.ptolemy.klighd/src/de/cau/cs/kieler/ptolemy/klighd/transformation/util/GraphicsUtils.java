@@ -37,31 +37,30 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.google.common.collect.Lists;
+
+import de.cau.cs.kieler.klighd.krendering.KAreaPlacementData;
+import de.cau.cs.kieler.klighd.krendering.KBackground;
+import de.cau.cs.kieler.klighd.krendering.KColor;
+import de.cau.cs.kieler.klighd.krendering.KContainerRendering;
+import de.cau.cs.kieler.klighd.krendering.KEllipse;
+import de.cau.cs.kieler.klighd.krendering.KFontSize;
+import de.cau.cs.kieler.klighd.krendering.KForeground;
+import de.cau.cs.kieler.klighd.krendering.KLineWidth;
+import de.cau.cs.kieler.klighd.krendering.KPointPlacementData;
+import de.cau.cs.kieler.klighd.krendering.KPolygon;
+import de.cau.cs.kieler.klighd.krendering.KPolyline;
+import de.cau.cs.kieler.klighd.krendering.KPosition;
+import de.cau.cs.kieler.klighd.krendering.KRectangle;
+import de.cau.cs.kieler.klighd.krendering.KRendering;
+import de.cau.cs.kieler.klighd.krendering.KRenderingFactory;
+import de.cau.cs.kieler.klighd.krendering.KText;
+import de.cau.cs.kieler.klighd.krendering.KXPosition;
+import de.cau.cs.kieler.klighd.krendering.KYPosition;
 import ptolemy.data.expr.XMLParser;
 import ptolemy.kernel.util.Attribute;
 import ptolemy.vergil.icon.EditorIcon;
 import ptolemy.vergil.icon.ImageIcon;
-
-import com.google.common.collect.Lists;
-
-import de.cau.cs.kieler.core.krendering.KAreaPlacementData;
-import de.cau.cs.kieler.core.krendering.KBackground;
-import de.cau.cs.kieler.core.krendering.KColor;
-import de.cau.cs.kieler.core.krendering.KContainerRendering;
-import de.cau.cs.kieler.core.krendering.KEllipse;
-import de.cau.cs.kieler.core.krendering.KFontSize;
-import de.cau.cs.kieler.core.krendering.KForeground;
-import de.cau.cs.kieler.core.krendering.KLineWidth;
-import de.cau.cs.kieler.core.krendering.KPointPlacementData;
-import de.cau.cs.kieler.core.krendering.KPolygon;
-import de.cau.cs.kieler.core.krendering.KPolyline;
-import de.cau.cs.kieler.core.krendering.KPosition;
-import de.cau.cs.kieler.core.krendering.KRectangle;
-import de.cau.cs.kieler.core.krendering.KRendering;
-import de.cau.cs.kieler.core.krendering.KRenderingFactory;
-import de.cau.cs.kieler.core.krendering.KText;
-import de.cau.cs.kieler.core.krendering.KXPosition;
-import de.cau.cs.kieler.core.krendering.KYPosition;
 
 /**
  * Contains utility methods for handling SVG output from Ptolemy and graphics-related stuff.
