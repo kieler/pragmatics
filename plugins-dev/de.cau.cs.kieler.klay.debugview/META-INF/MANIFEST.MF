@@ -7,13 +7,13 @@ Bundle-Activator: de.cau.cs.kieler.klay.debugview.KlayDebugViewPlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.ui,
- de.cau.cs.kieler.core.ui,
- de.cau.cs.kieler.kiml.graphviz.dot,
- de.cau.cs.kieler.kiml.graphviz.layouter,
- de.cau.cs.kieler.klay.layered,
  de.cau.cs.kieler.klighd.ui,
  de.cau.cs.kieler.kiml.formats,
- de.cau.cs.kieler.kiml.formats.json
+ de.cau.cs.kieler.kiml.formats.json,
+ org.eclipse.elk.alg.graphviz.dot,
+ org.eclipse.elk.alg.graphviz.layouter,
+ org.eclipse.elk.alg.layered,
+ org.eclipse.elk.core
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: %plugin.provider

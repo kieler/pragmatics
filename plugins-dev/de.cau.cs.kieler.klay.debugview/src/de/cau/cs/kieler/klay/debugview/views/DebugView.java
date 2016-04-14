@@ -21,6 +21,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.alg.graphviz.layouter.GraphvizTool;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -55,10 +58,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
-import de.cau.cs.kieler.kiml.graphviz.layouter.GraphvizTool;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
 import de.cau.cs.kieler.klay.debugview.KlayDebugViewPlugin;
 import de.cau.cs.kieler.klay.debugview.Messages;
 import de.cau.cs.kieler.klay.debugview.provider.FileTableContentProvider;
@@ -549,7 +549,7 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
         
         klighdComposite = new Composite(diagramComposite, SWT.NONE);
         klighdComposite.setLayout(new FillLayout());
-        viewContext = new ViewContext(this, KimlUtil.createInitializedNode());
+        viewContext = new ViewContext(this, ElkUtil.createInitializedNode());
         viewContext.configure();
         ContextViewer viewer = new ContextViewer(klighdComposite);
         viewer.setModel(viewContext);
