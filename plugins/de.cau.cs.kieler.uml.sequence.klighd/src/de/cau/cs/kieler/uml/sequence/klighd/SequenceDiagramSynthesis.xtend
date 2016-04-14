@@ -16,29 +16,23 @@ package de.cau.cs.kieler.uml.sequence.klighd
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Lists
-import de.cau.cs.kieler.core.kgraph.KEdge
-import de.cau.cs.kieler.core.kgraph.KNode
-import de.cau.cs.kieler.core.krendering.Colors
-import de.cau.cs.kieler.core.krendering.KContainerRendering
-import de.cau.cs.kieler.core.krendering.KPolyline
-import de.cau.cs.kieler.core.krendering.KPosition
-import de.cau.cs.kieler.core.krendering.KRendering
-import de.cau.cs.kieler.core.krendering.KRenderingFactory
-import de.cau.cs.kieler.core.krendering.LineStyle
-import de.cau.cs.kieler.core.krendering.extensions.KColorExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KContainerRenderingExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KEdgeExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KLabelExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KNodeExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KPolylineExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KPortExtensions
-import de.cau.cs.kieler.core.krendering.extensions.KRenderingExtensions
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout
-import de.cau.cs.kieler.kiml.options.LayoutOptions
-import de.cau.cs.kieler.kiml.util.FixedLayoutProvider
-import de.cau.cs.kieler.kiml.util.KimlUtil
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
+import de.cau.cs.kieler.klighd.krendering.Colors
+import de.cau.cs.kieler.klighd.krendering.KContainerRendering
+import de.cau.cs.kieler.klighd.krendering.KPolyline
+import de.cau.cs.kieler.klighd.krendering.KPosition
+import de.cau.cs.kieler.klighd.krendering.KRendering
+import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
+import de.cau.cs.kieler.klighd.krendering.LineStyle
+import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KLabelExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KPortExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramLayoutProvider
 import de.cau.cs.kieler.papyrus.sequence.p4sorting.LifelineSortingStrategy
@@ -63,6 +57,12 @@ import java.util.HashMap
 import java.util.List
 import java.util.Stack
 import javax.inject.Inject
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.util.ElkUtil
+import org.eclipse.elk.core.util.FixedLayoutProvider
+import org.eclipse.elk.graph.KEdge
+import org.eclipse.elk.graph.KNode
 
 /**
  * This class is used for the transformation of a Sequence Diagram Model into a KGraph.
@@ -139,12 +139,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     /** @{inheritDoc} */
     override KNode transform(SequenceDiagram model) {
         val root = model.createNode()
-        root.addLayoutParam(LayoutOptions.ALGORITHM, FixedLayoutProvider.ID)
+        root.addLayoutParam(CoreOptions.ALGORITHM, FixedLayoutProvider.ID)
 
         // Attach different Properties.
         val surrInteraction = root.createNode().associateWith(model)
         root.children.add(surrInteraction)
-        surrInteraction.addSurroundingInteractionLayoutOptions()
+        surrInteraction.addSurroundingInteractionCoreOptions()
 
         // Diagramproperties for Lifelinesorting.
         switch LIFELINESORTING.objectValue {
@@ -214,10 +214,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      * 
      * @param node The KNode where the layout options shall be applied to.
      */
-    private def void addSurroundingInteractionLayoutOptions(KNode node) {
-        node.addLayoutParam(LayoutOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
+    private def void addSurroundingInteractionCoreOptions(KNode node) {
+        node.addLayoutParam(CoreOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
         .addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
-        .addLayoutParam(LayoutOptions.BORDER_SPACING, 10f)
+        .addLayoutParam(CoreOptions.SPACING_BORDER, 10f)
         .addLayoutParam(SequenceDiagramProperties.MESSAGE_SPACING, 65f)
         .addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
         .addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 40)
@@ -303,7 +303,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.setMessageRendering(msg.messageType)
 
         // Create a label.
-        val label = KimlUtil.createInitializedLabel(transEdge)
+        val label = ElkUtil.createInitializedLabel(transEdge)
         val labelText = msg.message
         label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
 
@@ -386,13 +386,13 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.setMessageRendering(msg.messageTypeLostAndFound)
 
         // Create a label.
-        val label = KimlUtil.createInitializedLabel(transEdge)
+        val label = ElkUtil.createInitializedLabel(transEdge)
         val labelText = msg.message
         label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
         transEdge.addPolyline(2).addHeadArrowDecorator()
 
         // Create a dummy node as source or target destination.
-        val dummyNode = KimlUtil.createInitializedNode()
+        val dummyNode = ElkUtil.createInitializedNode()
         surroundingInteraction.children.add(dummyNode)
         dummyNode.addEllipse.setBackground(Colors.BLACK)
 
@@ -468,7 +468,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.setMessageRendering(msg.messageType)
 
         // Create a label.
-        val label = KimlUtil.createInitializedLabel(transEdge)
+        val label = ElkUtil.createInitializedLabel(transEdge)
         val labelText = msg.message
         label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
 
@@ -609,7 +609,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             // sectionCount += 1
             // val sectRect = fragNodeRect.addRectangle // .foregroundInvisible = true
             if (sect.label != null) {
-                val label = KimlUtil.createInitializedLabel(fragNode)
+                val label = ElkUtil.createInitializedLabel(fragNode)
 
                 val labelText = "[" + sect.label + "]"
                 label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
