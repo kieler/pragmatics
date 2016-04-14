@@ -15,7 +15,7 @@ package de.cau.cs.kieler.klay.test.utils;
 
 import java.io.File;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
+import org.eclipse.elk.graph.KNode;
 
 /**
  * This Object represents a Graph file and the graph contained therein.

@@ -28,6 +28,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.service.ElkServicePlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
@@ -50,8 +51,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-
-import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
 
 /**
  * This class defines a JUnit4TestRunner dedicated to run tests on model data bases. It provides
@@ -339,7 +338,8 @@ public class ModelCollectionTestRunner extends Suite {
         super(clazz, Collections.emptyList());
 
         // make sure kiml.service is loaded
-        KimlServicePlugin.getDefault();
+        //KimlServicePlugin.getDefault();
+        ElkServicePlugin.getInstance();
 
         // try to obtain the test models by means of a method annotated with 'Models'
         List<?> models = Lists.newLinkedList(getModelsByModelsMethod());

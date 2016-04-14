@@ -13,13 +13,13 @@
  */
 package de.cau.cs.kieler.core.test.math;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import org.eclipse.elk.core.math.BezierSpline;
+import org.eclipse.elk.core.math.CubicSplineInterpolator;
+import org.eclipse.elk.core.math.KVector;
 import org.junit.Test;
-
-import de.cau.cs.kieler.core.math.BezierSpline;
-import de.cau.cs.kieler.core.math.CubicSplineInterpolator;
-import de.cau.cs.kieler.core.math.KVector;
 
 /**
  * Junit test-class for CubicSplineInterpolator from de.cau.cs.kieler.core.math: Mathematics utility

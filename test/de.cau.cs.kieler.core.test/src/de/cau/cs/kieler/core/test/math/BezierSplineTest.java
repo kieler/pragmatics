@@ -15,10 +15,9 @@ package de.cau.cs.kieler.core.test.math;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.elk.core.math.BezierSpline;
+import org.eclipse.elk.core.math.KVector;
 import org.junit.Test;
-
-import de.cau.cs.kieler.core.math.BezierSpline;
-import de.cau.cs.kieler.core.math.KVector;
 
 /**
  * Junit test-class for BezierSpline from de.cau.cs.kieler.core.math: Mathematics utility class for

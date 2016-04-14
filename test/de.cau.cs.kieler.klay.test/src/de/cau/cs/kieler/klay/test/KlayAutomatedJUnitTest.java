@@ -17,14 +17,13 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.service.ElkServicePlugin;
 import org.junit.AfterClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.klay.test.config.DummyLayoutConfigurator;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.runner.KlayTestRunner;
@@ -59,9 +58,12 @@ public abstract class KlayAutomatedJUnitTest {
      */
     public void graphAutomatedTestInitialization() {
         // make sure the ui plugin is loaded, as it holds required options.
-        KimlUiPlugin.getDefault();
+        // KimlUiPlugin.getDefault();
+        // FIXME elkMigrate still required? 
+        
         // as well as the kiml.service plugin
-        KimlServicePlugin.getDefault();
+        // KimlServicePlugin.getDefault();
+        ElkServicePlugin.getInstance();
         
         graphsList = GraphTestUtil.loadGraphs(getBundleTestPath());
         configurators = getConfigurators();

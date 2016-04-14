@@ -13,12 +13,12 @@
  */
 package de.cau.cs.kieler.core.test.math;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
 import org.junit.Test;
-
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
 
 /**
  * Junit test-class for KVectorChain from de.cau.cs.kieler.core.math: Mathematics utility class for

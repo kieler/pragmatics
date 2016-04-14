@@ -21,7 +21,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.IGraphLayoutEngine;
+import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.GraphDataUtil;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
@@ -29,16 +39,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 
-import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.text.KGraphStandaloneSetup;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kgraph.text.KGraphStandaloneSetup;
 
 /**
  * Class to load graphs from a given folder and its subfolders (optional).
@@ -154,12 +155,13 @@ public final class GraphTestUtil {
                 }
                 KNode graph = (KNode) resource.getContents().get(0);
                 // parse persisted key-value pairs using KIML's layout data service
-                KimlUtil.loadDataElements(graph, ADDITIONAL_PROPERTIES);
+                
+                GraphDataUtil.loadDataElements(graph, ADDITIONAL_PROPERTIES);
                 
                 // possibly apply default values
                 KLayoutData ld = graph.getData(KLayoutData.class);
                 if (ld != null && ld.getProperty(DEFAULTS)) {
-                    KimlUtil.configureDefaultsRecursively(graph);
+                    ElkUtil.configureDefaultsRecursively(graph);
                 }
                 // apply layout when applyLayout = true
                 if (doLayout) {

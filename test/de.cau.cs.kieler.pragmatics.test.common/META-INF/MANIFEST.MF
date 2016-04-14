@@ -6,11 +6,11 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Kiel University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava,
- de.cau.cs.kieler.kiml.service,
  org.eclipse.core.runtime,
  org.eclipse.emf.common,
  org.eclipse.emf.ecore,
- org.junit;bundle-version="[4.8.0,4.13.0)"
+ org.junit;bundle-version="[4.8.0,4.13.0)",
+ org.eclipse.elk.core.service
 Export-Package: de.cau.cs.kieler.pragmatics.test.common.runners,
  org.hamcrest,
  org.hamcrest.beans,
