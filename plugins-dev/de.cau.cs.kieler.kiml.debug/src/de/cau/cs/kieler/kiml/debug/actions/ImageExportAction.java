@@ -17,6 +17,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -29,12 +31,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.debug.KimlViewerPlugin;
 import de.cau.cs.kieler.kiml.debug.Messages;
 import de.cau.cs.kieler.kiml.debug.views.LayoutGraphCanvas;
 import de.cau.cs.kieler.kiml.debug.views.LayoutGraphView;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
 
 /**
  * Action that exports the currently displayed layout graph into an image file.

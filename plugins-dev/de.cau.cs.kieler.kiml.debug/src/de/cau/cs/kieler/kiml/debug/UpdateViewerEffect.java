@@ -13,14 +13,14 @@
  */
 package de.cau.cs.kieler.kiml.debug;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.debug.views.ExecutionView;
 import de.cau.cs.kieler.kiml.debug.views.LayoutGraphView;
 
@@ -35,7 +35,7 @@ public class UpdateViewerEffect {
     /** the layout graph that should be displayed. */
     private KNode layoutGraph;
     /** the progress monitor that was used for layout. */
-    private IKielerProgressMonitor progressMonitor;
+    private IElkProgressMonitor progressMonitor;
 
     /**
      * Creates a new update viewer effect, updating only the layout graph.
@@ -52,7 +52,7 @@ public class UpdateViewerEffect {
      * 
      * @param progressMonitor the progress monitor
      */
-    public UpdateViewerEffect(final IKielerProgressMonitor progressMonitor) {
+    public UpdateViewerEffect(final IElkProgressMonitor progressMonitor) {
         super();
         this.progressMonitor = progressMonitor;
     }
@@ -63,7 +63,7 @@ public class UpdateViewerEffect {
      * @param layoutGraph the layout graph
      * @param progressMonitor the progress monitor
      */
-    public UpdateViewerEffect(final KNode layoutGraph, final IKielerProgressMonitor progressMonitor) {
+    public UpdateViewerEffect(final KNode layoutGraph, final IElkProgressMonitor progressMonitor) {
         super();
         this.layoutGraph = layoutGraph;
         this.progressMonitor = progressMonitor;

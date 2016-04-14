@@ -13,12 +13,12 @@
  */
 package de.cau.cs.kieler.kiml.debug;
 
+import org.eclipse.elk.core.service.ILayoutListener;
+import org.eclipse.elk.core.service.LayoutConnectorsService;
+import org.eclipse.elk.core.service.LayoutMapping;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.service.DiagramLayoutEngine;
 
 /**
  * The activator class controls the plug-in life cycle.
@@ -47,11 +47,14 @@ public class KimlViewerPlugin extends AbstractUIPlugin {
         super.start(context);
         plugin = this;
         // register a listener for layout
-        DiagramLayoutEngine.INSTANCE.addLayoutTerminatedListener(
-                new DiagramLayoutEngine.ILayoutTerminatedListener() {
-
-            public void layoutDone(final KNode layoutGraph, final IKielerProgressMonitor monitor) {
-                new UpdateViewerEffect(layoutGraph, monitor).execute();
+        LayoutConnectorsService.getInstance().addLayoutListener(new ILayoutListener() {
+            @Override
+            public void layoutAboutToStart(final LayoutMapping mapping) {
+            }
+            @Override
+            public void layoutDone(final LayoutMapping mapping) {
+                new UpdateViewerEffect(mapping.getLayoutGraph(), new BasicProgressMonitor())
+                        .execute();
             }
         });
     }

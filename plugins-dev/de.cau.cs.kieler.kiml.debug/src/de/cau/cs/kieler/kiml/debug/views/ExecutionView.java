@@ -16,11 +16,11 @@ package de.cau.cs.kieler.kiml.debug.views;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.debug.actions.ClearExecutionsAction;
 
 /**
@@ -36,7 +36,7 @@ public class ExecutionView extends ViewPart {
     /** the tree viewer used to display content. */
     private TreeViewer viewer;
     /** the list of executions. */
-    private List<IKielerProgressMonitor> executions = new LinkedList<IKielerProgressMonitor>();
+    private List<IElkProgressMonitor> executions = new LinkedList<IElkProgressMonitor>();
 
     /**
      * Creates an execution view.
@@ -73,7 +73,7 @@ public class ExecutionView extends ViewPart {
      * 
      * @param progressMonitor progress monitor with execution information
      */
-    public void addExecution(final IKielerProgressMonitor progressMonitor) {
+    public void addExecution(final IElkProgressMonitor progressMonitor) {
         executions.add(progressMonitor);
         viewer.refresh();
     }

@@ -13,10 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.debug.views;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.kiml.debug.KimlViewerPlugin;
 
 /**
@@ -45,7 +45,7 @@ public class ExecutionLabelProvider extends LabelProvider {
      */
     @Override
     public Image getImage(final Object element) {
-        if (element instanceof IKielerProgressMonitor) {
+        if (element instanceof IElkProgressMonitor) {
             return elementImage;
         } else {
             return null;
@@ -57,15 +57,15 @@ public class ExecutionLabelProvider extends LabelProvider {
      */
     @Override
     public String getText(final Object element) {
-        if (element instanceof IKielerProgressMonitor) {
-            IKielerProgressMonitor monitor = (IKielerProgressMonitor) element;
+        if (element instanceof IElkProgressMonitor) {
+            IElkProgressMonitor monitor = (IElkProgressMonitor) element;
             String baseText = monitor.getTaskName() + ": ";
             double time = monitor.getExecutionTime();
             if (monitor.getSubMonitors().isEmpty()) {
                 return baseText + toString(time);
             } else {
                 double childrenTime = 0;
-                for (IKielerProgressMonitor child : monitor.getSubMonitors()) {
+                for (IElkProgressMonitor child : monitor.getSubMonitors()) {
                     childrenTime += child.getExecutionTime();
                 }
                 double localTime = Math.max(time - childrenTime, 0);

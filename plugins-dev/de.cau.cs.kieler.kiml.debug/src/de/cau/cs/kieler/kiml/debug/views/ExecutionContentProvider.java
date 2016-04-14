@@ -15,10 +15,9 @@ package de.cau.cs.kieler.kiml.debug.views;
 
 import java.util.List;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 
 /**
  * Content provider for KIELER progress monitors.
@@ -31,18 +30,18 @@ public class ExecutionContentProvider implements ITreeContentProvider {
      * {@inheritDoc}
      */
     public Object[] getChildren(final Object parentElement) {
-        if (parentElement instanceof IKielerProgressMonitor) {
-            return ((IKielerProgressMonitor) parentElement).getSubMonitors().toArray();
+        if (parentElement instanceof IElkProgressMonitor) {
+            return ((IElkProgressMonitor) parentElement).getSubMonitors().toArray();
         }
-        return new IKielerProgressMonitor[0];
+        return new IElkProgressMonitor[0];
     }
 
     /**
      * {@inheritDoc}
      */
     public Object getParent(final Object element) {
-        if (element instanceof IKielerProgressMonitor) {
-            return ((IKielerProgressMonitor) element).getParentMonitor();
+        if (element instanceof IElkProgressMonitor) {
+            return ((IElkProgressMonitor) element).getParentMonitor();
         }
         return null;
     }
@@ -51,8 +50,8 @@ public class ExecutionContentProvider implements ITreeContentProvider {
      * {@inheritDoc}
      */
     public boolean hasChildren(final Object element) {
-        return element instanceof IKielerProgressMonitor
-                && !((IKielerProgressMonitor) element).getSubMonitors().isEmpty();
+        return element instanceof IElkProgressMonitor
+                && !((IElkProgressMonitor) element).getSubMonitors().isEmpty();
     }
 
     /**

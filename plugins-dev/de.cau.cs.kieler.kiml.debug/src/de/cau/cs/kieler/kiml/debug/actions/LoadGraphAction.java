@@ -16,6 +16,17 @@ package de.cau.cs.kieler.kiml.debug.actions;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.eclipse.elk.core.IGraphLayoutEngine;
+import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutOptionData;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KGraphData;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.PersistentEntry;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.common.util.WrappedException;
 import org.eclipse.emf.ecore.EObject;
@@ -28,20 +39,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KGraphData;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.PersistentEntry;
-import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.LayoutMetaDataService;
-import de.cau.cs.kieler.kiml.LayoutOptionData;
-import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.debug.KimlViewerPlugin;
 import de.cau.cs.kieler.kiml.debug.Messages;
 import de.cau.cs.kieler.kiml.debug.UpdateViewerEffect;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 
 /**
  * An action for loading a KGraph and performing layout on it.
@@ -130,8 +130,8 @@ public class LoadGraphAction extends Action {
         
         // perform layout using a graph layout engine
         KShapeLayout graphLayout = graph.getData(KShapeLayout.class);
-        IKielerProgressMonitor monitor = new BasicProgressMonitor();
-        if (graphLayout != null && !graphLayout.getProperty(LayoutOptions.NO_LAYOUT)) {
+        IElkProgressMonitor monitor = new BasicProgressMonitor();
+        if (graphLayout != null && !graphLayout.getProperty(CoreOptions.NO_LAYOUT)) {
             IGraphLayoutEngine layoutEngine = new RecursiveGraphLayoutEngine();
             layoutEngine.layout(graph, monitor);
         }
