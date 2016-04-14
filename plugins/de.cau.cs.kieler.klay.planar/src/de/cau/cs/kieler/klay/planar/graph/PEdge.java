@@ -16,8 +16,8 @@ package de.cau.cs.kieler.klay.planar.graph;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
 
 /**
  * An edge in a basic graph data structure for various graph theory algorithms.

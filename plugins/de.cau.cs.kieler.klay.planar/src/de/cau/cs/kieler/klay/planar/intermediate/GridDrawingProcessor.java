@@ -17,11 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -47,7 +48,7 @@ public class GridDrawingProcessor implements ILayoutProcessor {
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph pgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Draw grid", 1);
         
         this.graph = pgraph;

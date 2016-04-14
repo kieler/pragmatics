@@ -17,9 +17,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.InconsistentGraphModelException;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -48,7 +49,7 @@ public class RectShapeDummyRemover implements ILayoutProcessor {
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pGraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph pGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Remove rectangular shape dummy nodes", 1);
 
         this.graph = pGraph;

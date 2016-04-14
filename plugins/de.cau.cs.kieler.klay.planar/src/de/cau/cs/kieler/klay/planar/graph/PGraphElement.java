@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.graph;
 
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 /**
  * Any generic graph element in a basic graph data structure for various graph theory algorithms.

@@ -15,7 +15,9 @@ package de.cau.cs.kieler.klay.planar.intermediate;
 
 import java.util.Iterator;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
+
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -46,7 +48,7 @@ public class BendDummyRemover implements ILayoutProcessor {
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pGraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph pGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Remove dummynodes", 1);
 
         this.graph = pGraph;

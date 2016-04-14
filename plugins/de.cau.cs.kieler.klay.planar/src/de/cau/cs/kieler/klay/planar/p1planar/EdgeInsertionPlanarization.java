@@ -18,7 +18,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -66,7 +67,7 @@ public class EdgeInsertionPlanarization implements ILayoutPhase {
      * @param monitor
      *            a progress monitor to track algorithm progress
      */
-    public void process(final PGraph graph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph graph, final IElkProgressMonitor monitor) {
         monitor.begin("Edge insertion planarization", 1);
         
         List<PEdge> edges = graph.getProperty(Properties.INSERTABLE_EDGES);

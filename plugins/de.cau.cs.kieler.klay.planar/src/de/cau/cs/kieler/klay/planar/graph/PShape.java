@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.planar.graph;
 
-import de.cau.cs.kieler.core.math.KVector;
+import org.eclipse.elk.core.math.KVector;
 
 /**
  * Abstract superclass for {@link PGraphElement}s that can have a position and a size.

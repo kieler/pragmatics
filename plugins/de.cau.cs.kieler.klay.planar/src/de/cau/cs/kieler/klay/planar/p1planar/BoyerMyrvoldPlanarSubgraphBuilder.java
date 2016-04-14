@@ -21,8 +21,9 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Pair;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
+
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -206,7 +207,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder implements ILayoutPhase {
      * addition will cause non-planarity and therefore could not be inserted.This guarantees to find
      * a planar embedding for a subgraph in time linear to the number of nodes in the graph.
      */
-    public void process(final PGraph thegraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph thegraph, final IElkProgressMonitor monitor) {
         monitor.begin("Planar Subgraph Building", 1);
         
         this.graph = thegraph;
@@ -230,7 +231,7 @@ public class BoyerMyrvoldPlanarSubgraphBuilder implements ILayoutPhase {
      *            a progress monitor to track algorithm progress
      * @return true if the graph is planar, false otherwise
      */
-    public boolean testPlanarity(final PGraph g, final IKielerProgressMonitor monitor) {
+    public boolean testPlanarity(final PGraph g, final IElkProgressMonitor monitor) {
         monitor.begin("Planarity Testing", 1);
         this.graph = g;
         

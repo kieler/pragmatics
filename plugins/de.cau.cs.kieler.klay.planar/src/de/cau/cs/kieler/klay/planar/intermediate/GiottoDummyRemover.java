@@ -16,11 +16,12 @@ package de.cau.cs.kieler.klay.planar.intermediate;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -46,7 +47,7 @@ public class GiottoDummyRemover implements ILayoutProcessor {
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph pgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Giotto Dummy Removing", 1);
         
         this.graph = pgraph;

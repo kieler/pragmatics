@@ -16,16 +16,18 @@ package de.cau.cs.kieler.klay.planar.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
+
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
+import de.cau.cs.kieler.klay.planar.p3compact.TidyRectangleCompactor;
 import de.cau.cs.kieler.klay.planar.properties.Properties;
 
 /**
@@ -53,7 +55,7 @@ public class BendDummyProcessor implements ILayoutProcessor {
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph pgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Add bend dummies", 1);
         this.graph = pgraph;
         this.orthogonal = pgraph.getProperty(Properties.ORTHO_REPRESENTATION);

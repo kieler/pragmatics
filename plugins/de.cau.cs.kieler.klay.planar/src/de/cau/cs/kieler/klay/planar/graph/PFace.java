@@ -17,9 +17,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.util.Pair;
+
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation;
 import de.cau.cs.kieler.klay.planar.p2ortho.OrthogonalRepresentation.OrthogonalAngle;
 import de.cau.cs.kieler.klay.planar.properties.Properties;

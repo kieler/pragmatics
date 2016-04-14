@@ -20,11 +20,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KNode;
+
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
@@ -126,7 +127,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode kgraph, final IKielerProgressMonitor progressMonitor) {
+    public void layout(final KNode kgraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Orthogonal Layout", 1);
 
         // KGraph -> PGraph conversion
@@ -223,14 +224,14 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
      * @param themonitor
      *            a progress monitor, or {@code null}
      */
-    public void layout(final PGraph graph, final IKielerProgressMonitor themonitor) {
-        IKielerProgressMonitor monitor = themonitor;
+    public void layout(final PGraph graph, final IElkProgressMonitor themonitor) {
+        IElkProgressMonitor monitor = themonitor;
         if (monitor == null) {
             monitor = new BasicProgressMonitor();
         }
         monitor.begin("Component Layout", algorithm.size());
 
-        if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
+        if (graph.getProperty(CoreOptions.DEBUG_MODE)) {
             PUtil.clearTmpDir();
             // Debug Mode!
             // Prints the algorithm configuration and outputs the whole graph to a file

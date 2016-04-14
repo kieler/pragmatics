@@ -18,14 +18,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.properties.Property;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.properties.Property;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
@@ -139,7 +140,7 @@ public class TidyRectangleCompactor implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph pgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Tidy rectangle compaction", 3);  // SUPPRESS CHECKSTYLE MagicNumber
 
         this.graph = pgraph;

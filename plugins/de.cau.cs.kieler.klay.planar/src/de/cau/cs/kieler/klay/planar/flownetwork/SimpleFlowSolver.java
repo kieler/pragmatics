@@ -16,7 +16,8 @@ package de.cau.cs.kieler.klay.planar.flownetwork;
 import java.util.Iterator;
 import java.util.List;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
@@ -42,7 +43,7 @@ public class SimpleFlowSolver implements IFlowNetworkSolver {
     /**
      * {@inheritDoc}
      */
-    public void calcFlow(final PGraph network, final IKielerProgressMonitor monitor) {
+    public void calcFlow(final PGraph network, final IElkProgressMonitor monitor) {
         monitor.begin("Simple flow solver", 1);
 
         PNode source = null;

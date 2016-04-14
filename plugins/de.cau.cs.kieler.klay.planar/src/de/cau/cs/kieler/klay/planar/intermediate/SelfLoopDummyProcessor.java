@@ -15,9 +15,10 @@ package de.cau.cs.kieler.klay.planar.intermediate;
 
 import java.util.Set;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -37,7 +38,7 @@ public class SelfLoopDummyProcessor implements ILayoutProcessor {
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph pgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Add self loop dummies", 1);
         
         // filter selfloop edges.

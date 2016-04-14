@@ -22,8 +22,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Pair;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
+
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -206,7 +207,7 @@ public class LRPlanarSubgraphBuilder implements ILayoutPhase {
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph pgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Planar embedding", 1);
         
         if (pgraph == null) {
@@ -372,7 +373,7 @@ public class LRPlanarSubgraphBuilder implements ILayoutPhase {
      *            a progress monitor to track algorithm progress
      * @return {@code true}, if the graph is planar, {@code false} otherwise
      */
-    public boolean testPlanarity(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+    public boolean testPlanarity(final PGraph pgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Test planarity", 1);
         
         if (pgraph == null) {
@@ -429,7 +430,7 @@ public class LRPlanarSubgraphBuilder implements ILayoutPhase {
      * @return a list of edges of the input graph, that are not part of the determined subgraph and
      *         have been removed therefore (empty, if fully planar).
      */
-    public List<PEdge> planarSubgraph(final PGraph iGraph, final IKielerProgressMonitor monitor) {
+    public List<PEdge> planarSubgraph(final PGraph iGraph, final IElkProgressMonitor monitor) {
         monitor.begin("Planar embedding", 1);
         
         if (iGraph == null) {

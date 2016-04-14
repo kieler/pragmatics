@@ -13,8 +13,9 @@
  */
 package de.cau.cs.kieler.klay.planar.flownetwork;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.properties.Property;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.properties.Property;
+
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 
@@ -81,7 +82,7 @@ public interface IFlowNetworkSolver {
      * @param progressMonitor
      *            a progress monitor to track algorithm progress
      */
-    void calcFlow(PGraph network, IKielerProgressMonitor progressMonitor);
+    void calcFlow(PGraph network, IElkProgressMonitor progressMonitor);
 
     /**
      * Interface for algorithms to solve the maximum flow problem in a flow network. The maximum

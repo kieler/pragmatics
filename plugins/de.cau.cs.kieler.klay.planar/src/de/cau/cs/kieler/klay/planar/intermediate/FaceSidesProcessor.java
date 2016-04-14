@@ -17,10 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
+
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
@@ -47,7 +48,7 @@ public class FaceSidesProcessor implements ILayoutProcessor {
      * face shapes.
      */
     @SuppressWarnings({ "unchecked" })
-    public void process(final PGraph graph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph graph, final IElkProgressMonitor monitor) {
         monitor.begin("Face side processing", 1);
         
         Set<VisitEntry> visitedFaces = Sets.newHashSet();

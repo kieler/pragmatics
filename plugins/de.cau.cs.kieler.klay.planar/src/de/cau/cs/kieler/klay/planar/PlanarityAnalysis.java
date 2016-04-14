@@ -13,8 +13,9 @@
  */
 package de.cau.cs.kieler.klay.planar;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KNode;
+
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -38,7 +39,7 @@ public class PlanarityAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
         public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
-                final IKielerProgressMonitor progressMonitor) {
+                final IElkProgressMonitor progressMonitor) {
             
         progressMonitor.begin("Planarity testing", 1);
 

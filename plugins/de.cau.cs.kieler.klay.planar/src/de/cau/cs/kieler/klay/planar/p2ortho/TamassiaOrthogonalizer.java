@@ -20,12 +20,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.IntermediateProcessingConfiguration;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver;
@@ -115,7 +116,7 @@ public class TamassiaOrthogonalizer implements ILayoutPhase {
      * @param pgraph
      *            the graph to draw as orthogonal graph
      */
-    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph pgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Orthogonalization", 2);
 
         // Initialization
@@ -133,7 +134,7 @@ public class TamassiaOrthogonalizer implements ILayoutPhase {
         computeBends(network);
         computeAngles(network);
         pgraph.setProperty(Properties.ORTHO_REPRESENTATION, this.orthogonal);
-        if (graph.getProperty(LayoutOptions.DEBUG_MODE)) {
+        if (graph.getProperty(CoreOptions.DEBUG_MODE)) {
             testOrthoRep();
         }
         

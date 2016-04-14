@@ -15,7 +15,8 @@ package de.cau.cs.kieler.klay.planar.intermediate;
 
 import java.util.Iterator;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -32,7 +33,7 @@ public class ExternalFaceProcessor implements ILayoutProcessor {
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pGraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph pGraph, final IElkProgressMonitor monitor) {
         monitor.begin("external face processor", 1);
         
         pGraph.setChangedFaces();

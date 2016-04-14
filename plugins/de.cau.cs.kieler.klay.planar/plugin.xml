@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.kiml.layoutProviders">
+         point="org.eclipse.elk.core.layoutProviders">
       <layoutAlgorithm
             category="de.cau.cs.kieler"
             class="de.cau.cs.kieler.klay.planar.PlanarLayoutProvider"

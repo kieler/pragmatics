@@ -15,10 +15,11 @@ package de.cau.cs.kieler.klay.planar.flownetwork;
 
 import java.util.List;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Pair;
+
 import com.google.common.base.Predicate;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.flownetwork.IFlowNetworkSolver.IMaximumFlowSolver;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
@@ -38,7 +39,7 @@ public class FordFulkersonFlowSolver implements IMaximumFlowSolver {
     /**
      * {@inheritDoc}
      */
-    public void calcFlow(final PGraph network, final IKielerProgressMonitor monitor) {
+    public void calcFlow(final PGraph network, final IElkProgressMonitor monitor) {
         monitor.begin("Ford-Fulkerson maximum flow", 1);
 
         // Add source and sink nodes

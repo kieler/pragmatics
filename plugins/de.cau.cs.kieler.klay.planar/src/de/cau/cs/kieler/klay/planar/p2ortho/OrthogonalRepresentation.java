@@ -16,9 +16,10 @@ package de.cau.cs.kieler.klay.planar.p2ortho;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.util.Pair;
+
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 

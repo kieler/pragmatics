@@ -6,10 +6,9 @@ Bundle-Version: 0.3.0.qualifier
 Bundle-Vendor: Kiel University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava;bundle-version="10.0.0",
- de.cau.cs.kieler.core,
- de.cau.cs.kieler.core.kgraph,
- de.cau.cs.kieler.kiml,
- de.cau.cs.kieler.kiml.grana
+ de.cau.cs.kieler.kiml.grana,
+ org.eclipse.elk.core,
+ org.eclipse.elk.graph
 Export-Package: de.cau.cs.kieler.klay.planar,
  de.cau.cs.kieler.klay.planar.flownetwork,
  de.cau.cs.kieler.klay.planar.graph,

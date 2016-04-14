@@ -20,14 +20,15 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+
 import de.cau.cs.kieler.klay.planar.PConstants;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
@@ -405,7 +406,7 @@ public class PGraphFactory {
             }
         }
 
-        if (pgraph.getProperty(LayoutOptions.DEBUG_MODE) == Boolean.TRUE) {
+        if (pgraph.getProperty(CoreOptions.DEBUG_MODE) == Boolean.TRUE) {
             for (PEdge edge : pgraph.getEdges()) {
                 KEdge originEdge = (KEdge) edge.getProperty(Properties.ORIGIN);
                 KEdgeLayout edgeLayout = originEdge.getData(KEdgeLayout.class);

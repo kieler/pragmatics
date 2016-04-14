@@ -18,10 +18,11 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
+
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
@@ -92,7 +93,7 @@ public class ComponentsProcessor {
      * @return a list of components that can be processed one by one
      */
     public List<PGraph> split(final PGraph graph) {
-        Boolean separate = graph.getProperty(LayoutOptions.SEPARATE_CC);
+        Boolean separate = graph.getProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS);
         if (separate == null || separate.booleanValue()) {
             initialize(graph);
 
@@ -175,7 +176,7 @@ public class ComponentsProcessor {
             double minx = Integer.MAX_VALUE, miny = Integer.MAX_VALUE;
             double maxx = Integer.MIN_VALUE, maxy = Integer.MIN_VALUE;
             for (PNode node : graph.getNodes()) {
-                Integer p = node.getProperty(LayoutOptions.PRIORITY);
+                Integer p = node.getProperty(CoreOptions.PRIORITY);
                 if (p != null) {
                     priority += p;
                 }

@@ -16,9 +16,10 @@ package de.cau.cs.kieler.klay.planar.intermediate;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
@@ -39,7 +40,7 @@ public class ExpansionCycleProcessor implements ILayoutProcessor {
     /**
      * {@inheritDoc}
      */
-    public void process(final PGraph pgraph, final IKielerProgressMonitor monitor) {
+    public void process(final PGraph pgraph, final IElkProgressMonitor monitor) {
         monitor.begin("Perform Giotto Process", 1);
 
         // filter nodes with degree higher than 4.

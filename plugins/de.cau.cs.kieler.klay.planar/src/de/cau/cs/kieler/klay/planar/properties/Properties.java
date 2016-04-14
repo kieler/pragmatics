@@ -16,18 +16,20 @@ package de.cau.cs.kieler.klay.planar.properties;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.Pair;
-import de.cau.cs.kieler.kiml.options.EdgeType;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeType;
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
+
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
 import de.cau.cs.kieler.klay.planar.graph.PFace;
 import de.cau.cs.kieler.klay.planar.graph.PGraphElement;
 import de.cau.cs.kieler.klay.planar.graph.PNode;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
 import de.cau.cs.kieler.klay.planar.intermediate.FullAngleDummyEntry;
+import de.cau.cs.kieler.klay.planar.intermediate.FullAngleDummyProcessor;
 import de.cau.cs.kieler.klay.planar.intermediate.GridRepresentation;
 import de.cau.cs.kieler.klay.planar.intermediate.RectShapeEdgeProperties;
 import de.cau.cs.kieler.klay.planar.intermediate.SelfLoopDummyContainer;
@@ -125,7 +127,7 @@ public final class Properties {
             "de.cau.cs.kieler.klay.planar.faceSides");
 
     /** priority of nodes or edges. */
-    public static final Property<Integer> PRIORITY = new Property<Integer>(LayoutOptions.PRIORITY,
+    public static final Property<Integer> PRIORITY = new Property<Integer>(CoreOptions.PRIORITY,
             1);
 
     // =========================== USER INTERFACE OPTIONS =================================
@@ -143,17 +145,17 @@ public final class Properties {
 
     /** the aspect ratio for packing connected components. */
     public static final Property<Float> ASPECT_RATIO = new Property<Float>(
-            LayoutOptions.ASPECT_RATIO, 1.6f, 0.0f);
+            CoreOptions.ASPECT_RATIO.getId(), 1.6f, 0.0f);
 
     /** spacing to the border of the drawing. */
     public static final Property<Float> BORDER_SPACING = new Property<Float>(
-            LayoutOptions.BORDER_SPACING, 20.0f, 0.0f);
+            CoreOptions.SPACING_BORDER.getId(), 20.0f, 0.0f);
 
     /** default value for object spacing. */
     public static final float DEF_SPACING = 40.0f;
 
     /** minimal spacing between objects. */
-    public static final Property<Float> SPACING = new Property<Float>(LayoutOptions.SPACING,
+    public static final Property<Float> SPACING = new Property<Float>(CoreOptions.SPACING_NODE,
             DEF_SPACING);
 
     /** A property that indicates the orthogonal representation of a graph. */

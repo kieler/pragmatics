@@ -13,7 +13,8 @@
  */
 package de.cau.cs.kieler.klay.planar;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 
 /**
@@ -33,6 +34,6 @@ public interface ILayoutProcessor {
      * @param progressMonitor
      *            a progress monitor to track algorithm progress
      */
-    void process(PGraph graph, IKielerProgressMonitor progressMonitor);
+    void process(PGraph graph, IElkProgressMonitor progressMonitor);
 
 }
