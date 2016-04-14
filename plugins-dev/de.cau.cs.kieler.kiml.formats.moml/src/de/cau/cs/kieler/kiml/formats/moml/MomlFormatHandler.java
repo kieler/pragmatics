@@ -13,6 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.formats.moml;
 
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMIResource;
@@ -20,7 +21,6 @@ import org.ptolemy.moml.DocumentRoot;
 import org.ptolemy.moml.MomlPackage;
 import org.ptolemy.moml.util.MomlResourceFactoryImpl;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.kiml.formats.AbstractEmfHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;

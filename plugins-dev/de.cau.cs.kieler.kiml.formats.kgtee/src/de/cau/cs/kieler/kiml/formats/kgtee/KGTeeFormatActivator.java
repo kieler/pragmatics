@@ -42,7 +42,7 @@ public class KGTeeFormatActivator extends AbstractUIPlugin {
     }
     
     private void initResourceRegistrations() {
-        Injector injector = Guice.createInjector(new de.cau.cs.kieler.core.kgraph.text.KGraphRuntimeModule());
+        Injector injector = Guice.createInjector(new de.cau.cs.kieler.kgraph.text.KGraphRuntimeModule());
         org.eclipse.xtext.resource.IResourceFactory resourceFactory = injector.getInstance(org.eclipse.xtext.resource.IResourceFactory.class);
         org.eclipse.xtext.resource.IResourceServiceProvider serviceProvider = injector.getInstance(org.eclipse.xtext.resource.IResourceServiceProvider.class);
         Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put("kgtee", resourceFactory);

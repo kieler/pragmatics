@@ -21,8 +21,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-import de.cau.cs.kieler.core.kgraph.text.KGraphRuntimeModule;
-import de.cau.cs.kieler.core.kgraph.text.ui.KGraphUiModule;
+import de.cau.cs.kieler.kgraph.text.KGraphRuntimeModule;
+import de.cau.cs.kieler.kgraph.text.ui.KGraphUiModule;
 
 /**
  * This class is based on the executable extension factory in

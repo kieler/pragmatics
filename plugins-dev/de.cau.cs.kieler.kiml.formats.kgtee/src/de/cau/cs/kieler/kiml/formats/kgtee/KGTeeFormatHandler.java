@@ -13,10 +13,10 @@
  */
 package de.cau.cs.kieler.kiml.formats.kgtee;
 
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.text.ui.KGraphTextHandler;
+import de.cau.cs.kieler.kgraph.text.ui.KGraphTextHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
