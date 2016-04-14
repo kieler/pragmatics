@@ -17,15 +17,15 @@
   <!-- all plugins need to be listed as module -->
   <modules>
     <module>../build/de.cau.cs.kieler.pragmatics.targetplatform</module>
-    <module>../test</module>
-    <module>de.cau.cs.kieler.core.kgraph</module>
-    <module>de.cau.cs.kieler.core.kgraph.text</module>
-    <module>de.cau.cs.kieler.core.kgraph.text.ui</module>
+    <!-- <module>../test</module>-->
+    <!--<module>de.cau.cs.kieler.core.kgraph</module>-->
+    <!--<module>de.cau.cs.kieler.core.kgraph.text</module>-->
+    <!--<module>de.cau.cs.kieler.core.kgraph.text.ui</module>-->
     <module>de.cau.cs.kieler.core.kivi</module>
-    <module>de.cau.cs.kieler.core.krendering</module>
-    <module>de.cau.cs.kieler.core.krendering.extensions</module>
-    <module>de.cau.cs.kieler.kiml.config.text</module>
-    <module>de.cau.cs.kieler.kiml.config.text.ui</module>
+    <!--<module>de.cau.cs.kieler.core.krendering</module>-->
+    <!--<module>de.cau.cs.kieler.core.krendering.extensions</module>-->
+    <!--<module>de.cau.cs.kieler.kiml.config.text</module>-->
+    <!--<module>de.cau.cs.kieler.kiml.config.text.ui</module>-->
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.formats</module>
     <module>de.cau.cs.kieler.kiml.formats.dot</module>
@@ -35,13 +35,12 @@
     <module>de.cau.cs.kieler.kiml.formats.ogml</module>
     <module>de.cau.cs.kieler.kiml.formats.svg</module>
     <module>de.cau.cs.kieler.kiml.grana</module>
-    <module>de.cau.cs.kieler.kiml.grana.headless</module>
-    <module>de.cau.cs.kieler.kiml.grana.text</module>
-    <module>de.cau.cs.kieler.kiml.grana.text.ui</module>
-    <module>de.cau.cs.kieler.kiml.libavoid</module>
-    <module>de.cau.cs.kieler.kiml.kivi</module>
+    <!--<module>de.cau.cs.kieler.kiml.grana.headless</module>-->
+    <!--<module>de.cau.cs.kieler.kiml.grana.text</module>-->
+    <!--<module>de.cau.cs.kieler.kiml.grana.text.ui</module>-->
+    <!--<module>de.cau.cs.kieler.kiml.libavoid</module>-->
     <module>de.cau.cs.kieler.kiml.ogdf</module>
-    <module>de.cau.cs.kieler.klay.planar</module>
+    <!--<module>de.cau.cs.kieler.klay.planar</module>-->
     <module>de.cau.cs.kieler.klighd</module>
     <module>de.cau.cs.kieler.klighd.examples</module>
     <module>de.cau.cs.kieler.klighd.kivi</module>
@@ -57,15 +56,13 @@
     <module>de.cau.cs.kieler.klighd.ui.emf</module>
     <module>de.cau.cs.kieler.klighd.ui.view</module>
     <module>de.cau.cs.kieler.klighd.ui.wizard</module>
-    <module>de.cau.cs.kieler.ksbase</module>
-    <module>de.cau.cs.kieler.ksbase.ui</module>
     <module>de.cau.cs.kieler.kwebs.server</module>
     <module>de.cau.cs.kieler.ptolemy.klighd</module>
     <module>de.cau.cs.kieler.web.statistics</module>
     <module>edu.umd.cs.piccolo</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
-    <module>../../pragmatics-libraries/plugins/org.adaptagrams.libavoid</module>
+    <!--<module>../../pragmatics-libraries/plugins/org.adaptagrams.libavoid</module> !-->
     <module>org.graphdrawing.graphml</module>
   </modules>
 
