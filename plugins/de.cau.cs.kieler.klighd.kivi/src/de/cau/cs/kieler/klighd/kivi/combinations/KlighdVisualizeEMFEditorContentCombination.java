@@ -16,21 +16,21 @@ package de.cau.cs.kieler.klighd.kivi.combinations;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.elk.graph.KGraphElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.edit.domain.IEditingDomainProvider;
 import org.eclipse.ui.part.FileEditorInput;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
 import de.cau.cs.kieler.core.kivi.AbstractCombination;
 import de.cau.cs.kieler.core.kivi.triggers.PartTrigger;
 import de.cau.cs.kieler.core.kivi.triggers.PartTrigger.EditorState;
 import de.cau.cs.kieler.core.kivi.triggers.SelectionTrigger.SelectionState;
-import de.cau.cs.kieler.core.krendering.KText;
+import de.cau.cs.kieler.klighd.KlighdTreeSelection;
 import de.cau.cs.kieler.klighd.kivi.effects.KlighdCloseDiagramEffect;
 import de.cau.cs.kieler.klighd.kivi.effects.KlighdUpdateDiagramEffect;
-import de.cau.cs.kieler.klighd.KlighdTreeSelection;
+import de.cau.cs.kieler.klighd.krendering.KText;
 
 /**
  * This combination in is charge of visualizing EMF tree editors' content graphically.

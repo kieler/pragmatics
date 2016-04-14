@@ -15,4 +15,4 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="3.8.0",
  de.cau.cs.kieler.core.kivi;visibility:=reexport,
  de.cau.cs.kieler.klighd;visibility:=reexport,
  de.cau.cs.kieler.klighd.ui,
- de.cau.cs.kieler.kiml.service
+ org.eclipse.elk.core.service

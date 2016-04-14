@@ -16,24 +16,24 @@ package de.cau.cs.kieler.klighd.kivi.effects;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KLabeledGraphElement;
+import org.eclipse.elk.graph.KPort;
 import org.eclipse.swt.graphics.Color;
 
 import com.google.common.collect.Iterables;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
-import de.cau.cs.kieler.core.krendering.KBackground;
-import de.cau.cs.kieler.core.krendering.KColor;
-import de.cau.cs.kieler.core.krendering.KForeground;
-import de.cau.cs.kieler.core.krendering.KLineStyle;
-import de.cau.cs.kieler.core.krendering.KLineWidth;
-import de.cau.cs.kieler.core.krendering.KRendering;
-import de.cau.cs.kieler.core.krendering.KRenderingFactory;
-import de.cau.cs.kieler.core.krendering.KStyle;
+import de.cau.cs.kieler.klighd.krendering.KBackground;
+import de.cau.cs.kieler.klighd.krendering.KColor;
+import de.cau.cs.kieler.klighd.krendering.KForeground;
+import de.cau.cs.kieler.klighd.krendering.KLineStyle;
+import de.cau.cs.kieler.klighd.krendering.KLineWidth;
+import de.cau.cs.kieler.klighd.krendering.KRendering;
+import de.cau.cs.kieler.klighd.krendering.KRenderingFactory;
+import de.cau.cs.kieler.klighd.krendering.KStyle;
 
 /**
  * Effect highlight a given {@link KGraphElement} as well as optionally its {@link KLabel} and ports
