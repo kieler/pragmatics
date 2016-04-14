@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klay.test.config;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
+import org.eclipse.elk.graph.KNode;
 
 /**
  * Allows to apply certain layout configurations to a graph.

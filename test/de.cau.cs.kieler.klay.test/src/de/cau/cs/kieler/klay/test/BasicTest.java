@@ -19,24 +19,24 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeRouting;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.core.math.KielerMath;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.EdgeRouting;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.utils.GraphTestObject;
 import de.cau.cs.kieler.klay.test.utils.TestPath;
@@ -90,7 +90,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
     @Before
     public void layout() {
         LayeredLayoutProvider layered = new LayeredLayoutProvider();
-        layered.doLayout(graphObject.getKnode(), new BasicProgressMonitor());
+        layered.layout(graphObject.getKnode(), new BasicProgressMonitor());
     }
 
     /**
@@ -124,7 +124,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
             ListIterator<KNode> nodeIter2 = nodeList.listIterator(nodeIter1.nextIndex());
             while (nodeIter2.hasNext()) {
                 KNode node2 = nodeIter2.next();
-                if (!(KimlUtil.isDescendant(node1, node2) || KimlUtil.isDescendant(node2, node1))) {
+                if (!(ElkUtil.isDescendant(node1, node2) || ElkUtil.isDescendant(node2, node1))) {
                     KShapeLayout nodeLayout2 = node2.getData(KShapeLayout.class);
 
                     Assert.assertFalse(hasNodeToNodeOverlaps(nodeLayout1, nodeLayout2));
@@ -147,7 +147,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
             ListIterator<KNode> nodeIter2 = nodeList.listIterator();
             while (nodeIter2.hasNext()) {
                 KNode node2 = nodeIter2.next();
-                if (!(node1 == node2 || KimlUtil.isDescendant(node1, node2))) {
+                if (!(node1 == node2 || ElkUtil.isDescendant(node1, node2))) {
 
                     assertFalse(hasNodeEdgeOverlaps(node1, node2));
                 }
@@ -189,22 +189,22 @@ public class BasicTest extends KlayAutomatedJUnitTest {
     private boolean hasNodeEdgeOverlaps(final KNode node1, final KNode node2) {
         KShapeLayout node2Layout = node2.getData(KShapeLayout.class);
         KVector node2Pos = node2Layout.createVector();
-        KimlUtil.toAbsolute(node2Pos, node2.getParent());
+        ElkUtil.toAbsolute(node2Pos, node2.getParent());
         for (KEdge edge : node1.getOutgoingEdges()) {
             if (edge.getTarget() != node2) {
                 KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
                 KVectorChain vectorChain = edgeLayout.createVectorChain();
                 // approximate spline if required
-                if (edgeLayout.getProperty(LayoutOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
-                    vectorChain = KielerMath.approximateBezierSpline(vectorChain);
+                if (edgeLayout.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
+                    vectorChain = ElkMath.approximateBezierSpline(vectorChain);
                 }
                 // transform to absolute coordinates
                 KNode referenceNode = edge.getSource();
-                if (!KimlUtil.isDescendant(edge.getTarget(), referenceNode)) {
+                if (!ElkUtil.isDescendant(edge.getTarget(), referenceNode)) {
                     referenceNode = referenceNode.getParent();
                 }
                 KVector offset = new KVector();
-                KimlUtil.toAbsolute(offset, referenceNode);
+                ElkUtil.toAbsolute(offset, referenceNode);
 
                 ListIterator<KVector> pointIter = vectorChain.listIterator();
                 KVector p1 = pointIter.next().add(offset);
@@ -259,7 +259,7 @@ public class BasicTest extends KlayAutomatedJUnitTest {
                         nodePos.y + height);
             } else if ((outcode & TOP) > 0) {
                 return hasIntersection(p1, p2, nodePos.x, nodePos.y, nodePos.x + width, nodePos.y);
-            } else /* if ((p1OutCode & BOTTOM) > 0) */{
+            } else /* if ((p1OutCode & BOTTOM) > 0) */ {
                 return hasIntersection(p1, p2, nodePos.x, nodePos.y + height, nodePos.x + width,
                         nodePos.y + height);
             }

@@ -17,12 +17,12 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.junit.Before;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;

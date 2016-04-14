@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.elk.core.service.ElkServicePlugin;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,12 +29,9 @@ import org.junit.runners.Parameterized.Parameters;
 
 import com.google.common.collect.ImmutableSet;
 
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
-import de.cau.cs.kieler.kiml.service.KimlServicePlugin;
-import de.cau.cs.kieler.kiml.ui.KimlUiPlugin;
 import de.cau.cs.kieler.klay.test.KlayAutomatedJUnitTest;
 import de.cau.cs.kieler.klay.test.config.ILayoutConfigurator;
 import de.cau.cs.kieler.klay.test.runner.KlayTestRunner;
@@ -61,9 +60,12 @@ public class BasicGranaTest extends KlayAutomatedJUnitTest {
      */
     public void graphAutomatedTestInitialization() {
         // make sure the ui plugin is loaded, as it holds required options.
-        KimlUiPlugin.getDefault();
+        //KimlUiPlugin.getDefault();
+        // FIXME elkMigrate necessary?
+        
         // as well as the kiml.service plugin
-        KimlServicePlugin.getDefault();
+        //KimlServicePlugin.getDefault();
+        ElkServicePlugin.getInstance();
 
         graphsList = GraphTestUtil.loadGraphs(getBundleTestPath());
     }
