@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?pde version="3.8"?>
-<target name="Generated from KIELER" sequenceNumber="12">
+<target name="Generated from KIELER" sequenceNumber="13">
   <locations>
-    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="org.eclipse.equinox.executable.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
       <repository location="http://download.eclipse.org/eclipse/updates/4.5"/>
     </location>
-    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="org.eclipse.emf.mwe2.language.ui" version="0.0.0"/>
       <unit id="org.eclipse.emf.mwe2.launch.ui" version="0.0.0"/>
       <unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
@@ -18,21 +18,25 @@
       <unit id="org.eclipse.uml2.sdk.feature.group" version="0.0.0"/>
       <repository location="http://download.eclipse.org/releases/mars"/>
     </location>
-    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="javax.transaction" version="0.0.0"/>
       <unit id="javax.xml.bind" version="0.0.0"/>
       <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/"/>
     </location>
-    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+      <unit id="org.eclipse.elk.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.elk.graphviz.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.elk.ui.feature.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.elk.feature.source.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.elk.graphviz.feature.source.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.elk.ui.feature.source.feature.group" version="0.0.0"/>
       <repository location="http://build.eclipse.org/modeling/elk/updates/nightly"/>
     </location>
-    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
       <repository location="http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/"/>
     </location>
-    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+    <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
       <unit id="org.ptolemy.feature.feature.group" version="0.0.0"/>
       <repository location="http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/ptolemy/"/>
     </location>

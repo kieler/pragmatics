@@ -220,9 +220,9 @@ litigation.
    <requires>
       <import feature="org.eclipse.platform" version="3.8.0" match="greaterOrEqual"/>
       <import feature="org.eclipse.xtext.xbase.lib" version="2.7.2" match="greaterOrEqual"/>
-      <import feature="de.cau.cs.kieler.kiml.feature"/>
       <import plugin="com.google.guava" version="11.0.0" match="greaterOrEqual"/>
       <import plugin="com.google.inject" version="3.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.elk.feature"/>
    </requires>
 
    <plugin
@@ -247,20 +247,6 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.core.krendering"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.krendering.extensions"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.klighd.ui"
          download-size="0"
          install-size="0"
@@ -268,7 +254,14 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.core"
+         id="de.cau.cs.kieler.klighd.krendering"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klighd.krendering.extensions"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -31,34 +31,6 @@
 
    <!-- LAYOUT -->
 
-   <feature url="features/de.cau.cs.kieler.kiml_0.20.0.qualifier.jar" id="de.cau.cs.kieler.kiml.feature" version="0.20.0.qualifier">
-      <category name="kieler-layout"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.kiml.source_0.20.0.qualifier.jar" id="de.cau.cs.kieler.kiml.feature.source" version="0.20.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-
-   <feature url="features/de.cau.cs.kieler.kiml.gmf_0.14.0.qualifier.jar" id="de.cau.cs.kieler.kiml.gmf.feature" version="0.14.0.qualifier">
-      <category name="kieler-layout"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.kiml.gmf.source_0.14.0.qualifier.jar" id="de.cau.cs.kieler.kiml.gmf.feature.source" version="0.14.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-
-   <feature url="features/de.cau.cs.kieler.kiml.graphiti_0.14.0.qualifier.jar" id="de.cau.cs.kieler.kiml.graphiti.feature" version="0.14.0.qualifier">
-      <category name="kieler-layout"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.kiml.graphiti.source_0.14.0.qualifier.jar" id="de.cau.cs.kieler.kiml.graphiti.feature.source" version="0.14.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-
-   <feature url="features/de.cau.cs.kieler.kiml.graphviz_0.10.0.qualifier.jar" id="de.cau.cs.kieler.kiml.graphviz.feature" version="0.10.0.qualifier">
-      <category name="kieler-layout"/>
-   </feature>
-   <feature url="features/de.cau.cs.kieler.kiml.graphviz.source_0.10.0.qualifier.jar" id="de.cau.cs.kieler.kiml.graphviz.feature.source" version="0.10.0.qualifier">
-      <category name="kieler-sources"/>
-   </feature>
-
    <feature url="features/de.cau.cs.kieler.kiml.ogdf_0.8.0.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature" version="0.8.0.qualifier">
       <category name="kieler-layout"/>
    </feature>

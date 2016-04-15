@@ -222,7 +222,7 @@ litigation.
          version="0.0.0"/>
 
    <requires>
-      <import feature="de.cau.cs.kieler.kiml.feature"/>
+      <import feature="org.eclipse.elk.feature"/>
    </requires>
 
    <plugin

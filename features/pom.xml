@@ -16,10 +16,7 @@
 
   <!-- all features are listed as modules -->
   <modules>
-    <module>de.cau.cs.kieler.kiml.feature</module>
-    <module>de.cau.cs.kieler.kiml.gmf.feature</module>
-    <module>de.cau.cs.kieler.kiml.graphiti.feature</module>
-    <module>de.cau.cs.kieler.kiml.graphviz.feature</module>
+    <module>de.cau.cs.kieler.kgraph.feature</module>
     <module>de.cau.cs.kieler.kiml.libavoid.feature</module>
     <module>de.cau.cs.kieler.kiml.ogdf.feature</module>
     <module>de.cau.cs.kieler.klighd.feature</module>
@@ -27,11 +24,10 @@
     <module>de.cau.cs.kieler.klighd.freehep.feature</module>
     <module>de.cau.cs.kieler.klighd.sdk.feature</module>
     <module>de.cau.cs.kieler.klighd.view.feature</module>
-    <module>de.cau.cs.kieler.kgraph.feature</module>
     <module>de.cau.cs.kieler.kwebs.server.feature</module>
     <module>de.cau.cs.kieler.ptview.feature</module>
     <module>net.ogdf.bin.feature</module>
-    <!-- <module>../../pragmatics-libraries/features/org.adaptagrams.libavoid.feature</module> -->
+    <module>../../pragmatics-libraries/features/org.adaptagrams.libavoid.feature</module>
   </modules>
 
   <!-- customization of the feature build sub process: incorporate
@@ -79,7 +75,7 @@
                 <plugin id="org.apache.xerces" />
                 <plugin id="org.apache.xml.resolver" />
                 <plugin id="org.apache.xml.serializer" />
-                
+
                 <plugin id="org.eclipse.jetty.websocket" />
               </excludes>
             </configuration>

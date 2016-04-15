@@ -218,15 +218,14 @@ litigation.
    </url>
 
    <requires>
-      <import plugin="org.apache.commons.logging"/>
       <import plugin="org.antlr.runtime"/>
       <import plugin="org.apache.log4j"/>
       <import feature="org.eclipse.emf" version="2.6.0" match="greaterOrEqual"/>
-      <import plugin="com.google.guava"/>
-      <import feature="de.cau.cs.kieler.kiml.feature"/>
       <import feature="de.cau.cs.kieler.klighd.feature"/>
-      <import feature="de.cau.cs.kieler.kiml.graphviz.feature"/>
       <import feature="de.cau.cs.kieler.kiml.ogdf.feature"/>
+      <import feature="org.eclipse.elk.feature"/>
+      <import feature="org.eclipse.elk.graphviz.feature"/>
+      <import feature="org.eclipse.elk.ui.feature"/>
    </requires>
 
    <plugin
@@ -237,42 +236,7 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.core.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="de.cau.cs.kieler.klighd.xtext"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.kivi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.kiml.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.kgraph.text"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="de.cau.cs.kieler.core.kgraph.text.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -378,6 +342,20 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klighd.ui.contrib3x"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kgraph.text"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.kgraph.text.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
