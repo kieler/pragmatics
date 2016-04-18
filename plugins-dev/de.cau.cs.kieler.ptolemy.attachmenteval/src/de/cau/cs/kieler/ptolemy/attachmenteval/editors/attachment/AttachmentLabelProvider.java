@@ -13,15 +13,15 @@
  */
 package de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment;
 
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.ptolemy.moml.EntityType;
 import org.ptolemy.moml.PropertyType;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.ptolemy.attachmenteval.PtolemyAttachmentEvalPlugin;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties;
 
@@ -65,7 +65,7 @@ final class AttachmentLabelProvider implements ITableLabelProvider {
             
             switch (columnIndex) {
             case 0:
-                if (layoutData.getProperty(LayoutOptions.COMMENT_BOX)) {
+                if (layoutData.getProperty(CoreOptions.COMMENT_BOX)) {
                     // Retrieve the comment text
                     return layoutData.getProperty(PtolemyProperties.COMMENT_TEXT);
                 } else {
@@ -83,7 +83,7 @@ final class AttachmentLabelProvider implements ITableLabelProvider {
                 
             case 1:
                 // If the node represents a comment, this column contains the attached node
-                if (layoutData.getProperty(LayoutOptions.COMMENT_BOX)) {
+                if (layoutData.getProperty(CoreOptions.COMMENT_BOX)) {
                     // Retrieve the attached actor, if any
                     KNode attachedActor = editor.getCurrentAssociations().get(knode);
                     
@@ -119,7 +119,7 @@ final class AttachmentLabelProvider implements ITableLabelProvider {
             KLayoutData layoutData = knode.getData(KLayoutData.class);
             
             if (columnIndex == 0) {
-                if (layoutData.getProperty(LayoutOptions.COMMENT_BOX)) {
+                if (layoutData.getProperty(CoreOptions.COMMENT_BOX)) {
                     return commentIcon;
                 } else {
                     return containerIcon;

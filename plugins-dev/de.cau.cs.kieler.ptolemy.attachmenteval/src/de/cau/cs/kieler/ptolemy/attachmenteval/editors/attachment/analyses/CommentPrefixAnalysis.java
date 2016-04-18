@@ -14,12 +14,13 @@ package de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses;
 
 import java.util.Map;
 
+import org.eclipse.elk.core.comments.CommentAttacher;
+import org.eclipse.elk.core.comments.TextPrefixFilter;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.graph.KNode;
+
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.comments.CommentAttacher;
-import de.cau.cs.kieler.kiml.comments.TextPrefixFilter;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
 import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.CommentAttachmentEditor;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties;
 

@@ -15,14 +15,15 @@ package de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
+import org.eclipse.elk.core.comments.CommentAttacher;
+import org.eclipse.elk.core.comments.IBoundsProvider;
+import org.eclipse.elk.core.comments.TextPrefixFilter;
+import org.eclipse.elk.graph.KNode;
+
 import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.comments.CommentAttacher;
-import de.cau.cs.kieler.kiml.comments.IBoundsProvider;
-import de.cau.cs.kieler.kiml.comments.TextPrefixFilter;
 import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.CommentAttachmentEditor;
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyBoundsProvider;
 import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.PtolemyTitleCommentFilter;

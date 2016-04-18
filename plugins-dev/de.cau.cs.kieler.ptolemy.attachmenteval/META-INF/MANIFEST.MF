@@ -17,13 +17,11 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf,
  org.eclipse.emf.ecore,
  org.ptolemy.moml,
- de.cau.cs.kieler.core.kgraph,
- de.cau.cs.kieler.kiml,
  de.cau.cs.kieler.ptolemy.klighd,
- de.cau.cs.kieler.core.krendering,
  org.eclipse.ui.workbench,
  de.cau.cs.kieler.kiml.grana,
- com.google.inject
+ com.google.inject,
+ org.eclipse.elk.core,
+ org.eclipse.elk.core.service
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Import-Package: de.cau.cs.kieler.kiml.service.util

@@ -12,7 +12,8 @@
  */
 package de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
+import org.eclipse.elk.graph.KNode;
+
 import de.cau.cs.kieler.ptolemy.attachmenteval.AttachmentData;
 import de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.CommentAttachmentEditor;
 

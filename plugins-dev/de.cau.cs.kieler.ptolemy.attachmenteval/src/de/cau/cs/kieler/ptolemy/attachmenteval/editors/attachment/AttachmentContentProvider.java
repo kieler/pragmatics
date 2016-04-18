@@ -15,14 +15,14 @@ package de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment;
 
 import java.util.List;
 
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
 import de.cau.cs.kieler.klighd.ViewContext;
 
 /**
@@ -64,7 +64,7 @@ class AttachmentContentProvider implements ITreeContentProvider {
         for (KNode child : children) {
             KLayoutData layoutData = child.getData(KLayoutData.class);
             
-            if (child.getChildren().size() > 0 || layoutData.getProperty(LayoutOptions.COMMENT_BOX)) {
+            if (child.getChildren().size() > 0 || layoutData.getProperty(CoreOptions.COMMENT_BOX)) {
                 result.add(child);
             }
         }

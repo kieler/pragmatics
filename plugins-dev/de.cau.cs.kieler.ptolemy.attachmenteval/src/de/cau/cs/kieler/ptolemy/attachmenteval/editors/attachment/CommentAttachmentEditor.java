@@ -26,6 +26,14 @@ import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.service.util.ProgressMonitorAdapter;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Maybe;
+import org.eclipse.elk.core.util.WrappedException;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.properties.MapPropertyHolder;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -85,12 +93,6 @@ import org.ptolemy.moml.util.MomlResourceFactoryImpl;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.core.WrappedException;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.krendering.KText;
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
 import de.cau.cs.kieler.kiml.grana.AnalysisService;
 import de.cau.cs.kieler.kiml.grana.ui.AnalysisSelectionDialog;
@@ -100,13 +102,11 @@ import de.cau.cs.kieler.kiml.grana.ui.batch.BatchResult;
 import de.cau.cs.kieler.kiml.grana.ui.batch.CSVResultSerializer;
 import de.cau.cs.kieler.kiml.grana.ui.batch.IBatchResultSerializer;
 import de.cau.cs.kieler.kiml.grana.ui.batch.IKGraphProvider;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter;
 import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.krendering.KText;
 import de.cau.cs.kieler.klighd.krendering.SimpleUpdateStrategy;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
@@ -509,7 +509,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
                     
                     if (selectedElement instanceof KNode) {
                         if (((KNode) selectedElement).getData(KLayoutData.class).getProperty(
-                                LayoutOptions.COMMENT_BOX)) {
+                                CoreOptions.COMMENT_BOX)) {
 
                             // Try selecting the object in the attachment tree
                             attachmentsTreeViewer.setSelection(
@@ -862,7 +862,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
                 extractExplicitAttachments(child);
             }
             
-            boolean isComment = child.getData(KLayoutData.class).getProperty(LayoutOptions.COMMENT_BOX);
+            boolean isComment = child.getData(KLayoutData.class).getProperty(CoreOptions.COMMENT_BOX);
             if (isComment) {
                 // Check if the comment is attached to something (this assumes that comment nodes only
                 // have outgoing edges)
@@ -954,7 +954,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         
         // Check if the current selection is a comment node
         KNode commentNode = (KNode) commentSelection.getFirstElement();
-        if (!commentNode.getData(KLayoutData.class).getProperty(LayoutOptions.COMMENT_BOX)) {
+        if (!commentNode.getData(KLayoutData.class).getProperty(CoreOptions.COMMENT_BOX)) {
             // Selection is not a comment
             return null;
         }
@@ -1207,7 +1207,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
             
             if (child.getChildren().size() > 0) {
                 result += countAnnotations(child);
-            } else if (layoutData.getProperty(LayoutOptions.COMMENT_BOX)) {
+            } else if (layoutData.getProperty(CoreOptions.COMMENT_BOX)) {
                 result++;
             }
         }
@@ -1237,7 +1237,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
         
         IRunnableWithProgress algorithmJob = new IRunnableWithProgress() {
             public void run(final IProgressMonitor uiMonitor) {
-                IKielerProgressMonitor monitor = new ProgressMonitorAdapter(uiMonitor);
+                IElkProgressMonitor monitor = new ProgressMonitorAdapter(uiMonitor);
                 monitor.begin("Analyzing diagrams...", 100);
                 
                 // Iterate over each selected model file
@@ -1247,7 +1247,7 @@ public final class CommentAttachmentEditor extends EditorPart implements IDiagra
                         
                         // We need to tell the batch analysis how to load our model
                         IKGraphProvider<IFile> kGraphProvider = new IKGraphProvider<IFile>() {
-                            public KNode getKGraph(IFile parameter, IKielerProgressMonitor monitor)
+                            public KNode getKGraph(IFile parameter, IElkProgressMonitor monitor)
                                     throws Exception {
                                 
                                 final Maybe<KNode> result = Maybe.create();
