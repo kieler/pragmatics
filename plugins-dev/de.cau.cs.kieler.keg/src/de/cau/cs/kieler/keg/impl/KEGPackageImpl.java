@@ -13,7 +13,13 @@
  */
 package de.cau.cs.kieler.keg.impl;
 
-import de.cau.cs.kieler.core.kgraph.KGraphPackage;
+import org.eclipse.elk.graph.KGraphPackage;
+import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EcorePackage;
+import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import de.cau.cs.kieler.keg.Edge;
 import de.cau.cs.kieler.keg.EdgeType;
@@ -21,14 +27,6 @@ import de.cau.cs.kieler.keg.KEGFactory;
 import de.cau.cs.kieler.keg.KEGPackage;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.Port;
-
-import org.eclipse.emf.ecore.EAttribute;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
-
-import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
  * <!-- begin-user-doc -->

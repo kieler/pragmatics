@@ -24,14 +24,15 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.properties.IPropertyHolder;
+import org.eclipse.elk.graph.properties.Property;
+
 import com.google.common.collect.Lists;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import de.cau.cs.kieler.core.properties.Property;
-import de.cau.cs.kieler.core.util.Pair;
 import de.cau.cs.kieler.keg.Edge;
 import de.cau.cs.kieler.keg.EdgeType;
 import de.cau.cs.kieler.keg.KEGFactory;

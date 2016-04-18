@@ -13,16 +13,13 @@
  */
 package de.cau.cs.kieler.keg.impl;
 
-import de.cau.cs.kieler.core.kgraph.impl.KPortImpl;
+import org.eclipse.elk.graph.impl.KPortImpl;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import de.cau.cs.kieler.keg.KEGPackage;
 import de.cau.cs.kieler.keg.Port;
-
-import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.ecore.EClass;
-
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->

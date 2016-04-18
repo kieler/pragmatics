@@ -13,20 +13,20 @@
  */
 package de.cau.cs.kieler.keg.util;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
-
-import de.cau.cs.kieler.keg.*;
-
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.KLabeledGraphElement;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
 import org.eclipse.emf.ecore.EObject;
+
+import de.cau.cs.kieler.keg.Edge;
+import de.cau.cs.kieler.keg.KEGPackage;
+import de.cau.cs.kieler.keg.Node;
+import de.cau.cs.kieler.keg.Port;
 
 /**
  * <!-- begin-user-doc -->

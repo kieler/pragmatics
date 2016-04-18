@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.keg;
 
-import de.cau.cs.kieler.core.kgraph.KPort;
+import org.eclipse.elk.graph.KPort;
 
 /**
  * <!-- begin-user-doc -->

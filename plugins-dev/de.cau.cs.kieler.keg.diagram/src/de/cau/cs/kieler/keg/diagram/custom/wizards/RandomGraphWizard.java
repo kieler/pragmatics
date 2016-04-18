@@ -27,6 +27,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.service.util.ProgressMonitorAdapter;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.Maybe;
+import org.eclipse.elk.graph.properties.IPropertyHolder;
+import org.eclipse.elk.graph.properties.MapPropertyHolder;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -52,17 +57,12 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.diagram.custom.random.IRandomGraphGenerator;
 import de.cau.cs.kieler.keg.diagram.custom.random.RandomGraphGenerator;
 import de.cau.cs.kieler.keg.diagram.edit.parts.NodeEditPart;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorUtil;
-import de.cau.cs.kieler.kiml.service.util.ProgressMonitorAdapter;
 
 /**
  * The new-wizard for creating random KEG graphs.
@@ -240,7 +240,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
      * @throws InterruptedException
      *             when the user cancels the operation
      */
-    private void doFinish(final IKielerProgressMonitor monitor) throws IOException, CoreException,
+    private void doFinish(final IElkProgressMonitor monitor) throws IOException, CoreException,
             InterruptedException {
         int numberOfGraphs = newFilePage.getNumberOfGraphs();
         monitor.begin(Messages.RandomGraphWizard_generating_graphs_task, numberOfGraphs);
@@ -353,7 +353,7 @@ public class RandomGraphWizard extends Wizard implements INewWizard {
      */
     private void generateAndSerialize(final IFile file, final boolean createDiagram,
             final boolean openDiagram, final IPropertyHolder options, final Random random,
-            final IKielerProgressMonitor monitor) throws IOException, CoreException {
+            final IElkProgressMonitor monitor) throws IOException, CoreException {
         monitor.begin(Messages.RandomGraphWizard_generate_and_serialize_task + file.getName(), 1);
         try {
             // generate

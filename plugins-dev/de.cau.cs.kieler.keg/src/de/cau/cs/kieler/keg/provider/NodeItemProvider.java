@@ -14,16 +14,10 @@
 package de.cau.cs.kieler.keg.provider;
 
 
-import de.cau.cs.kieler.core.kgraph.KGraphPackage;
-import de.cau.cs.kieler.keg.KEGFactory;
-import de.cau.cs.kieler.keg.KEGPackage;
-import de.cau.cs.kieler.keg.KegPlugin;
-import de.cau.cs.kieler.keg.Node;
-import de.cau.cs.kieler.keg.kgraph.provider.KNodeItemProvider;
-
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.elk.graph.KGraphPackage;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.ResourceLocator;
@@ -36,6 +30,12 @@ import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
+
+import de.cau.cs.kieler.keg.KEGFactory;
+import de.cau.cs.kieler.keg.KEGPackage;
+import de.cau.cs.kieler.keg.KegPlugin;
+import de.cau.cs.kieler.keg.Node;
+import de.cau.cs.kieler.keg.kgraph.provider.KNodeItemProvider;
 
 /**
  * This is the item provider adapter for a {@link de.cau.cs.kieler.keg.Node} object.

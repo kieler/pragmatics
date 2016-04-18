@@ -7,14 +7,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.graph.KGraphPackage;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.core.kgraph.KGraphPackage;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.keg.Edge;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.Port;

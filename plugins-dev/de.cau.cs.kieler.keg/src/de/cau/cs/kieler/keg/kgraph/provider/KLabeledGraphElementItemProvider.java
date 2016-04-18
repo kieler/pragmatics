@@ -14,18 +14,15 @@
 package de.cau.cs.kieler.keg.kgraph.provider;
 
 
-import de.cau.cs.kieler.core.kgraph.KGraphFactory;
-import de.cau.cs.kieler.core.kgraph.KGraphPackage;
-import de.cau.cs.kieler.core.kgraph.KLabeledGraphElement;
-
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.elk.graph.KGraphFactory;
+import org.eclipse.elk.graph.KGraphPackage;
+import org.eclipse.elk.graph.KLabeledGraphElement;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.ecore.EStructuralFeature;
-
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;

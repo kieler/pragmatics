@@ -13,17 +13,14 @@
  */
 package de.cau.cs.kieler.keg.impl;
 
-import de.cau.cs.kieler.core.kgraph.impl.KEdgeImpl;
+import org.eclipse.elk.graph.impl.KEdgeImpl;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import de.cau.cs.kieler.keg.Edge;
 import de.cau.cs.kieler.keg.EdgeType;
 import de.cau.cs.kieler.keg.KEGPackage;
-
-import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.ecore.EClass;
-
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->

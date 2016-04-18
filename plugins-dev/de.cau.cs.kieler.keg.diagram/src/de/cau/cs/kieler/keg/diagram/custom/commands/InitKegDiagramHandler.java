@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -39,7 +40,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-import de.cau.cs.kieler.core.util.Maybe;
 import de.cau.cs.kieler.keg.diagram.edit.parts.NodeEditPart;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditor;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;

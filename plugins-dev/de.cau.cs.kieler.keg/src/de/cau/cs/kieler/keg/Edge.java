@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.keg;
 
-import de.cau.cs.kieler.core.kgraph.KEdge;
+import org.eclipse.elk.graph.KEdge;
 
 /**
  * <!-- begin-user-doc -->

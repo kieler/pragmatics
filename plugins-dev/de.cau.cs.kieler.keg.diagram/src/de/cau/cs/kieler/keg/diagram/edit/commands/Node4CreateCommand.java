@@ -3,6 +3,7 @@ package de.cau.cs.kieler.keg.diagram.edit.commands;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.gmf.runtime.common.core.command.CommandResult;
 import org.eclipse.gmf.runtime.common.core.command.ICommand;
@@ -12,7 +13,6 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.ConfigureRequest;
 import org.eclipse.gmf.runtime.emf.type.core.requests.CreateElementRequest;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
 import de.cau.cs.kieler.keg.KEGFactory;
 import de.cau.cs.kieler.keg.Node;
 import de.cau.cs.kieler.keg.diagram.providers.ElementInitializers;

@@ -18,10 +18,9 @@ import java.util.Hashtable;
 import org.eclipse.draw2d.geometry.Point;
 import org.eclipse.draw2d.geometry.PointList;
 import org.eclipse.draw2d.geometry.PrecisionPoint;
+import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.gmf.runtime.draw2d.ui.geometry.LineSeg;
-
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KielerMath;
 
 /**
  * Helper methods for handling splines.
@@ -72,7 +71,7 @@ public final class SplineUtilities {
             spline[1] = new KVector(control.getPoint(i).x, control.getPoint(i).y);
             spline[2] = new KVector(control.getPoint(i + 1).x, control.getPoint(i + 1).y);
             spline[3] = new KVector(control.getPoint(i + 2).x, control.getPoint(i + 2).y);
-            for (KVector p : KielerMath.approximateBezierSegment(approxCount(spline), spline)) {
+            for (KVector p : ElkMath.approximateBezierSegment(approxCount(spline), spline)) {
                 points.addPoint(new PrecisionPoint(p.x, p.y));
             }
         }
@@ -85,7 +84,7 @@ public final class SplineUtilities {
             spline[0] = new KVector(control.getPoint(i - 1).x, control.getPoint(i - 1).y);
             spline[1] = new KVector(control.getPoint(i).x, control.getPoint(i).y);
             spline[2] = new KVector(control.getPoint(i + 1).x, control.getPoint(i + 1).y);
-            for (KVector p : KielerMath.approximateBezierSegment(approxCount(spline), spline)) {
+            for (KVector p : ElkMath.approximateBezierSegment(approxCount(spline), spline)) {
                 points.addPoint(new PrecisionPoint(p.x, p.y));
             }
             break;

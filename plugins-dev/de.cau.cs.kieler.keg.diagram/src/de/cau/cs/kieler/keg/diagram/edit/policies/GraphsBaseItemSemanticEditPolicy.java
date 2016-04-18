@@ -2,6 +2,8 @@ package de.cau.cs.kieler.keg.diagram.edit.policies;
 
 import java.util.Iterator;
 
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.commands.Command;
@@ -31,8 +33,6 @@ import org.eclipse.gmf.runtime.emf.type.core.requests.ReorientRelationshipReques
 import org.eclipse.gmf.runtime.emf.type.core.requests.SetRequest;
 import org.eclipse.gmf.runtime.notation.View;
 
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
 import de.cau.cs.kieler.keg.Edge;
 import de.cau.cs.kieler.keg.diagram.edit.helpers.GraphsBaseEditHelper;
 import de.cau.cs.kieler.keg.diagram.part.GraphsDiagramEditorPlugin;

@@ -15,15 +15,13 @@
  */
 package de.cau.cs.kieler.keg.kgraph.provider;
 
-import de.cau.cs.kieler.core.kgraph.util.KGraphAdapterFactory;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.elk.graph.util.KGraphAdapterFactory;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.edit.provider.ChangeNotifier;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.ComposedAdapterFactory;

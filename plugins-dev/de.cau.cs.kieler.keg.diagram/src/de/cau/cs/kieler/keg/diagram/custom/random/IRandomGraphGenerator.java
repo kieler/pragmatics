@@ -13,7 +13,8 @@
  */
 package de.cau.cs.kieler.keg.diagram.custom.random;
 
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
+import org.eclipse.elk.graph.properties.IPropertyHolder;
+
 import de.cau.cs.kieler.keg.Node;
 
 /**
