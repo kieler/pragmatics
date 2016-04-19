@@ -25,6 +25,7 @@
     <!--<module>de.cau.cs.kieler.core.krendering</module>-->
     <!--<module>de.cau.cs.kieler.core.krendering.extensions</module>-->
     <module>de.cau.cs.kieler.kgraph.text</module>
+    <module>de.cau.cs.kieler.kgraph.text.ide</module>
     <module>de.cau.cs.kieler.kgraph.text.ui</module>
     <module>de.cau.cs.kieler.kiml.config.text</module>
     <module>de.cau.cs.kieler.kiml.config.text.ui</module>
