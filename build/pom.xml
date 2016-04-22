@@ -53,27 +53,6 @@
       </modules>
     </profile>
 
-    <!-- The KGraph RCP. -->
-    <profile>
-      <id>kgraph-rcp</id>
-      
-      <repositories>
-        <!-- kieler pragmatics runtime -->
-        <repository>
-          <id>p2.nightly_pragmatics</id>
-          <layout>p2</layout>
-          <url>${kieler.pragmatics.nightly}</url>
-        </repository> 
-      </repositories>
-      
-      <modules>
-        <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
-        <module>../products/de.cau.cs.kieler.core.kgraph.rcp</module>
-        <module>../features/de.cau.cs.kieler.kgraph.rcp.feature</module>
-        <module>de.cau.cs.kieler.kgraph.rcp.repository</module>
-      </modules>
-    </profile>
-
     <!-- The KWebS product. -->
     <profile>
       <id>kwebs</id>
