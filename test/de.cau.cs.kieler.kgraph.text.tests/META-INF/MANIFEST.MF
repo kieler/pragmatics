@@ -1,0 +1,26 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: de.cau.cs.kieler.kgraph.text.tests
+Bundle-SymbolicName: de.cau.cs.kieler.kgraph.text.tests;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Export-Package: de.cau.cs.kieler.kgraph.text.tests
+Require-Bundle: de.cau.cs.kieler.kgraph.text,
+ de.cau.cs.kieler.kgraph.text.ui,
+ org.junit;bundle-version="4.7.0",
+ org.eclipse.xtext.junit4,
+ org.eclipse.xtext.xbase.junit,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.elk.core,
+ de.cau.cs.kieler.kgraph.text.ui,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
+ org.eclipse.elk.graph;bundle-version="0.1.0"
+Import-Package: org.hamcrest.core,
+ org.junit;version="4.5.0",
+ org.junit.runners.model;version="4.5.0",
+ org.junit.runner;version="4.5.0",
+ org.junit.runners;version="4.5.0",
+ org.junit.runner.manipulation;version="4.5.0",
+ org.junit.runner.notification;version="4.5.0"
+Bundle-Vendor: Kiel University
