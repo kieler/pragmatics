@@ -20,7 +20,7 @@
   <modules>
     <module>de.cau.cs.kieler.core.kivi.test</module>
     <module>de.cau.cs.kieler.core.test</module>
-    <module>de.cau.cs.kieler.kgraph.text.tests</module>
+    <!--module>de.cau.cs.kieler.kgraph.text.tests</module-->
 
     <!-- these tests require files from the models repository -->
     <!-- module>de.cau.cs.kieler.klay.codaflow.test</module -->
