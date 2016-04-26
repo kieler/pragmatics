@@ -273,6 +273,10 @@ public class LibavoidServerCommunicator {
         // first send the options
         transformOptions(root);
 
+        if (root.getData(KLayoutData.class).getProperty(CoreOptions.DEBUG_MODE)) {
+            sb.append("DEBUG\n");
+        }
+        
         // transform the graph to a text format
         transformGraph(root);
 
