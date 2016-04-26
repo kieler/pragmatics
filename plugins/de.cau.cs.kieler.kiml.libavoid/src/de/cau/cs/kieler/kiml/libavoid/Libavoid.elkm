@@ -94,6 +94,7 @@ advanced option fixedSharedPathPenalty: float {
     description
         "This penalty is applied whenever a connector path shares some segments with an immovable
         portion of an existing connector route (such as the first or last segment of a connector)."
+    default = 0
     targets parents
 }
 

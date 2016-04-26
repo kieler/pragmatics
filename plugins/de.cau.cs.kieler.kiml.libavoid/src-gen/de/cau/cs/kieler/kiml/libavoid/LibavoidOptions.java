@@ -88,11 +88,19 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
             null);
   
   /**
+   * Default value for {@link #FIXED_SHARED_PATH_PENALTY}.
+   */
+  private final static float FIXED_SHARED_PATH_PENALTY_DEFAULT = 0;
+  
+  /**
    * This penalty is applied whenever a connector path shares some segments with an immovable
    * portion of an existing connector route (such as the first or last segment of a connector).
    */
   public final static IProperty<Float> FIXED_SHARED_PATH_PENALTY = new Property<Float>(
-            "de.cau.cs.kieler.kiml.libavoid.fixedSharedPathPenalty");
+            "de.cau.cs.kieler.kiml.libavoid.fixedSharedPathPenalty",
+            FIXED_SHARED_PATH_PENALTY_DEFAULT,
+            null,
+            null);
   
   /**
    * Default value for {@link #PORT_DIRECTION_PENALTY}.
@@ -302,7 +310,7 @@ public class LibavoidOptions implements ILayoutMetaDataProvider {
         "",
         "Fixed Shared Path Penalty",
         "This penalty is applied whenever a connector path shares some segments with an immovable portion of an existing connector route (such as the first or last segment of a connector).",
-        null,
+        FIXED_SHARED_PATH_PENALTY_DEFAULT,
         null,
         null,
         LayoutOptionData.Type.FLOAT,
