@@ -14,7 +14,7 @@ import org.eclipse.elk.core.options.EdgeRouting
 
 bundle {
     label "Libavoid Connector Routing"
-    class LibavoidOptions
+    metadataClass LibavoidMetaDataProvider
 }
 
 category edge {
@@ -27,6 +27,7 @@ algorithm libavoid(LibavoidLayoutProvider) {
     description
         "libavoid is a cross-platform C++ library providing fast, object-avoiding orthogonal 
         and polyline connector routing for use in interactive diagram editors."
+    metadataClass LibavoidOptions
     category edge
         
        supports org.eclipse.elk.direction
