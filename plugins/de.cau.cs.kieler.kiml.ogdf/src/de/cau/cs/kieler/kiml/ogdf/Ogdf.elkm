@@ -20,7 +20,7 @@ import org.eclipse.elk.core.options.EdgeRouting
 
 bundle {   
     label "OGDF" 
-    class options.OgdfOptions
+    metadataClass options.OgdfMetaDataProvider
     idPrefix de.cau.cs.kieler.kiml.ogdf
 }
 
@@ -30,6 +30,7 @@ algorithm sugiyama(OgdfLayoutProvider#SUGIYAMA) {
         "Sugiyama&apos;s layout algorithm, based on Gansner et al. 1993 and Sander 1996. 
         This method emphasizes the direction of edges by reversing as few edges as possible. 
         Nodes are arranged in horizontal layers."
+    metadataClass options.SugiyamaOptions
     category org.eclipse.elk.layered
     features multi_edges, edge_labels, disconnected
     preview images/sugiyama.png 
@@ -64,6 +65,7 @@ algorithm planarization(OgdfLayoutProvider#PLANARIZATION) {
         approach by Batini, Nardelli and Tamassia '86. The algorithm also contains special treatment 
         for mixed-upward drawings in order to support UML class diagrams, where generalizations 
         need to be handled differently from other edge types."
+    metadataClass options.PlanarizationOptions
     category org.eclipse.elk.orthogonal
     preview images/planarization.png
     features multi_edges, edge_labels, disconnected
@@ -95,6 +97,7 @@ algorithm fmmm(OgdfLayoutProvider#FMMM) {
         This force-directed drawing method is suited also for very large graphs. 
         It is based on a combination of an efficient multilevel scheme and a strategy for approximating 
         the repusive forces in the system by rapidly evaluating potential fields."
+    metadataClass options.FmmmOptions
     category org.eclipse.elk.force
     preview images/fmmm.png
     features multi_edges, edge_labels, disconnected
@@ -114,6 +117,7 @@ algorithm davidsonHarel(OgdfLayoutProvider#DAVIDSON_HAREL) {
     description 
         "Force-based algorithm after Davidson and Harel 1996, applying the paradigm of 
         simulated annealing. This is applicable for undirected graphs with straight-line connections."
+    metadataClass options.DavidsonHarelOptions
     category org.eclipse.elk.force
     preview images/davidson_harel.png
     features multi_edges, edge_labels, disconnected
@@ -135,6 +139,7 @@ algorithm fruchtermanReingold(OgdfLayoutProvider#FRUCHTERMAN_REINGOLD) {
         "Force-based algorithm after Fruchterman and Reingold 1991. This is a modification of the 
         spring-embedder model of Eades for undirected graphs with straight edges. The heuristic 
         strives for uniform edge lengths, and is developed in analogy to forces in natural systems."
+    metadataClass options.FruchtermannReingoldOptions
     category org.eclipse.elk.force
     preview images/fruchterman_reingold.png
     features multi_edges, edge_labels, disconnected
@@ -160,6 +165,7 @@ algorithm gem(OgdfLayoutProvider#GEM) {
         and Mehldau 1995. The method is based on the spring-embedder paradigm and contains 
         several heuristics to improve the convergence, including local temperatures, gravitational 
         forces, and the detection of rotations and oscillations."
+    metadataClass options.GemOptions
     category org.eclipse.elk.force
     preview images/gem.png
     features multi_edges, edge_labels, disconnected
@@ -192,6 +198,7 @@ algorithm circular(OgdfLayoutProvider#CIRCULAR) {
         group structures inherent in a graph&apos;s topology, which is well suited for ring and star 
         network topologies. The nodes are clustered by biconnectivity or node degree and are 
         positioned on radiating circles."
+    metadataClass options.CircularOptions
     category org.eclipse.elk.circle
     preview images/circular.png
     features multi_edges, edge_labels, disconnected
@@ -214,6 +221,7 @@ algorithm tree(OgdfLayoutProvider#TREE) {
     description 
         "Specialized algorithm for trees, after Buchheim, Juenger and Leipert '06. 
         The branches of the tree are arranged in a given direction."
+    metadataClass options.TreeOptions
     category org.eclipse.elk.tree
     preview images/tree.png
     features edge_labels, disconnected
@@ -235,6 +243,7 @@ algorithm tree(OgdfLayoutProvider#TREE) {
 algorithm radialTree(OgdfLayoutProvider#RADIAL_TREE) {
     label "Radial Tree"
     description "Specialized algorithm for trees. Nodes are arranged radially around the root."
+    metadataClass options.RadialTreeOptions
     category org.eclipse.elk.tree
     preview images/radial_tree.png
     features edge_labels
@@ -259,6 +268,7 @@ algorithm upwardPlanarization(OgdfLayoutProvider#UPWARD_PLANARIZATION) {
         derived from this UPR, which also induces a node order in each layer. 
         This leads to significantly less edge crossings compared to former methods, 
         while the overall edge direction is still preserved. The input graph must be connected."
+    metadataClass options.UpwardPlanarizationOptions
     category org.eclipse.elk.layered
     preview images/upward.png
     features multi_edges, edge_labels
@@ -278,6 +288,7 @@ algorithm upwardPlanarization(OgdfLayoutProvider#UPWARD_PLANARIZATION) {
 algorithm fastMultipole(OgdfLayoutProvider#FAST_MULTIPOLE) {
     label "Fast Multipole"
     description "The Fast-Multipole-Embedder layout algorithm."
+    metadataClass options.FastMultipoleOptions
     category org.eclipse.elk.force
     preview images/fast_mp.png
     features multi_edges, edge_labels, disconnected
@@ -294,6 +305,7 @@ algorithm fastMultipole(OgdfLayoutProvider#FAST_MULTIPOLE) {
 algorithm fastMultipoleMultilevel(OgdfLayoutProvider#FAST_MULTIPOLE_MULTILEVEL) {
     label "Fast Multipole Multilevel"
     description "The Fast-Multipole-Multilevel-Embedder layout algorithm."
+    metadataClass options.FastMultipoleMultilevelOptions
     category org.eclipse.elk.force
     preview images/fast_mp_ml.png
     features multi_edges, edge_labels, disconnected
@@ -309,6 +321,7 @@ algorithm kamadaKawai(OgdfLayoutProvider#KAMADA_KAWAI) {
     description 
         "The spring-embedder layout algorithm after Kamada and Kawai 1989. The input graph 
         must be connected."
+    metadataClass options.KamadaKawaiOptions
     category org.eclipse.elk.force
     preview images/kamada_kawai.png
     features multi_edges, edge_labels
@@ -325,6 +338,7 @@ algorithm stressMajorization(OgdfLayoutProvider#STRESS_MAJORIZATION) {
     description 
         "Stress majorization layout that allows radial constraints based on shortest path distances. 
         The implementation is based on Brandes and Pich 2009. The input graph must be connected."
+    metadataClass options.StressMajorizationOptions
     category org.eclipse.elk.force
     preview images/stress_majorization.png
     features multi_edges, edge_labels
@@ -341,6 +355,7 @@ algorithm stressMajorization(OgdfLayoutProvider#STRESS_MAJORIZATION) {
 algorithm dominance(OgdfLayoutProvider#DOMINANCE) {
     label "Dominance"
     description "Dominance layout method. The input graph must be connected."
+    metadataClass options.DominanceOptions
     category org.eclipse.elk.planar
     preview images/dominance.png
     features multi_edges, edge_labels 
@@ -356,6 +371,7 @@ algorithm dominance(OgdfLayoutProvider#DOMINANCE) {
 algorithm visibility(OgdfLayoutProvider#VISIBILITY) {
     label "Visibility"
     description "Visibility layout method. The input graph must be connected."
+    metadataClass options.VisibilityOptions
     category org.eclipse.elk.planar
     preview images/visibility.png
     features multi_edges, edge_labels
@@ -378,6 +394,7 @@ algorithm fraysseixPachPollack(OgdfLayoutProvider#FRAYSSEIX_PACH_POLLACK) {
         triangulated planar graphs is computed. In the third phase the vertices are placed 
         incrementally according to the shelling order. The input graph must be planar and connected 
         and must not contain multi-edges."
+    metadataClass options.FraysseixPachPollackOptions
     category org.eclipse.elk.planar
     preview images/fpp.png
     features edge_labels
@@ -397,6 +414,7 @@ algorithm schnyder(OgdfLayoutProvider#SCHNYDER) {
         a partition of the set of interior edges in three trees (also called Schnyder trees) with 
         special orientation properties is derived. In the third step, the actual coordinates 
         are computed. The input graph must be planar and connected and must not contain multi-edges."
+    metadataClass options.SchnyderOptions
     category org.eclipse.elk.planar
     preview images/schnyder.png
     features edge_labels
@@ -414,6 +432,7 @@ algorithm canonicalOrder(OgdfLayoutProvider#CANONICAL_ORDER) {
         adding edges to achieve a certain connectivity (e.g., biconnected or triconnected). 
         Then, a shelling order of the the resulting graph is computed. The input graph must be 
         planar and must not contain multi-edges."
+    metadataClass options.CanonicalOrderOptions
     category org.eclipse.elk.planar
     preview images/canonical_order.png
     features edge_labels, disconnected
@@ -441,6 +460,7 @@ algorithm mixedModel(OgdfLayoutProvider#MIXED_MODEL) {
         boxes around each vertex are defined in such a way that the incident edges appear 
         regularly along the box. Finally, the coordinates of the vertex boxes are computed 
         taking the degree-one vertices into account. The input graph must not contain multi-edges."
+    metadataClass options.MixedModelOptions
     category org.eclipse.elk.orthogonal
     preview images/mixed_model.png
     features edge_labels, disconnected
@@ -465,6 +485,7 @@ algorithm convexGrid(OgdfLayoutProvider#CONVEX_GRID) {
         edges to achieve a certain connectivity (e.g., biconnected or triconnected). 
         Then, a shelling order of the the resulting graph is computed. The input graph must be 
         planar and must not contain multi-edges."
+    metadataClass options.ConvexGridOptions
     category org.eclipse.elk.planar
     preview images/convex_grid.png
     features edge_labels, disconnected
@@ -479,6 +500,7 @@ algorithm convexGrid(OgdfLayoutProvider#CONVEX_GRID) {
 
 algorithm balloon(OgdfLayoutProvider#BALLOON) {
     label "Balloon"
+    metadataClass options.BalloonOptions
     preview images/balloon.png
     features multi_edges, edge_labels, disconnected
     supports placeLabels
