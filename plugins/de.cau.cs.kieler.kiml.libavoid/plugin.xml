@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.elk.core.layoutProviders">
       <provider
-            class="de.cau.cs.kieler.kiml.libavoid.LibavoidOptions">
+            class="de.cau.cs.kieler.kiml.libavoid.LibavoidMetaDataProvider">
       </provider>
    </extension>
 </plugin>
