@@ -260,7 +260,7 @@ class GRandomParsingTest {
     def givenPortsWithLabels_HasLabels() {
         val rdg = parser.parse('''
             generate 1 graphs {
-                    edges relative = 1
+                edges relative = 1
                 nodes = 20 {
                     ports {
                         labels
@@ -278,7 +278,7 @@ class GRandomParsingTest {
     def givenPortsWithoutLabels_HasNone() {
         val rdg = parser.parse('''
             generate 1 graphs {
-                    edges relative = 1
+                edges relative = 1
                 nodes = 20 {
                     ports
                 }
@@ -397,9 +397,11 @@ class GRandomParsingTest {
     @Test
     def givenHierarchical_CheckHasHierarchical() {
         val rdg = parser.parse('''
-            generate 1 hierarchical graphs {
+            generate 1 graphs {
                 nodes = 1
-                hierarchical nodes = 1
+                hierarchy{
+                      compound nodes = 1
+                }
             }
         ''')
         val generator = new GRandomGraphMaker(rdg)
@@ -412,12 +414,15 @@ class GRandomParsingTest {
     @Test
     def givenHierarchical_CheckNoHierarchicalOnLowestLayer() {
         val rdg = parser.parse('''
-            generate 1 hierarchical graphs {
-                hierarchy levels = 2
+            generate 1 graphs {
                 nodes = 1 {
                     labels
                     }
-                hierarchical nodes = 1
+                
+                hierarchy {
+                    compound nodes = 1
+                    levels = 2
+                }
             }
         ''')
         val generator = new GRandomGraphMaker(rdg)
@@ -430,12 +435,14 @@ class GRandomParsingTest {
     @Test
     def givenCrossHierarchicalEdges_CheckExist() {
         val rdg = parser.parse('''
-            generate 1 hierarchical graphs {
+            generate 1 graphs {
                 nodes = 1 {
                     labels
                     }
-                hierarchical nodes = 1
-                cross-hierarchy edges = 5
+                hierarchy {
+                    compound nodes = 1
+                    cross-hierarchy edges = 5
+                }
             }
         ''')
         val generator = new GRandomGraphMaker(rdg)
@@ -445,6 +452,7 @@ class GRandomParsingTest {
         edgeSourcesAndTargets.addAll(Sets.newHashSet(parentGraphNodes.map[edges].flatten.map[target]))
         assertTrue(edgeSourcesAndTargets.map[!parentGraphNodes.contains(it)].any)
     }
+    
     @Test
     def void givenMulitLevelHierarch_CheckSameLevelEverywhere() {
         val rdg = parser.parse('''
@@ -452,9 +460,11 @@ class GRandomParsingTest {
                 nodes = 1 {
                     labels
                 }
-                hierarchical nodes = 1.0
-                cross-hierarchy edges = 5.0
-                hierarchy levels = 3
+                hierarchy {
+                    cross-hierarchy edges = 5.0
+                    compound nodes = 1.0
+                    levels = 3
+                }
             }
         ''')
         val generator = new GRandomGraphMaker(rdg)
@@ -472,7 +482,9 @@ class GRandomParsingTest {
                 nodes = 1 to 1000 {
                     labels
                 }
-                hierarchical nodes = 1
+                hierarchy {
+                    compound nodes = 1
+                }
                 seed = 0
             }
         ''')
