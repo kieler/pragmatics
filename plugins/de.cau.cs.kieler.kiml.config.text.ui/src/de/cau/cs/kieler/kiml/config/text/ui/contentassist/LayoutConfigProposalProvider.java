@@ -13,6 +13,9 @@
  */
 package de.cau.cs.kieler.kiml.config.text.ui.contentassist;
 
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+
 import org.eclipse.elk.core.data.LayoutAlgorithmData;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
@@ -20,6 +23,8 @@ import org.eclipse.elk.core.data.LayoutOptionData.Visibility;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.ui.LayoutOptionLabelProvider;
 import org.eclipse.elk.graph.PersistentEntry;
+import org.eclipse.elk.graph.properties.AdvancedPropertyValue;
+import org.eclipse.elk.graph.properties.ExperimentalPropertyValue;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.viewers.StyledString;
@@ -64,11 +69,13 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
 
         // create and register the completion proposal for every element in the list
         for (LayoutOptionData optionData : layoutServices.getOptionData()) {
-            StyledString displayString =
-                    new StyledString(optionData.toString(),
-                            (optionData.getVisibility() == Visibility.ADVANCED) ? StyledString.COUNTER_STYLER : null);
+            StyledString displayString = new StyledString();
+            displayString.append(optionData.getName(),
+                    (optionData.getVisibility() == Visibility.ADVANCED)
+                            ? StyledString.COUNTER_STYLER : null);
+            
             displayString.append(" (" + optionData.getId() + ")", StyledString.QUALIFIER_STYLER);
-
+            
             String proposal =
                     getValueConverter().toString(optionData.getId(),
                             grammmarAccess.getQualifiedIDRule().getName());
@@ -119,8 +126,11 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
                 // find the specific option an display all possible values
                 LayoutOptionData optionData = layoutServices.getOptionData(annotationName);
                 
+                // FIXME this has two issues,
+                //  first we should also check for the elk prefix now,
+                //  second we have groups now which make this guess too simple
                 // if option data is null, try to add the kieler prefix
-                if(optionData == null) {
+                if (optionData == null) {
                     optionData = layoutServices.getOptionData("de.cau.cs.kieler." + annotationName);
                 }
                 
@@ -135,7 +145,16 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
                 case ENUMSET:
                     for (int j = 0; j < optionData.getChoices().length; j++) {
                         proposal = optionData.getChoices()[j];
-                        acceptor.accept(createCompletionProposal(proposal, context));
+                        
+                        StyledString displayString = new StyledString(proposal);
+                        if (isExperimentalPropertyValue(optionData.getEnumValue(j))) {
+                            displayString.append(" - Experimental", StyledString.COUNTER_STYLER);
+                        } else if (isAdvancedPropertyValue(optionData.getEnumValue(j))) {
+                            displayString.append(" - Advanced", StyledString.COUNTER_STYLER);
+                        }
+                        
+                        acceptor.accept(createCompletionProposal(
+                                proposal, displayString, null, context));
                     }
                     break;
 
@@ -196,4 +215,33 @@ public class LayoutConfigProposalProvider extends AbstractLayoutConfigProposalPr
         }
     }
 
+    private boolean isExperimentalPropertyValue(final Enum<?> enumValue) {
+        if (enumValue != null) {
+            try {
+                Annotation[] annotations =
+                        enumValue.getClass().getField(enumValue.name()).getAnnotations();
+                return Arrays.stream(annotations)
+                        .anyMatch(a -> a instanceof AdvancedPropertyValue);
+            } catch (NoSuchFieldException | SecurityException e) {
+                return false;
+            }
+        }
+        
+        return false;
+    }
+
+    private boolean isAdvancedPropertyValue(final Enum<?> enumValue) {
+        if (enumValue != null) {
+            try {
+                Annotation[] annotations =
+                        enumValue.getClass().getField(enumValue.name()).getAnnotations();
+                return Arrays.stream(annotations)
+                        .anyMatch(a -> a instanceof ExperimentalPropertyValue);
+            } catch (NoSuchFieldException | SecurityException e) {
+                return false;
+            }
+        }
+        
+        return false;
+    }
 }
