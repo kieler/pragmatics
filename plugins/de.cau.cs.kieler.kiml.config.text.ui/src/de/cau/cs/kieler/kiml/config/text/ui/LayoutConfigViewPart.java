@@ -28,6 +28,7 @@ import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
+import org.eclipse.elk.core.ui.LayoutHandler;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -417,13 +418,6 @@ public class LayoutConfigViewPart extends ViewPart {
         return f;
     }
     
-    /** preference identifier for animation of layout. */
-    private static final String PREF_ANIMATION = "de.cau.cs.kieler.kiml.animation";
-    /** preference identifier for zoom-to-fit after layout. */
-    private static final String PREF_ZOOM = "de.cau.cs.kieler.kiml.zoomToFit";
-    /** preference identifier for progress dialog. */
-    private static final String PREF_PROGRESS = "de.cau.cs.kieler.kiml.progressDialog";
-
     /** an additional layout option that can be specified via a scaler below the textual view. */
     private Pair<String, Number> scaleAddition = Pair.of("", (Number) 0);
     
@@ -435,9 +429,9 @@ public class LayoutConfigViewPart extends ViewPart {
 
         // fetch general settings from preferences
         IPreferenceStore preferenceStore = ElkUiPlugin.getInstance().getPreferenceStore();
-        boolean animation = preferenceStore.getBoolean(PREF_ANIMATION);
-        boolean zoomToFit = preferenceStore.getBoolean(PREF_ZOOM);
-        boolean progressDialog = preferenceStore.getBoolean(PREF_PROGRESS);
+        boolean animation = preferenceStore.getBoolean(LayoutHandler.PREF_ANIMATION);
+        boolean zoomToFit = preferenceStore.getBoolean(LayoutHandler.PREF_ZOOM);
+        boolean progressDialog = preferenceStore.getBoolean(LayoutHandler.PREF_PROGRESS);
  
         @SuppressWarnings("unchecked")
         List<LayoutConfigurator> cfgs = LayoutConfigTransformer.from(resource, scaleAddition);
