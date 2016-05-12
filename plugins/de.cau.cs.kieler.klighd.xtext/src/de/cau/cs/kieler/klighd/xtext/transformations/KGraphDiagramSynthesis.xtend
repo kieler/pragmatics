@@ -53,6 +53,10 @@ import org.eclipse.elk.graph.properties.IProperty
 import org.eclipse.elk.graph.properties.Property
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
+import de.cau.cs.kieler.klighd.krendering.extensions.PositionReferenceX
+import de.cau.cs.kieler.klighd.krendering.extensions.PositionReferenceY
+import de.cau.cs.kieler.klighd.krendering.HorizontalAlignment
+import de.cau.cs.kieler.klighd.krendering.VerticalAlignment
 
 /**
  * Synthesizes a copy of the given {@code KNode} and adds default stuff.
@@ -116,10 +120,11 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     private static val STYLE_BORING = "Boring";
     private static val STYLE_STYLISH = "Stylish";
     private static val STYLE_HELLO_KITTY = "Hello Kitty";
+    private static val STYLE_SPONGEBOB = "Spongebob";
     /** The style to be used when drawing the KGraphs. */
     private static val SynthesisOption STYLE = SynthesisOption::createChoiceOption(
         "Style",
-        ImmutableList::of(STYLE_BORING, STYLE_STYLISH, STYLE_HELLO_KITTY),
+        ImmutableList::of(STYLE_BORING, STYLE_STYLISH, STYLE_HELLO_KITTY, STYLE_SPONGEBOB),
         STYLE_STYLISH);
     
     private static val LABELS_NO_LABELS = "No Labels";
@@ -228,6 +233,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         switch STYLE.objectValue {
             case STYLE_STYLISH: library.initStylishFactory
             case STYLE_HELLO_KITTY: library.initHelloKittyFactory
+            case STYLE_SPONGEBOB: library.initSpongebobFactory
             default: library.initBoringFactory // boring 
         }
 
@@ -325,6 +331,47 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         defaultNodeRendering = renderingFactory.createKEllipse => [
             it.id = "DefaultNodeRendering"
             it.setBackgroundGradient("#FFEEEE".color, "#FFBBBB".color, 90)
+        ]
+        library.renderings += defaultNodeRendering
+    }
+
+    private def initSpongebobFactory(KRenderingLibrary library) {
+        library.initEdgeRenderings
+        defaultNodeRendering = renderingFactory.createKRoundedRectangle => [
+            it.id = "DefaultNodeRendering"
+            it.cornerWidth = 5
+            it.cornerHeight = 5
+            it.setBackgroundColor(237,249,107)
+            it.children += renderingFactory.createKEllipse => [
+                            it.setPointPlacementData(PositionReferenceX.LEFT, 0, 0.1f, PositionReferenceY.TOP, 0, 0.1f,
+                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 20, 20)
+                            it.setBackgroundColor(255,255,255)
+            ]
+            it.children += renderingFactory.createKEllipse => [
+                            it.setPointPlacementData(PositionReferenceX.RIGHT, 0, 0.2f, PositionReferenceY.TOP, 0, 0.15f,
+                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 10, 10)
+                            it.setBackgroundColor(255,255,255)
+            ]
+            it.children += renderingFactory.createKEllipse => [
+                            it.setPointPlacementData(PositionReferenceX.LEFT, 0, 0.05f, PositionReferenceY.TOP, 0, 0.5f,
+                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 10, 10)
+                            it.setBackgroundColor(255,255,255)
+            ]
+            it.children += renderingFactory.createKEllipse => [
+                            it.setPointPlacementData(PositionReferenceX.RIGHT, 0, 0.4f, PositionReferenceY.TOP, 0, 0.5f,
+                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 10, 10)
+                            it.setBackgroundColor(255,255,255)
+            ]
+            it.children += renderingFactory.createKEllipse => [
+                            it.setPointPlacementData(PositionReferenceX.LEFT, 0, 0.15f, PositionReferenceY.BOTTOM, 0, 0.3f,
+                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 23, 23)
+                            it.setBackgroundColor(255,255,255)
+            ]
+            it.children += renderingFactory.createKEllipse => [
+                            it.setPointPlacementData(PositionReferenceX.RIGHT, 0, 0.3f, PositionReferenceY.BOTTOM, 0, 0.4f,
+                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 20, 20)
+                            it.setBackgroundColor(255,255,255)
+            ]
         ]
         library.renderings += defaultNodeRendering
     }
