@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kiml.formats.svg
 
 bundle {
     label "SVG Export"
-    class SvgOptions
+    metadataClass SvgOptions
 }
 
 option scale: float {
