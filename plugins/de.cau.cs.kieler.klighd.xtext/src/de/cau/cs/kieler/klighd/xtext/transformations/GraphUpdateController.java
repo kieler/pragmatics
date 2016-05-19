@@ -17,18 +17,13 @@ import java.io.IOException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.elk.graph.KNode;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
-import org.eclipse.ui.IMemento;
 
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.klighd.ui.view.controller.AbstractViewUpdateController;
 import de.cau.cs.kieler.klighd.ui.view.controllers.EditorSaveAdapter;
-import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 
 /**
  * {@link de.cau.cs.kieler.klighd.ui.view.DiagramView DiagramView} controller for opening general
@@ -62,6 +57,9 @@ public class GraphUpdateController extends AbstractViewUpdateController implemen
         return ID;
     }
 
+    // -- Activation
+    // -------------------------------------------------------------------------
+
     /**
      * {@inheritDoc}
      */
@@ -78,64 +76,7 @@ public class GraphUpdateController extends AbstractViewUpdateController implemen
     public void onDeactivate() {
         saveAdapter.deactivate();
     }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void selectionChanged(final SelectionChangedEvent event) {
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void copy(final AbstractViewUpdateController source) {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void reset() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void saveState(final IMemento memento) {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void loadState(final IMemento memento) {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onDiagramUpdate(final Object model, final KlighdSynthesisProperties properties) {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void onDispose() {
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void addContributions(final IToolBarManager toolBar, final IMenuManager menu) {
-    }
-    
+        
     // -- Save Listener
     // -------------------------------------------------------------------------
     
