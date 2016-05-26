@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="de.cau.cs.kieler.klighd.legacy.feature"
-      label="KIELER Lightweight Diagrams - Developer Resources &amp; Examples"
+      label="KIELER Lightweight Diagrams - Legacy"
       version="0.1.0.qualifier"
       provider-name="Kiel University"
       plugin="de.cau.cs.kieler.klighd.legacy">
@@ -11,7 +11,7 @@
    </description>
 
    <copyright>
-      Copyright 2013 by Real-Time and Embedded Systems Group, Department of Computer Science, Kiel University
+      Copyright 2016 by Real-Time and Embedded Systems Group, Department of Computer Science, Kiel University
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
