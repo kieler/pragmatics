@@ -661,7 +661,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -674,7 +674,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
@@ -687,7 +687,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
@@ -718,7 +718,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -731,7 +731,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -744,7 +744,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -757,7 +757,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -775,7 +775,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
@@ -788,7 +788,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -814,7 +814,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -827,7 +827,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -840,7 +840,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -853,7 +853,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -879,7 +879,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -892,7 +892,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -905,7 +905,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -931,7 +931,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -944,7 +944,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -957,7 +957,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -970,7 +970,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -983,7 +983,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -996,7 +996,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1009,7 +1009,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1022,7 +1022,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1035,7 +1035,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1048,7 +1048,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
@@ -1061,7 +1061,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1074,7 +1074,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1087,7 +1087,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
@@ -1100,7 +1100,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
     ));
@@ -1113,7 +1113,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1152,7 +1152,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.INT,
-        int.class,
+        Integer.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1209,7 +1209,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));
@@ -1235,7 +1235,7 @@ public class OgdfMetaDataProvider implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.ADVANCED
     ));

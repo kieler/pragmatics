@@ -59,7 +59,7 @@ public class SvgOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.FLOAT,
-        float.class,
+        Float.class,
         EnumSet.of(LayoutOptionData.Target.PARENTS),
         LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.svg.scale"
@@ -73,7 +73,7 @@ public class SvgOptions implements ILayoutMetaDataProvider {
         null,
         null,
         LayoutOptionData.Type.BOOLEAN,
-        boolean.class,
+        Boolean.class,
         null,
         LayoutOptionData.Visibility.VISIBLE
         , "de.cau.cs.kieler.svg.css"
