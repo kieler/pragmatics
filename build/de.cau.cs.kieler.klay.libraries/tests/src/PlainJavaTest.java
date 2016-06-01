@@ -14,26 +14,25 @@
 
 import static org.junit.Assert.assertNotEquals;
 
+import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
+import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.layered.properties.PortType;
+import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.options.PortConstraints;
+import org.eclipse.elk.core.options.PortSide;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.KLabel;
+import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.KPort;
 import org.junit.Test;
-
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KLabel;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.kgraph.KPort;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KVectorChain;
-import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.options.PortConstraints;
-import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
-import de.cau.cs.kieler.klay.layered.LayeredLayoutProvider;
-import de.cau.cs.kieler.klay.layered.properties.PortType;
 
 /**
  * Tests for successful layout of a graph given as POJO Kgraph.
@@ -51,13 +50,13 @@ public class PlainJavaTest {
         KNode parentNode = createGraph();
 
         // create a progress monitor
-        IKielerProgressMonitor progressMonitor = new BasicProgressMonitor();
+        IElkProgressMonitor progressMonitor = new BasicProgressMonitor();
 
         // create the layout provider
         AbstractLayoutProvider layoutProvider = new LayeredLayoutProvider();
 
         // perform layout on the created graph
-        layoutProvider.doLayout(parentNode, progressMonitor);
+        layoutProvider.layout(parentNode, progressMonitor);
 
         // output layout information
 //        printLayoutInfo(parentNode, progressMonitor);
@@ -74,35 +73,35 @@ public class PlainJavaTest {
      */
     private static KNode createGraph() {
         // create parent node
-        KNode parentNode = KimlUtil.createInitializedNode();
+        KNode parentNode = ElkUtil.createInitializedNode();
         configureParentNodeLayout(parentNode);
 
         // create child nodes
-        KNode childNode1 = KimlUtil.createInitializedNode();
+        KNode childNode1 = ElkUtil.createInitializedNode();
         // This automatically adds the child to the list of its parent's children.
         childNode1.setParent(parentNode);
-        KLabel nodeLabel1 = KimlUtil.createInitializedLabel(childNode1);
+        KLabel nodeLabel1 = ElkUtil.createInitializedLabel(childNode1);
         nodeLabel1.setText("node1");
         configureNodeLayout(childNode1);
         
-        KNode childNode2 = KimlUtil.createInitializedNode();
+        KNode childNode2 = ElkUtil.createInitializedNode();
         childNode2.setParent(parentNode);
-        KLabel nodeLabel2 = KimlUtil.createInitializedLabel(childNode2);
+        KLabel nodeLabel2 = ElkUtil.createInitializedLabel(childNode2);
         nodeLabel2.setText("node2");
         configureNodeLayout(childNode2);
 
         // create ports (optional)
-        KPort port1 = KimlUtil.createInitializedPort();
+        KPort port1 = ElkUtil.createInitializedPort();
         // this automatically adds the port to the node's list of ports.
         port1.setNode(childNode1);
         confiugurePortLayout(port1, PortType.OUTPUT);
         
-        KPort port2 = KimlUtil.createInitializedPort();
+        KPort port2 = ElkUtil.createInitializedPort();
         port2.setNode(childNode2);
         confiugurePortLayout(port2, PortType.INPUT);
 
         // create edges
-        KEdge edge1 = KimlUtil.createInitializedEdge();
+        KEdge edge1 = ElkUtil.createInitializedEdge();
         // this automatically adds the edge to the node's list of outgoing edges.
         edge1.setSource(childNode1);
         // this automatically adds the edge to the node's list of incoming edges.
@@ -123,9 +122,9 @@ public class PlainJavaTest {
         // add options for the parent node
         KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
         // set layout direction to horizontal
-        parentLayout.setProperty(LayoutOptions.DIRECTION, Direction.RIGHT);
+        parentLayout.setProperty(LayeredOptions.DIRECTION, Direction.RIGHT);
         // set overall element spacing
-        parentLayout.setProperty(LayoutOptions.SPACING, 25f);
+        parentLayout.setProperty(LayeredOptions.SPACING_NODE, 25f);
     }
     
     /**
@@ -139,7 +138,7 @@ public class PlainJavaTest {
         childLayout.setWidth(30.0f);
         childLayout.setHeight(30.0f);
         // set port constraints to fixed port positions
-        childLayout.setProperty(LayoutOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
+        childLayout.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
     }
     
     /**
@@ -155,11 +154,11 @@ public class PlainJavaTest {
         switch (type) {
         case OUTPUT:
             portLayout.setXpos(30.0f);
-            portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.EAST);
+            portLayout.setProperty(LayeredOptions.PORT_SIDE, PortSide.EAST);
             break;
         case INPUT:
             portLayout.setXpos(0.0f);
-            portLayout.setProperty(LayoutOptions.PORT_SIDE, PortSide.WEST);
+            portLayout.setProperty(LayeredOptions.PORT_SIDE, PortSide.WEST);
             break;
         }
     }
@@ -174,7 +173,7 @@ public class PlainJavaTest {
      */
     @SuppressWarnings("unused")
     private static void printLayoutInfo(final KNode parentNode,
-            final IKielerProgressMonitor progressMonitor) {
+            final IElkProgressMonitor progressMonitor) {
         // print execution time of the algorithm run
         System.out.println("Execution time: "
                 + progressMonitor.getExecutionTime() * 1000 + " ms");
