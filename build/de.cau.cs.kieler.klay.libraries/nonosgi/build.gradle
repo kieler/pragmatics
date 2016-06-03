@@ -2,13 +2,10 @@ apply plugin: 'java'
 
 dependencies {
     compile 'com.google.guava:com.google.guava:[0,)'
-    //compile 'de.cau.cs.kieler:de.cau.cs.kieler.core:[0,)'
-    //compile 'de.cau.cs.kieler:de.cau.cs.kieler.core.kgraph:[0,)'
-    // compile 'de.cau.cs.kieler:de.cau.cs.kieler.kiml:[0,)'
     compile 'org.eclipse.elk:org.eclipse.elk.core:[0,)'
     compile 'org.eclipse.elk:org.eclipse.elk.graph:[0,)'
     compile 'de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats:[0,)'
-    compile 'org.eclipse.core:org.eclipse.core.resources:[0,)'
+    //compile 'org.eclipse.core:org.eclipse.core.resources:[0,)' // TODO can this be removed?
     compile 'org.eclipse.core:org.eclipse.core.runtime:[0,)'
     compile 'org.eclipse.equinox:org.eclipse.equinox.common:[0,)'
     compile 'org.eclipse.equinox:org.eclipse.equinox.registry:[0,)'
