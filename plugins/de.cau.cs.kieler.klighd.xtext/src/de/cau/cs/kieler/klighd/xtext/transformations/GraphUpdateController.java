@@ -85,7 +85,17 @@ public class GraphUpdateController extends AbstractViewUpdateController implemen
      */
     @Override
     public void onEditorSaved(final IEditorPart editor) {
-        updateModel(readModel(editor));
+        if (getDiagramView().isLinkedWithActiveEditor()) {
+            updateModel(readModel(editor));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void refresh() {
+        updateModel(readModel(getEditor()));
     }
 
     // -- Utility
