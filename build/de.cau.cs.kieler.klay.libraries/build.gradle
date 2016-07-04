@@ -62,12 +62,11 @@ ext {
     // Adjust dependencies here
     // ------------------------
     klayDeps = [
-        'de.cau.cs.kieler:de.cau.cs.kieler.core:[0,)',
-        'de.cau.cs.kieler:de.cau.cs.kieler.core.kgraph:[0,)',
-        'de.cau.cs.kieler:de.cau.cs.kieler.kiml:[0,)',
-        'de.cau.cs.kieler:de.cau.cs.kieler.klay.force:[0,)',
-        'de.cau.cs.kieler:de.cau.cs.kieler.klay.layered:[0,)',
-        'de.cau.cs.kieler:de.cau.cs.kieler.klay.tree:[0,)'
+        'org.eclipse.elk:org.eclipse.elk.core:[0,)',
+        'org.eclipse.elk:org.eclipse.elk.graph:[0,)',
+        'org.eclipse.elk:org.eclipse.elk.alg.force:[0,)',
+        'org.eclipse.elk:org.eclipse.elk.alg.layered:[0,)',
+        'org.eclipse.elk:org.eclipse.elk.alg.mrtree:[0,)'
     ]
     klayExternalDeps = [
         // long names on mvn central
@@ -82,10 +81,11 @@ ext {
     ]
     formatsExternalDeps = [
         // short names on mvn central
+        'org.eclipse:org.eclipse.osgi:[0,)',
+        'org.eclipse:org.eclipse.core.runtime:[0,)',
         'org.eclipse.equinox:org.eclipse.equinox.app:[0,)',
         'org.eclipse.equinox:org.eclipse.equinox.common:[0,)',
-        'org.eclipse.equinox:org.eclipse.equinox.registry:[0,)',
-        'org.eclipse:org.eclipse.osgi:[0,)'
+        'org.eclipse.equinox:org.eclipse.equinox.registry:[0,)'
     ]
     jsonDeps = [
         'de.cau.cs.kieler:de.cau.cs.kieler.kiml.formats.json:[0,)'
@@ -102,16 +102,29 @@ ext {
 group = 'de.cau.cs.kieler'
 version = project.properties['v'] ?: 'nightly-' + getTimeStamp()
 
-allprojects{
+allprojects {
     repositories {
-        ivy {
+        ivy { // elk update site
+            ivyPattern 'http://build.eclipse.org/modeling/elk/updates/nightly/artifacts.jar/artifacts.xml'
+            artifactPattern 'http://build.eclipse.org/modeling/elk/updates/nightly/plugins/[artifact](.[classifier])_[revision].jar'
+        }
+        ivy { // kieler stuff
             ivyPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/artifacts.jar/artifacts.xml'
             artifactPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/plugins/[artifact](.[classifier])_[revision].jar'
         }
-        ivy {
+        ivy { // eclipse mars for the emf deps
+            ivyPattern 'http://download.eclipse.org/eclipse/updates/4.5/R-4.5.2-201602121500/artifacts.jar/artifacts.xml'
+            artifactPattern 'http://download.eclipse.org/eclipse/updates/4.5/R-4.5.2-201602121500/plugins/?d/[artifact](.[classifier])_[revision].jar'
+        }
+        ivy { // google guava
+            ivyPattern 'http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/artifacts.jar/artifacts.xml'
+            artifactPattern 'http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/plugins/[artifact](.[classifier])_[revision].jar'
+        }
+        ivy { // old target platform
             ivyPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/artifacts.jar/artifacts.xml'
             artifactPattern 'http://rtsys.informatik.uni-kiel.de/~kieler/repository/luna441/plugins/[artifact](.[classifier])_[revision].jar'
         }
+
     }
 }
 

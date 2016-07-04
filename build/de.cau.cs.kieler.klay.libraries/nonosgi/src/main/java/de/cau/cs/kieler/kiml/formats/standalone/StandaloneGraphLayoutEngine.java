@@ -13,23 +13,25 @@
  */
 package de.cau.cs.kieler.kiml.formats.standalone;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.elk.core.IGraphLayoutEngine;
+import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.graph.KNode;
 import org.eclipse.equinox.nonosgi.registry.RegistryFactoryHelper;
 
-import de.cau.cs.kieler.core.alg.BasicProgressMonitor;
-import de.cau.cs.kieler.core.alg.DefaultFactory;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.IGraphLayoutEngine;
-import de.cau.cs.kieler.kiml.LayoutMetaDataService;
-import de.cau.cs.kieler.kiml.RecursiveGraphLayoutEngine;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
-import de.cau.cs.kieler.kiml.formats.standalone.service.NonOsgiExtensionLayoutMetaDataService;
 
 /**
- * This class provides an interface to KIELER layout with graph format support, such as JSON, in a
+ * This class provides an interface to ELK layout with KIELER's graph format support, such as JSON, in a
  * pure Java environment. In other words, no active OSGI or Eclipse environment is required. The
- * dependencies are resolved via jar depenencies.
+ * dependencies are resolved via jar dependencies.
  * 
  * See this <a href=
  * "https://angelozerr.wordpress.com/2010/09/14/eclipse-extension-points-and-extensions-without-osgi/"
@@ -41,30 +43,51 @@ public final class StandaloneGraphLayoutEngine {
 
     // Initialization
     static {
-
         // this basically initializes the non osgi registry
         RegistryFactoryHelper.getRegistry();
 
-        // Following two lines are copied from
-        // de.cau.cs.kieler.kiml.formats.service.KimlServicePlugin#start()
-
-        // Replaced the default service by one that does not
-        // require any eclipse platform or ui stuff
-
-        // Initialize the layout meta data service (see LayoutDataService.getInstance())
-        LayoutMetaDataService.setInstanceFactory(new DefaultFactory<LayoutMetaDataService>(
-                NonOsgiExtensionLayoutMetaDataService.class));
-
-        // Not required here because we don't have any editors or views that provide configurations
-
-        // Initialize the layout configuration service (see LayoutConfigService.getInstance())
-        // LayoutConfigService.setInstanceFactory(new DefaultFactory<LayoutConfigService>(
-        // ExtensionLayoutConfigService.class));
-
+        // Initialize the layout meta data service
+        loadLayoutProviders();
+    }
+    
+    /** identifier of the extension point for layout providers. */
+    protected static final String EXTP_ID_LAYOUT_PROVIDERS = "org.eclipse.elk.core.layoutProviders";
+    /** name of the 'provider' element in the 'layout providers' extension point. */
+    protected static final String ELEMENT_PROVIDER = "provider";
+    /** name of the 'class' attribute in the extension points. */
+    protected static final String ATTRIBUTE_CLASS = "class";
+    
+    /**
+     * Creates a new instance, loading the extension point information in the process.
+     * 
+     * Code copied from {@link org.eclipse.elk.core.service.ElkServicePlugin ElkServicePlugin}.
+     */
+    private static void loadLayoutProviders() {
+        IConfigurationElement[] extensions = Platform.getExtensionRegistry()
+                .getConfigurationElementsFor(EXTP_ID_LAYOUT_PROVIDERS);
+        LayoutMetaDataService service = LayoutMetaDataService.getInstance();
+        
+        for (IConfigurationElement element : extensions) {
+            try {
+                if (ELEMENT_PROVIDER.equals(element.getName())) {
+                    ILayoutMetaDataProvider provider = (ILayoutMetaDataProvider)
+                            element.createExecutableExtension(ATTRIBUTE_CLASS);
+                    
+                    if (provider != null) {
+                        service.registerLayoutMetaDataProvider(provider);
+                    }
+                }
+            } catch (CoreException exception) {
+            	System.err.println(
+                        "Error while parsing extension point:" 
+                        + "\nElement: " + (element != null ? element.toString() : "<unknown>")
+                        + "\n\n"
+                    );
+            }
+        }
     }
 
-    private StandaloneGraphLayoutEngine() {
-    }
+    private StandaloneGraphLayoutEngine() { }
 
     /**
      * The layout engine we will use internally.

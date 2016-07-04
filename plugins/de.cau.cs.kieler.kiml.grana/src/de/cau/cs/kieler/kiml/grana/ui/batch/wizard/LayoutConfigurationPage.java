@@ -19,15 +19,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.elk.core.GraphIssue;
 import org.eclipse.elk.core.LayoutConfigurator;
+import org.eclipse.elk.core.LayoutOptionValidator;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.ui.AlgorithmSelectionDialog;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
-import org.eclipse.elk.core.ui.LayoutOptionValidator;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.layout.LayoutConstants;
 import org.eclipse.jface.resource.ImageRegistry;
@@ -274,7 +276,7 @@ public class LayoutConfigurationPage extends WizardPage {
             String value = entry.getSecond().toString();
             InputDialog dialog = new InputDialog(shell, "Edit Option",
                     "Enter a new value for the layout option:", value,
-                    new LayoutOptionValidator(optionData));
+                    new StringLayoutOptionValidator(optionData));
             if (dialog.open() == InputDialog.OK) {
                 String result = dialog.getValue().trim();
                 switch (optionData.getType()) {
@@ -320,6 +322,87 @@ public class LayoutConfigurationPage extends WizardPage {
             }
         }
         return null;
+    }
+    
+    
+    /**
+     * An input validator that checks if a given String can be parsed into a valid option value for a given layout
+     * option.
+     */
+    private static final class StringLayoutOptionValidator implements IInputValidator {
+        /** the layout option data to validate for. */
+        private LayoutOptionData optionData;
+        /** validator used to validate layout options after parsing. */
+        private LayoutOptionValidator optionValidator = new LayoutOptionValidator();
+        
+        
+        /**
+         * Creates a layout option validator for a layout option data.
+         * 
+         * @param theoptionData layout option data
+         */
+        private StringLayoutOptionValidator(final LayoutOptionData theoptionData) {
+            this.optionData = theoptionData;
+        }
+        
+        
+        /**
+         * {@inheritDoc}
+         */
+        public String isValid(final String newText) {
+            // Try to parse the string value
+            Object parsedValue = optionData.parseValue(newText);
+            
+            // If the value couldn't be parsed, raise an error message depending on which data format the layout
+            // option expects
+            if (parsedValue == null) {
+                switch (optionData.getType()) {
+                case BOOLEAN:
+                    return "Expected true or false.";
+                case ENUM:
+                case ENUMSET:
+                    return getChoicesMessage();
+                case INT:
+                    return "Expected integer number.";
+                case FLOAT:
+                    return "Expected real number.";
+                case OBJECT:
+                    // We allow null objects if the input string is either null or "null"
+                    if (newText != null && !newText.equals("null")) {
+                        return "Error parsing data object.";
+                    }
+                }
+            } else {
+                // Let our validator validate the value to be validated
+                List<GraphIssue> issues = optionValidator.checkProperty(optionData, parsedValue, null);
+                if (!issues.isEmpty()) {
+                    return issues.get(0).toString();
+                }
+            }
+            
+            // Fallback
+            return null;
+        }
+        
+        /**
+         * Creates an error message for available choices.
+         * 
+         * @param choices the available choices
+         * @return an error message
+         */
+        private String getChoicesMessage() {
+            StringBuilder messageBuilder = new StringBuilder("Invalid value. Valid values are ");
+            String[] choices = optionData.getChoices();
+            for (int i = 0; i < choices.length; i++) {
+                if (i == 0) {
+                    messageBuilder.append(" " + choices[i]);
+                } else {
+                    messageBuilder.append(", " + choices[i]);
+                }
+            }
+            return messageBuilder.toString();
+        }
+
     }
     
     /**

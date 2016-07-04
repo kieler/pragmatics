@@ -7,12 +7,12 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  
+
   <!-- Define a few properties used throughout all build profiles. -->
   <properties>
     <tycho-version>0.21.0</tycho-version>
     <targetJdk>1.8</targetJdk>
-    
+
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
     <!-- Non-breakable space, as normal spaces are trimmed. -->
     <sourceFeatureLabelSuffix>&#xA0;(Sources)</sourceFeatureLabelSuffix>
@@ -32,7 +32,7 @@
   <!-- Define one profile for each output target we have.
        Formerly, we had the <repository> definitions repeated below in each profile
        globally defined, i.e. profile independent. This, however, prevents the
-       Stuttgart/India guys from relying on our build infrastructure as it is 
+       Stuttgart/India guys from relying on our build infrastructure as it is
        (they don't want and cannot rely on our target platform repos) and would
        require customization, which may lead to merge conflicts due updates in our
        config and further hassles... -->
@@ -56,7 +56,7 @@
     <!-- The KWebS product. -->
     <profile>
       <id>kwebs</id>
-      
+
       <repositories>
         <!-- kieler pragmatics runtime -->
         <repository>
@@ -65,7 +65,7 @@
           <url>${kieler.pragmatics.nightly}</url>
         </repository>
       </repositories>
-      
+
       <modules>
         <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../plugins/de.cau.cs.kieler.web.statistics</module>
@@ -74,11 +74,11 @@
         <module>de.cau.cs.kieler.kwebs.repository</module>
       </modules>
     </profile>
-    
+
     <!-- The Ptolemy RCP. -->
     <profile>
       <id>ptolemy-rcp</id>
-      
+
       <repositories>
         <!-- kieler pragmatics runtime -->
         <repository>
@@ -87,14 +87,14 @@
           <url>${kieler.pragmatics.nightly}</url>
         </repository>
       </repositories>
-      
+
       <modules>
         <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
         <module>../products/de.cau.cs.kieler.ptolemy.rcp</module>
         <module>de.cau.cs.kieler.ptolemy.rcp.repository</module>
       </modules>
     </profile>
-	
+
   </profiles>
 
 
@@ -105,17 +105,24 @@
       <name>Maven Plugin Repository</name>
       <url>http://repo1.maven.org/maven2</url>
     </pluginRepository>
+
     <pluginRepository>
       <id>jboss-releases</id>
       <name>JBoss Releases Maven Repository</name>
       <url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+    </pluginRepository>
+
+    <pluginRepository>
+      <id>eclipse-elk-meta</id>
+      <name>ELK Meta Data Language Compiler Maven Repository</name>
+      <url>http://build.eclipse.org/modeling/elk/maven/meta/nightly</url>
     </pluginRepository>
   </pluginRepositories>
 
 
   <!-- Modify the build process to add Tycho and configure some utility plug-ins. -->
   <build>
-    <plugins>    
+    <plugins>
       <!-- we need tycho plugin to build eclipse plugins -->
       <plugin>
         <groupId>org.eclipse.tycho</groupId>
@@ -137,7 +144,7 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <!-- Enable java assertions during junit test runs. -->
       <!-- The "enableAssertions" property is only available in the maven-surefire plugin. -->
       <plugin>
@@ -212,20 +219,65 @@
         </configuration>
       </plugin>
     </plugins>
-    
+
     <pluginManagement>
       <plugins>
-      
+
         <!-- maven xtend plugin to tell maven how to compile xtend code -->
         <plugin>
           <groupId>org.eclipse.xtend</groupId>
           <artifactId>xtend-maven-plugin</artifactId>
           <version>2.9.2</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compile</goal>
+              </goals>
+            </execution>
+          </executions>
           <configuration>
             <outputDirectory>${basedir}/xtend-gen</outputDirectory>
           </configuration>
         </plugin>
-        
+
+        <!-- generate code from elkm files -->
+        <plugin>
+          <groupId>org.eclipse.xtext</groupId>
+          <artifactId>xtext-maven-plugin</artifactId>
+          <version>2.9.2</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>generate</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <languages>
+              <language>
+                <setup>org.eclipse.elk.core.meta.MetaDataStandaloneSetup</setup>
+                <outputConfigurations>
+                  <outputConfiguration>
+                    <outputDirectory>${basedir}/src-gen/</outputDirectory>
+                  </outputConfiguration>
+                </outputConfigurations>
+              </language>
+            </languages>
+          </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>org.eclipse.elk</groupId>
+              <artifactId>org.eclipse.elk.graph</artifactId>
+              <version>0.1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+              <groupId>org.eclipse.elk</groupId>
+              <artifactId>org.eclipse.elk.core.meta</artifactId>
+              <version>0.1.0-SNAPSHOT</version>
+            </dependency>
+          </dependencies>
+        </plugin>
+
         <!-- add src-gen and xtend-gen to source-directories -->
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -249,7 +301,7 @@
             </execution>
           </executions>
         </plugin>
-        
+
         <!-- generated code needs cleanup too -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
