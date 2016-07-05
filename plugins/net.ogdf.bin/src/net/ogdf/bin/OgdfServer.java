@@ -367,6 +367,7 @@ public class OgdfServer {
             }
             break;
         }
+        
         return execFile;
     }
     
@@ -388,7 +389,7 @@ public class OgdfServer {
         if (process == null) {
             try {
                 if (executable == null) {
-                    executable = resolveExecutable().getPath();
+                    executable = resolveExecutable().getCanonicalPath();
                 }
                 process = Runtime.getRuntime().exec(new String[] { executable, inputFormat });
             } catch (IOException exception) {
