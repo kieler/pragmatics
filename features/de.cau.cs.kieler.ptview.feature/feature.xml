@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.ptview.feature"
       label="KIELER Ptolemy Viewer"
-      version="0.9.0.qualifier"
+      version="0.10.0.qualifier"
       provider-name="Kiel University"
       plugin="de.cau.cs.kieler.ptolemy.klighd">
 
