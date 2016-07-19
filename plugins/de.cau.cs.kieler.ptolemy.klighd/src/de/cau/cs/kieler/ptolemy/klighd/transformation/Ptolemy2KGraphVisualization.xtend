@@ -53,7 +53,7 @@ import org.eclipse.elk.graph.KNode
 import org.eclipse.elk.graph.KPort
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-import org.eclipse.elk.alg.layered.LayeredLayoutProvider
+import org.eclipse.elk.alg.layered.properties.LayeredOptions
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -705,10 +705,10 @@ class Ptolemy2KGraphVisualization {
         val layout = node.layout
         // Check if this is a state machine
         if (node.markedAsStateMachineContainer) {
-            layout.setProperty(CoreOptions::ALGORITHM, LayeredLayoutProvider.ID)
+            layout.setProperty(CoreOptions::ALGORITHM, LayeredOptions.ALGORITHM_ID)
             layout.setProperty(CoreOptions::EDGE_ROUTING, EdgeRouting::SPLINES)
         } else {
-            layout.setProperty(CoreOptions::ALGORITHM, LayeredLayoutProvider.ID)
+            layout.setProperty(CoreOptions::ALGORITHM, LayeredOptions.ALGORITHM_ID)
             layout.setProperty(CoreOptions::EDGE_ROUTING, EdgeRouting::ORTHOGONAL)
             
             // explicitly set a layout direction as we do not want the diagram layouted 

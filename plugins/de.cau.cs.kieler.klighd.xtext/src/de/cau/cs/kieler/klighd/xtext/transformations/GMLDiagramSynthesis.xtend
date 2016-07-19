@@ -38,10 +38,10 @@ import org.eclipse.elk.core.math.KVector
 import org.eclipse.elk.core.math.KVectorChain
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.util.ElkUtil
-import org.eclipse.elk.core.util.FixedLayoutProvider
 import org.eclipse.elk.graph.KEdge
 import org.eclipse.elk.graph.KGraphElement
 import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.core.options.FixedLayouterOptions
 
 /**
  * Generic diagram synthesis for GML files. 
@@ -88,7 +88,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
                        
             // set the fixed layouter if we found positions    
             if (hasPositions) {
-                root.setLayoutOption(CoreOptions::ALGORITHM, FixedLayoutProvider.ID)
+                root.setLayoutOption(CoreOptions::ALGORITHM, FixedLayouterOptions.ALGORITHM_ID)
             }
         ]
     }
