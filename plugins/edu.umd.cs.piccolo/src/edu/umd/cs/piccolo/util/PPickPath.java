@@ -71,10 +71,13 @@ public class PPickPath implements PInputEventListener {
 
     /** Stack of nodes representing all picked nodes. */
     private PStack nodeStack;
+    private PStack _nodeStack;
 
     private final PCamera topCamera;
     private PStack transformStack;
+    private PStack _transformStack;
     private PStack pickBoundsStack;
+    private PStack _pickBoundsStack;
     private PCamera bottomCamera;
     private HashMap excludedNodes;
 
@@ -159,6 +162,8 @@ public class PPickPath implements PInputEventListener {
      * child will always be picked first, use this method to find the covered
      * child. Return the camera when no more visual will be picked.
      * 
+     * Alters the effective node stack in the process!
+     * 
      * @return next node to picked after the picked node
      */
     public PNode nextPickedNode() {
@@ -175,6 +180,11 @@ public class PPickPath implements PInputEventListener {
         excludedNodes.put(picked, picked);
 
         final Object screenPickBounds = pickBoundsStack.get(0);
+
+        // Save original path state if not already done
+        if (_nodeStack == null) _nodeStack = nodeStack;
+        if (_transformStack == null) _transformStack = transformStack;
+        if (_pickBoundsStack == null) _pickBoundsStack = pickBoundsStack;
 
         // reset path state
         pickBoundsStack = new PStack();
@@ -194,6 +204,26 @@ public class PPickPath implements PInputEventListener {
         }
 
         return getPickedNode();
+    }
+
+    /**
+     * Resets the PickPath to its initial state. Can be used to obtain the original node stack
+     * after using nextPickedNode().
+     */
+    public void reset() {
+        if (_nodeStack != null) {
+            nodeStack = _nodeStack;
+            _nodeStack = null;
+        }
+        if (_transformStack != null) {
+            transformStack = _transformStack;
+            _transformStack = null;
+        }
+        if (_pickBoundsStack != null) {
+            pickBoundsStack = _pickBoundsStack;
+            _pickBoundsStack = null;
+        }
+        excludedNodes.clear();
     }
 
     /**
