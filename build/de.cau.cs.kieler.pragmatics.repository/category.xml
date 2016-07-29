@@ -64,6 +64,13 @@
       <category name="kieler-sources"/>
    </feature>
 
+   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.draw2d.feature" version="0.1.0.qualifier">
+      <category name="kieler-klighd"/>
+   </feature>
+   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature.source_0.1.0.qualifier.jar" id="de.cau.cs.kieler.klighd.draws2.feature.source" version="0.1.0.qualifier">
+      <category name="kieler-sources"/>
+   </feature>
+
    <feature url="features/de.cau.cs.kieler.klighd.sdk.feature_0.9.0.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature" version="0.9.0.qualifier">
       <category name="kieler-klighd"/>
    </feature>
