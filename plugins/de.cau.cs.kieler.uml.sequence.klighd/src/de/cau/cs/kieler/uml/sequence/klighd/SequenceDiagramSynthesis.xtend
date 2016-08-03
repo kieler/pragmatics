@@ -63,6 +63,7 @@ import org.eclipse.elk.core.util.ElkUtil
 import org.eclipse.elk.core.util.FixedLayoutProvider
 import org.eclipse.elk.graph.KEdge
 import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.core.options.FixedLayouterOptions
 
 /**
  * This class is used for the transformation of a Sequence Diagram Model into a KGraph.
@@ -139,7 +140,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     /** @{inheritDoc} */
     override KNode transform(SequenceDiagram model) {
         val root = model.createNode()
-        root.addLayoutParam(CoreOptions.ALGORITHM, FixedLayoutProvider.ID)
+        root.addLayoutParam(CoreOptions.ALGORITHM, FixedLayouterOptions.ALGORITHM_ID)
 
         // Attach different Properties.
         val surrInteraction = root.createNode().associateWith(model)
