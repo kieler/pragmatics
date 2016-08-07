@@ -21,7 +21,8 @@ Copyright 2014 by Kiel University, Department of Computer Science, Real-Time and
    </configIni>
 
    <launcherArgs>
-      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
+      </vmArgsMac>
    </launcherArgs>
 
    <windowImages i16="/de.cau.cs.kieler.ptolemy.rcp/icons/PtolemyII256x256.png" i32="/de.cau.cs.kieler.ptolemy.rcp/icons/PtolemyII256x256.png" i48="/de.cau.cs.kieler.ptolemy.rcp/icons/PtolemyII256x256.png" i64="/de.cau.cs.kieler.ptolemy.rcp/icons/PtolemyII256x256.png" i128="/de.cau.cs.kieler.ptolemy.rcp/icons/PtolemyII256x256.png"/>
@@ -138,18 +139,12 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="com.google.guava"/>
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
-      <plugin id="de.cau.cs.kieler.core"/>
-      <plugin id="de.cau.cs.kieler.core.kgraph"/>
-      <plugin id="de.cau.cs.kieler.core.krendering"/>
-      <plugin id="de.cau.cs.kieler.core.krendering.extensions"/>
-      <plugin id="de.cau.cs.kieler.core.ui"/>
-      <plugin id="de.cau.cs.kieler.kiml"/>
-      <plugin id="de.cau.cs.kieler.kiml.graphviz.dot"/>
-      <plugin id="de.cau.cs.kieler.kiml.graphviz.layouter"/>
-      <plugin id="de.cau.cs.kieler.kiml.service"/>
-      <plugin id="de.cau.cs.kieler.klay.layered"/>
       <plugin id="de.cau.cs.kieler.klighd"/>
+      <plugin id="de.cau.cs.kieler.klighd.krendering"/>
+      <plugin id="de.cau.cs.kieler.klighd.krendering.extensions"/>
       <plugin id="de.cau.cs.kieler.klighd.piccolo"/>
+      <plugin id="de.cau.cs.kieler.klighd.piccolo.draw2d" fragment="true"/>
+      <plugin id="de.cau.cs.kieler.klighd.piccolo.freehep" fragment="true"/>
       <plugin id="de.cau.cs.kieler.klighd.ui"/>
       <plugin id="de.cau.cs.kieler.klighd.ui.emf" fragment="true"/>
       <plugin id="de.cau.cs.kieler.ptolemy.klighd"/>
@@ -211,8 +206,16 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.e4.ui.workbench"/>
       <plugin id="org.eclipse.e4.ui.workbench.addons.swt"/>
       <plugin id="org.eclipse.e4.ui.workbench.renderers.swt"/>
+      <plugin id="org.eclipse.e4.ui.workbench.renderers.swt.cocoa" fragment="true"/>
       <plugin id="org.eclipse.e4.ui.workbench.swt"/>
       <plugin id="org.eclipse.e4.ui.workbench3"/>
+      <plugin id="org.eclipse.elk.alg.graphviz.dot"/>
+      <plugin id="org.eclipse.elk.alg.graphviz.layouter"/>
+      <plugin id="org.eclipse.elk.alg.layered"/>
+      <plugin id="org.eclipse.elk.core"/>
+      <plugin id="org.eclipse.elk.core.service"/>
+      <plugin id="org.eclipse.elk.core.ui"/>
+      <plugin id="org.eclipse.elk.graph"/>
       <plugin id="org.eclipse.emf"/>
       <plugin id="org.eclipse.emf.common"/>
       <plugin id="org.eclipse.emf.ecore"/>
@@ -235,6 +238,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.equinox.security"/>
+      <plugin id="org.eclipse.equinox.security.macosx" fragment="true"/>
       <plugin id="org.eclipse.equinox.util"/>
       <plugin id="org.eclipse.help"/>
       <plugin id="org.eclipse.jface"/>
@@ -247,6 +251,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.osgi.services"/>
       <plugin id="org.eclipse.pde"/>
       <plugin id="org.eclipse.swt"/>
+      <plugin id="org.eclipse.swt.cocoa.macosx.x86_64" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
       <plugin id="org.eclipse.swt.gtk.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
@@ -255,6 +260,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.team.ui"/>
       <plugin id="org.eclipse.text"/>
       <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
       <plugin id="org.eclipse.ui.editors"/>
       <plugin id="org.eclipse.ui.forms"/>
       <plugin id="org.eclipse.ui.ide"/>

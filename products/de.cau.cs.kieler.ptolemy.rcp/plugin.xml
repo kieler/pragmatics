@@ -250,10 +250,6 @@
                value="KIELER Ptolemy Browser">
          </property>
          <property
-               name="preferenceCustomization"
-               value="plugin_customization.ini">
-         </property>
-         <property
                name="defaultPerspectiveId"
                value="de.cau.cs.kieler.ptolemy.rcp.perspective">
          </property>
@@ -283,7 +279,11 @@
           </property>
           <property
                 name="aboutText"
-                value="KIELER - Kiel Integrated Environment for Layout (Eclipse Rich Client)&#x0D;&#x0A;A research project on enhancing the model-based design of complex systems&#x0D;&#x0A;&#x0D;&#x0A;&#x0D;&#x0A;For more information, visit our website:&#x0D;&#x0A;http://www.informatik.uni-kiel.de/rtsys/kieler/&#x0D;&#x0A;&#x0D;&#x0A;Copyright 2013 by Kiel University, Department of Computer Science, Real-Time and Embedded Systems Group">
+                value="KIELER - Kiel Integrated Environment for Layout (Eclipse Rich Client)&#x0A;A research project on enhancing the model-based design of complex systems&#x0A;&#x0A;&#x0A;For more information, visit our website:&#x0A;http://www.informatik.uni-kiel.de/rtsys/kieler/&#x0A;&#x0A;Copyright 2014 by Kiel University, Department of Computer Science, Real-Time and Embedded Systems Group">
+          </property>
+          <property
+                name="preferenceCustomization"
+                value="plugin_customization.ini">
           </property>
       </product>
    </extension>

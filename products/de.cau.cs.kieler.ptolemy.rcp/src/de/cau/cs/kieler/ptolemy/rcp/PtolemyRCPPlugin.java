@@ -103,7 +103,7 @@ public class PtolemyRCPPlugin extends AbstractUIPlugin implements IStartup {
                     ww.setCoolBarVisible(false);
                     ww.setPerspectiveBarVisible(false);
                     ww.setStatusLineVisible(false);
-                    ww.setFastViewBarVisible(false);
+//                    ww.setFastViewBarVisible(false);
 
                     // find the composite that hosts the status line and dispose it
                     Shell shell = ww.getShell();
