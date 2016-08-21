@@ -101,7 +101,7 @@ public class AnalysisFailed {
             return MESSAGE_ANALYSIS_DEPENDENCY;
         case Failed:
         default:
-            return MESSAGE_ANALYSIS_FAILED;
+            return MESSAGE_ANALYSIS_FAILED + exception != null ? exception.getMessage() : "";
         }
     }
     
