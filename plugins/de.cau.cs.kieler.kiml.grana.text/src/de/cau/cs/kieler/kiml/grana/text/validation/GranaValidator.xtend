@@ -33,8 +33,14 @@ class GranaValidator extends AbstractGranaValidator {
     def checkRangeAnalysisComponentExists(RangeJob job) {
         val analysis = AnalysisService.getInstance.getAnalysis(job.rangeAnalysis.name)
         if (analysis != null) {
-            if (job.rangeAnalysisComponent < 0 || analysis.components.size <= job.rangeAnalysisComponent) {
-                error("Invalid component", GranaPackage.Literals.RANGE_JOB__RANGE_ANALYSIS_COMPONENT)                
+            if (job.rangeAnalysisComponent < 0) {
+                error("Component must be >= 0.", GranaPackage.Literals.RANGE_JOB__RANGE_ANALYSIS_COMPONENT)                
+            }
+            if ((analysis.components == null || analysis.components.isEmpty) && job.rangeAnalysisComponent != 0) {
+                error("Selected range analysis has only a single component, 'component' must be 0.", GranaPackage.Literals.RANGE_JOB__RANGE_ANALYSIS_COMPONENT)
+            }
+            if (!analysis.components.isEmpty && analysis.components.size <= job.rangeAnalysisComponent) {
+                error("Selected range analysis has only " + analysis.components.size + " components.", GranaPackage.Literals.RANGE_JOB__RANGE_ANALYSIS_COMPONENT)
             }
         }
     }
