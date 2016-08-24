@@ -90,6 +90,11 @@ public class GranaAdapterFactory extends AdapterFactoryImpl
         return createRegularJobAdapter();
       }
       @Override
+      public Adapter caseCompareJob(CompareJob object)
+      {
+        return createCompareJobAdapter();
+      }
+      @Override
       public Adapter caseRangeJob(RangeJob object)
       {
         return createRangeJobAdapter();
@@ -227,6 +232,21 @@ public class GranaAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createRegularJobAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.kiml.grana.text.grana.CompareJob <em>Compare Job</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.CompareJob
+   * @generated
+   */
+  public Adapter createCompareJobAdapter()
   {
     return null;
   }

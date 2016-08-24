@@ -13,11 +13,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef#getName <em>Name</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef#getResources <em>Resources</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage#getGlobalResourceRef()
  * @model

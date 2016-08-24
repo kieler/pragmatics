@@ -285,7 +285,7 @@ public class DependencyGraph<S extends Comparable<S>, T extends IDepending<S>> {
          * @param obj
          *            the object
          */
-        public Node(final T obj) {
+        Node(final T obj) {
             object = obj;
         }
 

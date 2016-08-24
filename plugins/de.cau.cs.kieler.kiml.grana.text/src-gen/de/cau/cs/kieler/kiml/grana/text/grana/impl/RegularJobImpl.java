@@ -17,11 +17,11 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RegularJobImpl#isLayoutBeforeAnalysis <em>Layout Before Analysis</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RegularJobImpl#isMeasureExecutionTime <em>Measure Execution Time</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -111,6 +111,14 @@
             silent="true"
             type="html">
       </visualizationMethod>
+      <type
+            name="json">
+      </type>
+      <visualizer
+            class="de.cau.cs.kieler.kiml.grana.ui.visualizers.BasicJsonVisualizer"
+            priority="1"
+            type="json">
+      </visualizer>
    </extension>
    <extension
          point="de.cau.cs.kieler.kiml.grana.analysisProviders">

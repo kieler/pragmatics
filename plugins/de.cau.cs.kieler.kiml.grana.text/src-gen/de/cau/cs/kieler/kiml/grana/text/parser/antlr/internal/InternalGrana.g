@@ -24,6 +24,7 @@ import org.eclipse.xtext.parser.*;
 import org.eclipse.xtext.parser.impl.*;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.xtext.parser.antlr.AbstractInternalAntlrParser;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream;
 import org.eclipse.xtext.parser.antlr.XtextTokenStream.HiddenTokens;
@@ -125,11 +126,26 @@ ruleGrana returns [EObject current=null]
     {
     	newLeafNode(otherlv_4, grammarAccess.getGranaAccess().getExecuteKeyword_2_0());
     }
-((
 (
-		lv_executeAll_5_0=	'all' 
+(
+		lv_parallel_5_0=	'parallel' 
     {
-        newLeafNode(lv_executeAll_5_0, grammarAccess.getGranaAccess().getExecuteAllAllKeyword_2_1_0_0());
+        newLeafNode(lv_parallel_5_0, grammarAccess.getGranaAccess().getParallelParallelKeyword_2_1_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getGranaRule());
+	        }
+       		setWithLastConsumed($current, "parallel", true, "parallel");
+	    }
+
+)
+)?((
+(
+		lv_executeAll_6_0=	'all' 
+    {
+        newLeafNode(lv_executeAll_6_0, grammarAccess.getGranaAccess().getExecuteAllAllKeyword_2_2_0_0());
     }
  
 	    {
@@ -148,9 +164,9 @@ ruleGrana returns [EObject current=null]
 	            $current = createModelElement(grammarAccess.getGranaRule());
 	        }
         }
-	otherlv_6=RULE_ID
+	otherlv_7=RULE_ID
 	{
-		newLeafNode(otherlv_6, grammarAccess.getGranaAccess().getExecuteJobCrossReference_2_1_1_0()); 
+		newLeafNode(otherlv_7, grammarAccess.getGranaAccess().getExecuteJobCrossReference_2_2_1_0()); 
 	}
 
 )
@@ -159,14 +175,14 @@ ruleGrana returns [EObject current=null]
 		{ 
 	        newCompositeNode(grammarAccess.getGranaAccess().getJobsJobParserRuleCall_3_0()); 
 	    }
-		lv_jobs_7_0=ruleJob		{
+		lv_jobs_8_0=ruleJob		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getGranaRule());
 	        }
        		add(
        			$current, 
        			"jobs",
-        		lv_jobs_7_0, 
+        		lv_jobs_8_0, 
         		"de.cau.cs.kieler.kiml.grana.text.Grana.Job");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -210,6 +226,16 @@ ruleJob returns [EObject current=null]
     this_RangeJob_1=ruleRangeJob
     { 
         $current = $this_RangeJob_1.current; 
+        afterParserOrEnumRuleCall();
+    }
+
+    |
+    { 
+        newCompositeNode(grammarAccess.getJobAccess().getCompareJobParserRuleCall_2()); 
+    }
+    this_CompareJob_2=ruleCompareJob
+    { 
+        $current = $this_CompareJob_2.current; 
         afterParserOrEnumRuleCall();
     }
 )
@@ -358,11 +384,196 @@ ruleRegularJob returns [EObject current=null]
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getRegularJobAccess().getOutputOutputParserRuleCall_11_0()); 
+	        newCompositeNode(grammarAccess.getRegularJobAccess().getOutputTypeOutputTypeEnumRuleCall_11_0()); 
+	    }
+		lv_outputType_11_0=ruleOutputType		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getRegularJobRule());
+	        }
+       		set(
+       			$current, 
+       			"outputType",
+        		lv_outputType_11_0, 
+        		"de.cau.cs.kieler.kiml.grana.text.Grana.OutputType");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)?(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getRegularJobAccess().getOutputOutputParserRuleCall_12_0()); 
+	    }
+		lv_output_12_0=ruleOutput		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getRegularJobRule());
+	        }
+       		set(
+       			$current, 
+       			"output",
+        		lv_output_12_0, 
+        		"de.cau.cs.kieler.kiml.grana.text.Grana.Output");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))
+;
+
+
+
+
+
+// Entry rule entryRuleCompareJob
+entryRuleCompareJob returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getCompareJobRule()); }
+	 iv_ruleCompareJob=ruleCompareJob 
+	 { $current=$iv_ruleCompareJob.current; } 
+	 EOF 
+;
+
+// Rule CompareJob
+ruleCompareJob returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+(	otherlv_0='comparejob' 
+    {
+    	newLeafNode(otherlv_0, grammarAccess.getCompareJobAccess().getComparejobKeyword_0());
+    }
+(
+(
+		lv_name_1_0=RULE_ID
+		{
+			newLeafNode(lv_name_1_0, grammarAccess.getCompareJobAccess().getNameIDTerminalRuleCall_1_0()); 
+		}
+		{
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getCompareJobRule());
+	        }
+       		setWithLastConsumed(
+       			$current, 
+       			"name",
+        		lv_name_1_0, 
+        		"de.cau.cs.kieler.kiml.grana.text.Grana.ID");
+	    }
+
+)
+)	otherlv_2='resources' 
+    {
+    	newLeafNode(otherlv_2, grammarAccess.getCompareJobAccess().getResourcesKeyword_2());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getCompareJobAccess().getResourcesResourceParserRuleCall_3_0()); 
+	    }
+		lv_resources_3_0=ruleResource		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getCompareJobRule());
+	        }
+       		add(
+       			$current, 
+       			"resources",
+        		lv_resources_3_0, 
+        		"de.cau.cs.kieler.kiml.grana.text.Grana.Resource");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)+	otherlv_4='layoutoptions' 
+    {
+    	newLeafNode(otherlv_4, grammarAccess.getCompareJobAccess().getLayoutoptionsKeyword_4());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getCompareJobAccess().getLayoutOptionsKIdentifierParserRuleCall_5_0()); 
+	    }
+		lv_layoutOptions_5_0=ruleKIdentifier		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getCompareJobRule());
+	        }
+       		add(
+       			$current, 
+       			"layoutOptions",
+        		lv_layoutOptions_5_0, 
+        		"de.cau.cs.kieler.kiml.grana.text.Grana.KIdentifier");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getCompareJobAccess().getLayoutOptionsKIdentifierParserRuleCall_6_0()); 
+	    }
+		lv_layoutOptions_6_0=ruleKIdentifier		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getCompareJobRule());
+	        }
+       		add(
+       			$current, 
+       			"layoutOptions",
+        		lv_layoutOptions_6_0, 
+        		"de.cau.cs.kieler.kiml.grana.text.Grana.KIdentifier");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)	otherlv_7='analyses' 
+    {
+    	newLeafNode(otherlv_7, grammarAccess.getCompareJobAccess().getAnalysesKeyword_7());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getCompareJobAccess().getAnalysesAnalysisParserRuleCall_8_0()); 
+	    }
+		lv_analyses_8_0=ruleAnalysis		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getCompareJobRule());
+	        }
+       		add(
+       			$current, 
+       			"analyses",
+        		lv_analyses_8_0, 
+        		"de.cau.cs.kieler.kiml.grana.text.Grana.Analysis");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)+	otherlv_9='output' 
+    {
+    	newLeafNode(otherlv_9, grammarAccess.getCompareJobAccess().getOutputKeyword_9());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getCompareJobAccess().getOutputTypeOutputTypeEnumRuleCall_10_0()); 
+	    }
+		lv_outputType_10_0=ruleOutputType		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getCompareJobRule());
+	        }
+       		set(
+       			$current, 
+       			"outputType",
+        		lv_outputType_10_0, 
+        		"de.cau.cs.kieler.kiml.grana.text.Grana.OutputType");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)?(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getCompareJobAccess().getOutputOutputParserRuleCall_11_0()); 
 	    }
 		lv_output_11_0=ruleOutput		{
 	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getRegularJobRule());
+	            $current = createModelElementForParent(grammarAccess.getCompareJobRule());
 	        }
        		set(
        			$current, 
@@ -416,89 +627,104 @@ ruleRangeJob returns [EObject current=null]
 	    }
 
 )
-)	otherlv_2='resources' 
+)(
+(
+		lv_measureExecutionTime_2_0=	'measureExecutionTime' 
     {
-    	newLeafNode(otherlv_2, grammarAccess.getRangeJobAccess().getResourcesKeyword_2());
+        newLeafNode(lv_measureExecutionTime_2_0, grammarAccess.getRangeJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_2_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getRangeJobRule());
+	        }
+       		setWithLastConsumed($current, "measureExecutionTime", true, "measureExecutionTime");
+	    }
+
+)
+)?	otherlv_3='resources' 
+    {
+    	newLeafNode(otherlv_3, grammarAccess.getRangeJobAccess().getResourcesKeyword_3());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getRangeJobAccess().getResourcesResourceParserRuleCall_3_0()); 
+	        newCompositeNode(grammarAccess.getRangeJobAccess().getResourcesResourceParserRuleCall_4_0()); 
 	    }
-		lv_resources_3_0=ruleResource		{
+		lv_resources_4_0=ruleResource		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getRangeJobRule());
 	        }
        		add(
        			$current, 
        			"resources",
-        		lv_resources_3_0, 
+        		lv_resources_4_0, 
         		"de.cau.cs.kieler.kiml.grana.text.Grana.Resource");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)+	otherlv_4='layoutoptions' 
+)+	otherlv_5='layoutoptions' 
     {
-    	newLeafNode(otherlv_4, grammarAccess.getRangeJobAccess().getLayoutoptionsKeyword_4());
+    	newLeafNode(otherlv_5, grammarAccess.getRangeJobAccess().getLayoutoptionsKeyword_5());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getRangeJobAccess().getLayoutOptionsKIdentifierParserRuleCall_5_0()); 
+	        newCompositeNode(grammarAccess.getRangeJobAccess().getLayoutOptionsKIdentifierParserRuleCall_6_0()); 
 	    }
-		lv_layoutOptions_5_0=ruleKIdentifier		{
+		lv_layoutOptions_6_0=ruleKIdentifier		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getRangeJobRule());
 	        }
        		add(
        			$current, 
        			"layoutOptions",
-        		lv_layoutOptions_5_0, 
+        		lv_layoutOptions_6_0, 
         		"de.cau.cs.kieler.kiml.grana.text.Grana.KIdentifier");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)+	otherlv_6='analyses' 
+)+	otherlv_7='analyses' 
     {
-    	newLeafNode(otherlv_6, grammarAccess.getRangeJobAccess().getAnalysesKeyword_6());
+    	newLeafNode(otherlv_7, grammarAccess.getRangeJobAccess().getAnalysesKeyword_7());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getRangeJobAccess().getAnalysesAnalysisParserRuleCall_7_0()); 
+	        newCompositeNode(grammarAccess.getRangeJobAccess().getAnalysesAnalysisParserRuleCall_8_0()); 
 	    }
-		lv_analyses_7_0=ruleAnalysis		{
+		lv_analyses_8_0=ruleAnalysis		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getRangeJobRule());
 	        }
        		add(
        			$current, 
        			"analyses",
-        		lv_analyses_7_0, 
+        		lv_analyses_8_0, 
         		"de.cau.cs.kieler.kiml.grana.text.Grana.Analysis");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)+	otherlv_8='rangeoption' 
+)+	otherlv_9='rangeoption' 
     {
-    	newLeafNode(otherlv_8, grammarAccess.getRangeJobAccess().getRangeoptionKeyword_8());
+    	newLeafNode(otherlv_9, grammarAccess.getRangeJobAccess().getRangeoptionKeyword_9());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getRangeJobAccess().getRangeOptionQualifiedIDParserRuleCall_9_0()); 
+	        newCompositeNode(grammarAccess.getRangeJobAccess().getRangeOptionQualifiedIDParserRuleCall_10_0()); 
 	    }
-		lv_rangeOption_9_0=ruleQualifiedID		{
+		lv_rangeOption_10_0=ruleQualifiedID		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getRangeJobRule());
 	        }
        		set(
        			$current, 
        			"rangeOption",
-        		lv_rangeOption_9_0, 
+        		lv_rangeOption_10_0, 
         		"de.cau.cs.kieler.kiml.grana.text.Grana.QualifiedID");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -507,52 +733,52 @@ ruleRangeJob returns [EObject current=null]
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getRangeJobAccess().getRangeValuesRangeParserRuleCall_10_0()); 
+	        newCompositeNode(grammarAccess.getRangeJobAccess().getRangeValuesRangeParserRuleCall_11_0()); 
 	    }
-		lv_rangeValues_10_0=ruleRange		{
+		lv_rangeValues_11_0=ruleRange		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getRangeJobRule());
 	        }
        		set(
        			$current, 
        			"rangeValues",
-        		lv_rangeValues_10_0, 
+        		lv_rangeValues_11_0, 
         		"de.cau.cs.kieler.kiml.grana.text.Grana.Range");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)	otherlv_11='rangeanalysis' 
+)((	otherlv_12='rangeanalysis' 
     {
-    	newLeafNode(otherlv_11, grammarAccess.getRangeJobAccess().getRangeanalysisKeyword_11());
+    	newLeafNode(otherlv_12, grammarAccess.getRangeJobAccess().getRangeanalysisKeyword_12_0_0());
     }
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getRangeJobAccess().getRangeAnalysisAnalysisParserRuleCall_12_0()); 
+	        newCompositeNode(grammarAccess.getRangeJobAccess().getRangeAnalysisAnalysisParserRuleCall_12_0_1_0()); 
 	    }
-		lv_rangeAnalysis_12_0=ruleAnalysis		{
+		lv_rangeAnalysis_13_0=ruleAnalysis		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getRangeJobRule());
 	        }
        		set(
        			$current, 
        			"rangeAnalysis",
-        		lv_rangeAnalysis_12_0, 
+        		lv_rangeAnalysis_13_0, 
         		"de.cau.cs.kieler.kiml.grana.text.Grana.Analysis");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)(	otherlv_13='component' 
+)(	otherlv_14='component' 
     {
-    	newLeafNode(otherlv_13, grammarAccess.getRangeJobAccess().getComponentKeyword_13_0());
+    	newLeafNode(otherlv_14, grammarAccess.getRangeJobAccess().getComponentKeyword_12_0_2_0());
     }
 (
 (
-		lv_rangeAnalysisComponent_14_0=RULE_NATURAL
+		lv_rangeAnalysisComponent_15_0=RULE_NATURAL
 		{
-			newLeafNode(lv_rangeAnalysisComponent_14_0, grammarAccess.getRangeJobAccess().getRangeAnalysisComponentNATURALTerminalRuleCall_13_1_0()); 
+			newLeafNode(lv_rangeAnalysisComponent_15_0, grammarAccess.getRangeJobAccess().getRangeAnalysisComponentNATURALTerminalRuleCall_12_0_2_1_0()); 
 		}
 		{
 	        if ($current==null) {
@@ -561,28 +787,69 @@ ruleRangeJob returns [EObject current=null]
        		setWithLastConsumed(
        			$current, 
        			"rangeAnalysisComponent",
-        		lv_rangeAnalysisComponent_14_0, 
+        		lv_rangeAnalysisComponent_15_0, 
         		"de.cau.cs.kieler.kiml.grana.text.Grana.NATURAL");
 	    }
 
 )
-))?	otherlv_15='output' 
+))?)
+    |(	otherlv_16='rangeanalyses' 
     {
-    	newLeafNode(otherlv_15, grammarAccess.getRangeJobAccess().getOutputKeyword_14());
+    	newLeafNode(otherlv_16, grammarAccess.getRangeJobAccess().getRangeanalysesKeyword_12_1_0());
     }
 (
 (
 		{ 
+	        newCompositeNode(grammarAccess.getRangeJobAccess().getRangeAnalysesAnalysisParserRuleCall_12_1_1_0()); 
+	    }
+		lv_rangeAnalyses_17_0=ruleAnalysis		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getRangeJobRule());
+	        }
+       		add(
+       			$current, 
+       			"rangeAnalyses",
+        		lv_rangeAnalyses_17_0, 
+        		"de.cau.cs.kieler.kiml.grana.text.Grana.Analysis");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)+))	otherlv_18='output' 
+    {
+    	newLeafNode(otherlv_18, grammarAccess.getRangeJobAccess().getOutputKeyword_13());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getRangeJobAccess().getOutputTypeOutputTypeEnumRuleCall_14_0()); 
+	    }
+		lv_outputType_19_0=ruleOutputType		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getRangeJobRule());
+	        }
+       		set(
+       			$current, 
+       			"outputType",
+        		lv_outputType_19_0, 
+        		"de.cau.cs.kieler.kiml.grana.text.Grana.OutputType");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)?(
+(
+		{ 
 	        newCompositeNode(grammarAccess.getRangeJobAccess().getOutputOutputParserRuleCall_15_0()); 
 	    }
-		lv_output_16_0=ruleOutput		{
+		lv_output_20_0=ruleOutput		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getRangeJobRule());
 	        }
        		set(
        			$current, 
        			"output",
-        		lv_output_16_0, 
+        		lv_output_20_0, 
         		"de.cau.cs.kieler.kiml.grana.text.Grana.Output");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -1563,6 +1830,25 @@ ruleFloat returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
     ;
 
 
+
+
+
+// Rule OutputType
+ruleOutputType returns [Enumerator current=null] 
+    @init { enterRule(); }
+    @after { leaveRule(); }:
+((	enumLiteral_0='csv' 
+	{
+        $current = grammarAccess.getOutputTypeAccess().getCsvEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
+        newLeafNode(enumLiteral_0, grammarAccess.getOutputTypeAccess().getCsvEnumLiteralDeclaration_0()); 
+    }
+)
+    |(	enumLiteral_1='json' 
+	{
+        $current = grammarAccess.getOutputTypeAccess().getJsonEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
+        newLeafNode(enumLiteral_1, grammarAccess.getOutputTypeAccess().getJsonEnumLiteralDeclaration_1()); 
+    }
+));
 
 
 

@@ -40,9 +40,17 @@ public interface IBatchJob<T> {
      * @throws Exception
      *             any exception
      */
-    BatchJobResult<T> execute(List<AnalysisData> analyses, IElkProgressMonitor monitor)
+    BatchJobResult execute(List<AnalysisData> analyses, IElkProgressMonitor monitor)
             throws Exception;
-
+    
+    /**
+     * Assign this job to the {@link Batch} it will be executed with.
+     * 
+     * @param batch
+     *            the {@link Batch} collection of jobs.
+     */
+    void setBatch(Batch batch);
+    
     /**
      * Returns the parameter of the job.
      * 

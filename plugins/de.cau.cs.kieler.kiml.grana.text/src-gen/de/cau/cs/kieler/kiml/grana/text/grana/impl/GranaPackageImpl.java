@@ -3,6 +3,7 @@
 package de.cau.cs.kieler.kiml.grana.text.grana.impl;
 
 import de.cau.cs.kieler.kiml.grana.text.grana.Analysis;
+import de.cau.cs.kieler.kiml.grana.text.grana.CompareJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.FloatRange;
 import de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef;
 import de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef;
@@ -17,6 +18,7 @@ import de.cau.cs.kieler.kiml.grana.text.grana.LocalOutput;
 import de.cau.cs.kieler.kiml.grana.text.grana.LocalResource;
 import de.cau.cs.kieler.kiml.grana.text.grana.Output;
 import de.cau.cs.kieler.kiml.grana.text.grana.OutputReference;
+import de.cau.cs.kieler.kiml.grana.text.grana.OutputType;
 import de.cau.cs.kieler.kiml.grana.text.grana.Range;
 import de.cau.cs.kieler.kiml.grana.text.grana.RangeJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.RegularJob;
@@ -27,6 +29,7 @@ import org.eclipse.elk.core.klayoutdata.KLayoutDataPackage;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -60,6 +63,13 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * @generated
    */
   private EClass regularJobEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass compareJobEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -167,6 +177,13 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
   private EClass analysisEClass = null;
 
   /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EEnum outputTypeEEnum = null;
+
+  /**
    * Creates an instance of the model <b>Package</b>, registered with
    * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
    * package URI value.
@@ -267,7 +284,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getGrana_ExecuteAll()
+  public EAttribute getGrana_Parallel()
   {
     return (EAttribute)granaEClass.getEStructuralFeatures().get(2);
   }
@@ -277,9 +294,19 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getGrana_ExecuteAll()
+  {
+    return (EAttribute)granaEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getGrana_Execute()
   {
-    return (EReference)granaEClass.getEStructuralFeatures().get(3);
+    return (EReference)granaEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -289,7 +316,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    */
   public EReference getGrana_Jobs()
   {
-    return (EReference)granaEClass.getEStructuralFeatures().get(4);
+    return (EReference)granaEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -347,9 +374,19 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getJob_OutputType()
+  {
+    return (EAttribute)jobEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EReference getJob_Output()
   {
-    return (EReference)jobEClass.getEStructuralFeatures().get(4);
+    return (EReference)jobEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -387,6 +424,16 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getCompareJob()
+  {
+    return compareJobEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getRangeJob()
   {
     return rangeJobEClass;
@@ -397,7 +444,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getRangeJob_RangeOption()
+  public EAttribute getRangeJob_MeasureExecutionTime()
   {
     return (EAttribute)rangeJobEClass.getEStructuralFeatures().get(0);
   }
@@ -407,9 +454,9 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getRangeJob_RangeValues()
+  public EAttribute getRangeJob_RangeOption()
   {
-    return (EReference)rangeJobEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)rangeJobEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -417,7 +464,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getRangeJob_RangeAnalysis()
+  public EReference getRangeJob_RangeValues()
   {
     return (EReference)rangeJobEClass.getEStructuralFeatures().get(2);
   }
@@ -427,9 +474,29 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getRangeJob_RangeAnalysis()
+  {
+    return (EReference)rangeJobEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EAttribute getRangeJob_RangeAnalysisComponent()
   {
-    return (EAttribute)rangeJobEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)rangeJobEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getRangeJob_RangeAnalyses()
+  {
+    return (EReference)rangeJobEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -717,6 +784,16 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EEnum getOutputType()
+  {
+    return outputTypeEEnum;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public GranaFactory getGranaFactory()
   {
     return (GranaFactory)getEFactoryInstance();
@@ -745,6 +822,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     granaEClass = createEClass(GRANA);
     createEReference(granaEClass, GRANA__GLOBAL_RESOURCES);
     createEReference(granaEClass, GRANA__GLOOBAL_OUTPUTS);
+    createEAttribute(granaEClass, GRANA__PARALLEL);
     createEAttribute(granaEClass, GRANA__EXECUTE_ALL);
     createEReference(granaEClass, GRANA__EXECUTE);
     createEReference(granaEClass, GRANA__JOBS);
@@ -754,17 +832,22 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     createEReference(jobEClass, JOB__RESOURCES);
     createEReference(jobEClass, JOB__LAYOUT_OPTIONS);
     createEReference(jobEClass, JOB__ANALYSES);
+    createEAttribute(jobEClass, JOB__OUTPUT_TYPE);
     createEReference(jobEClass, JOB__OUTPUT);
 
     regularJobEClass = createEClass(REGULAR_JOB);
     createEAttribute(regularJobEClass, REGULAR_JOB__LAYOUT_BEFORE_ANALYSIS);
     createEAttribute(regularJobEClass, REGULAR_JOB__MEASURE_EXECUTION_TIME);
 
+    compareJobEClass = createEClass(COMPARE_JOB);
+
     rangeJobEClass = createEClass(RANGE_JOB);
+    createEAttribute(rangeJobEClass, RANGE_JOB__MEASURE_EXECUTION_TIME);
     createEAttribute(rangeJobEClass, RANGE_JOB__RANGE_OPTION);
     createEReference(rangeJobEClass, RANGE_JOB__RANGE_VALUES);
     createEReference(rangeJobEClass, RANGE_JOB__RANGE_ANALYSIS);
     createEAttribute(rangeJobEClass, RANGE_JOB__RANGE_ANALYSIS_COMPONENT);
+    createEReference(rangeJobEClass, RANGE_JOB__RANGE_ANALYSES);
 
     rangeEClass = createEClass(RANGE);
 
@@ -807,6 +890,9 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
 
     analysisEClass = createEClass(ANALYSIS);
     createEAttribute(analysisEClass, ANALYSIS__NAME);
+
+    // Create enums
+    outputTypeEEnum = createEEnum(OUTPUT_TYPE);
   }
 
   /**
@@ -842,6 +928,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
 
     // Add supertypes to classes
     regularJobEClass.getESuperTypes().add(this.getJob());
+    compareJobEClass.getESuperTypes().add(this.getJob());
     rangeJobEClass.getESuperTypes().add(this.getJob());
     floatRangeEClass.getESuperTypes().add(this.getRange());
     intRangeEClass.getESuperTypes().add(this.getRange());
@@ -856,6 +943,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     initEClass(granaEClass, Grana.class, "Grana", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getGrana_GlobalResources(), this.getGlobalResourceRef(), null, "globalResources", null, 0, -1, Grana.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getGrana_GloobalOutputs(), this.getGlobalOutputRef(), null, "gloobalOutputs", null, 0, -1, Grana.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getGrana_Parallel(), ecorePackage.getEBoolean(), "parallel", null, 0, 1, Grana.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getGrana_ExecuteAll(), ecorePackage.getEBoolean(), "executeAll", null, 0, 1, Grana.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getGrana_Execute(), this.getJob(), null, "execute", null, 0, -1, Grana.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getGrana_Jobs(), this.getJob(), null, "jobs", null, 0, -1, Grana.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -865,17 +953,22 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     initEReference(getJob_Resources(), this.getResource(), null, "resources", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_LayoutOptions(), theKLayoutDataPackage.getKIdentifier(), null, "layoutOptions", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_Analyses(), this.getAnalysis(), null, "analyses", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getJob_OutputType(), this.getOutputType(), "outputType", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_Output(), this.getOutput(), null, "output", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(regularJobEClass, RegularJob.class, "RegularJob", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getRegularJob_LayoutBeforeAnalysis(), ecorePackage.getEBoolean(), "layoutBeforeAnalysis", null, 0, 1, RegularJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getRegularJob_MeasureExecutionTime(), ecorePackage.getEBoolean(), "measureExecutionTime", null, 0, 1, RegularJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+    initEClass(compareJobEClass, CompareJob.class, "CompareJob", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
     initEClass(rangeJobEClass, RangeJob.class, "RangeJob", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getRangeJob_MeasureExecutionTime(), ecorePackage.getEBoolean(), "measureExecutionTime", null, 0, 1, RangeJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getRangeJob_RangeOption(), ecorePackage.getEString(), "rangeOption", null, 0, 1, RangeJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getRangeJob_RangeValues(), this.getRange(), null, "rangeValues", null, 0, 1, RangeJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getRangeJob_RangeAnalysis(), this.getAnalysis(), null, "rangeAnalysis", null, 0, 1, RangeJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getRangeJob_RangeAnalysisComponent(), ecorePackage.getEInt(), "rangeAnalysisComponent", null, 0, 1, RangeJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getRangeJob_RangeAnalyses(), this.getAnalysis(), null, "rangeAnalyses", null, 0, -1, RangeJob.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(rangeEClass, Range.class, "Range", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -918,6 +1011,11 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
 
     initEClass(analysisEClass, Analysis.class, "Analysis", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAnalysis_Name(), ecorePackage.getEString(), "name", null, 0, 1, Analysis.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    // Initialize enums and add enum literals
+    initEEnum(outputTypeEEnum, OutputType.class, "OutputType");
+    addEEnumLiteral(outputTypeEEnum, OutputType.CSV);
+    addEEnumLiteral(outputTypeEEnum, OutputType.JSON);
 
     // Create resource
     createResource(eNS_URI);
