@@ -69,9 +69,13 @@ public final class LightDiagramServices {
      *            the {@link ViewContext} of the diagram to be updated
      * @return <code>true</code> if update could be performed successfully, <code>false</code>
      *         otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #updateDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static boolean updateDiagram(final ViewContext viewContext) {
-        return updateDiagram(viewContext, null, null, null);
+        return new LightDiagramLayoutConfig(viewContext)
+                    .performUpdate();
     }
 
     /**
@@ -85,9 +89,14 @@ public final class LightDiagramServices {
      *            layout with or without animation
      * @return <code>true</code> if update could be performed successfully, <code>false</code>
      *         otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #updateDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static boolean updateDiagram(final ViewContext viewContext, final boolean animate) {
-        return updateDiagram(viewContext, null, null, animate);
+        return new LightDiagramLayoutConfig(viewContext)
+                    .animate(animate)
+                    .performUpdate();
     }
 
     /**
@@ -101,9 +110,14 @@ public final class LightDiagramServices {
      *            the new model, if <code>null</code> the current input model is taken
      * @return <code>true</code> if update could be performed successfully, <code>false</code>
      *         otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #updateDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static boolean updateDiagram(final ViewContext viewContext, final Object model) {
-        return updateDiagram(viewContext, model, null, null);
+        return new LightDiagramLayoutConfig(viewContext)
+                    .model(model)
+                    .performUpdate();
     }
 
     /**
@@ -118,10 +132,15 @@ public final class LightDiagramServices {
      *            {@link KlighdSynthesisProperties#REQUESTED_UPDATE_STRATEGY} property configuration
      * @return <code>true</code> if update could be performed successfully, <code>false</code>
      *         otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #updateDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static boolean updateDiagram(final ViewContext viewContext,
             final IPropertyHolder properties) {
-        return updateDiagram(viewContext, null, properties, null);
+        return new LightDiagramLayoutConfig(viewContext)
+                    .properties(properties)
+                    .performUpdate();
     }
 
     /**
@@ -137,10 +156,16 @@ public final class LightDiagramServices {
      *            layout with or without animation
      * @return <code>true</code> if update could be performed successfully, <code>false</code>
      *         otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #updateDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static boolean updateDiagram(final ViewContext viewContext, final Object model,
             final boolean animate) {
-        return updateDiagram(viewContext, model, null, animate);
+        return new LightDiagramLayoutConfig(viewContext)
+                    .model(model)
+                    .animate(animate)
+                    .performUpdate();
     }
 
     /**
@@ -157,10 +182,16 @@ public final class LightDiagramServices {
      *            {@link KlighdSynthesisProperties#REQUESTED_UPDATE_STRATEGY} property configuration
      * @return <code>true</code> if update could be performed successfully, <code>false</code>
      *         otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #updateDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static boolean updateDiagram(final ViewContext viewContext, final Object model,
             final IPropertyHolder properties) {
-        return updateDiagram(viewContext, model, properties, null);
+        return new LightDiagramLayoutConfig(viewContext)
+                    .model(model)
+                    .properties(properties)
+                    .performUpdate();
     }
 
     /**
@@ -177,10 +208,16 @@ public final class LightDiagramServices {
      *            layout with or without animation
      * @return <code>true</code> if update could be performed successfully, <code>false</code>
      *         otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #updateDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static boolean updateDiagram(final ViewContext viewContext,
             final IPropertyHolder properties, final boolean animate) {
-        return updateDiagram(viewContext, null, properties, animate);
+        return new LightDiagramLayoutConfig(viewContext)
+                    .properties(properties)
+                    .animate(animate)
+                    .performUpdate();
     }
 
     /**
@@ -199,36 +236,72 @@ public final class LightDiagramServices {
      *            layout with or without animation
      * @return <code>true</code> if update could be performed successfully, <code>false</code>
      *         otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #updateDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static boolean updateDiagram(final ViewContext viewContext, final Object model,
             final IPropertyHolder properties, final Boolean animate) {
+        return new LightDiagramLayoutConfig(viewContext)
+                    .animate(animate)
+                    .model(model)
+                    .properties(properties)
+                    .performUpdate();
+    }
 
-        final Object currentInputModel = viewContext.getInputModel();
-        if (model == null && currentInputModel == null) {
+    /**
+     * Updates the diagram according to the specification in the given
+     * {@link LightDiagramLayoutConfig}. <br>
+     *
+     * @param config
+     *            the {@link LightDiagramLayoutConfig} of the diagram to be updated
+     * 
+     * @return <code>true</code> if update could be performed successfully, <code>false</code>
+     *         otherwise
+     * @since 0.11
+     */
+    public static boolean updateDiagram(final LightDiagramLayoutConfig config) {
+
+        if (config == null) {
+            return false;
+        }
+        
+        ViewContext theViewContext;
+        // Ensure that the viewContext is present
+        if (config.viewContext() == null) {
+            Pair<IDiagramWorkbenchPart, ViewContext> dwpandvc = 
+                    determineDWPandVC(config.workbenchPart(), config.viewContext());
+            theViewContext = dwpandvc.getSecond();
+        } else {
+            theViewContext = config.viewContext();
+        }
+        
+        final Object currentInputModel = theViewContext.getInputModel();
+        if (config.model() == null && currentInputModel == null) {
             return false;
         }
 
         // update the view context and viewer
-        final Object theModel = (model != null ? model : currentInputModel);
+        final Object theModel = (config.model() != null ? config.model() : currentInputModel);
 
-        viewContext.getLayoutRecorder().startRecording();
+        theViewContext.getLayoutRecorder().startRecording();
 
         // update the view context
-        final boolean successful = viewContext.update(theModel, properties);
+        final boolean successful = theViewContext.update(theModel, config.properties());
 
         // in case the view update didn't work properly
-        //  consider this as a failure according to the method doc!
+        // consider this as a failure according to the method doc!
         if (!successful) {
             return false;
         }
 
-        final IDiagramWorkbenchPart diagramWP = viewContext.getDiagramWorkbenchPart();
+        final IDiagramWorkbenchPart diagramWP = theViewContext.getDiagramWorkbenchPart();
 
         if (diagramWP != null) {
             diagramWP.getSite().getPage().bringToTop(diagramWP);
         }
 
-        layoutDiagram(null, null, viewContext, animate, null, null, null);
+        config.performLayout();
 
         return true;
     }
@@ -242,9 +315,13 @@ public final class LightDiagramServices {
      *
      * @param viewContext
      *            the viewContext whose diagram is to be arranged
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext) {
-        layoutDiagram(viewContext, (List<LayoutConfigurator>) null);
+        new LightDiagramLayoutConfig(viewContext)
+                .performLayout();
     }
 
     /**
@@ -257,10 +334,15 @@ public final class LightDiagramServices {
      *            the viewContext whose diagram is to be arranged
      * @param options
      *            a list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext,
             final List<LayoutConfigurator> options) {
-        layoutDiagram(null, null, viewContext, null, null, null, options);
+        new LightDiagramLayoutConfig(viewContext)
+                .options(options)
+                .performLayout();
     }
 
     /**
@@ -273,9 +355,14 @@ public final class LightDiagramServices {
      *            the viewContext whose diagram is to be arranged
      * @param animate
      *            layout with or without animation
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext, final boolean animate) {
-        layoutDiagram(viewContext, animate, (List<LayoutConfigurator>) null);
+        new LightDiagramLayoutConfig(viewContext)
+                .animate(animate)
+                .performLayout();
     }
 
     /**
@@ -290,10 +377,16 @@ public final class LightDiagramServices {
      *            layout with or without animation
      * @param options
      *            a list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext, final boolean animate,
             final List<LayoutConfigurator> options) {
-        layoutDiagram(null, null, viewContext, animate, null, null, options);
+        new LightDiagramLayoutConfig(viewContext)
+                .animate(animate)
+                .options(options)
+                .performLayout();
     }
 
     /**
@@ -305,9 +398,14 @@ public final class LightDiagramServices {
      *            the viewContext whose diagram is to be arranged
      * @param zoomStyle
      *            the {@link ZoomStyle} to be applied during this layout update
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext, final ZoomStyle zoomStyle) {
-        layoutDiagram(viewContext, zoomStyle, null, null);
+        new LightDiagramLayoutConfig(viewContext)
+                .zoomStyle(zoomStyle)
+                .performLayout();
     }
 
     /**
@@ -321,10 +419,16 @@ public final class LightDiagramServices {
      *            the {@link ZoomStyle} to be applied during this layout update
      * @param options
      *            an optional list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext, final ZoomStyle zoomStyle,
             final List<LayoutConfigurator> options) {
-        layoutDiagram(null, null, viewContext, null, zoomStyle, null, options);
+        new LightDiagramLayoutConfig(viewContext)
+                .zoomStyle(zoomStyle)
+                .options(options)
+                .performLayout();
     }
 
     /**
@@ -339,10 +443,16 @@ public final class LightDiagramServices {
      * @param focusNode
      *            the {@link KNode} to focus in case <code>zoomStyle</code> is
      *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext, final ZoomStyle zoomStyle,
             final KNode focusNode) {
-        layoutDiagram(viewContext, zoomStyle, focusNode, null);
+        new LightDiagramLayoutConfig(viewContext)
+                .zoomStyle(zoomStyle)
+                .focusNode(focusNode)
+                .performLayout();
     }
 
     /**
@@ -359,10 +469,17 @@ public final class LightDiagramServices {
      *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
      * @param options
      *            an optional list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext, final ZoomStyle zoomStyle,
             final KNode focusNode, final List<LayoutConfigurator> options) {
-        layoutDiagram(null, null, viewContext, null, zoomStyle, focusNode, options);
+        new LightDiagramLayoutConfig(viewContext)
+                .zoomStyle(zoomStyle)
+                .focusNode(focusNode)
+                .options(options)
+                .performLayout();
     }
 
     /**
@@ -374,10 +491,16 @@ public final class LightDiagramServices {
      *            layout with or without animation
      * @param zoomStyle
      *            the {@link ZoomStyle} to be applied during this layout update
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext, final boolean animate,
             final ZoomStyle zoomStyle) {
-        layoutDiagram(viewContext, animate, zoomStyle, (List<LayoutConfigurator>) null);
+        new LightDiagramLayoutConfig(viewContext)
+                .animate(animate)
+                .zoomStyle(zoomStyle)
+                .performLayout();
     }
 
     /**
@@ -391,10 +514,17 @@ public final class LightDiagramServices {
      *            the {@link ZoomStyle} to be applied during this layout update
      * @param options
      *            an optional list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext, final boolean animate,
             final ZoomStyle zoomStyle, final List<LayoutConfigurator> options) {
-        layoutDiagram(null, null, viewContext, animate, zoomStyle, null, options);
+        new LightDiagramLayoutConfig(viewContext)
+                .animate(animate)
+                .zoomStyle(zoomStyle)
+                .options(options)
+                .performLayout();
     }
 
     /**
@@ -409,10 +539,17 @@ public final class LightDiagramServices {
      * @param focusNode
      *            the {@link KNode} to focus in case <code>zoomStyle</code> is
      *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext, final boolean animate,
             final ZoomStyle zoomStyle, final KNode focusNode) {
-        layoutDiagram(viewContext, animate, zoomStyle, focusNode, null);
+        new LightDiagramLayoutConfig(viewContext)
+                .animate(animate)
+                .zoomStyle(zoomStyle)
+                .focusNode(focusNode)
+                .performLayout();
     }
 
     /**
@@ -429,10 +566,19 @@ public final class LightDiagramServices {
      *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
      * @param options
      *            an optional list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final ViewContext viewContext, final boolean animate,
-            final ZoomStyle zoomStyle, final KNode focusNode, final List<LayoutConfigurator> options) {
-        layoutDiagram(null, null, viewContext, animate, zoomStyle, focusNode, options);
+            final ZoomStyle zoomStyle, final KNode focusNode,
+            final List<LayoutConfigurator> options) {
+        new LightDiagramLayoutConfig(viewContext)
+                .animate(animate)
+                .zoomStyle(zoomStyle)
+                .focusNode(focusNode)
+                .options(options)
+                .performLayout();
     }
 
 
@@ -445,9 +591,13 @@ public final class LightDiagramServices {
      *
      * @param viewPart
      *            the diagram view part showing the diagram to layout
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final IDiagramWorkbenchPart viewPart) {
-        layoutDiagram(viewPart, (List<LayoutConfigurator>) null);
+        new LightDiagramLayoutConfig(viewPart)
+                .performLayout();
     }
 
     /**
@@ -461,10 +611,15 @@ public final class LightDiagramServices {
      *            the diagram view part showing the diagram to layout
      * @param options
      *            an optional list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final IDiagramWorkbenchPart viewPart,
             final List<LayoutConfigurator> options) {
-        layoutDiagram(viewPart, null, null, null, null, null, options);
+        new LightDiagramLayoutConfig(viewPart)
+                .options(options)
+                .performLayout();
     }
 
 
@@ -479,9 +634,14 @@ public final class LightDiagramServices {
      *            the diagram view part showing the diagram to layout
      * @param animate
      *            layout with or without animation
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final IDiagramWorkbenchPart viewPart, final boolean animate) {
-        layoutDiagram(viewPart, animate, (List<LayoutConfigurator>) null);
+        new LightDiagramLayoutConfig(viewPart)
+                .animate(animate)
+                .performLayout();
     }
 
     /**
@@ -497,10 +657,16 @@ public final class LightDiagramServices {
      *            layout with or without animation
      * @param options
      *            an optional list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final IDiagramWorkbenchPart viewPart, final boolean animate,
             final List<LayoutConfigurator> options) {
-        layoutDiagram(viewPart, null, null, animate, null, null, options);
+        new LightDiagramLayoutConfig(viewPart)
+                .animate(animate)
+                .options(options)
+                .performLayout();
     }
 
     /**
@@ -513,9 +679,15 @@ public final class LightDiagramServices {
      *            the diagram view part showing the diagram to layout
      * @param zoomStyle
      *            the {@link ZoomStyle} to be applied during this layout update
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
-    public static void layoutDiagram(final IDiagramWorkbenchPart viewPart, final ZoomStyle zoomStyle) {
-        layoutDiagram(viewPart, zoomStyle, null, null);
+    public static void layoutDiagram(final IDiagramWorkbenchPart viewPart,
+            final ZoomStyle zoomStyle) {
+        new LightDiagramLayoutConfig(viewPart)
+                .zoomStyle(zoomStyle)
+                .performLayout();
     }
 
     /**
@@ -530,10 +702,16 @@ public final class LightDiagramServices {
      *            the {@link ZoomStyle} to be applied during this layout update
      * @param options
      *            an optional list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
-    public static void layoutDiagram(final IDiagramWorkbenchPart viewPart, final ZoomStyle zoomStyle,
-            final List<LayoutConfigurator> options) {
-        layoutDiagram(viewPart, null, null, null, zoomStyle, null, null);
+    public static void layoutDiagram(final IDiagramWorkbenchPart viewPart,
+            final ZoomStyle zoomStyle, final List<LayoutConfigurator> options) {
+        new LightDiagramLayoutConfig(viewPart)
+                .zoomStyle(zoomStyle)
+                .options(options)
+                .performLayout();
     }
 
     /**
@@ -548,10 +726,16 @@ public final class LightDiagramServices {
      * @param focusNode
      *            the {@link KNode} to focus in case <code>zoomStyle</code> is
      *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final IDiagramWorkbenchPart viewPart,
             final ZoomStyle zoomStyle, final KNode focusNode) {
-        layoutDiagram(viewPart, zoomStyle, focusNode, null);
+        new LightDiagramLayoutConfig(viewPart)
+                .zoomStyle(zoomStyle)
+                .focusNode(focusNode)
+                .performLayout();
     }
 
     /**
@@ -568,10 +752,17 @@ public final class LightDiagramServices {
      *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
      * @param options
      *            an optional list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final IDiagramWorkbenchPart viewPart,
-            final ZoomStyle zoomStyle, final KNode focusNode, final List<LayoutConfigurator> options) {
-        layoutDiagram(viewPart, null, null, null, zoomStyle, focusNode, null);
+            final ZoomStyle zoomStyle, final KNode focusNode,
+            final List<LayoutConfigurator> options) {
+        new LightDiagramLayoutConfig(viewPart)
+                .zoomStyle(zoomStyle)
+                .options(options)
+                .performLayout();
     }
 
     /**
@@ -584,10 +775,16 @@ public final class LightDiagramServices {
      *            layout with or without animation
      * @param zoomStyle
      *            the {@link ZoomStyle} to be applied, may be <code>null</code>
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final IDiagramWorkbenchPart viewPart, final boolean animate,
             final ZoomStyle zoomStyle) {
-        layoutDiagram(viewPart, animate, zoomStyle, null, null);
+        new LightDiagramLayoutConfig(viewPart)
+                .animate(animate)
+                .zoomStyle(zoomStyle)
+                .performLayout();
     }
 
     /**
@@ -602,10 +799,17 @@ public final class LightDiagramServices {
      *            the {@link ZoomStyle} to be applied, may be <code>null</code>
      * @param options
      *            an optional list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final IDiagramWorkbenchPart viewPart, final boolean animate,
             final ZoomStyle zoomStyle, final List<LayoutConfigurator> options) {
-        layoutDiagram(viewPart, null, null, animate, zoomStyle, null, options);
+        new LightDiagramLayoutConfig(viewPart)
+                .animate(animate)
+                .zoomStyle(zoomStyle)
+                .options(options)
+                .performLayout();
     }
 
     /**
@@ -620,10 +824,17 @@ public final class LightDiagramServices {
      * @param focusNode
      *            the {@link KNode} to focus in case <code>zoomStyle</code> is
      *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final IDiagramWorkbenchPart viewPart, final boolean animate,
             final ZoomStyle zoomStyle, final KNode focusNode) {
-        layoutDiagram(viewPart, null, null, animate, zoomStyle, focusNode, null);
+        new LightDiagramLayoutConfig(viewPart)
+                .animate(animate)
+                .zoomStyle(zoomStyle)
+                .focusNode(focusNode)
+                .performLayout();
     }
 
     /**
@@ -640,48 +851,50 @@ public final class LightDiagramServices {
      *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
      * @param options
      *            an optional list of layout options
+     * @deprecated Due to the various configuration options use
+     *             {@link #layoutDiagram(LightDiagramLayoutConfig)} with a fresh
+     *             {@link LightDiagramLayoutConfig} instead.
      */
     public static void layoutDiagram(final IDiagramWorkbenchPart viewPart, final boolean animate,
-            final ZoomStyle zoomStyle, final KNode focusNode, final List<LayoutConfigurator> options) {
-        layoutDiagram(viewPart, null, null, animate, zoomStyle, focusNode, options);
+            final ZoomStyle zoomStyle, final KNode focusNode,
+            final List<LayoutConfigurator> options) {
+        new LightDiagramLayoutConfig(viewPart)
+                .animate(animate)
+                .zoomStyle(zoomStyle)
+                .focusNode(focusNode)
+                .options(options)
+                .performLayout();
     }
 
 
     /**
-     * Performs the automatic layout on the diagram represented by the given
-     * {@link IDiagramWorkbenchPart} / {@link IViewer} / {@link ViewContext}.
-     *
-     * @param workbenchPart
-     *            the {@link IDiagramWorkbenchPart} part showing the diagram to layout
-     * @param diagramViewer
-     *            the {@link IViewer} that renders the diagram to layout
-     * @param viewContext
-     *            the {@link ViewContext} whose diagram is to be arranged
-     * @param animate
-     *            layout with or without animation
-     * @param zoomStyle
-     *            the {@link ZoomStyle} to be applied, may be <code>null</code>
-     * @param focusNode
-     *            the {@link KNode} to focus in case <code>zoomStyle</code> is
-     *            {@link ZoomStyle#ZOOM_TO_FOCUS}, is ignored otherwise
-     * @param options
-     *            an optional list of layout options
+     * Performs the automatic layout on the diagram represented in the given
+     * {@link LightDiagramLayoutConfig}.
+     * 
+     * @param config
+     *            The {@link LightDiagramLayoutConfig} to be used in this layout process.
+     * @since 0.11
      */
-    private static void layoutDiagram(final IDiagramWorkbenchPart workbenchPart,
-            final IViewer diagramViewer, final ViewContext viewContext,
-            final Boolean animate, final ZoomStyle zoomStyle, final KNode focusNode,
-            final List<LayoutConfigurator> options) {
+    public static void layoutDiagram(final LightDiagramLayoutConfig config) {
+
+        if (config == null) {
+            final String msg = "KlighD LightDiagramServices: Could not perform layout since no"
+                    + "configuration has been specified.";
+            StatusManager.getManager()
+                    .handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg));
+            return;
+        }
 
         final Pair<IDiagramWorkbenchPart, ViewContext> pair =
-                determineDWPandVC(workbenchPart, diagramViewer, viewContext);
+                determineDWPandVC(config.workbenchPart(), config.viewContext());
 
         if (pair == null || pair.getSecond() == null) {
             final String msg = "KLighD LightDiagramServices: Could not perform layout since no "
                     + "ViewContext could be determined for IDiagramWorkbenchPart "
-                    + workbenchPart + "/IViewer " + diagramViewer + ". "
+                    + config.workbenchPart() + ". "
                     + "Is the diagram correctly and completely initialized?";
-            StatusManager.getManager().handle(
-                    new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg));
+            StatusManager.getManager()
+                    .handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg));
             return;
         }
 
@@ -690,31 +903,50 @@ public final class LightDiagramServices {
 
         final ILayoutRecorder recorder = theViewContext.getLayoutRecorder();
         final KNode viewModel = theViewContext.getViewModel();
-        final KLayoutData layoutData = viewModel != null ? viewModel.getData(KLayoutData.class) : null;
+        final KLayoutData layoutData =
+                viewModel != null ? viewModel.getData(KLayoutData.class) : null;
 
         if (layoutData != null) {
-            theViewContext.setProperty(KlighdInternalProperties.NEXT_ZOOM_STYLE, zoomStyle);
-            theViewContext.setProperty(KlighdInternalProperties.NEXT_FOCUS_NODE, focusNode);
+            theViewContext.setProperty(KlighdInternalProperties.NEXT_ZOOM_STYLE,
+                    config.zoomStyle());
+            theViewContext.setProperty(KlighdInternalProperties.NEXT_FOCUS_NODE,
+                    config.focusNode());
 
             // Activate the ELK Service plug-in so all layout options are loaded
             ElkServicePlugin.getInstance();
-            
+
             // Our parameters for the layout run
             Parameters layoutParameters = new Parameters();
             final LayoutConfigurator extendedConfigurator = layoutParameters.addLayoutRun();
-            
+
             // Animation
-            final boolean doAnimate = animate != null
-                    ? animate.booleanValue() : KlighdPlugin.getDefault()
-                            .getPreferenceStore().getBoolean(KlighdPreferences.ANIMATE_LAYOUT);
+            final boolean doAnimate = config.animate() != null ? config.animate().booleanValue()
+                    : KlighdPlugin.getDefault().getPreferenceStore()
+                            .getBoolean(KlighdPreferences.ANIMATE_LAYOUT);
             layoutParameters.getGlobalSettings().setProperty(CoreOptions.ANIMATE, doAnimate);
 
-            if (thePart instanceof ILayoutConfigProvider) {
-                extendedConfigurator.overrideWith(((ILayoutConfigProvider) thePart).getLayoutConfig());
+            // Animation time properties
+            if (config.animationTimeFactor() != null) {
+                    layoutParameters.getGlobalSettings().setProperty(CoreOptions.ANIM_TIME_FACTOR, 
+                            config.animationTimeFactor());
+            }
+            if (config.minAnimationTime() != null) {
+                layoutParameters.getGlobalSettings().setProperty(CoreOptions.MIN_ANIM_TIME, 
+                        config.minAnimationTime());
+            }
+            if (config.maxAnimationTime() != null) {
+                layoutParameters.getGlobalSettings().setProperty(CoreOptions.MAX_ANIM_TIME, 
+                        config.maxAnimationTime());
             }
 
-            if (options != null) {
-                for (LayoutConfigurator c : Collections2.filter(options, Predicates.notNull())) {
+            if (thePart instanceof ILayoutConfigProvider) {
+                extendedConfigurator
+                        .overrideWith(((ILayoutConfigProvider) thePart).getLayoutConfig());
+            }
+
+            if (config.options() != null) {
+                for (LayoutConfigurator c : Collections2.filter(config.options(),
+                        Predicates.notNull())) {
                     extendedConfigurator.overrideWith(c);
                 }
             }
@@ -724,8 +956,8 @@ public final class LightDiagramServices {
 
             final Object diagramPart = recorder != null ? recorder : theViewContext;
 
-            final IElkCancelIndicator cancelationIndicator = thePart != null
-                    ? new DispositionAwareCancelationHandle(thePart) : null;
+            final IElkCancelIndicator cancelationIndicator =
+                    thePart != null ? new DispositionAwareCancelationHandle(thePart) : null;
 
             if (additionalConfigs.isEmpty()) {
                 DiagramLayoutEngine.invokeLayout(thePart, diagramPart, cancelationIndicator,
@@ -741,14 +973,13 @@ public final class LightDiagramServices {
 
         } else {
             if (recorder != null) {
-                recorder.stopRecording(zoomStyle, null, 0);
+                recorder.stopRecording(config.zoomStyle(), null, 0);
             }
         }
     }
 
     private static Pair<IDiagramWorkbenchPart, ViewContext> determineDWPandVC(
-            final IDiagramWorkbenchPart workbenchPart, final IViewer diagramViewer,
-            final ViewContext viewContext) {
+            final IDiagramWorkbenchPart workbenchPart, final ViewContext viewContext) {
 
         final IDiagramWorkbenchPart thePart;
         final ViewContext theViewContext;
@@ -766,13 +997,6 @@ public final class LightDiagramServices {
             theViewContext = viewContext;
             thePart = theViewContext.getDiagramWorkbenchPart();
 
-        } else if (diagramViewer != null) {
-            theViewContext = diagramViewer.getViewContext();
-            if (theViewContext != null) {
-                thePart = theViewContext.getDiagramWorkbenchPart();
-            } else {
-                thePart = null;
-            }
         } else {
             return null;
         }
@@ -811,7 +1035,6 @@ public final class LightDiagramServices {
             return workbenchPart.getViewer() == null;
         }
     }
-
 
     /* ---------------------------------------- */
     /*     diagram zooming API                  */
@@ -888,7 +1111,7 @@ public final class LightDiagramServices {
             final ViewContext viewContext, final Boolean animate) {
 
         final Pair<IDiagramWorkbenchPart, ViewContext> pair =
-                determineDWPandVC(workbenchPart, null, viewContext);
+                determineDWPandVC(workbenchPart, viewContext);
 
         if (pair == null || pair.getSecond() == null) {
             final String msg = "KLighD LightDiagramServices: Could not perform zoom since no "
