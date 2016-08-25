@@ -50,10 +50,10 @@
 
    <!-- LIGHTWEIGHT DIAGRAMS -->
 
-   <feature url="features/de.cau.cs.kieler.klighd.feature_0.11.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.11.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.feature_0.11.1.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.11.1.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.11.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.11.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.11.1.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.11.1.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
@@ -78,10 +78,10 @@
       <category name="kieler-sources"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.klighd.view.feature_0.3.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature" version="0.3.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.view.feature_0.3.1.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature" version="0.3.1.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.view.feature.source_0.3.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature.source" version="0.3.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.view.feature.source_0.3.1.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature.source" version="0.3.1.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
