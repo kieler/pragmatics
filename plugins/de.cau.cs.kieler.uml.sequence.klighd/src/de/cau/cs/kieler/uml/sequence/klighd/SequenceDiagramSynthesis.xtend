@@ -38,7 +38,7 @@ import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramLayoutProvider
 import de.cau.cs.kieler.papyrus.sequence.p4sorting.LifelineSortingStrategy
 import de.cau.cs.kieler.papyrus.sequence.properties.MessageType
 import de.cau.cs.kieler.papyrus.sequence.properties.NodeType
-import de.cau.cs.kieler.papyrus.sequence.properties.SequenceDiagramProperties
+import de.cau.cs.kieler.papyrus.sequence.properties.SequenceDiagramOptions
 import de.cau.cs.kieler.papyrus.sequence.properties.SequenceExecutionType
 import de.cau.cs.kieler.uml.sequence.text.sequence.DestroyLifelineEvent
 import de.cau.cs.kieler.uml.sequence.text.sequence.Fragment
@@ -59,11 +59,10 @@ import java.util.Stack
 import javax.inject.Inject
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout
 import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.FixedLayouterOptions
 import org.eclipse.elk.core.util.ElkUtil
-import org.eclipse.elk.core.util.FixedLayoutProvider
 import org.eclipse.elk.graph.KEdge
 import org.eclipse.elk.graph.KNode
-import org.eclipse.elk.core.options.FixedLayouterOptions
 
 /**
  * This class is used for the transformation of a Sequence Diagram Model into a KGraph.
@@ -118,13 +117,13 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      */
     private val elementIdOnLifeline = new HashMap<Lifeline, Stack<Integer>>
     /** Increasing number, such that every element receives a different Id. */
-    private var elementId = 0
+    private var elementId = 1
     /** Stack of all top-level fragments. */
     private var fragmentList = new Stack<Integer>
     /** The elementId of the last created edge, such that it can't accidently happen to increase the 
      * elementId and use a wrong elementId for an edge. 
      */
-    private var edgeId = 0
+    private var edgeId = 1
     /** Map of the elementId for every lifeline. */
     private var lifelineId = new HashMap<String, Integer>
     /**
@@ -150,13 +149,13 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         // Diagramproperties for Lifelinesorting.
         switch LIFELINESORTING.objectValue {
             case "Layer Based":
-                surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_SORTING,
+                surrInteraction.addLayoutParam(SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY,
                     LifelineSortingStrategy.LAYER_BASED)
             case "Short Message":
-                surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_SORTING,
+                surrInteraction.addLayoutParam(SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY,
                     LifelineSortingStrategy.SHORT_MESSAGES)
             default:
-                surrInteraction.addLayoutParam(SequenceDiagramProperties.LIFELINE_SORTING,
+                surrInteraction.addLayoutParam(SequenceDiagramOptions.LIFELINE_SORTING_STRATEGY,
                     LifelineSortingStrategy.INTERACTIVE)
         }
 
@@ -217,12 +216,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      */
     private def void addSurroundingInteractionCoreOptions(KNode node) {
         node.addLayoutParam(CoreOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
-        .addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
-        .addLayoutParam(CoreOptions.SPACING_BORDER, 10f)
-        .addLayoutParam(SequenceDiagramProperties.MESSAGE_SPACING, 65f)
-        .addLayoutParam(SequenceDiagramProperties.LIFELINE_Y_POS, 50)
-        .addLayoutParam(SequenceDiagramProperties.LIFELINE_HEADER, 40)
-        .addLayoutParam(SequenceDiagramProperties.AREA_HEADER, 45)
+        .addLayoutParam(SequenceDiagramOptions.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
+        .addLayoutParam(SequenceDiagramOptions.SPACING_BORDER, 10f)
+        .addLayoutParam(SequenceDiagramOptions.MESSAGE_SPACING, 65f)
+        .addLayoutParam(SequenceDiagramOptions.LIFELINE_Y_POS, 50f)
+        .addLayoutParam(SequenceDiagramOptions.LIFELINE_HEADER_HEIGHT, 40f)
+        .addLayoutParam(SequenceDiagramOptions.AREA_HEADER_HEIGHT, 45f)
     }
 
     /**
@@ -233,7 +232,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      */
     private def KNode transformLifeline(Lifeline lifeline) {
         val lifelineNode = lifeline.createNode().associateWith(lifeline)
-        lifelineNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.LIFELINE)
+        lifelineNode.addLayoutParam(SequenceDiagramOptions.NODE_TYPE, NodeType.LIFELINE)
 
         elementId += 1
 
@@ -336,13 +335,13 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         if (elementIdOnLifeline.containsKey(source)) {
             val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(source))
 
-            transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS, executionList)
+            transEdge.addLayoutParam(SequenceDiagramOptions.SOURCE_EXECUTION_IDS, executionList)
         }
 
         if (elementIdOnLifeline.containsKey(target)) {
             val List<Integer> executionList = Lists.newArrayList(elementIdOnLifeline.get(target))
 
-            transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_IDS, executionList)
+            transEdge.addLayoutParam(SequenceDiagramOptions.TARGET_EXECUTION_IDS, executionList)
         }
 
         if (msg.sourceEndExec || msg.sourceStartEndExec) {
@@ -363,12 +362,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                     fragmentDepths.add(fragmentList.last)
                 }
                 var list = new ArrayList(fragmentDepths)
-                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
-                transEdge.addLayoutParam(SequenceDiagramProperties.PARENT_AREA_ID, fragmentList.last)
+                transEdge.addLayoutParam(SequenceDiagramOptions.AREA_IDS, list)
+                transEdge.addLayoutParam(SequenceDiagramOptions.PARENT_AREA_ID, fragmentList.last)
             } else {
                 val list = new ArrayList(1)
                 list.add(fragmentList.last)
-                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+                transEdge.addLayoutParam(SequenceDiagramOptions.AREA_IDS, list)
             }
         }
 
@@ -400,11 +399,11 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         if (msg.messageTypeLostAndFound.equals(MessageTypeLostAndFound.LOST)) {
             transEdge.source = lifelineNodes.get(msg.lifeline)
             transEdge.target = dummyNode
-            dummyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.LOST_MESSAGE_TARGET)
+            dummyNode.addLayoutParam(SequenceDiagramOptions.NODE_TYPE, NodeType.LOST_MESSAGE_TARGET)
         } else {
             transEdge.source = dummyNode
             transEdge.target = lifelineNodes.get(msg.lifeline)
-            dummyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.FOUND_MESSAGE_SOURCE)
+            dummyNode.addLayoutParam(SequenceDiagramOptions.NODE_TYPE, NodeType.FOUND_MESSAGE_SOURCE)
         }
 
         edgeOrder(transEdge)
@@ -423,12 +422,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                 val List<Integer> executionList = Lists
                 .newArrayList(elementIdOnLifeline.get(msg.lifeline))
 
-                transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS, executionList)
+                transEdge.addLayoutParam(SequenceDiagramOptions.SOURCE_EXECUTION_IDS, executionList)
             } else {
                 val List<Integer> executionList = Lists
                 .newArrayList(elementIdOnLifeline.get(msg.lifeline))
 
-                transEdge.addLayoutParam(SequenceDiagramProperties.TARGET_EXECUTION_IDS, executionList)
+                transEdge.addLayoutParam(SequenceDiagramOptions.TARGET_EXECUTION_IDS, executionList)
             }
         }
 
@@ -446,12 +445,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                     fragmentDepths.add(fragmentList.last)
                 }
                 var list = new ArrayList(fragmentDepths)
-                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
-                transEdge.addLayoutParam(SequenceDiagramProperties.PARENT_AREA_ID, fragmentList.last)
+                transEdge.addLayoutParam(SequenceDiagramOptions.AREA_IDS, list)
+                transEdge.addLayoutParam(SequenceDiagramOptions.PARENT_AREA_ID, fragmentList.last)
             } else {
                 val list = new ArrayList(1)
                 list.add(fragmentList.last)
-                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+                transEdge.addLayoutParam(SequenceDiagramOptions.AREA_IDS, list)
             }
         }
         return transEdge
@@ -492,7 +491,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             val List<Integer> executionList = Lists
             .newArrayList(elementIdOnLifeline.get(msg.lifeline))
 
-            transEdge.addLayoutParam(SequenceDiagramProperties.SOURCE_EXECUTION_IDS, executionList)
+            transEdge.addLayoutParam(SequenceDiagramOptions.SOURCE_EXECUTION_IDS, executionList)
         }
 
         if (msg.endExec || msg.startEndExec) {
@@ -509,12 +508,12 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
                     fragmentDepths.add(fragmentList.last)
                 }
                 var list = new ArrayList(fragmentDepths)
-                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
-                transEdge.addLayoutParam(SequenceDiagramProperties.PARENT_AREA_ID, fragmentList.last)
+                transEdge.addLayoutParam(SequenceDiagramOptions.AREA_IDS, list)
+                transEdge.addLayoutParam(SequenceDiagramOptions.PARENT_AREA_ID, fragmentList.last)
             } else {
                 val list = new ArrayList(1)
                 list.add(fragmentList.last)
-                transEdge.addLayoutParam(SequenceDiagramProperties.AREA_IDS, list)
+                transEdge.addLayoutParam(SequenceDiagramOptions.AREA_IDS, list)
             }
         }
 
@@ -530,7 +529,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      */
     private def dispatch KNode transformInteraction(DestroyLifelineEvent destroy) {
         val destroyNode = destroy.createNode().associateWith(destroy)
-        destroyNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.DESTRUCTION_EVENT)
+        destroyNode.addLayoutParam(SequenceDiagramOptions.NODE_TYPE, NodeType.DESTRUCTION_EVENT)
 
         val destroyRect = destroyNode.setNodeSize(20, 20).addRectangle().foregroundInvisible = true
 
@@ -563,16 +562,16 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         
         // Different node type, if the fragment consists of multiple regions or not.
         if (sectionSize > 1) {
-            fragNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMBINED_FRAGMENT)
+            fragNode.addLayoutParam(SequenceDiagramOptions.NODE_TYPE, NodeType.COMBINED_FRAGMENT)
         } else {
-            fragNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.INTERACTION_USE)
+            fragNode.addLayoutParam(SequenceDiagramOptions.NODE_TYPE, NodeType.INTERACTION_USE)
         }
 
         elementId += 1
 
         fragmentList.push(elementId)
 
-        fragNode.addLayoutParam(SequenceDiagramProperties.ELEMENT_ID, elementId)
+        fragNode.addLayoutParam(SequenceDiagramOptions.ELEMENT_ID, elementId)
 
         surroundingInteraction.children.add(fragNode)
 
@@ -631,7 +630,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     // Not supported so far.
     private def dispatch KNode transformInteraction(Refinement ref) {
         val refNode = ref.createNode().associateWith(ref)
-        refNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.INTERACTION_USE)
+        refNode.addLayoutParam(SequenceDiagramOptions.NODE_TYPE, NodeType.INTERACTION_USE)
 
         val label = ref.label
 
@@ -652,15 +651,15 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private def dispatch KEdge setMessageRendering(KEdge edge, MessageTypeOne type) {
         switch(type) {
             case MessageTypeOne.SYNC: {
-                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.SYNCHRONOUS)
+                edge.addLayoutParam(SequenceDiagramOptions.MESSAGE_TYPE, MessageType.SYNCHRONOUS)
                 edge.addPolyline(2).addHeadArrowDecorator()
             }
             case MessageTypeOne.ASYNC: {
-                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.ASYNCHRONOUS)
+                edge.addLayoutParam(SequenceDiagramOptions.MESSAGE_TYPE, MessageType.ASYNCHRONOUS)
                 edge.addPolyline(2).addAssociationArrowDecorator()
             }
             case MessageTypeOne.RESPONSE: {
-                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.REPLY)
+                edge.addLayoutParam(SequenceDiagramOptions.MESSAGE_TYPE, MessageType.REPLY)
                 edge.addPolyline(2).setLineStyle(LineStyle.DASH).addAssociationArrowDecorator()
             }
         }
@@ -678,19 +677,19 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private def dispatch KEdge setMessageRendering(KEdge edge, MessageTypeTwo type) {
         switch(type) {
             case MessageTypeTwo.SYNC: {
-                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.SYNCHRONOUS)
+                edge.addLayoutParam(SequenceDiagramOptions.MESSAGE_TYPE, MessageType.SYNCHRONOUS)
                 edge.addPolyline(2).addHeadArrowDecorator()
             }
             case MessageTypeTwo.ASYNC: {
-                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.ASYNCHRONOUS)
+                edge.addLayoutParam(SequenceDiagramOptions.MESSAGE_TYPE, MessageType.ASYNCHRONOUS)
                 edge.addPolyline(2).addAssociationArrowDecorator()
             }
             case MessageTypeTwo.RESPONSE: {
-                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.REPLY)
+                edge.addLayoutParam(SequenceDiagramOptions.MESSAGE_TYPE, MessageType.REPLY)
                 edge.addPolyline(2).setLineStyle(LineStyle.DASH).addAssociationArrowDecorator()
             } 
             case MessageTypeTwo.CREATE: {
-                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.CREATE)
+                edge.addLayoutParam(SequenceDiagramOptions.MESSAGE_TYPE, MessageType.CREATE)
                 edge.addPolyline(2).setLineStyle(LineStyle.DASH).addAssociationArrowDecorator()
             }
         }
@@ -708,10 +707,10 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
     private def dispatch KEdge setMessageRendering(KEdge edge, MessageTypeLostAndFound type) {
         switch(type) {
             case MessageTypeLostAndFound.LOST: {
-                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.LOST)
+                edge.addLayoutParam(SequenceDiagramOptions.MESSAGE_TYPE, MessageType.LOST)
             }
             case MessageTypeLostAndFound.FOUND: {
-                edge.addLayoutParam(SequenceDiagramProperties.MESSAGE_TYPE, MessageType.FOUND)
+                edge.addLayoutParam(SequenceDiagramOptions.MESSAGE_TYPE, MessageType.FOUND)
             }
         }
 
@@ -726,7 +725,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      */
     private def KNode createExecution(Lifeline l) {
         val execution = createNode()
-        execution.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.ACTION_EXEC_SPECIFICATION)
+        execution.addLayoutParam(SequenceDiagramOptions.NODE_TYPE, NodeType.ACTION_EXEC_SPECIFICATION)
         
         elementId += 1
         
@@ -741,12 +740,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             stack.push(elementId)
             elementIdOnLifeline.put(l, stack)
         }
-        execution.addLayoutParam(SequenceDiagramProperties.ELEMENT_ID, elementIdOnLifeline
-            .get(l).peek()
-        )
-        execution.addLayoutParam(SequenceDiagramProperties.EXECUTION_TYPE, 
-            SequenceExecutionType.EXECUTION
-        )
+        execution.addLayoutParam(SequenceDiagramOptions.ELEMENT_ID, elementIdOnLifeline.get(l).peek())
+        execution.addLayoutParam(SequenceDiagramOptions.EXECUTION_TYPE, SequenceExecutionType.EXECUTION)
         
         // Set the style options for the execution.
         switch STYLE.objectValue {
@@ -812,8 +807,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      */
     private def KNode createNote(String note, Integer id) {
         val noteNode = createNode()
-        noteNode.addLayoutParam(SequenceDiagramProperties.NODE_TYPE, NodeType.COMMENT)
-        noteNode.addLayoutParam(SequenceDiagramProperties.ATTACHED_TO_ID, id)
+        noteNode.addLayoutParam(SequenceDiagramOptions.NODE_TYPE, NodeType.COMMENT)
+        noteNode.addLayoutParam(SequenceDiagramOptions.ATTACHED_OBJECT_ID, id)
 
         surroundingInteraction.children.add(noteNode)
         
