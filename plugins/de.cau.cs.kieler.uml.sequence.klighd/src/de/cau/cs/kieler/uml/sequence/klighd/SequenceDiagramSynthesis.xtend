@@ -34,8 +34,8 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPortExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
-import de.cau.cs.kieler.papyrus.sequence.SequenceDiagramLayoutProvider
 import de.cau.cs.kieler.papyrus.sequence.p4sorting.LifelineSortingStrategy
+import de.cau.cs.kieler.papyrus.sequence.properties.CoordinateSystem
 import de.cau.cs.kieler.papyrus.sequence.properties.MessageType
 import de.cau.cs.kieler.papyrus.sequence.properties.NodeType
 import de.cau.cs.kieler.papyrus.sequence.properties.SequenceDiagramOptions
@@ -215,7 +215,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
      * @param node The KNode where the layout options shall be applied to.
      */
     private def void addSurroundingInteractionCoreOptions(KNode node) {
-        node.addLayoutParam(CoreOptions.ALGORITHM, SequenceDiagramLayoutProvider.ID)
+        node.addLayoutParam(CoreOptions.ALGORITHM, SequenceDiagramOptions.ALGORITHM_ID)
+        .addLayoutParam(SequenceDiagramOptions.COORDINATE_SYSTEM, CoordinateSystem.KGRAPH)
         .addLayoutParam(SequenceDiagramOptions.NODE_TYPE, NodeType.SURROUNDING_INTERACTION)
         .addLayoutParam(SequenceDiagramOptions.SPACING_BORDER, 10f)
         .addLayoutParam(SequenceDiagramOptions.MESSAGE_SPACING, 65f)
