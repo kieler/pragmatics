@@ -17,12 +17,12 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
-import org.eclipse.elk.core.util.ElkUtil
 import org.eclipse.elk.core.util.Pair
-import org.eclipse.elk.graph.KNode
 import org.eclipse.emf.ecore.util.FeatureMap
 import org.eclipse.emf.ecore.xmi.XMLResource
 import org.eclipse.emf.ecore.xml.type.AnyType
@@ -291,10 +291,10 @@ class CommentsExtractor {
     def private KNode addCommentNode(KNode parent, String text, String fontSize,
         Multimap<KNode, KNode> createdCommentNodes) {
             
-        val commentNode = ElkUtil::createInitializedNode()
+        val commentNode = KGraphUtil.createInitializedNode()
         
-        commentNode.layout.setProperty(COMMENT_TEXT, text)
-        commentNode.layout.setProperty(COMMENT_FONT_SIZE, Integer.parseInt(fontSize))
+        commentNode.setProperty(COMMENT_TEXT, text)
+        commentNode.setProperty(COMMENT_FONT_SIZE, Integer.parseInt(fontSize))
         commentNode.markAsComment()
         
         parent.children += commentNode

@@ -75,20 +75,21 @@ final class PtolemyTitleCommentFilter implements IEligibilityFilter {
         // Iterate over all the comments
         for (node : graph.children) {
             // Make sure the node is a comment
-            if (node.layout.getProperty(CoreOptions.COMMENT_BOX)) {
-                numberOfComments++;
-                val fontSize = node.layout.getProperty(COMMENT_FONT_SIZE);
-                
-                if (fontSize > largestFontSize) {
-                    // We have a new biggest font size!
-                    largestFontSize = fontSize;
-                    largestFontSizeComment = node;
-                    
-                } else if (fontSize == largestFontSize) {
-                    // We don't have a single comment with the biggest font size anymore
-                    largestFontSizeComment = null;
-                }
-            }
+            // TODO Fix this
+//            if (node.layout.getProperty(CoreOptions.COMMENT_BOX)) {
+//                numberOfComments++;
+//                val fontSize = node.layout.getProperty(COMMENT_FONT_SIZE);
+//                
+//                if (fontSize > largestFontSize) {
+//                    // We have a new biggest font size!
+//                    largestFontSize = fontSize;
+//                    largestFontSizeComment = node;
+//                    
+//                } else if (fontSize == largestFontSize) {
+//                    // We don't have a single comment with the biggest font size anymore
+//                    largestFontSizeComment = null;
+//                }
+//            }
         }
         
         // If we only encountered a single comment, we don't consider it a title comment
@@ -101,8 +102,10 @@ final class PtolemyTitleCommentFilter implements IEligibilityFilter {
      * {@inheritDoc}
      */
     override eligibleForAttachment(KNode comment) {
-        return comment != largestFontSizeComment
-            && (decideBasedOnFontSizeOnly || !comment.markedAsTitleNode);
+        // TODO Fix this
+//        return comment != largestFontSizeComment
+//            && (decideBasedOnFontSizeOnly || !comment.markedAsTitleNode);
+        return false;
     }
     
     /**

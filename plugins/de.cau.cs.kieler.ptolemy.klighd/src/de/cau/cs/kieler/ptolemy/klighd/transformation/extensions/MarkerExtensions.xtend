@@ -16,12 +16,12 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation.extensions
 import com.google.inject.Inject
 import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
 import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KGraphElement
-import org.eclipse.elk.graph.KNode
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 import com.google.common.base.Strings
+import de.cau.cs.kieler.klighd.kgraph.KGraphElement
+import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.KNode
 
 /**
  * Utility methods used to mark elements by the Ptolemy to KGraph transformation.
@@ -149,7 +149,7 @@ class MarkerExtensions {
      * @param node the node to be marked.
      */
     def void markAsHypernode(KNode node) {
-        node.safeLayout.setProperty(CoreOptions::HYPERNODE, true)
+        node.setProperty(CoreOptions::HYPERNODE, true)
     }
     
     /**
@@ -159,7 +159,7 @@ class MarkerExtensions {
      * @return {@code true} if the node is marked as being a hypernode, {@code false} otherwise.
      */
     def boolean isMarkedAsHypernode(KNode node) {
-        return node.safeLayout.getProperty(CoreOptions::HYPERNODE)
+        return node.getProperty(CoreOptions::HYPERNODE)
     }
     
     /**
@@ -168,7 +168,7 @@ class MarkerExtensions {
      * @param node the node to be marked.
      */
     def void markAsComment(KNode node) {
-        node.safeLayout.setProperty(CoreOptions::COMMENT_BOX, true)
+        node.setProperty(CoreOptions::COMMENT_BOX, true)
     }
     
     /**
@@ -178,7 +178,7 @@ class MarkerExtensions {
      * @return {@code true} if the node is marked as being a comment node, {@code false} otherwise.
      */
     def boolean isMarkedAsComment(KNode node) {
-        return node.safeLayout.getProperty(CoreOptions::COMMENT_BOX)
+        return node.getProperty(CoreOptions::COMMENT_BOX)
     }
     
     /**

@@ -17,15 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import de.cau.cs.kieler.klighd.kgraph.KEdge;
+import de.cau.cs.kieler.klighd.kgraph.KNode;
+import de.cau.cs.kieler.klighd.kgraph.KPort;
 
 
 /**
@@ -179,7 +179,7 @@ public final class HyperedgeGatherer {
      * @return {@code true} if it is a relation.
      */
     private boolean isRelation(final KNode node) {
-        return node.getData(KShapeLayout.class).getProperty(CoreOptions.HYPERNODE);
+        return node.getProperty(CoreOptions.HYPERNODE);
     }
     
     

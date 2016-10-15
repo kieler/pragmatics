@@ -19,9 +19,8 @@ import de.cau.cs.kieler.klighd.krendering.KRotation
 import de.cau.cs.kieler.klighd.krendering.KStyle
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
-import org.eclipse.elk.core.klayoutdata.KShapeLayout
 import org.eclipse.elk.core.options.PortSide
-import org.eclipse.elk.graph.KPort
+import de.cau.cs.kieler.klighd.kgraph.KPort
 
 /**
  * KlighD style modifier for port renderings. The "direction" 
@@ -46,11 +45,10 @@ class PtolemyPortStyleModifier implements IStyleModifier {
            
            val style = (context.style as KRotation)
            val port = context.style.getPort()
-           val portLayout = port.getData(typeof(KShapeLayout))
            
            val isInput = port.markedAsInputPort
            
-           switch portLayout.getProperty(KlighdProperties.LAYOUT_PORT_SIDE) -> isInput {
+           switch port.getProperty(KlighdProperties.LAYOUT_PORT_SIDE) -> isInput {
                case PortSide.NORTH -> true: {
                  style.rotation = 90f   // v
                }

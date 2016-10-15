@@ -15,16 +15,12 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation.extensions
 
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties
 import java.util.List
-import org.eclipse.elk.core.klayoutdata.KLayoutData
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory
-import org.eclipse.elk.core.klayoutdata.KShapeLayout
-import org.eclipse.elk.graph.KGraphElement
-import org.eclipse.elk.graph.KNode
 import org.eclipse.emf.ecore.EObject
 import org.ptolemy.moml.ClassType
 import org.ptolemy.moml.EntityType
 import org.ptolemy.moml.MomlFactory
 import org.ptolemy.moml.PropertyType
+import de.cau.cs.kieler.klighd.kgraph.KGraphElement
 
 /**
  * Utility methods regarding annotations used by the Ptolemy to KGraph transformation.
@@ -41,31 +37,6 @@ class AnnotationExtensions {
     
     
     /**
-     * Returns the layout data of the given element.
-     * 
-     * @param element the object.
-     * @return the shape layout or edge layout, or {@code null} if none was found.
-     */
-    def KLayoutData getLayout(KGraphElement element) {
-        return element.getData(typeof(KLayoutData))
-    }
-    
-    /**
-     * Returns the shape layout of the given element, creating it if it does not exist yet.
-     * 
-     * @param node the node.
-     * @return the shape layout.
-     */
-    def KShapeLayout getSafeLayout(KNode node) {
-        var layout = node.getData(typeof(KShapeLayout))
-        if (layout == null) {
-            layout = KLayoutDataFactory::eINSTANCE.createKShapeLayout()
-            node.data += layout
-        }
-        return layout
-    }
-    
-    /**
      * Returns the annotations of the given object.
      * This particular method looks for the property in the element's KShapeLayout.
      * 
@@ -73,7 +44,7 @@ class AnnotationExtensions {
      * @return the annotations list or {@code null} if none was found.
      */
     def dispatch List<PropertyType> getAnnotations(KGraphElement element) {
-        return element.layout?.getProperty(PtolemyProperties::PT_PROPERTIES)
+        return element.getProperty(PtolemyProperties::PT_PROPERTIES)
     }
     
     /**
