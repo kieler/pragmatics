@@ -17,14 +17,6 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.krendering.KPosition
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import java.util.List
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout
-import org.eclipse.elk.core.klayoutdata.KLayoutData
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory
-import org.eclipse.elk.core.klayoutdata.KShapeLayout
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KGraphElement
-import org.eclipse.elk.graph.KNode
-import org.eclipse.elk.graph.KPort
 import org.eclipse.emf.ecore.EObject
 import org.ptolemy.moml.ClassType
 import org.ptolemy.moml.EntityType
@@ -32,6 +24,9 @@ import org.ptolemy.moml.EntityType
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 import static extension com.google.common.base.Strings.*
+import de.cau.cs.kieler.klighd.kgraph.KPort
+import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.KNode
 
 /**
  * Utility methods used by the Ptolemy to KGraph transformation.
@@ -111,37 +106,6 @@ class MiscellaneousExtensions {
         incidentEdges.addAll(node.outgoingEdges)
         
         return incidentEdges
-    }
-    
-    /**
-     * Returns the layout information of the given graph element. This method is guaranteed to not
-     * return {@code null}: if the element has no layout information yet, a new layout instance is
-     * created and added to the element, depending on the element's type.
-     * <p>
-     * chsch: renamed in order to avoid name clashes with {@link AnnotationExtensions#getLayout()}.
-     * </p>
-     * 
-     * @param element the element whose layout information to return.
-     * @return layout information of the element.
-     */
-    def KLayoutData getLayoutEx(KGraphElement element) {
-        if (element instanceof KEdge) {
-            // Return the edge layout, if any
-            var edgeLayout = element.getData(typeof(KEdgeLayout))
-            if (edgeLayout == null) {
-                edgeLayout = KLayoutDataFactory::eINSTANCE.createKEdgeLayout()
-                element.data.add(edgeLayout)
-            }
-            return edgeLayout
-        } else {
-            // Return the shape layout, if any
-            var shapeLayout = element.getData(typeof(KShapeLayout))
-            if (shapeLayout == null) {
-                shapeLayout = KLayoutDataFactory::eINSTANCE.createKShapeLayout()
-                element.data.add(shapeLayout)
-            }
-            return shapeLayout
-        }
     }
     
     /**

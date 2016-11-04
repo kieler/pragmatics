@@ -13,12 +13,16 @@
  */
 package de.cau.cs.kieler.klighd.krendering.util;
 
+import de.cau.cs.kieler.klighd.kgraph.EMapPropertyHolder;
+import de.cau.cs.kieler.klighd.kgraph.KGraphData;
+
 import de.cau.cs.kieler.klighd.krendering.*;
-import org.eclipse.elk.graph.EMapPropertyHolder;
-import org.eclipse.elk.graph.KGraphData;
+
 import org.eclipse.elk.graph.properties.IPropertyHolder;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+
 import org.eclipse.emf.ecore.util.Switch;
 
 /**

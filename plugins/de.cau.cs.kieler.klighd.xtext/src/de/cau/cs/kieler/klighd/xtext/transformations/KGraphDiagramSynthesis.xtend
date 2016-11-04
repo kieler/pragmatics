@@ -19,13 +19,25 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
+import de.cau.cs.kieler.klighd.kgraph.EMapPropertyHolder
+import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.KGraphData
+import de.cau.cs.kieler.klighd.kgraph.KGraphElement
+import de.cau.cs.kieler.klighd.kgraph.KLabel
+import de.cau.cs.kieler.klighd.kgraph.KLayoutData
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.KPort
+import de.cau.cs.kieler.klighd.krendering.HorizontalAlignment
 import de.cau.cs.kieler.klighd.krendering.KRendering
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import de.cau.cs.kieler.klighd.krendering.KRenderingLibrary
+import de.cau.cs.kieler.klighd.krendering.VerticalAlignment
 import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KLibraryExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.PositionReferenceX
+import de.cau.cs.kieler.klighd.krendering.extensions.PositionReferenceY
 import de.cau.cs.kieler.klighd.labels.AbstractKlighdLabelManager
 import de.cau.cs.kieler.klighd.labels.ConditionLabelManager
 import de.cau.cs.kieler.klighd.labels.IdentLabelManager
@@ -35,28 +47,18 @@ import de.cau.cs.kieler.klighd.labels.TruncatingLabelManager
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
-import org.eclipse.elk.core.klayoutdata.KLayoutData
 import org.eclipse.elk.core.labels.LabelManagementOptions
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.EdgeLabelPlacement
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.util.ElkUtil
 import org.eclipse.elk.core.util.GraphDataUtil
-import org.eclipse.elk.graph.EMapPropertyHolder
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KGraphData
-import org.eclipse.elk.graph.KGraphElement
-import org.eclipse.elk.graph.KLabel
-import org.eclipse.elk.graph.KNode
-import org.eclipse.elk.graph.KPort
 import org.eclipse.elk.graph.properties.IProperty
 import org.eclipse.elk.graph.properties.Property
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier
-import de.cau.cs.kieler.klighd.krendering.extensions.PositionReferenceX
-import de.cau.cs.kieler.klighd.krendering.extensions.PositionReferenceY
-import de.cau.cs.kieler.klighd.krendering.HorizontalAlignment
-import de.cau.cs.kieler.klighd.krendering.VerticalAlignment
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil
 
 /**
  * Synthesizes a copy of the given {@code KNode} and adds default stuff.
@@ -209,11 +211,11 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         //  but until now nobody knows about any persisted entries that originate from KLighD.
         // First, this might be the expansion state of nodes. Second, also KRendering elements
         //  may carry persisted entries that have to be parsed before we build the view model.
-        GraphDataUtil.loadDataElements(result, PREDICATE_IS_KGRAPHDATA, KNOWN_PROPS)
+        KGraphDataUtil.loadDataElements(result, PREDICATE_IS_KGRAPHDATA, KNOWN_PROPS)
 
         // Evaluate the defaults property
         try {
-            defaults = graph.getData(typeof(KLayoutData)).getProperty(DEFAULTS_PROPERTY)
+            defaults = graph.getProperty(DEFAULTS_PROPERTY)
         } catch (ClassCastException cce) {
             // This is a 'special' property not known as layout option hence it is not type-checked,
             //  possibly yielding a class cast exception if neither 'true' nor 'false' are specified
@@ -410,7 +412,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             return;
         }
 
-        ElkUtil.configureWithDefaultValues(node)
+        KGraphUtil.configureWithDefaultValues(node)
 
         // add a rendering to the node
         val rendering = node.addRenderingRef(defaultNodeRendering)
@@ -428,7 +430,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             return;
         }
 
-        ElkUtil.configureWithDefaultValues(port)
+        KGraphUtil.configureWithDefaultValues(port)
     }
 
     /**
@@ -439,11 +441,11 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     def private dispatch void enrichRendering(KEdge edge) {
         if (!edge.hasRendering) {
-            val parent = if (ElkUtil.isDescendant(edge.target, edge.source))
+            val parent = if (KGraphUtil.isDescendant(edge.target, edge.source))
                     edge.source
                 else
                     edge.source?.parent
-            val routing = parent?.getData(typeof(KLayoutData))?.getProperty(CoreOptions::EDGE_ROUTING)
+            val routing = parent?.getProperty(CoreOptions::EDGE_ROUTING)
             edge.data += renderingFactory.createKRenderingRef => [
                 if (routing != null && routing == EdgeRouting::SPLINES) {
                     it.rendering = defaultSplineRendering
@@ -460,7 +462,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
             return;
         }
 
-        ElkUtil.configureWithDefaultValues(edge)
+        KGraphUtil.configureWithDefaultValues(edge)
     }
 
     /**

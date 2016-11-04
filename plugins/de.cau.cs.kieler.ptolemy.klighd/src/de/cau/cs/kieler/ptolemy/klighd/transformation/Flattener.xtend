@@ -14,12 +14,12 @@
  package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
 import java.util.List
-import org.eclipse.elk.core.util.ElkUtil
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KNode
 
 /**
  * Optional optimization that flattens the graph by eliminating all composite actors.
@@ -81,12 +81,12 @@ class Flattener {
             for (edge1 : incoming) {
                 for (edge2 : outgoing) {
                     if (edge1.source != child && edge2.target != child) {
-                        ElkUtil::createInitializedEdge() => [ e |
+                        KGraphUtil.createInitializedEdge() => [ e |
                             e.source = edge1.source
                             e.sourcePort = edge1.sourcePort
                             e.target = edge2.target
                             e.targetPort = edge2.targetPort
-                            e.getLayoutEx().copyProperties(edge1.getLayoutEx())
+                            e.copyProperties(edge1)
                         ]
                     }
                 }

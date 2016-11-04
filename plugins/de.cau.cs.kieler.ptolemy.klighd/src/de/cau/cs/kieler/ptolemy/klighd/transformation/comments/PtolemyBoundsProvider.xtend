@@ -18,10 +18,12 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExten
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 import java.awt.geom.Rectangle2D
 import org.eclipse.elk.core.comments.IBoundsProvider
-import org.eclipse.elk.graph.KNode
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
+import org.eclipse.elk.graph.KNode
+import de.cau.cs.kieler.klighd.microlayout.Bounds
+import de.cau.cs.kieler.klighd.krendering.KRendering
 
 /**
  * Retrieves the position of the given node in the original Ptolemy diagram, if any, as well as
@@ -53,7 +55,8 @@ final class PtolemyBoundsProvider implements IBoundsProvider {
         var String locationAnnotationValue;
 
         if (locationAnnotation == null) {
-            var locationSpecialAnnotation = node.layout.getProperty(PT_LOCATION);
+            // TODO Fix this
+            var locationSpecialAnnotation = null //node.layout.getProperty(PT_LOCATION);
             if (locationSpecialAnnotation == null) {
                 return bounds;
             } else {
@@ -76,7 +79,10 @@ final class PtolemyBoundsProvider implements IBoundsProvider {
                 bounds.y = Double::valueOf(locationArray.get(1));
 
                 // Save the node's size in the bounds as well
-                val estimatedSize = PlacementUtil.estimateSize(node);
+                // TODO Fix
+                //      The problem here is that we need to get our hands at the original KRendering
+//                val estimatedSize = PlacementUtil.estimateSize(node);
+                val estimatedSize = new Bounds(0, 0);
 
                 bounds.width = estimatedSize.width;
                 bounds.height = estimatedSize.height;
@@ -89,7 +95,8 @@ final class PtolemyBoundsProvider implements IBoundsProvider {
         // in the actor is a completely different question and defaults to the actor's center, except
         // for TextAttribute instances, which default to northwest.
         val anchorDefault =
-            if (node.markedAsComment) {
+            // TODO Fix this
+            if (true /*node.markedAsComment*/) {
                 "northwest";
             } else {
                 "center";

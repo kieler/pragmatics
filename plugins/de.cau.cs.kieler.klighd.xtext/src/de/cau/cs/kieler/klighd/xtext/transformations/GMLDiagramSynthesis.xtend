@@ -21,6 +21,9 @@ import de.cau.cs.kieler.kiml.formats.gml.Element
 import de.cau.cs.kieler.kiml.formats.gml.GMLModel
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
+import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.klighd.krendering.KPolyline
 import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
@@ -31,16 +34,10 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 import java.util.List
-import org.eclipse.elk.core.klayoutdata.KLayoutData
-import org.eclipse.elk.core.klayoutdata.KShapeLayout
 import org.eclipse.elk.core.math.ElkMath
 import org.eclipse.elk.core.math.KVector
 import org.eclipse.elk.core.math.KVectorChain
 import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.core.util.ElkUtil
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KGraphElement
-import org.eclipse.elk.graph.KNode
 import org.eclipse.elk.core.options.FixedLayouterOptions
 
 /**
@@ -125,7 +122,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
         e.createNode => [ node |
             parent.children += node
             
-            node.layout.setProperty(CoreOptions::POSITION, new KVector())
+            node.setProperty(CoreOptions::POSITION, new KVector())
             node.addRectangle => [it.lineWidth = 1 ]
             // style and position of created noode
             e.elements.forEach[it.convertNode(node)]
@@ -135,7 +132,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
     private def void createKEdge(Element e) {
         e.createEdge => [ edge |
             edge.addPolyline
-            edge.layout.setProperty(CoreOptions::BEND_POINTS, new KVectorChain())
+            edge.setProperty(CoreOptions::BEND_POINTS, new KVectorChain())
             e.elements.forEach[it.convertEdge(edge)]
         ]
     }
@@ -146,18 +143,18 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
             case "id" : idMap.put(e.value.toInt, node)
             
             case "label": if (SHOW_LABELS.booleanValue) 
-                            ElkUtil.createInitializedLabel(node).text = e.value.stripQuotes
+                            KGraphUtil.createInitializedLabel(node).text = e.value.stripQuotes
             
             case "graphics" : e.elements.forEach[it.convertNode(node)]
             
             case "x": {
                 hasPositions = true
-                val v = node.layout.getProperty(CoreOptions::POSITION)
+                val v = node.getProperty(CoreOptions::POSITION)
                 v.x = e.value.toFloat
             }
             case "y": {
                 hasPositions = true
-                val v = node.layout.getProperty(CoreOptions::POSITION)
+                val v = node.getProperty(CoreOptions::POSITION)
                 v.y = e.value.toFloat
             }
             case "w" : node.width = e.value.toFloat
@@ -185,7 +182,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
                 e.createKNode(node)
             
                 // by default, do not expand
-                node.layout.setProperty(KlighdProperties.EXPAND, false)
+                node.setProperty(KlighdProperties.EXPAND, false)
 
                 // if this is the first child node, style the parent as a 
                 // compound node with special rendering and the ability 
@@ -242,7 +239,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
     
     private def convertEdgeBendpoints(Element bp, KEdge e) {
         
-        val bps = e.layout.getProperty(CoreOptions::BEND_POINTS)
+        val bps = e.getProperty(CoreOptions::BEND_POINTS)
         val x = bp.elements.findFirst[it.key == "x"]
         val y = bp.elements.findFirst[it.key == "y"]
         
@@ -256,16 +253,11 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
             
             n.outgoingEdges.forEach [ e |
                 
-                val bps = e.layout.getProperty(CoreOptions::BEND_POINTS)
-                
-                val sShape = e.source.shapeLayout
-                val tShape = e.target.shapeLayout
+                val bps = e.getProperty(CoreOptions::BEND_POINTS)
                 
                 if (bps.isEmpty) {
-                    
-                    
-                    val src = e.source.layout.getProperty(CoreOptions::POSITION).clone.add(sShape.width / 2f, sShape.height / 2f)
-                    val tgt = e.target.layout.getProperty(CoreOptions::POSITION).clone.add(tShape.width / 2f, tShape.height / 2f)
+                    val src = e.source.getProperty(CoreOptions::POSITION).clone.add(e.source.width / 2f, e.source.height / 2f)
+                    val tgt = e.target.getProperty(CoreOptions::POSITION).clone.add(e.target.width / 2f, e.target.height / 2f)
                     
                     val st = tgt.clone.sub(src).clip(e.source).add(src)
                     bps.add(0, st)
@@ -273,7 +265,6 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
                     bps.add(ts)   
     
                 } else if (bps.size >= 2) {
-
                     // clip the first and the last point of the bends
                     val src = bps.head
                     val snd = bps.tail.head
@@ -290,7 +281,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
     }
     
     private def clip(KVector v, KNode n) {
-        ElkMath.clipVector(v, n.shapeLayout.width, n.shapeLayout.height)
+        ElkMath.clipVector(v, n.width, n.height)
     }
     
     var minX = Double.MAX_VALUE
@@ -306,7 +297,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
         
         // determine maximal extend of a node in x and y direction
         parent.children.forEach[ n |
-            val pos = n.layout.getProperty(CoreOptions::POSITION)
+            val pos = n.getProperty(CoreOptions::POSITION)
             if (pos != null) {
                 minX = Math.min(minX, pos.x - n.width / 2)
                 minY = Math.min(minY, pos.y - n.height / 2)
@@ -316,11 +307,11 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
             n.centerNodes    
         ]
         
-        val borderSpacing = parent.layout.getProperty(CoreOptions::SPACING_BORDER)
+        val borderSpacing = parent.getProperty(CoreOptions::SPACING_BORDER)
         
         // minX and minY are determined
         parent.children.forEach[ n |
-            val pos = n.layout.getProperty(CoreOptions::POSITION)
+            val pos = n.getProperty(CoreOptions::POSITION)
             
             if (pos != null) {
                 // gml specifies center positions
@@ -330,7 +321,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
             
             // move all the bend points
             n.outgoingEdges.forEach [ e |
-                val bps = e.layout.getProperty(CoreOptions::BEND_POINTS)
+                val bps = e.getProperty(CoreOptions::BEND_POINTS)
                 if (bps != null) {
                     bps.forEach [ bp |
                         bp.x = bp.x - minX
@@ -341,8 +332,8 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
             
             // shift labels to the center of the node
             n.labels.forEach[ l |
-                l.shapeLayout.xpos = n.width / 2
-                l.shapeLayout.ypos = n.height / 2
+                l.xpos = n.width / 2
+                l.ypos = n.height / 2
             ]
         ]
     }
@@ -361,14 +352,6 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
         } else {
             s
         }
-    }
-    
-    private def getLayout(KGraphElement e) {
-        e.getData(typeof(KLayoutData))
-    }
-    
-    private def getShapeLayout(KGraphElement e) {
-        e.getData(typeof(KShapeLayout))
     }
     
 }

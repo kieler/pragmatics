@@ -3,7 +3,7 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="KIELER - Kiel Integrated Environment for Layout Eclipse RichClient&#xA;&#xA;http://www.informatik.uni-kiel.de/rtsys/kieler/&#xA;&#xA;Copyright 2012 by&#xA;+ Kiel University&#xA;  + Department of Computer Science&#xA;    + Real-Time and Embedded Systems Group&#xA;&#xA;This code is provided under the terms of the Eclipse Public License (EPL).&#xA;See the file epl-v10.html for the license text."
     modelDirectory="/de.cau.cs.kieler.klighd.krendering/src" modelPluginID="de.cau.cs.kieler.klighd.krendering"
     modelName="KRendering" importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0"
-    copyrightFields="false" usedGenPackages="../../org.eclipse.elk.graph/model/kgraph.genmodel#//graph">
+    copyrightFields="false" usedGenPackages="../../de.cau.cs.kieler.klighd.kgraph/model/kgraph.genmodel#//kgraph">>
   <foreignModel>krendering.ecore</foreignModel>
   <genPackages prefix="KRendering" basePackage="de.cau.cs.kieler.klighd" disposableProviderFactory="true"
       fileExtensions="krender" ecorePackage="krendering.ecore#/">
@@ -33,7 +33,10 @@
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="krendering.ecore#//Trigger">
       <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Trigger/SINGLECLICK"/>
       <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Trigger/DOUBLECLICK"/>
+      <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Trigger/SINGLE_OR_MULTICLICK"/>
       <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Trigger/MIDDLE_SINGLECLICK"/>
+      <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Trigger/MIDDLE_DOUBLECLICK"/>
+      <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Trigger/MIDDLE_SINGLE_OR_MULTICLICK"/>
     </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="krendering.ecore#//Underline">
       <genEnumLiterals ecoreEnumLiteral="krendering.ecore#//Underline/NONE"/>
@@ -85,6 +88,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KImage/bundleName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KImage/imagePath"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KImage/imageObject"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference krendering.ecore#//KImage/clipShape"/>
     </genClasses>
     <genClasses ecoreClass="krendering.ecore#//KDecoratorPlacementData">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KDecoratorPlacementData/absolute"/>
@@ -119,6 +123,7 @@
     <genClasses ecoreClass="krendering.ecore#//KText">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KText/text"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KText/cursorSelectable"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KText/editable"/>
     </genClasses>
     <genClasses image="false" ecoreClass="krendering.ecore#//KPlacement"/>
     <genClasses ecoreClass="krendering.ecore#//KGridPlacement">
@@ -426,6 +431,7 @@
     </genClasses>
     <genClasses ecoreClass="krendering.ecore#//KStyleRef">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference krendering.ecore#//KStyleRef/styleHolder"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KStyleRef/referencedTypes"/>
     </genClasses>
     <genClasses ecoreClass="krendering.ecore#//KTextStrikeout">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute krendering.ecore#//KTextStrikeout/struckOut"/>

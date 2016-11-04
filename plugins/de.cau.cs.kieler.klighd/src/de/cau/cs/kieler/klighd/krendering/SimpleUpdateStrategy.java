@@ -15,15 +15,16 @@ package de.cau.cs.kieler.klighd.krendering;
 
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.graph.KGraphData;
-import org.eclipse.elk.graph.KNode;
-
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.klighd.IUpdateStrategy;
 import de.cau.cs.kieler.klighd.ViewContext;
+import de.cau.cs.kieler.klighd.kgraph.KGraphData;
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory;
+import de.cau.cs.kieler.klighd.kgraph.KInsets;
+import de.cau.cs.kieler.klighd.kgraph.KNode;
+import de.cau.cs.kieler.klighd.kgraph.KShapeLayout;
 
 /**
  * A simple update strategy for KGraph with KRendering which merges by copying the new model.
@@ -70,7 +71,6 @@ public class SimpleUpdateStrategy implements IUpdateStrategy {
         // compose a collection of the baseModel's data that are to be replaced by those of newModel
         final List<KGraphData> obsoleteData =
                 Lists.newArrayList(Iterables.concat(
-                        Iterables.filter(baseModel.getData(), KShapeLayout.class),
                         Iterables.filter(baseModel.getData(), KRendering.class),
                         Iterables.filter(baseModel.getData(), KRenderingLibrary.class)));
 
@@ -80,6 +80,9 @@ public class SimpleUpdateStrategy implements IUpdateStrategy {
             // viewContext.getViewer() is null if called via LightDiagramServices#translateModel(...)
             viewContext.getViewer().clip(baseModel);
         }
+        
+        // apply the new model's shape layout information to the base model
+        applyShapeLayout(baseModel, newModel);
 
         // ... and remove the diagram elements afterwards
         baseModel.getChildren().clear();
@@ -92,5 +95,31 @@ public class SimpleUpdateStrategy implements IUpdateStrategy {
         //  by means of a property on the corresponding layout data.
         // Thus, the baseModel node obtains its associated source element through the above statement
         //  'baseModel.getData().addAll(newData); :-)
+    }
+    
+    private void applyShapeLayout(final KShapeLayout baseLayout, final KShapeLayout newLayout) {
+        baseLayout.setPos(newLayout.getXpos(), newLayout.getYpos());
+        baseLayout.setSize(newLayout.getWidth(), newLayout.getHeight());
+        
+        KInsets baseInsets = baseLayout.getInsets();
+        if (baseInsets == null) {
+            baseInsets = KGraphFactory.eINSTANCE.createKInsets();
+        }
+        
+        KInsets newInsets = newLayout.getInsets();
+        if (newInsets == null) {
+            baseInsets.setLeft(0);
+            baseInsets.setRight(0);
+            baseInsets.setTop(0);
+            baseInsets.setBottom(0);
+        } else {
+            baseInsets.setLeft(newInsets.getLeft());
+            baseInsets.setRight(newInsets.getRight());
+            baseInsets.setTop(newInsets.getTop());
+            baseInsets.setBottom(newInsets.getBottom());
+        }
+
+        baseLayout.getProperties().clear();
+        baseLayout.copyProperties(newLayout);
     }
 }

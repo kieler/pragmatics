@@ -18,6 +18,9 @@ import com.google.common.collect.ImmutableList
 import com.google.common.collect.Lists
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
+import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.klighd.krendering.Colors
 import de.cau.cs.kieler.klighd.krendering.KContainerRendering
 import de.cau.cs.kieler.klighd.krendering.KPolyline
@@ -57,12 +60,8 @@ import java.util.HashMap
 import java.util.List
 import java.util.Stack
 import javax.inject.Inject
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.FixedLayouterOptions
-import org.eclipse.elk.core.util.ElkUtil
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KNode
 
 /**
  * This class is used for the transformation of a Sequence Diagram Model into a KGraph.
@@ -304,7 +303,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.setMessageRendering(msg.messageType)
 
         // Create a label.
-        val label = ElkUtil.createInitializedLabel(transEdge)
+        val label = KGraphUtil.createInitializedLabel(transEdge)
         val labelText = msg.message
         label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
 
@@ -387,13 +386,13 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.setMessageRendering(msg.messageTypeLostAndFound)
 
         // Create a label.
-        val label = ElkUtil.createInitializedLabel(transEdge)
+        val label = KGraphUtil.createInitializedLabel(transEdge)
         val labelText = msg.message
         label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
         transEdge.addPolyline(2).addHeadArrowDecorator()
 
         // Create a dummy node as source or target destination.
-        val dummyNode = ElkUtil.createInitializedNode()
+        val dummyNode = KGraphUtil.createInitializedNode()
         surroundingInteraction.children.add(dummyNode)
         dummyNode.addEllipse.setBackground(Colors.BLACK)
 
@@ -469,7 +468,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         transEdge.setMessageRendering(msg.messageType)
 
         // Create a label.
-        val label = ElkUtil.createInitializedLabel(transEdge)
+        val label = KGraphUtil.createInitializedLabel(transEdge)
         val labelText = msg.message
         label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
 
@@ -610,7 +609,7 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
             // sectionCount += 1
             // val sectRect = fragNodeRect.addRectangle // .foregroundInvisible = true
             if (sect.label != null) {
-                val label = ElkUtil.createInitializedLabel(fragNode)
+                val label = KGraphUtil.createInitializedLabel(fragNode)
 
                 val labelText = "[" + sect.label + "]"
                 label.configureCenterEdgeLabel(labelText, 13, KlighdConstants.DEFAULT_FONT_NAME)
@@ -830,9 +829,8 @@ class SequenceDiagramSynthesis extends AbstractDiagramSynthesis<SequenceDiagram>
         edgeId = elementId
 
         // Set a position for a message, so that the algorithm has an increasing order.
-        val edgeLayout = e.getData(typeof(KEdgeLayout))
-        edgeLayout.sourcePoint.y = edgeId
-        edgeLayout.targetPoint.y = edgeId
+        edge.sourcePoint.y = edgeId
+        edge.targetPoint.y = edgeId
     }
 
     /**
