@@ -13,4 +13,5 @@ Require-Bundle: org.apache.batik.svggen;bundle-version="1.6.0",
  de.cau.cs.kieler.kiml.formats,
  de.cau.cs.kieler.klighd.krendering,
  com.google.guava;bundle-version="15.0.0",
- org.eclipse.elk.core
+ org.eclipse.elk.core,
+ de.cau.cs.kieler.klighd

@@ -35,6 +35,7 @@ import javax.imageio.ImageIO;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KInsets;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
@@ -51,6 +52,7 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 
 import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.klighd.KlighdOptions;
 import de.cau.cs.kieler.klighd.krendering.HorizontalAlignment;
 import de.cau.cs.kieler.klighd.krendering.KArc;
 import de.cau.cs.kieler.klighd.krendering.KAreaPlacementData;
@@ -214,7 +216,7 @@ public class KAwtRenderer {
      */
     private void renderNodeRecursive(final KNode node, final Set<KEdge> edgeSet) {
         KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        KRendering nodeRendering = node.getData(KRendering.class);
+        KRendering nodeRendering = nodeLayout.getProperty(KlighdOptions.K_RENDERING);
         if (nodeRendering == null) {
             int width = Math.round(scale * nodeLayout.getWidth());
             int height = Math.round(scale * nodeLayout.getHeight());
@@ -239,7 +241,8 @@ public class KAwtRenderer {
             // apply the offset of the port coordinates
             graphics.translate(scale * portLayout.getXpos(), scale * portLayout.getYpos());
             
-            KRendering portRendering = port.getData(KRendering.class);
+            KRendering portRendering = portLayout.getProperty(KlighdOptions.K_RENDERING);
+            
             if (portRendering == null) {
                 int width = Math.round(scale * portLayout.getWidth());
                 int height = Math.round(scale * portLayout.getHeight());
@@ -299,7 +302,8 @@ public class KAwtRenderer {
         graphics.translate(scale * labelLayout.getXpos(), scale * labelLayout.getYpos());
         
         KVector size = new KVector(labelLayout.getWidth(), labelLayout.getHeight()).scale(scale);
-        KRendering labelRendering = label.getData(KRendering.class);
+        
+        KRendering labelRendering = label.getData(KLayoutData.class).getProperty(KlighdOptions.K_RENDERING);
         if (labelRendering == null) {
             // paint the text string
             graphics.setColor(Color.BLACK);
@@ -378,7 +382,7 @@ public class KAwtRenderer {
         bendPoints.scale(scale);
 
         boolean isSpline = edgeLayout.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES;
-        KRendering edgeRendering = edge.getData(KRendering.class);
+        KRendering edgeRendering = edgeLayout.getProperty(KlighdOptions.K_RENDERING);
         if (edgeRendering == null) {
             // paint a polyline following the edge bend points
             Path2D path = createPath(bendPoints, isSpline);
