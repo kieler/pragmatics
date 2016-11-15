@@ -18,15 +18,15 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import org.eclipse.elk.core.UnsupportedGraphException;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.kiml.ogdf.options.AcyclicSubgraphModule;
 import de.cau.cs.kieler.kiml.ogdf.options.AttractionFormula;
@@ -297,11 +297,10 @@ public final class AlgorithmSetup {
      * @param layoutNode the parent node of the layout graph
      */
     public static void setup(final LayoutAlgorithm algorithm, final OgmlServerCommunicator comm,
-            final KNode layoutNode) {
+            final ElkNode layoutNode) {
         comm.addOption(OgdfServer.OPTION_LAYOUTER, algorithm);
-        KShapeLayout parentLayout = layoutNode.getData(KShapeLayout.class);
         
-        Integer seed = parentLayout.getProperty(CoreOptions.RANDOM_SEED);
+        Integer seed = layoutNode.getProperty(CoreOptions.RANDOM_SEED);
         if (seed == null) {
             comm.addOption(OgdfServer.OPTION_RANDOM_SEED, 1);
         } else if (seed == 0) {
@@ -310,16 +309,16 @@ public final class AlgorithmSetup {
             comm.addOption(OgdfServer.OPTION_RANDOM_SEED, seed);
         }
         
-        boolean processLabels = parentLayout.getProperty(PLACE_LABELS);
+        boolean processLabels = layoutNode.getProperty(PLACE_LABELS);
         if (processLabels) {
             // edge distance
-            float edgeDistance = parentLayout.getProperty(LABEL_EDGE_DIST);
+            float edgeDistance = layoutNode.getProperty(LABEL_EDGE_DIST);
             if (edgeDistance < 0) {
                 edgeDistance = LABEL_EDGE_DIST.getDefault();
             }
             comm.addOption(OgdfServer.OPTION_LABEL_EDGE_DISTANCE, edgeDistance);
             // margin distance
-            float marginDistance = parentLayout.getProperty(LABEL_MARGIN_DIST);
+            float marginDistance = layoutNode.getProperty(LABEL_MARGIN_DIST);
             if (marginDistance < 0) {
                 marginDistance = LABEL_MARGIN_DIST.getDefault();
             }
@@ -329,247 +328,247 @@ public final class AlgorithmSetup {
         switch (algorithm) {
         case SUGIYAMA: {
             // page ratio
-            float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
+            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // node distance
-            float nodeDistance = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float nodeDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (nodeDistance < 0) {
                 nodeDistance = DEF_NODE_DISTANCE;
             }
             comm.addOption(OgdfServer.OPTION_NODE_DISTANCE, nodeDistance);
             // number of fails
-            int fails = parentLayout.getProperty(FAILS);
+            int fails = layoutNode.getProperty(FAILS);
             comm.addOption(OgdfServer.OPTION_FAILS, fails);
             // number of runs
-            int runs = parentLayout.getProperty(RUNS);
+            int runs = layoutNode.getProperty(RUNS);
             if (runs <= 0) {
                 runs = 15;    // SUPPRESS CHECKSTYLE MagicNumber
             }
             comm.addOption(OgdfServer.OPTION_RUNS, runs);
             // transpose
-            boolean transpose = parentLayout.getProperty(TRANSPOSE);
+            boolean transpose = layoutNode.getProperty(TRANSPOSE);
             comm.addOption(OgdfServer.OPTION_TRANSPOSE, transpose);
             // arrange connected components
-            Boolean arrangeCCs = parentLayout.getProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS);
+            Boolean arrangeCCs = layoutNode.getProperty(CoreOptions.SEPARATE_CONNECTED_COMPONENTS);
             comm.addOption(OgdfServer.OPTION_ARRANGE_CC,
                     arrangeCCs != null && arrangeCCs.booleanValue());
             // minimal distance of connected components
-            float minDistCCFactor = parentLayout.getProperty(MIN_DIST_CC);
+            float minDistCCFactor = layoutNode.getProperty(MIN_DIST_CC);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, nodeDistance * minDistCCFactor);
             // layer distance
-            float layerDistanceFactor = parentLayout.getProperty(LAYER_DISTANCE);
+            float layerDistanceFactor = layoutNode.getProperty(LAYER_DISTANCE);
             comm.addOption(OgdfServer.OPTION_LAYER_DISTANCE, nodeDistance * layerDistanceFactor);
             // acyclic subgraph module
-            AcyclicSubgraphModule acyclicSubgraphModule = parentLayout.getProperty(ACYCLIC_SUBGRAPH);
+            AcyclicSubgraphModule acyclicSubgraphModule = layoutNode.getProperty(ACYCLIC_SUBGRAPH);
             comm.addOption(OgdfServer.OPTION_ACYCLIC_SUBGRAPH_MODULE,
                     acyclicSubgraphModule.ordinal());
             // ranking module
-            RankingModule rankingModule = parentLayout.getProperty(RANKING);
+            RankingModule rankingModule = layoutNode.getProperty(RANKING);
             comm.addOption(OgdfServer.OPTION_RANKING_MODULE, rankingModule.ordinal());
             // width of the ranking
-            int width = parentLayout.getProperty(WIDTH);
+            int width = layoutNode.getProperty(WIDTH);
             comm.addOption(OgdfServer.OPTION_WIDTH, width);
             // crossing minimization module
-            CrossMinModule crossMinModule = parentLayout.getProperty(CROSS_MIN);
+            CrossMinModule crossMinModule = layoutNode.getProperty(CROSS_MIN);
             comm.addOption(OgdfServer.OPTION_CROSS_MIN_MODULE, crossMinModule.ordinal());
             break;
         }
             
         case PLANARIZATION: {
             // page ratio
-            float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
+            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // minimal spacing
-            float separation = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (separation < 0) {
                 separation = DEF_PLAN_SEPARATION;
             }
             comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
             // layout direction
-            Direction direction = parentLayout.getProperty(CoreOptions.DIRECTION);
+            Direction direction = layoutNode.getProperty(CoreOptions.DIRECTION);
             OgdfDirection ogdfDirection = OgdfDirection.fromKielerDirection(direction);
             comm.addOption(OgdfServer.OPTION_LAYOUT_DIRECTION, ogdfDirection.ordinal());
             // preprocess cliques
-            boolean preprocessCliques = parentLayout.getProperty(PREPROCESS_CLIQUES);
+            boolean preprocessCliques = layoutNode.getProperty(PREPROCESS_CLIQUES);
             comm.addOption(OgdfServer.OPTION_PREPROCESS_CLIQUES, preprocessCliques);
             // minimal clique size
-            int minCliqueSize = parentLayout.getProperty(MIN_CLIQUE_SIZE);
+            int minCliqueSize = layoutNode.getProperty(MIN_CLIQUE_SIZE);
             comm.addOption(OgdfServer.OPTION_MIN_CLIQUE_SIZE, minCliqueSize);
             // cost for association edges
-            int costAssoc = parentLayout.getProperty(COST_ASSOC);
+            int costAssoc = layoutNode.getProperty(COST_ASSOC);
             comm.addOption(OgdfServer.OPTION_COST_ASSOC, costAssoc);
             // cost for generalization edges
-            int costGen = parentLayout.getProperty(COST_GEN);
+            int costGen = layoutNode.getProperty(COST_GEN);
             comm.addOption(OgdfServer.OPTION_COST_GEN, costGen);
             // number of runs
-            int runs = parentLayout.getProperty(RUNS);
+            int runs = layoutNode.getProperty(RUNS);
             comm.addOption(OgdfServer.OPTION_RUNS, runs);
             // edge insertion module
-            EdgeInsertionModule edgeInsertionModule = parentLayout.getProperty(EDGE_INSERTION);
+            EdgeInsertionModule edgeInsertionModule = layoutNode.getProperty(EDGE_INSERTION);
             comm.addOption(OgdfServer.OPTION_EDGE_INSERTION_MODULE, edgeInsertionModule.ordinal());
             // embedder module
-            EmbedderModule embedderModule = parentLayout.getProperty(EMBEDDER);
+            EmbedderModule embedderModule = layoutNode.getProperty(EMBEDDER);
             comm.addOption(OgdfServer.OPTION_EMBEDDER_MODULE, embedderModule.ordinal());
             break;
         }
             
         case FMMM: {
             // quality vs. speed
-            QualityVsSpeed qualityVsSpeed = parentLayout.getProperty(QUALITY_VS_SPEED);
+            QualityVsSpeed qualityVsSpeed = layoutNode.getProperty(QUALITY_VS_SPEED);
             comm.addOption(OgdfServer.OPTION_QUALITY_VS_SPEED, qualityVsSpeed.ordinal());
             // new initial placement
-            boolean newInitialPlacement = parentLayout.getProperty(NEW_INITIAL_PLACEMENT);
+            boolean newInitialPlacement = layoutNode.getProperty(NEW_INITIAL_PLACEMENT);
             comm.addOption(OgdfServer.OPTION_NEW_INITIAL_PLACEMENT, newInitialPlacement);
             break;
         }
             
         case DAVIDSON_HAREL: {
             // desired edge length
-            float desiredEdgeLength = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float desiredEdgeLength = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (desiredEdgeLength < 0) {
                 desiredEdgeLength = DEF_DESIRED_EDGE_LENGTH;
             }
             comm.addOption(OgdfServer.OPTION_EDGE_LENGTH, desiredEdgeLength);
             // costs
-            Costs costs = parentLayout.getProperty(COSTS);
+            Costs costs = layoutNode.getProperty(COSTS);
             comm.addOption(OgdfServer.OPTION_COSTS, costs.ordinal());
             // speed
-            Speed speed = parentLayout.getProperty(SPEED);
+            Speed speed = layoutNode.getProperty(SPEED);
             comm.addOption(OgdfServer.OPTION_SPEED, speed.ordinal());
             break;
         }
             
         case FRUCHTERMAN_REINGOLD: {
             // page ratio
-            float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
+            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // iterations
-            Integer iterations = parentLayout.getProperty(ITERATIONS);
+            Integer iterations = layoutNode.getProperty(ITERATIONS);
             if (iterations != null) {
                 comm.addOption(OgdfServer.OPTION_ITERATIONS, iterations);
             }
             // fineness
-            float fineness = parentLayout.getProperty(FINENESS);
+            float fineness = layoutNode.getProperty(FINENESS);
             comm.addOption(OgdfServer.OPTION_FINENESS, fineness);
             // noise
-            boolean noise = parentLayout.getProperty(NOISE);
+            boolean noise = layoutNode.getProperty(NOISE);
             comm.addOption(OgdfServer.OPTION_NOISE, noise);
             // minimal distance of connected components
-            float minDistCC = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float minDistCC = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (minDistCC < 0) {
                 minDistCC = DEF_MIN_DIST_CC;
             }
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCC);
             // scale function factor
-            float scaleFactor = parentLayout.getProperty(SCALE_FUNCTION_FACTOR);
+            float scaleFactor = layoutNode.getProperty(SCALE_FUNCTION_FACTOR);
             comm.addOption(OgdfServer.OPTION_SCALE_FUNCTION_FACTOR, scaleFactor);
             break;
         }
             
         case GEM: {
             // page ratio
-            float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
+            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // desired length
-            float desiredLength = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float desiredLength = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (desiredLength < 0) {
                 desiredLength = DEF_DESIRED_LENGTH;
             }
             comm.addOption(OgdfServer.OPTION_DESIRED_LENGTH, desiredLength);
             // number of rounds
-            int numberOfRounds = parentLayout.getProperty(NUMBER_OF_ROUNDS);
+            int numberOfRounds = layoutNode.getProperty(NUMBER_OF_ROUNDS);
             comm.addOption(OgdfServer.OPTION_NUMBER_OF_ROUNDS, numberOfRounds);
             // minimal temperature
-            float minimalTemperature = parentLayout.getProperty(MINIMAL_TEMPERATURE);
+            float minimalTemperature = layoutNode.getProperty(MINIMAL_TEMPERATURE);
             comm.addOption(OgdfServer.OPTION_MINIMAL_TEMPERATURE, minimalTemperature);
             // initial temperature
-            float initialTemperature = parentLayout.getProperty(INITIAL_TEMPERATURE);
+            float initialTemperature = layoutNode.getProperty(INITIAL_TEMPERATURE);
             comm.addOption(OgdfServer.OPTION_INITIAL_TEMPERATURE, initialTemperature);
             // gravitational constant
-            float gravitationalConstant = parentLayout.getProperty(GRAVITATIONAL_CONSTANT);
+            float gravitationalConstant = layoutNode.getProperty(GRAVITATIONAL_CONSTANT);
             comm.addOption(OgdfServer.OPTION_GRAVITATIONAL_CONSTANT, gravitationalConstant);
             // maximal disturbance
-            float maximalDisturbance = parentLayout.getProperty(MAXIMAL_DISTURBANCE);
+            float maximalDisturbance = layoutNode.getProperty(MAXIMAL_DISTURBANCE);
             comm.addOption(OgdfServer.OPTION_MAXIMAL_DISTURBANCE, maximalDisturbance);
             // rotation angle
-            float rotationAngle = parentLayout.getProperty(ROTATION_ANGLE);
+            float rotationAngle = layoutNode.getProperty(ROTATION_ANGLE);
             comm.addOption(OgdfServer.OPTION_ROTATION_ANGLE, rotationAngle);
             // oscillation angle
-            float oscillationAngle = parentLayout.getProperty(OSCILLATION_ANGLE);
+            float oscillationAngle = layoutNode.getProperty(OSCILLATION_ANGLE);
             comm.addOption(OgdfServer.OPTION_OSCILLATION_ANGLE, oscillationAngle);
             // rotation sensitivity
-            float rotationSensitivity = parentLayout.getProperty(ROTATION_SENSITIVITY);
+            float rotationSensitivity = layoutNode.getProperty(ROTATION_SENSITIVITY);
             comm.addOption(OgdfServer.OPTION_ROTATION_SENSITIVITY, rotationSensitivity);
             // oscillation sensitivity
-            float oscillationSensitivity = parentLayout.getProperty(OSCILLATION_SENSITIVITY);
+            float oscillationSensitivity = layoutNode.getProperty(OSCILLATION_SENSITIVITY);
             comm.addOption(OgdfServer.OPTION_OSCILLATION_SENSITIVITY, oscillationSensitivity);
             // attraction formula
-            AttractionFormula attractionFormula = parentLayout.getProperty(ATTRACTION_FORMULA);
+            AttractionFormula attractionFormula = layoutNode.getProperty(ATTRACTION_FORMULA);
             comm.addOption(OgdfServer.OPTION_ATTRACTION_FORMULA, attractionFormula.ordinal());
             // minimal distance of connected components
-            float minDistCCFactor = parentLayout.getProperty(MIN_DIST_CC);
+            float minDistCCFactor = layoutNode.getProperty(MIN_DIST_CC);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, desiredLength * minDistCCFactor);
             break;
         }
             
         case CIRCULAR: {
             // page ratio
-            float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
+            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // minimal distance of circles
-            float minDistCircle = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float minDistCircle = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (minDistCircle < 0) {
                 minDistCircle = DEF_MIN_DIST_CIRCLE;
             }
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CIRCLE, minDistCircle);
             // minimal distance of levels
-            float minDistLevelFactor = parentLayout.getProperty(MIN_DIST_LEVEL);
+            float minDistLevelFactor = layoutNode.getProperty(MIN_DIST_LEVEL);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_LEVEL, minDistCircle * minDistLevelFactor);
             // minimal distance of siblings
-            float minDistSiblingFactor = parentLayout.getProperty(MIN_DIST_SIBLING);
+            float minDistSiblingFactor = layoutNode.getProperty(MIN_DIST_SIBLING);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_SIBLING, minDistCircle * minDistSiblingFactor);
             // minimal distance of connected components
-            float minDistCCFactor = parentLayout.getProperty(MIN_DIST_CC);
+            float minDistCCFactor = layoutNode.getProperty(MIN_DIST_CC);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCircle * minDistCCFactor);
             break;
         }
             
         case TREE: {
             // direction
-            Direction direction = parentLayout.getProperty(CoreOptions.DIRECTION);
+            Direction direction = layoutNode.getProperty(CoreOptions.DIRECTION);
             Orientation orientation = Orientation.fromDirection(direction);
             comm.addOption(OgdfServer.OPTION_ORIENTATION, orientation.ordinal());
             // edge routing
-            EdgeRouting edgeRouting = parentLayout.getProperty(CoreOptions.EDGE_ROUTING);
+            EdgeRouting edgeRouting = layoutNode.getProperty(CoreOptions.EDGE_ROUTING);
             boolean orthogonal = edgeRouting == EdgeRouting.ORTHOGONAL;
             comm.addOption(OgdfServer.OPTION_ORTHOGONAL, orthogonal);
             // sibling distance
-            float siblingDistance = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float siblingDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (siblingDistance < 0) {
                 siblingDistance = DEF_SIBLING_DISTANCE;
             }
             comm.addOption(OgdfServer.OPTION_SIBLING_DISTANCE, siblingDistance);
             // level distance
-            float levelDistanceFactor = parentLayout.getProperty(LEVEL_DISTANCE);
+            float levelDistanceFactor = layoutNode.getProperty(LEVEL_DISTANCE);
             comm.addOption(OgdfServer.OPTION_LEVEL_DISTANCE, siblingDistance * levelDistanceFactor);
             // subtree distance
-            float subtreeDistanceFactor = parentLayout.getProperty(SUBTREE_DISTANCE);
+            float subtreeDistanceFactor = layoutNode.getProperty(SUBTREE_DISTANCE);
             comm.addOption(OgdfServer.OPTION_SUBTREE_DISTANCE, siblingDistance * subtreeDistanceFactor);
             // tree distance
-            float treeDistanceFactor = parentLayout.getProperty(TREE_DISTANCE);
+            float treeDistanceFactor = layoutNode.getProperty(TREE_DISTANCE);
             comm.addOption(OgdfServer.OPTION_TREE_DISTANCE, siblingDistance * treeDistanceFactor);
             break;
         }
             
         case RADIAL_TREE: {
             // level distance
-            float levelDistance = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float levelDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (levelDistance < 0) {
                 levelDistance = DEF_TREE_SPACING;
             }
             comm.addOption(OgdfServer.OPTION_LEVEL_DISTANCE, levelDistance);
             // connected components distance
-            float ccDistanceFactor = parentLayout.getProperty(CC_DISTANCE);
+            float ccDistanceFactor = layoutNode.getProperty(CC_DISTANCE);
             comm.addOption(OgdfServer.OPTION_CC_DISTANCE, levelDistance * ccDistanceFactor);
             break;
         }
@@ -581,31 +580,31 @@ public final class AlgorithmSetup {
                         "The Upward-Planarization layout algorithm does not support non-connected graphs."); // SUPPRESS CHECKSTYLE LineLength
             }
             // node distance
-            float nodeDistance = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float nodeDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (nodeDistance < 0) {
                 nodeDistance = DEF_UPL_SPACING;
             }
             comm.addOption(OgdfServer.OPTION_NODE_DISTANCE, nodeDistance);
             // layer distance
-            float layerDistanceFactor = parentLayout.getProperty(LAYER_DISTANCE);
+            float layerDistanceFactor = layoutNode.getProperty(LAYER_DISTANCE);
             comm.addOption(OgdfServer.OPTION_LAYER_DISTANCE, nodeDistance * layerDistanceFactor);
             // number of runs
-            int runs = parentLayout.getProperty(RUNS);
+            int runs = layoutNode.getProperty(RUNS);
             comm.addOption(OgdfServer.OPTION_RUNS, runs);
             break;
         }
         
         case FAST_MULTIPOLE: {
             // multipole precision
-            int multipolePrec = parentLayout.getProperty(MULTIPOLE_PREC);
+            int multipolePrec = layoutNode.getProperty(MULTIPOLE_PREC);
             comm.addOption(OgdfServer.OPTION_MULTIPOLE_PREC, multipolePrec);
             // iterations
-            Integer iterations = parentLayout.getProperty(ITERATIONS);
+            Integer iterations = layoutNode.getProperty(ITERATIONS);
             if (iterations != null) {
                 comm.addOption(OgdfServer.OPTION_ITERATIONS, iterations);
             }
             // randomize
-            boolean interactive = parentLayout.getProperty(CoreOptions.INTERACTIVE);
+            boolean interactive = layoutNode.getProperty(CoreOptions.INTERACTIVE);
             comm.addOption(OgdfServer.OPTION_RANDOMIZE, !interactive);
             break;
         }
@@ -621,13 +620,13 @@ public final class AlgorithmSetup {
                         "The Kamada-Kawai layout algorithm does not support non-connected graphs.");
             }
             // edge length
-            float edgeLength = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float edgeLength = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (edgeLength < 0) {
                 edgeLength = DEF_KK_EDGE_LENGTH;
             }
             comm.addOption(OgdfServer.OPTION_EDGE_LENGTH, edgeLength);
             // stop tolerance
-            float stopTolerance = parentLayout.getProperty(STOP_TOLERANCE);
+            float stopTolerance = layoutNode.getProperty(STOP_TOLERANCE);
             comm.addOption(OgdfServer.OPTION_STOP_TOLERANCE, stopTolerance);
             break;
         }
@@ -639,18 +638,18 @@ public final class AlgorithmSetup {
                         "The Stress Majorization layout algorithm does not support non-connected graphs."); // SUPPRESS CHECKSTYLE LineLength
             }
             // iterations
-            Integer iterations = parentLayout.getProperty(ITERATIONS);
+            Integer iterations = layoutNode.getProperty(ITERATIONS);
             if (iterations != null) {
                 comm.addOption(OgdfServer.OPTION_ITERATIONS, iterations);
             }
             // stop tolerance
-            float stopTolerance = parentLayout.getProperty(STOP_TOLERANCE);
+            float stopTolerance = layoutNode.getProperty(STOP_TOLERANCE);
             comm.addOption(OgdfServer.OPTION_STOP_TOLERANCE, stopTolerance);
             // upward constraints
-            boolean upward = parentLayout.getProperty(UPWARD);
+            boolean upward = layoutNode.getProperty(UPWARD);
             comm.addOption(OgdfServer.OPTION_UPWARD, upward);
             // radial constraints
-            boolean radial = parentLayout.getProperty(RADIAL);
+            boolean radial = layoutNode.getProperty(RADIAL);
             comm.addOption(OgdfServer.OPTION_RADIAL, radial);
             break;
         }
@@ -662,13 +661,13 @@ public final class AlgorithmSetup {
                         "The Dominance layout algorithm does not support non-connected graphs.");
             }
             // grid distance
-            float distance = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float distance = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (distance < 0) {
                 distance = DEF_GRID_DISTANCE;
             }
             comm.addOption(OgdfServer.OPTION_GRID_DISTANCE, Math.round(distance));
             // number of runs
-            int runs = parentLayout.getProperty(RUNS);
+            int runs = layoutNode.getProperty(RUNS);
             comm.addOption(OgdfServer.OPTION_RUNS, runs);
             break;
         }
@@ -680,13 +679,13 @@ public final class AlgorithmSetup {
                         "The Visibility layout algorithm does not support non-connected graphs.");
             }
             // grid distance
-            float distance = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float distance = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (distance < 0) {
                 distance = DEF_GRID_DISTANCE;
             }
             comm.addOption(OgdfServer.OPTION_GRID_DISTANCE, Math.round(distance));
             // number of runs
-            int runs = parentLayout.getProperty(RUNS);
+            int runs = layoutNode.getProperty(RUNS);
             comm.addOption(OgdfServer.OPTION_RUNS, runs);
             break;
         }
@@ -703,7 +702,7 @@ public final class AlgorithmSetup {
                         "The Fraysseix-Pach-Pollack layout algorithm does not support non-connected graphs."); // SUPPRESS CHECKSTYLE LineLength
             }
             // separation
-            float separation = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
             }
@@ -723,7 +722,7 @@ public final class AlgorithmSetup {
                         "The Schnyder layout algorithm does not support non-connected graphs.");
             }
             // separation
-            float separation = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
             }
@@ -738,16 +737,16 @@ public final class AlgorithmSetup {
                         "The Canonical Order layout algorithm does not support multi-edges.");
             }
             // separation
-            float separation = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
             }
             comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
             // base ratio
-            float baseRatio = parentLayout.getProperty(BASE_RATIO);
+            float baseRatio = layoutNode.getProperty(BASE_RATIO);
             comm.addOption(OgdfServer.OPTION_BASE_RATIO, baseRatio);
             // embedder module
-            EmbedderModule embedderModule = parentLayout.getProperty(EMBEDDER);
+            EmbedderModule embedderModule = layoutNode.getProperty(EMBEDDER);
             comm.addOption(OgdfServer.OPTION_EMBEDDER_MODULE, embedderModule.ordinal());
             break;
         }
@@ -759,16 +758,16 @@ public final class AlgorithmSetup {
                         "The Convex Grid layout algorithm does not support multi-edges.");
             }
             // separation
-            float separation = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
             }
             comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
             // base ratio
-            float baseRatio = parentLayout.getProperty(BASE_RATIO);
+            float baseRatio = layoutNode.getProperty(BASE_RATIO);
             comm.addOption(OgdfServer.OPTION_BASE_RATIO, baseRatio);
             // embedder module
-            EmbedderModule embedderModule = parentLayout.getProperty(EMBEDDER);
+            EmbedderModule embedderModule = layoutNode.getProperty(EMBEDDER);
             comm.addOption(OgdfServer.OPTION_EMBEDDER_MODULE, embedderModule.ordinal());
             break;
         }
@@ -780,25 +779,25 @@ public final class AlgorithmSetup {
                         "The Mixed Model layout algorithm does not support multi-edges.");
             }
             // separation
-            float separation = parentLayout.getProperty(CoreOptions.SPACING_NODE);
+            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
             }
             comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
             // page ratio
-            float pageRatio = parentLayout.getProperty(ASPECT_RATIO);
+            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // number of runs
-            int runs = parentLayout.getProperty(RUNS);
+            int runs = layoutNode.getProperty(RUNS);
             comm.addOption(OgdfServer.OPTION_RUNS, runs);
             // edge insertion module
-            EdgeInsertionModule edgeInsertionModule = parentLayout.getProperty(EDGE_INSERTION);
+            EdgeInsertionModule edgeInsertionModule = layoutNode.getProperty(EDGE_INSERTION);
             comm.addOption(OgdfServer.OPTION_EDGE_INSERTION_MODULE, edgeInsertionModule.ordinal());
             // embedder module
-            EmbedderModule embedderModule = parentLayout.getProperty(EMBEDDER);
+            EmbedderModule embedderModule = layoutNode.getProperty(EMBEDDER);
             comm.addOption(OgdfServer.OPTION_EMBEDDER_MODULE, embedderModule.ordinal());
             // crossing beautification module
-            CrossBeautifModule crossBeautifModule = parentLayout.getProperty(CROSS_BEAUTIF);
+            CrossBeautifModule crossBeautifModule = layoutNode.getProperty(CROSS_BEAUTIF);
             comm.addOption(OgdfServer.OPTION_CROSS_BEAUTIF_MODULE, crossBeautifModule.ordinal());
             break;
         }
@@ -819,33 +818,35 @@ public final class AlgorithmSetup {
      * @param graph the parent node of the graph
      * @return whether the graph is connected
      */
-   private static boolean isConnected(final KNode graph) {
+   private static boolean isConnected(final ElkNode graph) {
        // empty graphs are connected
        if (graph.getChildren().size() == 0) {
            return true;
        }
        // mark all nodes connected to a random node
-       Set<KNode> marker = new HashSet<KNode>();
-       LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
+       Set<ElkNode> marker = new HashSet<>();
+       LinkedList<ElkNode> nodeQueue = new LinkedList<>();
        nodeQueue.offer(graph.getChildren().get(0));
        do {
-           KNode currentNode = nodeQueue.poll();
+           ElkNode currentNode = nodeQueue.poll();
            if (!marker.contains(currentNode)) {
                marker.add(currentNode);
-               for (KEdge edge : currentNode.getOutgoingEdges()) {
-                   nodeQueue.offer(edge.getTarget());
+               for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(currentNode)) {
+                   nodeQueue.offer(ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0)));
                }
-               for (KEdge edge : currentNode.getIncomingEdges()) {
-                   nodeQueue.offer(edge.getSource());
+               for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(currentNode)) {
+                   nodeQueue.offer(ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)));
                }
            }
        } while (!nodeQueue.isEmpty());
+       
        // if there is still a not marked node the graph is not connected
-       for (KNode currentNode : graph.getChildren()) {
+       for (ElkNode currentNode : graph.getChildren()) {
            if (!marker.contains(currentNode)) {
                return false;
            }
        }
+       
        return true;
    }
    
@@ -855,14 +856,15 @@ public final class AlgorithmSetup {
     * @param graph the parent node of the graph
     * @return whether the graph contains a multi-edge
     */
-   private static boolean hasMultiEdges(final KNode graph) {
-       HashSet<Pair<KNode, KNode>> edgeSet = new HashSet<Pair<KNode, KNode>>();
-       for (KNode source : graph.getChildren()) {
-           for (KEdge edge : source.getOutgoingEdges()) {
-               KNode target = edge.getTarget();
+   private static boolean hasMultiEdges(final ElkNode graph) {
+       HashSet<Pair<ElkNode, ElkNode>> edgeSet = new HashSet<>();
+       for (ElkNode source : graph.getChildren()) {
+           for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(source)) {
+               ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
+               
                // self-loops are ignored by the server communicator
                if (source != target) {
-                   Pair<KNode, KNode> pair = Pair.of(source, target);
+                   Pair<ElkNode, ElkNode> pair = Pair.of(source, target);
                    if (edgeSet.contains(pair) || edgeSet.contains(Pair.of(target, source))) {
                        return true;
                    }
@@ -870,6 +872,7 @@ public final class AlgorithmSetup {
                }
            }
        }
+       
        return false;
    }
 
