@@ -18,9 +18,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
@@ -444,15 +443,14 @@ public class PNode extends PShape {
      * @param y
      *            y-coordinate
      */
-    public void setPostion(final Float x, final Float y) {
-        if (hasProperties() && getProperty(Properties.ORIGIN) instanceof KNode) {
-            KShapeLayout nodeLayout = ((KNode) getProperty(Properties.ORIGIN))
-                    .getData(KShapeLayout.class);
+    public void setPosition(final Double x, final Double y) {
+        if (hasProperties() && getProperty(Properties.ORIGIN) instanceof ElkNode) {
+            ElkNode node = (ElkNode) getProperty(Properties.ORIGIN);
             if (x != null) {
-                nodeLayout.setXpos(x);
+                node.setX(x);
             }
             if (y != null) {
-                nodeLayout.setYpos(y);
+                node.setY(y);
             }
         }
     }
