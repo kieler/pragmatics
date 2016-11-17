@@ -18,7 +18,7 @@ import java.util.Collections;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.elk.core.util.WrappedException;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -31,7 +31,7 @@ import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
 
 /**
- *  This class is responsible for transforming and exporting graphs from graphical diagrams.
+ * This class is responsible for transforming and exporting graphs from graphical diagrams.
  * 
  * @author wah
  * @author msp
@@ -42,15 +42,16 @@ public class GraphFileHandler {
     /**
      * Perform the actual graph export.
      * 
-     * @param kgraph a graph
+     * @param elkgraph a graph
      * @param transHandler the transformation handler
      * @return the exported graph
      */
-    private static <T> String performExport(final KNode kgraph,
+    private static <T> String performExport(final ElkNode elkgraph,
             final IGraphFormatHandler<T> transHandler) {
-        TransformationData<KNode, T> transData = new TransformationData<KNode, T>();
-        transData.setSourceGraph(kgraph);
-        IGraphTransformer<KNode, T> transformer = transHandler.getExporter();
+        
+        TransformationData<ElkNode, T> transData = new TransformationData<ElkNode, T>();
+        transData.setSourceGraph(elkgraph);
+        IGraphTransformer<ElkNode, T> transformer = transHandler.getExporter();
         transformer.transform(transData);
         return transHandler.serialize(transData);
     }
@@ -111,9 +112,9 @@ public class GraphFileHandler {
     /**
      * Retrieve a graph from the selected file.
      * 
-     * @return the KGraph
+     * @return the ELK Graph
      */
-    private KNode retreiveGraph() {
+    private ElkNode retrieveGraph() {
         // load the notation diagram element
         URI uri = URI.createPlatformResourceURI(sourceFile.toString(), true);
         ResourceSet resourceSet = new ResourceSetImpl();
@@ -128,8 +129,8 @@ public class GraphFileHandler {
         }
 
         EObject content = resource.getContents().get(0);
-        if (content instanceof KNode) {
-            return (KNode) content;
+        if (content instanceof ElkNode) {
+            return (ElkNode) content;
         } else {
             throw new IllegalArgumentException(
                     "The selected file does not contain a supported format.");
@@ -142,7 +143,7 @@ public class GraphFileHandler {
      * @return the string value from the converted graph
      */
     public String graphToString() {
-        KNode graph = retreiveGraph();
+        ElkNode graph = retrieveGraph();
         return performExport(graph, targetFormat.getHandler());
     }
 
