@@ -22,7 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Map;
 
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.common.util.URI;
@@ -48,8 +48,8 @@ public abstract class AbstractEmfHandler<T extends EObject> implements IGraphFor
     /** the character set to use for serialization and deserialization. */
     public static final IProperty<String> CHARSET = new Property<String>("emfHandler.charset");
     /** the XML options for loading and saving files. */
-    public static final IProperty<Map<Object, Object>> XML_OPTIONS = new Property<Map<Object, Object>>(
-            "emfHandler.xmlOptions");
+    public static final IProperty<Map<Object, Object>> XML_OPTIONS =
+            new Property<>("emfHandler.xmlOptions");
     
     /** the file extension for loading and saving resources. */
     private String fileExtension;
@@ -58,7 +58,7 @@ public abstract class AbstractEmfHandler<T extends EObject> implements IGraphFor
      * {@inheritDoc}
      */
     public void deserialize(final String serializedGraph,
-            final TransformationData<T, KNode> transData) {
+            final TransformationData<T, ElkNode> transData) {
         try {
             String charset = transData.getProperty(CHARSET);
             byte[] bytes;
@@ -80,7 +80,7 @@ public abstract class AbstractEmfHandler<T extends EObject> implements IGraphFor
     /**
      * {@inheritDoc}
      */
-    public String serialize(final TransformationData<KNode, T> transData) {
+    public String serialize(final TransformationData<ElkNode, T> transData) {
         try {
             ByteArrayOutputStream target = new ByteArrayOutputStream();
             Map<Object, Object> xmlOptions = transData.getProperty(XML_OPTIONS);

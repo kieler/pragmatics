@@ -6,7 +6,7 @@
    <extension
          point="de.cau.cs.kieler.kiml.formats.graphFormats">
       <handler
-            class="de.cau.cs.kieler.kiml.formats.KGraphHandler"
+            class="de.cau.cs.kieler.kiml.formats.ElkGraphHandler"
             description="Internally used graph format of the KIELER project. See http://rtsys.informatik.uni-kiel.de/confluence/x/U4EN"
             extensions="kgraph,kgx,xmi"
             id="de.cau.cs.kieler.kgraph"

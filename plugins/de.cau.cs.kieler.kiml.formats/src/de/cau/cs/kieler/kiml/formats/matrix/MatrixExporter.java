@@ -17,13 +17,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
@@ -37,20 +37,20 @@ import de.cau.cs.kieler.kiml.formats.TransformationData;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class MatrixExporter implements IGraphTransformer<KNode, Matrix> {
+public class MatrixExporter implements IGraphTransformer<ElkNode, Matrix> {
 
     /**
      * {@inheritDoc}
      */
-    public void transform(final TransformationData<KNode, Matrix> data) {
-        KNode parentNode = data.getSourceGraph();
+    public void transform(final TransformationData<ElkNode, Matrix> data) {
+        ElkNode parentNode = data.getSourceGraph();
         int n = parentNode.getChildren().size();
         Matrix matrix = new Matrix(n, n);
         
         // count the edges of the graph and index the nodes
         int m = 0, index = 0;
-        Map<KNode, Integer> nodeIndex = new HashMap<KNode, Integer>();
-        for (KNode node : parentNode.getChildren()) {
+        Map<ElkNode, Integer> nodeIndex = new HashMap<ElkNode, Integer>();
+        for (ElkNode node : parentNode.getChildren()) {
             m += node.getOutgoingEdges().size();
             nodeIndex.put(node, index++);
         }
@@ -59,17 +59,26 @@ public class MatrixExporter implements IGraphTransformer<KNode, Matrix> {
         if (3 * m < n * n) {
             // sparse matrix: use coordinate format
             List<Matrix.Entry> adjlist = matrix.createList(m);
-            for (KNode node : parentNode.getChildren()) {
+            for (ElkNode node : parentNode.getChildren()) {
                 int sourceIndex = nodeIndex.get(node);
-                Map<KNode, Matrix.Entry> targetMap = new HashMap<KNode, Matrix.Entry>();
-                for (KEdge edge : node.getOutgoingEdges()) {
-                    Integer targetIndex = nodeIndex.get(edge.getTarget());
+                Map<ElkNode, Matrix.Entry> targetMap = new HashMap<>();
+                
+                // Note that this ignores edges connected to ports, which are not supported
+                // by the matrix format anyway (we could change that)
+                for (ElkEdge edge : node.getOutgoingEdges()) {
+                    if (!isDirectSimpleEdgeBetweenNodes(edge)) {
+                        // No hyperedges, no edges that connect to ports
+                        continue;
+                    }
+                    
+                    ElkConnectableShape targetShape = edge.getTargets().get(0);
+                    Integer targetIndex = nodeIndex.get(targetShape);
                     if (targetIndex != null) {
-                        Matrix.Entry entry = targetMap.get(edge.getTarget());
+                        Matrix.Entry entry = targetMap.get(targetShape);
                         if (entry == null) {
                             entry = new Matrix.Entry(sourceIndex, targetIndex, 1);
                             adjlist.add(entry);
-                            targetMap.put(edge.getTarget(), entry);
+                            targetMap.put((ElkNode) targetShape, entry);
                         } else {
                             entry.value++;
                         }
@@ -79,10 +88,15 @@ public class MatrixExporter implements IGraphTransformer<KNode, Matrix> {
         } else {
             // dense matrix: use array format
             int[][] x = matrix.createMatrix();
-            for (KNode node : parentNode.getChildren()) {
+            for (ElkNode node : parentNode.getChildren()) {
                 int sourceIndex = nodeIndex.get(node);
-                for (KEdge edge : node.getOutgoingEdges()) {
-                    Integer targetIndex = nodeIndex.get(edge.getTarget());
+                for (ElkEdge edge : node.getOutgoingEdges()) {
+                    if (!isDirectSimpleEdgeBetweenNodes(edge)) {
+                        // No hyperedges, no edges that connect to ports
+                        continue;
+                    }
+                    
+                    Integer targetIndex = nodeIndex.get(edge.getTargets().get(0));
                     if (targetIndex != null) {
                         x[sourceIndex][targetIndex]++;
                     }
@@ -94,32 +108,36 @@ public class MatrixExporter implements IGraphTransformer<KNode, Matrix> {
         if (!data.getProperty(CoreOptions.NO_LAYOUT)) {
             List<KVectorChain> layout = matrix.createLayout();
             // first lines: coordinates of node positions
-            for (KNode node : parentNode.getChildren()) {
-                KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+            for (ElkNode node : parentNode.getChildren()) {
                 KVectorChain chain = new KVectorChain();
-                chain.add(nodeLayout.getXpos() + nodeLayout.getWidth() / 2,
-                        nodeLayout.getYpos() + nodeLayout.getHeight() / 2);
+                chain.add(node.getX() + node.getWidth() / 2, node.getY() + node.getHeight() / 2);
                 layout.add(chain);
             }
+            
             // remaining lines: coordinates of edge bend points
-            for (KNode node : parentNode.getChildren()) {
-                for (KEdge edge : node.getOutgoingEdges()) {
-                    KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                    if (!edgeLayout.getBendPoints().isEmpty()) {
-                        try {
-                            KVectorChain vectorChain = new KVectorChain();
-                            // the first pair of numbers indicates the source and target node
-                            vectorChain.add(nodeIndex.get(edge.getSource()),
-                                    nodeIndex.get(edge.getTarget()));
-                            // the remaining numbers are bend point coordinates
-                            for (KPoint bendPoint : edgeLayout.getBendPoints()) {
-                                vectorChain.add(bendPoint.getX(), bendPoint.getY());
-                            }
-                            layout.add(vectorChain);
-                        } catch (NumberFormatException exception) {
-                            // ignore exception
-                        }
+            for (ElkNode node : parentNode.getChildren()) {
+                for (ElkEdge edge : node.getOutgoingEdges()) {
+                    if (edge.getSections().isEmpty()) {
+                        continue;
                     }
+                    ElkEdgeSection edgeSection = edge.getSections().get(0);
+                    
+                    if (edgeSection.getBendPoints().isEmpty()) {
+                        continue;
+                    }
+                    
+                    KVectorChain vectorChain = new KVectorChain();
+                    // the first pair of numbers indicates the source and target node
+                    vectorChain.add(
+                            nodeIndex.get(edge.getSources().get(0)),
+                            nodeIndex.get(edge.getTargets().get(0)));
+                    
+                    // the remaining numbers are bend point coordinates
+                    for (ElkBendPoint bendPoint : edgeSection.getBendPoints()) {
+                        vectorChain.add(bendPoint.getX(), bendPoint.getY());
+                    }
+                    
+                    layout.add(vectorChain);
                 }
             }
         }
@@ -130,8 +148,19 @@ public class MatrixExporter implements IGraphTransformer<KNode, Matrix> {
     /**
      * {@inheritDoc}
      */
-    public void transferLayout(final TransformationData<KNode, Matrix> data) {
+    public void transferLayout(final TransformationData<ElkNode, Matrix> data) {
         throw new UnsupportedOperationException("Layout transfer is not supported for matrix export.");
+    }
+    
+    private boolean isDirectSimpleEdgeBetweenNodes(final ElkEdge edge) {
+        if (!(edge.getSources().size() == 1 && edge.getTargets().size() == 1)) {
+            return false;
+        }
+        
+        ElkConnectableShape sourceShape = edge.getSources().get(0);
+        ElkConnectableShape targetShape = edge.getTargets().get(0);
+        
+        return sourceShape instanceof ElkNode && targetShape instanceof ElkNode;
     }
 
 }
