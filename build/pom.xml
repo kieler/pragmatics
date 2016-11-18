@@ -240,7 +240,7 @@
           </configuration>
         </plugin>
 
-        <!-- generate code from elkm files -->
+        <!-- generate code from melk files -->
         <plugin>
           <groupId>org.eclipse.xtext</groupId>
           <artifactId>xtext-maven-plugin</artifactId>

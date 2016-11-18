@@ -50,6 +50,15 @@ public interface GranaFactory extends EFactory
   RegularJob createRegularJob();
 
   /**
+   * Returns a new object of class '<em>Compare Job</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Compare Job</em>'.
+   * @generated
+   */
+  CompareJob createCompareJob();
+
+  /**
    * Returns a new object of class '<em>Range Job</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

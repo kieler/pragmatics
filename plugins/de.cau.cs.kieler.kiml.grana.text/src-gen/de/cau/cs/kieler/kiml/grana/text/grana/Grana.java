@@ -13,14 +13,15 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#getGlobalResources <em>Global Resources</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#getGloobalOutputs <em>Gloobal Outputs</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#isParallel <em>Parallel</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#isExecuteAll <em>Execute All</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#getExecute <em>Execute</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#getJobs <em>Jobs</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage#getGrana()
  * @model
@@ -59,6 +60,32 @@ public interface Grana extends EObject
    * @generated
    */
   EList<GlobalOutputRef> getGloobalOutputs();
+
+  /**
+   * Returns the value of the '<em><b>Parallel</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Parallel</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Parallel</em>' attribute.
+   * @see #setParallel(boolean)
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage#getGrana_Parallel()
+   * @model
+   * @generated
+   */
+  boolean isParallel();
+
+  /**
+   * Sets the value of the '{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#isParallel <em>Parallel</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Parallel</em>' attribute.
+   * @see #isParallel()
+   * @generated
+   */
+  void setParallel(boolean value);
 
   /**
    * Returns the value of the '<em><b>Execute All</b></em>' attribute.

@@ -15,6 +15,7 @@ package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -27,7 +28,6 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.service.util.ProgressMonitorAdapter;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.common.util.URI;
@@ -42,6 +42,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
+
+import com.google.common.collect.FluentIterable;
 
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.ui.batch.wizard.BatchWizard;
@@ -70,7 +72,7 @@ public class BatchHandler extends AbstractHandler {
      */
     public static final IProperty<Map<String, Double>> EXECUTION_TIME_RESULTS =
             new Property<Map<String, Double>>("grana.execTimeResults");
-
+ 
     /**
      * {@inheritDoc}
      */
@@ -96,11 +98,11 @@ public class BatchHandler extends AbstractHandler {
             try {
                 IRunnableWithProgress runnable = new IRunnableWithProgress() {
                     public void run(final IProgressMonitor uiMonitor) {
-                    	IElkProgressMonitor monitor = new ProgressMonitorAdapter(uiMonitor);
+                        IElkProgressMonitor monitor = new ProgressMonitorAdapter(uiMonitor);
                         monitor.begin("Starting analysis batch", WORK_ALL);
                         try {
                             // create the batch
-                            Batch batch = new Batch(wizard.getAnalyses());
+                            Batch batch = new Batch.Simple(wizard.getAnalyses());
                             
                             // create a batch job for every selected file
                             for (IPath file : wizard.getSelectedFiles()) {
@@ -108,7 +110,7 @@ public class BatchHandler extends AbstractHandler {
                                 provider.setLayoutBeforeAnalysis(wizard.getLayoutBeforeAnalysis());
                                 provider.setExecutionTimeAnalysis(wizard.getExecutionTimeAnalysis());
                                 provider.setLayoutConfigurator(wizard.getLayoutConfig());
-                                BatchJob<IPath> batchJob = new BatchJob<IPath>(file, provider);
+                                BatchJob<IPath> batchJob = new BatchJob.Simple<IPath>(file, provider);
                                 batch.appendJob(batchJob);
                             }
                             monitor.worked(WORK_BATCH);
@@ -130,13 +132,16 @@ public class BatchHandler extends AbstractHandler {
                             outputStream.close();
                             
                             // display problems
-                            if (!result.getFailedJobs().isEmpty()) {
-                                IStatus[] stati = new IStatus[result.getFailedJobs().size()];
+                            List<BatchJobResult.Failed> failed =
+                                    FluentIterable.from(result.getJobResults())
+                                            .filter(BatchJobResult.Failed.class).toList();
+                            if (!failed.isEmpty()) {
+                                IStatus[] stati = new IStatus[failed.size()];
                                 int i = 0;
-                                for (Pair<IBatchJob<?>, Throwable> entry : result.getFailedJobs()) {
+                                for (BatchJobResult.Failed fail : failed) {
                                     stati[i++] = new Status(IStatus.ERROR, GranaPlugin.PLUGIN_ID,
-                                            "Failed analysis of " + entry.getFirst().getParameter(),
-                                            entry.getSecond());
+                                            "Failed analysis of " + fail.getJob().getParameter(),
+                                            fail.getThrowable());
                                 }
                                 StatusManager.getManager().handle(new MultiStatus(GranaPlugin.PLUGIN_ID,
                                         0, stati, MESSAGE_BATCH_FAILED, null),

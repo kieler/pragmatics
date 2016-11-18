@@ -2,26 +2,26 @@
  */
 package de.cau.cs.kieler.kiml.grana.text.grana.impl;
 
+import de.cau.cs.kieler.kiml.grana.text.grana.CompareJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage;
-import de.cau.cs.kieler.kiml.grana.text.grana.IntRange;
 
 import org.eclipse.emf.ecore.EClass;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Int Range</b></em>'.
+ * An implementation of the model object '<em><b>Compare Job</b></em>'.
  * <!-- end-user-doc -->
  *
  * @generated
  */
-public class IntRangeImpl extends RangeImpl implements IntRange
+public class CompareJobImpl extends JobImpl implements CompareJob
 {
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected IntRangeImpl()
+  protected CompareJobImpl()
   {
     super();
   }
@@ -34,7 +34,7 @@ public class IntRangeImpl extends RangeImpl implements IntRange
   @Override
   protected EClass eStaticClass()
   {
-    return GranaPackage.Literals.INT_RANGE;
+    return GranaPackage.Literals.COMPARE_JOB;
   }
 
-} //IntRangeImpl
+} //CompareJobImpl

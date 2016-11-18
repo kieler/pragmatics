@@ -10,11 +10,11 @@ package de.cau.cs.kieler.kiml.grana.text.grana;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.IntRangeRange#getStart <em>Start</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.IntRangeRange#getEnd <em>End</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage#getIntRangeRange()
  * @model

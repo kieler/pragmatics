@@ -16,6 +16,7 @@ package de.cau.cs.kieler.kiml.grana.headless;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -23,7 +24,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.elk.core.util.Pair;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -34,13 +34,15 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.xtext.util.Arrays;
 
+import com.google.common.collect.FluentIterable;
+
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.text.GranaStandaloneSetup;
 import de.cau.cs.kieler.kiml.grana.text.GranaTextPlugin;
 import de.cau.cs.kieler.kiml.grana.text.GranaTextToBatchJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana;
+import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJobResult;
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchResult;
-import de.cau.cs.kieler.kiml.grana.ui.batch.IBatchJob;
 
 /**
  * Headless application used to execute Grana Batch Jobs from the command line.
@@ -151,14 +153,16 @@ public class HeadlessGranaExecutor implements IApplication {
     
     private void displayProblems(final Iterable<BatchResult> results) {
         for (BatchResult result : results) {
-            if (!result.getFailedJobs().isEmpty()) {
-                IStatus[] stati = new IStatus[result.getFailedJobs().size()];
+            List<BatchJobResult.Failed> failed = FluentIterable.from(result.getJobResults())
+                    .filter(BatchJobResult.Failed.class).toList();
+            if (!failed.isEmpty()) {
+                IStatus[] stati = new IStatus[failed.size()];
                 int i = 0;
-                for (Pair<IBatchJob<?>, Throwable> entry : result.getFailedJobs()) {
+                for (BatchJobResult.Failed fail : failed) {
                     stati[i++] =
                             new Status(IStatus.ERROR, GranaTextPlugin.PLUGIN_ID,
-                                    "Failed analysis of " + entry.getFirst().getParameter(),
-                                    entry.getSecond());
+                                    "Failed analysis of " + fail.getJob().getParameter(),
+                                    fail.getThrowable());
                 }
                 GranaTextPlugin.getDefault().getLog()
                         .log(new MultiStatus(GranaTextPlugin.PLUGIN_ID, 0, stati,

@@ -55,12 +55,17 @@ public class AnalyzeAction extends Action {
     public void run() {
         // Run analyses, if possible
         if (VisualizationService.getInstance().findActiveMethod(true)) {
+            
             // There is a visualization method; find the active editor, if any
+            // Note: it would be nice to use this action for view parts as well 
+            //       technically this is possible, however, as the action's button
+            //       is part of the grana view, when the button is pressed, the active view
+            //       is the grana view itself, not the view with the diagram in it
             final IEditorPart activeEditorPart = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                             .getActivePage().getActiveEditor();
             
             if (activeEditorPart != null) {
-                activeEditorPart.getEditorSite().getShell().getDisplay().asyncExec(new Runnable() {
+                activeEditorPart.getSite().getShell().getDisplay().asyncExec(new Runnable() {
                     public void run() {
                         // Analyze the diagram and visualize the results
                         List<AnalysisData> analyses = GranaUtil.getLastAnalysesSelection();

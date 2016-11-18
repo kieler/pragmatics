@@ -5,6 +5,7 @@ package de.cau.cs.kieler.kiml.grana.text.grana.impl;
 import de.cau.cs.kieler.kiml.grana.text.grana.*;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -67,6 +68,7 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
       case GranaPackage.GRANA: return createGrana();
       case GranaPackage.JOB: return createJob();
       case GranaPackage.REGULAR_JOB: return createRegularJob();
+      case GranaPackage.COMPARE_JOB: return createCompareJob();
       case GranaPackage.RANGE_JOB: return createRangeJob();
       case GranaPackage.RANGE: return createRange();
       case GranaPackage.FLOAT_RANGE: return createFloatRange();
@@ -84,6 +86,40 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
       case GranaPackage.ANALYSIS: return createAnalysis();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Object createFromString(EDataType eDataType, String initialValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case GranaPackage.OUTPUT_TYPE:
+        return createOutputTypeFromString(eDataType, initialValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+    }
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String convertToString(EDataType eDataType, Object instanceValue)
+  {
+    switch (eDataType.getClassifierID())
+    {
+      case GranaPackage.OUTPUT_TYPE:
+        return convertOutputTypeToString(eDataType, instanceValue);
+      default:
+        throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
     }
   }
 
@@ -118,6 +154,17 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
   {
     RegularJobImpl regularJob = new RegularJobImpl();
     return regularJob;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public CompareJob createCompareJob()
+  {
+    CompareJobImpl compareJob = new CompareJobImpl();
+    return compareJob;
   }
 
   /**
@@ -283,6 +330,28 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
   {
     AnalysisImpl analysis = new AnalysisImpl();
     return analysis;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public OutputType createOutputTypeFromString(EDataType eDataType, String initialValue)
+  {
+    OutputType result = OutputType.get(initialValue);
+    if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+    return result;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String convertOutputTypeToString(EDataType eDataType, Object instanceValue)
+  {
+    return instanceValue == null ? null : instanceValue.toString();
   }
 
   /**

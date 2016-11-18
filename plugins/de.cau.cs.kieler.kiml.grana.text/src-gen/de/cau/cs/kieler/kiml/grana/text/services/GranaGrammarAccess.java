@@ -30,22 +30,24 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cGloobalOutputsGlobalOutputRefParserRuleCall_1_1_0 = (RuleCall)cGloobalOutputsAssignment_1_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
 		private final Keyword cExecuteKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Alternatives cAlternatives_2_1 = (Alternatives)cGroup_2.eContents().get(1);
-		private final Assignment cExecuteAllAssignment_2_1_0 = (Assignment)cAlternatives_2_1.eContents().get(0);
-		private final Keyword cExecuteAllAllKeyword_2_1_0_0 = (Keyword)cExecuteAllAssignment_2_1_0.eContents().get(0);
-		private final Assignment cExecuteAssignment_2_1_1 = (Assignment)cAlternatives_2_1.eContents().get(1);
-		private final CrossReference cExecuteJobCrossReference_2_1_1_0 = (CrossReference)cExecuteAssignment_2_1_1.eContents().get(0);
-		private final RuleCall cExecuteJobIDTerminalRuleCall_2_1_1_0_1 = (RuleCall)cExecuteJobCrossReference_2_1_1_0.eContents().get(1);
+		private final Assignment cParallelAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final Keyword cParallelParallelKeyword_2_1_0 = (Keyword)cParallelAssignment_2_1.eContents().get(0);
+		private final Alternatives cAlternatives_2_2 = (Alternatives)cGroup_2.eContents().get(2);
+		private final Assignment cExecuteAllAssignment_2_2_0 = (Assignment)cAlternatives_2_2.eContents().get(0);
+		private final Keyword cExecuteAllAllKeyword_2_2_0_0 = (Keyword)cExecuteAllAssignment_2_2_0.eContents().get(0);
+		private final Assignment cExecuteAssignment_2_2_1 = (Assignment)cAlternatives_2_2.eContents().get(1);
+		private final CrossReference cExecuteJobCrossReference_2_2_1_0 = (CrossReference)cExecuteAssignment_2_2_1.eContents().get(0);
+		private final RuleCall cExecuteJobIDTerminalRuleCall_2_2_1_0_1 = (RuleCall)cExecuteJobCrossReference_2_2_1_0.eContents().get(1);
 		private final Assignment cJobsAssignment_3 = (Assignment)cGroup.eContents().get(3);
 		private final RuleCall cJobsJobParserRuleCall_3_0 = (RuleCall)cJobsAssignment_3.eContents().get(0);
 		
 		//Grana:
 		//	('globalResources' globalResources+=GlobalResourceRef*)? ('globalOutputs' gloobalOutputs+=GlobalOutputRef*)?
-		//	('execute' (executeAll?='all' | execute+=[Job]+)) jobs+=Job+;
+		//	('execute' parallel?='parallel'? (executeAll?='all' | execute+=[Job]+)) jobs+=Job+;
 		@Override public ParserRule getRule() { return rule; }
 
 		//('globalResources' globalResources+=GlobalResourceRef*)? ('globalOutputs' gloobalOutputs+=GlobalOutputRef*)? ('execute'
-		//(executeAll?='all' | execute+=[Job]+)) jobs+=Job+
+		//parallel?='parallel'? (executeAll?='all' | execute+=[Job]+)) jobs+=Job+
 		public Group getGroup() { return cGroup; }
 
 		//('globalResources' globalResources+=GlobalResourceRef*)?
@@ -72,29 +74,35 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//GlobalOutputRef
 		public RuleCall getGloobalOutputsGlobalOutputRefParserRuleCall_1_1_0() { return cGloobalOutputsGlobalOutputRefParserRuleCall_1_1_0; }
 
-		//('execute' (executeAll?='all' | execute+=[Job]+))
+		//('execute' parallel?='parallel'? (executeAll?='all' | execute+=[Job]+))
 		public Group getGroup_2() { return cGroup_2; }
 
 		//'execute'
 		public Keyword getExecuteKeyword_2_0() { return cExecuteKeyword_2_0; }
 
+		//parallel?='parallel'?
+		public Assignment getParallelAssignment_2_1() { return cParallelAssignment_2_1; }
+
+		//'parallel'
+		public Keyword getParallelParallelKeyword_2_1_0() { return cParallelParallelKeyword_2_1_0; }
+
 		//(executeAll?='all' | execute+=[Job]+)
-		public Alternatives getAlternatives_2_1() { return cAlternatives_2_1; }
+		public Alternatives getAlternatives_2_2() { return cAlternatives_2_2; }
 
 		//executeAll?='all'
-		public Assignment getExecuteAllAssignment_2_1_0() { return cExecuteAllAssignment_2_1_0; }
+		public Assignment getExecuteAllAssignment_2_2_0() { return cExecuteAllAssignment_2_2_0; }
 
 		//'all'
-		public Keyword getExecuteAllAllKeyword_2_1_0_0() { return cExecuteAllAllKeyword_2_1_0_0; }
+		public Keyword getExecuteAllAllKeyword_2_2_0_0() { return cExecuteAllAllKeyword_2_2_0_0; }
 
 		//execute+=[Job]+
-		public Assignment getExecuteAssignment_2_1_1() { return cExecuteAssignment_2_1_1; }
+		public Assignment getExecuteAssignment_2_2_1() { return cExecuteAssignment_2_2_1; }
 
 		//[Job]
-		public CrossReference getExecuteJobCrossReference_2_1_1_0() { return cExecuteJobCrossReference_2_1_1_0; }
+		public CrossReference getExecuteJobCrossReference_2_2_1_0() { return cExecuteJobCrossReference_2_2_1_0; }
 
 		//ID
-		public RuleCall getExecuteJobIDTerminalRuleCall_2_1_1_0_1() { return cExecuteJobIDTerminalRuleCall_2_1_1_0_1; }
+		public RuleCall getExecuteJobIDTerminalRuleCall_2_2_1_0_1() { return cExecuteJobIDTerminalRuleCall_2_2_1_0_1; }
 
 		//jobs+=Job+
 		public Assignment getJobsAssignment_3() { return cJobsAssignment_3; }
@@ -108,12 +116,13 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final RuleCall cRegularJobParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cRangeJobParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		private final RuleCall cCompareJobParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		
 		//Job:
-		//	RegularJob | RangeJob;
+		//	RegularJob | RangeJob | CompareJob;
 		@Override public ParserRule getRule() { return rule; }
 
-		//RegularJob | RangeJob
+		//RegularJob | RangeJob | CompareJob
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//RegularJob
@@ -121,6 +130,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 		//RangeJob
 		public RuleCall getRangeJobParserRuleCall_1() { return cRangeJobParserRuleCall_1; }
+
+		//CompareJob
+		public RuleCall getCompareJobParserRuleCall_2() { return cCompareJobParserRuleCall_2; }
 	}
 
 	public class RegularJobElements extends AbstractParserRuleElementFinder {
@@ -143,8 +155,10 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cAnalysesAssignment_9 = (Assignment)cGroup.eContents().get(9);
 		private final RuleCall cAnalysesAnalysisParserRuleCall_9_0 = (RuleCall)cAnalysesAssignment_9.eContents().get(0);
 		private final Keyword cOutputKeyword_10 = (Keyword)cGroup.eContents().get(10);
-		private final Assignment cOutputAssignment_11 = (Assignment)cGroup.eContents().get(11);
-		private final RuleCall cOutputOutputParserRuleCall_11_0 = (RuleCall)cOutputAssignment_11.eContents().get(0);
+		private final Assignment cOutputTypeAssignment_11 = (Assignment)cGroup.eContents().get(11);
+		private final RuleCall cOutputTypeOutputTypeEnumRuleCall_11_0 = (RuleCall)cOutputTypeAssignment_11.eContents().get(0);
+		private final Assignment cOutputAssignment_12 = (Assignment)cGroup.eContents().get(12);
+		private final RuleCall cOutputOutputParserRuleCall_12_0 = (RuleCall)cOutputAssignment_12.eContents().get(0);
 		
 		//RegularJob:
 		//	'job' name=ID layoutBeforeAnalysis?='layoutBeforeAnalysis'?
@@ -156,11 +170,12 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//	'analyses'
 		//	analyses+=Analysis+
 		//	'output'
-		//	output=Output;
+		//	outputType=OutputType? output=Output;
 		@Override public ParserRule getRule() { return rule; }
 
 		//'job' name=ID layoutBeforeAnalysis?='layoutBeforeAnalysis'? measureExecutionTime?='measureExecutionTime'? 'resources'
-		//resources+=Resource+ 'layoutoptions' layoutOptions+=KIdentifier+ 'analyses' analyses+=Analysis+ 'output' output=Output
+		//resources+=Resource+ 'layoutoptions' layoutOptions+=KIdentifier+ 'analyses' analyses+=Analysis+ 'output'
+		//outputType=OutputType? output=Output
 		public Group getGroup() { return cGroup; }
 
 		//'job'
@@ -214,17 +229,23 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//'output'
 		public Keyword getOutputKeyword_10() { return cOutputKeyword_10; }
 
+		//outputType=OutputType?
+		public Assignment getOutputTypeAssignment_11() { return cOutputTypeAssignment_11; }
+
+		//OutputType
+		public RuleCall getOutputTypeOutputTypeEnumRuleCall_11_0() { return cOutputTypeOutputTypeEnumRuleCall_11_0; }
+
 		//output=Output
-		public Assignment getOutputAssignment_11() { return cOutputAssignment_11; }
+		public Assignment getOutputAssignment_12() { return cOutputAssignment_12; }
 
 		//Output
-		public RuleCall getOutputOutputParserRuleCall_11_0() { return cOutputOutputParserRuleCall_11_0; }
+		public RuleCall getOutputOutputParserRuleCall_12_0() { return cOutputOutputParserRuleCall_12_0; }
 	}
 
-	public class RangeJobElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.RangeJob");
+	public class CompareJobElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.CompareJob");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword cRangejobKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cComparejobKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		private final Keyword cResourcesKeyword_2 = (Keyword)cGroup.eContents().get(2);
@@ -233,48 +254,33 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cLayoutoptionsKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		private final Assignment cLayoutOptionsAssignment_5 = (Assignment)cGroup.eContents().get(5);
 		private final RuleCall cLayoutOptionsKIdentifierParserRuleCall_5_0 = (RuleCall)cLayoutOptionsAssignment_5.eContents().get(0);
-		private final Keyword cAnalysesKeyword_6 = (Keyword)cGroup.eContents().get(6);
-		private final Assignment cAnalysesAssignment_7 = (Assignment)cGroup.eContents().get(7);
-		private final RuleCall cAnalysesAnalysisParserRuleCall_7_0 = (RuleCall)cAnalysesAssignment_7.eContents().get(0);
-		private final Keyword cRangeoptionKeyword_8 = (Keyword)cGroup.eContents().get(8);
-		private final Assignment cRangeOptionAssignment_9 = (Assignment)cGroup.eContents().get(9);
-		private final RuleCall cRangeOptionQualifiedIDParserRuleCall_9_0 = (RuleCall)cRangeOptionAssignment_9.eContents().get(0);
-		private final Assignment cRangeValuesAssignment_10 = (Assignment)cGroup.eContents().get(10);
-		private final RuleCall cRangeValuesRangeParserRuleCall_10_0 = (RuleCall)cRangeValuesAssignment_10.eContents().get(0);
-		private final Keyword cRangeanalysisKeyword_11 = (Keyword)cGroup.eContents().get(11);
-		private final Assignment cRangeAnalysisAssignment_12 = (Assignment)cGroup.eContents().get(12);
-		private final RuleCall cRangeAnalysisAnalysisParserRuleCall_12_0 = (RuleCall)cRangeAnalysisAssignment_12.eContents().get(0);
-		private final Group cGroup_13 = (Group)cGroup.eContents().get(13);
-		private final Keyword cComponentKeyword_13_0 = (Keyword)cGroup_13.eContents().get(0);
-		private final Assignment cRangeAnalysisComponentAssignment_13_1 = (Assignment)cGroup_13.eContents().get(1);
-		private final RuleCall cRangeAnalysisComponentNATURALTerminalRuleCall_13_1_0 = (RuleCall)cRangeAnalysisComponentAssignment_13_1.eContents().get(0);
-		private final Keyword cOutputKeyword_14 = (Keyword)cGroup.eContents().get(14);
-		private final Assignment cOutputAssignment_15 = (Assignment)cGroup.eContents().get(15);
-		private final RuleCall cOutputOutputParserRuleCall_15_0 = (RuleCall)cOutputAssignment_15.eContents().get(0);
+		private final Assignment cLayoutOptionsAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cLayoutOptionsKIdentifierParserRuleCall_6_0 = (RuleCall)cLayoutOptionsAssignment_6.eContents().get(0);
+		private final Keyword cAnalysesKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		private final Assignment cAnalysesAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final RuleCall cAnalysesAnalysisParserRuleCall_8_0 = (RuleCall)cAnalysesAssignment_8.eContents().get(0);
+		private final Keyword cOutputKeyword_9 = (Keyword)cGroup.eContents().get(9);
+		private final Assignment cOutputTypeAssignment_10 = (Assignment)cGroup.eContents().get(10);
+		private final RuleCall cOutputTypeOutputTypeEnumRuleCall_10_0 = (RuleCall)cOutputTypeAssignment_10.eContents().get(0);
+		private final Assignment cOutputAssignment_11 = (Assignment)cGroup.eContents().get(11);
+		private final RuleCall cOutputOutputParserRuleCall_11_0 = (RuleCall)cOutputAssignment_11.eContents().get(0);
 		
-		//RangeJob:
-		//	'rangejob' name=ID
+		//CompareJob:
+		//	'comparejob' name=ID
 		//	'resources' resources+=Resource+
 		//	'layoutoptions'
-		//	layoutOptions+=KIdentifier+
-		//	'analyses'
+		//	layoutOptions+=KIdentifier layoutOptions+=KIdentifier 'analyses'
 		//	analyses+=Analysis+
-		//	'rangeoption'
-		//	rangeOption=QualifiedID
-		//	rangeValues=Range
-		//	'rangeanalysis'
-		//	rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)?
 		//	'output'
-		//	output=Output;
+		//	outputType=OutputType? output=Output;
 		@Override public ParserRule getRule() { return rule; }
 
-		//'rangejob' name=ID 'resources' resources+=Resource+ 'layoutoptions' layoutOptions+=KIdentifier+ 'analyses'
-		//analyses+=Analysis+ 'rangeoption' rangeOption=QualifiedID rangeValues=Range 'rangeanalysis' rangeAnalysis=Analysis
-		//('component' rangeAnalysisComponent=NATURAL)? 'output' output=Output
+		//'comparejob' name=ID 'resources' resources+=Resource+ 'layoutoptions' layoutOptions+=KIdentifier
+		//layoutOptions+=KIdentifier 'analyses' analyses+=Analysis+ 'output' outputType=OutputType? output=Output
 		public Group getGroup() { return cGroup; }
 
-		//'rangejob'
-		public Keyword getRangejobKeyword_0() { return cRangejobKeyword_0; }
+		//'comparejob'
+		public Keyword getComparejobKeyword_0() { return cComparejobKeyword_0; }
 
 		//name=ID
 		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
@@ -294,59 +300,213 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//'layoutoptions'
 		public Keyword getLayoutoptionsKeyword_4() { return cLayoutoptionsKeyword_4; }
 
-		//layoutOptions+=KIdentifier+
+		//layoutOptions+=KIdentifier
 		public Assignment getLayoutOptionsAssignment_5() { return cLayoutOptionsAssignment_5; }
 
 		//KIdentifier
 		public RuleCall getLayoutOptionsKIdentifierParserRuleCall_5_0() { return cLayoutOptionsKIdentifierParserRuleCall_5_0; }
 
+		//layoutOptions+=KIdentifier
+		public Assignment getLayoutOptionsAssignment_6() { return cLayoutOptionsAssignment_6; }
+
+		//KIdentifier
+		public RuleCall getLayoutOptionsKIdentifierParserRuleCall_6_0() { return cLayoutOptionsKIdentifierParserRuleCall_6_0; }
+
 		//'analyses'
-		public Keyword getAnalysesKeyword_6() { return cAnalysesKeyword_6; }
+		public Keyword getAnalysesKeyword_7() { return cAnalysesKeyword_7; }
 
 		//analyses+=Analysis+
-		public Assignment getAnalysesAssignment_7() { return cAnalysesAssignment_7; }
+		public Assignment getAnalysesAssignment_8() { return cAnalysesAssignment_8; }
 
 		//Analysis
-		public RuleCall getAnalysesAnalysisParserRuleCall_7_0() { return cAnalysesAnalysisParserRuleCall_7_0; }
-
-		//'rangeoption'
-		public Keyword getRangeoptionKeyword_8() { return cRangeoptionKeyword_8; }
-
-		//rangeOption=QualifiedID
-		public Assignment getRangeOptionAssignment_9() { return cRangeOptionAssignment_9; }
-
-		//QualifiedID
-		public RuleCall getRangeOptionQualifiedIDParserRuleCall_9_0() { return cRangeOptionQualifiedIDParserRuleCall_9_0; }
-
-		//rangeValues=Range
-		public Assignment getRangeValuesAssignment_10() { return cRangeValuesAssignment_10; }
-
-		//Range
-		public RuleCall getRangeValuesRangeParserRuleCall_10_0() { return cRangeValuesRangeParserRuleCall_10_0; }
-
-		//'rangeanalysis'
-		public Keyword getRangeanalysisKeyword_11() { return cRangeanalysisKeyword_11; }
-
-		//rangeAnalysis=Analysis
-		public Assignment getRangeAnalysisAssignment_12() { return cRangeAnalysisAssignment_12; }
-
-		//Analysis
-		public RuleCall getRangeAnalysisAnalysisParserRuleCall_12_0() { return cRangeAnalysisAnalysisParserRuleCall_12_0; }
-
-		//('component' rangeAnalysisComponent=NATURAL)?
-		public Group getGroup_13() { return cGroup_13; }
-
-		//'component'
-		public Keyword getComponentKeyword_13_0() { return cComponentKeyword_13_0; }
-
-		//rangeAnalysisComponent=NATURAL
-		public Assignment getRangeAnalysisComponentAssignment_13_1() { return cRangeAnalysisComponentAssignment_13_1; }
-
-		//NATURAL
-		public RuleCall getRangeAnalysisComponentNATURALTerminalRuleCall_13_1_0() { return cRangeAnalysisComponentNATURALTerminalRuleCall_13_1_0; }
+		public RuleCall getAnalysesAnalysisParserRuleCall_8_0() { return cAnalysesAnalysisParserRuleCall_8_0; }
 
 		//'output'
-		public Keyword getOutputKeyword_14() { return cOutputKeyword_14; }
+		public Keyword getOutputKeyword_9() { return cOutputKeyword_9; }
+
+		//outputType=OutputType?
+		public Assignment getOutputTypeAssignment_10() { return cOutputTypeAssignment_10; }
+
+		//OutputType
+		public RuleCall getOutputTypeOutputTypeEnumRuleCall_10_0() { return cOutputTypeOutputTypeEnumRuleCall_10_0; }
+
+		//output=Output
+		public Assignment getOutputAssignment_11() { return cOutputAssignment_11; }
+
+		//Output
+		public RuleCall getOutputOutputParserRuleCall_11_0() { return cOutputOutputParserRuleCall_11_0; }
+	}
+
+	public class RangeJobElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.RangeJob");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cRangejobKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameIDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final Assignment cMeasureExecutionTimeAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final Keyword cMeasureExecutionTimeMeasureExecutionTimeKeyword_2_0 = (Keyword)cMeasureExecutionTimeAssignment_2.eContents().get(0);
+		private final Keyword cResourcesKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cResourcesAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cResourcesResourceParserRuleCall_4_0 = (RuleCall)cResourcesAssignment_4.eContents().get(0);
+		private final Keyword cLayoutoptionsKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		private final Assignment cLayoutOptionsAssignment_6 = (Assignment)cGroup.eContents().get(6);
+		private final RuleCall cLayoutOptionsKIdentifierParserRuleCall_6_0 = (RuleCall)cLayoutOptionsAssignment_6.eContents().get(0);
+		private final Keyword cAnalysesKeyword_7 = (Keyword)cGroup.eContents().get(7);
+		private final Assignment cAnalysesAssignment_8 = (Assignment)cGroup.eContents().get(8);
+		private final RuleCall cAnalysesAnalysisParserRuleCall_8_0 = (RuleCall)cAnalysesAssignment_8.eContents().get(0);
+		private final Keyword cRangeoptionKeyword_9 = (Keyword)cGroup.eContents().get(9);
+		private final Assignment cRangeOptionAssignment_10 = (Assignment)cGroup.eContents().get(10);
+		private final RuleCall cRangeOptionQualifiedIDParserRuleCall_10_0 = (RuleCall)cRangeOptionAssignment_10.eContents().get(0);
+		private final Assignment cRangeValuesAssignment_11 = (Assignment)cGroup.eContents().get(11);
+		private final RuleCall cRangeValuesRangeParserRuleCall_11_0 = (RuleCall)cRangeValuesAssignment_11.eContents().get(0);
+		private final Alternatives cAlternatives_12 = (Alternatives)cGroup.eContents().get(12);
+		private final Group cGroup_12_0 = (Group)cAlternatives_12.eContents().get(0);
+		private final Keyword cRangeanalysisKeyword_12_0_0 = (Keyword)cGroup_12_0.eContents().get(0);
+		private final Assignment cRangeAnalysisAssignment_12_0_1 = (Assignment)cGroup_12_0.eContents().get(1);
+		private final RuleCall cRangeAnalysisAnalysisParserRuleCall_12_0_1_0 = (RuleCall)cRangeAnalysisAssignment_12_0_1.eContents().get(0);
+		private final Group cGroup_12_0_2 = (Group)cGroup_12_0.eContents().get(2);
+		private final Keyword cComponentKeyword_12_0_2_0 = (Keyword)cGroup_12_0_2.eContents().get(0);
+		private final Assignment cRangeAnalysisComponentAssignment_12_0_2_1 = (Assignment)cGroup_12_0_2.eContents().get(1);
+		private final RuleCall cRangeAnalysisComponentNATURALTerminalRuleCall_12_0_2_1_0 = (RuleCall)cRangeAnalysisComponentAssignment_12_0_2_1.eContents().get(0);
+		private final Group cGroup_12_1 = (Group)cAlternatives_12.eContents().get(1);
+		private final Keyword cRangeanalysesKeyword_12_1_0 = (Keyword)cGroup_12_1.eContents().get(0);
+		private final Assignment cRangeAnalysesAssignment_12_1_1 = (Assignment)cGroup_12_1.eContents().get(1);
+		private final RuleCall cRangeAnalysesAnalysisParserRuleCall_12_1_1_0 = (RuleCall)cRangeAnalysesAssignment_12_1_1.eContents().get(0);
+		private final Keyword cOutputKeyword_13 = (Keyword)cGroup.eContents().get(13);
+		private final Assignment cOutputTypeAssignment_14 = (Assignment)cGroup.eContents().get(14);
+		private final RuleCall cOutputTypeOutputTypeEnumRuleCall_14_0 = (RuleCall)cOutputTypeAssignment_14.eContents().get(0);
+		private final Assignment cOutputAssignment_15 = (Assignment)cGroup.eContents().get(15);
+		private final RuleCall cOutputOutputParserRuleCall_15_0 = (RuleCall)cOutputAssignment_15.eContents().get(0);
+		
+		//RangeJob:
+		//	'rangejob' name=ID
+		//	measureExecutionTime?='measureExecutionTime'?
+		//	'resources' resources+=Resource+
+		//	'layoutoptions'
+		//	layoutOptions+=KIdentifier+
+		//	'analyses'
+		//	analyses+=Analysis+
+		//	'rangeoption'
+		//	rangeOption=QualifiedID
+		//	rangeValues=Range ('rangeanalysis'
+		//	rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)? |
+		//	'rangeanalyses'
+		//	rangeAnalyses+=Analysis+)
+		//	'output'
+		//	outputType=OutputType? output=Output;
+		@Override public ParserRule getRule() { return rule; }
+
+		//'rangejob' name=ID measureExecutionTime?='measureExecutionTime'? 'resources' resources+=Resource+ 'layoutoptions'
+		//layoutOptions+=KIdentifier+ 'analyses' analyses+=Analysis+ 'rangeoption' rangeOption=QualifiedID rangeValues=Range
+		//('rangeanalysis' rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)? | 'rangeanalyses'
+		//rangeAnalyses+=Analysis+) 'output' outputType=OutputType? output=Output
+		public Group getGroup() { return cGroup; }
+
+		//'rangejob'
+		public Keyword getRangejobKeyword_0() { return cRangejobKeyword_0; }
+
+		//name=ID
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
+
+		//ID
+		public RuleCall getNameIDTerminalRuleCall_1_0() { return cNameIDTerminalRuleCall_1_0; }
+
+		//measureExecutionTime?='measureExecutionTime'?
+		public Assignment getMeasureExecutionTimeAssignment_2() { return cMeasureExecutionTimeAssignment_2; }
+
+		//'measureExecutionTime'
+		public Keyword getMeasureExecutionTimeMeasureExecutionTimeKeyword_2_0() { return cMeasureExecutionTimeMeasureExecutionTimeKeyword_2_0; }
+
+		//'resources'
+		public Keyword getResourcesKeyword_3() { return cResourcesKeyword_3; }
+
+		//resources+=Resource+
+		public Assignment getResourcesAssignment_4() { return cResourcesAssignment_4; }
+
+		//Resource
+		public RuleCall getResourcesResourceParserRuleCall_4_0() { return cResourcesResourceParserRuleCall_4_0; }
+
+		//'layoutoptions'
+		public Keyword getLayoutoptionsKeyword_5() { return cLayoutoptionsKeyword_5; }
+
+		//layoutOptions+=KIdentifier+
+		public Assignment getLayoutOptionsAssignment_6() { return cLayoutOptionsAssignment_6; }
+
+		//KIdentifier
+		public RuleCall getLayoutOptionsKIdentifierParserRuleCall_6_0() { return cLayoutOptionsKIdentifierParserRuleCall_6_0; }
+
+		//'analyses'
+		public Keyword getAnalysesKeyword_7() { return cAnalysesKeyword_7; }
+
+		//analyses+=Analysis+
+		public Assignment getAnalysesAssignment_8() { return cAnalysesAssignment_8; }
+
+		//Analysis
+		public RuleCall getAnalysesAnalysisParserRuleCall_8_0() { return cAnalysesAnalysisParserRuleCall_8_0; }
+
+		//'rangeoption'
+		public Keyword getRangeoptionKeyword_9() { return cRangeoptionKeyword_9; }
+
+		//rangeOption=QualifiedID
+		public Assignment getRangeOptionAssignment_10() { return cRangeOptionAssignment_10; }
+
+		//QualifiedID
+		public RuleCall getRangeOptionQualifiedIDParserRuleCall_10_0() { return cRangeOptionQualifiedIDParserRuleCall_10_0; }
+
+		//rangeValues=Range
+		public Assignment getRangeValuesAssignment_11() { return cRangeValuesAssignment_11; }
+
+		//Range
+		public RuleCall getRangeValuesRangeParserRuleCall_11_0() { return cRangeValuesRangeParserRuleCall_11_0; }
+
+		//('rangeanalysis' rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)? | 'rangeanalyses'
+		//rangeAnalyses+=Analysis+)
+		public Alternatives getAlternatives_12() { return cAlternatives_12; }
+
+		//'rangeanalysis' rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)?
+		public Group getGroup_12_0() { return cGroup_12_0; }
+
+		//'rangeanalysis'
+		public Keyword getRangeanalysisKeyword_12_0_0() { return cRangeanalysisKeyword_12_0_0; }
+
+		//rangeAnalysis=Analysis
+		public Assignment getRangeAnalysisAssignment_12_0_1() { return cRangeAnalysisAssignment_12_0_1; }
+
+		//Analysis
+		public RuleCall getRangeAnalysisAnalysisParserRuleCall_12_0_1_0() { return cRangeAnalysisAnalysisParserRuleCall_12_0_1_0; }
+
+		//('component' rangeAnalysisComponent=NATURAL)?
+		public Group getGroup_12_0_2() { return cGroup_12_0_2; }
+
+		//'component'
+		public Keyword getComponentKeyword_12_0_2_0() { return cComponentKeyword_12_0_2_0; }
+
+		//rangeAnalysisComponent=NATURAL
+		public Assignment getRangeAnalysisComponentAssignment_12_0_2_1() { return cRangeAnalysisComponentAssignment_12_0_2_1; }
+
+		//NATURAL
+		public RuleCall getRangeAnalysisComponentNATURALTerminalRuleCall_12_0_2_1_0() { return cRangeAnalysisComponentNATURALTerminalRuleCall_12_0_2_1_0; }
+
+		//'rangeanalyses' rangeAnalyses+=Analysis+
+		public Group getGroup_12_1() { return cGroup_12_1; }
+
+		//'rangeanalyses'
+		public Keyword getRangeanalysesKeyword_12_1_0() { return cRangeanalysesKeyword_12_1_0; }
+
+		//rangeAnalyses+=Analysis+
+		public Assignment getRangeAnalysesAssignment_12_1_1() { return cRangeAnalysesAssignment_12_1_1; }
+
+		//Analysis
+		public RuleCall getRangeAnalysesAnalysisParserRuleCall_12_1_1_0() { return cRangeAnalysesAnalysisParserRuleCall_12_1_1_0; }
+
+		//'output'
+		public Keyword getOutputKeyword_13() { return cOutputKeyword_13; }
+
+		//outputType=OutputType?
+		public Assignment getOutputTypeAssignment_14() { return cOutputTypeAssignment_14; }
+
+		//OutputType
+		public RuleCall getOutputTypeOutputTypeEnumRuleCall_14_0() { return cOutputTypeOutputTypeEnumRuleCall_14_0; }
 
 		//output=Output
 		public Assignment getOutputAssignment_15() { return cOutputAssignment_15; }
@@ -898,9 +1058,39 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	
+	public class OutputTypeElements extends AbstractEnumRuleElementFinder {
+		private final EnumRule rule = (EnumRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.OutputType");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final EnumLiteralDeclaration cCsvEnumLiteralDeclaration_0 = (EnumLiteralDeclaration)cAlternatives.eContents().get(0);
+		private final Keyword cCsvCsvKeyword_0_0 = (Keyword)cCsvEnumLiteralDeclaration_0.eContents().get(0);
+		private final EnumLiteralDeclaration cJsonEnumLiteralDeclaration_1 = (EnumLiteralDeclaration)cAlternatives.eContents().get(1);
+		private final Keyword cJsonJsonKeyword_1_0 = (Keyword)cJsonEnumLiteralDeclaration_1.eContents().get(0);
+		
+		//enum OutputType:
+		//	csv | json // first literal is default
+		//;
+		public EnumRule getRule() { return rule; }
+
+		//csv | json
+		public Alternatives getAlternatives() { return cAlternatives; }
+
+		//csv
+		public EnumLiteralDeclaration getCsvEnumLiteralDeclaration_0() { return cCsvEnumLiteralDeclaration_0; }
+
+		//"csv"
+		public Keyword getCsvCsvKeyword_0_0() { return cCsvCsvKeyword_0_0; }
+
+		//json
+		public EnumLiteralDeclaration getJsonEnumLiteralDeclaration_1() { return cJsonEnumLiteralDeclaration_1; }
+
+		//"json"
+		public Keyword getJsonJsonKeyword_1_0() { return cJsonJsonKeyword_1_0; }
+	}
+	
 	private final GranaElements pGrana;
 	private final JobElements pJob;
 	private final RegularJobElements pRegularJob;
+	private final CompareJobElements pCompareJob;
 	private final RangeJobElements pRangeJob;
 	private final RangeElements pRange;
 	private final FloatRangeElements pFloatRange;
@@ -915,6 +1105,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	private final GlobalOutputRefElements pGlobalOutputRef;
 	private final OutputReferenceElements pOutputReference;
 	private final LocalOutputElements pLocalOutput;
+	private final OutputTypeElements eOutputType;
 	private final AnalysisElements pAnalysis;
 	private final KIdentifierElements pKIdentifier;
 	private final PersistentEntryElements pPersistentEntry;
@@ -938,6 +1129,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		this.pGrana = new GranaElements();
 		this.pJob = new JobElements();
 		this.pRegularJob = new RegularJobElements();
+		this.pCompareJob = new CompareJobElements();
 		this.pRangeJob = new RangeJobElements();
 		this.pRange = new RangeElements();
 		this.pFloatRange = new FloatRangeElements();
@@ -952,6 +1144,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		this.pGlobalOutputRef = new GlobalOutputRefElements();
 		this.pOutputReference = new OutputReferenceElements();
 		this.pLocalOutput = new LocalOutputElements();
+		this.eOutputType = new OutputTypeElements();
 		this.pAnalysis = new AnalysisElements();
 		this.pKIdentifier = new KIdentifierElements();
 		this.pPersistentEntry = new PersistentEntryElements();
@@ -993,7 +1186,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Grana:
 	//	('globalResources' globalResources+=GlobalResourceRef*)? ('globalOutputs' gloobalOutputs+=GlobalOutputRef*)?
-	//	('execute' (executeAll?='all' | execute+=[Job]+)) jobs+=Job+;
+	//	('execute' parallel?='parallel'? (executeAll?='all' | execute+=[Job]+)) jobs+=Job+;
 	public GranaElements getGranaAccess() {
 		return pGrana;
 	}
@@ -1003,7 +1196,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Job:
-	//	RegularJob | RangeJob;
+	//	RegularJob | RangeJob | CompareJob;
 	public JobElements getJobAccess() {
 		return pJob;
 	}
@@ -1022,7 +1215,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	//	'analyses'
 	//	analyses+=Analysis+
 	//	'output'
-	//	output=Output;
+	//	outputType=OutputType? output=Output;
 	public RegularJobElements getRegularJobAccess() {
 		return pRegularJob;
 	}
@@ -1031,8 +1224,25 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		return getRegularJobAccess().getRule();
 	}
 
+	//CompareJob:
+	//	'comparejob' name=ID
+	//	'resources' resources+=Resource+
+	//	'layoutoptions'
+	//	layoutOptions+=KIdentifier layoutOptions+=KIdentifier 'analyses'
+	//	analyses+=Analysis+
+	//	'output'
+	//	outputType=OutputType? output=Output;
+	public CompareJobElements getCompareJobAccess() {
+		return pCompareJob;
+	}
+	
+	public ParserRule getCompareJobRule() {
+		return getCompareJobAccess().getRule();
+	}
+
 	//RangeJob:
 	//	'rangejob' name=ID
+	//	measureExecutionTime?='measureExecutionTime'?
 	//	'resources' resources+=Resource+
 	//	'layoutoptions'
 	//	layoutOptions+=KIdentifier+
@@ -1040,11 +1250,12 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	//	analyses+=Analysis+
 	//	'rangeoption'
 	//	rangeOption=QualifiedID
-	//	rangeValues=Range
-	//	'rangeanalysis'
-	//	rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)?
+	//	rangeValues=Range ('rangeanalysis'
+	//	rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)? |
+	//	'rangeanalyses'
+	//	rangeAnalyses+=Analysis+)
 	//	'output'
-	//	output=Output;
+	//	outputType=OutputType? output=Output;
 	public RangeJobElements getRangeJobAccess() {
 		return pRangeJob;
 	}
@@ -1185,6 +1396,17 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getLocalOutputRule() {
 		return getLocalOutputAccess().getRule();
+	}
+
+	//enum OutputType:
+	//	csv | json // first literal is default
+	//;
+	public OutputTypeElements getOutputTypeAccess() {
+		return eOutputType;
+	}
+	
+	public EnumRule getOutputTypeRule() {
+		return getOutputTypeAccess().getRule();
 	}
 
 	//Analysis:

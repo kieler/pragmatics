@@ -14,6 +14,7 @@
 package de.cau.cs.kieler.kiml.grana.text.ui;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -24,7 +25,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.elk.core.util.Pair;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -34,13 +34,15 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
+import com.google.common.collect.FluentIterable;
+
 import de.cau.cs.kieler.kiml.grana.GranaPlugin;
 import de.cau.cs.kieler.kiml.grana.text.GranaStandaloneSetup;
 import de.cau.cs.kieler.kiml.grana.text.GranaTextPlugin;
 import de.cau.cs.kieler.kiml.grana.text.GranaTextToBatchJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana;
+import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJobResult;
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchResult;
-import de.cau.cs.kieler.kiml.grana.ui.batch.IBatchJob;
 
 /**
  * @author uru
@@ -107,14 +109,15 @@ public class GranaTextHandler extends AbstractHandler {
 
     private void displayProblems(final Iterable<BatchResult> results) {
         for (BatchResult result : results) {
-            if (!result.getFailedJobs().isEmpty()) {
-                IStatus[] stati = new IStatus[result.getFailedJobs().size()];
+            List<BatchJobResult.Failed> fails = FluentIterable.from(result.getJobResults()).filter(BatchJobResult.Failed.class).toList();
+            if (!fails.isEmpty()) {
+                IStatus[] stati = new IStatus[fails.size()];
                 int i = 0;
-                for (Pair<IBatchJob<?>, Throwable> entry : result.getFailedJobs()) {
+                for (BatchJobResult.Failed fail : fails) {
                     stati[i++] =
                             new Status(IStatus.ERROR, GranaTextPlugin.PLUGIN_ID,
-                                    "Failed analysis of " + entry.getFirst().getParameter(),
-                                    entry.getSecond());
+                                    "Failed analysis of " + fail.getJob().getParameter(),
+                                    fail.getThrowable());
                 }
                 StatusManager.getManager().handle(
                         new MultiStatus(GranaTextPlugin.PLUGIN_ID, 0, stati, MESSAGE_BATCH_FAILED,

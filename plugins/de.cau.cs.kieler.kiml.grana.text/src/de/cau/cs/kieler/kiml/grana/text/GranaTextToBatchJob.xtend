@@ -19,6 +19,7 @@ import com.google.common.collect.Lists
 import com.google.common.collect.Range
 import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer
 import de.cau.cs.kieler.kiml.grana.AnalysisService
+import de.cau.cs.kieler.kiml.grana.text.grana.CompareJob
 import de.cau.cs.kieler.kiml.grana.text.grana.FloatRange
 import de.cau.cs.kieler.kiml.grana.text.grana.Grana
 import de.cau.cs.kieler.kiml.grana.text.grana.IntRangeRange
@@ -32,10 +33,10 @@ import de.cau.cs.kieler.kiml.grana.text.grana.RegularJob
 import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference
 import de.cau.cs.kieler.kiml.grana.ui.batch.Batch
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJob
-import de.cau.cs.kieler.kiml.grana.ui.batch.BatchRangeJob
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchResult
 import de.cau.cs.kieler.kiml.grana.ui.batch.CSVResultSerializer
 import de.cau.cs.kieler.kiml.grana.ui.batch.FileKGraphProvider
+import de.cau.cs.kieler.kiml.grana.ui.batch.JsonResultSerializer
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
@@ -47,6 +48,9 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.core.runtime.Path
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.service.util.ProgressMonitorAdapter
+import org.eclipse.elk.core.util.IElkProgressMonitor
+import org.eclipse.elk.core.util.Pair
+import org.eclipse.elk.graph.properties.MapPropertyHolder
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
 
@@ -62,6 +66,12 @@ import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
  */
 final class GranaTextToBatchJob {
 
+    /** Work per job, used for the progress monitors. */ 
+    private static val WORK_LOAD = 1f
+    private static val WORK_ANALYSES = 10f
+    private static val WORK_SERIALIZE = 1f
+    private static val WORK_TOTAL = WORK_ANALYSES + WORK_LOAD + WORK_SERIALIZE
+
     /**
      * @return an iterable with the results of all executed batch jobs.
      *         These can be used to print problems that might have occurred during the execution. 
@@ -69,133 +79,204 @@ final class GranaTextToBatchJob {
     public static def Iterable<BatchResult> execute(Grana grana, IProgressMonitor progressMonitor) {
 
         val pm = new ProgressMonitorAdapter(progressMonitor)
-        val wsRoot = ResourcesPlugin.workspace.root
 
         val results = Lists.<BatchResult>newLinkedList
-        
-        // execute for every job by creating a batch
-        for (job : grana.jobs
+        val activeJobs = grana.jobs
                         // ignore deactivated jobs
                         .filter[ grana.executeAll || grana.execute.contains(it) ]
-                        .filter[ !it.name.startsWith("_")]) {
+                        .filter[ !it.name.startsWith("_")]
+        val work = (WORK_TOTAL * activeJobs.size)
+        
+        pm.begin("Executing batch analysis", work)
+        
+        // execute for every job by creating a batch
+        for (job : activeJobs) {
             
-            // collect requested analyses
-            val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
-            val batch = new Batch(analyses)
-
-            // further configure the batch              
-            switch (job) {
-                RangeJob: {
-                    val rangeAnalysis = AnalysisService.instance.getAnalysis(job.rangeAnalysis.name)
-                    if (rangeAnalysis == null) {
-                        throw new IllegalArgumentException("Invalid range analysis: " + job.rangeAnalysis.name);
-                    }
-                    batch.rangeAnalysis = rangeAnalysis
-                    batch.rangeAnalysisComponent = job.rangeAnalysisComponent
-                    
-                    val layOpt = LayoutMetaDataService.getInstance.getOptionDataBySuffix(job.rangeOption)
-                    if (layOpt == null) {
-                        throw new IllegalArgumentException("Invalid layout option: " + job.rangeOption);
-                    }
-                    batch.rangeOption = layOpt
-                    
-                    val v = job.rangeValues
-                    val vals = switch (v) {
-                      IntRangeRange: ContiguousSet.create(Range.closed(v.start, v.end), DiscreteDomain.integers)
-                      IntRangeValues: ContiguousSet.copyOf(v.values)
-                      FloatRange: ContiguousSet.copyOf(v.values)                  
-                    }
-                    batch.rangeValues = vals
-                }
-            }
-
-            // resolve references to resources
-            val resources =  job.resources.map[ r |
-                switch r {
-                    ResourceReference: (r as ResourceReference).resourceRefs.map[it.resources].flatten
-                    default: #[(r as LocalResource)]
-                }
-            ].flatten
+            val batch = initializeJob(job, pm.subTask(WORK_LOAD))
             
-            // collect all model files within the specified resources            
-            for (resource : resources) {
-                val filter = if (!resource.filter.nullOrEmpty)
-                    Pattern.compile(resource.filter) else null
-
-                try {
-                    // first we try to interpret the path as workspace relative
-                    val p = wsRoot.projects.findFirst[p|resource.path.contains(p.name)]
-                    if (p == null) 
-                        throw new IllegalArgumentException("Could not find resource " + resource.path)
-                    val wsloc = p.findMember(resource.path.replace(p.name, ""))
-    
-                    // add all files to the batch job
-                    for (file : (wsloc as IContainer).members) {
-                        if (filter == null || filter.matcher(file.name).matches) {
-                            // add the job
-                            addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
-                        }
-                    }
-                } catch (Exception e) {
-                	
-                	val fileURI = URI.createURI(resource.path, true)
-                	val dir = new File(fileURI.toFileString)
-					if (dir == null || !dir.exists) {
-						throw new IllegalArgumentException("Could not find resource location: '" 
-							+ resource.path + "'")
-					}                    	
-                	
-                    for (file : dir.listFiles) {
-                        if (filter == null || filter.matcher(file.name).matches) {
-                            addBatchJob(batch, job, new Path(file.absolutePath))
-                        }
-                    }                    
-                }
-            }
+            // parallel execution?
+            batch.parallel = grana.parallel
             
             // resolve output file
             val outputPath = switch job.output {
                 OutputReference: (job.output as OutputReference).outputRef.output.path
                 default: (job.output as LocalOutput).path
             }
-                
-            try {
-                // write results (of successful analyses)
-                var OutputStream os
-                val fileURI = URI.createURI(outputPath, true)
-                val uriConv = new ExtensibleURIConverterImpl
-                os = uriConv.createOutputStream(fileURI)
-                os.write(0)
-                os.close
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Could not store results to file '" 
-                    + outputPath + "'")
-            }
+            checkOutputPathExist(outputPath)
 
             // everything should be fine ... execute the analyses!
-            val result = batch.execute(pm.subTask(1))
-            if (pm.canceled) {
-                return #[]
-            }
+            val result = batch.execute(pm.subTask(WORK_ANALYSES))
 
-           try {
-                // write results (of successful analyses)
-                var OutputStream os
-                val fileURI = URI.createURI(outputPath, true)
-                val uriConv = new ExtensibleURIConverterImpl
-                os = uriConv.createOutputStream(fileURI)
-                val serializer = new CSVResultSerializer
-                serializer.serialize(os, result, pm.subTask(1))
-                os.close
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Could not store results to file '" 
-                    + outputPath + "'")
-            }
+            writeResults(job, outputPath, result, pm);
 
             results += result
+            
+            // do not cancel before serialization has been taken place
+            if (pm.canceled) {
+                // return what we analyzed so far
+                return results
+            }
         }
         
+        pm.done();
         return results
+    }
+    
+    /**
+     * For the given {@link Job}, initialize and configure a corresponding {@link Batch} object.
+     * Note that the term 'job' is unfortunately overloaded here.  
+     */
+    private static def Batch initializeJob(Job job, IElkProgressMonitor monitor) {
+        monitor.begin("Initializing jobs ...", 1)
+        
+        // collect requested analyses
+        val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
+        val Batch batch = switch (job) {
+            RegularJob: new Batch.Simple(job.name, analyses)  
+            RangeJob: {
+                val batch = new Batch.Range(job.name, analyses)
+                
+                // gather the range analyses
+                if (job.rangeAnalysis != null) {
+                    val rangeAnalysis = AnalysisService.instance.getAnalysis(job.rangeAnalysis.name)
+                    if (rangeAnalysis == null) {
+                        throw new IllegalArgumentException("Invalid range analysis: " + job.rangeAnalysis.name);
+                    }
+                    batch.rangeAnalysis = rangeAnalysis
+                    batch.rangeAnalysisComponent = job.rangeAnalysisComponent
+                
+                } else {                
+                    val tanalyses = job.rangeAnalyses.map[ an |
+                        val rangeAnalysis = AnalysisService.instance.getAnalysis(an.name)
+                        if (rangeAnalysis == null) {
+                            throw new IllegalArgumentException("Invalid range analysis: " + job.rangeAnalysis.name);
+                        }
+                        rangeAnalysis
+                    ]
+                    batch.rangeAnalyses = tanalyses 
+                }
+                
+                // configure the range option
+                val layOpt = LayoutMetaDataService.getInstance.getOptionDataBySuffix(job.rangeOption)
+                if (layOpt == null) {
+                    throw new IllegalArgumentException("Invalid layout option: " + job.rangeOption);
+                }
+                batch.rangeOption = layOpt
+                
+                val v = job.rangeValues
+                val vals = switch (v) {
+                  IntRangeRange: ContiguousSet.create(Range.closed(v.start, v.end), DiscreteDomain.integers)
+                  IntRangeValues: ContiguousSet.copyOf(v.values)
+                  FloatRange: ContiguousSet.copyOf(v.values)                  
+                }
+                batch.rangeValues = vals
+
+                // assemble layout configs for the range job
+                val rangeOptionCfgs = vals.map[ value |
+                    val parsed = layOpt.parseValue(value.toString())
+                    if (parsed == null) {
+                        throw new IllegalArgumentException(
+                            "Value " + value + " is not valid for layout option " + layOpt);
+                    }
+                    new MapPropertyHolder().setProperty(layOpt, parsed)
+                ].toList
+                batch.rangeConfigurations = rangeOptionCfgs
+                
+                batch
+            } 
+        }
+
+        // resolve references to resources
+        val resources =  job.resources.map[ r |
+            switch r {
+                ResourceReference: (r as ResourceReference).resourceRefs.map[it.resources].flatten
+                default: #[(r as LocalResource)]
+            }
+        ].flatten
+
+        // FIXME the file handling below is a mess ... 
+
+        // collect all model files within the specified resources            
+        for (resource : resources) {
+            val filter = if (!resource.filter.nullOrEmpty)
+                Pattern.compile(resource.filter) else null
+
+            try {
+                // first we try to interpret the path as workspace relative
+                val p =  ResourcesPlugin.workspace.root.projects.findFirst[p|resource.path.contains(p.name)]
+                if (p == null) 
+                    throw new IllegalArgumentException("Could not find resource " + resource.path)
+                val wsloc = p.findMember(resource.path.replace(p.name, ""))
+
+                // add all files to the batch job
+                for (file : (wsloc as IContainer).members) {
+                    if (filter == null || filter.matcher(file.name).matches) {
+                        // add the job
+                        addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace
+                val fileURI = URI.createURI(resource.path, true)
+                println(fileURI)
+                val dir = new File(fileURI.toFileString)
+                if (dir == null || !dir.exists) {
+                    throw new IllegalArgumentException("Could not find resource location: '" 
+                        + resource.path + "'")
+                }                       
+                
+                for (file : dir.listFiles) {
+                    if (filter == null || filter.matcher(file.name).matches) {
+                        addBatchJob(batch, job, new Path(file.absolutePath))
+                    }
+                }                    
+            }
+        }
+        
+        monitor.done()
+        return batch
+    }
+    
+    /**
+     * Checks if the specified output path exists and can be written. 
+     */
+    private static def checkOutputPathExist(String outputPath) {
+        try {
+            // probe the output files, if it fails don't bother to analyze
+            var OutputStream os
+            val fileURI = URI.createURI(outputPath, true)
+            val uriConv = new ExtensibleURIConverterImpl
+            os = uriConv.createOutputStream(fileURI)
+            os.write(0)
+            os.close
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not store results to file '" 
+                + outputPath + "'")
+        }
+    }
+    
+    /**
+     * Serialize the results.
+     */
+    private static def writeResults(Job job, String outputPath, BatchResult result, IElkProgressMonitor pm) {
+        try {
+            // write results (of successful analyses)
+            var OutputStream os
+            val fileURI = URI.createURI(outputPath, true)
+            val uriConv = new ExtensibleURIConverterImpl
+            os = uriConv.createOutputStream(fileURI)
+
+            val serializer = switch (job.outputType) {
+                case CSV: new CSVResultSerializer
+                case JSON: new JsonResultSerializer
+            }
+
+            serializer.serialize(os, result, pm.subTask(WORK_SERIALIZE))
+            os.close
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Could not store results to file '" + outputPath + "'")
+        }
+        
     }
     
     /**
@@ -208,7 +289,7 @@ final class GranaTextToBatchJob {
      */
     private static def addBatchJob(Batch batch, Job job, IPath path) {
         val provider = new FileKGraphProvider
-        
+         
         switch (job) {
             RegularJob: {
                 provider.setLayoutBeforeAnalysis(job.layoutBeforeAnalysis)
@@ -216,28 +297,43 @@ final class GranaTextToBatchJob {
             }
             RangeJob: {
                 provider.setLayoutBeforeAnalysis(true)
+                provider.setExecutionTimeAnalysis(job.measureExecutionTime)
+            }
+            CompareJob: {
+                provider.setLayoutBeforeAnalysis(false)
                 provider.setExecutionTimeAnalysis(false)
             }
         }
-    
-        // set the layout options
-        if (!job.layoutOptions.isEmpty) {
-            provider.layoutConfigurator = 
-                LayoutConfigTransformer.transformConfig(job.layoutOptions.head)
+        
+        switch job {
+            CompareJob: {
+                if (job.layoutOptions.size != 2) 
+                    throw new UnsupportedOperationException("Compare jobs require exactly two layout configurations.")
+            }
+            RegularJob, RangeJob: {
+                // TODO it should be possible to add multiple layout runs
+                if (job.layoutOptions.size > 1) 
+                    throw new UnsupportedOperationException("Multiple layout runs are not yet supported.")        
+            } 
         }
         
-        // TODO it shold be possible to add multiple layout runs
-        if (job.layoutOptions.size > 1) 
-            throw new UnsupportedOperationException("Multiple layout runs are not yet supported.")
-        //val params = new Parameters
-        //for (cfg : job.layoutOptions) {
-        //    params.addLayoutRun(LayoutConfigTransformer.transformConfig(cfg))
-        //}
+        val cfgs = job.layoutOptions.map[LayoutConfigTransformer.transformConfig(it)]
         
+        // set the layout options
+        if (!job.layoutOptions.isEmpty) {
+            provider.layoutConfigurator = cfgs.head
+        }
+         
         // the batch executer expects a workspace relative path
         val batchJob = switch (job) {
-            RegularJob: new BatchJob<IPath>(path, provider)
-            RangeJob: new BatchRangeJob<IPath>(batch, path, provider)
+            RegularJob: new BatchJob.Simple<IPath>(path, provider)
+            RangeJob: {
+                val br = batch as Batch.Range
+                new BatchJob.Range<IPath>(path, provider, br.getRangeConfigurations())
+            }
+            CompareJob: {
+                new BatchJob.Compare(path, provider, Pair.of(cfgs.head, cfgs.last))
+            }
         }
         batch.appendJob(batchJob) 
     }

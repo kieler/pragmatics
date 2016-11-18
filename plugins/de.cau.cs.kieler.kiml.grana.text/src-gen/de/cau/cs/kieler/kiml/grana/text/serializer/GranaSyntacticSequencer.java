@@ -57,8 +57,10 @@ public class GranaSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * This ambiguous syntax occurs at:
 	 *     (rule start) 'globalResources'? (ambiguity) 'execute' execute+=[Job|ID]
 	 *     (rule start) 'globalResources'? (ambiguity) 'execute' executeAll?='all'
+	 *     (rule start) 'globalResources'? (ambiguity) 'execute' parallel?='parallel'
 	 *     globalResources+=GlobalResourceRef (ambiguity) 'execute' execute+=[Job|ID]
 	 *     globalResources+=GlobalResourceRef (ambiguity) 'execute' executeAll?='all'
+	 *     globalResources+=GlobalResourceRef (ambiguity) 'execute' parallel?='parallel'
 	 */
 	protected void emit_Grana_GlobalOutputsKeyword_1_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -72,6 +74,7 @@ public class GranaSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (rule start) (ambiguity) 'globalOutputs' gloobalOutputs+=GlobalOutputRef
 	 *     (rule start) (ambiguity) 'globalOutputs'? 'execute' execute+=[Job|ID]
 	 *     (rule start) (ambiguity) 'globalOutputs'? 'execute' executeAll?='all'
+	 *     (rule start) (ambiguity) 'globalOutputs'? 'execute' parallel?='parallel'
 	 */
 	protected void emit_Grana_GlobalResourcesKeyword_0_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

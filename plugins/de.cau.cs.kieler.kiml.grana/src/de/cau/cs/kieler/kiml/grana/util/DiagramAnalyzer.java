@@ -29,6 +29,7 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.collect.Lists;
 
@@ -55,18 +56,18 @@ public final class DiagramAnalyzer {
     /**
      * Starts the given analysis on a diagram.
      * 
-     * @param editorPart
-     *            the editor the analysis is performed on, or {@code null} if the diagram is not
-     *            part of an editor
+     * @param workbenchPart
+     *            the workbench part the analysis is performed on, or {@code null} if the diagram is
+     *            not part of an editor
      * @param analysis
      *            the analysis to perform
      * @param progressBar
      *            if true, a progress bar is displayed
      * @return the analysis result
      */
-    public static Object analyze(final IEditorPart editorPart,
+    public static Object analyze(final IEditorPart workbenchPart,
             final AnalysisData analysis, final boolean progressBar) {
-        return analyze(editorPart, Lists.newArrayList(analysis), progressBar);
+        return analyze(workbenchPart, Lists.newArrayList(analysis), progressBar);
     }
     
     private static final float CONFIGURE_WORK = 1;
@@ -76,19 +77,19 @@ public final class DiagramAnalyzer {
     /**
      * Starts the given analyses on the diagram.
      * 
-     * @param editorPart
-     *            the editor the analysis is performed on, or {@code null} if the diagram is not
-     *            part of an editor
+     * @param workbenchPart
+     *            the workbench part the analysis is performed on, or {@code null} if the diagram is
+     *            not part of an editor
      * @param analyses
      *            the analyses to perform
      * @param progressBar
      *            if true, a progress bar is displayed
      * @return the analyses results
      */
-    public static Map<String, Object> analyze(final IEditorPart editorPart,
+    public static Map<String, Object> analyze(final IWorkbenchPart workbenchPart,
             final List<AnalysisData> analyses, final boolean progressBar) {
         final IDiagramLayoutConnector manager =
-                LayoutConnectorsService.getInstance().getConnector(editorPart, null);
+                LayoutConnectorsService.getInstance().getConnector(workbenchPart, null);
         if (manager == null) {
             return Collections.emptyMap();
         }
@@ -98,7 +99,7 @@ public final class DiagramAnalyzer {
         final MonitoredOperation monitoredOperation = new MonitoredOperation(EXECUTOR_SERVICE) {
             // first phase: build the graph
             protected void preUIexec() {
-                layoutMapping.set(manager.buildLayoutGraph(editorPart, null));
+                layoutMapping.set(manager.buildLayoutGraph(workbenchPart, null));
             }
 
             // second phase: analyze the graph

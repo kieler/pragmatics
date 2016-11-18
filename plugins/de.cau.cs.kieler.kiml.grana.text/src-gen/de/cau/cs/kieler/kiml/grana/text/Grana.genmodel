@@ -8,9 +8,14 @@
     usedGenPackages="platform:/resource/org.eclipse.elk.core/model/klayoutdata.genmodel#//klayoutdata">
   <genPackages prefix="Grana" basePackage="de.cau.cs.kieler.kiml.grana.text" disposableProviderFactory="true"
       fileExtensions="grana" ecorePackage="Grana.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Grana.ecore#//OutputType">
+      <genEnumLiterals ecoreEnumLiteral="Grana.ecore#//OutputType/csv"/>
+      <genEnumLiterals ecoreEnumLiteral="Grana.ecore#//OutputType/json"/>
+    </genEnums>
     <genClasses ecoreClass="Grana.ecore#//Grana">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Grana/globalResources"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Grana/gloobalOutputs"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Grana/parallel"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Grana/executeAll"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Grana.ecore#//Grana/execute"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Grana/jobs"/>
@@ -20,17 +25,21 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/resources"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/layoutOptions"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/analyses"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//Job/outputType"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//Job/output"/>
     </genClasses>
     <genClasses ecoreClass="Grana.ecore#//RegularJob">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//RegularJob/layoutBeforeAnalysis"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//RegularJob/measureExecutionTime"/>
     </genClasses>
+    <genClasses ecoreClass="Grana.ecore#//CompareJob"/>
     <genClasses ecoreClass="Grana.ecore#//RangeJob">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//RangeJob/measureExecutionTime"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//RangeJob/rangeOption"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//RangeJob/rangeValues"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//RangeJob/rangeAnalysis"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//RangeJob/rangeAnalysisComponent"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Grana.ecore#//RangeJob/rangeAnalyses"/>
     </genClasses>
     <genClasses ecoreClass="Grana.ecore#//Range"/>
     <genClasses ecoreClass="Grana.ecore#//FloatRange">

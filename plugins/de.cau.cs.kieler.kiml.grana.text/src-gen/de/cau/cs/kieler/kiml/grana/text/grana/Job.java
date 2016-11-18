@@ -15,14 +15,15 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getName <em>Name</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getResources <em>Resources</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getLayoutOptions <em>Layout Options</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getAnalyses <em>Analyses</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getOutputType <em>Output Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getOutput <em>Output</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage#getJob()
  * @model
@@ -74,7 +75,7 @@ public interface Job extends EObject
 
   /**
    * Returns the value of the '<em><b>Layout Options</b></em>' containment reference list.
-     * The list contents are of type {@link org.eclipse.elk.core.klayoutdata.KIdentifier}.
+   * The list contents are of type {@link org.eclipse.elk.core.klayoutdata.KIdentifier}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Layout Options</em>' containment reference list isn't clear,
@@ -103,6 +104,35 @@ public interface Job extends EObject
    * @generated
    */
   EList<Analysis> getAnalyses();
+
+  /**
+   * Returns the value of the '<em><b>Output Type</b></em>' attribute.
+   * The literals are from the enumeration {@link de.cau.cs.kieler.kiml.grana.text.grana.OutputType}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Output Type</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Output Type</em>' attribute.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.OutputType
+   * @see #setOutputType(OutputType)
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage#getJob_OutputType()
+   * @model
+   * @generated
+   */
+  OutputType getOutputType();
+
+  /**
+   * Sets the value of the '{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getOutputType <em>Output Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Output Type</em>' attribute.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.OutputType
+   * @see #getOutputType()
+   * @generated
+   */
+  void setOutputType(OutputType value);
 
   /**
    * Returns the value of the '<em><b>Output</b></em>' containment reference.
