@@ -33,10 +33,6 @@ import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -44,12 +40,15 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.options.NodeLabelPlacement;
 import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.klighd.KlighdOptions;
@@ -150,24 +149,23 @@ public class KAwtRenderer {
      * @param parentNode the parent node of the graph to render
      * @return the size of the rendered graph
      */
-    public KVector renderGraph(final KNode parentNode) {
-        KShapeLayout parentLayout = parentNode.getData(KShapeLayout.class);
+    public KVector renderGraph(final ElkNode parentNode) {
         // set the scale factor
-        scale = parentLayout.getProperty(SvgOptions.SCALE);
+        scale = parentNode.getProperty(SvgOptions.SCALE);
         if (scale <= 0) {
             scale = 1;
         }
         
         // render the nodes and ports
-        Set<KEdge> edgeSet = new HashSet<KEdge>();
+        Set<ElkEdge> edgeSet = new HashSet<>();
         renderNodeRecursive(parentNode, edgeSet);
         
         // render the edges
-        for (KEdge edge : edgeSet) {
+        for (ElkEdge edge : edgeSet) {
             renderEdge(parentNode, edge);
         }
         
-        return new KVector(parentLayout.getWidth(), parentLayout.getHeight()).scale(scale);
+        return new KVector(parentNode.getWidth(), parentNode.getHeight()).scale(scale);
     }
     
     /**
@@ -203,7 +201,8 @@ public class KAwtRenderer {
      * @param points points to apply to the top-level {@link KPolyline}
      * @param isSpline whether the points are control points for a spline
      */
-    public void render(final KRendering rendering, final KVectorChain points, final boolean isSpline) {
+    public void render(final KRendering rendering, final KVectorChain points,
+            final boolean isSpline) {
         doRender(rendering, null, points, isSpline);
     }
 
@@ -214,12 +213,11 @@ public class KAwtRenderer {
      * @param node the node to paint
      * @param edgeSet set to be filled with edges that are found on the way
      */
-    private void renderNodeRecursive(final KNode node, final Set<KEdge> edgeSet) {
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-        KRendering nodeRendering = nodeLayout.getProperty(KlighdOptions.K_RENDERING);
+    private void renderNodeRecursive(final ElkNode node, final Set<ElkEdge> edgeSet) {
+        KRendering nodeRendering = node.getProperty(KlighdOptions.K_RENDERING);
         if (nodeRendering == null) {
-            int width = Math.round(scale * nodeLayout.getWidth());
-            int height = Math.round(scale * nodeLayout.getHeight());
+            int width = (int) Math.round(scale * node.getWidth());
+            int height = (int) Math.round(scale * node.getHeight());
             // paint the background with white
             graphics.setColor(Color.WHITE);
             graphics.fillRect(0, 0, width, height);
@@ -230,63 +228,58 @@ public class KAwtRenderer {
                 graphics.drawRect(0, 0, width, height);
             }
         } else {
-            KVector size = new KVector(nodeLayout.getWidth(), nodeLayout.getHeight()).scale(scale);
+            KVector size = new KVector(node.getWidth(), node.getHeight()).scale(scale);
             // paint the given rendering
             render(nodeRendering, size);
         }
         
         // render ports
-        for (KPort port : node.getPorts()) {
-            KShapeLayout portLayout = port.getData(KShapeLayout.class);
+        for (ElkPort port : node.getPorts()) {
             // apply the offset of the port coordinates
-            graphics.translate(scale * portLayout.getXpos(), scale * portLayout.getYpos());
+            graphics.translate(scale * port.getX(), scale * port.getY());
             
-            KRendering portRendering = portLayout.getProperty(KlighdOptions.K_RENDERING);
+            KRendering portRendering = port.getProperty(KlighdOptions.K_RENDERING);
             
             if (portRendering == null) {
-                int width = Math.round(scale * portLayout.getWidth());
-                int height = Math.round(scale * portLayout.getHeight());
+                int width = (int) Math.round(scale * port.getWidth());
+                int height = (int) Math.round(scale * port.getHeight());
                 // paint a dark gray box
                 graphics.setColor(Color.DARK_GRAY);
                 graphics.fillRect(0, 0, width, height);
             } else {
-                KVector size = new KVector(portLayout.getWidth(), portLayout.getHeight()).scale(scale);
+                KVector size = new KVector(port.getWidth(), port.getHeight()).scale(scale);
                 // paint the given rendering
                 render(portRendering, size);
             }
             
             // render port labels
-            for (KLabel label : port.getLabels()) {
+            for (ElkLabel label : port.getLabels()) {
                 renderLabel(label, PORT_FONT_SIZE);
             }
             
             // reset the offset
-            graphics.translate(-scale * portLayout.getXpos(), -scale * portLayout.getYpos());
+            graphics.translate(-scale * port.getX(), -scale * port.getY());
         }
         
         // render node labels
-        for (KLabel label : node.getLabels()) {
+        for (ElkLabel label : node.getLabels()) {
             renderLabel(label, NODE_FONT_SIZE);
         }
         
         // render contained child nodes
-        KInsets insets = nodeLayout.getInsets();
-        graphics.translate(scale * insets.getLeft(), scale * insets.getTop());
-        for (KNode child : node.getChildren()) {
+        for (ElkNode child : node.getChildren()) {
             // apply the offset of the child coordinates
-            KShapeLayout childLayout = child.getData(KShapeLayout.class);
-            graphics.translate(scale * childLayout.getXpos(), scale * childLayout.getYpos());
+            graphics.translate(scale * child.getX(), scale * child.getY());
             
             renderNodeRecursive(child, edgeSet);
             
             // reset the offset
-            graphics.translate(-scale * childLayout.getXpos(), -scale * childLayout.getYpos());
+            graphics.translate(-scale * child.getX(), -scale * child.getY());
 
             // store all incident edges to render them later
             edgeSet.addAll(child.getIncomingEdges());
             edgeSet.addAll(child.getOutgoingEdges());
         }
-        graphics.translate(-scale * insets.getLeft(), -scale * insets.getTop());
     }
     
     /**
@@ -296,14 +289,13 @@ public class KAwtRenderer {
      * @param label the label to paint
      * @param fontSize the font size in points (unscaled)
      */
-    private void renderLabel(final KLabel label, final int fontSize) {
-        KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+    private void renderLabel(final ElkLabel label, final int fontSize) {
         // apply the offset of the label coordinates
-        graphics.translate(scale * labelLayout.getXpos(), scale * labelLayout.getYpos());
+        graphics.translate(scale * label.getX(), scale * label.getY());
         
-        KVector size = new KVector(labelLayout.getWidth(), labelLayout.getHeight()).scale(scale);
+        KVector size = new KVector(label.getWidth(), label.getHeight()).scale(scale);
         
-        KRendering labelRendering = label.getData(KLayoutData.class).getProperty(KlighdOptions.K_RENDERING);
+        KRendering labelRendering = label.getProperty(KlighdOptions.K_RENDERING);
         if (labelRendering == null) {
             // paint the text string
             graphics.setColor(Color.BLACK);
@@ -312,8 +304,8 @@ public class KAwtRenderer {
             // retrieve the alignment
             HorizontalAlignment hAlign = HorizontalAlignment.LEFT;
             VerticalAlignment vAlign = VerticalAlignment.CENTER;
-            EnumSet<NodeLabelPlacement> placement =
-                    labelLayout.getProperty(CoreOptions.NODE_LABELS_PLACEMENT); 
+            EnumSet<NodeLabelPlacement> placement = label.getProperty(
+                    CoreOptions.NODE_LABELS_PLACEMENT); 
             if (placement != null) {
                 // horizontal
                 if (placement.contains(NodeLabelPlacement.H_LEFT)) {
@@ -342,7 +334,7 @@ public class KAwtRenderer {
         }
         
         // reset the offset
-        graphics.translate(-scale * labelLayout.getXpos(), -scale * labelLayout.getYpos());
+        graphics.translate(-scale * label.getX(), -scale * label.getY());
     }
 
     /**
@@ -351,38 +343,35 @@ public class KAwtRenderer {
      * @param graph the top-level node of the graph
      * @param edge the edge to paint
      */
-    private void renderEdge(final KNode graph, final KEdge edge) {
-        if (!ElkUtil.isDescendant(edge.getSource(), graph)
-                || !ElkUtil.isDescendant(edge.getTarget(), graph)) {
-            // the edge points to some node outside of the rendered subgraph
+    private void renderEdge(final ElkNode graph, final ElkEdge edge) {
+        // check if the edge lies completely inside the rendered subgraph
+        for (ElkConnectableShape shape : ElkGraphUtil.allIncidentShapes(edge)) {
+            if (!ElkGraphUtil.isDescendant(ElkGraphUtil.connectableShapeToNode(shape), graph)) {
+                // the edge points to some node outside of the rendered subgraph
+                return;
+            }
+        }
+        
+        // if the edge does not have a layout, we cannot draw it
+        if (edge.getSections().isEmpty()) {
             return;
         }
         
         // calculate an offset for edge coordinates
-        KNode parent = edge.getSource();
-        if (!ElkUtil.isDescendant(edge.getTarget(), parent)) {
-            parent = parent.getParent();
-        }
-        KNode node = parent;
-        KInsets graphInsets = graph.getData(KShapeLayout.class).getInsets();
-        KVector offset = new KVector(graphInsets.getLeft(), graphInsets.getTop());
-        while (node != graph && node != null) {
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            KInsets insets = nodeLayout.getInsets();
-            offset.add(nodeLayout.getXpos() + insets.getLeft(),
-                    nodeLayout.getYpos() + insets.getTop());
-            node = node.getParent();
-        }
+        KVector offset = new KVector();
+        ElkUtil.toAbsolute(offset, edge.getContainingNode());
         offset.scale(scale);
         graphics.translate(offset.x, offset.y);
 
+        // TODO We could actually support drawing hyperedges rather easily here
+        
         // get the bend points of the edge
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-        KVectorChain bendPoints = edgeLayout.createVectorChain();
+        ElkEdgeSection edgeSection = edge.getSections().get(0);
+        KVectorChain bendPoints = ElkUtil.createVectorChain(edgeSection);
         bendPoints.scale(scale);
 
-        boolean isSpline = edgeLayout.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES;
-        KRendering edgeRendering = edgeLayout.getProperty(KlighdOptions.K_RENDERING);
+        boolean isSpline = edge.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES;
+        KRendering edgeRendering = edge.getProperty(KlighdOptions.K_RENDERING);
         if (edgeRendering == null) {
             // paint a polyline following the edge bend points
             Path2D path = createPath(bendPoints, isSpline);
@@ -398,7 +387,7 @@ public class KAwtRenderer {
         }
         
         // paint the edge labels
-        for (KLabel label : edge.getLabels()) {
+        for (ElkLabel label : edge.getLabels()) {
             renderLabel(label, EDGE_FONT_SIZE);
         }
         
