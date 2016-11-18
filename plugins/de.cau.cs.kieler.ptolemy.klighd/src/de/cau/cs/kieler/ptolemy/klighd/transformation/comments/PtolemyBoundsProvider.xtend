@@ -13,17 +13,14 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation.comments
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
+import de.cau.cs.kieler.klighd.microlayout.Bounds
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 import java.awt.geom.Rectangle2D
 import org.eclipse.elk.core.comments.IBoundsProvider
+import org.eclipse.elk.graph.ElkNode
 
-import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-import org.eclipse.elk.graph.KNode
-import de.cau.cs.kieler.klighd.microlayout.Bounds
-import de.cau.cs.kieler.klighd.krendering.KRendering
 
 /**
  * Retrieves the position of the given node in the original Ptolemy diagram, if any, as well as
@@ -43,7 +40,7 @@ final class PtolemyBoundsProvider implements IBoundsProvider {
     /**
      * {@inheritDoc}
      */
-    override boundsFor(KNode node) {
+    override boundsFor(ElkNode node) {
         val bounds = new Rectangle2D.Double();
         
         // Initialize point with ridiculous values
