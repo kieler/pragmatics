@@ -15,12 +15,6 @@ package de.cau.cs.kieler.kiml.formats.json
 
 import com.google.common.collect.Iterators
 import java.util.Iterator
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout
-import org.eclipse.elk.core.klayoutdata.KShapeLayout
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KLabel
-import org.eclipse.elk.graph.KNode
-import org.eclipse.elk.graph.KPort
 
 /**
  * Some convenience.
@@ -28,39 +22,19 @@ import org.eclipse.elk.graph.KPort
  * @author uru
  */
 class JsonExtensions {
-    
-    def layout(KNode node) {
-        return node.getData(typeof(KShapeLayout))
-    }
-
-    def layout(KPort port) {
-        return port.getData(typeof(KShapeLayout))
-    }
-    
-    def layout(KLabel label) {
-        return label.getData(typeof(KShapeLayout))
-    }
-
-    def layout(KEdge edge) {
-        return edge.getData(typeof(KEdgeLayout))
-    }
-
-    /**
-     * Maps infinite or NaN values to 0f.
-     */
-    def float floatValueValid(Double d) {
-        if (d == null || d.infinite || d.naN) {
-            return 0f
-        } else {
-            return d.floatValue
-        }
-    }
-
     def <T> Iterator<T> emptyIfNull(Iterator<T> iterator) {
         if (iterator == null) {
             return Iterators.emptyIterator
         } else {
             iterator
+        }
+    }
+    
+    def <T> T firstNonNullElement(T element1, T element2) {
+        if (element1 != null) {
+            return element1;
+        } else {
+            return element2;
         }
     }
 }
