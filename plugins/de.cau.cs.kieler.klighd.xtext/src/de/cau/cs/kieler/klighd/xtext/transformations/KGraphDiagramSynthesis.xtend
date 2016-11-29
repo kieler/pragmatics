@@ -117,6 +117,14 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption("Default Values",
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
     
+    private static val HIERARCHICAL_ON = "On"
+    private static val HIERARCHICAL_OFF = "Off"
+    /**
+     * 
+     */
+    private static val SynthesisOption HIERARCHICAL = SynthesisOption::createChoiceOption("Hierarchical View",
+        ImmutableList::of(HIERARCHICAL_ON, HIERARCHICAL_OFF), HIERARCHICAL_OFF)
+    
     private static val STYLE_BORING = "Boring";
     private static val STYLE_STYLISH = "Stylish";
     private static val STYLE_HELLO_KITTY = "Hello Kitty";
@@ -158,8 +166,10 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     override getDisplayedSynthesisOptions() {
         return ImmutableList::of(
             DEFAULTS,
+            HIERARCHICAL,
             STYLE,
             LABEL_SHORTENING_STRATEGY
+            
         )
     }
 
