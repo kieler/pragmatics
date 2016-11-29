@@ -211,29 +211,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         //  may carry persisted entries that have to be parsed before we build the view model.
         GraphDataUtil.loadDataElements(result, PREDICATE_IS_KGRAPHDATA, KNOWN_PROPS)
 
-
-
-        result.children.toList.forEach[
-            it.children.forEach[
-            if(!it.children.empty) {
-                val p = it
-                newArrayList(it.children).forEach[ node |
-                    p.children -= node
-                    
-                    
-                    
-                ]
-            }]
-        ]
-        
-        result.KRendering // first krendering
-        result.data.filter(KRendering).forEach[ ren | 
-            println(ren.getProperty(KlighdProperties.COLLAPSED_RENDERING))
-            
-        ]
-
-        //KlighdProperties.COLLAPSED_RENDERING
-        
+        HierachicalKGraphSynthesis.transform(result);
         
 
         // Evaluate the defaults property
