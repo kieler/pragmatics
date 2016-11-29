@@ -27,7 +27,7 @@ import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.service.util.MonitoredOperation;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Maybe;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 
@@ -114,7 +114,7 @@ public final class DiagramAnalyzer {
                 // LayoutConfigurator diagramConfig = configManager.createConfigurator(layoutMapping);
                 
                 // perform analyses on the graph
-                KNode graph = layoutMapping.get().getLayoutGraph();
+                ElkNode graph = layoutMapping.get().getLayoutGraph();
                 result.set(AnalysisService.getInstance().analyze(graph, analyses,
                         monitor.subTask(ANALYSIS_WORK)).getResults());
                 if (monitor.isCanceled()) {

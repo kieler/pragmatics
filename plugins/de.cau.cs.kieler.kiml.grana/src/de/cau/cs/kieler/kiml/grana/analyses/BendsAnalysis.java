@@ -18,14 +18,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
@@ -66,51 +66,56 @@ public class BendsAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode,
-            final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Number of Bends analysis", 1);
         
         // The set of unique bend points
         Set<KVector> uniqueBendPoints = new HashSet<KVector>();
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         
         // Per-edge bend point analyses
         int min = Integer.MAX_VALUE;
-        float avg = 0.0f;
+        double avg = 0.0;
         int max = 0;
         int nonUniqueSum = 0;
         int edges = 0;
         int current;
         
         // Iterate through all nodes
-        List<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.addAll(parentNode.getChildren());
+        List<ElkNode> nodeQueue = new LinkedList<ElkNode>();
+        nodeQueue.add(parentNode);
         while (nodeQueue.size() > 0) {
             // Pop first element
-            KNode node = nodeQueue.remove(0);
+            ElkNode node = nodeQueue.remove(0);
             
             // Iterate through the node's edges
-            for (KEdge edge : node.getOutgoingEdges()) {
-                if (!hierarchy && edge.getTarget().getParent() != parentNode) {
+            for (ElkEdge edge : node.getContainedEdges()) {
+                if (!hierarchy && edge.isHierarchical()) {
                     continue;
                 }
-                KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-                List<KPoint> bendPoints = edgeLayout.getBendPoints();
+                
+                if (edge.isHyperedge()) {
+                    throw new UnsupportedGraphException("Hyperedges are not supported by the "
+                            + this.getClass().getSimpleName());
+                }
+                
+                // We only support edges with a single edge section
+                if (edge.getSections().size() != 1) {
+                    continue;
+                }
+                
+                ElkEdgeSection edgeSection = edge.getSections().get(0);
+                
+                // get all per edge bendpoints 
+                List<ElkBendPoint> bendPoints = edgeSection.getBendPoints();
                 
                 // Add bend points to the set
-                for (KPoint bendPoint : bendPoints) {
+                for (ElkBendPoint bendPoint : bendPoints) {
                     // convert bendpoint to a common, global coordinate system
-                    KVector local = bendPoint.createVector();
-                    KVector global;
-                    if (ElkUtil.isDescendant(edge.getTarget(), edge.getSource())) {
-                        global = ElkUtil.toAbsolute(local, edge.getSource());
-                    } else {
-                        global = ElkUtil.toAbsolute(local, edge.getSource().getParent());
-                    }
-                    
-                    uniqueBendPoints.add(global);
+                    KVector kpoint = new KVector(bendPoint.getX(), bendPoint.getY());
+                    ElkUtil.toAbsolute(kpoint, node);
+                    uniqueBendPoints.add(kpoint);
                 }
                 
                 // Update per-edge analyses
@@ -128,7 +133,7 @@ public class BendsAnalysis implements IAnalysis {
         
         // Compute the average number of bend points per edge
         if (edges > 0) {
-            avg = (float) nonUniqueSum / (float) edges;
+            avg = nonUniqueSum / edges;
         } else {
             min = 0;
         }

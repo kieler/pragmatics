@@ -18,7 +18,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
@@ -52,11 +52,11 @@ public class AreaAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Area analysis", 1);
         
-        Point2D.Float area = computeArea(parentNode);
+        Point2D.Double area = computeArea(parentNode);
         progressMonitor.done();
         
         return new Object[] { area.x, area.y, area.x * area.y };
@@ -69,16 +69,16 @@ public class AreaAnalysis implements IAnalysis {
      * @return a point whose x coordinate gives the width and whose y coordinate gives the
      *         height of the drawing area used.
      */
-    private Point2D.Float computeArea(final KNode parentNode) {
+    private Point2D.Double computeArea(final ElkNode parentNode) {
         // The bounds of the area that is actually used for drawing nodes
-        float minX = Float.POSITIVE_INFINITY;
-        float maxX = Float.NEGATIVE_INFINITY;
-        float minY = Float.POSITIVE_INFINITY;
-        float maxY = Float.NEGATIVE_INFINITY;
+        double minX = Double.POSITIVE_INFINITY;
+        double maxX = Double.NEGATIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY;
+        double maxY = Double.NEGATIVE_INFINITY;
         
         // Iterate through the parent node's children
-        for (KNode child : parentNode.getChildren()) {
-            Rectangle2D.Float nodeRect = NodeSizeAnalysis.computeNodeRect(
+        for (ElkNode child : parentNode.getChildren()) {
+            Rectangle2D.Double nodeRect = NodeSizeAnalysis.computeNodeRect(
                     child, true, true, true);
             
             // Compute the new bounds of the drawing area
@@ -88,6 +88,6 @@ public class AreaAnalysis implements IAnalysis {
             maxY = Math.max(maxY, nodeRect.y + nodeRect.height);
         }
         
-        return new Point2D.Float(maxX - minX, maxY - minY);
+        return new Point2D.Double(maxX - minX, maxY - minY);
     }
 }

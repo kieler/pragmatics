@@ -37,7 +37,6 @@ public interface IBatchResultSerializer {
      * @throws Exception
      *             any kind of exception
      */
-    void serialize(final OutputStream outputStream,
-            final BatchResult batchResult, final IElkProgressMonitor monitor)
+    void serialize(OutputStream outputStream, BatchResult batchResult, IElkProgressMonitor monitor)
             throws Exception;
 }

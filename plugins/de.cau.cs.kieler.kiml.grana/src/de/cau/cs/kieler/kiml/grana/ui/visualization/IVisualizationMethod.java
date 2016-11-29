@@ -32,6 +32,5 @@ public interface IVisualizationMethod {
      * @param visualizations
      *            the encapsualted visualizer
      */
-    void visualize(final String type,
-            final List<BoundVisualization> visualizations);
+    void visualize(String type, List<BoundVisualization> visualizations);
 }

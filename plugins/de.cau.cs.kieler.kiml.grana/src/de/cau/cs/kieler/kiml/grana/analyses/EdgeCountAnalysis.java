@@ -16,10 +16,9 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
@@ -40,26 +39,25 @@ public class EdgeCountAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Number of edges analysis", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         
         int numberOfEdges = 0;
-        List<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.addAll(parentNode.getChildren());
+        List<ElkNode> nodeQueue = new LinkedList<>();
+        nodeQueue.add(parentNode);
         while (nodeQueue.size() > 0) {
             // pop first element
-            KNode node = nodeQueue.remove(0);
+            ElkNode node = nodeQueue.remove(0);
             
             if (hierarchy) {
-                numberOfEdges += node.getOutgoingEdges().size();
+                numberOfEdges += node.getContainedEdges().size();
                 nodeQueue.addAll(node.getChildren());
             } else {
-                for (KEdge edge : node.getOutgoingEdges()) {
-                    if (edge.getTarget().getParent() == parentNode) {
+                for (ElkEdge edge : node.getContainedEdges()) {
+                    if (!edge.isHierarchical()) {
                         numberOfEdges++;
                     }
                 }

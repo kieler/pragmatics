@@ -28,7 +28,7 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.ui.AlgorithmSelectionDialog;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -249,7 +249,7 @@ public class LayoutConfigurationPage extends WizardPage {
     public LayoutConfigurator getConfig() {
         LayoutConfigurator config = new LayoutConfigurator();
         for (Pair<LayoutOptionData, Object> pair : optionEntries) {
-            config.configure(KGraphElement.class).setProperty(pair.getFirst(), pair.getSecond());
+            config.configure(ElkGraphElement.class).setProperty(pair.getFirst(), pair.getSecond());
         }
         return config;
     }

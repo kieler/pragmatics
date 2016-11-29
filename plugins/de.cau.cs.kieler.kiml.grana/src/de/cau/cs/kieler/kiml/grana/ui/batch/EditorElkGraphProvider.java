@@ -26,7 +26,7 @@ import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Maybe;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -36,7 +36,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
 /**
- * The KGraph provider that retrieves a KGraph by opening a diagram file in an
+ * The Elk Graph provider that retrieves an Elk Graph by opening a diagram file in an
  * editor and using KIML to build the graph structure.
  * 
  * @author mri
@@ -44,7 +44,7 @@ import org.eclipse.ui.ide.IDE;
  * 
  * TODO is this class really unused?
  */
-public class EditorKGraphProvider implements IKGraphProvider<IPath> {
+public class EditorElkGraphProvider implements IElkGraphProvider<IPath> {
 
     /** the message for an unsupported diagram editor. */
     private static final String MESSAGE_NO_MANAGER =
@@ -59,15 +59,14 @@ public class EditorKGraphProvider implements IKGraphProvider<IPath> {
     /**
      * {@inheritDoc}
      */
-    public KNode getKGraph(final IPath parameter,
-            final IElkProgressMonitor monitor) {
+    public ElkNode getElkGraph(final IPath parameter, final IElkProgressMonitor monitor) {
         monitor.begin("Retrieving KGraph from " + parameter.toString(), 1);
         
         // get the diagram file
         final IFile diagramFile =
                 ResourcesPlugin.getWorkspace().getRoot().getFile(parameter);
         final Maybe<Throwable> wrappedException = new Maybe<Throwable>();
-        final Maybe<org.eclipse.elk.graph.KNode> graph = new Maybe<>();
+        final Maybe<ElkNode> graph = new Maybe<>();
         PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
             public void run() {
                 IWorkbenchPage page =

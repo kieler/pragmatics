@@ -16,12 +16,12 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.UnsupportedGraphException;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
@@ -49,7 +49,7 @@ public class AxisParallelEdgesAnalysis implements IAnalysis {
     public static final String ID = "de.cau.cs.kieler.kiml.grana.axisParallelEdges";
     
     /** tolerance for float equality. */
-    private static final float TOLERANCE = 0.00001f;
+    private static final double TOLERANCE = 0.00001;
     
     /**
      * Index of the number of straight edges going topwards in the result array.
@@ -79,47 +79,61 @@ public class AxisParallelEdgesAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode,
+    public Object doAnalysis(final ElkNode parentNode,
             final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Axis-parallel edges analysis", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         
         int[] edgeDirections = {0, 0, 0, 0, 0};
-        List<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.addAll(parentNode.getChildren());
+        List<ElkNode> nodeQueue = new LinkedList<ElkNode>();
+        nodeQueue.add(parentNode);
         while (!nodeQueue.isEmpty()) {
-            KNode node = nodeQueue.remove(0);
+            ElkNode node = nodeQueue.remove(0);
             
-            for (KEdge edge : node.getOutgoingEdges()) {
-                if (!hierarchy && edge.getTarget().getParent() != parentNode) {
+            // Prior to the new ELK graph, this for loop iterated over all outgoing edges of the
+            // parent node's children that connected them to their siblings. Now we simply iterate
+            // over all edges contained in the parent node and, if hierarchy is enabled, its
+            // descendants. This may result in slightly different edge sets if people don't respect
+            // how edges should be contained in the graph
+            for (ElkEdge edge : node.getContainedEdges()) {
+                if (!hierarchy && edge.isHierarchical()) {
                     continue;
                 }
-                KEdgeLayout layoutData = edge.getData(KEdgeLayout.class);
+                
+                if (edge.isHyperedge()) {
+                    throw new UnsupportedGraphException("Hyperedges are not supported by the "
+                            + this.getClass().getSimpleName());
+                }
+                
+                // We only support edges with a single edge section
+                if (edge.getSections().size() != 1) {
+                    continue;
+                }
+                
+                ElkEdgeSection edgeSection = edge.getSections().get(0);
                 
                 // get all per edge bendpoints 
-                List<KPoint> bendPoints = layoutData.getBendPoints();
+                List<ElkBendPoint> bendPoints = edgeSection.getBendPoints();
                 
-                KPoint sourcePoint = layoutData.getSourcePoint();
-                KPoint targetPoint = layoutData.getTargetPoint();
-                // if there are no bendpoints, just compare the position of target and source of an edge
+                // if there are no bendpoints, just compare the position of target and source
+                // of an edge
                 if (bendPoints.isEmpty()) {
-                    if (Math.abs(sourcePoint.getY() - targetPoint.getY()) < TOLERANCE 
-                            && sourcePoint.getX() < targetPoint.getX()) {
+                    if (Math.abs(edgeSection.getStartY() - edgeSection.getEndY()) < TOLERANCE 
+                            && edgeSection.getStartX() < edgeSection.getEndX()) {
                         // x-straight and from left to right
                         edgeDirections[INDEX_RIGHT]++;
-                    } else if (Math.abs(targetPoint.getY() - sourcePoint.getY()) < TOLERANCE
-                            && sourcePoint.getX() > targetPoint.getX()) {
+                    } else if (Math.abs(edgeSection.getEndY() - edgeSection.getStartY()) < TOLERANCE
+                            && edgeSection.getStartX() > edgeSection.getEndX()) {
                         // x-straight and from right to left
                         edgeDirections[INDEX_LEFT]++;
-                    } else if (Math.abs(targetPoint.getX() - sourcePoint.getX()) < TOLERANCE
-                            && sourcePoint.getY() < targetPoint.getY()) {
+                    } else if (Math.abs(edgeSection.getEndX() - edgeSection.getStartX()) < TOLERANCE
+                            && edgeSection.getStartY() < edgeSection.getEndY()) {
                         // y-straight and from top to bottom
                         edgeDirections[INDEX_DOWN]++;
-                    } else if (Math.abs(sourcePoint.getX() - targetPoint.getX()) < TOLERANCE
-                            && sourcePoint.getY() > targetPoint.getY()) {
+                    } else if (Math.abs(edgeSection.getStartX() - edgeSection.getEndX()) < TOLERANCE
+                            && edgeSection.getStartY() > edgeSection.getEndY()) {
                         // y-straight and from bottom to top
                         edgeDirections[INDEX_UP]++;
                     }
@@ -130,13 +144,13 @@ public class AxisParallelEdgesAnalysis implements IAnalysis {
                     
                     // reference integer for comparison
                     boolean onlyConformingBendpoints = true;
-                    if (Math.abs(sourcePoint.getY() - targetPoint.getY()) < TOLERANCE
-                            && sourcePoint.getX() < targetPoint.getX()) {
+                    if (Math.abs(edgeSection.getStartY() - edgeSection.getEndY()) < TOLERANCE
+                            && edgeSection.getStartX() < edgeSection.getEndX()) {
                         // left-to-right
-                        for (KPoint point : bendPoints) {
+                        for (ElkBendPoint point : bendPoints) {
                             // if only one bendpoint lies not on a straight line between source 
                             // and target, count one up
-                            if (Math.abs(sourcePoint.getY() - point.getY()) > TOLERANCE) {
+                            if (Math.abs(edgeSection.getStartY() - point.getY()) > TOLERANCE) {
                                 onlyConformingBendpoints = false;
                                 break;
                             }
@@ -146,11 +160,11 @@ public class AxisParallelEdgesAnalysis implements IAnalysis {
                         if (onlyConformingBendpoints) {
                             edgeDirections[INDEX_RIGHT]++;
                         }
-                    } else if (Math.abs(targetPoint.getY() - sourcePoint.getY()) < TOLERANCE
-                            && targetPoint.getX() < sourcePoint.getX()) {
+                    } else if (Math.abs(edgeSection.getEndY() - edgeSection.getStartY()) < TOLERANCE
+                            && edgeSection.getEndX() < edgeSection.getStartX()) {
                         // right-to-left
-                        for (KPoint point : bendPoints) {
-                            if (Math.abs(sourcePoint.getY() - point.getY()) > TOLERANCE) { 
+                        for (ElkBendPoint point : bendPoints) {
+                            if (Math.abs(edgeSection.getStartY() - point.getY()) > TOLERANCE) { 
                                 onlyConformingBendpoints = false;
                                 break;
                             }
@@ -158,11 +172,11 @@ public class AxisParallelEdgesAnalysis implements IAnalysis {
                         if (onlyConformingBendpoints) {
                             edgeDirections[INDEX_LEFT]++;
                         }
-                    } else if (Math.abs(sourcePoint.getX() - targetPoint.getX()) < TOLERANCE
-                            && sourcePoint.getY() > targetPoint.getY()) {
+                    } else if (Math.abs(edgeSection.getStartX() - edgeSection.getEndX()) < TOLERANCE
+                            && edgeSection.getStartY() > edgeSection.getEndY()) {
                         // bottom-up
-                        for (KPoint point : bendPoints) {
-                            if (Math.abs(sourcePoint.getX() - point.getX()) > TOLERANCE) {
+                        for (ElkBendPoint point : bendPoints) {
+                            if (Math.abs(edgeSection.getStartX() - point.getX()) > TOLERANCE) {
                                 onlyConformingBendpoints = false;
                                 break;
                             }
@@ -170,11 +184,11 @@ public class AxisParallelEdgesAnalysis implements IAnalysis {
                         if (onlyConformingBendpoints) {
                             edgeDirections[INDEX_UP]++;
                         }
-                    } else if (Math.abs(targetPoint.getX() - sourcePoint.getX()) < TOLERANCE
-                            && sourcePoint.getY() < targetPoint.getY()) {
+                    } else if (Math.abs(edgeSection.getEndX() - edgeSection.getStartX()) < TOLERANCE
+                            && edgeSection.getStartY() < edgeSection.getEndY()) {
                         // top-down
-                        for (KPoint point : bendPoints) {
-                            if (Math.abs(sourcePoint.getX() - point.getX()) > TOLERANCE) {
+                        for (ElkBendPoint point : bendPoints) {
+                            if (Math.abs(edgeSection.getStartX() - point.getX()) > TOLERANCE) {
                                 onlyConformingBendpoints = false;
                                 break;
                             }

@@ -16,14 +16,13 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
@@ -41,28 +40,24 @@ public class PortSideAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode,
-            final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Port side analysis", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         
         int north = 0, east = 0, south = 0, west = 0;
-        List<KNode> nodeQueue = new LinkedList<KNode>();
+        List<ElkNode> nodeQueue = new LinkedList<>();
         nodeQueue.addAll(parentNode.getChildren());
         while (nodeQueue.size() > 0) {
-            KNode node = nodeQueue.remove(0);
+            ElkNode node = nodeQueue.remove(0);
             Direction direction = Direction.UNDEFINED;
             if (node.getParent() != null) {
-                direction = node.getParent().getData(KShapeLayout.class).getProperty(
-                        CoreOptions.DIRECTION);
+                direction = node.getParent().getProperty(CoreOptions.DIRECTION);
             }
             
-            for (KPort port : node.getPorts()) {
-                KShapeLayout portLayout = port.getData(KShapeLayout.class);
-                PortSide portSide = portLayout.getProperty(CoreOptions.PORT_SIDE);
+            for (ElkPort port : node.getPorts()) {
+                PortSide portSide = port.getProperty(CoreOptions.PORT_SIDE);
                 if (portSide == PortSide.UNDEFINED) {
                     portSide = ElkUtil.calcPortSide(port, direction);
                 }
