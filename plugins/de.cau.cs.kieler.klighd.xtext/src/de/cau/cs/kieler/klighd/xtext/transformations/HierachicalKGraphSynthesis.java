@@ -7,6 +7,7 @@ import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
+import de.cau.cs.kieler.klighd.krendering.KRendering;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 
 /*
@@ -28,44 +29,24 @@ import de.cau.cs.kieler.klighd.util.KlighdProperties;
  */
 public class HierachicalKGraphSynthesis {
 
-    public static void transform(KNode diagram) {
-        // remove the empty node from the model
-        KNode trashNode = diagram.getChildren().remove(0);
-        diagram.getChildren().addAll(trashNode.getChildren());
-
+    /**
+     * Transform the graph to have the representation we want
+     */
+    public static void transform(final KNode diagram) {
+        // put the inner nodes onto the highest hierarchy level
         List<KNode> nodes = recursiveTraversal(diagram);
+        diagram.getChildren().clear();
         diagram.getChildren().addAll(nodes);
 
         deletion(diagram.getChildren());
-
-        // result.children.toList.forEach[
-        // it.children.forEach[
-        // if(!it.children.empty) {
-        // val p = it
-        // newArrayList(it.children).forEach[ node |
-        // p.children -= node
-        //
-        //
-        //
-        // ]
-        // }]
-        // ]
-        //
-        // result.KRendering // first krendering
-        // result.data.filter(KRendering).forEach[ ren |
-        // println(ren.getProperty(KlighdProperties.COLLAPSED_RENDERING))
-        //
-        // ]
-
-        // KlighdProperties.COLLAPSED_RENDERING
     }
 
-    private static List<KNode> recursiveTraversal(KNode parent) {
+    private static List<KNode> recursiveTraversal(final KNode parent) {
         List<KNode> copiedChildren = new ArrayList<>();
 
-        KLayoutData layoutData = parent.getData(KLayoutData.class);
-        if (layoutData.getProperty(KlighdProperties.EXPAND)) {
-            for (KNode child : parent.getChildren()) {
+        for (KNode child : parent.getChildren()) {
+            if (!child.getChildren().isEmpty()) { 
+
                 // extract/copy content of children
                 Copier copier = new Copier();
                 KNode copy = (KNode) copier.copy(child);
@@ -76,22 +57,28 @@ public class HierachicalKGraphSynthesis {
         }
 
         return copiedChildren;
-
-        // collapse all children
-        // KlighdProperties p = child.getData(KlighdProperties.class);
-        // p.
-
-        // for (KNode copiedChild : copiedChildren) {
-        // recursiveTraversal(copiedChild);
-        // }
-
     }
 
-    private static void deletion(List<KNode> allNodes) {
-        for (KNode child : allNodes) {
-            for (KNode childOfChild : child.getChildren()) {
+    /**
+     * delete all the deeper hierachy levels of the copied children
+     * 
+     * @param allNodes
+     */
+    private static void deletion(final List<KNode> allNodes) {
+        for (KNode node : allNodes) {
+            for (KNode childOfChild : node.getChildren()) {
                 childOfChild.getChildren().clear();
+                KLayoutData layoutDataChildOfChild = childOfChild.getData(KLayoutData.class);
+                layoutDataChildOfChild.setProperty(KlighdProperties.COLLAPSED_RENDERING, true);
+                layoutDataChildOfChild.setProperty(KlighdProperties.EXPANDED_RENDERING, false);
+                layoutDataChildOfChild.setProperty(KlighdProperties.EXPAND, true);
             }
+
+            //try to expand all the original children
+            KLayoutData layoutDataNode = node.getData(KLayoutData.class);
+            layoutDataNode.setProperty(KlighdProperties.COLLAPSED_RENDERING, false);
+            layoutDataNode.setProperty(KlighdProperties.EXPANDED_RENDERING, true);
+            //layoutDataNode.setProperty(KlighdProperties.EXPAND, true);
         }
     }
 
