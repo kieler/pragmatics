@@ -120,7 +120,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     private static val HIERARCHICAL_ON = "On"
     private static val HIERARCHICAL_OFF = "Off"
     /**
-     * 
+     * Synthesis option specifying whether Hierarchical view should be used or not.
      */
     private static val SynthesisOption HIERARCHICAL = SynthesisOption::createChoiceOption("Hierarchical View",
         ImmutableList::of(HIERARCHICAL_ON, HIERARCHICAL_OFF), HIERARCHICAL_OFF)
@@ -221,7 +221,9 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         //  may carry persisted entries that have to be parsed before we build the view model.
         GraphDataUtil.loadDataElements(result, PREDICATE_IS_KGRAPHDATA, KNOWN_PROPS)
 
-        HierachicalKGraphSynthesis.transform(result);
+        if (HIERARCHICAL.objectValue == HIERARCHICAL_ON) {
+            HierachicalKGraphSynthesis.transform(result);
+        }
         
 
         // Evaluate the defaults property
