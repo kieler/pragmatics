@@ -34,7 +34,7 @@ algorithm sugiyama(OgdfLayoutProvider#SUGIYAMA) {
     category org.eclipse.elk.layered
     features multi_edges, edge_labels, disconnected
     preview images/sugiyama.png 
-    supports org.eclipse.elk.spacing.node = 16
+    supports org.eclipse.elk.spacing.nodeNode = 16
     supports org.eclipse.elk.spacing.border = 15
     supports labelEdgeDistance
     supports labelMarginDistance
@@ -70,7 +70,7 @@ algorithm planarization(OgdfLayoutProvider#PLANARIZATION) {
     preview images/planarization.png
     features multi_edges, edge_labels, disconnected
     supports org.eclipse.elk.direction = Direction.UP
-    supports org.eclipse.elk.spacing.node = 20
+    supports org.eclipse.elk.spacing.nodeNode = 20
     supports org.eclipse.elk.randomSeed = 1
     supports org.eclipse.elk.spacing.border = 15
     supports labelEdgeDistance
@@ -121,7 +121,7 @@ algorithm davidsonHarel(OgdfLayoutProvider#DAVIDSON_HAREL) {
     category org.eclipse.elk.force
     preview images/davidson_harel.png
     features multi_edges, edge_labels, disconnected
-    supports org.eclipse.elk.spacing.node = 80
+    supports org.eclipse.elk.spacing.nodeNode = 80
     supports org.eclipse.elk.spacing.border = 15
     supports costs
     supports speed
@@ -149,7 +149,7 @@ algorithm fruchtermanReingold(OgdfLayoutProvider#FRUCHTERMAN_REINGOLD) {
     supports iterations = 400
     supports fineness
     supports noise
-    supports org.eclipse.elk.spacing.node = 20
+    supports org.eclipse.elk.spacing.nodeNode = 20
     supports org.eclipse.elk.aspectRatio = 1.3f
     supports org.eclipse.elk.nodeSize.constraints 
     supports org.eclipse.elk.nodeSize.options
@@ -173,7 +173,7 @@ algorithm gem(OgdfLayoutProvider#GEM) {
     supports labelEdgeDistance
     supports labelMarginDistance
     supports org.eclipse.elk.aspectRatio = 1.3f
-    supports org.eclipse.elk.spacing.node = 30
+    supports org.eclipse.elk.spacing.nodeNode = 30
     supports numberOfRounds
     supports minimalTemperature
     supports initialTemperature
@@ -205,7 +205,7 @@ algorithm circular(OgdfLayoutProvider#CIRCULAR) {
     supports org.eclipse.elk.spacing.border = 15
     supports labelEdgeDistance
     supports labelMarginDistance
-    supports org.eclipse.elk.spacing.node = 20
+    supports org.eclipse.elk.spacing.nodeNode = 20
     supports subtreeDistance
     supports minDistLevel
     supports minDistCC
@@ -230,7 +230,7 @@ algorithm tree(OgdfLayoutProvider#TREE) {
     supports labelMarginDistance
     supports org.eclipse.elk.direction = Direction.RIGHT
     supports org.eclipse.elk.edgeRouting = EdgeRouting.POLYLINE
-    supports org.eclipse.elk.spacing.node=  20
+    supports org.eclipse.elk.spacing.nodeNode=  20
     supports minDistLevel
     supports subtreeDistance
     supports minDistCC
@@ -247,7 +247,7 @@ algorithm radialTree(OgdfLayoutProvider#RADIAL_TREE) {
     category org.eclipse.elk.tree
     preview images/radial_tree.png
     features edge_labels
-    supports org.eclipse.elk.spacing.node = 50
+    supports org.eclipse.elk.spacing.nodeNode = 50
     supports org.eclipse.elk.spacing.border = 15
     supports labelEdgeDistance
     supports labelMarginDistance
@@ -276,7 +276,7 @@ algorithm upwardPlanarization(OgdfLayoutProvider#UPWARD_PLANARIZATION) {
     supports labelEdgeDistance
     supports labelMarginDistance
     supports minDistLevel = 16 
-    supports org.eclipse.elk.spacing.node = 16
+    supports org.eclipse.elk.spacing.nodeNode = 16
     supports org.eclipse.elk.nodeSize.constraints
     supports org.eclipse.elk.nodeSize.options
     supports placeLabels
@@ -325,7 +325,7 @@ algorithm kamadaKawai(OgdfLayoutProvider#KAMADA_KAWAI) {
     category org.eclipse.elk.force
     preview images/kamada_kawai.png
     features multi_edges, edge_labels
-    supports org.eclipse.elk.spacing.node = 30
+    supports org.eclipse.elk.spacing.nodeNode = 30
     supports stopTolerance
     supports placeLabels
     supports labelEdgeDistance
@@ -359,7 +359,7 @@ algorithm dominance(OgdfLayoutProvider#DOMINANCE) {
     category org.eclipse.elk.planar
     preview images/dominance.png
     features multi_edges, edge_labels 
-    supports org.eclipse.elk.spacing.node = 10
+    supports org.eclipse.elk.spacing.nodeNode = 10
     supports org.eclipse.elk.randomSeed = 1
     supports placeLabels
     supports labelEdgeDistance
@@ -375,7 +375,7 @@ algorithm visibility(OgdfLayoutProvider#VISIBILITY) {
     category org.eclipse.elk.planar
     preview images/visibility.png
     features multi_edges, edge_labels
-    supports org.eclipse.elk.spacing.node = 10
+    supports org.eclipse.elk.spacing.nodeNode = 10
     supports org.eclipse.elk.randomSeed = 1
     supports placeLabels
     supports labelEdgeDistance
@@ -398,7 +398,7 @@ algorithm fraysseixPachPollack(OgdfLayoutProvider#FRAYSSEIX_PACH_POLLACK) {
     category org.eclipse.elk.planar
     preview images/fpp.png
     features edge_labels
-    supports org.eclipse.elk.spacing.node = 30
+    supports org.eclipse.elk.spacing.nodeNode = 30
     supports placeLabels
     supports labelEdgeDistance
     supports labelMarginDistance
@@ -418,7 +418,7 @@ algorithm schnyder(OgdfLayoutProvider#SCHNYDER) {
     category org.eclipse.elk.planar
     preview images/schnyder.png
     features edge_labels
-    supports org.eclipse.elk.spacing.node = 30
+    supports org.eclipse.elk.spacing.nodeNode = 30
     supports placeLabels
     supports labelEdgeDistance
     supports labelMarginDistance
@@ -441,7 +441,7 @@ algorithm canonicalOrder(OgdfLayoutProvider#CANONICAL_ORDER) {
     supports labelMarginDistance
     supports baseRatio
     supports embedder
-    supports org.eclipse.elk.spacing.node = 30
+    supports org.eclipse.elk.spacing.nodeNode = 30
     supports adaptPortPositions
 }
 
@@ -467,7 +467,7 @@ algorithm mixedModel(OgdfLayoutProvider#MIXED_MODEL) {
     supports placeLabels
     supports labelEdgeDistance
     supports labelMarginDistance
-    supports org.eclipse.elk.spacing.node = 30
+    supports org.eclipse.elk.spacing.nodeNode = 30
     supports runs
     supports org.eclipse.elk.randomSeed = 1
     supports edgeInsertion
@@ -494,7 +494,7 @@ algorithm convexGrid(OgdfLayoutProvider#CONVEX_GRID) {
     supports labelMarginDistance
     supports baseRatio
     supports embedder
-    supports org.eclipse.elk.spacing.node = 30
+    supports org.eclipse.elk.spacing.nodeNode = 30
     supports adaptPortPositions
 }
 

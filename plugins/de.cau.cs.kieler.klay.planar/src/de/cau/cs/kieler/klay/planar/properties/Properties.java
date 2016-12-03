@@ -155,7 +155,7 @@ public final class Properties {
     public static final float DEF_SPACING = 40.0f;
 
     /** minimal spacing between objects. */
-    public static final Property<Float> SPACING = new Property<Float>(CoreOptions.SPACING_NODE,
+    public static final Property<Float> SPACING = new Property<Float>(CoreOptions.SPACING_NODE_NODE,
             DEF_SPACING);
 
     /** A property that indicates the orthogonal representation of a graph. */

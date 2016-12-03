@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.elk.core.math.ElkInsets;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -408,14 +408,14 @@ public class OgmlServerCommunicator {
         }
         
         // dem insets!
-        ElkInsets elkInsets = parentNode.getProperty(CoreOptions.INSETS);
+        ElkPadding elkPadding = parentNode.getProperty(CoreOptions.PADDING);
         
         // calculate offsets and parent size
         float boundingBoxWidth = Float.NaN;
         float boundingBoxHeight = Float.NaN;
         
-        double offsetX = borderSpacing + elkInsets.getLeft();
-        double offsetY = borderSpacing + elkInsets.getTop();
+        double offsetX = borderSpacing + elkPadding.getLeft();
+        double offsetY = borderSpacing + elkPadding.getTop();
         
         KVectorChain boundingBox = layoutInformation.get("graph");
         if (boundingBox != null && boundingBox.size() == 2) {
@@ -546,9 +546,9 @@ public class OgmlServerCommunicator {
         // set the width/height of the graph
         if (!(Double.isNaN(boundingBoxWidth) || Double.isNaN(boundingBoxHeight))) {
             double width = boundingBoxWidth + 2 * borderSpacing
-                    + elkInsets.getLeft() + elkInsets.getRight();
+                    + elkPadding.getLeft() + elkPadding.getRight();
             double height = boundingBoxHeight + 2 * borderSpacing
-                    + elkInsets.getTop() + elkInsets.getBottom();
+                    + elkPadding.getTop() + elkPadding.getBottom();
             
             ElkUtil.resizeNode(parentNode, width, height, false, true);
         }
