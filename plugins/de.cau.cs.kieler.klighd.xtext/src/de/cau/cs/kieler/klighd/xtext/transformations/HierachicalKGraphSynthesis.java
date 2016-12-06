@@ -46,11 +46,12 @@ public class HierachicalKGraphSynthesis {
     public static void transform(final KNode diagram) {
         // put the inner nodes onto the highest hierarchy level
         List<KNode> nodes = recursiveTraversal(diagram);
+        
         diagram.getChildren().clear();
         diagram.getChildren().addAll(nodes);
 
-        deletion(diagram.getChildren());
-        addEdges(diagram);
+//        deletion(diagram.getChildren());
+//        addEdges(diagram);
 
     }
 
@@ -58,23 +59,33 @@ public class HierachicalKGraphSynthesis {
         List<KNode> copiedChildren = new ArrayList<>();
 
         for (KNode child : parent.getChildren()) {
-            if (!child.getChildren().isEmpty()) {
-
-                // extract/copy content of children
-                Copier copier = new Copier();
-                KNode copy = (KNode) copier.copy(child);
+            List<KNode> children = child.getChildren();
+            
+            // Remove useless blue boxes, if there is only one expandable child inside
+            if(children.size() == 1 && !children.get(0).getChildren().isEmpty()) {
+                System.out.println("hier");
+                copiedChildren.addAll(recursiveTraversal(child));
+            } else {
                 
-                // delete the existing edges for the copy
-                if (copy.getOutgoingEdges() != null) {
-                    copy.getOutgoingEdges().clear();
+                if (!child.getChildren().isEmpty()) {
+                    
+                    // extract/copy content of children
+                    Copier copier = new Copier();
+                    KNode copy = (KNode) copier.copy(child);
+                    copier.copyReferences();
+                    
+                    // delete the existing edges for the copy
+                    if (copy.getOutgoingEdges() != null) {
+                        copy.getOutgoingEdges().clear();
+                    }
+                    if (copy.getIncomingEdges() != null) {
+                        copy.getIncomingEdges().clear();
+                    }
+                    copiedChildren.add(copy);
+                    parents.put(copy, parent);
+                    
+                    copiedChildren.addAll(recursiveTraversal(copy));
                 }
-                if (copy.getIncomingEdges() != null) {
-                    copy.getIncomingEdges().clear();
-                }
-                copiedChildren.add(copy);
-                parents.put(copy, parent);
-
-                copiedChildren.addAll(recursiveTraversal(copy));
             }
         }
 
