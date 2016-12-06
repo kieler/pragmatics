@@ -34,12 +34,12 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KNode
-import org.eclipse.elk.graph.KPort
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.KPort
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -261,14 +261,14 @@ class KRenderingFigureProvider {
             // Add the title's text
             rectangle.children += renderingFactory.createKText() => [text |
                 text.fontSize = 18
-                text.text = node.layout.getProperty(COMMENT_TEXT)
+                text.text = node.getProperty(COMMENT_TEXT)
                 text.setSurroundingSpace(5, 0)
             ]   
         } else {
            // Add the comment's text
             rectangle.children += renderingFactory.createKText() => [text |
-                text.fontSize = node.layout.getProperty(COMMENT_FONT_SIZE) - 2
-                text.text = node.layout.getProperty(COMMENT_TEXT)
+                text.fontSize = node.getProperty(COMMENT_FONT_SIZE) - 2
+                text.text = node.getProperty(COMMENT_TEXT)
                 text.setSurroundingSpace(5, 0)
             ]
         }
@@ -327,7 +327,7 @@ class KRenderingFigureProvider {
         ]
         
         // Find the parameters that should be displayed
-        val parameters = node.layout.getProperty(PT_PARAMETERS)
+        val parameters = node.getProperty(PT_PARAMETERS)
         
         // Visualize each parameter
         for (parameter : parameters) {
@@ -750,7 +750,6 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createPortRendering(KPort port) {
-        
         // Determine the port color
         val portFillColor = if (port.hasAnnotation(IS_PARAMETER_PORT)) {
             // Parameter ports are gray

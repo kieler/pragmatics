@@ -20,10 +20,10 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.ResourceReferenceImpl#getResourceRefs <em>Resource Refs</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

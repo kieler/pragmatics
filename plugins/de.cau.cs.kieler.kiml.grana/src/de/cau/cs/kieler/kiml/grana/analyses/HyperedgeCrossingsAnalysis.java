@@ -374,7 +374,7 @@ public class HyperedgeCrossingsAnalysis implements IAnalysis {
          * @param y2 the Y coordinate of the end point
          * @since 1.2
          */
-        public Line(final double x1, final double y1, final double x2, final double y2) {
+        Line(final double x1, final double y1, final double x2, final double y2) {
             super(x1, y1, x2, y2);
         }
         

@@ -24,15 +24,15 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousEx
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.PortExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.util.HyperedgeGatherer
 import java.util.List
-import org.eclipse.elk.core.util.ElkUtil
 import org.eclipse.elk.core.util.Pair
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KNode
-import org.eclipse.elk.graph.KPort
 import org.ptolemy.moml.PropertyType
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.KPort
+import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 
 /**
  * Optimizes a KGraph model freshly transformed from a Ptolemy2 model. This is step two of the Ptolemy
@@ -580,7 +580,7 @@ public class Ptolemy2KGraphOptimization {
                 // Add new edges
                 for (sourceNode : hyperedge.sourceNodes) {
                     for (targetNode : hyperedge.targetNodes) {
-                        val newEdge = ElkUtil::createInitializedEdge()
+                        val newEdge = KGraphUtil::createInitializedEdge()
                         newEdge.annotations += relationAnnotations
                         
                         newEdge.source = sourceNode
@@ -589,7 +589,7 @@ public class Ptolemy2KGraphOptimization {
                     }
                     
                     for (targetPort : hyperedge.targetPorts) {
-                        val newEdge = ElkUtil::createInitializedEdge()
+                        val newEdge = KGraphUtil::createInitializedEdge()
                         newEdge.annotations += relationAnnotations
                         
                         newEdge.source = sourceNode
@@ -601,7 +601,7 @@ public class Ptolemy2KGraphOptimization {
                 
                 for (sourcePort : hyperedge.sourcePorts) {
                     for (targetNode : hyperedge.targetNodes) {
-                        val newEdge = ElkUtil::createInitializedEdge()
+                        val newEdge = KGraphUtil::createInitializedEdge()
                         newEdge.annotations += relationAnnotations
                         
                         newEdge.source = sourcePort.node
@@ -611,7 +611,7 @@ public class Ptolemy2KGraphOptimization {
                     }
                     
                     for (targetPort : hyperedge.targetPorts) {
-                        val newEdge = ElkUtil::createInitializedEdge()
+                        val newEdge = KGraphUtil::createInitializedEdge()
                         newEdge.annotations += relationAnnotations
                         
                         newEdge.source = sourcePort.node
@@ -706,7 +706,7 @@ public class Ptolemy2KGraphOptimization {
                 && options.directors) {
                 
                 // Create a new node for it
-                val directorNode = ElkUtil::createInitializedNode()
+                val directorNode = KGraphUtil::createInitializedNode()
                 diagramSynthesis.associateWith(directorNode, annotation);
                 
                 // Set the name and mark it as a Ptolemy element, as a director and as having been 
@@ -718,8 +718,7 @@ public class Ptolemy2KGraphOptimization {
                 
                 //Try to retrieve the location from the annotations
                 if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {  
-                directorNode.layout.setProperty(PT_LOCATION, 
-                                                annotation.getAnnotation(ANNOTATION_LOCATION).value)   
+                directorNode.setProperty(PT_LOCATION, annotation.getAnnotation(ANNOTATION_LOCATION).value)   
                 }
             
                 // Add the new node to the root element
@@ -733,7 +732,7 @@ public class Ptolemy2KGraphOptimization {
                 // It's a documentation attribute
 
                 // Create a new node for it
-                val documentationNode = ElkUtil::createInitializedNode()
+                val documentationNode = KGraphUtil::createInitializedNode()
                 diagramSynthesis.associateWith(documentationNode, annotation);
 
                 // Mark it as a Ptolemy element, as a documentation node and as having been 
@@ -744,8 +743,7 @@ public class Ptolemy2KGraphOptimization {
 
                 //Try to retrieve the location from the annotations
                 if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {
-                    documentationNode.layout.setProperty(PT_LOCATION, 
-                                                    annotation.getAnnotation(ANNOTATION_LOCATION).value)
+                    documentationNode.setProperty(PT_LOCATION, annotation.getAnnotation(ANNOTATION_LOCATION).value)
                 }
 
                 // Add the new node to the root element
@@ -759,7 +757,7 @@ public class Ptolemy2KGraphOptimization {
                 // It's a title element
                 
                 // Create a node for it
-                val titleNode = ElkUtil.createInitializedNode();
+                val titleNode = KGraphUtil.createInitializedNode();
                 diagramSynthesis.associateWith(titleNode, annotation);
                 
                 // Set the name, add language annotation and mark it as having been created from an 
@@ -768,21 +766,20 @@ public class Ptolemy2KGraphOptimization {
                 titleNode.markAsFormerAnnotationNode();
                 titleNode.markAsComment();
                 titleNode.markAsTitleNode();
-                titleNode.layout.setProperty(COMMENT_TEXT, annotation.value);
+                titleNode.setProperty(COMMENT_TEXT, annotation.value);
                 
                 //Try to retrieve the location from the annotations
                 if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {
-                    titleNode.layout.setProperty(PT_LOCATION, 
-                                                 annotation.getAnnotation(ANNOTATION_LOCATION).value)
+                    titleNode.setProperty(PT_LOCATION, annotation.getAnnotation(ANNOTATION_LOCATION).value)
                 }
                 
                 //Finds out whether the default font size of titles was changed and if so stores the new
                 //value. Otherwise, the default value is stored.
                 if (annotation.getAnnotation(ANNOTATION_FONT_SIZE) != null) {
-                    titleNode.layout.setProperty(COMMENT_FONT_SIZE, Integer.parseInt(
+                    titleNode.setProperty(COMMENT_FONT_SIZE, Integer.parseInt(
                                                  annotation.getAnnotationValue(ANNOTATION_FONT_SIZE)))
                 } else {
-                    titleNode.layout.setProperty(COMMENT_FONT_SIZE, 24)
+                    titleNode.setProperty(COMMENT_FONT_SIZE, 24)
                 }
                    
                 // Add the new node to the root element
@@ -794,7 +791,7 @@ public class Ptolemy2KGraphOptimization {
                 //It's a lattice ontology solver
                 
                 //Create a node for it
-                val solverNode = ElkUtil.createInitializedNode();
+                val solverNode = KGraphUtil.createInitializedNode();
                 diagramSynthesis.associateWith(solverNode, annotation);
                 
                 // Set the name, add language annotation and mark it as having been created from
@@ -805,8 +802,7 @@ public class Ptolemy2KGraphOptimization {
                 
                 //Try to retrieve the location from the annotations
                 if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {
-                    solverNode.layout.setProperty(PT_LOCATION, 
-                                                  annotation.getAnnotation(ANNOTATION_LOCATION).value)
+                    solverNode.setProperty(PT_LOCATION, annotation.getAnnotation(ANNOTATION_LOCATION).value)
                 }
                 
                 // Add the new node to the root element
@@ -823,13 +819,13 @@ public class Ptolemy2KGraphOptimization {
             }
             
             // Create a new node for it
-            val parameterNode = ElkUtil::createInitializedNode()
+            val parameterNode = KGraphUtil::createInitializedNode()
             
             // TODO Mark as parameter node and tell it about the parameters it should display
             parameterNode.markAsPtolemyElement()
             parameterNode.markAsFormerAnnotationNode()
             parameterNode.markAsParameterNode()
-            parameterNode.layout.setProperty(PT_PARAMETERS, parameterPairs)
+            parameterNode.setProperty(PT_PARAMETERS, parameterPairs)
             
             // Add the new node to the root element
             root.children += parameterNode

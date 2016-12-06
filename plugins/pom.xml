@@ -22,8 +22,6 @@
     <!--<module>de.cau.cs.kieler.core.kgraph.text</module>-->
     <!--<module>de.cau.cs.kieler.core.kgraph.text.ui</module>-->
     <module>de.cau.cs.kieler.core.kivi</module>
-    <!--<module>de.cau.cs.kieler.core.krendering</module>-->
-    <!--<module>de.cau.cs.kieler.core.krendering.extensions</module>-->
     <module>de.cau.cs.kieler.kgraph.text</module>
     <module>de.cau.cs.kieler.kgraph.text.ide</module>
     <module>de.cau.cs.kieler.kgraph.text.ui</module>
@@ -47,6 +45,7 @@
     <module>de.cau.cs.kieler.klighd</module>
     <module>de.cau.cs.kieler.klighd.examples</module>
     <module>de.cau.cs.kieler.klighd.kivi</module>
+    <module>de.cau.cs.kieler.klighd.kgraph</module>
     <module>de.cau.cs.kieler.klighd.krendering</module>
     <module>de.cau.cs.kieler.klighd.krendering.extensions</module>
     <module>de.cau.cs.kieler.klighd.piccolo</module>

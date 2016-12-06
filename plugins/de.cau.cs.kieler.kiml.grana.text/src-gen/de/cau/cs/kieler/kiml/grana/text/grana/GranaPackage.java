@@ -4,6 +4,7 @@ package de.cau.cs.kieler.kiml.grana.text.grana;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -85,13 +86,22 @@ public interface GranaPackage extends EPackage
   int GRANA__GLOOBAL_OUTPUTS = 1;
 
   /**
+   * The feature id for the '<em><b>Parallel</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GRANA__PARALLEL = 2;
+
+  /**
    * The feature id for the '<em><b>Execute All</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int GRANA__EXECUTE_ALL = 2;
+  int GRANA__EXECUTE_ALL = 3;
 
   /**
    * The feature id for the '<em><b>Execute</b></em>' reference list.
@@ -100,7 +110,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int GRANA__EXECUTE = 3;
+  int GRANA__EXECUTE = 4;
 
   /**
    * The feature id for the '<em><b>Jobs</b></em>' containment reference list.
@@ -109,7 +119,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int GRANA__JOBS = 4;
+  int GRANA__JOBS = 5;
 
   /**
    * The number of structural features of the '<em>Grana</em>' class.
@@ -118,7 +128,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int GRANA_FEATURE_COUNT = 5;
+  int GRANA_FEATURE_COUNT = 6;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl <em>Job</em>}' class.
@@ -167,13 +177,22 @@ public interface GranaPackage extends EPackage
   int JOB__ANALYSES = 3;
 
   /**
+   * The feature id for the '<em><b>Output Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int JOB__OUTPUT_TYPE = 4;
+
+  /**
    * The feature id for the '<em><b>Output</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int JOB__OUTPUT = 4;
+  int JOB__OUTPUT = 5;
 
   /**
    * The number of structural features of the '<em>Job</em>' class.
@@ -182,7 +201,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int JOB_FEATURE_COUNT = 5;
+  int JOB_FEATURE_COUNT = 6;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RegularJobImpl <em>Regular Job</em>}' class.
@@ -231,6 +250,15 @@ public interface GranaPackage extends EPackage
   int REGULAR_JOB__ANALYSES = JOB__ANALYSES;
 
   /**
+   * The feature id for the '<em><b>Output Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int REGULAR_JOB__OUTPUT_TYPE = JOB__OUTPUT_TYPE;
+
+  /**
    * The feature id for the '<em><b>Output</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -267,6 +295,79 @@ public interface GranaPackage extends EPackage
   int REGULAR_JOB_FEATURE_COUNT = JOB_FEATURE_COUNT + 2;
 
   /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.CompareJobImpl <em>Compare Job</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.CompareJobImpl
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getCompareJob()
+   * @generated
+   */
+  int COMPARE_JOB = 3;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPARE_JOB__NAME = JOB__NAME;
+
+  /**
+   * The feature id for the '<em><b>Resources</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPARE_JOB__RESOURCES = JOB__RESOURCES;
+
+  /**
+   * The feature id for the '<em><b>Layout Options</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPARE_JOB__LAYOUT_OPTIONS = JOB__LAYOUT_OPTIONS;
+
+  /**
+   * The feature id for the '<em><b>Analyses</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPARE_JOB__ANALYSES = JOB__ANALYSES;
+
+  /**
+   * The feature id for the '<em><b>Output Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPARE_JOB__OUTPUT_TYPE = JOB__OUTPUT_TYPE;
+
+  /**
+   * The feature id for the '<em><b>Output</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPARE_JOB__OUTPUT = JOB__OUTPUT;
+
+  /**
+   * The number of structural features of the '<em>Compare Job</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int COMPARE_JOB_FEATURE_COUNT = JOB_FEATURE_COUNT + 0;
+
+  /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RangeJobImpl <em>Range Job</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -274,7 +375,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getRangeJob()
    * @generated
    */
-  int RANGE_JOB = 3;
+  int RANGE_JOB = 4;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -313,6 +414,15 @@ public interface GranaPackage extends EPackage
   int RANGE_JOB__ANALYSES = JOB__ANALYSES;
 
   /**
+   * The feature id for the '<em><b>Output Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RANGE_JOB__OUTPUT_TYPE = JOB__OUTPUT_TYPE;
+
+  /**
    * The feature id for the '<em><b>Output</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -322,13 +432,22 @@ public interface GranaPackage extends EPackage
   int RANGE_JOB__OUTPUT = JOB__OUTPUT;
 
   /**
+   * The feature id for the '<em><b>Measure Execution Time</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RANGE_JOB__MEASURE_EXECUTION_TIME = JOB_FEATURE_COUNT + 0;
+
+  /**
    * The feature id for the '<em><b>Range Option</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int RANGE_JOB__RANGE_OPTION = JOB_FEATURE_COUNT + 0;
+  int RANGE_JOB__RANGE_OPTION = JOB_FEATURE_COUNT + 1;
 
   /**
    * The feature id for the '<em><b>Range Values</b></em>' containment reference.
@@ -337,7 +456,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RANGE_JOB__RANGE_VALUES = JOB_FEATURE_COUNT + 1;
+  int RANGE_JOB__RANGE_VALUES = JOB_FEATURE_COUNT + 2;
 
   /**
    * The feature id for the '<em><b>Range Analysis</b></em>' containment reference.
@@ -346,7 +465,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RANGE_JOB__RANGE_ANALYSIS = JOB_FEATURE_COUNT + 2;
+  int RANGE_JOB__RANGE_ANALYSIS = JOB_FEATURE_COUNT + 3;
 
   /**
    * The feature id for the '<em><b>Range Analysis Component</b></em>' attribute.
@@ -355,7 +474,16 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RANGE_JOB__RANGE_ANALYSIS_COMPONENT = JOB_FEATURE_COUNT + 3;
+  int RANGE_JOB__RANGE_ANALYSIS_COMPONENT = JOB_FEATURE_COUNT + 4;
+
+  /**
+   * The feature id for the '<em><b>Range Analyses</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int RANGE_JOB__RANGE_ANALYSES = JOB_FEATURE_COUNT + 5;
 
   /**
    * The number of structural features of the '<em>Range Job</em>' class.
@@ -364,7 +492,7 @@ public interface GranaPackage extends EPackage
    * @generated
    * @ordered
    */
-  int RANGE_JOB_FEATURE_COUNT = JOB_FEATURE_COUNT + 4;
+  int RANGE_JOB_FEATURE_COUNT = JOB_FEATURE_COUNT + 6;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RangeImpl <em>Range</em>}' class.
@@ -374,7 +502,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getRange()
    * @generated
    */
-  int RANGE = 4;
+  int RANGE = 5;
 
   /**
    * The number of structural features of the '<em>Range</em>' class.
@@ -393,7 +521,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getFloatRange()
    * @generated
    */
-  int FLOAT_RANGE = 5;
+  int FLOAT_RANGE = 6;
 
   /**
    * The feature id for the '<em><b>Values</b></em>' attribute list.
@@ -421,7 +549,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getIntRange()
    * @generated
    */
-  int INT_RANGE = 6;
+  int INT_RANGE = 7;
 
   /**
    * The number of structural features of the '<em>Int Range</em>' class.
@@ -440,7 +568,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getIntRangeValues()
    * @generated
    */
-  int INT_RANGE_VALUES = 7;
+  int INT_RANGE_VALUES = 8;
 
   /**
    * The feature id for the '<em><b>Values</b></em>' attribute list.
@@ -468,7 +596,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getIntRangeRange()
    * @generated
    */
-  int INT_RANGE_RANGE = 8;
+  int INT_RANGE_RANGE = 9;
 
   /**
    * The feature id for the '<em><b>Start</b></em>' attribute.
@@ -505,7 +633,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getResource()
    * @generated
    */
-  int RESOURCE = 9;
+  int RESOURCE = 10;
 
   /**
    * The number of structural features of the '<em>Resource</em>' class.
@@ -524,7 +652,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getResourceReference()
    * @generated
    */
-  int RESOURCE_REFERENCE = 10;
+  int RESOURCE_REFERENCE = 11;
 
   /**
    * The feature id for the '<em><b>Resource Refs</b></em>' reference list.
@@ -552,7 +680,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getGlobalResourceRef()
    * @generated
    */
-  int GLOBAL_RESOURCE_REF = 11;
+  int GLOBAL_RESOURCE_REF = 12;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -589,7 +717,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getLocalResource()
    * @generated
    */
-  int LOCAL_RESOURCE = 12;
+  int LOCAL_RESOURCE = 13;
 
   /**
    * The feature id for the '<em><b>Path</b></em>' attribute.
@@ -626,7 +754,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getOutput()
    * @generated
    */
-  int OUTPUT = 13;
+  int OUTPUT = 14;
 
   /**
    * The number of structural features of the '<em>Output</em>' class.
@@ -645,7 +773,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getGlobalOutputRef()
    * @generated
    */
-  int GLOBAL_OUTPUT_REF = 14;
+  int GLOBAL_OUTPUT_REF = 15;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -682,7 +810,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getOutputReference()
    * @generated
    */
-  int OUTPUT_REFERENCE = 15;
+  int OUTPUT_REFERENCE = 16;
 
   /**
    * The feature id for the '<em><b>Output Ref</b></em>' reference.
@@ -710,7 +838,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getLocalOutput()
    * @generated
    */
-  int LOCAL_OUTPUT = 16;
+  int LOCAL_OUTPUT = 17;
 
   /**
    * The feature id for the '<em><b>Path</b></em>' attribute.
@@ -738,7 +866,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getAnalysis()
    * @generated
    */
-  int ANALYSIS = 17;
+  int ANALYSIS = 18;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -757,6 +885,16 @@ public interface GranaPackage extends EPackage
    * @ordered
    */
   int ANALYSIS_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.OutputType <em>Output Type</em>}' enum.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.OutputType
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getOutputType()
+   * @generated
+   */
+  int OUTPUT_TYPE = 19;
 
 
   /**
@@ -790,6 +928,17 @@ public interface GranaPackage extends EPackage
    * @generated
    */
   EReference getGrana_GloobalOutputs();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#isParallel <em>Parallel</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Parallel</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.Grana#isParallel()
+   * @see #getGrana()
+   * @generated
+   */
+  EAttribute getGrana_Parallel();
 
   /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.Grana#isExecuteAll <em>Execute All</em>}'.
@@ -879,6 +1028,17 @@ public interface GranaPackage extends EPackage
   EReference getJob_Analyses();
 
   /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getOutputType <em>Output Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Output Type</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.Job#getOutputType()
+   * @see #getJob()
+   * @generated
+   */
+  EAttribute getJob_OutputType();
+
+  /**
    * Returns the meta object for the containment reference '{@link de.cau.cs.kieler.kiml.grana.text.grana.Job#getOutput <em>Output</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -922,6 +1082,16 @@ public interface GranaPackage extends EPackage
   EAttribute getRegularJob_MeasureExecutionTime();
 
   /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.CompareJob <em>Compare Job</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Compare Job</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.CompareJob
+   * @generated
+   */
+  EClass getCompareJob();
+
+  /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.RangeJob <em>Range Job</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -930,6 +1100,17 @@ public interface GranaPackage extends EPackage
    * @generated
    */
   EClass getRangeJob();
+
+  /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.RangeJob#isMeasureExecutionTime <em>Measure Execution Time</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Measure Execution Time</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.RangeJob#isMeasureExecutionTime()
+   * @see #getRangeJob()
+   * @generated
+   */
+  EAttribute getRangeJob_MeasureExecutionTime();
 
   /**
    * Returns the meta object for the attribute '{@link de.cau.cs.kieler.kiml.grana.text.grana.RangeJob#getRangeOption <em>Range Option</em>}'.
@@ -974,6 +1155,17 @@ public interface GranaPackage extends EPackage
    * @generated
    */
   EAttribute getRangeJob_RangeAnalysisComponent();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link de.cau.cs.kieler.kiml.grana.text.grana.RangeJob#getRangeAnalyses <em>Range Analyses</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Range Analyses</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.RangeJob#getRangeAnalyses()
+   * @see #getRangeJob()
+   * @generated
+   */
+  EReference getRangeJob_RangeAnalyses();
 
   /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.kiml.grana.text.grana.Range <em>Range</em>}'.
@@ -1270,6 +1462,16 @@ public interface GranaPackage extends EPackage
   EAttribute getAnalysis_Name();
 
   /**
+   * Returns the meta object for enum '{@link de.cau.cs.kieler.kiml.grana.text.grana.OutputType <em>Output Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for enum '<em>Output Type</em>'.
+   * @see de.cau.cs.kieler.kiml.grana.text.grana.OutputType
+   * @generated
+   */
+  EEnum getOutputType();
+
+  /**
    * Returns the factory that creates the instances of the model.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1317,6 +1519,14 @@ public interface GranaPackage extends EPackage
      * @generated
      */
     EReference GRANA__GLOOBAL_OUTPUTS = eINSTANCE.getGrana_GloobalOutputs();
+
+    /**
+     * The meta object literal for the '<em><b>Parallel</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute GRANA__PARALLEL = eINSTANCE.getGrana_Parallel();
 
     /**
      * The meta object literal for the '<em><b>Execute All</b></em>' attribute feature.
@@ -1385,6 +1595,14 @@ public interface GranaPackage extends EPackage
     EReference JOB__ANALYSES = eINSTANCE.getJob_Analyses();
 
     /**
+     * The meta object literal for the '<em><b>Output Type</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute JOB__OUTPUT_TYPE = eINSTANCE.getJob_OutputType();
+
+    /**
      * The meta object literal for the '<em><b>Output</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1419,6 +1637,16 @@ public interface GranaPackage extends EPackage
     EAttribute REGULAR_JOB__MEASURE_EXECUTION_TIME = eINSTANCE.getRegularJob_MeasureExecutionTime();
 
     /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.CompareJobImpl <em>Compare Job</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.CompareJobImpl
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getCompareJob()
+     * @generated
+     */
+    EClass COMPARE_JOB = eINSTANCE.getCompareJob();
+
+    /**
      * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RangeJobImpl <em>Range Job</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1427,6 +1655,14 @@ public interface GranaPackage extends EPackage
      * @generated
      */
     EClass RANGE_JOB = eINSTANCE.getRangeJob();
+
+    /**
+     * The meta object literal for the '<em><b>Measure Execution Time</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute RANGE_JOB__MEASURE_EXECUTION_TIME = eINSTANCE.getRangeJob_MeasureExecutionTime();
 
     /**
      * The meta object literal for the '<em><b>Range Option</b></em>' attribute feature.
@@ -1459,6 +1695,14 @@ public interface GranaPackage extends EPackage
      * @generated
      */
     EAttribute RANGE_JOB__RANGE_ANALYSIS_COMPONENT = eINSTANCE.getRangeJob_RangeAnalysisComponent();
+
+    /**
+     * The meta object literal for the '<em><b>Range Analyses</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference RANGE_JOB__RANGE_ANALYSES = eINSTANCE.getRangeJob_RangeAnalyses();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RangeImpl <em>Range</em>}' class.
@@ -1711,6 +1955,16 @@ public interface GranaPackage extends EPackage
      * @generated
      */
     EAttribute ANALYSIS__NAME = eINSTANCE.getAnalysis_Name();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.kiml.grana.text.grana.OutputType <em>Output Type</em>}' enum.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.OutputType
+     * @see de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaPackageImpl#getOutputType()
+     * @generated
+     */
+    EEnum OUTPUT_TYPE = eINSTANCE.getOutputType();
 
   }
 

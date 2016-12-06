@@ -6,6 +6,7 @@ import de.cau.cs.kieler.kiml.grana.text.grana.Analysis;
 import de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage;
 import de.cau.cs.kieler.kiml.grana.text.grana.Job;
 import de.cau.cs.kieler.kiml.grana.text.grana.Output;
+import de.cau.cs.kieler.kiml.grana.text.grana.OutputType;
 import de.cau.cs.kieler.kiml.grana.text.grana.Resource;
 
 import java.util.Collection;
@@ -32,14 +33,15 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#getResources <em>Resources</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#getLayoutOptions <em>Layout Options</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#getAnalyses <em>Analyses</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#getOutputType <em>Output Type</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.JobImpl#getOutput <em>Output</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -94,6 +96,26 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
    * @ordered
    */
   protected EList<Analysis> analyses;
+
+  /**
+   * The default value of the '{@link #getOutputType() <em>Output Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOutputType()
+   * @generated
+   * @ordered
+   */
+  protected static final OutputType OUTPUT_TYPE_EDEFAULT = OutputType.CSV;
+
+  /**
+   * The cached value of the '{@link #getOutputType() <em>Output Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOutputType()
+   * @generated
+   * @ordered
+   */
+  protected OutputType outputType = OUTPUT_TYPE_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getOutput() <em>Output</em>}' containment reference.
@@ -196,6 +218,29 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
    * <!-- end-user-doc -->
    * @generated
    */
+  public OutputType getOutputType()
+  {
+    return outputType;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setOutputType(OutputType newOutputType)
+  {
+    OutputType oldOutputType = outputType;
+    outputType = newOutputType == null ? OUTPUT_TYPE_EDEFAULT : newOutputType;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GranaPackage.JOB__OUTPUT_TYPE, oldOutputType, outputType));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Output getOutput()
   {
     return output;
@@ -279,6 +324,8 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
         return getLayoutOptions();
       case GranaPackage.JOB__ANALYSES:
         return getAnalyses();
+      case GranaPackage.JOB__OUTPUT_TYPE:
+        return getOutputType();
       case GranaPackage.JOB__OUTPUT:
         return getOutput();
     }
@@ -311,6 +358,9 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
         getAnalyses().clear();
         getAnalyses().addAll((Collection<? extends Analysis>)newValue);
         return;
+      case GranaPackage.JOB__OUTPUT_TYPE:
+        setOutputType((OutputType)newValue);
+        return;
       case GranaPackage.JOB__OUTPUT:
         setOutput((Output)newValue);
         return;
@@ -340,6 +390,9 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
       case GranaPackage.JOB__ANALYSES:
         getAnalyses().clear();
         return;
+      case GranaPackage.JOB__OUTPUT_TYPE:
+        setOutputType(OUTPUT_TYPE_EDEFAULT);
+        return;
       case GranaPackage.JOB__OUTPUT:
         setOutput((Output)null);
         return;
@@ -365,6 +418,8 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
         return layoutOptions != null && !layoutOptions.isEmpty();
       case GranaPackage.JOB__ANALYSES:
         return analyses != null && !analyses.isEmpty();
+      case GranaPackage.JOB__OUTPUT_TYPE:
+        return outputType != OUTPUT_TYPE_EDEFAULT;
       case GranaPackage.JOB__OUTPUT:
         return output != null;
     }
@@ -384,6 +439,8 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
     StringBuffer result = new StringBuffer(super.toString());
     result.append(" (name: ");
     result.append(name);
+    result.append(", outputType: ");
+    result.append(outputType);
     result.append(')');
     return result.toString();
   }

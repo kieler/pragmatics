@@ -13,56 +13,50 @@
  */
 package de.cau.cs.kieler.kiml.grana.ui.batch;
 
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.elk.graph.properties.MapPropertyHolder;
+
+import com.google.common.collect.LinkedListMultimap;
+
 /**
- * The class that contains the results of a batch job.
+ * The class that contains the results of a batch job. Each form of {@link BatchJob}s has its own
+ * {@link BatchJobResult} class.
  * 
  * @author mri
- * @author uru 
+ * @author uru
  * @kieler.ignore (excluded from review process)
- * @param <T> the parameter type
  */
-public class BatchJobResult<T> {
+public abstract class BatchJobResult {
 
     /** the analysis job. */
-    private IBatchJob<T> job;
-    /** the analyses results. */
-    private Map<String, Object> results;
-    /** results of the execution time analysis. */
-    private Map<String, Double> execTimeResults;
-    /** the results of a range analysis, properly ordered according to
-     *  they execution sequence. */
-    private List<Object> rangeResults;
+    private IBatchJob<?> job;
     
+    /** results for the basic analyses as returned by {@link Batch#getAnalyses()}. */
+    private Map<String, Object> results;
+
     /**
-     * Constructs an AnalysisBatchJobResult using the AnalysisBatchJob and the
-     * results the job computed.
+     * Constructs an BatchJobResult using the IBatchJob and the results the job computed.
      * 
      * @param theJob
      *            the job
-     * @param theResults
-     *            the results
      */
-    public BatchJobResult(final IBatchJob<T> theJob,
-            final Map<String, Object> theResults) {
-        job = theJob;
-        results = theResults;
+    public BatchJobResult(final IBatchJob<?> theJob) {
+        this(theJob, Collections.emptyMap());
     }
 
     /**
+     * Constructs an BatchJobResult using the IBatchJob and the results the job computed.
+     * 
      * @param theJob
      *            the job
-     * @param theResults
-     *            the results
-     * @param execResults
-     *            execution time results
+     * @param results
+     *            the results for the basic analyses.
      */
-    public BatchJobResult(final IBatchJob<T> theJob,
-            final Map<String, Object> theResults, final Map<String, Double> execResults) {
-        this(theJob, theResults);
-        this.execTimeResults = execResults;
+    public BatchJobResult(final IBatchJob<?> theJob, final Map<String, Object> results) {
+        this.job = theJob;
+        this.results = results;
     }
     
     /**
@@ -70,38 +64,102 @@ public class BatchJobResult<T> {
      * 
      * @return the job
      */
-    public IBatchJob<T> getJob() {
+    public IBatchJob<?> getJob() {
         return job;
     }
-
+    
     /**
-     * Returns the analyses results performed by the job.
-     * 
      * @return the results
      */
     public Map<String, Object> getResults() {
         return results;
     }
+
+    // ------------------------------------------------------------------------------
+    // - - - - - - - - - - - - - - - - - - RANGE - - - - - - - - - - - - - - - - - -
+    // ------------------------------------------------------------------------------
     
     /**
-     * @return the execTimeResults
+     * Indicates that the job was not executed as the batch run was cancelled (e.g. by the user).
      */
-    public Map<String, Double> getExecTimeResults() {
-        return execTimeResults;
+    public static class Canceled extends BatchJobResult {
+        public Canceled(final IBatchJob<?> job) { // SUPPRESS CHECKSTYLE Javadoc
+            super(job);
+        }
     }
 
-    /**
-     * @return the rangeResults
-     */
-    public List<Object> getRangeResults() {
-        return rangeResults;
-    }
+    // ------------------------------------------------------------------------------
+    // - - - - - - - - - - - - - - - - - - RANGE - - - - - - - - - - - - - - - - - -
+    // ------------------------------------------------------------------------------
 
     /**
-     * @param rangeResults
-     *            the rangeResults, properly ordered according to they execution sequence.
+     * Indicates that the associated job failed for some reason. 
      */
-    public void setRangeResults(final List<Object> rangeResults) {
-        this.rangeResults = rangeResults;
+    public static class Failed extends BatchJobResult {
+        private Throwable t;
+        public Failed(final IBatchJob<?> job, final Throwable t) { // SUPPRESS CHECKSTYLE Javadoc
+            super(job);
+            this.t = t;
+        }
+        /**
+         * @return the reason the job failed.
+         */
+        public Throwable getThrowable() {
+            return t;
+        }
     }
+
+    // ------------------------------------------------------------------------------
+    // - - - - - - - - - - - - - - - - - - RANGE - - - - - - - - - - - - - - - - - -
+    // ------------------------------------------------------------------------------
+    
+    /**
+     * Common superclass for successful jobs.
+     */
+    public abstract static class Success extends BatchJobResult {
+        public Success(final IBatchJob<?> job, final Map<String, Object> results) { // SUPPRESS CHECKSTYLE Javadoc
+            super(job, results);
+        }
+    }
+
+    // ------------------------------------------------------------------------------
+    // - - - - - - - - - - - - - - - - - - RANGE - - - - - - - - - - - - - - - - - -
+    // ------------------------------------------------------------------------------
+
+    /**
+     * Holds the results of a successfully executed {@link BatchJob.Simple}.
+     */
+    public static class Simple extends Success {
+        public Simple(final IBatchJob<?> job, final Map<String, Object> results) { // SUPPRESS CHECKSTYLE Javadoc
+            super(job, results);
+        }
+    }
+
+    // ------------------------------------------------------------------------------
+    // - - - - - - - - - - - - - - - - - - RANGE - - - - - - - - - - - - - - - - - -
+    // ------------------------------------------------------------------------------
+    
+    /**
+     * Holds the results of a successfully executed {@link BatchJob.Range}.
+     */
+    public static class Range extends Success {
+        /** the results of a range analysis, properly ordered according to
+         *  they execution sequence. */
+        private LinkedListMultimap<MapPropertyHolder, Map<String, Object>> rangeResults;
+
+        // SUPPRESS CHECKSTYLE NEXT 2 Javadoc
+        public Range(final IBatchJob<?> job, final Map<String, Object> results,
+                final LinkedListMultimap<MapPropertyHolder, Map<String, Object>> rangeResults) { 
+            super(job, results);
+            this.rangeResults = rangeResults;
+        }
+       
+        /**
+         * @return the rangeResults
+         */
+        public LinkedListMultimap<MapPropertyHolder, Map<String, Object>> getRangeResults() {
+            return rangeResults;
+        }
+    }
+
 }

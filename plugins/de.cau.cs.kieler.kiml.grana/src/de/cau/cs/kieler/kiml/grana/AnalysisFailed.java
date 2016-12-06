@@ -100,6 +100,7 @@ public class AnalysisFailed {
         case Dependency:
             return MESSAGE_ANALYSIS_DEPENDENCY;
         case Failed:
+            return MESSAGE_ANALYSIS_FAILED + " " + exception != null ? exception.getMessage() : "";
         default:
             return MESSAGE_ANALYSIS_FAILED + exception != null ? exception.getMessage() : "";
         }

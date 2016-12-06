@@ -15,40 +15,32 @@ package de.cau.cs.kieler.klighd.piccolo.internal.controller;
 
 import java.awt.geom.AffineTransform;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutDataPackage;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.graph.KGraphPackage;
-import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
 import de.cau.cs.kieler.klighd.internal.macrolayout.KlighdDiagramLayoutConnector;
+import de.cau.cs.kieler.klighd.kgraph.KGraphPackage;
+import de.cau.cs.kieler.klighd.kgraph.KShapeLayout;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKGraphElementNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
-import de.cau.cs.kieler.klighd.util.LimitedKGraphContentAdapter;
 import edu.umd.cs.piccolo.PNode;
 import edu.umd.cs.piccolo.util.PBounds;
 
 /**
- * A specialized {@link LimitedKGraphContentAdapter}, which is in charge of synchronizing the
+ * An EMF adapter which is in charge of synchronizing the
  * position the PNode that represents of the {@link de.cau.cs.kieler.core.kgraph.KGraphElement
- * KGraphElement} that this adapter is attached to. It is intended to be attached to {@link KNode
- * KNodes}, {@link de.cau.cs.kieler.core.kgraph.KPort KPorts}, and
- * {@link de.cau.cs.kieler.core.kgraph.KLabel KLabels}.<br>
- * <br>
- * Due to the fact that EMF Compare's standard mergers replace whole instances of
- * {@link KShapeLayout} when some of the attribute values have changed, such updaters are attached
- * to the {@link de.cau.cs.kieler.core.kgraph.KGraphElement KGraphElement}. They propagate
- * themselves to the available {@link KShapeLayout KShapeLayouts} or those that are added
- * afterwards.
+ * KGraphElement} that this adapter is attached to. It is intended to be attached to
+ * {@link de.cau.cs.kieler.klighd.kgraph.KNode KNodes},
+ * {@link de.cau.cs.kieler.core.kgraph.KPort KPorts}, and
+ * {@link de.cau.cs.kieler.core.kgraph.KLabel KLabels}.
  *
  * @author chsch
  */
-class KGEShapeLayoutPNodeUpdater extends LimitedKGraphContentAdapter {
+class KGEShapeLayoutPNodeUpdater extends AdapterImpl {
 
     KGEShapeLayoutPNodeUpdater(final PNode theRepNode, final DiagramController theController) {
-        super(KShapeLayout.class);
         this.controller = theController;
         this.nodeRep = theRepNode;
     }
@@ -84,13 +76,7 @@ class KGEShapeLayoutPNodeUpdater extends LimitedKGraphContentAdapter {
         final boolean dataCompletelyChanged;
         final boolean unchanged;
 
-        if (notification.getNotifier() instanceof KNode
-                && notification.getNewValue() instanceof KShapeLayout) {
-            shL = (KShapeLayout) notification.getNewValue();
-            dataCompletelyChanged = true;
-            unchanged = false;
-
-        } else if (notification.getNotifier() instanceof KShapeLayout) {
+        if (notification.getNotifier() instanceof KShapeLayout) {
             shL = (KShapeLayout) notification.getNotifier();
 
             final Object newValue = notification.getNewValue();
@@ -112,10 +98,10 @@ class KGEShapeLayoutPNodeUpdater extends LimitedKGraphContentAdapter {
                 unchanged = false;
 
                 switch (((EStructuralFeature) notification.getFeature()).getFeatureID()) {
-                case KLayoutDataPackage.KSHAPE_LAYOUT__XPOS:
-                case KLayoutDataPackage.KSHAPE_LAYOUT__YPOS:
-                case KLayoutDataPackage.KSHAPE_LAYOUT__WIDTH:
-                case KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT:
+                case KGraphPackage.KSHAPE_LAYOUT__XPOS:
+                case KGraphPackage.KSHAPE_LAYOUT__YPOS:
+                case KGraphPackage.KSHAPE_LAYOUT__WIDTH:
+                case KGraphPackage.KSHAPE_LAYOUT__HEIGHT:
                     break;
                 default:
                     return;
@@ -152,14 +138,14 @@ class KGEShapeLayoutPNodeUpdater extends LimitedKGraphContentAdapter {
                 final double offsetY = localTransform.getTranslateY();
 
                 switch (notification.getFeatureID(KShapeLayout.class)) {
-                case KLayoutDataPackage.KSHAPE_LAYOUT__XPOS: {
+                case KGraphPackage.KSHAPE_LAYOUT__XPOS: {
                     final double newX = shL.getXpos();
                     if (newX != offsetX) {
                         nodeRep.setOffset(newX, offsetY);
                     }
                     break;
                 }
-                case KLayoutDataPackage.KSHAPE_LAYOUT__YPOS: {
+                case KGraphPackage.KSHAPE_LAYOUT__YPOS: {
                     final double oldY = offsetY;
                     final double newY = shL.getYpos();
                     if (newY != oldY) {
@@ -167,7 +153,7 @@ class KGEShapeLayoutPNodeUpdater extends LimitedKGraphContentAdapter {
                     }
                     break;
                 }
-                case KLayoutDataPackage.KSHAPE_LAYOUT__WIDTH: {
+                case KGraphPackage.KSHAPE_LAYOUT__WIDTH: {
                     final double oldWidth = nodeRep.getWidth();
                     final double newWidth = shL.getWidth();
                     if (oldWidth != newWidth) {
@@ -175,7 +161,7 @@ class KGEShapeLayoutPNodeUpdater extends LimitedKGraphContentAdapter {
                     }
                     break;
                 }
-                case KLayoutDataPackage.KSHAPE_LAYOUT__HEIGHT: {
+                case KGraphPackage.KSHAPE_LAYOUT__HEIGHT: {
                     final double oldHeight = nodeRep.getHeight();
                     final double newHeight = shL.getHeight();
                     if (oldHeight != newHeight) {

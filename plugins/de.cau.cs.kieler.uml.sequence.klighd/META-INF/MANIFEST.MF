@@ -21,6 +21,7 @@ Require-Bundle: javax.inject,
  org.eclipse.elk.alg.graphviz.layouter;resolution:=optional,
  org.eclipse.emf,
  org.eclipse.ui,
- org.eclipse.xtext.ui;resolution:=optional
+ org.eclipse.xtext.ui;resolution:=optional,
+ de.cau.cs.kieler.klighd.kgraph
 Import-Package: de.cau.cs.kieler.uml.sequence.text.sequence
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

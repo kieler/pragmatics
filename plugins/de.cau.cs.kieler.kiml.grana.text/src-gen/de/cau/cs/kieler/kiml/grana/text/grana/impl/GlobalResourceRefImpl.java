@@ -28,11 +28,11 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GlobalResourceRefImpl#getName <em>Name</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GlobalResourceRefImpl#getResources <em>Resources</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

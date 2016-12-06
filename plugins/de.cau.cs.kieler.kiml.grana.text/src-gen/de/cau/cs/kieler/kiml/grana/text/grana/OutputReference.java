@@ -10,10 +10,10 @@ package de.cau.cs.kieler.kiml.grana.text.grana;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.OutputReference#getOutputRef <em>Output Ref</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage#getOutputReference()
  * @model

@@ -7,13 +7,20 @@ import de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage;
 import de.cau.cs.kieler.kiml.grana.text.grana.Range;
 import de.cau.cs.kieler.kiml.grana.text.grana.RangeJob;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -21,18 +28,40 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
+ *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RangeJobImpl#isMeasureExecutionTime <em>Measure Execution Time</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RangeJobImpl#getRangeOption <em>Range Option</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RangeJobImpl#getRangeValues <em>Range Values</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RangeJobImpl#getRangeAnalysis <em>Range Analysis</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RangeJobImpl#getRangeAnalysisComponent <em>Range Analysis Component</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.RangeJobImpl#getRangeAnalyses <em>Range Analyses</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
 public class RangeJobImpl extends JobImpl implements RangeJob
 {
+  /**
+   * The default value of the '{@link #isMeasureExecutionTime() <em>Measure Execution Time</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMeasureExecutionTime()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean MEASURE_EXECUTION_TIME_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isMeasureExecutionTime() <em>Measure Execution Time</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMeasureExecutionTime()
+   * @generated
+   * @ordered
+   */
+  protected boolean measureExecutionTime = MEASURE_EXECUTION_TIME_EDEFAULT;
+
   /**
    * The default value of the '{@link #getRangeOption() <em>Range Option</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -94,6 +123,16 @@ public class RangeJobImpl extends JobImpl implements RangeJob
   protected int rangeAnalysisComponent = RANGE_ANALYSIS_COMPONENT_EDEFAULT;
 
   /**
+   * The cached value of the '{@link #getRangeAnalyses() <em>Range Analyses</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRangeAnalyses()
+   * @generated
+   * @ordered
+   */
+  protected EList<Analysis> rangeAnalyses;
+
+  /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -112,6 +151,29 @@ public class RangeJobImpl extends JobImpl implements RangeJob
   protected EClass eStaticClass()
   {
     return GranaPackage.Literals.RANGE_JOB;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public boolean isMeasureExecutionTime()
+  {
+    return measureExecutionTime;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setMeasureExecutionTime(boolean newMeasureExecutionTime)
+  {
+    boolean oldMeasureExecutionTime = measureExecutionTime;
+    measureExecutionTime = newMeasureExecutionTime;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GranaPackage.RANGE_JOB__MEASURE_EXECUTION_TIME, oldMeasureExecutionTime, measureExecutionTime));
   }
 
   /**
@@ -261,6 +323,20 @@ public class RangeJobImpl extends JobImpl implements RangeJob
    * <!-- end-user-doc -->
    * @generated
    */
+  public EList<Analysis> getRangeAnalyses()
+  {
+    if (rangeAnalyses == null)
+    {
+      rangeAnalyses = new EObjectContainmentEList<Analysis>(Analysis.class, this, GranaPackage.RANGE_JOB__RANGE_ANALYSES);
+    }
+    return rangeAnalyses;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -270,6 +346,8 @@ public class RangeJobImpl extends JobImpl implements RangeJob
         return basicSetRangeValues(null, msgs);
       case GranaPackage.RANGE_JOB__RANGE_ANALYSIS:
         return basicSetRangeAnalysis(null, msgs);
+      case GranaPackage.RANGE_JOB__RANGE_ANALYSES:
+        return ((InternalEList<?>)getRangeAnalyses()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -284,6 +362,8 @@ public class RangeJobImpl extends JobImpl implements RangeJob
   {
     switch (featureID)
     {
+      case GranaPackage.RANGE_JOB__MEASURE_EXECUTION_TIME:
+        return isMeasureExecutionTime();
       case GranaPackage.RANGE_JOB__RANGE_OPTION:
         return getRangeOption();
       case GranaPackage.RANGE_JOB__RANGE_VALUES:
@@ -292,6 +372,8 @@ public class RangeJobImpl extends JobImpl implements RangeJob
         return getRangeAnalysis();
       case GranaPackage.RANGE_JOB__RANGE_ANALYSIS_COMPONENT:
         return getRangeAnalysisComponent();
+      case GranaPackage.RANGE_JOB__RANGE_ANALYSES:
+        return getRangeAnalyses();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -301,11 +383,15 @@ public class RangeJobImpl extends JobImpl implements RangeJob
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
+      case GranaPackage.RANGE_JOB__MEASURE_EXECUTION_TIME:
+        setMeasureExecutionTime((Boolean)newValue);
+        return;
       case GranaPackage.RANGE_JOB__RANGE_OPTION:
         setRangeOption((String)newValue);
         return;
@@ -317,6 +403,10 @@ public class RangeJobImpl extends JobImpl implements RangeJob
         return;
       case GranaPackage.RANGE_JOB__RANGE_ANALYSIS_COMPONENT:
         setRangeAnalysisComponent((Integer)newValue);
+        return;
+      case GranaPackage.RANGE_JOB__RANGE_ANALYSES:
+        getRangeAnalyses().clear();
+        getRangeAnalyses().addAll((Collection<? extends Analysis>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -332,6 +422,9 @@ public class RangeJobImpl extends JobImpl implements RangeJob
   {
     switch (featureID)
     {
+      case GranaPackage.RANGE_JOB__MEASURE_EXECUTION_TIME:
+        setMeasureExecutionTime(MEASURE_EXECUTION_TIME_EDEFAULT);
+        return;
       case GranaPackage.RANGE_JOB__RANGE_OPTION:
         setRangeOption(RANGE_OPTION_EDEFAULT);
         return;
@@ -343,6 +436,9 @@ public class RangeJobImpl extends JobImpl implements RangeJob
         return;
       case GranaPackage.RANGE_JOB__RANGE_ANALYSIS_COMPONENT:
         setRangeAnalysisComponent(RANGE_ANALYSIS_COMPONENT_EDEFAULT);
+        return;
+      case GranaPackage.RANGE_JOB__RANGE_ANALYSES:
+        getRangeAnalyses().clear();
         return;
     }
     super.eUnset(featureID);
@@ -358,6 +454,8 @@ public class RangeJobImpl extends JobImpl implements RangeJob
   {
     switch (featureID)
     {
+      case GranaPackage.RANGE_JOB__MEASURE_EXECUTION_TIME:
+        return measureExecutionTime != MEASURE_EXECUTION_TIME_EDEFAULT;
       case GranaPackage.RANGE_JOB__RANGE_OPTION:
         return RANGE_OPTION_EDEFAULT == null ? rangeOption != null : !RANGE_OPTION_EDEFAULT.equals(rangeOption);
       case GranaPackage.RANGE_JOB__RANGE_VALUES:
@@ -366,6 +464,8 @@ public class RangeJobImpl extends JobImpl implements RangeJob
         return rangeAnalysis != null;
       case GranaPackage.RANGE_JOB__RANGE_ANALYSIS_COMPONENT:
         return rangeAnalysisComponent != RANGE_ANALYSIS_COMPONENT_EDEFAULT;
+      case GranaPackage.RANGE_JOB__RANGE_ANALYSES:
+        return rangeAnalyses != null && !rangeAnalyses.isEmpty();
     }
     return super.eIsSet(featureID);
   }
@@ -381,7 +481,9 @@ public class RangeJobImpl extends JobImpl implements RangeJob
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (rangeOption: ");
+    result.append(" (measureExecutionTime: ");
+    result.append(measureExecutionTime);
+    result.append(", rangeOption: ");
     result.append(rangeOption);
     result.append(", rangeAnalysisComponent: ");
     result.append(rangeAnalysisComponent);

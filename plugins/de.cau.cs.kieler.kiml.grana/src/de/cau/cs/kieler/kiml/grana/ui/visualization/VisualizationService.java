@@ -329,7 +329,7 @@ public final class VisualizationService {
          * @param theType
          *            the visualization type
          */
-        public VisualizationMethodData(final IVisualizationMethod theMethod, final boolean isSilent,
+        VisualizationMethodData(final IVisualizationMethod theMethod, final boolean isSilent,
                 final boolean isActive, final String theType) {
             this.method = theMethod;
             this.silent = isSilent;

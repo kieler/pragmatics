@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.ptolemy.klighd.transformation.extensions
 
-import org.eclipse.elk.core.util.ElkUtil
-import org.eclipse.elk.graph.KLabeledGraphElement
+import de.cau.cs.kieler.klighd.kgraph.KLabeledGraphElement
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 
 /**
  * Utility methods for handling labels used by the Ptolemy to KGraph transformation.
@@ -33,7 +33,7 @@ class LabelExtensions {
      */
     def setName(KLabeledGraphElement element, String name) {
         if (element.labels.empty) {
-            ElkUtil::createInitializedLabel(element)
+            KGraphUtil::createInitializedLabel(element)
         }
         
         element.labels.get(0).text = name

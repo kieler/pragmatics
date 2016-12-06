@@ -87,13 +87,13 @@ class GranaFormatter extends AbstractDeclarativeFormatter {
        
        // RangeJob
        c.setLinewrap(1, 1, 2).after(rangeJobAccess.nameAssignment_1)
-       c.setLinewrap(1, 1, 2).after(rangeJobAccess.resourcesKeyword_2)
-       c.setLinewrap(1, 1, 2).after(rangeJobAccess.layoutoptionsKeyword_4)
-       c.setLinewrap(1, 1, 2).after(rangeJobAccess.analysesKeyword_6)
-       c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeoptionKeyword_8)
-       c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeanalysisKeyword_11)
-       c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeOptionAssignment_9)
-       c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeAnalysisComponentNATURALTerminalRuleCall_13_1_0)
+       c.setLinewrap(1, 1, 2).after(rangeJobAccess.resourcesKeyword_3)
+       c.setLinewrap(1, 1, 2).after(rangeJobAccess.layoutoptionsKeyword_5)
+       c.setLinewrap(1, 1, 2).after(rangeJobAccess.analysesKeyword_7)
+       c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeoptionKeyword_9)
+       c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeanalysisKeyword_12_0_0)
+       c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeOptionAssignment_10)
+       c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeAnalysisComponentNATURALTerminalRuleCall_12_0_2_1_0)
        c.setLinewrap(1, 1, 2).after(rangeAccess.rule)
        
        
@@ -117,11 +117,11 @@ class GranaFormatter extends AbstractDeclarativeFormatter {
        c.setIndentationIncrement.after(regularJobAccess.analysesKeyword_8)
        c.setIndentationIncrement.after(regularJobAccess.layoutoptionsKeyword_6)
        c.setIndentationIncrement.after(rangeJobAccess.nameAssignment_1)
-       c.setIndentationIncrement.after(rangeJobAccess.resourcesKeyword_2)
-       c.setIndentationIncrement.after(rangeJobAccess.analysesKeyword_6)
-       c.setIndentationIncrement.after(rangeJobAccess.layoutoptionsKeyword_4)
-       c.setIndentationIncrement.after(rangeJobAccess.rangeoptionKeyword_8)
-       c.setIndentationIncrement.after(rangeJobAccess.rangeanalysisKeyword_11)
+       c.setIndentationIncrement.after(rangeJobAccess.resourcesKeyword_3)
+       c.setIndentationIncrement.after(rangeJobAccess.analysesKeyword_7)
+       c.setIndentationIncrement.after(rangeJobAccess.layoutoptionsKeyword_5)
+       c.setIndentationIncrement.after(rangeJobAccess.rangeoptionKeyword_9)
+       c.setIndentationIncrement.after(rangeJobAccess.rangeanalysisKeyword_12_0_0)
        
        // indentation decrements
        c.setIndentationDecrement.before(granaAccess.globalOutputsKeyword_1_0)
@@ -129,11 +129,11 @@ class GranaFormatter extends AbstractDeclarativeFormatter {
        c.setIndentationDecrement.before(regularJobAccess.layoutoptionsKeyword_6)
        c.setIndentationDecrement.before(regularJobAccess.analysesKeyword_8)
        c.setIndentationDecrement.before(regularJobAccess.outputKeyword_10)
-       c.setIndentationDecrement.before(rangeJobAccess.layoutoptionsKeyword_4)
-       c.setIndentationDecrement.before(rangeJobAccess.analysesKeyword_6)
-       c.setIndentationDecrement.before(rangeJobAccess.outputKeyword_14)
-       c.setIndentationDecrement.before(rangeJobAccess.rangeoptionKeyword_8)
-       c.setIndentationDecrement.before(rangeJobAccess.rangeanalysisKeyword_11)
+       c.setIndentationDecrement.before(rangeJobAccess.layoutoptionsKeyword_5)
+       c.setIndentationDecrement.before(rangeJobAccess.analysesKeyword_7)
+       c.setIndentationDecrement.before(rangeJobAccess.outputKeyword_13)
+       c.setIndentationDecrement.before(rangeJobAccess.rangeoptionKeyword_9)
+       c.setIndentationDecrement.before(rangeJobAccess.rangeanalysisKeyword_12_0_0)
        c.setIndentationDecrement.after(outputRule)
 	}
 }

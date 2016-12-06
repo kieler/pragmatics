@@ -27,8 +27,8 @@ import org.eclipse.elk.core.comments.DistanceHeuristic
 import org.eclipse.elk.core.comments.NodeReferenceHeuristic
 import org.eclipse.elk.core.comments.SizeEligibilityFilter
 import org.eclipse.elk.core.comments.TextPrefixFilter
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KNode
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.KEdge
 
 /**
  * Tries to infer the attachments between comment nodes and the elements they are supposed to describe.
@@ -81,51 +81,53 @@ class CommentsAttachor {
         val titleCommentFilter = injector.getInstance(typeof(PtolemyTitleCommentFilter));
         
         // Configure comment attachment
-        val attacher = new CommentAttacher()
-            .withBoundsProvider(boundsProvider)
-            .withExplicitAttachmentProvider(explicitAttachmentProvider)
-            .withAttachmentDecider(new ReferencePreferringAttachmentDecider())
-            
-            // Filters
-            .addEligibilityFilter(titleCommentFilter)
-            .addEligibilityFilter(new TextPrefixFilter()
-                .withCommentTextProvider(c | c.layout.getProperty(PtolemyProperties.COMMENT_TEXT))
-                .addPrefix("Author")  // Also matches "Authors"
-                .addPrefix("Demo created by")
-                .addPrefix("This model ")
-                .addPrefix("This submodel ")
-                .addPrefix("This example ")
-                .addPrefix("This demo ")
-                .addPrefix("Model of ")
-            )
-            .addEligibilityFilter(new SizeEligibilityFilter()
-                .withBoundsProvider(boundsProvider)
-                .withMaximumArea(maxCommentArea)
-            )
-            
-            // Heuristics
-            .addHeuristic(new NodeReferenceHeuristic()
-                .withCommentTextProvider(c | c.layout.getProperty(PtolemyProperties.COMMENT_TEXT))
-                .withNodeNameProvider(n | n.name)
-                .withBoundsProvider(boundsProvider)
-                .withMaximumAttachmentDistance(maxAttachmentDistanceForReferenceHeuristic)
-            )
-            .addHeuristic(new DistanceHeuristic()
-                .withBoundsProvider(boundsProvider)
-                .withMaximumAttachmentDistance(maxAttachmentDistance)
-            )
+//        val attacher = new CommentAttacher()
+//            .withBoundsProvider(boundsProvider)
+//            .withExplicitAttachmentProvider(explicitAttachmentProvider)
+//            .withAttachmentDecider(new ReferencePreferringAttachmentDecider())
+//            
+//            // Filters
+//            .addEligibilityFilter(titleCommentFilter)
+//            .addEligibilityFilter(new TextPrefixFilter()
+//                .withCommentTextProvider(c | c.getProperty(PtolemyProperties.COMMENT_TEXT))
+//                .addPrefix("Author")  // Also matches "Authors"
+//                .addPrefix("Demo created by")
+//                .addPrefix("This model ")
+//                .addPrefix("This submodel ")
+//                .addPrefix("This example ")
+//                .addPrefix("This demo ")
+//                .addPrefix("Model of ")
+//            )
+//            .addEligibilityFilter(new SizeEligibilityFilter()
+//                .withBoundsProvider(boundsProvider)
+//                .withMaximumArea(maxCommentArea)
+//            )
+//            
+//            // Heuristics
+//            .addHeuristic(new NodeReferenceHeuristic()
+//                .withCommentTextProvider(c | c.getProperty(PtolemyProperties.COMMENT_TEXT))
+//                .withNodeNameProvider(n | n.name)
+//                .withBoundsProvider(boundsProvider)
+//                .withMaximumAttachmentDistance(maxAttachmentDistanceForReferenceHeuristic)
+//            )
+//            .addHeuristic(new DistanceHeuristic()
+//                .withBoundsProvider(boundsProvider)
+//                .withMaximumAttachmentDistance(maxAttachmentDistance)
+//            )
 //            .addHeuristic(new AlignmentHeuristic()
 //                .withBoundsProvider(boundsProvider)
 //                .withMaximumAlignmentOffset(maxAlignmentDistance)
 //            )
         
         // Run comment attachment
-        val edges = attacher.attachComments(graph);
-        
-        for (KEdge edge : edges) {
-            val edgeRendering = createCommentEdgeRendering(edge)
-            edge.data += edgeRendering
-        }
+        // TODO Fix
+        //      Again, the problem is in the difference between the view model and the layout graph
+//        val edges = attacher.attachComments(graph);
+//        
+//        for (KEdge edge : edges) {
+//            val edgeRendering = createCommentEdgeRendering(edge)
+//            edge.data += edgeRendering
+//        }
     }
 
 

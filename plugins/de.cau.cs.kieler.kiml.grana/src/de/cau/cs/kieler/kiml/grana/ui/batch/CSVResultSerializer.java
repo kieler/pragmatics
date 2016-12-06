@@ -13,18 +13,21 @@
  */
 package de.cau.cs.kieler.kiml.grana.ui.batch;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.LinkedListMultimap;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
+import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJobResult.Range;
+import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJobResult.Simple;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.Visualization;
 import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
 
@@ -51,7 +54,22 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                 new OutputStreamWriter(outputStream, "UTF-8");
         // write the header
         writer.write("File");
-        for (AnalysisData analysis : batchResult.getAnalyses()) {
+        
+        Batch batch = batchResult.getBatch();
+        if (batch instanceof Batch.Simple) {
+            handleSimpleBatch((Batch.Simple) batch, batchResult, writer);
+        } else if (batch instanceof Batch.Range) {
+            handleRangeBatch((Batch.Range) batch, batchResult, writer);
+        }
+        
+        writer.close();
+        monitor.done();
+    }
+
+    private void handleSimpleBatch(final Batch.Simple batch, final BatchResult batchResult,
+            final OutputStreamWriter writer) throws IOException {
+        
+        for (AnalysisData analysis : batch.getAnalyses()) {
             if (analysis.getComponents().size() > 0) {
                 for (Pair<String, String> component : analysis.getComponents()) {
                     writer.write(";" + analysis.getName() + " ("
@@ -62,29 +80,16 @@ public class CSVResultSerializer implements IBatchResultSerializer {
             }
         }
         
-        // possibly write range analysis headers
-        Batch batch = batchResult.getBatch();
-        if (batch.getRangeAnalysis() != null) {
-            for (Number n : batch.getRangeValues()) {
-                writer.write(";" + n);
-            }
-        }
-        
-        // headers for execution time
-        List<String> executionTimePhases = Lists.newArrayList(batchResult.getExecutionTimePhases());
-        // sort them lexicographically 
-        Collections.sort(executionTimePhases);
-        for (String phase : executionTimePhases) {
-            writer.write(";" + phase);
-        }
         writer.write("\n");
         
         // write the job results
-        for (BatchJobResult<?> jobResult : batchResult.getJobResults()) {
+        Iterable<BatchJobResult.Simple> simpleSuccesses =
+                FluentIterable.from(batchResult.getJobResults()).filter(Simple.class);
+        for (BatchJobResult.Simple jobResult : simpleSuccesses) {
             writer.write(jobResult.getJob().getParameter().toString());
             Map<String, Object> results = jobResult.getResults();
             // basic analyses
-            for (AnalysisData analysis : batchResult.getAnalyses()) {
+            for (AnalysisData analysis : batch.getAnalyses()) {
                 Object result = results.get(analysis.getId());
                 Visualization visualization =
                         VisualizationService.getInstance().getVisualization(
@@ -92,10 +97,55 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                 String s = visualization.get(analysis, result);
                 writer.write(";" + s);
             }
+            writer.write("\n");
+        }
+    }
+    
+    private void handleRangeBatch(final Batch.Range batch, final BatchResult batchResult,
+            final OutputStreamWriter writer) throws IOException {
+
+        for (AnalysisData analysis : batch.getAnalyses()) {
+            if (analysis.getComponents().size() > 0) {
+                for (Pair<String, String> component : analysis.getComponents()) {
+                    writer.write(";" + analysis.getName() + " ("
+                            + component.getFirst() + ")");
+                }
+            } else {
+                writer.write(";" + analysis.getName());
+            }
+        }
+        // possibly write range analysis headers
+        if (batch.getRangeAnalysis() != null) {
+            for (Number n : batch.getRangeValues()) {
+                writer.write(";" + n);
+            }
+        }
+
+        writer.write("\n");
+
+        Iterable<BatchJobResult.Range> rangeSuccesses =
+                FluentIterable.from(batchResult.getJobResults()).filter(Range.class);
+        for (BatchJobResult.Range jobResult : rangeSuccesses) {
+            writer.write(jobResult.getJob().getParameter().toString());
+            Map<String, Object> results = jobResult.getResults();
             
+            // basic analyses
+            for (AnalysisData analysis : batch.getAnalyses()) {
+                Object result = results.get(analysis.getId());
+                Visualization visualization = VisualizationService.getInstance()
+                        .getVisualization(VISUALIZATION_TYPE, result);
+                String s = visualization.get(analysis, result);
+                writer.write(";" + s);
+            }
+
             // possibly append range batch results
-            if (jobResult.getJob() instanceof BatchRangeJob<?>) {
-                for (Object result : jobResult.getRangeResults()) {
+            LinkedListMultimap<MapPropertyHolder, Map<String, Object>> rangeResults =
+                    jobResult.getRangeResults();
+
+            // note that we rely on the proper iteration order of the results here
+            // which should be guaranteed by the 'LinkedListMultimap'
+            for (Map<String, Object> rangeResult : rangeResults.values()) {
+                for (Object result : rangeResult.values()) {
                     Object component = result;
                     if (result instanceof Object[]) {
                         component = ((Object[]) result)[batch.getRangeAnalysisComponent()];
@@ -106,20 +156,8 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                     writer.write(";" + text);
                 }
             }
-
-            // execution time results
-            Map<String, Double> execTimes = jobResult.getExecTimeResults();
-            if (execTimes != null) {
-                for (String phase : executionTimePhases) {
-                    Double time = execTimes.get(phase);
-                    writer.write(";" + (time != null ? time + "" : ""));
-                }
-            }
-            
             writer.write("\n");
         }
-        writer.close();
-        monitor.done();
     }
-
+    
 }

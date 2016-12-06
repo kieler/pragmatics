@@ -13,7 +13,8 @@
  */
 package de.cau.cs.kieler.klighd.krendering;
 
-import org.eclipse.elk.graph.KGraphPackage;
+import de.cau.cs.kieler.klighd.kgraph.KGraphPackage;
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -112,6 +113,16 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KPOSITION_FEATURE_COUNT = 2;
+
+    /**
+     * The meta object id for the '{@link de.cau.cs.kieler.klighd.krendering.impl.KStyleHolderImpl <em>KStyle Holder</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.klighd.krendering.impl.KStyleHolderImpl
+     * @see de.cau.cs.kieler.klighd.krendering.impl.KRenderingPackageImpl#getKStyleHolder()
+     * @generated
+     */
+    int KSTYLE_HOLDER = 46;
 
     /**
      * The meta object id for the '{@link de.cau.cs.kieler.klighd.krendering.impl.KRenderingImpl <em>KRendering</em>}' class.
@@ -3658,16 +3669,6 @@ public interface KRenderingPackage extends EPackage {
      * @ordered
      */
     int KPOINT_PLACEMENT_DATA_FEATURE_COUNT = KPLACEMENT_DATA_FEATURE_COUNT + 7;
-
-    /**
-     * The meta object id for the '{@link de.cau.cs.kieler.klighd.krendering.impl.KStyleHolderImpl <em>KStyle Holder</em>}' class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see de.cau.cs.kieler.klighd.krendering.impl.KStyleHolderImpl
-     * @see de.cau.cs.kieler.klighd.krendering.impl.KRenderingPackageImpl#getKStyleHolder()
-     * @generated
-     */
-    int KSTYLE_HOLDER = 46;
 
     /**
      * The feature id for the '<em><b>Styles</b></em>' containment reference list.

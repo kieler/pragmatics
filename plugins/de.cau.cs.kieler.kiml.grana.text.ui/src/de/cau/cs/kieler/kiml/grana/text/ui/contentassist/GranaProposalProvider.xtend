@@ -371,7 +371,11 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
             if (analysis != null) {
                 val analysisData = AnalysisService.getInstance.getAnalysis(analysis.name)
                 if (analysisData != null) {
-                    println(analysisData.components)
+                    
+                    if (analysisData == null || analysisData.components.isEmpty) {
+                        acceptor.accept(doCreateProposal("0", new StyledString("0"), null, priorityHelper.defaultPriority, context))
+                    }
+                    
                     var i = 0
                     for (c : analysisData.components) {
                         val suggestion = i + ""

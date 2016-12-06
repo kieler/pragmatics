@@ -10,11 +10,11 @@ package de.cau.cs.kieler.kiml.grana.text.grana;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.LocalResource#getPath <em>Path</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.LocalResource#getFilter <em>Filter</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage#getLocalResource()
  * @model

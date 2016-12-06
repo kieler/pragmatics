@@ -31,14 +31,15 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaImpl#getGlobalResources <em>Global Resources</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaImpl#getGloobalOutputs <em>Gloobal Outputs</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaImpl#isParallel <em>Parallel</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaImpl#isExecuteAll <em>Execute All</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaImpl#getExecute <em>Execute</em>}</li>
  *   <li>{@link de.cau.cs.kieler.kiml.grana.text.grana.impl.GranaImpl#getJobs <em>Jobs</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -63,6 +64,26 @@ public class GranaImpl extends MinimalEObjectImpl.Container implements Grana
    * @ordered
    */
   protected EList<GlobalOutputRef> gloobalOutputs;
+
+  /**
+   * The default value of the '{@link #isParallel() <em>Parallel</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isParallel()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean PARALLEL_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isParallel() <em>Parallel</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isParallel()
+   * @generated
+   * @ordered
+   */
+  protected boolean parallel = PARALLEL_EDEFAULT;
 
   /**
    * The default value of the '{@link #isExecuteAll() <em>Execute All</em>}' attribute.
@@ -158,6 +179,29 @@ public class GranaImpl extends MinimalEObjectImpl.Container implements Grana
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isParallel()
+  {
+    return parallel;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setParallel(boolean newParallel)
+  {
+    boolean oldParallel = parallel;
+    parallel = newParallel;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GranaPackage.GRANA__PARALLEL, oldParallel, parallel));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public boolean isExecuteAll()
   {
     return executeAll;
@@ -238,6 +282,8 @@ public class GranaImpl extends MinimalEObjectImpl.Container implements Grana
         return getGlobalResources();
       case GranaPackage.GRANA__GLOOBAL_OUTPUTS:
         return getGloobalOutputs();
+      case GranaPackage.GRANA__PARALLEL:
+        return isParallel();
       case GranaPackage.GRANA__EXECUTE_ALL:
         return isExecuteAll();
       case GranaPackage.GRANA__EXECUTE:
@@ -266,6 +312,9 @@ public class GranaImpl extends MinimalEObjectImpl.Container implements Grana
       case GranaPackage.GRANA__GLOOBAL_OUTPUTS:
         getGloobalOutputs().clear();
         getGloobalOutputs().addAll((Collection<? extends GlobalOutputRef>)newValue);
+        return;
+      case GranaPackage.GRANA__PARALLEL:
+        setParallel((Boolean)newValue);
         return;
       case GranaPackage.GRANA__EXECUTE_ALL:
         setExecuteAll((Boolean)newValue);
@@ -298,6 +347,9 @@ public class GranaImpl extends MinimalEObjectImpl.Container implements Grana
       case GranaPackage.GRANA__GLOOBAL_OUTPUTS:
         getGloobalOutputs().clear();
         return;
+      case GranaPackage.GRANA__PARALLEL:
+        setParallel(PARALLEL_EDEFAULT);
+        return;
       case GranaPackage.GRANA__EXECUTE_ALL:
         setExecuteAll(EXECUTE_ALL_EDEFAULT);
         return;
@@ -325,6 +377,8 @@ public class GranaImpl extends MinimalEObjectImpl.Container implements Grana
         return globalResources != null && !globalResources.isEmpty();
       case GranaPackage.GRANA__GLOOBAL_OUTPUTS:
         return gloobalOutputs != null && !gloobalOutputs.isEmpty();
+      case GranaPackage.GRANA__PARALLEL:
+        return parallel != PARALLEL_EDEFAULT;
       case GranaPackage.GRANA__EXECUTE_ALL:
         return executeAll != EXECUTE_ALL_EDEFAULT;
       case GranaPackage.GRANA__EXECUTE:
@@ -346,7 +400,9 @@ public class GranaImpl extends MinimalEObjectImpl.Container implements Grana
     if (eIsProxy()) return super.toString();
 
     StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (executeAll: ");
+    result.append(" (parallel: ");
+    result.append(parallel);
+    result.append(", executeAll: ");
     result.append(executeAll);
     result.append(')');
     return result.toString();

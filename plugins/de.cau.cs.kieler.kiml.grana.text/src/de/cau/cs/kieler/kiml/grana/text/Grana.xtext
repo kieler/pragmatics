@@ -11,13 +11,14 @@ Grana:
     ('globalResources' (globalResources+=GlobalResourceRef)*)?
     ('globalOutputs' (gloobalOutputs+=GlobalOutputRef)*)?
     
-    ('execute' (executeAll ?= 'all' | (execute+=[Job | ID])+))
+    ('execute' (parallel?='parallel')?
+              (executeAll ?= 'all' | (execute+=[Job | ID])+))
     
     (jobs+=Job)+
 ;
 
 Job:
-    RegularJob | RangeJob
+    RegularJob | RangeJob | CompareJob
 ;
 
 RegularJob:
@@ -37,11 +38,29 @@ RegularJob:
         (analyses+=Analysis)+
         
     'output'
-        output=Output
+        outputType=OutputType? output=Output
+;
+
+CompareJob:
+    'comparejob' name=ID
+    
+    'resources' (resources+=Resource)+
+    
+    'layoutoptions'
+        (layoutOptions+=KIdentifier)
+        (layoutOptions+=KIdentifier)
+    
+    'analyses'
+        (analyses+=Analysis)+
+        
+    'output'
+        outputType=OutputType? output=Output
 ;
 
 RangeJob:
     'rangejob' name=ID
+    
+    (measureExecutionTime ?= 'measureExecutionTime')?
     
     'resources' (resources+=Resource)+
     
@@ -55,12 +74,15 @@ RangeJob:
         rangeOption=QualifiedID
         rangeValues=Range
             
-    'rangeanalysis'
+    (('rangeanalysis'
         rangeAnalysis=Analysis
-        ('component' rangeAnalysisComponent=NATURAL)?
+        ('component' rangeAnalysisComponent=NATURAL)?)
+     |
+     'rangeanalyses'
+        (rangeAnalyses+=Analysis)+)
     
     'output'
-        output=Output
+        outputType=OutputType? output=Output
 ;
 
 Range:
@@ -118,6 +140,10 @@ OutputReference:
 
 LocalOutput:
     path=STRING
+;
+
+enum OutputType:
+    csv | json // first literal is default
 ;
 
 Analysis:

@@ -21,15 +21,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.LayoutConfigurator;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataPackage;
-import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.core.util.WrappedException;
-import org.eclipse.elk.graph.KGraphData;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KGraphPackage;
-import org.eclipse.elk.graph.KNode;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
@@ -48,6 +41,11 @@ import de.cau.cs.kieler.klighd.internal.ILayoutRecorder;
 import de.cau.cs.kieler.klighd.internal.ISynthesis;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.internal.util.SourceModelTrackingAdapter;
+import de.cau.cs.kieler.klighd.kgraph.KGraphData;
+import de.cau.cs.kieler.klighd.kgraph.KGraphElement;
+import de.cau.cs.kieler.klighd.kgraph.KGraphPackage;
+import de.cau.cs.kieler.klighd.kgraph.KNode;
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil;
 import de.cau.cs.kieler.klighd.syntheses.DuplicatingDiagramSynthesis;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
@@ -157,7 +155,7 @@ public class ViewContext extends MapPropertyHolder {
      * @return a new empty view model root node
      */
     private KNode createViewModel() {
-        return ElkUtil.createInitializedNode();
+        return KGraphUtil.createInitializedNode();
     }
 
     /**
@@ -643,15 +641,11 @@ public class ViewContext extends MapPropertyHolder {
      *            a member of the view model, must not by <code>null</code>
      */
     public void associateSourceTargetPair(final Object source, final EObject target) {
-        if (KLayoutDataPackage.eINSTANCE.getKLayoutData().isInstance(target)) {
-            return;
-        }
         if (KGraphPackage.eINSTANCE.getKGraphData().isInstance(target)) {
             ((KGraphData) target).setProperty(KlighdInternalProperties.MODEL_ELEMEMT, source);
 
         } else if (KGraphPackage.eINSTANCE.getKGraphElement().isInstance(target)) {
-            ((KGraphElement) target).getData(KLayoutData.class).setProperty(
-                    KlighdInternalProperties.MODEL_ELEMEMT, source);
+            ((KGraphElement) target).setProperty(KlighdInternalProperties.MODEL_ELEMEMT, source);
         }
     }
 

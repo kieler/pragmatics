@@ -5,6 +5,7 @@ package de.cau.cs.kieler.kiml.grana.text.serializer;
 
 import com.google.inject.Inject;
 import de.cau.cs.kieler.kiml.grana.text.grana.Analysis;
+import de.cau.cs.kieler.kiml.grana.text.grana.CompareJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.FloatRange;
 import de.cau.cs.kieler.kiml.grana.text.grana.GlobalOutputRef;
 import de.cau.cs.kieler.kiml.grana.text.grana.GlobalResourceRef;
@@ -50,6 +51,9 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 			switch (semanticObject.eClass().getClassifierID()) {
 			case GranaPackage.ANALYSIS:
 				sequence_Analysis(context, (Analysis) semanticObject); 
+				return; 
+			case GranaPackage.COMPARE_JOB:
+				sequence_CompareJob(context, (CompareJob) semanticObject); 
 				return; 
 			case GranaPackage.FLOAT_RANGE:
 				sequence_FloatRange(context, (FloatRange) semanticObject); 
@@ -124,6 +128,27 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	
 	/**
 	 * Contexts:
+	 *     Job returns CompareJob
+	 *     CompareJob returns CompareJob
+	 *
+	 * Constraint:
+	 *     (
+	 *         name=ID 
+	 *         resources+=Resource+ 
+	 *         layoutOptions+=KIdentifier 
+	 *         layoutOptions+=KIdentifier 
+	 *         analyses+=Analysis+ 
+	 *         outputType=OutputType? 
+	 *         output=Output
+	 *     )
+	 */
+	protected void sequence_CompareJob(ISerializationContext context, CompareJob semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Range returns FloatRange
 	 *     FloatRange returns FloatRange
 	 *
@@ -173,7 +198,7 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *     Grana returns Grana
 	 *
 	 * Constraint:
-	 *     (globalResources+=GlobalResourceRef* gloobalOutputs+=GlobalOutputRef* (executeAll?='all' | execute+=[Job|ID]+) jobs+=Job+)
+	 *     (globalResources+=GlobalResourceRef* gloobalOutputs+=GlobalOutputRef* parallel?='parallel'? (executeAll?='all' | execute+=[Job|ID]+) jobs+=Job+)
 	 */
 	protected void sequence_Grana(ISerializationContext context, Grana semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -318,13 +343,14 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 * Constraint:
 	 *     (
 	 *         name=ID 
+	 *         measureExecutionTime?='measureExecutionTime'? 
 	 *         resources+=Resource+ 
 	 *         layoutOptions+=KIdentifier+ 
 	 *         analyses+=Analysis+ 
 	 *         rangeOption=QualifiedID 
 	 *         rangeValues=Range 
-	 *         rangeAnalysis=Analysis 
-	 *         rangeAnalysisComponent=NATURAL? 
+	 *         ((rangeAnalysis=Analysis rangeAnalysisComponent=NATURAL?) | rangeAnalyses+=Analysis+) 
+	 *         outputType=OutputType? 
 	 *         output=Output
 	 *     )
 	 */
@@ -346,6 +372,7 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *         resources+=Resource+ 
 	 *         layoutOptions+=KIdentifier+ 
 	 *         analyses+=Analysis+ 
+	 *         outputType=OutputType? 
 	 *         output=Output
 	 *     )
 	 */

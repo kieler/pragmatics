@@ -21,14 +21,12 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.LayoutConfigurator;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
 import org.eclipse.elk.core.service.ElkServicePlugin;
 import org.eclipse.elk.core.util.IElkCancelIndicator;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KNode;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
@@ -42,6 +40,7 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.klighd.internal.ILayoutConfigProvider;
 import de.cau.cs.kieler.klighd.internal.ILayoutRecorder;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
+import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 
 /**
@@ -908,28 +907,26 @@ public final class LightDiagramServices {
 
         final ILayoutRecorder recorder = theViewContext.getLayoutRecorder();
         final KNode viewModel = theViewContext.getViewModel();
-        final KLayoutData layoutData =
-                viewModel != null ? viewModel.getData(KLayoutData.class) : null;
 
-        if (layoutData != null) {
+        if (viewModel != null) {
             theViewContext.setProperty(KlighdInternalProperties.NEXT_ZOOM_STYLE,
                     config.zoomStyle());
             theViewContext.setProperty(KlighdInternalProperties.NEXT_FOCUS_NODE,
                     config.focusNode());
-
+    
             // Activate the ELK Service plug-in so all layout options are loaded
             ElkServicePlugin.getInstance();
-
+    
             // Our parameters for the layout run
             Parameters layoutParameters = new Parameters();
             final LayoutConfigurator extendedConfigurator = layoutParameters.addLayoutRun();
-
+    
             // Animation
             final boolean doAnimate = config.animate() != null ? config.animate().booleanValue()
                     : KlighdPlugin.getDefault().getPreferenceStore()
                             .getBoolean(KlighdPreferences.ANIMATE_LAYOUT);
             layoutParameters.getGlobalSettings().setProperty(CoreOptions.ANIMATE, doAnimate);
-
+    
             // Animation time properties
             if (config.animationTimeFactor() != null) {
                     layoutParameters.getGlobalSettings().setProperty(CoreOptions.ANIM_TIME_FACTOR, 
@@ -947,32 +944,32 @@ public final class LightDiagramServices {
             // Copy global properties from root node. This might overwrite
             // options defined by the LightDiagramLayoutConfig
             for (@SuppressWarnings("rawtypes") IProperty property : GLOBALOPTIONS) {
-                if (layoutData.getProperties().containsKey(property)) {
+                if (viewModel.getProperties().containsKey(property)) {
                     layoutParameters.getGlobalSettings().setProperty(
-                            property, layoutData.getProperty(property));
+                            property, viewModel.getProperty(property));
                 }
             }
-
+    
             if (thePart instanceof ILayoutConfigProvider) {
                 extendedConfigurator
                         .overrideWith(((ILayoutConfigProvider) thePart).getLayoutConfig());
             }
-
+    
             if (config.options() != null) {
                 for (LayoutConfigurator c : Collections2.filter(config.options(),
                         Predicates.notNull())) {
                     extendedConfigurator.overrideWith(c);
                 }
             }
-
+    
             final List<? extends LayoutConfigurator> additionalConfigs =
                     theViewContext.getAdditionalLayoutConfigs();
-
+    
             final Object diagramPart = recorder != null ? recorder : theViewContext;
-
+    
             final IElkCancelIndicator cancelationIndicator =
                     thePart != null ? new DispositionAwareCancelationHandle(thePart) : null;
-
+    
             if (additionalConfigs.isEmpty()) {
                 DiagramLayoutEngine.invokeLayout(thePart, diagramPart, cancelationIndicator,
                         layoutParameters);
@@ -980,16 +977,16 @@ public final class LightDiagramServices {
                 for (LayoutConfigurator c : additionalConfigs) {
                     layoutParameters.addLayoutRun(c);
                 }
-
+    
                 DiagramLayoutEngine.invokeLayout(thePart, diagramPart, cancelationIndicator,
                         layoutParameters);
             }
-
         } else {
             if (recorder != null) {
                 recorder.stopRecording(config.zoomStyle(), null, 0);
             }
         }
+        
     }
 
     private static Pair<IDiagramWorkbenchPart, ViewContext> determineDWPandVC(

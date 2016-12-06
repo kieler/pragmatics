@@ -47,9 +47,10 @@ final class ExplicitPtolemyAttachmentProvider implements IExplicitAttachmentProv
 
             // Look for siblings of the comment node that have the correct name
             for (sibling : comment.parent.children) {
-                if (sibling.name.equals(relativeTo.value)) {
-                    return sibling
-                }
+                // TODO Fix this
+//                if (sibling.name.equals(relativeTo.value)) {
+//                    return sibling
+//                }
             }
         }
         
