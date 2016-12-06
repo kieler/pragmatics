@@ -6,16 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphFactory;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.impl.KGraphFactoryImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
+import de.cau.cs.kieler.klighd.kgraph.KEdge;
+import de.cau.cs.kieler.klighd.kgraph.KEdgeLayout;
+import de.cau.cs.kieler.klighd.kgraph.KLayoutData;
+import de.cau.cs.kieler.klighd.kgraph.KNode;
+import de.cau.cs.kieler.klighd.kgraph.KShapeLayout;
+import de.cau.cs.kieler.klighd.kgraph.impl.KGraphFactoryImpl;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 
 /*
@@ -91,20 +90,20 @@ public class HierachicalKGraphSynthesis {
         for (KNode node : allNodes) {
             for (KNode childOfChild : node.getChildren()) {
                 childOfChild.getChildren().clear();
-                KLayoutData layoutDataChildOfChild = childOfChild.getData(KLayoutData.class);
-                layoutDataChildOfChild.setProperty(KlighdProperties.COLLAPSED_RENDERING, true);
-                layoutDataChildOfChild.setProperty(KlighdProperties.EXPANDED_RENDERING, false);
-                layoutDataChildOfChild.setProperty(KlighdProperties.EXPAND, true);
+                //KLayoutData layoutDataChildOfChild = childOfChild.getData(KLayoutData.class);
+                node.setProperty(KlighdProperties.COLLAPSED_RENDERING, true);
+                node.setProperty(KlighdProperties.EXPANDED_RENDERING, false);
+                node.setProperty(KlighdProperties.EXPAND, true);
             }
 
             // try to expand all the original children
-            KLayoutData layoutDataNode = node.getData(KLayoutData.class);
-            layoutDataNode.setProperty(KlighdProperties.COLLAPSED_RENDERING, false);
-            layoutDataNode.setProperty(KlighdProperties.EXPANDED_RENDERING, true);
-            layoutDataNode.setProperty(KlighdProperties.EXPAND, true);
-            KShapeLayout shape = node.getData(KShapeLayout.class);
-            shape.setHeight(200.0f);
-            shape.setWidth(200.0f);
+//            KLayoutData layoutDataNode = node.getData(KLayoutData.class);
+            node.setProperty(KlighdProperties.COLLAPSED_RENDERING, false);
+            node.setProperty(KlighdProperties.EXPANDED_RENDERING, true);
+            node.setProperty(KlighdProperties.EXPAND, true);
+//            KShapeLayout shape = node.getData(KShapeLayout.class);
+            node.setHeight(200.0f);
+            node.setWidth(200.0f);
         }
     }
 
@@ -118,8 +117,8 @@ public class HierachicalKGraphSynthesis {
 
             // create an edge
             KEdge edge = KGraphFactoryImpl.eINSTANCE.createKEdge();
-            KEdgeLayout edgeLayout = KLayoutDataFactory.eINSTANCE.createKEdgeLayout();
-            edge.getData().add(edgeLayout);
+//            KEdgeLayout edgeLayout = KLayoutDataFactory.eINSTANCE.createKEdgeLayout();
+//            edge.getData().add(edgeLayout);
 
             edge.setSource(parent);
             edge.setTarget(child);
