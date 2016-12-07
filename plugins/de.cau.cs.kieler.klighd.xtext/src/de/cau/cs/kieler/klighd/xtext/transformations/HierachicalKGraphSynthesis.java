@@ -68,8 +68,12 @@ public class HierachicalKGraphSynthesis {
             KNode copy;
             // Remove useless blue boxes, if there is only one expandable child inside
             if(!(children.size() == 1 && !children.get(0).getChildren().isEmpty())) {
+                clearGrandchildren(child);
                 copy = (KNode) copier.copy(child); 
             } else {
+                for(KNode grandChild : child.getChildren()) {
+                    clearGrandchildren(grandChild);
+                }
                 copy = (KNode) copier.copy(child.getChildren().get(0));
             }
             
@@ -94,11 +98,11 @@ public class HierachicalKGraphSynthesis {
         for (KNode child : parent.getChildren()) {
             copiedChildren.addAll(recursiveTraversal(child));
             
-            List<KNode> children = child.getChildren();
+            List<KNode> grandChildren = child.getChildren();
 
             // Ignore blue boxes and copied only the child inside
-            if(!(children.size() == 1 && !children.get(0).getChildren().isEmpty())) {
-                if (!child.getChildren().isEmpty()) {
+            if(!(grandChildren.size() == 1 && !grandChildren.get(0).getChildren().isEmpty())) {
+                if (!grandChildren.isEmpty()) {
                     
                     // extract/copy content of children
                     
@@ -120,42 +124,11 @@ public class HierachicalKGraphSynthesis {
         return copiedChildren;
     }
 
-    private static List<KNode> recursiveTraversalOld(final KNode parent) {
-        List<KNode> copiedChildren = new ArrayList<>();
-
-        for (KNode child : parent.getChildren()) {
-            List<KNode> children = child.getChildren();
-            
-            // Remove useless blue boxes, if there is only one expandable child inside
-            if(children.size() == 1 && !children.get(0).getChildren().isEmpty()) {
-                System.out.println("hier");
-                copiedChildren.addAll(recursiveTraversalOld(child));
-            } else {
-                
-                if (!child.getChildren().isEmpty()) {
-                    
-                    // extract/copy content of children
-                    Copier copier = new Copier();
-                    KNode copy = (KNode) copier.copy(child);
-                    copier.copyReferences();
-                    
-                    // delete the existing edges for the copy
-                    if (copy.getOutgoingEdges() != null) {
-                        copy.getOutgoingEdges().clear();
-                    }
-                    if (copy.getIncomingEdges() != null) {
-                        copy.getIncomingEdges().clear();
-                    }
-                    copiedChildren.add(copy);
-                    parents.put(copy, parent);
-                    
-                    copiedChildren.addAll(recursiveTraversalOld(copy));
-                }
-            }
-        }
-
-        return copiedChildren;
-    }    
+    private static void clearGrandchildren(KNode child) {
+        for(KNode grandChild : child.getChildren()) {
+            grandChild.getChildren().clear();
+        }      
+    }
     
     /**
      * Delete all the deeper hierachy levels of the copied children.
