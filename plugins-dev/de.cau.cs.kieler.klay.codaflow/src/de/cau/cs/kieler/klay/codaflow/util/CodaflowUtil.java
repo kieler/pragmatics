@@ -52,10 +52,10 @@ public final class CodaflowUtil {
         c.getSize().y = k.getHeight();
 
         // insets
-        KInsets insets = k.getInsets();
+        KInsets insets = k.getPadding();
         if (insets == null) {
             insets = KLayoutDataFactory.eINSTANCE.createKInsets();
-            k.setInsets(insets);
+            k.setPadding(insets);
         }
         c.getInsets().left = insets.getLeft();
         c.getInsets().right = insets.getRight();

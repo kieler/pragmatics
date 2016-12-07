@@ -280,7 +280,7 @@ public class LibavoidGraph {
     private void transformHierarchicalParent(final KNode parent) {
 
         KShapeLayout shape = parent.getData(KShapeLayout.class);
-        KInsets insets = shape.getInsets();
+        KInsets insets = shape.getPadding();
         float borderSpacing = shape.getProperty(LayoutOptions.BORDER_SPACING);
 
         // offset each side by the shape buffer distance to let edges route properly
