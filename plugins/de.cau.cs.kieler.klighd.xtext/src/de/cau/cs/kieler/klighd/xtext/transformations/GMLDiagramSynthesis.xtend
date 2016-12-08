@@ -307,7 +307,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
             n.centerNodes    
         ]
         
-        val borderSpacing = parent.getProperty(CoreOptions::SPACING_BORDER)
+        val padding = parent.getProperty(CoreOptions.PADDING)
         
         // minX and minY are determined
         parent.children.forEach[ n |
@@ -315,8 +315,8 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
             
             if (pos != null) {
                 // gml specifies center positions
-                pos.x = -minX + pos.x - n.width / 2 + borderSpacing
-                pos.y = -minY + pos.y - n.height / 2 + borderSpacing
+                pos.x = -minX + pos.x - n.width / 2 + padding.left
+                pos.y = -minY + pos.y - n.height / 2 + padding.top
             }
             
             // move all the bend points
