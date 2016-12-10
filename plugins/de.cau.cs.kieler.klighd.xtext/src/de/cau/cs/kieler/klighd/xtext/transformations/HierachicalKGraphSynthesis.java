@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
+import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
@@ -15,6 +16,7 @@ import de.cau.cs.kieler.klighd.kgraph.KLayoutData;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.KShapeLayout;
 import de.cau.cs.kieler.klighd.kgraph.impl.KGraphFactoryImpl;
+import de.cau.cs.kieler.klighd.krendering.KRectangle;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 
 /*
@@ -117,6 +119,20 @@ public class HierachicalKGraphSynthesis {
                     }
                     copiedChildren.add(copy);
                     parents.put(copy, parent);
+
+                    // Display expandable Nodes smaller without their content.
+                    // TODO shrink size of root node.
+                    for (KNode k : grandChildren) {
+                        Map<IProperty<?>, Object> map = k.getData(KRectangle.class).getAllProperties();
+                        if (!map.isEmpty()) {
+                            for (Map.Entry<IProperty<?>, Object> entry : map.entrySet()) {
+                                if(entry.getKey().toString().equals("de.cau.cs.kieler.klighd.collapsedRendering")) {
+                                    k.setHeight(200.0f);
+                                    k.setWidth(200.0f);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
