@@ -55,30 +55,30 @@ public final class AlgorithmSetup {
     // general options used for multiple algorithms
     
     /** Spacing of edge labels to the edge. */
-    public static final IProperty<Float> LABEL_EDGE_DIST = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance", 15.0f);
+    public static final IProperty<Double> LABEL_EDGE_DIST = new Property<Double>(
+            "de.cau.cs.kieler.kiml.ogdf.option.labelEdgeDistance", 15.0);
     /** Distance of edge labels to the nodes. */
-    public static final IProperty<Float> LABEL_MARGIN_DIST = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance", 15.0f);
+    public static final IProperty<Double> LABEL_MARGIN_DIST = new Property<Double>(
+            "de.cau.cs.kieler.kiml.ogdf.option.labelMarginDistance", 15.0);
     /** Whether edge labels shall be processed. */
     public static final IProperty<Boolean> PLACE_LABELS = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.placeLabels", true);
     
     /** The targeted aspect ratio for the whole drawing. */
-    public static final IProperty<Float> ASPECT_RATIO = new Property<Float>(
-            CoreOptions.ASPECT_RATIO, 1.3f);
+    public static final IProperty<Double> ASPECT_RATIO = new Property<Double>(
+            CoreOptions.ASPECT_RATIO, 1.3);
     /** Factor for the spacing between connected components. */
-    public static final IProperty<Float> MIN_DIST_CC = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
+    public static final IProperty<Double> MIN_DIST_CC = new Property<Double>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0);
     /** Factor for the minimal distance between father and child components. */
-    public static final IProperty<Float> LAYER_DISTANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
+    public static final IProperty<Double> LAYER_DISTANCE = new Property<Double>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0);
     /** The number of iterations performed by the algorithm. */
     public static final IProperty<Integer> ITERATIONS = new Property<Integer>(
             "de.cau.cs.kieler.kiml.ogdf.option.iterations");
     /** Tolerance below which the system is regarded stable and the optimization is stopped. */
-    public static final IProperty<Float> STOP_TOLERANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.stopTolerance", 0.001f);
+    public static final IProperty<Double> STOP_TOLERANCE = new Property<Double>(
+            "de.cau.cs.kieler.kiml.ogdf.option.stopTolerance", 0.001);
     /** Determines how many times the crossing minimization phase (Sugiyama) or planar subgraph
      *  phase (Planarization) is repeated. */
     public static final IProperty<Integer> RUNS = new Property<Integer>(
@@ -90,7 +90,7 @@ public final class AlgorithmSetup {
     // options for Sugiyama layouter
     
     /** Default value for the 'nodeDistance' option. */
-    private static final float DEF_NODE_DISTANCE = 16.0f;
+    private static final double DEF_NODE_DISTANCE = 16.0;
     /** The number of times that the number of crossings may not decrease after a complete top-down
      *  bottom-up traversal, before a run is terminated. */
     public static final IProperty<Integer> FAILS = new Property<Integer>(
@@ -115,7 +115,7 @@ public final class AlgorithmSetup {
     // options for planarization layouter
     
     /** Default value for the 'separation' option. */
-    private static final float DEF_PLAN_SEPARATION = 20.0f;
+    private static final double DEF_PLAN_SEPARATION = 20.0;
     /** If set to true, a preprocessing for cliques (complete subgraphs) is performed and cliques
      *  will be laid out in a special form (straight-line, not orthogonal). */
     public static final IProperty<Boolean> PREPROCESS_CLIQUES = new Property<Boolean>(
@@ -161,48 +161,48 @@ public final class AlgorithmSetup {
     // options for Fruchterman & Reingold layouter
     
     /** The fineness option used in the Fruchterman-Reingold algorithm. */
-    public static final IProperty<Float> FINENESS = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.fineness", 0.51f);
+    public static final IProperty<Double> FINENESS = new Property<Double>(
+            "de.cau.cs.kieler.kiml.ogdf.option.fineness", 0.51);
     /** If set to true, small random perturbations are performed. */
     public static final IProperty<Boolean> NOISE = new Property<Boolean>(
             "de.cau.cs.kieler.kiml.ogdf.option.noise", true);
     /** Default value for the 'minDistCC' option. */
-    private static final float DEF_MIN_DIST_CC = 20.0f;
+    private static final double DEF_MIN_DIST_CC = 20.0;
     /** Factor for scaling the bounding box of the initial layout. */
-    public static final IProperty<Float> SCALE_FUNCTION_FACTOR = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.scaleFunctionFactor", 8.0f);
+    public static final IProperty<Double> SCALE_FUNCTION_FACTOR = new Property<Double>(
+            "de.cau.cs.kieler.kiml.ogdf.option.scaleFunctionFactor", 8.0);
     
     // options for GEM layouter
     
     /** Default value for the 'desiredLength' option. */
-    private static final float DEF_DESIRED_LENGTH = 30.0f;
+    private static final double DEF_DESIRED_LENGTH = 30.0;
     /** The maximal number of rounds per node. */
-    public static final IProperty<Integer> NUMBER_OF_ROUNDS = new Property<Integer>(
+    public static final IProperty<Integer> NUMBER_OF_ROUNDS = new Property<>(
             "de.cau.cs.kieler.kiml.ogdf.option.numberOfRounds", 20000);
     /** The minimal temperature. */
-    public static final IProperty<Float> MINIMAL_TEMPERATURE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minimalTemperature", 0.005f);
+    public static final IProperty<Double> MINIMAL_TEMPERATURE = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minimalTemperature", 0.005);
     /** The initial temperature. */
-    public static final IProperty<Float> INITIAL_TEMPERATURE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.initialTemperature", 10.0f);
+    public static final IProperty<Double> INITIAL_TEMPERATURE = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.initialTemperature", 10.0);
     /** The gravitational constant. */
-    public static final IProperty<Float> GRAVITATIONAL_CONSTANT = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.gravitationalConstant", 0.0625f);
+    public static final IProperty<Double> GRAVITATIONAL_CONSTANT = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.gravitationalConstant", 0.0625);
     /** The maximal disturbance. */
-    public static final IProperty<Float> MAXIMAL_DISTURBANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance", 0.0f);
+    public static final IProperty<Double> MAXIMAL_DISTURBANCE = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.maximalDisturbance", 0.0);
     /** The opening angle for rotations (in radians). */
-    public static final IProperty<Float> ROTATION_ANGLE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.rotationAngle", 1.047f);
+    public static final IProperty<Double> ROTATION_ANGLE = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.rotationAngle", 1.047);
     /** The opening angle for oscillations (in radians). */
-    public static final IProperty<Float> OSCILLATION_ANGLE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle", 1.57f);
+    public static final IProperty<Double> OSCILLATION_ANGLE = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.oscillationAngle", 1.57);
     /** The rotation sensitivity. */
-    public static final IProperty<Float> ROTATION_SENSITIVITY = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity", 0.01f);
+    public static final IProperty<Double> ROTATION_SENSITIVITY = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.rotationSensitivity", 0.01);
     /** The oscillation sensitivity. */
-    public static final IProperty<Float> OSCILLATION_SENSITIVITY = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.oscillationSensitivity", 0.3f);
+    public static final IProperty<Double> OSCILLATION_SENSITIVITY = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.oscillationSensitivity", 0.3);
     /** The used formula for attraction. */
     public static final IProperty<AttractionFormula> ATTRACTION_FORMULA =
             new Property<AttractionFormula>("de.cau.cs.kieler.kiml.ogdf.option.attractionFormula",
@@ -211,40 +211,40 @@ public final class AlgorithmSetup {
     // options for circular layouter
     
     /** Default value for the 'minDistCircle' option. */
-    private static final float DEF_MIN_DIST_CIRCLE = 20.0f;
+    private static final double DEF_MIN_DIST_CIRCLE = 20.0;
     /** Factor for the minimal distance between father and child components. */
-    public static final IProperty<Float> MIN_DIST_LEVEL = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
+    public static final IProperty<Double> MIN_DIST_LEVEL = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0);
     /** factor for 'minDistSibling' option. */
-    public static final IProperty<Float> MIN_DIST_SIBLING = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance", 1.0f);
+    public static final IProperty<Double> MIN_DIST_SIBLING = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance", 1.0);
     
     // options for tree layouter
     
     /** Default value for the 'siblingDistance' option. */
-    private static final float DEF_SIBLING_DISTANCE = 20.0f;
+    private static final double DEF_SIBLING_DISTANCE = 20.0;
     /** factor for 'levelDistance' option. */
-    public static final IProperty<Float> LEVEL_DISTANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0f);
+    public static final IProperty<Double> LEVEL_DISTANCE = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistLevel", 1.0);
     /** Factor for the horizontal spacing between adjacent subtrees. */
-    public static final IProperty<Float> SUBTREE_DISTANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance", 1.0f);
+    public static final IProperty<Double> SUBTREE_DISTANCE = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.subtreeDistance", 1.0);
     /** factor for 'treeDistance' option. */
-    public static final IProperty<Float> TREE_DISTANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
+    public static final IProperty<Double> TREE_DISTANCE = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0);
     
     // options for radial tree layouter
     
     /** Default value for the 'levelDistance' option. */
-    private static final float DEF_TREE_SPACING = 50.0f;
+    private static final double DEF_TREE_SPACING = 50.0;
     /** factor for 'ccDistance' option. */
-    public static final IProperty<Float> CC_DISTANCE = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0f);
+    public static final IProperty<Double> CC_DISTANCE = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.minDistCC", 1.0);
     
     // options for upward planarization layouter
     
     /** Default value for the 'spacing' option. */
-    private static final float DEF_UPL_SPACING = 16.0f;
+    private static final double DEF_UPL_SPACING = 16.0;
     
     // options for fast multipole layouter
     
@@ -255,7 +255,7 @@ public final class AlgorithmSetup {
     // options for the Kamada & Kawai layouter
     
     /** Default value for the 'edgeLength' option. */
-    private static final float DEF_KK_EDGE_LENGTH = 30.0f;
+    private static final double DEF_KK_EDGE_LENGTH = 30.0;
     
     // options for the stress majorization layouter
     
@@ -269,16 +269,16 @@ public final class AlgorithmSetup {
     // options for dominance and visibility layouters
     
     /** Default value for the 'gridDistance' option. */
-    private static final float DEF_GRID_DISTANCE = 10.0f;
+    private static final double DEF_GRID_DISTANCE = 10.0;
     
     // options for FPP and Schnyder and other grid-based layouters
     
     /** Default value for the 'separation' option. */
-    private static final float DEF_GRID_SEPARATION = 30.0f;
+    private static final double DEF_GRID_SEPARATION = 30.0;
     /** Ratio of the nodes on the external face giving a limit for the number of nodes placed
      *  on the base line. */
-    public static final IProperty<Float> BASE_RATIO = new Property<Float>(
-            "de.cau.cs.kieler.kiml.ogdf.option.baseRatio", 0.33f);
+    public static final IProperty<Double> BASE_RATIO = new Property<>(
+            "de.cau.cs.kieler.kiml.ogdf.option.baseRatio", 0.33);
     /** */
     public static final IProperty<CrossBeautifModule> CROSS_BEAUTIF = new Property<CrossBeautifModule>(
             "de.cau.cs.kieler.kiml.ogdf.option.crossingBeautifier", CrossBeautifModule.LOCAL_STRETCH);
@@ -312,13 +312,13 @@ public final class AlgorithmSetup {
         boolean processLabels = layoutNode.getProperty(PLACE_LABELS);
         if (processLabels) {
             // edge distance
-            float edgeDistance = layoutNode.getProperty(LABEL_EDGE_DIST);
+            double edgeDistance = layoutNode.getProperty(LABEL_EDGE_DIST);
             if (edgeDistance < 0) {
                 edgeDistance = LABEL_EDGE_DIST.getDefault();
             }
             comm.addOption(OgdfServer.OPTION_LABEL_EDGE_DISTANCE, edgeDistance);
             // margin distance
-            float marginDistance = layoutNode.getProperty(LABEL_MARGIN_DIST);
+            double marginDistance = layoutNode.getProperty(LABEL_MARGIN_DIST);
             if (marginDistance < 0) {
                 marginDistance = LABEL_MARGIN_DIST.getDefault();
             }
@@ -328,10 +328,10 @@ public final class AlgorithmSetup {
         switch (algorithm) {
         case SUGIYAMA: {
             // page ratio
-            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
+            double pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // node distance
-            float nodeDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double nodeDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (nodeDistance < 0) {
                 nodeDistance = DEF_NODE_DISTANCE;
             }
@@ -353,10 +353,10 @@ public final class AlgorithmSetup {
             comm.addOption(OgdfServer.OPTION_ARRANGE_CC,
                     arrangeCCs != null && arrangeCCs.booleanValue());
             // minimal distance of connected components
-            float minDistCCFactor = layoutNode.getProperty(MIN_DIST_CC);
+            double minDistCCFactor = layoutNode.getProperty(MIN_DIST_CC);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, nodeDistance * minDistCCFactor);
             // layer distance
-            float layerDistanceFactor = layoutNode.getProperty(LAYER_DISTANCE);
+            double layerDistanceFactor = layoutNode.getProperty(LAYER_DISTANCE);
             comm.addOption(OgdfServer.OPTION_LAYER_DISTANCE, nodeDistance * layerDistanceFactor);
             // acyclic subgraph module
             AcyclicSubgraphModule acyclicSubgraphModule = layoutNode.getProperty(ACYCLIC_SUBGRAPH);
@@ -376,10 +376,10 @@ public final class AlgorithmSetup {
             
         case PLANARIZATION: {
             // page ratio
-            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
+            double pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // minimal spacing
-            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (separation < 0) {
                 separation = DEF_PLAN_SEPARATION;
             }
@@ -424,7 +424,7 @@ public final class AlgorithmSetup {
             
         case DAVIDSON_HAREL: {
             // desired edge length
-            float desiredEdgeLength = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double desiredEdgeLength = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (desiredEdgeLength < 0) {
                 desiredEdgeLength = DEF_DESIRED_EDGE_LENGTH;
             }
@@ -440,7 +440,7 @@ public final class AlgorithmSetup {
             
         case FRUCHTERMAN_REINGOLD: {
             // page ratio
-            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
+            double pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // iterations
             Integer iterations = layoutNode.getProperty(ITERATIONS);
@@ -448,29 +448,29 @@ public final class AlgorithmSetup {
                 comm.addOption(OgdfServer.OPTION_ITERATIONS, iterations);
             }
             // fineness
-            float fineness = layoutNode.getProperty(FINENESS);
+            double fineness = layoutNode.getProperty(FINENESS);
             comm.addOption(OgdfServer.OPTION_FINENESS, fineness);
             // noise
             boolean noise = layoutNode.getProperty(NOISE);
             comm.addOption(OgdfServer.OPTION_NOISE, noise);
             // minimal distance of connected components
-            float minDistCC = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double minDistCC = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (minDistCC < 0) {
                 minDistCC = DEF_MIN_DIST_CC;
             }
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCC);
             // scale function factor
-            float scaleFactor = layoutNode.getProperty(SCALE_FUNCTION_FACTOR);
+            double scaleFactor = layoutNode.getProperty(SCALE_FUNCTION_FACTOR);
             comm.addOption(OgdfServer.OPTION_SCALE_FUNCTION_FACTOR, scaleFactor);
             break;
         }
             
         case GEM: {
             // page ratio
-            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
+            double pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // desired length
-            float desiredLength = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double desiredLength = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (desiredLength < 0) {
                 desiredLength = DEF_DESIRED_LENGTH;
             }
@@ -479,56 +479,56 @@ public final class AlgorithmSetup {
             int numberOfRounds = layoutNode.getProperty(NUMBER_OF_ROUNDS);
             comm.addOption(OgdfServer.OPTION_NUMBER_OF_ROUNDS, numberOfRounds);
             // minimal temperature
-            float minimalTemperature = layoutNode.getProperty(MINIMAL_TEMPERATURE);
+            double minimalTemperature = layoutNode.getProperty(MINIMAL_TEMPERATURE);
             comm.addOption(OgdfServer.OPTION_MINIMAL_TEMPERATURE, minimalTemperature);
             // initial temperature
-            float initialTemperature = layoutNode.getProperty(INITIAL_TEMPERATURE);
+            double initialTemperature = layoutNode.getProperty(INITIAL_TEMPERATURE);
             comm.addOption(OgdfServer.OPTION_INITIAL_TEMPERATURE, initialTemperature);
             // gravitational constant
-            float gravitationalConstant = layoutNode.getProperty(GRAVITATIONAL_CONSTANT);
+            double gravitationalConstant = layoutNode.getProperty(GRAVITATIONAL_CONSTANT);
             comm.addOption(OgdfServer.OPTION_GRAVITATIONAL_CONSTANT, gravitationalConstant);
             // maximal disturbance
-            float maximalDisturbance = layoutNode.getProperty(MAXIMAL_DISTURBANCE);
+            double maximalDisturbance = layoutNode.getProperty(MAXIMAL_DISTURBANCE);
             comm.addOption(OgdfServer.OPTION_MAXIMAL_DISTURBANCE, maximalDisturbance);
             // rotation angle
-            float rotationAngle = layoutNode.getProperty(ROTATION_ANGLE);
+            double rotationAngle = layoutNode.getProperty(ROTATION_ANGLE);
             comm.addOption(OgdfServer.OPTION_ROTATION_ANGLE, rotationAngle);
             // oscillation angle
-            float oscillationAngle = layoutNode.getProperty(OSCILLATION_ANGLE);
+            double oscillationAngle = layoutNode.getProperty(OSCILLATION_ANGLE);
             comm.addOption(OgdfServer.OPTION_OSCILLATION_ANGLE, oscillationAngle);
             // rotation sensitivity
-            float rotationSensitivity = layoutNode.getProperty(ROTATION_SENSITIVITY);
+            double rotationSensitivity = layoutNode.getProperty(ROTATION_SENSITIVITY);
             comm.addOption(OgdfServer.OPTION_ROTATION_SENSITIVITY, rotationSensitivity);
             // oscillation sensitivity
-            float oscillationSensitivity = layoutNode.getProperty(OSCILLATION_SENSITIVITY);
+            double oscillationSensitivity = layoutNode.getProperty(OSCILLATION_SENSITIVITY);
             comm.addOption(OgdfServer.OPTION_OSCILLATION_SENSITIVITY, oscillationSensitivity);
             // attraction formula
             AttractionFormula attractionFormula = layoutNode.getProperty(ATTRACTION_FORMULA);
             comm.addOption(OgdfServer.OPTION_ATTRACTION_FORMULA, attractionFormula.ordinal());
             // minimal distance of connected components
-            float minDistCCFactor = layoutNode.getProperty(MIN_DIST_CC);
+            double minDistCCFactor = layoutNode.getProperty(MIN_DIST_CC);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, desiredLength * minDistCCFactor);
             break;
         }
             
         case CIRCULAR: {
             // page ratio
-            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
+            double pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // minimal distance of circles
-            float minDistCircle = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double minDistCircle = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (minDistCircle < 0) {
                 minDistCircle = DEF_MIN_DIST_CIRCLE;
             }
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CIRCLE, minDistCircle);
             // minimal distance of levels
-            float minDistLevelFactor = layoutNode.getProperty(MIN_DIST_LEVEL);
+            double minDistLevelFactor = layoutNode.getProperty(MIN_DIST_LEVEL);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_LEVEL, minDistCircle * minDistLevelFactor);
             // minimal distance of siblings
-            float minDistSiblingFactor = layoutNode.getProperty(MIN_DIST_SIBLING);
+            double minDistSiblingFactor = layoutNode.getProperty(MIN_DIST_SIBLING);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_SIBLING, minDistCircle * minDistSiblingFactor);
             // minimal distance of connected components
-            float minDistCCFactor = layoutNode.getProperty(MIN_DIST_CC);
+            double minDistCCFactor = layoutNode.getProperty(MIN_DIST_CC);
             comm.addOption(OgdfServer.OPTION_MIN_DIST_CC, minDistCircle * minDistCCFactor);
             break;
         }
@@ -543,32 +543,32 @@ public final class AlgorithmSetup {
             boolean orthogonal = edgeRouting == EdgeRouting.ORTHOGONAL;
             comm.addOption(OgdfServer.OPTION_ORTHOGONAL, orthogonal);
             // sibling distance
-            float siblingDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double siblingDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (siblingDistance < 0) {
                 siblingDistance = DEF_SIBLING_DISTANCE;
             }
             comm.addOption(OgdfServer.OPTION_SIBLING_DISTANCE, siblingDistance);
             // level distance
-            float levelDistanceFactor = layoutNode.getProperty(LEVEL_DISTANCE);
+            double levelDistanceFactor = layoutNode.getProperty(LEVEL_DISTANCE);
             comm.addOption(OgdfServer.OPTION_LEVEL_DISTANCE, siblingDistance * levelDistanceFactor);
             // subtree distance
-            float subtreeDistanceFactor = layoutNode.getProperty(SUBTREE_DISTANCE);
+            double subtreeDistanceFactor = layoutNode.getProperty(SUBTREE_DISTANCE);
             comm.addOption(OgdfServer.OPTION_SUBTREE_DISTANCE, siblingDistance * subtreeDistanceFactor);
             // tree distance
-            float treeDistanceFactor = layoutNode.getProperty(TREE_DISTANCE);
+            double treeDistanceFactor = layoutNode.getProperty(TREE_DISTANCE);
             comm.addOption(OgdfServer.OPTION_TREE_DISTANCE, siblingDistance * treeDistanceFactor);
             break;
         }
             
         case RADIAL_TREE: {
             // level distance
-            float levelDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double levelDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (levelDistance < 0) {
                 levelDistance = DEF_TREE_SPACING;
             }
             comm.addOption(OgdfServer.OPTION_LEVEL_DISTANCE, levelDistance);
             // connected components distance
-            float ccDistanceFactor = layoutNode.getProperty(CC_DISTANCE);
+            double ccDistanceFactor = layoutNode.getProperty(CC_DISTANCE);
             comm.addOption(OgdfServer.OPTION_CC_DISTANCE, levelDistance * ccDistanceFactor);
             break;
         }
@@ -580,13 +580,13 @@ public final class AlgorithmSetup {
                         "The Upward-Planarization layout algorithm does not support non-connected graphs."); // SUPPRESS CHECKSTYLE LineLength
             }
             // node distance
-            float nodeDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double nodeDistance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (nodeDistance < 0) {
                 nodeDistance = DEF_UPL_SPACING;
             }
             comm.addOption(OgdfServer.OPTION_NODE_DISTANCE, nodeDistance);
             // layer distance
-            float layerDistanceFactor = layoutNode.getProperty(LAYER_DISTANCE);
+            double layerDistanceFactor = layoutNode.getProperty(LAYER_DISTANCE);
             comm.addOption(OgdfServer.OPTION_LAYER_DISTANCE, nodeDistance * layerDistanceFactor);
             // number of runs
             int runs = layoutNode.getProperty(RUNS);
@@ -620,13 +620,13 @@ public final class AlgorithmSetup {
                         "The Kamada-Kawai layout algorithm does not support non-connected graphs.");
             }
             // edge length
-            float edgeLength = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double edgeLength = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (edgeLength < 0) {
                 edgeLength = DEF_KK_EDGE_LENGTH;
             }
             comm.addOption(OgdfServer.OPTION_EDGE_LENGTH, edgeLength);
             // stop tolerance
-            float stopTolerance = layoutNode.getProperty(STOP_TOLERANCE);
+            double stopTolerance = layoutNode.getProperty(STOP_TOLERANCE);
             comm.addOption(OgdfServer.OPTION_STOP_TOLERANCE, stopTolerance);
             break;
         }
@@ -643,7 +643,7 @@ public final class AlgorithmSetup {
                 comm.addOption(OgdfServer.OPTION_ITERATIONS, iterations);
             }
             // stop tolerance
-            float stopTolerance = layoutNode.getProperty(STOP_TOLERANCE);
+            double stopTolerance = layoutNode.getProperty(STOP_TOLERANCE);
             comm.addOption(OgdfServer.OPTION_STOP_TOLERANCE, stopTolerance);
             // upward constraints
             boolean upward = layoutNode.getProperty(UPWARD);
@@ -661,7 +661,7 @@ public final class AlgorithmSetup {
                         "The Dominance layout algorithm does not support non-connected graphs.");
             }
             // grid distance
-            float distance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double distance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (distance < 0) {
                 distance = DEF_GRID_DISTANCE;
             }
@@ -679,7 +679,7 @@ public final class AlgorithmSetup {
                         "The Visibility layout algorithm does not support non-connected graphs.");
             }
             // grid distance
-            float distance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double distance = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (distance < 0) {
                 distance = DEF_GRID_DISTANCE;
             }
@@ -702,7 +702,7 @@ public final class AlgorithmSetup {
                         "The Fraysseix-Pach-Pollack layout algorithm does not support non-connected graphs."); // SUPPRESS CHECKSTYLE LineLength
             }
             // separation
-            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
             }
@@ -722,7 +722,7 @@ public final class AlgorithmSetup {
                         "The Schnyder layout algorithm does not support non-connected graphs.");
             }
             // separation
-            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
             }
@@ -737,13 +737,13 @@ public final class AlgorithmSetup {
                         "The Canonical Order layout algorithm does not support multi-edges.");
             }
             // separation
-            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
             }
             comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
             // base ratio
-            float baseRatio = layoutNode.getProperty(BASE_RATIO);
+            double baseRatio = layoutNode.getProperty(BASE_RATIO);
             comm.addOption(OgdfServer.OPTION_BASE_RATIO, baseRatio);
             // embedder module
             EmbedderModule embedderModule = layoutNode.getProperty(EMBEDDER);
@@ -758,13 +758,13 @@ public final class AlgorithmSetup {
                         "The Convex Grid layout algorithm does not support multi-edges.");
             }
             // separation
-            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
             }
             comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
             // base ratio
-            float baseRatio = layoutNode.getProperty(BASE_RATIO);
+            double baseRatio = layoutNode.getProperty(BASE_RATIO);
             comm.addOption(OgdfServer.OPTION_BASE_RATIO, baseRatio);
             // embedder module
             EmbedderModule embedderModule = layoutNode.getProperty(EMBEDDER);
@@ -779,13 +779,13 @@ public final class AlgorithmSetup {
                         "The Mixed Model layout algorithm does not support multi-edges.");
             }
             // separation
-            float separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
+            double separation = layoutNode.getProperty(CoreOptions.SPACING_NODE_NODE);
             if (separation < 0) {
                 separation = DEF_GRID_SEPARATION;
             }
             comm.addOption(OgdfServer.OPTION_SEPARATION, separation);
             // page ratio
-            float pageRatio = layoutNode.getProperty(ASPECT_RATIO);
+            double pageRatio = layoutNode.getProperty(ASPECT_RATIO);
             comm.addOption(OgdfServer.OPTION_PAGE_RATIO, pageRatio);
             // number of runs
             int runs = layoutNode.getProperty(RUNS);

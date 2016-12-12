@@ -77,7 +77,7 @@ import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
 public class OgmlServerCommunicator {
 
     /** default value for border spacing. */
-    public static final float DEF_BORDER_SPACING = 15.0f;
+    public static final double DEF_BORDER_SPACING = 15.0;
 
     /** the input format for the ogdf server. */
     private static final String INPUT_FORMAT = "OGML";
@@ -402,7 +402,7 @@ public class OgmlServerCommunicator {
         progressMonitor.begin("Apply layout", 1);
         
         // get the border spacing
-        float borderSpacing = parentNode.getProperty(CoreOptions.SPACING_BORDER);
+        double borderSpacing = parentNode.getProperty(CoreOptions.SPACING_BORDER);
         if (borderSpacing < 0) {
             borderSpacing = DEF_BORDER_SPACING;
         }
