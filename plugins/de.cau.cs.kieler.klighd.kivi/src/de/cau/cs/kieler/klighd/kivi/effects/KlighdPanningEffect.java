@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.kivi.effects;
 
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.ui.IWorkbenchPart;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
@@ -100,8 +100,8 @@ public class KlighdPanningEffect extends AbstractEffect {
      * {@inheritDoc}
      */
     public void execute() {
-        if (element instanceof KGraphElement) {
-            viewer.centerOn((KGraphElement) element, animationDuration);
+        if (element instanceof ElkGraphElement) {
+            viewer.centerOn((ElkGraphElement) element, animationDuration);
         } else {
             viewer.centerOn(element, animationDuration);
         }

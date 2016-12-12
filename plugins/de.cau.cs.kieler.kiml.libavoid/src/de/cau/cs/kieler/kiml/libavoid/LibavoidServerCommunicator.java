@@ -516,7 +516,7 @@ public class LibavoidServerCommunicator {
         float centerY = portLayout.getYpos() + portLayout.getHeight() / 2;
         
         // adjust according to parent's insets
-        KInsets nodeInsets = port.getNode().getData(KShapeLayout.class).getInsets();
+        KInsets nodeInsets = port.getNode().getData(KShapeLayout.class).getPadding();
         centerX += nodeInsets.getLeft();
         centerY += nodeInsets.getTop();
 
@@ -549,7 +549,7 @@ public class LibavoidServerCommunicator {
 
         // convert the bounds
         KShapeLayout shape = node.getData(KShapeLayout.class);
-        KInsets insets = shape.getInsets();
+        KInsets insets = shape.getPadding();
 
         libavoidNode(node, nodeIdCounter, 
                 shape.getXpos() - insets.getLeft(),

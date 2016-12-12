@@ -16,10 +16,10 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
@@ -38,43 +38,43 @@ public class NodeDegreeAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode,
-            final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Node degree analysis", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         
         int numberOfNodes = 0;
         int overallNodeDegree = 0;
         int minNodeDegree = Integer.MAX_VALUE;
         int maxNodeDegree = 0;
-        List<KNode> nodeQueue = new LinkedList<KNode>();
+        List<ElkNode> nodeQueue = new LinkedList<ElkNode>();
         numberOfNodes += parentNode.getChildren().size();
         nodeQueue.addAll(parentNode.getChildren());
         while (nodeQueue.size() > 0) {
             // pop first element
-            KNode node = nodeQueue.remove(0);
+            ElkNode node = nodeQueue.remove(0);
             int nodeDegree = 0;
+            
             // node degree outgoing
-            for (KEdge edge : node.getOutgoingEdges()) {
-                if (edge.getTarget() != node
-                        && (hierarchy || edge.getTarget().getParent() == parentNode)) {
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                if (!edge.isSelfloop() && (hierarchy || !edge.isHierarchical())) {
                     nodeDegree++;
                 }
             }
+            
             // node degree incoming
-            for (KEdge edge : node.getIncomingEdges()) {
-                if (edge.getSource() != node
-                        && (hierarchy || edge.getSource().getParent() == parentNode)) {
+            for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
+                if (!edge.isSelfloop() && (hierarchy || !edge.isHierarchical())) {
                     nodeDegree++;
                 }
             }
+            
             // min node degree
             if (nodeDegree < minNodeDegree) {
                 minNodeDegree = nodeDegree;
             }
+            
             // max node degree
             if (nodeDegree > maxNodeDegree) {
                 maxNodeDegree = nodeDegree;
@@ -91,10 +91,10 @@ public class NodeDegreeAnalysis implements IAnalysis {
 
         if (numberOfNodes > 0) {
             return new Object[] { minNodeDegree,
-                    (float) overallNodeDegree / (float) numberOfNodes,
+                    overallNodeDegree / numberOfNodes,
                     maxNodeDegree };
         } else {
-            return new Object[] { 0, 0.0f, 0 };
+            return new Object[] { 0, 0.0, 0 };
         }
     }
 }

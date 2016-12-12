@@ -1,6 +1,6 @@
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
- *
+ * 
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
@@ -13,16 +13,19 @@
  */
 package de.cau.cs.kieler.kiml.formats.json
 
+import com.google.common.collect.BiMap
+import com.google.common.collect.HashBiMap
 import com.google.common.collect.Maps
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer
 import de.cau.cs.kieler.kiml.formats.TransformationData
 import java.util.Map
-import org.eclipse.elk.core.klayoutdata.KLayoutData
-import org.eclipse.elk.core.klayoutdata.KShapeLayout
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KLabel
-import org.eclipse.elk.graph.KNode
-import org.eclipse.elk.graph.KPort
+import org.eclipse.elk.graph.EMapPropertyHolder
+import org.eclipse.elk.graph.ElkEdge
+import org.eclipse.elk.graph.ElkEdgeSection
+import org.eclipse.elk.graph.ElkLabel
+import org.eclipse.elk.graph.ElkNode
+import org.eclipse.elk.graph.ElkPort
+import org.eclipse.elk.graph.ElkShape
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -31,56 +34,58 @@ import org.json.JSONObject
  * 
  * @author uru
  */
-class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
+class JsonExporter implements IGraphTransformer<ElkNode, JSONObject> {
 
-    extension JsonExtensions = new JsonExtensions
+    private val BiMap<ElkNode, String> nodeIdMap = HashBiMap.create()
+    private val BiMap<ElkPort, String> portIdMap = HashBiMap.create()
+    private val Map<ElkEdge, String> edgeIdMap = Maps.newHashMap
+    private val BiMap<ElkEdgeSection, String> edgeSectionIdMap = HashBiMap.create()
 
-    private val Map<KNode, String> nodeIdMap = Maps.newHashMap
-    private val Map<KPort, String> portIdMap = Maps.newHashMap
-    private val Map<KEdge, String> edgeIdMap = Maps.newHashMap
-        
-    private val Map<KNode, JSONObject> nodeJsonMap = Maps.newHashMap
-    private val Map<KPort, JSONObject> portJsonMap = Maps.newHashMap
-    private val Map<KEdge, JSONObject> edgeJsonMap = Maps.newHashMap
-    
+    private val Map<ElkNode, JSONObject> nodeJsonMap = Maps.newHashMap
+    private val Map<ElkPort, JSONObject> portJsonMap = Maps.newHashMap
+    private val Map<ElkEdge, JSONObject> edgeJsonMap = Maps.newHashMap
+    private val Map<ElkEdgeSection, JSONObject> edgeSectionJsonMap = Maps.newHashMap
+
     private var nodeIdCounter = 0
     private var portIdCounter = 0
     private var edgeIdCounter = 0
+    private var edgeSectionIdCounter = 0
 
-    override transform(TransformationData<KNode, JSONObject> data) {
-        
-        init 
-        
+    override transform(TransformationData<ElkNode, JSONObject> data) {
+        init
+
         val jsonGraph = new JSONObject
         jsonGraph.put("id", "root")
-        
+
         // create a tmp array
         val jsonArray = new JSONArray
+
         // transform the root node
         data.sourceGraph.transformNode(jsonArray)
-        
+
         // edges (important that all nodes are already transformed!)
         data.sourceGraph.transformEdges
-        
+
         // retrieve the result from the tmp array
         data.targetGraphs += jsonArray.get(0) as JSONObject
     }
-    
+
     private def init() {
         nodeIdMap.clear
         portIdMap.clear
         edgeIdMap.clear
+        edgeSectionIdMap.clear
         nodeJsonMap.clear
         portJsonMap.clear
         edgeJsonMap.clear
+        edgeSectionJsonMap.clear
         nodeIdCounter = 0
         portIdCounter = 0
         edgeIdCounter = 0
+        edgeSectionIdCounter = 0
     }
-    
 
-    private def void transformNode(KNode node, JSONArray array) {
-        
+    private def void transformNode(ElkNode node, JSONArray array) {
         // create the node and add it to the parent
         val jsonObj = node.createAndRegister
         array.put(jsonObj)
@@ -88,175 +93,191 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         // labels
         val labels = new JSONArray
         jsonObj.put("labels", labels)
-        node.labels.forEach [ it.transformLabel(labels) ]
+        node.labels.forEach[it.transformLabel(labels)]
 
-        // transfer positions and dimension
-        node.layout.transferShapeLayout(jsonObj)
-        
         // ports
         val ports = new JSONArray
         jsonObj.put("ports", ports)
-        node.ports.forEach [ it.transformPort(ports) ]
-        
+        node.ports.forEach[it.transformPort(ports)]
+
         // children
         val children = new JSONArray
         jsonObj.put("children", children)
-        node.children.forEach [ it.transformNode(children) ]
-        
+        node.children.forEach[it.transformNode(children)]
+
         // properties
-        node.layout.transformProperties(jsonObj)
-        
+        node.transformProperties(jsonObj)
+        node.transferShapeLayout(jsonObj)
     }
-    
-    
-    private def void transformPort(KPort port, JSONArray array) {
+
+    private def void transformPort(ElkPort port, JSONArray array) {
         val jsonObj = port.createAndRegister
         array.put(jsonObj)
 
         // labels
         val labels = new JSONArray
         jsonObj.put("labels", labels)
-        port.labels.forEach [ it.transformLabel(labels) ]
-        
-         // properties
-        port.layout.transformProperties(jsonObj)
+        port.labels.forEach[it.transformLabel(labels)]
 
-        // transfer positions and dimension
-        port.layout.transferShapeLayout(jsonObj)
+        // properties and things
+        port.transformProperties(jsonObj)
+        port.transferShapeLayout(jsonObj)
     }
 
-    private def void transformEdges(KNode node) {
-        val jsonObj = nodeJsonMap.get(node)        
+    private def void transformEdges(ElkNode node) {
+        val jsonObj = nodeJsonMap.get(node)
         val edges = new JSONArray
         jsonObj.put("edges", edges)
-        node.outgoingEdges.forEach [ it.transformEdge(edges)]
-        
+        node.outgoingEdges.forEach[it.transformEdge(edges)]
+
         // children
-        node.children.forEach [ it.transformEdges ]
+        node.children.forEach[it.transformEdges]
     }
 
-    private def void transformEdge(KEdge edge, JSONArray array) {
+    private def void transformEdge(ElkEdge edge, JSONArray array) {
         val jsonObj = edge.createAndRegister
         array.put(jsonObj)
 
         // labels
         val labels = new JSONArray
         jsonObj.put("labels", labels)
-        edge.labels.forEach [ it.transformLabel(labels) ]
+        edge.labels.forEach[it.transformLabel(labels)]
+        
+        // sections
+        val sections = new JSONArray
+        jsonObj.put("sections", sections)
+        edge.sections.forEach[it.transformSection(sections)]
 
         // properties        
-        edge.layout.transformProperties(jsonObj)
-
-        // connection points
-        nodeIdMap.get(edge.source) => [ jsonObj.put("source", it)]
-        nodeIdMap.get(edge.target) => [ jsonObj.put("target", it)]
+        edge.transformProperties(jsonObj)
+    }
+    
+    private def void transformSection(ElkEdgeSection section, JSONArray sections) {
+        val jsonObj = section.createAndRegister
+        sections.put(jsonObj)
         
-        portIdMap.get(edge.sourcePort) => [ if (it != null) jsonObj.put("sourcePort", it) ]
-        portIdMap.get(edge.targetPort) => [ if (it != null) jsonObj.put("targetPort", it) ]
+        // Start Point
+        val startPoint = new JSONObject;
+        startPoint.put("x", section.startX);
+        startPoint.put("y", section.startY);
+        jsonObj.put("startPoint", startPoint);
         
-        // source
-        val sourcePoint = new JSONObject
-        sourcePoint.put("x", edge.layout.sourcePoint.x)
-        sourcePoint.put("y", edge.layout.sourcePoint.y)
-        jsonObj.put("sourcePoint", sourcePoint)
-
-        // target        
-        val targetPoint = new JSONObject
-        targetPoint.put("x", edge.layout.targetPoint.x)
-        targetPoint.put("y", edge.layout.targetPoint.y)
-        jsonObj.put("targetPoint", targetPoint)
-
-        // bend points
-        val bends = new JSONArray
-        edge.layout.bendPoints.forEach [ pnt |
+        // End Point
+        val endPoint = new JSONObject;
+        endPoint.put("x", section.endX);
+        endPoint.put("y", section.endY);
+        jsonObj.put("endPoint", endPoint);
+        
+        // Bend Points
+        val bendPoints = new JSONArray;
+        section.bendPoints.forEach [ pnt |
             val jsonPnt = new JSONObject
             jsonPnt.put("x", pnt.x)
             jsonPnt.put("y", pnt.y)
-            bends.put(jsonPnt)
+            bendPoints.put(jsonPnt)
         ]
-        jsonObj?.put("bendPoints", bends)
-    }
-    
-
-    private def void transformLabel(KLabel label, JSONArray array) {
-            val jsonLabel = new JSONObject
-            jsonLabel.put("text", label.text)
-            label.layout.transformProperties(jsonLabel)
-            
-            // position
-            label.layout.transferShapeLayout(jsonLabel)
-    }
-
-    private def void transformProperties(KLayoutData holder, JSONObject parent) {
         
+        // Incoming shape
+        if (section.incomingShape != null) {
+            jsonObj.put("incomingShape", idByElement(section.incomingShape))
+        }
+        
+        // Outgoing shape
+        if (section.outgoingShape != null) {
+            jsonObj.put("outgoingShape", idByElement(section.outgoingShape))
+        }
+        
+        // Incoming sections
+        if (!section.incomingSections.empty) {
+            val incomingSections = new JSONArray;
+            section.incomingSections.forEach [ sec |
+                incomingSections.put(idByElement(sec));
+            ];
+        }
+        
+        // Incoming sections
+        if (!section.incomingSections.empty) {
+            val incomingSections = new JSONArray;
+            section.incomingSections.forEach [ sec |
+                incomingSections.put(idByElement(sec));
+            ];
+            jsonObj.put("incomingSections", incomingSections);
+        }
+        
+        // Outgoing sections
+        if (!section.outgoingSections.empty) {
+            val outgoingSections = new JSONArray;
+            section.outgoingSections.forEach [ sec |
+                outgoingSections.put(idByElement(sec));
+            ];
+            jsonObj.put("outgoingSections", outgoingSections);
+        }
+        
+        section.transformProperties(jsonObj);
+    }
+
+    private def void transformLabel(ElkLabel label, JSONArray array) {
+        val jsonLabel = new JSONObject
+        jsonLabel.put("text", label.text)
+
+        // properties and things
+        label.transformProperties(jsonLabel)
+        label.transferShapeLayout(jsonLabel)
+    }
+
+    private def void transformProperties(EMapPropertyHolder holder, JSONObject parent) {
         val jsonProps = new JSONObject
         parent.put("properties", jsonProps)
-        
-        holder.properties.entrySet.forEach [ p |
-            jsonProps.put(p.key.id, p.value.toString)    
-        ]
-    } 
-    
 
-    override transferLayout(TransformationData<KNode, JSONObject> data) {
+        holder.properties.entrySet.forEach [ p |
+            jsonProps.put(p.key.id, p.value.toString)
+        ]
+    }
+
+    override transferLayout(TransformationData<ElkNode, JSONObject> data) {
         throw new UnsupportedOperationException("Not yet implemented.")
     }
-    
-    private def transferShapeLayout(KShapeLayout layout, JSONObject jsonObj) {
-        // pos and dimension
-        jsonObj?.put("x", layout.xpos)
-        jsonObj?.put("y", layout.ypos)
-        jsonObj?.put("width", layout.width)
-        jsonObj?.put("height", layout.height)
+
+    private def transferShapeLayout(ElkShape shape, JSONObject jsonObj) {
+        val location = new JSONObject;
+        location.put("x", shape.x);
+        location.put("y", shape.y);
+        jsonObj?.put("location", location);
         
-        // padding
-        val insets = layout.insets
-        if (insets != null) {
-          var padding = jsonObj?.optJSONObject("padding")
-          if (padding == null 
-              && (insets.left != 0 || insets.top != 0 
-                  || insets.right != 0 || insets.bottom != 0)) {
-              padding = new JSONObject()
-              jsonObj?.put("padding", padding)  
-          }
-          padding?.put("left", insets.left)
-          padding?.put("top", insets.top)
-          padding?.put("right", insets.right)
-          padding?.put("bottom", insets.bottom)
-        }
-    } 
-    
+        val dimensions = new JSONObject;
+        dimensions.put("width", shape.width);
+        dimensions.put("height", shape.height);
+        jsonObj?.put("dimensions", dimensions);
+    }
+
     /* ---------------------------------------------------------------------------
      *   Convenience methods
      */
-    def JSONObject createAndRegister(KNode node) {
-        
+    def JSONObject createAndRegister(ElkNode node) {
         val obj = new JSONObject
         val id = "n" + nodeIdCounter
         obj.put("id", id)
         nodeIdCounter = nodeIdCounter + 1
-        
+
         nodeIdMap.put(node, id)
         nodeJsonMap.put(node, obj)
 
         return obj
     }
 
-    def JSONObject createAndRegister(KPort port) {
-        
+    def JSONObject createAndRegister(ElkPort port) {
         val obj = new JSONObject
         val id = "p" + portIdCounter
         obj.put("id", id)
         portIdCounter = portIdCounter + 1
-    
+
         portIdMap.put(port, id)
         portJsonMap.put(port, obj)
 
         return obj
     }
 
-    def JSONObject createAndRegister(KEdge edge) {
-        
+    def JSONObject createAndRegister(ElkEdge edge) {
         val obj = new JSONObject
         val id = "e" + edgeIdCounter
         obj.put("id", id)
@@ -265,7 +286,30 @@ class JsonExporter implements IGraphTransformer<KNode, JSONObject> {
         edgeIdMap.put(edge, id)
         edgeJsonMap.put(edge, obj)
 
+        return obj
+    }
+
+    def JSONObject createAndRegister(ElkEdgeSection section) {
+        val obj = new JSONObject
+        val id = "s" + edgeSectionIdCounter
+        obj.put("id", id)
+        edgeSectionIdCounter = edgeIdCounter + 1
+
+        edgeSectionIdMap.put(section, id)
+        edgeSectionJsonMap.put(section, obj)
 
         return obj
+    }
+    
+    private def dispatch idByElement(ElkNode node) {
+        return nodeIdMap.inverse.get(node);
+    }
+    
+    private def dispatch idByElement(ElkPort port) {
+        return portIdMap.inverse.get(port);
+    }
+    
+    private def dispatch idByElement(ElkEdgeSection section) {
+        return edgeSectionIdMap.inverse.get(section);
     }
 }

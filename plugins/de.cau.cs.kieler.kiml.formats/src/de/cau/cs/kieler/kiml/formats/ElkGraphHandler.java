@@ -16,11 +16,10 @@ package de.cau.cs.kieler.kiml.formats;
 
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutDataPackage;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.GraphDataUtil;
-import org.eclipse.elk.graph.KGraphPackage;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkGraphPackage;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -34,7 +33,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
-public class KGraphHandler extends AbstractEmfHandler<KNode> {
+public class ElkGraphHandler extends AbstractEmfHandler<ElkNode> {
     
     /** the KGraph format identifier. */
     public static final String FORMAT = "de.cau.cs.kieler.kgraph";
@@ -43,8 +42,8 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
      * {@inheritDoc}
      */
     @Override
-    public String serialize(final TransformationData<KNode, KNode> transData) {
-        for (KNode graph : transData.getTargetGraphs()) {
+    public String serialize(final TransformationData<ElkNode, ElkNode> transData) {
+        for (ElkNode graph : transData.getTargetGraphs()) {
             ElkUtil.persistDataElements(graph);
         }
         return super.serialize(transData);
@@ -55,7 +54,7 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
      */
     @Override
     public void deserialize(final String serializedGraph,
-            final TransformationData<KNode, KNode> transData) {
+            final TransformationData<ElkNode, ElkNode> transData) {
         
         super.deserialize(serializedGraph, transData);
         if (transData.getSourceGraph() != null) {
@@ -69,37 +68,27 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
      */
     protected ResourceSet createResourceSet() {
         Map<String, Object> extensionMap = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
-        if (!extensionMap.containsKey("kgraph")) {
-            extensionMap.put("kgraph", new XMIResourceFactoryImpl());
-        }
-        if (!extensionMap.containsKey("kgx")) {
-            extensionMap.put("kgx", new XMIResourceFactoryImpl());
+        if (!extensionMap.containsKey("elkg")) {
+            extensionMap.put("elkg", new XMIResourceFactoryImpl());
         }
         
         EPackage.Registry registry = EPackage.Registry.INSTANCE;
-        if (!registry.containsKey(KGraphPackage.eNS_URI)) {
-            registry.put(KGraphPackage.eNS_URI, KGraphPackage.eINSTANCE);
-        }
-        if (!registry.containsKey(KLayoutDataPackage.eNS_URI)) {
-            registry.put(KLayoutDataPackage.eNS_URI, KLayoutDataPackage.eINSTANCE);
+        if (!registry.containsKey(ElkGraphPackage.eNS_URI)) {
+            registry.put(ElkGraphPackage.eNS_URI, ElkGraphPackage.eINSTANCE);
         }
         
         return new ResourceSetImpl();
     }
     
     /** the identity transformer for KGraph. */
-    private static final IGraphTransformer<KNode, KNode> TRANSFORMER
-            = new IGraphTransformer<KNode, KNode>() {
+    private static final IGraphTransformer<ElkNode, ElkNode> TRANSFORMER
+            = new IGraphTransformer<ElkNode, ElkNode>() {
         
-        public void transform(final TransformationData<KNode, KNode> data) {
-            KNode graph = data.getSourceGraph();        
-            // Make sure all graph elements are configured according to specifications
-            ElkUtil.validate(graph);
-            // Forward the validated graph as layout graph
-            data.getTargetGraphs().add(graph);
+        public void transform(final TransformationData<ElkNode, ElkNode> data) {
+            data.getTargetGraphs().add(data.getSourceGraph());
         }
         
-        public void transferLayout(final TransformationData<KNode, KNode> data) {
+        public void transferLayout(final TransformationData<ElkNode, ElkNode> data) {
             // nothing to do
         }
     };
@@ -107,14 +96,14 @@ public class KGraphHandler extends AbstractEmfHandler<KNode> {
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<KNode, KNode> getImporter() {
+    public IGraphTransformer<ElkNode, ElkNode> getImporter() {
         return TRANSFORMER;
     }
 
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<KNode, KNode> getExporter() {
+    public IGraphTransformer<ElkNode, ElkNode> getExporter() {
         return TRANSFORMER;
     }
 

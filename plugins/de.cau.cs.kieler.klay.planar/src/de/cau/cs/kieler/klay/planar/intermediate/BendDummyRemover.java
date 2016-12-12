@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klay.planar.intermediate;
 import java.util.Iterator;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
+import org.eclipse.elk.graph.ElkEdge;
 
 import de.cau.cs.kieler.klay.planar.ILayoutProcessor;
 import de.cau.cs.kieler.klay.planar.graph.PEdge;
@@ -73,7 +73,7 @@ public class BendDummyRemover implements ILayoutProcessor {
 
     /**
      * Removes a bend point dummy of the grid and adds it as a bend point to the edge. If the edge
-     * is original meaning it contains a {@link KEdge} as property, otherwise choose a arbitrary
+     * is original meaning it contains an {@link ElkEdge} as property, otherwise choose a arbitrary
      * edge.
      * 
      * @param x

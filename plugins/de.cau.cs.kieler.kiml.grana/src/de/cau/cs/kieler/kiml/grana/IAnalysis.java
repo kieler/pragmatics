@@ -14,7 +14,7 @@
 package de.cau.cs.kieler.kiml.grana;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * The interface all graph analysis algorithms have to implement.
@@ -39,7 +39,7 @@ public interface IAnalysis {
      *            progress monitor used to keep track of progress
      * @return the analysis results
      */
-    Object doAnalysis(KNode parentNode, AnalysisContext context,
+    Object doAnalysis(ElkNode parentNode, AnalysisContext context,
             IElkProgressMonitor progressMonitor);
 
 }

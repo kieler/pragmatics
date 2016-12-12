@@ -16,15 +16,14 @@ package de.cau.cs.kieler.kiml.formats.matrix;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
@@ -36,12 +35,12 @@ import de.cau.cs.kieler.kiml.formats.TransformationData;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
+public class MatrixImporter implements IGraphTransformer<Matrix, ElkNode> {
 
     /** the nodes that are created by this transformer, in order as given by the matrix. */
-    private static final IProperty<KNode[]> NODES = new Property<KNode[]>("matrixImporter.nodes");
+    private static final IProperty<ElkNode[]> NODES = new Property<>("matrixImporter.nodes");
     /** the edges that are created by this transformer. */
-    private static final IProperty<KEdge[]> EDGES = new Property<KEdge[]>("matrixImporter.edges");
+    private static final IProperty<ElkEdge[]> EDGES = new Property<>("matrixImporter.edges");
     /** the index that is attached to a node. */
     private static final IProperty<Integer> NODE_INDEX = new Property<Integer>(
             "matrixImporter.nodeIndex", -1);
@@ -49,17 +48,16 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
     /**
      * {@inheritDoc}
      */
-    public void transform(final TransformationData<Matrix, KNode> transData) {
+    public void transform(final TransformationData<Matrix, ElkNode> transData) {
         Matrix matrix = transData.getSourceGraph();
-        KNode parent = ElkUtil.createInitializedNode();
+        ElkNode parent = ElkGraphUtil.createGraph();
         int nodec = Math.max(matrix.getRows(), matrix.getColumns());
-        KNode[] nodes = new KNode[nodec];
+        ElkNode[] nodes = new ElkNode[nodec];
         for (int i = 0; i < nodec; i++) {
-            nodes[i] = ElkUtil.createInitializedNode();
-            nodes[i].setParent(parent);
-            nodes[i].getData(KShapeLayout.class).setProperty(NODE_INDEX, i + 1);
+            nodes[i] = ElkGraphUtil.createNode(parent);
+            nodes[i].setProperty(NODE_INDEX, i + 1);
         }
-        List<KEdge> edgeList = new LinkedList<KEdge>();
+        List<ElkEdge> edgeList = new LinkedList<ElkEdge>();
         
         // transform matrix form
         int[][] m = matrix.getMatrix();
@@ -67,14 +65,10 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
             for (int i = 0; i < matrix.getRows(); i++) {
                 for (int j = 0; j < matrix.getColumns(); j++) {
                     if (m[i][j] != 0) {
-                        KEdge kedge = ElkUtil.createInitializedEdge();
-                        edgeList.add(kedge);
                         if (m[i][j] > 0) {
-                            kedge.setSource(nodes[i]);
-                            kedge.setTarget(nodes[j]);
+                            ElkGraphUtil.createSimpleEdge(nodes[i], nodes[j]);
                         } else if (m[i][j] < 0) {
-                            kedge.setSource(nodes[j]);
-                            kedge.setTarget(nodes[i]);
+                            ElkGraphUtil.createSimpleEdge(nodes[j], nodes[i]);
                         }
                     }
                 }
@@ -86,14 +80,10 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
         if (list != null) {
             for (Matrix.Entry entry : list) {
                 if (entry.i < nodec && entry.j < nodec && entry.value != 0) {
-                    KEdge kedge = ElkUtil.createInitializedEdge();
-                    edgeList.add(kedge);
                     if (entry.value > 0) {
-                        kedge.setSource(nodes[entry.i]);
-                        kedge.setTarget(nodes[entry.j]);
+                        ElkGraphUtil.createSimpleEdge(nodes[entry.i], nodes[entry.j]);
                     } else {
-                        kedge.setSource(nodes[entry.j]);
-                        kedge.setTarget(nodes[entry.i]);
+                        ElkGraphUtil.createSimpleEdge(nodes[entry.j], nodes[entry.i]);
                     }
                 }
             }
@@ -101,41 +91,45 @@ public class MatrixImporter implements IGraphTransformer<Matrix, KNode> {
 
         transData.getTargetGraphs().add(parent);
         transData.setProperty(NODES, nodes);
-        transData.setProperty(EDGES, edgeList.toArray(new KEdge[edgeList.size()]));
+        transData.setProperty(EDGES, edgeList.toArray(new ElkEdge[edgeList.size()]));
     }
 
     /**
      * {@inheritDoc}
      */
-    public void transferLayout(final TransformationData<Matrix, KNode> transData) {
+    public void transferLayout(final TransformationData<Matrix, ElkNode> transData) {
         List<KVectorChain> layout = transData.getSourceGraph().createLayout();
         // first lines: coordinates of node positions
-        for (KNode node : transData.getProperty(NODES)) {
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+        for (ElkNode node : transData.getProperty(NODES)) {
             KVectorChain chain = new KVectorChain();
-            chain.add(nodeLayout.getXpos() + nodeLayout.getWidth() / 2,
-                    nodeLayout.getYpos() + nodeLayout.getHeight() / 2);
+            chain.add(node.getX() + node.getWidth() / 2,
+                    node.getY() + node.getHeight() / 2);
             layout.add(chain);
         }
+        
         // remaining lines: coordinates of edge bend points
-        for (KEdge edge : transData.getProperty(EDGES)) {
-            KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-            if (!edgeLayout.getBendPoints().isEmpty()) {
-                try {
-                    KVectorChain vectorChain = new KVectorChain();
-                    // the first pair of numbers indicates the source and target node
-                    vectorChain.add(
-                            edge.getSource().getData(KShapeLayout.class).getProperty(NODE_INDEX)
-                                    .doubleValue(), edge.getTarget().getData(KShapeLayout.class)
-                                    .getProperty(NODE_INDEX).doubleValue());
-                    // the remaining numbers are bend point coordinates
-                    for (KPoint bendPoint : edgeLayout.getBendPoints()) {
-                        vectorChain.add(bendPoint.getX(), bendPoint.getY());
-                    }
-                    layout.add(vectorChain);
-                } catch (NumberFormatException exception) {
-                    // ignore exception
+        for (ElkEdge edge : transData.getProperty(EDGES)) {
+            if (edge.getSections().isEmpty()) {
+                continue;
+            }
+            
+            ElkEdgeSection edgeSection = edge.getSections().get(0);
+            if (!edgeSection.getBendPoints().isEmpty()) {
+                KVectorChain vectorChain = new KVectorChain();
+                
+                // the first pair of numbers indicates the source and target node
+                ElkNode sourceNode = (ElkNode) edge.getSources().get(0);
+                ElkNode targetNode = (ElkNode) edge.getTargets().get(0);
+                
+                vectorChain.add(
+                        sourceNode.getProperty(NODE_INDEX).doubleValue(),
+                        targetNode.getProperty(NODE_INDEX).doubleValue());
+                
+                // the remaining numbers are bend point coordinates
+                for (ElkBendPoint bendPoint : edgeSection.getBendPoints()) {
+                    vectorChain.add(bendPoint.getX(), bendPoint.getY());
                 }
+                layout.add(vectorChain);
             }
         }
     }

@@ -24,7 +24,7 @@ import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
@@ -124,7 +124,7 @@ public class PlanarLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final KNode kgraph, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode kgraph, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Orthogonal Layout", 1);
 
         // KGraph -> PGraph conversion

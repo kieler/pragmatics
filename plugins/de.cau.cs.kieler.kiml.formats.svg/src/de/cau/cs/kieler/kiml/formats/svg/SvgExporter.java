@@ -18,7 +18,7 @@ import java.awt.Dimension;
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.formats.TransformationData;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class SvgExporter implements IGraphTransformer<KNode, SVGGraphics2D> {
+public class SvgExporter implements IGraphTransformer<ElkNode, SVGGraphics2D> {
 
     /** namespace of the SVG format. */
     private static final String SVG_NAMESPACE = "http://www.w3.org/2000/svg";
@@ -40,7 +40,7 @@ public class SvgExporter implements IGraphTransformer<KNode, SVGGraphics2D> {
     /**
      * {@inheritDoc}
      */
-    public void transform(final TransformationData<KNode, SVGGraphics2D> data) {
+    public void transform(final TransformationData<ElkNode, SVGGraphics2D> data) {
         // create a DOM document for XML output
         DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
         Document document = domImpl.createDocument(SVG_NAMESPACE, "svg", null);
@@ -60,7 +60,7 @@ public class SvgExporter implements IGraphTransformer<KNode, SVGGraphics2D> {
     /**
      * {@inheritDoc}
      */
-    public void transferLayout(final TransformationData<KNode, SVGGraphics2D> data) {
+    public void transferLayout(final TransformationData<ElkNode, SVGGraphics2D> data) {
         throw new UnsupportedOperationException("SVG layout transfer is not supported.");
     }
 

@@ -16,18 +16,18 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
+import org.eclipse.elk.core.UnsupportedGraphException;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortSide;
-import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.ImmutableSet;
@@ -77,16 +77,15 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
 
         // check that the precondition is met
-        KLayoutData ld = parentNode.getData(KLayoutData.class);
         if (
-                (ld.getProperty(ALGORITHM) != null 
-                && !ld.getProperty(ALGORITHM).equals(KLAY_LAYERED_ID))
+                (parentNode.getProperty(ALGORITHM) != null 
+                && !parentNode.getProperty(ALGORITHM).equals(KLAY_LAYERED_ID))
                 // edge routing
-                || ld.getProperty(CoreOptions.EDGE_ROUTING) != EdgeRouting.ORTHOGONAL
+                || parentNode.getProperty(CoreOptions.EDGE_ROUTING) != EdgeRouting.ORTHOGONAL
             ) {
             return new AnalysisFailed(AnalysisFailed.Type.Configuration, new IllegalStateException(
                     "KlayLayered has to be used in conjunction with ORTHOGONAL edge routing."));
@@ -114,51 +113,45 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
         int specialBendpoints = 0;
         while (allContents.hasNext()) {
             EObject e = allContents.next();
-            if (e instanceof KEdge) {
-                KEdge kedge = (KEdge) e;
+            if (e instanceof ElkEdge) {
+                ElkEdge elkedge = (ElkEdge) e;
                 
                 // currently no self-loop support
-                if (kedge.getSource() == kedge.getTarget()) {
-                    throw new IllegalStateException("Self-loops are not supported by the "
+                if (elkedge.isSelfloop()) {
+                    throw new UnsupportedGraphException("Self-loops are not supported by the "
+                            + this.getClass().getSimpleName());
+                } else if (elkedge.isHyperedge()) {
+                    throw new UnsupportedGraphException("Hyperedges are not supported by the "
                             + this.getClass().getSimpleName());
                 }
                 
                 // get the direction of the edge's parent node
-                KNode parent = kedge.getSource().getParent();
-                if (kedge.getTarget().getParent() != kedge.getSource().getParent()) {
-                    // external port dummy
-                    if (ElkUtil.isDescendant(kedge.getTarget(), kedge.getSource())) {
-                        parent = kedge.getSource();
-                    }
-                }
-                KLayoutData parentLayout = parent.getData(KLayoutData.class);
-                Direction direction = parentLayout.getProperty(CoreOptions.DIRECTION);
+                Direction direction =
+                        elkedge.getContainingNode().getProperty(CoreOptions.DIRECTION);
                 
                 // edge's source
-                KPort src = kedge.getSourcePort();
+                ElkPort src = ElkGraphUtil.connectableShapeToPort(elkedge.getSources().get(0));
                 if (src != null) {
-                    KLayoutData pld = src.getData(KLayoutData.class);
                     if (LEFT_TO_RIGHT.contains(direction)) {
-                        if (NORTH_SOUTH.contains(pld.getProperty(CoreOptions.PORT_SIDE))) {
+                        if (NORTH_SOUTH.contains(src.getProperty(CoreOptions.PORT_SIDE))) {
                             specialBendpoints++;
                         }
                     } else {
-                        if (EAST_WEST.contains(pld.getProperty(CoreOptions.PORT_SIDE))) {
+                        if (EAST_WEST.contains(src.getProperty(CoreOptions.PORT_SIDE))) {
                             specialBendpoints++;
                         }
                     }
                 }
                 
                 // edge's target
-                KPort tgt = kedge.getTargetPort();
+                ElkPort tgt = ElkGraphUtil.connectableShapeToPort(elkedge.getSources().get(0));
                 if (tgt != null) {
-                    KLayoutData pld = tgt.getData(KLayoutData.class);
                     if (LEFT_TO_RIGHT.contains(direction)) {
-                        if (NORTH_SOUTH.contains(pld.getProperty(CoreOptions.PORT_SIDE))) {
+                        if (NORTH_SOUTH.contains(tgt.getProperty(CoreOptions.PORT_SIDE))) {
                             specialBendpoints++;
                         }
                     } else {
-                        if (EAST_WEST.contains(pld.getProperty(CoreOptions.PORT_SIDE))) {
+                        if (EAST_WEST.contains(tgt.getProperty(CoreOptions.PORT_SIDE))) {
                             specialBendpoints++;
                         }
                     }
@@ -167,7 +160,7 @@ public class AxisParallelEdgeSegmentsAnalysis implements IAnalysis {
         }
 
         int notAxisParallel = 0;
-        if ("SIMPLE".equals(ld.getProperty(SIMPLE_NODE_PLACE).toString())) {
+        if ("SIMPLE".equals(parentNode.getProperty(SIMPLE_NODE_PLACE).toString())) {
             notAxisParallel = (bendpoints - specialBendpoints) / 2;
         } else {
             notAxisParallel = (bendpoints + specialBendpoints) / 2;

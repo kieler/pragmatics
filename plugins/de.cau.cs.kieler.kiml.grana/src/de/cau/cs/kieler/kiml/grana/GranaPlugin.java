@@ -19,7 +19,7 @@ import org.eclipse.elk.core.service.ILayoutListener;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
 import org.eclipse.elk.core.service.LayoutMapping;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -60,7 +60,7 @@ public class GranaPlugin extends AbstractUIPlugin {
         LayoutConnectorsService.getInstance().addLayoutListener(new ILayoutListener() {
             @Override
             public void layoutDone(final LayoutMapping mapping, final IElkProgressMonitor progressMonitor) {
-                KNode layoutGraph = mapping.getLayoutGraph();
+                ElkNode layoutGraph = mapping.getLayoutGraph();
 
                 if (VisualizationService.getInstance().findActiveMethod(true)) {
                     List<AnalysisData> analyses = GranaUtil.getLastAnalysesSelection();

@@ -93,7 +93,7 @@ public class CoverageAnalysis implements IAnalysis {
         if (!children.isEmpty()) {
             // Compound node; get layout data and insets and compute the node's bounding box
             KShapeLayout layoutData = parentNode.getData(KShapeLayout.class);
-            KInsets insets = layoutData.getInsets();
+            KInsets insets = layoutData.getPadding();
             Rectangle2D.Float nodeRect = NodeSizeAnalysis.computeNodeRect(
                     parentNode, true, true, true);
             

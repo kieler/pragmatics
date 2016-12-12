@@ -16,11 +16,10 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 
 import java.awt.geom.Rectangle2D;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
@@ -54,17 +53,17 @@ public class NodeSizeAnalysis implements IAnalysis {
         /**
          * The maximum node size analyzed so far.
          */
-        private float maxSize = Float.NEGATIVE_INFINITY;
+        private double maxSize = Double.NEGATIVE_INFINITY;
         
         /**
          * The minimum node size analyzed so far.
          */
-        private float minSize = Float.POSITIVE_INFINITY;
+        private double minSize = Double.POSITIVE_INFINITY;
         
         /**
          * The sum of the size of all nodes analyzed so far.
          */
-        private float sumOfSize = 0.0f;
+        private double sumOfSize = 0.0;
     }
     
 
@@ -98,14 +97,13 @@ public class NodeSizeAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Node size analysis", 1);
         
         NodeSizeAnalysisState state = new NodeSizeAnalysisState();
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
-        for (KNode node : parentNode.getChildren()) {
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
+        for (ElkNode node : parentNode.getChildren()) {
             computeNodeSizes(node, state, hierarchy);
         }
         
@@ -130,12 +128,12 @@ public class NodeSizeAnalysis implements IAnalysis {
      * @param state the analysis state to accumulate the results in.
      * @param hierarchy whether to process hierarchy recursively
      */
-    private void computeNodeSizes(final KNode node, final NodeSizeAnalysisState state,
+    private void computeNodeSizes(final ElkNode node, final NodeSizeAnalysisState state,
             final boolean hierarchy) {
         if (!hierarchy || node.getChildren().isEmpty()) {
             // Compute the node size
-            Rectangle2D.Float nodeRect = computeNodeRect(node, true, true, true);
-            float nodeSize = nodeRect.width * nodeRect.height;
+            Rectangle2D.Double nodeRect = computeNodeRect(node, true, true, true);
+            double nodeSize = nodeRect.width * nodeRect.height;
             
             // Update analysis state
             state.nodes++;
@@ -144,7 +142,7 @@ public class NodeSizeAnalysis implements IAnalysis {
             state.sumOfSize += nodeSize;
         } else {
             // Analyze the children
-            for (KNode child : node.getChildren()) {
+            for (ElkNode child : node.getChildren()) {
                 computeNodeSizes(child, state, hierarchy);
             }
         }
@@ -161,16 +159,13 @@ public class NodeSizeAnalysis implements IAnalysis {
      *                          bounding box.
      * @return the bounding box.
      */
-    public static Rectangle2D.Float computeNodeRect(final KNode node, final boolean includeLabel,
+    public static Rectangle2D.Double computeNodeRect(final ElkNode node, final boolean includeLabel,
             final boolean includePorts, final boolean includePortLabels) {
         
-        float nodeTopLeftX = 0.0f;
-        float nodeTopLeftY = 0.0f;
-        float nodeBottomRightX = 0.0f;
-        float nodeBottomRightY = 0.0f;
-        
-        // Get the node's layout data, and the layout data of the node's label, if any
-        KShapeLayout layoutData = node.getData(KShapeLayout.class);
+        double nodeTopLeftX = 0.0;
+        double nodeTopLeftY = 0.0;
+        double nodeBottomRightX = 0.0;
+        double nodeBottomRightY = 0.0;
         
         // Compute the node's minimum top left and maximum bottom right coordinates.
         // At first, this is done relative to the top left point of the node.
@@ -179,57 +174,45 @@ public class NodeSizeAnalysis implements IAnalysis {
         // and their labels.
         
         // First, the size of the node itself
-        nodeBottomRightX = layoutData.getWidth();
-        nodeBottomRightY = layoutData.getHeight();
+        nodeBottomRightX = node.getWidth();
+        nodeBottomRightY = node.getHeight();
         
         // Take the label into account, if any
         if (includeLabel) {
-            for (KLabel label : node.getLabels()) {
-                KShapeLayout labelLayoutData = label.getData(KShapeLayout.class);
-                nodeTopLeftX = Math.min(nodeTopLeftX, labelLayoutData.getXpos());
-                nodeTopLeftY = Math.min(nodeTopLeftY, labelLayoutData.getYpos());
-                nodeBottomRightX = Math.max(nodeBottomRightX,
-                        labelLayoutData.getXpos() + labelLayoutData.getWidth());
-                nodeBottomRightY = Math.max(nodeBottomRightY,
-                        labelLayoutData.getYpos() + labelLayoutData.getHeight());
+            for (ElkLabel label : node.getLabels()) {
+                nodeTopLeftX = Math.min(nodeTopLeftX, label.getX());
+                nodeTopLeftY = Math.min(nodeTopLeftY, label.getY());
+                nodeBottomRightX = Math.max(nodeBottomRightX, label.getX() + label.getWidth());
+                nodeBottomRightY = Math.max(nodeBottomRightY, label.getY() + label.getHeight());
             }
         }
         
         // Iterate through the ports
         if (includePorts) {
-            for (KPort port : node.getPorts()) {
-                KShapeLayout portLayoutData = port.getData(KShapeLayout.class);
-                
-                nodeTopLeftX = Math.min(nodeTopLeftX, portLayoutData.getXpos());
-                nodeTopLeftY = Math.min(nodeTopLeftY, portLayoutData.getYpos());
-                nodeBottomRightX = Math.max(nodeBottomRightX,
-                        portLayoutData.getXpos() + portLayoutData.getWidth());
-                nodeBottomRightY = Math.max(nodeBottomRightY,
-                        portLayoutData.getYpos() + portLayoutData.getHeight());
+            for (ElkPort port : node.getPorts()) {
+                nodeTopLeftX = Math.min(nodeTopLeftX, port.getX());
+                nodeTopLeftY = Math.min(nodeTopLeftY, port.getY());
+                nodeBottomRightX = Math.max(nodeBottomRightX, port.getX() + port.getWidth());
+                nodeBottomRightY = Math.max(nodeBottomRightY, port.getY() + port.getHeight());
                 
                 // Take the port label into account, if any
                 if (includePortLabels) {
-                    for (KLabel label : port.getLabels()) {
-                        KShapeLayout labelLayoutData = label.getData(KShapeLayout.class);
-                        nodeTopLeftX = Math.min(nodeTopLeftX,
-                                portLayoutData.getXpos() + labelLayoutData.getXpos());
-                        nodeTopLeftY = Math.min(nodeTopLeftY,
-                                portLayoutData.getYpos() + labelLayoutData.getYpos());
+                    for (ElkLabel label : port.getLabels()) {
+                        nodeTopLeftX = Math.min(nodeTopLeftX, port.getX() + label.getX());
+                        nodeTopLeftY = Math.min(nodeTopLeftY, port.getY() + label.getY());
                         nodeBottomRightX = Math.max(nodeBottomRightX,
-                                portLayoutData.getXpos() + labelLayoutData.getXpos()
-                                    + labelLayoutData.getWidth());
+                                port.getX() + label.getX() + label.getWidth());
                         nodeBottomRightY = Math.max(nodeBottomRightY,
-                                portLayoutData.getYpos() + labelLayoutData.getYpos()
-                                    + labelLayoutData.getHeight());
+                                port.getY() + label.getY() + label.getHeight());
                     }
                 }
             }
         }
         
         // Offset coordinates by the node's actual position
-        return new Rectangle2D.Float(
-                nodeTopLeftX + layoutData.getXpos(),
-                nodeTopLeftY + layoutData.getYpos(),
+        return new Rectangle2D.Double(
+                nodeTopLeftX + node.getX(),
+                nodeTopLeftY + node.getY(),
                 nodeBottomRightX - nodeTopLeftX,
                 nodeBottomRightY - nodeTopLeftY);
     }

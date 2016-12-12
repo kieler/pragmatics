@@ -31,6 +31,6 @@ public interface ISelectionListener {
      * @param selectedAnalyses
      *            the selected analyses
      */
-    void selectionChanged(final List<AnalysisData> selectedAnalyses);
+    void selectionChanged(List<AnalysisData> selectedAnalyses);
     
 }

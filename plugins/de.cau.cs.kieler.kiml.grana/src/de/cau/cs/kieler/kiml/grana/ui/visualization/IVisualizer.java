@@ -32,7 +32,7 @@ public interface IVisualizer<S, T> {
      *            the result of an analysis
      * @return true if this class can visualize the result
      */
-    boolean canVisualize(final Object result);
+    boolean canVisualize(Object result);
 
     /**
      * Visualizes the given analysis result by modifying the given parameter
@@ -48,5 +48,5 @@ public interface IVisualizer<S, T> {
      * @return an object that represents the visualization or null if not
      *         applicable
      */
-    S visualize(final AnalysisData analysis, final Object result, final T parameter);
+    S visualize(AnalysisData analysis, Object result, T parameter);
 }

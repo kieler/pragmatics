@@ -14,16 +14,16 @@
 package de.cau.cs.kieler.kiml.grana.ui.batch;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
- * The interface for KGraph providers.
+ * The interface for ELK Graph providers.
  * 
  * @author mri
  * @kieler.ignore (excluded from review process)
  * @param <T> the parameter type
  */
-public interface IKGraphProvider<T> {
+public interface IElkGraphProvider<T> {
 
     /**
      * Returns a KGraph instance from a specific source using the parameter.
@@ -32,10 +32,9 @@ public interface IKGraphProvider<T> {
      *            the parameter
      * @param monitor
      *            the progress monitor
-     * @return the KGraph instance
+     * @return the Elk Graph instance
      * @throws Exception
      *             any kind of exception
      */
-    KNode getKGraph(final T parameter, final IElkProgressMonitor monitor)
-            throws Exception;
+    ElkNode getElkGraph(T parameter, IElkProgressMonitor monitor) throws Exception;
 }

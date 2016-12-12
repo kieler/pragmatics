@@ -27,13 +27,12 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.WrappedException;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -53,7 +52,7 @@ import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
  * @author uru
  * @kieler.ignore (excluded from review process)
  */
-public class FileKGraphProvider implements IKGraphProvider<IPath> {
+public class FileElkGraphProvider implements IElkGraphProvider<IPath> {
 
     /** the layout engine for graph layout. */
     private static IGraphLayoutEngine layoutEngine;
@@ -70,12 +69,12 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
     /**
      * {@inheritDoc}
      */
-    public KNode getKGraph(final IPath parameter, final IElkProgressMonitor monitor) {
+    public ElkNode getElkGraph(final IPath parameter, final IElkProgressMonitor monitor) {
         monitor.begin("Retrieving KGraph from " + parameter.toString(), 2);
         
         // try to load the file as a kgraph 
         // possibly converting a different format such as graphml
-        KNode graph = null;
+        ElkNode graph = null;
         try {
 
             String extension = parameter.getFileExtension();
@@ -88,7 +87,7 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                 is = new FileInputStream(parameter.toFile());
             }
             
-            KNode[] nodes = GraphFormatsService.getInstance().loadKGraph(is, extension);
+            ElkNode[] nodes = GraphFormatsService.getInstance().loadElkGraph(is, extension);
             // if a file contains multiple graphs, we consider only the first graph
             if (nodes.length > 0) {
                 graph = nodes[0];
@@ -118,9 +117,9 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
             content = resource.getContents().get(0);
         }
 
-        if (graph != null || content instanceof KNode) {
+        if (graph != null || content instanceof ElkNode) {
             if (graph == null) {
-                graph = (KNode) content;
+                graph = (ElkNode) content;
             }
             // assure that properties, stored in the model file, are loaded properly 
             GraphDataUtil.loadDataElements(graph, true);
@@ -164,8 +163,7 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
                     
                     // attach the results to the graph such that the 
                     // execution time analysis can print them
-                    graph.getData(KLayoutData.class).setProperty(
-                            BatchHandler.EXECUTION_TIME_RESULTS, minPhaseTimes);
+                    graph.setProperty(BatchHandler.EXECUTION_TIME_RESULTS, minPhaseTimes);
 
                 } else {
                     // plain layout - no hassle
@@ -210,14 +208,14 @@ public class FileKGraphProvider implements IKGraphProvider<IPath> {
     /**
      * Apply the given graph element visitors to the content of the given graph.
      */
-    private static void applyVisitors(final KNode graph, final IGraphElementVisitor... visitors) {
+    private static void applyVisitors(final ElkNode graph, final IGraphElementVisitor... visitors) {
         for (int i = 0; i < visitors.length; i++) {
             visitors[i].visit(graph);
         }
-        Iterator<KGraphElement> allElements =
-                Iterators.filter(graph.eAllContents(), KGraphElement.class);
+        Iterator<ElkGraphElement> allElements =
+                Iterators.filter(graph.eAllContents(), ElkGraphElement.class);
         while (allElements.hasNext()) {
-            KGraphElement element = allElements.next();
+            ElkGraphElement element = allElements.next();
             for (int i = 0; i < visitors.length; i++) {
                 visitors[i].visit(element);
             }

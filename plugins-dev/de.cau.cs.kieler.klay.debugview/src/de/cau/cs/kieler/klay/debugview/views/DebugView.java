@@ -22,8 +22,8 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.alg.graphviz.layouter.GraphvizTool;
-import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -332,8 +332,8 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
                 activateDotView();
             } else {
                 try {
-                     KNode[] kgraph = GraphFormatsService.getInstance()
-                             .loadKGraph(new FileInputStream(modelFile), "json"); //$NON-NLS-1$
+                     ElkNode[] kgraph = GraphFormatsService.getInstance()
+                             .loadElkGraph(new FileInputStream(modelFile), "json"); //$NON-NLS-1$
                     viewContext.update(kgraph[0]);
                     viewContext.getViewer().zoom(ZoomStyle.ZOOM_TO_FIT,
                             KlighdConstants.DEFAULT_ANIMATION_TIME);
@@ -549,7 +549,7 @@ public class DebugView extends ViewPart implements IDiagramWorkbenchPart {
         
         klighdComposite = new Composite(diagramComposite, SWT.NONE);
         klighdComposite.setLayout(new FillLayout());
-        viewContext = new ViewContext(this, ElkUtil.createInitializedNode());
+        viewContext = new ViewContext(this, ElkGraphUtil.createGraph());
         viewContext.configure();
         ContextViewer viewer = new ContextViewer(klighdComposite);
         viewer.setModel(viewContext);

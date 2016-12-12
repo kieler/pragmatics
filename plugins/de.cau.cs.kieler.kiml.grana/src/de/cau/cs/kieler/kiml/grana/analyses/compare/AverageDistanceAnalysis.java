@@ -18,12 +18,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Queue;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Lists;
@@ -66,12 +65,13 @@ public class AverageDistanceAnalysis implements IComparingAnalysis {
      * {@inheritDoc}
      */
     @Override
-    public Object doAnalysis(final KNode first, final KNode second, final Map<EObject, EObject> mapping,
-            final AnalysisContext context, final IElkProgressMonitor progressMonitor) {
+    public Object doAnalysis(final ElkNode first, final ElkNode second,
+            final Map<EObject, EObject> mapping, final AnalysisContext context,
+            final IElkProgressMonitor progressMonitor) {
+        
         progressMonitor.begin("Average Distance Analysis", 1);
         
-        boolean hierarchy = first.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = first.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
 
         Result result = new Result();
         // --------------------------
@@ -89,27 +89,26 @@ public class AverageDistanceAnalysis implements IComparingAnalysis {
                 result.relative / result.cntRelative };
     }
     
-    private Result analyzeAbsolute(final KNode root, final Map<EObject, EObject> mapping,
+    private Result analyzeAbsolute(final ElkNode root, final Map<EObject, EObject> mapping,
             final Result result, final boolean hierarchy) {
 
         KVectorChain ap1 = new KVectorChain();
         KVectorChain ap2 = new KVectorChain();
-        Queue<KNode> nodes = Lists.newLinkedList();
+        Queue<ElkNode> nodes = Lists.newLinkedList();
         nodes.addAll(root.getChildren());
 
         while (!nodes.isEmpty()) {
-            KNode node = nodes.poll();
+            ElkNode node = nodes.poll();
 
             // only use atomic nodes
             if (node.getChildren().isEmpty()) {
-                KShapeLayout sl1 = node.getData(KShapeLayout.class);
-                KShapeLayout sl2 = (KShapeLayout) mapping.get(sl1);
+                ElkNode node2 = (ElkNode) mapping.get(node);
 
-                KVector n1Center = center(sl1);
-                KVector n2Center = center(sl2);
+                KVector n1Center = center(node);
+                KVector n2Center = center(node2);
                 n1Center = ElkUtil.toAbsolute(n1Center, node.getParent());
                 // CAREFUL! Take the correct parent here
-                KNode secondParent = (KNode) mapping.get(node.getParent());
+                ElkNode secondParent = (ElkNode) mapping.get(node.getParent());
                 n2Center = ElkUtil.toAbsolute(n2Center, secondParent);
 
                 ap1.add(n1Center.clone());
@@ -130,19 +129,18 @@ public class AverageDistanceAnalysis implements IComparingAnalysis {
         return result;
     }
     
-    private Result analyzeRelative(final KNode parent, final Map<EObject, EObject> mapping,
+    private Result analyzeRelative(final ElkNode parent, final Map<EObject, EObject> mapping,
             final Result result, final boolean hierarchy) {
    
         KVectorChain rp1 = new KVectorChain();
         KVectorChain rp2 = new KVectorChain();
         
         // collect the points
-        for (KNode n1 : parent.getChildren()) {
-            KShapeLayout sl1 = n1.getData(KShapeLayout.class);
-            KShapeLayout sl2 = (KShapeLayout) mapping.get(sl1);
+        for (ElkNode n1 : parent.getChildren()) {
+            ElkNode n2 = (ElkNode) mapping.get(n1);
 
-            KVector n1Center = center(sl1);
-            KVector n2Center = center(sl2);
+            KVector n1Center = center(n1);
+            KVector n2Center = center(n2);
             
             rp1.add(n1Center.clone());
             rp2.add(n2Center.clone());
@@ -156,7 +154,7 @@ public class AverageDistanceAnalysis implements IComparingAnalysis {
         
         // hierarchy
         if (hierarchy) {
-            for (KNode n1 : parent.getChildren()) {
+            for (ElkNode n1 : parent.getChildren()) {
                 if (!n1.getChildren().isEmpty()) {
                     analyzeRelative(n1, mapping, result, hierarchy);
                 }

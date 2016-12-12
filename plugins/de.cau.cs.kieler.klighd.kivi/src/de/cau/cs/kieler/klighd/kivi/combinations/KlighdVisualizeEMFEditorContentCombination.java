@@ -16,7 +16,7 @@ package de.cau.cs.kieler.klighd.kivi.combinations;
 import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -105,7 +105,7 @@ public class KlighdVisualizeEMFEditorContentCombination extends AbstractCombinat
                 //  as well as on KGraphElement/KText selections,
                 //   the latter will cause ClassCastExceptions later on
                 if (!(selected instanceof Resource || selected instanceof EObject)
-                        || selected instanceof KGraphElement
+                        || selected instanceof ElkGraphElement
                         || selected instanceof KText) {
                     return;
                 }

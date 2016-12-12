@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
@@ -108,7 +108,7 @@ public class GraphUpdateController extends AbstractViewUpdateController implemen
      *            IEditorPart containing model
      * @return EObject model
      */
-    protected static KNode readModel(final IEditorPart editor) {
+    protected static ElkNode readModel(final IEditorPart editor) {
         
         final IEditorInput input = editor.getEditorInput();
         if (input instanceof IFileEditorInput) {
@@ -116,7 +116,7 @@ public class GraphUpdateController extends AbstractViewUpdateController implemen
             
             try {
                 // if we know how to handle the graph's format, load it
-                KNode[] kgraph = GraphFormatsService.getInstance().loadKGraph(file);
+                ElkNode[] kgraph = GraphFormatsService.getInstance().loadElkGraph(file);
                 return kgraph[0];
                 
             } catch (IOException | CoreException e) {

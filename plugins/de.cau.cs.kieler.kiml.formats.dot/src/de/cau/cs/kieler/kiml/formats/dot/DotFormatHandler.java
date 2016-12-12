@@ -22,7 +22,7 @@ import org.eclipse.elk.alg.graphviz.dot.transform.DotExporter;
 import org.eclipse.elk.alg.graphviz.dot.transform.DotImporter;
 import org.eclipse.elk.alg.graphviz.dot.transform.DotResourceSetProvider;
 import org.eclipse.elk.alg.graphviz.dot.transform.IDotTransformationData;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.IPropertyHolder;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -75,16 +75,16 @@ public class DotFormatHandler extends AbstractEmfHandler<GraphvizModel> {
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<GraphvizModel, KNode> getImporter() {
-        return new IGraphTransformer<GraphvizModel, KNode>() {
+    public IGraphTransformer<GraphvizModel, ElkNode> getImporter() {
+        return new IGraphTransformer<GraphvizModel, ElkNode>() {
 
             @Override
-            public void transform(TransformationData<GraphvizModel, KNode> data) {
+            public void transform(TransformationData<GraphvizModel, ElkNode> data) {
                 IMPORTER.transform(DotTransformationDataWrapper.wrap(data));
             }
 
             @Override
-            public void transferLayout(TransformationData<GraphvizModel, KNode> data) {
+            public void transferLayout(TransformationData<GraphvizModel, ElkNode> data) {
                 IMPORTER.transferLayout(DotTransformationDataWrapper.wrap(data));
             }
             
@@ -96,16 +96,16 @@ public class DotFormatHandler extends AbstractEmfHandler<GraphvizModel> {
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<KNode, GraphvizModel> getExporter() {
-        return new IGraphTransformer<KNode, GraphvizModel>() {
+    public IGraphTransformer<ElkNode, GraphvizModel> getExporter() {
+        return new IGraphTransformer<ElkNode, GraphvizModel>() {
 
             @Override
-            public void transform(TransformationData<KNode, GraphvizModel> data) {
+            public void transform(TransformationData<ElkNode, GraphvizModel> data) {
                 EXPORTER.transform(DotTransformationDataWrapper.wrap(data));
             }
 
             @Override
-            public void transferLayout(TransformationData<KNode, GraphvizModel> data) {
+            public void transferLayout(TransformationData<ElkNode, GraphvizModel> data) {
                 EXPORTER.transferLayout(DotTransformationDataWrapper.wrap(data));
             }
             

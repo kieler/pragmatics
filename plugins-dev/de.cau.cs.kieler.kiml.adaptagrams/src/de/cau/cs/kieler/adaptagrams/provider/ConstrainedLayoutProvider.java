@@ -218,7 +218,7 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         }
 
         // resize the parent node
-        KInsets insets = root.getData(KShapeLayout.class).getInsets();
+        KInsets insets = root.getData(KShapeLayout.class).getPadding();
         float width =
                 (float) (maxX - minX) + 2 * borderSpacing + insets.getLeft() + insets.getRight();
         float height =

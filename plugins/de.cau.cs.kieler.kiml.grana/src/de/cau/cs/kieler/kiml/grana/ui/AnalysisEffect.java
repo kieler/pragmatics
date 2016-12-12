@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisData;
@@ -36,7 +36,7 @@ import de.cau.cs.kieler.kiml.grana.ui.visualization.VisualizationService;
 public class AnalysisEffect extends Job {
 
     /** the parent node. */
-    private KNode parentNode;
+    private ElkNode parentNode;
     /** the analyses to perform. */
     private List<AnalysisData> analyses;
 
@@ -48,7 +48,7 @@ public class AnalysisEffect extends Job {
      * @param theanalyses
      *            the analyses to perform
      */
-    public AnalysisEffect(final KNode theparentNode,
+    public AnalysisEffect(final ElkNode theparentNode,
             final List<AnalysisData> theanalyses) {
         super("Grana Analysis Job");
         this.parentNode = theparentNode;

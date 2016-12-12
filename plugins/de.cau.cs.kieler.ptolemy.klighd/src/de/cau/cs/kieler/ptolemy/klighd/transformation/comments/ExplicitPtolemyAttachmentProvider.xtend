@@ -16,7 +16,7 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import org.eclipse.elk.core.comments.IExplicitAttachmentProvider
-import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.graph.ElkNode
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
@@ -34,7 +34,7 @@ final class ExplicitPtolemyAttachmentProvider implements IExplicitAttachmentProv
     /**
      * {@inheritDoc}
      */
-    override findExplicitAttachment(KNode comment) {
+    override findExplicitAttachment(ElkNode comment) {
         // Retrieve some annotations and check if we have the required information
         val location = comment.getAnnotation(ANNOTATION_LOCATION)
         val relativeTo = location?.getAnnotation(ANNOTATION_RELATIVE_TO)

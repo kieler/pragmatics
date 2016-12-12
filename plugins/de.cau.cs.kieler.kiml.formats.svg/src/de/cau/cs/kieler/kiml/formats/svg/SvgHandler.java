@@ -17,7 +17,7 @@ import java.io.StringWriter;
 
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.svggen.SVGGraphics2DIOException;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
@@ -46,14 +46,14 @@ public class SvgHandler implements IGraphFormatHandler<SVGGraphics2D> {
      * {@inheritDoc}
      */
     public void deserialize(final String serializedGraph,
-            final TransformationData<SVGGraphics2D, KNode> transData) {
+            final TransformationData<SVGGraphics2D, ElkNode> transData) {
         throw new UnsupportedOperationException("SVG parsing is not supported.");
     }
 
     /**
      * {@inheritDoc}
      */
-    public String serialize(final TransformationData<KNode, SVGGraphics2D> transData) {
+    public String serialize(final TransformationData<ElkNode, SVGGraphics2D> transData) {
         StringWriter writer = new StringWriter();
         boolean useCss = transData.getProperty(SvgOptions.USE_CSS);
         try {
@@ -69,7 +69,7 @@ public class SvgHandler implements IGraphFormatHandler<SVGGraphics2D> {
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<SVGGraphics2D, KNode> getImporter() {
+    public IGraphTransformer<SVGGraphics2D, ElkNode> getImporter() {
         throw new UnsupportedOperationException("SVG import is not supported.");
     }
     
@@ -78,7 +78,7 @@ public class SvgHandler implements IGraphFormatHandler<SVGGraphics2D> {
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<KNode, SVGGraphics2D> getExporter() {
+    public IGraphTransformer<ElkNode, SVGGraphics2D> getExporter() {
         return exporter;
     }
 

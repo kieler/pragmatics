@@ -19,7 +19,7 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -62,7 +62,7 @@ public class OpenGraphDiagramHandler extends AbstractHandler {
                     try {
                         
                         // if we know how to handle the graph's format, load it
-                        KNode[] kgraph = GraphFormatsService.getInstance().loadKGraph(f);
+                        ElkNode[] kgraph = GraphFormatsService.getInstance().loadElkGraph(f);
 
                         // and show a kgraph visualization of the graph
                         DiagramViewManager.createView(f.getName(),

@@ -35,7 +35,6 @@ import de.cau.cs.kieler.kiml.grana.ui.batch.Batch
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJob
 import de.cau.cs.kieler.kiml.grana.ui.batch.BatchResult
 import de.cau.cs.kieler.kiml.grana.ui.batch.CSVResultSerializer
-import de.cau.cs.kieler.kiml.grana.ui.batch.FileKGraphProvider
 import de.cau.cs.kieler.kiml.grana.ui.batch.JsonResultSerializer
 import java.io.File
 import java.io.IOException
@@ -53,6 +52,7 @@ import org.eclipse.elk.core.util.Pair
 import org.eclipse.elk.graph.properties.MapPropertyHolder
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
+import de.cau.cs.kieler.kiml.grana.ui.batch.FileElkGraphProvider
 
 /**
  * Utility class to convert textually specified grana executions to 
@@ -288,7 +288,7 @@ final class GranaTextToBatchJob {
      *          the path of a test case (corresponding to a grana Job) 
      */
     private static def addBatchJob(Batch batch, Job job, IPath path) {
-        val provider = new FileKGraphProvider
+        val provider = new FileElkGraphProvider
          
         switch (job) {
             RegularJob: {

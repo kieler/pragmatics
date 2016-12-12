@@ -15,7 +15,7 @@ package de.cau.cs.kieler.kiml.ogdf;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.ogdf.options.LayoutAlgorithm;
 import net.ogdf.bin.OgdfServer;
@@ -54,7 +54,7 @@ public class OgdfLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final KNode layoutNode, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode layoutNode, final IElkProgressMonitor progressMonitor) {
         if (layoutAlgorithm == null) {
             throw new IllegalStateException("The OGDF layout algorithm is not configured correctly."
                     + " Please check the parameter in the extension point");
