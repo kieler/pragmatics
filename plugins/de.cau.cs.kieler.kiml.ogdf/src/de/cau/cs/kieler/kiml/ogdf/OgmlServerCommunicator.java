@@ -401,12 +401,6 @@ public class OgmlServerCommunicator {
         
         progressMonitor.begin("Apply layout", 1);
         
-        // get the border spacing
-        double borderSpacing = parentNode.getProperty(CoreOptions.SPACING_BORDER);
-        if (borderSpacing < 0) {
-            borderSpacing = DEF_BORDER_SPACING;
-        }
-        
         // dem insets!
         ElkPadding elkPadding = parentNode.getProperty(CoreOptions.PADDING);
         
@@ -414,8 +408,8 @@ public class OgmlServerCommunicator {
         float boundingBoxWidth = Float.NaN;
         float boundingBoxHeight = Float.NaN;
         
-        double offsetX = borderSpacing + elkPadding.getLeft();
-        double offsetY = borderSpacing + elkPadding.getTop();
+        double offsetX = elkPadding.getLeft();
+        double offsetY = elkPadding.getTop();
         
         KVectorChain boundingBox = layoutInformation.get("graph");
         if (boundingBox != null && boundingBox.size() == 2) {
@@ -545,10 +539,8 @@ public class OgmlServerCommunicator {
         
         // set the width/height of the graph
         if (!(Double.isNaN(boundingBoxWidth) || Double.isNaN(boundingBoxHeight))) {
-            double width = boundingBoxWidth + 2 * borderSpacing
-                    + elkPadding.getLeft() + elkPadding.getRight();
-            double height = boundingBoxHeight + 2 * borderSpacing
-                    + elkPadding.getTop() + elkPadding.getBottom();
+            double width = boundingBoxWidth + elkPadding.getLeft() + elkPadding.getRight();
+            double height = boundingBoxHeight + elkPadding.getTop() + elkPadding.getBottom();
             
             ElkUtil.resizeNode(parentNode, width, height, false, true);
         }
