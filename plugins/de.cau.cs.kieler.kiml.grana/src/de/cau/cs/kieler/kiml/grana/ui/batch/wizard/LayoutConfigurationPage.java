@@ -364,7 +364,7 @@ public class LayoutConfigurationPage extends WizardPage {
                     return getChoicesMessage();
                 case INT:
                     return "Expected integer number.";
-                case FLOAT:
+                case DOUBLE:
                     return "Expected real number.";
                 case OBJECT:
                     // We allow null objects if the input string is either null or "null"
@@ -441,8 +441,8 @@ public class LayoutConfigurationPage extends WizardPage {
                     return imageRegistry.get(ElkUiPlugin.IMG_CHOICE);
                 case INT:
                     return imageRegistry.get(ElkUiPlugin.IMG_INT);
-                case FLOAT:
-                    return imageRegistry.get(ElkUiPlugin.IMG_FLOAT);
+                case DOUBLE:
+                    return imageRegistry.get(ElkUiPlugin.IMG_DOUBLE);
                 }
             }
             return null;
