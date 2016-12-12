@@ -18,11 +18,11 @@ bundle {
     metadataClass SvgOptions
 }
 
-option scale: float {
+option scale: double {
     label "SVG Rendering Scale"
     description "Property for output scaling, to be put in parent node's shape layout."
     targets parents
-    default = 1.0f
+    default = 1.0
     legacyIds de.cau.cs.kieler.svg.scale
 }
 

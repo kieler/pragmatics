@@ -128,7 +128,7 @@ public class KAwtRenderer {
     /** the graphics context used for drawing. */
     private Graphics2D graphics;
     /** the scale factor for all coordinates. */
-    private float scale = 1.0f;
+    private double scale = 1.0;
     /** the transformation data object used for logging. */
     private TransformationData<?, ?> transData;
     
@@ -299,7 +299,8 @@ public class KAwtRenderer {
         if (labelRendering == null) {
             // paint the text string
             graphics.setColor(Color.BLACK);
-            graphics.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, Math.round(scale * fontSize)));
+            graphics.setFont(new Font(Font.SANS_SERIF, Font.PLAIN,
+                    (int) Math.round(scale * fontSize)));
             
             // retrieve the alignment
             HorizontalAlignment hAlign = HorizontalAlignment.LEFT;
@@ -556,13 +557,20 @@ public class KAwtRenderer {
         if (styleData.lineStyle != null) {
             scaledLineStyle = new float[styleData.lineStyle.length];
             for (int i = 0; i < styleData.lineStyle.length; i++) {
-                scaledLineStyle[i] = scale * styleData.lineWidth * styleData.lineStyle[i];
+                scaledLineStyle[i] = (float) (scale * styleData.lineWidth * styleData.lineStyle[i]);
             }
         }
-        graphics.setStroke(new BasicStroke(scale * styleData.lineWidth, styleData.lineCap,
-                BasicStroke.JOIN_MITER, scale, scaledLineStyle, 0.0f));
-        graphics.setFont(new Font(styleData.fontName, styleData.fontStyle,
-                Math.round(scale * styleData.fontSize)));
+        graphics.setStroke(new BasicStroke(
+                (float) (scale * styleData.lineWidth),
+                styleData.lineCap,
+                BasicStroke.JOIN_MITER,
+                (float) scale,
+                scaledLineStyle,
+                0.0f));
+        graphics.setFont(new Font(
+                styleData.fontName,
+                styleData.fontStyle,
+                (int) Math.round(scale * styleData.fontSize)));
         return styleData;
     }
     
@@ -723,8 +731,8 @@ public class KAwtRenderer {
                     break;
                 case KRenderingPackage.KROUNDED_RECTANGLE:
                     KRoundedRectangle roundedRectangle = (KRoundedRectangle) rendering;
-                    int arcWidth = Math.round(scale * roundedRectangle.getCornerWidth());
-                    int arcHeight = Math.round(scale * roundedRectangle.getCornerHeight());
+                    int arcWidth = (int) Math.round(scale * roundedRectangle.getCornerWidth());
+                    int arcHeight = (int) Math.round(scale * roundedRectangle.getCornerHeight());
                     if (styleData.backgVisible) {
                         graphics.setColor(styleData.backgColor);
                         graphics.fillRoundRect(0, 0, width, height, arcWidth, arcHeight);
