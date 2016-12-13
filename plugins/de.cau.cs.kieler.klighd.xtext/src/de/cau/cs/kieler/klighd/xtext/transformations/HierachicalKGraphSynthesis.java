@@ -6,14 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
+import de.cau.cs.kieler.klighd.kgraph.KEdgeLayout;
+import de.cau.cs.kieler.klighd.kgraph.KLayoutData;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
+import de.cau.cs.kieler.klighd.kgraph.KShapeLayout;
 import de.cau.cs.kieler.klighd.kgraph.impl.KGraphFactoryImpl;
-import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 
 /*
@@ -53,6 +54,10 @@ public class HierachicalKGraphSynthesis {
 //        addEdges(diagram);
 
     }
+
+    private static boolean isLeaf(final KNode node) {
+        return node.getChildren().isEmpty();
+    }
     
     private static KNode copyWithoutBlueBox(final KNode parent) {
         List<KNode> copies = new ArrayList<KNode>();
@@ -60,13 +65,6 @@ public class HierachicalKGraphSynthesis {
         
         for(KNode child : parent.getChildren()) {
             List<KNode> children = child.getChildren();
-            KGraphDataUtil.loadDataElements(child);
-            float sizeW = child.getProperty(CoreOptions.NODE_SIZE_MIN_WIDTH);
-            float sizeH = child.getProperty(CoreOptions.NODE_SIZE_MIN_HEIGHT);
-//            if (sizeW > 0) {
-                child.setWidth(sizeW);
-                child.setHeight(sizeH);
-//            }
             KNode copy;
             // Remove useless blue boxes, if there is only one expandable child inside
             if(!(children.size() == 1 && !children.get(0).getChildren().isEmpty())) {
