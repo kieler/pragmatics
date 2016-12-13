@@ -116,20 +116,17 @@ public class HierachicalKGraphSynthesis {
 
                     // Display expandable Nodes smaller without their content.
                     // TODO shrink size of root node.
-                    for (KNode k : grandChildren) {
-                        Map<IProperty<?>, Object> map =
-                                k.getData(KRectangle.class).getAllProperties();
-                        if (!map.isEmpty()) {
-                            for (Map.Entry<IProperty<?>, Object> entry : map.entrySet()) {
-                                if (entry.getKey().toString()
-                                        .equals("de.cau.cs.kieler.klighd.collapsedRendering")) {
-                                    k.setHeight(200.0f);
-                                    k.setWidth(200.0f);
-                                }
+                    Map<IProperty<?>, Object> map =
+                            child.getData(KRectangle.class).getAllProperties();
+                    if (!map.isEmpty()) {
+                        for (Map.Entry<IProperty<?>, Object> entry : map.entrySet()) {
+                            if (entry.getKey().toString()
+                                    .equals("de.cau.cs.kieler.klighd.collapsedRendering")) {
+                                child.setHeight(200.0f);
+                                child.setWidth(200.0f);
                             }
                         }
                     }
-
                 }
             }
         }
