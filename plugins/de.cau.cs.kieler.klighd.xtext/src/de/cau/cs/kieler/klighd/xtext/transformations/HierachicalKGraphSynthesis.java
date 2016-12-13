@@ -124,8 +124,6 @@ public final class HierachicalKGraphSynthesis {
             if (!(children.size() == 1 && !children.get(0).getChildren().isEmpty())) {
                 clearGrandchildren(child);
                 copy = (KNode) copier.copy(child);
-                copy.getChildren().clear();
-
             } else {
                 for (KNode grandChild : child.getChildren()) {
                     clearGrandchildren(grandChild);
@@ -133,7 +131,8 @@ public final class HierachicalKGraphSynthesis {
                 // copy = (KNode) copier.copy(child.getChildren().get(0));
                 copy = (KNode) copier.copy(child);
             }
-
+            
+            copy.getChildren().clear();
             copier.copyReferences();
 
             copies.add(copy);
