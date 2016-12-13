@@ -32,7 +32,12 @@ import de.cau.cs.kieler.klighd.util.KlighdProperties;
  * @author ybl
  *
  */
-public class HierachicalKGraphSynthesis {
+public final class HierachicalKGraphSynthesis {
+
+    private HierachicalKGraphSynthesis() {
+        // not available
+    }
+
     private static Map<KNode, KNode> parents = new HashMap<>();
 
     /**
@@ -48,50 +53,15 @@ public class HierachicalKGraphSynthesis {
         diagram.getChildren().clear();
         diagram.getChildren().addAll(nodes);
 
-        // deletion(diagram.getChildren());
         // addEdges(diagram);
 
-    }
-
-    private static KNode copyWithoutBlueBox(final KNode parent) {
-        List<KNode> copies = new ArrayList<KNode>();
-        Copier copier = new Copier();
-
-        for (KNode child : parent.getChildren()) {
-            List<KNode> children = child.getChildren();
-            KNode copy;
-            // Remove useless blue boxes, if there is only one expandable child inside
-            if (!(children.size() == 1 && !children.get(0).getChildren().isEmpty())) {
-                clearGrandchildren(child);
-                copy = (KNode) copier.copy(child);
-                copy.getChildren().clear();
-
-            } else {
-                for (KNode grandChild : child.getChildren()) {
-                    clearGrandchildren(grandChild);
-                }
-                // copy = (KNode) copier.copy(child.getChildren().get(0));
-                copy = (KNode) copier.copy(child);
-            }
-
-            copier.copyReferences();
-
-            copies.add(copy);
-        }
-
-        parent.getChildren().clear();
-        parent.getChildren().addAll(copies);
-        return parent;
     }
 
     private static List<KNode> recursiveTraversal(final KNode parent) {
         List<KNode> copiedChildren = new ArrayList<>();
 
-        if (parent.getChildren().isEmpty()) {
-            return copiedChildren;
-        }
-
         for (KNode child : parent.getChildren()) {
+            // deep search, first look at the children
             copiedChildren.addAll(recursiveTraversal(child));
 
             List<KNode> grandChildren = child.getChildren();
@@ -101,7 +71,6 @@ public class HierachicalKGraphSynthesis {
                 if (!grandChildren.isEmpty()) {
 
                     // extract/copy content of children
-
                     KNode copy = copyWithoutBlueBox(child);
 
                     // delete the existing edges for the copy
@@ -137,35 +106,52 @@ public class HierachicalKGraphSynthesis {
         return copiedChildren;
     }
 
-    private static void clearGrandchildren(KNode child) {
-        for (KNode grandChild : child.getChildren()) {
-            grandChild.getChildren().clear();
+    /**
+     * Copy a node or if it is a blue box skip it. On the way, clear the grandchildren to flatten
+     * the hierarchy.
+     * 
+     * @param parent
+     * @return
+     */
+    private static KNode copyWithoutBlueBox(final KNode parent) {
+        List<KNode> copies = new ArrayList<KNode>();
+        Copier copier = new Copier();
+
+        for (KNode child : parent.getChildren()) {
+            List<KNode> children = child.getChildren();
+            KNode copy;
+            // Remove useless blue boxes, if there is only one expandable child inside
+            if (!(children.size() == 1 && !children.get(0).getChildren().isEmpty())) {
+                clearGrandchildren(child);
+                copy = (KNode) copier.copy(child);
+                copy.getChildren().clear();
+
+            } else {
+                for (KNode grandChild : child.getChildren()) {
+                    clearGrandchildren(grandChild);
+                }
+                // copy = (KNode) copier.copy(child.getChildren().get(0));
+                copy = (KNode) copier.copy(child);
+            }
+
+            copier.copyReferences();
+
+            copies.add(copy);
         }
+
+        parent.getChildren().clear();
+        parent.getChildren().addAll(copies);
+        return parent;
     }
 
     /**
-     * Delete all the deeper hierachy levels of the copied children.
+     * Delete all the grandchildren of a node.
      * 
-     * @param allNodes
+     * @param child
      */
-    private static void deletion(final List<KNode> allNodes) {
-        for (KNode node : allNodes) {
-            for (KNode childOfChild : node.getChildren()) {
-                childOfChild.getChildren().clear();
-                // KLayoutData layoutDataChildOfChild = childOfChild.getData(KLayoutData.class);
-                node.setProperty(KlighdProperties.COLLAPSED_RENDERING, true);
-                node.setProperty(KlighdProperties.EXPANDED_RENDERING, false);
-                node.setProperty(KlighdProperties.EXPAND, true);
-            }
-
-            // try to expand all the original children
-            // KLayoutData layoutDataNode = node.getData(KLayoutData.class);
-            node.setProperty(KlighdProperties.COLLAPSED_RENDERING, false);
-            node.setProperty(KlighdProperties.EXPANDED_RENDERING, true);
-            node.setProperty(KlighdProperties.EXPAND, true);
-            // KShapeLayout shape = node.getData(KShapeLayout.class);
-            node.setHeight(200.0f);
-            node.setWidth(200.0f);
+    private static void clearGrandchildren(KNode child) {
+        for (KNode grandChild : child.getChildren()) {
+            grandChild.getChildren().clear();
         }
     }
 
