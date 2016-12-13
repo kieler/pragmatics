@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.impl.KGraphFactoryImpl;
-import de.cau.cs.kieler.klighd.krendering.KRectangle;
-import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
 
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
@@ -53,10 +53,9 @@ public final class HierachicalKGraphSynthesis {
         diagram.getChildren().clear();
         diagram.getChildren().addAll(nodes);
 
-        // addEdges(diagram);
+         addEdges(diagram);
 
     }
-
     private static List<KNode> recursiveTraversal(final KNode parent) {
         List<KNode> copiedChildren = new ArrayList<>();
 
@@ -68,13 +67,14 @@ public final class HierachicalKGraphSynthesis {
             copiedChildren.addAll(recursiveTraversal(child));
 
             List<KNode> grandChildren = child.getChildren();
-
+            
             // Ignore blue boxes and copied only the child inside
             if (!(grandChildren.size() == 1 && !grandChildren.get(0).getChildren().isEmpty())) {
                 if (!grandChildren.isEmpty()) {
 
                     // extract/copy content of children
                     KNode copy = copyWithoutBlueBox(child);
+                    
 
                     // delete the existing edges for the copy
                     if (copy.getOutgoingEdges() != null) {
@@ -84,22 +84,16 @@ public final class HierachicalKGraphSynthesis {
                         copy.getIncomingEdges().clear();
                     }
                     copiedChildren.add(copy);
+//                    LayeredLayoutProvider test = new LayeredLayoutProvider();
+//                    test.layout((org.eclipse.elk.graph.KNode) copy, null);
                     parents.put(copy, parent);
-
-                    // Display expandable Nodes smaller without their content.
-                    // TODO shrink size of root node.
-                    Map<IProperty<?>, Object> map =
-                            child.getData(KRectangle.class).getAllProperties();
-                    if (!map.isEmpty()) {
-                        for (Map.Entry<IProperty<?>, Object> entry : map.entrySet()) {
-                            if (entry.getKey().toString()
-                                    .equals("de.cau.cs.kieler.klighd.collapsedRendering")) {
-                                child.setHeight(200.0f);
-                                child.setWidth(200.0f);
-                            }
-                        }
-                    }
-                }
+                    
+                    // set size
+                    KGraphDataUtil.loadDataElements(copy);
+                    copy.setHeight(CoreOptions.NODE_SIZE_MIN_HEIGHT.getDefault());
+                    copy.setWidth(CoreOptions.NODE_SIZE_MIN_WIDTH.getDefault());
+                 
+                } 
             }
         }
 
@@ -132,9 +126,9 @@ public final class HierachicalKGraphSynthesis {
                 copy = (KNode) copier.copy(child);
             }
             
-            copy.getChildren().clear();
+            
             copier.copyReferences();
-
+            copy.getChildren().clear();
             copies.add(copy);
         }
 
