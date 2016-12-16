@@ -43,6 +43,7 @@
     <module>de.cau.cs.kieler.kiml.ogdf</module>
     <module>de.cau.cs.kieler.klay.planar</module>
     <module>de.cau.cs.kieler.klighd</module>
+    <module>de.cau.cs.kieler.klighd.incremental</module>
     <module>de.cau.cs.kieler.klighd.kivi</module>
     <module>de.cau.cs.kieler.klighd.kgraph</module>
     <module>de.cau.cs.kieler.klighd.krendering</module>
