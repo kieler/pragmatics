@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -290,13 +291,13 @@ public class PGraphFactory {
      */
     public static void applyLayout(final PGraph pgraph) {
         GridRepresentation grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
-        float borderSpacing = pgraph.getProperty(Properties.BORDER_SPACING);
+        ElkPadding padding = pgraph.getProperty(Properties.PADDING);
         HighDegreeNodeStrategy hdStrategy = pgraph
                 .getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY);
         PGraphFactory.determineSpacing(pgraph);
 
-        PGraphFactory.startX = borderSpacing;
-        PGraphFactory.startY = borderSpacing;
+        PGraphFactory.startX = padding.left;
+        PGraphFactory.startY = padding.top;
 
         // handle high degree nodes!
         PGraphFactory.performHDNodes(pgraph, grid);
@@ -456,7 +457,7 @@ public class PGraphFactory {
         // check whether minimum spacing is smaller than the size of each node,
         // if so adjust spacing
 
-        Float userSpacing = pgraph.getProperty(Properties.SPACING);
+        Double userSpacing = pgraph.getProperty(Properties.SPACING);
         PGraphFactory.spacing = (userSpacing == null) ? 0 : userSpacing.floatValue();
 
         for (PNode node : pgraph.getNodes()) {

@@ -16,6 +16,7 @@ package de.cau.cs.kieler.klay.planar.properties;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeType;
@@ -148,14 +149,13 @@ public final class Properties {
             CoreOptions.ASPECT_RATIO.getId(), 1.6f, 0.0f);
 
     /** spacing to the border of the drawing. */
-    public static final Property<Float> BORDER_SPACING = new Property<Float>(
-            CoreOptions.SPACING_BORDER.getId(), 20.0f, 0.0f);
+    public static final IProperty<ElkPadding> PADDING = CoreOptions.PADDING;
 
     /** default value for object spacing. */
-    public static final float DEF_SPACING = 40.0f;
+    public static final double DEF_SPACING = 40.0;
 
     /** minimal spacing between objects. */
-    public static final Property<Float> SPACING = new Property<Float>(CoreOptions.SPACING_NODE_NODE,
+    public static final Property<Double> SPACING = new Property<Double>(CoreOptions.SPACING_NODE_NODE,
             DEF_SPACING);
 
     /** A property that indicates the orthogonal representation of a graph. */
