@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
+//import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
@@ -53,51 +53,50 @@ public final class HierachicalKGraphSynthesis {
         diagram.getChildren().clear();
         diagram.getChildren().addAll(nodes);
 
-         addEdges(diagram);
+        addEdges(diagram);
 
     }
+
     private static List<KNode> recursiveTraversal(final KNode parent) {
         List<KNode> copiedChildren = new ArrayList<>();
 
-        if (parent.getChildren().isEmpty()) {
-            return copiedChildren;
-        }
-
         for (KNode child : parent.getChildren()) {
+            // deep search
             copiedChildren.addAll(recursiveTraversal(child));
 
             List<KNode> grandChildren = child.getChildren();
-            
-            // Ignore blue boxes and copied only the child inside
-            if (!(grandChildren.size() == 1 && !grandChildren.get(0).getChildren().isEmpty())) {
+            boolean isBlueBox =
+                    grandChildren.size() == 1 && !grandChildren.get(0).getChildren().isEmpty();
+
+            // Ignore blue boxes and copy only the child inside
+            if (!isBlueBox) {
                 if (!grandChildren.isEmpty()) {
 
                     // extract/copy content of children
                     KNode copy = copyWithoutBlueBox(child);
-                    
-
-                    // delete the existing edges for the copy
-                    if (copy.getOutgoingEdges() != null) {
-                        copy.getOutgoingEdges().clear();
-                    }
-                    if (copy.getIncomingEdges() != null) {
-                        copy.getIncomingEdges().clear();
-                    }
                     copiedChildren.add(copy);
-//                    LayeredLayoutProvider test = new LayeredLayoutProvider();
-//                    test.layout((org.eclipse.elk.graph.KNode) copy, null);
                     parents.put(copy, parent);
-                    
-                    // set size
-                    KGraphDataUtil.loadDataElements(copy);
-                    copy.setHeight(CoreOptions.NODE_SIZE_MIN_HEIGHT.getDefault());
-                    copy.setWidth(CoreOptions.NODE_SIZE_MIN_WIDTH.getDefault());
-                 
-                } 
+                    restoreLayout(copy);
+                }
+            } else {
+                List<KNode> childsWithBlueBoxParent = new ArrayList<>();
+                for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
+                    if (savedParent.getValue().equals(child)) {
+                        childsWithBlueBoxParent.add(savedParent.getKey());
+                        savedParent.setValue(parent);
+                    }
+                }               
             }
         }
 
         return copiedChildren;
+    }
+
+    private static void restoreLayout(final KNode node) {
+        // set size
+        KGraphDataUtil.loadDataElements(node);
+        node.setHeight(CoreOptions.NODE_SIZE_MIN_HEIGHT.getDefault());
+        node.setWidth(CoreOptions.NODE_SIZE_MIN_WIDTH.getDefault());
     }
 
     /**
@@ -125,8 +124,7 @@ public final class HierachicalKGraphSynthesis {
                 // copy = (KNode) copier.copy(child.getChildren().get(0));
                 copy = (KNode) copier.copy(child);
             }
-            
-            
+
             copier.copyReferences();
             copy.getChildren().clear();
             copies.add(copy);
@@ -134,9 +132,17 @@ public final class HierachicalKGraphSynthesis {
 
         parent.getChildren().clear();
         parent.getChildren().addAll(copies);
+
+        // delete the existing edges for the copy
+        if (parent.getOutgoingEdges() != null) {
+            parent.getOutgoingEdges().clear();
+        }
+        if (parent.getIncomingEdges() != null) {
+            parent.getIncomingEdges().clear();
+        }
         return parent;
-    }    
-    
+    }
+
     /**
      * Delete all the grandchildren of a node.
      * 
