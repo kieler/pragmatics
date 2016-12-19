@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 //import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
@@ -29,15 +30,21 @@ import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
  */
 
 /**
+ * 
+ * 
  * @author ybl
  *
  */
 public final class HierachicalKGraphSynthesis {
 
+    /**
+     * 
+     */
     private HierachicalKGraphSynthesis() {
         // not available
     }
 
+    /** */
     private static Map<KNode, KNode> parents = new HashMap<>();
 
     /**
@@ -48,15 +55,23 @@ public final class HierachicalKGraphSynthesis {
      */
     public static void transform(final KNode diagram) {
         // put the inner nodes onto the highest hierarchy level
+
         List<KNode> nodes = recursiveTraversal(diagram);
 
+        deleteEdges(nodes);
+        
         diagram.getChildren().clear();
         diagram.getChildren().addAll(nodes);
 
-        addEdges(diagram);
+        addHierarchicalEdges();
 
     }
 
+    /**
+     * 
+     * @param parent
+     * @return
+     */
     private static List<KNode> recursiveTraversal(final KNode parent) {
         List<KNode> copiedChildren = new ArrayList<>();
 
@@ -85,13 +100,18 @@ public final class HierachicalKGraphSynthesis {
                         childsWithBlueBoxParent.add(savedParent.getKey());
                         savedParent.setValue(parent);
                     }
-                }               
+                }
             }
         }
 
         return copiedChildren;
     }
 
+    /**
+     * 
+     * @param node
+     */
+    @SuppressWarnings("deprecation")
     private static void restoreLayout(final KNode node) {
         // set size
         KGraphDataUtil.loadDataElements(node);
@@ -133,13 +153,6 @@ public final class HierachicalKGraphSynthesis {
         parent.getChildren().clear();
         parent.getChildren().addAll(copies);
 
-        // delete the existing edges for the copy
-        if (parent.getOutgoingEdges() != null) {
-            parent.getOutgoingEdges().clear();
-        }
-        if (parent.getIncomingEdges() != null) {
-            parent.getIncomingEdges().clear();
-        }
         return parent;
     }
 
@@ -153,11 +166,28 @@ public final class HierachicalKGraphSynthesis {
             grandChild.getChildren().clear();
         }
     }
-
+    
     /**
+     * Delete the edges of the root children such that the hierarchical edges can be added in that
+     * layer instead.
+     * 
      * @param diagram
      */
-    private static void addEdges(final KNode diagram) {
+    private static void deleteEdges(final List<KNode> diagram) {
+    for (KNode node : diagram) {
+        if (node.getIncomingEdges() != null) {
+            node.getIncomingEdges().clear();
+        }
+        if (node.getIncomingEdges() != null) {
+            node.getIncomingEdges().clear();
+        }
+    }
+    }
+
+    /**
+     * Add the edges representing the Hierarchical connection.
+     */
+    private static void addHierarchicalEdges() {
         for (Entry<KNode, KNode> entry : parents.entrySet()) {
             KNode child = entry.getKey();
             KNode parent = entry.getValue();
