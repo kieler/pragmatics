@@ -8,13 +8,15 @@ import java.util.Map.Entry;
 
 //import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.impl.KGraphFactoryImpl;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
+import de.cau.cs.kieler.klighd.krendering.impl.KRenderingImpl;
+import de.cau.cs.kieler.klighd.util.KlighdProperties;
 
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
@@ -57,13 +59,13 @@ public final class HierachicalKGraphSynthesis {
         // put the inner nodes onto the highest hierarchy level
 
         List<KNode> nodes = recursiveTraversal(diagram);
-
+        
         deleteEdges(nodes);
         
         diagram.getChildren().clear();
         diagram.getChildren().addAll(nodes);
-
-        addHierarchicalEdges();
+        
+       addHierarchicalEdges();
 
     }
 
@@ -88,12 +90,19 @@ public final class HierachicalKGraphSynthesis {
                 if (!grandChildren.isEmpty()) {
 
                     // extract/copy content of children
-                    KNode copy = copyWithoutBlueBox(child);
+                    Copier copier = new Copier();
+                    KNode copy = (KNode) copier.copy(child);
+                    copier.copyReferences();
+                    
+                    //KNode parentWithDifferentChild = copyWithoutBlueBox(child);
                     copiedChildren.add(copy);
                     parents.put(copy, parent);
                     restoreLayout(copy);
+                } else {
+                    // The child has no children, therefore it is not hierarchical (no copy)
                 }
             } else {
+                // if it is a blue box reset the pointer to the parent
                 List<KNode> childsWithBlueBoxParent = new ArrayList<>();
                 for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
                     if (savedParent.getValue().equals(child)) {
@@ -117,6 +126,18 @@ public final class HierachicalKGraphSynthesis {
         KGraphDataUtil.loadDataElements(node);
         node.setHeight(CoreOptions.NODE_SIZE_MIN_HEIGHT.getDefault());
         node.setWidth(CoreOptions.NODE_SIZE_MIN_WIDTH.getDefault());
+
+        KRenderingImpl rendering = node.getData(KRenderingImpl.class);
+        rendering.getActions().clear();
+
+        for (KNode child : node.getChildren()) {
+            child.setProperty(KlighdProperties.EXPAND, false);
+        }
+
+        if (node.getChildren().size() > 0) {
+            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
+        }
+
     }
 
     /**
@@ -150,8 +171,8 @@ public final class HierachicalKGraphSynthesis {
             copies.add(copy);
         }
 
-        parent.getChildren().clear();
-        parent.getChildren().addAll(copies);
+         parent.getChildren().clear();
+         parent.getChildren().addAll(copies);
 
         return parent;
     }
@@ -163,10 +184,10 @@ public final class HierachicalKGraphSynthesis {
      */
     private static void clearGrandchildren(KNode child) {
         for (KNode grandChild : child.getChildren()) {
-            grandChild.getChildren().clear();
+           grandChild.getChildren().clear();
         }
     }
-    
+
     /**
      * Delete the edges of the root children such that the hierarchical edges can be added in that
      * layer instead.
@@ -174,14 +195,25 @@ public final class HierachicalKGraphSynthesis {
      * @param diagram
      */
     private static void deleteEdges(final List<KNode> diagram) {
-    for (KNode node : diagram) {
-        if (node.getIncomingEdges() != null) {
-            node.getIncomingEdges().clear();
-        }
-        if (node.getIncomingEdges() != null) {
-            node.getIncomingEdges().clear();
-        }
-    }
+        // for (KNode node : diagram) {
+        //
+        // List<KEdge> deleteEdges = new ArrayList<>();
+        // for (KEdge edge : node.getIncomingEdges()) {
+        //
+        // KNode target = edge.getTarget();
+        // KNode source = edge.getSource();
+        //
+        // if (!source.getPorts().contains(edge.getSourcePort())) {
+        // deleteEdges.add(edge);
+        // }
+        //
+        // // if (!KGraphUtil.isDescendant(target, source) || target.getChildren().size() != 0)
+        // // {
+        // // deleteEdges.add(edge);
+        // // }
+        // }
+        // node.getOutgoingEdges().removeAll(deleteEdges);
+        // }
     }
 
     /**
