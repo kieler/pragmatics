@@ -61,8 +61,6 @@ public final class HierachicalKGraphSynthesis {
 
         List<KNode> nodes = recursiveTraversal(diagram);
 
-        deleteEdges(nodes);
-
         diagram.getChildren().clear();
         diagram.getChildren().addAll(nodes);
 
@@ -147,81 +145,8 @@ public final class HierachicalKGraphSynthesis {
 
     }
 
-    /**
-     * Copy a node or if it is a blue box skip it. On the way, clear the grandchildren to flatten
-     * the hierarchy.
-     * 
-     * @param parent
-     * @return
-     */
-    private static KNode copyWithoutBlueBox(final KNode parent) {
-        List<KNode> copies = new ArrayList<KNode>();
-        Copier copier = new Copier();
 
-        for (KNode child : parent.getChildren()) {
-            List<KNode> children = child.getChildren();
-            KNode copy;
-            // Remove useless blue boxes, if there is only one expandable child inside
-            if (!(children.size() == 1 && !children.get(0).getChildren().isEmpty())) {
-                clearGrandchildren(child);
-                copy = (KNode) copier.copy(child);
-            } else {
-                for (KNode grandChild : child.getChildren()) {
-                    clearGrandchildren(grandChild);
-                }
-                // copy = (KNode) copier.copy(child.getChildren().get(0));
-                copy = (KNode) copier.copy(child);
-            }
 
-            copier.copyReferences();
-            copy.getChildren().clear();
-            copies.add(copy);
-        }
-
-        parent.getChildren().clear();
-        parent.getChildren().addAll(copies);
-
-        return parent;
-    }
-
-    /**
-     * Delete all the grandchildren of a node.
-     * 
-     * @param child
-     */
-    private static void clearGrandchildren(KNode child) {
-        for (KNode grandChild : child.getChildren()) {
-            grandChild.getChildren().clear();
-        }
-    }
-
-    /**
-     * Delete the edges of the root children such that the hierarchical edges can be added in that
-     * layer instead.
-     * 
-     * @param diagram
-     */
-    private static void deleteEdges(final List<KNode> diagram) {
-        // for (KNode node : diagram) {
-        //
-        // List<KEdge> deleteEdges = new ArrayList<>();
-        // for (KEdge edge : node.getIncomingEdges()) {
-        //
-        // KNode target = edge.getTarget();
-        // KNode source = edge.getSource();
-        //
-        // if (!source.getPorts().contains(edge.getSourcePort())) {
-        // deleteEdges.add(edge);
-        // }
-        //
-        // // if (!KGraphUtil.isDescendant(target, source) || target.getChildren().size() != 0)
-        // // {
-        // // deleteEdges.add(edge);
-        // // }
-        // }
-        // node.getOutgoingEdges().removeAll(deleteEdges);
-        // }
-    }
 
     /**
      * Add the edges representing the Hierarchical connection.
@@ -241,5 +166,53 @@ public final class HierachicalKGraphSynthesis {
         }
 
     }
+    
+//  /**
+//  * Copy a node or if it is a blue box skip it. On the way, clear the grandchildren to flatten
+//  * the hierarchy.
+//  * 
+//  * @param parent
+//  * @return
+//  */
+// private static KNode copyWithoutBlueBox(final KNode parent) {
+//     List<KNode> copies = new ArrayList<KNode>();
+//     Copier copier = new Copier();
+//
+//     for (KNode child : parent.getChildren()) {
+//         List<KNode> children = child.getChildren();
+//         KNode copy;
+//         // Remove useless blue boxes, if there is only one expandable child inside
+//         if (!(children.size() == 1 && !children.get(0).getChildren().isEmpty())) {
+//             clearGrandchildren(child);
+//             copy = (KNode) copier.copy(child);
+//         } else {
+//             for (KNode grandChild : child.getChildren()) {
+//                 clearGrandchildren(grandChild);
+//             }
+//             // copy = (KNode) copier.copy(child.getChildren().get(0));
+//             copy = (KNode) copier.copy(child);
+//         }
+//
+//         copier.copyReferences();
+//         copy.getChildren().clear();
+//         copies.add(copy);
+//     }
+//
+//     parent.getChildren().clear();
+//     parent.getChildren().addAll(copies);
+//
+//     return parent;
+// }
+//
+// /**
+//  * Delete all the grandchildren of a node.
+//  * 
+//  * @param child
+//  */
+// private static void clearGrandchildren(KNode child) {
+//     for (KNode grandChild : child.getChildren()) {
+//         grandChild.getChildren().clear();
+//     }
+// }
 
 }
