@@ -47,7 +47,7 @@ public final class HierachicalKGraphSynthesis {
     }
 
     /** */
-    private static Map<KNode, KNode> parents = new HashMap<>();
+    private static Map<KNode, KNode> parents;
 
     /**
      * Transform the graph to have the representation we want.
@@ -56,16 +56,17 @@ public final class HierachicalKGraphSynthesis {
      *            the method takes a graph as input.
      */
     public static void transform(final KNode diagram) {
+        parents = new HashMap<>();
         // put the inner nodes onto the highest hierarchy level
 
         List<KNode> nodes = recursiveTraversal(diagram);
-        
+
         deleteEdges(nodes);
-        
+
         diagram.getChildren().clear();
         diagram.getChildren().addAll(nodes);
-        
-       addHierarchicalEdges();
+
+        addHierarchicalEdges();
 
     }
 
@@ -93,20 +94,26 @@ public final class HierachicalKGraphSynthesis {
                     Copier copier = new Copier();
                     KNode copy = (KNode) copier.copy(child);
                     copier.copyReferences();
-                    
-                    //KNode parentWithDifferentChild = copyWithoutBlueBox(child);
+
+                    // KNode parentWithDifferentChild = copyWithoutBlueBox(child);
                     copiedChildren.add(copy);
                     parents.put(copy, parent);
                     restoreLayout(copy);
+
+                    // keep track of the right parent
+                    for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
+                        if (savedParent.getValue().equals(child)) {
+                            savedParent.setValue(copy);
+                        }
+                    }
+
                 } else {
                     // The child has no children, therefore it is not hierarchical (no copy)
                 }
             } else {
                 // if it is a blue box reset the pointer to the parent
-                List<KNode> childsWithBlueBoxParent = new ArrayList<>();
                 for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
                     if (savedParent.getValue().equals(child)) {
-                        childsWithBlueBoxParent.add(savedParent.getKey());
                         savedParent.setValue(parent);
                     }
                 }
@@ -171,8 +178,8 @@ public final class HierachicalKGraphSynthesis {
             copies.add(copy);
         }
 
-         parent.getChildren().clear();
-         parent.getChildren().addAll(copies);
+        parent.getChildren().clear();
+        parent.getChildren().addAll(copies);
 
         return parent;
     }
@@ -184,7 +191,7 @@ public final class HierachicalKGraphSynthesis {
      */
     private static void clearGrandchildren(KNode child) {
         for (KNode grandChild : child.getChildren()) {
-           grandChild.getChildren().clear();
+            grandChild.getChildren().clear();
         }
     }
 
@@ -226,8 +233,6 @@ public final class HierachicalKGraphSynthesis {
 
             // create an edge
             KEdge edge = KGraphFactoryImpl.eINSTANCE.createKEdge();
-            // KEdgeLayout edgeLayout = KLayoutDataFactory.eINSTANCE.createKEdgeLayout();
-            // edge.getData().add(edgeLayout);
 
             edge.setSource(parent);
             edge.setTarget(child);
