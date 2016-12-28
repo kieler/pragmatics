@@ -126,6 +126,18 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     private static val SynthesisOption HIERARCHICAL = SynthesisOption::createChoiceOption("Hierarchical View",
         ImmutableList::of(HIERARCHICAL_ON, HIERARCHICAL_OFF), HIERARCHICAL_OFF)
+        
+    private static val RADIAL = "Radial"
+    private static val FORCE = "Force"
+    private static val GRID = "Grid Snap"
+    private static val OVERLAP = "Overlap Removal"
+    private static val H_LAYOUTER = "H-Layouter"
+    
+    /**
+     * Synthesis option specifying how the Hierarchical view should be layouted.
+     */
+    private static val SynthesisOption HIERARCHICAL_LAYOUT = SynthesisOption::createChoiceOption("Hierarchical Layout",
+        ImmutableList::of(RADIAL, FORCE, GRID, OVERLAP, H_LAYOUTER), RADIAL)
     
     private static val STYLE_BORING = "Boring";
     private static val STYLE_STYLISH = "Stylish";
@@ -166,12 +178,12 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      * {@inheritDoc} 
      */
     override getDisplayedSynthesisOptions() {
-        return ImmutableList::of(
+            return ImmutableList::of(
             DEFAULTS,
             HIERARCHICAL,
+            HIERARCHICAL_LAYOUT,
             STYLE,
             LABEL_SHORTENING_STRATEGY
-            
         )
     }
 
@@ -224,7 +236,17 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         KGraphDataUtil.loadDataElements(result, PREDICATE_IS_KGRAPHDATA, KNOWN_PROPS)
 
         if (HIERARCHICAL.objectValue == HIERARCHICAL_ON) {
-            HierachicalKGraphSynthesis.transform(result);
+            if (HIERARCHICAL_LAYOUT.objectValue == RADIAL) {
+                HierachicalKGraphSynthesis.transform(result, "radial");
+            } else if (HIERARCHICAL_LAYOUT.objectValue == FORCE) {
+                HierachicalKGraphSynthesis.transform(result, "force");
+            } else if (HIERARCHICAL_LAYOUT.objectValue == GRID) {
+                HierachicalKGraphSynthesis.transform(result, "grid");
+            } else if (HIERARCHICAL_LAYOUT.objectValue == OVERLAP) {
+                HierachicalKGraphSynthesis.transform(result, "overlap");
+            } else if (HIERARCHICAL_LAYOUT.objectValue == H_LAYOUTER) {
+                HierachicalKGraphSynthesis.transform(result, "h");
+            }
         }
         
 

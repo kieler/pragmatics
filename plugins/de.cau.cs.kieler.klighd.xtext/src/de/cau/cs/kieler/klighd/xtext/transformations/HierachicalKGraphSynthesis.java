@@ -54,8 +54,11 @@ public final class HierachicalKGraphSynthesis {
      * 
      * @param diagram
      *            the method takes a graph as input.
+     * @param layout 
+     *            the layoutalgorithm that should be used for the connection of the hierarchical 
+     *            nodes we extracted
      */
-    public static void transform(final KNode diagram) {
+    public static void transform(final KNode diagram, final String layout) {
         parents = new HashMap<>();
 
         // put the inner nodes onto the highest hierarchy level
@@ -65,6 +68,18 @@ public final class HierachicalKGraphSynthesis {
         diagram.getChildren().addAll(nodes);
 
         addHierarchicalEdges();
+        
+        if (layout.equals("radial")) {
+            
+        } else if (layout.equals("force")) {
+//            diagram.setProperty(DiagramLayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.force");
+        } else if (layout.equals("grid")) {
+            
+        } else if (layout.equals("overlap")) {
+            
+        } else if (layout.equals("h")) {
+            
+        }
     }
 
     /**
