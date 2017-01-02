@@ -70,15 +70,16 @@ public final class HierachicalKGraphSynthesis {
         addHierarchicalEdges();
         
         if (layout.equals("radial")) {
-            
+            radiallayout(diagram);
         } else if (layout.equals("force")) {
 //            diagram.setProperty(DiagramLayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.force");
+            forcelayout(diagram);
         } else if (layout.equals("grid")) {
-            
+            gridlayout(diagram);
         } else if (layout.equals("overlap")) {
-            
+            overlaplayout(diagram);
         } else if (layout.equals("h")) {
-            
+            hlayout(diagram);
         }
     }
 
@@ -181,6 +182,46 @@ public final class HierachicalKGraphSynthesis {
 
             parent.getOutgoingEdges().add(edge);
         }
+    }
+    
+    /**
+     * 
+     * @param diagram
+     */
+    private static void radiallayout(KNode diagram) {
+        
+    }
+    
+    /**
+     * 
+     * @param diagram
+     */
+    private static void forcelayout(KNode diagram) {
+        
+    }
+    
+    /**
+     * 
+     * @param diagram
+     */
+    private static void gridlayout(KNode diagram) {
+        
+    }
+    
+    /**
+     * 
+     * @param diagram
+     */
+    private static void overlaplayout(KNode diagram) {
+        
+    }
+    
+    /**
+     * 
+     * @param diagram
+     */
+    private static void hlayout(KNode diagram) {
+        
     }
 
     // /**
