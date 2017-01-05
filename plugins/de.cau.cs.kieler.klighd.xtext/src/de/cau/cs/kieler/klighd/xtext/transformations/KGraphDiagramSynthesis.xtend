@@ -1,6 +1,6 @@
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
- *
+ * 
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
  * Copyright 2013 by
@@ -83,24 +83,20 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     /**
      * ID this synthesis is registered with KLighD with.
      */
-    public static val String TRANSFORMATION_ID =
-        "de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
+    public static val String TRANSFORMATION_ID = "de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
 
     // The next two definitions are used to load possibly persisted klighd information
-    //  that is ignored by kiml, e.g. the expansion state of nodes
+    // that is ignored by kiml, e.g. the expansion state of nodes
     private static val PREDICATE_IS_KGRAPHDATA = new Predicate<EMapPropertyHolder>() {
         override apply(EMapPropertyHolder input) {
             return input instanceof KGraphData;
         }
     }
-    private static val KNOWN_PROPS = ImmutableList.of(KlighdProperties.EXPAND,
-        KlighdProperties.EXPANDED_RENDERING, KlighdProperties.COLLAPSED_RENDERING,
-        KlighdProperties.TOOLTIP, KlighdProperties.NOT_SELECTABLE);
+    private static val KNOWN_PROPS = ImmutableList.of(KlighdProperties.EXPAND, KlighdProperties.EXPANDED_RENDERING,
+        KlighdProperties.COLLAPSED_RENDERING, KlighdProperties.TOOLTIP, KlighdProperties.NOT_SELECTABLE);
 
-
-    ///////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
     // SYNTHESIS OPTIONS
-    
     /**
      * Whether the model wants default defaults. This property is no layout option, not registered with
      * KIML, and has to be loaded explicitly by the 
@@ -108,7 +104,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     private static final IProperty<Boolean> DEFAULTS_PROPERTY = new Property<Boolean>(
         "de.cau.cs.kieler.kgraphsynthesis.defaults", false)
-    
+
     private static val DEFAULTS_AS_IN_MODEL = "As in Model"
     private static val DEFAULTS_ON = "On"
     private static val DEFAULTS_OFF = "Off"
@@ -118,7 +114,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption("Default Values",
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
-    
+
     private static val HIERARCHICAL_ON = "On"
     private static val HIERARCHICAL_OFF = "Off"
     /**
@@ -126,51 +122,47 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      */
     private static val SynthesisOption HIERARCHICAL = SynthesisOption::createChoiceOption("Hierarchical View",
         ImmutableList::of(HIERARCHICAL_ON, HIERARCHICAL_OFF), HIERARCHICAL_OFF)
-        
+
     private static val RADIAL = "Radial"
     private static val FORCE = "Force"
     private static val GRID = "Grid Snap"
     private static val OVERLAP = "Overlap Removal"
     private static val H_LAYOUTER = "H-Layouter"
-    
+
     /**
      * Synthesis option specifying how the Hierarchical view should be layouted.
      */
     private static val SynthesisOption HIERARCHICAL_LAYOUT = SynthesisOption::createChoiceOption("Hierarchical Layout",
         ImmutableList::of(RADIAL, FORCE, GRID, OVERLAP, H_LAYOUTER), RADIAL)
-    
+
     private static val STYLE_BORING = "Boring";
     private static val STYLE_STYLISH = "Stylish";
     private static val STYLE_HELLO_KITTY = "Hello Kitty";
     private static val STYLE_SPONGEBOB = "Spongebob";
     /** The style to be used when drawing the KGraphs. */
-    private static val SynthesisOption STYLE = SynthesisOption::createChoiceOption(
-        "Style",
-        ImmutableList::of(STYLE_BORING, STYLE_STYLISH, STYLE_HELLO_KITTY, STYLE_SPONGEBOB),
-        STYLE_STYLISH);
-    
+    private static val SynthesisOption STYLE = SynthesisOption::createChoiceOption("Style",
+        ImmutableList::of(STYLE_BORING, STYLE_STYLISH, STYLE_HELLO_KITTY, STYLE_SPONGEBOB), STYLE_STYLISH);
+
     private static val LABELS_NO_LABELS = "No Labels";
     private static val LABELS_TRUNCATE = "Truncate";
     private static val LABELS_SOFT_WORD_WRAP = "Soft Word Wrapping";
     private static val LABELS_FULL = "Full Labels";
     private static val SynthesisOption LABEL_SHORTENING_STRATEGY = SynthesisOption.createChoiceOption(
         "Label Shortening Strategy",
-        ImmutableList::of(LABELS_NO_LABELS, LABELS_TRUNCATE, LABELS_SOFT_WORD_WRAP, LABELS_FULL),
-        LABELS_FULL);
+        ImmutableList::of(LABELS_NO_LABELS, LABELS_TRUNCATE, LABELS_SOFT_WORD_WRAP, LABELS_FULL), LABELS_FULL);
 
     /**
      * {@inheritDoc} 
      */
     override getDisplayedLayoutOptions() {
-        return ImmutableList::of( 
-            // example to specify external layout option (in this case one of klay layered)
-            // remember to add the following import in the head of this class
-            //   import static de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
-            // specifyLayoutOption("de.cau.cs.kieler.klay.layered.edgeSpacingFactor", ImmutableList.of(0f,1f))
-            // These values are annoying :)
-            //specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
-            //  ImmutableList::copyOf(PortConstraints::values)),
-            //specifyLayoutOption(LayoutOptions::SPACING, ImmutableList::of(0, 255))
+        return ImmutableList::of(// example to specify external layout option (in this case one of klay layered)
+        // remember to add the following import in the head of this class
+        // import static de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
+        // specifyLayoutOption("de.cau.cs.kieler.klay.layered.edgeSpacingFactor", ImmutableList.of(0f,1f))
+        // These values are annoying :)
+        // specifyLayoutOption(LayoutOptions::PORT_CONSTRAINTS,
+        // ImmutableList::copyOf(PortConstraints::values)),
+        // specifyLayoutOption(LayoutOptions::SPACING, ImmutableList::of(0, 255))
         )
     }
 
@@ -178,7 +170,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      * {@inheritDoc} 
      */
     override getDisplayedSynthesisOptions() {
-            return ImmutableList::of(
+        return ImmutableList::of(
             DEFAULTS,
             HIERARCHICAL,
             HIERARCHICAL_LAYOUT,
@@ -187,9 +179,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         )
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
     // VARIABLES
-    
     @Inject extension KPolylineExtensions
     @Inject extension KRenderingExtensions
     @Inject extension KColorExtensions
@@ -210,10 +201,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     /** Default rendering for spline edges. */
     private var KRendering defaultSplineRendering;
 
-
-    ///////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
     // TRANSFORMATION
-    
     /**
      * Transforms the given graph into an equivalent graph that may be enriched with additional
      * rendering information.
@@ -230,38 +219,27 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         copier.copyReferences()
 
         // Persistent entries of the original graph are already loaded in the KGraphResource
-        //  but until now nobody knows about any persisted entries that originate from KLighD.
+        // but until now nobody knows about any persisted entries that originate from KLighD.
         // First, this might be the expansion state of nodes. Second, also KRendering elements
-        //  may carry persisted entries that have to be parsed before we build the view model.
+        // may carry persisted entries that have to be parsed before we build the view model.
         KGraphDataUtil.loadDataElements(result, PREDICATE_IS_KGRAPHDATA, KNOWN_PROPS)
 
         if (HIERARCHICAL.objectValue == HIERARCHICAL_ON) {
-            if (HIERARCHICAL_LAYOUT.objectValue == RADIAL) {
-                HierachicalKGraphSynthesis.transform(result, "radial");
-            } else if (HIERARCHICAL_LAYOUT.objectValue == FORCE) {
-                HierachicalKGraphSynthesis.transform(result, "force");
-            } else if (HIERARCHICAL_LAYOUT.objectValue == GRID) {
-                HierachicalKGraphSynthesis.transform(result, "grid");
-            } else if (HIERARCHICAL_LAYOUT.objectValue == OVERLAP) {
-                HierachicalKGraphSynthesis.transform(result, "overlap");
-            } else if (HIERARCHICAL_LAYOUT.objectValue == H_LAYOUTER) {
-                HierachicalKGraphSynthesis.transform(result, "h");
-            }
+            HierachicalKGraphSynthesis.transform(result, HIERARCHICAL_LAYOUT.objectValue as String);
         }
-        
 
         // Evaluate the defaults property
         try {
             defaults = graph.getProperty(DEFAULTS_PROPERTY)
         } catch (ClassCastException cce) {
             // This is a 'special' property not known as layout option hence it is not type-checked,
-            //  possibly yielding a class cast exception if neither 'true' nor 'false' are specified
-            //  as value.
+            // possibly yielding a class cast exception if neither 'true' nor 'false' are specified
+            // as value.
         }
 
         // Enable label management
         addLabelManager(result)
-               
+
         // Create a rendering library for reuse of renderings
         var library = result.getData(typeof(KRenderingLibrary))
         if (library == null) {
@@ -286,7 +264,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
 
         return result
     }
-    
+
     /**
      * Configures the appropriate label manager for the given KGraph.
      * 
@@ -298,37 +276,28 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         // Evaluate the label shortening property
         switch LABEL_SHORTENING_STRATEGY.objectValue {
             case LABELS_NO_LABELS: {
-                labelManager = new ConditionLabelManager(
-                    null,
-                    LabelPredicates.matchNone,
-                    true);
+                labelManager = new ConditionLabelManager(null, LabelPredicates.matchNone, true);
             }
             case LABELS_TRUNCATE: {
-                labelManager = new ConditionLabelManager(
-                    new TruncatingLabelManager(),
-                    LabelPredicates.centerEdgeLabel,
+                labelManager = new ConditionLabelManager(new TruncatingLabelManager(), LabelPredicates.centerEdgeLabel,
                     false);
             }
             case LABELS_SOFT_WORD_WRAP: {
-                labelManager = new ConditionLabelManager(
-                    new SoftWrappingLabelManager(),
-                    LabelPredicates.centerEdgeLabel,
-                    false);
+                labelManager = new ConditionLabelManager(new SoftWrappingLabelManager(),
+                    LabelPredicates.centerEdgeLabel, false);
             }
             case LABELS_FULL: {
                 labelManager = new IdentLabelManager()
             }
         }
-        
+
         if (labelManager != null) {
             kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager)
         }
     }
-    
 
-    ///////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
     // RENDERING INITIALIZATION
-    
     private def initEdgeRenderings(KRenderingLibrary library) {
         // Create a common rendering for polylines
         defaultPolylineRendering = renderingFactory.createKPolyline() => [
@@ -376,50 +345,61 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
 
     private def initSpongebobFactory(KRenderingLibrary library) {
         library.initEdgeRenderings
-        defaultNodeRendering = renderingFactory.createKRoundedRectangle => [
-            it.id = "DefaultNodeRendering"
-            it.cornerWidth = 5
-            it.cornerHeight = 5
-            it.setBackgroundColor(237,249,107)
-            it.children += renderingFactory.createKEllipse => [
+        defaultNodeRendering = renderingFactory.createKRoundedRectangle =>
+            [
+                it.id = "DefaultNodeRendering"
+                it.cornerWidth = 5
+                it.cornerHeight = 5
+                it.setBackgroundColor(237, 249, 107)
+                it.children +=
+                    renderingFactory.createKEllipse =>
+                        [
                             it.setPointPlacementData(PositionReferenceX.LEFT, 0, 0.1f, PositionReferenceY.TOP, 0, 0.1f,
                                 HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 20, 20)
-                            it.setBackgroundColor(255,255,255)
-            ]
-            it.children += renderingFactory.createKEllipse => [
-                            it.setPointPlacementData(PositionReferenceX.RIGHT, 0, 0.2f, PositionReferenceY.TOP, 0, 0.15f,
-                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 10, 10)
-                            it.setBackgroundColor(255,255,255)
-            ]
-            it.children += renderingFactory.createKEllipse => [
+                            it.setBackgroundColor(255, 255, 255)
+                        ]
+                it.children +=
+                    renderingFactory.createKEllipse =>
+                        [
+                            it.setPointPlacementData(PositionReferenceX.RIGHT, 0, 0.2f, PositionReferenceY.TOP, 0,
+                                0.15f, HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 10, 10)
+                            it.setBackgroundColor(255, 255, 255)
+                        ]
+                it.children +=
+                    renderingFactory.createKEllipse =>
+                        [
                             it.setPointPlacementData(PositionReferenceX.LEFT, 0, 0.05f, PositionReferenceY.TOP, 0, 0.5f,
                                 HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 10, 10)
-                            it.setBackgroundColor(255,255,255)
-            ]
-            it.children += renderingFactory.createKEllipse => [
+                            it.setBackgroundColor(255, 255, 255)
+                        ]
+                it.children +=
+                    renderingFactory.createKEllipse =>
+                        [
                             it.setPointPlacementData(PositionReferenceX.RIGHT, 0, 0.4f, PositionReferenceY.TOP, 0, 0.5f,
                                 HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 10, 10)
-                            it.setBackgroundColor(255,255,255)
+                            it.setBackgroundColor(255, 255, 255)
+                        ]
+                it.children +=
+                    renderingFactory.createKEllipse =>
+                        [
+                            it.setPointPlacementData(PositionReferenceX.LEFT, 0, 0.15f, PositionReferenceY.BOTTOM, 0,
+                                0.3f, HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 23, 23)
+                            it.setBackgroundColor(255, 255, 255)
+                        ]
+                it.children +=
+                    renderingFactory.createKEllipse =>
+                        [
+                            it.setPointPlacementData(PositionReferenceX.RIGHT, 0, 0.3f, PositionReferenceY.BOTTOM, 0,
+                                0.4f, HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 20, 20)
+                            it.setBackgroundColor(255, 255, 255)
+                        ]
             ]
-            it.children += renderingFactory.createKEllipse => [
-                            it.setPointPlacementData(PositionReferenceX.LEFT, 0, 0.15f, PositionReferenceY.BOTTOM, 0, 0.3f,
-                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 23, 23)
-                            it.setBackgroundColor(255,255,255)
-            ]
-            it.children += renderingFactory.createKEllipse => [
-                            it.setPointPlacementData(PositionReferenceX.RIGHT, 0, 0.3f, PositionReferenceY.BOTTOM, 0, 0.4f,
-                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 20, 20)
-                            it.setBackgroundColor(255,255,255)
-            ]
-        ]
         library.renderings += defaultNodeRendering
     }
 
-
-    ///////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
     // RENDERINGS ENRICHMENT CENTER
-    //   "Thank you for helping us help you help us all."
-    
+    // "Thank you for helping us help you help us all."
     /**
      * Recursively calls {@link #enrichRendering(EObject)} on this object and all of its children.
      * 
@@ -489,7 +469,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
                 } else {
                     it.rendering = defaultPolylineRendering
                 }
-                
+
                 it.addSingleClickAction(FocusAndContextAction.ID)
             ]
         }
@@ -516,7 +496,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
                 label.data += text
                 text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
                 text.addSingleClickAction(FocusAndContextAction.ID)
-                
+
                 // Port labels should have a smaller font size
                 if (label.eContainer instanceof KPort) {
                     text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 3
@@ -525,10 +505,8 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         }
     }
 
-
-    ///////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////
     // UTILITY METHODS
-    
     /**
      * Checks if the given graph element already has a rendering attached.
      * 
@@ -545,7 +523,6 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      * @return {@code true} if default stuff should be added, {@code false} otherwise.
      */
     def private boolean defaultsEnabled() {
-        return DEFAULTS.objectValue == DEFAULTS_ON
-            || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults);
+        return DEFAULTS.objectValue == DEFAULTS_ON || (DEFAULTS.objectValue == DEFAULTS_AS_IN_MODEL && defaults);
     }
 }

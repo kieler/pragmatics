@@ -6,16 +6,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
 //import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
+import com.google.inject.Inject;
+
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.impl.KGraphFactoryImpl;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil;
+import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions;
 import de.cau.cs.kieler.klighd.krendering.impl.KRenderingImpl;
+import de.cau.cs.kieler.klighd.syntheses.DiagramLayoutOptions;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 
 /*
@@ -54,8 +60,8 @@ public final class HierachicalKGraphSynthesis {
      * 
      * @param diagram
      *            the method takes a graph as input.
-     * @param layout 
-     *            the layoutalgorithm that should be used for the connection of the hierarchical 
+     * @param layout
+     *            the layoutalgorithm that should be used for the connection of the hierarchical
      *            nodes we extracted
      */
     public static void transform(final KNode diagram, final String layout) {
@@ -68,17 +74,18 @@ public final class HierachicalKGraphSynthesis {
         diagram.getChildren().addAll(nodes);
 
         addHierarchicalEdges();
-        
-        if (layout.equals("radial")) {
-            
-        } else if (layout.equals("force")) {
-//            diagram.setProperty(DiagramLayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.force");
-        } else if (layout.equals("grid")) {
-            
-        } else if (layout.equals("overlap")) {
-            
-        } else if (layout.equals("h")) {
-            
+
+        if (layout.equals("Radial")) {
+            diagram.setProperty(CoreOptions.ALGORITHM,
+                    "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial");
+        } else if (layout.equals("Force")) {
+            diagram.setProperty(CoreOptions.ALGORITHM, "org.eclipse.elk.force");
+        } else if (layout.equals("Grid Snap")) {
+
+        } else if (layout.equals("Overlap Removal")) {
+
+        } else if (layout.equals("H-Layouter")) {
+
         }
     }
 
@@ -129,7 +136,7 @@ public final class HierachicalKGraphSynthesis {
                     // TODO remove the actions of the copy, such that the root children are not
                     // expandable. If we simply remove the action of the copy, we can minimize the
                     // node once but can not expand it anymore...
-                    
+
                 } else {
                     // The child has no children, therefore it is not hierarchical (no copy)
                 }
