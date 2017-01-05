@@ -54,8 +54,8 @@ public final class HierachicalKGraphSynthesis {
      * 
      * @param diagram
      *            the method takes a graph as input.
-     * @param layout 
-     *            the layoutalgorithm that should be used for the connection of the hierarchical 
+     * @param layout
+     *            the layoutalgorithm that should be used for the connection of the hierarchical
      *            nodes we extracted
      */
     public static void transform(final KNode diagram, final String layout) {
@@ -68,18 +68,19 @@ public final class HierachicalKGraphSynthesis {
         diagram.getChildren().addAll(nodes);
 
         addHierarchicalEdges();
-        
-        if (layout.equals("radial")) {
-            radiallayout(diagram);
-        } else if (layout.equals("force")) {
-//            diagram.setProperty(DiagramLayoutOptions.ALGORITHM, "de.cau.cs.kieler.klay.force");
-            forcelayout(diagram);
-        } else if (layout.equals("grid")) {
-            gridlayout(diagram);
-        } else if (layout.equals("overlap")) {
-            overlaplayout(diagram);
-        } else if (layout.equals("h")) {
-            hlayout(diagram);
+
+        if (layout.equals("Radial")) {
+            diagram.setProperty(CoreOptions.ALGORITHM,
+                    "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial");
+        } else if (layout.equals("Force")) {
+            diagram.setProperty(CoreOptions.ALGORITHM, "org.eclipse.elk.force");
+        } else if (layout.equals("Grid Snap")) {
+            diagram.setProperty(CoreOptions.ALGORITHM,
+                    "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.grid");
+        } else if (layout.equals("Overlap Removal")) {
+
+        } else if (layout.equals("H-Layouter")) {
+
         }
     }
 
@@ -130,7 +131,7 @@ public final class HierachicalKGraphSynthesis {
                     // TODO remove the actions of the copy, such that the root children are not
                     // expandable. If we simply remove the action of the copy, we can minimize the
                     // node once but can not expand it anymore...
-                    
+
                 } else {
                     // The child has no children, therefore it is not hierarchical (no copy)
                 }
@@ -182,46 +183,6 @@ public final class HierachicalKGraphSynthesis {
 
             parent.getOutgoingEdges().add(edge);
         }
-    }
-    
-    /**
-     * 
-     * @param diagram
-     */
-    private static void radiallayout(KNode diagram) {
-        
-    }
-    
-    /**
-     * 
-     * @param diagram
-     */
-    private static void forcelayout(KNode diagram) {
-        
-    }
-    
-    /**
-     * 
-     * @param diagram
-     */
-    private static void gridlayout(KNode diagram) {
-        
-    }
-    
-    /**
-     * 
-     * @param diagram
-     */
-    private static void overlaplayout(KNode diagram) {
-        
-    }
-    
-    /**
-     * 
-     * @param diagram
-     */
-    private static void hlayout(KNode diagram) {
-        
     }
 
     // /**
