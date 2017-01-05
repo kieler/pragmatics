@@ -81,7 +81,8 @@ public final class HierachicalKGraphSynthesis {
         } else if (layout.equals("Force")) {
             diagram.setProperty(CoreOptions.ALGORITHM, "org.eclipse.elk.force");
         } else if (layout.equals("Grid Snap")) {
-
+            diagram.setProperty(CoreOptions.ALGORITHM,
+                    "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.grid");
         } else if (layout.equals("Overlap Removal")) {
 
         } else if (layout.equals("H-Layouter")) {
