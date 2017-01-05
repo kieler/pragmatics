@@ -1,0 +1,14 @@
+package de.cau.cs.kieler.hierarchicalLayoutAlgorithms
+
+bundle {
+    label "Hierarchical Layout Algoritms"
+    metadataClass HierarchicalMetaDataProvider
+}
+ 
+algorithm radial(RadialLayoutProvider) {
+    label "Radial Layouter"
+    metadataClass RadialOptions
+ 
+    supports org.eclipse.elk.spacing.border
+    supports org.eclipse.elk.spacing.node
+}
