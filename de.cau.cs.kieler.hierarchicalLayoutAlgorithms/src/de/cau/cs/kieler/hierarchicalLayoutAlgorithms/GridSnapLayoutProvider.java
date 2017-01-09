@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.alg.force.ForceLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
@@ -32,25 +33,76 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	private static List<KNode> visited = new ArrayList<KNode>();
 	private static int distance;
 	private static Map<KNode, Float> dispMap = new HashMap<KNode, Float>();
+	private static int gridwidth;
+	private static int gridheight;
 
 	@Override
 	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		progressMonitor.begin("Grid Snap Layouter", 1);
-		edges.clear();
-		children.clear();
-		dispMap.clear();
-		width = 0f;
-		height = 0f;
 
-		initializeGrid(layoutGraph);
-
-		initializeNodes(layoutGraph);
-
-		pStress();
-
+		simpleGrid(layoutGraph, progressMonitor);
+		
+//		initializeGrid(layoutGraph);
+//		initializeNodes(layoutGraph);
+//		pStress();
 		routeEdges();
 		
 		progressMonitor.done();
+	}
+	
+	private static void simpleGrid(KNode diagram, IElkProgressMonitor progressMonitor) {
+		ForceLayoutProvider force = new ForceLayoutProvider();
+		force.layout(diagram, progressMonitor);
+		
+		edges.clear();
+		children.clear();
+		width = 0.0f;
+		height = 0.0f;
+		
+		KShapeLayout diagramLayout = diagram.getData(KShapeLayout.class);
+		width = diagramLayout.getWidth();
+		height = diagramLayout.getHeight();
+		
+		children.addAll(diagram.getChildren());
+		
+		gridwidth = (int) (width / children.size());
+		gridheight = (int) (height / children.size());
+		
+		for (KNode node : children) {
+			for (KEdge edge : node.getOutgoingEdges()) {
+				if (children.contains(edge.getTarget())) {
+					edges.add(edge);
+				}
+			}
+			
+			KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+			float xPos = nodeLayout.getXpos();
+			float yPos = nodeLayout.getYpos();
+			
+			xPos = calculateNewPos(xPos, gridwidth);
+			yPos = calculateNewPos(yPos, gridheight);
+			
+			nodeLayout.setPos(xPos, yPos);
+		}
+		
+	}
+	
+	/**
+	 * 
+	 * @param pos
+	 * @param size
+	 * @return
+	 */
+	private static float calculateNewPos(float pos, int size) {
+		float x = pos / size;
+		double y = x - Math.floor(x);
+		
+		if (y > 0.5) {
+			pos = ((float) Math.ceil(x)) * size;
+		} else {
+			pos = ((float) Math.floor(x)) * size;
+		}
+		return pos;
 	}
 
 	/**
@@ -58,6 +110,12 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	 * @param layoutGraph
 	 */
 	private static void initializeGrid(KNode layoutGraph) {
+		edges.clear();
+		children.clear();
+		dispMap.clear();
+		width = 0.0f;
+		height = 0.0f;
+		
 		for (KNode node : layoutGraph.getChildren()) {
 			KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 			width += nodeLayout.getWidth();
@@ -85,9 +143,6 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	private static void initializeNodes(KNode layoutGraph) {
 		children.addAll(layoutGraph.getChildren());
 		for (KNode node : children) {
-			if (node.getChildren().isEmpty()) {
-				System.out.println(node);
-			}
 			// Calculate edges we need to draw
 			for (KEdge edge : node.getOutgoingEdges()) {
 				if (children.contains(edge.getTarget())) {
@@ -105,7 +160,6 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	 */
 	private static void pStress() {
 		dL = 100;
-		//TODO minimize dL
 		float pStress = 0.0f;
 		for (KNode u : children) {
 			float pStressLeft = 0.0f;
