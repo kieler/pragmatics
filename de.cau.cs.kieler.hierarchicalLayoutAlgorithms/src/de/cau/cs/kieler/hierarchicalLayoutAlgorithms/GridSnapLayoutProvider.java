@@ -11,6 +11,7 @@ import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
 import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
@@ -41,52 +42,55 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 		progressMonitor.begin("Grid Snap Layouter", 1);
 
 		simpleGrid(layoutGraph, progressMonitor);
-		
-//		initializeGrid(layoutGraph);
-//		initializeNodes(layoutGraph);
-//		pStress();
+
+		// initializeGrid(layoutGraph);
+		// initializeNodes(layoutGraph);
+		// pStress();
+
 		routeEdges();
-		
+		// routeBetterEdges();
+
 		progressMonitor.done();
 	}
-	
+
 	private static void simpleGrid(KNode diagram, IElkProgressMonitor progressMonitor) {
 		ForceLayoutProvider force = new ForceLayoutProvider();
+		// TODO ForceOptions
 		force.layout(diagram, progressMonitor);
-		
+
 		edges.clear();
 		children.clear();
 		width = 0.0f;
 		height = 0.0f;
-		
+
 		KShapeLayout diagramLayout = diagram.getData(KShapeLayout.class);
 		width = diagramLayout.getWidth();
 		height = diagramLayout.getHeight();
-		
+
 		children.addAll(diagram.getChildren());
-		
+
 		gridwidth = (int) (width / children.size());
 		gridheight = (int) (height / children.size());
-		
+
 		for (KNode node : children) {
 			for (KEdge edge : node.getOutgoingEdges()) {
 				if (children.contains(edge.getTarget())) {
 					edges.add(edge);
 				}
 			}
-			
+
 			KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 			float xPos = nodeLayout.getXpos();
 			float yPos = nodeLayout.getYpos();
-			
+
 			xPos = calculateNewPos(xPos, gridwidth);
 			yPos = calculateNewPos(yPos, gridheight);
-			
+
 			nodeLayout.setPos(xPos, yPos);
 		}
-		
+
 	}
-	
+
 	/**
 	 * 
 	 * @param pos
@@ -96,7 +100,7 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	private static float calculateNewPos(float pos, int size) {
 		float x = pos / size;
 		double y = x - Math.floor(x);
-		
+
 		if (y > 0.5) {
 			pos = ((float) Math.ceil(x)) * size;
 		} else {
@@ -115,7 +119,7 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 		dispMap.clear();
 		width = 0.0f;
 		height = 0.0f;
-		
+
 		for (KNode node : layoutGraph.getChildren()) {
 			KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 			width += nodeLayout.getWidth();
@@ -167,30 +171,30 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 			for (KNode v : children) {
 				if (u != v) {
 					float dist = distance(u, v);
-					if(children.indexOf(u) < children.indexOf(v)) {
+					if (children.indexOf(u) < children.indexOf(v)) {
 						float duv = getPathLength(u, v);
-						float wuv = 1 / (duv*duv);
+						float wuv = 1 / (duv * duv);
 						pStressLeft += wuv * z(duv - dist) * z((duv - dist));
 					}
-					wp = 1/dL;
+					wp = 1 / dL;
 					pStressRight += wp * z(dist - dL) * z(dist - dL);
 				}
 			}
 			pStress = pStressLeft + pStressRight;
 			dispMap.put(u, pStress);
 		}
-		
+
 		for (KNode n : children) {
 			KShapeLayout nLayout = n.getData(KShapeLayout.class);
-//			System.out.println("x: " + dispMap.get(n));
-			float newXpos = nLayout.getXpos() - dispMap.get(n) - nLayout.getWidth()/2;
-			float newYpos = nLayout.getYpos() - dispMap.get(n) - nLayout.getHeight()/2;
+			// System.out.println("x: " + dispMap.get(n));
+			float newXpos = nLayout.getXpos() - dispMap.get(n) - nLayout.getWidth() / 2;
+			float newYpos = nLayout.getYpos() - dispMap.get(n) - nLayout.getHeight() / 2;
 			nLayout.setPos(newXpos, newYpos);
-//			System.out.println("x: " + newXpos);
-//			System.out.println("y: " + newYpos);
+			// System.out.println("x: " + newXpos);
+			// System.out.println("y: " + newYpos);
 		}
 	}
-	
+
 	/**
 	 * 
 	 * @param i
@@ -254,6 +258,56 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 
 			sPoint.setPos(sLayout.getXpos(), sLayout.getYpos());
 			tPoint.setPos(tLayout.getXpos(), tLayout.getYpos());
+
+			KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+			edgeLayout.setSourcePoint(sPoint);
+			edgeLayout.setTargetPoint(tPoint);
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private static void routeBetterEdges() {
+		for (KEdge edge : edges) {
+			KNode source = edge.getSource();
+			KShapeLayout sLayout = source.getData(KShapeLayout.class);
+			KPoint sPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+
+			KNode target = edge.getTarget();
+			KShapeLayout tLayout = target.getData(KShapeLayout.class);
+			KPoint tPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
+
+			// Check at which position the edge should start/end
+			if (sLayout.getXpos() + sLayout.getWidth() <= tLayout.getXpos()
+					&& sLayout.getYpos() > tLayout.getYpos() + tLayout.getHeight()) {
+				sPoint.setPos(sLayout.getXpos() + sLayout.getWidth() / 1.5f, sLayout.getYpos());
+				tPoint.setPos(tLayout.getXpos() + tLayout.getWidth() / 1.5f, tLayout.getYpos() + tLayout.getHeight());
+			} else if (sLayout.getXpos() + sLayout.getWidth() <= tLayout.getXpos()
+					&& sLayout.getYpos() + sLayout.getHeight() < tLayout.getYpos()) {
+				sPoint.setPos(sLayout.getXpos() + sLayout.getWidth() / 1.5f, sLayout.getYpos() + sLayout.getHeight());
+				tPoint.setPos(tLayout.getXpos() + tLayout.getWidth() / 1.5f, tLayout.getYpos());
+			} else if (sLayout.getXpos() + sLayout.getWidth() <= tLayout.getXpos()) {
+				sPoint.setPos(sLayout.getXpos() + sLayout.getWidth(), sLayout.getYpos() + sLayout.getHeight() / 1.5f);
+				tPoint.setPos(tLayout.getXpos(), tLayout.getYpos() / 1.5f);
+			} else if (sLayout.getXpos() > tLayout.getXpos() + tLayout.getWidth()
+					&& sLayout.getYpos() > tLayout.getYpos() + tLayout.getHeight()) {
+				sPoint.setPos(sLayout.getXpos() + sLayout.getWidth() / 2.5f, sLayout.getYpos());
+				tPoint.setPos(tLayout.getXpos() + tLayout.getWidth() / 2.5f, tLayout.getYpos() + tLayout.getHeight());
+			} else if (sLayout.getXpos() > tLayout.getXpos() + tLayout.getHeight()
+					&& sLayout.getYpos() + sLayout.getHeight() < tLayout.getYpos()) {
+				sPoint.setPos(sLayout.getXpos() + sLayout.getWidth() / 2.5f, sLayout.getYpos() + sLayout.getHeight());
+				tPoint.setPos(tLayout.getXpos() + tLayout.getWidth() / 2.5f, tLayout.getYpos());
+			} else if (sLayout.getXpos() > tLayout.getXpos() + tLayout.getWidth()) {
+				sPoint.setPos(sLayout.getXpos(), sLayout.getYpos() + sLayout.getHeight() / 2.5f);
+				tPoint.setPos(tLayout.getXpos() + tLayout.getWidth(), tLayout.getYpos() + tLayout.getHeight() / 2.5f);
+			} else if (sLayout.getYpos() > tLayout.getYpos() + tLayout.getHeight()) {
+				sPoint.setPos(sLayout.getXpos() + sLayout.getWidth() / 1.5f, sLayout.getYpos());
+				tPoint.setPos(tLayout.getXpos() + tLayout.getWidth() / 1.5f, tLayout.getYpos() + tLayout.getHeight());
+			} else {
+				sPoint.setPos(sLayout.getXpos() + sLayout.getWidth() / 2.5f, sLayout.getYpos());
+				tPoint.setPos(tLayout.getXpos() + tLayout.getWidth() / 2.5f, tLayout.getYpos() + tLayout.getHeight());
+			}
 
 			KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
 			edgeLayout.setSourcePoint(sPoint);
