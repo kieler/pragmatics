@@ -16,8 +16,7 @@ package de.cau.cs.kieler.kiml.formats;
 
 import java.util.Map;
 
-import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.core.util.GraphDataUtil;
+import org.eclipse.elk.core.util.persistence.ElkGraphResourceFactory;
 import org.eclipse.elk.graph.ElkGraphPackage;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.ecore.EPackage;
@@ -41,35 +40,10 @@ public class ElkGraphHandler extends AbstractEmfHandler<ElkNode> {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public String serialize(final TransformationData<ElkNode, ElkNode> transData) {
-        for (ElkNode graph : transData.getTargetGraphs()) {
-            ElkUtil.persistDataElements(graph);
-        }
-        return super.serialize(transData);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void deserialize(final String serializedGraph,
-            final TransformationData<ElkNode, ElkNode> transData) {
-        
-        super.deserialize(serializedGraph, transData);
-        if (transData.getSourceGraph() != null) {
-            // load layout options from their serialized form
-            GraphDataUtil.loadDataElements(transData.getSourceGraph(), true);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     protected ResourceSet createResourceSet() {
         Map<String, Object> extensionMap = Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap();
         if (!extensionMap.containsKey("elkg")) {
-            extensionMap.put("elkg", new XMIResourceFactoryImpl());
+            extensionMap.put("elkg", new ElkGraphResourceFactory());
         }
         
         EPackage.Registry registry = EPackage.Registry.INSTANCE;
