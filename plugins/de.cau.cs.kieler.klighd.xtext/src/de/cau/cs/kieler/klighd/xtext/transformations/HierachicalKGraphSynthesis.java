@@ -6,22 +6,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-//import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
-
-import com.google.inject.Inject;
 
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.impl.KGraphFactoryImpl;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
-import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil;
-import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions;
 import de.cau.cs.kieler.klighd.krendering.impl.KRenderingImpl;
-import de.cau.cs.kieler.klighd.syntheses.DiagramLayoutOptions;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 
 /*
@@ -81,7 +74,8 @@ public final class HierachicalKGraphSynthesis {
         } else if (layout.equals("Force")) {
             diagram.setProperty(CoreOptions.ALGORITHM, "org.eclipse.elk.force");
         } else if (layout.equals("Grid Snap")) {
-
+            diagram.setProperty(CoreOptions.ALGORITHM,
+                    "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.grid");
         } else if (layout.equals("Overlap Removal")) {
 
         } else if (layout.equals("H-Layouter")) {
