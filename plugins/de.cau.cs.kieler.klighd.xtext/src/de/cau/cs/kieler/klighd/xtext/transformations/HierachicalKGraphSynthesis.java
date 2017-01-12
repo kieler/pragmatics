@@ -92,55 +92,57 @@ public final class HierachicalKGraphSynthesis {
         List<KNode> copiedChildren = new ArrayList<>();
 
         for (KNode child : parent.getChildren()) {
-            // deep search
-            copiedChildren.addAll(recursiveTraversal(child));
 
             List<KNode> grandChildren = child.getChildren();
             boolean isBlueBox =
                     grandChildren.size() == 1 && !grandChildren.get(0).getChildren().isEmpty();
 
-            // Ignore blue boxes and copy only the child inside
-            if (!isBlueBox) {
-                if (!grandChildren.isEmpty()) {
+            // deep search
+            if (isBlueBox) {
+                for (KNode grandChild : grandChildren) {
+                    copiedChildren.addAll(recursiveTraversal(grandChild));
+                }
+            } else {
+                copiedChildren.addAll(recursiveTraversal(child));
+            }
 
-                    // extract/copy content of children
-                    Copier copier = new Copier();
-                    KNode copy = (KNode) copier.copy(child);
-                    copier.copyReferences();
+            // The child has no children, therefore it is not hierarchical (no copy)
+            if (!grandChildren.isEmpty()) {
 
-                    // delete the content of the original node
-                    child.getChildren().clear();
+                // extract/copy content of children
+                Copier copier = new Copier();
+                KNode copy = (KNode) copier.copy(child);
+                copier.copyReferences();
 
-                    // KNode parentWithDifferentChild = copyWithoutBlueBox(child);
-                    copiedChildren.add(copy);
-                    parents.put(copy, parent);
-                    restoreLayout(copy);
+                copiedChildren.add(copy);
 
-                    // keep track of the right parent
+                parents.put(copy, parent);
+
+                // if it is a blue box reset the pointer to the parent
+                if (isBlueBox) {
                     for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
-                        if (savedParent.getValue().equals(child)) {
+                        if (savedParent.getValue().equals(child.getChildren().get(0))) {
                             savedParent.setValue(copy);
                         }
                     }
-
-                    // Remove the actions of the inner nodes so they are not expandable
-                    KRenderingImpl rendering = child.getData(KRenderingImpl.class);
-                    rendering.getActions().clear();
-
-                    // TODO remove the actions of the copy, such that the root children are not
-                    // expandable. If we simply remove the action of the copy, we can minimize the
-                    // node once but can not expand it anymore...
-
-                } else {
-                    // The child has no children, therefore it is not hierarchical (no copy)
                 }
-            } else {
-                // if it is a blue box reset the pointer to the parent
+                restoreLayout(copy, isBlueBox);
+
+                // keep track of the right parent
                 for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
                     if (savedParent.getValue().equals(child)) {
-                        savedParent.setValue(parent);
+                        savedParent.setValue(copy);
                     }
                 }
+
+                // Remove the actions of the inner nodes so they are not expandable
+                KRenderingImpl rendering = child.getData(KRenderingImpl.class);
+                rendering.getActions().clear();
+
+                // TODO remove the actions of the copy, such that the root children are not
+                // expandable. If we simply remove the action of the copy, we can minimize the
+                // node once but can not expand it anymore...
+
             }
         }
         return copiedChildren;
@@ -151,14 +153,25 @@ public final class HierachicalKGraphSynthesis {
      * @param node
      */
     @SuppressWarnings("deprecation")
-    private static void restoreLayout(final KNode node) {
-        // set size
-        KGraphDataUtil.loadDataElements(node);
-        node.setHeight(CoreOptions.NODE_SIZE_MIN_HEIGHT.getDefault());
-        node.setWidth(CoreOptions.NODE_SIZE_MIN_WIDTH.getDefault());
+    private static void restoreLayout(final KNode node, final boolean isBlueBox) {
+        List<KNode> children = node.getChildren();
+        if (isBlueBox) {
+            children = children.get(0).getChildren();
+        }
 
-        for (KNode child : node.getChildren()) {
+        for (KNode child : children) {
+
+            // delete the content of the original node
+            child.getChildren().clear();
+            KGraphDataUtil.loadDataElements(child);
             child.setProperty(KlighdProperties.EXPAND, false);
+
+            // if (child.getHeight() == 0) {
+            // child.setHeight(CoreOptions.NODE_SIZE_MIN_HEIGHT.getDefault());
+            // }
+            // if (child.getWidth() == 0) {
+            // child.setWidth(CoreOptions.NODE_SIZE_MIN_WIDTH.getDefault());
+            // }
         }
 
         if (node.getChildren().size() > 0) {
@@ -183,53 +196,5 @@ public final class HierachicalKGraphSynthesis {
             parent.getOutgoingEdges().add(edge);
         }
     }
-
-    // /**
-    // * Copy a node or if it is a blue box skip it. On the way, clear the grandchildren to flatten
-    // * the hierarchy.
-    // *
-    // * @param parent
-    // * @return
-    // */
-    // private static KNode copyWithoutBlueBox(final KNode parent) {
-    // List<KNode> copies = new ArrayList<KNode>();
-    // Copier copier = new Copier();
-    //
-    // for (KNode child : parent.getChildren()) {
-    // List<KNode> children = child.getChildren();
-    // KNode copy;
-    // // Remove useless blue boxes, if there is only one expandable child inside
-    // if (!(children.size() == 1 && !children.get(0).getChildren().isEmpty())) {
-    // clearGrandchildren(child);
-    // copy = (KNode) copier.copy(child);
-    // } else {
-    // for (KNode grandChild : child.getChildren()) {
-    // clearGrandchildren(grandChild);
-    // }
-    // // copy = (KNode) copier.copy(child.getChildren().get(0));
-    // copy = (KNode) copier.copy(child);
-    // }
-    //
-    // copier.copyReferences();
-    // copy.getChildren().clear();
-    // copies.add(copy);
-    // }
-    //
-    // parent.getChildren().clear();
-    // parent.getChildren().addAll(copies);
-    //
-    // return parent;
-    // }
-    //
-    // /**
-    // * Delete all the grandchildren of a node.
-    // *
-    // * @param child
-    // */
-    // private static void clearGrandchildren(KNode child) {
-    // for (KNode grandChild : child.getChildren()) {
-    // grandChild.getChildren().clear();
-    // }
-    // }
 
 }
