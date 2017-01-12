@@ -3,12 +3,14 @@ package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
 import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
@@ -18,9 +20,12 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 	private static final float DEFAULT_SPACING = 15.0f;
 	private List<List<KNode>> layers;
 	private ArrayList<Float> layerSize;
+	private LayeredLayoutProvider provider;
 
 	@Override
 	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
+		provider = new LayeredLayoutProvider();
+		
 		progressMonitor.begin("Simple layouter", 1);
 		KShapeLayout parentLayout = layoutGraph.getData(KShapeLayout.class);
 
@@ -52,8 +57,9 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		layerSize.set(0, layerSize.get(0) / 2);
 
 		calcPos(root, 0, 0, 2 * Math.PI);
+        
+        postProcess(layoutGraph);
 		routeEdges(root);
-
 		progressMonitor.done();
 	}
 
@@ -116,6 +122,8 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		}
 
 		for (KNode child : getSuccessor(node)) {
+			IElkProgressMonitor monitor = new BasicProgressMonitor();
+			provider.layout(child, monitor);
 			calcPos(child, layer + 1, alpha, alpha + s * (calcSizes(child) - 1));
 			alpha += s * (calcSizes(child) - 1);
 		}
@@ -209,6 +217,38 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 			}
 
 		}
+	}
+	
+	
+	private void postProcess(KNode layoutGraph){
+	    // calculate min size
+        KShapeLayout graphData = layoutGraph.getData(KShapeLayout.class);
+        float maxHeight = 0;
+        float minXPos = 0;
+        for (KNode node : layoutGraph.getChildren()) {
+            KShapeLayout layoutData = node.getData(KShapeLayout.class);
+            maxHeight = Math.max(maxHeight, layoutData.getYpos());
+            minXPos = Math.min(minXPos, layoutData.getXpos());
+        }
+        
+        //shift graph
+        for (KNode node : layoutGraph.getChildren()) {
+            KShapeLayout layoutData = node.getData(KShapeLayout.class);
+           layoutData.setXpos(layoutData.getXpos()-minXPos);
+           layoutData.setYpos(layoutData.getYpos()-maxHeight);
+        }
+		
+		
+	    // calculate graph size
+        float height = 0;
+        float width = 0;
+        for (KNode node : layoutGraph.getChildren()) {
+            KShapeLayout layoutData = node.getData(KShapeLayout.class);
+            height = Math.max(height, layoutData.getYpos()+layoutData.getHeight());
+            width = Math.max(width, layoutData.getXpos()+layoutData.getWidth());
+        }
+        graphData.setHeight(height+100);
+        graphData.setWidth(width+100);
 	}
 
 }
