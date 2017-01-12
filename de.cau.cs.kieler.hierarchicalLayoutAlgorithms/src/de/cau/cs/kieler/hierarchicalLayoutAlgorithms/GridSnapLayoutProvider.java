@@ -5,13 +5,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.ProgressMonitor;
+
 import org.eclipse.elk.alg.force.ForceLayoutProvider;
+import org.eclipse.elk.alg.force.properties.ForceOptions;
+import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
 import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
@@ -41,23 +46,30 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		progressMonitor.begin("Grid Snap Layouter", 1);
 
-		simpleGrid(layoutGraph, progressMonitor);
+		simpleGrid(layoutGraph);
 
 		// initializeGrid(layoutGraph);
 		// initializeNodes(layoutGraph);
 		// pStress();
 
 		routeEdges();
-		// routeBetterEdges();
+		//routeBetterEdges();
 
 		progressMonitor.done();
 	}
 
-	private static void simpleGrid(KNode diagram, IElkProgressMonitor progressMonitor) {
+	private static void simpleGrid(KNode diagram) {
+		KLayoutData data = diagram.getData(KLayoutData.class);
+//		LayeredLayoutProvider layered = new LayeredLayoutProvider();
+//		BasicProgressMonitor layeredMonitor = new BasicProgressMonitor();
+//		layered.layout(diagram, layeredMonitor);
+		
 		ForceLayoutProvider force = new ForceLayoutProvider();
-		// TODO ForceOptions
-		force.layout(diagram, progressMonitor);
-
+		data.setProperty(ForceOptions.SPACING_NODE, 20.0f);
+		data.setProperty(ForceOptions.SPACING_BORDER, 20.0f);
+		BasicProgressMonitor forceMonitor = new BasicProgressMonitor();
+		force.layout(diagram, forceMonitor);
+		
 		edges.clear();
 		children.clear();
 		width = 0.0f;
@@ -69,10 +81,19 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 
 		children.addAll(diagram.getChildren());
 
-		gridwidth = (int) (width / children.size());
-		gridheight = (int) (height / children.size());
+		gridwidth = (int) (width / (children.size() / 2));
+		gridheight = (int) (height / (children.size() / 2));
 
 		for (KNode node : children) {
+//			if (node.getChildren().size() == 3) {
+//				KShapeLayout shape = node.getData(KShapeLayout.class);
+//				shape.setHeight(100);
+//				shape.setWidth(700);
+//				shape.setPos(0, 0);
+//				BasicProgressMonitor layeredMonitor = new BasicProgressMonitor();
+//				LayeredLayoutProvider layered = new LayeredLayoutProvider();
+//				layered.layout(node, layeredMonitor);
+//			}
 			for (KEdge edge : node.getOutgoingEdges()) {
 				if (children.contains(edge.getTarget())) {
 					edges.add(edge);
@@ -86,9 +107,20 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 			xPos = calculateNewPos(xPos, gridwidth);
 			yPos = calculateNewPos(yPos, gridheight);
 
+			//TODO check availability
 			nodeLayout.setPos(xPos, yPos);
 		}
 
+	}
+	
+	/**
+	 * 
+	 * @param diagram
+	 */
+	private static void minimizingWhitespaceGrid(KNode diagram) {
+		// TODO init grid
+		// TODO calculate ralative closest grid position and check if available
+		// TODO maybe make grid bigger because nodes are too big
 	}
 
 	/**
