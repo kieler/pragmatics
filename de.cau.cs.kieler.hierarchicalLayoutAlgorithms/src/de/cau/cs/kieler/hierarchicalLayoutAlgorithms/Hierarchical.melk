@@ -37,3 +37,8 @@ programmatic option hierarchicalParentID:int{
     targets parents
     legacyIds de.cau.cs.kieler.hierarchicalParentID
 }
+
+algorithm stress(HierarchicalStressLayoutProvider) {
+    label "Stress Layouter"
+    metadataClass HierarchicalStressOptions
+}

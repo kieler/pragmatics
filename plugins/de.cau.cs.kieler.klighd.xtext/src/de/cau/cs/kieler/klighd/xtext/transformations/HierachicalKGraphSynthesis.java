@@ -74,7 +74,8 @@ public final class HierachicalKGraphSynthesis {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial");
         } else if (layout.equals("Force")) {
-            diagram.setProperty(CoreOptions.ALGORITHM, "org.eclipse.elk.force");
+            diagram.setProperty(CoreOptions.ALGORITHM,
+                    "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.stress");
         } else if (layout.equals("Grid Snap")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.grid");
