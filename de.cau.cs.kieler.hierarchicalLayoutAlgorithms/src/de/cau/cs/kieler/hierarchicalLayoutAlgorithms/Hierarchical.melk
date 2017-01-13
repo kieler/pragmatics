@@ -11,6 +11,7 @@ algorithm radial(RadialLayoutProvider) {
  
     supports org.eclipse.elk.spacing.border
     supports org.eclipse.elk.spacing.node
+    supports hierarchicalID
 }
 
 algorithm grid(GridSnapLayoutProvider) {
@@ -22,4 +23,17 @@ algorithm grid(GridSnapLayoutProvider) {
 algorithm custom(CustomLayoutProvider) {
     label "Custom Layouter"
     metadataClass CustomOptions
+}
+
+
+programmatic option hierarchicalID:int{
+    label "Hierarchical ID "
+    targets parents
+    legacyIds de.cau.cs.kieler.hierarchicalID
+}
+
+programmatic option hierarchicalParentID:int{
+    label "Hierarchical Parent ID "
+    targets parents
+    legacyIds de.cau.cs.kieler.hierarchicalParentID
 }

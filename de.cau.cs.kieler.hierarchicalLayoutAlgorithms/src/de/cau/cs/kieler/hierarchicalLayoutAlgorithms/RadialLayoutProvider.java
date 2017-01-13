@@ -55,7 +55,7 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		layerSize.add(size);
 		layerSize.set(0, layerSize.get(0) / 2);
 
-		calcPos(root, 0, 0, 2 * Math.PI);
+		calcPos(root, 0, 0, 4 * Math.PI);
         
         postProcess(layoutGraph);
 		routeEdges(root);
@@ -63,16 +63,16 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 	}
 
 	private void calcPos(KNode node, int layer, double minAlpha, double maxAlpha) {
-		double alpha = (minAlpha + maxAlpha) / 2;
+		double alphaPoint = (minAlpha + maxAlpha) / 2;
 
 		KShapeLayout shape = node.getData(KShapeLayout.class);
 		double size = layerSize.get(layer);
 
 		// x=r*sinθ, y=r*cosθ
-		float xPos = (float) (size * Math.sin(alpha));
-		float yPos = (float) (size * Math.cos(alpha));
-		shape.setXpos(xPos);
-		shape.setYpos(yPos);
+		float xPos = (float) (size * Math.sin(alphaPoint));
+		float yPos = (float) (size * Math.cos(alphaPoint));
+//		shape.setXpos(xPos);
+//		shape.setYpos(yPos);
 
 		// center root
 		if (xPos == 0 && yPos == 0) {
@@ -108,8 +108,9 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		}
 
 		double sizeNextLayer = layerSize.get(layer + 1);
-		double tau = 2 * Math.acos(size / sizeNextLayer);
+		double tau = Math.acos(size / sizeNextLayer);
 		double s;
+		double alpha;
 		double numberOfSucessors = (calcSizes(node) - 1);
 		if (tau < minAlpha - maxAlpha) {
 			s = tau / numberOfSucessors;
@@ -123,7 +124,7 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		for (KNode child : getSuccessor(node)) {
 			IElkProgressMonitor monitor = new BasicProgressMonitor();
 			provider.layout(child, monitor);
-			calcPos(child, layer + 1, alpha, alpha + s * (calcSizes(child) - 1));
+			calcPos(child, layer + 1, alpha, alpha + s * (calcSizes(child)-1));
 			alpha += s * (calcSizes(child) - 1);
 		}
 	}
@@ -147,6 +148,8 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 
 		for (KNode child : node) {
 			KShapeLayout shape = child.getData(KShapeLayout.class);
+			shape.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
+			
 			float width = shape.getWidth();
 			float height = shape.getHeight();
 			biggestChildSize += (float) Math.sqrt(width * width + height * height);

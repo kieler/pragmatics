@@ -1,7 +1,6 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
@@ -13,8 +12,6 @@ import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
-
-import de.cau.cs.kieler.klighd.xtext.transformations.HierarchicalProperties;
 
 public class CustomLayoutProvider extends AbstractLayoutProvider {
 
@@ -38,7 +35,8 @@ public class CustomLayoutProvider extends AbstractLayoutProvider {
 
 				for(KNode node: layers.get(i)){
 			        KLayoutData nodeData = node.getData(KLayoutData.class);
-			       //nodeData.getProperty(HierarchicalProperties.HIERARCHICAL_PARENT);
+			      
+			      nodeData.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
 					KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 					if(nodeLayout.getXpos() < layout.getWidth()/2){
 						if(nodeLayout.getYpos() < -layout.getHeight()/2){
