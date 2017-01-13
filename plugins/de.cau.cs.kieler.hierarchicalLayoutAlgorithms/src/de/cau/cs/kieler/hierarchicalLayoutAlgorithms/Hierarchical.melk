@@ -1,0 +1,44 @@
+package de.cau.cs.kieler.hierarchicalLayoutAlgorithms
+
+bundle {
+    label "Hierarchical Layout Algorithms"
+    metadataClass HierarchicalMetaDataProvider
+}
+ 
+algorithm radial(RadialLayoutProvider) {
+    label "Radial Layouter"
+    metadataClass RadialOptions
+ 
+    supports org.eclipse.elk.spacing.border
+    supports org.eclipse.elk.spacing.node
+    supports hierarchicalID
+}
+
+algorithm grid(GridSnapLayoutProvider) {
+    label "Grid Snap Layouter"
+    metadataClass GridOptions
+    description "Layouter that uses a force based algorithm and places the nodes in a grid afterwards."
+}
+
+algorithm custom(CustomLayoutProvider) {
+    label "Custom Layouter"
+    metadataClass CustomOptions
+}
+
+
+programmatic option hierarchicalID:int{
+    label "Hierarchical ID "
+    targets parents
+    legacyIds de.cau.cs.kieler.hierarchicalID
+}
+
+programmatic option hierarchicalParentID:int{
+    label "Hierarchical Parent ID "
+    targets parents
+    legacyIds de.cau.cs.kieler.hierarchicalParentID
+}
+
+algorithm stress(HierarchicalStressLayoutProvider) {
+    label "Stress Layouter"
+    metadataClass HierarchicalStressOptions
+}
