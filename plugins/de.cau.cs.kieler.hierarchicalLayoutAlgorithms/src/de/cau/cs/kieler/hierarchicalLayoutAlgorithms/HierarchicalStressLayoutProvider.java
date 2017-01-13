@@ -7,6 +7,7 @@ import org.eclipse.elk.alg.force.properties.StressOptions;
 import org.eclipse.elk.alg.force.stress.StressLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
+import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
@@ -32,9 +33,18 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 			for (KEdge edge : node.getOutgoingEdges()) {
 				if (children.contains(edge.getTarget())) {
 					edges.add(edge);
+					KNode source = edge.getSource();
+					KNode target = edge.getTarget();
+					KShapeLayout sourceLayout = source.getData(KShapeLayout.class);
+					float width = sourceLayout.getWidth() / 2;
+					float height = sourceLayout.getHeight() / 2;
+					float diagonal = (float) Math.sqrt((Math.pow(width, 2) + Math.pow(height, 2)));
+					KShapeLayout targetLayout = target.getData(KShapeLayout.class);
+					width = targetLayout.getWidth();
+					height = targetLayout.getHeight();
+					diagonal += Math.sqrt((Math.pow(width, 2) + Math.pow(height, 2)));
 					KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-					// TODO set edge length
-					edgeLayout.setProperty(StressOptions.DESIRED_EDGE_LENGTH, 800.0f);
+					edgeLayout.setProperty(StressOptions.DESIRED_EDGE_LENGTH, diagonal);
 				}
 			}
 		}
