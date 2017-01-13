@@ -12,3 +12,9 @@ algorithm radial(RadialLayoutProvider) {
     supports org.eclipse.elk.spacing.border
     supports org.eclipse.elk.spacing.node
 }
+
+algorithm grid(GridSnapLayoutProvider) {
+    label "Grid Snap Layouter"
+    metadataClass GridOptions
+    description "Layouter that uses a force based algorithm and places the nodes in a grid afterwards."
+}
