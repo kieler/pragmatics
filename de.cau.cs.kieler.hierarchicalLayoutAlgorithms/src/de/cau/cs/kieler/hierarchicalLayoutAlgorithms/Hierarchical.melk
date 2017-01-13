@@ -1,7 +1,7 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms
 
 bundle {
-    label "Hierarchical Layout Algoritms"
+    label "Hierarchical Layout Algorithms"
     metadataClass HierarchicalMetaDataProvider
 }
  
@@ -17,4 +17,9 @@ algorithm grid(GridSnapLayoutProvider) {
     label "Grid Snap Layouter"
     metadataClass GridOptions
     description "Layouter that uses a force based algorithm and places the nodes in a grid afterwards."
+}
+
+algorithm custom(CustomLayoutProvider) {
+    label "Custom Layouter"
+    metadataClass CustomOptions
 }

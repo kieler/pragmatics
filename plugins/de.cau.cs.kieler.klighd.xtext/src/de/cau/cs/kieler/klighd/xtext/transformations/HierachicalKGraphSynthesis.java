@@ -115,6 +115,7 @@ public final class HierachicalKGraphSynthesis {
                 copier.copyReferences();
 
                 copiedChildren.add(copy);
+                copy.setProperty(HierarchicalProperties.HIERARCHICAL_PARENT, child);
 
                 parents.put(copy, parent);
 
