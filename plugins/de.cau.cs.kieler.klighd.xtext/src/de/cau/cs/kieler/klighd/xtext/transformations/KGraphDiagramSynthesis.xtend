@@ -127,13 +127,13 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
     private static val FORCE = "Force"
     private static val GRID = "Grid Snap"
     private static val OVERLAP = "Overlap Removal"
-    private static val H_LAYOUTER = "H-Layouter"
+    private static val H_LAYOUTER = "ELK Layered"
 
     /**
      * Synthesis option specifying how the Hierarchical view should be layouted.
      */
     private static val SynthesisOption HIERARCHICAL_LAYOUT = SynthesisOption::createChoiceOption("Hierarchical Layout",
-        ImmutableList::of(RADIAL, FORCE, GRID, OVERLAP, H_LAYOUTER), RADIAL)
+        ImmutableList::of(RADIAL, FORCE, GRID, OVERLAP, H_LAYOUTER), H_LAYOUTER)
 
     private static val STYLE_BORING = "Boring";
     private static val STYLE_STYLISH = "Stylish";
