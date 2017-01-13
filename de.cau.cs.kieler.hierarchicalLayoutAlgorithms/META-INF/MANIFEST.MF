@@ -7,4 +7,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.elk.core;bundle-version="0.1.0",
  org.eclipse.elk.graph;bundle-version="0.1.0",
  org.eclipse.elk.alg.force;bundle-version="0.1.0"
-Import-Package: org.eclipse.elk.alg.layered
+Import-Package: org.eclipse.elk.alg.force.stress,
+ org.eclipse.elk.alg.layered

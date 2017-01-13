@@ -18,3 +18,8 @@ algorithm grid(GridSnapLayoutProvider) {
     metadataClass GridOptions
     description "Layouter that uses a force based algorithm and places the nodes in a grid afterwards."
 }
+
+algorithm stress(HierarchicalStressLayoutProvider) {
+    label "Stress Layouter"
+    metadataClass HierarchicalStressOptions
+}

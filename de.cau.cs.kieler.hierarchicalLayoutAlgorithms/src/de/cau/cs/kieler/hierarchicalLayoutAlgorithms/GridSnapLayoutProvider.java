@@ -6,11 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.ProgressMonitor;
-
 import org.eclipse.elk.alg.force.ForceLayoutProvider;
 import org.eclipse.elk.alg.force.properties.ForceOptions;
-import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.klayoutdata.KLayoutData;
@@ -46,11 +43,14 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	private static int gridwidth;
 	private static int gridheight;
 	private static List<Point2D.Double> availablePositions = new ArrayList<Point2D.Double>();
-	private static int averageNodeWidth;
 
 	@Override
 	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		progressMonitor.begin("Grid Snap Layouter", 1);
+		
+		BasicProgressMonitor forceMonitor = new BasicProgressMonitor();
+		HierarchicalStressLayoutProvider stress = new HierarchicalStressLayoutProvider();
+		stress.layout(layoutGraph, forceMonitor);
 
 		minimizingWhitespaceGrid(layoutGraph);
 
@@ -69,16 +69,6 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	 * @param diagram
 	 */
 	private static void minimizingWhitespaceGrid(KNode diagram) {
-		KShapeLayout diagramLayout = diagram.getData(KShapeLayout.class);
-		System.out.println("Width before grid: " + diagramLayout.getWidth());
-		System.out.println("Height before grid: " + diagramLayout.getHeight());
-		// KLayoutData diagramData = diagram.getData(KLayoutData.class);
-		ForceLayoutProvider force = new ForceLayoutProvider();
-		// diagramData.setProperty(ForceOptions.SPACING_NODE, 20.0f);
-		// diagramData.setProperty(ForceOptions.SPACING_BORDER, 20.0f);
-		BasicProgressMonitor forceMonitor = new BasicProgressMonitor();
-		force.layout(diagram, forceMonitor);
-
 		edges.clear();
 		children.clear();
 		width = 0.0f;
@@ -109,12 +99,12 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 
 		// calculate ralative closest grid position and check if available
 //		KShapeLayout diagramLayout = diagram.getData(KShapeLayout.class);
+		KShapeLayout diagramLayout = diagram.getData(KShapeLayout.class);
 		double diagramwidth = diagramLayout.getWidth();
 		double diagramheight = diagramLayout.getHeight();
 		gridwidth = xPos - 50;
 		gridheight = yPos - 50;
 		Map<Integer, KNode> gridNodeMap = new HashMap<Integer, KNode>();
-//		int nodewidth = 0;
 
 		for (KNode node : children) {
 			for (KEdge edge : node.getOutgoingEdges()) {
@@ -124,7 +114,6 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 			}
 
 			KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-//			nodewidth += nodeLayout.getWidth();
 			int gridXpos = (int) ((nodeLayout.getXpos() + nodeLayout.getWidth() / diagramwidth) * gridwidth);
 			int gridYpos = (int) ((nodeLayout.getYpos() + nodeLayout.getHeight() / diagramheight) * gridheight);
 			// TODO Fix calculation of nearest Position
@@ -134,7 +123,7 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 //			System.out.println(mapPosition);
 			gridNodeMap.put(mapPosition, node);
 		}
-//		averageNodeWidth = nodewidth / children.size();
+
 		float newWidth = 20;
 		float newHeight = 20;
 		Map<Integer, Float> rowwidth = new HashMap<Integer, Float>();
@@ -184,8 +173,6 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 
 		diagramLayout.setWidth(newWidth + 20);
 		diagramLayout.setHeight(newHeight + 20);
-		System.out.println("Width after grid: " + diagramLayout.getWidth());
-		System.out.println("Height after grid: " + diagramLayout.getHeight());
 	}
 
 	/**
