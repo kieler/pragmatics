@@ -6,23 +6,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 //import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
-import com.google.inject.Inject;
-
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.impl.KGraphFactoryImpl;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
-import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil;
-import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions;
 import de.cau.cs.kieler.klighd.krendering.impl.KRenderingImpl;
-import de.cau.cs.kieler.klighd.syntheses.DiagramLayoutOptions;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import de.cau.cs.kieler.overlapRemoval.helper.KGrid;
+import de.cau.cs.kieler.overlapRemoval.helper.Point;
+import de.cau.cs.kieler.overlapRemoval.helper.QuickHull;
 
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
@@ -74,7 +71,26 @@ public final class HierachicalKGraphSynthesis {
         diagram.getChildren().addAll(nodes);
 
         addHierarchicalEdges();
-
+        System.out.println("was? "+ diagram.getChildren().get(0).getChildren().size());
+        KGrid grid = new KGrid(diagram, 4);
+        grid.createGrid(grid, 4);
+        final List<Point> points = new ArrayList<Point>();
+        for(KNode node : diagram.getChildren().get(0).getChildren()) {
+            points.add(new Point(node));
+        }
+        
+        QuickHull hull = new QuickHull();
+        int h = hull.computeHull(points);
+        for(int i = 0; i < h; i++) {
+            System.out.println(points.get(i).toString());
+        }
+        
+        for(KNode node : diagram.getChildren().get(0).getChildren()) {
+        grid.insertNodes(node, grid);
+        }
+        
+        System.out.println(grid.getFields().get(0).getFields().size());
+        
         if (layout.equals("Radial")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial");
