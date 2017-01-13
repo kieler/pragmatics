@@ -45,5 +45,6 @@ public class HierarchicalMetaDataProvider implements ILayoutMetaDataProvider {
     new de.cau.cs.kieler.hierarchicalLayoutAlgorithms.RadialOptions().apply(registry);
     new de.cau.cs.kieler.hierarchicalLayoutAlgorithms.GridOptions().apply(registry);
     new de.cau.cs.kieler.hierarchicalLayoutAlgorithms.CustomOptions().apply(registry);
+    new de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalStressOptions().apply(registry);
   }
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.force.properties.StressOptions;
-import org.eclipse.elk.alg.force.stress.StressLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -20,7 +19,7 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		progressMonitor.begin("Grid Snap Layouter", 1);
 		
-		StressLayoutProvider stress = new StressLayoutProvider();
+		//StressLayoutProvider stress = new StressLayoutProvider();
 
 		edges.clear();
 		children.clear();
@@ -39,7 +38,7 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 			}
 		}
 		
-		stress.layout(layoutGraph, progressMonitor);
+		//stress.layout(layoutGraph, progressMonitor);
 
 		progressMonitor.done();
 	}
