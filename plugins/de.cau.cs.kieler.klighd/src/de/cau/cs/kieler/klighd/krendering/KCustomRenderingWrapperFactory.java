@@ -183,10 +183,10 @@ public final class KCustomRenderingWrapperFactory {
         // no rendering type specified. This can be the case 
         // for partly exported view models, such as code-based figures
         if (Strings.isNullOrEmpty(renderingTypeName)) {
-//            final String msg =
-//                    "KLighD custom rendering wrapper factory: Rendering type name not specified.";
-//            StatusManager.getManager().handle(
-//                    new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg), StatusManager.LOG);
+            final String msg =
+                    "KLighD custom rendering wrapper factory: Rendering type name not specified.";
+            StatusManager.getManager().handle(
+                    new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg), StatusManager.LOG);
             return null;
         }
         
