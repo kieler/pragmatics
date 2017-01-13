@@ -69,6 +69,9 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	 * @param diagram
 	 */
 	private static void minimizingWhitespaceGrid(KNode diagram) {
+		KShapeLayout diagramLayout = diagram.getData(KShapeLayout.class);
+		System.out.println("Width before grid: " + diagramLayout.getWidth());
+		System.out.println("Height before grid: " + diagramLayout.getHeight());
 		// KLayoutData diagramData = diagram.getData(KLayoutData.class);
 		ForceLayoutProvider force = new ForceLayoutProvider();
 		// diagramData.setProperty(ForceOptions.SPACING_NODE, 20.0f);
@@ -105,13 +108,13 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 		}
 
 		// calculate ralative closest grid position and check if available
-		KShapeLayout diagramLayout = diagram.getData(KShapeLayout.class);
+//		KShapeLayout diagramLayout = diagram.getData(KShapeLayout.class);
 		double diagramwidth = diagramLayout.getWidth();
 		double diagramheight = diagramLayout.getHeight();
 		gridwidth = xPos - 50;
 		gridheight = yPos - 50;
 		Map<Integer, KNode> gridNodeMap = new HashMap<Integer, KNode>();
-		int nodewidth = 0;
+//		int nodewidth = 0;
 
 		for (KNode node : children) {
 			for (KEdge edge : node.getOutgoingEdges()) {
@@ -121,16 +124,17 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 			}
 
 			KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-			nodewidth += nodeLayout.getWidth();
+//			nodewidth += nodeLayout.getWidth();
 			int gridXpos = (int) ((nodeLayout.getXpos() + nodeLayout.getWidth() / diagramwidth) * gridwidth);
 			int gridYpos = (int) ((nodeLayout.getYpos() + nodeLayout.getHeight() / diagramheight) * gridheight);
 			// TODO Fix calculation of nearest Position
 			Point2D point = nearestAvailablePosition(
 					new Point2D.Double(round(gridXpos, gridwidth), round(gridYpos, gridheight)));
 			int mapPosition = gridNodePosition.get(point);
+//			System.out.println(mapPosition);
 			gridNodeMap.put(mapPosition, node);
 		}
-		averageNodeWidth = nodewidth / children.size();
+//		averageNodeWidth = nodewidth / children.size();
 		float newWidth = 20;
 		float newHeight = 20;
 		Map<Integer, Float> rowwidth = new HashMap<Integer, Float>();
@@ -180,6 +184,8 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 
 		diagramLayout.setWidth(newWidth + 20);
 		diagramLayout.setHeight(newHeight + 20);
+		System.out.println("Width after grid: " + diagramLayout.getWidth());
+		System.out.println("Height after grid: " + diagramLayout.getHeight());
 	}
 
 	/**
