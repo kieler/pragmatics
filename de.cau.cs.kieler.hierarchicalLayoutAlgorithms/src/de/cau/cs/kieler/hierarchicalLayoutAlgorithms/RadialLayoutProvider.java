@@ -47,11 +47,10 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		// pre-calculate the size of each layer
 		layerSize = new ArrayList<>();
 		float size = 0;
-		float spacing = 10;
 		for (List<KNode> layer : layers) {
 			layerSize.add(size);
 			size += findBiggestNode(layer);
-			// size += spacing;
+			size += objectSpacing;
 		}
 		layerSize.add(size);
 		layerSize.set(0, layerSize.get(0) / 2);
@@ -150,14 +149,14 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 			KShapeLayout shape = child.getData(KShapeLayout.class);
 			float width = shape.getWidth();
 			float height = shape.getHeight();
-			float diameter = (float) Math.sqrt(width * width + height * height);
+			biggestChildSize += (float) Math.sqrt(width * width + height * height);
 
-			if (biggestChildSize < diameter) {
-				biggestChildSize = diameter;
-			}
+//			if (biggestChildSize < diameter) {
+//				biggestChildSize = diameter;
+//			}
 
 		}
-		return biggestChildSize;
+		return (biggestChildSize/ node.size());
 	}
 
 	private KNode findRoot(KNode graph) {
@@ -227,7 +226,7 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
         float minXPos = 0;
         for (KNode node : layoutGraph.getChildren()) {
             KShapeLayout layoutData = node.getData(KShapeLayout.class);
-            maxHeight = Math.max(maxHeight, layoutData.getYpos());
+            maxHeight = Math.min(maxHeight, layoutData.getYpos());
             minXPos = Math.min(minXPos, layoutData.getXpos());
         }
         
