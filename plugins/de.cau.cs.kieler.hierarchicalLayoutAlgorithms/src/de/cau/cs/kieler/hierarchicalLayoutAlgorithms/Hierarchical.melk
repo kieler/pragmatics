@@ -42,3 +42,8 @@ algorithm stress(HierarchicalStressLayoutProvider) {
     label "Stress Layouter"
     metadataClass HierarchicalStressOptions
 }
+
+algorithm tree(HierarchicalTreeLayoutProvider) {
+    label "Tree Layouter"
+    metadataClass HierarchicalTreeOptions
+}
