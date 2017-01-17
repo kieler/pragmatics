@@ -23,12 +23,6 @@ import java.util.StringTokenizer;
 import org.adaptagrams.libavoid.LibavoidServer;
 import org.adaptagrams.libavoid.LibavoidServer.Cleanup;
 import org.adaptagrams.libavoid.LibavoidServerException;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
@@ -39,9 +33,14 @@ import org.eclipse.elk.core.options.PortSide;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.WrappedException;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphFactory;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.BiMap;
@@ -73,9 +72,9 @@ public class LibavoidServerCommunicator {
     private static final String CHUNK_KEYWORD = "[CHUNK]\n";
 
     // Maps holding the nodes and edges of the current graph.
-    private BiMap<Integer, KNode> nodeIdMap = HashBiMap.create();
-    private BiMap<Integer, KPort> portIdMap = HashBiMap.create();
-    private BiMap<Integer, KEdge> edgeIdMap = HashBiMap.create();
+    private BiMap<Integer, ElkNode> nodeIdMap = HashBiMap.create();
+    private BiMap<Integer, ElkPort> portIdMap = HashBiMap.create();
+    private BiMap<Integer, ElkEdge> edgeIdMap = HashBiMap.create();
 
     // Internal data.
     private static final int PORT_ID_START = 5;
@@ -125,7 +124,7 @@ public class LibavoidServerCommunicator {
      * @param lvServer
      *            an instance of the libavoid server.
      */
-    public void requestLayout(final KNode layoutNode, final IElkProgressMonitor progressMonitor,
+    public void requestLayout(final ElkNode layoutNode, final IElkProgressMonitor progressMonitor,
             final LibavoidServer lvServer) {
         progressMonitor.begin("Libavoid Layout", LAYOUT_WORK);
         // if the graph is empty there is no need to layout
@@ -175,7 +174,7 @@ public class LibavoidServerCommunicator {
      * @param progressMonitor
      *            the progress monitor
      */
-    private void applyLayout(final KNode parentNode,
+    private void applyLayout(final ElkNode parentNode,
             final Map<String, KVectorChain> layoutInformation,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Apply layout", SUBTASK_WORK);
@@ -192,21 +191,25 @@ public class LibavoidServerCommunicator {
 
             // get the corresponding edge
             int edgeId = Integer.valueOf(entry.getKey().split(" ")[1]);
-            KEdge e = edgeIdMap.get(edgeId);
+            ElkEdge e = edgeIdMap.get(edgeId);
             if (e == null) {
                 throw new IllegalStateException("A problem within the edge mapping occured."
                         + "Could not determine edge for id " + edgeId + ".");
             }
-            KEdgeLayout edgeLayout = e.getData(KEdgeLayout.class);
-            edgeLayout.getBendPoints().clear();
+            // The new Elk supports hyperedges. For the time being we assume that only one segment
+            // exists in the hyperedge.
+            ElkEdgeSection edgeSection = e.getSections().get(0);
+            edgeSection.getBendPoints().clear();
 
             // transfer libavoid's results to the edges
-            edgeLayout.setSourcePoint(toKPoint(points.pollFirst()));
+            KVector startPoint = points.pollFirst();
+            edgeSection.setStartLocation(startPoint.x, startPoint.y);
             while (points.size() > 1) {
                 KVector head = points.pollFirst();
-                edgeLayout.getBendPoints().add(toKPoint(head));
+                edgeSection.getBendPoints().add(toElkBendPoint(head));
             }
-            edgeLayout.setTargetPoint(toKPoint(points.pollFirst()));
+            KVector endPoint = points.pollFirst();
+            edgeSection.setEndLocation(endPoint.x, endPoint.y);
 
         }
 
@@ -219,12 +222,11 @@ public class LibavoidServerCommunicator {
      * @param graph
      *            the graph.
      */
-    private void calculateJunctionPoints(final KNode graph) {
-        for (KNode n : graph.getChildren()) {
-            for (KEdge edge : n.getOutgoingEdges()) {
+    private void calculateJunctionPoints(final ElkNode graph) {
+        for (ElkNode n : graph.getChildren()) {
+            for (ElkEdge edge : n.getOutgoingEdges()) {
                 KVectorChain junctionPoints = ElkUtil.determineJunctionPoints(edge);
-                edge.getData(KLayoutData.class).setProperty(CoreOptions.JUNCTION_POINTS,
-                        junctionPoints);
+                edge.setProperty(CoreOptions.JUNCTION_POINTS, junctionPoints);
             }
         }
     }
@@ -268,12 +270,12 @@ public class LibavoidServerCommunicator {
     /**
      * Transforms the passed graph to a textual format and writes it to the specified output stream.
      */
-    private void writeTextGraph(final KNode root, final OutputStream stream) {
+    private void writeTextGraph(final ElkNode root, final OutputStream stream) {
 
         // first send the options
         transformOptions(root);
 
-        if (root.getData(KLayoutData.class).getProperty(CoreOptions.DEBUG_MODE)) {
+        if (root.getProperty(CoreOptions.DEBUG_MODE)) {
             sb.append("DEBUG\n");
         }
         
@@ -295,9 +297,7 @@ public class LibavoidServerCommunicator {
         }
     }
 
-    private void transformOptions(final KNode node) {
-
-        KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
+    private void transformOptions(final ElkNode node) {
 
         /*
          * General Properties
@@ -305,74 +305,74 @@ public class LibavoidServerCommunicator {
         // IMPORTANT: the edge routing option has to be passed first!
         // The information is required to initialize the libavoid router properly
         // before the router can be configured with additional options
-        EdgeRouting edgeRouting = nodeLayout.getProperty(CoreOptions.EDGE_ROUTING);
+        EdgeRouting edgeRouting = node.getProperty(CoreOptions.EDGE_ROUTING);
         addOption(CoreOptions.EDGE_ROUTING.getId(), edgeRouting);
 
-        Direction direction = nodeLayout.getProperty(CoreOptions.DIRECTION);
+        Direction direction = node.getProperty(CoreOptions.DIRECTION);
         currentDirection = direction;
         addOption(CoreOptions.DIRECTION.getId(), direction);
 
         /*
          * Penalties
          */
-        float segmentPenalty = nodeLayout.getProperty(LibavoidOptions.SEGMENT_PENALTY);
+        float segmentPenalty = node.getProperty(LibavoidOptions.SEGMENT_PENALTY);
         addPenalty(LibavoidOptions.SEGMENT_PENALTY.getId(), segmentPenalty);
 
-        float anglePenalty = nodeLayout.getProperty(LibavoidOptions.ANGLE_PENALTY);
+        float anglePenalty = node.getProperty(LibavoidOptions.ANGLE_PENALTY);
         addPenalty(LibavoidOptions.ANGLE_PENALTY.getId(), anglePenalty);
 
-        float crossingPenalty = nodeLayout.getProperty(LibavoidOptions.CROSSING_PENALTY);
+        float crossingPenalty = node.getProperty(LibavoidOptions.CROSSING_PENALTY);
         addPenalty(LibavoidOptions.CROSSING_PENALTY.getId(), crossingPenalty);
 
         float clusterCrossingPenalty =
-                nodeLayout.getProperty(LibavoidOptions.CLUSTER_CROSSING_PENALTY);
+                node.getProperty(LibavoidOptions.CLUSTER_CROSSING_PENALTY);
         addPenalty(LibavoidOptions.CLUSTER_CROSSING_PENALTY.getId(), clusterCrossingPenalty);
 
         float fixedSharedPathPenalty =
-                nodeLayout.getProperty(LibavoidOptions.FIXED_SHARED_PATH_PENALTY);
+                node.getProperty(LibavoidOptions.FIXED_SHARED_PATH_PENALTY);
         addPenalty(LibavoidOptions.FIXED_SHARED_PATH_PENALTY.getId(), fixedSharedPathPenalty);
 
         float portDirectionPenalty =
-                nodeLayout.getProperty(LibavoidOptions.PORT_DIRECTION_PENALTY);
+                node.getProperty(LibavoidOptions.PORT_DIRECTION_PENALTY);
         addPenalty(LibavoidOptions.PORT_DIRECTION_PENALTY.getId(), portDirectionPenalty);
 
         float shapeBufferDistance =
-                nodeLayout.getProperty(LibavoidOptions.SHAPE_BUFFER_DISTANCE);
+                node.getProperty(LibavoidOptions.SHAPE_BUFFER_DISTANCE);
         addPenalty(LibavoidOptions.SHAPE_BUFFER_DISTANCE.getId(), shapeBufferDistance);
 
         float idealNudgingDistance =
-                nodeLayout.getProperty(LibavoidOptions.IDEAL_NUDGING_DISTANCE);
+                node.getProperty(LibavoidOptions.IDEAL_NUDGING_DISTANCE);
         addPenalty(LibavoidOptions.IDEAL_NUDGING_DISTANCE.getId(), idealNudgingDistance);
 
         /*
          * Routing options
          */
         boolean nudgeOrthogonalSegmentsConnectedToShapes =
-                nodeLayout.getProperty(LibavoidOptions.NUDGE_ORTHOGONAL_SEGMENTS_CONNECTED_TO_SHAPES);
+                node.getProperty(LibavoidOptions.NUDGE_ORTHOGONAL_SEGMENTS_CONNECTED_TO_SHAPES);
         addRoutingOption(LibavoidOptions.NUDGE_ORTHOGONAL_SEGMENTS_CONNECTED_TO_SHAPES.getId(),
                 nudgeOrthogonalSegmentsConnectedToShapes);
 
         boolean improveHyperedgeRoutesMovingJunctions =
-                nodeLayout.getProperty(LibavoidOptions.IMPROVE_HYPEREDGE_ROUTES_MOVING_JUNCTIONS);
+                node.getProperty(LibavoidOptions.IMPROVE_HYPEREDGE_ROUTES_MOVING_JUNCTIONS);
         addRoutingOption(LibavoidOptions.IMPROVE_HYPEREDGE_ROUTES_MOVING_JUNCTIONS.getId(),
                 improveHyperedgeRoutesMovingJunctions);
 
         boolean penaliseOrthogonalSharedPathsAtConnEnds =
-                nodeLayout.getProperty(LibavoidOptions.PENALISE_ORTHOGONAL_SHARED_PATHS_AT_CONN_ENDS);
+                node.getProperty(LibavoidOptions.PENALISE_ORTHOGONAL_SHARED_PATHS_AT_CONN_ENDS);
         addRoutingOption(LibavoidOptions.PENALISE_ORTHOGONAL_SHARED_PATHS_AT_CONN_ENDS.getId(),
                 penaliseOrthogonalSharedPathsAtConnEnds);
 
         boolean nudgeOrthogonalTouchingColinearSegments =
-                nodeLayout.getProperty(LibavoidOptions.NUDGE_ORTHOGONAL_TOUCHING_COLINEAR_SEGMENTS);
+                node.getProperty(LibavoidOptions.NUDGE_ORTHOGONAL_TOUCHING_COLINEAR_SEGMENTS);
         addRoutingOption(LibavoidOptions.NUDGE_ORTHOGONAL_TOUCHING_COLINEAR_SEGMENTS.getId(),
                 nudgeOrthogonalTouchingColinearSegments);
 
         boolean performUnifyingNudgingPreprocessingStep =
-                nodeLayout.getProperty(LibavoidOptions.PERFORM_UNIFYING_NUDGING_PREPROCESSING_STEP);
+                node.getProperty(LibavoidOptions.PERFORM_UNIFYING_NUDGING_PREPROCESSING_STEP);
         addRoutingOption(LibavoidOptions.PERFORM_UNIFYING_NUDGING_PREPROCESSING_STEP.getId(),
                 performUnifyingNudgingPreprocessingStep);
 
-        boolean improveHyperedgeRoutesMovingAddingAndDeletingJunctions = nodeLayout.getProperty(
+        boolean improveHyperedgeRoutesMovingAddingAndDeletingJunctions = node.getProperty(
                 LibavoidOptions.IMPROVE_HYPEREDGE_ROUTES_MOVING_ADDING_AND_DELETING_JUNCTIONS);
         addRoutingOption(
                 LibavoidOptions.IMPROVE_HYPEREDGE_ROUTES_MOVING_ADDING_AND_DELETING_JUNCTIONS
@@ -402,7 +402,7 @@ public class LibavoidServerCommunicator {
      * @param root
      *            of the current graph.
      */
-    private void transformGraph(final KNode root) {
+    private void transformGraph(final ElkNode root) {
 
         sb.append("GRAPH");
         sb.append("\n");
@@ -417,25 +417,31 @@ public class LibavoidServerCommunicator {
         }
 
         // nodes
-        for (KNode node : root.getChildren()) {
+        for (ElkNode node : root.getChildren()) {
             transformNode(node);
         }
 
         // edges
-        for (KNode node : root.getChildren()) {
+        for (ElkNode node : root.getChildren()) {
             // all edges between nodes within the root node
-            for (KEdge edge : node.getOutgoingEdges()) {
-                if (edge.getSource().getParent().equals(edge.getTarget().getParent())) {
+            for (ElkEdge edge : node.getOutgoingEdges()) {
+                ElkConnectableShape source = edge.getSources().get(0);
+                ElkConnectableShape target = edge.getTargets().get(0);
+                
+                if (ElkGraphUtil.connectableShapeToNode(source).getParent().equals(
+                        ElkGraphUtil.connectableShapeToNode(target).getParent())) {
                     transformEdge(edge);
                 }
             }
         }
         // AND, in case of an compound node,
         // all edges between hierarchical ports and nodes within the root node
-        for (KPort p : root.getPorts()) {
-            for (KEdge e : p.getEdges()) {
-                KNode srcParent = e.getSource().getParent();
-                KNode tgtParent = e.getTarget().getParent();
+        for (ElkPort p : root.getPorts()) {
+            for (ElkEdge e : ElkGraphUtil.allIncidentEdges(p)) {
+                ElkNode srcParent =
+                        ElkGraphUtil.connectableShapeToNode(e.getSources().get(0)).getParent();
+                ElkNode tgtParent =
+                        ElkGraphUtil.connectableShapeToNode(e.getTargets().get(0)).getParent();
                 if ((srcParent.equals(root) || tgtParent.equals(root))) {
                     transformEdge(e);
                 }
@@ -450,34 +456,32 @@ public class LibavoidServerCommunicator {
      * Create 4 nodes that "surround", hence restrict, the child area. This way it is guaranteed
      * that no edge is routed outsite its compound node.
      */
-    private void transformHierarchicalParent(final KNode parent) {
-
-        KShapeLayout shape = parent.getData(KShapeLayout.class);
+    private void transformHierarchicalParent(final ElkNode parent) {
 
         // offset each side by the shape buffer distance to let edges route properly
-        float bufferDistance = shape.getProperty(LibavoidOptions.SHAPE_BUFFER_DISTANCE);
+        float bufferDistance = parent.getProperty(LibavoidOptions.SHAPE_BUFFER_DISTANCE);
         // top
         libavoidNode(parent, NODE_COMPOUND_NORTH, 0, 0 - SURROUNDING_RECT_SIZE - bufferDistance,
-                shape.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);
+                parent.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);
         // right
-        libavoidNode(parent, NODE_COMPOUND_EAST, 0 + shape.getWidth() + bufferDistance, 0,
-                SURROUNDING_RECT_SIZE, shape.getHeight(), 0, 0);
+        libavoidNode(parent, NODE_COMPOUND_EAST, 0 + parent.getWidth() + bufferDistance, 0,
+                SURROUNDING_RECT_SIZE, parent.getHeight(), 0, 0);
         // bottom
-        libavoidNode(parent, NODE_COMPOUND_SOUTH, 0, 0 + shape.getHeight() + bufferDistance,
-                shape.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);
+        libavoidNode(parent, NODE_COMPOUND_SOUTH, 0, 0 + parent.getHeight() + bufferDistance,
+                parent.getWidth(), SURROUNDING_RECT_SIZE, 0, 0);
         // left
         libavoidNode(parent, NODE_COMPOUND_WEST, 0 - bufferDistance - SURROUNDING_RECT_SIZE, 0,
-                SURROUNDING_RECT_SIZE, shape.getHeight(), 0, 0);
+                SURROUNDING_RECT_SIZE, parent.getHeight(), 0, 0);
 
         // convert the ports of the compound node itself
-        for (KPort port : parent.getPorts()) {
+        for (ElkPort port : parent.getPorts()) {
             int nodeId = determineHierarchicalNodeId(port);
             libavoidPort(port, portIdCounter, nodeId, parent);
             portIdCounter++;
         }
     }
 
-    private void transformHierarchicalParentDummy(final KNode root) {
+    private void transformHierarchicalParentDummy(final ElkNode root) {
         // 4 dummies
         libavoidNode(root, NODE_COMPOUND_NORTH, 0, 0, 0, 0, 0, 0);
         libavoidNode(root, NODE_COMPOUND_EAST, 0, 0, 0, 0, 0, 0);
@@ -485,8 +489,8 @@ public class LibavoidServerCommunicator {
         libavoidNode(root, NODE_COMPOUND_WEST, 0, 0, 0, 0, 0, 0);
     }
 
-    private void libavoidNode(final KNode node, final int id, final float xPos, final float yPos,
-            final float width, final float height, final int portLessIncomingEdges,
+    private void libavoidNode(final ElkNode node, final int id, final double xPos, final double yPos,
+            final double width, final double height, final int portLessIncomingEdges,
             final int portLessOutgoingEdges) {
 
         // put to map
@@ -501,24 +505,24 @@ public class LibavoidServerCommunicator {
         sb.append("\n");
     }
 
-    private void libavoidPort(final KPort port, final int portId, final int nodeId,
-            final KNode compoundNode) {
+    private void libavoidPort(final ElkPort port, final int portId, final int nodeId,
+            final ElkNode compoundNode) {
 
         // put to map
         portIdMap.put(portId, port);
 
         // gather information
-        KShapeLayout portLayout = port.getData(KShapeLayout.class);
         PortSide side = ElkUtil.calcPortSide(port, currentDirection);
 
         // get center point of port
-        float centerX = portLayout.getXpos() + portLayout.getWidth() / 2;
-        float centerY = portLayout.getYpos() + portLayout.getHeight() / 2;
+        double centerX = port.getX() + port.getWidth() / 2;
+        double centerY = port.getY() + port.getHeight() / 2;
         
         // adjust according to parent's insets
-        KInsets nodeInsets = port.getNode().getData(KShapeLayout.class).getPadding();
-        centerX += nodeInsets.getLeft();
-        centerY += nodeInsets.getTop();
+        // Insets are mostly gone now
+//        KInsets nodeInsets = port.getParent().getPadding();
+//        centerX += nodeInsets.getLeft();
+//        centerY += nodeInsets.getTop();
 
         // for compound nodes we have to mirror the port sides
         if (compoundNode != null) {
@@ -532,39 +536,38 @@ public class LibavoidServerCommunicator {
 
     }
 
-    private void transformNode(final KNode node) {
+    private void transformNode(final ElkNode node) {
         // get information about port-less incoming and outgoing edges
         int portLessIncomingEdges =
-                Iterables.size(Iterables.filter(node.getIncomingEdges(), new Predicate<KEdge>() {
-                    public boolean apply(final KEdge edge) {
-                        return edge.getTargetPort() == null;
+                Iterables.size(Iterables.filter(node.getIncomingEdges(), new Predicate<ElkEdge>() {
+                    public boolean apply(final ElkEdge edge) {
+                        return !(edge.getTargets().get(0) instanceof ElkPort);
                     }
                 }));
         int portLessOutgoingEdges =
-                Iterables.size(Iterables.filter(node.getOutgoingEdges(), new Predicate<KEdge>() {
-                    public boolean apply(final KEdge edge) {
-                        return edge.getSourcePort() == null;
+                Iterables.size(Iterables.filter(node.getOutgoingEdges(), new Predicate<ElkEdge>() {
+                    public boolean apply(final ElkEdge edge) {
+                        return !(edge.getSources().get(0) instanceof ElkPort);
                     }
                 }));
 
         // convert the bounds
-        KShapeLayout shape = node.getData(KShapeLayout.class);
-        KInsets insets = shape.getPadding();
+//        KInsets insets = node.getPadding();
 
         libavoidNode(node, nodeIdCounter, 
-                shape.getXpos() - insets.getLeft(),
-                shape.getYpos() - insets.getTop(), 
-                shape.getWidth() + insets.getRight() + insets.getLeft(), 
-                shape.getHeight() + insets.getBottom() + insets.getTop(), 
+                node.getX()/* - insets.getLeft()*/,
+                node.getY()/* - insets.getTop()*/, 
+                node.getWidth()/* + insets.getRight() + insets.getLeft()*/, 
+                node.getHeight()/* + insets.getBottom() + insets.getTop()*/, 
                 portLessIncomingEdges, portLessOutgoingEdges);
 
         // transfer port constraints
-        PortConstraints pc = shape.getProperty(CoreOptions.PORT_CONSTRAINTS);
+        PortConstraints pc = node.getProperty(CoreOptions.PORT_CONSTRAINTS);
         sb.append("NODEOPTION " + nodeIdCounter + " " + pc);
         sb.append("\n");
 
         // transfer all ports
-        for (KPort port : node.getPorts()) {
+        for (ElkPort port : node.getPorts()) {
             libavoidPort(port, portIdCounter, nodeIdCounter, null);
             portIdCounter++;
         }
@@ -572,23 +575,26 @@ public class LibavoidServerCommunicator {
         nodeIdCounter++;
     }
 
-    private void transformEdge(final KEdge edge) {
+    private void transformEdge(final ElkEdge edge) {
         // assign an id
         edgeIdMap.put(edgeIdCounter, edge);
 
+        ElkConnectableShape source = edge.getSources().get(0);
+        ElkConnectableShape target = edge.getTargets().get(0);
+        
         // convert the edge
-        Integer srcId = nodeIdMap.inverse().get(edge.getSource());
-        Integer tgtId = nodeIdMap.inverse().get(edge.getTarget());
+        Integer srcId = nodeIdMap.inverse().get(ElkGraphUtil.connectableShapeToNode(source));
+        Integer tgtId = nodeIdMap.inverse().get(ElkGraphUtil.connectableShapeToNode(target));
 
-        Integer srcPort = portIdMap.inverse().get(edge.getSourcePort());
-        Integer tgtPort = portIdMap.inverse().get(edge.getTargetPort());
+        Integer srcPort = portIdMap.inverse().get(ElkGraphUtil.connectableShapeToPort(source));
+        Integer tgtPort = portIdMap.inverse().get(ElkGraphUtil.connectableShapeToPort(target));
 
         // hierarchical port's libavoid nodes are not stored in the mapping
         if (srcPort != null && srcId == null) {
-            srcId = determineHierarchicalNodeId(edge.getSourcePort());
+            srcId = determineHierarchicalNodeId(ElkGraphUtil.connectableShapeToPort(source));
         }
         if (tgtPort != null && tgtId == null) {
-            tgtId = determineHierarchicalNodeId(edge.getTargetPort());
+            tgtId = determineHierarchicalNodeId(ElkGraphUtil.connectableShapeToPort(target));
         }
 
         // determine the type of the edge, ie, if it involves ports
@@ -613,10 +619,10 @@ public class LibavoidServerCommunicator {
      * Convenient methods.
      */
 
-    private KPoint toKPoint(final KVector v) {
-        KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-        kpoint.setPos((float) v.x, (float) v.y);
-        return kpoint;
+    private ElkBendPoint toElkBendPoint(final KVector v) {
+        ElkBendPoint bendpoint = ElkGraphFactory.eINSTANCE.createElkBendPoint();
+        bendpoint.set((float) v.x, (float) v.y);
+        return bendpoint;
     }
 
     /**
@@ -635,7 +641,7 @@ public class LibavoidServerCommunicator {
         }
     }
 
-    private int determineHierarchicalNodeId(final KPort port) {
+    private int determineHierarchicalNodeId(final ElkPort port) {
         PortSide ps = ElkUtil.calcPortSide(port, currentDirection);
         int nodeId = 0;
         switch (ps) {

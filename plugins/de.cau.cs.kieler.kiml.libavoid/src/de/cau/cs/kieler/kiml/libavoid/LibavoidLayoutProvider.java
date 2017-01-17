@@ -17,10 +17,10 @@ import org.adaptagrams.libavoid.LibavoidServer;
 import org.adaptagrams.libavoid.LibavoidServerPool;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.adapters.KGraphAdapters;
-import org.eclipse.elk.core.util.adapters.KGraphAdapters.KGraphAdapter;
-import org.eclipse.elk.core.util.nodespacing.KimlNodeDimensionCalculation;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
+import org.eclipse.elk.core.util.adapters.ElkGraphAdapters.ElkGraphAdapter;
+import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * A layout provider for KIML that performs layout using the Libavoid connector routing library. See
@@ -36,14 +36,14 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void layout(final KNode parentNode, final IElkProgressMonitor progressMonitor) {
+    public void layout(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
 
         // calculate node margins
-        KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);
+        ElkGraphAdapter adapter = ElkGraphAdapters.adapt(parentNode);
 
-        KimlNodeDimensionCalculation.sortPortLists(adapter);
-        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
-        KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
+        NodeDimensionCalculation.sortPortLists(adapter);
+        NodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
+        NodeDimensionCalculation.calculateNodeMargins(adapter);
         
         // create an Libavoid server process instance or use an existing one
         LibavoidServer lvServer = LibavoidServerPool.INSTANCE.fetch();
