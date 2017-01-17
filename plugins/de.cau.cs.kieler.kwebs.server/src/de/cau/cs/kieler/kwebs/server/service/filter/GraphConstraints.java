@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kwebs.server.service.filter;
 
 import java.util.List;
 
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kwebs.server.alg.Message;
 import de.cau.cs.kieler.kwebs.server.alg.Message.Severity;
@@ -78,7 +78,7 @@ public class GraphConstraints extends LayoutFilter {
             return false;
         }
         if (testMaxElements) {
-            for (KNode layout : data.getGraphs()) {
+            for (ElkNode layout : data.getGraphs()) {
                 if (Graphs.countElements(layout) > maxElements) {
                     messages.add(new Message(
                         this, 

@@ -18,15 +18,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.eclipse.elk.core.klayoutdata.KIdentifier;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.impl.KEdgeImpl;
-import org.eclipse.elk.graph.impl.KLabelImpl;
-import org.eclipse.elk.graph.impl.KNodeImpl;
-import org.eclipse.elk.graph.impl.KPortImpl;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.impl.ElkEdgeImpl;
+import org.eclipse.elk.graph.impl.ElkLabelImpl;
+import org.eclipse.elk.graph.impl.ElkNodeImpl;
+import org.eclipse.elk.graph.impl.ElkPortImpl;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 
@@ -53,26 +51,24 @@ public final class Graphs {
      * @param targetGraph
      *            the model which gets the layout information
      */
-    public static void duplicateGraphLayoutByUniqueID(final KNode sourceGraph,
-            final KNode targetGraph) {
-        HashMap<String, KGraphElement> targetMap = createHashmapByUniqueID(targetGraph);
-        LinkedList<KGraphElement> elementQueue = new LinkedList<KGraphElement>();
+    public static void duplicateGraphLayoutByUniqueID(final ElkNode sourceGraph,
+            final ElkNode targetGraph) {
+        HashMap<String, ElkGraphElement> targetMap = createHashmapByUniqueID(targetGraph);
+        LinkedList<ElkGraphElement> elementQueue = new LinkedList<ElkGraphElement>();
         elementQueue.add(sourceGraph);
         do {
             // move the layout of the first graph element in the list
-            KGraphElement sourceElement = elementQueue.removeFirst();
-            KIdentifier kidentifier = sourceElement.getData(KIdentifier.class);
-            if (kidentifier != null) {
-                KGraphElement targetElement = targetMap.get(kidentifier.getId());
-                if (targetElement != null) {
-                    moveGraphElementLayout(sourceElement, targetElement);
-                }
+            ElkGraphElement sourceElement = elementQueue.removeFirst();
+            ElkGraphElement targetElement = targetMap.get(sourceElement.getIdentifier());
+            if (targetElement != null) {
+                // TODO: This needs to be migrated. Moving the LayoutData is no option anymore
+//                moveGraphElementLayout(sourceElement, targetElement);
             }
             
             // find all child elements of the graph element
             for (EObject content : sourceElement.eContents()) {
-                if (content instanceof KGraphElement) {
-                    elementQueue.addLast((KGraphElement) content);
+                if (content instanceof ElkGraphElement) {
+                    elementQueue.addLast((ElkGraphElement) content);
                 }
             }
         } while (!elementQueue.isEmpty());
@@ -87,37 +83,34 @@ public final class Graphs {
      * @param targetElement
      *            the element which gets the layout information
      */
-    private static void moveGraphElementLayout(final KGraphElement sourceElement,
-            final KGraphElement targetElement) {
-        KLayoutData sourceData = sourceElement.getData(KLayoutData.class);
-        if (sourceData != null) {
-            KLayoutData targetData = targetElement.getData(KLayoutData.class);
-            if (targetData != null) {
-                targetElement.getData().remove(targetData);
-            }
-            targetElement.getData().add(sourceData);
-        }
-    }
+//    private static void moveGraphElementLayout(final ElkGraphElement sourceElement,
+//            final ElkGraphElement targetElement) {
+//        KLayoutData sourceData = sourceElement.getData(KLayoutData.class);
+//        if (sourceData != null) {
+//            KLayoutData targetData = targetElement.getData(KLayoutData.class);
+//            if (targetData != null) {
+//                targetElement.getData().remove(targetData);
+//            }
+//            targetElement.getData().add(sourceData);
+//        }
+//    }
 
     /**
-     * Creates a {@code HashMap} of all {@code KGraphElement} objects of the given graph indexed by
+     * Creates a {@code HashMap} of all {@code ElkGraphElement} objects of the given graph indexed by
      * by the id of it's {@code KIdentifier} objects.
      * 
      * @param graph
      *            the graph model
      * @return HashMap a map containing the graph elements indexed by their unique identifier
      */
-    private static HashMap<String, KGraphElement> createHashmapByUniqueID(final KNode graph) {
-        HashMap<String, KGraphElement> map = new HashMap<String, KGraphElement>();
+    private static HashMap<String, ElkGraphElement> createHashmapByUniqueID(final ElkNode graph) {
+        HashMap<String, ElkGraphElement> map = new HashMap<String, ElkGraphElement>();
         TreeIterator<EObject> iterator = graph.eAllContents();
         while (iterator.hasNext()) {
             EObject eObject = iterator.next();
-            if (eObject instanceof KGraphElement) {
-                KGraphElement kgraphElement = (KGraphElement) eObject;
-                KIdentifier kidentifier = (KIdentifier) kgraphElement.getData(KIdentifier.class);
-                if (kidentifier != null) {
-                    map.put(kidentifier.getId(), kgraphElement);
-                }
+            if (eObject instanceof ElkGraphElement) {
+                ElkGraphElement elkGraphElement = (ElkGraphElement) eObject;
+                map.put(elkGraphElement.getIdentifier(), elkGraphElement);
             }
         }
         return map;
@@ -129,12 +122,12 @@ public final class Graphs {
      * @param graph
      *            the graph to be annotated
      */
-    public static void annotateGraphWithUniqueID(final KNode graph) {
+    public static void annotateGraphWithUniqueID(final ElkNode graph) {
         TreeIterator<EObject> identifier = graph.eAllContents();
         while (identifier.hasNext()) {
             EObject eObject = identifier.next();
-            if (eObject instanceof KGraphElement) {
-                ElkUtil.createIdentifier((KGraphElement) eObject);
+            if (eObject instanceof ElkGraphElement) {
+                ElkUtil.createIdentifier((ElkGraphElement) eObject);
             }
         }
     }
@@ -146,10 +139,10 @@ public final class Graphs {
      *            parent layout node to examine
      * @return total number of elements
      */
-    public static int countElements(final KNode graph) {
+    public static int countElements(final ElkNode graph) {
         int count = 0;
-        Iterable<KGraphElement> iterable = getAllElementsOfType(graph, KGraphElement.class, true);
-        for (Iterator<KGraphElement> it = iterable.iterator(); it.hasNext(); it.next()) {
+        Iterable<ElkGraphElement> iterable = getAllElementsOfType(graph, ElkGraphElement.class, true);
+        for (Iterator<ElkGraphElement> it = iterable.iterator(); it.hasNext(); it.next()) {
             count++;
         }
         return count;
@@ -162,10 +155,10 @@ public final class Graphs {
      *            parent layout node to examine
      * @return total number of child nodes
      */
-    public static int countNodes(final KNode graph) {
+    public static int countNodes(final ElkNode graph) {
         int count = 0;
-        Iterable<KNodeImpl> iterable = getAllElementsOfType(graph, KNodeImpl.class, false);
-        for (Iterator<KNodeImpl> it = iterable.iterator(); it.hasNext(); it.next()) {
+        Iterable<ElkNodeImpl> iterable = getAllElementsOfType(graph, ElkNodeImpl.class, false);
+        for (Iterator<ElkNodeImpl> it = iterable.iterator(); it.hasNext(); it.next()) {
             count++;
         }
         return count;
@@ -178,10 +171,10 @@ public final class Graphs {
      *            parent layout node to examine
      * @return total number of edges
      */
-    public static int countEdges(final KNode graph) {
+    public static int countEdges(final ElkNode graph) {
         int count = 0;
-        Iterable<KEdgeImpl> iterable = getAllElementsOfType(graph, KEdgeImpl.class, false);
-        for (Iterator<KEdgeImpl> it = iterable.iterator(); it.hasNext(); it.next()) {
+        Iterable<ElkEdgeImpl> iterable = getAllElementsOfType(graph, ElkEdgeImpl.class, false);
+        for (Iterator<ElkEdgeImpl> it = iterable.iterator(); it.hasNext(); it.next()) {
             count++;
         }
         return count;
@@ -194,10 +187,10 @@ public final class Graphs {
      *            parent layout node to examine
      * @return total number of ports
      */
-    public static int countPorts(final KNode graph) {
+    public static int countPorts(final ElkNode graph) {
         int count = 0;
-        Iterable<KPortImpl> iterable = getAllElementsOfType(graph, KPortImpl.class, false);
-        for (Iterator<KPortImpl> it = iterable.iterator(); it.hasNext(); it.next()) {
+        Iterable<ElkPortImpl> iterable = getAllElementsOfType(graph, ElkPortImpl.class, false);
+        for (Iterator<ElkPortImpl> it = iterable.iterator(); it.hasNext(); it.next()) {
             count++;
         }
         return count;
@@ -210,10 +203,10 @@ public final class Graphs {
      *            parent layout node to examine
      * @return total number of labels
      */
-    public static int countLabels(final KNode graph) {
+    public static int countLabels(final ElkNode graph) {
         int count = 0;
-        Iterable<KLabelImpl> iterable = getAllElementsOfType(graph, KLabelImpl.class, false);
-        for (Iterator<KLabelImpl> it = iterable.iterator(); it.hasNext(); it.next()) {
+        Iterable<ElkLabelImpl> iterable = getAllElementsOfType(graph, ElkLabelImpl.class, false);
+        for (Iterator<ElkLabelImpl> it = iterable.iterator(); it.hasNext(); it.next()) {
             count++;
         }
         return count;
@@ -232,7 +225,7 @@ public final class Graphs {
      * @return an iterable over all the elements from a given graph which are of the specified type
      *         or subclasses of it
      */
-    public static <T> Iterable<T> getAllElementsOfType(final KNode graph, final Class<T> type) {
+    public static <T> Iterable<T> getAllElementsOfType(final ElkNode graph, final Class<T> type) {
         return getAllElementsOfType(graph, type, true);
     }
 
@@ -251,7 +244,7 @@ public final class Graphs {
      * @return an iterable over all the elements from a given graph which are of the specified type
      */
     @SuppressWarnings("unchecked")
-    public static <T> Iterable<T> getAllElementsOfType(final KNode graph, final Class<T> type,
+    public static <T> Iterable<T> getAllElementsOfType(final ElkNode graph, final Class<T> type,
             final boolean maySubclass) {
         Iterable<EObject> allContents = new Iterable<EObject>() {
             public Iterator<EObject> iterator() {

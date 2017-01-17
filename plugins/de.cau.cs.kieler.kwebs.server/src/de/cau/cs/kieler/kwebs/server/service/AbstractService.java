@@ -27,23 +27,17 @@ import org.eclipse.elk.core.data.LayoutCategoryData;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.data.LayoutOptionData.Target;
-import org.eclipse.elk.core.klayoutdata.KIdentifier;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.impl.KLayoutDataFactoryImpl;
-import org.eclipse.elk.core.klayoutdata.impl.KLayoutDataPackageImpl;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.DefaultFactory;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphData;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.emf.common.util.EMap;
-import org.eclipse.emf.ecore.EClass;
 
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
@@ -311,7 +305,7 @@ public abstract class AbstractService {
         double operationStarted = System.nanoTime();
 
         // Get the graph instances of which the layout is to be calculated
-        TransformationData<I, KNode> inTransData = new TransformationData<I, KNode>();
+        TransformationData<I, ElkNode> inTransData = new TransformationData<I, ElkNode>();
         if (options != null) {
             annotateTransData(inTransData, options);
         }
@@ -330,7 +324,7 @@ public abstract class AbstractService {
             messageIter.remove();
         }
 
-        List<KNode> graphs = inTransData.getTargetGraphs();
+        List<ElkNode> graphs = inTransData.getTargetGraphs();
 
         // Create filter DTO
         LayoutFilterData filterData = new LayoutFilterData(graphs, options);
@@ -342,7 +336,7 @@ public abstract class AbstractService {
         
         // Parse the transmitted layout options and annotate the layout structure
         if (options != null) {
-            for (KNode layout : graphs) {
+            for (ElkNode layout : graphs) {
                 annotateGraph(layout, options);
             }
         }
@@ -350,7 +344,7 @@ public abstract class AbstractService {
         // Actually do the layout on the structure
         double layoutTime = 0;
         if (!inTransData.getProperty(CoreOptions.NO_LAYOUT)) {
-            for (KNode layout : graphs) {
+            for (ElkNode layout : graphs) {
                 IElkProgressMonitor layoutMonitor = new BasicProgressMonitor();
                 layoutEngine.layout(layout, layoutMonitor);
                 layoutTime += layoutMonitor.getExecutionTime() * NANO_FACT;
@@ -363,9 +357,9 @@ public abstract class AbstractService {
 
         // Calculate statistical values and annotate graph if it is a KGraph instance.
         // The serialization process can not be included.
-        if (inTransData.getSourceGraph() instanceof KNode) {
+        if (inTransData.getSourceGraph() instanceof ElkNode) {
             double supplementalTime = System.nanoTime() - operationStarted - layoutTime;
-            annotateStatistics((KNode) inTransData.getSourceGraph(), inTransData.getTargetGraphs(),
+            annotateStatistics((ElkNode) inTransData.getSourceGraph(), inTransData.getTargetGraphs(),
                     serializedGraph.length(), layoutTime, supplementalTime);
         }
 
@@ -377,16 +371,16 @@ public abstract class AbstractService {
             }
 
             // Serialize the resulting graph
-            TransformationData<KNode, I> outTransData = new TransformationData<KNode, I>();
+            TransformationData<ElkNode, I> outTransData = new TransformationData<ElkNode, I>();
             annotateTransData(outTransData, options);
             outTransData.getTargetGraphs().add(inTransData.getSourceGraph());
             serializedResult = inhandler.serialize(outTransData);
 
         } else {
             StringBuilder outGraphBuilder = new StringBuilder();
-            for (KNode layoutGraph : inTransData.getTargetGraphs()) {
+            for (ElkNode layoutGraph : inTransData.getTargetGraphs()) {
                 // Transform the graph to the output format
-                TransformationData<KNode, O> outTransData = new TransformationData<KNode, O>();
+                TransformationData<ElkNode, O> outTransData = new TransformationData<ElkNode, O>();
                 annotateTransData(outTransData, options);
                 outTransData.setSourceGraph(layoutGraph);
                 outhandler.getExporter().transform(outTransData);
@@ -423,22 +417,22 @@ public abstract class AbstractService {
      * @param layoutTime the time taken for layout
      * @param supplementalTime the time taken for supplemental operations
      */
-    private void annotateStatistics(final KNode sourceGraph, final List<KNode> layoutGraphs,
+    private void annotateStatistics(final ElkNode sourceGraph, final List<ElkNode> layoutGraphs,
             final int serializedSize, final double layoutTime, final double supplementalTime) {
         // Graph related statistics
         int nodes = 0;
         int ports = 0;
         int labels = 0;
         int edges = 0;
-        for (KNode layout : layoutGraphs) {
-            for (KGraphElement element : Graphs.getAllElementsOfType(layout, KGraphElement.class)) {
-                if (element instanceof KNode) {
+        for (ElkNode layout : layoutGraphs) {
+            for (ElkGraphElement element : Graphs.getAllElementsOfType(layout, ElkGraphElement.class)) {
+                if (element instanceof ElkNode) {
                     nodes++;
-                } else if (element instanceof KPort) {
+                } else if (element instanceof ElkPort) {
                     ports++;
-                } else if (element instanceof KLabel) {
+                } else if (element instanceof ElkLabel) {
                     labels++;
-                } else if (element instanceof KEdge) {
+                } else if (element instanceof ElkEdge) {
                     edges++;
                 }
             }
@@ -452,12 +446,7 @@ public abstract class AbstractService {
         // Execution time related statistics
         statistics.setTimeLayout(layoutTime);
         statistics.setTimeRemoteSupplemental(supplementalTime);
-        KIdentifier identifier = sourceGraph.getData(KIdentifier.class);
-        if (identifier == null) {
-            identifier = KLayoutDataFactoryImpl.eINSTANCE.createKIdentifier();
-            sourceGraph.getData().add(identifier);
-        }
-        identifier.setProperty(Statistics.STATISTICS, statistics.toString());
+        sourceGraph.setProperty(Statistics.STATISTICS, statistics.toString());
     }
     
     /**
@@ -467,7 +456,7 @@ public abstract class AbstractService {
      * @param serializedSize the size of the serialized graph
      * @param layoutTime the time taken for layout
      */
-    private void collectUsageStatistics(final List<KNode> layoutGraphs,
+    private void collectUsageStatistics(final List<ElkNode> layoutGraphs,
             final List<GraphLayoutOption> options, final int serializedSize,
             final double layoutTime) {
 
@@ -495,9 +484,8 @@ public abstract class AbstractService {
                 int edges = 0;
                 
                 // we wanna know which algorithm is used
-                for (KNode graph : layoutGraphs) {
-                    KLayoutData data = graph.getData(KLayoutData.class);
-                    String alg = data.getProperty(CoreOptions.ALGORITHM);
+                for (ElkNode graph : layoutGraphs) {
+                    String alg = graph.getProperty(CoreOptions.ALGORITHM);
                     stats.incCounter(Logger.STATS_KWEBS, STATS_ALG,
                             CoreOptions.ALGORITHM.getId(), alg, Granularity.DAY);
 
@@ -505,16 +493,16 @@ public abstract class AbstractService {
                     stats.recordKlayLayeredStats(graph);
                     
                     // graph information
-                    for (KNode layout : layoutGraphs) {
-                        for (KGraphElement element 
-                                : Graphs.getAllElementsOfType(layout, KGraphElement.class)) {
-                            if (element instanceof KNode) {
+                    for (ElkNode layout : layoutGraphs) {
+                        for (ElkGraphElement element 
+                                : Graphs.getAllElementsOfType(layout, ElkGraphElement.class)) {
+                            if (element instanceof ElkNode) {
                                 nodes++;
-                            } else if (element instanceof KPort) {
+                            } else if (element instanceof ElkPort) {
                                 ports++;
-                            } else if (element instanceof KLabel) {
+                            } else if (element instanceof ElkLabel) {
                                 labels++;
-                            } else if (element instanceof KEdge) {
+                            } else if (element instanceof ElkEdge) {
                                 edges++;
                             }
                         }
@@ -562,7 +550,7 @@ public abstract class AbstractService {
      * @param graph a layout graph
      * @param options a list of layout options
      */
-    private void annotateGraph(final KNode graph, final List<GraphLayoutOption> options) {
+    private void annotateGraph(final ElkNode graph, final List<GraphLayoutOption> options) {
         LayoutMetaDataService dataService = LayoutMetaDataService.getInstance();
         for (GraphLayoutOption option : options) {
             LayoutOptionData optionData = dataService.getOptionDataBySuffix(option.getId());
@@ -587,50 +575,39 @@ public abstract class AbstractService {
                             }
                         }
                         // annotate all parent nodes of the graph
-                        annotateGraphElement(graph, KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
-                                optionData, optionValue);
-                        for (KNode node : Graphs.getAllElementsOfType(graph, KNode.class)) {
+                        annotateGraphElement(graph, optionData, optionValue);
+                        for (ElkNode node : Graphs.getAllElementsOfType(graph, ElkNode.class)) {
                             if (node.getChildren().size() > 0) {
-                                annotateGraphElement(node,
-                                        KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
-                                        optionData, optionValue);
+                                annotateGraphElement(node, optionData, optionValue);
                             }
                         }
                     }
                     if (optionData.getTargets().isEmpty()
                             || optionData.getTargets().contains(Target.NODES)) {
                         // annotate all child nodes of the graph
-                        for (KNode node : Graphs.getAllElementsOfType(graph, KNode.class)) {
-                            annotateGraphElement(node,
-                                    KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
-                                    optionData, optionValue);
+                        for (ElkNode node : Graphs.getAllElementsOfType(graph, ElkNode.class)) {
+                            annotateGraphElement(node, optionData, optionValue);
                         }
                     }
                     if (optionData.getTargets().isEmpty()
                             || optionData.getTargets().contains(Target.EDGES)) {
                         // annotate all edges of the graph
-                        for (KEdge edge : Graphs.getAllElementsOfType(graph, KEdge.class)) {
-                            annotateGraphElement(edge,
-                                    KLayoutDataPackageImpl.eINSTANCE.getKEdgeLayout(),
-                                    optionData, optionValue);
+                        for (ElkEdge edge : Graphs.getAllElementsOfType(graph, ElkEdge.class)) {
+                            annotateGraphElement(edge, optionData, optionValue);
                         }
                     }
                     if (optionData.getTargets().isEmpty()
                             || optionData.getTargets().contains(Target.PORTS)) {
                         // annotate all ports of the graph
-                        for (KPort port : Graphs.getAllElementsOfType(graph, KPort.class)) {
-                            annotateGraphElement(port,
-                                    KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
-                                    optionData, optionValue);
+                        for (ElkPort port : Graphs.getAllElementsOfType(graph, ElkPort.class)) {
+                            annotateGraphElement(port, optionData, optionValue);
                         }
                     }
                     if (optionData.getTargets().isEmpty()
                             || optionData.getTargets().contains(Target.LABELS)) {
                         // annotate all labels of the graph
-                        for (KLabel label : Graphs.getAllElementsOfType(graph, KLabel.class)) {
-                            annotateGraphElement(label,
-                                    KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout(),
-                                    optionData, optionValue);
+                        for (ElkLabel label : Graphs.getAllElementsOfType(graph, ElkLabel.class)) {
+                            annotateGraphElement(label, optionData, optionValue);
                         }
                     }
                 }
@@ -654,23 +631,13 @@ public abstract class AbstractService {
      *            the value of the option
      */
     @SuppressWarnings("unchecked")
-    private void annotateGraphElement(final KGraphElement element,
-        final EClass type, final IProperty<?> layoutOption,
-        final Object layoutOptionValue) {
-        // Illegal type declarations are silently ignored
-        if (!type.equals(KLayoutDataPackageImpl.eINSTANCE.getKShapeLayout())
-            && !type.equals(KLayoutDataPackageImpl.eINSTANCE.getKEdgeLayout())) {
-            return;
-        }
-        KGraphData layout = element.getData(type);
-        if (layout == null) {
-            layout = (KGraphData) KLayoutDataFactoryImpl.eINSTANCE.create(type);
-            element.getData().add(layout);
-        }
+    private void annotateGraphElement(final ElkGraphElement element,
+            final IProperty<?> layoutOption, final Object layoutOptionValue) {
+
         // Do not overwrite element specific option if already set
-        EMap<IProperty<?>, Object> properties = layout.getProperties();
+        EMap<IProperty<?>, Object> properties = element.getProperties();
         if (!properties.containsKey(layoutOption)) {
-            layout.setProperty((IProperty<Object>) layoutOption, layoutOptionValue);
+            element.setProperty((IProperty<Object>) layoutOption, layoutOptionValue);
         }
     }
 

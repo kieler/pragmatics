@@ -22,9 +22,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.IProperty;
 
 import com.google.common.collect.Maps;
@@ -171,15 +170,14 @@ public final class KIELERStatistics {
      * @param graph
      *            the graph to inspect.
      */
-    public void recordKlayLayeredStats(final KNode graph) {
+    public void recordKlayLayeredStats(final ElkNode graph) {
 
         // if it is klay layered, get some more insight into the configuration
-        KLayoutData data = graph.getData(KLayoutData.class);
-        String alg = data.getProperty(CoreOptions.ALGORITHM);
+        String alg = graph.getProperty(CoreOptions.ALGORITHM);
 
         // get the exact property list
         if (alg != null && alg.equals(ID_KLAY_LAYERED)) {
-            for (Entry<IProperty<?>, Object> entry : data.getProperties()) {
+            for (Entry<IProperty<?>, Object> entry : graph.getProperties()) {
                 if (entry.getValue() != null && supportedTypes.contains(entry.getValue().getClass())) {
                     recordValue(ID_KLAY_LAYERED, entry.getKey().getId(), entry.getValue());
                 }
