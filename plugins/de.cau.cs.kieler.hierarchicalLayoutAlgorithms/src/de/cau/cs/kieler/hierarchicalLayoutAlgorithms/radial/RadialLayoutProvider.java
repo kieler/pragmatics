@@ -1,32 +1,26 @@
-package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
+package de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
-import org.eclipse.elk.core.klayoutdata.KPoint;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
+
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalEdgeRouting;
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalUtil;
 
 public class RadialLayoutProvider extends AbstractLayoutProvider {
 	/** default value for spacing between nodes. */
 	private static final float DEFAULT_SPACING = 15.0f;
 	private List<List<KNode>> layers;
 	private ArrayList<Float> layerSize;
-	private LayeredLayoutProvider provider;
 	private double size;
 
 	@Override
 	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
-		provider = new LayeredLayoutProvider();
-
 		progressMonitor.begin("Simple layouter", 1);
 		KShapeLayout parentLayout = layoutGraph.getData(KShapeLayout.class);
 
@@ -62,7 +56,7 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		calcPos(root, 0, 0, 2 * Math.PI);
 
 		postProcess(layoutGraph);
-		routeEdges(root);
+		HierarchicalEdgeRouting.routeEdgesCenterToCenter(root);
 		progressMonitor.done();
 	}
 
@@ -92,7 +86,7 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 			alpha = minAlpha;
 		}
 
-		for (KNode child : getSuccessor(node)) {
+		for (KNode child : HierarchicalUtil.getSuccessor(node)) {
 			int numberOfChildLeafs = numberOfLeafs(child);
 			calcPos(child, currentSize + size, alpha, alpha + s * numberOfChildLeafs);
 			alpha += s * numberOfChildLeafs;
@@ -106,7 +100,7 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 
 		List<KNode> nextLayer = new ArrayList<>();
 		for (KNode node : nodes) {
-			nextLayer.addAll(getSuccessor(node));
+			nextLayer.addAll(HierarchicalUtil.getSuccessor(node));
 		}
 		if (!nextLayer.isEmpty()) {
 			layers.addAll(orderNodesInLayer(nextLayer));
@@ -190,66 +184,16 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		return null;
 	}
 
-	// private int calcSizes(KNode node) {
-	// int n = 1;
-	//
-	// for (KNode child : getSuccessor(node)) {
-	// n += calcSizes(child);
-	// }
-	// return n;
-	// }
-
 	private int numberOfLeafs(KNode node) {
 		int leafs = 0;
-		if (getSuccessor(node).isEmpty()) {
+		if (HierarchicalUtil.getSuccessor(node).isEmpty()) {
 			return 1;
 		} else {
-			for (KNode child : getSuccessor(node)) {
+			for (KNode child : HierarchicalUtil.getSuccessor(node)) {
 				leafs += numberOfLeafs(child);
 			}
 		}
 		return leafs;
-	}
-
-	private List<KNode> getSuccessor(KNode node) {
-		List<KNode> children = new ArrayList<>();
-		for (KEdge outgoingEdge : node.getOutgoingEdges()) {
-			KNode target = outgoingEdge.getTarget();
-			if (!node.getChildren().contains(target)) {
-				children.add(target);
-			}
-		}
-		return children;
-	}
-
-	private void routeEdges(KNode graph) {
-
-		for (KEdge edge : graph.getOutgoingEdges()) {
-			KNode target = edge.getTarget();
-			if (!graph.getChildren().contains(target)) {
-				KShapeLayout sourceLayout = graph.getData(KShapeLayout.class);
-				KShapeLayout targetLayout = target.getData(KShapeLayout.class);
-
-				float sourceX = sourceLayout.getXpos() + sourceLayout.getWidth() / 2;
-				float sourceY = sourceLayout.getYpos() + sourceLayout.getHeight() / 2;
-
-				float targetX = targetLayout.getXpos() + targetLayout.getWidth() / 2;
-				float targetY = targetLayout.getYpos() + targetLayout.getHeight() / 2;
-
-				KEdgeLayout layout = edge.getData(KEdgeLayout.class);
-
-				KPoint sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-				sourcePoint.setPos(sourceX, sourceY);
-				layout.setSourcePoint(sourcePoint);
-
-				KPoint targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-				targetPoint.setPos(targetX, targetY);
-				layout.setTargetPoint(targetPoint);
-
-				routeEdges(target);
-			}
-
-		}
 	}
 
 	private int nodeCounter = 0;
@@ -261,7 +205,7 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		double width = shape.getWidth();
 		double height = shape.getHeight();
 		size += (float) Math.sqrt(width * width + height * height);
-		for (KNode node : getSuccessor(graph)) {
+		for (KNode node : HierarchicalUtil.getSuccessor(graph)) {
 			size += averageNodeSize(node);
 		}
 
