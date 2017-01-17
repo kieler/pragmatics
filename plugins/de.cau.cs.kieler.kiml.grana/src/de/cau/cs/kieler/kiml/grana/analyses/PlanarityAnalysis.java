@@ -11,13 +11,14 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klay.planar;
+package de.cau.cs.kieler.kiml.grana.analyses;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.IAnalysis;
+import de.cau.cs.kieler.klay.planar.ILayoutPhase;
 import de.cau.cs.kieler.klay.planar.graph.PGraph;
 import de.cau.cs.kieler.klay.planar.graph.PGraphFactory;
 import de.cau.cs.kieler.klay.planar.p1planar.BoyerMyrvoldPlanarSubgraphBuilder;
