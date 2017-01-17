@@ -21,11 +21,12 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 	private List<List<KNode>> layers;
 	private ArrayList<Float> layerSize;
 	private LayeredLayoutProvider provider;
+	private double size;
 
 	@Override
 	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		provider = new LayeredLayoutProvider();
-		
+
 		progressMonitor.begin("Simple layouter", 1);
 		KShapeLayout parentLayout = layoutGraph.getData(KShapeLayout.class);
 
@@ -45,34 +46,87 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		layers = orderNodesInLayer(rootLayer);
 
 		// pre-calculate the size of each layer
-		layerSize = new ArrayList<>();
-		float size = 0;
-		for (List<KNode> layer : layers) {
-			layerSize.add(size);
-			size += findBiggestNode(layer);
-			size += objectSpacing;
-		}
-		layerSize.add(size);
-		layerSize.set(0, layerSize.get(0) / 2);
+		// layerSize = new ArrayList<>();
+		// float size = 0;
+		// for (List<KNode> layer : layers) {
+		// layerSize.add(size);
+		// size += findBiggestNode(layer);
+		// size += objectSpacing;
+		// }
+		// layerSize.add(size);
+		// layerSize.set(0, layerSize.get(0) / 2);
 
-		calcPos(root, 0, 0, 4 * Math.PI);
-        
-        postProcess(layoutGraph);
+		nodeCounter = 0;
+		size = averageNodeSize(layoutGraph) / nodeCounter;
+
+		calcPos(root, 0, 0, 2 * Math.PI);
+
+		postProcess(layoutGraph);
 		routeEdges(root);
 		progressMonitor.done();
 	}
 
-	private void calcPos(KNode node, int layer, double minAlpha, double maxAlpha) {
+	private void calcPos(KNode node, double currentSize, double minAlpha, double maxAlpha) {
 		double alphaPoint = (minAlpha + maxAlpha) / 2;
 
 		KShapeLayout shape = node.getData(KShapeLayout.class);
-		double size = layerSize.get(layer);
+		// double size = layerSize.get(layer);
 
 		// x=r*sinθ, y=r*cosθ
-		float xPos = (float) (size * Math.sin(alphaPoint));
-		float yPos = (float) (size * Math.cos(alphaPoint));
-//		shape.setXpos(xPos);
-//		shape.setYpos(yPos);
+		float xPos = (float) (currentSize * Math.sin(alphaPoint));
+		float yPos = (float) (currentSize * Math.cos(alphaPoint));
+		centerNodesOnRadi(shape, xPos, yPos);
+		// shiftClosestEdgeToRadi(shape, xPos, yPos);
+
+		double numberOfLeafs = numberOfLeafs(node);
+		// double sizeNextLayer = layerSize.get(layer + 1);
+		double tau = 2 * Math.acos(currentSize / currentSize + size);
+		double s;
+		double alpha;
+		if (tau < maxAlpha - minAlpha) {
+			s = tau / numberOfLeafs;
+			alpha = (minAlpha + maxAlpha - tau) / 2;
+
+		} else {
+			s = (maxAlpha - minAlpha) / numberOfLeafs;
+			alpha = minAlpha;
+		}
+
+		for (KNode child : getSuccessor(node)) {
+			int numberOfChildLeafs = numberOfLeafs(child);
+			calcPos(child, currentSize + size, alpha, alpha + s * numberOfChildLeafs);
+			alpha += s * numberOfChildLeafs;
+		}
+
+	}
+
+	private List<List<KNode>> orderNodesInLayer(List<KNode> nodes) {
+		List<List<KNode>> layers = new ArrayList<List<KNode>>();
+		layers.add(nodes);
+
+		List<KNode> nextLayer = new ArrayList<>();
+		for (KNode node : nodes) {
+			nextLayer.addAll(getSuccessor(node));
+		}
+		if (!nextLayer.isEmpty()) {
+			layers.addAll(orderNodesInLayer(nextLayer));
+		}
+		return layers;
+	}
+
+	private void centerNodesOnRadi(KShapeLayout shape, float xPos, float yPos) {
+		if (xPos == 0 && yPos == 0) {
+			xPos = xPos - shape.getWidth() / 2;
+			yPos = yPos - shape.getHeight() / 2;
+		} else {
+			xPos = xPos - shape.getWidth() / 2;
+			yPos = yPos - shape.getHeight() / 2;
+		}
+		shape.setXpos(xPos);
+		shape.setYpos(yPos);
+	}
+
+	private void shiftClosestEdgeToRadi(KShapeLayout shape, float xPos, float yPos) {
 
 		// center root
 		if (xPos == 0 && yPos == 0) {
@@ -106,41 +160,6 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 				}
 			}
 		}
-
-		double sizeNextLayer = layerSize.get(layer + 1);
-		double tau = Math.acos(size / sizeNextLayer);
-		double s;
-		double alpha;
-		double numberOfSucessors = (calcSizes(node) - 1);
-		if (tau < minAlpha - maxAlpha) {
-			s = tau / numberOfSucessors;
-			alpha = (minAlpha + maxAlpha - tau) / 2;
-
-		} else {
-			s = (minAlpha - maxAlpha) / numberOfSucessors;
-			alpha = minAlpha;
-		}
-
-		for (KNode child : getSuccessor(node)) {
-			IElkProgressMonitor monitor = new BasicProgressMonitor();
-			provider.layout(child, monitor);
-			calcPos(child, layer + 1, alpha, alpha + s * (calcSizes(child)-1));
-			alpha += s * (calcSizes(child) - 1);
-		}
-	}
-
-	private List<List<KNode>> orderNodesInLayer(List<KNode> nodes) {
-		List<List<KNode>> layers = new ArrayList<List<KNode>>();
-		layers.add(nodes);
-
-		List<KNode> nextLayer = new ArrayList<>();
-		for (KNode node : nodes) {
-			nextLayer.addAll(getSuccessor(node));
-		}
-		if (!nextLayer.isEmpty()) {
-			layers.addAll(orderNodesInLayer(nextLayer));
-		}
-		return layers;
 	}
 
 	private float findBiggestNode(List<KNode> node) {
@@ -149,17 +168,17 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		for (KNode child : node) {
 			KShapeLayout shape = child.getData(KShapeLayout.class);
 			shape.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
-			
+
 			float width = shape.getWidth();
 			float height = shape.getHeight();
 			biggestChildSize += (float) Math.sqrt(width * width + height * height);
 
-//			if (biggestChildSize < diameter) {
-//				biggestChildSize = diameter;
-//			}
+			// if (biggestChildSize < diameter) {
+			// biggestChildSize = diameter;
+			// }
 
 		}
-		return (biggestChildSize/ node.size());
+		return (biggestChildSize / node.size());
 	}
 
 	private KNode findRoot(KNode graph) {
@@ -171,13 +190,25 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		return null;
 	}
 
-	private int calcSizes(KNode node) {
-		int n = 1;
+	// private int calcSizes(KNode node) {
+	// int n = 1;
+	//
+	// for (KNode child : getSuccessor(node)) {
+	// n += calcSizes(child);
+	// }
+	// return n;
+	// }
 
-		for (KNode child : getSuccessor(node)) {
-			n += calcSizes(child);
+	private int numberOfLeafs(KNode node) {
+		int leafs = 0;
+		if (getSuccessor(node).isEmpty()) {
+			return 1;
+		} else {
+			for (KNode child : getSuccessor(node)) {
+				leafs += numberOfLeafs(child);
+			}
 		}
-		return n;
+		return leafs;
 	}
 
 	private List<KNode> getSuccessor(KNode node) {
@@ -220,37 +251,51 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 
 		}
 	}
-	
-	
-	private void postProcess(KNode layoutGraph){
-	    // calculate min size
-        KShapeLayout graphData = layoutGraph.getData(KShapeLayout.class);
-        float maxHeight = 0;
-        float minXPos = 0;
-        for (KNode node : layoutGraph.getChildren()) {
-            KShapeLayout layoutData = node.getData(KShapeLayout.class);
-            maxHeight = Math.min(maxHeight, layoutData.getYpos());
-            minXPos = Math.min(minXPos, layoutData.getXpos());
-        }
-        
-        //shift graph
-        for (KNode node : layoutGraph.getChildren()) {
-            KShapeLayout layoutData = node.getData(KShapeLayout.class);
-           layoutData.setXpos(layoutData.getXpos()-minXPos);
-           layoutData.setYpos(layoutData.getYpos()-maxHeight);
-        }
-		
-		
-	    // calculate graph size
-        float height = 0;
-        float width = 0;
-        for (KNode node : layoutGraph.getChildren()) {
-            KShapeLayout layoutData = node.getData(KShapeLayout.class);
-            height = Math.max(height, layoutData.getYpos()+layoutData.getHeight());
-            width = Math.max(width, layoutData.getXpos()+layoutData.getWidth());
-        }
-        graphData.setHeight(height+100);
-        graphData.setWidth(width+100);
+
+	private int nodeCounter = 0;
+
+	private double averageNodeSize(KNode graph) {
+		double size = 0;
+		nodeCounter++;
+		KShapeLayout shape = graph.getData(KShapeLayout.class);
+		double width = shape.getWidth();
+		double height = shape.getHeight();
+		size += (float) Math.sqrt(width * width + height * height);
+		for (KNode node : getSuccessor(graph)) {
+			size += averageNodeSize(node);
+		}
+
+		return size;
+	}
+
+	private void postProcess(KNode layoutGraph) {
+		// calculate min size
+		KShapeLayout graphData = layoutGraph.getData(KShapeLayout.class);
+		float maxHeight = 0;
+		float minXPos = 0;
+		for (KNode node : layoutGraph.getChildren()) {
+			KShapeLayout layoutData = node.getData(KShapeLayout.class);
+			maxHeight = Math.min(maxHeight, layoutData.getYpos());
+			minXPos = Math.min(minXPos, layoutData.getXpos());
+		}
+
+		// shift graph
+		for (KNode node : layoutGraph.getChildren()) {
+			KShapeLayout layoutData = node.getData(KShapeLayout.class);
+			layoutData.setXpos(layoutData.getXpos() - minXPos);
+			layoutData.setYpos(layoutData.getYpos() - maxHeight);
+		}
+
+		// calculate graph size
+		float height = 0;
+		float width = 0;
+		for (KNode node : layoutGraph.getChildren()) {
+			KShapeLayout layoutData = node.getData(KShapeLayout.class);
+			height = Math.max(height, layoutData.getYpos() + layoutData.getHeight());
+			width = Math.max(width, layoutData.getXpos() + layoutData.getWidth());
+		}
+		graphData.setHeight(height + 100);
+		graphData.setWidth(width + 100);
 	}
 
 }
