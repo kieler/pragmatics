@@ -36,7 +36,7 @@ public class FloatRangeImpl extends RangeImpl implements FloatRange
    * @generated
    * @ordered
    */
-  protected EList<Float> values;
+  protected EList<Double> values;
 
   /**
    * <!-- begin-user-doc -->
@@ -64,11 +64,11 @@ public class FloatRangeImpl extends RangeImpl implements FloatRange
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Float> getValues()
+  public EList<Double> getValues()
   {
     if (values == null)
     {
-      values = new EDataTypeEList<Float>(Float.class, this, GranaPackage.FLOAT_RANGE__VALUES);
+      values = new EDataTypeEList<Double>(Double.class, this, GranaPackage.FLOAT_RANGE__VALUES);
     }
     return values;
   }
@@ -102,7 +102,7 @@ public class FloatRangeImpl extends RangeImpl implements FloatRange
     {
       case GranaPackage.FLOAT_RANGE__VALUES:
         getValues().clear();
-        getValues().addAll((Collection<? extends Float>)newValue);
+        getValues().addAll((Collection<? extends Double>)newValue);
         return;
     }
     super.eSet(featureID, newValue);

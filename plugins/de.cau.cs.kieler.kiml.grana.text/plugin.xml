@@ -7,7 +7,7 @@
     <package 
        uri = "http://www.cau.de/cs/kieler/kiml/grana/text/Grana" 
        class = "de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage"
-       genModel = "de/cau/cs/kieler/kiml/grana/text/Grana.genmodel" /> 
+       genModel = "model/generated/Grana.genmodel" /> 
 	
   </extension>
 

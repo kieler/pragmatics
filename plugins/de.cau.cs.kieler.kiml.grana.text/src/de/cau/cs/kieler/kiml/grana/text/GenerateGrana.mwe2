@@ -15,13 +15,8 @@ Workflow {
     bean = StandaloneSetup {
     	scanClassPath = true
     	platformUri = "${runtimeProject}/.."
-    	// The following two lines can be removed, if Xbase is not used.
-    	// registerGeneratedEPackage = "org.eclipse.xtext.xbase.XbasePackage"
-    	// registerGenModelFile = "platform:/resource/org.eclipse.xtext.xbase/model/Xbase.genmodel"
-        registerGeneratedEPackage = "org.eclipse.elk.graph.KGraphPackage"
-        registerGeneratedEPackage = "org.eclipse.elk.core.klayoutdata.KLayoutDataPackage"
-        registerGenModelFile = "platform:/resource/org.eclipse.elk.core/model/klayoutdata.genmodel"
-        registerGenModelFile = "platform:/resource/org.eclipse.elk.graph/model/kgraph.genmodel"
+        registerGeneratedEPackage = "org.eclipse.elk.graph.ElkGraphPackage"
+        registerGenModelFile = "platform:/resource/org.eclipse.elk.graph/model/elkgraph.genmodel"
     }
     
     component = DirectoryCleaner {
@@ -55,8 +50,8 @@ Workflow {
     
     		// generates Java API for the generated EPackages
     		fragment = //
-    		  //ecore.EMFGeneratorFragment auto-inject {}
-    		  ecore.EcoreGeneratorFragment auto-inject {}
+    		  ecore.EMFGeneratorFragment auto-inject {}
+    		  //ecore.EcoreGeneratorFragment auto-inject {}
     
     		// the old serialization component
     		// fragment = parseTreeConstructor.ParseTreeConstructorFragment auto-inject {}    

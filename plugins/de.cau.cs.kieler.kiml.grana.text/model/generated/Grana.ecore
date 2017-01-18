@@ -19,7 +19,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="resources" upperBound="-1"
         eType="#//Resource" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="layoutOptions" upperBound="-1"
-        eType="ecore:EClass platform:/resource/org.eclipse.elk.core/model/klayoutdata.ecore#//KIdentifier"
+        eType="ecore:EClass platform:/resource/org.eclipse.elk.graph/model/elkgraph.ecore#//ElkNode"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="analyses" upperBound="-1"
         eType="#//Analysis" containment="true"/>
@@ -47,7 +47,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="Range"/>
   <eClassifiers xsi:type="ecore:EClass" name="FloatRange" eSuperTypes="#//Range">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="values" unique="false"
-        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDouble"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IntRange" eSuperTypes="#//Range"/>
   <eClassifiers xsi:type="ecore:EClass" name="IntRangeValues" eSuperTypes="#//IntRange">

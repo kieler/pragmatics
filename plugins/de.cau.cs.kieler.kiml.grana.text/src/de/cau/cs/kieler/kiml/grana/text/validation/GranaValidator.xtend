@@ -50,7 +50,7 @@ class GranaValidator extends AbstractGranaValidator {
     
     @Check
     def checkRangeOptionUnique(RangeJob job) {
-        val layoutOptions = job.layoutOptions.map[it.persistentEntries.map[it.key]].flatten.toSet
+        val layoutOptions = job.layoutOptions.map[it.properties.map[it.key]].flatten.toSet
         val rangeOption = job.rangeOption
          
         if (layoutOptions.contains(rangeOption)) {

@@ -1,11 +1,15 @@
-grammar de.cau.cs.kieler.kiml.grana.text.Grana
+grammar de.cau.cs.kieler.kiml.grana.text.Grana 
+    //with org.eclipse.xtext.common.Terminals
+    with org.eclipse.elk.graph.text.ElkGraph
 hidden(WS, ML_COMMENT, SL_COMMENT)
 
 generate grana "http://www.cau.de/cs/kieler/kiml/grana/text/Grana"
 
+//import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+//import "http://elk.eclipse.org/KLayoutData"
+//import "http://elk.eclipse.org/KGraph"
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
-import "http://elk.eclipse.org/KLayoutData"
-import "http://elk.eclipse.org/KGraph"
+import "http://www.eclipse.org/elk/ElkGraph"
 
 Grana:
     ('globalResources' (globalResources+=GlobalResourceRef)*)?
@@ -32,7 +36,7 @@ RegularJob:
         (resources+=Resource)+
     
     'layoutoptions'
-        (layoutOptions+=KIdentifier)+
+        (layoutOptions+=LayoutConfig)+
         
     'analyses'
         (analyses+=Analysis)+
@@ -47,8 +51,8 @@ CompareJob:
     'resources' (resources+=Resource)+
     
     'layoutoptions'
-        (layoutOptions+=KIdentifier)
-        (layoutOptions+=KIdentifier)
+        (layoutOptions+=LayoutConfig)
+        (layoutOptions+=LayoutConfig)
     
     'analyses'
         (analyses+=Analysis)+
@@ -65,18 +69,18 @@ RangeJob:
     'resources' (resources+=Resource)+
     
     'layoutoptions'
-        (layoutOptions+=KIdentifier)+
+        (layoutOptions+=LayoutConfig)+
     
     'analyses'
         (analyses+=Analysis)+
     
     'rangeoption'
-        rangeOption=QualifiedID
+        rangeOption=QualifiedId
         rangeValues=Range
             
     (('rangeanalysis'
         rangeAnalysis=Analysis
-        ('component' rangeAnalysisComponent=NATURAL)?)
+        ('component' rangeAnalysisComponent=SIGNED_INT)?)
      |
      'rangeanalyses'
         (rangeAnalyses+=Analysis)+)
@@ -90,7 +94,7 @@ Range:
 ;
 
 FloatRange:
-    'floatvalues' values+=Float (',' values+=Float)*
+    'floatvalues' values+=FLOAT (',' values+=FLOAT)*
 ;
 
 IntRange:
@@ -98,11 +102,11 @@ IntRange:
 ;
 
 IntRangeValues:
-    'intvalues' values+=NATURAL (',' values+=NATURAL)*
+    'intvalues' values+=SIGNED_INT (',' values+=SIGNED_INT)*
 ;
 
 IntRangeRange:
-    'intrange' start=NATURAL 'to' end=NATURAL   
+    'intrange' start=SIGNED_INT 'to' end=SIGNED_INT   
 ;
 /*
  * ---- Resources ---- 
@@ -147,59 +151,11 @@ enum OutputType:
 ;
 
 Analysis:
-    name=QualifiedID
+    name=QualifiedId
 ;
 
-
-KIdentifier returns KIdentifier:
-    {KIdentifier}
-    id=ID
-     '{' 
-        (persistentEntries+=PersistentEntry (persistentEntries+=PersistentEntry)*)? 
-     '}'
+LayoutConfig returns ElkNode:
+    identifier=ID '{'
+        properties+=Property*
+    '}'
 ;
-
-PersistentEntry returns PersistentEntry:
-    key=QualifiedID ':' value=PropertyValue
-;
-
-QualifiedID returns ecore::EString:
-    ID ('.' ID)*;
-
-
-PropertyValue returns ecore::EString:
-    BOOLEAN | STRING | Float | QualifiedID;
-    
-
-Float returns ecore::EFloat:
-    TFLOAT | NATURAL;
-    
-    /* Terminals */
-
-terminal TFLOAT returns ecore::EFloat:
-    ('+' | '-') (
-        ('0'..'9')+ ('.' ('0'..'9')*)? (('e' | 'E') ('+' | '-')? ('0'..'9')+)?
-        | '.' ('0'..'9')+ (('e' | 'E') ('+' | '-')? ('0'..'9')+)?
-    )
-    | ('0'..'9')+ '.' ('0'..'9')* (('e' | 'E') ('+' | '-')? ('0'..'9')+)?
-    | '.' ('0'..'9')+ (('e' | 'E') ('+' | '-')? ('0'..'9')+)?
-    | ('0'..'9')+ ('e' | 'E') ('+' | '-')? ('0'..'9')+;
-    
-terminal NATURAL returns ecore::EInt:
-    ('0'..'9')+;
-
-terminal BOOLEAN returns ecore::EBoolean:
-    'true' | 'false';
-    
-terminal STRING :
-    // chsch: added '\'' alternative! 
-    '"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'u'|'"'|'\''|'\\') | !('\\'|'"') )* '"';
-
-terminal ID:
-    // chsch: the optional leading '^' is the implicit keyword escape character
-    '^'? ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
-
-terminal ML_COMMENT : '/*' -> '*/';
-terminal SL_COMMENT : '//' !('\n'|'\r')* ('\r'? '\n')?;
-terminal WS         : (' '|'\t'|'\r'|'\n')+;
-    

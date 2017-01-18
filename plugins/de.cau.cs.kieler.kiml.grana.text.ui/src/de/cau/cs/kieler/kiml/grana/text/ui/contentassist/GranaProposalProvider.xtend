@@ -13,22 +13,13 @@
  */
 package de.cau.cs.kieler.kiml.grana.text.ui.contentassist
 
-import com.google.inject.Inject
 import de.cau.cs.kieler.kiml.grana.AnalysisService
 import de.cau.cs.kieler.kiml.grana.text.grana.RangeJob
-import de.cau.cs.kieler.kiml.grana.text.services.GranaGrammarAccess
 import java.io.File
 import org.eclipse.core.resources.IContainer
 import org.eclipse.core.resources.ResourcesPlugin
-import org.eclipse.elk.core.data.LayoutMetaDataService
-import org.eclipse.elk.core.data.LayoutOptionData.Type
-import org.eclipse.elk.core.data.LayoutOptionData.Visibility
-import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.core.ui.LayoutOptionLabelProvider
-import org.eclipse.elk.graph.PersistentEntry
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.jface.viewers.StyledString
-import org.eclipse.swt.graphics.Image
 import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.RuleCall
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
@@ -41,14 +32,10 @@ import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
  */
 class GranaProposalProvider extends AbstractGranaProposalProvider {
     
-    @Inject
-    private GranaGrammarAccess grammarAccess;
-    
     /**
      * Proposals for graph analyses. 
      */
     override completeAnalysis_Name(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-        
         super.completeAnalysis_Name(model, assignment, context, acceptor)
 
         // propose all known analyses that match the current prefix
@@ -59,177 +46,7 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
             }
         }
     }
-    
-    /**
-     * Proposals for layout option keys.
-     */
-    override completePersistentEntry_Key(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-        handleLayoutOptionProposal(model, assignment, context, acceptor)
-    }
-    
-    override completeRangeJob_RangeOption(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-        handleLayoutOptionProposal(model, assignment, context, acceptor)
-    }
-    
-    private def handleLayoutOptionProposal(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-        // create and register the completion proposal for every element in the list
-        for (optionData : LayoutMetaDataService.instance.optionData) {
-            val displayString = new StyledString(optionData.toString(),
-                            if (optionData.visibility == Visibility.ADVANCED) StyledString.COUNTER_STYLER else null)
-                            
-            displayString.append(" (" + optionData.getId() + ")", StyledString.QUALIFIER_STYLER)
 
-            val proposal = getValueConverter().toString(optionData.getId(),
-                                grammarAccess.getQualifiedIDRule().getName())
-
-            val labelProvider = new LayoutOptionLabelProvider(optionData)
-            val image = labelProvider.getImage(optionData.getDefault())
-
-            handleKeyProposal(context, acceptor, optionData.getId(), proposal, displayString, image);
-        }
-    }
-    
-    /**
-     * Copied from {@link KGraphProposalProvider}.
-     */
-    private def handleKeyProposal(ContentAssistContext context,
-            ICompletionProposalAcceptor acceptor, String id, String proposal,
-            StyledString displayString, Image image) {
-        
-        if (isValidProposal(proposal, context.getPrefix(), context)) {
-            // accept the proposal with unmodified prefix
-            acceptor.accept(doCreateProposal(proposal, displayString, image, getPriorityHelper()
-                    .getDefaultPriority(), context));
-        } else {
-            val lastDotIndex = id.lastIndexOf('.');
-            if (lastDotIndex >= 0) {
-                // accept the proposal with enhanced prefix
-                val prefix =
-                        new StringBuilder(id.substring(0, lastDotIndex + 1))
-                prefix.append(context.getPrefix())
-                // add escape characters as required
-                var i = 0
-                while (i < proposal.length && i < prefix.length) {
-                    
-                    if (proposal.charAt(i) != prefix.charAt(i)) {
-                        if (proposal.charAt(i) == '^') {
-                            prefix.insert(i, '^');
-                        } else {
-                            // break
-                            i = proposal.length
-                        }
-                    }
-                    
-                    i = i + 1
-                }
-                if (isValidProposal(proposal, prefix.toString(), context)) {
-                    // accept the proposal with unmodified prefix
-                    acceptor.accept(doCreateProposal(proposal, displayString, image,
-                            getPriorityHelper().getDefaultPriority(), context));
-                }
-            }
-        }
-    }
-    
-    override completePersistentEntry_Value(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-        super.completePersistentEntry_Value(model, assignment, context, acceptor)
-        
-        valueProposal(context, acceptor)
-    }
-    
-    /**
-     * Copied from {@link KGraphProposalProvider}.
-     * 
-     * Computes the annotation value proposals based on a foregoing layout parameter.
-     * 
-     * @param context Xtext API
-     * @param acceptor Xtext API
-     * 
-     * @author sgu, chsch
-     */
-    private def valueProposal(ContentAssistContext context,
-            ICompletionProposalAcceptor acceptor) {
-        // check if the prefix is a KIELER annotation
-        if (context.getCurrentModel() instanceof PersistentEntry) {
-
-            val annotationName = (context.getCurrentModel() as PersistentEntry).getKey();
-            if (!annotationName.nullOrEmpty) {
-
-                // get the option list
-                val layoutServices = LayoutMetaDataService.getInstance();
-
-                // find the specific option an display all possible values
-                var optionData = layoutServices.getOptionData(annotationName);
-                
-                // if option data is null, try to add the kieler prefix
-                if (optionData == null) {
-                    optionData = layoutServices.getOptionData("de.cau.cs.kieler." + annotationName);
-                }
-                
-                val theType = if (optionData != null) optionData.getType() else Type.UNDEFINED;
-                var String proposal = null;
-                
-                switch (theType) {
-                // show the available choices for boolean and enumeration/
-                case Type.BOOLEAN,
-                case Type.ENUM,
-                case Type.ENUMSET:
-                    for ( j : 0..< optionData.getChoices().length) {
-                        proposal = optionData.choices.get(j)
-                        acceptor.accept(createCompletionProposal(proposal, context));
-                    }
-
-                // for string, float, integer and object show the type of the value and give a
-                //  corresponding default value
-                case theType == Type.STRING && annotationName.equals(CoreOptions.ALGORITHM.getId()): {
-                    var String displayString = null;
-                    for (data : layoutServices.getAlgorithmData()) {
-                        proposal = '"' + data.getId() + '"';
-                        displayString = data.getName();
-                        acceptor.accept(createCompletionProposal(proposal, displayString, null,
-                                context));
-                    }
-                }
-
-                // fall through if STRING but above predicate is false
-
-                //case Type.FLOAT:
-                //case Type.INT:
-                //case Type.OBJECT:
-                case Type.STRING,
-                case Type.FLOAT,
-                case Type.INT,
-                case Type.OBJECT: {
-                    // chose the corresponding default value
-                    switch (theType) {
-                        case Type.STRING:
-                            proposal = "\"\""
-                        case Type.FLOAT:
-                            proposal = "0.0"
-                        case Type.INT:
-                            proposal = "0"
-                        case Type.OBJECT: {
-                            try {
-                                proposal = "\""
-                                        + optionData.getOptionClass().newInstance().toString()
-                                        + "\"";
-                            } catch (InstantiationException e) {
-                                proposal = "\"\"";
-                            } catch (IllegalAccessException e) {
-                                proposal = "\"\"";
-                            }
-                        }
-                        default: 
-                        	proposal = ""
-                    }
-                    acceptor.accept(createCompletionProposal(proposal, optionData.getType()
-                            .toString(), null, context));
-                }
-                }
-            }
-        }
-    }
- 
     // some constants for the following code completions for workspace navigation 
     val FS_PREFIX = "file://"
     val SUG_WORKSPACEROOT = "\"/"
@@ -387,5 +204,5 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
             }
         }
     }
-    
+
 }

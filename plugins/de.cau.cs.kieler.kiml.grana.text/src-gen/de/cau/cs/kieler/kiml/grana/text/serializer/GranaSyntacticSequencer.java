@@ -11,6 +11,7 @@ import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.RuleCall;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.AbstractElementAlias;
+import org.eclipse.xtext.serializer.analysis.GrammarAlias.GroupAlias;
 import org.eclipse.xtext.serializer.analysis.GrammarAlias.TokenAlias;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynNavigable;
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynTransition;
@@ -20,12 +21,14 @@ import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 public class GranaSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected GranaGrammarAccess grammarAccess;
+	protected AbstractElementAlias match_ElkEdge___LeftCurlyBracketKeyword_7_0_RightCurlyBracketKeyword_7_4__q;
 	protected AbstractElementAlias match_Grana_GlobalOutputsKeyword_1_0_q;
 	protected AbstractElementAlias match_Grana_GlobalResourcesKeyword_0_0_q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (GranaGrammarAccess) access;
+		match_ElkEdge___LeftCurlyBracketKeyword_7_0_RightCurlyBracketKeyword_7_4__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getElkEdgeAccess().getLeftCurlyBracketKeyword_7_0()), new TokenAlias(false, false, grammarAccess.getElkEdgeAccess().getRightCurlyBracketKeyword_7_4()));
 		match_Grana_GlobalOutputsKeyword_1_0_q = new TokenAlias(false, true, grammarAccess.getGranaAccess().getGlobalOutputsKeyword_1_0());
 		match_Grana_GlobalResourcesKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getGranaAccess().getGlobalResourcesKeyword_0_0());
 	}
@@ -42,7 +45,9 @@ public class GranaSyntacticSequencer extends AbstractSyntacticSequencer {
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if (match_Grana_GlobalOutputsKeyword_1_0_q.equals(syntax))
+			if (match_ElkEdge___LeftCurlyBracketKeyword_7_0_RightCurlyBracketKeyword_7_4__q.equals(syntax))
+				emit_ElkEdge___LeftCurlyBracketKeyword_7_0_RightCurlyBracketKeyword_7_4__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Grana_GlobalOutputsKeyword_1_0_q.equals(syntax))
 				emit_Grana_GlobalOutputsKeyword_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Grana_GlobalResourcesKeyword_0_0_q.equals(syntax))
 				emit_Grana_GlobalResourcesKeyword_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
@@ -50,6 +55,17 @@ public class GranaSyntacticSequencer extends AbstractSyntacticSequencer {
 		}
 	}
 
+	/**
+	 * Ambiguous syntax:
+	 *     ('{' '}')?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     targets+=[ElkConnectableShape|QualifiedId] (ambiguity) (rule end)
+	 */
+	protected void emit_ElkEdge___LeftCurlyBracketKeyword_7_0_RightCurlyBracketKeyword_7_4__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
 	/**
 	 * Ambiguous syntax:
 	 *     'globalOutputs'?

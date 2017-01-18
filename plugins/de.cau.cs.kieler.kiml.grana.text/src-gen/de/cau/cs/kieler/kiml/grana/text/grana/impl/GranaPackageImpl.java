@@ -25,7 +25,7 @@ import de.cau.cs.kieler.kiml.grana.text.grana.RegularJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.Resource;
 import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutDataPackage;
+import org.eclipse.elk.graph.ElkGraphPackage;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -232,7 +232,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     isInited = true;
 
     // Initialize simple dependencies
-    KLayoutDataPackage.eINSTANCE.eClass();
+    ElkGraphPackage.eINSTANCE.eClass();
 
     // Create package meta-data objects
     theGranaPackage.createPackageContents();
@@ -920,7 +920,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     setNsURI(eNS_URI);
 
     // Obtain other dependent packages
-    KLayoutDataPackage theKLayoutDataPackage = (KLayoutDataPackage)EPackage.Registry.INSTANCE.getEPackage(KLayoutDataPackage.eNS_URI);
+    ElkGraphPackage theElkGraphPackage = (ElkGraphPackage)EPackage.Registry.INSTANCE.getEPackage(ElkGraphPackage.eNS_URI);
 
     // Create type parameters
 
@@ -951,7 +951,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     initEClass(jobEClass, Job.class, "Job", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getJob_Name(), ecorePackage.getEString(), "name", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_Resources(), this.getResource(), null, "resources", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getJob_LayoutOptions(), theKLayoutDataPackage.getKIdentifier(), null, "layoutOptions", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getJob_LayoutOptions(), theElkGraphPackage.getElkNode(), null, "layoutOptions", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_Analyses(), this.getAnalysis(), null, "analyses", null, 0, -1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getJob_OutputType(), this.getOutputType(), "outputType", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getJob_Output(), this.getOutput(), null, "output", null, 0, 1, Job.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -973,7 +973,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     initEClass(rangeEClass, Range.class, "Range", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(floatRangeEClass, FloatRange.class, "FloatRange", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getFloatRange_Values(), ecorePackage.getEFloat(), "values", null, 0, -1, FloatRange.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getFloatRange_Values(), ecorePackage.getEDouble(), "values", null, 0, -1, FloatRange.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(intRangeEClass, IntRange.class, "IntRange", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

@@ -11,7 +11,7 @@ import de.cau.cs.kieler.kiml.grana.text.grana.Resource;
 
 import java.util.Collection;
 
-import org.eclipse.elk.core.klayoutdata.KIdentifier;
+import org.eclipse.elk.graph.ElkNode;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -85,7 +85,7 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
    * @generated
    * @ordered
    */
-  protected EList<KIdentifier> layoutOptions;
+  protected EList<ElkNode> layoutOptions;
 
   /**
    * The cached value of the '{@link #getAnalyses() <em>Analyses</em>}' containment reference list.
@@ -190,11 +190,11 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<KIdentifier> getLayoutOptions()
+  public EList<ElkNode> getLayoutOptions()
   {
     if (layoutOptions == null)
     {
-      layoutOptions = new EObjectContainmentEList<KIdentifier>(KIdentifier.class, this, GranaPackage.JOB__LAYOUT_OPTIONS);
+      layoutOptions = new EObjectContainmentEList<ElkNode>(ElkNode.class, this, GranaPackage.JOB__LAYOUT_OPTIONS);
     }
     return layoutOptions;
   }
@@ -352,7 +352,7 @@ public class JobImpl extends MinimalEObjectImpl.Container implements Job
         return;
       case GranaPackage.JOB__LAYOUT_OPTIONS:
         getLayoutOptions().clear();
-        getLayoutOptions().addAll((Collection<? extends KIdentifier>)newValue);
+        getLayoutOptions().addAll((Collection<? extends ElkNode>)newValue);
         return;
       case GranaPackage.JOB__ANALYSES:
         getAnalyses().clear();
