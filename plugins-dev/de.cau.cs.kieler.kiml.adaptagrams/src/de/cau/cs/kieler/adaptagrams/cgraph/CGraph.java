@@ -21,10 +21,9 @@ import org.adaptagrams.CompoundConstraintPtrs;
 import org.adaptagrams.Doubles;
 import org.adaptagrams.RectanglePtrs;
 import org.adaptagrams.RootCluster;
+import org.eclipse.elk.core.math.ElkPadding;
 
 import com.google.common.collect.Lists;
-
-import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
 
 
 /**
@@ -84,7 +83,7 @@ public class CGraph extends CGraphElement {
     private List<CPort> externalPorts;
     
     /** Insets, aka padding for this graph. */
-    public final Insets insets = new Insets();
+    public final ElkPadding padding = new ElkPadding();
     
     private boolean initialized = false;
     

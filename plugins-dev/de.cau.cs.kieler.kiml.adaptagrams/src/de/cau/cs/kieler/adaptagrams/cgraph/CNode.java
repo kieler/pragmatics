@@ -17,17 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.adaptagrams.Rectangle;
+import org.eclipse.elk.core.math.ElkMargin;
+import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
-import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
-import de.cau.cs.kieler.kiml.options.PortSide;
-import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
+import de.cau.cs.kieler.kiml.adaptagrams.properties.ColaOptions;
 
 /**
- * 
  * <h3>Usage:</h3>
  * Upon {@link #init()} the node is automatically added to the graph's nodes list.
  * 
@@ -48,7 +47,7 @@ public class CNode extends CShape {
     protected List<CEdge> externalEdges;
     
     /** Artificial margin added to guarantee spacing around the node. */
-    private Margins artificialMargin = new Margins();
+    private ElkMargin artificialMargin = new ElkMargin();
     
     /**
      * .
@@ -69,8 +68,8 @@ public class CNode extends CShape {
     @Override
     public void init() {
         // get spacing and margins
-        double spacing = graph.getProperty(CoLaProperties.SPACING).doubleValue();
-        Margins margin = getMargins();
+        double spacing = graph.getProperty(ColaOptions.SPACING_NODE_NODE);
+        ElkMargin margin = getMargins();
 
         if (graph.getProperty(CGraphProperties.INCLUDE_SPACING_IN_MARGIN)) {
             // currently the adaptagrams rectangles do not support any border or margin,
@@ -83,7 +82,7 @@ public class CNode extends CShape {
         }
         
         boolean considerPreviousPositions =
-                graph.getProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS);
+                graph.getProperty(ColaOptions.CONSIDER_PREVIOUS_POSITIONS);
         // x X y Y meaning x width y height
         // assure that the size is at least 1
         if (considerPreviousPositions) {

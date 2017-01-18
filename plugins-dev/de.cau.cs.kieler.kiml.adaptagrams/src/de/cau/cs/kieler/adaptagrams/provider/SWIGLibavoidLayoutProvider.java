@@ -13,13 +13,14 @@
  */
 package de.cau.cs.kieler.adaptagrams.provider;
 
+import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
+import org.eclipse.elk.core.util.adapters.ElkGraphAdapters.ElkGraphAdapter;
+import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
+import org.eclipse.elk.graph.ElkNode;
+
 import de.cau.cs.kieler.adaptagrams.avoid.LibavoidGraph;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters;
-import de.cau.cs.kieler.kiml.util.adapters.KGraphAdapters.KGraphAdapter;
-import de.cau.cs.kieler.kiml.util.nodespacing.KimlNodeDimensionCalculation;
 
 /**
  * A layout provider for KIML that performs layout using the Libavoid connector routing library. See
@@ -37,7 +38,7 @@ public class SWIGLibavoidLayoutProvider extends AbstractLayoutProvider {
      * {@inheritDoc}
      */
     @Override
-    public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
+    public void layout(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Libavoid Layout", LAYOUT_WORK);
         // if the graph is empty there is no need to layout
         if (parentNode.getChildren().isEmpty()) {
@@ -48,11 +49,12 @@ public class SWIGLibavoidLayoutProvider extends AbstractLayoutProvider {
         LibavoidGraph graph = new LibavoidGraph(parentNode);
 
         // calculate node margins
-        KGraphAdapter adapter = KGraphAdapters.adapt(parentNode);
+        ElkGraphAdapter adapter = ElkGraphAdapters.adapt(parentNode);
 
-        KimlNodeDimensionCalculation.sortPortLists(adapter);
-        KimlNodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
-        KimlNodeDimensionCalculation.calculateNodeMargins(adapter);
+        
+        NodeDimensionCalculation.sortPortLists(adapter);
+        NodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
+        NodeDimensionCalculation.calculateNodeMargins(adapter);
 
         // transform the kgraph to libavoid structures
         graph.transformGraph();
