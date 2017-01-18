@@ -20,11 +20,16 @@ import de.cau.cs.kieler.kiml.grana.text.grana.RangeJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.RegularJob;
 import de.cau.cs.kieler.kiml.grana.text.grana.ResourceReference;
 import de.cau.cs.kieler.kiml.grana.text.services.GranaGrammarAccess;
+import java.util.Map;
 import java.util.Set;
-import org.eclipse.elk.core.klayoutdata.KIdentifier;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataPackage;
-import org.eclipse.elk.graph.KGraphPackage;
-import org.eclipse.elk.graph.PersistentEntry;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphPackage;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.text.serializer.ElkGraphSemanticSequencer;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.xtext.Action;
@@ -32,11 +37,10 @@ import org.eclipse.xtext.Parameter;
 import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.serializer.ISerializationContext;
 import org.eclipse.xtext.serializer.acceptor.SequenceFeeder;
-import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequencer;
 import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransient;
 
 @SuppressWarnings("all")
-public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer {
+public class GranaSemanticSequencer extends ElkGraphSemanticSequencer {
 
 	@Inject
 	private GranaGrammarAccess grammarAccess;
@@ -92,16 +96,46 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 				sequence_ResourceReference(context, (ResourceReference) semanticObject); 
 				return; 
 			}
-		else if (epackage == KGraphPackage.eINSTANCE)
+		else if (epackage == ElkGraphPackage.eINSTANCE)
 			switch (semanticObject.eClass().getClassifierID()) {
-			case KGraphPackage.PERSISTENT_ENTRY:
-				sequence_PersistentEntry(context, (PersistentEntry) semanticObject); 
+			case ElkGraphPackage.ELK_BEND_POINT:
+				sequence_ElkBendPoint(context, (ElkBendPoint) semanticObject); 
 				return; 
-			}
-		else if (epackage == KLayoutDataPackage.eINSTANCE)
-			switch (semanticObject.eClass().getClassifierID()) {
-			case KLayoutDataPackage.KIDENTIFIER:
-				sequence_KIdentifier(context, (KIdentifier) semanticObject); 
+			case ElkGraphPackage.ELK_EDGE:
+				sequence_EdgeLayout_ElkEdge(context, (ElkEdge) semanticObject); 
+				return; 
+			case ElkGraphPackage.ELK_EDGE_SECTION:
+				if (rule == grammarAccess.getElkEdgeSectionRule()) {
+					sequence_ElkEdgeSection(context, (ElkEdgeSection) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getElkSingleEdgeSectionRule()) {
+					sequence_ElkSingleEdgeSection(context, (ElkEdgeSection) semanticObject); 
+					return; 
+				}
+				else break;
+			case ElkGraphPackage.ELK_LABEL:
+				sequence_ElkLabel_ShapeLayout(context, (ElkLabel) semanticObject); 
+				return; 
+			case ElkGraphPackage.ELK_NODE:
+				if (rule == grammarAccess.getElkNodeRule()) {
+					sequence_ElkNode_ShapeLayout(context, (ElkNode) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getLayoutConfigRule()) {
+					sequence_LayoutConfig(context, (ElkNode) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getRootNodeRule()) {
+					sequence_RootNode(context, (ElkNode) semanticObject); 
+					return; 
+				}
+				else break;
+			case ElkGraphPackage.ELK_PORT:
+				sequence_ElkPort_ShapeLayout(context, (ElkPort) semanticObject); 
+				return; 
+			case ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY:
+				sequence_Property(context, (Map.Entry) semanticObject); 
 				return; 
 			}
 		if (errorAcceptor != null)
@@ -113,7 +147,7 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *     Analysis returns Analysis
 	 *
 	 * Constraint:
-	 *     name=QualifiedID
+	 *     name=QualifiedId
 	 */
 	protected void sequence_Analysis(ISerializationContext context, Analysis semanticObject) {
 		if (errorAcceptor != null) {
@@ -121,7 +155,7 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GranaPackage.Literals.ANALYSIS__NAME));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getAnalysisAccess().getNameQualifiedIDParserRuleCall_0(), semanticObject.getName());
+		feeder.accept(grammarAccess.getAnalysisAccess().getNameQualifiedIdParserRuleCall_0(), semanticObject.getName());
 		feeder.finish();
 	}
 	
@@ -135,8 +169,8 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *     (
 	 *         name=ID 
 	 *         resources+=Resource+ 
-	 *         layoutOptions+=KIdentifier 
-	 *         layoutOptions+=KIdentifier 
+	 *         layoutOptions+=LayoutConfig 
+	 *         layoutOptions+=LayoutConfig 
 	 *         analyses+=Analysis+ 
 	 *         outputType=OutputType? 
 	 *         output=Output
@@ -153,7 +187,7 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *     FloatRange returns FloatRange
 	 *
 	 * Constraint:
-	 *     (values+=Float values+=Float*)
+	 *     (values+=FLOAT values+=FLOAT*)
 	 */
 	protected void sequence_FloatRange(ISerializationContext context, FloatRange semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -212,7 +246,7 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *     IntRangeRange returns IntRangeRange
 	 *
 	 * Constraint:
-	 *     (start=NATURAL end=NATURAL)
+	 *     (start=SIGNED_INT end=SIGNED_INT)
 	 */
 	protected void sequence_IntRangeRange(ISerializationContext context, IntRangeRange semanticObject) {
 		if (errorAcceptor != null) {
@@ -222,8 +256,8 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GranaPackage.Literals.INT_RANGE_RANGE__END));
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getIntRangeRangeAccess().getStartNATURALTerminalRuleCall_1_0(), semanticObject.getStart());
-		feeder.accept(grammarAccess.getIntRangeRangeAccess().getEndNATURALTerminalRuleCall_3_0(), semanticObject.getEnd());
+		feeder.accept(grammarAccess.getIntRangeRangeAccess().getStartSIGNED_INTTerminalRuleCall_1_0(), semanticObject.getStart());
+		feeder.accept(grammarAccess.getIntRangeRangeAccess().getEndSIGNED_INTTerminalRuleCall_3_0(), semanticObject.getEnd());
 		feeder.finish();
 	}
 	
@@ -235,7 +269,7 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *     IntRangeValues returns IntRangeValues
 	 *
 	 * Constraint:
-	 *     (values+=NATURAL values+=NATURAL*)
+	 *     (values+=SIGNED_INT values+=SIGNED_INT*)
 	 */
 	protected void sequence_IntRangeValues(ISerializationContext context, IntRangeValues semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -244,12 +278,12 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	
 	/**
 	 * Contexts:
-	 *     KIdentifier returns KIdentifier
+	 *     LayoutConfig returns ElkNode
 	 *
 	 * Constraint:
-	 *     (id=ID (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?)
+	 *     (identifier=ID properties+=Property*)
 	 */
-	protected void sequence_KIdentifier(ISerializationContext context, KIdentifier semanticObject) {
+	protected void sequence_LayoutConfig(ISerializationContext context, ElkNode semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -316,27 +350,6 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	
 	/**
 	 * Contexts:
-	 *     PersistentEntry returns PersistentEntry
-	 *
-	 * Constraint:
-	 *     (key=QualifiedID value=PropertyValue)
-	 */
-	protected void sequence_PersistentEntry(ISerializationContext context, PersistentEntry semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, KGraphPackage.Literals.PERSISTENT_ENTRY__KEY) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KGraphPackage.Literals.PERSISTENT_ENTRY__KEY));
-			if (transientValues.isValueTransient(semanticObject, KGraphPackage.Literals.PERSISTENT_ENTRY__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KGraphPackage.Literals.PERSISTENT_ENTRY__VALUE));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getPersistentEntryAccess().getKeyQualifiedIDParserRuleCall_0_0(), semanticObject.getKey());
-		feeder.accept(grammarAccess.getPersistentEntryAccess().getValuePropertyValueParserRuleCall_2_0(), semanticObject.getValue());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     Job returns RangeJob
 	 *     RangeJob returns RangeJob
 	 *
@@ -345,11 +358,11 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *         name=ID 
 	 *         measureExecutionTime?='measureExecutionTime'? 
 	 *         resources+=Resource+ 
-	 *         layoutOptions+=KIdentifier+ 
+	 *         layoutOptions+=LayoutConfig+ 
 	 *         analyses+=Analysis+ 
-	 *         rangeOption=QualifiedID 
+	 *         rangeOption=QualifiedId 
 	 *         rangeValues=Range 
-	 *         ((rangeAnalysis=Analysis rangeAnalysisComponent=NATURAL?) | rangeAnalyses+=Analysis+) 
+	 *         ((rangeAnalysis=Analysis rangeAnalysisComponent=SIGNED_INT?) | rangeAnalyses+=Analysis+) 
 	 *         outputType=OutputType? 
 	 *         output=Output
 	 *     )
@@ -370,7 +383,7 @@ public class GranaSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *         layoutBeforeAnalysis?='layoutBeforeAnalysis'? 
 	 *         measureExecutionTime?='measureExecutionTime'? 
 	 *         resources+=Resource+ 
-	 *         layoutOptions+=KIdentifier+ 
+	 *         layoutOptions+=LayoutConfig+ 
 	 *         analyses+=Analysis+ 
 	 *         outputType=OutputType? 
 	 *         output=Output

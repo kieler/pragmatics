@@ -4,8 +4,8 @@
     editorDirectory="/de.cau.cs.kieler.kiml.grana.text.editor/src" modelPluginID="de.cau.cs.kieler.kiml.grana.text"
     forceOverwrite="true" modelName="Grana" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="6.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.kiml.grana.text.edit"
-    editorPluginID="de.cau.cs.kieler.kiml.grana.text.editor" runtimeVersion="2.11"
-    usedGenPackages="platform:/resource/org.eclipse.elk.core/model/klayoutdata.genmodel#//klayoutdata">
+    editorPluginID="de.cau.cs.kieler.kiml.grana.text.editor" runtimeVersion="2.12"
+    usedGenPackages="platform:/resource/org.eclipse.elk.graph/model/elkgraph.genmodel#//graph">
   <genPackages prefix="Grana" basePackage="de.cau.cs.kieler.kiml.grana.text" disposableProviderFactory="true"
       fileExtensions="grana" ecorePackage="Grana.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="Grana.ecore#//OutputType">

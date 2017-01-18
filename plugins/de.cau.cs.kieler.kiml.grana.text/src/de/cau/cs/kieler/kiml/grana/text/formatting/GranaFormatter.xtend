@@ -93,7 +93,7 @@ class GranaFormatter extends AbstractDeclarativeFormatter {
        c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeoptionKeyword_9)
        c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeanalysisKeyword_12_0_0)
        c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeOptionAssignment_10)
-       c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeAnalysisComponentNATURALTerminalRuleCall_12_0_2_1_0)
+       c.setLinewrap(1, 1, 2).after(rangeJobAccess.rangeAnalysisComponentSIGNED_INTTerminalRuleCall_12_0_2_1_0)
        c.setLinewrap(1, 1, 2).after(rangeAccess.rule)
        
        
@@ -107,7 +107,11 @@ class GranaFormatter extends AbstractDeclarativeFormatter {
        c.setLinewrap(2, 2, 2).before(granaAccess.executeKeyword_2_0)
     
         // key value pairs
-        c.setLinewrap.after(persistentEntryAccess.valueAssignment_2)
+        c.setLinewrap.after(propertyAccess.valueAssignment_2_0)
+        c.setLinewrap.after(propertyAccess.valueAssignment_2_1)
+        c.setLinewrap.after(propertyAccess.valueAssignment_2_2)
+        c.setLinewrap.after(propertyAccess.valueAssignment_2_3)
+        c.setLinewrap.after(propertyAccess.valueAssignment_2_4)
        
        // indentation increments 
        c.setIndentationIncrement.after(granaAccess.globalResourcesKeyword_0_0)

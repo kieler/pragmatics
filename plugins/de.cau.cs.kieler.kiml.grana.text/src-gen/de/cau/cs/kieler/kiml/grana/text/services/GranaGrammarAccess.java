@@ -12,6 +12,8 @@ import org.eclipse.xtext.*;
 import org.eclipse.xtext.service.GrammarProvider;
 import org.eclipse.xtext.service.AbstractElementFinder.*;
 
+import org.eclipse.elk.graph.text.services.ElkGraphGrammarAccess;
+import org.eclipse.xtext.common.services.TerminalsGrammarAccess;
 
 @Singleton
 public class GranaGrammarAccess extends AbstractGrammarElementFinder {
@@ -150,7 +152,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cResourcesResourceParserRuleCall_5_0 = (RuleCall)cResourcesAssignment_5.eContents().get(0);
 		private final Keyword cLayoutoptionsKeyword_6 = (Keyword)cGroup.eContents().get(6);
 		private final Assignment cLayoutOptionsAssignment_7 = (Assignment)cGroup.eContents().get(7);
-		private final RuleCall cLayoutOptionsKIdentifierParserRuleCall_7_0 = (RuleCall)cLayoutOptionsAssignment_7.eContents().get(0);
+		private final RuleCall cLayoutOptionsLayoutConfigParserRuleCall_7_0 = (RuleCall)cLayoutOptionsAssignment_7.eContents().get(0);
 		private final Keyword cAnalysesKeyword_8 = (Keyword)cGroup.eContents().get(8);
 		private final Assignment cAnalysesAssignment_9 = (Assignment)cGroup.eContents().get(9);
 		private final RuleCall cAnalysesAnalysisParserRuleCall_9_0 = (RuleCall)cAnalysesAssignment_9.eContents().get(0);
@@ -166,7 +168,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//	'resources'
 		//	resources+=Resource+
 		//	'layoutoptions'
-		//	layoutOptions+=KIdentifier+
+		//	layoutOptions+=LayoutConfig+
 		//	'analyses'
 		//	analyses+=Analysis+
 		//	'output'
@@ -174,7 +176,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		@Override public ParserRule getRule() { return rule; }
 
 		//'job' name=ID layoutBeforeAnalysis?='layoutBeforeAnalysis'? measureExecutionTime?='measureExecutionTime'? 'resources'
-		//resources+=Resource+ 'layoutoptions' layoutOptions+=KIdentifier+ 'analyses' analyses+=Analysis+ 'output'
+		//resources+=Resource+ 'layoutoptions' layoutOptions+=LayoutConfig+ 'analyses' analyses+=Analysis+ 'output'
 		//outputType=OutputType? output=Output
 		public Group getGroup() { return cGroup; }
 
@@ -211,11 +213,11 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//'layoutoptions'
 		public Keyword getLayoutoptionsKeyword_6() { return cLayoutoptionsKeyword_6; }
 
-		//layoutOptions+=KIdentifier+
+		//layoutOptions+=LayoutConfig+
 		public Assignment getLayoutOptionsAssignment_7() { return cLayoutOptionsAssignment_7; }
 
-		//KIdentifier
-		public RuleCall getLayoutOptionsKIdentifierParserRuleCall_7_0() { return cLayoutOptionsKIdentifierParserRuleCall_7_0; }
+		//LayoutConfig
+		public RuleCall getLayoutOptionsLayoutConfigParserRuleCall_7_0() { return cLayoutOptionsLayoutConfigParserRuleCall_7_0; }
 
 		//'analyses'
 		public Keyword getAnalysesKeyword_8() { return cAnalysesKeyword_8; }
@@ -253,9 +255,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cResourcesResourceParserRuleCall_3_0 = (RuleCall)cResourcesAssignment_3.eContents().get(0);
 		private final Keyword cLayoutoptionsKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		private final Assignment cLayoutOptionsAssignment_5 = (Assignment)cGroup.eContents().get(5);
-		private final RuleCall cLayoutOptionsKIdentifierParserRuleCall_5_0 = (RuleCall)cLayoutOptionsAssignment_5.eContents().get(0);
+		private final RuleCall cLayoutOptionsLayoutConfigParserRuleCall_5_0 = (RuleCall)cLayoutOptionsAssignment_5.eContents().get(0);
 		private final Assignment cLayoutOptionsAssignment_6 = (Assignment)cGroup.eContents().get(6);
-		private final RuleCall cLayoutOptionsKIdentifierParserRuleCall_6_0 = (RuleCall)cLayoutOptionsAssignment_6.eContents().get(0);
+		private final RuleCall cLayoutOptionsLayoutConfigParserRuleCall_6_0 = (RuleCall)cLayoutOptionsAssignment_6.eContents().get(0);
 		private final Keyword cAnalysesKeyword_7 = (Keyword)cGroup.eContents().get(7);
 		private final Assignment cAnalysesAssignment_8 = (Assignment)cGroup.eContents().get(8);
 		private final RuleCall cAnalysesAnalysisParserRuleCall_8_0 = (RuleCall)cAnalysesAssignment_8.eContents().get(0);
@@ -269,14 +271,14 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//	'comparejob' name=ID
 		//	'resources' resources+=Resource+
 		//	'layoutoptions'
-		//	layoutOptions+=KIdentifier layoutOptions+=KIdentifier 'analyses'
+		//	layoutOptions+=LayoutConfig layoutOptions+=LayoutConfig 'analyses'
 		//	analyses+=Analysis+
 		//	'output'
 		//	outputType=OutputType? output=Output;
 		@Override public ParserRule getRule() { return rule; }
 
-		//'comparejob' name=ID 'resources' resources+=Resource+ 'layoutoptions' layoutOptions+=KIdentifier
-		//layoutOptions+=KIdentifier 'analyses' analyses+=Analysis+ 'output' outputType=OutputType? output=Output
+		//'comparejob' name=ID 'resources' resources+=Resource+ 'layoutoptions' layoutOptions+=LayoutConfig
+		//layoutOptions+=LayoutConfig 'analyses' analyses+=Analysis+ 'output' outputType=OutputType? output=Output
 		public Group getGroup() { return cGroup; }
 
 		//'comparejob'
@@ -300,17 +302,17 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//'layoutoptions'
 		public Keyword getLayoutoptionsKeyword_4() { return cLayoutoptionsKeyword_4; }
 
-		//layoutOptions+=KIdentifier
+		//layoutOptions+=LayoutConfig
 		public Assignment getLayoutOptionsAssignment_5() { return cLayoutOptionsAssignment_5; }
 
-		//KIdentifier
-		public RuleCall getLayoutOptionsKIdentifierParserRuleCall_5_0() { return cLayoutOptionsKIdentifierParserRuleCall_5_0; }
+		//LayoutConfig
+		public RuleCall getLayoutOptionsLayoutConfigParserRuleCall_5_0() { return cLayoutOptionsLayoutConfigParserRuleCall_5_0; }
 
-		//layoutOptions+=KIdentifier
+		//layoutOptions+=LayoutConfig
 		public Assignment getLayoutOptionsAssignment_6() { return cLayoutOptionsAssignment_6; }
 
-		//KIdentifier
-		public RuleCall getLayoutOptionsKIdentifierParserRuleCall_6_0() { return cLayoutOptionsKIdentifierParserRuleCall_6_0; }
+		//LayoutConfig
+		public RuleCall getLayoutOptionsLayoutConfigParserRuleCall_6_0() { return cLayoutOptionsLayoutConfigParserRuleCall_6_0; }
 
 		//'analyses'
 		public Keyword getAnalysesKeyword_7() { return cAnalysesKeyword_7; }
@@ -350,13 +352,13 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cResourcesResourceParserRuleCall_4_0 = (RuleCall)cResourcesAssignment_4.eContents().get(0);
 		private final Keyword cLayoutoptionsKeyword_5 = (Keyword)cGroup.eContents().get(5);
 		private final Assignment cLayoutOptionsAssignment_6 = (Assignment)cGroup.eContents().get(6);
-		private final RuleCall cLayoutOptionsKIdentifierParserRuleCall_6_0 = (RuleCall)cLayoutOptionsAssignment_6.eContents().get(0);
+		private final RuleCall cLayoutOptionsLayoutConfigParserRuleCall_6_0 = (RuleCall)cLayoutOptionsAssignment_6.eContents().get(0);
 		private final Keyword cAnalysesKeyword_7 = (Keyword)cGroup.eContents().get(7);
 		private final Assignment cAnalysesAssignment_8 = (Assignment)cGroup.eContents().get(8);
 		private final RuleCall cAnalysesAnalysisParserRuleCall_8_0 = (RuleCall)cAnalysesAssignment_8.eContents().get(0);
 		private final Keyword cRangeoptionKeyword_9 = (Keyword)cGroup.eContents().get(9);
 		private final Assignment cRangeOptionAssignment_10 = (Assignment)cGroup.eContents().get(10);
-		private final RuleCall cRangeOptionQualifiedIDParserRuleCall_10_0 = (RuleCall)cRangeOptionAssignment_10.eContents().get(0);
+		private final RuleCall cRangeOptionQualifiedIdParserRuleCall_10_0 = (RuleCall)cRangeOptionAssignment_10.eContents().get(0);
 		private final Assignment cRangeValuesAssignment_11 = (Assignment)cGroup.eContents().get(11);
 		private final RuleCall cRangeValuesRangeParserRuleCall_11_0 = (RuleCall)cRangeValuesAssignment_11.eContents().get(0);
 		private final Alternatives cAlternatives_12 = (Alternatives)cGroup.eContents().get(12);
@@ -367,7 +369,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_12_0_2 = (Group)cGroup_12_0.eContents().get(2);
 		private final Keyword cComponentKeyword_12_0_2_0 = (Keyword)cGroup_12_0_2.eContents().get(0);
 		private final Assignment cRangeAnalysisComponentAssignment_12_0_2_1 = (Assignment)cGroup_12_0_2.eContents().get(1);
-		private final RuleCall cRangeAnalysisComponentNATURALTerminalRuleCall_12_0_2_1_0 = (RuleCall)cRangeAnalysisComponentAssignment_12_0_2_1.eContents().get(0);
+		private final RuleCall cRangeAnalysisComponentSIGNED_INTTerminalRuleCall_12_0_2_1_0 = (RuleCall)cRangeAnalysisComponentAssignment_12_0_2_1.eContents().get(0);
 		private final Group cGroup_12_1 = (Group)cAlternatives_12.eContents().get(1);
 		private final Keyword cRangeanalysesKeyword_12_1_0 = (Keyword)cGroup_12_1.eContents().get(0);
 		private final Assignment cRangeAnalysesAssignment_12_1_1 = (Assignment)cGroup_12_1.eContents().get(1);
@@ -383,13 +385,13 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//	measureExecutionTime?='measureExecutionTime'?
 		//	'resources' resources+=Resource+
 		//	'layoutoptions'
-		//	layoutOptions+=KIdentifier+
+		//	layoutOptions+=LayoutConfig+
 		//	'analyses'
 		//	analyses+=Analysis+
 		//	'rangeoption'
-		//	rangeOption=QualifiedID
+		//	rangeOption=QualifiedId
 		//	rangeValues=Range ('rangeanalysis'
-		//	rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)? |
+		//	rangeAnalysis=Analysis ('component' rangeAnalysisComponent=SIGNED_INT)? |
 		//	'rangeanalyses'
 		//	rangeAnalyses+=Analysis+)
 		//	'output'
@@ -397,8 +399,8 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		@Override public ParserRule getRule() { return rule; }
 
 		//'rangejob' name=ID measureExecutionTime?='measureExecutionTime'? 'resources' resources+=Resource+ 'layoutoptions'
-		//layoutOptions+=KIdentifier+ 'analyses' analyses+=Analysis+ 'rangeoption' rangeOption=QualifiedID rangeValues=Range
-		//('rangeanalysis' rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)? | 'rangeanalyses'
+		//layoutOptions+=LayoutConfig+ 'analyses' analyses+=Analysis+ 'rangeoption' rangeOption=QualifiedId rangeValues=Range
+		//('rangeanalysis' rangeAnalysis=Analysis ('component' rangeAnalysisComponent=SIGNED_INT)? | 'rangeanalyses'
 		//rangeAnalyses+=Analysis+) 'output' outputType=OutputType? output=Output
 		public Group getGroup() { return cGroup; }
 
@@ -429,11 +431,11 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//'layoutoptions'
 		public Keyword getLayoutoptionsKeyword_5() { return cLayoutoptionsKeyword_5; }
 
-		//layoutOptions+=KIdentifier+
+		//layoutOptions+=LayoutConfig+
 		public Assignment getLayoutOptionsAssignment_6() { return cLayoutOptionsAssignment_6; }
 
-		//KIdentifier
-		public RuleCall getLayoutOptionsKIdentifierParserRuleCall_6_0() { return cLayoutOptionsKIdentifierParserRuleCall_6_0; }
+		//LayoutConfig
+		public RuleCall getLayoutOptionsLayoutConfigParserRuleCall_6_0() { return cLayoutOptionsLayoutConfigParserRuleCall_6_0; }
 
 		//'analyses'
 		public Keyword getAnalysesKeyword_7() { return cAnalysesKeyword_7; }
@@ -447,11 +449,11 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//'rangeoption'
 		public Keyword getRangeoptionKeyword_9() { return cRangeoptionKeyword_9; }
 
-		//rangeOption=QualifiedID
+		//rangeOption=QualifiedId
 		public Assignment getRangeOptionAssignment_10() { return cRangeOptionAssignment_10; }
 
-		//QualifiedID
-		public RuleCall getRangeOptionQualifiedIDParserRuleCall_10_0() { return cRangeOptionQualifiedIDParserRuleCall_10_0; }
+		//QualifiedId
+		public RuleCall getRangeOptionQualifiedIdParserRuleCall_10_0() { return cRangeOptionQualifiedIdParserRuleCall_10_0; }
 
 		//rangeValues=Range
 		public Assignment getRangeValuesAssignment_11() { return cRangeValuesAssignment_11; }
@@ -459,11 +461,11 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//Range
 		public RuleCall getRangeValuesRangeParserRuleCall_11_0() { return cRangeValuesRangeParserRuleCall_11_0; }
 
-		//('rangeanalysis' rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)? | 'rangeanalyses'
+		//('rangeanalysis' rangeAnalysis=Analysis ('component' rangeAnalysisComponent=SIGNED_INT)? | 'rangeanalyses'
 		//rangeAnalyses+=Analysis+)
 		public Alternatives getAlternatives_12() { return cAlternatives_12; }
 
-		//'rangeanalysis' rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)?
+		//'rangeanalysis' rangeAnalysis=Analysis ('component' rangeAnalysisComponent=SIGNED_INT)?
 		public Group getGroup_12_0() { return cGroup_12_0; }
 
 		//'rangeanalysis'
@@ -475,17 +477,17 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		//Analysis
 		public RuleCall getRangeAnalysisAnalysisParserRuleCall_12_0_1_0() { return cRangeAnalysisAnalysisParserRuleCall_12_0_1_0; }
 
-		//('component' rangeAnalysisComponent=NATURAL)?
+		//('component' rangeAnalysisComponent=SIGNED_INT)?
 		public Group getGroup_12_0_2() { return cGroup_12_0_2; }
 
 		//'component'
 		public Keyword getComponentKeyword_12_0_2_0() { return cComponentKeyword_12_0_2_0; }
 
-		//rangeAnalysisComponent=NATURAL
+		//rangeAnalysisComponent=SIGNED_INT
 		public Assignment getRangeAnalysisComponentAssignment_12_0_2_1() { return cRangeAnalysisComponentAssignment_12_0_2_1; }
 
-		//NATURAL
-		public RuleCall getRangeAnalysisComponentNATURALTerminalRuleCall_12_0_2_1_0() { return cRangeAnalysisComponentNATURALTerminalRuleCall_12_0_2_1_0; }
+		//SIGNED_INT
+		public RuleCall getRangeAnalysisComponentSIGNED_INTTerminalRuleCall_12_0_2_1_0() { return cRangeAnalysisComponentSIGNED_INTTerminalRuleCall_12_0_2_1_0; }
 
 		//'rangeanalyses' rangeAnalyses+=Analysis+
 		public Group getGroup_12_1() { return cGroup_12_1; }
@@ -540,39 +542,39 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cFloatvaluesKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cValuesAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cValuesFloatParserRuleCall_1_0 = (RuleCall)cValuesAssignment_1.eContents().get(0);
+		private final RuleCall cValuesFLOATTerminalRuleCall_1_0 = (RuleCall)cValuesAssignment_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
 		private final Keyword cCommaKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
 		private final Assignment cValuesAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cValuesFloatParserRuleCall_2_1_0 = (RuleCall)cValuesAssignment_2_1.eContents().get(0);
+		private final RuleCall cValuesFLOATTerminalRuleCall_2_1_0 = (RuleCall)cValuesAssignment_2_1.eContents().get(0);
 		
 		//FloatRange:
-		//	'floatvalues' values+=Float (',' values+=Float)*;
+		//	'floatvalues' values+=FLOAT (',' values+=FLOAT)*;
 		@Override public ParserRule getRule() { return rule; }
 
-		//'floatvalues' values+=Float (',' values+=Float)*
+		//'floatvalues' values+=FLOAT (',' values+=FLOAT)*
 		public Group getGroup() { return cGroup; }
 
 		//'floatvalues'
 		public Keyword getFloatvaluesKeyword_0() { return cFloatvaluesKeyword_0; }
 
-		//values+=Float
+		//values+=FLOAT
 		public Assignment getValuesAssignment_1() { return cValuesAssignment_1; }
 
-		//Float
-		public RuleCall getValuesFloatParserRuleCall_1_0() { return cValuesFloatParserRuleCall_1_0; }
+		//FLOAT
+		public RuleCall getValuesFLOATTerminalRuleCall_1_0() { return cValuesFLOATTerminalRuleCall_1_0; }
 
-		//(',' values+=Float)*
+		//(',' values+=FLOAT)*
 		public Group getGroup_2() { return cGroup_2; }
 
 		//','
 		public Keyword getCommaKeyword_2_0() { return cCommaKeyword_2_0; }
 
-		//values+=Float
+		//values+=FLOAT
 		public Assignment getValuesAssignment_2_1() { return cValuesAssignment_2_1; }
 
-		//Float
-		public RuleCall getValuesFloatParserRuleCall_2_1_0() { return cValuesFloatParserRuleCall_2_1_0; }
+		//FLOAT
+		public RuleCall getValuesFLOATTerminalRuleCall_2_1_0() { return cValuesFLOATTerminalRuleCall_2_1_0; }
 	}
 
 	public class IntRangeElements extends AbstractParserRuleElementFinder {
@@ -600,39 +602,39 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cIntvaluesKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cValuesAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cValuesNATURALTerminalRuleCall_1_0 = (RuleCall)cValuesAssignment_1.eContents().get(0);
+		private final RuleCall cValuesSIGNED_INTTerminalRuleCall_1_0 = (RuleCall)cValuesAssignment_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
 		private final Keyword cCommaKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
 		private final Assignment cValuesAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cValuesNATURALTerminalRuleCall_2_1_0 = (RuleCall)cValuesAssignment_2_1.eContents().get(0);
+		private final RuleCall cValuesSIGNED_INTTerminalRuleCall_2_1_0 = (RuleCall)cValuesAssignment_2_1.eContents().get(0);
 		
 		//IntRangeValues:
-		//	'intvalues' values+=NATURAL (',' values+=NATURAL)*;
+		//	'intvalues' values+=SIGNED_INT (',' values+=SIGNED_INT)*;
 		@Override public ParserRule getRule() { return rule; }
 
-		//'intvalues' values+=NATURAL (',' values+=NATURAL)*
+		//'intvalues' values+=SIGNED_INT (',' values+=SIGNED_INT)*
 		public Group getGroup() { return cGroup; }
 
 		//'intvalues'
 		public Keyword getIntvaluesKeyword_0() { return cIntvaluesKeyword_0; }
 
-		//values+=NATURAL
+		//values+=SIGNED_INT
 		public Assignment getValuesAssignment_1() { return cValuesAssignment_1; }
 
-		//NATURAL
-		public RuleCall getValuesNATURALTerminalRuleCall_1_0() { return cValuesNATURALTerminalRuleCall_1_0; }
+		//SIGNED_INT
+		public RuleCall getValuesSIGNED_INTTerminalRuleCall_1_0() { return cValuesSIGNED_INTTerminalRuleCall_1_0; }
 
-		//(',' values+=NATURAL)*
+		//(',' values+=SIGNED_INT)*
 		public Group getGroup_2() { return cGroup_2; }
 
 		//','
 		public Keyword getCommaKeyword_2_0() { return cCommaKeyword_2_0; }
 
-		//values+=NATURAL
+		//values+=SIGNED_INT
 		public Assignment getValuesAssignment_2_1() { return cValuesAssignment_2_1; }
 
-		//NATURAL
-		public RuleCall getValuesNATURALTerminalRuleCall_2_1_0() { return cValuesNATURALTerminalRuleCall_2_1_0; }
+		//SIGNED_INT
+		public RuleCall getValuesSIGNED_INTTerminalRuleCall_2_1_0() { return cValuesSIGNED_INTTerminalRuleCall_2_1_0; }
 	}
 
 	public class IntRangeRangeElements extends AbstractParserRuleElementFinder {
@@ -640,35 +642,35 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cIntrangeKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cStartAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cStartNATURALTerminalRuleCall_1_0 = (RuleCall)cStartAssignment_1.eContents().get(0);
+		private final RuleCall cStartSIGNED_INTTerminalRuleCall_1_0 = (RuleCall)cStartAssignment_1.eContents().get(0);
 		private final Keyword cToKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		private final Assignment cEndAssignment_3 = (Assignment)cGroup.eContents().get(3);
-		private final RuleCall cEndNATURALTerminalRuleCall_3_0 = (RuleCall)cEndAssignment_3.eContents().get(0);
+		private final RuleCall cEndSIGNED_INTTerminalRuleCall_3_0 = (RuleCall)cEndAssignment_3.eContents().get(0);
 		
 		//IntRangeRange:
-		//	'intrange' start=NATURAL 'to' end=NATURAL;
+		//	'intrange' start=SIGNED_INT 'to' end=SIGNED_INT;
 		@Override public ParserRule getRule() { return rule; }
 
-		//'intrange' start=NATURAL 'to' end=NATURAL
+		//'intrange' start=SIGNED_INT 'to' end=SIGNED_INT
 		public Group getGroup() { return cGroup; }
 
 		//'intrange'
 		public Keyword getIntrangeKeyword_0() { return cIntrangeKeyword_0; }
 
-		//start=NATURAL
+		//start=SIGNED_INT
 		public Assignment getStartAssignment_1() { return cStartAssignment_1; }
 
-		//NATURAL
-		public RuleCall getStartNATURALTerminalRuleCall_1_0() { return cStartNATURALTerminalRuleCall_1_0; }
+		//SIGNED_INT
+		public RuleCall getStartSIGNED_INTTerminalRuleCall_1_0() { return cStartSIGNED_INTTerminalRuleCall_1_0; }
 
 		//'to'
 		public Keyword getToKeyword_2() { return cToKeyword_2; }
 
-		//end=NATURAL
+		//end=SIGNED_INT
 		public Assignment getEndAssignment_3() { return cEndAssignment_3; }
 
-		//NATURAL
-		public RuleCall getEndNATURALTerminalRuleCall_3_0() { return cEndNATURALTerminalRuleCall_3_0; }
+		//SIGNED_INT
+		public RuleCall getEndSIGNED_INTTerminalRuleCall_3_0() { return cEndSIGNED_INTTerminalRuleCall_3_0; }
 	}
 
 	public class ResourceElements extends AbstractParserRuleElementFinder {
@@ -882,179 +884,55 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	public class AnalysisElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.Analysis");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
-		private final RuleCall cNameQualifiedIDParserRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
+		private final RuleCall cNameQualifiedIdParserRuleCall_0 = (RuleCall)cNameAssignment.eContents().get(0);
 		
 		//Analysis:
-		//	name=QualifiedID;
+		//	name=QualifiedId;
 		@Override public ParserRule getRule() { return rule; }
 
-		//name=QualifiedID
+		//name=QualifiedId
 		public Assignment getNameAssignment() { return cNameAssignment; }
 
-		//QualifiedID
-		public RuleCall getNameQualifiedIDParserRuleCall_0() { return cNameQualifiedIDParserRuleCall_0; }
+		//QualifiedId
+		public RuleCall getNameQualifiedIdParserRuleCall_0() { return cNameQualifiedIdParserRuleCall_0; }
 	}
 
-	public class KIdentifierElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.KIdentifier");
+	public class LayoutConfigElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.LayoutConfig");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cKIdentifierAction_0 = (Action)cGroup.eContents().get(0);
-		private final Assignment cIdAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cIdIDTerminalRuleCall_1_0 = (RuleCall)cIdAssignment_1.eContents().get(0);
-		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
-		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
-		private final Assignment cPersistentEntriesAssignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
-		private final RuleCall cPersistentEntriesPersistentEntryParserRuleCall_3_0_0 = (RuleCall)cPersistentEntriesAssignment_3_0.eContents().get(0);
-		private final Assignment cPersistentEntriesAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
-		private final RuleCall cPersistentEntriesPersistentEntryParserRuleCall_3_1_0 = (RuleCall)cPersistentEntriesAssignment_3_1.eContents().get(0);
-		private final Keyword cRightCurlyBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		private final Assignment cIdentifierAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cIdentifierIDTerminalRuleCall_0_0 = (RuleCall)cIdentifierAssignment_0.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cPropertiesAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cPropertiesPropertyParserRuleCall_2_0 = (RuleCall)cPropertiesAssignment_2.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
-		//KIdentifier:
-		//	{KIdentifier} id=ID
-		//	'{' (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?
-		//	'}';
+		//LayoutConfig ElkNode:
+		//	identifier=ID '{'
+		//	properties+=Property*
+		//	'}'
 		@Override public ParserRule getRule() { return rule; }
 
-		//{KIdentifier} id=ID '{' (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)? '}'
+		//identifier=ID '{' properties+=Property* '}'
 		public Group getGroup() { return cGroup; }
 
-		//{KIdentifier}
-		public Action getKIdentifierAction_0() { return cKIdentifierAction_0; }
-
-		//id=ID
-		public Assignment getIdAssignment_1() { return cIdAssignment_1; }
+		//identifier=ID
+		public Assignment getIdentifierAssignment_0() { return cIdentifierAssignment_0; }
 
 		//ID
-		public RuleCall getIdIDTerminalRuleCall_1_0() { return cIdIDTerminalRuleCall_1_0; }
+		public RuleCall getIdentifierIDTerminalRuleCall_0_0() { return cIdentifierIDTerminalRuleCall_0_0; }
 
 		//'{'
-		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
+		public Keyword getLeftCurlyBracketKeyword_1() { return cLeftCurlyBracketKeyword_1; }
 
-		//(persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?
-		public Group getGroup_3() { return cGroup_3; }
+		//properties+=Property*
+		public Assignment getPropertiesAssignment_2() { return cPropertiesAssignment_2; }
 
-		//persistentEntries+=PersistentEntry
-		public Assignment getPersistentEntriesAssignment_3_0() { return cPersistentEntriesAssignment_3_0; }
-
-		//PersistentEntry
-		public RuleCall getPersistentEntriesPersistentEntryParserRuleCall_3_0_0() { return cPersistentEntriesPersistentEntryParserRuleCall_3_0_0; }
-
-		//persistentEntries+=PersistentEntry*
-		public Assignment getPersistentEntriesAssignment_3_1() { return cPersistentEntriesAssignment_3_1; }
-
-		//PersistentEntry
-		public RuleCall getPersistentEntriesPersistentEntryParserRuleCall_3_1_0() { return cPersistentEntriesPersistentEntryParserRuleCall_3_1_0; }
+		//Property
+		public RuleCall getPropertiesPropertyParserRuleCall_2_0() { return cPropertiesPropertyParserRuleCall_2_0; }
 
 		//'}'
-		public Keyword getRightCurlyBracketKeyword_4() { return cRightCurlyBracketKeyword_4; }
-	}
-
-	public class PersistentEntryElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.PersistentEntry");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cKeyQualifiedIDParserRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
-		private final Keyword cColonKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cValuePropertyValueParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
-		
-		//PersistentEntry:
-		//	key=QualifiedID ':' value=PropertyValue;
-		@Override public ParserRule getRule() { return rule; }
-
-		//key=QualifiedID ':' value=PropertyValue
-		public Group getGroup() { return cGroup; }
-
-		//key=QualifiedID
-		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
-
-		//QualifiedID
-		public RuleCall getKeyQualifiedIDParserRuleCall_0_0() { return cKeyQualifiedIDParserRuleCall_0_0; }
-
-		//':'
-		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
-
-		//value=PropertyValue
-		public Assignment getValueAssignment_2() { return cValueAssignment_2; }
-
-		//PropertyValue
-		public RuleCall getValuePropertyValueParserRuleCall_2_0() { return cValuePropertyValueParserRuleCall_2_0; }
-	}
-
-	public class QualifiedIDElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.QualifiedID");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cIDTerminalRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Keyword cFullStopKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final RuleCall cIDTerminalRuleCall_1_1 = (RuleCall)cGroup_1.eContents().get(1);
-		
-		//QualifiedID:
-		//	ID ('.' ID)*;
-		@Override public ParserRule getRule() { return rule; }
-
-		//ID ('.' ID)*
-		public Group getGroup() { return cGroup; }
-
-		//ID
-		public RuleCall getIDTerminalRuleCall_0() { return cIDTerminalRuleCall_0; }
-
-		//('.' ID)*
-		public Group getGroup_1() { return cGroup_1; }
-
-		//'.'
-		public Keyword getFullStopKeyword_1_0() { return cFullStopKeyword_1_0; }
-
-		//ID
-		public RuleCall getIDTerminalRuleCall_1_1() { return cIDTerminalRuleCall_1_1; }
-	}
-
-	public class PropertyValueElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.PropertyValue");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cBOOLEANTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final RuleCall cSTRINGTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		private final RuleCall cFloatParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
-		private final RuleCall cQualifiedIDParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
-		
-		//PropertyValue:
-		//	BOOLEAN | STRING | Float | QualifiedID;
-		@Override public ParserRule getRule() { return rule; }
-
-		//BOOLEAN | STRING | Float | QualifiedID
-		public Alternatives getAlternatives() { return cAlternatives; }
-
-		//BOOLEAN
-		public RuleCall getBOOLEANTerminalRuleCall_0() { return cBOOLEANTerminalRuleCall_0; }
-
-		//STRING
-		public RuleCall getSTRINGTerminalRuleCall_1() { return cSTRINGTerminalRuleCall_1; }
-
-		//Float
-		public RuleCall getFloatParserRuleCall_2() { return cFloatParserRuleCall_2; }
-
-		//QualifiedID
-		public RuleCall getQualifiedIDParserRuleCall_3() { return cQualifiedIDParserRuleCall_3; }
-	}
-
-	public class FloatElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.Float");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cTFLOATTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final RuleCall cNATURALTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		
-		//Float ecore::EFloat:
-		//	TFLOAT | NATURAL
-		@Override public ParserRule getRule() { return rule; }
-
-		//TFLOAT | NATURAL
-		public Alternatives getAlternatives() { return cAlternatives; }
-
-		//TFLOAT
-		public RuleCall getTFLOATTerminalRuleCall_0() { return cTFLOATTerminalRuleCall_0; }
-
-		//NATURAL
-		public RuleCall getNATURALTerminalRuleCall_1() { return cNATURALTerminalRuleCall_1; }
+		public Keyword getRightCurlyBracketKeyword_3() { return cRightCurlyBracketKeyword_3; }
 	}
 	
 	
@@ -1107,25 +985,21 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	private final LocalOutputElements pLocalOutput;
 	private final OutputTypeElements eOutputType;
 	private final AnalysisElements pAnalysis;
-	private final KIdentifierElements pKIdentifier;
-	private final PersistentEntryElements pPersistentEntry;
-	private final QualifiedIDElements pQualifiedID;
-	private final PropertyValueElements pPropertyValue;
-	private final FloatElements pFloat;
-	private final TerminalRule tTFLOAT;
-	private final TerminalRule tNATURAL;
-	private final TerminalRule tBOOLEAN;
-	private final TerminalRule tSTRING;
-	private final TerminalRule tID;
-	private final TerminalRule tML_COMMENT;
-	private final TerminalRule tSL_COMMENT;
-	private final TerminalRule tWS;
+	private final LayoutConfigElements pLayoutConfig;
 	
 	private final Grammar grammar;
 
+	private final ElkGraphGrammarAccess gaElkGraph;
+
+	private final TerminalsGrammarAccess gaTerminals;
+
 	@Inject
-	public GranaGrammarAccess(GrammarProvider grammarProvider) {
+	public GranaGrammarAccess(GrammarProvider grammarProvider,
+		ElkGraphGrammarAccess gaElkGraph,
+		TerminalsGrammarAccess gaTerminals) {
 		this.grammar = internalFindGrammar(grammarProvider);
+		this.gaElkGraph = gaElkGraph;
+		this.gaTerminals = gaTerminals;
 		this.pGrana = new GranaElements();
 		this.pJob = new JobElements();
 		this.pRegularJob = new RegularJobElements();
@@ -1146,19 +1020,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		this.pLocalOutput = new LocalOutputElements();
 		this.eOutputType = new OutputTypeElements();
 		this.pAnalysis = new AnalysisElements();
-		this.pKIdentifier = new KIdentifierElements();
-		this.pPersistentEntry = new PersistentEntryElements();
-		this.pQualifiedID = new QualifiedIDElements();
-		this.pPropertyValue = new PropertyValueElements();
-		this.pFloat = new FloatElements();
-		this.tTFLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.TFLOAT");
-		this.tNATURAL = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.NATURAL");
-		this.tBOOLEAN = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.BOOLEAN");
-		this.tSTRING = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.STRING");
-		this.tID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.ID");
-		this.tML_COMMENT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.ML_COMMENT");
-		this.tSL_COMMENT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.SL_COMMENT");
-		this.tWS = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.grana.text.Grana.WS");
+		this.pLayoutConfig = new LayoutConfigElements();
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -1182,6 +1044,14 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		return grammar;
 	}
 	
+
+	public ElkGraphGrammarAccess getElkGraphGrammarAccess() {
+		return gaElkGraph;
+	}
+
+	public TerminalsGrammarAccess getTerminalsGrammarAccess() {
+		return gaTerminals;
+	}
 
 	
 	//Grana:
@@ -1211,7 +1081,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	//	'resources'
 	//	resources+=Resource+
 	//	'layoutoptions'
-	//	layoutOptions+=KIdentifier+
+	//	layoutOptions+=LayoutConfig+
 	//	'analyses'
 	//	analyses+=Analysis+
 	//	'output'
@@ -1228,7 +1098,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	//	'comparejob' name=ID
 	//	'resources' resources+=Resource+
 	//	'layoutoptions'
-	//	layoutOptions+=KIdentifier layoutOptions+=KIdentifier 'analyses'
+	//	layoutOptions+=LayoutConfig layoutOptions+=LayoutConfig 'analyses'
 	//	analyses+=Analysis+
 	//	'output'
 	//	outputType=OutputType? output=Output;
@@ -1245,13 +1115,13 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	//	measureExecutionTime?='measureExecutionTime'?
 	//	'resources' resources+=Resource+
 	//	'layoutoptions'
-	//	layoutOptions+=KIdentifier+
+	//	layoutOptions+=LayoutConfig+
 	//	'analyses'
 	//	analyses+=Analysis+
 	//	'rangeoption'
-	//	rangeOption=QualifiedID
+	//	rangeOption=QualifiedId
 	//	rangeValues=Range ('rangeanalysis'
-	//	rangeAnalysis=Analysis ('component' rangeAnalysisComponent=NATURAL)? |
+	//	rangeAnalysis=Analysis ('component' rangeAnalysisComponent=SIGNED_INT)? |
 	//	'rangeanalyses'
 	//	rangeAnalyses+=Analysis+)
 	//	'output'
@@ -1275,7 +1145,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//FloatRange:
-	//	'floatvalues' values+=Float (',' values+=Float)*;
+	//	'floatvalues' values+=FLOAT (',' values+=FLOAT)*;
 	public FloatRangeElements getFloatRangeAccess() {
 		return pFloatRange;
 	}
@@ -1295,7 +1165,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IntRangeValues:
-	//	'intvalues' values+=NATURAL (',' values+=NATURAL)*;
+	//	'intvalues' values+=SIGNED_INT (',' values+=SIGNED_INT)*;
 	public IntRangeValuesElements getIntRangeValuesAccess() {
 		return pIntRangeValues;
 	}
@@ -1305,7 +1175,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//IntRangeRange:
-	//	'intrange' start=NATURAL 'to' end=NATURAL;
+	//	'intrange' start=SIGNED_INT 'to' end=SIGNED_INT;
 	public IntRangeRangeElements getIntRangeRangeAccess() {
 		return pIntRangeRange;
 	}
@@ -1410,7 +1280,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Analysis:
-	//	name=QualifiedID;
+	//	name=QualifiedId;
 	public AnalysisElements getAnalysisAccess() {
 		return pAnalysis;
 	}
@@ -1419,107 +1289,247 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		return getAnalysisAccess().getRule();
 	}
 
-	//KIdentifier:
-	//	{KIdentifier} id=ID
-	//	'{' (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?
-	//	'}';
-	public KIdentifierElements getKIdentifierAccess() {
-		return pKIdentifier;
+	//LayoutConfig ElkNode:
+	//	identifier=ID '{'
+	//	properties+=Property*
+	//	'}'
+	public LayoutConfigElements getLayoutConfigAccess() {
+		return pLayoutConfig;
 	}
 	
-	public ParserRule getKIdentifierRule() {
-		return getKIdentifierAccess().getRule();
+	public ParserRule getLayoutConfigRule() {
+		return getLayoutConfigAccess().getRule();
 	}
 
-	//PersistentEntry:
-	//	key=QualifiedID ':' value=PropertyValue;
-	public PersistentEntryElements getPersistentEntryAccess() {
-		return pPersistentEntry;
+	//RootNode ElkNode:
+	//	{ElkNode} ('graph' identifier=ID)?
+	//	properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+	public ElkGraphGrammarAccess.RootNodeElements getRootNodeAccess() {
+		return gaElkGraph.getRootNodeAccess();
 	}
 	
-	public ParserRule getPersistentEntryRule() {
-		return getPersistentEntryAccess().getRule();
+	public ParserRule getRootNodeRule() {
+		return getRootNodeAccess().getRule();
 	}
 
-	//QualifiedID:
+	//ElkNode:
+	//	'node' identifier=ID ('{'
+	//	ShapeLayout?
+	//	properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+	//	'}')?;
+	public ElkGraphGrammarAccess.ElkNodeElements getElkNodeAccess() {
+		return gaElkGraph.getElkNodeAccess();
+	}
+	
+	public ParserRule getElkNodeRule() {
+		return getElkNodeAccess().getRule();
+	}
+
+	//ElkLabel:
+	//	'label' (identifier=ID ':')? text=STRING ('{'
+	//	ShapeLayout?
+	//	properties+=Property*
+	//	labels+=ElkLabel*
+	//	'}')?;
+	public ElkGraphGrammarAccess.ElkLabelElements getElkLabelAccess() {
+		return gaElkGraph.getElkLabelAccess();
+	}
+	
+	public ParserRule getElkLabelRule() {
+		return getElkLabelAccess().getRule();
+	}
+
+	//ElkPort:
+	//	'port' identifier=ID ('{'
+	//	ShapeLayout?
+	//	properties+=Property*
+	//	labels+=ElkLabel*
+	//	'}')?;
+	public ElkGraphGrammarAccess.ElkPortElements getElkPortAccess() {
+		return gaElkGraph.getElkPortAccess();
+	}
+	
+	public ParserRule getElkPortRule() {
+		return getElkPortAccess().getRule();
+	}
+
+	//fragment ShapeLayout returns ElkShape:
+	//	'layout' '[' (('position' ':' x=Number ',' y=Number)?
+	//	& ('size' ':' width=Number ',' height=Number)?) ']';
+	public ElkGraphGrammarAccess.ShapeLayoutElements getShapeLayoutAccess() {
+		return gaElkGraph.getShapeLayoutAccess();
+	}
+	
+	public ParserRule getShapeLayoutRule() {
+		return getShapeLayoutAccess().getRule();
+	}
+
+	//ElkEdge:
+	//	'edge' (identifier=ID ':')?
+	//	sources+=[ElkConnectableShape|QualifiedId] (',' sources+=[ElkConnectableShape|QualifiedId])* '->'
+	//	targets+=[ElkConnectableShape|QualifiedId] (',' targets+=[ElkConnectableShape|QualifiedId])* ('{'
+	//	EdgeLayout?
+	//	properties+=Property*
+	//	labels+=ElkLabel*
+	//	'}')?;
+	public ElkGraphGrammarAccess.ElkEdgeElements getElkEdgeAccess() {
+		return gaElkGraph.getElkEdgeAccess();
+	}
+	
+	public ParserRule getElkEdgeRule() {
+		return getElkEdgeAccess().getRule();
+	}
+
+	//fragment EdgeLayout returns ElkEdge:
+	//	'layout' '[' (sections+=ElkSingleEdgeSection | sections+=ElkEdgeSection+) ']';
+	public ElkGraphGrammarAccess.EdgeLayoutElements getEdgeLayoutAccess() {
+		return gaElkGraph.getEdgeLayoutAccess();
+	}
+	
+	public ParserRule getEdgeLayoutRule() {
+		return getEdgeLayoutAccess().getRule();
+	}
+
+	//ElkSingleEdgeSection ElkEdgeSection:
+	//	{ElkEdgeSection} (('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
+	//	& ('start' ':' startX=Number ',' startY=Number)?
+	//	& ('end' ':' endX=Number ',' endY=Number)?
+	//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?)
+	public ElkGraphGrammarAccess.ElkSingleEdgeSectionElements getElkSingleEdgeSectionAccess() {
+		return gaElkGraph.getElkSingleEdgeSectionAccess();
+	}
+	
+	public ParserRule getElkSingleEdgeSectionRule() {
+		return getElkSingleEdgeSectionAccess().getRule();
+	}
+
+	//ElkEdgeSection:
+	//	'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
+	//	(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
+	//	& ('start' ':' startX=Number ',' startY=Number)?
+	//	& ('end' ':' endX=Number ',' endY=Number)?
+	//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?) ']';
+	public ElkGraphGrammarAccess.ElkEdgeSectionElements getElkEdgeSectionAccess() {
+		return gaElkGraph.getElkEdgeSectionAccess();
+	}
+	
+	public ParserRule getElkEdgeSectionRule() {
+		return getElkEdgeSectionAccess().getRule();
+	}
+
+	//ElkBendPoint:
+	//	x=Number ',' y=Number;
+	public ElkGraphGrammarAccess.ElkBendPointElements getElkBendPointAccess() {
+		return gaElkGraph.getElkBendPointAccess();
+	}
+	
+	public ParserRule getElkBendPointRule() {
+		return getElkBendPointAccess().getRule();
+	}
+
+	//Property ElkPropertyToValueMapEntry:
+	//	key=PropertyKey ':' (value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT)
+	public ElkGraphGrammarAccess.PropertyElements getPropertyAccess() {
+		return gaElkGraph.getPropertyAccess();
+	}
+	
+	public ParserRule getPropertyRule() {
+		return getPropertyAccess().getRule();
+	}
+
+	//QualifiedId:
 	//	ID ('.' ID)*;
-	public QualifiedIDElements getQualifiedIDAccess() {
-		return pQualifiedID;
+	public ElkGraphGrammarAccess.QualifiedIdElements getQualifiedIdAccess() {
+		return gaElkGraph.getQualifiedIdAccess();
 	}
 	
-	public ParserRule getQualifiedIDRule() {
-		return getQualifiedIDAccess().getRule();
+	public ParserRule getQualifiedIdRule() {
+		return getQualifiedIdAccess().getRule();
 	}
 
-	//PropertyValue:
-	//	BOOLEAN | STRING | Float | QualifiedID;
-	public PropertyValueElements getPropertyValueAccess() {
-		return pPropertyValue;
-	}
-	
-	public ParserRule getPropertyValueRule() {
-		return getPropertyValueAccess().getRule();
-	}
-
-	//Float ecore::EFloat:
-	//	TFLOAT | NATURAL
-	public FloatElements getFloatAccess() {
-		return pFloat;
+	//Boolean ecore::EBoolean:
+	//	'true' | 'false'
+	public ElkGraphGrammarAccess.BooleanElements getBooleanAccess() {
+		return gaElkGraph.getBooleanAccess();
 	}
 	
-	public ParserRule getFloatRule() {
-		return getFloatAccess().getRule();
+	public ParserRule getBooleanRule() {
+		return getBooleanAccess().getRule();
 	}
 
-	//terminal TFLOAT returns ecore::EFloat:
-	//	('+' | '-') ('0'..'9'+ ('.' '0'..'9'*)? (('e' | 'E') ('+' | '-')? '0'..'9'+)?
-	//	| '.' '0'..'9'+ (('e' | 'E') ('+' | '-')? '0'..'9'+)?) | '0'..'9'+ '.' '0'..'9'* (('e' | 'E') ('+' | '-')?
-	//	'0'..'9'+)?
-	//	| '.' '0'..'9'+ (('e' | 'E') ('+' | '-')? '0'..'9'+)?
-	//	| '0'..'9'+ ('e' | 'E') ('+' | '-')? '0'..'9'+;
-	public TerminalRule getTFLOATRule() {
-		return tTFLOAT;
+	//Number ecore::EDouble:
+	//	SIGNED_INT | FLOAT
+	public ElkGraphGrammarAccess.NumberElements getNumberAccess() {
+		return gaElkGraph.getNumberAccess();
+	}
+	
+	public ParserRule getNumberRule() {
+		return getNumberAccess().getRule();
+	}
+
+	//PropertyKey IProperty hidden():
+	//	ID ('.' ID)*
+	public ElkGraphGrammarAccess.PropertyKeyElements getPropertyKeyAccess() {
+		return gaElkGraph.getPropertyKeyAccess();
+	}
+	
+	public ParserRule getPropertyKeyRule() {
+		return getPropertyKeyAccess().getRule();
+	}
+
+	//terminal SIGNED_INT returns ecore::EInt:
+	//	('+' | '-')? INT;
+	public TerminalRule getSIGNED_INTRule() {
+		return gaElkGraph.getSIGNED_INTRule();
 	} 
 
-	//terminal NATURAL returns ecore::EInt:
-	//	'0'..'9'+;
-	public TerminalRule getNATURALRule() {
-		return tNATURAL;
+	//terminal FLOAT returns ecore::EDouble:
+	//	('+' | '-')? (INT '.' INT | INT ('.' INT)? ('e' | 'E') ('+' | '-')? INT);
+	public TerminalRule getFLOATRule() {
+		return gaElkGraph.getFLOATRule();
 	} 
 
-	//terminal BOOLEAN returns ecore::EBoolean:
-	//	'true' | 'false';
-	public TerminalRule getBOOLEANRule() {
-		return tBOOLEAN;
-	} 
-
-	//terminal STRING: // chsch: added '\'' alternative! 
-	//	'"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | '\'' | '\\') | !('\\' | '"'))* '"';
-	public TerminalRule getSTRINGRule() {
-		return tSTRING;
-	} 
-
-	//terminal ID: // chsch: the optional leading '^' is the implicit keyword escape character
+	//terminal ID:
 	//	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 	public TerminalRule getIDRule() {
-		return tID;
+		return gaTerminals.getIDRule();
+	} 
+
+	//terminal INT returns ecore::EInt:
+	//	'0'..'9'+;
+	public TerminalRule getINTRule() {
+		return gaTerminals.getINTRule();
+	} 
+
+	//terminal STRING:
+	//	'"' ('\\' . | !('\\' | '"'))* '"' | "'" ('\\' . | !('\\' | "'"))* "'";
+	public TerminalRule getSTRINGRule() {
+		return gaTerminals.getSTRINGRule();
 	} 
 
 	//terminal ML_COMMENT:
 	//	'/ *'->'* /';
 	public TerminalRule getML_COMMENTRule() {
-		return tML_COMMENT;
+		return gaTerminals.getML_COMMENTRule();
 	} 
 
 	//terminal SL_COMMENT:
 	//	'//' !('\n' | '\r')* ('\r'? '\n')?;
 	public TerminalRule getSL_COMMENTRule() {
-		return tSL_COMMENT;
+		return gaTerminals.getSL_COMMENTRule();
 	} 
 
 	//terminal WS:
 	//	' ' | '\t' | '\r' | '\n'+;
 	public TerminalRule getWSRule() {
-		return tWS;
+		return gaTerminals.getWSRule();
+	} 
+
+	//terminal ANY_OTHER:
+	//	.;
+	public TerminalRule getANY_OTHERRule() {
+		return gaTerminals.getANY_OTHERRule();
 	} 
 }

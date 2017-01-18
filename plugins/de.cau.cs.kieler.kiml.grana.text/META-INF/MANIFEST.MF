@@ -26,7 +26,8 @@ Require-Bundle: org.eclipse.xtext;visibility:=reexport,
  de.cau.cs.kieler.kiml.config.text;visibility:=reexport,
  de.cau.cs.kieler.kiml.grana;visibility:=reexport,
  org.eclipse.elk.core.service;visibility:=reexport,
- org.eclipse.elk.graph
+ org.eclipse.elk.graph,
+ org.eclipse.elk.graph.text
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8

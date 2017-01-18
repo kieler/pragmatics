@@ -18,7 +18,9 @@ Require-Bundle: de.cau.cs.kieler.kiml.grana.text;visibility:=reexport,
  org.eclipse.compare,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.elk.core.ui,
- org.eclipse.elk.graph
+ org.eclipse.elk.graph,
+ org.eclipse.elk.graph.text,
+ org.eclipse.elk.graph.text.ui
 Import-Package: org.apache.log4j,
  org.eclipse.xtext.xbase.lib
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
