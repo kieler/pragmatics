@@ -21,23 +21,22 @@ import org.adaptagrams.Dim;
 import org.adaptagrams.Rectangle;
 import org.adaptagrams.RectanglePtrs;
 import org.adaptagrams.SeparationConstraint;
+import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.Direction;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
-import de.cau.cs.kieler.core.alg.IKielerProgressMonitor;
-import de.cau.cs.kieler.core.kgraph.KEdge;
-import de.cau.cs.kieler.core.kgraph.KNode;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.AbstractLayoutProvider;
-import de.cau.cs.kieler.kiml.klayoutdata.KEdgeLayout;
-import de.cau.cs.kieler.kiml.klayoutdata.KInsets;
-import de.cau.cs.kieler.kiml.klayoutdata.KLayoutData;
-import de.cau.cs.kieler.kiml.klayoutdata.KShapeLayout;
-import de.cau.cs.kieler.kiml.options.Direction;
-import de.cau.cs.kieler.kiml.options.LayoutOptions;
-import de.cau.cs.kieler.kiml.util.KimlUtil;
+import de.cau.cs.kieler.kiml.adaptagrams.properties.ColaOptions;
+
 
 /**
  * Entry class for KIML to perform basic constrained layout. In terms of constraints only a
@@ -57,16 +56,15 @@ import de.cau.cs.kieler.kiml.util.KimlUtil;
 public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
 
     // DO NOT map the class instances, as the cpp side might return new instances ..
-    private BiMap<KNode, Long> nodeIndexMap = HashBiMap.create();
-    private BiMap<KEdge, Long> edgeIndexMap = HashBiMap.create();
+    private BiMap<ElkNode, Long> nodeIndexMap = HashBiMap.create();
+    private BiMap<ElkEdge, Long> edgeIndexMap = HashBiMap.create();
 
     private RectanglePtrs nodes;
     private ColaEdges edges;
 
     private CompoundConstraintPtrs constraints;
 
-    private float spacing;
-    private float borderSpacing;
+    private double spacing;
     private Direction direction;
     private boolean considerPrevious;
 
@@ -75,30 +73,26 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
      * 
      * {@inheritDoc}
      */
-    public void doLayout(final KNode parentNode, final IKielerProgressMonitor progressMonitor) {
-
-        // handle some properties
-        KLayoutData rootLayout = parentNode.getData(KLayoutData.class);
+    public void layout(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
 
         // should we consider previous node positions?
-        considerPrevious = rootLayout.getProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS);
+        considerPrevious = parentNode.getProperty(ColaOptions.CONSIDER_PREVIOUS_POSITIONS);
 
         // spacing
-        spacing = rootLayout.getProperty(LayoutOptions.SPACING);
+        spacing = parentNode.getProperty(ColaOptions.SPACING_NODE_NODE);
         Rectangle.setXBorder(spacing);
         Rectangle.setYBorder(spacing);
 
         // further options
-        double idealEdgeLength = rootLayout.getProperty(CoLaProperties.IDEAL_EDGE_LENGTHS).doubleValue();
-        boolean avoidOverlaps = rootLayout.getProperty(CoLaProperties.AVOID_OVERLAPS);
-        borderSpacing = rootLayout.getProperty(LayoutOptions.BORDER_SPACING);
+        double idealEdgeLength = parentNode.getProperty(ColaOptions.IDEAL_EDGE_LENGTH);
+        boolean avoidOverlaps = parentNode.getProperty(ColaOptions.AVOID_OVERLAPS);
 
         // transform to cola representation
         transformGraph(parentNode);
 
         // create constraints
         constraints = new CompoundConstraintPtrs();
-        direction = rootLayout.getProperty(LayoutOptions.DIRECTION);
+        direction = parentNode.getProperty(ColaOptions.DIRECTION);
         if (direction != Direction.UNDEFINED) {
             addDirectionConstraints(parentNode);
         }
@@ -123,27 +117,24 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
     /**
      * Transforms the KGraph into adaptagrams object.
      */
-    private void transformGraph(final KNode root) {
+    private void transformGraph(final ElkNode root) {
         nodeIndexMap.clear();
         edgeIndexMap.clear();
 
         // Nodes
         nodes = new RectanglePtrs();
         long index = 0;
-        for (KNode n : root.getChildren()) {
-            KShapeLayout layout = n.getData(KShapeLayout.class);
-
+        for (ElkNode n : root.getChildren()) {
             // x X y Y meaning x width y height
             Rectangle r = null;
             if (considerPrevious) {
-                r =
-                        new Rectangle(layout.getXpos(), layout.getXpos() + layout.getWidth(),
-                                layout.getYpos(), layout.getYpos() + layout.getHeight());
+                r = new Rectangle(n.getX(), n.getX() + n.getWidth(),
+                                  n.getY(), n.getY() + n.getHeight());
             } else {
                 // constrained layout considers previous positions, to make it independent from
                 // any weird layout stuff used before we run it, use 0 as initial positions for all
                 // rects
-                r = new Rectangle(0, 0 + layout.getWidth(), 0, 0 + layout.getHeight());
+                r = new Rectangle(0, 0 + n.getWidth(), 0, 0 + n.getHeight());
             }
 
             nodes.add(r);
@@ -153,14 +144,15 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
         // Edges are index pairs to the rectangle array
         edges = new ColaEdges();
         index = 0;
-        for (KNode n : root.getChildren()) {
-            for (KEdge e : n.getOutgoingEdges()) {
-
+        for (ElkNode n : root.getChildren()) {
+            for (ElkEdge e : ElkGraphUtil.allOutgoingEdges(n)) {
                 // ignore cross-hierarchy edges and self-loops
-                if (e.getTarget().getParent() == root && !e.getSource().equals(e.getTarget())) {
+                if (!e.isHierarchical() && !e.isSelfloop()) {
 
-                    long src = nodeIndexMap.get(e.getSource());
-                    long tgt = nodeIndexMap.get(e.getTarget());
+                    ElkNode source = ElkGraphUtil.connectableShapeToNode(e.getSources().get(0));
+                    ElkNode target = ElkGraphUtil.connectableShapeToNode(e.getTargets().get(0));
+                    long src = nodeIndexMap.get(source);
+                    long tgt = nodeIndexMap.get(target);
                     ColaEdge cE = new ColaEdge(src, tgt);
 
                     edges.add(cE);
@@ -173,7 +165,7 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
     /**
      * Apply the calculated layout back to the KGraph.
      */
-    private void applyLayout(final KNode root) {
+    private void applyLayout(final ElkNode root) {
 
         // calculate the offset from border spacing and node distribution
         double minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, maxX = Float.MIN_VALUE, maxY =
@@ -187,82 +179,74 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
             maxX = Math.max(maxX, r.getMaxX());
             maxY = Math.max(maxY, r.getMaxY());
         }
-        KVector offset = new KVector(borderSpacing - minX, borderSpacing - minY);
+        
+        ElkPadding padding = root.getProperty(ColaOptions.PADDING);
+        KVector offset = new KVector(padding.left - minX, padding.top - minY);
 
         // Nodes
         for (int i = 0; i < nodes.size(); i++) {
             Rectangle r = nodes.get(i);
-            KNode n = nodeIndexMap.inverse().get((long) i);
+            ElkNode n = nodeIndexMap.inverse().get((long) i);
 
-            KShapeLayout layout = n.getData(KShapeLayout.class);
-            layout.setXpos((float) (r.getMinX() + offset.x));
-            layout.setYpos((float) (r.getMinY() + offset.y));
+            n.setX((float) (r.getMinX() + offset.x));
+            n.setY((float) (r.getMinY() + offset.y));
         }
 
         // Edges, no routing done -> clear the bend points
-        for (KNode n : root.getChildren()) {
-            for (KEdge kedge : n.getOutgoingEdges()) {
-                KEdgeLayout layout = kedge.getData(KEdgeLayout.class);
-                layout.getBendPoints().clear();
-
+        for (ElkNode src : root.getChildren()) {
+            
+            for (ElkEdge elkEdge : ElkGraphUtil.allOutgoingEdges(src)) {
+               
+                ElkNode tgt = ElkGraphUtil.connectableShapeToNode(elkEdge.getTargets().get(0));
+                ElkEdgeSection edgeSection = ElkGraphUtil.firstEdgeSection(elkEdge, true, true);
+                
                 // TODO handle this more sophisticatedly
-                // set some positions for the edge
-                KShapeLayout srcLayout = n.getData(KShapeLayout.class);
-                KShapeLayout tgtLayout = kedge.getTarget().getData(KShapeLayout.class);
-
-                layout.getSourcePoint().setPos(srcLayout.getXpos() + srcLayout.getWidth() / 2,
-                        srcLayout.getYpos() + srcLayout.getHeight() / 2);
-                layout.getTargetPoint().setPos(tgtLayout.getXpos() + tgtLayout.getWidth() / 2,
-                        tgtLayout.getYpos() + tgtLayout.getHeight() / 2);
+                edgeSection.setStartLocation(src.getX() + src.getWidth() / 2, src.getY() + src.getHeight() / 2);
+                edgeSection.setEndLocation(tgt.getX() + tgt.getWidth() / 2, tgt.getY() + tgt.getHeight() / 2);
             }
         }
 
         // resize the parent node
-        KInsets insets = root.getData(KShapeLayout.class).getPadding();
-        float width =
-                (float) (maxX - minX) + 2 * borderSpacing + insets.getLeft() + insets.getRight();
-        float height =
-                (float) (maxY - minY) + 2 * borderSpacing + insets.getTop() + insets.getBottom();
-        KimlUtil.resizeNode(root, width, height, false, true);
+        double width = (maxX - minX) + padding.getHorizontal();
+        double height = (maxY - minY) + padding.getVertical();
+        ElkUtil.resizeNode(root, width, height, false, true);
     }
 
     /**
      * Add direction constraints.
      */
-    private void addDirectionConstraints(final KNode root) {
+    private void addDirectionConstraints(final ElkNode root) {
 
-        for (KNode n : root.getChildren()) {
-            for (KEdge e : n.getOutgoingEdges()) {
+        for (ElkNode srcNode : root.getChildren()) {
+            for (ElkEdge e : ElkGraphUtil.allOutgoingEdges(srcNode)) {
 
                 // only handle edges between nodes of the same parent
-                if (!e.getSource().getParent().equals(e.getTarget().getParent())) {
+                if (!e.isHierarchical()) {
                     continue;
                 }
                 
-                long src = nodeIndexMap.get(e.getSource());
-                long tgt = nodeIndexMap.get(e.getTarget());
-
-                KShapeLayout srcLayout = e.getSource().getData(KShapeLayout.class);
-                KShapeLayout tgtLayout = e.getTarget().getData(KShapeLayout.class);
+                ElkNode tgtNode = ElkGraphUtil.connectableShapeToNode(e.getTargets().get(0));
+                long src = nodeIndexMap.get(srcNode);
+                long tgt = nodeIndexMap.get(tgtNode);
 
                 int dim = Dim.XDIM;
-                float separation = 2 * spacing;
+                double separation = 2 * spacing;
                 boolean swap = false;
 
                 switch (direction) {
                 case RIGHT:
-                    separation += srcLayout.getWidth();
+                    separation += srcNode.getWidth();
                     break;
                 case LEFT:
-                    separation += tgtLayout.getWidth();
+                    separation += tgtNode.getWidth();
                     swap = true;
                     break;
                 case DOWN:
-                    separation += srcLayout.getHeight();
+                    separation += srcNode.getHeight();
                     dim = Dim.YDIM;
                     break;
                 case UP:
-                    separation += tgtLayout.getHeight();
+                    separation += tgtNode.getHeight();
                     dim = Dim.YDIM;
                     swap = true;
                     break;

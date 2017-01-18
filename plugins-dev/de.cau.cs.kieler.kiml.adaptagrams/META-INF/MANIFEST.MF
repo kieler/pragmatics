@@ -6,10 +6,9 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Kiel University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava,
- de.cau.cs.kieler.core,
- de.cau.cs.kieler.core.kgraph,
- de.cau.cs.kieler.kiml,
- org.adaptagrams
+ org.adaptagrams,
+ org.eclipse.elk.core,
+ org.eclipse.elk.graph
 Export-Package: de.cau.cs.kieler.adaptagrams.avoid,
  de.cau.cs.kieler.adaptagrams.cgraph,
  de.cau.cs.kieler.adaptagrams.layouter,

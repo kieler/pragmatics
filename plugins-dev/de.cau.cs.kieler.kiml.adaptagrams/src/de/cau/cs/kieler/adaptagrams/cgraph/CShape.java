@@ -14,10 +14,9 @@
 package de.cau.cs.kieler.adaptagrams.cgraph;
 
 import org.adaptagrams.Rectangle;
-
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Insets;
-import de.cau.cs.kieler.kiml.util.nodespacing.Spacing.Margins;
+import org.eclipse.elk.core.math.ElkMargin;
+import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.math.KVector;
 
 /**
  * A shape that has a position, a size and defined margins and insets.
@@ -43,9 +42,9 @@ public abstract class CShape extends CGraphElement {
     private final KVector size = new KVector();
 
     /** the margin area around this node. */
-    private final Margins margins = new Margins();
+    private final ElkMargin margins = new ElkMargin();
     /** the insets inside this node, usually reserved for port and label placement. */
-    private final Insets insets = new Insets();
+    private final ElkPadding padding = new ElkPadding();
 
     // CHECKSTYLEOFF VisibilityModifier
     /** The adaptagrams {@link Rectangle} representing this shape. */
@@ -173,14 +172,14 @@ public abstract class CShape extends CGraphElement {
     /**
      * @return the margins
      */
-    public Margins getMargins() {
+    public ElkMargin getMargins() {
         return margins;
     }
 
     /**
      * @return the insets
      */
-    public Insets getInsets() {
-        return insets;
+    public ElkPadding getPadding() {
+        return padding;
     }
 }

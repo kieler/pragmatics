@@ -13,9 +13,9 @@
  */
 package de.cau.cs.kieler.adaptagrams.properties;
 
-import de.cau.cs.kieler.core.kgraph.KGraphElement;
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.Property;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 
 /**
  * @author uru
@@ -29,7 +29,7 @@ public final class CGraphProperties {
     /**
      * The original object from which a graph element was created.
      */
-    public static final IProperty<KGraphElement> ORIGIN = new Property<KGraphElement>(
+    public static final IProperty<ElkGraphElement> ORIGIN = new Property<ElkGraphElement>(
             "cgraph.origin");
 
     /**

@@ -16,12 +16,12 @@ package de.cau.cs.kieler.adaptagrams.cgraph;
 import java.util.List;
 
 import org.adaptagrams.ColaEdge;
+import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.math.KVector;
 
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.core.math.KielerMath;
 
 /**
  * @author uru
@@ -178,7 +178,7 @@ public class CEdge extends CGraphElement {
         }
 
         KVector v = tV.clone().sub(sV);
-        KielerMath.clipVector(v, srcSize.x, srcSize.y);
+        ElkMath.clipVector(v, srcSize.x, srcSize.y);
         
         return v.add(sV);
     }
