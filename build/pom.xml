@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.cau.cs.kieler</groupId>
   <artifactId>parent</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.42.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
 
@@ -165,7 +165,7 @@
           <docletArtifact>
             <groupId>de.cau.cs.kieler</groupId>
             <artifactId>de.cau.cs.kieler.doclets</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>0.42.0-SNAPSHOT</version>
           </docletArtifact>
           <useStandardDocletOptions>false</useStandardDocletOptions>
           <additionalJOption>-p pragmatics -d ./rating</additionalJOption>
