@@ -5,24 +5,25 @@ package de.cau.cs.kieler.kiml.config.text.serializer;
 
 import com.google.inject.Inject;
 import de.cau.cs.kieler.kiml.config.text.services.LayoutConfigGrammarAccess;
+import java.util.Map;
 import java.util.Set;
-import org.eclipse.elk.core.klayoutdata.KIdentifier;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataPackage;
-import org.eclipse.elk.graph.KGraphPackage;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.PersistentEntry;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphPackage;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.text.serializer.ElkGraphSemanticSequencer;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.xtext.Action;
 import org.eclipse.xtext.Parameter;
 import org.eclipse.xtext.ParserRule;
 import org.eclipse.xtext.serializer.ISerializationContext;
-import org.eclipse.xtext.serializer.acceptor.SequenceFeeder;
-import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequencer;
-import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransient;
 
 @SuppressWarnings("all")
-public abstract class AbstractLayoutConfigSemanticSequencer extends AbstractDelegatingSemanticSequencer {
+public abstract class AbstractLayoutConfigSemanticSequencer extends ElkGraphSemanticSequencer {
 
 	@Inject
 	private LayoutConfigGrammarAccess grammarAccess;
@@ -33,19 +34,46 @@ public abstract class AbstractLayoutConfigSemanticSequencer extends AbstractDele
 		ParserRule rule = context.getParserRule();
 		Action action = context.getAssignedAction();
 		Set<Parameter> parameters = context.getEnabledBooleanParameters();
-		if (epackage == KGraphPackage.eINSTANCE)
+		if (epackage == ElkGraphPackage.eINSTANCE)
 			switch (semanticObject.eClass().getClassifierID()) {
-			case KGraphPackage.KNODE:
-				sequence_KGraphElement(context, (KNode) semanticObject); 
+			case ElkGraphPackage.ELK_BEND_POINT:
+				sequence_ElkBendPoint(context, (ElkBendPoint) semanticObject); 
 				return; 
-			case KGraphPackage.PERSISTENT_ENTRY:
-				sequence_PersistentEntry(context, (PersistentEntry) semanticObject); 
+			case ElkGraphPackage.ELK_EDGE:
+				sequence_EdgeLayout_ElkEdge(context, (ElkEdge) semanticObject); 
 				return; 
-			}
-		else if (epackage == KLayoutDataPackage.eINSTANCE)
-			switch (semanticObject.eClass().getClassifierID()) {
-			case KLayoutDataPackage.KIDENTIFIER:
-				sequence_KIdentifier(context, (KIdentifier) semanticObject); 
+			case ElkGraphPackage.ELK_EDGE_SECTION:
+				if (rule == grammarAccess.getElkEdgeSectionRule()) {
+					sequence_ElkEdgeSection(context, (ElkEdgeSection) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getElkSingleEdgeSectionRule()) {
+					sequence_ElkSingleEdgeSection(context, (ElkEdgeSection) semanticObject); 
+					return; 
+				}
+				else break;
+			case ElkGraphPackage.ELK_LABEL:
+				sequence_ElkLabel_ShapeLayout(context, (ElkLabel) semanticObject); 
+				return; 
+			case ElkGraphPackage.ELK_NODE:
+				if (rule == grammarAccess.getElkNodeRule()) {
+					sequence_ElkNode(context, (ElkNode) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getRefElkNodeRule()) {
+					sequence_RefElkNode(context, (ElkNode) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getRootNodeRule()) {
+					sequence_RootNode(context, (ElkNode) semanticObject); 
+					return; 
+				}
+				else break;
+			case ElkGraphPackage.ELK_PORT:
+				sequence_ElkPort_ShapeLayout(context, (ElkPort) semanticObject); 
+				return; 
+			case ElkGraphPackage.ELK_PROPERTY_TO_VALUE_MAP_ENTRY:
+				sequence_Property(context, (Map.Entry) semanticObject); 
 				return; 
 			}
 		if (errorAcceptor != null)
@@ -54,46 +82,37 @@ public abstract class AbstractLayoutConfigSemanticSequencer extends AbstractDele
 	
 	/**
 	 * Contexts:
-	 *     KGraphElement returns KNode
+	 *     ElkNode returns ElkNode
 	 *
 	 * Constraint:
-	 *     data+=KIdentifier*
+	 *     (identifier=ID properties+=Property* children+=RefElkNode*)
 	 */
-	protected void sequence_KGraphElement(ISerializationContext context, KNode semanticObject) {
+	protected void sequence_ElkNode(ISerializationContext context, ElkNode semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Contexts:
-	 *     KIdentifier returns KIdentifier
+	 *     RefElkNode returns ElkNode
 	 *
 	 * Constraint:
-	 *     (id=ID (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?)
+	 *     (identifier=ID properties+=Property*)
 	 */
-	protected void sequence_KIdentifier(ISerializationContext context, KIdentifier semanticObject) {
+	protected void sequence_RefElkNode(ISerializationContext context, ElkNode semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
 	/**
 	 * Contexts:
-	 *     PersistentEntry returns PersistentEntry
+	 *     RootNode returns ElkNode
 	 *
 	 * Constraint:
-	 *     (key=QualifiedID value=PropertyValue)
+	 *     children+=ElkNode+
 	 */
-	protected void sequence_PersistentEntry(ISerializationContext context, PersistentEntry semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, KGraphPackage.Literals.PERSISTENT_ENTRY__KEY) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KGraphPackage.Literals.PERSISTENT_ENTRY__KEY));
-			if (transientValues.isValueTransient(semanticObject, KGraphPackage.Literals.PERSISTENT_ENTRY__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KGraphPackage.Literals.PERSISTENT_ENTRY__VALUE));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getPersistentEntryAccess().getKeyQualifiedIDParserRuleCall_0_0(), semanticObject.getKey());
-		feeder.accept(grammarAccess.getPersistentEntryAccess().getValuePropertyValueParserRuleCall_2_0(), semanticObject.getValue());
-		feeder.finish();
+	protected void sequence_RootNode(ISerializationContext context, ElkNode semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
