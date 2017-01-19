@@ -1,5 +1,7 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms
 
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial.RadialLayoutProvider
+
 bundle {
     label "Hierarchical Layout Algorithms"
     metadataClass HierarchicalMetaDataProvider
@@ -29,13 +31,11 @@ algorithm custom(CustomLayoutProvider) {
 programmatic option hierarchicalID:int{
     label "Hierarchical ID "
     targets parents
-    legacyIds de.cau.cs.kieler.hierarchicalID
 }
 
 programmatic option hierarchicalParentID:int{
     label "Hierarchical Parent ID "
     targets parents
-    legacyIds de.cau.cs.kieler.hierarchicalParentID
 }
 
 algorithm stress(HierarchicalStressLayoutProvider) {

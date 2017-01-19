@@ -11,6 +11,7 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvider;
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.impl.KGraphFactoryImpl;
@@ -121,8 +122,8 @@ public final class HierachicalKGraphSynthesis {
                 copier.copyReferences();
 
                 copiedChildren.add(copy);
-//                 copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D, copy.hashCode());
-//                 copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D, parent.hashCode());
+                 copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D, copy.hashCode());
+                 copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D, parent.hashCode());
 
                 parents.put(copy, parent);
 
