@@ -25,23 +25,16 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	 * Our representation of infinity, allow to add two of them without getting
 	 * an int overflow.
 	 */
-	private static final int INFINITY = (Integer.MAX_VALUE / 2) - 1;
-	private static final double DOUBLE_INFINITY = Double.MAX_VALUE;
+	private static final double INFINITY = Double.MAX_VALUE;
 	// TODO make as option
 	private static final float SPACING = 100;
-	private static float dL;
-	private static float wp;
 	private static float width;
 	private static float height;
 	/** */
 	private static List<KEdge> edges = new ArrayList<KEdge>();
 	private static List<KNode> children = new ArrayList<KNode>();
-	private static KPoint[][] grid;
-	private static List<KNode> visited = new ArrayList<KNode>();
-	private static int distance;
-	private static Map<KNode, Float> dispMap = new HashMap<KNode, Float>();
-	private static int gridwidth;
-	private static int gridheight;
+	private static float gridwidth;
+	private static float gridheight;
 	private static List<Point2D.Double> availablePositions = new ArrayList<Point2D.Double>();
 
 	@Override
@@ -54,12 +47,7 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 
 		minimizingWhitespaceGrid(layoutGraph);
 
-		// initializeGrid(layoutGraph);
-		// initializeNodes(layoutGraph);
-		// pStress();
-
 		routeEdges();
-		// routeBetterEdges();
 
 		progressMonitor.done();
 	}
@@ -97,11 +85,10 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 			yPos += 50;
 		}
 
-		// calculate ralative closest grid position and check if available
-//		KShapeLayout diagramLayout = diagram.getData(KShapeLayout.class);
+//		calculate ralative closest grid position and check if available
 		KShapeLayout diagramLayout = diagram.getData(KShapeLayout.class);
-		double diagramwidth = diagramLayout.getWidth();
-		double diagramheight = diagramLayout.getHeight();
+		float diagramwidth = diagramLayout.getWidth();
+		float diagramheight = diagramLayout.getHeight();
 		gridwidth = xPos - 50;
 		gridheight = yPos - 50;
 		Map<Integer, KNode> gridNodeMap = new HashMap<Integer, KNode>();
@@ -114,15 +101,21 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 			}
 
 			KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-			int gridXpos = (int) ((nodeLayout.getXpos() + nodeLayout.getWidth() / diagramwidth) * gridwidth);
-			int gridYpos = (int) ((nodeLayout.getYpos() + nodeLayout.getHeight() / diagramheight) * gridheight);
-			// TODO Fix calculation of nearest Position
+//			System.out.println("xpos: " + nodeLayout.getXpos());
+//			System.out.println("width: " + diagramwidth);
+//			System.out.println("gridwidth: " + gridwidth);
+			float gridXpos = ((nodeLayout.getXpos() + nodeLayout.getWidth() / 2) / diagramwidth) * gridwidth;
+			float gridYpos = ((nodeLayout.getYpos() + nodeLayout.getHeight() / 2) / diagramheight) * gridheight;
+			// TODO Sort x- and y-axis first
+//			System.out.println("gridpos: " + gridXpos);
+//			System.out.println(round(gridXpos, gridwidth));
 			Point2D point = nearestAvailablePosition(
 					new Point2D.Double(round(gridXpos, gridwidth), round(gridYpos, gridheight)));
 			int mapPosition = gridNodePosition.get(point);
 //			System.out.println(mapPosition);
 			gridNodeMap.put(mapPosition, node);
 		}
+		System.out.println("Hallo");
 
 		float newWidth = 20;
 		float newHeight = 20;
@@ -182,7 +175,7 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	 */
 	private static Point2D nearestAvailablePosition(Point2D point) {
 		Point2D.Double position = new Point2D.Double(0, 0);
-		double smallestDistance = DOUBLE_INFINITY;
+		double smallestDistance = INFINITY;
 		double currentDistance;
 		for (Point2D.Double p : availablePositions) {
 			currentDistance = point.distance(p);
@@ -202,8 +195,8 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	 * @param maxvalue
 	 * @return
 	 */
-	private static double round(int x, int maxvalue) {
-		int result;
+	private static float round(float x, float maxvalue) {
+		float result;
 		if ((x % 50) > 50 / 2) {
 			result = x + 50 - x % 50;
 		} else {
@@ -214,7 +207,7 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 			result = maxvalue;
 		}
 
-		return (double) result;
+		return result;
 	}
 
 	/**
@@ -248,15 +241,6 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 		gridheight = (int) (height / (children.size() / 2));
 
 		for (KNode node : children) {
-			// if (node.getChildren().size() == 3) {
-			// KShapeLayout shape = node.getData(KShapeLayout.class);
-			// shape.setHeight(100);
-			// shape.setWidth(700);
-			// shape.setPos(0, 0);
-			// BasicProgressMonitor layeredMonitor = new BasicProgressMonitor();
-			// LayeredLayoutProvider layered = new LayeredLayoutProvider();
-			// layered.layout(node, layeredMonitor);
-			// }
 			for (KEdge edge : node.getOutgoingEdges()) {
 				if (children.contains(edge.getTarget())) {
 					edges.add(edge);
@@ -282,7 +266,7 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 	 * @param size
 	 * @return
 	 */
-	private static float calculateNewPos(float pos, int size) {
+	private static float calculateNewPos(float pos, float size) {
 		float x = pos / size;
 		double y = x - Math.floor(x);
 
@@ -292,140 +276,6 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 			pos = ((float) Math.floor(x)) * size;
 		}
 		return pos;
-	}
-
-	/**
-	 * 
-	 * @param layoutGraph
-	 */
-	private static void initializeGrid(KNode layoutGraph) {
-		edges.clear();
-		children.clear();
-		dispMap.clear();
-		width = 0.0f;
-		height = 0.0f;
-
-		for (KNode node : layoutGraph.getChildren()) {
-			KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-			width += nodeLayout.getWidth();
-			height += nodeLayout.getHeight();
-		}
-
-		KShapeLayout layout = layoutGraph.getData(KShapeLayout.class);
-		layout.setWidth(width);
-		layout.setHeight(height);
-
-		// grid = new KPoint[(int) (width / 10 + 1)][(int) (height / 10 + 1)];
-		// for (int i = 10; i <= width; i += 10) {
-		// for (int j = 10; j <= height; j += 10) {
-		// KPoint gridPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-		// gridPoint.setPos(i, j);
-		// grid[i / 10][j / 10] = gridPoint;
-		// }
-		// }
-	}
-
-	/**
-	 * 
-	 * @param layoutGraph
-	 */
-	private static void initializeNodes(KNode layoutGraph) {
-		children.addAll(layoutGraph.getChildren());
-		for (KNode node : children) {
-			// Calculate edges we need to draw
-			for (KEdge edge : node.getOutgoingEdges()) {
-				if (children.contains(edge.getTarget())) {
-					edges.add(edge);
-				}
-			}
-			// Initial random positions
-			KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-			nodeLayout.setPos((float) Math.random() * width, (float) Math.random() * height);
-		}
-	}
-
-	/**
-	 * 
-	 */
-	private static void pStress() {
-		dL = 100;
-		float pStress = 0.0f;
-		for (KNode u : children) {
-			float pStressLeft = 0.0f;
-			float pStressRight = 0.0f;
-			for (KNode v : children) {
-				if (u != v) {
-					float dist = distance(u, v);
-					if (children.indexOf(u) < children.indexOf(v)) {
-						float duv = getPathLength(u, v);
-						float wuv = 1 / (duv * duv);
-						pStressLeft += wuv * z(duv - dist) * z((duv - dist));
-					}
-					wp = 1 / dL;
-					pStressRight += wp * z(dist - dL) * z(dist - dL);
-				}
-			}
-			pStress = pStressLeft + pStressRight;
-			dispMap.put(u, pStress);
-		}
-
-		for (KNode n : children) {
-			KShapeLayout nLayout = n.getData(KShapeLayout.class);
-			// System.out.println("x: " + dispMap.get(n));
-			float newXpos = nLayout.getXpos() - dispMap.get(n) - nLayout.getWidth() / 2;
-			float newYpos = nLayout.getYpos() - dispMap.get(n) - nLayout.getHeight() / 2;
-			nLayout.setPos(newXpos, newYpos);
-			// System.out.println("x: " + newXpos);
-			// System.out.println("y: " + newYpos);
-		}
-	}
-
-	/**
-	 * 
-	 * @param i
-	 * @return
-	 */
-	private static float z(float i) {
-		return Math.max(i, 0.0f);
-	}
-
-	/**
-	 * 
-	 */
-	private static void gridSnap() {
-
-	}
-
-	/**
-	 * 
-	 */
-	private static void nodeSnap() {
-
-	}
-
-	/**
-	 * 
-	 */
-	private static void ACA() {
-		for (KEdge edge : edges) {
-
-		}
-	}
-
-	/**
-	 * 
-	 * @param k1
-	 * @param k2
-	 * @return
-	 */
-	private static float distance(KNode k1, KNode k2) {
-		KShapeLayout k1Layout = k1.getData(KShapeLayout.class);
-		KShapeLayout k2Layout = k2.getData(KShapeLayout.class);
-		float k1_X = k1Layout.getXpos() + k1Layout.getWidth() / 2;
-		float k2_X = k2Layout.getXpos() + k2Layout.getWidth() / 2;
-		float k1_Y = k1Layout.getYpos() + k1Layout.getHeight() / 2;
-		float k2_Y = k2Layout.getYpos() + k2Layout.getHeight() / 2;
-		return (float) Math.sqrt((k1_X - k2_X) * (k1_X - k2_X) + (k1_Y - k2_Y) * (k1_Y - k2_Y));
 	}
 
 	/**
@@ -499,67 +349,4 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 			edgeLayout.setTargetPoint(tPoint);
 		}
 	}
-
-	/**
-	 * 
-	 * @param start
-	 * @param end
-	 * @return
-	 */
-	private static int getPathLength(KNode start, KNode end) {
-		distance = INFINITY;
-		visited.clear();
-		int distance;
-		if (start == end) {
-			return 0;
-		} else {
-			distance = pathLengthRecursive(start, end, 0);
-		}
-		return distance;
-	}
-
-	/**
-	 * 
-	 * @param node
-	 * @param end
-	 * @param temp
-	 * @return
-	 */
-	private static int pathLengthRecursive(KNode node, KNode end, int temp) {
-		visited.add(node);
-		List<KNode> neighbours = getNeighbours(node);
-		if (!neighbours.isEmpty()) {
-			for (KNode n : getNeighbours(node)) {
-				if (!visited.contains(n)) {
-					if (n == end) {
-						temp += 1;
-						if (temp < distance) {
-							distance = temp;
-						}
-					} else {
-						pathLengthRecursive(n, end, temp + 1);
-					}
-				}
-			}
-		}
-		return distance;
-	}
-
-	/**
-	 * 
-	 * @param node
-	 * @return
-	 */
-	private static List<KNode> getNeighbours(KNode node) {
-		List<KNode> neighbours = new ArrayList<KNode>();
-		for (KEdge e : edges) {
-			if (e.getSource() == node) {
-				neighbours.add(e.getTarget());
-			} else if (e.getTarget() == node) {
-				neighbours.add(e.getSource());
-			}
-		}
-		return neighbours;
-	}
-
 }
