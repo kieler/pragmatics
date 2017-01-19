@@ -14,10 +14,8 @@ Workflow {
 	bean = StandaloneSetup {
 		scanClassPath  = true
 		platformUri = "${runtimeProject}/.."
-		registerGeneratedEPackage = "org.eclipse.elk.graph.KGraphPackage"
-		registerGeneratedEPackage = "org.eclipse.elk.core.klayoutdata.KLayoutDataPackage"
-		registerGenModelFile = "platform:/resource/org.eclipse.elk.graph/model/kgraph.genmodel"
-		registerGenModelFile = "platform:/resource/org.eclipse.elk.core/model/klayoutdata.genmodel"
+        registerGeneratedEPackage = "org.eclipse.elk.graph.ElkGraphPackage"
+		registerGenModelFile = "platform:/resource/org.eclipse.elk.graph/model/elkgraph.genmodel"
 	}
 
 	component = DirectoryCleaner {

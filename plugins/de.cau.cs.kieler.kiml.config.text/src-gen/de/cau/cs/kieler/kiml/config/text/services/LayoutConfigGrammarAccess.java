@@ -12,232 +12,150 @@ import org.eclipse.xtext.*;
 import org.eclipse.xtext.service.GrammarProvider;
 import org.eclipse.xtext.service.AbstractElementFinder.*;
 
+import org.eclipse.elk.graph.text.services.ElkGraphGrammarAccess;
+import org.eclipse.xtext.common.services.TerminalsGrammarAccess;
 
 @Singleton
 public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 	
 	
-	public class KGraphElementElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.KGraphElement");
+	public class RootNodeElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.RootNode");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cKNodeAction_0 = (Action)cGroup.eContents().get(0);
-		private final Assignment cDataAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cDataKIdentifierParserRuleCall_1_0 = (RuleCall)cDataAssignment_1.eContents().get(0);
+		private final Action cElkNodeAction_0 = (Action)cGroup.eContents().get(0);
+		private final Assignment cChildrenAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cChildrenElkNodeParserRuleCall_1_0 = (RuleCall)cChildrenAssignment_1.eContents().get(0);
 		
-		//KGraphElement:
-		//	{KNode} data+=KIdentifier*;
+		//RootNode ElkNode:
+		//	{ElkNode} children+=ElkNode+
 		@Override public ParserRule getRule() { return rule; }
 
-		//{KNode} data+=KIdentifier*
+		//{ElkNode} children+=ElkNode+
 		public Group getGroup() { return cGroup; }
 
-		//{KNode}
-		public Action getKNodeAction_0() { return cKNodeAction_0; }
+		//{ElkNode}
+		public Action getElkNodeAction_0() { return cElkNodeAction_0; }
 
-		//data+=KIdentifier*
-		public Assignment getDataAssignment_1() { return cDataAssignment_1; }
+		//children+=ElkNode+
+		public Assignment getChildrenAssignment_1() { return cChildrenAssignment_1; }
 
-		//KIdentifier
-		public RuleCall getDataKIdentifierParserRuleCall_1_0() { return cDataKIdentifierParserRuleCall_1_0; }
+		//ElkNode
+		public RuleCall getChildrenElkNodeParserRuleCall_1_0() { return cChildrenElkNodeParserRuleCall_1_0; }
 	}
 
-	public class KIdentifierElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.KIdentifier");
+	public class ElkNodeElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.ElkNode");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Action cKIdentifierAction_0 = (Action)cGroup.eContents().get(0);
-		private final Assignment cIdAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cIdIDTerminalRuleCall_1_0 = (RuleCall)cIdAssignment_1.eContents().get(0);
-		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Assignment cIdentifierAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cIdentifierIDTerminalRuleCall_0_0 = (RuleCall)cIdentifierAssignment_0.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cPropertiesAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cPropertiesPropertyParserRuleCall_2_0 = (RuleCall)cPropertiesAssignment_2.eContents().get(0);
 		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
-		private final Assignment cPersistentEntriesAssignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
-		private final RuleCall cPersistentEntriesPersistentEntryParserRuleCall_3_0_0 = (RuleCall)cPersistentEntriesAssignment_3_0.eContents().get(0);
-		private final Assignment cPersistentEntriesAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
-		private final RuleCall cPersistentEntriesPersistentEntryParserRuleCall_3_1_0 = (RuleCall)cPersistentEntriesAssignment_3_1.eContents().get(0);
+		private final Keyword cRefKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Assignment cChildrenAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
+		private final RuleCall cChildrenRefElkNodeParserRuleCall_3_1_0 = (RuleCall)cChildrenAssignment_3_1.eContents().get(0);
 		private final Keyword cRightCurlyBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		
-		//KIdentifier:
-		//	{KIdentifier} id=ID
-		//	'{' (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?
+		//ElkNode:
+		//	identifier=ID '{'
+		//	properties+=Property* ('ref' children+=RefElkNode)*
 		//	'}';
 		@Override public ParserRule getRule() { return rule; }
 
-		//{KIdentifier} id=ID '{' (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)? '}'
+		//identifier=ID '{' properties+=Property* ('ref' children+=RefElkNode)* '}'
 		public Group getGroup() { return cGroup; }
 
-		//{KIdentifier}
-		public Action getKIdentifierAction_0() { return cKIdentifierAction_0; }
-
-		//id=ID
-		public Assignment getIdAssignment_1() { return cIdAssignment_1; }
+		//identifier=ID
+		public Assignment getIdentifierAssignment_0() { return cIdentifierAssignment_0; }
 
 		//ID
-		public RuleCall getIdIDTerminalRuleCall_1_0() { return cIdIDTerminalRuleCall_1_0; }
+		public RuleCall getIdentifierIDTerminalRuleCall_0_0() { return cIdentifierIDTerminalRuleCall_0_0; }
 
 		//'{'
-		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
+		public Keyword getLeftCurlyBracketKeyword_1() { return cLeftCurlyBracketKeyword_1; }
 
-		//(persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?
+		//properties+=Property*
+		public Assignment getPropertiesAssignment_2() { return cPropertiesAssignment_2; }
+
+		//Property
+		public RuleCall getPropertiesPropertyParserRuleCall_2_0() { return cPropertiesPropertyParserRuleCall_2_0; }
+
+		//('ref' children+=RefElkNode)*
 		public Group getGroup_3() { return cGroup_3; }
 
-		//persistentEntries+=PersistentEntry
-		public Assignment getPersistentEntriesAssignment_3_0() { return cPersistentEntriesAssignment_3_0; }
+		//'ref'
+		public Keyword getRefKeyword_3_0() { return cRefKeyword_3_0; }
 
-		//PersistentEntry
-		public RuleCall getPersistentEntriesPersistentEntryParserRuleCall_3_0_0() { return cPersistentEntriesPersistentEntryParserRuleCall_3_0_0; }
+		//children+=RefElkNode
+		public Assignment getChildrenAssignment_3_1() { return cChildrenAssignment_3_1; }
 
-		//persistentEntries+=PersistentEntry*
-		public Assignment getPersistentEntriesAssignment_3_1() { return cPersistentEntriesAssignment_3_1; }
-
-		//PersistentEntry
-		public RuleCall getPersistentEntriesPersistentEntryParserRuleCall_3_1_0() { return cPersistentEntriesPersistentEntryParserRuleCall_3_1_0; }
+		//RefElkNode
+		public RuleCall getChildrenRefElkNodeParserRuleCall_3_1_0() { return cChildrenRefElkNodeParserRuleCall_3_1_0; }
 
 		//'}'
 		public Keyword getRightCurlyBracketKeyword_4() { return cRightCurlyBracketKeyword_4; }
 	}
 
-	public class PersistentEntryElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.PersistentEntry");
+	public class RefElkNodeElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.RefElkNode");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cKeyQualifiedIDParserRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
-		private final Keyword cColonKeyword_1 = (Keyword)cGroup.eContents().get(1);
-		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cValuePropertyValueParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
+		private final Assignment cIdentifierAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cIdentifierIDTerminalRuleCall_0_0 = (RuleCall)cIdentifierAssignment_0.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Assignment cPropertiesAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cPropertiesPropertyParserRuleCall_2_0 = (RuleCall)cPropertiesAssignment_2.eContents().get(0);
+		private final Keyword cRightCurlyBracketKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
-		//PersistentEntry:
-		//	key=QualifiedID ':' value=PropertyValue;
+		//RefElkNode ElkNode:
+		//	identifier=ID '{'
+		//	properties+=Property*
+		//	'}'
 		@Override public ParserRule getRule() { return rule; }
 
-		//key=QualifiedID ':' value=PropertyValue
+		//identifier=ID '{' properties+=Property* '}'
 		public Group getGroup() { return cGroup; }
 
-		//key=QualifiedID
-		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
-
-		//QualifiedID
-		public RuleCall getKeyQualifiedIDParserRuleCall_0_0() { return cKeyQualifiedIDParserRuleCall_0_0; }
-
-		//':'
-		public Keyword getColonKeyword_1() { return cColonKeyword_1; }
-
-		//value=PropertyValue
-		public Assignment getValueAssignment_2() { return cValueAssignment_2; }
-
-		//PropertyValue
-		public RuleCall getValuePropertyValueParserRuleCall_2_0() { return cValuePropertyValueParserRuleCall_2_0; }
-	}
-
-	public class PropertyValueElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.PropertyValue");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cBOOLEANTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final RuleCall cSTRINGTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		private final RuleCall cFloatParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
-		private final RuleCall cQualifiedIDParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
-		
-		//PropertyValue:
-		//	BOOLEAN | STRING | Float | QualifiedID;
-		@Override public ParserRule getRule() { return rule; }
-
-		//BOOLEAN | STRING | Float | QualifiedID
-		public Alternatives getAlternatives() { return cAlternatives; }
-
-		//BOOLEAN
-		public RuleCall getBOOLEANTerminalRuleCall_0() { return cBOOLEANTerminalRuleCall_0; }
-
-		//STRING
-		public RuleCall getSTRINGTerminalRuleCall_1() { return cSTRINGTerminalRuleCall_1; }
-
-		//Float
-		public RuleCall getFloatParserRuleCall_2() { return cFloatParserRuleCall_2; }
-
-		//QualifiedID
-		public RuleCall getQualifiedIDParserRuleCall_3() { return cQualifiedIDParserRuleCall_3; }
-	}
-
-	public class QualifiedIDElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.QualifiedID");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cIDTerminalRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Keyword cFullStopKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final RuleCall cIDTerminalRuleCall_1_1 = (RuleCall)cGroup_1.eContents().get(1);
-		
-		//QualifiedID:
-		//	ID ('.' ID)*;
-		@Override public ParserRule getRule() { return rule; }
-
-		//ID ('.' ID)*
-		public Group getGroup() { return cGroup; }
+		//identifier=ID
+		public Assignment getIdentifierAssignment_0() { return cIdentifierAssignment_0; }
 
 		//ID
-		public RuleCall getIDTerminalRuleCall_0() { return cIDTerminalRuleCall_0; }
+		public RuleCall getIdentifierIDTerminalRuleCall_0_0() { return cIdentifierIDTerminalRuleCall_0_0; }
 
-		//('.' ID)*
-		public Group getGroup_1() { return cGroup_1; }
+		//'{'
+		public Keyword getLeftCurlyBracketKeyword_1() { return cLeftCurlyBracketKeyword_1; }
 
-		//'.'
-		public Keyword getFullStopKeyword_1_0() { return cFullStopKeyword_1_0; }
+		//properties+=Property*
+		public Assignment getPropertiesAssignment_2() { return cPropertiesAssignment_2; }
 
-		//ID
-		public RuleCall getIDTerminalRuleCall_1_1() { return cIDTerminalRuleCall_1_1; }
-	}
+		//Property
+		public RuleCall getPropertiesPropertyParserRuleCall_2_0() { return cPropertiesPropertyParserRuleCall_2_0; }
 
-	public class FloatElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.Float");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final RuleCall cTFLOATTerminalRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
-		private final RuleCall cNATURALTerminalRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		
-		//Float ecore::EFloat:
-		//	TFLOAT | NATURAL
-		@Override public ParserRule getRule() { return rule; }
-
-		//TFLOAT | NATURAL
-		public Alternatives getAlternatives() { return cAlternatives; }
-
-		//TFLOAT
-		public RuleCall getTFLOATTerminalRuleCall_0() { return cTFLOATTerminalRuleCall_0; }
-
-		//NATURAL
-		public RuleCall getNATURALTerminalRuleCall_1() { return cNATURALTerminalRuleCall_1; }
+		//'}'
+		public Keyword getRightCurlyBracketKeyword_3() { return cRightCurlyBracketKeyword_3; }
 	}
 	
 	
-	private final KGraphElementElements pKGraphElement;
-	private final KIdentifierElements pKIdentifier;
-	private final PersistentEntryElements pPersistentEntry;
-	private final PropertyValueElements pPropertyValue;
-	private final QualifiedIDElements pQualifiedID;
-	private final FloatElements pFloat;
-	private final TerminalRule tTFLOAT;
-	private final TerminalRule tNATURAL;
-	private final TerminalRule tBOOLEAN;
-	private final TerminalRule tSTRING;
-	private final TerminalRule tID;
-	private final TerminalRule tML_COMMENT;
-	private final TerminalRule tSL_COMMENT;
-	private final TerminalRule tWS;
+	private final RootNodeElements pRootNode;
+	private final ElkNodeElements pElkNode;
+	private final RefElkNodeElements pRefElkNode;
 	
 	private final Grammar grammar;
 
+	private final ElkGraphGrammarAccess gaElkGraph;
+
+	private final TerminalsGrammarAccess gaTerminals;
+
 	@Inject
-	public LayoutConfigGrammarAccess(GrammarProvider grammarProvider) {
+	public LayoutConfigGrammarAccess(GrammarProvider grammarProvider,
+		ElkGraphGrammarAccess gaElkGraph,
+		TerminalsGrammarAccess gaTerminals) {
 		this.grammar = internalFindGrammar(grammarProvider);
-		this.pKGraphElement = new KGraphElementElements();
-		this.pKIdentifier = new KIdentifierElements();
-		this.pPersistentEntry = new PersistentEntryElements();
-		this.pPropertyValue = new PropertyValueElements();
-		this.pQualifiedID = new QualifiedIDElements();
-		this.pFloat = new FloatElements();
-		this.tTFLOAT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.TFLOAT");
-		this.tNATURAL = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.NATURAL");
-		this.tBOOLEAN = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.BOOLEAN");
-		this.tSTRING = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.STRING");
-		this.tID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.ID");
-		this.tML_COMMENT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.ML_COMMENT");
-		this.tSL_COMMENT = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.SL_COMMENT");
-		this.tWS = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.kiml.config.text.LayoutConfig.WS");
+		this.gaElkGraph = gaElkGraph;
+		this.gaTerminals = gaTerminals;
+		this.pRootNode = new RootNodeElements();
+		this.pElkNode = new ElkNodeElements();
+		this.pRefElkNode = new RefElkNodeElements();
 	}
 	
 	protected Grammar internalFindGrammar(GrammarProvider grammarProvider) {
@@ -262,118 +180,254 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 
-	
-	//KGraphElement:
-	//	{KNode} data+=KIdentifier*;
-	public KGraphElementElements getKGraphElementAccess() {
-		return pKGraphElement;
-	}
-	
-	public ParserRule getKGraphElementRule() {
-		return getKGraphElementAccess().getRule();
+	public ElkGraphGrammarAccess getElkGraphGrammarAccess() {
+		return gaElkGraph;
 	}
 
-	//KIdentifier:
-	//	{KIdentifier} id=ID
-	//	'{' (persistentEntries+=PersistentEntry persistentEntries+=PersistentEntry*)?
+	public TerminalsGrammarAccess getTerminalsGrammarAccess() {
+		return gaTerminals;
+	}
+
+	
+	//RootNode ElkNode:
+	//	{ElkNode} children+=ElkNode+
+	public RootNodeElements getRootNodeAccess() {
+		return pRootNode;
+	}
+	
+	public ParserRule getRootNodeRule() {
+		return getRootNodeAccess().getRule();
+	}
+
+	//ElkNode:
+	//	identifier=ID '{'
+	//	properties+=Property* ('ref' children+=RefElkNode)*
 	//	'}';
-	public KIdentifierElements getKIdentifierAccess() {
-		return pKIdentifier;
+	public ElkNodeElements getElkNodeAccess() {
+		return pElkNode;
 	}
 	
-	public ParserRule getKIdentifierRule() {
-		return getKIdentifierAccess().getRule();
+	public ParserRule getElkNodeRule() {
+		return getElkNodeAccess().getRule();
 	}
 
-	//PersistentEntry:
-	//	key=QualifiedID ':' value=PropertyValue;
-	public PersistentEntryElements getPersistentEntryAccess() {
-		return pPersistentEntry;
+	//RefElkNode ElkNode:
+	//	identifier=ID '{'
+	//	properties+=Property*
+	//	'}'
+	public RefElkNodeElements getRefElkNodeAccess() {
+		return pRefElkNode;
 	}
 	
-	public ParserRule getPersistentEntryRule() {
-		return getPersistentEntryAccess().getRule();
+	public ParserRule getRefElkNodeRule() {
+		return getRefElkNodeAccess().getRule();
 	}
 
-	//PropertyValue:
-	//	BOOLEAN | STRING | Float | QualifiedID;
-	public PropertyValueElements getPropertyValueAccess() {
-		return pPropertyValue;
+	//ElkLabel:
+	//	'label' (identifier=ID ':')? text=STRING ('{'
+	//	ShapeLayout?
+	//	properties+=Property*
+	//	labels+=ElkLabel*
+	//	'}')?;
+	public ElkGraphGrammarAccess.ElkLabelElements getElkLabelAccess() {
+		return gaElkGraph.getElkLabelAccess();
 	}
 	
-	public ParserRule getPropertyValueRule() {
-		return getPropertyValueAccess().getRule();
+	public ParserRule getElkLabelRule() {
+		return getElkLabelAccess().getRule();
 	}
 
-	//QualifiedID:
+	//ElkPort:
+	//	'port' identifier=ID ('{'
+	//	ShapeLayout?
+	//	properties+=Property*
+	//	labels+=ElkLabel*
+	//	'}')?;
+	public ElkGraphGrammarAccess.ElkPortElements getElkPortAccess() {
+		return gaElkGraph.getElkPortAccess();
+	}
+	
+	public ParserRule getElkPortRule() {
+		return getElkPortAccess().getRule();
+	}
+
+	//fragment ShapeLayout returns ElkShape:
+	//	'layout' '[' (('position' ':' x=Number ',' y=Number)?
+	//	& ('size' ':' width=Number ',' height=Number)?) ']';
+	public ElkGraphGrammarAccess.ShapeLayoutElements getShapeLayoutAccess() {
+		return gaElkGraph.getShapeLayoutAccess();
+	}
+	
+	public ParserRule getShapeLayoutRule() {
+		return getShapeLayoutAccess().getRule();
+	}
+
+	//ElkEdge:
+	//	'edge' (identifier=ID ':')?
+	//	sources+=[ElkConnectableShape|QualifiedId] (',' sources+=[ElkConnectableShape|QualifiedId])* '->'
+	//	targets+=[ElkConnectableShape|QualifiedId] (',' targets+=[ElkConnectableShape|QualifiedId])* ('{'
+	//	EdgeLayout?
+	//	properties+=Property*
+	//	labels+=ElkLabel*
+	//	'}')?;
+	public ElkGraphGrammarAccess.ElkEdgeElements getElkEdgeAccess() {
+		return gaElkGraph.getElkEdgeAccess();
+	}
+	
+	public ParserRule getElkEdgeRule() {
+		return getElkEdgeAccess().getRule();
+	}
+
+	//fragment EdgeLayout returns ElkEdge:
+	//	'layout' '[' (sections+=ElkSingleEdgeSection | sections+=ElkEdgeSection+) ']';
+	public ElkGraphGrammarAccess.EdgeLayoutElements getEdgeLayoutAccess() {
+		return gaElkGraph.getEdgeLayoutAccess();
+	}
+	
+	public ParserRule getEdgeLayoutRule() {
+		return getEdgeLayoutAccess().getRule();
+	}
+
+	//ElkSingleEdgeSection ElkEdgeSection:
+	//	{ElkEdgeSection} (('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
+	//	& ('start' ':' startX=Number ',' startY=Number)?
+	//	& ('end' ':' endX=Number ',' endY=Number)?
+	//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?)
+	public ElkGraphGrammarAccess.ElkSingleEdgeSectionElements getElkSingleEdgeSectionAccess() {
+		return gaElkGraph.getElkSingleEdgeSectionAccess();
+	}
+	
+	public ParserRule getElkSingleEdgeSectionRule() {
+		return getElkSingleEdgeSectionAccess().getRule();
+	}
+
+	//ElkEdgeSection:
+	//	'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
+	//	(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
+	//	& ('start' ':' startX=Number ',' startY=Number)?
+	//	& ('end' ':' endX=Number ',' endY=Number)?
+	//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?) ']';
+	public ElkGraphGrammarAccess.ElkEdgeSectionElements getElkEdgeSectionAccess() {
+		return gaElkGraph.getElkEdgeSectionAccess();
+	}
+	
+	public ParserRule getElkEdgeSectionRule() {
+		return getElkEdgeSectionAccess().getRule();
+	}
+
+	//ElkBendPoint:
+	//	x=Number ',' y=Number;
+	public ElkGraphGrammarAccess.ElkBendPointElements getElkBendPointAccess() {
+		return gaElkGraph.getElkBendPointAccess();
+	}
+	
+	public ParserRule getElkBendPointRule() {
+		return getElkBendPointAccess().getRule();
+	}
+
+	//Property ElkPropertyToValueMapEntry:
+	//	key=PropertyKey ':' (value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT)
+	public ElkGraphGrammarAccess.PropertyElements getPropertyAccess() {
+		return gaElkGraph.getPropertyAccess();
+	}
+	
+	public ParserRule getPropertyRule() {
+		return getPropertyAccess().getRule();
+	}
+
+	//QualifiedId:
 	//	ID ('.' ID)*;
-	public QualifiedIDElements getQualifiedIDAccess() {
-		return pQualifiedID;
+	public ElkGraphGrammarAccess.QualifiedIdElements getQualifiedIdAccess() {
+		return gaElkGraph.getQualifiedIdAccess();
 	}
 	
-	public ParserRule getQualifiedIDRule() {
-		return getQualifiedIDAccess().getRule();
+	public ParserRule getQualifiedIdRule() {
+		return getQualifiedIdAccess().getRule();
 	}
 
-	//Float ecore::EFloat:
-	//	TFLOAT | NATURAL
-	public FloatElements getFloatAccess() {
-		return pFloat;
+	//Boolean ecore::EBoolean:
+	//	'true' | 'false'
+	public ElkGraphGrammarAccess.BooleanElements getBooleanAccess() {
+		return gaElkGraph.getBooleanAccess();
 	}
 	
-	public ParserRule getFloatRule() {
-		return getFloatAccess().getRule();
+	public ParserRule getBooleanRule() {
+		return getBooleanAccess().getRule();
 	}
 
-	//terminal TFLOAT returns ecore::EFloat:
-	//	('+' | '-') ('0'..'9'+ ('.' '0'..'9'*)? (('e' | 'E') ('+' | '-')? '0'..'9'+)?
-	//	| '.' '0'..'9'+ (('e' | 'E') ('+' | '-')? '0'..'9'+)?) | '0'..'9'+ '.' '0'..'9'* (('e' | 'E') ('+' | '-')?
-	//	'0'..'9'+)?
-	//	| '.' '0'..'9'+ (('e' | 'E') ('+' | '-')? '0'..'9'+)?
-	//	| '0'..'9'+ ('e' | 'E') ('+' | '-')? '0'..'9'+;
-	public TerminalRule getTFLOATRule() {
-		return tTFLOAT;
+	//Number ecore::EDouble:
+	//	SIGNED_INT | FLOAT
+	public ElkGraphGrammarAccess.NumberElements getNumberAccess() {
+		return gaElkGraph.getNumberAccess();
+	}
+	
+	public ParserRule getNumberRule() {
+		return getNumberAccess().getRule();
+	}
+
+	//PropertyKey IProperty hidden():
+	//	ID ('.' ID)*
+	public ElkGraphGrammarAccess.PropertyKeyElements getPropertyKeyAccess() {
+		return gaElkGraph.getPropertyKeyAccess();
+	}
+	
+	public ParserRule getPropertyKeyRule() {
+		return getPropertyKeyAccess().getRule();
+	}
+
+	//terminal SIGNED_INT returns ecore::EInt:
+	//	('+' | '-')? INT;
+	public TerminalRule getSIGNED_INTRule() {
+		return gaElkGraph.getSIGNED_INTRule();
 	} 
 
-	//terminal NATURAL returns ecore::EInt:
-	//	'0'..'9'+;
-	public TerminalRule getNATURALRule() {
-		return tNATURAL;
+	//terminal FLOAT returns ecore::EDouble:
+	//	('+' | '-')? (INT '.' INT | INT ('.' INT)? ('e' | 'E') ('+' | '-')? INT);
+	public TerminalRule getFLOATRule() {
+		return gaElkGraph.getFLOATRule();
 	} 
 
-	//terminal BOOLEAN returns ecore::EBoolean:
-	//	'true' | 'false';
-	public TerminalRule getBOOLEANRule() {
-		return tBOOLEAN;
-	} 
-
-	//terminal STRING: // chsch: added '\'' alternative! 
-	//	'"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | '\'' | '\\') | !('\\' | '"'))* '"';
-	public TerminalRule getSTRINGRule() {
-		return tSTRING;
-	} 
-
-	//terminal ID: // chsch: the optional leading '^' is the implicit keyword escape character
+	//terminal ID:
 	//	'^'? ('a'..'z' | 'A'..'Z' | '_') ('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*;
 	public TerminalRule getIDRule() {
-		return tID;
+		return gaTerminals.getIDRule();
+	} 
+
+	//terminal INT returns ecore::EInt:
+	//	'0'..'9'+;
+	public TerminalRule getINTRule() {
+		return gaTerminals.getINTRule();
+	} 
+
+	//terminal STRING:
+	//	'"' ('\\' . | !('\\' | '"'))* '"' | "'" ('\\' . | !('\\' | "'"))* "'";
+	public TerminalRule getSTRINGRule() {
+		return gaTerminals.getSTRINGRule();
 	} 
 
 	//terminal ML_COMMENT:
 	//	'/ *'->'* /';
 	public TerminalRule getML_COMMENTRule() {
-		return tML_COMMENT;
+		return gaTerminals.getML_COMMENTRule();
 	} 
 
 	//terminal SL_COMMENT:
 	//	'//' !('\n' | '\r')* ('\r'? '\n')?;
 	public TerminalRule getSL_COMMENTRule() {
-		return tSL_COMMENT;
+		return gaTerminals.getSL_COMMENTRule();
 	} 
 
 	//terminal WS:
 	//	' ' | '\t' | '\r' | '\n'+;
 	public TerminalRule getWSRule() {
-		return tWS;
+		return gaTerminals.getWSRule();
+	} 
+
+	//terminal ANY_OTHER:
+	//	.;
+	public TerminalRule getANY_OTHERRule() {
+		return gaTerminals.getANY_OTHERRule();
 	} 
 }

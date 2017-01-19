@@ -7,13 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.emf.ecore.EPackage;
 
-public class AbstractLayoutConfigValidator extends org.eclipse.xtext.validation.AbstractDeclarativeValidator {
+public class AbstractLayoutConfigValidator extends org.eclipse.elk.graph.text.validation.ElkGraphValidator {
 
 	@Override
 	protected List<EPackage> getEPackages() {
-	    List<EPackage> result = new ArrayList<EPackage>();
-	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://elk.eclipse.org/KGraph"));
-	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://elk.eclipse.org/KLayoutData"));
+	    List<EPackage> result = new ArrayList<EPackage>(super.getEPackages());
+	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://www.eclipse.org/elk/ElkGraph"));
 		return result;
 	}
 }

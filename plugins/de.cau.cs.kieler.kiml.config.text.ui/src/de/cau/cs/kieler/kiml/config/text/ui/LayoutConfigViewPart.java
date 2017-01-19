@@ -206,7 +206,7 @@ public class LayoutConfigViewPart extends ViewPart {
         // if there was text stored, load it again
         IPreferenceStore store = LayoutConfigActivator.getInstance().getPreferenceStore();
         String text = store.getString(CURRENT_CONFIG_TEXT + ":" + getViewSite().getSecondaryId());
-        if(text != null) {
+        if (text != null) {
             partialEditor.updateModel("", text, "");
         }
         
@@ -222,7 +222,7 @@ public class LayoutConfigViewPart extends ViewPart {
         // remove the listeners
         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                 .removePartListener(partListener);
-        handle.getDocument().removeDocumentListener(documentListener);
+            handle.getDocument().removeDocumentListener(documentListener);
         
         super.dispose();
     }

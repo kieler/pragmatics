@@ -25,7 +25,7 @@ public class LayoutConfigParser extends org.eclipse.xtext.parser.antlr.AbstractA
 	
 	@Override 
 	protected String getDefaultRuleName() {
-		return "KGraphElement";
+		return "RootNode";
 	}
 	
 	public LayoutConfigGrammarAccess getGrammarAccess() {
