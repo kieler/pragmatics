@@ -11,10 +11,12 @@
 package de.cau.cs.kieler.kiml.libavoid
 
 import org.eclipse.elk.core.options.EdgeRouting
+import de.cau.cs.kieler.kiml.libavoid.LibavoidLayoutProvider
+import org.eclipse.elk.core.options.PortConstraints
 
 bundle {
     label "Libavoid Connector Routing"
-    metadataClass LibavoidMetaDataProvider
+    metadataClass options.LibavoidMetaDataProvider
 }
 
 category edge {
@@ -27,11 +29,15 @@ algorithm libavoid(LibavoidLayoutProvider) {
     description
         "libavoid is a cross-platform C++ library providing fast, object-avoiding orthogonal 
         and polyline connector routing for use in interactive diagram editors."
-    metadataClass LibavoidOptions
+    metadataClass options.LibavoidOptions
     category edge
+        
+       supports org.eclipse.elk.debugMode = false
         
        supports org.eclipse.elk.direction
        supports org.eclipse.elk.edgeRouting = EdgeRouting.ORTHOGONAL
+       supports org.eclipse.elk.portConstraints = PortConstraints.FREE
+       
        supports de.cau.cs.kieler.kiml.libavoid.segmentPenalty
        supports de.cau.cs.kieler.kiml.libavoid.anglePenalty
        supports de.cau.cs.kieler.kiml.libavoid.crossingPenalty
@@ -51,7 +57,7 @@ algorithm libavoid(LibavoidLayoutProvider) {
 // --- Layout Options
 // NOTE: Do not group this layout options unless you change the libavoid server as well.
 
-option segmentPenalty: float {
+option segmentPenalty: double {
     label "Segment Penalty"
     description 
         "This penalty is applied for each segment in the connector path beyond the first. 
@@ -61,7 +67,7 @@ option segmentPenalty: float {
     targets parents
 }
       
-option anglePenalty: float {
+option anglePenalty: double {
     label "Angle Penalty"
     description 
         "This penalty is applied in its full amount to tight acute bends in the connector path. 
@@ -73,7 +79,7 @@ option anglePenalty: float {
     targets parents
 }
 
-advanced option crossingPenalty: float {
+advanced option crossingPenalty: double {
     label "Crossing Penalty"
     description 
         "This penalty is applied whenever a connector path crosses another connector path. 
@@ -83,14 +89,14 @@ advanced option crossingPenalty: float {
     targets parents
 }
 
-advanced option clusterCrossingPenalty: float {
+advanced option clusterCrossingPenalty: double {
     label "Cluster Crossing Penalty"
     description "This penalty is applied whenever a connector path crosses a cluster boundary."
     default = 4000
     targets parents
 }
 
-advanced option fixedSharedPathPenalty: float {
+advanced option fixedSharedPathPenalty: double {
     label "Fixed Shared Path Penalty"
     description
         "This penalty is applied whenever a connector path shares some segments with an immovable
@@ -99,7 +105,7 @@ advanced option fixedSharedPathPenalty: float {
     targets parents
 }
 
-advanced option portDirectionPenalty: float {
+advanced option portDirectionPenalty: double {
     label "Port Direction Penalty"
     description
         "This penalty is applied to port selection choice when the other end of the connector 
@@ -109,7 +115,7 @@ advanced option portDirectionPenalty: float {
     targets parents
 }
 
-option shapeBufferDistance: float {
+option shapeBufferDistance: double {
     label "Shape Buffer Distance"
     description
         "This parameter defines the spacing distance that will be added to the sides of each 
@@ -120,7 +126,7 @@ option shapeBufferDistance: float {
     targets parents
 }
 
-option idealNudgingDistance: float {
+option idealNudgingDistance: double {
     label "Ideal Nudging Distance"
     description
         "This parameter defines the spacing distance that will be used for nudging apart 
@@ -152,7 +158,7 @@ option improveHyperedgeRoutesMovingJunctions: boolean {
 }
 
 advanced option penaliseOrthogonalSharedPathsAtConnEnds: boolean {
-    label "Shape Buffer Distance"
+    label "Penalise Orthogonal Shared Paths"
     description 
         "This option penalises and attempts to reroute orthogonal shared connector paths terminating 
         at a common junction or shape connection pin. When multiple connector paths enter or leave 
@@ -164,7 +170,7 @@ advanced option penaliseOrthogonalSharedPathsAtConnEnds: boolean {
 }
 
 option nudgeOrthogonalTouchingColinearSegments: boolean {
-    label "Shape Buffer Distance"
+    label "Nudge Orthogonal Touching Colinear Segments"
     description
         "This option can be used to control whether colinear line segments that touch just at 
         their ends will be nudged apart. The overlap will usually be resolved in the other dimension, 
@@ -174,7 +180,7 @@ option nudgeOrthogonalTouchingColinearSegments: boolean {
 }
 
 advanced option performUnifyingNudgingPreprocessingStep: boolean {
-    label "Shape Buffer Distance"
+    label "Perform Unifying Nudging Preprocessing"
     description
         "This option can be used to control whether the router performs a preprocessing step before 
         orthogonal nudging where is tries to unify segments and centre them in free space. 
@@ -187,6 +193,6 @@ advanced option improveHyperedgeRoutesMovingAddingAndDeletingJunctions: boolean 
     label "Improve Hyperedge Routes Add Delete"
     description 
         "This option causes hyperedge routes to be locally improved fixing obviously bad paths."
-    default = false
+    default = true
     targets parents
 }

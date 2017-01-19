@@ -22,6 +22,8 @@ import org.eclipse.elk.core.util.adapters.ElkGraphAdapters.ElkGraphAdapter;
 import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.graph.ElkNode;
 
+import de.cau.cs.kieler.kiml.libavoid.options.LibavoidOptions;
+
 /**
  * A layout provider for KIML that performs layout using the Libavoid connector routing library. See
  * http://www.adaptagrams.org/documentation/ for further information on the library.
@@ -38,11 +40,21 @@ public class LibavoidLayoutProvider extends AbstractLayoutProvider {
     @Override
     public void layout(final ElkNode parentNode, final IElkProgressMonitor progressMonitor) {
 
+        // TODO
+        // at this point the 'DIRECTION' should be set to a reasonable value ... 
+        // parentNode.setProperty(LibavoidOptions.DIRECTION, Direction.DOWN);
+        
+        // TODO check if we should set this to 0 by default
+        parentNode.setProperty(LibavoidOptions.IDEAL_NUDGING_DISTANCE, 0d);
+        
         // calculate node margins
         ElkGraphAdapter adapter = ElkGraphAdapters.adapt(parentNode);
 
         NodeDimensionCalculation.sortPortLists(adapter);
-        NodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
+        
+        // TODO this behaves strangely (creates different node sizes for the layered alg)
+        // NodeDimensionCalculation.calculateLabelAndNodeSizes(adapter);
+        
         NodeDimensionCalculation.calculateNodeMargins(adapter);
         
         // create an Libavoid server process instance or use an existing one
