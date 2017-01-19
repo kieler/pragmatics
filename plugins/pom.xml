@@ -36,7 +36,6 @@
     <module>de.cau.cs.kieler.kiml.formats.ogml</module>
     <module>de.cau.cs.kieler.kiml.formats.svg</module>
     <!-- <module>de.cau.cs.kieler.kiml.grana</module> -->
-    <!-- <module>de.cau.cs.kieler.kiml.grana.headless</module> -->
     <!-- <module>de.cau.cs.kieler.kiml.grana.text</module> -->
     <!-- <module>de.cau.cs.kieler.kiml.grana.text.ui</module> -->
     <module>de.cau.cs.kieler.kiml.libavoid</module>
