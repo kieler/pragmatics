@@ -46,7 +46,7 @@
             type="enum">
       </layoutOption>
    </extension>
-   <extension
+   <!--<extension
          point="de.cau.cs.kieler.kiml.grana.analysisProviders">
       <analysis
             category="de.cau.cs.kieler.kiml.grana.basic"
@@ -55,6 +55,6 @@
             id="de.cau.cs.kieler.klay.planarity"
             name="Planarity">
       </analysis>
-   </extension>
+   </extension>-->
 
 </plugin>
