@@ -221,7 +221,7 @@ public class ConstrainedLayoutProvider extends AbstractLayoutProvider {
             for (ElkEdge e : ElkGraphUtil.allOutgoingEdges(srcNode)) {
 
                 // only handle edges between nodes of the same parent
-                if (!e.isHierarchical()) {
+                if (e.isHierarchical()) {
                     continue;
                 }
                 
