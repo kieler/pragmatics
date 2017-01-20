@@ -2,13 +2,13 @@
 <feature
       id="de.cau.cs.kieler.kiml.adaptagrams.feature"
       label="KIELER Layout - Adaptagrams Support (optional)"
-      version="0.1.0.qualifier"
+      version="0.42.0.qualifier"
       provider-name="Kiel University"
       plugin="de.cau.cs.kieler.kiml.libavoid">
 
    <description url="http://rtsys.informatik.uni-kiel.de/confluence/">
-      Adaptagrams is a library of tools and reusable code for adaptive diagramming applications, for example: drawing tools, automated document and diagram layout, smart presentation software, graph drawing, chart layout, etc. See http://www.adaptagrams.org/documentation for more information. 
-   
+      Adaptagrams is a library of tools and reusable code for adaptive diagramming applications, for example: drawing tools, automated document and diagram layout, smart presentation software, graph drawing, chart layout, etc. See http://www.adaptagrams.org/documentation for more information.
+
    Currently we integrate the cola and libavoid functionality.
    </description>
 

@@ -3,7 +3,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <version>0.10.0-SNAPSHOT</version>
+  <version>0.42.0-SNAPSHOT</version>
   <artifactId>de.cau.cs.kieler.pragmatics.repository</artifactId>
   <packaging>eclipse-repository</packaging>
   <name>KIELER Pragmatics Repository</name>
@@ -19,8 +19,8 @@
   <properties>
     <update.site.name>KIELER Pragmatics</update.site.name>
     <update.site.description>Nightly</update.site.description>
-    <update.site.version>2016-07</update.site.version>
-    <target.eclipse.version>4.5 (Mars)</target.eclipse.version>
+    <update.site.version>2017-03</update.site.version>
+    <target.eclipse.version>4.6 (Neon)</target.eclipse.version>
   </properties>
 
   <build>
@@ -45,7 +45,8 @@
                 <!-- Eclipse -->
                 <associateSite>http://download.eclipse.org/releases/mars</associateSite>
                 <!-- Eclipse Layout Kernel -->
-                <associateSite>http://download.eclipse.org/elk/updates/releases/0.1.0/</associateSite>
+                <associateSite>http://build.eclipse.org/modeling/elk/updates/nightly/</associateSite>
+                <!-- <associateSite>http://download.eclipse.org/elk/updates/releases/0.1.0/</associateSite> -->
                 <!-- Eclipse Orbit for Apache Batik -->
                 <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20140114142710/repository/</associateSite>
                 <!-- Google Guava -->
