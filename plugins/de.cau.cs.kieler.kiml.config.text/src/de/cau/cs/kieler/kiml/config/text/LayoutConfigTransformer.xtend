@@ -73,31 +73,27 @@ final class LayoutConfigTransformer {
         val currentConfig = new LayoutConfigurator
 
         // add all textually specified layout options
-            cfg.properties.forEach [ entry |
-            
+        cfg.properties.forEach [ entry |
+        
             val optData = LayoutMetaDataService.instance.getOptionDataBySuffix(entry.key.id)
-//            val optData = LayoutMetaDataService.getInstance().getOptionDataBySuffix(entry.key) as LayoutOptionData
             
             // if valid, parse its value
-//            if (optData != null) {
-//                val value = optData.parseValue(entry.value)
-                val value = entry.value 
-                if (value != null) {
-                    if (optData.targets.contains(LayoutOptionData.Target.NODES) 
-                        || optData.targets.contains(LayoutOptionData.Target.PARENTS))
-                        currentConfig.configure(ElkNode).setProperty(optData, value)
+            val value = optData.parseValue(entry.value.toString)
+            if (value != null) {
+                if (optData.targets.contains(LayoutOptionData.Target.NODES) 
+                    || optData.targets.contains(LayoutOptionData.Target.PARENTS))
+                    currentConfig.configure(ElkNode).setProperty(optData, value)
+                
+                if (optData.targets.contains(LayoutOptionData.Target.EDGES))
+                    currentConfig.configure(ElkEdge).setProperty(optData, value)
                     
-                    if (optData.targets.contains(LayoutOptionData.Target.EDGES))
-                        currentConfig.configure(ElkEdge).setProperty(optData, value)
-                        
-                    if (optData.targets.contains(LayoutOptionData.Target.PORTS))
-                        currentConfig.configure(ElkPort).setProperty(optData, value)
-                        
-                    if (optData.targets.contains(LayoutOptionData.Target.LABELS))
-                        currentConfig.configure(ElkLabel).setProperty(optData, value)    
-                        
-                }
-//            }
+                if (optData.targets.contains(LayoutOptionData.Target.PORTS))
+                    currentConfig.configure(ElkPort).setProperty(optData, value)
+                    
+                if (optData.targets.contains(LayoutOptionData.Target.LABELS))
+                    currentConfig.configure(ElkLabel).setProperty(optData, value)    
+                    
+            }
         ]
         
         return currentConfig
