@@ -70,7 +70,6 @@ public final class HierachicalKGraphSynthesis {
 
         addHierarchicalEdges();
 
-        
         if (layout.equals("Radial")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial");
@@ -80,7 +79,7 @@ public final class HierachicalKGraphSynthesis {
         } else if (layout.equals("Grid Snap")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.grid");
-        } else if (layout.equals("Tree")) { 
+        } else if (layout.equals("Tree")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.tree");
         } else if (layout.equals("Overlap Removal")) {
@@ -122,8 +121,9 @@ public final class HierachicalKGraphSynthesis {
                 copier.copyReferences();
 
                 copiedChildren.add(copy);
-                 copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D, copy.hashCode());
-                 copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D, parent.hashCode());
+                int id = child.hashCode();
+                child.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D, id);
+                copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D, id);
 
                 parents.put(copy, parent);
 
