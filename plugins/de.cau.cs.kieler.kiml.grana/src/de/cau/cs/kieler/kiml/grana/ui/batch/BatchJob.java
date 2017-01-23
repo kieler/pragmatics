@@ -127,8 +127,8 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
      *            the monitor
      * @return the result
      */
-    protected abstract BatchJobResult localExecute(final ElkNode graph,
-            final List<AnalysisData> analyses, final IElkProgressMonitor monitor);
+    protected abstract BatchJobResult localExecute(ElkNode graph,
+            List<AnalysisData> analyses, IElkProgressMonitor monitor);
 
     // -------------------------------------------------------------------------------
     // - - - - - - - - - - - - - - - - - - SIMPLE - - - - - - - - - - - - - - - - - -

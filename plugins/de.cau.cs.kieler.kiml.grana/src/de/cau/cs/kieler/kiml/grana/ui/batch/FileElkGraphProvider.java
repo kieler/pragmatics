@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
-import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.WrappedException;
@@ -45,8 +44,7 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 
 /**
- * The KGraph provider that derives a graph from a file. It uses GMF services to open a
- * headless diagram, that is without an editor.
+ * The provider that derives a graph from a file. 
  *
  * @author msp
  * @author uru
@@ -70,9 +68,9 @@ public class FileElkGraphProvider implements IElkGraphProvider<IPath> {
      * {@inheritDoc}
      */
     public ElkNode getElkGraph(final IPath parameter, final IElkProgressMonitor monitor) {
-        monitor.begin("Retrieving KGraph from " + parameter.toString(), 2);
+        monitor.begin("Retrieving graph from " + parameter.toString(), 2);
         
-        // try to load the file as a kgraph 
+        // try to load the file as a elk graph 
         // possibly converting a different format such as graphml
         ElkNode graph = null;
         try {
@@ -100,6 +98,7 @@ public class FileElkGraphProvider implements IElkGraphProvider<IPath> {
 
         EObject content = null;
         ResourceSet resourceSet = new ResourceSetImpl();
+        
         if (graph == null) {
             // load the notation diagram element
             URI uri = URI.createPlatformResourceURI(parameter.toString(), true);
@@ -121,8 +120,6 @@ public class FileElkGraphProvider implements IElkGraphProvider<IPath> {
             if (graph == null) {
                 graph = (ElkNode) content;
             }
-            // assure that properties, stored in the model file, are loaded properly 
-            GraphDataUtil.loadDataElements(graph, true);
             
             if (layoutBeforeAnalysis) {
                 if (configurator != null) {
