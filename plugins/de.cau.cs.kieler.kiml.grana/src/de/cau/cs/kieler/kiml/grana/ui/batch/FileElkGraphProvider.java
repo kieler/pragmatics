@@ -32,13 +32,13 @@ import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.WrappedException;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
-import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
@@ -209,12 +209,15 @@ public class FileElkGraphProvider implements IElkGraphProvider<IPath> {
         for (int i = 0; i < visitors.length; i++) {
             visitors[i].visit(graph);
         }
-        Iterator<ElkGraphElement> allElements =
-                Iterators.filter(graph.eAllContents(), ElkGraphElement.class);
+        Iterator<EObject> allElements = ElkGraphUtil.propertiesSkippingIteratorFor(graph, true);
         while (allElements.hasNext()) {
-            ElkGraphElement element = allElements.next();
-            for (int i = 0; i < visitors.length; i++) {
-                visitors[i].visit(element);
+            EObject nextElement = allElements.next();
+            
+            if (nextElement instanceof ElkGraphElement) {
+                ElkGraphElement graphElement = (ElkGraphElement) nextElement;
+                for (int i = 0; i < visitors.length; i++) {
+                    visitors[i].visit(graphElement);
+                }
             }
         }
     }
