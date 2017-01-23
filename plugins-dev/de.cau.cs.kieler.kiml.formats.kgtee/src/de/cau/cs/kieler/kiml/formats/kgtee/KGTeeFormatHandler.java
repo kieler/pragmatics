@@ -21,7 +21,7 @@ import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
-import de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis;
+import de.cau.cs.kieler.graphs.klighd.syntheses.KGraphDiagramSynthesis;
 
 /**
  * Handles opening {@code .kgtee} files, puts them through the {@link KGraphDiagramSynthesis} and

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.xtext;
+package de.cau.cs.kieler.graphs.klighd;
 
 import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.ui.IEditorPart;
@@ -30,20 +30,20 @@ import de.cau.cs.kieler.klighd.ISourceProxy;
  * 
  * @author chsch
  */
-public class KLighDXtextPlugin extends AbstractUIPlugin {
+public class GraphsPlugin extends AbstractUIPlugin {
 
     /**
      * The plug-in ID.
      */
-    public static final String PLUGIN_ID = "de.cau.cs.kieler.klighd.xtext"; //$NON-NLS-1$
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.graphs.klighd"; //$NON-NLS-1$
 
     // The shared instance
-    private static KLighDXtextPlugin plugin;
+    private static GraphsPlugin plugin;
 
     /**
      * The constructor.
      */
-    public KLighDXtextPlugin() {
+    public GraphsPlugin() {
     }
 
     /*
@@ -73,7 +73,7 @@ public class KLighDXtextPlugin extends AbstractUIPlugin {
      * 
      * @return the shared instance
      */
-    public static KLighDXtextPlugin getDefault() {
+    public static GraphsPlugin getDefault() {
         return plugin;
     }
 

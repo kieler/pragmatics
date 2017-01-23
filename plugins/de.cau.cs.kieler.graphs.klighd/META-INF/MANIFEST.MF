@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: KIELER Lightweight Diagrams Xtext Editor Support
-Bundle-SymbolicName: de.cau.cs.kieler.klighd.xtext;singleton:=true
+Bundle-Name: KIELER Diagram Syntheses For Graphs 
+Bundle-SymbolicName: de.cau.cs.kieler.graphs.klighd;singleton:=true
 Bundle-Version: 0.42.0.qualifier
-Bundle-Activator: de.cau.cs.kieler.klighd.xtext.KLighDXtextPlugin
+Bundle-Activator: de.cau.cs.kieler.graphs.klighd.GraphsPlugin
 Bundle-Vendor: Kiel University
 Require-Bundle: org.eclipse.ui.ide;bundle-version="3.8.0",
  org.eclipse.xtext;bundle-version="2.3.0",
@@ -20,5 +20,5 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="3.8.0",
  org.eclipse.elk.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
-Export-Package: de.cau.cs.kieler.klighd.xtext,
- de.cau.cs.kieler.klighd.xtext.transformations
+Export-Package: de.cau.cs.kieler.graphs.klighd,
+ de.cau.cs.kieler.graphs.klighd.syntheses

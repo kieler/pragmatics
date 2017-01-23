@@ -236,7 +236,7 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.klighd.xtext"
+         id="de.cau.cs.kieler.graphs.klighd"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klighd.xtext.transformations;
+package de.cau.cs.kieler.graphs.klighd;
 
 import java.io.IOException;
 

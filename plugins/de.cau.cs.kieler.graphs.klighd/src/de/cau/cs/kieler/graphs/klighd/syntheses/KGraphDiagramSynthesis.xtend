@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.xtext.transformations
+package de.cau.cs.kieler.graphs.klighd.syntheses
 
 import com.google.common.base.Predicate
 import com.google.common.collect.ImmutableList
@@ -54,7 +54,7 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
      * ID this synthesis is registered with KLighD with.
      */
     public static val String TRANSFORMATION_ID =
-        "de.cau.cs.kieler.klighd.xtext.transformations.KGraphDiagramSynthesis"
+        "de.cau.cs.kieler.graphs.klighd.syntheses.KGraphDiagramSynthesis"
 
     // The next two definitions are used to load possibly persisted klighd information
     //  that is ignored by kiml, e.g. the expansion state of nodes

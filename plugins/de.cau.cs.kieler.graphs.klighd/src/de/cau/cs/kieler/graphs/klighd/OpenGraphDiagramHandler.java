@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.klighd.xtext.transformations;
+package de.cau.cs.kieler.graphs.klighd;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -40,7 +40,7 @@ public class OpenGraphDiagramHandler extends AbstractHandler {
     /**
      * This plugin's id.
      */
-    public static final String PLUGIN_ID = "de.cau.cs.kieler.klighd.xtext";
+    public static final String PLUGIN_ID = "de.cau.cs.kieler.graphs.klighd";
 
     /**
      * {@inheritDoc}

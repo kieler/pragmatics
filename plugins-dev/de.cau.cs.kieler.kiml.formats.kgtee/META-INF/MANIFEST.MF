@@ -9,7 +9,7 @@ Require-Bundle: de.cau.cs.kieler.kgraph.text,
  de.cau.cs.kieler.kgraph.text.ui,
  de.cau.cs.kieler.kiml.formats,
  de.cau.cs.kieler.klighd,
- de.cau.cs.kieler.klighd.xtext,
+ de.cau.cs.kieler.graphs.klighd,
  org.eclipse.emf.ecore.xmi,
  org.eclipse.xtext.ui,
  org.eclipse.xtext.ui.shared
