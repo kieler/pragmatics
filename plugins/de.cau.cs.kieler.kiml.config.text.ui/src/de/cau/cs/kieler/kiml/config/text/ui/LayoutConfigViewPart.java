@@ -183,7 +183,7 @@ public class LayoutConfigViewPart extends ViewPart {
         IPreferenceStore store = LayoutConfigActivator.getInstance().getPreferenceStore();
         String text = store.getString(CURRENT_CONFIG_TEXT + ":" + getViewSite().getSecondaryId());
         if (text != null) {
-            partialEditor.updateModel("", text, "");
+            partialEditor.updateModel(text);
         }
         
         handle.getDocument().addDocumentListener(documentListener);        
@@ -214,7 +214,7 @@ public class LayoutConfigViewPart extends ViewPart {
         handle = factory.newEditor(resourceProvider)
                     .showErrorAndWarningAnnotations()
                     .withParent(parent);
-        partialEditor = handle.createPartialEditor(true);
+        partialEditor = handle.createPartialEditor(false); // false -> don't insert line breaks
 
     }
 
