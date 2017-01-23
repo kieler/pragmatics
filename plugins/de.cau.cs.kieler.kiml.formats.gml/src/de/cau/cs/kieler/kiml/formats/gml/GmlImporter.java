@@ -18,12 +18,15 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
@@ -123,7 +126,7 @@ public class GmlImporter implements IGraphTransformer<GMLModel, ElkNode> {
                             }
                         }
                     } else {
-                        GraphDataUtil.setOption(elknode, e.getKey(), e.getValue());
+                        setOption(elknode, e.getKey(), e.getValue());
                     }
                 }
             } else if ("edge".equalsIgnoreCase(element.getKey())) {
@@ -145,7 +148,7 @@ public class GmlImporter implements IGraphTransformer<GMLModel, ElkNode> {
                         if ("label".equalsIgnoreCase(e.getKey())) {
                             ElkGraphUtil.createLabel(e.getValue(), elkedge);
                         } else {
-                            GraphDataUtil.setOption(elkedge, e.getKey(), e.getValue());
+                            setOption(elkedge, e.getKey(), e.getValue());
                         }
                     }
                 }
@@ -291,4 +294,20 @@ public class GmlImporter implements IGraphTransformer<GMLModel, ElkNode> {
         }
     }
 
+    /**
+     * Set a layout option using a serialized key / value pair.
+     * 
+     * @param graphElement the graph data instance to modify
+     * @param id the layout option identifier
+     * @param value the value for the layout option
+     */
+    private static void setOption(final ElkGraphElement graphElement, final String id, final String value) {
+        LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(id);
+        if (optionData != null) {
+            Object obj = optionData.parseValue(value);
+            if (obj != null) {
+                graphElement.setProperty(optionData, obj);
+            }
+        }
+    }
 }

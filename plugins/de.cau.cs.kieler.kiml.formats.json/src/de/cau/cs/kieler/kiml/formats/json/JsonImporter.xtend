@@ -25,7 +25,6 @@ import java.util.Map
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.EdgeLabelPlacement
-import org.eclipse.elk.core.util.GraphDataUtil
 import org.eclipse.elk.graph.EMapPropertyHolder
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkEdgeSection
@@ -293,15 +292,23 @@ class JsonImporter implements IGraphTransformer<JSONObject, ElkNode> {
     }
 
     private def transformProperties(JSONObject jsonObject, EMapPropertyHolder layoutData) {
-        val metaService = LayoutMetaDataService.getInstance()
-      
         jsonObject.optJSONObject("properties") => [ props |
             props?.keys.emptyIfNull.forEach [ key |
                 val value = props.optString(key as String)
-                GraphDataUtil.loadDataElement(metaService, layoutData, key as String, value)
+                layoutData.setOption(key as String, value)
             ]
         ]
     }
+       
+    private def setOption(EMapPropertyHolder e, String id, String value) {
+        val optionData = LayoutMetaDataService.instance.getOptionDataBySuffix(id)
+        if (optionData != null) {
+            val parsed = optionData.parseValue(value)
+            if (parsed != null) {
+                e.setProperty(optionData, parsed)
+            }
+        }
+    } 
 
     private def transformLabels(JSONObject jsonObj, ElkGraphElement element) {
         jsonObj.optJSONArray("labels") => [ labels |

@@ -17,10 +17,11 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
@@ -454,7 +455,24 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, ElkNode> {
     private void convertLayoutOption(final ElkGraphElement layout, final DataType option) {
         String[] splittedOption = option.getValue().split("=");
         if (splittedOption.length == 2) {
-            GraphDataUtil.setOption(layout, splittedOption[0], splittedOption[1]);
+            setOption(layout, splittedOption[0], splittedOption[1]);
+        }
+    }
+    
+    /**
+     * Set a layout option using a serialized key / value pair.
+     * 
+     * @param graphElement the graph data instance to modify
+     * @param id the layout option identifier
+     * @param value the value for the layout option
+     */
+    private static void setOption(final ElkGraphElement graphElement, final String id, final String value) {
+        LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(id);
+        if (optionData != null) {
+            Object obj = optionData.parseValue(value);
+            if (obj != null) {
+                graphElement.setProperty(optionData, obj);
+            }
         }
     }
 

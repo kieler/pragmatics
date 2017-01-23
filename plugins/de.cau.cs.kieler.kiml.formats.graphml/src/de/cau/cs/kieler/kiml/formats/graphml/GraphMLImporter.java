@@ -16,13 +16,15 @@ package de.cau.cs.kieler.kiml.formats.graphml;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
-import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
@@ -143,7 +145,7 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, ElkNode>
         
         // transform layout options
         for (DataType data : graph.getData()) {
-            GraphDataUtil.setOption(parent, data.getKey(), getValue(data));
+            setOption(parent, data.getKey(), getValue(data));
         }
         
         // transform nodes
@@ -151,13 +153,13 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, ElkNode>
             ElkNode elknode = transformNode(node.getId(), parent, transData);
             elknode.setProperty(PROP_NODE, node);
             for (DataType data : node.getData()) {
-                GraphDataUtil.setOption(elknode, data.getKey(), getValue(data));
+                setOption(elknode, data.getKey(), getValue(data));
             }
             // transform ports
             for (PortType port : node.getPort()) {
                 ElkPort elkport = transformPort(port.getName(), elknode, transData);
                 for (DataType data : port.getData()) {
-                    GraphDataUtil.setOption(elkport, data.getKey(), getValue(data));
+                    setOption(elkport, data.getKey(), getValue(data));
                 }
             }
             // transform subgraph
@@ -187,7 +189,7 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, ElkNode>
             elkedge.setProperty(PROP_EDGE, edge);
             
             for (DataType data : edge.getData()) {
-                GraphDataUtil.setOption(elkedge, data.getKey(), getValue(data));
+                setOption(elkedge, data.getKey(), getValue(data));
             }
         }
         
@@ -346,4 +348,20 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, ElkNode>
                 Lists.newArrayList(value));
     }
 
+    /**
+     * Set a layout option using a serialized key / value pair.
+     * 
+     * @param graphElement the graph data instance to modify
+     * @param id the layout option identifier
+     * @param value the value for the layout option
+     */
+    private static void setOption(final ElkGraphElement graphElement, final String id, final String value) {
+        LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(id);
+        if (optionData != null) {
+            Object obj = optionData.parseValue(value);
+            if (obj != null) {
+                graphElement.setProperty(optionData, obj);
+            }
+        }
+    }
 }
