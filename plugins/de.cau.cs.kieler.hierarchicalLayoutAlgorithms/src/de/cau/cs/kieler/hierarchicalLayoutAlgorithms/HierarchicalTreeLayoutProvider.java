@@ -32,9 +32,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		KNode root = null;
 		for (KNode node : children) {
 			ArrayList<KEdge> nodeEdges = new ArrayList<KEdge>();
-			for (KEdge edge : node.getOutgoingEdges()) {
+			for (KEdge edge : node.getIncomingEdges()) {
 				if (children.contains(edge.getTarget())) {
-					edges.add(edge);
+//					edges.add(edge);
 					nodeEdges.add(edge);
 				}
 			}
@@ -72,12 +72,14 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			KNode copy = (KNode) copier.copy(node);
 			copier.copyReferences();
 			copiedchildren.add(copy);
-			for (KEdge e : edgeMap.get(node)) {
-				e.setSource(copy);
-			}
+//			for (KEdge e : edgeMap.get(node)) {
+//				e.setSource(copy);
+//				e.setTarget(copiedchildren.get(1));
+//			}
 			// copy.setParent(firstRun);
 			// firstRun.add(secondHierarchyNodes.get(i));
 		}
+		
 		firstRun.getChildren().clear();
 		firstRun.getChildren().addAll(copiedchildren);
 //		for (KEdge edge : edges) {
@@ -88,6 +90,30 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		
 		System.out.println(firstRun.getChildren().size());
 		
+		for (KNode node : copiedchildren) {
+			for (KEdge edge : node.getIncomingEdges()) {
+				System.out.println(edge.getTarget());
+				if (firstRun.getChildren().contains(edge.getSource())) {
+					edges.add(edge);
+				}
+			}
+		}
+		System.out.println(edges);
+		
+		KNode copiedRoot = null;
+		for (KNode node : firstRun.getChildren()) {
+			Boolean isRoot = true;
+			for (KEdge edge : node.getIncomingEdges()) {
+				if (children.contains(edge.getTarget())) {
+					isRoot = false;
+				}
+			}
+			if (isRoot) {
+				copiedRoot = node;
+			}
+		}
+		System.out.println("root: " + copiedRoot);
+		
 		for (KNode node : firstRun.getChildren()) {
 			for (KEdge edge : node.getIncomingEdges()) {
 //				System.out.println(edge);
@@ -95,7 +121,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				if (!copiedchildren.contains(edge.getSource())) {
 					System.out.println(edge);
 				}
-				if (edge.getSource() == root) {
+				if (edge.getSource() == copiedRoot) {
 					System.out.println("Hallo");
 				}
 			}
@@ -104,7 +130,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		TreeLayoutProvider tree = new TreeLayoutProvider();
 		BasicProgressMonitor firstTreeRun = new BasicProgressMonitor();
 		KShapeLayout diagramLayout = firstRun.getData(KShapeLayout.class);
-//		diagramLayout.setProperty(, );
+//		diagramLayout.setProperty(MrTreeOptions., );
 		tree.layout(firstRun, firstTreeRun);
 
 
@@ -112,6 +138,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// tree.layout(layoutGraph, secondTreeRun);
 
 		// Merge Layout
+		
+//		tree.layout(layoutGraph, firstTreeRun);
 	}
 
 }

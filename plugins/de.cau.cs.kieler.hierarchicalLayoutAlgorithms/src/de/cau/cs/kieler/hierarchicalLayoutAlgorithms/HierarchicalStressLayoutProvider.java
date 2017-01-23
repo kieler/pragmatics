@@ -14,37 +14,36 @@ import org.eclipse.elk.graph.KNode;
 
 public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 	
-	private static List<KEdge> edges = new ArrayList<KEdge>();
 	private static List<KNode> children = new ArrayList<KNode>();
+	private static final float SPACING = 100;
 	
 	@Override
 	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
-		progressMonitor.begin("Grid Snap Layouter", 1);
+		progressMonitor.begin("Stress Layouter", 1);
 		
 		StressLayoutProvider stress = new StressLayoutProvider();
 
-		edges.clear();
 		children.clear();
-		
 		children.addAll(layoutGraph.getChildren());
 		
 		
 		for (KNode node : children) {
 			for (KEdge edge : node.getOutgoingEdges()) {
 				if (children.contains(edge.getTarget())) {
-					edges.add(edge);
 					KNode source = edge.getSource();
 					KNode target = edge.getTarget();
 					KShapeLayout sourceLayout = source.getData(KShapeLayout.class);
 					float width = sourceLayout.getWidth() / 2;
 					float height = sourceLayout.getHeight() / 2;
-					float diagonal = (float) Math.sqrt((Math.pow(width, 2) + Math.pow(height, 2)));
+					double sourcediagonal = Math.sqrt(width*width + height*height);
 					KShapeLayout targetLayout = target.getData(KShapeLayout.class);
 					width = targetLayout.getWidth();
 					height = targetLayout.getHeight();
-					diagonal += Math.sqrt((Math.pow(width, 2) + Math.pow(height, 2)));
+					double targetdiagonal = Math.sqrt(width*width + height*height);
+					float edgelength = (float) (sourcediagonal + targetdiagonal + SPACING);
+//					System.out.println(edgelength);
 					KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-					edgeLayout.setProperty(StressOptions.DESIRED_EDGE_LENGTH, diagonal);
+					edgeLayout.setProperty(StressOptions.DESIRED_EDGE_LENGTH, edgelength);
 				}
 			}
 		}
