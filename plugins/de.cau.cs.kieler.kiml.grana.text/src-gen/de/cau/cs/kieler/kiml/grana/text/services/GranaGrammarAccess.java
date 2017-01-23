@@ -1364,7 +1364,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		return getShapeLayoutAccess().getRule();
 	}
 
-	//ElkEdge:
+	/// * SuppressWarnings[BidirectionalReference] * / ElkEdge:
 	//	'edge' (identifier=ID ':')?
 	//	sources+=[ElkConnectableShape|QualifiedId] (',' sources+=[ElkConnectableShape|QualifiedId])* '->'
 	//	targets+=[ElkConnectableShape|QualifiedId] (',' targets+=[ElkConnectableShape|QualifiedId])* ('{'
@@ -1404,7 +1404,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		return getElkSingleEdgeSectionAccess().getRule();
 	}
 
-	//ElkEdgeSection:
+	/// * SuppressWarnings[BidirectionalReference] * / ElkEdgeSection:
 	//	'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
 	//	(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
@@ -1429,16 +1429,6 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		return getElkBendPointAccess().getRule();
 	}
 
-	//Property ElkPropertyToValueMapEntry:
-	//	key=PropertyKey ':' (value=STRING | value=QualifiedId | value=Boolean | value=SIGNED_INT | value=FLOAT)
-	public ElkGraphGrammarAccess.PropertyElements getPropertyAccess() {
-		return gaElkGraph.getPropertyAccess();
-	}
-	
-	public ParserRule getPropertyRule() {
-		return getPropertyAccess().getRule();
-	}
-
 	//QualifiedId:
 	//	ID ('.' ID)*;
 	public ElkGraphGrammarAccess.QualifiedIdElements getQualifiedIdAccess() {
@@ -1447,16 +1437,6 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getQualifiedIdRule() {
 		return getQualifiedIdAccess().getRule();
-	}
-
-	//Boolean ecore::EBoolean:
-	//	'true' | 'false'
-	public ElkGraphGrammarAccess.BooleanElements getBooleanAccess() {
-		return gaElkGraph.getBooleanAccess();
-	}
-	
-	public ParserRule getBooleanRule() {
-		return getBooleanAccess().getRule();
 	}
 
 	//Number ecore::EDouble:
@@ -1469,6 +1449,16 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		return getNumberAccess().getRule();
 	}
 
+	//Property ElkPropertyToValueMapEntry:
+	//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)
+	public ElkGraphGrammarAccess.PropertyElements getPropertyAccess() {
+		return gaElkGraph.getPropertyAccess();
+	}
+	
+	public ParserRule getPropertyRule() {
+		return getPropertyAccess().getRule();
+	}
+
 	//PropertyKey IProperty hidden():
 	//	ID ('.' ID)*
 	public ElkGraphGrammarAccess.PropertyKeyElements getPropertyKeyAccess() {
@@ -1477,6 +1467,46 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getPropertyKeyRule() {
 		return getPropertyKeyAccess().getRule();
+	}
+
+	//StringValue ecore::EJavaObject:
+	//	STRING
+	public ElkGraphGrammarAccess.StringValueElements getStringValueAccess() {
+		return gaElkGraph.getStringValueAccess();
+	}
+	
+	public ParserRule getStringValueRule() {
+		return getStringValueAccess().getRule();
+	}
+
+	//QualifiedIdValue ecore::EJavaObject:
+	//	QualifiedId
+	public ElkGraphGrammarAccess.QualifiedIdValueElements getQualifiedIdValueAccess() {
+		return gaElkGraph.getQualifiedIdValueAccess();
+	}
+	
+	public ParserRule getQualifiedIdValueRule() {
+		return getQualifiedIdValueAccess().getRule();
+	}
+
+	//NumberValue ecore::EJavaObject:
+	//	SIGNED_INT | FLOAT
+	public ElkGraphGrammarAccess.NumberValueElements getNumberValueAccess() {
+		return gaElkGraph.getNumberValueAccess();
+	}
+	
+	public ParserRule getNumberValueRule() {
+		return getNumberValueAccess().getRule();
+	}
+
+	//BooleanValue ecore::EJavaObject:
+	//	'true' | 'false'
+	public ElkGraphGrammarAccess.BooleanValueElements getBooleanValueAccess() {
+		return gaElkGraph.getBooleanValueAccess();
+	}
+	
+	public ParserRule getBooleanValueRule() {
+		return getBooleanValueAccess().getRule();
 	}
 
 	//terminal SIGNED_INT returns ecore::EInt:

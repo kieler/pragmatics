@@ -31,7 +31,7 @@ public class InternalGranaLexer extends Lexer {
     public static final int T__54=54;
     public static final int T__60=60;
     public static final int T__61=61;
-    public static final int RULE_ID=6;
+    public static final int RULE_ID=7;
     public static final int T__26=26;
     public static final int T__27=27;
     public static final int T__28=28;
@@ -45,7 +45,7 @@ public class InternalGranaLexer extends Lexer {
     public static final int T__62=62;
     public static final int T__20=20;
     public static final int T__21=21;
-    public static final int RULE_STRING=7;
+    public static final int RULE_STRING=4;
     public static final int RULE_SL_COMMENT=10;
     public static final int T__37=37;
     public static final int T__38=38;
@@ -59,13 +59,13 @@ public class InternalGranaLexer extends Lexer {
     public static final int T__31=31;
     public static final int T__32=32;
     public static final int RULE_WS=11;
-    public static final int RULE_SIGNED_INT=4;
+    public static final int RULE_SIGNED_INT=5;
     public static final int RULE_ANY_OTHER=12;
     public static final int T__48=48;
     public static final int T__49=49;
     public static final int T__44=44;
     public static final int T__45=45;
-    public static final int RULE_FLOAT=5;
+    public static final int RULE_FLOAT=6;
     public static final int T__46=46;
     public static final int T__47=47;
     public static final int T__40=40;
@@ -1133,10 +1133,10 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_SIGNED_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalGrana.g:10669:17: ( ( '+' | '-' )? RULE_INT )
-            // InternalGrana.g:10669:19: ( '+' | '-' )? RULE_INT
+            // InternalGrana.g:10754:17: ( ( '+' | '-' )? RULE_INT )
+            // InternalGrana.g:10754:19: ( '+' | '-' )? RULE_INT
             {
-            // InternalGrana.g:10669:19: ( '+' | '-' )?
+            // InternalGrana.g:10754:19: ( '+' | '-' )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -1179,10 +1179,10 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_FLOAT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalGrana.g:10671:12: ( ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT ) )
-            // InternalGrana.g:10671:14: ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
+            // InternalGrana.g:10756:12: ( ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT ) )
+            // InternalGrana.g:10756:14: ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
             {
-            // InternalGrana.g:10671:14: ( '+' | '-' )?
+            // InternalGrana.g:10756:14: ( '+' | '-' )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -1208,12 +1208,12 @@ public class InternalGranaLexer extends Lexer {
 
             }
 
-            // InternalGrana.g:10671:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
+            // InternalGrana.g:10756:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
             int alt5=2;
             alt5 = dfa5.predict(input);
             switch (alt5) {
                 case 1 :
-                    // InternalGrana.g:10671:26: RULE_INT '.' RULE_INT
+                    // InternalGrana.g:10756:26: RULE_INT '.' RULE_INT
                     {
                     mRULE_INT(); 
                     match('.'); 
@@ -1222,10 +1222,10 @@ public class InternalGranaLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:10671:48: RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT
+                    // InternalGrana.g:10756:48: RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT
                     {
                     mRULE_INT(); 
-                    // InternalGrana.g:10671:57: ( '.' RULE_INT )?
+                    // InternalGrana.g:10756:57: ( '.' RULE_INT )?
                     int alt3=2;
                     int LA3_0 = input.LA(1);
 
@@ -1234,7 +1234,7 @@ public class InternalGranaLexer extends Lexer {
                     }
                     switch (alt3) {
                         case 1 :
-                            // InternalGrana.g:10671:58: '.' RULE_INT
+                            // InternalGrana.g:10756:58: '.' RULE_INT
                             {
                             match('.'); 
                             mRULE_INT(); 
@@ -1253,7 +1253,7 @@ public class InternalGranaLexer extends Lexer {
                         recover(mse);
                         throw mse;}
 
-                    // InternalGrana.g:10671:83: ( '+' | '-' )?
+                    // InternalGrana.g:10756:83: ( '+' | '-' )?
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -1302,10 +1302,10 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalGrana.g:10673:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // InternalGrana.g:10673:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalGrana.g:10758:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalGrana.g:10758:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // InternalGrana.g:10673:11: ( '^' )?
+            // InternalGrana.g:10758:11: ( '^' )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -1314,7 +1314,7 @@ public class InternalGranaLexer extends Lexer {
             }
             switch (alt6) {
                 case 1 :
-                    // InternalGrana.g:10673:11: '^'
+                    // InternalGrana.g:10758:11: '^'
                     {
                     match('^'); 
 
@@ -1332,7 +1332,7 @@ public class InternalGranaLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // InternalGrana.g:10673:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalGrana.g:10758:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop7:
             do {
                 int alt7=2;
@@ -1379,10 +1379,10 @@ public class InternalGranaLexer extends Lexer {
     // $ANTLR start "RULE_INT"
     public final void mRULE_INT() throws RecognitionException {
         try {
-            // InternalGrana.g:10675:19: ( ( '0' .. '9' )+ )
-            // InternalGrana.g:10675:21: ( '0' .. '9' )+
+            // InternalGrana.g:10760:19: ( ( '0' .. '9' )+ )
+            // InternalGrana.g:10760:21: ( '0' .. '9' )+
             {
-            // InternalGrana.g:10675:21: ( '0' .. '9' )+
+            // InternalGrana.g:10760:21: ( '0' .. '9' )+
             int cnt8=0;
             loop8:
             do {
@@ -1396,7 +1396,7 @@ public class InternalGranaLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // InternalGrana.g:10675:22: '0' .. '9'
+            	    // InternalGrana.g:10760:22: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -1426,10 +1426,10 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalGrana.g:10677:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // InternalGrana.g:10677:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalGrana.g:10762:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // InternalGrana.g:10762:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // InternalGrana.g:10677:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalGrana.g:10762:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -1447,10 +1447,10 @@ public class InternalGranaLexer extends Lexer {
             }
             switch (alt11) {
                 case 1 :
-                    // InternalGrana.g:10677:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // InternalGrana.g:10762:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // InternalGrana.g:10677:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // InternalGrana.g:10762:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop9:
                     do {
                         int alt9=3;
@@ -1466,7 +1466,7 @@ public class InternalGranaLexer extends Lexer {
 
                         switch (alt9) {
                     	case 1 :
-                    	    // InternalGrana.g:10677:21: '\\\\' .
+                    	    // InternalGrana.g:10762:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -1474,7 +1474,7 @@ public class InternalGranaLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalGrana.g:10677:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // InternalGrana.g:10762:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -1499,10 +1499,10 @@ public class InternalGranaLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:10677:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // InternalGrana.g:10762:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // InternalGrana.g:10677:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // InternalGrana.g:10762:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop10:
                     do {
                         int alt10=3;
@@ -1518,7 +1518,7 @@ public class InternalGranaLexer extends Lexer {
 
                         switch (alt10) {
                     	case 1 :
-                    	    // InternalGrana.g:10677:54: '\\\\' .
+                    	    // InternalGrana.g:10762:54: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -1526,7 +1526,7 @@ public class InternalGranaLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalGrana.g:10677:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // InternalGrana.g:10762:61: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -1569,12 +1569,12 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalGrana.g:10679:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // InternalGrana.g:10679:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalGrana.g:10764:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalGrana.g:10764:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // InternalGrana.g:10679:24: ( options {greedy=false; } : . )*
+            // InternalGrana.g:10764:24: ( options {greedy=false; } : . )*
             loop12:
             do {
                 int alt12=2;
@@ -1599,7 +1599,7 @@ public class InternalGranaLexer extends Lexer {
 
                 switch (alt12) {
             	case 1 :
-            	    // InternalGrana.g:10679:52: .
+            	    // InternalGrana.g:10764:52: .
             	    {
             	    matchAny(); 
 
@@ -1629,12 +1629,12 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalGrana.g:10681:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // InternalGrana.g:10681:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalGrana.g:10766:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalGrana.g:10766:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // InternalGrana.g:10681:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalGrana.g:10766:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop13:
             do {
                 int alt13=2;
@@ -1647,7 +1647,7 @@ public class InternalGranaLexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // InternalGrana.g:10681:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalGrana.g:10766:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1667,7 +1667,7 @@ public class InternalGranaLexer extends Lexer {
                 }
             } while (true);
 
-            // InternalGrana.g:10681:40: ( ( '\\r' )? '\\n' )?
+            // InternalGrana.g:10766:40: ( ( '\\r' )? '\\n' )?
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -1676,9 +1676,9 @@ public class InternalGranaLexer extends Lexer {
             }
             switch (alt15) {
                 case 1 :
-                    // InternalGrana.g:10681:41: ( '\\r' )? '\\n'
+                    // InternalGrana.g:10766:41: ( '\\r' )? '\\n'
                     {
-                    // InternalGrana.g:10681:41: ( '\\r' )?
+                    // InternalGrana.g:10766:41: ( '\\r' )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -1687,7 +1687,7 @@ public class InternalGranaLexer extends Lexer {
                     }
                     switch (alt14) {
                         case 1 :
-                            // InternalGrana.g:10681:41: '\\r'
+                            // InternalGrana.g:10766:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1719,10 +1719,10 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalGrana.g:10683:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // InternalGrana.g:10683:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalGrana.g:10768:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalGrana.g:10768:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // InternalGrana.g:10683:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalGrana.g:10768:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt16=0;
             loop16:
             do {
@@ -1776,8 +1776,8 @@ public class InternalGranaLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalGrana.g:10685:16: ( . )
-            // InternalGrana.g:10685:18: .
+            // InternalGrana.g:10770:16: ( . )
+            // InternalGrana.g:10770:18: .
             {
             matchAny(); 
 
@@ -2261,7 +2261,7 @@ public class InternalGranaLexer extends Lexer {
             this.transition = DFA5_transition;
         }
         public String getDescription() {
-            return "10671:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )";
+            return "10756:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )";
         }
     }
     static final String DFA17_eotS =

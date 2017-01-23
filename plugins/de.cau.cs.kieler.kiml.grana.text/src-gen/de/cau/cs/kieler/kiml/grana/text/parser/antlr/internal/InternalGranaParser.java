@@ -7705,8 +7705,238 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleElkBendPoint"
 
 
+    // $ANTLR start "entryRuleQualifiedId"
+    // InternalGrana.g:3096:1: entryRuleQualifiedId returns [String current=null] : iv_ruleQualifiedId= ruleQualifiedId EOF ;
+    public final String entryRuleQualifiedId() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleQualifiedId = null;
+
+
+        try {
+            // InternalGrana.g:3097:2: (iv_ruleQualifiedId= ruleQualifiedId EOF )
+            // InternalGrana.g:3098:2: iv_ruleQualifiedId= ruleQualifiedId EOF
+            {
+             newCompositeNode(grammarAccess.getQualifiedIdRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleQualifiedId=ruleQualifiedId();
+
+            state._fsp--;
+
+             current =iv_ruleQualifiedId.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleQualifiedId"
+
+
+    // $ANTLR start "ruleQualifiedId"
+    // InternalGrana.g:3105:1: ruleQualifiedId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    public final AntlrDatatypeRuleToken ruleQualifiedId() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_ID_0=null;
+        Token kw=null;
+        Token this_ID_2=null;
+
+         enterRule(); 
+            
+        try {
+            // InternalGrana.g:3108:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalGrana.g:3109:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            {
+            // InternalGrana.g:3109:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalGrana.g:3109:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            {
+            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_54); 
+
+            		current.merge(this_ID_0);
+                
+             
+                newLeafNode(this_ID_0, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_0()); 
+                
+            // InternalGrana.g:3116:1: (kw= '.' this_ID_2= RULE_ID )*
+            loop64:
+            do {
+                int alt64=2;
+                int LA64_0 = input.LA(1);
+
+                if ( (LA64_0==58) ) {
+                    alt64=1;
+                }
+
+
+                switch (alt64) {
+            	case 1 :
+            	    // InternalGrana.g:3117:2: kw= '.' this_ID_2= RULE_ID
+            	    {
+            	    kw=(Token)match(input,58,FOLLOW_10); 
+
+            	            current.merge(kw);
+            	            newLeafNode(kw, grammarAccess.getQualifiedIdAccess().getFullStopKeyword_1_0()); 
+            	        
+            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_54); 
+
+            	    		current.merge(this_ID_2);
+            	        
+            	     
+            	        newLeafNode(this_ID_2, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_1_1()); 
+            	        
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop64;
+                }
+            } while (true);
+
+
+            }
+
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleQualifiedId"
+
+
+    // $ANTLR start "entryRuleNumber"
+    // InternalGrana.g:3137:1: entryRuleNumber returns [String current=null] : iv_ruleNumber= ruleNumber EOF ;
+    public final String entryRuleNumber() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleNumber = null;
+
+
+        try {
+            // InternalGrana.g:3138:2: (iv_ruleNumber= ruleNumber EOF )
+            // InternalGrana.g:3139:2: iv_ruleNumber= ruleNumber EOF
+            {
+             newCompositeNode(grammarAccess.getNumberRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleNumber=ruleNumber();
+
+            state._fsp--;
+
+             current =iv_ruleNumber.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleNumber"
+
+
+    // $ANTLR start "ruleNumber"
+    // InternalGrana.g:3146:1: ruleNumber returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
+    public final AntlrDatatypeRuleToken ruleNumber() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_SIGNED_INT_0=null;
+        Token this_FLOAT_1=null;
+
+         enterRule(); 
+            
+        try {
+            // InternalGrana.g:3149:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
+            // InternalGrana.g:3150:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            {
+            // InternalGrana.g:3150:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            int alt65=2;
+            int LA65_0 = input.LA(1);
+
+            if ( (LA65_0==RULE_SIGNED_INT) ) {
+                alt65=1;
+            }
+            else if ( (LA65_0==RULE_FLOAT) ) {
+                alt65=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 65, 0, input);
+
+                throw nvae;
+            }
+            switch (alt65) {
+                case 1 :
+                    // InternalGrana.g:3150:6: this_SIGNED_INT_0= RULE_SIGNED_INT
+                    {
+                    this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FOLLOW_2); 
+
+                    		current.merge(this_SIGNED_INT_0);
+                        
+                     
+                        newLeafNode(this_SIGNED_INT_0, grammarAccess.getNumberAccess().getSIGNED_INTTerminalRuleCall_0()); 
+                        
+
+                    }
+                    break;
+                case 2 :
+                    // InternalGrana.g:3158:10: this_FLOAT_1= RULE_FLOAT
+                    {
+                    this_FLOAT_1=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
+
+                    		current.merge(this_FLOAT_1);
+                        
+                     
+                        newLeafNode(this_FLOAT_1, grammarAccess.getNumberAccess().getFLOATTerminalRuleCall_1()); 
+                        
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleNumber"
+
+
     // $ANTLR start "entryRuleProperty"
-    // InternalGrana.g:3096:1: entryRuleProperty returns [EObject current=null] : iv_ruleProperty= ruleProperty EOF ;
+    // InternalGrana.g:3173:1: entryRuleProperty returns [EObject current=null] : iv_ruleProperty= ruleProperty EOF ;
     public final EObject entryRuleProperty() throws RecognitionException {
         EObject current = null;
 
@@ -7714,8 +7944,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3097:2: (iv_ruleProperty= ruleProperty EOF )
-            // InternalGrana.g:3098:2: iv_ruleProperty= ruleProperty EOF
+            // InternalGrana.g:3174:2: (iv_ruleProperty= ruleProperty EOF )
+            // InternalGrana.g:3175:2: iv_ruleProperty= ruleProperty EOF
             {
              newCompositeNode(grammarAccess.getPropertyRule()); 
             pushFollow(FOLLOW_1);
@@ -7742,35 +7972,36 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleProperty"
-    // InternalGrana.g:3105:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) ) ;
+    // InternalGrana.g:3182:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) ;
     public final EObject ruleProperty() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_1=null;
-        Token lv_value_2_0=null;
-        Token lv_value_5_0=null;
-        Token lv_value_6_0=null;
         AntlrDatatypeRuleToken lv_key_0_0 = null;
+
+        AntlrDatatypeRuleToken lv_value_2_0 = null;
 
         AntlrDatatypeRuleToken lv_value_3_0 = null;
 
         AntlrDatatypeRuleToken lv_value_4_0 = null;
 
+        AntlrDatatypeRuleToken lv_value_5_0 = null;
+
 
          enterRule(); 
             
         try {
-            // InternalGrana.g:3108:28: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) ) )
-            // InternalGrana.g:3109:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) )
+            // InternalGrana.g:3185:28: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) )
+            // InternalGrana.g:3186:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
             {
-            // InternalGrana.g:3109:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) )
-            // InternalGrana.g:3109:2: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) )
+            // InternalGrana.g:3186:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
+            // InternalGrana.g:3186:2: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
             {
-            // InternalGrana.g:3109:2: ( (lv_key_0_0= rulePropertyKey ) )
-            // InternalGrana.g:3110:1: (lv_key_0_0= rulePropertyKey )
+            // InternalGrana.g:3186:2: ( (lv_key_0_0= rulePropertyKey ) )
+            // InternalGrana.g:3187:1: (lv_key_0_0= rulePropertyKey )
             {
-            // InternalGrana.g:3110:1: (lv_key_0_0= rulePropertyKey )
-            // InternalGrana.g:3111:3: lv_key_0_0= rulePropertyKey
+            // InternalGrana.g:3187:1: (lv_key_0_0= rulePropertyKey )
+            // InternalGrana.g:3188:3: lv_key_0_0= rulePropertyKey
             {
              
             	        newCompositeNode(grammarAccess.getPropertyAccess().getKeyPropertyKeyParserRuleCall_0_0()); 
@@ -7797,69 +8028,70 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,42,FOLLOW_54); 
+            otherlv_1=(Token)match(input,42,FOLLOW_55); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getPropertyAccess().getColonKeyword_1());
                 
-            // InternalGrana.g:3131:1: ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) )
-            int alt64=5;
+            // InternalGrana.g:3208:1: ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
+            int alt66=4;
             switch ( input.LA(1) ) {
             case RULE_STRING:
                 {
-                alt64=1;
+                alt66=1;
                 }
                 break;
             case RULE_ID:
                 {
-                alt64=2;
+                alt66=2;
+                }
+                break;
+            case RULE_SIGNED_INT:
+            case RULE_FLOAT:
+                {
+                alt66=3;
                 }
                 break;
             case 59:
             case 60:
                 {
-                alt64=3;
-                }
-                break;
-            case RULE_SIGNED_INT:
-                {
-                alt64=4;
-                }
-                break;
-            case RULE_FLOAT:
-                {
-                alt64=5;
+                alt66=4;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 64, 0, input);
+                    new NoViableAltException("", 66, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt64) {
+            switch (alt66) {
                 case 1 :
-                    // InternalGrana.g:3131:2: ( (lv_value_2_0= RULE_STRING ) )
+                    // InternalGrana.g:3208:2: ( (lv_value_2_0= ruleStringValue ) )
                     {
-                    // InternalGrana.g:3131:2: ( (lv_value_2_0= RULE_STRING ) )
-                    // InternalGrana.g:3132:1: (lv_value_2_0= RULE_STRING )
+                    // InternalGrana.g:3208:2: ( (lv_value_2_0= ruleStringValue ) )
+                    // InternalGrana.g:3209:1: (lv_value_2_0= ruleStringValue )
                     {
-                    // InternalGrana.g:3132:1: (lv_value_2_0= RULE_STRING )
-                    // InternalGrana.g:3133:3: lv_value_2_0= RULE_STRING
+                    // InternalGrana.g:3209:1: (lv_value_2_0= ruleStringValue )
+                    // InternalGrana.g:3210:3: lv_value_2_0= ruleStringValue
                     {
-                    lv_value_2_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
+                     
+                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueStringValueParserRuleCall_2_0_0()); 
+                    	    
+                    pushFollow(FOLLOW_2);
+                    lv_value_2_0=ruleStringValue();
 
-                    			newLeafNode(lv_value_2_0, grammarAccess.getPropertyAccess().getValueSTRINGTerminalRuleCall_2_0_0()); 
-                    		
+                    state._fsp--;
+
 
                     	        if (current==null) {
-                    	            current = createModelElement(grammarAccess.getPropertyRule());
+                    	            current = createModelElementForParent(grammarAccess.getPropertyRule());
                     	        }
-                           		setWithLastConsumed(
+                           		set(
                            			current, 
                            			"value",
                             		lv_value_2_0, 
-                            		"org.eclipse.xtext.common.Terminals.STRING");
+                            		"org.eclipse.elk.graph.text.ElkGraph.StringValue");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -7871,19 +8103,19 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:3150:6: ( (lv_value_3_0= ruleQualifiedId ) )
+                    // InternalGrana.g:3227:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
                     {
-                    // InternalGrana.g:3150:6: ( (lv_value_3_0= ruleQualifiedId ) )
-                    // InternalGrana.g:3151:1: (lv_value_3_0= ruleQualifiedId )
+                    // InternalGrana.g:3227:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
+                    // InternalGrana.g:3228:1: (lv_value_3_0= ruleQualifiedIdValue )
                     {
-                    // InternalGrana.g:3151:1: (lv_value_3_0= ruleQualifiedId )
-                    // InternalGrana.g:3152:3: lv_value_3_0= ruleQualifiedId
+                    // InternalGrana.g:3228:1: (lv_value_3_0= ruleQualifiedIdValue )
+                    // InternalGrana.g:3229:3: lv_value_3_0= ruleQualifiedIdValue
                     {
                      
-                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueQualifiedIdParserRuleCall_2_1_0()); 
+                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueQualifiedIdValueParserRuleCall_2_1_0()); 
                     	    
                     pushFollow(FOLLOW_2);
-                    lv_value_3_0=ruleQualifiedId();
+                    lv_value_3_0=ruleQualifiedIdValue();
 
                     state._fsp--;
 
@@ -7895,7 +8127,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                            			current, 
                            			"value",
                             		lv_value_3_0, 
-                            		"org.eclipse.elk.graph.text.ElkGraph.QualifiedId");
+                            		"org.eclipse.elk.graph.text.ElkGraph.QualifiedIdValue");
                     	        afterParserOrEnumRuleCall();
                     	    
 
@@ -7908,19 +8140,19 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalGrana.g:3169:6: ( (lv_value_4_0= ruleBoolean ) )
+                    // InternalGrana.g:3246:6: ( (lv_value_4_0= ruleNumberValue ) )
                     {
-                    // InternalGrana.g:3169:6: ( (lv_value_4_0= ruleBoolean ) )
-                    // InternalGrana.g:3170:1: (lv_value_4_0= ruleBoolean )
+                    // InternalGrana.g:3246:6: ( (lv_value_4_0= ruleNumberValue ) )
+                    // InternalGrana.g:3247:1: (lv_value_4_0= ruleNumberValue )
                     {
-                    // InternalGrana.g:3170:1: (lv_value_4_0= ruleBoolean )
-                    // InternalGrana.g:3171:3: lv_value_4_0= ruleBoolean
+                    // InternalGrana.g:3247:1: (lv_value_4_0= ruleNumberValue )
+                    // InternalGrana.g:3248:3: lv_value_4_0= ruleNumberValue
                     {
                      
-                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueBooleanParserRuleCall_2_2_0()); 
+                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueNumberValueParserRuleCall_2_2_0()); 
                     	    
                     pushFollow(FOLLOW_2);
-                    lv_value_4_0=ruleBoolean();
+                    lv_value_4_0=ruleNumberValue();
 
                     state._fsp--;
 
@@ -7932,7 +8164,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                            			current, 
                            			"value",
                             		lv_value_4_0, 
-                            		"org.eclipse.elk.graph.text.ElkGraph.Boolean");
+                            		"org.eclipse.elk.graph.text.ElkGraph.NumberValue");
                     	        afterParserOrEnumRuleCall();
                     	    
 
@@ -7945,59 +8177,32 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalGrana.g:3188:6: ( (lv_value_5_0= RULE_SIGNED_INT ) )
+                    // InternalGrana.g:3265:6: ( (lv_value_5_0= ruleBooleanValue ) )
                     {
-                    // InternalGrana.g:3188:6: ( (lv_value_5_0= RULE_SIGNED_INT ) )
-                    // InternalGrana.g:3189:1: (lv_value_5_0= RULE_SIGNED_INT )
+                    // InternalGrana.g:3265:6: ( (lv_value_5_0= ruleBooleanValue ) )
+                    // InternalGrana.g:3266:1: (lv_value_5_0= ruleBooleanValue )
                     {
-                    // InternalGrana.g:3189:1: (lv_value_5_0= RULE_SIGNED_INT )
-                    // InternalGrana.g:3190:3: lv_value_5_0= RULE_SIGNED_INT
+                    // InternalGrana.g:3266:1: (lv_value_5_0= ruleBooleanValue )
+                    // InternalGrana.g:3267:3: lv_value_5_0= ruleBooleanValue
                     {
-                    lv_value_5_0=(Token)match(input,RULE_SIGNED_INT,FOLLOW_2); 
+                     
+                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueBooleanValueParserRuleCall_2_3_0()); 
+                    	    
+                    pushFollow(FOLLOW_2);
+                    lv_value_5_0=ruleBooleanValue();
 
-                    			newLeafNode(lv_value_5_0, grammarAccess.getPropertyAccess().getValueSIGNED_INTTerminalRuleCall_2_3_0()); 
-                    		
+                    state._fsp--;
+
 
                     	        if (current==null) {
-                    	            current = createModelElement(grammarAccess.getPropertyRule());
+                    	            current = createModelElementForParent(grammarAccess.getPropertyRule());
                     	        }
-                           		setWithLastConsumed(
+                           		set(
                            			current, 
                            			"value",
                             		lv_value_5_0, 
-                            		"org.eclipse.elk.graph.text.ElkGraph.SIGNED_INT");
-                    	    
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 5 :
-                    // InternalGrana.g:3207:6: ( (lv_value_6_0= RULE_FLOAT ) )
-                    {
-                    // InternalGrana.g:3207:6: ( (lv_value_6_0= RULE_FLOAT ) )
-                    // InternalGrana.g:3208:1: (lv_value_6_0= RULE_FLOAT )
-                    {
-                    // InternalGrana.g:3208:1: (lv_value_6_0= RULE_FLOAT )
-                    // InternalGrana.g:3209:3: lv_value_6_0= RULE_FLOAT
-                    {
-                    lv_value_6_0=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
-
-                    			newLeafNode(lv_value_6_0, grammarAccess.getPropertyAccess().getValueFLOATTerminalRuleCall_2_4_0()); 
-                    		
-
-                    	        if (current==null) {
-                    	            current = createModelElement(grammarAccess.getPropertyRule());
-                    	        }
-                           		setWithLastConsumed(
-                           			current, 
-                           			"value",
-                            		lv_value_6_0, 
-                            		"org.eclipse.elk.graph.text.ElkGraph.FLOAT");
+                            		"org.eclipse.elk.graph.text.ElkGraph.BooleanValue");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -8031,346 +8236,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleProperty"
 
 
-    // $ANTLR start "entryRuleQualifiedId"
-    // InternalGrana.g:3233:1: entryRuleQualifiedId returns [String current=null] : iv_ruleQualifiedId= ruleQualifiedId EOF ;
-    public final String entryRuleQualifiedId() throws RecognitionException {
-        String current = null;
-
-        AntlrDatatypeRuleToken iv_ruleQualifiedId = null;
-
-
-        try {
-            // InternalGrana.g:3234:2: (iv_ruleQualifiedId= ruleQualifiedId EOF )
-            // InternalGrana.g:3235:2: iv_ruleQualifiedId= ruleQualifiedId EOF
-            {
-             newCompositeNode(grammarAccess.getQualifiedIdRule()); 
-            pushFollow(FOLLOW_1);
-            iv_ruleQualifiedId=ruleQualifiedId();
-
-            state._fsp--;
-
-             current =iv_ruleQualifiedId.getText(); 
-            match(input,EOF,FOLLOW_2); 
-
-            }
-
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleQualifiedId"
-
-
-    // $ANTLR start "ruleQualifiedId"
-    // InternalGrana.g:3242:1: ruleQualifiedId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
-    public final AntlrDatatypeRuleToken ruleQualifiedId() throws RecognitionException {
-        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
-
-        Token this_ID_0=null;
-        Token kw=null;
-        Token this_ID_2=null;
-
-         enterRule(); 
-            
-        try {
-            // InternalGrana.g:3245:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // InternalGrana.g:3246:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            {
-            // InternalGrana.g:3246:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // InternalGrana.g:3246:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
-            {
-            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_55); 
-
-            		current.merge(this_ID_0);
-                
-             
-                newLeafNode(this_ID_0, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_0()); 
-                
-            // InternalGrana.g:3253:1: (kw= '.' this_ID_2= RULE_ID )*
-            loop65:
-            do {
-                int alt65=2;
-                int LA65_0 = input.LA(1);
-
-                if ( (LA65_0==58) ) {
-                    alt65=1;
-                }
-
-
-                switch (alt65) {
-            	case 1 :
-            	    // InternalGrana.g:3254:2: kw= '.' this_ID_2= RULE_ID
-            	    {
-            	    kw=(Token)match(input,58,FOLLOW_10); 
-
-            	            current.merge(kw);
-            	            newLeafNode(kw, grammarAccess.getQualifiedIdAccess().getFullStopKeyword_1_0()); 
-            	        
-            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_55); 
-
-            	    		current.merge(this_ID_2);
-            	        
-            	     
-            	        newLeafNode(this_ID_2, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_1_1()); 
-            	        
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop65;
-                }
-            } while (true);
-
-
-            }
-
-
-            }
-
-             leaveRule(); 
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleQualifiedId"
-
-
-    // $ANTLR start "entryRuleBoolean"
-    // InternalGrana.g:3274:1: entryRuleBoolean returns [String current=null] : iv_ruleBoolean= ruleBoolean EOF ;
-    public final String entryRuleBoolean() throws RecognitionException {
-        String current = null;
-
-        AntlrDatatypeRuleToken iv_ruleBoolean = null;
-
-
-        try {
-            // InternalGrana.g:3275:2: (iv_ruleBoolean= ruleBoolean EOF )
-            // InternalGrana.g:3276:2: iv_ruleBoolean= ruleBoolean EOF
-            {
-             newCompositeNode(grammarAccess.getBooleanRule()); 
-            pushFollow(FOLLOW_1);
-            iv_ruleBoolean=ruleBoolean();
-
-            state._fsp--;
-
-             current =iv_ruleBoolean.getText(); 
-            match(input,EOF,FOLLOW_2); 
-
-            }
-
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleBoolean"
-
-
-    // $ANTLR start "ruleBoolean"
-    // InternalGrana.g:3283:1: ruleBoolean returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
-    public final AntlrDatatypeRuleToken ruleBoolean() throws RecognitionException {
-        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
-
-        Token kw=null;
-
-         enterRule(); 
-            
-        try {
-            // InternalGrana.g:3286:28: ( (kw= 'true' | kw= 'false' ) )
-            // InternalGrana.g:3287:1: (kw= 'true' | kw= 'false' )
-            {
-            // InternalGrana.g:3287:1: (kw= 'true' | kw= 'false' )
-            int alt66=2;
-            int LA66_0 = input.LA(1);
-
-            if ( (LA66_0==59) ) {
-                alt66=1;
-            }
-            else if ( (LA66_0==60) ) {
-                alt66=2;
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 66, 0, input);
-
-                throw nvae;
-            }
-            switch (alt66) {
-                case 1 :
-                    // InternalGrana.g:3288:2: kw= 'true'
-                    {
-                    kw=(Token)match(input,59,FOLLOW_2); 
-
-                            current.merge(kw);
-                            newLeafNode(kw, grammarAccess.getBooleanAccess().getTrueKeyword_0()); 
-                        
-
-                    }
-                    break;
-                case 2 :
-                    // InternalGrana.g:3295:2: kw= 'false'
-                    {
-                    kw=(Token)match(input,60,FOLLOW_2); 
-
-                            current.merge(kw);
-                            newLeafNode(kw, grammarAccess.getBooleanAccess().getFalseKeyword_1()); 
-                        
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-             leaveRule(); 
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleBoolean"
-
-
-    // $ANTLR start "entryRuleNumber"
-    // InternalGrana.g:3308:1: entryRuleNumber returns [String current=null] : iv_ruleNumber= ruleNumber EOF ;
-    public final String entryRuleNumber() throws RecognitionException {
-        String current = null;
-
-        AntlrDatatypeRuleToken iv_ruleNumber = null;
-
-
-        try {
-            // InternalGrana.g:3309:2: (iv_ruleNumber= ruleNumber EOF )
-            // InternalGrana.g:3310:2: iv_ruleNumber= ruleNumber EOF
-            {
-             newCompositeNode(grammarAccess.getNumberRule()); 
-            pushFollow(FOLLOW_1);
-            iv_ruleNumber=ruleNumber();
-
-            state._fsp--;
-
-             current =iv_ruleNumber.getText(); 
-            match(input,EOF,FOLLOW_2); 
-
-            }
-
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleNumber"
-
-
-    // $ANTLR start "ruleNumber"
-    // InternalGrana.g:3317:1: ruleNumber returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
-    public final AntlrDatatypeRuleToken ruleNumber() throws RecognitionException {
-        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
-
-        Token this_SIGNED_INT_0=null;
-        Token this_FLOAT_1=null;
-
-         enterRule(); 
-            
-        try {
-            // InternalGrana.g:3320:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
-            // InternalGrana.g:3321:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
-            {
-            // InternalGrana.g:3321:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
-            int alt67=2;
-            int LA67_0 = input.LA(1);
-
-            if ( (LA67_0==RULE_SIGNED_INT) ) {
-                alt67=1;
-            }
-            else if ( (LA67_0==RULE_FLOAT) ) {
-                alt67=2;
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 67, 0, input);
-
-                throw nvae;
-            }
-            switch (alt67) {
-                case 1 :
-                    // InternalGrana.g:3321:6: this_SIGNED_INT_0= RULE_SIGNED_INT
-                    {
-                    this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FOLLOW_2); 
-
-                    		current.merge(this_SIGNED_INT_0);
-                        
-                     
-                        newLeafNode(this_SIGNED_INT_0, grammarAccess.getNumberAccess().getSIGNED_INTTerminalRuleCall_0()); 
-                        
-
-                    }
-                    break;
-                case 2 :
-                    // InternalGrana.g:3329:10: this_FLOAT_1= RULE_FLOAT
-                    {
-                    this_FLOAT_1=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
-
-                    		current.merge(this_FLOAT_1);
-                        
-                     
-                        newLeafNode(this_FLOAT_1, grammarAccess.getNumberAccess().getFLOATTerminalRuleCall_1()); 
-                        
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-             leaveRule(); 
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleNumber"
-
-
     // $ANTLR start "entryRulePropertyKey"
-    // InternalGrana.g:3344:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
+    // InternalGrana.g:3291:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
     public final String entryRulePropertyKey() throws RecognitionException {
         String current = null;
 
@@ -8381,8 +8248,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
         		HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
         	
         try {
-            // InternalGrana.g:3348:2: (iv_rulePropertyKey= rulePropertyKey EOF )
-            // InternalGrana.g:3349:2: iv_rulePropertyKey= rulePropertyKey EOF
+            // InternalGrana.g:3295:2: (iv_rulePropertyKey= rulePropertyKey EOF )
+            // InternalGrana.g:3296:2: iv_rulePropertyKey= rulePropertyKey EOF
             {
              newCompositeNode(grammarAccess.getPropertyKeyRule()); 
             pushFollow(FOLLOW_1);
@@ -8412,7 +8279,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePropertyKey"
-    // InternalGrana.g:3359:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    // InternalGrana.g:3306:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
     public final AntlrDatatypeRuleToken rulePropertyKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8424,40 +8291,40 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
         		HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
             
         try {
-            // InternalGrana.g:3363:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // InternalGrana.g:3364:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalGrana.g:3310:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalGrana.g:3311:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
             {
-            // InternalGrana.g:3364:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // InternalGrana.g:3364:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            // InternalGrana.g:3311:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalGrana.g:3311:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
             {
-            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_55); 
+            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_54); 
 
             		current.merge(this_ID_0);
                 
              
                 newLeafNode(this_ID_0, grammarAccess.getPropertyKeyAccess().getIDTerminalRuleCall_0()); 
                 
-            // InternalGrana.g:3371:1: (kw= '.' this_ID_2= RULE_ID )*
-            loop68:
+            // InternalGrana.g:3318:1: (kw= '.' this_ID_2= RULE_ID )*
+            loop67:
             do {
-                int alt68=2;
-                int LA68_0 = input.LA(1);
+                int alt67=2;
+                int LA67_0 = input.LA(1);
 
-                if ( (LA68_0==58) ) {
-                    alt68=1;
+                if ( (LA67_0==58) ) {
+                    alt67=1;
                 }
 
 
-                switch (alt68) {
+                switch (alt67) {
             	case 1 :
-            	    // InternalGrana.g:3372:2: kw= '.' this_ID_2= RULE_ID
+            	    // InternalGrana.g:3319:2: kw= '.' this_ID_2= RULE_ID
             	    {
             	    kw=(Token)match(input,58,FOLLOW_10); 
 
             	            current.merge(kw);
             	            newLeafNode(kw, grammarAccess.getPropertyKeyAccess().getFullStopKeyword_1_0()); 
             	        
-            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_55); 
+            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_54); 
 
             	    		current.merge(this_ID_2);
             	        
@@ -8469,7 +8336,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop68;
+            	    break loop67;
                 }
             } while (true);
 
@@ -8496,27 +8363,330 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
     // $ANTLR end "rulePropertyKey"
 
 
-    // $ANTLR start "ruleOutputType"
-    // InternalGrana.g:3395:1: ruleOutputType returns [Enumerator current=null] : ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) ;
-    public final Enumerator ruleOutputType() throws RecognitionException {
-        Enumerator current = null;
+    // $ANTLR start "entryRuleStringValue"
+    // InternalGrana.g:3342:1: entryRuleStringValue returns [String current=null] : iv_ruleStringValue= ruleStringValue EOF ;
+    public final String entryRuleStringValue() throws RecognitionException {
+        String current = null;
 
-        Token enumLiteral_0=null;
-        Token enumLiteral_1=null;
+        AntlrDatatypeRuleToken iv_ruleStringValue = null;
+
+
+        try {
+            // InternalGrana.g:3343:2: (iv_ruleStringValue= ruleStringValue EOF )
+            // InternalGrana.g:3344:2: iv_ruleStringValue= ruleStringValue EOF
+            {
+             newCompositeNode(grammarAccess.getStringValueRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleStringValue=ruleStringValue();
+
+            state._fsp--;
+
+             current =iv_ruleStringValue.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleStringValue"
+
+
+    // $ANTLR start "ruleStringValue"
+    // InternalGrana.g:3351:1: ruleStringValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_STRING_0= RULE_STRING ;
+    public final AntlrDatatypeRuleToken ruleStringValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_STRING_0=null;
 
          enterRule(); 
+            
         try {
-            // InternalGrana.g:3397:28: ( ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) )
-            // InternalGrana.g:3398:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
+            // InternalGrana.g:3354:28: (this_STRING_0= RULE_STRING )
+            // InternalGrana.g:3355:5: this_STRING_0= RULE_STRING
             {
-            // InternalGrana.g:3398:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
+            this_STRING_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
+
+            		current.merge(this_STRING_0);
+                
+             
+                newLeafNode(this_STRING_0, grammarAccess.getStringValueAccess().getSTRINGTerminalRuleCall()); 
+                
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleStringValue"
+
+
+    // $ANTLR start "entryRuleQualifiedIdValue"
+    // InternalGrana.g:3370:1: entryRuleQualifiedIdValue returns [String current=null] : iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF ;
+    public final String entryRuleQualifiedIdValue() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleQualifiedIdValue = null;
+
+
+        try {
+            // InternalGrana.g:3371:2: (iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF )
+            // InternalGrana.g:3372:2: iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF
+            {
+             newCompositeNode(grammarAccess.getQualifiedIdValueRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleQualifiedIdValue=ruleQualifiedIdValue();
+
+            state._fsp--;
+
+             current =iv_ruleQualifiedIdValue.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleQualifiedIdValue"
+
+
+    // $ANTLR start "ruleQualifiedIdValue"
+    // InternalGrana.g:3379:1: ruleQualifiedIdValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_QualifiedId_0= ruleQualifiedId ;
+    public final AntlrDatatypeRuleToken ruleQualifiedIdValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        AntlrDatatypeRuleToken this_QualifiedId_0 = null;
+
+
+         enterRule(); 
+            
+        try {
+            // InternalGrana.g:3382:28: (this_QualifiedId_0= ruleQualifiedId )
+            // InternalGrana.g:3384:5: this_QualifiedId_0= ruleQualifiedId
+            {
+             
+                    newCompositeNode(grammarAccess.getQualifiedIdValueAccess().getQualifiedIdParserRuleCall()); 
+                
+            pushFollow(FOLLOW_2);
+            this_QualifiedId_0=ruleQualifiedId();
+
+            state._fsp--;
+
+
+            		current.merge(this_QualifiedId_0);
+                
+             
+                    afterParserOrEnumRuleCall();
+                
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleQualifiedIdValue"
+
+
+    // $ANTLR start "entryRuleNumberValue"
+    // InternalGrana.g:3402:1: entryRuleNumberValue returns [String current=null] : iv_ruleNumberValue= ruleNumberValue EOF ;
+    public final String entryRuleNumberValue() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleNumberValue = null;
+
+
+        try {
+            // InternalGrana.g:3403:2: (iv_ruleNumberValue= ruleNumberValue EOF )
+            // InternalGrana.g:3404:2: iv_ruleNumberValue= ruleNumberValue EOF
+            {
+             newCompositeNode(grammarAccess.getNumberValueRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleNumberValue=ruleNumberValue();
+
+            state._fsp--;
+
+             current =iv_ruleNumberValue.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleNumberValue"
+
+
+    // $ANTLR start "ruleNumberValue"
+    // InternalGrana.g:3411:1: ruleNumberValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
+    public final AntlrDatatypeRuleToken ruleNumberValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_SIGNED_INT_0=null;
+        Token this_FLOAT_1=null;
+
+         enterRule(); 
+            
+        try {
+            // InternalGrana.g:3414:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
+            // InternalGrana.g:3415:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            {
+            // InternalGrana.g:3415:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            int alt68=2;
+            int LA68_0 = input.LA(1);
+
+            if ( (LA68_0==RULE_SIGNED_INT) ) {
+                alt68=1;
+            }
+            else if ( (LA68_0==RULE_FLOAT) ) {
+                alt68=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 68, 0, input);
+
+                throw nvae;
+            }
+            switch (alt68) {
+                case 1 :
+                    // InternalGrana.g:3415:6: this_SIGNED_INT_0= RULE_SIGNED_INT
+                    {
+                    this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FOLLOW_2); 
+
+                    		current.merge(this_SIGNED_INT_0);
+                        
+                     
+                        newLeafNode(this_SIGNED_INT_0, grammarAccess.getNumberValueAccess().getSIGNED_INTTerminalRuleCall_0()); 
+                        
+
+                    }
+                    break;
+                case 2 :
+                    // InternalGrana.g:3423:10: this_FLOAT_1= RULE_FLOAT
+                    {
+                    this_FLOAT_1=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
+
+                    		current.merge(this_FLOAT_1);
+                        
+                     
+                        newLeafNode(this_FLOAT_1, grammarAccess.getNumberValueAccess().getFLOATTerminalRuleCall_1()); 
+                        
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleNumberValue"
+
+
+    // $ANTLR start "entryRuleBooleanValue"
+    // InternalGrana.g:3438:1: entryRuleBooleanValue returns [String current=null] : iv_ruleBooleanValue= ruleBooleanValue EOF ;
+    public final String entryRuleBooleanValue() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleBooleanValue = null;
+
+
+        try {
+            // InternalGrana.g:3439:2: (iv_ruleBooleanValue= ruleBooleanValue EOF )
+            // InternalGrana.g:3440:2: iv_ruleBooleanValue= ruleBooleanValue EOF
+            {
+             newCompositeNode(grammarAccess.getBooleanValueRule()); 
+            pushFollow(FOLLOW_1);
+            iv_ruleBooleanValue=ruleBooleanValue();
+
+            state._fsp--;
+
+             current =iv_ruleBooleanValue.getText(); 
+            match(input,EOF,FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleBooleanValue"
+
+
+    // $ANTLR start "ruleBooleanValue"
+    // InternalGrana.g:3447:1: ruleBooleanValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
+    public final AntlrDatatypeRuleToken ruleBooleanValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token kw=null;
+
+         enterRule(); 
+            
+        try {
+            // InternalGrana.g:3450:28: ( (kw= 'true' | kw= 'false' ) )
+            // InternalGrana.g:3451:1: (kw= 'true' | kw= 'false' )
+            {
+            // InternalGrana.g:3451:1: (kw= 'true' | kw= 'false' )
             int alt69=2;
             int LA69_0 = input.LA(1);
 
-            if ( (LA69_0==61) ) {
+            if ( (LA69_0==59) ) {
                 alt69=1;
             }
-            else if ( (LA69_0==62) ) {
+            else if ( (LA69_0==60) ) {
                 alt69=2;
             }
             else {
@@ -8527,10 +8697,82 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             }
             switch (alt69) {
                 case 1 :
-                    // InternalGrana.g:3398:2: (enumLiteral_0= 'csv' )
+                    // InternalGrana.g:3452:2: kw= 'true'
                     {
-                    // InternalGrana.g:3398:2: (enumLiteral_0= 'csv' )
-                    // InternalGrana.g:3398:4: enumLiteral_0= 'csv'
+                    kw=(Token)match(input,59,FOLLOW_2); 
+
+                            current.merge(kw);
+                            newLeafNode(kw, grammarAccess.getBooleanValueAccess().getTrueKeyword_0()); 
+                        
+
+                    }
+                    break;
+                case 2 :
+                    // InternalGrana.g:3459:2: kw= 'false'
+                    {
+                    kw=(Token)match(input,60,FOLLOW_2); 
+
+                            current.merge(kw);
+                            newLeafNode(kw, grammarAccess.getBooleanValueAccess().getFalseKeyword_1()); 
+                        
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleBooleanValue"
+
+
+    // $ANTLR start "ruleOutputType"
+    // InternalGrana.g:3472:1: ruleOutputType returns [Enumerator current=null] : ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) ;
+    public final Enumerator ruleOutputType() throws RecognitionException {
+        Enumerator current = null;
+
+        Token enumLiteral_0=null;
+        Token enumLiteral_1=null;
+
+         enterRule(); 
+        try {
+            // InternalGrana.g:3474:28: ( ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) )
+            // InternalGrana.g:3475:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
+            {
+            // InternalGrana.g:3475:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
+            int alt70=2;
+            int LA70_0 = input.LA(1);
+
+            if ( (LA70_0==61) ) {
+                alt70=1;
+            }
+            else if ( (LA70_0==62) ) {
+                alt70=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 70, 0, input);
+
+                throw nvae;
+            }
+            switch (alt70) {
+                case 1 :
+                    // InternalGrana.g:3475:2: (enumLiteral_0= 'csv' )
+                    {
+                    // InternalGrana.g:3475:2: (enumLiteral_0= 'csv' )
+                    // InternalGrana.g:3475:4: enumLiteral_0= 'csv'
                     {
                     enumLiteral_0=(Token)match(input,61,FOLLOW_2); 
 
@@ -8544,10 +8786,10 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:3404:6: (enumLiteral_1= 'json' )
+                    // InternalGrana.g:3481:6: (enumLiteral_1= 'json' )
                     {
-                    // InternalGrana.g:3404:6: (enumLiteral_1= 'json' )
-                    // InternalGrana.g:3404:8: enumLiteral_1= 'json'
+                    // InternalGrana.g:3481:6: (enumLiteral_1= 'json' )
+                    // InternalGrana.g:3481:8: enumLiteral_1= 'json'
                     {
                     enumLiteral_1=(Token)match(input,62,FOLLOW_2); 
 
@@ -8637,7 +8879,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_51 = new BitSet(new long[]{0x0000200100000000L});
     public static final BitSet FOLLOW_52 = new BitSet(new long[]{0x00F9000000000000L});
     public static final BitSet FOLLOW_53 = new BitSet(new long[]{0x01F9000000000000L});
-    public static final BitSet FOLLOW_54 = new BitSet(new long[]{0x18000000000000F0L});
-    public static final BitSet FOLLOW_55 = new BitSet(new long[]{0x0400000000000002L});
+    public static final BitSet FOLLOW_54 = new BitSet(new long[]{0x0400000000000002L});
+    public static final BitSet FOLLOW_55 = new BitSet(new long[]{0x18000000000000F0L});
 
 }

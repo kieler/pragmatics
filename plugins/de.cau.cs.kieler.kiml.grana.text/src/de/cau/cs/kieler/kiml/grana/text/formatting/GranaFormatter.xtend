@@ -111,7 +111,6 @@ class GranaFormatter extends AbstractDeclarativeFormatter {
         c.setLinewrap.after(propertyAccess.valueAssignment_2_1)
         c.setLinewrap.after(propertyAccess.valueAssignment_2_2)
         c.setLinewrap.after(propertyAccess.valueAssignment_2_3)
-        c.setLinewrap.after(propertyAccess.valueAssignment_2_4)
        
        // indentation increments 
        c.setIndentationIncrement.after(granaAccess.globalResourcesKeyword_0_0)
