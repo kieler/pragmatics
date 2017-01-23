@@ -3085,8 +3085,238 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleElkBendPoint"
 
 
+    // $ANTLR start "entryRuleQualifiedId"
+    // InternalLayoutConfig.g:1317:1: entryRuleQualifiedId returns [String current=null] : iv_ruleQualifiedId= ruleQualifiedId EOF ;
+    public final String entryRuleQualifiedId() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleQualifiedId = null;
+
+
+        try {
+            // InternalLayoutConfig.g:1318:2: (iv_ruleQualifiedId= ruleQualifiedId EOF )
+            // InternalLayoutConfig.g:1319:2: iv_ruleQualifiedId= ruleQualifiedId EOF
+            {
+             newCompositeNode(grammarAccess.getQualifiedIdRule()); 
+            pushFollow(FollowSets000.FOLLOW_1);
+            iv_ruleQualifiedId=ruleQualifiedId();
+
+            state._fsp--;
+
+             current =iv_ruleQualifiedId.getText(); 
+            match(input,EOF,FollowSets000.FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleQualifiedId"
+
+
+    // $ANTLR start "ruleQualifiedId"
+    // InternalLayoutConfig.g:1326:1: ruleQualifiedId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    public final AntlrDatatypeRuleToken ruleQualifiedId() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_ID_0=null;
+        Token kw=null;
+        Token this_ID_2=null;
+
+         enterRule(); 
+            
+        try {
+            // InternalLayoutConfig.g:1329:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalLayoutConfig.g:1330:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            {
+            // InternalLayoutConfig.g:1330:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalLayoutConfig.g:1330:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            {
+            this_ID_0=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_28); 
+
+            		current.merge(this_ID_0);
+                
+             
+                newLeafNode(this_ID_0, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_0()); 
+                
+            // InternalLayoutConfig.g:1337:1: (kw= '.' this_ID_2= RULE_ID )*
+            loop19:
+            do {
+                int alt19=2;
+                int LA19_0 = input.LA(1);
+
+                if ( (LA19_0==32) ) {
+                    alt19=1;
+                }
+
+
+                switch (alt19) {
+            	case 1 :
+            	    // InternalLayoutConfig.g:1338:2: kw= '.' this_ID_2= RULE_ID
+            	    {
+            	    kw=(Token)match(input,32,FollowSets000.FOLLOW_6); 
+
+            	            current.merge(kw);
+            	            newLeafNode(kw, grammarAccess.getQualifiedIdAccess().getFullStopKeyword_1_0()); 
+            	        
+            	    this_ID_2=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_28); 
+
+            	    		current.merge(this_ID_2);
+            	        
+            	     
+            	        newLeafNode(this_ID_2, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_1_1()); 
+            	        
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop19;
+                }
+            } while (true);
+
+
+            }
+
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleQualifiedId"
+
+
+    // $ANTLR start "entryRuleNumber"
+    // InternalLayoutConfig.g:1358:1: entryRuleNumber returns [String current=null] : iv_ruleNumber= ruleNumber EOF ;
+    public final String entryRuleNumber() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleNumber = null;
+
+
+        try {
+            // InternalLayoutConfig.g:1359:2: (iv_ruleNumber= ruleNumber EOF )
+            // InternalLayoutConfig.g:1360:2: iv_ruleNumber= ruleNumber EOF
+            {
+             newCompositeNode(grammarAccess.getNumberRule()); 
+            pushFollow(FollowSets000.FOLLOW_1);
+            iv_ruleNumber=ruleNumber();
+
+            state._fsp--;
+
+             current =iv_ruleNumber.getText(); 
+            match(input,EOF,FollowSets000.FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleNumber"
+
+
+    // $ANTLR start "ruleNumber"
+    // InternalLayoutConfig.g:1367:1: ruleNumber returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
+    public final AntlrDatatypeRuleToken ruleNumber() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_SIGNED_INT_0=null;
+        Token this_FLOAT_1=null;
+
+         enterRule(); 
+            
+        try {
+            // InternalLayoutConfig.g:1370:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
+            // InternalLayoutConfig.g:1371:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            {
+            // InternalLayoutConfig.g:1371:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            int alt20=2;
+            int LA20_0 = input.LA(1);
+
+            if ( (LA20_0==RULE_SIGNED_INT) ) {
+                alt20=1;
+            }
+            else if ( (LA20_0==RULE_FLOAT) ) {
+                alt20=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 20, 0, input);
+
+                throw nvae;
+            }
+            switch (alt20) {
+                case 1 :
+                    // InternalLayoutConfig.g:1371:6: this_SIGNED_INT_0= RULE_SIGNED_INT
+                    {
+                    this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FollowSets000.FOLLOW_2); 
+
+                    		current.merge(this_SIGNED_INT_0);
+                        
+                     
+                        newLeafNode(this_SIGNED_INT_0, grammarAccess.getNumberAccess().getSIGNED_INTTerminalRuleCall_0()); 
+                        
+
+                    }
+                    break;
+                case 2 :
+                    // InternalLayoutConfig.g:1379:10: this_FLOAT_1= RULE_FLOAT
+                    {
+                    this_FLOAT_1=(Token)match(input,RULE_FLOAT,FollowSets000.FOLLOW_2); 
+
+                    		current.merge(this_FLOAT_1);
+                        
+                     
+                        newLeafNode(this_FLOAT_1, grammarAccess.getNumberAccess().getFLOATTerminalRuleCall_1()); 
+                        
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleNumber"
+
+
     // $ANTLR start "entryRuleProperty"
-    // InternalLayoutConfig.g:1317:1: entryRuleProperty returns [EObject current=null] : iv_ruleProperty= ruleProperty EOF ;
+    // InternalLayoutConfig.g:1394:1: entryRuleProperty returns [EObject current=null] : iv_ruleProperty= ruleProperty EOF ;
     public final EObject entryRuleProperty() throws RecognitionException {
         EObject current = null;
 
@@ -3094,8 +3324,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLayoutConfig.g:1318:2: (iv_ruleProperty= ruleProperty EOF )
-            // InternalLayoutConfig.g:1319:2: iv_ruleProperty= ruleProperty EOF
+            // InternalLayoutConfig.g:1395:2: (iv_ruleProperty= ruleProperty EOF )
+            // InternalLayoutConfig.g:1396:2: iv_ruleProperty= ruleProperty EOF
             {
              newCompositeNode(grammarAccess.getPropertyRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -3122,35 +3352,36 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleProperty"
-    // InternalLayoutConfig.g:1326:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) ) ;
+    // InternalLayoutConfig.g:1403:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) ;
     public final EObject ruleProperty() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_1=null;
-        Token lv_value_2_0=null;
-        Token lv_value_5_0=null;
-        Token lv_value_6_0=null;
         AntlrDatatypeRuleToken lv_key_0_0 = null;
+
+        AntlrDatatypeRuleToken lv_value_2_0 = null;
 
         AntlrDatatypeRuleToken lv_value_3_0 = null;
 
         AntlrDatatypeRuleToken lv_value_4_0 = null;
 
+        AntlrDatatypeRuleToken lv_value_5_0 = null;
+
 
          enterRule(); 
             
         try {
-            // InternalLayoutConfig.g:1329:28: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) ) )
-            // InternalLayoutConfig.g:1330:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) )
+            // InternalLayoutConfig.g:1406:28: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) )
+            // InternalLayoutConfig.g:1407:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
             {
-            // InternalLayoutConfig.g:1330:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) ) )
-            // InternalLayoutConfig.g:1330:2: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) )
+            // InternalLayoutConfig.g:1407:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
+            // InternalLayoutConfig.g:1407:2: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
             {
-            // InternalLayoutConfig.g:1330:2: ( (lv_key_0_0= rulePropertyKey ) )
-            // InternalLayoutConfig.g:1331:1: (lv_key_0_0= rulePropertyKey )
+            // InternalLayoutConfig.g:1407:2: ( (lv_key_0_0= rulePropertyKey ) )
+            // InternalLayoutConfig.g:1408:1: (lv_key_0_0= rulePropertyKey )
             {
-            // InternalLayoutConfig.g:1331:1: (lv_key_0_0= rulePropertyKey )
-            // InternalLayoutConfig.g:1332:3: lv_key_0_0= rulePropertyKey
+            // InternalLayoutConfig.g:1408:1: (lv_key_0_0= rulePropertyKey )
+            // InternalLayoutConfig.g:1409:3: lv_key_0_0= rulePropertyKey
             {
              
             	        newCompositeNode(grammarAccess.getPropertyAccess().getKeyPropertyKeyParserRuleCall_0_0()); 
@@ -3177,69 +3408,70 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,17,FollowSets000.FOLLOW_28); 
+            otherlv_1=(Token)match(input,17,FollowSets000.FOLLOW_29); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getPropertyAccess().getColonKeyword_1());
                 
-            // InternalLayoutConfig.g:1352:1: ( ( (lv_value_2_0= RULE_STRING ) ) | ( (lv_value_3_0= ruleQualifiedId ) ) | ( (lv_value_4_0= ruleBoolean ) ) | ( (lv_value_5_0= RULE_SIGNED_INT ) ) | ( (lv_value_6_0= RULE_FLOAT ) ) )
-            int alt19=5;
+            // InternalLayoutConfig.g:1429:1: ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
+            int alt21=4;
             switch ( input.LA(1) ) {
             case RULE_STRING:
                 {
-                alt19=1;
+                alt21=1;
                 }
                 break;
             case RULE_ID:
                 {
-                alt19=2;
+                alt21=2;
+                }
+                break;
+            case RULE_SIGNED_INT:
+            case RULE_FLOAT:
+                {
+                alt21=3;
                 }
                 break;
             case 33:
             case 34:
                 {
-                alt19=3;
-                }
-                break;
-            case RULE_SIGNED_INT:
-                {
-                alt19=4;
-                }
-                break;
-            case RULE_FLOAT:
-                {
-                alt19=5;
+                alt21=4;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 19, 0, input);
+                    new NoViableAltException("", 21, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt19) {
+            switch (alt21) {
                 case 1 :
-                    // InternalLayoutConfig.g:1352:2: ( (lv_value_2_0= RULE_STRING ) )
+                    // InternalLayoutConfig.g:1429:2: ( (lv_value_2_0= ruleStringValue ) )
                     {
-                    // InternalLayoutConfig.g:1352:2: ( (lv_value_2_0= RULE_STRING ) )
-                    // InternalLayoutConfig.g:1353:1: (lv_value_2_0= RULE_STRING )
+                    // InternalLayoutConfig.g:1429:2: ( (lv_value_2_0= ruleStringValue ) )
+                    // InternalLayoutConfig.g:1430:1: (lv_value_2_0= ruleStringValue )
                     {
-                    // InternalLayoutConfig.g:1353:1: (lv_value_2_0= RULE_STRING )
-                    // InternalLayoutConfig.g:1354:3: lv_value_2_0= RULE_STRING
+                    // InternalLayoutConfig.g:1430:1: (lv_value_2_0= ruleStringValue )
+                    // InternalLayoutConfig.g:1431:3: lv_value_2_0= ruleStringValue
                     {
-                    lv_value_2_0=(Token)match(input,RULE_STRING,FollowSets000.FOLLOW_2); 
+                     
+                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueStringValueParserRuleCall_2_0_0()); 
+                    	    
+                    pushFollow(FollowSets000.FOLLOW_2);
+                    lv_value_2_0=ruleStringValue();
 
-                    			newLeafNode(lv_value_2_0, grammarAccess.getPropertyAccess().getValueSTRINGTerminalRuleCall_2_0_0()); 
-                    		
+                    state._fsp--;
+
 
                     	        if (current==null) {
-                    	            current = createModelElement(grammarAccess.getPropertyRule());
+                    	            current = createModelElementForParent(grammarAccess.getPropertyRule());
                     	        }
-                           		setWithLastConsumed(
+                           		set(
                            			current, 
                            			"value",
                             		lv_value_2_0, 
-                            		"org.eclipse.xtext.common.Terminals.STRING");
+                            		"org.eclipse.elk.graph.text.ElkGraph.StringValue");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -3251,19 +3483,19 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalLayoutConfig.g:1371:6: ( (lv_value_3_0= ruleQualifiedId ) )
+                    // InternalLayoutConfig.g:1448:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
                     {
-                    // InternalLayoutConfig.g:1371:6: ( (lv_value_3_0= ruleQualifiedId ) )
-                    // InternalLayoutConfig.g:1372:1: (lv_value_3_0= ruleQualifiedId )
+                    // InternalLayoutConfig.g:1448:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
+                    // InternalLayoutConfig.g:1449:1: (lv_value_3_0= ruleQualifiedIdValue )
                     {
-                    // InternalLayoutConfig.g:1372:1: (lv_value_3_0= ruleQualifiedId )
-                    // InternalLayoutConfig.g:1373:3: lv_value_3_0= ruleQualifiedId
+                    // InternalLayoutConfig.g:1449:1: (lv_value_3_0= ruleQualifiedIdValue )
+                    // InternalLayoutConfig.g:1450:3: lv_value_3_0= ruleQualifiedIdValue
                     {
                      
-                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueQualifiedIdParserRuleCall_2_1_0()); 
+                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueQualifiedIdValueParserRuleCall_2_1_0()); 
                     	    
                     pushFollow(FollowSets000.FOLLOW_2);
-                    lv_value_3_0=ruleQualifiedId();
+                    lv_value_3_0=ruleQualifiedIdValue();
 
                     state._fsp--;
 
@@ -3275,7 +3507,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                            			current, 
                            			"value",
                             		lv_value_3_0, 
-                            		"org.eclipse.elk.graph.text.ElkGraph.QualifiedId");
+                            		"org.eclipse.elk.graph.text.ElkGraph.QualifiedIdValue");
                     	        afterParserOrEnumRuleCall();
                     	    
 
@@ -3288,19 +3520,19 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalLayoutConfig.g:1390:6: ( (lv_value_4_0= ruleBoolean ) )
+                    // InternalLayoutConfig.g:1467:6: ( (lv_value_4_0= ruleNumberValue ) )
                     {
-                    // InternalLayoutConfig.g:1390:6: ( (lv_value_4_0= ruleBoolean ) )
-                    // InternalLayoutConfig.g:1391:1: (lv_value_4_0= ruleBoolean )
+                    // InternalLayoutConfig.g:1467:6: ( (lv_value_4_0= ruleNumberValue ) )
+                    // InternalLayoutConfig.g:1468:1: (lv_value_4_0= ruleNumberValue )
                     {
-                    // InternalLayoutConfig.g:1391:1: (lv_value_4_0= ruleBoolean )
-                    // InternalLayoutConfig.g:1392:3: lv_value_4_0= ruleBoolean
+                    // InternalLayoutConfig.g:1468:1: (lv_value_4_0= ruleNumberValue )
+                    // InternalLayoutConfig.g:1469:3: lv_value_4_0= ruleNumberValue
                     {
                      
-                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueBooleanParserRuleCall_2_2_0()); 
+                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueNumberValueParserRuleCall_2_2_0()); 
                     	    
                     pushFollow(FollowSets000.FOLLOW_2);
-                    lv_value_4_0=ruleBoolean();
+                    lv_value_4_0=ruleNumberValue();
 
                     state._fsp--;
 
@@ -3312,7 +3544,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                            			current, 
                            			"value",
                             		lv_value_4_0, 
-                            		"org.eclipse.elk.graph.text.ElkGraph.Boolean");
+                            		"org.eclipse.elk.graph.text.ElkGraph.NumberValue");
                     	        afterParserOrEnumRuleCall();
                     	    
 
@@ -3325,59 +3557,32 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalLayoutConfig.g:1409:6: ( (lv_value_5_0= RULE_SIGNED_INT ) )
+                    // InternalLayoutConfig.g:1486:6: ( (lv_value_5_0= ruleBooleanValue ) )
                     {
-                    // InternalLayoutConfig.g:1409:6: ( (lv_value_5_0= RULE_SIGNED_INT ) )
-                    // InternalLayoutConfig.g:1410:1: (lv_value_5_0= RULE_SIGNED_INT )
+                    // InternalLayoutConfig.g:1486:6: ( (lv_value_5_0= ruleBooleanValue ) )
+                    // InternalLayoutConfig.g:1487:1: (lv_value_5_0= ruleBooleanValue )
                     {
-                    // InternalLayoutConfig.g:1410:1: (lv_value_5_0= RULE_SIGNED_INT )
-                    // InternalLayoutConfig.g:1411:3: lv_value_5_0= RULE_SIGNED_INT
+                    // InternalLayoutConfig.g:1487:1: (lv_value_5_0= ruleBooleanValue )
+                    // InternalLayoutConfig.g:1488:3: lv_value_5_0= ruleBooleanValue
                     {
-                    lv_value_5_0=(Token)match(input,RULE_SIGNED_INT,FollowSets000.FOLLOW_2); 
+                     
+                    	        newCompositeNode(grammarAccess.getPropertyAccess().getValueBooleanValueParserRuleCall_2_3_0()); 
+                    	    
+                    pushFollow(FollowSets000.FOLLOW_2);
+                    lv_value_5_0=ruleBooleanValue();
 
-                    			newLeafNode(lv_value_5_0, grammarAccess.getPropertyAccess().getValueSIGNED_INTTerminalRuleCall_2_3_0()); 
-                    		
+                    state._fsp--;
+
 
                     	        if (current==null) {
-                    	            current = createModelElement(grammarAccess.getPropertyRule());
+                    	            current = createModelElementForParent(grammarAccess.getPropertyRule());
                     	        }
-                           		setWithLastConsumed(
+                           		set(
                            			current, 
                            			"value",
                             		lv_value_5_0, 
-                            		"org.eclipse.elk.graph.text.ElkGraph.SIGNED_INT");
-                    	    
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 5 :
-                    // InternalLayoutConfig.g:1428:6: ( (lv_value_6_0= RULE_FLOAT ) )
-                    {
-                    // InternalLayoutConfig.g:1428:6: ( (lv_value_6_0= RULE_FLOAT ) )
-                    // InternalLayoutConfig.g:1429:1: (lv_value_6_0= RULE_FLOAT )
-                    {
-                    // InternalLayoutConfig.g:1429:1: (lv_value_6_0= RULE_FLOAT )
-                    // InternalLayoutConfig.g:1430:3: lv_value_6_0= RULE_FLOAT
-                    {
-                    lv_value_6_0=(Token)match(input,RULE_FLOAT,FollowSets000.FOLLOW_2); 
-
-                    			newLeafNode(lv_value_6_0, grammarAccess.getPropertyAccess().getValueFLOATTerminalRuleCall_2_4_0()); 
-                    		
-
-                    	        if (current==null) {
-                    	            current = createModelElement(grammarAccess.getPropertyRule());
-                    	        }
-                           		setWithLastConsumed(
-                           			current, 
-                           			"value",
-                            		lv_value_6_0, 
-                            		"org.eclipse.elk.graph.text.ElkGraph.FLOAT");
+                            		"org.eclipse.elk.graph.text.ElkGraph.BooleanValue");
+                    	        afterParserOrEnumRuleCall();
                     	    
 
                     }
@@ -3411,346 +3616,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
     // $ANTLR end "ruleProperty"
 
 
-    // $ANTLR start "entryRuleQualifiedId"
-    // InternalLayoutConfig.g:1454:1: entryRuleQualifiedId returns [String current=null] : iv_ruleQualifiedId= ruleQualifiedId EOF ;
-    public final String entryRuleQualifiedId() throws RecognitionException {
-        String current = null;
-
-        AntlrDatatypeRuleToken iv_ruleQualifiedId = null;
-
-
-        try {
-            // InternalLayoutConfig.g:1455:2: (iv_ruleQualifiedId= ruleQualifiedId EOF )
-            // InternalLayoutConfig.g:1456:2: iv_ruleQualifiedId= ruleQualifiedId EOF
-            {
-             newCompositeNode(grammarAccess.getQualifiedIdRule()); 
-            pushFollow(FollowSets000.FOLLOW_1);
-            iv_ruleQualifiedId=ruleQualifiedId();
-
-            state._fsp--;
-
-             current =iv_ruleQualifiedId.getText(); 
-            match(input,EOF,FollowSets000.FOLLOW_2); 
-
-            }
-
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleQualifiedId"
-
-
-    // $ANTLR start "ruleQualifiedId"
-    // InternalLayoutConfig.g:1463:1: ruleQualifiedId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
-    public final AntlrDatatypeRuleToken ruleQualifiedId() throws RecognitionException {
-        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
-
-        Token this_ID_0=null;
-        Token kw=null;
-        Token this_ID_2=null;
-
-         enterRule(); 
-            
-        try {
-            // InternalLayoutConfig.g:1466:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // InternalLayoutConfig.g:1467:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            {
-            // InternalLayoutConfig.g:1467:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // InternalLayoutConfig.g:1467:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
-            {
-            this_ID_0=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_29); 
-
-            		current.merge(this_ID_0);
-                
-             
-                newLeafNode(this_ID_0, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_0()); 
-                
-            // InternalLayoutConfig.g:1474:1: (kw= '.' this_ID_2= RULE_ID )*
-            loop20:
-            do {
-                int alt20=2;
-                int LA20_0 = input.LA(1);
-
-                if ( (LA20_0==32) ) {
-                    alt20=1;
-                }
-
-
-                switch (alt20) {
-            	case 1 :
-            	    // InternalLayoutConfig.g:1475:2: kw= '.' this_ID_2= RULE_ID
-            	    {
-            	    kw=(Token)match(input,32,FollowSets000.FOLLOW_6); 
-
-            	            current.merge(kw);
-            	            newLeafNode(kw, grammarAccess.getQualifiedIdAccess().getFullStopKeyword_1_0()); 
-            	        
-            	    this_ID_2=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_29); 
-
-            	    		current.merge(this_ID_2);
-            	        
-            	     
-            	        newLeafNode(this_ID_2, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_1_1()); 
-            	        
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop20;
-                }
-            } while (true);
-
-
-            }
-
-
-            }
-
-             leaveRule(); 
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleQualifiedId"
-
-
-    // $ANTLR start "entryRuleBoolean"
-    // InternalLayoutConfig.g:1495:1: entryRuleBoolean returns [String current=null] : iv_ruleBoolean= ruleBoolean EOF ;
-    public final String entryRuleBoolean() throws RecognitionException {
-        String current = null;
-
-        AntlrDatatypeRuleToken iv_ruleBoolean = null;
-
-
-        try {
-            // InternalLayoutConfig.g:1496:2: (iv_ruleBoolean= ruleBoolean EOF )
-            // InternalLayoutConfig.g:1497:2: iv_ruleBoolean= ruleBoolean EOF
-            {
-             newCompositeNode(grammarAccess.getBooleanRule()); 
-            pushFollow(FollowSets000.FOLLOW_1);
-            iv_ruleBoolean=ruleBoolean();
-
-            state._fsp--;
-
-             current =iv_ruleBoolean.getText(); 
-            match(input,EOF,FollowSets000.FOLLOW_2); 
-
-            }
-
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleBoolean"
-
-
-    // $ANTLR start "ruleBoolean"
-    // InternalLayoutConfig.g:1504:1: ruleBoolean returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
-    public final AntlrDatatypeRuleToken ruleBoolean() throws RecognitionException {
-        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
-
-        Token kw=null;
-
-         enterRule(); 
-            
-        try {
-            // InternalLayoutConfig.g:1507:28: ( (kw= 'true' | kw= 'false' ) )
-            // InternalLayoutConfig.g:1508:1: (kw= 'true' | kw= 'false' )
-            {
-            // InternalLayoutConfig.g:1508:1: (kw= 'true' | kw= 'false' )
-            int alt21=2;
-            int LA21_0 = input.LA(1);
-
-            if ( (LA21_0==33) ) {
-                alt21=1;
-            }
-            else if ( (LA21_0==34) ) {
-                alt21=2;
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 21, 0, input);
-
-                throw nvae;
-            }
-            switch (alt21) {
-                case 1 :
-                    // InternalLayoutConfig.g:1509:2: kw= 'true'
-                    {
-                    kw=(Token)match(input,33,FollowSets000.FOLLOW_2); 
-
-                            current.merge(kw);
-                            newLeafNode(kw, grammarAccess.getBooleanAccess().getTrueKeyword_0()); 
-                        
-
-                    }
-                    break;
-                case 2 :
-                    // InternalLayoutConfig.g:1516:2: kw= 'false'
-                    {
-                    kw=(Token)match(input,34,FollowSets000.FOLLOW_2); 
-
-                            current.merge(kw);
-                            newLeafNode(kw, grammarAccess.getBooleanAccess().getFalseKeyword_1()); 
-                        
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-             leaveRule(); 
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleBoolean"
-
-
-    // $ANTLR start "entryRuleNumber"
-    // InternalLayoutConfig.g:1529:1: entryRuleNumber returns [String current=null] : iv_ruleNumber= ruleNumber EOF ;
-    public final String entryRuleNumber() throws RecognitionException {
-        String current = null;
-
-        AntlrDatatypeRuleToken iv_ruleNumber = null;
-
-
-        try {
-            // InternalLayoutConfig.g:1530:2: (iv_ruleNumber= ruleNumber EOF )
-            // InternalLayoutConfig.g:1531:2: iv_ruleNumber= ruleNumber EOF
-            {
-             newCompositeNode(grammarAccess.getNumberRule()); 
-            pushFollow(FollowSets000.FOLLOW_1);
-            iv_ruleNumber=ruleNumber();
-
-            state._fsp--;
-
-             current =iv_ruleNumber.getText(); 
-            match(input,EOF,FollowSets000.FOLLOW_2); 
-
-            }
-
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "entryRuleNumber"
-
-
-    // $ANTLR start "ruleNumber"
-    // InternalLayoutConfig.g:1538:1: ruleNumber returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
-    public final AntlrDatatypeRuleToken ruleNumber() throws RecognitionException {
-        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
-
-        Token this_SIGNED_INT_0=null;
-        Token this_FLOAT_1=null;
-
-         enterRule(); 
-            
-        try {
-            // InternalLayoutConfig.g:1541:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
-            // InternalLayoutConfig.g:1542:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
-            {
-            // InternalLayoutConfig.g:1542:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
-            int alt22=2;
-            int LA22_0 = input.LA(1);
-
-            if ( (LA22_0==RULE_SIGNED_INT) ) {
-                alt22=1;
-            }
-            else if ( (LA22_0==RULE_FLOAT) ) {
-                alt22=2;
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 22, 0, input);
-
-                throw nvae;
-            }
-            switch (alt22) {
-                case 1 :
-                    // InternalLayoutConfig.g:1542:6: this_SIGNED_INT_0= RULE_SIGNED_INT
-                    {
-                    this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FollowSets000.FOLLOW_2); 
-
-                    		current.merge(this_SIGNED_INT_0);
-                        
-                     
-                        newLeafNode(this_SIGNED_INT_0, grammarAccess.getNumberAccess().getSIGNED_INTTerminalRuleCall_0()); 
-                        
-
-                    }
-                    break;
-                case 2 :
-                    // InternalLayoutConfig.g:1550:10: this_FLOAT_1= RULE_FLOAT
-                    {
-                    this_FLOAT_1=(Token)match(input,RULE_FLOAT,FollowSets000.FOLLOW_2); 
-
-                    		current.merge(this_FLOAT_1);
-                        
-                     
-                        newLeafNode(this_FLOAT_1, grammarAccess.getNumberAccess().getFLOATTerminalRuleCall_1()); 
-                        
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-             leaveRule(); 
-        }
-         
-            catch (RecognitionException re) { 
-                recover(input,re); 
-                appendSkippedTokens();
-            } 
-        finally {
-        }
-        return current;
-    }
-    // $ANTLR end "ruleNumber"
-
-
     // $ANTLR start "entryRulePropertyKey"
-    // InternalLayoutConfig.g:1565:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
+    // InternalLayoutConfig.g:1512:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
     public final String entryRulePropertyKey() throws RecognitionException {
         String current = null;
 
@@ -3761,8 +3628,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
         		HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
         	
         try {
-            // InternalLayoutConfig.g:1569:2: (iv_rulePropertyKey= rulePropertyKey EOF )
-            // InternalLayoutConfig.g:1570:2: iv_rulePropertyKey= rulePropertyKey EOF
+            // InternalLayoutConfig.g:1516:2: (iv_rulePropertyKey= rulePropertyKey EOF )
+            // InternalLayoutConfig.g:1517:2: iv_rulePropertyKey= rulePropertyKey EOF
             {
              newCompositeNode(grammarAccess.getPropertyKeyRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -3792,7 +3659,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePropertyKey"
-    // InternalLayoutConfig.g:1580:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    // InternalLayoutConfig.g:1527:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
     public final AntlrDatatypeRuleToken rulePropertyKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -3804,40 +3671,40 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
         		HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
             
         try {
-            // InternalLayoutConfig.g:1584:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // InternalLayoutConfig.g:1585:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalLayoutConfig.g:1531:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalLayoutConfig.g:1532:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
             {
-            // InternalLayoutConfig.g:1585:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // InternalLayoutConfig.g:1585:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            // InternalLayoutConfig.g:1532:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalLayoutConfig.g:1532:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
             {
-            this_ID_0=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_29); 
+            this_ID_0=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_28); 
 
             		current.merge(this_ID_0);
                 
              
                 newLeafNode(this_ID_0, grammarAccess.getPropertyKeyAccess().getIDTerminalRuleCall_0()); 
                 
-            // InternalLayoutConfig.g:1592:1: (kw= '.' this_ID_2= RULE_ID )*
-            loop23:
+            // InternalLayoutConfig.g:1539:1: (kw= '.' this_ID_2= RULE_ID )*
+            loop22:
             do {
-                int alt23=2;
-                int LA23_0 = input.LA(1);
+                int alt22=2;
+                int LA22_0 = input.LA(1);
 
-                if ( (LA23_0==32) ) {
-                    alt23=1;
+                if ( (LA22_0==32) ) {
+                    alt22=1;
                 }
 
 
-                switch (alt23) {
+                switch (alt22) {
             	case 1 :
-            	    // InternalLayoutConfig.g:1593:2: kw= '.' this_ID_2= RULE_ID
+            	    // InternalLayoutConfig.g:1540:2: kw= '.' this_ID_2= RULE_ID
             	    {
             	    kw=(Token)match(input,32,FollowSets000.FOLLOW_6); 
 
             	            current.merge(kw);
             	            newLeafNode(kw, grammarAccess.getPropertyKeyAccess().getFullStopKeyword_1_0()); 
             	        
-            	    this_ID_2=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_29); 
+            	    this_ID_2=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_28); 
 
             	    		current.merge(this_ID_2);
             	        
@@ -3849,7 +3716,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop23;
+            	    break loop22;
                 }
             } while (true);
 
@@ -3874,6 +3741,381 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
         return current;
     }
     // $ANTLR end "rulePropertyKey"
+
+
+    // $ANTLR start "entryRuleStringValue"
+    // InternalLayoutConfig.g:1563:1: entryRuleStringValue returns [String current=null] : iv_ruleStringValue= ruleStringValue EOF ;
+    public final String entryRuleStringValue() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleStringValue = null;
+
+
+        try {
+            // InternalLayoutConfig.g:1564:2: (iv_ruleStringValue= ruleStringValue EOF )
+            // InternalLayoutConfig.g:1565:2: iv_ruleStringValue= ruleStringValue EOF
+            {
+             newCompositeNode(grammarAccess.getStringValueRule()); 
+            pushFollow(FollowSets000.FOLLOW_1);
+            iv_ruleStringValue=ruleStringValue();
+
+            state._fsp--;
+
+             current =iv_ruleStringValue.getText(); 
+            match(input,EOF,FollowSets000.FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleStringValue"
+
+
+    // $ANTLR start "ruleStringValue"
+    // InternalLayoutConfig.g:1572:1: ruleStringValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_STRING_0= RULE_STRING ;
+    public final AntlrDatatypeRuleToken ruleStringValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_STRING_0=null;
+
+         enterRule(); 
+            
+        try {
+            // InternalLayoutConfig.g:1575:28: (this_STRING_0= RULE_STRING )
+            // InternalLayoutConfig.g:1576:5: this_STRING_0= RULE_STRING
+            {
+            this_STRING_0=(Token)match(input,RULE_STRING,FollowSets000.FOLLOW_2); 
+
+            		current.merge(this_STRING_0);
+                
+             
+                newLeafNode(this_STRING_0, grammarAccess.getStringValueAccess().getSTRINGTerminalRuleCall()); 
+                
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleStringValue"
+
+
+    // $ANTLR start "entryRuleQualifiedIdValue"
+    // InternalLayoutConfig.g:1591:1: entryRuleQualifiedIdValue returns [String current=null] : iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF ;
+    public final String entryRuleQualifiedIdValue() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleQualifiedIdValue = null;
+
+
+        try {
+            // InternalLayoutConfig.g:1592:2: (iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF )
+            // InternalLayoutConfig.g:1593:2: iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF
+            {
+             newCompositeNode(grammarAccess.getQualifiedIdValueRule()); 
+            pushFollow(FollowSets000.FOLLOW_1);
+            iv_ruleQualifiedIdValue=ruleQualifiedIdValue();
+
+            state._fsp--;
+
+             current =iv_ruleQualifiedIdValue.getText(); 
+            match(input,EOF,FollowSets000.FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleQualifiedIdValue"
+
+
+    // $ANTLR start "ruleQualifiedIdValue"
+    // InternalLayoutConfig.g:1600:1: ruleQualifiedIdValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_QualifiedId_0= ruleQualifiedId ;
+    public final AntlrDatatypeRuleToken ruleQualifiedIdValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        AntlrDatatypeRuleToken this_QualifiedId_0 = null;
+
+
+         enterRule(); 
+            
+        try {
+            // InternalLayoutConfig.g:1603:28: (this_QualifiedId_0= ruleQualifiedId )
+            // InternalLayoutConfig.g:1605:5: this_QualifiedId_0= ruleQualifiedId
+            {
+             
+                    newCompositeNode(grammarAccess.getQualifiedIdValueAccess().getQualifiedIdParserRuleCall()); 
+                
+            pushFollow(FollowSets000.FOLLOW_2);
+            this_QualifiedId_0=ruleQualifiedId();
+
+            state._fsp--;
+
+
+            		current.merge(this_QualifiedId_0);
+                
+             
+                    afterParserOrEnumRuleCall();
+                
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleQualifiedIdValue"
+
+
+    // $ANTLR start "entryRuleNumberValue"
+    // InternalLayoutConfig.g:1623:1: entryRuleNumberValue returns [String current=null] : iv_ruleNumberValue= ruleNumberValue EOF ;
+    public final String entryRuleNumberValue() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleNumberValue = null;
+
+
+        try {
+            // InternalLayoutConfig.g:1624:2: (iv_ruleNumberValue= ruleNumberValue EOF )
+            // InternalLayoutConfig.g:1625:2: iv_ruleNumberValue= ruleNumberValue EOF
+            {
+             newCompositeNode(grammarAccess.getNumberValueRule()); 
+            pushFollow(FollowSets000.FOLLOW_1);
+            iv_ruleNumberValue=ruleNumberValue();
+
+            state._fsp--;
+
+             current =iv_ruleNumberValue.getText(); 
+            match(input,EOF,FollowSets000.FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleNumberValue"
+
+
+    // $ANTLR start "ruleNumberValue"
+    // InternalLayoutConfig.g:1632:1: ruleNumberValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
+    public final AntlrDatatypeRuleToken ruleNumberValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token this_SIGNED_INT_0=null;
+        Token this_FLOAT_1=null;
+
+         enterRule(); 
+            
+        try {
+            // InternalLayoutConfig.g:1635:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
+            // InternalLayoutConfig.g:1636:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            {
+            // InternalLayoutConfig.g:1636:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            int alt23=2;
+            int LA23_0 = input.LA(1);
+
+            if ( (LA23_0==RULE_SIGNED_INT) ) {
+                alt23=1;
+            }
+            else if ( (LA23_0==RULE_FLOAT) ) {
+                alt23=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 23, 0, input);
+
+                throw nvae;
+            }
+            switch (alt23) {
+                case 1 :
+                    // InternalLayoutConfig.g:1636:6: this_SIGNED_INT_0= RULE_SIGNED_INT
+                    {
+                    this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FollowSets000.FOLLOW_2); 
+
+                    		current.merge(this_SIGNED_INT_0);
+                        
+                     
+                        newLeafNode(this_SIGNED_INT_0, grammarAccess.getNumberValueAccess().getSIGNED_INTTerminalRuleCall_0()); 
+                        
+
+                    }
+                    break;
+                case 2 :
+                    // InternalLayoutConfig.g:1644:10: this_FLOAT_1= RULE_FLOAT
+                    {
+                    this_FLOAT_1=(Token)match(input,RULE_FLOAT,FollowSets000.FOLLOW_2); 
+
+                    		current.merge(this_FLOAT_1);
+                        
+                     
+                        newLeafNode(this_FLOAT_1, grammarAccess.getNumberValueAccess().getFLOATTerminalRuleCall_1()); 
+                        
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleNumberValue"
+
+
+    // $ANTLR start "entryRuleBooleanValue"
+    // InternalLayoutConfig.g:1659:1: entryRuleBooleanValue returns [String current=null] : iv_ruleBooleanValue= ruleBooleanValue EOF ;
+    public final String entryRuleBooleanValue() throws RecognitionException {
+        String current = null;
+
+        AntlrDatatypeRuleToken iv_ruleBooleanValue = null;
+
+
+        try {
+            // InternalLayoutConfig.g:1660:2: (iv_ruleBooleanValue= ruleBooleanValue EOF )
+            // InternalLayoutConfig.g:1661:2: iv_ruleBooleanValue= ruleBooleanValue EOF
+            {
+             newCompositeNode(grammarAccess.getBooleanValueRule()); 
+            pushFollow(FollowSets000.FOLLOW_1);
+            iv_ruleBooleanValue=ruleBooleanValue();
+
+            state._fsp--;
+
+             current =iv_ruleBooleanValue.getText(); 
+            match(input,EOF,FollowSets000.FOLLOW_2); 
+
+            }
+
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "entryRuleBooleanValue"
+
+
+    // $ANTLR start "ruleBooleanValue"
+    // InternalLayoutConfig.g:1668:1: ruleBooleanValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
+    public final AntlrDatatypeRuleToken ruleBooleanValue() throws RecognitionException {
+        AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
+
+        Token kw=null;
+
+         enterRule(); 
+            
+        try {
+            // InternalLayoutConfig.g:1671:28: ( (kw= 'true' | kw= 'false' ) )
+            // InternalLayoutConfig.g:1672:1: (kw= 'true' | kw= 'false' )
+            {
+            // InternalLayoutConfig.g:1672:1: (kw= 'true' | kw= 'false' )
+            int alt24=2;
+            int LA24_0 = input.LA(1);
+
+            if ( (LA24_0==33) ) {
+                alt24=1;
+            }
+            else if ( (LA24_0==34) ) {
+                alt24=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 24, 0, input);
+
+                throw nvae;
+            }
+            switch (alt24) {
+                case 1 :
+                    // InternalLayoutConfig.g:1673:2: kw= 'true'
+                    {
+                    kw=(Token)match(input,33,FollowSets000.FOLLOW_2); 
+
+                            current.merge(kw);
+                            newLeafNode(kw, grammarAccess.getBooleanValueAccess().getTrueKeyword_0()); 
+                        
+
+                    }
+                    break;
+                case 2 :
+                    // InternalLayoutConfig.g:1680:2: kw= 'false'
+                    {
+                    kw=(Token)match(input,34,FollowSets000.FOLLOW_2); 
+
+                            current.merge(kw);
+                            newLeafNode(kw, grammarAccess.getBooleanValueAccess().getFalseKeyword_1()); 
+                        
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+             leaveRule(); 
+        }
+         
+            catch (RecognitionException re) { 
+                recover(input,re); 
+                appendSkippedTokens();
+            } 
+        finally {
+        }
+        return current;
+    }
+    // $ANTLR end "ruleBooleanValue"
 
     // Delegated rules
 
@@ -3909,8 +4151,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
         public static final BitSet FOLLOW_25 = new BitSet(new long[]{0x0000000000280000L});
         public static final BitSet FOLLOW_26 = new BitSet(new long[]{0x000000001F800000L});
         public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x000000003F800000L});
-        public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x00000006000000F0L});
-        public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x0000000100000002L});
+        public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x0000000100000002L});
+        public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x00000006000000F0L});
     }
 
 

@@ -38,9 +38,10 @@ public class LayoutConfigParser extends AbstractContentAssistParser {
 				private static final long serialVersionUID = 1L;
 				{
 					put(grammarAccess.getEdgeLayoutAccess().getAlternatives_2(), "rule__EdgeLayout__Alternatives_2");
-					put(grammarAccess.getPropertyAccess().getAlternatives_2(), "rule__Property__Alternatives_2");
-					put(grammarAccess.getBooleanAccess().getAlternatives(), "rule__Boolean__Alternatives");
 					put(grammarAccess.getNumberAccess().getAlternatives(), "rule__Number__Alternatives");
+					put(grammarAccess.getPropertyAccess().getAlternatives_2(), "rule__Property__Alternatives_2");
+					put(grammarAccess.getNumberValueAccess().getAlternatives(), "rule__NumberValue__Alternatives");
+					put(grammarAccess.getBooleanValueAccess().getAlternatives(), "rule__BooleanValue__Alternatives");
 					put(grammarAccess.getRootNodeAccess().getGroup(), "rule__RootNode__Group__0");
 					put(grammarAccess.getElkNodeAccess().getGroup(), "rule__ElkNode__Group__0");
 					put(grammarAccess.getElkNodeAccess().getGroup_3(), "rule__ElkNode__Group_3__0");
@@ -76,9 +77,9 @@ public class LayoutConfigParser extends AbstractContentAssistParser {
 					put(grammarAccess.getElkEdgeSectionAccess().getGroup_4_4(), "rule__ElkEdgeSection__Group_4_4__0");
 					put(grammarAccess.getElkEdgeSectionAccess().getGroup_4_4_3(), "rule__ElkEdgeSection__Group_4_4_3__0");
 					put(grammarAccess.getElkBendPointAccess().getGroup(), "rule__ElkBendPoint__Group__0");
-					put(grammarAccess.getPropertyAccess().getGroup(), "rule__Property__Group__0");
 					put(grammarAccess.getQualifiedIdAccess().getGroup(), "rule__QualifiedId__Group__0");
 					put(grammarAccess.getQualifiedIdAccess().getGroup_1(), "rule__QualifiedId__Group_1__0");
+					put(grammarAccess.getPropertyAccess().getGroup(), "rule__Property__Group__0");
 					put(grammarAccess.getPropertyKeyAccess().getGroup(), "rule__PropertyKey__Group__0");
 					put(grammarAccess.getPropertyKeyAccess().getGroup_1(), "rule__PropertyKey__Group_1__0");
 					put(grammarAccess.getRootNodeAccess().getChildrenAssignment_1(), "rule__RootNode__ChildrenAssignment_1");
@@ -133,7 +134,6 @@ public class LayoutConfigParser extends AbstractContentAssistParser {
 					put(grammarAccess.getPropertyAccess().getValueAssignment_2_1(), "rule__Property__ValueAssignment_2_1");
 					put(grammarAccess.getPropertyAccess().getValueAssignment_2_2(), "rule__Property__ValueAssignment_2_2");
 					put(grammarAccess.getPropertyAccess().getValueAssignment_2_3(), "rule__Property__ValueAssignment_2_3");
-					put(grammarAccess.getPropertyAccess().getValueAssignment_2_4(), "rule__Property__ValueAssignment_2_4");
 					put(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), "rule__ShapeLayout__UnorderedGroup_2");
 					put(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), "rule__ElkSingleEdgeSection__UnorderedGroup_1");
 					put(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), "rule__ElkEdgeSection__UnorderedGroup_4");
