@@ -30,6 +30,9 @@ import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.ElkPort
 import org.eclipse.elk.graph.ElkShape
 import org.eclipse.elk.graph.util.ElkGraphUtil
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
+import org.eclipse.elk.graph.ElkGraphElement
+import de.cau.cs.kieler.klighd.kgraph.KGraphElement
 
 /**
  * Turns an ELK graph into a diagram KLighD knows how to display.
@@ -82,6 +85,14 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         node.children.forEach[elkNode | elkNode.transformEdges()];
     }
     
+    private def void transformId(ElkGraphElement elkEle, KGraphElement kEle) {
+        // Convert the id
+        if (!elkEle.identifier.isNullOrEmpty) {
+            val id = KGraphFactory.eINSTANCE.createKIdentifier
+            id.id = elkEle.identifier
+            kEle.data += id
+        }
+    }
     
     ///////////////////////////////////////////////////////////////////////////////
     // TRANSFORMATION DETAILS
@@ -93,6 +104,9 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
             node.parent = elkNode.parent.transformNode();
         }
         
+        // Id
+        elkNode.transformId(node)
+        
         // Layout information
         elkNode.copyShapeLayoutTo(node);
     }
@@ -100,6 +114,9 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     private def create port : createPort() transformPort(ElkPort elkPort) {
         // Structural information
         port.node = elkPort.parent.transformNode();
+        
+        // Id
+        elkPort.transformId(port)
         
         // Structural information
         elkPort.copyShapeLayoutTo(port);
@@ -118,6 +135,9 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
             // it was attached to in the original ELK graph
             return;
         }
+        
+        // Id
+        elkLabel.transformId(label)
         
         // Structural information
         elkLabel.copyShapeLayoutTo(label);
@@ -146,6 +166,9 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         if (elkTargetPort != null) {
             edge.targetPort = elkTargetPort.transformPort();
         }
+        
+        // Id 
+        elkEdge.transformId(edge)
         
         // Structural information
         elkEdge.copyEdgeLayoutTo(edge);
