@@ -49,6 +49,7 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 		}
 		
 		stress.layout(layoutGraph, progressMonitor);
+		HierarchicalEdgeRouting.drawExplosionLines(HierarchicalUtil.findRoot(layoutGraph));
 
 		progressMonitor.done();
 	}
