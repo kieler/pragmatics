@@ -17,7 +17,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -27,12 +26,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.WrappedException;
-import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -123,7 +120,7 @@ public class FileElkGraphProvider implements IElkGraphProvider<IPath> {
             
             if (layoutBeforeAnalysis) {
                 if (configurator != null) {
-                    applyVisitors(graph, configurator);
+                    ElkUtil.applyVisitors(graph, configurator);
                 }
                 
                 if (layoutEngine == null) {
@@ -200,26 +197,6 @@ public class FileElkGraphProvider implements IElkGraphProvider<IPath> {
      */
     public void setLayoutConfigurator(final LayoutConfigurator configuratorOption) {
         this.configurator = configuratorOption;
-    }
-
-    /**
-     * Apply the given graph element visitors to the content of the given graph.
-     */
-    private static void applyVisitors(final ElkNode graph, final IGraphElementVisitor... visitors) {
-        for (int i = 0; i < visitors.length; i++) {
-            visitors[i].visit(graph);
-        }
-        Iterator<EObject> allElements = ElkGraphUtil.propertiesSkippingIteratorFor(graph, true);
-        while (allElements.hasNext()) {
-            EObject nextElement = allElements.next();
-            
-            if (nextElement instanceof ElkGraphElement) {
-                ElkGraphElement graphElement = (ElkGraphElement) nextElement;
-                for (int i = 0; i < visitors.length; i++) {
-                    visitors[i].visit(graphElement);
-                }
-            }
-        }
     }
     
 }

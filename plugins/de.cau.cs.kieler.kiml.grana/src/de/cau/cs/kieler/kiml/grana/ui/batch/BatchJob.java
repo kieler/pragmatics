@@ -13,7 +13,6 @@
  */
 package de.cau.cs.kieler.kiml.grana.ui.batch;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -22,8 +21,8 @@ import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
@@ -32,7 +31,6 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
-import com.google.common.collect.Iterators;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 
@@ -300,9 +298,9 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
             if (layoutEngine == null) {
                 layoutEngine = new RecursiveGraphLayoutEngine();
             }
-            applyVisitors(first, layoutConfigurators.getFirst());
+            ElkUtil.applyVisitors(first, layoutConfigurators.getFirst());
             layoutEngine.layout(first, monitor.subTask(1));
-            applyVisitors(second, layoutConfigurators.getSecond());
+            ElkUtil.applyVisitors(second, layoutConfigurators.getSecond());
             layoutEngine.layout(second, monitor.subTask(1));
             
             // #3 create a wrapper node to be passed to the analysis service
@@ -321,25 +319,6 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
             
             monitor.done();
             return batchJobResult;
-        }
-        
-        /**
-         * Apply the given graph element visitors to the content of the given graph.
-         */
-        private static void applyVisitors(final ElkNode graph,
-                final IGraphElementVisitor... visitors) {
-            
-            for (int i = 0; i < visitors.length; i++) {
-                visitors[i].visit(graph);
-            }
-            Iterator<ElkGraphElement> allElements =
-                    Iterators.filter(graph.eAllContents(), ElkGraphElement.class);
-            while (allElements.hasNext()) {
-                ElkGraphElement element = allElements.next();
-                for (int i = 0; i < visitors.length; i++) {
-                    visitors[i].visit(element);
-                }
-            }
         }
     }
     
