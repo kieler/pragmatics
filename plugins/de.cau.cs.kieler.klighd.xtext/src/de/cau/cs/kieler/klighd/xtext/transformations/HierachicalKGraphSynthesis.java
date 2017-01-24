@@ -122,8 +122,8 @@ public final class HierachicalKGraphSynthesis {
 
                 copiedChildren.add(copy);
                 int id = child.hashCode();
-                child.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D, id);
-                copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D, id);
+                child.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D, id);
+                copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D, id);
 
                 parents.put(copy, parent);
 
