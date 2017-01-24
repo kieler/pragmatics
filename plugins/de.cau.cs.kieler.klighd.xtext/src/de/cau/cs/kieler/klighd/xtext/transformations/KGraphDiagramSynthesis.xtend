@@ -124,7 +124,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
         ImmutableList::of(HIERARCHICAL_ON, HIERARCHICAL_OFF), HIERARCHICAL_OFF)
 
     private static val RADIAL = "Radial"
-    private static val FORCE = "Force"
+    private static val STRESS = "Stress"
     private static val GRID = "Grid Snap"
     private static val TREE = "Tree"
     private static val OVERLAP = "Overlap Removal"
@@ -134,7 +134,7 @@ class KGraphDiagramSynthesis extends AbstractDiagramSynthesis<KNode> {
      * Synthesis option specifying how the Hierarchical view should be layouted.
      */
     private static val SynthesisOption HIERARCHICAL_LAYOUT = SynthesisOption::createChoiceOption("Hierarchical Layout",
-        ImmutableList::of(RADIAL, FORCE, GRID, TREE, OVERLAP, H_LAYOUTER), H_LAYOUTER)
+        ImmutableList::of(RADIAL, STRESS, GRID, TREE, OVERLAP, H_LAYOUTER), H_LAYOUTER)
 
     private static val STYLE_BORING = "Boring";
     private static val STYLE_STYLISH = "Stylish";

@@ -73,7 +73,7 @@ public final class HierachicalKGraphSynthesis {
         if (layout.equals("Radial")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial");
-        } else if (layout.equals("Force")) {
+        } else if (layout.equals("Stress")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.stress");
         } else if (layout.equals("Grid Snap")) {
