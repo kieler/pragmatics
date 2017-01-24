@@ -18,4 +18,13 @@ public class HierarchicalUtil {
 		}
 		return children;
 	}
+	
+	public static KNode findRoot(KNode graph) {
+		for (KNode child : graph.getChildren()) {
+			if (child.getIncomingEdges().isEmpty()) {
+				return child;
+			}
+		}
+		return null;
+	}
 }
