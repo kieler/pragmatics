@@ -27,4 +27,16 @@ public class HierarchicalUtil {
 		}
 		return null;
 	}
+	
+	public static int getNumberOfLeafs(KNode node) {
+		int leafs = 0;
+		if (HierarchicalUtil.getSuccessor(node).isEmpty()) {
+			return 1;
+		} else {
+			for (KNode child : HierarchicalUtil.getSuccessor(node)) {
+				leafs += getNumberOfLeafs(child);
+			}
+		}
+		return leafs;
+	}
 }

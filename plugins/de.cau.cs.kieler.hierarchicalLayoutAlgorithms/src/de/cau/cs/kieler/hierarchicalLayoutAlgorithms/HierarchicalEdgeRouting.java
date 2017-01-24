@@ -74,27 +74,33 @@ public class HierarchicalEdgeRouting {
 		}
 	}
 
-	public static void bendEdgesToExplosionLines(KNode graph) {
-		List<KNode> copiedChildren = new ArrayList<>();
-		copiedChildren.addAll(graph.getChildren());
+	public static void drawExplosionLines(KNode root) {
+		routeEdgesCornerToCorner(root);
+		bendEdgesToExplosionLines(root);
+	}
 
-		//take a look at all the successors of the node
-		for (KNode successor : HierarchicalUtil.getSuccessor(graph)) {
-			KShapeLayout graphShape = graph.getData(KShapeLayout.class);
+	public static void bendEdgesToExplosionLines(KNode root) {
+		List<KNode> copiedChildren = new ArrayList<>();
+		copiedChildren.addAll(root.getChildren());
+
+		// take a look at all the successors of the node
+		for (KNode successor : HierarchicalUtil.getSuccessor(root)) {
+			KShapeLayout graphShape = root.getData(KShapeLayout.class);
 			KShapeLayout shapeSuccessor = successor.getData(KShapeLayout.class);
 			Integer id = shapeSuccessor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
 
-			//look at the incoming edges
+			// look at the incoming edges
 			for (KEdge edge : successor.getIncomingEdges()) {
-				//only the edge coming from the original node shall be considered
-				if (edge.getSource() == graph) {
+				// only the edge coming from the original node shall be
+				// considered
+				if (edge.getSource() == root) {
 					KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
 					KNode childFound = null;
 					for (KNode child : copiedChildren) {
 						KShapeLayout shapeChild = child.getData(KShapeLayout.class);
 						Integer idParent = shapeChild.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
 
-						if (idParent != null  && id.equals(idParent)) {
+						if (idParent != null && id.equals(idParent)) {
 							childFound = child;
 							float xPos = graphShape.getXpos() + shapeChild.getXpos();
 							float yPos = graphShape.getYpos() + shapeChild.getYpos();
