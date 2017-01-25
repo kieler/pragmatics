@@ -4130,7 +4130,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleElkNode"
-    // InternalGrana.g:1626:1: ruleElkNode returns [EObject current=null] : (otherlv_0= 'node' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_children_5_0= ruleElkNode ) ) | ( (lv_containedEdges_6_0= ruleElkEdge ) ) | ( (lv_ports_7_0= ruleElkPort ) ) | ( (lv_labels_8_0= ruleElkLabel ) ) )* otherlv_9= '}' )? ) ;
+    // InternalGrana.g:1626:1: ruleElkNode returns [EObject current=null] : (otherlv_0= 'node' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_labels_5_0= ruleElkLabel ) ) | ( (lv_ports_6_0= ruleElkPort ) ) | ( (lv_children_7_0= ruleElkNode ) ) | ( (lv_containedEdges_8_0= ruleElkEdge ) ) )* otherlv_9= '}' )? ) ;
     public final EObject ruleElkNode() throws RecognitionException {
         EObject current = null;
 
@@ -4142,23 +4142,23 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
         EObject lv_properties_4_0 = null;
 
-        EObject lv_children_5_0 = null;
+        EObject lv_labels_5_0 = null;
 
-        EObject lv_containedEdges_6_0 = null;
+        EObject lv_ports_6_0 = null;
 
-        EObject lv_ports_7_0 = null;
+        EObject lv_children_7_0 = null;
 
-        EObject lv_labels_8_0 = null;
+        EObject lv_containedEdges_8_0 = null;
 
 
          enterRule(); 
             
         try {
-            // InternalGrana.g:1629:28: ( (otherlv_0= 'node' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_children_5_0= ruleElkNode ) ) | ( (lv_containedEdges_6_0= ruleElkEdge ) ) | ( (lv_ports_7_0= ruleElkPort ) ) | ( (lv_labels_8_0= ruleElkLabel ) ) )* otherlv_9= '}' )? ) )
-            // InternalGrana.g:1630:1: (otherlv_0= 'node' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_children_5_0= ruleElkNode ) ) | ( (lv_containedEdges_6_0= ruleElkEdge ) ) | ( (lv_ports_7_0= ruleElkPort ) ) | ( (lv_labels_8_0= ruleElkLabel ) ) )* otherlv_9= '}' )? )
+            // InternalGrana.g:1629:28: ( (otherlv_0= 'node' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_labels_5_0= ruleElkLabel ) ) | ( (lv_ports_6_0= ruleElkPort ) ) | ( (lv_children_7_0= ruleElkNode ) ) | ( (lv_containedEdges_8_0= ruleElkEdge ) ) )* otherlv_9= '}' )? ) )
+            // InternalGrana.g:1630:1: (otherlv_0= 'node' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_labels_5_0= ruleElkLabel ) ) | ( (lv_ports_6_0= ruleElkPort ) ) | ( (lv_children_7_0= ruleElkNode ) ) | ( (lv_containedEdges_8_0= ruleElkEdge ) ) )* otherlv_9= '}' )? )
             {
-            // InternalGrana.g:1630:1: (otherlv_0= 'node' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_children_5_0= ruleElkNode ) ) | ( (lv_containedEdges_6_0= ruleElkEdge ) ) | ( (lv_ports_7_0= ruleElkPort ) ) | ( (lv_labels_8_0= ruleElkLabel ) ) )* otherlv_9= '}' )? )
-            // InternalGrana.g:1630:3: otherlv_0= 'node' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_children_5_0= ruleElkNode ) ) | ( (lv_containedEdges_6_0= ruleElkEdge ) ) | ( (lv_ports_7_0= ruleElkPort ) ) | ( (lv_labels_8_0= ruleElkLabel ) ) )* otherlv_9= '}' )?
+            // InternalGrana.g:1630:1: (otherlv_0= 'node' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_labels_5_0= ruleElkLabel ) ) | ( (lv_ports_6_0= ruleElkPort ) ) | ( (lv_children_7_0= ruleElkNode ) ) | ( (lv_containedEdges_8_0= ruleElkEdge ) ) )* otherlv_9= '}' )? )
+            // InternalGrana.g:1630:3: otherlv_0= 'node' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_labels_5_0= ruleElkLabel ) ) | ( (lv_ports_6_0= ruleElkPort ) ) | ( (lv_children_7_0= ruleElkNode ) ) | ( (lv_containedEdges_8_0= ruleElkEdge ) ) )* otherlv_9= '}' )?
             {
             otherlv_0=(Token)match(input,40,FOLLOW_10); 
 
@@ -4190,7 +4190,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalGrana.g:1652:2: (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_children_5_0= ruleElkNode ) ) | ( (lv_containedEdges_6_0= ruleElkEdge ) ) | ( (lv_ports_7_0= ruleElkPort ) ) | ( (lv_labels_8_0= ruleElkLabel ) ) )* otherlv_9= '}' )?
+            // InternalGrana.g:1652:2: (otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_labels_5_0= ruleElkLabel ) ) | ( (lv_ports_6_0= ruleElkPort ) ) | ( (lv_children_7_0= ruleElkNode ) ) | ( (lv_containedEdges_8_0= ruleElkEdge ) ) )* otherlv_9= '}' )?
             int alt38=2;
             int LA38_0 = input.LA(1);
 
@@ -4199,7 +4199,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             }
             switch (alt38) {
                 case 1 :
-                    // InternalGrana.g:1652:4: otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_children_5_0= ruleElkNode ) ) | ( (lv_containedEdges_6_0= ruleElkEdge ) ) | ( (lv_ports_7_0= ruleElkPort ) ) | ( (lv_labels_8_0= ruleElkLabel ) ) )* otherlv_9= '}'
+                    // InternalGrana.g:1652:4: otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( ( (lv_labels_5_0= ruleElkLabel ) ) | ( (lv_ports_6_0= ruleElkPort ) ) | ( (lv_children_7_0= ruleElkNode ) ) | ( (lv_containedEdges_8_0= ruleElkEdge ) ) )* otherlv_9= '}'
                     {
                     otherlv_2=(Token)match(input,38,FOLLOW_35); 
 
@@ -4286,27 +4286,27 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                         }
                     } while (true);
 
-                    // InternalGrana.g:1686:3: ( ( (lv_children_5_0= ruleElkNode ) ) | ( (lv_containedEdges_6_0= ruleElkEdge ) ) | ( (lv_ports_7_0= ruleElkPort ) ) | ( (lv_labels_8_0= ruleElkLabel ) ) )*
+                    // InternalGrana.g:1686:3: ( ( (lv_labels_5_0= ruleElkLabel ) ) | ( (lv_ports_6_0= ruleElkPort ) ) | ( (lv_children_7_0= ruleElkNode ) ) | ( (lv_containedEdges_8_0= ruleElkEdge ) ) )*
                     loop37:
                     do {
                         int alt37=5;
                         switch ( input.LA(1) ) {
-                        case 40:
+                        case 41:
                             {
                             alt37=1;
                             }
                             break;
-                        case 49:
+                        case 43:
                             {
                             alt37=2;
                             }
                             break;
-                        case 43:
+                        case 40:
                             {
                             alt37=3;
                             }
                             break;
-                        case 41:
+                        case 49:
                             {
                             alt37=4;
                             }
@@ -4316,19 +4316,19 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
                         switch (alt37) {
                     	case 1 :
-                    	    // InternalGrana.g:1686:4: ( (lv_children_5_0= ruleElkNode ) )
+                    	    // InternalGrana.g:1686:4: ( (lv_labels_5_0= ruleElkLabel ) )
                     	    {
-                    	    // InternalGrana.g:1686:4: ( (lv_children_5_0= ruleElkNode ) )
-                    	    // InternalGrana.g:1687:1: (lv_children_5_0= ruleElkNode )
+                    	    // InternalGrana.g:1686:4: ( (lv_labels_5_0= ruleElkLabel ) )
+                    	    // InternalGrana.g:1687:1: (lv_labels_5_0= ruleElkLabel )
                     	    {
-                    	    // InternalGrana.g:1687:1: (lv_children_5_0= ruleElkNode )
-                    	    // InternalGrana.g:1688:3: lv_children_5_0= ruleElkNode
+                    	    // InternalGrana.g:1687:1: (lv_labels_5_0= ruleElkLabel )
+                    	    // InternalGrana.g:1688:3: lv_labels_5_0= ruleElkLabel
                     	    {
                     	     
-                    	    	        newCompositeNode(grammarAccess.getElkNodeAccess().getChildrenElkNodeParserRuleCall_2_3_0_0()); 
+                    	    	        newCompositeNode(grammarAccess.getElkNodeAccess().getLabelsElkLabelParserRuleCall_2_3_0_0()); 
                     	    	    
                     	    pushFollow(FOLLOW_37);
-                    	    lv_children_5_0=ruleElkNode();
+                    	    lv_labels_5_0=ruleElkLabel();
 
                     	    state._fsp--;
 
@@ -4338,9 +4338,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	    	        }
                     	           		add(
                     	           			current, 
-                    	           			"children",
-                    	            		lv_children_5_0, 
-                    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkNode");
+                    	           			"labels",
+                    	            		lv_labels_5_0, 
+                    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkLabel");
                     	    	        afterParserOrEnumRuleCall();
                     	    	    
 
@@ -4353,56 +4353,19 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalGrana.g:1705:6: ( (lv_containedEdges_6_0= ruleElkEdge ) )
+                    	    // InternalGrana.g:1705:6: ( (lv_ports_6_0= ruleElkPort ) )
                     	    {
-                    	    // InternalGrana.g:1705:6: ( (lv_containedEdges_6_0= ruleElkEdge ) )
-                    	    // InternalGrana.g:1706:1: (lv_containedEdges_6_0= ruleElkEdge )
+                    	    // InternalGrana.g:1705:6: ( (lv_ports_6_0= ruleElkPort ) )
+                    	    // InternalGrana.g:1706:1: (lv_ports_6_0= ruleElkPort )
                     	    {
-                    	    // InternalGrana.g:1706:1: (lv_containedEdges_6_0= ruleElkEdge )
-                    	    // InternalGrana.g:1707:3: lv_containedEdges_6_0= ruleElkEdge
-                    	    {
-                    	     
-                    	    	        newCompositeNode(grammarAccess.getElkNodeAccess().getContainedEdgesElkEdgeParserRuleCall_2_3_1_0()); 
-                    	    	    
-                    	    pushFollow(FOLLOW_37);
-                    	    lv_containedEdges_6_0=ruleElkEdge();
-
-                    	    state._fsp--;
-
-
-                    	    	        if (current==null) {
-                    	    	            current = createModelElementForParent(grammarAccess.getElkNodeRule());
-                    	    	        }
-                    	           		add(
-                    	           			current, 
-                    	           			"containedEdges",
-                    	            		lv_containedEdges_6_0, 
-                    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkEdge");
-                    	    	        afterParserOrEnumRuleCall();
-                    	    	    
-
-                    	    }
-
-
-                    	    }
-
-
-                    	    }
-                    	    break;
-                    	case 3 :
-                    	    // InternalGrana.g:1724:6: ( (lv_ports_7_0= ruleElkPort ) )
-                    	    {
-                    	    // InternalGrana.g:1724:6: ( (lv_ports_7_0= ruleElkPort ) )
-                    	    // InternalGrana.g:1725:1: (lv_ports_7_0= ruleElkPort )
-                    	    {
-                    	    // InternalGrana.g:1725:1: (lv_ports_7_0= ruleElkPort )
-                    	    // InternalGrana.g:1726:3: lv_ports_7_0= ruleElkPort
+                    	    // InternalGrana.g:1706:1: (lv_ports_6_0= ruleElkPort )
+                    	    // InternalGrana.g:1707:3: lv_ports_6_0= ruleElkPort
                     	    {
                     	     
-                    	    	        newCompositeNode(grammarAccess.getElkNodeAccess().getPortsElkPortParserRuleCall_2_3_2_0()); 
+                    	    	        newCompositeNode(grammarAccess.getElkNodeAccess().getPortsElkPortParserRuleCall_2_3_1_0()); 
                     	    	    
                     	    pushFollow(FOLLOW_37);
-                    	    lv_ports_7_0=ruleElkPort();
+                    	    lv_ports_6_0=ruleElkPort();
 
                     	    state._fsp--;
 
@@ -4413,7 +4376,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	           		add(
                     	           			current, 
                     	           			"ports",
-                    	            		lv_ports_7_0, 
+                    	            		lv_ports_6_0, 
                     	            		"org.eclipse.elk.graph.text.ElkGraph.ElkPort");
                     	    	        afterParserOrEnumRuleCall();
                     	    	    
@@ -4426,20 +4389,20 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
                     	    }
                     	    break;
-                    	case 4 :
-                    	    // InternalGrana.g:1743:6: ( (lv_labels_8_0= ruleElkLabel ) )
+                    	case 3 :
+                    	    // InternalGrana.g:1724:6: ( (lv_children_7_0= ruleElkNode ) )
                     	    {
-                    	    // InternalGrana.g:1743:6: ( (lv_labels_8_0= ruleElkLabel ) )
-                    	    // InternalGrana.g:1744:1: (lv_labels_8_0= ruleElkLabel )
+                    	    // InternalGrana.g:1724:6: ( (lv_children_7_0= ruleElkNode ) )
+                    	    // InternalGrana.g:1725:1: (lv_children_7_0= ruleElkNode )
                     	    {
-                    	    // InternalGrana.g:1744:1: (lv_labels_8_0= ruleElkLabel )
-                    	    // InternalGrana.g:1745:3: lv_labels_8_0= ruleElkLabel
+                    	    // InternalGrana.g:1725:1: (lv_children_7_0= ruleElkNode )
+                    	    // InternalGrana.g:1726:3: lv_children_7_0= ruleElkNode
                     	    {
                     	     
-                    	    	        newCompositeNode(grammarAccess.getElkNodeAccess().getLabelsElkLabelParserRuleCall_2_3_3_0()); 
+                    	    	        newCompositeNode(grammarAccess.getElkNodeAccess().getChildrenElkNodeParserRuleCall_2_3_2_0()); 
                     	    	    
                     	    pushFollow(FOLLOW_37);
-                    	    lv_labels_8_0=ruleElkLabel();
+                    	    lv_children_7_0=ruleElkNode();
 
                     	    state._fsp--;
 
@@ -4449,9 +4412,46 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	    	        }
                     	           		add(
                     	           			current, 
-                    	           			"labels",
-                    	            		lv_labels_8_0, 
-                    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkLabel");
+                    	           			"children",
+                    	            		lv_children_7_0, 
+                    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkNode");
+                    	    	        afterParserOrEnumRuleCall();
+                    	    	    
+
+                    	    }
+
+
+                    	    }
+
+
+                    	    }
+                    	    break;
+                    	case 4 :
+                    	    // InternalGrana.g:1743:6: ( (lv_containedEdges_8_0= ruleElkEdge ) )
+                    	    {
+                    	    // InternalGrana.g:1743:6: ( (lv_containedEdges_8_0= ruleElkEdge ) )
+                    	    // InternalGrana.g:1744:1: (lv_containedEdges_8_0= ruleElkEdge )
+                    	    {
+                    	    // InternalGrana.g:1744:1: (lv_containedEdges_8_0= ruleElkEdge )
+                    	    // InternalGrana.g:1745:3: lv_containedEdges_8_0= ruleElkEdge
+                    	    {
+                    	     
+                    	    	        newCompositeNode(grammarAccess.getElkNodeAccess().getContainedEdgesElkEdgeParserRuleCall_2_3_3_0()); 
+                    	    	    
+                    	    pushFollow(FOLLOW_37);
+                    	    lv_containedEdges_8_0=ruleElkEdge();
+
+                    	    state._fsp--;
+
+
+                    	    	        if (current==null) {
+                    	    	            current = createModelElementForParent(grammarAccess.getElkNodeRule());
+                    	    	        }
+                    	           		add(
+                    	           			current, 
+                    	           			"containedEdges",
+                    	            		lv_containedEdges_8_0, 
+                    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkEdge");
                     	    	        afterParserOrEnumRuleCall();
                     	    	    
 
@@ -4650,7 +4650,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                 case 1 :
                     // InternalGrana.g:1830:4: otherlv_4= '{' (this_ShapeLayout_5= ruleShapeLayout[$current] )? ( (lv_properties_6_0= ruleProperty ) )* ( (lv_labels_7_0= ruleElkLabel ) )* otherlv_8= '}'
                     {
-                    otherlv_4=(Token)match(input,38,FOLLOW_35); 
+                    otherlv_4=(Token)match(input,38,FOLLOW_40); 
 
                         	newLeafNode(otherlv_4, grammarAccess.getElkLabelAccess().getLeftCurlyBracketKeyword_3_0());
                         
@@ -4671,7 +4671,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                             		}
                                     newCompositeNode(grammarAccess.getElkLabelAccess().getShapeLayoutParserRuleCall_3_1()); 
                                 
-                            pushFollow(FOLLOW_36);
+                            pushFollow(FOLLOW_41);
                             this_ShapeLayout_5=ruleShapeLayout(current);
 
                             state._fsp--;
@@ -4707,7 +4707,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	     
                     	    	        newCompositeNode(grammarAccess.getElkLabelAccess().getPropertiesPropertyParserRuleCall_3_2_0()); 
                     	    	    
-                    	    pushFollow(FOLLOW_36);
+                    	    pushFollow(FOLLOW_41);
                     	    lv_properties_6_0=ruleProperty();
 
                     	    state._fsp--;
@@ -4756,7 +4756,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	     
                     	    	        newCompositeNode(grammarAccess.getElkLabelAccess().getLabelsElkLabelParserRuleCall_3_3_0()); 
                     	    	    
-                    	    pushFollow(FOLLOW_37);
+                    	    pushFollow(FOLLOW_42);
                     	    lv_labels_7_0=ruleElkLabel();
 
                     	    state._fsp--;
@@ -4916,7 +4916,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                 case 1 :
                     // InternalGrana.g:1929:4: otherlv_2= '{' (this_ShapeLayout_3= ruleShapeLayout[$current] )? ( (lv_properties_4_0= ruleProperty ) )* ( (lv_labels_5_0= ruleElkLabel ) )* otherlv_6= '}'
                     {
-                    otherlv_2=(Token)match(input,38,FOLLOW_35); 
+                    otherlv_2=(Token)match(input,38,FOLLOW_40); 
 
                         	newLeafNode(otherlv_2, grammarAccess.getElkPortAccess().getLeftCurlyBracketKeyword_2_0());
                         
@@ -4937,7 +4937,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                             		}
                                     newCompositeNode(grammarAccess.getElkPortAccess().getShapeLayoutParserRuleCall_2_1()); 
                                 
-                            pushFollow(FOLLOW_36);
+                            pushFollow(FOLLOW_41);
                             this_ShapeLayout_3=ruleShapeLayout(current);
 
                             state._fsp--;
@@ -4973,7 +4973,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	     
                     	    	        newCompositeNode(grammarAccess.getElkPortAccess().getPropertiesPropertyParserRuleCall_2_2_0()); 
                     	    	    
-                    	    pushFollow(FOLLOW_36);
+                    	    pushFollow(FOLLOW_41);
                     	    lv_properties_4_0=ruleProperty();
 
                     	    state._fsp--;
@@ -5022,7 +5022,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	     
                     	    	        newCompositeNode(grammarAccess.getElkPortAccess().getLabelsElkLabelParserRuleCall_2_3_0()); 
                     	    	    
-                    	    pushFollow(FOLLOW_37);
+                    	    pushFollow(FOLLOW_42);
                     	    lv_labels_5_0=ruleElkLabel();
 
                     	    state._fsp--;
@@ -5112,11 +5112,11 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // InternalGrana.g:1998:1: (otherlv_0= 'layout' otherlv_1= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_3= 'position' otherlv_4= ':' ( (lv_x_5_0= ruleNumber ) ) otherlv_6= ',' ( (lv_y_7_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'size' otherlv_9= ':' ( (lv_width_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_height_12_0= ruleNumber ) ) ) ) ) ) )* ) ) ) otherlv_13= ']' )
             // InternalGrana.g:1998:3: otherlv_0= 'layout' otherlv_1= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_3= 'position' otherlv_4= ':' ( (lv_x_5_0= ruleNumber ) ) otherlv_6= ',' ( (lv_y_7_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'size' otherlv_9= ':' ( (lv_width_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_height_12_0= ruleNumber ) ) ) ) ) ) )* ) ) ) otherlv_13= ']'
             {
-            otherlv_0=(Token)match(input,44,FOLLOW_40); 
+            otherlv_0=(Token)match(input,44,FOLLOW_43); 
 
                 	newLeafNode(otherlv_0, grammarAccess.getShapeLayoutAccess().getLayoutKeyword_0());
                 
-            otherlv_1=(Token)match(input,45,FOLLOW_41); 
+            otherlv_1=(Token)match(input,45,FOLLOW_44); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getShapeLayoutAccess().getLeftSquareBracketKeyword_1());
                 
@@ -5175,7 +5175,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             	        	newLeafNode(otherlv_3, grammarAccess.getShapeLayoutAccess().getPositionKeyword_2_0_0());
             	        
-            	    otherlv_4=(Token)match(input,42,FOLLOW_42); 
+            	    otherlv_4=(Token)match(input,42,FOLLOW_45); 
 
             	        	newLeafNode(otherlv_4, grammarAccess.getShapeLayoutAccess().getColonKeyword_2_0_1());
             	        
@@ -5188,7 +5188,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	     
             	    	        newCompositeNode(grammarAccess.getShapeLayoutAccess().getXNumberParserRuleCall_2_0_2_0()); 
             	    	    
-            	    pushFollow(FOLLOW_43);
+            	    pushFollow(FOLLOW_46);
             	    lv_x_5_0=ruleNumber();
 
             	    state._fsp--;
@@ -5210,7 +5210,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    otherlv_6=(Token)match(input,32,FOLLOW_42); 
+            	    otherlv_6=(Token)match(input,32,FOLLOW_45); 
 
             	        	newLeafNode(otherlv_6, grammarAccess.getShapeLayoutAccess().getCommaKeyword_2_0_3());
             	        
@@ -5223,7 +5223,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	     
             	    	        newCompositeNode(grammarAccess.getShapeLayoutAccess().getYNumberParserRuleCall_2_0_4_0()); 
             	    	    
-            	    pushFollow(FOLLOW_41);
+            	    pushFollow(FOLLOW_44);
             	    lv_y_7_0=ruleNumber();
 
             	    state._fsp--;
@@ -5291,7 +5291,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             	        	newLeafNode(otherlv_8, grammarAccess.getShapeLayoutAccess().getSizeKeyword_2_1_0());
             	        
-            	    otherlv_9=(Token)match(input,42,FOLLOW_42); 
+            	    otherlv_9=(Token)match(input,42,FOLLOW_45); 
 
             	        	newLeafNode(otherlv_9, grammarAccess.getShapeLayoutAccess().getColonKeyword_2_1_1());
             	        
@@ -5304,7 +5304,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	     
             	    	        newCompositeNode(grammarAccess.getShapeLayoutAccess().getWidthNumberParserRuleCall_2_1_2_0()); 
             	    	    
-            	    pushFollow(FOLLOW_43);
+            	    pushFollow(FOLLOW_46);
             	    lv_width_10_0=ruleNumber();
 
             	    state._fsp--;
@@ -5326,7 +5326,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    otherlv_11=(Token)match(input,32,FOLLOW_42); 
+            	    otherlv_11=(Token)match(input,32,FOLLOW_45); 
 
             	        	newLeafNode(otherlv_11, grammarAccess.getShapeLayoutAccess().getCommaKeyword_2_1_3());
             	        
@@ -5339,7 +5339,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	     
             	    	        newCompositeNode(grammarAccess.getShapeLayoutAccess().getHeightNumberParserRuleCall_2_1_4_0()); 
             	    	    
-            	    pushFollow(FOLLOW_41);
+            	    pushFollow(FOLLOW_44);
             	    lv_height_12_0=ruleNumber();
 
             	    state._fsp--;
@@ -5555,7 +5555,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
              
             	        newCompositeNode(grammarAccess.getElkEdgeAccess().getSourcesElkConnectableShapeCrossReference_2_0()); 
             	    
-            pushFollow(FOLLOW_44);
+            pushFollow(FOLLOW_47);
             ruleQualifiedId();
 
             state._fsp--;
@@ -5602,7 +5602,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	     
             	    	        newCompositeNode(grammarAccess.getElkEdgeAccess().getSourcesElkConnectableShapeCrossReference_3_1_0()); 
             	    	    
-            	    pushFollow(FOLLOW_44);
+            	    pushFollow(FOLLOW_47);
             	    ruleQualifiedId();
 
             	    state._fsp--;
@@ -5643,7 +5643,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
              
             	        newCompositeNode(grammarAccess.getElkEdgeAccess().getTargetsElkConnectableShapeCrossReference_5_0()); 
             	    
-            pushFollow(FOLLOW_45);
+            pushFollow(FOLLOW_48);
             ruleQualifiedId();
 
             state._fsp--;
@@ -5690,7 +5690,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	     
             	    	        newCompositeNode(grammarAccess.getElkEdgeAccess().getTargetsElkConnectableShapeCrossReference_6_1_0()); 
             	    	    
-            	    pushFollow(FOLLOW_45);
+            	    pushFollow(FOLLOW_48);
             	    ruleQualifiedId();
 
             	    state._fsp--;
@@ -5724,7 +5724,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                 case 1 :
                     // InternalGrana.g:2265:6: otherlv_10= '{' (this_EdgeLayout_11= ruleEdgeLayout[$current] )? ( (lv_properties_12_0= ruleProperty ) )* ( (lv_labels_13_0= ruleElkLabel ) )* otherlv_14= '}'
                     {
-                    otherlv_10=(Token)match(input,38,FOLLOW_35); 
+                    otherlv_10=(Token)match(input,38,FOLLOW_40); 
 
                         	newLeafNode(otherlv_10, grammarAccess.getElkEdgeAccess().getLeftCurlyBracketKeyword_7_0());
                         
@@ -5745,7 +5745,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                             		}
                                     newCompositeNode(grammarAccess.getElkEdgeAccess().getEdgeLayoutParserRuleCall_7_1()); 
                                 
-                            pushFollow(FOLLOW_36);
+                            pushFollow(FOLLOW_41);
                             this_EdgeLayout_11=ruleEdgeLayout(current);
 
                             state._fsp--;
@@ -5781,7 +5781,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	     
                     	    	        newCompositeNode(grammarAccess.getElkEdgeAccess().getPropertiesPropertyParserRuleCall_7_2_0()); 
                     	    	    
-                    	    pushFollow(FOLLOW_36);
+                    	    pushFollow(FOLLOW_41);
                     	    lv_properties_12_0=ruleProperty();
 
                     	    state._fsp--;
@@ -5830,7 +5830,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	     
                     	    	        newCompositeNode(grammarAccess.getElkEdgeAccess().getLabelsElkLabelParserRuleCall_7_3_0()); 
                     	    	    
-                    	    pushFollow(FOLLOW_37);
+                    	    pushFollow(FOLLOW_42);
                     	    lv_labels_13_0=ruleElkLabel();
 
                     	    state._fsp--;
@@ -5910,11 +5910,11 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             // InternalGrana.g:2334:1: (otherlv_0= 'layout' otherlv_1= '[' ( ( (lv_sections_2_0= ruleElkSingleEdgeSection ) ) | ( (lv_sections_3_0= ruleElkEdgeSection ) )+ ) otherlv_4= ']' )
             // InternalGrana.g:2334:3: otherlv_0= 'layout' otherlv_1= '[' ( ( (lv_sections_2_0= ruleElkSingleEdgeSection ) ) | ( (lv_sections_3_0= ruleElkEdgeSection ) )+ ) otherlv_4= ']'
             {
-            otherlv_0=(Token)match(input,44,FOLLOW_40); 
+            otherlv_0=(Token)match(input,44,FOLLOW_43); 
 
                 	newLeafNode(otherlv_0, grammarAccess.getEdgeLayoutAccess().getLayoutKeyword_0());
                 
-            otherlv_1=(Token)match(input,45,FOLLOW_46); 
+            otherlv_1=(Token)match(input,45,FOLLOW_49); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getEdgeLayoutAccess().getLeftSquareBracketKeyword_1());
                 
@@ -5922,7 +5922,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             int alt57=2;
             int LA57_0 = input.LA(1);
 
-            if ( (LA57_0==48||(LA57_0>=51 && LA57_0<=55)) ) {
+            if ( (LA57_0==RULE_ID||LA57_0==48||(LA57_0>=51 && LA57_0<=55)) ) {
                 alt57=1;
             }
             else if ( (LA57_0==57) ) {
@@ -5947,7 +5947,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                      
                     	        newCompositeNode(grammarAccess.getEdgeLayoutAccess().getSectionsElkSingleEdgeSectionParserRuleCall_2_0_0()); 
                     	    
-                    pushFollow(FOLLOW_47);
+                    pushFollow(FOLLOW_50);
                     lv_sections_2_0=ruleElkSingleEdgeSection();
 
                     state._fsp--;
@@ -5997,7 +5997,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	     
                     	    	        newCompositeNode(grammarAccess.getEdgeLayoutAccess().getSectionsElkEdgeSectionParserRuleCall_2_1_0()); 
                     	    	    
-                    	    pushFollow(FOLLOW_46);
+                    	    pushFollow(FOLLOW_49);
                     	    lv_sections_3_0=ruleElkEdgeSection();
 
                     	    state._fsp--;
@@ -6096,7 +6096,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleElkSingleEdgeSection"
-    // InternalGrana.g:2400:1: ruleElkSingleEdgeSection returns [EObject current=null] : ( () ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) ) ;
+    // InternalGrana.g:2400:1: ruleElkSingleEdgeSection returns [EObject current=null] : ( () ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* ) ) ;
     public final EObject ruleElkSingleEdgeSection() throws RecognitionException {
         EObject current = null;
 
@@ -6125,15 +6125,17 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
         EObject lv_bendPoints_22_0 = null;
 
+        EObject lv_properties_23_0 = null;
+
 
          enterRule(); 
             
         try {
-            // InternalGrana.g:2403:28: ( ( () ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) ) )
-            // InternalGrana.g:2404:1: ( () ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) )
+            // InternalGrana.g:2403:28: ( ( () ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* ) ) )
+            // InternalGrana.g:2404:1: ( () ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* ) )
             {
-            // InternalGrana.g:2404:1: ( () ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) )
-            // InternalGrana.g:2404:2: () ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) )
+            // InternalGrana.g:2404:1: ( () ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* ) )
+            // InternalGrana.g:2404:2: () ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* )
             {
             // InternalGrana.g:2404:2: ()
             // InternalGrana.g:2405:5: 
@@ -6146,56 +6148,56 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalGrana.g:2410:2: ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) )
-            // InternalGrana.g:2412:1: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) )
+            // InternalGrana.g:2410:2: ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* )
+            // InternalGrana.g:2410:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )*
             {
-            // InternalGrana.g:2412:1: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) )
-            // InternalGrana.g:2413:2: ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* )
+            // InternalGrana.g:2410:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) )
+            // InternalGrana.g:2412:1: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) )
+            {
+            // InternalGrana.g:2412:1: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) )
+            // InternalGrana.g:2413:2: ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* )
             {
              
-            	  getUnorderedGroupHelper().enter(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	  getUnorderedGroupHelper().enter(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	
-            // InternalGrana.g:2416:2: ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* )
-            // InternalGrana.g:2417:3: ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )*
+            // InternalGrana.g:2416:2: ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* )
+            // InternalGrana.g:2417:3: ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )*
             {
-            // InternalGrana.g:2417:3: ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )*
-            loop59:
+            // InternalGrana.g:2417:3: ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )*
+            loop58:
             do {
-                int alt59=6;
-                int LA59_0 = input.LA(1);
+                int alt58=5;
+                int LA58_0 = input.LA(1);
 
-                if ( LA59_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0) ) {
-                    alt59=1;
+                if ( LA58_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+                    alt58=1;
                 }
-                else if ( LA59_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1) ) {
-                    alt59=2;
+                else if ( LA58_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+                    alt58=2;
                 }
-                else if ( LA59_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2) ) {
-                    alt59=3;
+                else if ( LA58_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+                    alt58=3;
                 }
-                else if ( LA59_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3) ) {
-                    alt59=4;
-                }
-                else if ( LA59_0 == 55 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4) ) {
-                    alt59=5;
+                else if ( LA58_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+                    alt58=4;
                 }
 
 
-                switch (alt59) {
+                switch (alt58) {
             	case 1 :
             	    // InternalGrana.g:2419:4: ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) )
             	    {
             	    // InternalGrana.g:2419:4: ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) )
             	    // InternalGrana.g:2420:5: {...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0)");
             	    }
-            	    // InternalGrana.g:2420:117: ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalGrana.g:2420:119: ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    // InternalGrana.g:2421:6: ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0);
             	    	 				
             	    // InternalGrana.g:2424:6: ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) )
             	    // InternalGrana.g:2424:7: {...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) )
@@ -6208,11 +6210,11 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    {
             	    otherlv_2=(Token)match(input,51,FOLLOW_39); 
 
-            	        	newLeafNode(otherlv_2, grammarAccess.getElkSingleEdgeSectionAccess().getIncomingKeyword_1_0_0());
+            	        	newLeafNode(otherlv_2, grammarAccess.getElkSingleEdgeSectionAccess().getIncomingKeyword_1_0_0_0());
             	        
             	    otherlv_3=(Token)match(input,42,FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_3, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_1());
+            	        	newLeafNode(otherlv_3, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_0_1());
             	        
             	    // InternalGrana.g:2432:1: ( ( ruleQualifiedId ) )
             	    // InternalGrana.g:2433:1: ( ruleQualifiedId )
@@ -6226,9 +6228,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    	        }
             	            
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_1_0_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_1_0_0_2_0()); 
             	    	    
-            	    pushFollow(FOLLOW_48);
+            	    pushFollow(FOLLOW_51);
             	    ruleQualifiedId();
 
             	    state._fsp--;
@@ -6249,7 +6251,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	    	 				
 
             	    }
@@ -6266,14 +6268,14 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    // InternalGrana.g:2454:4: ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) )
             	    // InternalGrana.g:2455:5: {...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1)");
             	    }
-            	    // InternalGrana.g:2455:117: ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalGrana.g:2455:119: ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    // InternalGrana.g:2456:6: ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1);
             	    	 				
             	    // InternalGrana.g:2459:6: ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) )
             	    // InternalGrana.g:2459:7: {...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) )
@@ -6286,11 +6288,11 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    {
             	    otherlv_5=(Token)match(input,52,FOLLOW_39); 
 
-            	        	newLeafNode(otherlv_5, grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingKeyword_1_1_0());
+            	        	newLeafNode(otherlv_5, grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingKeyword_1_0_1_0());
             	        
             	    otherlv_6=(Token)match(input,42,FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_6, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_1_1());
+            	        	newLeafNode(otherlv_6, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_1_1());
             	        
             	    // InternalGrana.g:2467:1: ( ( ruleQualifiedId ) )
             	    // InternalGrana.g:2468:1: ( ruleQualifiedId )
@@ -6304,9 +6306,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    	        }
             	            
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_1_1_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_1_0_1_2_0()); 
             	    	    
-            	    pushFollow(FOLLOW_48);
+            	    pushFollow(FOLLOW_51);
             	    ruleQualifiedId();
 
             	    state._fsp--;
@@ -6327,7 +6329,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	    	 				
 
             	    }
@@ -6344,14 +6346,14 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    // InternalGrana.g:2489:4: ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) )
             	    // InternalGrana.g:2490:5: {...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2)");
             	    }
-            	    // InternalGrana.g:2490:117: ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) )
+            	    // InternalGrana.g:2490:119: ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) )
             	    // InternalGrana.g:2491:6: ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2);
             	    	 				
             	    // InternalGrana.g:2494:6: ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) )
             	    // InternalGrana.g:2494:7: {...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) )
@@ -6364,11 +6366,11 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    {
             	    otherlv_8=(Token)match(input,53,FOLLOW_39); 
 
-            	        	newLeafNode(otherlv_8, grammarAccess.getElkSingleEdgeSectionAccess().getStartKeyword_1_2_0());
+            	        	newLeafNode(otherlv_8, grammarAccess.getElkSingleEdgeSectionAccess().getStartKeyword_1_0_2_0());
             	        
-            	    otherlv_9=(Token)match(input,42,FOLLOW_42); 
+            	    otherlv_9=(Token)match(input,42,FOLLOW_45); 
 
-            	        	newLeafNode(otherlv_9, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_2_1());
+            	        	newLeafNode(otherlv_9, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_2_1());
             	        
             	    // InternalGrana.g:2502:1: ( (lv_startX_10_0= ruleNumber ) )
             	    // InternalGrana.g:2503:1: (lv_startX_10_0= ruleNumber )
@@ -6377,9 +6379,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    // InternalGrana.g:2504:3: lv_startX_10_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getStartXNumberParserRuleCall_1_2_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getStartXNumberParserRuleCall_1_0_2_2_0()); 
             	    	    
-            	    pushFollow(FOLLOW_43);
+            	    pushFollow(FOLLOW_46);
             	    lv_startX_10_0=ruleNumber();
 
             	    state._fsp--;
@@ -6401,9 +6403,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    otherlv_11=(Token)match(input,32,FOLLOW_42); 
+            	    otherlv_11=(Token)match(input,32,FOLLOW_45); 
 
-            	        	newLeafNode(otherlv_11, grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_2_3());
+            	        	newLeafNode(otherlv_11, grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_0_2_3());
             	        
             	    // InternalGrana.g:2524:1: ( (lv_startY_12_0= ruleNumber ) )
             	    // InternalGrana.g:2525:1: (lv_startY_12_0= ruleNumber )
@@ -6412,9 +6414,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    // InternalGrana.g:2526:3: lv_startY_12_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getStartYNumberParserRuleCall_1_2_4_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getStartYNumberParserRuleCall_1_0_2_4_0()); 
             	    	    
-            	    pushFollow(FOLLOW_48);
+            	    pushFollow(FOLLOW_51);
             	    lv_startY_12_0=ruleNumber();
 
             	    state._fsp--;
@@ -6443,7 +6445,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	    	 				
 
             	    }
@@ -6460,14 +6462,14 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    // InternalGrana.g:2549:4: ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) )
             	    // InternalGrana.g:2550:5: {...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3)");
             	    }
-            	    // InternalGrana.g:2550:117: ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) )
+            	    // InternalGrana.g:2550:119: ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) )
             	    // InternalGrana.g:2551:6: ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3);
             	    	 				
             	    // InternalGrana.g:2554:6: ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) )
             	    // InternalGrana.g:2554:7: {...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) )
@@ -6480,11 +6482,11 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    {
             	    otherlv_13=(Token)match(input,54,FOLLOW_39); 
 
-            	        	newLeafNode(otherlv_13, grammarAccess.getElkSingleEdgeSectionAccess().getEndKeyword_1_3_0());
+            	        	newLeafNode(otherlv_13, grammarAccess.getElkSingleEdgeSectionAccess().getEndKeyword_1_0_3_0());
             	        
-            	    otherlv_14=(Token)match(input,42,FOLLOW_42); 
+            	    otherlv_14=(Token)match(input,42,FOLLOW_45); 
 
-            	        	newLeafNode(otherlv_14, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_3_1());
+            	        	newLeafNode(otherlv_14, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_3_1());
             	        
             	    // InternalGrana.g:2562:1: ( (lv_endX_15_0= ruleNumber ) )
             	    // InternalGrana.g:2563:1: (lv_endX_15_0= ruleNumber )
@@ -6493,9 +6495,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    // InternalGrana.g:2564:3: lv_endX_15_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getEndXNumberParserRuleCall_1_3_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getEndXNumberParserRuleCall_1_0_3_2_0()); 
             	    	    
-            	    pushFollow(FOLLOW_43);
+            	    pushFollow(FOLLOW_46);
             	    lv_endX_15_0=ruleNumber();
 
             	    state._fsp--;
@@ -6517,9 +6519,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    otherlv_16=(Token)match(input,32,FOLLOW_42); 
+            	    otherlv_16=(Token)match(input,32,FOLLOW_45); 
 
-            	        	newLeafNode(otherlv_16, grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_3_3());
+            	        	newLeafNode(otherlv_16, grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_0_3_3());
             	        
             	    // InternalGrana.g:2584:1: ( (lv_endY_17_0= ruleNumber ) )
             	    // InternalGrana.g:2585:1: (lv_endY_17_0= ruleNumber )
@@ -6528,9 +6530,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    // InternalGrana.g:2586:3: lv_endY_17_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getEndYNumberParserRuleCall_1_3_4_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getEndYNumberParserRuleCall_1_0_3_4_0()); 
             	    	    
-            	    pushFollow(FOLLOW_48);
+            	    pushFollow(FOLLOW_51);
             	    lv_endY_17_0=ruleNumber();
 
             	    state._fsp--;
@@ -6559,147 +6561,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
-            	    	 				
-
-            	    }
-
-
-            	    }
-
-
-            	    }
-            	    break;
-            	case 5 :
-            	    // InternalGrana.g:2609:4: ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) )
-            	    {
-            	    // InternalGrana.g:2609:4: ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) )
-            	    // InternalGrana.g:2610:5: {...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) )
-            	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4)");
-            	    }
-            	    // InternalGrana.g:2610:117: ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) )
-            	    // InternalGrana.g:2611:6: ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) )
-            	    {
-            	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4);
-            	    	 				
-            	    // InternalGrana.g:2614:6: ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) )
-            	    // InternalGrana.g:2614:7: {...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )
-            	    {
-            	    if ( !((true)) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "true");
-            	    }
-            	    // InternalGrana.g:2614:16: (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )
-            	    // InternalGrana.g:2614:18: otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )*
-            	    {
-            	    otherlv_18=(Token)match(input,55,FOLLOW_39); 
-
-            	        	newLeafNode(otherlv_18, grammarAccess.getElkSingleEdgeSectionAccess().getBendsKeyword_1_4_0());
-            	        
-            	    otherlv_19=(Token)match(input,42,FOLLOW_42); 
-
-            	        	newLeafNode(otherlv_19, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_4_1());
-            	        
-            	    // InternalGrana.g:2622:1: ( (lv_bendPoints_20_0= ruleElkBendPoint ) )
-            	    // InternalGrana.g:2623:1: (lv_bendPoints_20_0= ruleElkBendPoint )
-            	    {
-            	    // InternalGrana.g:2623:1: (lv_bendPoints_20_0= ruleElkBendPoint )
-            	    // InternalGrana.g:2624:3: lv_bendPoints_20_0= ruleElkBendPoint
-            	    {
-            	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_4_2_0()); 
-            	    	    
-            	    pushFollow(FOLLOW_49);
-            	    lv_bendPoints_20_0=ruleElkBendPoint();
-
-            	    state._fsp--;
-
-
-            	    	        if (current==null) {
-            	    	            current = createModelElementForParent(grammarAccess.getElkSingleEdgeSectionRule());
-            	    	        }
-            	           		add(
-            	           			current, 
-            	           			"bendPoints",
-            	            		lv_bendPoints_20_0, 
-            	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
-            	    	        afterParserOrEnumRuleCall();
-            	    	    
-
-            	    }
-
-
-            	    }
-
-            	    // InternalGrana.g:2640:2: (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )*
-            	    loop58:
-            	    do {
-            	        int alt58=2;
-            	        int LA58_0 = input.LA(1);
-
-            	        if ( (LA58_0==56) ) {
-            	            alt58=1;
-            	        }
-
-
-            	        switch (alt58) {
-            	    	case 1 :
-            	    	    // InternalGrana.g:2640:4: otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) )
-            	    	    {
-            	    	    otherlv_21=(Token)match(input,56,FOLLOW_42); 
-
-            	    	        	newLeafNode(otherlv_21, grammarAccess.getElkSingleEdgeSectionAccess().getVerticalLineKeyword_1_4_3_0());
-            	    	        
-            	    	    // InternalGrana.g:2644:1: ( (lv_bendPoints_22_0= ruleElkBendPoint ) )
-            	    	    // InternalGrana.g:2645:1: (lv_bendPoints_22_0= ruleElkBendPoint )
-            	    	    {
-            	    	    // InternalGrana.g:2645:1: (lv_bendPoints_22_0= ruleElkBendPoint )
-            	    	    // InternalGrana.g:2646:3: lv_bendPoints_22_0= ruleElkBendPoint
-            	    	    {
-            	    	     
-            	    	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_4_3_1_0()); 
-            	    	    	    
-            	    	    pushFollow(FOLLOW_49);
-            	    	    lv_bendPoints_22_0=ruleElkBendPoint();
-
-            	    	    state._fsp--;
-
-
-            	    	    	        if (current==null) {
-            	    	    	            current = createModelElementForParent(grammarAccess.getElkSingleEdgeSectionRule());
-            	    	    	        }
-            	    	           		add(
-            	    	           			current, 
-            	    	           			"bendPoints",
-            	    	            		lv_bendPoints_22_0, 
-            	    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
-            	    	    	        afterParserOrEnumRuleCall();
-            	    	    	    
-
-            	    	    }
-
-
-            	    	    }
-
-
-            	    	    }
-            	    	    break;
-
-            	    	default :
-            	    	    break loop58;
-            	        }
-            	    } while (true);
-
-
-            	    }
-
-
-            	    }
-
-            	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	    	 				
 
             	    }
@@ -6712,7 +6574,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop59;
+            	    break loop58;
                 }
             } while (true);
 
@@ -6723,8 +6585,175 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             }
 
              
-            	  getUnorderedGroupHelper().leave(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	  getUnorderedGroupHelper().leave(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	
+
+            }
+
+            // InternalGrana.g:2616:2: (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )?
+            int alt60=2;
+            int LA60_0 = input.LA(1);
+
+            if ( (LA60_0==55) ) {
+                alt60=1;
+            }
+            switch (alt60) {
+                case 1 :
+                    // InternalGrana.g:2616:4: otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )*
+                    {
+                    otherlv_18=(Token)match(input,55,FOLLOW_39); 
+
+                        	newLeafNode(otherlv_18, grammarAccess.getElkSingleEdgeSectionAccess().getBendsKeyword_1_1_0());
+                        
+                    otherlv_19=(Token)match(input,42,FOLLOW_45); 
+
+                        	newLeafNode(otherlv_19, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_1_1());
+                        
+                    // InternalGrana.g:2624:1: ( (lv_bendPoints_20_0= ruleElkBendPoint ) )
+                    // InternalGrana.g:2625:1: (lv_bendPoints_20_0= ruleElkBendPoint )
+                    {
+                    // InternalGrana.g:2625:1: (lv_bendPoints_20_0= ruleElkBendPoint )
+                    // InternalGrana.g:2626:3: lv_bendPoints_20_0= ruleElkBendPoint
+                    {
+                     
+                    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_1_2_0()); 
+                    	    
+                    pushFollow(FOLLOW_52);
+                    lv_bendPoints_20_0=ruleElkBendPoint();
+
+                    state._fsp--;
+
+
+                    	        if (current==null) {
+                    	            current = createModelElementForParent(grammarAccess.getElkSingleEdgeSectionRule());
+                    	        }
+                           		add(
+                           			current, 
+                           			"bendPoints",
+                            		lv_bendPoints_20_0, 
+                            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
+                    	        afterParserOrEnumRuleCall();
+                    	    
+
+                    }
+
+
+                    }
+
+                    // InternalGrana.g:2642:2: (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )*
+                    loop59:
+                    do {
+                        int alt59=2;
+                        int LA59_0 = input.LA(1);
+
+                        if ( (LA59_0==56) ) {
+                            alt59=1;
+                        }
+
+
+                        switch (alt59) {
+                    	case 1 :
+                    	    // InternalGrana.g:2642:4: otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) )
+                    	    {
+                    	    otherlv_21=(Token)match(input,56,FOLLOW_45); 
+
+                    	        	newLeafNode(otherlv_21, grammarAccess.getElkSingleEdgeSectionAccess().getVerticalLineKeyword_1_1_3_0());
+                    	        
+                    	    // InternalGrana.g:2646:1: ( (lv_bendPoints_22_0= ruleElkBendPoint ) )
+                    	    // InternalGrana.g:2647:1: (lv_bendPoints_22_0= ruleElkBendPoint )
+                    	    {
+                    	    // InternalGrana.g:2647:1: (lv_bendPoints_22_0= ruleElkBendPoint )
+                    	    // InternalGrana.g:2648:3: lv_bendPoints_22_0= ruleElkBendPoint
+                    	    {
+                    	     
+                    	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_1_3_1_0()); 
+                    	    	    
+                    	    pushFollow(FOLLOW_52);
+                    	    lv_bendPoints_22_0=ruleElkBendPoint();
+
+                    	    state._fsp--;
+
+
+                    	    	        if (current==null) {
+                    	    	            current = createModelElementForParent(grammarAccess.getElkSingleEdgeSectionRule());
+                    	    	        }
+                    	           		add(
+                    	           			current, 
+                    	           			"bendPoints",
+                    	            		lv_bendPoints_22_0, 
+                    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
+                    	    	        afterParserOrEnumRuleCall();
+                    	    	    
+
+                    	    }
+
+
+                    	    }
+
+
+                    	    }
+                    	    break;
+
+                    	default :
+                    	    break loop59;
+                        }
+                    } while (true);
+
+
+                    }
+                    break;
+
+            }
+
+            // InternalGrana.g:2664:6: ( (lv_properties_23_0= ruleProperty ) )*
+            loop61:
+            do {
+                int alt61=2;
+                int LA61_0 = input.LA(1);
+
+                if ( (LA61_0==RULE_ID) ) {
+                    alt61=1;
+                }
+
+
+                switch (alt61) {
+            	case 1 :
+            	    // InternalGrana.g:2665:1: (lv_properties_23_0= ruleProperty )
+            	    {
+            	    // InternalGrana.g:2665:1: (lv_properties_23_0= ruleProperty )
+            	    // InternalGrana.g:2666:3: lv_properties_23_0= ruleProperty
+            	    {
+            	     
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getPropertiesPropertyParserRuleCall_1_2_0()); 
+            	    	    
+            	    pushFollow(FOLLOW_29);
+            	    lv_properties_23_0=ruleProperty();
+
+            	    state._fsp--;
+
+
+            	    	        if (current==null) {
+            	    	            current = createModelElementForParent(grammarAccess.getElkSingleEdgeSectionRule());
+            	    	        }
+            	           		add(
+            	           			current, 
+            	           			"properties",
+            	            		lv_properties_23_0, 
+            	            		"org.eclipse.elk.graph.text.ElkGraph.Property");
+            	    	        afterParserOrEnumRuleCall();
+            	    	    
+
+            	    }
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop61;
+                }
+            } while (true);
+
 
             }
 
@@ -6749,7 +6778,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleElkEdgeSection"
-    // InternalGrana.g:2684:1: entryRuleElkEdgeSection returns [EObject current=null] : iv_ruleElkEdgeSection= ruleElkEdgeSection EOF ;
+    // InternalGrana.g:2690:1: entryRuleElkEdgeSection returns [EObject current=null] : iv_ruleElkEdgeSection= ruleElkEdgeSection EOF ;
     public final EObject entryRuleElkEdgeSection() throws RecognitionException {
         EObject current = null;
 
@@ -6757,8 +6786,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:2685:2: (iv_ruleElkEdgeSection= ruleElkEdgeSection EOF )
-            // InternalGrana.g:2686:2: iv_ruleElkEdgeSection= ruleElkEdgeSection EOF
+            // InternalGrana.g:2691:2: (iv_ruleElkEdgeSection= ruleElkEdgeSection EOF )
+            // InternalGrana.g:2692:2: iv_ruleElkEdgeSection= ruleElkEdgeSection EOF
             {
              newCompositeNode(grammarAccess.getElkEdgeSectionRule()); 
             pushFollow(FOLLOW_1);
@@ -6785,7 +6814,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleElkEdgeSection"
-    // InternalGrana.g:2693:1: ruleElkEdgeSection returns [EObject current=null] : (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) otherlv_29= ']' ) ;
+    // InternalGrana.g:2699:1: ruleElkEdgeSection returns [EObject current=null] : (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* ) otherlv_30= ']' ) ;
     public final EObject ruleElkEdgeSection() throws RecognitionException {
         EObject current = null;
 
@@ -6809,7 +6838,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
         Token otherlv_24=null;
         Token otherlv_25=null;
         Token otherlv_27=null;
-        Token otherlv_29=null;
+        Token otherlv_30=null;
         AntlrDatatypeRuleToken lv_startX_16_0 = null;
 
         AntlrDatatypeRuleToken lv_startY_18_0 = null;
@@ -6822,27 +6851,29 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
         EObject lv_bendPoints_28_0 = null;
 
+        EObject lv_properties_29_0 = null;
+
 
          enterRule(); 
             
         try {
-            // InternalGrana.g:2696:28: ( (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) otherlv_29= ']' ) )
-            // InternalGrana.g:2697:1: (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) otherlv_29= ']' )
+            // InternalGrana.g:2702:28: ( (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* ) otherlv_30= ']' ) )
+            // InternalGrana.g:2703:1: (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* ) otherlv_30= ']' )
             {
-            // InternalGrana.g:2697:1: (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) otherlv_29= ']' )
-            // InternalGrana.g:2697:3: otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) otherlv_29= ']'
+            // InternalGrana.g:2703:1: (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* ) otherlv_30= ']' )
+            // InternalGrana.g:2703:3: otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* ) otherlv_30= ']'
             {
             otherlv_0=(Token)match(input,57,FOLLOW_10); 
 
                 	newLeafNode(otherlv_0, grammarAccess.getElkEdgeSectionAccess().getSectionKeyword_0());
                 
-            // InternalGrana.g:2701:1: ( (lv_identifier_1_0= RULE_ID ) )
-            // InternalGrana.g:2702:1: (lv_identifier_1_0= RULE_ID )
+            // InternalGrana.g:2707:1: ( (lv_identifier_1_0= RULE_ID ) )
+            // InternalGrana.g:2708:1: (lv_identifier_1_0= RULE_ID )
             {
-            // InternalGrana.g:2702:1: (lv_identifier_1_0= RULE_ID )
-            // InternalGrana.g:2703:3: lv_identifier_1_0= RULE_ID
+            // InternalGrana.g:2708:1: (lv_identifier_1_0= RULE_ID )
+            // InternalGrana.g:2709:3: lv_identifier_1_0= RULE_ID
             {
-            lv_identifier_1_0=(Token)match(input,RULE_ID,FOLLOW_50); 
+            lv_identifier_1_0=(Token)match(input,RULE_ID,FOLLOW_53); 
 
             			newLeafNode(lv_identifier_1_0, grammarAccess.getElkEdgeSectionAccess().getIdentifierIDTerminalRuleCall_1_0()); 
             		
@@ -6862,33 +6893,33 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalGrana.g:2719:2: (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )?
-            int alt61=2;
-            int LA61_0 = input.LA(1);
+            // InternalGrana.g:2725:2: (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )?
+            int alt63=2;
+            int LA63_0 = input.LA(1);
 
-            if ( (LA61_0==50) ) {
-                alt61=1;
+            if ( (LA63_0==50) ) {
+                alt63=1;
             }
-            switch (alt61) {
+            switch (alt63) {
                 case 1 :
-                    // InternalGrana.g:2719:4: otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )*
+                    // InternalGrana.g:2725:4: otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )*
                     {
                     otherlv_2=(Token)match(input,50,FOLLOW_10); 
 
                         	newLeafNode(otherlv_2, grammarAccess.getElkEdgeSectionAccess().getHyphenMinusGreaterThanSignKeyword_2_0());
                         
-                    // InternalGrana.g:2723:1: ( (otherlv_3= RULE_ID ) )
-                    // InternalGrana.g:2724:1: (otherlv_3= RULE_ID )
+                    // InternalGrana.g:2729:1: ( (otherlv_3= RULE_ID ) )
+                    // InternalGrana.g:2730:1: (otherlv_3= RULE_ID )
                     {
-                    // InternalGrana.g:2724:1: (otherlv_3= RULE_ID )
-                    // InternalGrana.g:2725:3: otherlv_3= RULE_ID
+                    // InternalGrana.g:2730:1: (otherlv_3= RULE_ID )
+                    // InternalGrana.g:2731:3: otherlv_3= RULE_ID
                     {
 
                     			if (current==null) {
                     	            current = createModelElement(grammarAccess.getElkEdgeSectionRule());
                     	        }
                             
-                    otherlv_3=(Token)match(input,RULE_ID,FOLLOW_51); 
+                    otherlv_3=(Token)match(input,RULE_ID,FOLLOW_54); 
 
                     		newLeafNode(otherlv_3, grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsElkEdgeSectionCrossReference_2_1_0()); 
                     	
@@ -6898,37 +6929,37 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalGrana.g:2736:2: (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )*
-                    loop60:
+                    // InternalGrana.g:2742:2: (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )*
+                    loop62:
                     do {
-                        int alt60=2;
-                        int LA60_0 = input.LA(1);
+                        int alt62=2;
+                        int LA62_0 = input.LA(1);
 
-                        if ( (LA60_0==32) ) {
-                            alt60=1;
+                        if ( (LA62_0==32) ) {
+                            alt62=1;
                         }
 
 
-                        switch (alt60) {
+                        switch (alt62) {
                     	case 1 :
-                    	    // InternalGrana.g:2736:4: otherlv_4= ',' ( (otherlv_5= RULE_ID ) )
+                    	    // InternalGrana.g:2742:4: otherlv_4= ',' ( (otherlv_5= RULE_ID ) )
                     	    {
                     	    otherlv_4=(Token)match(input,32,FOLLOW_10); 
 
                     	        	newLeafNode(otherlv_4, grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_2_2_0());
                     	        
-                    	    // InternalGrana.g:2740:1: ( (otherlv_5= RULE_ID ) )
-                    	    // InternalGrana.g:2741:1: (otherlv_5= RULE_ID )
+                    	    // InternalGrana.g:2746:1: ( (otherlv_5= RULE_ID ) )
+                    	    // InternalGrana.g:2747:1: (otherlv_5= RULE_ID )
                     	    {
-                    	    // InternalGrana.g:2741:1: (otherlv_5= RULE_ID )
-                    	    // InternalGrana.g:2742:3: otherlv_5= RULE_ID
+                    	    // InternalGrana.g:2747:1: (otherlv_5= RULE_ID )
+                    	    // InternalGrana.g:2748:3: otherlv_5= RULE_ID
                     	    {
 
                     	    			if (current==null) {
                     	    	            current = createModelElement(grammarAccess.getElkEdgeSectionRule());
                     	    	        }
                     	            
-                    	    otherlv_5=(Token)match(input,RULE_ID,FOLLOW_51); 
+                    	    otherlv_5=(Token)match(input,RULE_ID,FOLLOW_54); 
 
                     	    		newLeafNode(otherlv_5, grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsElkEdgeSectionCrossReference_2_2_1_0()); 
                     	    	
@@ -6943,7 +6974,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     	    break;
 
                     	default :
-                    	    break loop60;
+                    	    break loop62;
                         }
                     } while (true);
 
@@ -6953,83 +6984,83 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_6=(Token)match(input,45,FOLLOW_52); 
+            otherlv_6=(Token)match(input,45,FOLLOW_55); 
 
                 	newLeafNode(otherlv_6, grammarAccess.getElkEdgeSectionAccess().getLeftSquareBracketKeyword_3());
                 
-            // InternalGrana.g:2757:1: ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) )
-            // InternalGrana.g:2759:1: ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) )
+            // InternalGrana.g:2763:1: ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* )
+            // InternalGrana.g:2763:2: ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )*
             {
-            // InternalGrana.g:2759:1: ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) )
-            // InternalGrana.g:2760:2: ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* )
+            // InternalGrana.g:2763:2: ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) )
+            // InternalGrana.g:2765:1: ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) )
+            {
+            // InternalGrana.g:2765:1: ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) )
+            // InternalGrana.g:2766:2: ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* )
             {
              
-            	  getUnorderedGroupHelper().enter(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	  getUnorderedGroupHelper().enter(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	
-            // InternalGrana.g:2763:2: ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* )
-            // InternalGrana.g:2764:3: ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )*
+            // InternalGrana.g:2769:2: ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* )
+            // InternalGrana.g:2770:3: ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )*
             {
-            // InternalGrana.g:2764:3: ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )*
-            loop63:
+            // InternalGrana.g:2770:3: ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )*
+            loop64:
             do {
-                int alt63=6;
-                int LA63_0 = input.LA(1);
+                int alt64=5;
+                int LA64_0 = input.LA(1);
 
-                if ( LA63_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0) ) {
-                    alt63=1;
+                if ( LA64_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+                    alt64=1;
                 }
-                else if ( LA63_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1) ) {
-                    alt63=2;
+                else if ( LA64_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+                    alt64=2;
                 }
-                else if ( LA63_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2) ) {
-                    alt63=3;
+                else if ( LA64_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+                    alt64=3;
                 }
-                else if ( LA63_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3) ) {
-                    alt63=4;
-                }
-                else if ( LA63_0 == 55 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4) ) {
-                    alt63=5;
+                else if ( LA64_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+                    alt64=4;
                 }
 
 
-                switch (alt63) {
+                switch (alt64) {
             	case 1 :
-            	    // InternalGrana.g:2766:4: ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) )
+            	    // InternalGrana.g:2772:4: ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) )
             	    {
-            	    // InternalGrana.g:2766:4: ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) )
-            	    // InternalGrana.g:2767:5: {...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalGrana.g:2772:4: ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) )
+            	    // InternalGrana.g:2773:5: {...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0)");
             	    }
-            	    // InternalGrana.g:2767:111: ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) )
-            	    // InternalGrana.g:2768:6: ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) )
+            	    // InternalGrana.g:2773:113: ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalGrana.g:2774:6: ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0);
             	    	 				
-            	    // InternalGrana.g:2771:6: ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) )
-            	    // InternalGrana.g:2771:7: {...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) )
+            	    // InternalGrana.g:2777:6: ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) )
+            	    // InternalGrana.g:2777:7: {...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) )
             	    {
             	    if ( !((true)) ) {
             	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "true");
             	    }
-            	    // InternalGrana.g:2771:16: (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) )
-            	    // InternalGrana.g:2771:18: otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) )
+            	    // InternalGrana.g:2777:16: (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) )
+            	    // InternalGrana.g:2777:18: otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) )
             	    {
             	    otherlv_8=(Token)match(input,51,FOLLOW_39); 
 
-            	        	newLeafNode(otherlv_8, grammarAccess.getElkEdgeSectionAccess().getIncomingKeyword_4_0_0());
+            	        	newLeafNode(otherlv_8, grammarAccess.getElkEdgeSectionAccess().getIncomingKeyword_4_0_0_0());
             	        
             	    otherlv_9=(Token)match(input,42,FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_9, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_1());
+            	        	newLeafNode(otherlv_9, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_0_1());
             	        
-            	    // InternalGrana.g:2779:1: ( ( ruleQualifiedId ) )
-            	    // InternalGrana.g:2780:1: ( ruleQualifiedId )
+            	    // InternalGrana.g:2785:1: ( ( ruleQualifiedId ) )
+            	    // InternalGrana.g:2786:1: ( ruleQualifiedId )
             	    {
-            	    // InternalGrana.g:2780:1: ( ruleQualifiedId )
-            	    // InternalGrana.g:2781:3: ruleQualifiedId
+            	    // InternalGrana.g:2786:1: ( ruleQualifiedId )
+            	    // InternalGrana.g:2787:3: ruleQualifiedId
             	    {
 
             	    			if (current==null) {
@@ -7037,9 +7068,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    	        }
             	            
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_4_0_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_4_0_0_2_0()); 
             	    	    
-            	    pushFollow(FOLLOW_52);
+            	    pushFollow(FOLLOW_55);
             	    ruleQualifiedId();
 
             	    state._fsp--;
@@ -7060,7 +7091,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	    	 				
 
             	    }
@@ -7072,42 +7103,42 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    }
             	    break;
             	case 2 :
-            	    // InternalGrana.g:2801:4: ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) )
+            	    // InternalGrana.g:2807:4: ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) )
             	    {
-            	    // InternalGrana.g:2801:4: ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) )
-            	    // InternalGrana.g:2802:5: {...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalGrana.g:2807:4: ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) )
+            	    // InternalGrana.g:2808:5: {...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1)");
             	    }
-            	    // InternalGrana.g:2802:111: ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) )
-            	    // InternalGrana.g:2803:6: ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) )
+            	    // InternalGrana.g:2808:113: ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalGrana.g:2809:6: ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1);
             	    	 				
-            	    // InternalGrana.g:2806:6: ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) )
-            	    // InternalGrana.g:2806:7: {...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) )
+            	    // InternalGrana.g:2812:6: ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) )
+            	    // InternalGrana.g:2812:7: {...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) )
             	    {
             	    if ( !((true)) ) {
             	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "true");
             	    }
-            	    // InternalGrana.g:2806:16: (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) )
-            	    // InternalGrana.g:2806:18: otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) )
+            	    // InternalGrana.g:2812:16: (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) )
+            	    // InternalGrana.g:2812:18: otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) )
             	    {
             	    otherlv_11=(Token)match(input,52,FOLLOW_39); 
 
-            	        	newLeafNode(otherlv_11, grammarAccess.getElkEdgeSectionAccess().getOutgoingKeyword_4_1_0());
+            	        	newLeafNode(otherlv_11, grammarAccess.getElkEdgeSectionAccess().getOutgoingKeyword_4_0_1_0());
             	        
             	    otherlv_12=(Token)match(input,42,FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_12, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_1_1());
+            	        	newLeafNode(otherlv_12, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_1_1());
             	        
-            	    // InternalGrana.g:2814:1: ( ( ruleQualifiedId ) )
-            	    // InternalGrana.g:2815:1: ( ruleQualifiedId )
+            	    // InternalGrana.g:2820:1: ( ( ruleQualifiedId ) )
+            	    // InternalGrana.g:2821:1: ( ruleQualifiedId )
             	    {
-            	    // InternalGrana.g:2815:1: ( ruleQualifiedId )
-            	    // InternalGrana.g:2816:3: ruleQualifiedId
+            	    // InternalGrana.g:2821:1: ( ruleQualifiedId )
+            	    // InternalGrana.g:2822:3: ruleQualifiedId
             	    {
 
             	    			if (current==null) {
@@ -7115,9 +7146,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    	        }
             	            
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_4_1_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_4_0_1_2_0()); 
             	    	    
-            	    pushFollow(FOLLOW_52);
+            	    pushFollow(FOLLOW_55);
             	    ruleQualifiedId();
 
             	    state._fsp--;
@@ -7138,7 +7169,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	    	 				
 
             	    }
@@ -7150,47 +7181,47 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    }
             	    break;
             	case 3 :
-            	    // InternalGrana.g:2836:4: ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) )
+            	    // InternalGrana.g:2842:4: ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) )
             	    {
-            	    // InternalGrana.g:2836:4: ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) )
-            	    // InternalGrana.g:2837:5: {...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) )
+            	    // InternalGrana.g:2842:4: ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) )
+            	    // InternalGrana.g:2843:5: {...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2)");
             	    }
-            	    // InternalGrana.g:2837:111: ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) )
-            	    // InternalGrana.g:2838:6: ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) )
+            	    // InternalGrana.g:2843:113: ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) )
+            	    // InternalGrana.g:2844:6: ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2);
             	    	 				
-            	    // InternalGrana.g:2841:6: ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) )
-            	    // InternalGrana.g:2841:7: {...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) )
+            	    // InternalGrana.g:2847:6: ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) )
+            	    // InternalGrana.g:2847:7: {...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) )
             	    {
             	    if ( !((true)) ) {
             	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "true");
             	    }
-            	    // InternalGrana.g:2841:16: (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) )
-            	    // InternalGrana.g:2841:18: otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) )
+            	    // InternalGrana.g:2847:16: (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) )
+            	    // InternalGrana.g:2847:18: otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) )
             	    {
             	    otherlv_14=(Token)match(input,53,FOLLOW_39); 
 
-            	        	newLeafNode(otherlv_14, grammarAccess.getElkEdgeSectionAccess().getStartKeyword_4_2_0());
+            	        	newLeafNode(otherlv_14, grammarAccess.getElkEdgeSectionAccess().getStartKeyword_4_0_2_0());
             	        
-            	    otherlv_15=(Token)match(input,42,FOLLOW_42); 
+            	    otherlv_15=(Token)match(input,42,FOLLOW_45); 
 
-            	        	newLeafNode(otherlv_15, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_2_1());
+            	        	newLeafNode(otherlv_15, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_2_1());
             	        
-            	    // InternalGrana.g:2849:1: ( (lv_startX_16_0= ruleNumber ) )
-            	    // InternalGrana.g:2850:1: (lv_startX_16_0= ruleNumber )
+            	    // InternalGrana.g:2855:1: ( (lv_startX_16_0= ruleNumber ) )
+            	    // InternalGrana.g:2856:1: (lv_startX_16_0= ruleNumber )
             	    {
-            	    // InternalGrana.g:2850:1: (lv_startX_16_0= ruleNumber )
-            	    // InternalGrana.g:2851:3: lv_startX_16_0= ruleNumber
+            	    // InternalGrana.g:2856:1: (lv_startX_16_0= ruleNumber )
+            	    // InternalGrana.g:2857:3: lv_startX_16_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getStartXNumberParserRuleCall_4_2_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getStartXNumberParserRuleCall_4_0_2_2_0()); 
             	    	    
-            	    pushFollow(FOLLOW_43);
+            	    pushFollow(FOLLOW_46);
             	    lv_startX_16_0=ruleNumber();
 
             	    state._fsp--;
@@ -7212,20 +7243,20 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    otherlv_17=(Token)match(input,32,FOLLOW_42); 
+            	    otherlv_17=(Token)match(input,32,FOLLOW_45); 
 
-            	        	newLeafNode(otherlv_17, grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_2_3());
+            	        	newLeafNode(otherlv_17, grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_0_2_3());
             	        
-            	    // InternalGrana.g:2871:1: ( (lv_startY_18_0= ruleNumber ) )
-            	    // InternalGrana.g:2872:1: (lv_startY_18_0= ruleNumber )
+            	    // InternalGrana.g:2877:1: ( (lv_startY_18_0= ruleNumber ) )
+            	    // InternalGrana.g:2878:1: (lv_startY_18_0= ruleNumber )
             	    {
-            	    // InternalGrana.g:2872:1: (lv_startY_18_0= ruleNumber )
-            	    // InternalGrana.g:2873:3: lv_startY_18_0= ruleNumber
+            	    // InternalGrana.g:2878:1: (lv_startY_18_0= ruleNumber )
+            	    // InternalGrana.g:2879:3: lv_startY_18_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getStartYNumberParserRuleCall_4_2_4_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getStartYNumberParserRuleCall_4_0_2_4_0()); 
             	    	    
-            	    pushFollow(FOLLOW_52);
+            	    pushFollow(FOLLOW_55);
             	    lv_startY_18_0=ruleNumber();
 
             	    state._fsp--;
@@ -7254,7 +7285,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	    	 				
 
             	    }
@@ -7266,47 +7297,47 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    }
             	    break;
             	case 4 :
-            	    // InternalGrana.g:2896:4: ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) )
+            	    // InternalGrana.g:2902:4: ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) )
             	    {
-            	    // InternalGrana.g:2896:4: ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) )
-            	    // InternalGrana.g:2897:5: {...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) )
+            	    // InternalGrana.g:2902:4: ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) )
+            	    // InternalGrana.g:2903:5: {...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3)");
             	    }
-            	    // InternalGrana.g:2897:111: ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) )
-            	    // InternalGrana.g:2898:6: ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) )
+            	    // InternalGrana.g:2903:113: ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) )
+            	    // InternalGrana.g:2904:6: ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3);
             	    	 				
-            	    // InternalGrana.g:2901:6: ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) )
-            	    // InternalGrana.g:2901:7: {...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) )
+            	    // InternalGrana.g:2907:6: ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) )
+            	    // InternalGrana.g:2907:7: {...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) )
             	    {
             	    if ( !((true)) ) {
             	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "true");
             	    }
-            	    // InternalGrana.g:2901:16: (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) )
-            	    // InternalGrana.g:2901:18: otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) )
+            	    // InternalGrana.g:2907:16: (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) )
+            	    // InternalGrana.g:2907:18: otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) )
             	    {
             	    otherlv_19=(Token)match(input,54,FOLLOW_39); 
 
-            	        	newLeafNode(otherlv_19, grammarAccess.getElkEdgeSectionAccess().getEndKeyword_4_3_0());
+            	        	newLeafNode(otherlv_19, grammarAccess.getElkEdgeSectionAccess().getEndKeyword_4_0_3_0());
             	        
-            	    otherlv_20=(Token)match(input,42,FOLLOW_42); 
+            	    otherlv_20=(Token)match(input,42,FOLLOW_45); 
 
-            	        	newLeafNode(otherlv_20, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_3_1());
+            	        	newLeafNode(otherlv_20, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_3_1());
             	        
-            	    // InternalGrana.g:2909:1: ( (lv_endX_21_0= ruleNumber ) )
-            	    // InternalGrana.g:2910:1: (lv_endX_21_0= ruleNumber )
+            	    // InternalGrana.g:2915:1: ( (lv_endX_21_0= ruleNumber ) )
+            	    // InternalGrana.g:2916:1: (lv_endX_21_0= ruleNumber )
             	    {
-            	    // InternalGrana.g:2910:1: (lv_endX_21_0= ruleNumber )
-            	    // InternalGrana.g:2911:3: lv_endX_21_0= ruleNumber
+            	    // InternalGrana.g:2916:1: (lv_endX_21_0= ruleNumber )
+            	    // InternalGrana.g:2917:3: lv_endX_21_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getEndXNumberParserRuleCall_4_3_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getEndXNumberParserRuleCall_4_0_3_2_0()); 
             	    	    
-            	    pushFollow(FOLLOW_43);
+            	    pushFollow(FOLLOW_46);
             	    lv_endX_21_0=ruleNumber();
 
             	    state._fsp--;
@@ -7328,20 +7359,20 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    otherlv_22=(Token)match(input,32,FOLLOW_42); 
+            	    otherlv_22=(Token)match(input,32,FOLLOW_45); 
 
-            	        	newLeafNode(otherlv_22, grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_3_3());
+            	        	newLeafNode(otherlv_22, grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_0_3_3());
             	        
-            	    // InternalGrana.g:2931:1: ( (lv_endY_23_0= ruleNumber ) )
-            	    // InternalGrana.g:2932:1: (lv_endY_23_0= ruleNumber )
+            	    // InternalGrana.g:2937:1: ( (lv_endY_23_0= ruleNumber ) )
+            	    // InternalGrana.g:2938:1: (lv_endY_23_0= ruleNumber )
             	    {
-            	    // InternalGrana.g:2932:1: (lv_endY_23_0= ruleNumber )
-            	    // InternalGrana.g:2933:3: lv_endY_23_0= ruleNumber
+            	    // InternalGrana.g:2938:1: (lv_endY_23_0= ruleNumber )
+            	    // InternalGrana.g:2939:3: lv_endY_23_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getEndYNumberParserRuleCall_4_3_4_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getEndYNumberParserRuleCall_4_0_3_4_0()); 
             	    	    
-            	    pushFollow(FOLLOW_52);
+            	    pushFollow(FOLLOW_55);
             	    lv_endY_23_0=ruleNumber();
 
             	    state._fsp--;
@@ -7370,147 +7401,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
-            	    	 				
-
-            	    }
-
-
-            	    }
-
-
-            	    }
-            	    break;
-            	case 5 :
-            	    // InternalGrana.g:2956:4: ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) )
-            	    {
-            	    // InternalGrana.g:2956:4: ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) )
-            	    // InternalGrana.g:2957:5: {...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) )
-            	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4)");
-            	    }
-            	    // InternalGrana.g:2957:111: ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) )
-            	    // InternalGrana.g:2958:6: ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) )
-            	    {
-            	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4);
-            	    	 				
-            	    // InternalGrana.g:2961:6: ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) )
-            	    // InternalGrana.g:2961:7: {...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )
-            	    {
-            	    if ( !((true)) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "true");
-            	    }
-            	    // InternalGrana.g:2961:16: (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )
-            	    // InternalGrana.g:2961:18: otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )*
-            	    {
-            	    otherlv_24=(Token)match(input,55,FOLLOW_39); 
-
-            	        	newLeafNode(otherlv_24, grammarAccess.getElkEdgeSectionAccess().getBendsKeyword_4_4_0());
-            	        
-            	    otherlv_25=(Token)match(input,42,FOLLOW_42); 
-
-            	        	newLeafNode(otherlv_25, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_4_1());
-            	        
-            	    // InternalGrana.g:2969:1: ( (lv_bendPoints_26_0= ruleElkBendPoint ) )
-            	    // InternalGrana.g:2970:1: (lv_bendPoints_26_0= ruleElkBendPoint )
-            	    {
-            	    // InternalGrana.g:2970:1: (lv_bendPoints_26_0= ruleElkBendPoint )
-            	    // InternalGrana.g:2971:3: lv_bendPoints_26_0= ruleElkBendPoint
-            	    {
-            	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_4_2_0()); 
-            	    	    
-            	    pushFollow(FOLLOW_53);
-            	    lv_bendPoints_26_0=ruleElkBendPoint();
-
-            	    state._fsp--;
-
-
-            	    	        if (current==null) {
-            	    	            current = createModelElementForParent(grammarAccess.getElkEdgeSectionRule());
-            	    	        }
-            	           		add(
-            	           			current, 
-            	           			"bendPoints",
-            	            		lv_bendPoints_26_0, 
-            	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
-            	    	        afterParserOrEnumRuleCall();
-            	    	    
-
-            	    }
-
-
-            	    }
-
-            	    // InternalGrana.g:2987:2: (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )*
-            	    loop62:
-            	    do {
-            	        int alt62=2;
-            	        int LA62_0 = input.LA(1);
-
-            	        if ( (LA62_0==56) ) {
-            	            alt62=1;
-            	        }
-
-
-            	        switch (alt62) {
-            	    	case 1 :
-            	    	    // InternalGrana.g:2987:4: otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) )
-            	    	    {
-            	    	    otherlv_27=(Token)match(input,56,FOLLOW_42); 
-
-            	    	        	newLeafNode(otherlv_27, grammarAccess.getElkEdgeSectionAccess().getVerticalLineKeyword_4_4_3_0());
-            	    	        
-            	    	    // InternalGrana.g:2991:1: ( (lv_bendPoints_28_0= ruleElkBendPoint ) )
-            	    	    // InternalGrana.g:2992:1: (lv_bendPoints_28_0= ruleElkBendPoint )
-            	    	    {
-            	    	    // InternalGrana.g:2992:1: (lv_bendPoints_28_0= ruleElkBendPoint )
-            	    	    // InternalGrana.g:2993:3: lv_bendPoints_28_0= ruleElkBendPoint
-            	    	    {
-            	    	     
-            	    	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_4_3_1_0()); 
-            	    	    	    
-            	    	    pushFollow(FOLLOW_53);
-            	    	    lv_bendPoints_28_0=ruleElkBendPoint();
-
-            	    	    state._fsp--;
-
-
-            	    	    	        if (current==null) {
-            	    	    	            current = createModelElementForParent(grammarAccess.getElkEdgeSectionRule());
-            	    	    	        }
-            	    	           		add(
-            	    	           			current, 
-            	    	           			"bendPoints",
-            	    	            		lv_bendPoints_28_0, 
-            	    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
-            	    	    	        afterParserOrEnumRuleCall();
-            	    	    	    
-
-            	    	    }
-
-
-            	    	    }
-
-
-            	    	    }
-            	    	    break;
-
-            	    	default :
-            	    	    break loop62;
-            	        }
-            	    } while (true);
-
-
-            	    }
-
-
-            	    }
-
-            	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	    	 				
 
             	    }
@@ -7523,7 +7414,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop63;
+            	    break loop64;
                 }
             } while (true);
 
@@ -7534,14 +7425,181 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             }
 
              
-            	  getUnorderedGroupHelper().leave(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	  getUnorderedGroupHelper().leave(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	
 
             }
 
-            otherlv_29=(Token)match(input,48,FOLLOW_2); 
+            // InternalGrana.g:2969:2: (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )?
+            int alt66=2;
+            int LA66_0 = input.LA(1);
 
-                	newLeafNode(otherlv_29, grammarAccess.getElkEdgeSectionAccess().getRightSquareBracketKeyword_5());
+            if ( (LA66_0==55) ) {
+                alt66=1;
+            }
+            switch (alt66) {
+                case 1 :
+                    // InternalGrana.g:2969:4: otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )*
+                    {
+                    otherlv_24=(Token)match(input,55,FOLLOW_39); 
+
+                        	newLeafNode(otherlv_24, grammarAccess.getElkEdgeSectionAccess().getBendsKeyword_4_1_0());
+                        
+                    otherlv_25=(Token)match(input,42,FOLLOW_45); 
+
+                        	newLeafNode(otherlv_25, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_1_1());
+                        
+                    // InternalGrana.g:2977:1: ( (lv_bendPoints_26_0= ruleElkBendPoint ) )
+                    // InternalGrana.g:2978:1: (lv_bendPoints_26_0= ruleElkBendPoint )
+                    {
+                    // InternalGrana.g:2978:1: (lv_bendPoints_26_0= ruleElkBendPoint )
+                    // InternalGrana.g:2979:3: lv_bendPoints_26_0= ruleElkBendPoint
+                    {
+                     
+                    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_1_2_0()); 
+                    	    
+                    pushFollow(FOLLOW_56);
+                    lv_bendPoints_26_0=ruleElkBendPoint();
+
+                    state._fsp--;
+
+
+                    	        if (current==null) {
+                    	            current = createModelElementForParent(grammarAccess.getElkEdgeSectionRule());
+                    	        }
+                           		add(
+                           			current, 
+                           			"bendPoints",
+                            		lv_bendPoints_26_0, 
+                            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
+                    	        afterParserOrEnumRuleCall();
+                    	    
+
+                    }
+
+
+                    }
+
+                    // InternalGrana.g:2995:2: (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )*
+                    loop65:
+                    do {
+                        int alt65=2;
+                        int LA65_0 = input.LA(1);
+
+                        if ( (LA65_0==56) ) {
+                            alt65=1;
+                        }
+
+
+                        switch (alt65) {
+                    	case 1 :
+                    	    // InternalGrana.g:2995:4: otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) )
+                    	    {
+                    	    otherlv_27=(Token)match(input,56,FOLLOW_45); 
+
+                    	        	newLeafNode(otherlv_27, grammarAccess.getElkEdgeSectionAccess().getVerticalLineKeyword_4_1_3_0());
+                    	        
+                    	    // InternalGrana.g:2999:1: ( (lv_bendPoints_28_0= ruleElkBendPoint ) )
+                    	    // InternalGrana.g:3000:1: (lv_bendPoints_28_0= ruleElkBendPoint )
+                    	    {
+                    	    // InternalGrana.g:3000:1: (lv_bendPoints_28_0= ruleElkBendPoint )
+                    	    // InternalGrana.g:3001:3: lv_bendPoints_28_0= ruleElkBendPoint
+                    	    {
+                    	     
+                    	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_1_3_1_0()); 
+                    	    	    
+                    	    pushFollow(FOLLOW_56);
+                    	    lv_bendPoints_28_0=ruleElkBendPoint();
+
+                    	    state._fsp--;
+
+
+                    	    	        if (current==null) {
+                    	    	            current = createModelElementForParent(grammarAccess.getElkEdgeSectionRule());
+                    	    	        }
+                    	           		add(
+                    	           			current, 
+                    	           			"bendPoints",
+                    	            		lv_bendPoints_28_0, 
+                    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
+                    	    	        afterParserOrEnumRuleCall();
+                    	    	    
+
+                    	    }
+
+
+                    	    }
+
+
+                    	    }
+                    	    break;
+
+                    	default :
+                    	    break loop65;
+                        }
+                    } while (true);
+
+
+                    }
+                    break;
+
+            }
+
+            // InternalGrana.g:3017:6: ( (lv_properties_29_0= ruleProperty ) )*
+            loop67:
+            do {
+                int alt67=2;
+                int LA67_0 = input.LA(1);
+
+                if ( (LA67_0==RULE_ID) ) {
+                    alt67=1;
+                }
+
+
+                switch (alt67) {
+            	case 1 :
+            	    // InternalGrana.g:3018:1: (lv_properties_29_0= ruleProperty )
+            	    {
+            	    // InternalGrana.g:3018:1: (lv_properties_29_0= ruleProperty )
+            	    // InternalGrana.g:3019:3: lv_properties_29_0= ruleProperty
+            	    {
+            	     
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getPropertiesPropertyParserRuleCall_4_2_0()); 
+            	    	    
+            	    pushFollow(FOLLOW_57);
+            	    lv_properties_29_0=ruleProperty();
+
+            	    state._fsp--;
+
+
+            	    	        if (current==null) {
+            	    	            current = createModelElementForParent(grammarAccess.getElkEdgeSectionRule());
+            	    	        }
+            	           		add(
+            	           			current, 
+            	           			"properties",
+            	            		lv_properties_29_0, 
+            	            		"org.eclipse.elk.graph.text.ElkGraph.Property");
+            	    	        afterParserOrEnumRuleCall();
+            	    	    
+
+            	    }
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop67;
+                }
+            } while (true);
+
+
+            }
+
+            otherlv_30=(Token)match(input,48,FOLLOW_2); 
+
+                	newLeafNode(otherlv_30, grammarAccess.getElkEdgeSectionAccess().getRightSquareBracketKeyword_5());
                 
 
             }
@@ -7564,7 +7622,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleElkBendPoint"
-    // InternalGrana.g:3035:1: entryRuleElkBendPoint returns [EObject current=null] : iv_ruleElkBendPoint= ruleElkBendPoint EOF ;
+    // InternalGrana.g:3047:1: entryRuleElkBendPoint returns [EObject current=null] : iv_ruleElkBendPoint= ruleElkBendPoint EOF ;
     public final EObject entryRuleElkBendPoint() throws RecognitionException {
         EObject current = null;
 
@@ -7572,8 +7630,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3036:2: (iv_ruleElkBendPoint= ruleElkBendPoint EOF )
-            // InternalGrana.g:3037:2: iv_ruleElkBendPoint= ruleElkBendPoint EOF
+            // InternalGrana.g:3048:2: (iv_ruleElkBendPoint= ruleElkBendPoint EOF )
+            // InternalGrana.g:3049:2: iv_ruleElkBendPoint= ruleElkBendPoint EOF
             {
              newCompositeNode(grammarAccess.getElkBendPointRule()); 
             pushFollow(FOLLOW_1);
@@ -7600,7 +7658,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleElkBendPoint"
-    // InternalGrana.g:3044:1: ruleElkBendPoint returns [EObject current=null] : ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) ) ;
+    // InternalGrana.g:3056:1: ruleElkBendPoint returns [EObject current=null] : ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) ) ;
     public final EObject ruleElkBendPoint() throws RecognitionException {
         EObject current = null;
 
@@ -7613,22 +7671,22 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3047:28: ( ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) ) )
-            // InternalGrana.g:3048:1: ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) )
+            // InternalGrana.g:3059:28: ( ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) ) )
+            // InternalGrana.g:3060:1: ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) )
             {
-            // InternalGrana.g:3048:1: ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) )
-            // InternalGrana.g:3048:2: ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) )
+            // InternalGrana.g:3060:1: ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) )
+            // InternalGrana.g:3060:2: ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) )
             {
-            // InternalGrana.g:3048:2: ( (lv_x_0_0= ruleNumber ) )
-            // InternalGrana.g:3049:1: (lv_x_0_0= ruleNumber )
+            // InternalGrana.g:3060:2: ( (lv_x_0_0= ruleNumber ) )
+            // InternalGrana.g:3061:1: (lv_x_0_0= ruleNumber )
             {
-            // InternalGrana.g:3049:1: (lv_x_0_0= ruleNumber )
-            // InternalGrana.g:3050:3: lv_x_0_0= ruleNumber
+            // InternalGrana.g:3061:1: (lv_x_0_0= ruleNumber )
+            // InternalGrana.g:3062:3: lv_x_0_0= ruleNumber
             {
              
             	        newCompositeNode(grammarAccess.getElkBendPointAccess().getXNumberParserRuleCall_0_0()); 
             	    
-            pushFollow(FOLLOW_43);
+            pushFollow(FOLLOW_46);
             lv_x_0_0=ruleNumber();
 
             state._fsp--;
@@ -7650,15 +7708,15 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,32,FOLLOW_42); 
+            otherlv_1=(Token)match(input,32,FOLLOW_45); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getElkBendPointAccess().getCommaKeyword_1());
                 
-            // InternalGrana.g:3070:1: ( (lv_y_2_0= ruleNumber ) )
-            // InternalGrana.g:3071:1: (lv_y_2_0= ruleNumber )
+            // InternalGrana.g:3082:1: ( (lv_y_2_0= ruleNumber ) )
+            // InternalGrana.g:3083:1: (lv_y_2_0= ruleNumber )
             {
-            // InternalGrana.g:3071:1: (lv_y_2_0= ruleNumber )
-            // InternalGrana.g:3072:3: lv_y_2_0= ruleNumber
+            // InternalGrana.g:3083:1: (lv_y_2_0= ruleNumber )
+            // InternalGrana.g:3084:3: lv_y_2_0= ruleNumber
             {
              
             	        newCompositeNode(grammarAccess.getElkBendPointAccess().getYNumberParserRuleCall_2_0()); 
@@ -7706,7 +7764,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleQualifiedId"
-    // InternalGrana.g:3096:1: entryRuleQualifiedId returns [String current=null] : iv_ruleQualifiedId= ruleQualifiedId EOF ;
+    // InternalGrana.g:3108:1: entryRuleQualifiedId returns [String current=null] : iv_ruleQualifiedId= ruleQualifiedId EOF ;
     public final String entryRuleQualifiedId() throws RecognitionException {
         String current = null;
 
@@ -7714,8 +7772,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3097:2: (iv_ruleQualifiedId= ruleQualifiedId EOF )
-            // InternalGrana.g:3098:2: iv_ruleQualifiedId= ruleQualifiedId EOF
+            // InternalGrana.g:3109:2: (iv_ruleQualifiedId= ruleQualifiedId EOF )
+            // InternalGrana.g:3110:2: iv_ruleQualifiedId= ruleQualifiedId EOF
             {
              newCompositeNode(grammarAccess.getQualifiedIdRule()); 
             pushFollow(FOLLOW_1);
@@ -7742,7 +7800,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleQualifiedId"
-    // InternalGrana.g:3105:1: ruleQualifiedId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    // InternalGrana.g:3117:1: ruleQualifiedId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
     public final AntlrDatatypeRuleToken ruleQualifiedId() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -7753,40 +7811,40 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3108:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // InternalGrana.g:3109:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalGrana.g:3120:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalGrana.g:3121:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
             {
-            // InternalGrana.g:3109:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // InternalGrana.g:3109:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            // InternalGrana.g:3121:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalGrana.g:3121:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
             {
-            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_54); 
+            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_58); 
 
             		current.merge(this_ID_0);
                 
              
                 newLeafNode(this_ID_0, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_0()); 
                 
-            // InternalGrana.g:3116:1: (kw= '.' this_ID_2= RULE_ID )*
-            loop64:
+            // InternalGrana.g:3128:1: (kw= '.' this_ID_2= RULE_ID )*
+            loop68:
             do {
-                int alt64=2;
-                int LA64_0 = input.LA(1);
+                int alt68=2;
+                int LA68_0 = input.LA(1);
 
-                if ( (LA64_0==58) ) {
-                    alt64=1;
+                if ( (LA68_0==58) ) {
+                    alt68=1;
                 }
 
 
-                switch (alt64) {
+                switch (alt68) {
             	case 1 :
-            	    // InternalGrana.g:3117:2: kw= '.' this_ID_2= RULE_ID
+            	    // InternalGrana.g:3129:2: kw= '.' this_ID_2= RULE_ID
             	    {
             	    kw=(Token)match(input,58,FOLLOW_10); 
 
             	            current.merge(kw);
             	            newLeafNode(kw, grammarAccess.getQualifiedIdAccess().getFullStopKeyword_1_0()); 
             	        
-            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_54); 
+            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_58); 
 
             	    		current.merge(this_ID_2);
             	        
@@ -7798,7 +7856,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop64;
+            	    break loop68;
                 }
             } while (true);
 
@@ -7823,7 +7881,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleNumber"
-    // InternalGrana.g:3137:1: entryRuleNumber returns [String current=null] : iv_ruleNumber= ruleNumber EOF ;
+    // InternalGrana.g:3149:1: entryRuleNumber returns [String current=null] : iv_ruleNumber= ruleNumber EOF ;
     public final String entryRuleNumber() throws RecognitionException {
         String current = null;
 
@@ -7831,8 +7889,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3138:2: (iv_ruleNumber= ruleNumber EOF )
-            // InternalGrana.g:3139:2: iv_ruleNumber= ruleNumber EOF
+            // InternalGrana.g:3150:2: (iv_ruleNumber= ruleNumber EOF )
+            // InternalGrana.g:3151:2: iv_ruleNumber= ruleNumber EOF
             {
              newCompositeNode(grammarAccess.getNumberRule()); 
             pushFollow(FOLLOW_1);
@@ -7859,7 +7917,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleNumber"
-    // InternalGrana.g:3146:1: ruleNumber returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
+    // InternalGrana.g:3158:1: ruleNumber returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
     public final AntlrDatatypeRuleToken ruleNumber() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -7869,28 +7927,28 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3149:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
-            // InternalGrana.g:3150:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            // InternalGrana.g:3161:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
+            // InternalGrana.g:3162:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
             {
-            // InternalGrana.g:3150:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
-            int alt65=2;
-            int LA65_0 = input.LA(1);
+            // InternalGrana.g:3162:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            int alt69=2;
+            int LA69_0 = input.LA(1);
 
-            if ( (LA65_0==RULE_SIGNED_INT) ) {
-                alt65=1;
+            if ( (LA69_0==RULE_SIGNED_INT) ) {
+                alt69=1;
             }
-            else if ( (LA65_0==RULE_FLOAT) ) {
-                alt65=2;
+            else if ( (LA69_0==RULE_FLOAT) ) {
+                alt69=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 65, 0, input);
+                    new NoViableAltException("", 69, 0, input);
 
                 throw nvae;
             }
-            switch (alt65) {
+            switch (alt69) {
                 case 1 :
-                    // InternalGrana.g:3150:6: this_SIGNED_INT_0= RULE_SIGNED_INT
+                    // InternalGrana.g:3162:6: this_SIGNED_INT_0= RULE_SIGNED_INT
                     {
                     this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FOLLOW_2); 
 
@@ -7903,7 +7961,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:3158:10: this_FLOAT_1= RULE_FLOAT
+                    // InternalGrana.g:3170:10: this_FLOAT_1= RULE_FLOAT
                     {
                     this_FLOAT_1=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
 
@@ -7936,7 +7994,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleProperty"
-    // InternalGrana.g:3173:1: entryRuleProperty returns [EObject current=null] : iv_ruleProperty= ruleProperty EOF ;
+    // InternalGrana.g:3185:1: entryRuleProperty returns [EObject current=null] : iv_ruleProperty= ruleProperty EOF ;
     public final EObject entryRuleProperty() throws RecognitionException {
         EObject current = null;
 
@@ -7944,8 +8002,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3174:2: (iv_ruleProperty= ruleProperty EOF )
-            // InternalGrana.g:3175:2: iv_ruleProperty= ruleProperty EOF
+            // InternalGrana.g:3186:2: (iv_ruleProperty= ruleProperty EOF )
+            // InternalGrana.g:3187:2: iv_ruleProperty= ruleProperty EOF
             {
              newCompositeNode(grammarAccess.getPropertyRule()); 
             pushFollow(FOLLOW_1);
@@ -7972,7 +8030,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleProperty"
-    // InternalGrana.g:3182:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) ;
+    // InternalGrana.g:3194:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) ;
     public final EObject ruleProperty() throws RecognitionException {
         EObject current = null;
 
@@ -7991,17 +8049,17 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3185:28: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) )
-            // InternalGrana.g:3186:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
+            // InternalGrana.g:3197:28: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) )
+            // InternalGrana.g:3198:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
             {
-            // InternalGrana.g:3186:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
-            // InternalGrana.g:3186:2: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
+            // InternalGrana.g:3198:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
+            // InternalGrana.g:3198:2: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
             {
-            // InternalGrana.g:3186:2: ( (lv_key_0_0= rulePropertyKey ) )
-            // InternalGrana.g:3187:1: (lv_key_0_0= rulePropertyKey )
+            // InternalGrana.g:3198:2: ( (lv_key_0_0= rulePropertyKey ) )
+            // InternalGrana.g:3199:1: (lv_key_0_0= rulePropertyKey )
             {
-            // InternalGrana.g:3187:1: (lv_key_0_0= rulePropertyKey )
-            // InternalGrana.g:3188:3: lv_key_0_0= rulePropertyKey
+            // InternalGrana.g:3199:1: (lv_key_0_0= rulePropertyKey )
+            // InternalGrana.g:3200:3: lv_key_0_0= rulePropertyKey
             {
              
             	        newCompositeNode(grammarAccess.getPropertyAccess().getKeyPropertyKeyParserRuleCall_0_0()); 
@@ -8028,51 +8086,51 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,42,FOLLOW_55); 
+            otherlv_1=(Token)match(input,42,FOLLOW_59); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getPropertyAccess().getColonKeyword_1());
                 
-            // InternalGrana.g:3208:1: ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
-            int alt66=4;
+            // InternalGrana.g:3220:1: ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
+            int alt70=4;
             switch ( input.LA(1) ) {
             case RULE_STRING:
                 {
-                alt66=1;
+                alt70=1;
                 }
                 break;
             case RULE_ID:
                 {
-                alt66=2;
+                alt70=2;
                 }
                 break;
             case RULE_SIGNED_INT:
             case RULE_FLOAT:
                 {
-                alt66=3;
+                alt70=3;
                 }
                 break;
             case 59:
             case 60:
                 {
-                alt66=4;
+                alt70=4;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 66, 0, input);
+                    new NoViableAltException("", 70, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt66) {
+            switch (alt70) {
                 case 1 :
-                    // InternalGrana.g:3208:2: ( (lv_value_2_0= ruleStringValue ) )
+                    // InternalGrana.g:3220:2: ( (lv_value_2_0= ruleStringValue ) )
                     {
-                    // InternalGrana.g:3208:2: ( (lv_value_2_0= ruleStringValue ) )
-                    // InternalGrana.g:3209:1: (lv_value_2_0= ruleStringValue )
+                    // InternalGrana.g:3220:2: ( (lv_value_2_0= ruleStringValue ) )
+                    // InternalGrana.g:3221:1: (lv_value_2_0= ruleStringValue )
                     {
-                    // InternalGrana.g:3209:1: (lv_value_2_0= ruleStringValue )
-                    // InternalGrana.g:3210:3: lv_value_2_0= ruleStringValue
+                    // InternalGrana.g:3221:1: (lv_value_2_0= ruleStringValue )
+                    // InternalGrana.g:3222:3: lv_value_2_0= ruleStringValue
                     {
                      
                     	        newCompositeNode(grammarAccess.getPropertyAccess().getValueStringValueParserRuleCall_2_0_0()); 
@@ -8103,13 +8161,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:3227:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
+                    // InternalGrana.g:3239:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
                     {
-                    // InternalGrana.g:3227:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
-                    // InternalGrana.g:3228:1: (lv_value_3_0= ruleQualifiedIdValue )
+                    // InternalGrana.g:3239:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
+                    // InternalGrana.g:3240:1: (lv_value_3_0= ruleQualifiedIdValue )
                     {
-                    // InternalGrana.g:3228:1: (lv_value_3_0= ruleQualifiedIdValue )
-                    // InternalGrana.g:3229:3: lv_value_3_0= ruleQualifiedIdValue
+                    // InternalGrana.g:3240:1: (lv_value_3_0= ruleQualifiedIdValue )
+                    // InternalGrana.g:3241:3: lv_value_3_0= ruleQualifiedIdValue
                     {
                      
                     	        newCompositeNode(grammarAccess.getPropertyAccess().getValueQualifiedIdValueParserRuleCall_2_1_0()); 
@@ -8140,13 +8198,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalGrana.g:3246:6: ( (lv_value_4_0= ruleNumberValue ) )
+                    // InternalGrana.g:3258:6: ( (lv_value_4_0= ruleNumberValue ) )
                     {
-                    // InternalGrana.g:3246:6: ( (lv_value_4_0= ruleNumberValue ) )
-                    // InternalGrana.g:3247:1: (lv_value_4_0= ruleNumberValue )
+                    // InternalGrana.g:3258:6: ( (lv_value_4_0= ruleNumberValue ) )
+                    // InternalGrana.g:3259:1: (lv_value_4_0= ruleNumberValue )
                     {
-                    // InternalGrana.g:3247:1: (lv_value_4_0= ruleNumberValue )
-                    // InternalGrana.g:3248:3: lv_value_4_0= ruleNumberValue
+                    // InternalGrana.g:3259:1: (lv_value_4_0= ruleNumberValue )
+                    // InternalGrana.g:3260:3: lv_value_4_0= ruleNumberValue
                     {
                      
                     	        newCompositeNode(grammarAccess.getPropertyAccess().getValueNumberValueParserRuleCall_2_2_0()); 
@@ -8177,13 +8235,13 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalGrana.g:3265:6: ( (lv_value_5_0= ruleBooleanValue ) )
+                    // InternalGrana.g:3277:6: ( (lv_value_5_0= ruleBooleanValue ) )
                     {
-                    // InternalGrana.g:3265:6: ( (lv_value_5_0= ruleBooleanValue ) )
-                    // InternalGrana.g:3266:1: (lv_value_5_0= ruleBooleanValue )
+                    // InternalGrana.g:3277:6: ( (lv_value_5_0= ruleBooleanValue ) )
+                    // InternalGrana.g:3278:1: (lv_value_5_0= ruleBooleanValue )
                     {
-                    // InternalGrana.g:3266:1: (lv_value_5_0= ruleBooleanValue )
-                    // InternalGrana.g:3267:3: lv_value_5_0= ruleBooleanValue
+                    // InternalGrana.g:3278:1: (lv_value_5_0= ruleBooleanValue )
+                    // InternalGrana.g:3279:3: lv_value_5_0= ruleBooleanValue
                     {
                      
                     	        newCompositeNode(grammarAccess.getPropertyAccess().getValueBooleanValueParserRuleCall_2_3_0()); 
@@ -8237,7 +8295,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePropertyKey"
-    // InternalGrana.g:3291:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
+    // InternalGrana.g:3303:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
     public final String entryRulePropertyKey() throws RecognitionException {
         String current = null;
 
@@ -8248,8 +8306,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
         		HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
         	
         try {
-            // InternalGrana.g:3295:2: (iv_rulePropertyKey= rulePropertyKey EOF )
-            // InternalGrana.g:3296:2: iv_rulePropertyKey= rulePropertyKey EOF
+            // InternalGrana.g:3307:2: (iv_rulePropertyKey= rulePropertyKey EOF )
+            // InternalGrana.g:3308:2: iv_rulePropertyKey= rulePropertyKey EOF
             {
              newCompositeNode(grammarAccess.getPropertyKeyRule()); 
             pushFollow(FOLLOW_1);
@@ -8279,7 +8337,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePropertyKey"
-    // InternalGrana.g:3306:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    // InternalGrana.g:3318:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
     public final AntlrDatatypeRuleToken rulePropertyKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8291,40 +8349,40 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
         		HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
             
         try {
-            // InternalGrana.g:3310:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // InternalGrana.g:3311:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalGrana.g:3322:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalGrana.g:3323:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
             {
-            // InternalGrana.g:3311:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // InternalGrana.g:3311:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            // InternalGrana.g:3323:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalGrana.g:3323:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
             {
-            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_54); 
+            this_ID_0=(Token)match(input,RULE_ID,FOLLOW_58); 
 
             		current.merge(this_ID_0);
                 
              
                 newLeafNode(this_ID_0, grammarAccess.getPropertyKeyAccess().getIDTerminalRuleCall_0()); 
                 
-            // InternalGrana.g:3318:1: (kw= '.' this_ID_2= RULE_ID )*
-            loop67:
+            // InternalGrana.g:3330:1: (kw= '.' this_ID_2= RULE_ID )*
+            loop71:
             do {
-                int alt67=2;
-                int LA67_0 = input.LA(1);
+                int alt71=2;
+                int LA71_0 = input.LA(1);
 
-                if ( (LA67_0==58) ) {
-                    alt67=1;
+                if ( (LA71_0==58) ) {
+                    alt71=1;
                 }
 
 
-                switch (alt67) {
+                switch (alt71) {
             	case 1 :
-            	    // InternalGrana.g:3319:2: kw= '.' this_ID_2= RULE_ID
+            	    // InternalGrana.g:3331:2: kw= '.' this_ID_2= RULE_ID
             	    {
             	    kw=(Token)match(input,58,FOLLOW_10); 
 
             	            current.merge(kw);
             	            newLeafNode(kw, grammarAccess.getPropertyKeyAccess().getFullStopKeyword_1_0()); 
             	        
-            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_54); 
+            	    this_ID_2=(Token)match(input,RULE_ID,FOLLOW_58); 
 
             	    		current.merge(this_ID_2);
             	        
@@ -8336,7 +8394,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop67;
+            	    break loop71;
                 }
             } while (true);
 
@@ -8364,7 +8422,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStringValue"
-    // InternalGrana.g:3342:1: entryRuleStringValue returns [String current=null] : iv_ruleStringValue= ruleStringValue EOF ;
+    // InternalGrana.g:3354:1: entryRuleStringValue returns [String current=null] : iv_ruleStringValue= ruleStringValue EOF ;
     public final String entryRuleStringValue() throws RecognitionException {
         String current = null;
 
@@ -8372,8 +8430,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3343:2: (iv_ruleStringValue= ruleStringValue EOF )
-            // InternalGrana.g:3344:2: iv_ruleStringValue= ruleStringValue EOF
+            // InternalGrana.g:3355:2: (iv_ruleStringValue= ruleStringValue EOF )
+            // InternalGrana.g:3356:2: iv_ruleStringValue= ruleStringValue EOF
             {
              newCompositeNode(grammarAccess.getStringValueRule()); 
             pushFollow(FOLLOW_1);
@@ -8400,7 +8458,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStringValue"
-    // InternalGrana.g:3351:1: ruleStringValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_STRING_0= RULE_STRING ;
+    // InternalGrana.g:3363:1: ruleStringValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_STRING_0= RULE_STRING ;
     public final AntlrDatatypeRuleToken ruleStringValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8409,8 +8467,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3354:28: (this_STRING_0= RULE_STRING )
-            // InternalGrana.g:3355:5: this_STRING_0= RULE_STRING
+            // InternalGrana.g:3366:28: (this_STRING_0= RULE_STRING )
+            // InternalGrana.g:3367:5: this_STRING_0= RULE_STRING
             {
             this_STRING_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -8437,7 +8495,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleQualifiedIdValue"
-    // InternalGrana.g:3370:1: entryRuleQualifiedIdValue returns [String current=null] : iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF ;
+    // InternalGrana.g:3382:1: entryRuleQualifiedIdValue returns [String current=null] : iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF ;
     public final String entryRuleQualifiedIdValue() throws RecognitionException {
         String current = null;
 
@@ -8445,8 +8503,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3371:2: (iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF )
-            // InternalGrana.g:3372:2: iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF
+            // InternalGrana.g:3383:2: (iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF )
+            // InternalGrana.g:3384:2: iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF
             {
              newCompositeNode(grammarAccess.getQualifiedIdValueRule()); 
             pushFollow(FOLLOW_1);
@@ -8473,7 +8531,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleQualifiedIdValue"
-    // InternalGrana.g:3379:1: ruleQualifiedIdValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_QualifiedId_0= ruleQualifiedId ;
+    // InternalGrana.g:3391:1: ruleQualifiedIdValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_QualifiedId_0= ruleQualifiedId ;
     public final AntlrDatatypeRuleToken ruleQualifiedIdValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8483,8 +8541,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3382:28: (this_QualifiedId_0= ruleQualifiedId )
-            // InternalGrana.g:3384:5: this_QualifiedId_0= ruleQualifiedId
+            // InternalGrana.g:3394:28: (this_QualifiedId_0= ruleQualifiedId )
+            // InternalGrana.g:3396:5: this_QualifiedId_0= ruleQualifiedId
             {
              
                     newCompositeNode(grammarAccess.getQualifiedIdValueAccess().getQualifiedIdParserRuleCall()); 
@@ -8518,7 +8576,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleNumberValue"
-    // InternalGrana.g:3402:1: entryRuleNumberValue returns [String current=null] : iv_ruleNumberValue= ruleNumberValue EOF ;
+    // InternalGrana.g:3414:1: entryRuleNumberValue returns [String current=null] : iv_ruleNumberValue= ruleNumberValue EOF ;
     public final String entryRuleNumberValue() throws RecognitionException {
         String current = null;
 
@@ -8526,8 +8584,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3403:2: (iv_ruleNumberValue= ruleNumberValue EOF )
-            // InternalGrana.g:3404:2: iv_ruleNumberValue= ruleNumberValue EOF
+            // InternalGrana.g:3415:2: (iv_ruleNumberValue= ruleNumberValue EOF )
+            // InternalGrana.g:3416:2: iv_ruleNumberValue= ruleNumberValue EOF
             {
              newCompositeNode(grammarAccess.getNumberValueRule()); 
             pushFollow(FOLLOW_1);
@@ -8554,7 +8612,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleNumberValue"
-    // InternalGrana.g:3411:1: ruleNumberValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
+    // InternalGrana.g:3423:1: ruleNumberValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
     public final AntlrDatatypeRuleToken ruleNumberValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8564,28 +8622,28 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3414:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
-            // InternalGrana.g:3415:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            // InternalGrana.g:3426:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
+            // InternalGrana.g:3427:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
             {
-            // InternalGrana.g:3415:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
-            int alt68=2;
-            int LA68_0 = input.LA(1);
+            // InternalGrana.g:3427:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            int alt72=2;
+            int LA72_0 = input.LA(1);
 
-            if ( (LA68_0==RULE_SIGNED_INT) ) {
-                alt68=1;
+            if ( (LA72_0==RULE_SIGNED_INT) ) {
+                alt72=1;
             }
-            else if ( (LA68_0==RULE_FLOAT) ) {
-                alt68=2;
+            else if ( (LA72_0==RULE_FLOAT) ) {
+                alt72=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 68, 0, input);
+                    new NoViableAltException("", 72, 0, input);
 
                 throw nvae;
             }
-            switch (alt68) {
+            switch (alt72) {
                 case 1 :
-                    // InternalGrana.g:3415:6: this_SIGNED_INT_0= RULE_SIGNED_INT
+                    // InternalGrana.g:3427:6: this_SIGNED_INT_0= RULE_SIGNED_INT
                     {
                     this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FOLLOW_2); 
 
@@ -8598,7 +8656,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:3423:10: this_FLOAT_1= RULE_FLOAT
+                    // InternalGrana.g:3435:10: this_FLOAT_1= RULE_FLOAT
                     {
                     this_FLOAT_1=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
 
@@ -8631,7 +8689,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleBooleanValue"
-    // InternalGrana.g:3438:1: entryRuleBooleanValue returns [String current=null] : iv_ruleBooleanValue= ruleBooleanValue EOF ;
+    // InternalGrana.g:3450:1: entryRuleBooleanValue returns [String current=null] : iv_ruleBooleanValue= ruleBooleanValue EOF ;
     public final String entryRuleBooleanValue() throws RecognitionException {
         String current = null;
 
@@ -8639,8 +8697,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3439:2: (iv_ruleBooleanValue= ruleBooleanValue EOF )
-            // InternalGrana.g:3440:2: iv_ruleBooleanValue= ruleBooleanValue EOF
+            // InternalGrana.g:3451:2: (iv_ruleBooleanValue= ruleBooleanValue EOF )
+            // InternalGrana.g:3452:2: iv_ruleBooleanValue= ruleBooleanValue EOF
             {
              newCompositeNode(grammarAccess.getBooleanValueRule()); 
             pushFollow(FOLLOW_1);
@@ -8667,7 +8725,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleBooleanValue"
-    // InternalGrana.g:3447:1: ruleBooleanValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
+    // InternalGrana.g:3459:1: ruleBooleanValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
     public final AntlrDatatypeRuleToken ruleBooleanValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8676,28 +8734,28 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3450:28: ( (kw= 'true' | kw= 'false' ) )
-            // InternalGrana.g:3451:1: (kw= 'true' | kw= 'false' )
+            // InternalGrana.g:3462:28: ( (kw= 'true' | kw= 'false' ) )
+            // InternalGrana.g:3463:1: (kw= 'true' | kw= 'false' )
             {
-            // InternalGrana.g:3451:1: (kw= 'true' | kw= 'false' )
-            int alt69=2;
-            int LA69_0 = input.LA(1);
+            // InternalGrana.g:3463:1: (kw= 'true' | kw= 'false' )
+            int alt73=2;
+            int LA73_0 = input.LA(1);
 
-            if ( (LA69_0==59) ) {
-                alt69=1;
+            if ( (LA73_0==59) ) {
+                alt73=1;
             }
-            else if ( (LA69_0==60) ) {
-                alt69=2;
+            else if ( (LA73_0==60) ) {
+                alt73=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 69, 0, input);
+                    new NoViableAltException("", 73, 0, input);
 
                 throw nvae;
             }
-            switch (alt69) {
+            switch (alt73) {
                 case 1 :
-                    // InternalGrana.g:3452:2: kw= 'true'
+                    // InternalGrana.g:3464:2: kw= 'true'
                     {
                     kw=(Token)match(input,59,FOLLOW_2); 
 
@@ -8708,7 +8766,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:3459:2: kw= 'false'
+                    // InternalGrana.g:3471:2: kw= 'false'
                     {
                     kw=(Token)match(input,60,FOLLOW_2); 
 
@@ -8739,7 +8797,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleOutputType"
-    // InternalGrana.g:3472:1: ruleOutputType returns [Enumerator current=null] : ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) ;
+    // InternalGrana.g:3484:1: ruleOutputType returns [Enumerator current=null] : ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) ;
     public final Enumerator ruleOutputType() throws RecognitionException {
         Enumerator current = null;
 
@@ -8748,31 +8806,31 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
          enterRule(); 
         try {
-            // InternalGrana.g:3474:28: ( ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) )
-            // InternalGrana.g:3475:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
+            // InternalGrana.g:3486:28: ( ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) )
+            // InternalGrana.g:3487:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
             {
-            // InternalGrana.g:3475:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
-            int alt70=2;
-            int LA70_0 = input.LA(1);
+            // InternalGrana.g:3487:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
+            int alt74=2;
+            int LA74_0 = input.LA(1);
 
-            if ( (LA70_0==61) ) {
-                alt70=1;
+            if ( (LA74_0==61) ) {
+                alt74=1;
             }
-            else if ( (LA70_0==62) ) {
-                alt70=2;
+            else if ( (LA74_0==62) ) {
+                alt74=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 70, 0, input);
+                    new NoViableAltException("", 74, 0, input);
 
                 throw nvae;
             }
-            switch (alt70) {
+            switch (alt74) {
                 case 1 :
-                    // InternalGrana.g:3475:2: (enumLiteral_0= 'csv' )
+                    // InternalGrana.g:3487:2: (enumLiteral_0= 'csv' )
                     {
-                    // InternalGrana.g:3475:2: (enumLiteral_0= 'csv' )
-                    // InternalGrana.g:3475:4: enumLiteral_0= 'csv'
+                    // InternalGrana.g:3487:2: (enumLiteral_0= 'csv' )
+                    // InternalGrana.g:3487:4: enumLiteral_0= 'csv'
                     {
                     enumLiteral_0=(Token)match(input,61,FOLLOW_2); 
 
@@ -8786,10 +8844,10 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:3481:6: (enumLiteral_1= 'json' )
+                    // InternalGrana.g:3493:6: (enumLiteral_1= 'json' )
                     {
-                    // InternalGrana.g:3481:6: (enumLiteral_1= 'json' )
-                    // InternalGrana.g:3481:8: enumLiteral_1= 'json'
+                    // InternalGrana.g:3493:6: (enumLiteral_1= 'json' )
+                    // InternalGrana.g:3493:8: enumLiteral_1= 'json'
                     {
                     enumLiteral_1=(Token)match(input,62,FOLLOW_2); 
 
@@ -8865,21 +8923,25 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_37 = new BitSet(new long[]{0x00020B8000000000L});
     public static final BitSet FOLLOW_38 = new BitSet(new long[]{0x0000000000000090L});
     public static final BitSet FOLLOW_39 = new BitSet(new long[]{0x0000040000000000L});
-    public static final BitSet FOLLOW_40 = new BitSet(new long[]{0x0000200000000000L});
-    public static final BitSet FOLLOW_41 = new BitSet(new long[]{0x0001C00000000000L});
-    public static final BitSet FOLLOW_42 = new BitSet(new long[]{0x0000000000000060L});
-    public static final BitSet FOLLOW_43 = new BitSet(new long[]{0x0000000100000000L});
-    public static final BitSet FOLLOW_44 = new BitSet(new long[]{0x0004000100000000L});
-    public static final BitSet FOLLOW_45 = new BitSet(new long[]{0x0000004100000002L});
-    public static final BitSet FOLLOW_46 = new BitSet(new long[]{0x02F9000000000000L});
-    public static final BitSet FOLLOW_47 = new BitSet(new long[]{0x0001000000000000L});
-    public static final BitSet FOLLOW_48 = new BitSet(new long[]{0x00F8000000000002L});
-    public static final BitSet FOLLOW_49 = new BitSet(new long[]{0x01F8000000000002L});
-    public static final BitSet FOLLOW_50 = new BitSet(new long[]{0x0004200000000000L});
-    public static final BitSet FOLLOW_51 = new BitSet(new long[]{0x0000200100000000L});
-    public static final BitSet FOLLOW_52 = new BitSet(new long[]{0x00F9000000000000L});
-    public static final BitSet FOLLOW_53 = new BitSet(new long[]{0x01F9000000000000L});
-    public static final BitSet FOLLOW_54 = new BitSet(new long[]{0x0400000000000002L});
-    public static final BitSet FOLLOW_55 = new BitSet(new long[]{0x18000000000000F0L});
+    public static final BitSet FOLLOW_40 = new BitSet(new long[]{0x0000128000000010L});
+    public static final BitSet FOLLOW_41 = new BitSet(new long[]{0x0000028000000010L});
+    public static final BitSet FOLLOW_42 = new BitSet(new long[]{0x0000028000000000L});
+    public static final BitSet FOLLOW_43 = new BitSet(new long[]{0x0000200000000000L});
+    public static final BitSet FOLLOW_44 = new BitSet(new long[]{0x0001C00000000000L});
+    public static final BitSet FOLLOW_45 = new BitSet(new long[]{0x0000000000000060L});
+    public static final BitSet FOLLOW_46 = new BitSet(new long[]{0x0000000100000000L});
+    public static final BitSet FOLLOW_47 = new BitSet(new long[]{0x0004000100000000L});
+    public static final BitSet FOLLOW_48 = new BitSet(new long[]{0x0000004100000002L});
+    public static final BitSet FOLLOW_49 = new BitSet(new long[]{0x02F9000000000010L});
+    public static final BitSet FOLLOW_50 = new BitSet(new long[]{0x0001000000000000L});
+    public static final BitSet FOLLOW_51 = new BitSet(new long[]{0x00F8000000000012L});
+    public static final BitSet FOLLOW_52 = new BitSet(new long[]{0x0100000000000012L});
+    public static final BitSet FOLLOW_53 = new BitSet(new long[]{0x0004200000000000L});
+    public static final BitSet FOLLOW_54 = new BitSet(new long[]{0x0000200100000000L});
+    public static final BitSet FOLLOW_55 = new BitSet(new long[]{0x00F9000000000010L});
+    public static final BitSet FOLLOW_56 = new BitSet(new long[]{0x0101000000000010L});
+    public static final BitSet FOLLOW_57 = new BitSet(new long[]{0x0001000000000010L});
+    public static final BitSet FOLLOW_58 = new BitSet(new long[]{0x0400000000000002L});
+    public static final BitSet FOLLOW_59 = new BitSet(new long[]{0x18000000000000F0L});
 
 }

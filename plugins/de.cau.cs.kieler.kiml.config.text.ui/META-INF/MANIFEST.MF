@@ -20,6 +20,7 @@ Require-Bundle: org.eclipse.xtext.ui,
  org.eclipse.elk.core.service,
  org.eclipse.elk.graph,
  org.eclipse.elk.graph.text,
+ org.eclipse.elk.graph.text.ide,
  org.eclipse.elk.graph.text.ui,
  de.cau.cs.kieler.kiml.config.text
 Import-Package: org.apache.log4j,

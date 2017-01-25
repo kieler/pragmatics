@@ -517,10 +517,10 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_SIGNED_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:5413:17: ( ( '+' | '-' )? RULE_INT )
-            // InternalLayoutConfig.g:5413:19: ( '+' | '-' )? RULE_INT
+            // InternalLayoutConfig.g:5563:17: ( ( '+' | '-' )? RULE_INT )
+            // InternalLayoutConfig.g:5563:19: ( '+' | '-' )? RULE_INT
             {
-            // InternalLayoutConfig.g:5413:19: ( '+' | '-' )?
+            // InternalLayoutConfig.g:5563:19: ( '+' | '-' )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -563,10 +563,10 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_FLOAT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:5415:12: ( ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT ) )
-            // InternalLayoutConfig.g:5415:14: ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
+            // InternalLayoutConfig.g:5565:12: ( ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT ) )
+            // InternalLayoutConfig.g:5565:14: ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
             {
-            // InternalLayoutConfig.g:5415:14: ( '+' | '-' )?
+            // InternalLayoutConfig.g:5565:14: ( '+' | '-' )?
             int alt2=2;
             int LA2_0 = input.LA(1);
 
@@ -592,12 +592,12 @@ public class InternalLayoutConfigLexer extends Lexer {
 
             }
 
-            // InternalLayoutConfig.g:5415:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
+            // InternalLayoutConfig.g:5565:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
             int alt5=2;
             alt5 = dfa5.predict(input);
             switch (alt5) {
                 case 1 :
-                    // InternalLayoutConfig.g:5415:26: RULE_INT '.' RULE_INT
+                    // InternalLayoutConfig.g:5565:26: RULE_INT '.' RULE_INT
                     {
                     mRULE_INT(); 
                     match('.'); 
@@ -606,10 +606,10 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalLayoutConfig.g:5415:48: RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT
+                    // InternalLayoutConfig.g:5565:48: RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT
                     {
                     mRULE_INT(); 
-                    // InternalLayoutConfig.g:5415:57: ( '.' RULE_INT )?
+                    // InternalLayoutConfig.g:5565:57: ( '.' RULE_INT )?
                     int alt3=2;
                     int LA3_0 = input.LA(1);
 
@@ -618,7 +618,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     switch (alt3) {
                         case 1 :
-                            // InternalLayoutConfig.g:5415:58: '.' RULE_INT
+                            // InternalLayoutConfig.g:5565:58: '.' RULE_INT
                             {
                             match('.'); 
                             mRULE_INT(); 
@@ -637,7 +637,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                         recover(mse);
                         throw mse;}
 
-                    // InternalLayoutConfig.g:5415:83: ( '+' | '-' )?
+                    // InternalLayoutConfig.g:5565:83: ( '+' | '-' )?
                     int alt4=2;
                     int LA4_0 = input.LA(1);
 
@@ -686,10 +686,10 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:5417:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // InternalLayoutConfig.g:5417:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalLayoutConfig.g:5567:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalLayoutConfig.g:5567:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // InternalLayoutConfig.g:5417:11: ( '^' )?
+            // InternalLayoutConfig.g:5567:11: ( '^' )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -698,7 +698,7 @@ public class InternalLayoutConfigLexer extends Lexer {
             }
             switch (alt6) {
                 case 1 :
-                    // InternalLayoutConfig.g:5417:11: '^'
+                    // InternalLayoutConfig.g:5567:11: '^'
                     {
                     match('^'); 
 
@@ -716,7 +716,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // InternalLayoutConfig.g:5417:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalLayoutConfig.g:5567:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop7:
             do {
                 int alt7=2;
@@ -763,10 +763,10 @@ public class InternalLayoutConfigLexer extends Lexer {
     // $ANTLR start "RULE_INT"
     public final void mRULE_INT() throws RecognitionException {
         try {
-            // InternalLayoutConfig.g:5419:19: ( ( '0' .. '9' )+ )
-            // InternalLayoutConfig.g:5419:21: ( '0' .. '9' )+
+            // InternalLayoutConfig.g:5569:19: ( ( '0' .. '9' )+ )
+            // InternalLayoutConfig.g:5569:21: ( '0' .. '9' )+
             {
-            // InternalLayoutConfig.g:5419:21: ( '0' .. '9' )+
+            // InternalLayoutConfig.g:5569:21: ( '0' .. '9' )+
             int cnt8=0;
             loop8:
             do {
@@ -780,7 +780,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // InternalLayoutConfig.g:5419:22: '0' .. '9'
+            	    // InternalLayoutConfig.g:5569:22: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -810,10 +810,10 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:5421:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // InternalLayoutConfig.g:5421:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalLayoutConfig.g:5571:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // InternalLayoutConfig.g:5571:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // InternalLayoutConfig.g:5421:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalLayoutConfig.g:5571:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt11=2;
             int LA11_0 = input.LA(1);
 
@@ -831,10 +831,10 @@ public class InternalLayoutConfigLexer extends Lexer {
             }
             switch (alt11) {
                 case 1 :
-                    // InternalLayoutConfig.g:5421:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // InternalLayoutConfig.g:5571:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // InternalLayoutConfig.g:5421:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // InternalLayoutConfig.g:5571:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop9:
                     do {
                         int alt9=3;
@@ -850,7 +850,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                         switch (alt9) {
                     	case 1 :
-                    	    // InternalLayoutConfig.g:5421:21: '\\\\' .
+                    	    // InternalLayoutConfig.g:5571:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -858,7 +858,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalLayoutConfig.g:5421:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // InternalLayoutConfig.g:5571:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -883,10 +883,10 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalLayoutConfig.g:5421:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // InternalLayoutConfig.g:5571:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // InternalLayoutConfig.g:5421:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // InternalLayoutConfig.g:5571:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop10:
                     do {
                         int alt10=3;
@@ -902,7 +902,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                         switch (alt10) {
                     	case 1 :
-                    	    // InternalLayoutConfig.g:5421:54: '\\\\' .
+                    	    // InternalLayoutConfig.g:5571:54: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -910,7 +910,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalLayoutConfig.g:5421:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // InternalLayoutConfig.g:5571:61: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -953,12 +953,12 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:5423:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // InternalLayoutConfig.g:5423:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalLayoutConfig.g:5573:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalLayoutConfig.g:5573:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // InternalLayoutConfig.g:5423:24: ( options {greedy=false; } : . )*
+            // InternalLayoutConfig.g:5573:24: ( options {greedy=false; } : . )*
             loop12:
             do {
                 int alt12=2;
@@ -983,7 +983,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                 switch (alt12) {
             	case 1 :
-            	    // InternalLayoutConfig.g:5423:52: .
+            	    // InternalLayoutConfig.g:5573:52: .
             	    {
             	    matchAny(); 
 
@@ -1013,12 +1013,12 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:5425:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // InternalLayoutConfig.g:5425:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalLayoutConfig.g:5575:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalLayoutConfig.g:5575:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // InternalLayoutConfig.g:5425:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalLayoutConfig.g:5575:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop13:
             do {
                 int alt13=2;
@@ -1031,7 +1031,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // InternalLayoutConfig.g:5425:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalLayoutConfig.g:5575:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1051,7 +1051,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                 }
             } while (true);
 
-            // InternalLayoutConfig.g:5425:40: ( ( '\\r' )? '\\n' )?
+            // InternalLayoutConfig.g:5575:40: ( ( '\\r' )? '\\n' )?
             int alt15=2;
             int LA15_0 = input.LA(1);
 
@@ -1060,9 +1060,9 @@ public class InternalLayoutConfigLexer extends Lexer {
             }
             switch (alt15) {
                 case 1 :
-                    // InternalLayoutConfig.g:5425:41: ( '\\r' )? '\\n'
+                    // InternalLayoutConfig.g:5575:41: ( '\\r' )? '\\n'
                     {
-                    // InternalLayoutConfig.g:5425:41: ( '\\r' )?
+                    // InternalLayoutConfig.g:5575:41: ( '\\r' )?
                     int alt14=2;
                     int LA14_0 = input.LA(1);
 
@@ -1071,7 +1071,7 @@ public class InternalLayoutConfigLexer extends Lexer {
                     }
                     switch (alt14) {
                         case 1 :
-                            // InternalLayoutConfig.g:5425:41: '\\r'
+                            // InternalLayoutConfig.g:5575:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1103,10 +1103,10 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:5427:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // InternalLayoutConfig.g:5427:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalLayoutConfig.g:5577:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalLayoutConfig.g:5577:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // InternalLayoutConfig.g:5427:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalLayoutConfig.g:5577:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt16=0;
             loop16:
             do {
@@ -1160,8 +1160,8 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:5429:16: ( . )
-            // InternalLayoutConfig.g:5429:18: .
+            // InternalLayoutConfig.g:5579:16: ( . )
+            // InternalLayoutConfig.g:5579:18: .
             {
             matchAny(); 
 
@@ -1449,7 +1449,7 @@ public class InternalLayoutConfigLexer extends Lexer {
             this.transition = DFA5_transition;
         }
         public String getDescription() {
-            return "5415:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )";
+            return "5565:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )";
         }
     }
     static final String DFA17_eotS =

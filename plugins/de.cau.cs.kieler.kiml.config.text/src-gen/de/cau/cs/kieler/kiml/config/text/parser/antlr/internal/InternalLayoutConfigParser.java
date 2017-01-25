@@ -1302,7 +1302,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             int alt12=2;
             int LA12_0 = input.LA(1);
 
-            if ( ((LA12_0>=23 && LA12_0<=28)) ) {
+            if ( (LA12_0==RULE_ID||(LA12_0>=23 && LA12_0<=28)) ) {
                 alt12=1;
             }
             else if ( (LA12_0==30) ) {
@@ -1476,7 +1476,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleElkSingleEdgeSection"
-    // InternalLayoutConfig.g:621:1: ruleElkSingleEdgeSection returns [EObject current=null] : ( () ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) ) ;
+    // InternalLayoutConfig.g:621:1: ruleElkSingleEdgeSection returns [EObject current=null] : ( () ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* ) ) ;
     public final EObject ruleElkSingleEdgeSection() throws RecognitionException {
         EObject current = null;
 
@@ -1505,15 +1505,17 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
         EObject lv_bendPoints_22_0 = null;
 
+        EObject lv_properties_23_0 = null;
+
 
          enterRule(); 
             
         try {
-            // InternalLayoutConfig.g:624:28: ( ( () ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) ) )
-            // InternalLayoutConfig.g:625:1: ( () ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) )
+            // InternalLayoutConfig.g:624:28: ( ( () ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* ) ) )
+            // InternalLayoutConfig.g:625:1: ( () ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* ) )
             {
-            // InternalLayoutConfig.g:625:1: ( () ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) )
-            // InternalLayoutConfig.g:625:2: () ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) )
+            // InternalLayoutConfig.g:625:1: ( () ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* ) )
+            // InternalLayoutConfig.g:625:2: () ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* )
             {
             // InternalLayoutConfig.g:625:2: ()
             // InternalLayoutConfig.g:626:5: 
@@ -1526,56 +1528,56 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalLayoutConfig.g:631:2: ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) )
-            // InternalLayoutConfig.g:633:1: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) )
+            // InternalLayoutConfig.g:631:2: ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )* )
+            // InternalLayoutConfig.g:631:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_23_0= ruleProperty ) )*
             {
-            // InternalLayoutConfig.g:633:1: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) )
-            // InternalLayoutConfig.g:634:2: ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* )
+            // InternalLayoutConfig.g:631:3: ( ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) ) )
+            // InternalLayoutConfig.g:633:1: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) )
+            {
+            // InternalLayoutConfig.g:633:1: ( ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* ) )
+            // InternalLayoutConfig.g:634:2: ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* )
             {
              
-            	  getUnorderedGroupHelper().enter(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	  getUnorderedGroupHelper().enter(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	
-            // InternalLayoutConfig.g:637:2: ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )* )
-            // InternalLayoutConfig.g:638:3: ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )*
+            // InternalLayoutConfig.g:637:2: ( ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )* )
+            // InternalLayoutConfig.g:638:3: ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )*
             {
-            // InternalLayoutConfig.g:638:3: ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) ) )*
-            loop14:
+            // InternalLayoutConfig.g:638:3: ( ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) ) )*
+            loop13:
             do {
-                int alt14=6;
-                int LA14_0 = input.LA(1);
+                int alt13=5;
+                int LA13_0 = input.LA(1);
 
-                if ( LA14_0 == 24 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0) ) {
-                    alt14=1;
+                if ( LA13_0 == 24 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+                    alt13=1;
                 }
-                else if ( LA14_0 == 25 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1) ) {
-                    alt14=2;
+                else if ( LA13_0 == 25 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+                    alt13=2;
                 }
-                else if ( LA14_0 == 26 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2) ) {
-                    alt14=3;
+                else if ( LA13_0 == 26 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+                    alt13=3;
                 }
-                else if ( LA14_0 == 27 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3) ) {
-                    alt14=4;
-                }
-                else if ( LA14_0 == 28 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4) ) {
-                    alt14=5;
+                else if ( LA13_0 == 27 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+                    alt13=4;
                 }
 
 
-                switch (alt14) {
+                switch (alt13) {
             	case 1 :
             	    // InternalLayoutConfig.g:640:4: ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) )
             	    {
             	    // InternalLayoutConfig.g:640:4: ({...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) ) )
             	    // InternalLayoutConfig.g:641:5: {...}? => ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0)");
             	    }
-            	    // InternalLayoutConfig.g:641:117: ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalLayoutConfig.g:641:119: ( ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    // InternalLayoutConfig.g:642:6: ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 0);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0);
             	    	 				
             	    // InternalLayoutConfig.g:645:6: ({...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) ) )
             	    // InternalLayoutConfig.g:645:7: {...}? => (otherlv_2= 'incoming' otherlv_3= ':' ( ( ruleQualifiedId ) ) )
@@ -1588,11 +1590,11 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    {
             	    otherlv_2=(Token)match(input,24,FollowSets000.FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_2, grammarAccess.getElkSingleEdgeSectionAccess().getIncomingKeyword_1_0_0());
+            	        	newLeafNode(otherlv_2, grammarAccess.getElkSingleEdgeSectionAccess().getIncomingKeyword_1_0_0_0());
             	        
             	    otherlv_3=(Token)match(input,17,FollowSets000.FOLLOW_6); 
 
-            	        	newLeafNode(otherlv_3, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_1());
+            	        	newLeafNode(otherlv_3, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_0_1());
             	        
             	    // InternalLayoutConfig.g:653:1: ( ( ruleQualifiedId ) )
             	    // InternalLayoutConfig.g:654:1: ( ruleQualifiedId )
@@ -1606,7 +1608,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    	        }
             	            
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_1_0_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_1_0_0_2_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_22);
             	    ruleQualifiedId();
@@ -1629,7 +1631,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	    	 				
 
             	    }
@@ -1646,14 +1648,14 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    // InternalLayoutConfig.g:675:4: ({...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) ) )
             	    // InternalLayoutConfig.g:676:5: {...}? => ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1)");
             	    }
-            	    // InternalLayoutConfig.g:676:117: ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalLayoutConfig.g:676:119: ( ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    // InternalLayoutConfig.g:677:6: ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 1);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1);
             	    	 				
             	    // InternalLayoutConfig.g:680:6: ({...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) ) )
             	    // InternalLayoutConfig.g:680:7: {...}? => (otherlv_5= 'outgoing' otherlv_6= ':' ( ( ruleQualifiedId ) ) )
@@ -1666,11 +1668,11 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    {
             	    otherlv_5=(Token)match(input,25,FollowSets000.FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_5, grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingKeyword_1_1_0());
+            	        	newLeafNode(otherlv_5, grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingKeyword_1_0_1_0());
             	        
             	    otherlv_6=(Token)match(input,17,FollowSets000.FOLLOW_6); 
 
-            	        	newLeafNode(otherlv_6, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_1_1());
+            	        	newLeafNode(otherlv_6, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_1_1());
             	        
             	    // InternalLayoutConfig.g:688:1: ( ( ruleQualifiedId ) )
             	    // InternalLayoutConfig.g:689:1: ( ruleQualifiedId )
@@ -1684,7 +1686,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    	        }
             	            
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_1_1_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_1_0_1_2_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_22);
             	    ruleQualifiedId();
@@ -1707,7 +1709,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	    	 				
 
             	    }
@@ -1724,14 +1726,14 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    // InternalLayoutConfig.g:710:4: ({...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) ) )
             	    // InternalLayoutConfig.g:711:5: {...}? => ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2)");
             	    }
-            	    // InternalLayoutConfig.g:711:117: ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) )
+            	    // InternalLayoutConfig.g:711:119: ( ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) ) )
             	    // InternalLayoutConfig.g:712:6: ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 2);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2);
             	    	 				
             	    // InternalLayoutConfig.g:715:6: ({...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) ) )
             	    // InternalLayoutConfig.g:715:7: {...}? => (otherlv_8= 'start' otherlv_9= ':' ( (lv_startX_10_0= ruleNumber ) ) otherlv_11= ',' ( (lv_startY_12_0= ruleNumber ) ) )
@@ -1744,11 +1746,11 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    {
             	    otherlv_8=(Token)match(input,26,FollowSets000.FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_8, grammarAccess.getElkSingleEdgeSectionAccess().getStartKeyword_1_2_0());
+            	        	newLeafNode(otherlv_8, grammarAccess.getElkSingleEdgeSectionAccess().getStartKeyword_1_0_2_0());
             	        
             	    otherlv_9=(Token)match(input,17,FollowSets000.FOLLOW_18); 
 
-            	        	newLeafNode(otherlv_9, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_2_1());
+            	        	newLeafNode(otherlv_9, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_2_1());
             	        
             	    // InternalLayoutConfig.g:723:1: ( (lv_startX_10_0= ruleNumber ) )
             	    // InternalLayoutConfig.g:724:1: (lv_startX_10_0= ruleNumber )
@@ -1757,7 +1759,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    // InternalLayoutConfig.g:725:3: lv_startX_10_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getStartXNumberParserRuleCall_1_2_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getStartXNumberParserRuleCall_1_0_2_2_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_19);
             	    lv_startX_10_0=ruleNumber();
@@ -1783,7 +1785,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
             	    otherlv_11=(Token)match(input,21,FollowSets000.FOLLOW_18); 
 
-            	        	newLeafNode(otherlv_11, grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_2_3());
+            	        	newLeafNode(otherlv_11, grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_0_2_3());
             	        
             	    // InternalLayoutConfig.g:745:1: ( (lv_startY_12_0= ruleNumber ) )
             	    // InternalLayoutConfig.g:746:1: (lv_startY_12_0= ruleNumber )
@@ -1792,7 +1794,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    // InternalLayoutConfig.g:747:3: lv_startY_12_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getStartYNumberParserRuleCall_1_2_4_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getStartYNumberParserRuleCall_1_0_2_4_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_22);
             	    lv_startY_12_0=ruleNumber();
@@ -1823,7 +1825,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	    	 				
 
             	    }
@@ -1840,14 +1842,14 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    // InternalLayoutConfig.g:770:4: ({...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) ) )
             	    // InternalLayoutConfig.g:771:5: {...}? => ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3)");
             	    }
-            	    // InternalLayoutConfig.g:771:117: ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) )
+            	    // InternalLayoutConfig.g:771:119: ( ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) ) )
             	    // InternalLayoutConfig.g:772:6: ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 3);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3);
             	    	 				
             	    // InternalLayoutConfig.g:775:6: ({...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) ) )
             	    // InternalLayoutConfig.g:775:7: {...}? => (otherlv_13= 'end' otherlv_14= ':' ( (lv_endX_15_0= ruleNumber ) ) otherlv_16= ',' ( (lv_endY_17_0= ruleNumber ) ) )
@@ -1860,11 +1862,11 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    {
             	    otherlv_13=(Token)match(input,27,FollowSets000.FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_13, grammarAccess.getElkSingleEdgeSectionAccess().getEndKeyword_1_3_0());
+            	        	newLeafNode(otherlv_13, grammarAccess.getElkSingleEdgeSectionAccess().getEndKeyword_1_0_3_0());
             	        
             	    otherlv_14=(Token)match(input,17,FollowSets000.FOLLOW_18); 
 
-            	        	newLeafNode(otherlv_14, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_3_1());
+            	        	newLeafNode(otherlv_14, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_3_1());
             	        
             	    // InternalLayoutConfig.g:783:1: ( (lv_endX_15_0= ruleNumber ) )
             	    // InternalLayoutConfig.g:784:1: (lv_endX_15_0= ruleNumber )
@@ -1873,7 +1875,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    // InternalLayoutConfig.g:785:3: lv_endX_15_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getEndXNumberParserRuleCall_1_3_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getEndXNumberParserRuleCall_1_0_3_2_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_19);
             	    lv_endX_15_0=ruleNumber();
@@ -1899,7 +1901,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
             	    otherlv_16=(Token)match(input,21,FollowSets000.FOLLOW_18); 
 
-            	        	newLeafNode(otherlv_16, grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_3_3());
+            	        	newLeafNode(otherlv_16, grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_0_3_3());
             	        
             	    // InternalLayoutConfig.g:805:1: ( (lv_endY_17_0= ruleNumber ) )
             	    // InternalLayoutConfig.g:806:1: (lv_endY_17_0= ruleNumber )
@@ -1908,7 +1910,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    // InternalLayoutConfig.g:807:3: lv_endY_17_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getEndYNumberParserRuleCall_1_3_4_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getEndYNumberParserRuleCall_1_0_3_4_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_22);
             	    lv_endY_17_0=ruleNumber();
@@ -1939,147 +1941,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
-            	    	 				
-
-            	    }
-
-
-            	    }
-
-
-            	    }
-            	    break;
-            	case 5 :
-            	    // InternalLayoutConfig.g:830:4: ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) )
-            	    {
-            	    // InternalLayoutConfig.g:830:4: ({...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) ) )
-            	    // InternalLayoutConfig.g:831:5: {...}? => ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) )
-            	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4)");
-            	    }
-            	    // InternalLayoutConfig.g:831:117: ( ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) ) )
-            	    // InternalLayoutConfig.g:832:6: ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) )
-            	    {
-            	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1(), 4);
-            	    	 				
-            	    // InternalLayoutConfig.g:835:6: ({...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* ) )
-            	    // InternalLayoutConfig.g:835:7: {...}? => (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )
-            	    {
-            	    if ( !((true)) ) {
-            	        throw new FailedPredicateException(input, "ruleElkSingleEdgeSection", "true");
-            	    }
-            	    // InternalLayoutConfig.g:835:16: (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )
-            	    // InternalLayoutConfig.g:835:18: otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )*
-            	    {
-            	    otherlv_18=(Token)match(input,28,FollowSets000.FOLLOW_10); 
-
-            	        	newLeafNode(otherlv_18, grammarAccess.getElkSingleEdgeSectionAccess().getBendsKeyword_1_4_0());
-            	        
-            	    otherlv_19=(Token)match(input,17,FollowSets000.FOLLOW_18); 
-
-            	        	newLeafNode(otherlv_19, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_4_1());
-            	        
-            	    // InternalLayoutConfig.g:843:1: ( (lv_bendPoints_20_0= ruleElkBendPoint ) )
-            	    // InternalLayoutConfig.g:844:1: (lv_bendPoints_20_0= ruleElkBendPoint )
-            	    {
-            	    // InternalLayoutConfig.g:844:1: (lv_bendPoints_20_0= ruleElkBendPoint )
-            	    // InternalLayoutConfig.g:845:3: lv_bendPoints_20_0= ruleElkBendPoint
-            	    {
-            	     
-            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_4_2_0()); 
-            	    	    
-            	    pushFollow(FollowSets000.FOLLOW_23);
-            	    lv_bendPoints_20_0=ruleElkBendPoint();
-
-            	    state._fsp--;
-
-
-            	    	        if (current==null) {
-            	    	            current = createModelElementForParent(grammarAccess.getElkSingleEdgeSectionRule());
-            	    	        }
-            	           		add(
-            	           			current, 
-            	           			"bendPoints",
-            	            		lv_bendPoints_20_0, 
-            	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
-            	    	        afterParserOrEnumRuleCall();
-            	    	    
-
-            	    }
-
-
-            	    }
-
-            	    // InternalLayoutConfig.g:861:2: (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )*
-            	    loop13:
-            	    do {
-            	        int alt13=2;
-            	        int LA13_0 = input.LA(1);
-
-            	        if ( (LA13_0==29) ) {
-            	            alt13=1;
-            	        }
-
-
-            	        switch (alt13) {
-            	    	case 1 :
-            	    	    // InternalLayoutConfig.g:861:4: otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) )
-            	    	    {
-            	    	    otherlv_21=(Token)match(input,29,FollowSets000.FOLLOW_18); 
-
-            	    	        	newLeafNode(otherlv_21, grammarAccess.getElkSingleEdgeSectionAccess().getVerticalLineKeyword_1_4_3_0());
-            	    	        
-            	    	    // InternalLayoutConfig.g:865:1: ( (lv_bendPoints_22_0= ruleElkBendPoint ) )
-            	    	    // InternalLayoutConfig.g:866:1: (lv_bendPoints_22_0= ruleElkBendPoint )
-            	    	    {
-            	    	    // InternalLayoutConfig.g:866:1: (lv_bendPoints_22_0= ruleElkBendPoint )
-            	    	    // InternalLayoutConfig.g:867:3: lv_bendPoints_22_0= ruleElkBendPoint
-            	    	    {
-            	    	     
-            	    	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_4_3_1_0()); 
-            	    	    	    
-            	    	    pushFollow(FollowSets000.FOLLOW_23);
-            	    	    lv_bendPoints_22_0=ruleElkBendPoint();
-
-            	    	    state._fsp--;
-
-
-            	    	    	        if (current==null) {
-            	    	    	            current = createModelElementForParent(grammarAccess.getElkSingleEdgeSectionRule());
-            	    	    	        }
-            	    	           		add(
-            	    	           			current, 
-            	    	           			"bendPoints",
-            	    	            		lv_bendPoints_22_0, 
-            	    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
-            	    	    	        afterParserOrEnumRuleCall();
-            	    	    	    
-
-            	    	    }
-
-
-            	    	    }
-
-
-            	    	    }
-            	    	    break;
-
-            	    	default :
-            	    	    break loop13;
-            	        }
-            	    } while (true);
-
-
-            	    }
-
-
-            	    }
-
-            	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	    	 				
 
             	    }
@@ -2092,7 +1954,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop14;
+            	    break loop13;
                 }
             } while (true);
 
@@ -2103,8 +1965,175 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             }
 
              
-            	  getUnorderedGroupHelper().leave(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1());
+            	  getUnorderedGroupHelper().leave(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             	
+
+            }
+
+            // InternalLayoutConfig.g:837:2: (otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )* )?
+            int alt15=2;
+            int LA15_0 = input.LA(1);
+
+            if ( (LA15_0==28) ) {
+                alt15=1;
+            }
+            switch (alt15) {
+                case 1 :
+                    // InternalLayoutConfig.g:837:4: otherlv_18= 'bends' otherlv_19= ':' ( (lv_bendPoints_20_0= ruleElkBendPoint ) ) (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )*
+                    {
+                    otherlv_18=(Token)match(input,28,FollowSets000.FOLLOW_10); 
+
+                        	newLeafNode(otherlv_18, grammarAccess.getElkSingleEdgeSectionAccess().getBendsKeyword_1_1_0());
+                        
+                    otherlv_19=(Token)match(input,17,FollowSets000.FOLLOW_18); 
+
+                        	newLeafNode(otherlv_19, grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_1_1());
+                        
+                    // InternalLayoutConfig.g:845:1: ( (lv_bendPoints_20_0= ruleElkBendPoint ) )
+                    // InternalLayoutConfig.g:846:1: (lv_bendPoints_20_0= ruleElkBendPoint )
+                    {
+                    // InternalLayoutConfig.g:846:1: (lv_bendPoints_20_0= ruleElkBendPoint )
+                    // InternalLayoutConfig.g:847:3: lv_bendPoints_20_0= ruleElkBendPoint
+                    {
+                     
+                    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_1_2_0()); 
+                    	    
+                    pushFollow(FollowSets000.FOLLOW_23);
+                    lv_bendPoints_20_0=ruleElkBendPoint();
+
+                    state._fsp--;
+
+
+                    	        if (current==null) {
+                    	            current = createModelElementForParent(grammarAccess.getElkSingleEdgeSectionRule());
+                    	        }
+                           		add(
+                           			current, 
+                           			"bendPoints",
+                            		lv_bendPoints_20_0, 
+                            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
+                    	        afterParserOrEnumRuleCall();
+                    	    
+
+                    }
+
+
+                    }
+
+                    // InternalLayoutConfig.g:863:2: (otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) ) )*
+                    loop14:
+                    do {
+                        int alt14=2;
+                        int LA14_0 = input.LA(1);
+
+                        if ( (LA14_0==29) ) {
+                            alt14=1;
+                        }
+
+
+                        switch (alt14) {
+                    	case 1 :
+                    	    // InternalLayoutConfig.g:863:4: otherlv_21= '|' ( (lv_bendPoints_22_0= ruleElkBendPoint ) )
+                    	    {
+                    	    otherlv_21=(Token)match(input,29,FollowSets000.FOLLOW_18); 
+
+                    	        	newLeafNode(otherlv_21, grammarAccess.getElkSingleEdgeSectionAccess().getVerticalLineKeyword_1_1_3_0());
+                    	        
+                    	    // InternalLayoutConfig.g:867:1: ( (lv_bendPoints_22_0= ruleElkBendPoint ) )
+                    	    // InternalLayoutConfig.g:868:1: (lv_bendPoints_22_0= ruleElkBendPoint )
+                    	    {
+                    	    // InternalLayoutConfig.g:868:1: (lv_bendPoints_22_0= ruleElkBendPoint )
+                    	    // InternalLayoutConfig.g:869:3: lv_bendPoints_22_0= ruleElkBendPoint
+                    	    {
+                    	     
+                    	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_1_3_1_0()); 
+                    	    	    
+                    	    pushFollow(FollowSets000.FOLLOW_23);
+                    	    lv_bendPoints_22_0=ruleElkBendPoint();
+
+                    	    state._fsp--;
+
+
+                    	    	        if (current==null) {
+                    	    	            current = createModelElementForParent(grammarAccess.getElkSingleEdgeSectionRule());
+                    	    	        }
+                    	           		add(
+                    	           			current, 
+                    	           			"bendPoints",
+                    	            		lv_bendPoints_22_0, 
+                    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
+                    	    	        afterParserOrEnumRuleCall();
+                    	    	    
+
+                    	    }
+
+
+                    	    }
+
+
+                    	    }
+                    	    break;
+
+                    	default :
+                    	    break loop14;
+                        }
+                    } while (true);
+
+
+                    }
+                    break;
+
+            }
+
+            // InternalLayoutConfig.g:885:6: ( (lv_properties_23_0= ruleProperty ) )*
+            loop16:
+            do {
+                int alt16=2;
+                int LA16_0 = input.LA(1);
+
+                if ( (LA16_0==RULE_ID) ) {
+                    alt16=1;
+                }
+
+
+                switch (alt16) {
+            	case 1 :
+            	    // InternalLayoutConfig.g:886:1: (lv_properties_23_0= ruleProperty )
+            	    {
+            	    // InternalLayoutConfig.g:886:1: (lv_properties_23_0= ruleProperty )
+            	    // InternalLayoutConfig.g:887:3: lv_properties_23_0= ruleProperty
+            	    {
+            	     
+            	    	        newCompositeNode(grammarAccess.getElkSingleEdgeSectionAccess().getPropertiesPropertyParserRuleCall_1_2_0()); 
+            	    	    
+            	    pushFollow(FollowSets000.FOLLOW_3);
+            	    lv_properties_23_0=ruleProperty();
+
+            	    state._fsp--;
+
+
+            	    	        if (current==null) {
+            	    	            current = createModelElementForParent(grammarAccess.getElkSingleEdgeSectionRule());
+            	    	        }
+            	           		add(
+            	           			current, 
+            	           			"properties",
+            	            		lv_properties_23_0, 
+            	            		"org.eclipse.elk.graph.text.ElkGraph.Property");
+            	    	        afterParserOrEnumRuleCall();
+            	    	    
+
+            	    }
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop16;
+                }
+            } while (true);
+
 
             }
 
@@ -2129,7 +2158,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleElkEdgeSection"
-    // InternalLayoutConfig.g:905:1: entryRuleElkEdgeSection returns [EObject current=null] : iv_ruleElkEdgeSection= ruleElkEdgeSection EOF ;
+    // InternalLayoutConfig.g:911:1: entryRuleElkEdgeSection returns [EObject current=null] : iv_ruleElkEdgeSection= ruleElkEdgeSection EOF ;
     public final EObject entryRuleElkEdgeSection() throws RecognitionException {
         EObject current = null;
 
@@ -2137,8 +2166,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLayoutConfig.g:906:2: (iv_ruleElkEdgeSection= ruleElkEdgeSection EOF )
-            // InternalLayoutConfig.g:907:2: iv_ruleElkEdgeSection= ruleElkEdgeSection EOF
+            // InternalLayoutConfig.g:912:2: (iv_ruleElkEdgeSection= ruleElkEdgeSection EOF )
+            // InternalLayoutConfig.g:913:2: iv_ruleElkEdgeSection= ruleElkEdgeSection EOF
             {
              newCompositeNode(grammarAccess.getElkEdgeSectionRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -2165,7 +2194,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleElkEdgeSection"
-    // InternalLayoutConfig.g:914:1: ruleElkEdgeSection returns [EObject current=null] : (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) otherlv_29= ']' ) ;
+    // InternalLayoutConfig.g:920:1: ruleElkEdgeSection returns [EObject current=null] : (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* ) otherlv_30= ']' ) ;
     public final EObject ruleElkEdgeSection() throws RecognitionException {
         EObject current = null;
 
@@ -2189,7 +2218,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
         Token otherlv_24=null;
         Token otherlv_25=null;
         Token otherlv_27=null;
-        Token otherlv_29=null;
+        Token otherlv_30=null;
         AntlrDatatypeRuleToken lv_startX_16_0 = null;
 
         AntlrDatatypeRuleToken lv_startY_18_0 = null;
@@ -2202,25 +2231,27 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
         EObject lv_bendPoints_28_0 = null;
 
+        EObject lv_properties_29_0 = null;
+
 
          enterRule(); 
             
         try {
-            // InternalLayoutConfig.g:917:28: ( (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) otherlv_29= ']' ) )
-            // InternalLayoutConfig.g:918:1: (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) otherlv_29= ']' )
+            // InternalLayoutConfig.g:923:28: ( (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* ) otherlv_30= ']' ) )
+            // InternalLayoutConfig.g:924:1: (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* ) otherlv_30= ']' )
             {
-            // InternalLayoutConfig.g:918:1: (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) otherlv_29= ']' )
-            // InternalLayoutConfig.g:918:3: otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) ) otherlv_29= ']'
+            // InternalLayoutConfig.g:924:1: (otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* ) otherlv_30= ']' )
+            // InternalLayoutConfig.g:924:3: otherlv_0= 'section' ( (lv_identifier_1_0= RULE_ID ) ) (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )? otherlv_6= '[' ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* ) otherlv_30= ']'
             {
             otherlv_0=(Token)match(input,30,FollowSets000.FOLLOW_6); 
 
                 	newLeafNode(otherlv_0, grammarAccess.getElkEdgeSectionAccess().getSectionKeyword_0());
                 
-            // InternalLayoutConfig.g:922:1: ( (lv_identifier_1_0= RULE_ID ) )
-            // InternalLayoutConfig.g:923:1: (lv_identifier_1_0= RULE_ID )
+            // InternalLayoutConfig.g:928:1: ( (lv_identifier_1_0= RULE_ID ) )
+            // InternalLayoutConfig.g:929:1: (lv_identifier_1_0= RULE_ID )
             {
-            // InternalLayoutConfig.g:923:1: (lv_identifier_1_0= RULE_ID )
-            // InternalLayoutConfig.g:924:3: lv_identifier_1_0= RULE_ID
+            // InternalLayoutConfig.g:929:1: (lv_identifier_1_0= RULE_ID )
+            // InternalLayoutConfig.g:930:3: lv_identifier_1_0= RULE_ID
             {
             lv_identifier_1_0=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_24); 
 
@@ -2242,26 +2273,26 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalLayoutConfig.g:940:2: (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )?
-            int alt16=2;
-            int LA16_0 = input.LA(1);
+            // InternalLayoutConfig.g:946:2: (otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )* )?
+            int alt18=2;
+            int LA18_0 = input.LA(1);
 
-            if ( (LA16_0==31) ) {
-                alt16=1;
+            if ( (LA18_0==31) ) {
+                alt18=1;
             }
-            switch (alt16) {
+            switch (alt18) {
                 case 1 :
-                    // InternalLayoutConfig.g:940:4: otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )*
+                    // InternalLayoutConfig.g:946:4: otherlv_2= '->' ( (otherlv_3= RULE_ID ) ) (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )*
                     {
                     otherlv_2=(Token)match(input,31,FollowSets000.FOLLOW_6); 
 
                         	newLeafNode(otherlv_2, grammarAccess.getElkEdgeSectionAccess().getHyphenMinusGreaterThanSignKeyword_2_0());
                         
-                    // InternalLayoutConfig.g:944:1: ( (otherlv_3= RULE_ID ) )
-                    // InternalLayoutConfig.g:945:1: (otherlv_3= RULE_ID )
+                    // InternalLayoutConfig.g:950:1: ( (otherlv_3= RULE_ID ) )
+                    // InternalLayoutConfig.g:951:1: (otherlv_3= RULE_ID )
                     {
-                    // InternalLayoutConfig.g:945:1: (otherlv_3= RULE_ID )
-                    // InternalLayoutConfig.g:946:3: otherlv_3= RULE_ID
+                    // InternalLayoutConfig.g:951:1: (otherlv_3= RULE_ID )
+                    // InternalLayoutConfig.g:952:3: otherlv_3= RULE_ID
                     {
 
                     			if (current==null) {
@@ -2278,30 +2309,30 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalLayoutConfig.g:957:2: (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )*
-                    loop15:
+                    // InternalLayoutConfig.g:963:2: (otherlv_4= ',' ( (otherlv_5= RULE_ID ) ) )*
+                    loop17:
                     do {
-                        int alt15=2;
-                        int LA15_0 = input.LA(1);
+                        int alt17=2;
+                        int LA17_0 = input.LA(1);
 
-                        if ( (LA15_0==21) ) {
-                            alt15=1;
+                        if ( (LA17_0==21) ) {
+                            alt17=1;
                         }
 
 
-                        switch (alt15) {
+                        switch (alt17) {
                     	case 1 :
-                    	    // InternalLayoutConfig.g:957:4: otherlv_4= ',' ( (otherlv_5= RULE_ID ) )
+                    	    // InternalLayoutConfig.g:963:4: otherlv_4= ',' ( (otherlv_5= RULE_ID ) )
                     	    {
                     	    otherlv_4=(Token)match(input,21,FollowSets000.FOLLOW_6); 
 
                     	        	newLeafNode(otherlv_4, grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_2_2_0());
                     	        
-                    	    // InternalLayoutConfig.g:961:1: ( (otherlv_5= RULE_ID ) )
-                    	    // InternalLayoutConfig.g:962:1: (otherlv_5= RULE_ID )
+                    	    // InternalLayoutConfig.g:967:1: ( (otherlv_5= RULE_ID ) )
+                    	    // InternalLayoutConfig.g:968:1: (otherlv_5= RULE_ID )
                     	    {
-                    	    // InternalLayoutConfig.g:962:1: (otherlv_5= RULE_ID )
-                    	    // InternalLayoutConfig.g:963:3: otherlv_5= RULE_ID
+                    	    // InternalLayoutConfig.g:968:1: (otherlv_5= RULE_ID )
+                    	    // InternalLayoutConfig.g:969:3: otherlv_5= RULE_ID
                     	    {
 
                     	    			if (current==null) {
@@ -2323,7 +2354,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                     	    break;
 
                     	default :
-                    	    break loop15;
+                    	    break loop17;
                         }
                     } while (true);
 
@@ -2337,79 +2368,79 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
                 	newLeafNode(otherlv_6, grammarAccess.getElkEdgeSectionAccess().getLeftSquareBracketKeyword_3());
                 
-            // InternalLayoutConfig.g:978:1: ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) ) )
-            // InternalLayoutConfig.g:980:1: ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) )
+            // InternalLayoutConfig.g:984:1: ( ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )* )
+            // InternalLayoutConfig.g:984:2: ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) ) (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )? ( (lv_properties_29_0= ruleProperty ) )*
             {
-            // InternalLayoutConfig.g:980:1: ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* ) )
-            // InternalLayoutConfig.g:981:2: ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* )
+            // InternalLayoutConfig.g:984:2: ( ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) ) )
+            // InternalLayoutConfig.g:986:1: ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) )
+            {
+            // InternalLayoutConfig.g:986:1: ( ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* ) )
+            // InternalLayoutConfig.g:987:2: ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* )
             {
              
-            	  getUnorderedGroupHelper().enter(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	  getUnorderedGroupHelper().enter(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	
-            // InternalLayoutConfig.g:984:2: ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )* )
-            // InternalLayoutConfig.g:985:3: ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )*
+            // InternalLayoutConfig.g:990:2: ( ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )* )
+            // InternalLayoutConfig.g:991:3: ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )*
             {
-            // InternalLayoutConfig.g:985:3: ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) ) )*
-            loop18:
+            // InternalLayoutConfig.g:991:3: ( ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) ) | ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) ) )*
+            loop19:
             do {
-                int alt18=6;
-                int LA18_0 = input.LA(1);
+                int alt19=5;
+                int LA19_0 = input.LA(1);
 
-                if ( LA18_0 == 24 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0) ) {
-                    alt18=1;
+                if ( LA19_0 == 24 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+                    alt19=1;
                 }
-                else if ( LA18_0 == 25 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1) ) {
-                    alt18=2;
+                else if ( LA19_0 == 25 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+                    alt19=2;
                 }
-                else if ( LA18_0 == 26 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2) ) {
-                    alt18=3;
+                else if ( LA19_0 == 26 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+                    alt19=3;
                 }
-                else if ( LA18_0 == 27 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3) ) {
-                    alt18=4;
-                }
-                else if ( LA18_0 == 28 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4) ) {
-                    alt18=5;
+                else if ( LA19_0 == 27 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+                    alt19=4;
                 }
 
 
-                switch (alt18) {
+                switch (alt19) {
             	case 1 :
-            	    // InternalLayoutConfig.g:987:4: ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) )
+            	    // InternalLayoutConfig.g:993:4: ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) )
             	    {
-            	    // InternalLayoutConfig.g:987:4: ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) )
-            	    // InternalLayoutConfig.g:988:5: {...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalLayoutConfig.g:993:4: ({...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) ) )
+            	    // InternalLayoutConfig.g:994:5: {...}? => ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0)");
             	    }
-            	    // InternalLayoutConfig.g:988:111: ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) )
-            	    // InternalLayoutConfig.g:989:6: ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) )
+            	    // InternalLayoutConfig.g:994:113: ( ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalLayoutConfig.g:995:6: ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 0);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0);
             	    	 				
-            	    // InternalLayoutConfig.g:992:6: ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) )
-            	    // InternalLayoutConfig.g:992:7: {...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) )
+            	    // InternalLayoutConfig.g:998:6: ({...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) ) )
+            	    // InternalLayoutConfig.g:998:7: {...}? => (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) )
             	    {
             	    if ( !((true)) ) {
             	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "true");
             	    }
-            	    // InternalLayoutConfig.g:992:16: (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) )
-            	    // InternalLayoutConfig.g:992:18: otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) )
+            	    // InternalLayoutConfig.g:998:16: (otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) ) )
+            	    // InternalLayoutConfig.g:998:18: otherlv_8= 'incoming' otherlv_9= ':' ( ( ruleQualifiedId ) )
             	    {
             	    otherlv_8=(Token)match(input,24,FollowSets000.FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_8, grammarAccess.getElkEdgeSectionAccess().getIncomingKeyword_4_0_0());
+            	        	newLeafNode(otherlv_8, grammarAccess.getElkEdgeSectionAccess().getIncomingKeyword_4_0_0_0());
             	        
             	    otherlv_9=(Token)match(input,17,FollowSets000.FOLLOW_6); 
 
-            	        	newLeafNode(otherlv_9, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_1());
+            	        	newLeafNode(otherlv_9, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_0_1());
             	        
-            	    // InternalLayoutConfig.g:1000:1: ( ( ruleQualifiedId ) )
-            	    // InternalLayoutConfig.g:1001:1: ( ruleQualifiedId )
+            	    // InternalLayoutConfig.g:1006:1: ( ( ruleQualifiedId ) )
+            	    // InternalLayoutConfig.g:1007:1: ( ruleQualifiedId )
             	    {
-            	    // InternalLayoutConfig.g:1001:1: ( ruleQualifiedId )
-            	    // InternalLayoutConfig.g:1002:3: ruleQualifiedId
+            	    // InternalLayoutConfig.g:1007:1: ( ruleQualifiedId )
+            	    // InternalLayoutConfig.g:1008:3: ruleQualifiedId
             	    {
 
             	    			if (current==null) {
@@ -2417,7 +2448,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    	        }
             	            
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_4_0_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_4_0_0_2_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_26);
             	    ruleQualifiedId();
@@ -2440,7 +2471,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	    	 				
 
             	    }
@@ -2452,42 +2483,42 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    }
             	    break;
             	case 2 :
-            	    // InternalLayoutConfig.g:1022:4: ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) )
+            	    // InternalLayoutConfig.g:1028:4: ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) )
             	    {
-            	    // InternalLayoutConfig.g:1022:4: ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) )
-            	    // InternalLayoutConfig.g:1023:5: {...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalLayoutConfig.g:1028:4: ({...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) ) )
+            	    // InternalLayoutConfig.g:1029:5: {...}? => ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1)");
             	    }
-            	    // InternalLayoutConfig.g:1023:111: ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) )
-            	    // InternalLayoutConfig.g:1024:6: ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) )
+            	    // InternalLayoutConfig.g:1029:113: ( ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) ) )
+            	    // InternalLayoutConfig.g:1030:6: ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 1);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1);
             	    	 				
-            	    // InternalLayoutConfig.g:1027:6: ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) )
-            	    // InternalLayoutConfig.g:1027:7: {...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) )
+            	    // InternalLayoutConfig.g:1033:6: ({...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) ) )
+            	    // InternalLayoutConfig.g:1033:7: {...}? => (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) )
             	    {
             	    if ( !((true)) ) {
             	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "true");
             	    }
-            	    // InternalLayoutConfig.g:1027:16: (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) )
-            	    // InternalLayoutConfig.g:1027:18: otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) )
+            	    // InternalLayoutConfig.g:1033:16: (otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) ) )
+            	    // InternalLayoutConfig.g:1033:18: otherlv_11= 'outgoing' otherlv_12= ':' ( ( ruleQualifiedId ) )
             	    {
             	    otherlv_11=(Token)match(input,25,FollowSets000.FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_11, grammarAccess.getElkEdgeSectionAccess().getOutgoingKeyword_4_1_0());
+            	        	newLeafNode(otherlv_11, grammarAccess.getElkEdgeSectionAccess().getOutgoingKeyword_4_0_1_0());
             	        
             	    otherlv_12=(Token)match(input,17,FollowSets000.FOLLOW_6); 
 
-            	        	newLeafNode(otherlv_12, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_1_1());
+            	        	newLeafNode(otherlv_12, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_1_1());
             	        
-            	    // InternalLayoutConfig.g:1035:1: ( ( ruleQualifiedId ) )
-            	    // InternalLayoutConfig.g:1036:1: ( ruleQualifiedId )
+            	    // InternalLayoutConfig.g:1041:1: ( ( ruleQualifiedId ) )
+            	    // InternalLayoutConfig.g:1042:1: ( ruleQualifiedId )
             	    {
-            	    // InternalLayoutConfig.g:1036:1: ( ruleQualifiedId )
-            	    // InternalLayoutConfig.g:1037:3: ruleQualifiedId
+            	    // InternalLayoutConfig.g:1042:1: ( ruleQualifiedId )
+            	    // InternalLayoutConfig.g:1043:3: ruleQualifiedId
             	    {
 
             	    			if (current==null) {
@@ -2495,7 +2526,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    	        }
             	            
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_4_1_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_4_0_1_2_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_26);
             	    ruleQualifiedId();
@@ -2518,7 +2549,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	    	 				
 
             	    }
@@ -2530,45 +2561,45 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    }
             	    break;
             	case 3 :
-            	    // InternalLayoutConfig.g:1057:4: ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) )
+            	    // InternalLayoutConfig.g:1063:4: ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) )
             	    {
-            	    // InternalLayoutConfig.g:1057:4: ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) )
-            	    // InternalLayoutConfig.g:1058:5: {...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) )
+            	    // InternalLayoutConfig.g:1063:4: ({...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) ) )
+            	    // InternalLayoutConfig.g:1064:5: {...}? => ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2)");
             	    }
-            	    // InternalLayoutConfig.g:1058:111: ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) )
-            	    // InternalLayoutConfig.g:1059:6: ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) )
+            	    // InternalLayoutConfig.g:1064:113: ( ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) ) )
+            	    // InternalLayoutConfig.g:1065:6: ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 2);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2);
             	    	 				
-            	    // InternalLayoutConfig.g:1062:6: ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) )
-            	    // InternalLayoutConfig.g:1062:7: {...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) )
+            	    // InternalLayoutConfig.g:1068:6: ({...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) ) )
+            	    // InternalLayoutConfig.g:1068:7: {...}? => (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) )
             	    {
             	    if ( !((true)) ) {
             	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "true");
             	    }
-            	    // InternalLayoutConfig.g:1062:16: (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) )
-            	    // InternalLayoutConfig.g:1062:18: otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) )
+            	    // InternalLayoutConfig.g:1068:16: (otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) ) )
+            	    // InternalLayoutConfig.g:1068:18: otherlv_14= 'start' otherlv_15= ':' ( (lv_startX_16_0= ruleNumber ) ) otherlv_17= ',' ( (lv_startY_18_0= ruleNumber ) )
             	    {
             	    otherlv_14=(Token)match(input,26,FollowSets000.FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_14, grammarAccess.getElkEdgeSectionAccess().getStartKeyword_4_2_0());
+            	        	newLeafNode(otherlv_14, grammarAccess.getElkEdgeSectionAccess().getStartKeyword_4_0_2_0());
             	        
             	    otherlv_15=(Token)match(input,17,FollowSets000.FOLLOW_18); 
 
-            	        	newLeafNode(otherlv_15, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_2_1());
+            	        	newLeafNode(otherlv_15, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_2_1());
             	        
-            	    // InternalLayoutConfig.g:1070:1: ( (lv_startX_16_0= ruleNumber ) )
-            	    // InternalLayoutConfig.g:1071:1: (lv_startX_16_0= ruleNumber )
+            	    // InternalLayoutConfig.g:1076:1: ( (lv_startX_16_0= ruleNumber ) )
+            	    // InternalLayoutConfig.g:1077:1: (lv_startX_16_0= ruleNumber )
             	    {
-            	    // InternalLayoutConfig.g:1071:1: (lv_startX_16_0= ruleNumber )
-            	    // InternalLayoutConfig.g:1072:3: lv_startX_16_0= ruleNumber
+            	    // InternalLayoutConfig.g:1077:1: (lv_startX_16_0= ruleNumber )
+            	    // InternalLayoutConfig.g:1078:3: lv_startX_16_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getStartXNumberParserRuleCall_4_2_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getStartXNumberParserRuleCall_4_0_2_2_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_19);
             	    lv_startX_16_0=ruleNumber();
@@ -2594,16 +2625,16 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
             	    otherlv_17=(Token)match(input,21,FollowSets000.FOLLOW_18); 
 
-            	        	newLeafNode(otherlv_17, grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_2_3());
+            	        	newLeafNode(otherlv_17, grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_0_2_3());
             	        
-            	    // InternalLayoutConfig.g:1092:1: ( (lv_startY_18_0= ruleNumber ) )
-            	    // InternalLayoutConfig.g:1093:1: (lv_startY_18_0= ruleNumber )
+            	    // InternalLayoutConfig.g:1098:1: ( (lv_startY_18_0= ruleNumber ) )
+            	    // InternalLayoutConfig.g:1099:1: (lv_startY_18_0= ruleNumber )
             	    {
-            	    // InternalLayoutConfig.g:1093:1: (lv_startY_18_0= ruleNumber )
-            	    // InternalLayoutConfig.g:1094:3: lv_startY_18_0= ruleNumber
+            	    // InternalLayoutConfig.g:1099:1: (lv_startY_18_0= ruleNumber )
+            	    // InternalLayoutConfig.g:1100:3: lv_startY_18_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getStartYNumberParserRuleCall_4_2_4_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getStartYNumberParserRuleCall_4_0_2_4_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_26);
             	    lv_startY_18_0=ruleNumber();
@@ -2634,7 +2665,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	    	 				
 
             	    }
@@ -2646,45 +2677,45 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    }
             	    break;
             	case 4 :
-            	    // InternalLayoutConfig.g:1117:4: ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) )
+            	    // InternalLayoutConfig.g:1123:4: ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) )
             	    {
-            	    // InternalLayoutConfig.g:1117:4: ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) )
-            	    // InternalLayoutConfig.g:1118:5: {...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) )
+            	    // InternalLayoutConfig.g:1123:4: ({...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) ) )
+            	    // InternalLayoutConfig.g:1124:5: {...}? => ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) )
             	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3)");
+            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3)");
             	    }
-            	    // InternalLayoutConfig.g:1118:111: ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) )
-            	    // InternalLayoutConfig.g:1119:6: ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) )
+            	    // InternalLayoutConfig.g:1124:113: ( ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) ) )
+            	    // InternalLayoutConfig.g:1125:6: ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) )
             	    {
             	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 3);
+            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3);
             	    	 				
-            	    // InternalLayoutConfig.g:1122:6: ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) )
-            	    // InternalLayoutConfig.g:1122:7: {...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) )
+            	    // InternalLayoutConfig.g:1128:6: ({...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) ) )
+            	    // InternalLayoutConfig.g:1128:7: {...}? => (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) )
             	    {
             	    if ( !((true)) ) {
             	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "true");
             	    }
-            	    // InternalLayoutConfig.g:1122:16: (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) )
-            	    // InternalLayoutConfig.g:1122:18: otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) )
+            	    // InternalLayoutConfig.g:1128:16: (otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) ) )
+            	    // InternalLayoutConfig.g:1128:18: otherlv_19= 'end' otherlv_20= ':' ( (lv_endX_21_0= ruleNumber ) ) otherlv_22= ',' ( (lv_endY_23_0= ruleNumber ) )
             	    {
             	    otherlv_19=(Token)match(input,27,FollowSets000.FOLLOW_10); 
 
-            	        	newLeafNode(otherlv_19, grammarAccess.getElkEdgeSectionAccess().getEndKeyword_4_3_0());
+            	        	newLeafNode(otherlv_19, grammarAccess.getElkEdgeSectionAccess().getEndKeyword_4_0_3_0());
             	        
             	    otherlv_20=(Token)match(input,17,FollowSets000.FOLLOW_18); 
 
-            	        	newLeafNode(otherlv_20, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_3_1());
+            	        	newLeafNode(otherlv_20, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_3_1());
             	        
-            	    // InternalLayoutConfig.g:1130:1: ( (lv_endX_21_0= ruleNumber ) )
-            	    // InternalLayoutConfig.g:1131:1: (lv_endX_21_0= ruleNumber )
+            	    // InternalLayoutConfig.g:1136:1: ( (lv_endX_21_0= ruleNumber ) )
+            	    // InternalLayoutConfig.g:1137:1: (lv_endX_21_0= ruleNumber )
             	    {
-            	    // InternalLayoutConfig.g:1131:1: (lv_endX_21_0= ruleNumber )
-            	    // InternalLayoutConfig.g:1132:3: lv_endX_21_0= ruleNumber
+            	    // InternalLayoutConfig.g:1137:1: (lv_endX_21_0= ruleNumber )
+            	    // InternalLayoutConfig.g:1138:3: lv_endX_21_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getEndXNumberParserRuleCall_4_3_2_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getEndXNumberParserRuleCall_4_0_3_2_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_19);
             	    lv_endX_21_0=ruleNumber();
@@ -2710,16 +2741,16 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
             	    otherlv_22=(Token)match(input,21,FollowSets000.FOLLOW_18); 
 
-            	        	newLeafNode(otherlv_22, grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_3_3());
+            	        	newLeafNode(otherlv_22, grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_0_3_3());
             	        
-            	    // InternalLayoutConfig.g:1152:1: ( (lv_endY_23_0= ruleNumber ) )
-            	    // InternalLayoutConfig.g:1153:1: (lv_endY_23_0= ruleNumber )
+            	    // InternalLayoutConfig.g:1158:1: ( (lv_endY_23_0= ruleNumber ) )
+            	    // InternalLayoutConfig.g:1159:1: (lv_endY_23_0= ruleNumber )
             	    {
-            	    // InternalLayoutConfig.g:1153:1: (lv_endY_23_0= ruleNumber )
-            	    // InternalLayoutConfig.g:1154:3: lv_endY_23_0= ruleNumber
+            	    // InternalLayoutConfig.g:1159:1: (lv_endY_23_0= ruleNumber )
+            	    // InternalLayoutConfig.g:1160:3: lv_endY_23_0= ruleNumber
             	    {
             	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getEndYNumberParserRuleCall_4_3_4_0()); 
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getEndYNumberParserRuleCall_4_0_3_4_0()); 
             	    	    
             	    pushFollow(FollowSets000.FOLLOW_26);
             	    lv_endY_23_0=ruleNumber();
@@ -2750,147 +2781,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    }
 
             	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
-            	    	 				
-
-            	    }
-
-
-            	    }
-
-
-            	    }
-            	    break;
-            	case 5 :
-            	    // InternalLayoutConfig.g:1177:4: ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) )
-            	    {
-            	    // InternalLayoutConfig.g:1177:4: ({...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) ) )
-            	    // InternalLayoutConfig.g:1178:5: {...}? => ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) )
-            	    {
-            	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4)");
-            	    }
-            	    // InternalLayoutConfig.g:1178:111: ( ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) ) )
-            	    // InternalLayoutConfig.g:1179:6: ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) )
-            	    {
-            	     
-            	    	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4(), 4);
-            	    	 				
-            	    // InternalLayoutConfig.g:1182:6: ({...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* ) )
-            	    // InternalLayoutConfig.g:1182:7: {...}? => (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )
-            	    {
-            	    if ( !((true)) ) {
-            	        throw new FailedPredicateException(input, "ruleElkEdgeSection", "true");
-            	    }
-            	    // InternalLayoutConfig.g:1182:16: (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )
-            	    // InternalLayoutConfig.g:1182:18: otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )*
-            	    {
-            	    otherlv_24=(Token)match(input,28,FollowSets000.FOLLOW_10); 
-
-            	        	newLeafNode(otherlv_24, grammarAccess.getElkEdgeSectionAccess().getBendsKeyword_4_4_0());
-            	        
-            	    otherlv_25=(Token)match(input,17,FollowSets000.FOLLOW_18); 
-
-            	        	newLeafNode(otherlv_25, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_4_1());
-            	        
-            	    // InternalLayoutConfig.g:1190:1: ( (lv_bendPoints_26_0= ruleElkBendPoint ) )
-            	    // InternalLayoutConfig.g:1191:1: (lv_bendPoints_26_0= ruleElkBendPoint )
-            	    {
-            	    // InternalLayoutConfig.g:1191:1: (lv_bendPoints_26_0= ruleElkBendPoint )
-            	    // InternalLayoutConfig.g:1192:3: lv_bendPoints_26_0= ruleElkBendPoint
-            	    {
-            	     
-            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_4_2_0()); 
-            	    	    
-            	    pushFollow(FollowSets000.FOLLOW_27);
-            	    lv_bendPoints_26_0=ruleElkBendPoint();
-
-            	    state._fsp--;
-
-
-            	    	        if (current==null) {
-            	    	            current = createModelElementForParent(grammarAccess.getElkEdgeSectionRule());
-            	    	        }
-            	           		add(
-            	           			current, 
-            	           			"bendPoints",
-            	            		lv_bendPoints_26_0, 
-            	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
-            	    	        afterParserOrEnumRuleCall();
-            	    	    
-
-            	    }
-
-
-            	    }
-
-            	    // InternalLayoutConfig.g:1208:2: (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )*
-            	    loop17:
-            	    do {
-            	        int alt17=2;
-            	        int LA17_0 = input.LA(1);
-
-            	        if ( (LA17_0==29) ) {
-            	            alt17=1;
-            	        }
-
-
-            	        switch (alt17) {
-            	    	case 1 :
-            	    	    // InternalLayoutConfig.g:1208:4: otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) )
-            	    	    {
-            	    	    otherlv_27=(Token)match(input,29,FollowSets000.FOLLOW_18); 
-
-            	    	        	newLeafNode(otherlv_27, grammarAccess.getElkEdgeSectionAccess().getVerticalLineKeyword_4_4_3_0());
-            	    	        
-            	    	    // InternalLayoutConfig.g:1212:1: ( (lv_bendPoints_28_0= ruleElkBendPoint ) )
-            	    	    // InternalLayoutConfig.g:1213:1: (lv_bendPoints_28_0= ruleElkBendPoint )
-            	    	    {
-            	    	    // InternalLayoutConfig.g:1213:1: (lv_bendPoints_28_0= ruleElkBendPoint )
-            	    	    // InternalLayoutConfig.g:1214:3: lv_bendPoints_28_0= ruleElkBendPoint
-            	    	    {
-            	    	     
-            	    	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_4_3_1_0()); 
-            	    	    	    
-            	    	    pushFollow(FollowSets000.FOLLOW_27);
-            	    	    lv_bendPoints_28_0=ruleElkBendPoint();
-
-            	    	    state._fsp--;
-
-
-            	    	    	        if (current==null) {
-            	    	    	            current = createModelElementForParent(grammarAccess.getElkEdgeSectionRule());
-            	    	    	        }
-            	    	           		add(
-            	    	           			current, 
-            	    	           			"bendPoints",
-            	    	            		lv_bendPoints_28_0, 
-            	    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
-            	    	    	        afterParserOrEnumRuleCall();
-            	    	    	    
-
-            	    	    }
-
-
-            	    	    }
-
-
-            	    	    }
-            	    	    break;
-
-            	    	default :
-            	    	    break loop17;
-            	        }
-            	    } while (true);
-
-
-            	    }
-
-
-            	    }
-
-            	     
-            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	    	 				  getUnorderedGroupHelper().returnFromSelection(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	    	 				
 
             	    }
@@ -2903,7 +2794,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop18;
+            	    break loop19;
                 }
             } while (true);
 
@@ -2914,14 +2805,181 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             }
 
              
-            	  getUnorderedGroupHelper().leave(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4());
+            	  getUnorderedGroupHelper().leave(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             	
 
             }
 
-            otherlv_29=(Token)match(input,23,FollowSets000.FOLLOW_2); 
+            // InternalLayoutConfig.g:1190:2: (otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )* )?
+            int alt21=2;
+            int LA21_0 = input.LA(1);
 
-                	newLeafNode(otherlv_29, grammarAccess.getElkEdgeSectionAccess().getRightSquareBracketKeyword_5());
+            if ( (LA21_0==28) ) {
+                alt21=1;
+            }
+            switch (alt21) {
+                case 1 :
+                    // InternalLayoutConfig.g:1190:4: otherlv_24= 'bends' otherlv_25= ':' ( (lv_bendPoints_26_0= ruleElkBendPoint ) ) (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )*
+                    {
+                    otherlv_24=(Token)match(input,28,FollowSets000.FOLLOW_10); 
+
+                        	newLeafNode(otherlv_24, grammarAccess.getElkEdgeSectionAccess().getBendsKeyword_4_1_0());
+                        
+                    otherlv_25=(Token)match(input,17,FollowSets000.FOLLOW_18); 
+
+                        	newLeafNode(otherlv_25, grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_1_1());
+                        
+                    // InternalLayoutConfig.g:1198:1: ( (lv_bendPoints_26_0= ruleElkBendPoint ) )
+                    // InternalLayoutConfig.g:1199:1: (lv_bendPoints_26_0= ruleElkBendPoint )
+                    {
+                    // InternalLayoutConfig.g:1199:1: (lv_bendPoints_26_0= ruleElkBendPoint )
+                    // InternalLayoutConfig.g:1200:3: lv_bendPoints_26_0= ruleElkBendPoint
+                    {
+                     
+                    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_1_2_0()); 
+                    	    
+                    pushFollow(FollowSets000.FOLLOW_27);
+                    lv_bendPoints_26_0=ruleElkBendPoint();
+
+                    state._fsp--;
+
+
+                    	        if (current==null) {
+                    	            current = createModelElementForParent(grammarAccess.getElkEdgeSectionRule());
+                    	        }
+                           		add(
+                           			current, 
+                           			"bendPoints",
+                            		lv_bendPoints_26_0, 
+                            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
+                    	        afterParserOrEnumRuleCall();
+                    	    
+
+                    }
+
+
+                    }
+
+                    // InternalLayoutConfig.g:1216:2: (otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) ) )*
+                    loop20:
+                    do {
+                        int alt20=2;
+                        int LA20_0 = input.LA(1);
+
+                        if ( (LA20_0==29) ) {
+                            alt20=1;
+                        }
+
+
+                        switch (alt20) {
+                    	case 1 :
+                    	    // InternalLayoutConfig.g:1216:4: otherlv_27= '|' ( (lv_bendPoints_28_0= ruleElkBendPoint ) )
+                    	    {
+                    	    otherlv_27=(Token)match(input,29,FollowSets000.FOLLOW_18); 
+
+                    	        	newLeafNode(otherlv_27, grammarAccess.getElkEdgeSectionAccess().getVerticalLineKeyword_4_1_3_0());
+                    	        
+                    	    // InternalLayoutConfig.g:1220:1: ( (lv_bendPoints_28_0= ruleElkBendPoint ) )
+                    	    // InternalLayoutConfig.g:1221:1: (lv_bendPoints_28_0= ruleElkBendPoint )
+                    	    {
+                    	    // InternalLayoutConfig.g:1221:1: (lv_bendPoints_28_0= ruleElkBendPoint )
+                    	    // InternalLayoutConfig.g:1222:3: lv_bendPoints_28_0= ruleElkBendPoint
+                    	    {
+                    	     
+                    	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_1_3_1_0()); 
+                    	    	    
+                    	    pushFollow(FollowSets000.FOLLOW_27);
+                    	    lv_bendPoints_28_0=ruleElkBendPoint();
+
+                    	    state._fsp--;
+
+
+                    	    	        if (current==null) {
+                    	    	            current = createModelElementForParent(grammarAccess.getElkEdgeSectionRule());
+                    	    	        }
+                    	           		add(
+                    	           			current, 
+                    	           			"bendPoints",
+                    	            		lv_bendPoints_28_0, 
+                    	            		"org.eclipse.elk.graph.text.ElkGraph.ElkBendPoint");
+                    	    	        afterParserOrEnumRuleCall();
+                    	    	    
+
+                    	    }
+
+
+                    	    }
+
+
+                    	    }
+                    	    break;
+
+                    	default :
+                    	    break loop20;
+                        }
+                    } while (true);
+
+
+                    }
+                    break;
+
+            }
+
+            // InternalLayoutConfig.g:1238:6: ( (lv_properties_29_0= ruleProperty ) )*
+            loop22:
+            do {
+                int alt22=2;
+                int LA22_0 = input.LA(1);
+
+                if ( (LA22_0==RULE_ID) ) {
+                    alt22=1;
+                }
+
+
+                switch (alt22) {
+            	case 1 :
+            	    // InternalLayoutConfig.g:1239:1: (lv_properties_29_0= ruleProperty )
+            	    {
+            	    // InternalLayoutConfig.g:1239:1: (lv_properties_29_0= ruleProperty )
+            	    // InternalLayoutConfig.g:1240:3: lv_properties_29_0= ruleProperty
+            	    {
+            	     
+            	    	        newCompositeNode(grammarAccess.getElkEdgeSectionAccess().getPropertiesPropertyParserRuleCall_4_2_0()); 
+            	    	    
+            	    pushFollow(FollowSets000.FOLLOW_28);
+            	    lv_properties_29_0=ruleProperty();
+
+            	    state._fsp--;
+
+
+            	    	        if (current==null) {
+            	    	            current = createModelElementForParent(grammarAccess.getElkEdgeSectionRule());
+            	    	        }
+            	           		add(
+            	           			current, 
+            	           			"properties",
+            	            		lv_properties_29_0, 
+            	            		"org.eclipse.elk.graph.text.ElkGraph.Property");
+            	    	        afterParserOrEnumRuleCall();
+            	    	    
+
+            	    }
+
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop22;
+                }
+            } while (true);
+
+
+            }
+
+            otherlv_30=(Token)match(input,23,FollowSets000.FOLLOW_2); 
+
+                	newLeafNode(otherlv_30, grammarAccess.getElkEdgeSectionAccess().getRightSquareBracketKeyword_5());
                 
 
             }
@@ -2944,7 +3002,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleElkBendPoint"
-    // InternalLayoutConfig.g:1256:1: entryRuleElkBendPoint returns [EObject current=null] : iv_ruleElkBendPoint= ruleElkBendPoint EOF ;
+    // InternalLayoutConfig.g:1268:1: entryRuleElkBendPoint returns [EObject current=null] : iv_ruleElkBendPoint= ruleElkBendPoint EOF ;
     public final EObject entryRuleElkBendPoint() throws RecognitionException {
         EObject current = null;
 
@@ -2952,8 +3010,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLayoutConfig.g:1257:2: (iv_ruleElkBendPoint= ruleElkBendPoint EOF )
-            // InternalLayoutConfig.g:1258:2: iv_ruleElkBendPoint= ruleElkBendPoint EOF
+            // InternalLayoutConfig.g:1269:2: (iv_ruleElkBendPoint= ruleElkBendPoint EOF )
+            // InternalLayoutConfig.g:1270:2: iv_ruleElkBendPoint= ruleElkBendPoint EOF
             {
              newCompositeNode(grammarAccess.getElkBendPointRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -2980,7 +3038,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleElkBendPoint"
-    // InternalLayoutConfig.g:1265:1: ruleElkBendPoint returns [EObject current=null] : ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) ) ;
+    // InternalLayoutConfig.g:1277:1: ruleElkBendPoint returns [EObject current=null] : ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) ) ;
     public final EObject ruleElkBendPoint() throws RecognitionException {
         EObject current = null;
 
@@ -2993,17 +3051,17 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalLayoutConfig.g:1268:28: ( ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) ) )
-            // InternalLayoutConfig.g:1269:1: ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) )
+            // InternalLayoutConfig.g:1280:28: ( ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) ) )
+            // InternalLayoutConfig.g:1281:1: ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) )
             {
-            // InternalLayoutConfig.g:1269:1: ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) )
-            // InternalLayoutConfig.g:1269:2: ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) )
+            // InternalLayoutConfig.g:1281:1: ( ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) ) )
+            // InternalLayoutConfig.g:1281:2: ( (lv_x_0_0= ruleNumber ) ) otherlv_1= ',' ( (lv_y_2_0= ruleNumber ) )
             {
-            // InternalLayoutConfig.g:1269:2: ( (lv_x_0_0= ruleNumber ) )
-            // InternalLayoutConfig.g:1270:1: (lv_x_0_0= ruleNumber )
+            // InternalLayoutConfig.g:1281:2: ( (lv_x_0_0= ruleNumber ) )
+            // InternalLayoutConfig.g:1282:1: (lv_x_0_0= ruleNumber )
             {
-            // InternalLayoutConfig.g:1270:1: (lv_x_0_0= ruleNumber )
-            // InternalLayoutConfig.g:1271:3: lv_x_0_0= ruleNumber
+            // InternalLayoutConfig.g:1282:1: (lv_x_0_0= ruleNumber )
+            // InternalLayoutConfig.g:1283:3: lv_x_0_0= ruleNumber
             {
              
             	        newCompositeNode(grammarAccess.getElkBendPointAccess().getXNumberParserRuleCall_0_0()); 
@@ -3034,11 +3092,11 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
                 	newLeafNode(otherlv_1, grammarAccess.getElkBendPointAccess().getCommaKeyword_1());
                 
-            // InternalLayoutConfig.g:1291:1: ( (lv_y_2_0= ruleNumber ) )
-            // InternalLayoutConfig.g:1292:1: (lv_y_2_0= ruleNumber )
+            // InternalLayoutConfig.g:1303:1: ( (lv_y_2_0= ruleNumber ) )
+            // InternalLayoutConfig.g:1304:1: (lv_y_2_0= ruleNumber )
             {
-            // InternalLayoutConfig.g:1292:1: (lv_y_2_0= ruleNumber )
-            // InternalLayoutConfig.g:1293:3: lv_y_2_0= ruleNumber
+            // InternalLayoutConfig.g:1304:1: (lv_y_2_0= ruleNumber )
+            // InternalLayoutConfig.g:1305:3: lv_y_2_0= ruleNumber
             {
              
             	        newCompositeNode(grammarAccess.getElkBendPointAccess().getYNumberParserRuleCall_2_0()); 
@@ -3086,7 +3144,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleQualifiedId"
-    // InternalLayoutConfig.g:1317:1: entryRuleQualifiedId returns [String current=null] : iv_ruleQualifiedId= ruleQualifiedId EOF ;
+    // InternalLayoutConfig.g:1329:1: entryRuleQualifiedId returns [String current=null] : iv_ruleQualifiedId= ruleQualifiedId EOF ;
     public final String entryRuleQualifiedId() throws RecognitionException {
         String current = null;
 
@@ -3094,8 +3152,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLayoutConfig.g:1318:2: (iv_ruleQualifiedId= ruleQualifiedId EOF )
-            // InternalLayoutConfig.g:1319:2: iv_ruleQualifiedId= ruleQualifiedId EOF
+            // InternalLayoutConfig.g:1330:2: (iv_ruleQualifiedId= ruleQualifiedId EOF )
+            // InternalLayoutConfig.g:1331:2: iv_ruleQualifiedId= ruleQualifiedId EOF
             {
              newCompositeNode(grammarAccess.getQualifiedIdRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -3122,7 +3180,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleQualifiedId"
-    // InternalLayoutConfig.g:1326:1: ruleQualifiedId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    // InternalLayoutConfig.g:1338:1: ruleQualifiedId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
     public final AntlrDatatypeRuleToken ruleQualifiedId() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -3133,40 +3191,40 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalLayoutConfig.g:1329:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // InternalLayoutConfig.g:1330:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalLayoutConfig.g:1341:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalLayoutConfig.g:1342:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
             {
-            // InternalLayoutConfig.g:1330:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // InternalLayoutConfig.g:1330:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            // InternalLayoutConfig.g:1342:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalLayoutConfig.g:1342:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
             {
-            this_ID_0=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_28); 
+            this_ID_0=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_29); 
 
             		current.merge(this_ID_0);
                 
              
                 newLeafNode(this_ID_0, grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_0()); 
                 
-            // InternalLayoutConfig.g:1337:1: (kw= '.' this_ID_2= RULE_ID )*
-            loop19:
+            // InternalLayoutConfig.g:1349:1: (kw= '.' this_ID_2= RULE_ID )*
+            loop23:
             do {
-                int alt19=2;
-                int LA19_0 = input.LA(1);
+                int alt23=2;
+                int LA23_0 = input.LA(1);
 
-                if ( (LA19_0==32) ) {
-                    alt19=1;
+                if ( (LA23_0==32) ) {
+                    alt23=1;
                 }
 
 
-                switch (alt19) {
+                switch (alt23) {
             	case 1 :
-            	    // InternalLayoutConfig.g:1338:2: kw= '.' this_ID_2= RULE_ID
+            	    // InternalLayoutConfig.g:1350:2: kw= '.' this_ID_2= RULE_ID
             	    {
             	    kw=(Token)match(input,32,FollowSets000.FOLLOW_6); 
 
             	            current.merge(kw);
             	            newLeafNode(kw, grammarAccess.getQualifiedIdAccess().getFullStopKeyword_1_0()); 
             	        
-            	    this_ID_2=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_28); 
+            	    this_ID_2=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_29); 
 
             	    		current.merge(this_ID_2);
             	        
@@ -3178,7 +3236,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop19;
+            	    break loop23;
                 }
             } while (true);
 
@@ -3203,7 +3261,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleNumber"
-    // InternalLayoutConfig.g:1358:1: entryRuleNumber returns [String current=null] : iv_ruleNumber= ruleNumber EOF ;
+    // InternalLayoutConfig.g:1370:1: entryRuleNumber returns [String current=null] : iv_ruleNumber= ruleNumber EOF ;
     public final String entryRuleNumber() throws RecognitionException {
         String current = null;
 
@@ -3211,8 +3269,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLayoutConfig.g:1359:2: (iv_ruleNumber= ruleNumber EOF )
-            // InternalLayoutConfig.g:1360:2: iv_ruleNumber= ruleNumber EOF
+            // InternalLayoutConfig.g:1371:2: (iv_ruleNumber= ruleNumber EOF )
+            // InternalLayoutConfig.g:1372:2: iv_ruleNumber= ruleNumber EOF
             {
              newCompositeNode(grammarAccess.getNumberRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -3239,7 +3297,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleNumber"
-    // InternalLayoutConfig.g:1367:1: ruleNumber returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
+    // InternalLayoutConfig.g:1379:1: ruleNumber returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
     public final AntlrDatatypeRuleToken ruleNumber() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -3249,28 +3307,28 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalLayoutConfig.g:1370:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
-            // InternalLayoutConfig.g:1371:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            // InternalLayoutConfig.g:1382:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
+            // InternalLayoutConfig.g:1383:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
             {
-            // InternalLayoutConfig.g:1371:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
-            int alt20=2;
-            int LA20_0 = input.LA(1);
+            // InternalLayoutConfig.g:1383:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            int alt24=2;
+            int LA24_0 = input.LA(1);
 
-            if ( (LA20_0==RULE_SIGNED_INT) ) {
-                alt20=1;
+            if ( (LA24_0==RULE_SIGNED_INT) ) {
+                alt24=1;
             }
-            else if ( (LA20_0==RULE_FLOAT) ) {
-                alt20=2;
+            else if ( (LA24_0==RULE_FLOAT) ) {
+                alt24=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 20, 0, input);
+                    new NoViableAltException("", 24, 0, input);
 
                 throw nvae;
             }
-            switch (alt20) {
+            switch (alt24) {
                 case 1 :
-                    // InternalLayoutConfig.g:1371:6: this_SIGNED_INT_0= RULE_SIGNED_INT
+                    // InternalLayoutConfig.g:1383:6: this_SIGNED_INT_0= RULE_SIGNED_INT
                     {
                     this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FollowSets000.FOLLOW_2); 
 
@@ -3283,7 +3341,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalLayoutConfig.g:1379:10: this_FLOAT_1= RULE_FLOAT
+                    // InternalLayoutConfig.g:1391:10: this_FLOAT_1= RULE_FLOAT
                     {
                     this_FLOAT_1=(Token)match(input,RULE_FLOAT,FollowSets000.FOLLOW_2); 
 
@@ -3316,7 +3374,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleProperty"
-    // InternalLayoutConfig.g:1394:1: entryRuleProperty returns [EObject current=null] : iv_ruleProperty= ruleProperty EOF ;
+    // InternalLayoutConfig.g:1406:1: entryRuleProperty returns [EObject current=null] : iv_ruleProperty= ruleProperty EOF ;
     public final EObject entryRuleProperty() throws RecognitionException {
         EObject current = null;
 
@@ -3324,8 +3382,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLayoutConfig.g:1395:2: (iv_ruleProperty= ruleProperty EOF )
-            // InternalLayoutConfig.g:1396:2: iv_ruleProperty= ruleProperty EOF
+            // InternalLayoutConfig.g:1407:2: (iv_ruleProperty= ruleProperty EOF )
+            // InternalLayoutConfig.g:1408:2: iv_ruleProperty= ruleProperty EOF
             {
              newCompositeNode(grammarAccess.getPropertyRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -3352,7 +3410,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleProperty"
-    // InternalLayoutConfig.g:1403:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) ;
+    // InternalLayoutConfig.g:1415:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) ;
     public final EObject ruleProperty() throws RecognitionException {
         EObject current = null;
 
@@ -3371,17 +3429,17 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalLayoutConfig.g:1406:28: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) )
-            // InternalLayoutConfig.g:1407:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
+            // InternalLayoutConfig.g:1418:28: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) )
+            // InternalLayoutConfig.g:1419:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
             {
-            // InternalLayoutConfig.g:1407:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
-            // InternalLayoutConfig.g:1407:2: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
+            // InternalLayoutConfig.g:1419:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
+            // InternalLayoutConfig.g:1419:2: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
             {
-            // InternalLayoutConfig.g:1407:2: ( (lv_key_0_0= rulePropertyKey ) )
-            // InternalLayoutConfig.g:1408:1: (lv_key_0_0= rulePropertyKey )
+            // InternalLayoutConfig.g:1419:2: ( (lv_key_0_0= rulePropertyKey ) )
+            // InternalLayoutConfig.g:1420:1: (lv_key_0_0= rulePropertyKey )
             {
-            // InternalLayoutConfig.g:1408:1: (lv_key_0_0= rulePropertyKey )
-            // InternalLayoutConfig.g:1409:3: lv_key_0_0= rulePropertyKey
+            // InternalLayoutConfig.g:1420:1: (lv_key_0_0= rulePropertyKey )
+            // InternalLayoutConfig.g:1421:3: lv_key_0_0= rulePropertyKey
             {
              
             	        newCompositeNode(grammarAccess.getPropertyAccess().getKeyPropertyKeyParserRuleCall_0_0()); 
@@ -3408,51 +3466,51 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
             }
 
-            otherlv_1=(Token)match(input,17,FollowSets000.FOLLOW_29); 
+            otherlv_1=(Token)match(input,17,FollowSets000.FOLLOW_30); 
 
                 	newLeafNode(otherlv_1, grammarAccess.getPropertyAccess().getColonKeyword_1());
                 
-            // InternalLayoutConfig.g:1429:1: ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
-            int alt21=4;
+            // InternalLayoutConfig.g:1441:1: ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
+            int alt25=4;
             switch ( input.LA(1) ) {
             case RULE_STRING:
                 {
-                alt21=1;
+                alt25=1;
                 }
                 break;
             case RULE_ID:
                 {
-                alt21=2;
+                alt25=2;
                 }
                 break;
             case RULE_SIGNED_INT:
             case RULE_FLOAT:
                 {
-                alt21=3;
+                alt25=3;
                 }
                 break;
             case 33:
             case 34:
                 {
-                alt21=4;
+                alt25=4;
                 }
                 break;
             default:
                 NoViableAltException nvae =
-                    new NoViableAltException("", 21, 0, input);
+                    new NoViableAltException("", 25, 0, input);
 
                 throw nvae;
             }
 
-            switch (alt21) {
+            switch (alt25) {
                 case 1 :
-                    // InternalLayoutConfig.g:1429:2: ( (lv_value_2_0= ruleStringValue ) )
+                    // InternalLayoutConfig.g:1441:2: ( (lv_value_2_0= ruleStringValue ) )
                     {
-                    // InternalLayoutConfig.g:1429:2: ( (lv_value_2_0= ruleStringValue ) )
-                    // InternalLayoutConfig.g:1430:1: (lv_value_2_0= ruleStringValue )
+                    // InternalLayoutConfig.g:1441:2: ( (lv_value_2_0= ruleStringValue ) )
+                    // InternalLayoutConfig.g:1442:1: (lv_value_2_0= ruleStringValue )
                     {
-                    // InternalLayoutConfig.g:1430:1: (lv_value_2_0= ruleStringValue )
-                    // InternalLayoutConfig.g:1431:3: lv_value_2_0= ruleStringValue
+                    // InternalLayoutConfig.g:1442:1: (lv_value_2_0= ruleStringValue )
+                    // InternalLayoutConfig.g:1443:3: lv_value_2_0= ruleStringValue
                     {
                      
                     	        newCompositeNode(grammarAccess.getPropertyAccess().getValueStringValueParserRuleCall_2_0_0()); 
@@ -3483,13 +3541,13 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalLayoutConfig.g:1448:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
+                    // InternalLayoutConfig.g:1460:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
                     {
-                    // InternalLayoutConfig.g:1448:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
-                    // InternalLayoutConfig.g:1449:1: (lv_value_3_0= ruleQualifiedIdValue )
+                    // InternalLayoutConfig.g:1460:6: ( (lv_value_3_0= ruleQualifiedIdValue ) )
+                    // InternalLayoutConfig.g:1461:1: (lv_value_3_0= ruleQualifiedIdValue )
                     {
-                    // InternalLayoutConfig.g:1449:1: (lv_value_3_0= ruleQualifiedIdValue )
-                    // InternalLayoutConfig.g:1450:3: lv_value_3_0= ruleQualifiedIdValue
+                    // InternalLayoutConfig.g:1461:1: (lv_value_3_0= ruleQualifiedIdValue )
+                    // InternalLayoutConfig.g:1462:3: lv_value_3_0= ruleQualifiedIdValue
                     {
                      
                     	        newCompositeNode(grammarAccess.getPropertyAccess().getValueQualifiedIdValueParserRuleCall_2_1_0()); 
@@ -3520,13 +3578,13 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalLayoutConfig.g:1467:6: ( (lv_value_4_0= ruleNumberValue ) )
+                    // InternalLayoutConfig.g:1479:6: ( (lv_value_4_0= ruleNumberValue ) )
                     {
-                    // InternalLayoutConfig.g:1467:6: ( (lv_value_4_0= ruleNumberValue ) )
-                    // InternalLayoutConfig.g:1468:1: (lv_value_4_0= ruleNumberValue )
+                    // InternalLayoutConfig.g:1479:6: ( (lv_value_4_0= ruleNumberValue ) )
+                    // InternalLayoutConfig.g:1480:1: (lv_value_4_0= ruleNumberValue )
                     {
-                    // InternalLayoutConfig.g:1468:1: (lv_value_4_0= ruleNumberValue )
-                    // InternalLayoutConfig.g:1469:3: lv_value_4_0= ruleNumberValue
+                    // InternalLayoutConfig.g:1480:1: (lv_value_4_0= ruleNumberValue )
+                    // InternalLayoutConfig.g:1481:3: lv_value_4_0= ruleNumberValue
                     {
                      
                     	        newCompositeNode(grammarAccess.getPropertyAccess().getValueNumberValueParserRuleCall_2_2_0()); 
@@ -3557,13 +3615,13 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalLayoutConfig.g:1486:6: ( (lv_value_5_0= ruleBooleanValue ) )
+                    // InternalLayoutConfig.g:1498:6: ( (lv_value_5_0= ruleBooleanValue ) )
                     {
-                    // InternalLayoutConfig.g:1486:6: ( (lv_value_5_0= ruleBooleanValue ) )
-                    // InternalLayoutConfig.g:1487:1: (lv_value_5_0= ruleBooleanValue )
+                    // InternalLayoutConfig.g:1498:6: ( (lv_value_5_0= ruleBooleanValue ) )
+                    // InternalLayoutConfig.g:1499:1: (lv_value_5_0= ruleBooleanValue )
                     {
-                    // InternalLayoutConfig.g:1487:1: (lv_value_5_0= ruleBooleanValue )
-                    // InternalLayoutConfig.g:1488:3: lv_value_5_0= ruleBooleanValue
+                    // InternalLayoutConfig.g:1499:1: (lv_value_5_0= ruleBooleanValue )
+                    // InternalLayoutConfig.g:1500:3: lv_value_5_0= ruleBooleanValue
                     {
                      
                     	        newCompositeNode(grammarAccess.getPropertyAccess().getValueBooleanValueParserRuleCall_2_3_0()); 
@@ -3617,7 +3675,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePropertyKey"
-    // InternalLayoutConfig.g:1512:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
+    // InternalLayoutConfig.g:1524:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
     public final String entryRulePropertyKey() throws RecognitionException {
         String current = null;
 
@@ -3628,8 +3686,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
         		HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
         	
         try {
-            // InternalLayoutConfig.g:1516:2: (iv_rulePropertyKey= rulePropertyKey EOF )
-            // InternalLayoutConfig.g:1517:2: iv_rulePropertyKey= rulePropertyKey EOF
+            // InternalLayoutConfig.g:1528:2: (iv_rulePropertyKey= rulePropertyKey EOF )
+            // InternalLayoutConfig.g:1529:2: iv_rulePropertyKey= rulePropertyKey EOF
             {
              newCompositeNode(grammarAccess.getPropertyKeyRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -3659,7 +3717,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePropertyKey"
-    // InternalLayoutConfig.g:1527:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    // InternalLayoutConfig.g:1539:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
     public final AntlrDatatypeRuleToken rulePropertyKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -3671,40 +3729,40 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
         		HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
             
         try {
-            // InternalLayoutConfig.g:1531:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // InternalLayoutConfig.g:1532:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalLayoutConfig.g:1543:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalLayoutConfig.g:1544:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
             {
-            // InternalLayoutConfig.g:1532:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // InternalLayoutConfig.g:1532:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            // InternalLayoutConfig.g:1544:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalLayoutConfig.g:1544:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
             {
-            this_ID_0=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_28); 
+            this_ID_0=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_29); 
 
             		current.merge(this_ID_0);
                 
              
                 newLeafNode(this_ID_0, grammarAccess.getPropertyKeyAccess().getIDTerminalRuleCall_0()); 
                 
-            // InternalLayoutConfig.g:1539:1: (kw= '.' this_ID_2= RULE_ID )*
-            loop22:
+            // InternalLayoutConfig.g:1551:1: (kw= '.' this_ID_2= RULE_ID )*
+            loop26:
             do {
-                int alt22=2;
-                int LA22_0 = input.LA(1);
+                int alt26=2;
+                int LA26_0 = input.LA(1);
 
-                if ( (LA22_0==32) ) {
-                    alt22=1;
+                if ( (LA26_0==32) ) {
+                    alt26=1;
                 }
 
 
-                switch (alt22) {
+                switch (alt26) {
             	case 1 :
-            	    // InternalLayoutConfig.g:1540:2: kw= '.' this_ID_2= RULE_ID
+            	    // InternalLayoutConfig.g:1552:2: kw= '.' this_ID_2= RULE_ID
             	    {
             	    kw=(Token)match(input,32,FollowSets000.FOLLOW_6); 
 
             	            current.merge(kw);
             	            newLeafNode(kw, grammarAccess.getPropertyKeyAccess().getFullStopKeyword_1_0()); 
             	        
-            	    this_ID_2=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_28); 
+            	    this_ID_2=(Token)match(input,RULE_ID,FollowSets000.FOLLOW_29); 
 
             	    		current.merge(this_ID_2);
             	        
@@ -3716,7 +3774,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
             	    break;
 
             	default :
-            	    break loop22;
+            	    break loop26;
                 }
             } while (true);
 
@@ -3744,7 +3802,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStringValue"
-    // InternalLayoutConfig.g:1563:1: entryRuleStringValue returns [String current=null] : iv_ruleStringValue= ruleStringValue EOF ;
+    // InternalLayoutConfig.g:1575:1: entryRuleStringValue returns [String current=null] : iv_ruleStringValue= ruleStringValue EOF ;
     public final String entryRuleStringValue() throws RecognitionException {
         String current = null;
 
@@ -3752,8 +3810,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLayoutConfig.g:1564:2: (iv_ruleStringValue= ruleStringValue EOF )
-            // InternalLayoutConfig.g:1565:2: iv_ruleStringValue= ruleStringValue EOF
+            // InternalLayoutConfig.g:1576:2: (iv_ruleStringValue= ruleStringValue EOF )
+            // InternalLayoutConfig.g:1577:2: iv_ruleStringValue= ruleStringValue EOF
             {
              newCompositeNode(grammarAccess.getStringValueRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -3780,7 +3838,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStringValue"
-    // InternalLayoutConfig.g:1572:1: ruleStringValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_STRING_0= RULE_STRING ;
+    // InternalLayoutConfig.g:1584:1: ruleStringValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_STRING_0= RULE_STRING ;
     public final AntlrDatatypeRuleToken ruleStringValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -3789,8 +3847,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalLayoutConfig.g:1575:28: (this_STRING_0= RULE_STRING )
-            // InternalLayoutConfig.g:1576:5: this_STRING_0= RULE_STRING
+            // InternalLayoutConfig.g:1587:28: (this_STRING_0= RULE_STRING )
+            // InternalLayoutConfig.g:1588:5: this_STRING_0= RULE_STRING
             {
             this_STRING_0=(Token)match(input,RULE_STRING,FollowSets000.FOLLOW_2); 
 
@@ -3817,7 +3875,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleQualifiedIdValue"
-    // InternalLayoutConfig.g:1591:1: entryRuleQualifiedIdValue returns [String current=null] : iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF ;
+    // InternalLayoutConfig.g:1603:1: entryRuleQualifiedIdValue returns [String current=null] : iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF ;
     public final String entryRuleQualifiedIdValue() throws RecognitionException {
         String current = null;
 
@@ -3825,8 +3883,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLayoutConfig.g:1592:2: (iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF )
-            // InternalLayoutConfig.g:1593:2: iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF
+            // InternalLayoutConfig.g:1604:2: (iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF )
+            // InternalLayoutConfig.g:1605:2: iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF
             {
              newCompositeNode(grammarAccess.getQualifiedIdValueRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -3853,7 +3911,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleQualifiedIdValue"
-    // InternalLayoutConfig.g:1600:1: ruleQualifiedIdValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_QualifiedId_0= ruleQualifiedId ;
+    // InternalLayoutConfig.g:1612:1: ruleQualifiedIdValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_QualifiedId_0= ruleQualifiedId ;
     public final AntlrDatatypeRuleToken ruleQualifiedIdValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -3863,8 +3921,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalLayoutConfig.g:1603:28: (this_QualifiedId_0= ruleQualifiedId )
-            // InternalLayoutConfig.g:1605:5: this_QualifiedId_0= ruleQualifiedId
+            // InternalLayoutConfig.g:1615:28: (this_QualifiedId_0= ruleQualifiedId )
+            // InternalLayoutConfig.g:1617:5: this_QualifiedId_0= ruleQualifiedId
             {
              
                     newCompositeNode(grammarAccess.getQualifiedIdValueAccess().getQualifiedIdParserRuleCall()); 
@@ -3898,7 +3956,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleNumberValue"
-    // InternalLayoutConfig.g:1623:1: entryRuleNumberValue returns [String current=null] : iv_ruleNumberValue= ruleNumberValue EOF ;
+    // InternalLayoutConfig.g:1635:1: entryRuleNumberValue returns [String current=null] : iv_ruleNumberValue= ruleNumberValue EOF ;
     public final String entryRuleNumberValue() throws RecognitionException {
         String current = null;
 
@@ -3906,8 +3964,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLayoutConfig.g:1624:2: (iv_ruleNumberValue= ruleNumberValue EOF )
-            // InternalLayoutConfig.g:1625:2: iv_ruleNumberValue= ruleNumberValue EOF
+            // InternalLayoutConfig.g:1636:2: (iv_ruleNumberValue= ruleNumberValue EOF )
+            // InternalLayoutConfig.g:1637:2: iv_ruleNumberValue= ruleNumberValue EOF
             {
              newCompositeNode(grammarAccess.getNumberValueRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -3934,7 +3992,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleNumberValue"
-    // InternalLayoutConfig.g:1632:1: ruleNumberValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
+    // InternalLayoutConfig.g:1644:1: ruleNumberValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
     public final AntlrDatatypeRuleToken ruleNumberValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -3944,28 +4002,28 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalLayoutConfig.g:1635:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
-            // InternalLayoutConfig.g:1636:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            // InternalLayoutConfig.g:1647:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
+            // InternalLayoutConfig.g:1648:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
             {
-            // InternalLayoutConfig.g:1636:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
-            int alt23=2;
-            int LA23_0 = input.LA(1);
+            // InternalLayoutConfig.g:1648:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            int alt27=2;
+            int LA27_0 = input.LA(1);
 
-            if ( (LA23_0==RULE_SIGNED_INT) ) {
-                alt23=1;
+            if ( (LA27_0==RULE_SIGNED_INT) ) {
+                alt27=1;
             }
-            else if ( (LA23_0==RULE_FLOAT) ) {
-                alt23=2;
+            else if ( (LA27_0==RULE_FLOAT) ) {
+                alt27=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 23, 0, input);
+                    new NoViableAltException("", 27, 0, input);
 
                 throw nvae;
             }
-            switch (alt23) {
+            switch (alt27) {
                 case 1 :
-                    // InternalLayoutConfig.g:1636:6: this_SIGNED_INT_0= RULE_SIGNED_INT
+                    // InternalLayoutConfig.g:1648:6: this_SIGNED_INT_0= RULE_SIGNED_INT
                     {
                     this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FollowSets000.FOLLOW_2); 
 
@@ -3978,7 +4036,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalLayoutConfig.g:1644:10: this_FLOAT_1= RULE_FLOAT
+                    // InternalLayoutConfig.g:1656:10: this_FLOAT_1= RULE_FLOAT
                     {
                     this_FLOAT_1=(Token)match(input,RULE_FLOAT,FollowSets000.FOLLOW_2); 
 
@@ -4011,7 +4069,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleBooleanValue"
-    // InternalLayoutConfig.g:1659:1: entryRuleBooleanValue returns [String current=null] : iv_ruleBooleanValue= ruleBooleanValue EOF ;
+    // InternalLayoutConfig.g:1671:1: entryRuleBooleanValue returns [String current=null] : iv_ruleBooleanValue= ruleBooleanValue EOF ;
     public final String entryRuleBooleanValue() throws RecognitionException {
         String current = null;
 
@@ -4019,8 +4077,8 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLayoutConfig.g:1660:2: (iv_ruleBooleanValue= ruleBooleanValue EOF )
-            // InternalLayoutConfig.g:1661:2: iv_ruleBooleanValue= ruleBooleanValue EOF
+            // InternalLayoutConfig.g:1672:2: (iv_ruleBooleanValue= ruleBooleanValue EOF )
+            // InternalLayoutConfig.g:1673:2: iv_ruleBooleanValue= ruleBooleanValue EOF
             {
              newCompositeNode(grammarAccess.getBooleanValueRule()); 
             pushFollow(FollowSets000.FOLLOW_1);
@@ -4047,7 +4105,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleBooleanValue"
-    // InternalLayoutConfig.g:1668:1: ruleBooleanValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
+    // InternalLayoutConfig.g:1680:1: ruleBooleanValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
     public final AntlrDatatypeRuleToken ruleBooleanValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -4056,28 +4114,28 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalLayoutConfig.g:1671:28: ( (kw= 'true' | kw= 'false' ) )
-            // InternalLayoutConfig.g:1672:1: (kw= 'true' | kw= 'false' )
+            // InternalLayoutConfig.g:1683:28: ( (kw= 'true' | kw= 'false' ) )
+            // InternalLayoutConfig.g:1684:1: (kw= 'true' | kw= 'false' )
             {
-            // InternalLayoutConfig.g:1672:1: (kw= 'true' | kw= 'false' )
-            int alt24=2;
-            int LA24_0 = input.LA(1);
+            // InternalLayoutConfig.g:1684:1: (kw= 'true' | kw= 'false' )
+            int alt28=2;
+            int LA28_0 = input.LA(1);
 
-            if ( (LA24_0==33) ) {
-                alt24=1;
+            if ( (LA28_0==33) ) {
+                alt28=1;
             }
-            else if ( (LA24_0==34) ) {
-                alt24=2;
+            else if ( (LA28_0==34) ) {
+                alt28=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 24, 0, input);
+                    new NoViableAltException("", 28, 0, input);
 
                 throw nvae;
             }
-            switch (alt24) {
+            switch (alt28) {
                 case 1 :
-                    // InternalLayoutConfig.g:1673:2: kw= 'true'
+                    // InternalLayoutConfig.g:1685:2: kw= 'true'
                     {
                     kw=(Token)match(input,33,FollowSets000.FOLLOW_2); 
 
@@ -4088,7 +4146,7 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalLayoutConfig.g:1680:2: kw= 'false'
+                    // InternalLayoutConfig.g:1692:2: kw= 'false'
                     {
                     kw=(Token)match(input,34,FollowSets000.FOLLOW_2); 
 
@@ -4143,16 +4201,17 @@ public class InternalLayoutConfigParser extends AbstractInternalAntlrParser {
         public static final BitSet FOLLOW_17 = new BitSet(new long[]{0x0000000000D00000L});
         public static final BitSet FOLLOW_18 = new BitSet(new long[]{0x00000000000000C0L});
         public static final BitSet FOLLOW_19 = new BitSet(new long[]{0x0000000000200000L});
-        public static final BitSet FOLLOW_20 = new BitSet(new long[]{0x000000005F800000L});
+        public static final BitSet FOLLOW_20 = new BitSet(new long[]{0x000000005F800010L});
         public static final BitSet FOLLOW_21 = new BitSet(new long[]{0x0000000000800000L});
-        public static final BitSet FOLLOW_22 = new BitSet(new long[]{0x000000001F000002L});
-        public static final BitSet FOLLOW_23 = new BitSet(new long[]{0x000000003F000002L});
+        public static final BitSet FOLLOW_22 = new BitSet(new long[]{0x000000001F000012L});
+        public static final BitSet FOLLOW_23 = new BitSet(new long[]{0x0000000020000012L});
         public static final BitSet FOLLOW_24 = new BitSet(new long[]{0x0000000080080000L});
         public static final BitSet FOLLOW_25 = new BitSet(new long[]{0x0000000000280000L});
-        public static final BitSet FOLLOW_26 = new BitSet(new long[]{0x000000001F800000L});
-        public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x000000003F800000L});
-        public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x0000000100000002L});
-        public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x00000006000000F0L});
+        public static final BitSet FOLLOW_26 = new BitSet(new long[]{0x000000001F800010L});
+        public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x0000000020800010L});
+        public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x0000000000800010L});
+        public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x0000000100000002L});
+        public static final BitSet FOLLOW_30 = new BitSet(new long[]{0x00000006000000F0L});
     }
 
 

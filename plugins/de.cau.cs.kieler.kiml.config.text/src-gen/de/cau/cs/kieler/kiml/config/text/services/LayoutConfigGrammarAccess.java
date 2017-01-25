@@ -289,11 +289,11 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//ElkSingleEdgeSection ElkEdgeSection:
-	//	{ElkEdgeSection} (('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+	//	{ElkEdgeSection} ((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('start' ':' startX=Number ',' startY=Number)?
-	//	& ('end' ':' endX=Number ',' endY=Number)?
-	//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?)
+	//	& ('end' ':' endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+	//	properties+=Property*)
 	public ElkGraphGrammarAccess.ElkSingleEdgeSectionElements getElkSingleEdgeSectionAccess() {
 		return gaElkGraph.getElkSingleEdgeSectionAccess();
 	}
@@ -304,11 +304,11 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 
 	/// * SuppressWarnings[BidirectionalReference] * / ElkEdgeSection:
 	//	'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
-	//	(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+	//	((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('start' ':' startX=Number ',' startY=Number)?
-	//	& ('end' ':' endX=Number ',' endY=Number)?
-	//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?) ']';
+	//	& ('end' ':' endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+	//	properties+=Property*) ']';
 	public ElkGraphGrammarAccess.ElkEdgeSectionElements getElkEdgeSectionAccess() {
 		return gaElkGraph.getElkEdgeSectionAccess();
 	}

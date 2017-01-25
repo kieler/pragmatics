@@ -1303,7 +1303,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 	//RootNode ElkNode:
 	//	{ElkNode} ('graph' identifier=ID)?
-	//	properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+	//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 	public ElkGraphGrammarAccess.RootNodeElements getRootNodeAccess() {
 		return gaElkGraph.getRootNodeAccess();
 	}
@@ -1315,7 +1315,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	//ElkNode:
 	//	'node' identifier=ID ('{'
 	//	ShapeLayout?
-	//	properties+=Property* (children+=ElkNode | containedEdges+=ElkEdge | ports+=ElkPort | labels+=ElkLabel)*
+	//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 	//	'}')?;
 	public ElkGraphGrammarAccess.ElkNodeElements getElkNodeAccess() {
 		return gaElkGraph.getElkNodeAccess();
@@ -1391,11 +1391,11 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//ElkSingleEdgeSection ElkEdgeSection:
-	//	{ElkEdgeSection} (('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+	//	{ElkEdgeSection} ((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('start' ':' startX=Number ',' startY=Number)?
-	//	& ('end' ':' endX=Number ',' endY=Number)?
-	//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?)
+	//	& ('end' ':' endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+	//	properties+=Property*)
 	public ElkGraphGrammarAccess.ElkSingleEdgeSectionElements getElkSingleEdgeSectionAccess() {
 		return gaElkGraph.getElkSingleEdgeSectionAccess();
 	}
@@ -1406,11 +1406,11 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 	/// * SuppressWarnings[BidirectionalReference] * / ElkEdgeSection:
 	//	'section' identifier=ID ('->' outgoingSections+=[ElkEdgeSection] (',' outgoingSections+=[ElkEdgeSection])*)? '['
-	//	(('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
+	//	((('incoming' ':' incomingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('outgoing' ':' outgoingShape=[ElkConnectableShape|QualifiedId])?
 	//	& ('start' ':' startX=Number ',' startY=Number)?
-	//	& ('end' ':' endX=Number ',' endY=Number)?
-	//	& ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?) ']';
+	//	& ('end' ':' endX=Number ',' endY=Number)?) ('bends' ':' bendPoints+=ElkBendPoint ('|' bendPoints+=ElkBendPoint)*)?
+	//	properties+=Property*) ']';
 	public ElkGraphGrammarAccess.ElkEdgeSectionElements getElkEdgeSectionAccess() {
 		return gaElkGraph.getElkEdgeSectionAccess();
 	}
