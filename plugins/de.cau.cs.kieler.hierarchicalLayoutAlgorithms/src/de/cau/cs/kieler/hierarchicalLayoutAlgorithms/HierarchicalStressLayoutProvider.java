@@ -26,7 +26,6 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 		children.clear();
 		children.addAll(layoutGraph.getChildren());
 		
-		
 		for (KNode node : children) {
 			for (KEdge edge : node.getOutgoingEdges()) {
 				if (children.contains(edge.getTarget())) {

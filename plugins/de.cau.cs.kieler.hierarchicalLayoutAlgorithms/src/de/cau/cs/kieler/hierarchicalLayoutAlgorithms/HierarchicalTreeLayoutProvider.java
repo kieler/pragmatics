@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.alg.mrtree.TreeLayoutProvider;
+import org.eclipse.elk.alg.mrtree.properties.MrTreeOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -56,7 +58,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		TreeLayoutProvider tree = new TreeLayoutProvider();
 		BasicProgressMonitor firstTreeRun = new BasicProgressMonitor();
 		KShapeLayout diagramLayout = firstRun.getData(KShapeLayout.class);
-		// diagramLayout.setProperty(org.eclipse.elk.alg.mrtree.properties.MrTreeOptions.DIRECTION, "Top");
+		diagramLayout.setProperty(MrTreeOptions.DIRECTION, Direction.UP);
 		tree.layout(firstRun, firstTreeRun);
 
 		// TODO improve this
@@ -64,11 +66,10 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			if (firstRunMap.containsKey(node)) {
 				KShapeLayout newLayout = firstRunMap.get(node).getData(KShapeLayout.class);
 				KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-//				System.out.println("original " + nodeLayout.getYpos());
-//				System.out.println("new " + newLayout.getYpos());
 				nodeLayout.setXpos(newLayout.getXpos());
 				nodeLayout.setYpos(newLayout.getYpos());
 			} else {
+				// Debug
 				KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
 				nodeLayout.setXpos(1500);
 				nodeLayout.setYpos(1500);
@@ -78,7 +79,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// TODO configure second Tree run
 		KNode secondRun = createTree(children, secondRunMap);
 		BasicProgressMonitor secondTreeRun = new BasicProgressMonitor();
-//		diagramLayout.setProperty(org.eclipse.elk.alg.mrtree.properties.MrTreeOptions.DIRECTION, "Bottom");
+		diagramLayout.setProperty(MrTreeOptions.DIRECTION, Direction.DOWN);
 //		tree.layout(secondRun, secondTreeRun);
 
 		// Merge Layout
