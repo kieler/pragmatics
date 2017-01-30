@@ -22,6 +22,7 @@
     <!--<module>de.cau.cs.kieler.core.kgraph.text</module>-->
     <!--<module>de.cau.cs.kieler.core.kgraph.text.ui</module>-->
     <module>de.cau.cs.kieler.core.kivi</module>
+    <module>de.cau.cs.kieler.formats.kgraph</module>
     <module>de.cau.cs.kieler.graphs.klighd</module>
     <module>de.cau.cs.kieler.kgraph.text</module>
     <module>de.cau.cs.kieler.kgraph.text.ide</module>
