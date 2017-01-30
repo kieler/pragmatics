@@ -123,12 +123,12 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
             getContainer().run(true, true, new IRunnableWithProgress() {
                 public void run(final IProgressMonitor monitor)
                     throws InvocationTargetException, InterruptedException {
-                    List<IPath> files = workspaceSourcesPage.getSourceFiles(null);
+                    List<IFile> files = workspaceSourcesPage.getSourceFiles(null);
                     monitor.beginTask("Export graphs", files.size());
                     IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
                     
                     // for all selected files
-                    for (IPath sourceFile : files) {
+                    for (IFile sourceFile : files) {
 
                         final GraphFileHandler graphFileHandler = new GraphFileHandler(sourceFile,
                                 targetFormat, targetDirectory);

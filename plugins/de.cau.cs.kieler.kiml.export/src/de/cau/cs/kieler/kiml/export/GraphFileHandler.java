@@ -14,18 +14,15 @@
 package de.cau.cs.kieler.kiml.export;
 
 import java.io.IOException;
-import java.util.Collections;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.elk.core.util.WrappedException;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
@@ -57,7 +54,7 @@ public class GraphFileHandler {
     }
     
     /** The source file to export.  */
-    private IPath sourceFile;
+    private IFile sourceFile;
     /** The target format to export file into. */
     private GraphFormatData targetFormat;
     /** The target directory to export file into. */
@@ -72,7 +69,7 @@ public class GraphFileHandler {
      * @param targetDirectory
      *            the target directory
      */
-    public GraphFileHandler(final IPath sourceFile, final GraphFormatData targetFormat,
+    public GraphFileHandler(final IFile sourceFile, final GraphFormatData targetFormat,
             final IPath targetDirectory) {
         super();
         this.sourceFile = sourceFile;
@@ -98,7 +95,7 @@ public class GraphFileHandler {
      * @return the Workspace targetIPath
      */
     public IPath getWorkspaceTarget() {
-        String sourceFileName = sourceFile.toFile().getName();
+        String sourceFileName = sourceFile.getFullPath().toFile().getName();
         String extension = targetFormat.getExtensions()[0];
         // get the last dot position
         int dotPos = sourceFileName.lastIndexOf(".");
@@ -115,25 +112,15 @@ public class GraphFileHandler {
      * @return the ELK Graph
      */
     private ElkNode retrieveGraph() {
-        // load the notation diagram element
-        URI uri = URI.createPlatformResourceURI(sourceFile.toString(), true);
-        ResourceSet resourceSet = new ResourceSetImpl();
-        final Resource resource = resourceSet.createResource(uri);
         try {
-            resource.load(Collections.emptyMap());
-        } catch (IOException e) {
+            ElkNode[] graphs = GraphFormatsService.getInstance().loadElkGraph(sourceFile);
+            if (graphs.length == 0) {
+                throw new IllegalArgumentException(
+                        "The selected file does not contain a supported format.");
+            }
+            return graphs[0];
+        } catch (IOException | CoreException e) {
             throw new WrappedException(e);
-        }
-        if (resource.getContents().isEmpty()) {
-            throw new IllegalArgumentException("The selected file is empty.");
-        }
-
-        EObject content = resource.getContents().get(0);
-        if (content instanceof ElkNode) {
-            return (ElkNode) content;
-        } else {
-            throw new IllegalArgumentException(
-                    "The selected file does not contain a supported format.");
         }
     }
 
