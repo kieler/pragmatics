@@ -23,7 +23,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 /**
  * Transformer for the KGraph model and XMI serialization.
@@ -34,8 +33,8 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
  */
 public class ElkGraphHandler extends AbstractEmfHandler<ElkNode> {
     
-    /** the KGraph format identifier. */
-    public static final String FORMAT = "de.cau.cs.kieler.kgraph";
+    /** the ELK graph format identifier. */
+    public static final String FORMAT = "org.eclipse.elk.graph";
 
     /**
      * {@inheritDoc}

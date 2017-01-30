@@ -19,7 +19,10 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
 class KGraphHandler extends AbstractEmfHandler<KNode>  {
 
-    override protected createResourceSet() {
+    override protected createResourceSet() { 
+        // TODO could be possible that the extensions are not registered ...
+        // in particular kgt files require the specialized KGraphResource
+        // See KGraphTextHandler in *kgraph.text.ui if you encounter errors here 
         return new ResourceSetImpl
     }
     

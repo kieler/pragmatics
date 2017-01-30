@@ -5,10 +5,10 @@
          point="de.cau.cs.kieler.kiml.formats.graphFormats">
       <handler
             class="de.cau.cs.kieler.formats.kgraph.KGraphHandler"
-            extensions="kgx"
-            id="de.cau.cs.kieler.formats.kgraph"
+            description="Internally used graph format of the KIELER project. See http://rtsys.informatik.uni-kiel.de/confluence/x/U4EN"
+            extensions="kgx,kgraph"
+            id="de.cau.cs.kieler.kgraph"
             name="KGraph">
       </handler>
    </extension>
-
 </plugin>
