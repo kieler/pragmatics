@@ -102,8 +102,8 @@ public class HierarchicalEdgeRouting {
 
 						if (idParent != null && id.equals(idParent)) {
 							childFound = child;
-							float xPos = graphShape.getXpos() + shapeChild.getXpos();
-							float yPos = graphShape.getYpos() + shapeChild.getYpos();
+							float xPos = graphShape.getXpos() + shapeChild.getXpos() + shapeChild.getWidth() / 2;
+							float yPos = graphShape.getYpos() + shapeChild.getYpos() + shapeChild.getHeight() / 2;
 							KPoint point = KLayoutDataFactory.eINSTANCE.createKPoint();
 							point.setX(xPos);
 							point.setY(yPos);

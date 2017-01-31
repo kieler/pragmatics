@@ -1,6 +1,7 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
@@ -10,14 +11,14 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KNode;
 
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalEdgeRouting;
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvider;
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalUtil;
 
 public class RadialLayoutProvider extends AbstractLayoutProvider {
 	/** default value for spacing between nodes. */
 	private static final float DEFAULT_SPACING = 15.0f;
-	private List<List<KNode>> layers;
-	private ArrayList<Float> layerSize;
-	private double size;
+	// private ArrayList<Float> layerSize;
+	private double radius = 1000;
 
 	@Override
 	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
@@ -33,11 +34,10 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		if (borderSpacing < 0) {
 			borderSpacing = DEFAULT_SPACING;
 		}
-		KNode root = findRoot(layoutGraph);
+		KNode root = HierarchicalUtil.findRoot(layoutGraph);
 
 		List<KNode> rootLayer = new ArrayList<>();
 		rootLayer.add(root);
-		layers = orderNodesInLayer(rootLayer);
 
 		// pre-calculate the size of each layer
 		// layerSize = new ArrayList<>();
@@ -51,17 +51,17 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		// layerSize.set(0, layerSize.get(0) / 2);
 
 		nodeCounter = 0;
-		size = averageNodeSize(layoutGraph) / nodeCounter;
+		// radius = averageNodeSize(layoutGraph) / nodeCounter;
 
 		calcPos(root, 0, 0, 2 * Math.PI);
 
 		postProcess(layoutGraph);
-		HierarchicalEdgeRouting.routeEdgesCenterToCenter(root);
+		HierarchicalEdgeRouting.drawExplosionLines(root);
 		progressMonitor.done();
 	}
 
 	private void calcPos(KNode node, double currentSize, double minAlpha, double maxAlpha) {
-		double alphaPoint = (minAlpha + maxAlpha) / 2;
+		double alphaPoint = (minAlpha + maxAlpha) / 2 + 45;
 
 		KShapeLayout shape = node.getData(KShapeLayout.class);
 		// double size = layerSize.get(layer);
@@ -72,9 +72,9 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		centerNodesOnRadi(shape, xPos, yPos);
 		// shiftClosestEdgeToRadi(shape, xPos, yPos);
 
-		double numberOfLeafs = numberOfLeafs(node);
+		double numberOfLeafs = HierarchicalUtil.getNumberOfLeafs(node);
 		// double sizeNextLayer = layerSize.get(layer + 1);
-		double tau = 2 * Math.acos(currentSize / currentSize + size);
+		double tau = 2 * Math.acos(currentSize / currentSize + radius);
 		double s;
 		double alpha;
 		if (tau < maxAlpha - minAlpha) {
@@ -85,28 +85,16 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 			s = (maxAlpha - minAlpha) / numberOfLeafs;
 			alpha = minAlpha;
 		}
-
-		for (KNode child : HierarchicalUtil.getSuccessor(node)) {
-			int numberOfChildLeafs = numberOfLeafs(child);
-			calcPos(child, currentSize + size, alpha, alpha + s * numberOfChildLeafs);
+		List<KNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
+		for (KNode child : successors) {
+			int numberOfChildLeafs = HierarchicalUtil.getNumberOfLeafs(child);
+			calcPos(child, currentSize + radius, alpha, alpha + s * numberOfChildLeafs);
 			alpha += s * numberOfChildLeafs;
 		}
 
 	}
 
-	private List<List<KNode>> orderNodesInLayer(List<KNode> nodes) {
-		List<List<KNode>> layers = new ArrayList<List<KNode>>();
-		layers.add(nodes);
-
-		List<KNode> nextLayer = new ArrayList<>();
-		for (KNode node : nodes) {
-			nextLayer.addAll(HierarchicalUtil.getSuccessor(node));
-		}
-		if (!nextLayer.isEmpty()) {
-			layers.addAll(orderNodesInLayer(nextLayer));
-		}
-		return layers;
-	}
+	
 
 	private void centerNodesOnRadi(KShapeLayout shape, float xPos, float yPos) {
 		if (xPos == 0 && yPos == 0) {
@@ -175,27 +163,6 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		return (biggestChildSize / node.size());
 	}
 
-	private KNode findRoot(KNode graph) {
-		for (KNode child : graph.getChildren()) {
-			if (child.getIncomingEdges().isEmpty()) {
-				return child;
-			}
-		}
-		return null;
-	}
-
-	private int numberOfLeafs(KNode node) {
-		int leafs = 0;
-		if (HierarchicalUtil.getSuccessor(node).isEmpty()) {
-			return 1;
-		} else {
-			for (KNode child : HierarchicalUtil.getSuccessor(node)) {
-				leafs += numberOfLeafs(child);
-			}
-		}
-		return leafs;
-	}
-
 	private int nodeCounter = 0;
 
 	private double averageNodeSize(KNode graph) {
@@ -215,11 +182,11 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 	private void postProcess(KNode layoutGraph) {
 		// calculate min size
 		KShapeLayout graphData = layoutGraph.getData(KShapeLayout.class);
-		float maxHeight = 0;
+		float minHeight = 0;
 		float minXPos = 0;
 		for (KNode node : layoutGraph.getChildren()) {
 			KShapeLayout layoutData = node.getData(KShapeLayout.class);
-			maxHeight = Math.min(maxHeight, layoutData.getYpos());
+			minHeight = Math.min(minHeight, layoutData.getYpos());
 			minXPos = Math.min(minXPos, layoutData.getXpos());
 		}
 
@@ -227,7 +194,7 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		for (KNode node : layoutGraph.getChildren()) {
 			KShapeLayout layoutData = node.getData(KShapeLayout.class);
 			layoutData.setXpos(layoutData.getXpos() - minXPos);
-			layoutData.setYpos(layoutData.getYpos() - maxHeight);
+			layoutData.setYpos(layoutData.getYpos() - minHeight);
 		}
 
 		// calculate graph size
