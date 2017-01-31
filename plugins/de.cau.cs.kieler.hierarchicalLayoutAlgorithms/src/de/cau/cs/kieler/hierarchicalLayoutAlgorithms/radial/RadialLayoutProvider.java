@@ -1,7 +1,6 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
@@ -11,14 +10,13 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.KNode;
 
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalEdgeRouting;
-import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvider;
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalUtil;
 
 public class RadialLayoutProvider extends AbstractLayoutProvider {
 	/** default value for spacing between nodes. */
 	private static final float DEFAULT_SPACING = 15.0f;
 	// private ArrayList<Float> layerSize;
-	private double radius = 1000;
+	private double radius;
 
 	@Override
 	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
@@ -51,7 +49,7 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		// layerSize.set(0, layerSize.get(0) / 2);
 
 		nodeCounter = 0;
-		// radius = averageNodeSize(layoutGraph) / nodeCounter;
+		radius = findBiggestNodeInGraph(layoutGraph); //averageNodeSize(root) / nodeCounter;
 
 		calcPos(root, 0, 0, 2 * Math.PI);
 
@@ -86,6 +84,10 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 			alpha = minAlpha;
 		}
 		List<KNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
+		List<KNode> successors2 = HierarchicalUtil.getSuccessor(node);
+		if(successors.size() != successors2.size()){
+			System.out.println("Hello there, im a fucker");
+		}
 		for (KNode child : successors) {
 			int numberOfChildLeafs = HierarchicalUtil.getNumberOfLeafs(child);
 			calcPos(child, currentSize + radius, alpha, alpha + s * numberOfChildLeafs);
@@ -144,23 +146,26 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		}
 	}
 
-	private float findBiggestNode(List<KNode> node) {
+	private float findBiggestNodeInGraph(KNode graph) {
 		float biggestChildSize = 0;
 
-		for (KNode child : node) {
+		for (KNode child : graph.getChildren()) {
 			KShapeLayout shape = child.getData(KShapeLayout.class);
-			shape.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
 
 			float width = shape.getWidth();
 			float height = shape.getHeight();
-			biggestChildSize += (float) Math.sqrt(width * width + height * height);
+			float diameter= (float) Math.sqrt(width * width + height * height);
 
-			// if (biggestChildSize < diameter) {
-			// biggestChildSize = diameter;
-			// }
+			if (biggestChildSize < diameter) {
+				biggestChildSize = diameter;
+			}
 
+			float biggestChild = findBiggestNodeInGraph(child);
+			if(biggestChild > biggestChildSize){
+				biggestChildSize = biggestChild;
+			}
 		}
-		return (biggestChildSize / node.size());
+		return biggestChildSize;
 	}
 
 	private int nodeCounter = 0;

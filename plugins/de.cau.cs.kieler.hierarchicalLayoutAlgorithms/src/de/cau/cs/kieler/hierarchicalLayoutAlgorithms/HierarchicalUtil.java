@@ -12,6 +12,7 @@ public class HierarchicalUtil {
 
 	/**
 	 * Computes a List of nodes that are the neighbours with outgoing edges.
+	 * 
 	 * @param node
 	 * @return List of neighbours with outgoing edges.
 	 */
@@ -25,9 +26,10 @@ public class HierarchicalUtil {
 		}
 		return children;
 	}
-	
+
 	/**
 	 * Computes the root node of the graph.
+	 * 
 	 * @param graph
 	 * @return root node of graph.
 	 */
@@ -39,9 +41,10 @@ public class HierarchicalUtil {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Computes the number of Leafs that a node has.
+	 * 
 	 * @param node
 	 * @return number of leafs.
 	 */
@@ -56,9 +59,10 @@ public class HierarchicalUtil {
 		}
 		return leafs;
 	}
-	
-		/**
+
+	/**
 	 * Computes a List of Edges that are the Hierarchical edges of the Graph.
+	 * 
 	 * @param graph
 	 * @return List of Hierarchical Edges.
 	 */
@@ -73,28 +77,21 @@ public class HierarchicalUtil {
 		}
 		return edges;
 	}
-	
+
 	public static List<KNode> sortSuccesorsByPolarCoordinate(KNode node) {
 		List<KNode> successors = HierarchicalUtil.getSuccessor(node);
 
 		if (successors.size() > 1) {
 			List<KNode> children = new ArrayList<>();
-			children.addAll(node.getChildren());
-			List<KNode> sortedSuccessors = new ArrayList<>();
-
-			float medianX = 0;
-			float medianY = 0;
-			int nodeCounter = 0;
-			for (KNode successor : successors) {
-				if (!successor.getChildren().isEmpty()) {
-					KShapeLayout sucShape = successor.getData(KShapeLayout.class);
-					medianX += sucShape.getXpos() + sucShape.getWidth() / 2;
-					medianY += sucShape.getYpos() + sucShape.getHeight() / 2;
-					nodeCounter++;
-				}
+			List<KNode> rootChildren = node.getChildren();
+			boolean isBlueBox = rootChildren.size() == 1 && !rootChildren.get(0).getChildren().isEmpty();
+			// blue boxing
+			if (!isBlueBox) {
+				children.addAll(rootChildren);
+			} else {
+				children.addAll(rootChildren.get(0).getChildren());
 			}
-			medianX = medianX / nodeCounter; //TODO
-			medianY = medianY / nodeCounter;
+			List<KNode> sortedSuccessors = new ArrayList<>();
 
 			// center of the node, as center of the polar coordinates
 			KShapeLayout nodeShape = node.getData(KShapeLayout.class);
