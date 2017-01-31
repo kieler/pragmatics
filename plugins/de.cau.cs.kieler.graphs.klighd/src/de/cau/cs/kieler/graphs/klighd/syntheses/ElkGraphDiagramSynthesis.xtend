@@ -17,7 +17,11 @@ import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
+import org.eclipse.elk.graph.ElkEdge
+import org.eclipse.elk.graph.ElkGraphElement
+import org.eclipse.elk.graph.ElkLabel
 import org.eclipse.elk.graph.ElkNode
+import org.eclipse.elk.graph.ElkPort
 
 /**
  * Turns an ELK graph into a diagram KLighD knows how to display.
@@ -26,9 +30,11 @@ import org.eclipse.elk.graph.ElkNode
  */
 class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     
+    extension KGraphExporter exporter = new KGraphExporter
+    
     override transform(ElkNode elkGraph) {
-        // Transform everything
-        val KNode result = new KGraphExporter().transform(elkGraph)
+        // Transform everything (don't use 'elkGraph.transform' :))
+        val KNode result = exporter.transform(elkGraph)
 
         // Enable label management
         addLabelManager(result)
@@ -38,6 +44,18 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
 
         // Enrich the rendering
         enrichRenderings(result)
+
+        // Associate original objects with transformed objects
+        //  note that the 'transformX' methods are contributed by the 
+        //  KGraphExporter extension and internally hold a mapping
+        elkGraph.eAllContents.filter(ElkGraphElement).forEach[ e |
+            switch e {
+                ElkNode: e.transformNode?.associateWith(e)
+                ElkPort: e.transformPort?.associateWith(e)
+                ElkEdge: e.transformEdge?.associateWith(e)
+                ElkLabel: e.transformLabel?.associateWith(e)
+            }
+        ] 
 
         return result
     }

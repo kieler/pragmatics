@@ -20,7 +20,6 @@ import de.cau.cs.kieler.klighd.kgraph.KEdgeLayout
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement
 import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KLabel
-import de.cau.cs.kieler.klighd.kgraph.KLabeledGraphElement
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.KShapeLayout
@@ -81,7 +80,7 @@ class KGraphExporter implements IGraphTransformer<ElkNode, KNode> {
     ///////////////////////////////////////////////////////////////////////////////
     // TRANSFORMATION DETAILS
     
-    private def create node : createNode() transformNode(ElkNode elkNode) {
+    public def create node : createNode() transformNode(ElkNode elkNode) {
         // Structural information
         if (elkNode.parent != null) {
             // We're not transforming the graph itself, so we actually do have a parent
@@ -95,7 +94,7 @@ class KGraphExporter implements IGraphTransformer<ElkNode, KNode> {
         elkNode.copyShapeLayoutTo(node);
     }
     
-    private def create port : createPort() transformPort(ElkPort elkPort) {
+    public def create port : createPort() transformPort(ElkPort elkPort) {
         // Structural information
         port.node = elkPort.parent.transformNode();
         
@@ -106,28 +105,31 @@ class KGraphExporter implements IGraphTransformer<ElkNode, KNode> {
         elkPort.copyShapeLayoutTo(port);
     }
     
-    private def create label : createLabel(null) transformLabel(ElkLabel elkLabel) {
+    public def KLabel create label : createLabel() transformLabel(ElkLabel elkLabel) {
+        // label text
+        label.text = elkLabel.text
+
         // Structural information
-        if (elkLabel.parent instanceof ElkNode) {
-            label.parent = (elkLabel.parent as ElkNode).transformNode();
-        } else if (elkLabel.parent instanceof ElkPort) {
-            label.parent = (elkLabel.parent as ElkPort).transformPort();
-        } else if (elkLabel.parent instanceof ElkEdge) {
-            label.parent = (elkLabel.parent as ElkEdge).transformEdge();
-        } else {
-            // We may have created the label, but there is no way to attach it to the graph element
-            // it was attached to in the original ELK graph
-            return;
+        val parent = elkLabel.parent
+        label.parent = switch parent {
+            ElkNode: parent.transformNode
+            ElkPort: parent.transformPort
+            ElkEdge: parent.transformEdge
+            default: {
+                // We may have created the label, but there is no way to attach it to the graph element
+                // it was attached to in the original ELK graph
+                return
+            }
         }
         
         // Id
         elkLabel.transformId(label)
         
         // Structural information
-        elkLabel.copyShapeLayoutTo(label);
+        elkLabel.copyShapeLayoutTo(label)
     }
     
-    private def create edge : createEdge() transformEdge(ElkEdge elkEdge) {
+    public def create edge : createEdge() transformEdge(ElkEdge elkEdge) {
         // Ensure that the edge has exactly one source and one target
         if (elkEdge.sources.size() != 1 || elkEdge.targets.size() != 1) {
             throw new IllegalArgumentException("Graph contains an edge that does not have exactly "
@@ -195,9 +197,6 @@ class KGraphExporter implements IGraphTransformer<ElkNode, KNode> {
         target.copyProperties(source);
     }
     
-        /**
-     * A convenience method to create a KNode without relating it to a business object. 
-     */
     def KNode createNode() {
         return KGraphUtil::createInitializedNode()
     }
@@ -210,8 +209,8 @@ class KGraphExporter implements IGraphTransformer<ElkNode, KNode> {
         return KGraphUtil::createInitializedEdge
     }
 
-    def KLabel createLabel(KLabeledGraphElement e) {
-        return KGraphUtil::createInitializedLabel(e)
+    def KLabel createLabel() {
+        return KGraphUtil::createInitializedLabel(null)
     }
     
     
