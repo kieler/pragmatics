@@ -115,7 +115,7 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 //			System.out.println(mapPosition);
 			gridNodeMap.put(mapPosition, node);
 		}
-		System.out.println("Hallo");
+//		System.out.println("Hallo");
 
 		float newWidth = 20;
 		float newHeight = 20;
