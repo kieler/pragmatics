@@ -81,7 +81,14 @@ public class HierarchicalEdgeRouting {
 
 	public static void bendEdgesToExplosionLines(KNode root) {
 		List<KNode> copiedChildren = new ArrayList<>();
-		copiedChildren.addAll(root.getChildren());
+		List<KNode> children = root.getChildren();
+		boolean isBlueBox = children.size() == 1 && !children.get(0).getChildren().isEmpty();
+		//blue boxing 
+		if (!isBlueBox) {
+			copiedChildren.addAll(children);
+		} else {
+			copiedChildren.addAll(children.get(0).getChildren());
+		}
 
 		// take a look at all the successors of the node
 		for (KNode successor : HierarchicalUtil.getSuccessor(root)) {
@@ -93,7 +100,7 @@ public class HierarchicalEdgeRouting {
 			for (KEdge edge : successor.getIncomingEdges()) {
 				// only the edge coming from the original node shall be
 				// considered
-				if (edge.getSource() == root) {
+				if (edge.getSource() == root || root.getChildren().contains(edge.getSource())) {
 					KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
 					KNode childFound = null;
 					for (KNode child : copiedChildren) {
@@ -112,6 +119,7 @@ public class HierarchicalEdgeRouting {
 						}
 					}
 					copiedChildren.remove(childFound);
+
 				}
 			}
 
