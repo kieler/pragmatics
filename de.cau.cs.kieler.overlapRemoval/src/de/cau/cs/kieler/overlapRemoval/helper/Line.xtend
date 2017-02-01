@@ -1,6 +1,7 @@
 package de.cau.cs.kieler.overlapRemoval.helper
 
 import java.awt.Graphics
+import java.util.Objects
 import org.eclipse.xtend.lib.annotations.Accessors
 
 class Line {
@@ -37,5 +38,32 @@ class Line {
         q1=this.getP1.round();        
         gr.drawLine(q0.x, q0.y, q1.x, q1.y);
     }
+    
+    def boolean sameSide(Point a, Point b) {
+        return a.isRightOf(this) && b.isRightOf(this);
+    }
+    
+       override int hashCode()  
+   {  
+      return Objects.hash(this.p0, this.p1);  
+   }  
+   
+       override equals(Object obj)   
+    {  
+      if (obj == null)  
+      {  
+         return false;  
+      }  
+      if (getClass() != obj.getClass())  
+      {  
+         return false;  
+      }  
+      val Line other = obj as Line;  
+      
+      return    (Objects.equals(this.p0, other.p0)  
+             && Objects.equals(this.p1, other.p1))
+             || (Objects.equals(this.p0, other.p1)  
+             && Objects.equals(this.p1, other.p0)); 
+   } 
 
 }

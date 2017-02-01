@@ -11,8 +11,6 @@ import java.util.Random;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import de.cau.cs.kieler.overlapRemoval.helper.Edge;
-import de.cau.cs.kieler.overlapRemoval.helper.Graph;
 import de.cau.cs.kieler.overlapRemoval.helper.Line;
 import de.cau.cs.kieler.overlapRemoval.helper.Point;
  
@@ -35,7 +33,7 @@ public class QuickHull extends JPanel
 			// xx and yy are the random number limits called from another part
 			// of the code
 			set.add(test);
-		} while (set.size() < 15);
+		} while (set.size() < 17);
 
 //		for(Point point : set) {
 //			point.draw(g2d);
@@ -48,60 +46,50 @@ public class QuickHull extends JPanel
 			}
         });
 		
-//		int a = 0;
-//		for(Point point : set) {
-//			System.out.println(a + " tz: " + point);
-//			a++;
+//		DelaunayTriangulation dt = new DelaunayTriangulation();
+//		
+//		Graph del = dt.calculateTriangulation(set);
+//		for(Point point : del.getVertices()) {
+//		point.draw(g2d);
+//	}		
+////		List<Point> hull = this.quickHull(set);
+//		
+//		List<Line> edges = new ArrayList<Line>();
+//		
+//		for(Edge<Point> edge : del.getEdges()) {
+//			edges.add(new Line(edge.getSource(), edge.getTarget()));
 //		}
-		System.out.println(set.size());
-		DelaunayTriangulation dt = new DelaunayTriangulation();
-		
-		Graph<Point> del = dt.calculateTriangulation(set);
-		for(Point point : del.getVertices()) {
-		point.draw(g2d);
-	}		
-//		List<Point> hull = this.quickHull(set);
-		
-		List<Line> edges = new ArrayList<Line>();
-//		for (int i = 0; i < hull.size(); i++) {
-//			System.out.println(set.get(i).toString());
-//			
-//			if(i == hull.size()-1) {
-//				edges.add(new Line(hull.get(i), hull.get(0)));
-//			} else {
-//				edges.add(new Line(hull.get(i), hull.get(i+1)));
-//			}
+////		System.out.println(hull.size());
+//		for(Line line : edges) {
+//			line.draw(g2d);
 //		}
 		
-		for(Edge<Point> edge : del.getEdges()) {
-			edges.add(new Line(edge.getSource(), edge.getTarget()));
-		}
-//		System.out.println(hull.size());
-		for(Line line : edges) {
-			line.draw(g2d);
-		}
-		
-		
+//		final int levels = (int) Math.floor(Math.sqrt((double) set.size()));
+//		KGrid grid = new KGrid(levels, new Bounds(0,0,500,500));
+//		grid.createGrid(grid, levels);
+		DelaunayIterative di = new DelaunayIterative(set);
+		di.draw(g2d);
 	  }
 	
     public List<Point> quickHull(List<Point> points)
     {
         List<Point> convexHull = new ArrayList<Point>();
-
-        Point A = points.get(0);
-        Point B = points.get(points.size()-1);
+        List<Point> copyOfPoints = new ArrayList<Point>();
+        copyOfPoints.addAll(points);
+        Point A = copyOfPoints.get(0);
+        Point B = copyOfPoints.get(copyOfPoints.size()-1);
         convexHull.add(A);
         convexHull.add(B);
-        points.remove(A);
-        points.remove(B);
+        copyOfPoints.remove(A);
+        copyOfPoints.remove(B);
  
         List<Point> leftSet = new ArrayList<Point>();
         List<Point> rightSet = new ArrayList<Point>();
         
         final Line AB = new Line(A,B);
-        for (int i = 0; i < points.size(); i++)
+        for (int i = 0; i < copyOfPoints.size(); i++)
         {
-            Point p = points.get(i);
+            Point p = copyOfPoints.get(i);
             if (p.isRightOf(AB))
                 leftSet.add(p);
             else
@@ -194,7 +182,7 @@ public class QuickHull extends JPanel
 	    JFrame frame = new JFrame("Points");
 	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	    frame.add(qh);
-	    frame.setSize(500, 500);
+	    frame.setSize(600, 600);
 	    frame.setLocationRelativeTo(null);
 	    frame.setVisible(true);
     }

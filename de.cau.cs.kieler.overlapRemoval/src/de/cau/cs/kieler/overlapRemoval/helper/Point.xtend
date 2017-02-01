@@ -2,14 +2,17 @@ package de.cau.cs.kieler.overlapRemoval.helper
 
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import java.awt.Graphics
+import java.util.Objects
 import org.eclipse.xtend.lib.annotations.Accessors
+import java.awt.Color
 
 class Point implements Comparable<Point> {
     @Accessors int id;
     @Accessors float xPos;
     @Accessors float yPos;
     @Accessors KNode node;
-    @Accessors private static final float delta= (1e-10).floatValue;
+    @Accessors private static final float delta = (1e-10).floatValue;
+
     new(float xPos, float yPos) {
         this.XPos = xPos;
         this.YPos = yPos;
@@ -27,176 +30,200 @@ class Point implements Comparable<Point> {
     }
 
     def add(Point p) {
-        return new Point(this.XPos+p.XPos, this.YPos+p.YPos);
+        return new Point(this.XPos + p.XPos, this.YPos + p.YPos);
     }
+
     def distance(Point point) {
-        return Math::sqrt(Math::pow((this.XPos - point.XPos), 2) + Math::pow((this.YPos - point.YPos), 2));
+        return Math::sqrt(Math::pow((this.XPos - point.XPos), 2) + Math::pow((this.YPos - point.YPos), 2)).floatValue;
     }
 
-    def Point moved(float x0, float y0)
-    {
-        return new Point(this.XPos+x0, this.YPos+y0);
+    def Point moved(float x0, float y0) {
+        return new Point(this.XPos + x0, this.YPos + y0);
     }
 
-    def Point neg()
-    {
+    def Point neg() {
         return new Point(-this.XPos, -this.YPos);
     }
 
-    def Point sub(Point p)
-    {
+    def Point sub(Point p) {
         return add(p.neg());
     }
 
-    def Point mul(float k)
-    {
-        return new Point(k*this.XPos, k*this.YPos);
+    def Point mul(float k) {
+        return new Point(k * this.XPos, k * this.YPos);
     }
 
     // Verschieben eines Punktes
-    def void offset(float x0, float y0)
-    {
+    def void offset(float x0, float y0) {
         this.XPos = this.XPos + x0;
         this.YPos = this.YPos + y0;
     }
 
     // Skalarprodukt
-    def float dot(Point p)
-    {
-        return this.XPos*p.XPos+this.YPos*p.YPos;
+    def float dot(Point p) {
+        return this.XPos * p.XPos + this.YPos * p.YPos;
     }
 
     // Kreuzprodukt
-    def float cross(Point p)
-    {
-        return this.XPos*p.YPos-this.YPos*p.XPos;
+    def float cross(Point p) {
+        return this.XPos * p.YPos - this.YPos * p.XPos;
     }
 
     // ---- Normen und Abstände ----
-
     // Betragsnorm
-    def float norm1()
-    {
-        return Math::abs(this.XPos)+Math::abs(this.YPos);
+    def float norm1() {
+        return Math::abs(this.XPos) + Math::abs(this.YPos);
     }
 
     // euklidische Norm
-    def float norm2()
-    {
+    def float norm2() {
         return Math::sqrt(Math::pow(this.XPos, 2) + Math::pow(this.YPos, 2)).floatValue;
     }
 
     // Maximumnorm
-    def float norm8()
-    {
+    def float norm8() {
         return Math::max(Math.abs(this.XPos), Math::abs(this.YPos));
     }
 
     // Manhattan-Abstand
-    def float mdist(Point p)
-    {
+    def float mdist(Point p) {
         return sub(p).norm1();
     }
 
     // euklidischer Abstand
-    def float dist(Point p)
-    {
+    def float dist(Point p) {
         return sub(p).norm2();
     }
 
     // Kantenlänge quadratischer Bounding-Box
-    def float bdist(Point p)
-    {
+    def float bdist(Point p) {
         return sub(p).norm8();
     }
 
-    def Point normalize()
-    {
-        return mul(1/norm2());
+    def Point normalize() {
+        return mul(1 / norm2());
     }
 
     // ---- Hilfsfunktionen für konvexe Hülle ----
-
-    def boolean isLower(Point p)
-    {
-        return this.YPos < p.YPos  || this.YPos == p.YPos && this.XPos < p.XPos;
+    def boolean isLower(Point p) {
+        return this.YPos < p.YPos || this.YPos == p.YPos && this.XPos < p.XPos;
     }
 
-    def boolean isFurther(Point p)
-    {
-        return norm1()>p.norm1();
+    def boolean isFurther(Point p) {
+        return norm1() > p.norm1();
     }
 
-    def boolean isBetween(Point p0, Point p1)
-    {
-        return p0.mdist(p1)>=mdist(p0)+mdist(p1);
+    def boolean isBetween(Point p0, Point p1) {
+        return p0.mdist(p1) >= mdist(p0) + mdist(p1);
     }
 
-    def boolean isLess(Point p)
-    {
+    def boolean isLess(Point p) {
         val f = this.cross(p);
         return f > 0 || f == 0 && isFurther(p);
     }
 
-    def float area2(Point p0, Point p1)
-    {
+    def float area2(Point p0, Point p1) {
         return sub(p0).cross(sub(p1));
     }
-    
-    def float area2(Line g)
-    {
+
+    def float area2(Line g) {
         return area2(g.p0, g.p1);
     }
 
-    def boolean isRightOf(Line g)
-    {
-        return area2(g.p0, g.p1)<0;
+    def boolean isRightOf(Line g) {
+        return area2(g.p0, g.p1) < 0;
+//        var rightValue = ((g.p1.YPos - g.p0.YPos)*(this.XPos - g.p0.XPos) - (g.p1.XPos - g.p0.XPos)*(this.YPos - g.p0.YPos));
+//        return rightValue < 0;
     }
 
-    def boolean isConvex(Point p0, Point p1)
-    {
-        val f=area2(p0, p1);
-        return f<0 || f==0 && !isBetween(p0, p1);
+    def boolean isConvex(Point p0, Point p1) {
+        val f = area2(p0, p1);
+        return f < 0 || f == 0 && !isBetween(p0, p1);
     }
 
     // ---- allgemeine Methoden ----
-
-    def boolean isEqual(float a, float b)
-    {
-        return Math.abs(a-b) < delta;
+    def boolean isEqual(float a, float b) {
+        return Math.abs(a - b) < delta;
     }
 
-    def boolean equals(Point p)
-    {
+    def boolean equals(Point p) {
         return isEqual(this.XPos, p.XPos) && isEqual(this.YPos, p.YPos);
     }
 
-    override String toString()
-    {
-        return this.XPos+" "+this.YPos;
-    }
-    
-    def void draw(Graphics gr)
-    {
-        var java.awt.Point d = round();
-        gr.fillRect((d.getX).intValue, (d.getY).intValue, 3, 3);
+    override String toString() {
+        return this.XPos + " " + this.YPos;
     }
 
-    def java.awt.Point round()
-    {
+    def void draw(Graphics gr) {
+        var java.awt.Point d = round();
+        gr.setColor(Color.black);
+        gr.fillRect((d.getX).intValue, (d.getY).intValue, 10, 10);
+    }
+
+    def java.awt.Point round() {
         return new java.awt.Point(Math::round(this.XPos).intValue, Math::round(this.YPos).intValue);
     }
-    
+
     override compareTo(Point p) {
-        if (this.XPos < p.XPos || (this.XPos < p.XPos && this.YPos < p.YPos)) {
+        if (this.XPos < p.XPos || (this.XPos < p.XPos && this.YPos > p.YPos)) {
             return -1;
-        }
-        else if (this.XPos > p.XPos) {
+        } else if (this.XPos > p.XPos) {
             return 1;
-        }
-        else {
+        } else {
             return 0;
         }
     }
+
+    // return the radius of this point in polar coordinates
+    def float r() {
+        return Math::sqrt(this.XPos * this.XPos + this.YPos * this.YPos).floatValue;
+    }
+
+    // return the angle of this point in polar coordinates
+    // (between -pi/2 and pi/2)
+    def float theta() {
+        return Math::atan2(this.YPos, this.XPos).floatValue;
+    }
+
+    // return the polar angle between this point and that point (between -pi and pi);
+    // (0 if two points are equal)
+    def float angleTo(Point that) {
+        val dx = this.XPos - that.XPos;
+        val dy = this.YPos - that.YPos;
+        return Math::atan2(dy, dx).floatValue;
+    }
+
+    // is a->b->c a counter-clockwise turn?
+    // -1 if clockwise, +1 if counter-clockwise, 0 if collinear
+    def static int ccw(Point a, Point b, Point c) {
+        val area2 = (b.XPos - a.XPos) * (c.YPos - a.YPos) - (b.YPos - a.YPos) * (c.XPos - a.XPos);
+        if (area2 < 0) {
+            return -1;
+        } else if (area2 > 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    
+   override int hashCode()  
+   {  
+      return Objects.hash(this.XPos, this.YPos);  
+   }  
    
+       override equals(Object obj)   
+    {  
+      if (obj == null)  
+      {  
+         return false;  
+      }  
+      if (getClass() != obj.getClass())  
+      {  
+         return false;  
+      }  
+      val Point other = obj as Point;  
+      
+      return    Objects.equals(this.XPos, other.XPos)  
+             && Objects.equals(this.YPos, other.YPos); 
+   } 
 }
