@@ -239,15 +239,11 @@ class JsonExporter implements IGraphTransformer<ElkNode, JSONObject> {
     }
 
     private def transferShapeLayout(ElkShape shape, JSONObject jsonObj) {
-        val location = new JSONObject;
-        location.put("x", shape.x);
-        location.put("y", shape.y);
-        jsonObj?.put("location", location);
-        
-        val dimensions = new JSONObject;
-        dimensions.put("width", shape.width);
-        dimensions.put("height", shape.height);
-        jsonObj?.put("dimensions", dimensions);
+        // pos and dimension
+        jsonObj?.put("x", shape.x)
+        jsonObj?.put("y", shape.y)
+        jsonObj?.put("width", shape.width)
+        jsonObj?.put("height", shape.height)
     }
 
     /* ---------------------------------------------------------------------------

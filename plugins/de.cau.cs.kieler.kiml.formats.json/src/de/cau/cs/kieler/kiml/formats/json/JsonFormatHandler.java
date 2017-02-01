@@ -32,7 +32,7 @@ import de.cau.cs.kieler.kiml.formats.TransformationException;
  * 
  * <h2>Nodes, Ports, Labels, Edges, and Edge Sections</h2>
  * 
- * <p>All elements have an {@code id} that uniquely identifies it. All elements furthermore can
+ * <p>All elements have an {@code id} that uniquely identifies them. All elements furthermore can
  * have properties. Properties are basically a list of key-value pairs that are usually used to
  * assign layout option values to the element.</p> 
  * 
@@ -53,8 +53,10 @@ import de.cau.cs.kieler.kiml.formats.TransformationException;
  * 
  * <pre>
  * {
- *   location: {x, y},
- *   dimensions: {width, height}
+ *   x: ...,
+ *   y: ...,
+ *   width: ...,
+ *   height: ...,
  *   labels: [ ..array of labels.. ],
  * }
  * </pre>
@@ -85,7 +87,7 @@ import de.cau.cs.kieler.kiml.formats.TransformationException;
  * 
  * <h2>Labels</h2>
  * 
- * <p>Labels can contain text.</p>
+ * <p>Labels can additionally contain text.</p>
  * 
  * <pre>
  * {
@@ -96,8 +98,30 @@ import de.cau.cs.kieler.kiml.formats.TransformationException;
  * 
  * <h2>Edges</h2>
  * 
- * <p>Edges have two mandatory arrays consisting of the identifiers of nodes and ports. One array
- * defines the edge's source elements, the other defines its target elements. Edges may well
+ * <p>There are two types of edges: primitive edges and extended edges.
+ * Primitive edges are solely supportedc for legacy models to work. 
+ * Exported graphs will always be made up of extended edges</p>
+ * 
+ * <h3>Primitive Edges</h3>
+ * 
+ * <p>Primitive edges have a source and target node and can optionally connect 
+ * to a source port and target port.</p> 
+ * <pre>
+ * {
+ *   source*: "node identifier",
+ *   sourcePort: "port identifier",
+ *   target*: "node identifier",
+ *   targetPort: "port identifier",
+ *   sourcePoint: {x,y},
+ *   targetPoint: {x,y},
+ *   bendPoints: [ .. {x,y} pairs .. ]
+ * }
+ * </pre>
+ * 
+ * <h3>Extended Edges</h3>
+ * <p>
+ * Extended edges have two mandatory arrays consisting of the identifiers of nodes and ports. One
+ * array defines the edge's source elements, the other defines its target elements. Edges may well
  * connect more than one source to more than one target, making them hyperedges. If an edge has
  * a layout, it can specify an arbitrary number of edge sections that define said layout. A simple
  * edge with one source and one target only needs a single section.</p>
@@ -113,7 +137,8 @@ import de.cau.cs.kieler.kiml.formats.TransformationException;
  * 
  * <h2>Edge Sections</h2>
  * 
- * <p>Edge sections capture the routing of an edge through a drawing. Each section connects two
+ * <p>Edge sections are only used in conjunction with extended edges and 
+ * capture the routing of an edge through a drawing. Each section connects two
  * end points. An end point can be one of the end points of the section's edge (a node or a port),
  * or one or more other edge sections. The points where edge sections meet are <em>junction
  * points</em> where one part of the edge branches off. An edge section can only have either an

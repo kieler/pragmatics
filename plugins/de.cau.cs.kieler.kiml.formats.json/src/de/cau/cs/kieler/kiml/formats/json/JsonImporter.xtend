@@ -125,7 +125,12 @@ class JsonImporter implements IGraphTransformer<JSONObject, ElkNode> {
         jsonObj.optJSONArray("edges") => [ edges |
             if (edges != null) {
                 for (i : 0 ..< edges.length) {
-                    edges.optJSONObject(i)?.transformEdge(node)
+                    val edge = edges.optJSONObject(i)
+                    if (edge.has("sources") || edge.has("targets")) {
+                        edge.transformEdge(node)
+                    } else {
+                        edge.transformPrimitiveEdge(node)
+                    }
                 }
             }
         ]
@@ -139,9 +144,80 @@ class JsonImporter implements IGraphTransformer<JSONObject, ElkNode> {
             }
         ]
     }
+    
+    private def transformPrimitiveEdge(JSONObject jsonObj, ElkNode parent) {
+        // Create ElkEdge
+        val edge = ElkGraphUtil.createEdge(parent).register(jsonObj)
+
+        // source
+        val srcNode = nodeIdMap.get(jsonObj.optString("source"))
+        val srcPort = portIdMap.get(jsonObj.optString("sourcePort"))
+
+        if (srcPort.parent != srcNode) {
+            throw new TransformationException(
+                "Invalid JSON graph format, the source port of an edge "
+                + "must be a port of the edge's source node (edge " + jsonObj.optString("id") + ").")
+        }
+        
+        edge.sources += srcPort ?: srcNode
+
+        // target
+        val tgtNode = nodeIdMap.get(jsonObj.optString("target"))
+        val tgtPort = portIdMap.get(jsonObj.optString("targetPort"))
+        
+        if (tgtPort.parent != tgtNode) {
+            throw new TransformationException(
+                "Invalid JSON graph format, the target port of an edge "
+                + "must be a port of the edge's target node (edge " + jsonObj.optString("id") + ").")
+        }
+        
+        edge.targets += tgtPort ?: tgtNode
+        
+        // check if ok
+        if (edge.sources.empty || edge.targets.empty) {
+            throw new TransformationException("Invalid JSON graph format, the target" 
+                + " and source of a node may not be null (edge " + jsonObj.optString("id") + ").")
+        }
+        
+        jsonObj.transformProperties(edge)
+        jsonObj.transformPrimitiveEdgeLayout(edge)
+        jsonObj.transformLabels(edge)
+    }
+
+    private def transformPrimitiveEdgeLayout(JSONObject jsonObj, ElkEdge edge) {
+
+        val section = ElkGraphUtil.firstEdgeSection(edge, true, true)
+        // src
+        jsonObj.optJSONObject("sourcePoint") => [ srcPnt |
+            if (srcPnt != null) {
+                srcPnt.optDouble("x") => [section.startX = it]
+                srcPnt.optDouble("y") => [section.startY = it]
+            }
+        ]
+
+        // tgt
+        jsonObj.optJSONObject("targetPoint") => [ tgtPnt |
+            if (tgtPnt != null) {
+                tgtPnt.optDouble("x") => [section.endX = it]
+                tgtPnt.optDouble("y") => [section.endY = it]
+            }
+        ]
+
+        // bend points
+        jsonObj.optJSONArray("bendPoints") => [ bendPoints |
+            if (bendPoints != null) {
+                for (i : 0 ..< bendPoints.length) {
+                    bendPoints.optJSONObject(i) => [ bendPoint |
+                        ElkGraphUtil.createBendPoint(section, bendPoint.optDouble("x"), bendPoint.optDouble("y"));
+                    ]
+                }
+            }
+        ]
+    }
+    
 
     private def transformEdge(JSONObject jsonObj, ElkNode parent) {
-        // Create KEdge
+        // Create ElkEdge
         val edge = ElkGraphUtil.createEdge(parent).register(jsonObj)
 
         // sources
@@ -175,7 +251,6 @@ class JsonImporter implements IGraphTransformer<JSONObject, ElkNode> {
         }
         
         // transform things
-        jsonObj.transformEdgeSections(edge)
         jsonObj.transformProperties(edge)
         jsonObj.transformEdgeSections(edge)
         jsonObj.transformLabels(edge)
@@ -353,19 +428,18 @@ class JsonImporter implements IGraphTransformer<JSONObject, ElkNode> {
     }
     
     private def transformShapeLayout(JSONObject jsonObj, ElkShape shape) {
-        jsonObj.optJSONObject("location") => [ location |
-            if (location != null) {
-                location.optDouble("x") => [shape.x = it]
-                location.optDouble("y") => [shape.y = it]
-            }
-        ]
-        
-        jsonObj.optJSONObject("dimensions") => [ dimensions |
-            if (dimensions != null) {
-                dimensions.optDouble("width") => [shape.width = it]
-                dimensions.optDouble("height") => [shape.height = it]
-            }
-        ]
+        jsonObj.optDouble("x") => [shape.x = it.doubleValueValid]
+        jsonObj.optDouble("y") => [shape.y = it.doubleValueValid]
+        jsonObj.optDouble("width") => [shape.width = it.doubleValueValid]
+        jsonObj.optDouble("height") => [shape.height = it.doubleValueValid]
+    }
+    
+    private def double doubleValueValid(Double d) {
+        if (d == null || d.infinite || d.naN) {
+            return 0.0
+        } else {
+            return d.doubleValue
+        }
     }
     
     private def shapeById(String id) {
@@ -497,15 +571,11 @@ class JsonImporter implements IGraphTransformer<JSONObject, ElkNode> {
     }
 
     private def transferShapeLayout(ElkShape shape, JSONObject jsonObj) {
-        val location = new JSONObject;
-        location.put("x", shape.x);
-        location.put("y", shape.y);
-        jsonObj?.put("location", location);
-        
-        val dimensions = new JSONObject;
-        dimensions.put("width", shape.width);
-        dimensions.put("height", shape.height);
-        jsonObj?.put("dimensions", dimensions);
+        // pos and dimension
+        jsonObj?.put("x", shape.x)
+        jsonObj?.put("y", shape.y)
+        jsonObj?.put("width", shape.width)
+        jsonObj?.put("height", shape.height)
     }
     
     private def dispatch idByElement(ElkNode node) {
