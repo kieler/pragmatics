@@ -26,7 +26,6 @@ public class HierarchicalMetaDataProvider implements ILayoutMetaDataProvider {
         Integer.class,
         EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
         org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
-        , "de.cau.cs.kieler.hierarchicalID"
     ));
     registry.register(new org.eclipse.elk.core.data.LayoutOptionData(
         "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.hierarchicalParentID",
@@ -40,11 +39,11 @@ public class HierarchicalMetaDataProvider implements ILayoutMetaDataProvider {
         Integer.class,
         EnumSet.of(org.eclipse.elk.core.data.LayoutOptionData.Target.PARENTS),
         org.eclipse.elk.core.data.LayoutOptionData.Visibility.HIDDEN
-        , "de.cau.cs.kieler.hierarchicalParentID"
     ));
     new de.cau.cs.kieler.hierarchicalLayoutAlgorithms.RadialOptions().apply(registry);
     new de.cau.cs.kieler.hierarchicalLayoutAlgorithms.GridOptions().apply(registry);
     new de.cau.cs.kieler.hierarchicalLayoutAlgorithms.CustomOptions().apply(registry);
     new de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalStressOptions().apply(registry);
+    new de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalTreeOptions().apply(registry);
   }
 }

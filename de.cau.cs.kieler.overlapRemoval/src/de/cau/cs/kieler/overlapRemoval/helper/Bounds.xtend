@@ -5,12 +5,12 @@ import java.awt.Graphics
 import org.eclipse.xtend.lib.annotations.Accessors
 
 class Bounds {
-    @Accessors private float xPos;
-    @Accessors private float yPos;
-    @Accessors private float width;
-    @Accessors private float height;
+    @Accessors private double xPos;
+    @Accessors private double yPos;
+    @Accessors private double width;
+    @Accessors private double height;
     
-    new(float xPos, float yPos, float width, float height) {
+    new(double xPos, double yPos, double width, double height) {
         this.xPos = xPos;
         this.yPos = yPos;
         this.width = width;

@@ -1,0 +1,27 @@
+package de.cau.cs.kieler.overlapRemoval
+
+import de.cau.cs.kieler.overlapRemoval.OverlapRemovalLayoutProvider
+
+/**
+ * Declarations for the ELK Layered layout algorithm.
+ */
+bundle {
+    metadataClass options.OverlapMetaDataProvider 
+     
+}
+algorithm overlapRemoval(OverlapRemovalLayoutProvider) {
+    label "Overlap Removal"
+    metadataClass options.OverlapRemovalOptions
+    
+}
+//algorithm layered(LayeredLayoutProvider) {
+//    label "ELK Layered"
+//    description
+//        "Layer-based algorithm provided by the Eclipse Layout Kernel. Arranges as many edges as
+//        possible into one direction by placing nodes into subsequent layers. This implementation
+//        supports different routing styles (straight, orthogonal, splines); if orthogonal routing is
+//        selected, arbitrary port constraints are respected, thus enabling the layout of block
+//        diagrams such as actor-oriented models or circuit schematics. Furthermore, full layout of
+//        compound graphs with cross-hierarchy edges is supported when the respective option is
+//        activated on the top level."
+//    metadataClass properties.LayeredOptions

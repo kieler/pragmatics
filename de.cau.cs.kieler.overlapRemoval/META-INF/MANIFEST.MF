@@ -1,13 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OverlapRemoval
-Bundle-SymbolicName: de.cau.cs.kieler.overlapRemoval
+Bundle-SymbolicName: de.cau.cs.kieler.overlapRemoval;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: de.cau.cs.kieler.klighd.kgraph;bundle-version="0.1.0",
  com.google.guava,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtend.lib,
- org.eclipse.xtend.lib.macro
+ org.eclipse.xtend.lib.macro,
+ org.eclipse.elk.core;bundle-version="0.1.0",
+ org.eclipse.elk.core.service;bundle-version="0.1.0",
+ org.eclipse.elk.graph;bundle-version="0.1.0"
 Export-Package: de.cau.cs.kieler.overlapRemoval.helper
 

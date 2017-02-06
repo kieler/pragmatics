@@ -15,7 +15,7 @@ class Triangle {
         this.a = a;
         this.b = b;
         this.c = c;
-        this.orderCW();
+//        this.orderCW();
         this.createEdges();
     }
     
@@ -26,18 +26,9 @@ class Triangle {
         this.b = points.get(1);
         this.c = points.get(2);
         
-        this.orderCW();
+//        this.orderCW();
         
         this.createEdges();
-    }
-    
-    def List<Point> getNodes() {
-        val List<Point> nodes = new ArrayList<Point>();
-        nodes.add(this.a);
-        nodes.add(this.b);
-        nodes.add(this.c);
-        
-        return nodes;
     }
     
     def createEdges() {
@@ -48,6 +39,16 @@ class Triangle {
         edges.add(AB);
         edges.add(BC);
         edges.add(CA);
+    }
+    
+    def List<Point> getNodes() {
+        val nodes = new ArrayList<Point>();
+        
+        nodes.add(this.a);
+        nodes.add(this.b);
+        nodes.add(this.c);
+        
+        return nodes;
     }
     
     def Point getCircumCenter() {
@@ -74,65 +75,40 @@ class Triangle {
         return circumcenter;
     }
     
+    
+    
     def Point getMidPoint(Point A, Point B) {
         return new Point((A.XPos+B.XPos)/2, (A.YPos+B.YPos)/2);
     }
     
-    def float getSlope(Point from, Point to) {
+    
+    
+    def double getSlope(Point from, Point to) {
         return (to.YPos - from.YPos) / (to.XPos - from.XPos);
     }
     
-    def boolean IsInCircle(Point point, Point center, float radius) {
+    def boolean IsInCircle(Point point, Point center, double radius) {
         // could also use the pythagorean theorem for this
-        return point.dist(center) < radius;
+        return point.dist(center) - radius < (1e-10);
     }
     
     def boolean inside(Point point) {
-        val whPA = new Line(point,this.a);
-        val whPB = new Line(point,this.b);
-        val whPC = new Line(point,this.c);
+        val whPA = new DelaunayEdge(point,this.a);
+        val whPB = new DelaunayEdge(point,this.b);
+        val whPC = new DelaunayEdge(point,this.c);
         
-        if(!whPA.sameSide(this.b, this.c) && !whPB.sameSide(this.a, this.c) && !whPC.sameSide(this.a, this.b)) {
+        if(!whPA.sameSide(this.b, this.c) && !whPB.sameSide(this.c, this.a) && !whPC.sameSide(this.a, this.b)) {
             return true;
-            
+
+//        } else if(isBetween(this.a, point, this.b) || isBetween(this.a, point, this.c) || isBetween(this.c, point, this.b)) {
+//            return true;
         } else {
             return false
         }
     }
     
-    def float getHeight() {
-        return 0.5f*a.dist(b)*getBaseline().distanceOf(this.c);
-    }
-    
-    def Line getBaseline() {
-        if(a.dist(b) > a.dist(c) && a.dist(b) > b.dist(c)) {
-           return new Line(a,b); 
-        } else if(a.dist(c) > a.dist(b) && a.dist(b) > b.dist(c)) {
-            return new Line(a,c);
-        } else {
-            return new Line(b,c);
-        }
-    }
-    
-    def orderCW() {
-        val baseline = getBaseline();
-        
-        if(baseline.p0.equals(a) && baseline.p1.equals(c)) {
-            this.c = this.b;
-            this.b = baseline.p1;
-        } else if(baseline.p0.equals(b) && baseline.p1.equals(c)) {
-            this.c = this.a;
-            this.a = this.b;
-            this.b = baseline.p1;            
-        }
-    }
-    
-    def float getArea() {
-        return 0.5f*this.a.dist(this.b)*this.getHeight();
-    }
-    
     def boolean containsPoint(Point p) {
-        return p.equals(this.a) || p.equals(this.b) || p.equals(this.c);
+        return this.a.equals(p) || this.b.equals(p) || this.c.equals(p);
     }
     
     def Point getMissingPoint(Point a, Point b) {
@@ -143,26 +119,15 @@ class Triangle {
         } else if((this.c.equals(a) && this.b.equals(b)) || (this.c.equals(b) && this.b.equals(a))) {
             return this.a;
         } else {
+            println("was?")
             return null;
         }
     }
     
     def List<Point> getOtherNodes(Point point) {
-        val points = new ArrayList<Point>();
+        val points = this.getNodes();
         
-        if(this.containsPoint(point) == false) {
-            return null;
-        }
-        
-        if(!this.getA.equals(point)) {
-            points.add(this.getA);
-        }
-        if(!this.getB.equals(point)) {
-            points.add(this.getB);
-        }
-        if(!this.getC.equals(point)) {
-            points.add(this.getC);
-        }
+        points.remove(point);
         
         return points;
     }
@@ -180,11 +145,13 @@ class Triangle {
     }
     
     def boolean hasEdge(Edge<Point> edge) {
-        return this.edges.contains(edge);
+        return this.edges.contains(edge)
+            || this.edges.contains(edge.revert());
     }
 
     def boolean hasEdge(Point p0, Point p1) {
-        return this.edges.contains(new DelaunayEdge(p0,p1));
+        val lookForEdge = new DelaunayEdge(p0,p1);
+        return this.hasEdge(lookForEdge);
     }
        
     def Edge<Point> getEdge(Point p1, Point p2) {
@@ -218,6 +185,10 @@ class Triangle {
              && this.containsPoint(other.b)
              && this.containsPoint(other.c); 
    } 
+   
+   def boolean isBetween(Point source, Point checkBetween, Point target) {
+       return source.distance(checkBetween) + target.distance(checkBetween) == source.distance(target);
+   }
    
    def boolean isTriangle() {
        if(this.a == null || this.b == null || this.c == null) {

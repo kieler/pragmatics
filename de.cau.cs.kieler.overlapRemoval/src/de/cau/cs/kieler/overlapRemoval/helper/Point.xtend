@@ -1,19 +1,19 @@
 package de.cau.cs.kieler.overlapRemoval.helper
 
 import de.cau.cs.kieler.klighd.kgraph.KNode
+import java.awt.Color
 import java.awt.Graphics
 import java.util.Objects
 import org.eclipse.xtend.lib.annotations.Accessors
-import java.awt.Color
 
 class Point implements Comparable<Point> {
     @Accessors int id;
-    @Accessors float xPos;
-    @Accessors float yPos;
+    @Accessors double xPos;
+    @Accessors double yPos;
     @Accessors KNode node;
-    @Accessors private static final float delta = (1e-10).floatValue;
+    @Accessors private static final double delta = (1e-10);
 
-    new(float xPos, float yPos) {
+    new(double xPos, double yPos) {
         this.XPos = xPos;
         this.YPos = yPos;
     }
@@ -34,10 +34,10 @@ class Point implements Comparable<Point> {
     }
 
     def distance(Point point) {
-        return Math::sqrt(Math::pow((this.XPos - point.XPos), 2) + Math::pow((this.YPos - point.YPos), 2)).floatValue;
+        return Math::sqrt(Math::pow((this.XPos - point.XPos), 2) + Math::pow((this.YPos - point.YPos), 2));
     }
 
-    def Point moved(float x0, float y0) {
+    def Point moved(double x0, double y0) {
         return new Point(this.XPos + x0, this.YPos + y0);
     }
 
@@ -49,54 +49,48 @@ class Point implements Comparable<Point> {
         return add(p.neg());
     }
 
-    def Point mul(float k) {
+    def Point mul(double k) {
         return new Point(k * this.XPos, k * this.YPos);
     }
 
-    // Verschieben eines Punktes
-    def void offset(float x0, float y0) {
-        this.XPos = this.XPos + x0;
-        this.YPos = this.YPos + y0;
-    }
-
     // Skalarprodukt
-    def float dot(Point p) {
+    def double dot(Point p) {
         return this.XPos * p.XPos + this.YPos * p.YPos;
     }
 
     // Kreuzprodukt
-    def float cross(Point p) {
+    def double cross(Point p) {
         return this.XPos * p.YPos - this.YPos * p.XPos;
     }
 
     // ---- Normen und Abstände ----
     // Betragsnorm
-    def float norm1() {
+    def double norm1() {
         return Math::abs(this.XPos) + Math::abs(this.YPos);
     }
 
     // euklidische Norm
-    def float norm2() {
-        return Math::sqrt(Math::pow(this.XPos, 2) + Math::pow(this.YPos, 2)).floatValue;
+    def double norm2() {
+        return Math::sqrt(Math::pow(this.XPos, 2) + Math::pow(this.YPos, 2));
     }
 
     // Maximumnorm
-    def float norm8() {
+    def double norm8() {
         return Math::max(Math.abs(this.XPos), Math::abs(this.YPos));
     }
 
     // Manhattan-Abstand
-    def float mdist(Point p) {
+    def double mdist(Point p) {
         return sub(p).norm1();
     }
 
     // euklidischer Abstand
-    def float dist(Point p) {
+    def double dist(Point p) {
         return sub(p).norm2();
     }
 
     // Kantenlänge quadratischer Bounding-Box
-    def float bdist(Point p) {
+    def double bdist(Point p) {
         return sub(p).norm8();
     }
 
@@ -114,7 +108,7 @@ class Point implements Comparable<Point> {
     }
 
     def boolean isBetween(Point p0, Point p1) {
-        return p0.mdist(p1) >= mdist(p0) + mdist(p1);
+        return p0.mdist(p1) - (mdist(p0) + mdist(p1)) >= delta;
     }
 
     def boolean isLess(Point p) {
@@ -122,32 +116,28 @@ class Point implements Comparable<Point> {
         return f > 0 || f == 0 && isFurther(p);
     }
 
-    def float area2(Point p0, Point p1) {
+    def double area2(Point p0, Point p1) {
         return sub(p0).cross(sub(p1));
     }
 
-    def float area2(Line g) {
+    def double area2(Line g) {
         return area2(g.p0, g.p1);
     }
 
     def boolean isRightOf(Line g) {
-        return area2(g.p0, g.p1) < 0;
+        return area2(g.p0, g.p1) < delta;
 //        var rightValue = ((g.p1.YPos - g.p0.YPos)*(this.XPos - g.p0.XPos) - (g.p1.XPos - g.p0.XPos)*(this.YPos - g.p0.YPos));
 //        return rightValue < 0;
+    }
+
+    def boolean isRightOf(Edge<Point> edge) {
+        return area2(edge.source, edge.target) < delta;
+
     }
 
     def boolean isConvex(Point p0, Point p1) {
         val f = area2(p0, p1);
         return f < 0 || f == 0 && !isBetween(p0, p1);
-    }
-
-    // ---- allgemeine Methoden ----
-    def boolean isEqual(float a, float b) {
-        return Math.abs(a - b) < delta;
-    }
-
-    def boolean equals(Point p) {
-        return isEqual(this.XPos, p.XPos) && isEqual(this.YPos, p.YPos);
     }
 
     override String toString() {
@@ -157,7 +147,7 @@ class Point implements Comparable<Point> {
     def void draw(Graphics gr) {
         var java.awt.Point d = round();
         gr.setColor(Color.black);
-        gr.fillRect((d.getX).intValue, (d.getY).intValue, 10, 10);
+        gr.fillRect((d.getX).intValue, (d.getY).intValue, 3, 3);
     }
 
     def java.awt.Point round() {
@@ -174,37 +164,7 @@ class Point implements Comparable<Point> {
         }
     }
 
-    // return the radius of this point in polar coordinates
-    def float r() {
-        return Math::sqrt(this.XPos * this.XPos + this.YPos * this.YPos).floatValue;
-    }
 
-    // return the angle of this point in polar coordinates
-    // (between -pi/2 and pi/2)
-    def float theta() {
-        return Math::atan2(this.YPos, this.XPos).floatValue;
-    }
-
-    // return the polar angle between this point and that point (between -pi and pi);
-    // (0 if two points are equal)
-    def float angleTo(Point that) {
-        val dx = this.XPos - that.XPos;
-        val dy = this.YPos - that.YPos;
-        return Math::atan2(dy, dx).floatValue;
-    }
-
-    // is a->b->c a counter-clockwise turn?
-    // -1 if clockwise, +1 if counter-clockwise, 0 if collinear
-    def static int ccw(Point a, Point b, Point c) {
-        val area2 = (b.XPos - a.XPos) * (c.YPos - a.YPos) - (b.YPos - a.YPos) * (c.XPos - a.XPos);
-        if (area2 < 0) {
-            return -1;
-        } else if (area2 > 0) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
     
    override int hashCode()  
    {  

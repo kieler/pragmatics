@@ -1,9 +1,8 @@
 package de.cau.cs.kieler.overlapRemoval.helper
 
-import java.awt.Graphics
+import java.awt.Graphics2D
 import java.util.Objects
 import org.eclipse.xtend.lib.annotations.Accessors
-import java.awt.Graphics2D
 
 abstract class Edge<V> {
 	@Accessors var V source
@@ -27,6 +26,7 @@ abstract class Edge<V> {
 	def boolean hasVertex(V vertex) {
 		return (source.equals(vertex) || target.equals(vertex))
 	}
+	
 	
 	def V getPath(V pSource) {
 		if(source.equals(pSource)) {
@@ -66,15 +66,9 @@ abstract class Edge<V> {
       }  
       val Edge<V> other = obj as Edge<V>;  
       
-      if(this.undirected == true) {
-       return    (Objects.equals(this.source, other.source)  
-              && Objects.equals(this.target, other.target))
-              || (Objects.equals(this.target, other.source)  
-              && Objects.equals(this.source, other.target));          
-      } else {
-      return    Objects.equals(this.source, other.source)  
-             && Objects.equals(this.target, other.target); 
-        }
+
+      return    Objects.equals(this, other) 
+            || Objects.equals(this, other.revert()); 
    }  
    
       override int hashCode()  
@@ -85,7 +79,8 @@ abstract class Edge<V> {
 //   def revert() {
 //       return new Edge<V>(this.getTarget, this.getSource);
 //   }
+    def abstract boolean sameSide(Point a, Point b);
    
    def abstract void draw(Graphics2D g2d);
-    
+   def abstract Edge<V> revert();
 }

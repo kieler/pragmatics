@@ -19,11 +19,15 @@ class Line {
         return this.p1.sub(p0).normalize();
     }
 
-    // liefert den Abstand des Punktes p zur Geraden
-    def float distanceOf(Point p)
-    {
-        return Math::abs(p.sub(this.p0).cross(getVector()));
+    def Line revert() {
+        return new Line(p1, p0);
     }
+
+    // liefert den Abstand des Punktes p zur Geraden
+//    def float distanceOf(Point p)
+//    {
+//        return Math::abs(p.sub(this.p0).cross(getVector()));
+//    }
 
     override String toString()
     {
@@ -60,10 +64,7 @@ class Line {
       }  
       val Line other = obj as Line;  
       
-      return    (Objects.equals(this.p0, other.p0)  
-             && Objects.equals(this.p1, other.p1))
-             || (Objects.equals(this.p0, other.p1)  
-             && Objects.equals(this.p1, other.p0)); 
+      return    (Objects.equals(this, other) || Objects.equals(this, other.revert())); 
    } 
 
 }

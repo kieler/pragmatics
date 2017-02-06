@@ -28,24 +28,15 @@ public class Kite {
 		this.t2 = t2;
 	}
 	
-	public Point findPointToTest() {
-		for(Point node : this.getT1().getNodes()) {
-			if(!this.getT2().containsPoint(node)) {
-				return node;
+	public Edge<Point> getDiagonale() {
+		List<Point> pointsDiagonale = new ArrayList<Point>();
+		for(Point nodeT1 : this.t1.getNodes()){
+			if(this.t2.containsPoint(nodeT1)) {
+				pointsDiagonale.add(nodeT1);
 			}
 		}
 		
-		return null;
-	}
-	
-	public Edge<Point> getDiagonale() {
-		if(this.t2.hasEdge(this.t1.getA(), this.t1.getB())) {
-			return new DelaunayEdge(this.t1.getA(), this.t1.getB());
-		} else if(this.t2.hasEdge(this.t1.getA(), this.t1.getC())) {
-			return new DelaunayEdge(this.t1.getA(), this.t1.getC());
-		} else {
-			return new DelaunayEdge(this.t1.getB(), this.t1.getC());
-		}	
+		return new DelaunayEdge(pointsDiagonale.get(0), pointsDiagonale.get(1));
 	}
 	
 	private boolean testCircumcircleProperty(Triangle triangle, Point K) {
@@ -56,7 +47,7 @@ public class Kite {
 
 		final Point center = triangle.getCircumCenter();
 
-		return triangle.IsInCircle(K, center, center.dist(triangle.getA()));
+		return triangle.IsInCircle(K, center, center.distance(triangle.getA()));
 	}
 	
 	public List<Triangle> swapDiagonale() {
@@ -67,10 +58,10 @@ public class Kite {
 		final Point testPointT1 = this.t1.getMissingPoint(diagonale.getSource(), diagonale.getTarget());
 		final Point testPointT2 = this.t2.getMissingPoint(diagonale.getSource(), diagonale.getTarget());
 		
-		if(testCircumcircleProperty(this.getT2(), testPointT1) == true) {
+		if(testCircumcircleProperty(this.getT1(), testPointT2) == true) {
 
-			Triangle swapedTriangle = new Triangle(diagonale.getSource(), testPointT1, testPointT2);
-			Triangle secondSwapedTriangle = new Triangle(diagonale.getTarget(), testPointT1, testPointT2);
+			Triangle swapedTriangle = new Triangle(testPointT1, testPointT2, diagonale.getSource());
+			Triangle secondSwapedTriangle = new Triangle(testPointT1, testPointT2, diagonale.getTarget());
 			
 			newTriangles.add(swapedTriangle);
 			newTriangles.add(secondSwapedTriangle);
@@ -84,5 +75,21 @@ public class Kite {
 		nodes.addAll(this.getT2().getNodes());
 		
 		return nodes;
+	}
+	
+	public boolean needToSwap() {
+		final Edge<Point> diagonale = this.getDiagonale();
+		
+		if(diagonale == null) {
+			return false;
+		}
+		final Point testPointT2 = this.t2.getMissingPoint(diagonale.getSource(), diagonale.getTarget());
+
+		if(testCircumcircleProperty(this.getT1(), testPointT2) == true) {
+
+			return true;
+		}
+		
+		return false;		
 	}
 }
