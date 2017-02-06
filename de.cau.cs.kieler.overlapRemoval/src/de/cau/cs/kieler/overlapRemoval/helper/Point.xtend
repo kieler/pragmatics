@@ -120,16 +120,6 @@ class Point implements Comparable<Point> {
         return sub(p0).cross(sub(p1));
     }
 
-    def double area2(Line g) {
-        return area2(g.p0, g.p1);
-    }
-
-    def boolean isRightOf(Line g) {
-        return area2(g.p0, g.p1) < delta;
-//        var rightValue = ((g.p1.YPos - g.p0.YPos)*(this.XPos - g.p0.XPos) - (g.p1.XPos - g.p0.XPos)*(this.YPos - g.p0.YPos));
-//        return rightValue < 0;
-    }
-
     def boolean isRightOf(Edge<Point> edge) {
         return area2(edge.source, edge.target) < delta;
 

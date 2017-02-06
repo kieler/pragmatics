@@ -104,27 +104,21 @@ public class DelaunayIterative {
 		}
 
 		Triangle smallestTriangle = null;
-//		System.out.println("candidates: "+ candidates.size());
+
 		for (Triangle candidate : candidates) {
 			if (smallestTriangle == null) {
 				smallestTriangle = candidate;
 			}
 		}
 
-		if (candidates.size() > 1) {
-			System.out.println("cant insert " + point + " candidates: " + candidates);
-		}
 		return smallestTriangle;
 	}
 
 	private Triangle getCorrespondingTriangle(Point startPoint, Point point) {
-		Set<Triangle> insert = new HashSet<Triangle>();
 		Triangle tri = null;
 		for (Triangle triangle : this.pointTriangles.get(startPoint)) {
 			if (triangle.inside(point)) {
-				insert.add(triangle);
 				return triangle;
-				// tri = triangle;
 			}
 		}
 
@@ -144,9 +138,6 @@ public class DelaunayIterative {
 	private Kite findKite(Point point, Triangle candidat) {
 		final List<Point> pointsToTest = candidat.getOtherNodes(point);
 
-		if (pointsToTest.size() < 2) {
-			System.out.println("ficken");
-		}
 		for (Point p : pointsToTest) {
 			Set<Triangle> neighbors = this.pointTriangles.get(p);
 			for (Triangle neighbor : neighbors) {
@@ -177,7 +168,6 @@ public class DelaunayIterative {
 	}
 
 	private void addTriangleToNeighbors(Triangle triangle) {
-		// if(triangle.isTriangle()) {
 		for (Point node : triangle.getNodes()) {
 			Set<Triangle> neighbors = null;
 			if (this.pointTriangles.containsKey(node)) {
@@ -188,7 +178,6 @@ public class DelaunayIterative {
 			neighbors.add(triangle);
 			this.pointTriangles.put(node, neighbors);
 		}
-		// }
 	}
 
 	private void addTrianglesToNeighbors(List<Triangle> triangles) {
@@ -198,14 +187,10 @@ public class DelaunayIterative {
 	}
 
 	private void removeTriangleFromNeighbors(Triangle triangle) {
-		if (triangle == null) {
-			System.out.println("fu");
-		}
+
 		for (Point node : triangle.getNodes()) {
 			Set<Triangle> neighbors = this.pointTriangles.get(node);
-			if (node == null) {
-				System.out.println("nö");
-			}
+
 			neighbors.remove(triangle);
 			this.pointTriangles.put(node, neighbors);
 		}
