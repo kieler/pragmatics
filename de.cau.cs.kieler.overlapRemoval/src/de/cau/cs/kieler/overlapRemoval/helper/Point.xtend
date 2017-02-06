@@ -121,7 +121,7 @@ class Point implements Comparable<Point> {
     }
 
     def boolean isRightOf(Edge<Point> edge) {
-        return area2(edge.source, edge.target) < delta;
+        return area2(edge.getSource(), edge.getTarget()) < delta;
 
     }
 

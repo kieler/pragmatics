@@ -15,26 +15,32 @@ import de.cau.cs.kieler.overlapRemoval.helper.Kite;
 import de.cau.cs.kieler.overlapRemoval.helper.Point;
 import de.cau.cs.kieler.overlapRemoval.helper.Triangle;
 
-public class DelaunayIterative {
+public class DelaunayIterative implements DelaunayTriangulation {
 	private Bounds bounds;
 	private List<Point> set;
-	private DelaunayGraph delaunayGraph = new DelaunayGraph();
-	private Map<Point, Set<Triangle>> pointTriangles = new HashMap<Point, Set<Triangle>>();
+	private final Map<Point, Set<Triangle>> pointTriangles = new HashMap<Point, Set<Triangle>>();
 
-	public DelaunayIterative(Bounds bounds, List<Point> set) {
+	
+	public void initTriangulation(Bounds bounds, List<Point> set) {
 		this.setSet(set);
 		this.setBounds(bounds);
 
 		this.initFirstPoint(this.set.get(0));
 		for (int i = 1; i < set.size(); i++) {
 			this.splitTriangles(set.get(i));
-		}
-
-		System.out.println("punkte: " + this.pointTriangles.size());
-
+		}		
+	}
+	
+	
+	public DelaunayGraph buildGraph() {
+		return  new DelaunayGraph(this.cleanDelaunayGraph());
 	}
 
-	public void initFirstPoint(Point startPoint) {
+	public DelaunayGraph buildDrawGraph() {
+		return  new DelaunayGraph(this.pointTriangles);
+	}	
+	
+	private void initFirstPoint(Point startPoint) {
 		final List<Triangle> neighborTriangles = new ArrayList<Triangle>();
 		final double startX = this.getBounds().getXPos();
 		final double startY = this.getBounds().getYPos();
@@ -54,7 +60,7 @@ public class DelaunayIterative {
 		this.addTrianglesToNeighbors(neighborTriangles);
 	}
 
-	public void splitTriangles(Point point) {
+	private void splitTriangles(Point point) {
 		final Triangle tri = findTriangle(point);
 		if (tri != null) {
 			this.removeTriangleFromNeighbors(tri);
@@ -125,7 +131,7 @@ public class DelaunayIterative {
 		return tri;
 	}
 
-	public List<Triangle> createTriangles(Point center, Triangle triangle) {
+	private List<Triangle> createTriangles(Point center, Triangle triangle) {
 		final List<Triangle> neighbors = new ArrayList<Triangle>();
 
 		neighbors.add(new Triangle(triangle.getA(), triangle.getB(), center));
@@ -200,29 +206,58 @@ public class DelaunayIterative {
 		this.set = set;
 	}
 
-	public Bounds getBounds() {
+	private Bounds getBounds() {
 		return bounds;
 	}
 
-	public void setBounds(Bounds bounds) {
+	private void setBounds(Bounds bounds) {
 		this.bounds = bounds;
 	}
 
+	private Map<Point, Set<Triangle>> cleanDelaunayGraph() {
+		final Map<Point, Set<Triangle>> cleanPointTriangles = this.pointTriangles;
+
+		final double startX = this.getBounds().getXPos();
+		final double startY = this.getBounds().getYPos();
+		final double width = this.getBounds().getWidth();
+		final double height = this.getBounds().getHeight();
+
+		final Point TLC = new Point(startX, startY);
+		final Point TRC = new Point(startX, height);
+		final Point BLC = new Point(width, startY);
+		final Point BRC = new Point(width, height);
+		
+		removeCorners(TLC, cleanPointTriangles);
+		removeCorners(TRC, cleanPointTriangles);
+		removeCorners(BLC, cleanPointTriangles);
+		removeCorners(BRC, cleanPointTriangles);
+
+			
+		return cleanPointTriangles;
+	}
+	
+	private void removeCorners(Point corner, Map<Point, Set<Triangle>> cleanPointTriangles) {
+		for (Triangle triangle : cleanPointTriangles.remove(corner)) {
+			for (Point node : triangle.getNodes()) {
+				if(!node.equals(corner)) {
+					Set<Triangle> neighbors = cleanPointTriangles.get(node);
+
+					neighbors.remove(triangle);
+					cleanPointTriangles.put(node, neighbors);
+				}
+			}
+		}		
+	}
+	
 	public void draw(Graphics2D g2d) {
 
-		for (Point point : this.pointTriangles.keySet()) {
-			this.delaunayGraph.addVertice(point);
+		final DelaunayGraph delaunayGraph = this.buildGraph();
 
-			for (Triangle triangle : this.pointTriangles.get(point)) {
-				delaunayGraph.addEdges(triangle.getEdges());
-			}
-		}
-
-		for (Point point : this.delaunayGraph.getVertices()) {
+		for (Point point : delaunayGraph.getVertices()) {
 			point.draw(g2d);
 		}
 
-		for (Edge<Point> edge : this.delaunayGraph.getEdges()) {
+		for (Edge<Point> edge : delaunayGraph.getEdges()) {
 			edge.draw(g2d);
 		}
 	}

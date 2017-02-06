@@ -31,7 +31,7 @@ public class QuickHull extends JPanel
 		do {
 			test = new Point(position.nextInt((int) bounds.getWidth()), position.nextInt((int)bounds.getHeight()));
 			set.add(test);
-		} while (set.size() < 1000);
+		} while (set.size() < 200);
 
 		
 		set.sort(new Comparator<Point>() {
@@ -41,7 +41,8 @@ public class QuickHull extends JPanel
 			}
         });
 		
-		DelaunayIterative di = new DelaunayIterative(bounds, set);
+		DelaunayTriangulation di = new DelaunayIterative();
+		di.initTriangulation(bounds, set);
 		di.draw(g2d);
 	  }
  

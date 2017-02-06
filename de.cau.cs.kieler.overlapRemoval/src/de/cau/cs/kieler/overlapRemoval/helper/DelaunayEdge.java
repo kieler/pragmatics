@@ -6,8 +6,7 @@ import java.util.Objects;
 public class DelaunayEdge extends Edge<Point> {
 
     public DelaunayEdge(Point source, Point target) {
-        super(source, target);
-       
+        super(source, target, (int) source.distance(target), true);
     }
 
 	@Override
