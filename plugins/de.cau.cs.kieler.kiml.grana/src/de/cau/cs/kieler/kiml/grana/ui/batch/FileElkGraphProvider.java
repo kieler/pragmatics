@@ -38,7 +38,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
+import de.cau.cs.kieler.formats.GraphFormatsService;
 
 /**
  * The provider that derives a graph from a file. 

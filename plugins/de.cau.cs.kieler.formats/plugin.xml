@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="graphFormats" name="Graph Formats" schema="schema/graphFormats.exsd"/>
+
+   <extension
+         point="de.cau.cs.kieler.formats.graphFormats">
+      <handler
+            class="de.cau.cs.kieler.formats.ElkGraphHandler"
+            description="Internally used graph format of ELK."
+            extensions="elkg"
+            id="org.eclipse.elk.graph"
+            name="ELK Graph">
+      </handler>
+      <handler
+            class="de.cau.cs.kieler.formats.ElkGraphHandler"
+            description="Textual version of ELK's graph format. Note that the 'org.eclipse.elk.graph.text' plugin is required for this format to work."
+            extensions="elkt"
+            id="org.eclipse.elk.graph.text"
+            name="ELK Graph Text">
+      </handler>
+      
+      <handler
+            class="de.cau.cs.kieler.formats.matrix.MatrixFormatHandler"
+            description="The Matrix Market format. See http://math.nist.gov/MatrixMarket/"
+            extensions="mtx,matrix"
+            id="gov.nist.math.matrix"
+            name="Matrix">
+      </handler>
+   </extension>
+
+</plugin>

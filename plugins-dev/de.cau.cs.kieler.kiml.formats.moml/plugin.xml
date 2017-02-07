@@ -2,11 +2,11 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.kiml.formats.graphFormats">
+         point="de.cau.cs.kieler.formats.graphFormats">
       <handler
-            class="de.cau.cs.kieler.kiml.formats.moml.MomlFormatHandler"
+            class="de.cau.cs.kieler.formats.moml.MomlFormatHandler"
             extensions="moml"
-            id="de.cau.cs.kieler.kiml.formats.moml"
+            id="de.cau.cs.kieler.formats.moml"
             name="MoML">
       </handler>
    </extension>

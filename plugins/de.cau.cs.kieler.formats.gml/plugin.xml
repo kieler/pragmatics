@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<plugin>
+  <extension point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+          class="de.cau.cs.kieler.formats.gml.GmlResource$GmlResourceFactory"
+          type="gml">
+      </parser>
+  </extension>
+  <extension
+        point="de.cau.cs.kieler.formats.graphFormats">
+     <handler
+           class="de.cau.cs.kieler.formats.gml.GmlFormatHandler"
+           description="The Graph Modelling Language. See http://www.fim.uni-passau.de/en/fim/faculty/chairs/theoretische-informatik/projects.html"
+           extensions="gml"
+           id="de.uni-passau.fim.gml"
+           name="GML">
+     </handler>
+  </extension>
+</plugin>

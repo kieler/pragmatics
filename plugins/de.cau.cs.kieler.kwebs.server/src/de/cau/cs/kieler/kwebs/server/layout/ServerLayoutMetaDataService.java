@@ -36,8 +36,8 @@ import org.eclipse.elk.core.data.LayoutOptionData.Visibility;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
-import de.cau.cs.kieler.kiml.formats.GraphFormatData;
-import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
+import de.cau.cs.kieler.formats.GraphFormatData;
+import de.cau.cs.kieler.formats.GraphFormatsService;
 import de.cau.cs.kieler.kwebs.server.Application;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.formats.moml;
+package de.cau.cs.kieler.formats.moml;
 
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -21,9 +21,9 @@ import org.ptolemy.moml.DocumentRoot;
 import org.ptolemy.moml.MomlPackage;
 import org.ptolemy.moml.util.MomlResourceFactoryImpl;
 
-import de.cau.cs.kieler.kiml.formats.AbstractEmfHandler;
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.formats.AbstractEmfHandler;
+import de.cau.cs.kieler.formats.IGraphTransformer;
+import de.cau.cs.kieler.formats.TransformationData;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis;

@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.kiml.formats.standalone;
+package de.cau.cs.kieler.formats.standalone;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -24,9 +24,9 @@ import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.graph.KNode;
 import org.eclipse.equinox.nonosgi.registry.RegistryFactoryHelper;
 
-import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.formats.IGraphFormatHandler;
+import de.cau.cs.kieler.formats.IGraphTransformer;
+import de.cau.cs.kieler.formats.TransformationData;
 
 /**
  * This class provides an interface to ELK layout with KIELER's graph format support, such as JSON, in a

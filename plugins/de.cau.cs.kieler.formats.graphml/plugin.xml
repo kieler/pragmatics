@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.formats.graphFormats">
+      <handler
+            class="de.cau.cs.kieler.formats.graphml.GraphMLFormatHandler"
+            description="The Graph Markup Language. See http://graphml.graphdrawing.org/"
+            extensions="graphml"
+            id="org.graphdrawing.graphml"
+            name="GraphML">
+      </handler>
+   </extension>
+
+</plugin>

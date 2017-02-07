@@ -39,10 +39,10 @@ import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.emf.common.util.EMap;
 
-import de.cau.cs.kieler.kiml.formats.GraphFormatData;
-import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
-import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
-import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.formats.GraphFormatData;
+import de.cau.cs.kieler.formats.GraphFormatsService;
+import de.cau.cs.kieler.formats.IGraphFormatHandler;
+import de.cau.cs.kieler.formats.TransformationData;
 import de.cau.cs.kieler.kwebs.server.RemoteServiceException;
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.layout.ServerGraphFormatsService;

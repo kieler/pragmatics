@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.kiml.formats.kgtee;
+package de.cau.cs.kieler.formats.kgtee;
 
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

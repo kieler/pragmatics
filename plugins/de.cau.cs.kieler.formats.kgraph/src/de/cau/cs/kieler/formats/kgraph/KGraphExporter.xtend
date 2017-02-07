@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.formats.kgraph
 
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer
-import de.cau.cs.kieler.kiml.formats.TransformationData
+import de.cau.cs.kieler.formats.IGraphTransformer
+import de.cau.cs.kieler.formats.TransformationData
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KEdgeLayout
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement

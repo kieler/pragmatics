@@ -16,9 +16,9 @@ package de.cau.cs.kieler.graphs.klighd.syntheses
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Maps
 import com.google.inject.Inject
-import de.cau.cs.kieler.kiml.formats.gml.CollectionElement
-import de.cau.cs.kieler.kiml.formats.gml.Element
-import de.cau.cs.kieler.kiml.formats.gml.GMLModel
+import de.cau.cs.kieler.formats.gml.CollectionElement
+import de.cau.cs.kieler.formats.gml.Element
+import de.cau.cs.kieler.formats.gml.GMLModel
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.kgraph.KEdge
