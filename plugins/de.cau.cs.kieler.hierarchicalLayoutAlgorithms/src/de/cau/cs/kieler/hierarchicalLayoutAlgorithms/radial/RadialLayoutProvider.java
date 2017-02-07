@@ -84,10 +84,6 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 			alpha = minAlpha;
 		}
 		List<KNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
-		List<KNode> successors2 = HierarchicalUtil.getSuccessor(node);
-		if(successors.size() != successors2.size()){
-			System.out.println("Hello there, im a fucker");
-		}
 		for (KNode child : successors) {
 			int numberOfChildLeafs = HierarchicalUtil.getNumberOfLeafs(child);
 			calcPos(child, currentSize + radius, alpha, alpha + s * numberOfChildLeafs);
