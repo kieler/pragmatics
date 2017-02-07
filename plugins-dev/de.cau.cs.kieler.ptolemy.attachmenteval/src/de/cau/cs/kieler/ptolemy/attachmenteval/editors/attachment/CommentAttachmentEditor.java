@@ -93,15 +93,15 @@ import org.ptolemy.moml.util.MomlResourceFactoryImpl;
 
 import com.google.common.collect.Maps;
 
-import de.cau.cs.kieler.kiml.grana.AnalysisData;
-import de.cau.cs.kieler.kiml.grana.AnalysisService;
-import de.cau.cs.kieler.kiml.grana.ui.AnalysisSelectionDialog;
-import de.cau.cs.kieler.kiml.grana.ui.batch.Batch;
-import de.cau.cs.kieler.kiml.grana.ui.batch.BatchJob;
-import de.cau.cs.kieler.kiml.grana.ui.batch.BatchResult;
-import de.cau.cs.kieler.kiml.grana.ui.batch.CSVResultSerializer;
-import de.cau.cs.kieler.kiml.grana.ui.batch.IBatchResultSerializer;
-import de.cau.cs.kieler.kiml.grana.ui.batch.IKGraphProvider;
+import de.cau.cs.kieler.grana.AnalysisData;
+import de.cau.cs.kieler.grana.AnalysisService;
+import de.cau.cs.kieler.grana.ui.AnalysisSelectionDialog;
+import de.cau.cs.kieler.grana.ui.batch.Batch;
+import de.cau.cs.kieler.grana.ui.batch.BatchJob;
+import de.cau.cs.kieler.grana.ui.batch.BatchResult;
+import de.cau.cs.kieler.grana.ui.batch.CSVResultSerializer;
+import de.cau.cs.kieler.grana.ui.batch.IBatchResultSerializer;
+import de.cau.cs.kieler.grana.ui.batch.IKGraphProvider;
 import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.LightDiagramServices;

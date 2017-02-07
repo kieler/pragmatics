@@ -47,9 +47,9 @@
       </layoutOption>
    </extension>
    <!--<extension
-         point="de.cau.cs.kieler.kiml.grana.analysisProviders">
+         point="de.cau.cs.kieler.grana.analysisProviders">
       <analysis
-            category="de.cau.cs.kieler.kiml.grana.basic"
+            category="de.cau.cs.kieler.grana.basic"
             class="de.cau.cs.kieler.klay.planar.PlanarityAnalysis"
             description="The number of edges to remove for a planar subgraph, that is one that allows a drawing with no edge crossings."
             id="de.cau.cs.kieler.klay.planarity"

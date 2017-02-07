@@ -1,0 +1,46 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Graph Analysis Text
+Bundle-Vendor: Kiel University
+Bundle-Version: 0.42.0.qualifier
+Bundle-SymbolicName: de.cau.cs.kieler.grana.text; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.xtext;visibility:=reexport,
+ org.eclipse.xtext.xbase;resolution:=optional;visibility:=reexport,
+ org.eclipse.xtext.generator;resolution:=optional,
+ org.apache.commons.logging;bundle-version="1.0.4";resolution:=optional,
+ org.eclipse.emf.codegen.ecore;resolution:=optional,
+ org.eclipse.emf.mwe.utils;resolution:=optional,
+ org.eclipse.emf.mwe2.launch;resolution:=optional,
+ org.eclipse.core.filesystem,
+ org.eclipse.xtext.util,
+ org.antlr.runtime,
+ org.eclipse.xtext.common.types,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common,
+ org.eclipse.core.resources,
+ org.eclipse.core.runtime,
+ org.objectweb.asm;bundle-version="[5.0.1,6.0.0)";resolution:=optional,
+ org.eclipse.xtext.xbase.lib,
+ de.cau.cs.kieler.kgraph.text,
+ de.cau.cs.kieler.kiml.config.text;visibility:=reexport,
+ de.cau.cs.kieler.grana;visibility:=reexport,
+ org.eclipse.elk.core.service;visibility:=reexport,
+ org.eclipse.elk.graph,
+ org.eclipse.elk.graph.text
+Import-Package: org.apache.log4j,
+ org.eclipse.xtext.xbase.lib
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.cau.cs.kieler.grana.text,
+ de.cau.cs.kieler.grana.text.formatting,
+ de.cau.cs.kieler.grana.text.generator,
+ de.cau.cs.kieler.grana.text.scoping,
+ de.cau.cs.kieler.grana.text.validation,
+ de.cau.cs.kieler.grana.text.services,
+ de.cau.cs.kieler.grana.text.grana,
+ de.cau.cs.kieler.grana.text.grana.impl,
+ de.cau.cs.kieler.grana.text.grana.util,
+ de.cau.cs.kieler.grana.text.serializer,
+ de.cau.cs.kieler.grana.text.parser.antlr,
+ de.cau.cs.kieler.grana.text.parser.antlr.internal
+Bundle-Activator: de.cau.cs.kieler.grana.text.GranaTextPlugin

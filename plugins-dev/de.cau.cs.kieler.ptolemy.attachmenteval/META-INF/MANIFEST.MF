@@ -19,7 +19,7 @@ Require-Bundle: org.eclipse.ui,
  org.ptolemy.moml,
  de.cau.cs.kieler.ptolemy.klighd,
  org.eclipse.ui.workbench,
- de.cau.cs.kieler.kiml.grana,
+ de.cau.cs.kieler.grana,
  com.google.inject,
  org.eclipse.elk.core,
  org.eclipse.elk.core.service

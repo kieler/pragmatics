@@ -37,9 +37,9 @@
     <module>de.cau.cs.kieler.formats.json</module>
     <module>de.cau.cs.kieler.formats.ogml</module>
     <module>de.cau.cs.kieler.formats.svg</module>
-    <!-- <module>de.cau.cs.kieler.kiml.grana</module> -->
-    <!-- <module>de.cau.cs.kieler.kiml.grana.text</module> -->
-    <!-- <module>de.cau.cs.kieler.kiml.grana.text.ui</module> -->
+    <!-- <module>de.cau.cs.kieler.grana</module> -->
+    <!-- <module>de.cau.cs.kieler.grana.text</module> -->
+    <!-- <module>de.cau.cs.kieler.grana.text.ui</module> -->
     <module>de.cau.cs.kieler.kiml.libavoid</module>
     <module>de.cau.cs.kieler.kiml.ogdf</module>
     <module>de.cau.cs.kieler.klay.planar</module>
