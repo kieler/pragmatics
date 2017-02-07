@@ -151,7 +151,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		int i = 0;
 		List<KNode> firstRunList = new ArrayList<KNode>();
 		List<KNode> secondRunList = new ArrayList<KNode>();
-		// TODO sort according to width
+		// TODO Secondary sort method according to width
 		Comparator<KNode> compY = new Comparator<KNode>() {
 			@Override
 			public int compare(KNode n1, KNode n2) {
@@ -190,7 +190,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				}
 			}
 		};
-		List<KNode> sortedXNodes = sortAxis(root, compX);
+//		List<KNode> sortedXNodes = sortAxis(root, compX);
+		List<KNode> sortedXNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root);
 		List<KNode> tempListF = new ArrayList<KNode>();
 		List<KNode> tempListS = new ArrayList<KNode>();
 		for (KNode node : sortedXNodes) {
@@ -362,9 +363,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	}
 
 	private void buildNodeList(KNode node, List<KNode> list, Comparator<KNode> comp, Boolean first) {
-		if (!HierarchicalUtil.getSuccessor(node).isEmpty()) {
-			// TODO Sort y first
-			List<KNode> compList = sortAxis(node, comp);
+//		if (!HierarchicalUtil.getSuccessor(node).isEmpty()) {
+//			List<KNode> compList = sortAxis(node, comp);
+			List<KNode> compList = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
 			for (KNode n : compList) {
 				if (first) {
 					list.add(0, n);
@@ -377,7 +378,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 //				list.add(n);
 //				buildNodeList(n, list);
 //			}
-		}
+//		}
 	}
 
 }
