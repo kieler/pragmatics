@@ -8,29 +8,36 @@ import java.util.Map;
 
 import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.alg.layered.properties.FixedAlignment;
+import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
 import org.eclipse.elk.alg.mrtree.TreeLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
-	private List<KNode> children = new ArrayList<KNode>();
-	private static List<KEdge> edges = new ArrayList<KEdge>();
-	private static Map<KNode, KNode> firstRunMap = new HashMap<KNode, KNode>();
-	private static Map<KNode, KNode> secondRunMap = new HashMap<KNode, KNode>();
-	private static KNode root;
-	private List<KNode> secondHierarchyNodes;
+	private List<ElkNode> children = new ArrayList<ElkNode>();
+	private static List<ElkEdge> edges = new ArrayList<ElkEdge>();
+	private static Map<ElkNode, ElkNode> firstRunMap = new HashMap<ElkNode, ElkNode>();
+	private static Map<ElkNode, ElkNode> secondRunMap = new HashMap<ElkNode, ElkNode>();
+	private static ElkNode root;
+	private List<ElkNode> secondHierarchyNodes;
+	private int treeseperator;
+	private int maxDepth = 0;
+	private Map<Integer, Integer> firstOffset = new HashMap<Integer, Integer>();
+	private Map<Integer, Integer> secondOffset = new HashMap<Integer, Integer>();
 
 	@Override
-	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
+	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		children.clear();
 		edges.clear();
 		firstRunMap.clear();
@@ -41,133 +48,32 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		root = HierarchicalUtil.findRoot(layoutGraph);
 		secondHierarchyNodes = HierarchicalUtil.getSuccessor(root);
 
-		// treeLayout(layoutGraph);
 		layeredLayout(layoutGraph);
 
 		HierarchicalEdgeRouting.drawExplosionLines(root);
 	}
 
-	private void treeLayout(KNode layoutGraph) {
+	private void layeredLayout(ElkNode layoutGraph) {
 		// Compute the two Lists of nodes for the two runs of MrTree.
-		int treeseperator = secondHierarchyNodes.size() / 2;
+		treeseperator = secondHierarchyNodes.size() / 2;
 		int i = 0;
-		List<KNode> firstRunList = new ArrayList<KNode>();
-		List<KNode> secondRunList = new ArrayList<KNode>();
-		for (KNode node : secondHierarchyNodes) {
-			if (i < treeseperator) {
-				firstRunList.add(node);
-			} else {
-				secondRunList.add(node);
-			}
-			i++;
-		}
-
-		List<KNode> tempList = new ArrayList<KNode>();
-		for (KNode node : firstRunList) {
-//			buildNodeList(node, tempList);
-		}
-		firstRunList.addAll(tempList);
-
-		tempList.clear();
-		for (KNode node : secondRunList) {
-//			buildNodeList(node, tempList);
-		}
-		secondRunList.addAll(tempList);
-
-		// First run for upward tree
-		KNode firstRun = createTree(firstRunList, firstRunMap);
-		TreeLayoutProvider tree = new TreeLayoutProvider();
-		BasicProgressMonitor firstTreeRun = new BasicProgressMonitor();
-		tree.layout(firstRun, firstTreeRun);
-
-		// TODO Compute correct displacement for x
-		KShapeLayout firstRunLayout = firstRun.getData(KShapeLayout.class);
-		float firstWidth = firstRunLayout.getWidth();
-		float yDisplacement = firstRunLayout.getHeight();
-		float smallestXPos = Float.MAX_VALUE;
-
-		// Second run for downward tree
-		KNode secondRun = createTree(secondRunList, secondRunMap);
-		BasicProgressMonitor secondTreeRun = new BasicProgressMonitor();
-		tree.layout(secondRun, secondTreeRun);
-
-		KShapeLayout secondRunLayout = secondRun.getData(KShapeLayout.class);
-		float secondWidth = secondRunLayout.getWidth();
-
-		System.out.println("first: " + firstWidth);
-		System.out.println("second: " + secondWidth);
-
-		// Compute positions for first run
-		float xDisplacement = 0;
-		if (firstWidth < secondWidth) {
-			xDisplacement = (secondWidth - firstWidth) / 2;
-		}
-
-		System.out.println("xDisp: " + xDisplacement);
-		System.out.println("smallest: " + smallestXPos);
-		for (KNode node : children) {
-			if (firstRunMap.containsKey(node)) {
-				KShapeLayout newLayout = firstRunMap.get(node).getData(KShapeLayout.class);
-				KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-				// nodeLayout.setXpos(newLayout.getXpos() + xDisplacement -
-				// smallestXPos);
-				nodeLayout.setXpos(newLayout.getXpos() + xDisplacement);
-				nodeLayout.setYpos(-(newLayout.getYpos() + newLayout.getHeight()) + yDisplacement);
-			}
-		}
-
-		// Compute positions for second run
-		xDisplacement = 0;
-		if (firstWidth > secondWidth) {
-			xDisplacement = (firstWidth - secondWidth) / 2;
-		}
-
-		KShapeLayout rootLayout = root.getData(KShapeLayout.class);
-		yDisplacement -= rootLayout.getHeight() + 40;
-		for (KNode node : children) {
-			if (secondRunMap.containsKey(node)) {
-				KShapeLayout newLayout = secondRunMap.get(node).getData(KShapeLayout.class);
-				KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-				// System.out.println("before: " + newLayout.getXpos());
-				// nodeLayout.setXpos(newLayout.getXpos() + xDisplacement -
-				// smallestXPos);
-				nodeLayout.setXpos(newLayout.getXpos() + xDisplacement);
-				// System.out.println("after: " + nodeLayout.getXpos());
-				nodeLayout.setYpos(newLayout.getYpos() + yDisplacement);
-			}
-		}
-
-		// TODO set appropriate height and width
-		KShapeLayout graphLayout = layoutGraph.getData(KShapeLayout.class);
-		graphLayout.setWidth(3000);
-		graphLayout.setHeight(3000);
-		// rootLayout.setYpos(0);
-		// rootLayout.setXpos(0);
-	}
-
-	private void layeredLayout(KNode layoutGraph) {
-		// Compute the two Lists of nodes for the two runs of MrTree.
-		int treeseperator = secondHierarchyNodes.size() / 2;
-		int i = 0;
-		List<KNode> firstRunList = new ArrayList<KNode>();
-		List<KNode> secondRunList = new ArrayList<KNode>();
+		List<ElkNode> firstRunList = new ArrayList<ElkNode>();
+		List<ElkNode> secondRunList = new ArrayList<ElkNode>();
 		// TODO Secondary sort method according to width
-		Comparator<KNode> compY = new Comparator<KNode>() {
+		Comparator<ElkNode> compY = new Comparator<ElkNode>() {
 			@Override
-			public int compare(KNode n1, KNode n2) {
-				KShapeLayout n1Layout = n1.getData(KShapeLayout.class);
-				KShapeLayout n2Layout = n2.getData(KShapeLayout.class);
-				if (n1Layout.getYpos() < n2Layout.getYpos()) {
+			public int compare(ElkNode n1, ElkNode n2) {
+				if (n1.getY() < n2.getY()) {
 					return -1;
-				} else if (n1Layout.getYpos() == n2Layout.getYpos()) {
+				} else if (n1.getY() == n2.getY()) {
 					return 0;
 				} else {
 					return 1;
 				}
 			}
 		};
-		List<KNode> sortedYNodes = sortAxis(root, compY);
-		for (KNode node : sortedYNodes) {
+		List<ElkNode> sortedYNodes = sortAxis(root, compY);
+		for (ElkNode node : sortedYNodes) {
 			if (i < treeseperator) {
 				firstRunList.add(node);
 			} else {
@@ -175,26 +81,24 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			}
 			i++;
 		}
-		
-		Comparator<KNode> compX = new Comparator<KNode>() {
+
+		Comparator<ElkNode> compX = new Comparator<ElkNode>() {
 			@Override
-			public int compare(KNode n1, KNode n2) {
-				KShapeLayout n1Layout = n1.getData(KShapeLayout.class);
-				KShapeLayout n2Layout = n2.getData(KShapeLayout.class);
-				if (n1Layout.getXpos() < n2Layout.getXpos()) {
+			public int compare(ElkNode n1, ElkNode n2) {
+				if (n1.getX() < n2.getX()) {
 					return -1;
-				} else if (n1Layout.getXpos() == n2Layout.getXpos()) {
+				} else if (n1.getX() == n2.getX()) {
 					return 0;
 				} else {
 					return 1;
 				}
 			}
 		};
-//		List<KNode> sortedXNodes = sortAxis(root, compX);
-		List<KNode> sortedXNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root);
-		List<KNode> tempListF = new ArrayList<KNode>();
-		List<KNode> tempListS = new ArrayList<KNode>();
-		for (KNode node : sortedXNodes) {
+		// List<ElkNode> sortedXNodes = sortAxis(root, compX);
+		List<ElkNode> sortedXNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root);
+		List<ElkNode> tempListF = new ArrayList<ElkNode>();
+		List<ElkNode> tempListS = new ArrayList<ElkNode>();
+		for (ElkNode node : sortedXNodes) {
 			if (firstRunList.contains(node)) {
 				tempListF.add(0, node);
 			} else if (secondRunList.contains(node)) {
@@ -206,68 +110,75 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		secondRunList.clear();
 		secondRunList.addAll(tempListS);
 
-		List<KNode> tempList = new ArrayList<KNode>();
+		List<ElkNode> tempList = new ArrayList<ElkNode>();
 		Boolean first = true;
-		for (KNode node : firstRunList) {
+		for (ElkNode node : firstRunList) {
+			tempList.add(node);
 			buildNodeList(node, tempList, compX, first);
 		}
+		firstRunList.clear();
 		firstRunList.addAll(tempList);
+		for (int x = 0; i < maxDepth; i++) {
+			firstOffset.put(x, 0);
+		}
 
+		maxDepth = 0;
 		tempList.clear();
 		first = false;
-		for (KNode node : secondRunList) {
+		for (ElkNode node : secondRunList) {
+			tempList.add(node);
 			buildNodeList(node, tempList, compX, first);
 		}
+		secondRunList.clear();
 		secondRunList.addAll(tempList);
-
+		for (int x = 0; i < maxDepth; i++) {
+			secondOffset.put(x, 0);
+		}
+		
 		// First run for upward tree
-		KNode firstRun = createTree(firstRunList, firstRunMap);
+		ElkNode firstRun = createTree(firstRunList, firstRunMap);
 		BasicProgressMonitor firstLayeredRun = new BasicProgressMonitor();
 		LayeredLayoutProvider layered = new LayeredLayoutProvider();
-		KShapeLayout firstLayout = firstRun.getData(KShapeLayout.class);
-		firstLayout.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
-		firstLayout.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
-		firstLayout.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
-		firstLayout.setProperty(LayeredOptions.DIRECTION, Direction.UP);
+		firstRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
+		firstRun.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
+		firstRun.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
+//		firstRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH, GreedySwitchType.OFF);
+		firstRun.setProperty(LayeredOptions.DIRECTION, Direction.UP);
 		layered.layout(firstRun, firstLayeredRun);
 
 		// TODO Compute correct displacement for x (maybe fixed)
-		KShapeLayout firstRunLayout = firstRun.getData(KShapeLayout.class);
-		float firstWidth = firstRunLayout.getWidth();
+		float firstWidth = (float) firstRun.getWidth();
 		float smallestXPos = Float.MAX_VALUE;
 
 		// Second run for downward tree
-		KNode secondRun = createTree(secondRunList, secondRunMap);
+		ElkNode secondRun = createTree(secondRunList, secondRunMap);
 		BasicProgressMonitor secondLayeredRun = new BasicProgressMonitor();
-		KShapeLayout secondLayout = secondRun.getData(KShapeLayout.class);
-		secondLayout.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
-		secondLayout.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
-		secondLayout.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
-		secondLayout.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
+		secondRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
+		secondRun.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
+		secondRun.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
+//		secondRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH, GreedySwitchType.OFF);
+		secondRun.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
 		layered.layout(secondRun, secondLayeredRun);
 
-		KShapeLayout secondRunLayout = secondRun.getData(KShapeLayout.class);
-		float secondWidth = secondRunLayout.getWidth();
+		float secondWidth = (float) secondRun.getWidth();
 
 		System.out.println("first: " + firstWidth);
 		System.out.println("second: " + secondWidth);
 
 		// Compute positions for first run
-		KShapeLayout graphLayout = layoutGraph.getData(KShapeLayout.class);
 		float xDisplacement = 0;
 		if (firstWidth < secondWidth) {
 			xDisplacement = (secondWidth - firstWidth) / 2;
-			graphLayout.setWidth(secondWidth);
+			layoutGraph.setWidth(secondWidth);
 		}
 
 		System.out.println("xDisp: " + xDisplacement);
 		System.out.println("smallest: " + smallestXPos);
-		for (KNode node : children) {
+		for (ElkNode node : children) {
 			if (firstRunMap.containsKey(node)) {
-				KShapeLayout newLayout = firstRunMap.get(node).getData(KShapeLayout.class);
-				KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-				nodeLayout.setXpos(newLayout.getXpos() + xDisplacement);
-				nodeLayout.setYpos(newLayout.getYpos());
+				ElkNode newLayout = firstRunMap.get(node);
+				node.setX(newLayout.getX() + xDisplacement);
+				node.setY(newLayout.getY());
 			}
 		}
 
@@ -275,30 +186,28 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		xDisplacement = 0;
 		if (firstWidth > secondWidth) {
 			xDisplacement = (firstWidth - secondWidth) / 2;
-			graphLayout.setWidth(firstWidth);
+			layoutGraph.setWidth(firstWidth);
 		}
 
-		KShapeLayout rootLayout = root.getData(KShapeLayout.class);
-		float yDisplacement = firstRunLayout.getHeight() - rootLayout.getHeight();
-		for (KNode node : children) {
+		float yDisplacement = (float) (firstRun.getHeight() - root.getHeight());
+		for (ElkNode node : children) {
 			if (secondRunMap.containsKey(node)) {
-				KShapeLayout newLayout = secondRunMap.get(node).getData(KShapeLayout.class);
-				KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-				nodeLayout.setXpos(newLayout.getXpos() + xDisplacement);
-				nodeLayout.setYpos(newLayout.getYpos() + yDisplacement);
+				ElkNode newLayout = secondRunMap.get(node);
+				node.setX(newLayout.getX() + xDisplacement);
+				node.setY(newLayout.getY() + yDisplacement);
 			}
 		}
 
-		graphLayout.setHeight(yDisplacement + secondRunLayout.getHeight());
+		layoutGraph.setHeight(yDisplacement + secondRun.getHeight());
 	}
 
-	private List<KNode> sortAxis(KNode node, Comparator<KNode> comp) {
-		List<KNode> successors = HierarchicalUtil.getSuccessor(node);
-		
+	private List<ElkNode> sortAxis(ElkNode node, Comparator<ElkNode> comp) {
+		List<ElkNode> successors = HierarchicalUtil.getSuccessor(node);
+
 		if (successors.size() > 1) {
-			List<KNode> sortedNodes = new ArrayList<KNode>();
-			List<KNode> children = new ArrayList<>();
-			List<KNode> nodeChildren = node.getChildren();
+			List<ElkNode> sortedNodes = new ArrayList<ElkNode>();
+			List<ElkNode> children = new ArrayList<>();
+			List<ElkNode> nodeChildren = node.getChildren();
 			boolean isBlueBox = nodeChildren.size() == 1 && !nodeChildren.get(0).getChildren().isEmpty();
 			// blue boxing
 			if (!isBlueBox) {
@@ -309,15 +218,13 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			children.sort(comp);
 
 			// map sorted nodes
-			for (KNode child : children) {
-				KShapeLayout shapeChild = child.getData(KShapeLayout.class);
-				Integer childID = shapeChild.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
+			for (ElkNode child : children) {
+				Integer childID = child.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
 				if (childID != null) {
 
-					KNode removeNode = null;
-					for (KNode successor : successors) {
-						KShapeLayout shapeSuccessor = successor.getData(KShapeLayout.class);
-						Integer successorID = shapeSuccessor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
+					ElkNode removeNode = null;
+					for (ElkNode successor : successors) {
+						Integer successorID = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
 						if (childID.equals(successorID)) {
 							sortedNodes.add(successor);
 							removeNode = successor;
@@ -333,52 +240,59 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			return successors;
 		}
 	}
-	
-	private KNode createTree(List<KNode> nodes, Map<KNode, KNode> map) {
-		KNode layoutRoot = ElkUtil.createInitializedNode();
-		KNode treeRoot = ElkUtil.createInitializedNode();
-		treeRoot.setParent(layoutRoot);
-		KShapeLayout rootLayout = root.getData(KShapeLayout.class);
-		ElkUtil.resizeNode(treeRoot, rootLayout.getWidth(), rootLayout.getHeight(), false, false);
+
+	private ElkNode createTree(List<ElkNode> nodes, Map<ElkNode, ElkNode> map) {
+		ElkNode layoutRoot = ElkGraphUtil.createGraph();
+		ElkNode treeRoot = ElkGraphUtil.createNode(layoutRoot);
+		ElkUtil.resizeNode(treeRoot, root.getWidth(), root.getHeight(), false, false);
 		map.put(root, treeRoot);
-		for (KNode node : nodes) {
-			KNode tempNode = ElkUtil.createInitializedNode();
-			tempNode.setParent(layoutRoot);
-			KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-			ElkUtil.resizeNode(tempNode, nodeLayout.getWidth(), nodeLayout.getHeight(), false, false);
+		int j = 0;
+		int i = 0;
+		for (ElkNode node : nodes) {
+			// TODO mit getDepth arbeiten
+			if (j <= 0) {
+				i++;
+				j = HierarchicalUtil.getSuccessor(node).size();
+			}
+			ElkNode tempNode = ElkGraphUtil.createNode(layoutRoot);
+			tempNode.setProperty(LayeredOptions.POSITION, new KVector(i, i));
+			ElkUtil.resizeNode(tempNode, node.getWidth(), node.getHeight(), false, false);
 			map.put(node, tempNode);
+			j--;
 		}
 
-		for (KNode node : nodes) {
-			KEdge tempEdge = ElkUtil.createInitializedEdge();
-			for (KEdge edge : node.getIncomingEdges()) {
+		for (ElkNode node : nodes) {
+			ElkNode source = null;
+			for (ElkEdge edge : node.getIncomingEdges()) {
 				if (edges.contains(edge)) {
-					tempEdge.setSource(map.get(edge.getSource()));
+					source = map.get(edge.getSources());
+					break;
 				}
 			}
-			tempEdge.setTarget(map.get(node));
+			ElkGraphUtil.createSimpleEdge(source, map.get(node));
 		}
 
 		return layoutRoot;
 	}
 
-	private void buildNodeList(KNode node, List<KNode> list, Comparator<KNode> comp, Boolean first) {
-//		if (!HierarchicalUtil.getSuccessor(node).isEmpty()) {
-//			List<KNode> compList = sortAxis(node, comp);
-			List<KNode> compList = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
-			for (KNode n : compList) {
-				if (first) {
-					list.add(0, n);
-				} else {
-					list.add(n);
-				}
-				buildNodeList(n, list, comp, first);
+	private void buildNodeList(ElkNode node, List<ElkNode> list, Comparator<ElkNode> comp, Boolean first) {
+		// if (!HierarchicalUtil.getSuccessor(node).isEmpty()) {
+		// List<ElkNode> compList = sortAxis(node, comp);
+		List<ElkNode> compList = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
+		for (ElkNode n : compList) {
+			if (first) {
+				list.add(0, n);
+			} else {
+				list.add(n);
 			}
-//			for (KNode n : HierarchicalUtil.getSuccessor(node)) {
-//				list.add(n);
-//				buildNodeList(n, list);
-//			}
-//		}
+			// TODO depth
+			buildNodeList(n, list, comp, first);
+		}
+		// for (ElkNode n : HierarchicalUtil.getSuccessor(node)) {
+		// list.add(n);
+		// buildNodeList(n, list);
+		// }
+		// }
 	}
 
 }
