@@ -3,70 +3,47 @@ package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.core.klayoutdata.impl.KEdgeLayoutImpl;
-import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphFactory;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.impl.KGraphFactoryImpl;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 public class HierarchicalEdgeRouting {
 
-	public static void routeEdgesCenterToCenter(KNode graph) {
-		for (KEdge edge : graph.getOutgoingEdges()) {
-			KNode target = edge.getTarget();
+	public static void routeEdgesCenterToCenter(ElkNode graph) {
+		for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(graph)) {
+
+			ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
 			if (!graph.getChildren().contains(target)) {
-				KShapeLayout sourceLayout = graph.getData(KShapeLayout.class);
-				KShapeLayout targetLayout = target.getData(KShapeLayout.class);
 
-				float sourceX = sourceLayout.getXpos() + sourceLayout.getWidth() / 2;
-				float sourceY = sourceLayout.getYpos() + sourceLayout.getHeight() / 2;
+				double sourceX = graph.getX() + graph.getWidth() / 2;
+				double sourceY = graph.getY() + graph.getHeight() / 2;
 
-				float targetX = targetLayout.getXpos() + targetLayout.getWidth() / 2;
-				float targetY = targetLayout.getYpos() + targetLayout.getHeight() / 2;
+				double targetX = target.getX() + target.getWidth() / 2;
+				double targetY = target.getY() + target.getHeight() / 2;
 
-				KEdgeLayout layout = edge.getData(KEdgeLayout.class);
-
-				KPoint sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-				sourcePoint.setPos(sourceX, sourceY);
-				layout.setSourcePoint(sourcePoint);
-
-				KPoint targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-				targetPoint.setPos(targetX, targetY);
-				layout.setTargetPoint(targetPoint);
+				ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, true, true);
+				section.setStartLocation(sourceX, sourceY);
+				section.setEndLocation(targetX, targetY);
 
 				routeEdgesCenterToCenter(target);
 			}
-
 		}
 	}
 
-	public static void routeEdgesCornerToCorner(KNode graph) {
-		for (KEdge edge : graph.getOutgoingEdges()) {
-			KNode target = edge.getTarget();
+	public static void routeEdgesCornerToCorner(ElkNode graph) {
+		for (ElkEdge edge : graph.getOutgoingEdges()) {
+			ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
 			if (!graph.getChildren().contains(target)) {
-				KShapeLayout sourceLayout = graph.getData(KShapeLayout.class);
-				KShapeLayout targetLayout = target.getData(KShapeLayout.class);
+				double sourceX = graph.getX();
+				double sourceY = graph.getY();
 
-				float sourceX = sourceLayout.getXpos();
-				float sourceY = sourceLayout.getYpos();
+				double targetX = target.getX();
+				double targetY = target.getY();
 
-				float targetX = targetLayout.getXpos();
-				float targetY = targetLayout.getYpos();
-
-				KEdgeLayout layout = edge.getData(KEdgeLayout.class);
-
-				KPoint sourcePoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-				sourcePoint.setPos(sourceX, sourceY);
-				layout.setSourcePoint(sourcePoint);
-
-				KPoint targetPoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-				targetPoint.setPos(targetX, targetY);
-				layout.setTargetPoint(targetPoint);
+				ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, true, true);
+				section.setStartLocation(sourceX, sourceY);
+				section.setEndLocation(targetX, targetY);
 
 				routeEdgesCornerToCorner(target);
 			}
@@ -74,16 +51,16 @@ public class HierarchicalEdgeRouting {
 		}
 	}
 
-	public static void drawExplosionLines(KNode root) {
+	public static void drawExplosionLines(ElkNode root) {
 		routeEdgesCornerToCorner(root);
 		bendEdgesToExplosionLines(root);
 	}
 
-	public static void bendEdgesToExplosionLines(KNode root) {
-		List<KNode> copiedChildren = new ArrayList<>();
-		List<KNode> children = root.getChildren();
+	public static void bendEdgesToExplosionLines(ElkNode root) {
+		List<ElkNode> copiedChildren = new ArrayList<>();
+		List<ElkNode> children = root.getChildren();
 		boolean isBlueBox = children.size() == 1 && !children.get(0).getChildren().isEmpty();
-		//blue boxing 
+		// blue boxing
 		if (!isBlueBox) {
 			copiedChildren.addAll(children);
 		} else {
@@ -91,30 +68,25 @@ public class HierarchicalEdgeRouting {
 		}
 
 		// take a look at all the successors of the node
-		for (KNode successor : HierarchicalUtil.getSuccessor(root)) {
-			KShapeLayout graphShape = root.getData(KShapeLayout.class);
-			KShapeLayout shapeSuccessor = successor.getData(KShapeLayout.class);
-			Integer id = shapeSuccessor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
+		for (ElkNode successor : HierarchicalUtil.getSuccessor(root)) {
+			Integer id = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
 
 			// look at the incoming edges
-			for (KEdge edge : successor.getIncomingEdges()) {
+			for (ElkEdge edge : successor.getIncomingEdges()) {
 				// only the edge coming from the original node shall be
 				// considered
-				if (edge.getSource() == root || root.getChildren().contains(edge.getSource())) {
-					KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-					KNode childFound = null;
-					for (KNode child : copiedChildren) {
-						KShapeLayout shapeChild = child.getData(KShapeLayout.class);
-						Integer idParent = shapeChild.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
+				if (edge.getSources().get(0) == root || root.getChildren().contains(edge.getSources().get(0))) {
+					ElkNode childFound = null;
+					for (ElkNode child : copiedChildren) {
+						Integer idParent = child.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
 
 						if (idParent != null && id.equals(idParent)) {
 							childFound = child;
-							float xPos = graphShape.getXpos() + shapeChild.getXpos() + shapeChild.getWidth() / 2;
-							float yPos = graphShape.getYpos() + shapeChild.getYpos() + shapeChild.getHeight() / 2;
-							KPoint point = KLayoutDataFactory.eINSTANCE.createKPoint();
-							point.setX(xPos);
-							point.setY(yPos);
-							edgeLayout.setSourcePoint(point);
+							double xPos = root.getX() + child.getX() + child.getWidth() / 2;
+							double yPos = root.getY() + child.getY() + child.getHeight() / 2;
+
+							ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, true, true);
+							section.setStartLocation(xPos, yPos);
 
 						}
 					}

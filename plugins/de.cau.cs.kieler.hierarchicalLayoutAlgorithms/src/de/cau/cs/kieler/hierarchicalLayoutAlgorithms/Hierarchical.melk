@@ -6,11 +6,10 @@ bundle {
     label "Hierarchical Layout Algorithms"
     metadataClass HierarchicalMetaDataProvider
 }
- 
 algorithm radial(RadialLayoutProvider) {
     label "Radial Layouter"
     metadataClass RadialOptions
-    
+ 
     supports hierarchicalID
 }
 
@@ -26,15 +25,6 @@ algorithm custom(CustomLayoutProvider) {
 }
 
 
-programmatic option hierarchicalID:int{
-    label "Hierarchical ID "
-    targets parents
-}
-
-programmatic option hierarchicalParentID:int{
-    label "Hierarchical Parent ID "
-    targets parents
-}
 
 algorithm stress(HierarchicalStressLayoutProvider) {
     label "Stress Layouter"
@@ -45,3 +35,16 @@ algorithm tree(HierarchicalTreeLayoutProvider) {
     label "Tree Layouter"
     metadataClass HierarchicalTreeOptions
 }
+
+
+programmatic option hierarchicalID:int{
+    label "Hierarchical ID "
+    targets parents
+}
+
+programmatic option hierarchicalParentID:int{
+    label "Hierarchical Parent ID "
+    targets parents
+}
+ 
+

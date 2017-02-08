@@ -7,6 +7,7 @@ import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalEdgeRouting;
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalUtil;
@@ -145,8 +146,8 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		List<ElkEdge> edges = node.getIncomingEdges();
 		ElkNode parent = null;
 		for (ElkEdge edge : edges) {
-			if (!node.getChildren().contains(edge.getSource())) {
-				parent = edge.getSource();
+			if (!node.getChildren().contains(edge.getSources().get(0))) {
+				parent = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
 			}
 		}
 		ElkNode innerNode = HierarchicalUtil.getOriginalNode(parent, node);
