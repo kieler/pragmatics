@@ -9,7 +9,7 @@ bundle {
 algorithm radial(RadialLayoutProvider) {
     label "Radial Layouter"
     metadataClass RadialOptions
- 
+    description "A radial layouter"
     supports hierarchicalID
 }
 
@@ -22,18 +22,20 @@ algorithm grid(GridSnapLayoutProvider) {
 algorithm custom(CustomLayoutProvider) {
     label "Custom Layouter"
     metadataClass CustomOptions
+    description "A custom layouter, not implemented yet."
 }
-
 
 
 algorithm stress(HierarchicalStressLayoutProvider) {
     label "Stress Layouter"
     metadataClass HierarchicalStressOptions
+    description "A hierarchical stress layouter."
 }
 
 algorithm tree(HierarchicalTreeLayoutProvider) {
     label "Tree Layouter"
     metadataClass HierarchicalTreeOptions
+    description "A tree layouter."
 }
 
 
