@@ -6,19 +6,19 @@ import java.util.List;
 import org.eclipse.elk.alg.force.properties.StressOptions;
 import org.eclipse.elk.alg.force.stress.StressLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 	
-	private static List<KNode> children = new ArrayList<KNode>();
+	private static List<ElkNode> children = new ArrayList<ElkNode>();
 	private static final float SPACING = 100;
 	
 	@Override
-	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
+	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		progressMonitor.begin("Stress Layouter", 1);
 		
 		StressLayoutProvider stress = new StressLayoutProvider();
@@ -26,23 +26,20 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 		children.clear();
 		children.addAll(layoutGraph.getChildren());
 		
-		for (KNode node : children) {
-			for (KEdge edge : node.getOutgoingEdges()) {
-				if (children.contains(edge.getTarget())) {
-					KNode source = edge.getSource();
-					KNode target = edge.getTarget();
-					KShapeLayout sourceLayout = source.getData(KShapeLayout.class);
-					float width = sourceLayout.getWidth() / 2;
-					float height = sourceLayout.getHeight() / 2;
+		for (ElkNode node : children) {
+			for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+				ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
+				if (children.contains(target)) {
+					ElkNode source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
+					double width = source.getWidth() / 2;
+					double height = source.getHeight() / 2;
 					double sourcediagonal = Math.sqrt(width*width + height*height);
-					KShapeLayout targetLayout = target.getData(KShapeLayout.class);
-					width = targetLayout.getWidth();
-					height = targetLayout.getHeight();
+					width = target.getWidth();
+					height = target.getHeight();
 					double targetdiagonal = Math.sqrt(width*width + height*height);
-					float edgelength = (float) (sourcediagonal + targetdiagonal + SPACING);
+					double edgelength = (sourcediagonal + targetdiagonal + SPACING);
 //					System.out.println(edgelength);
-					KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
-					edgeLayout.setProperty(StressOptions.DESIRED_EDGE_LENGTH, edgelength);
+					edge.setProperty(StressOptions.DESIRED_EDGE_LENGTH, edgelength);
 				}
 			}
 		}
