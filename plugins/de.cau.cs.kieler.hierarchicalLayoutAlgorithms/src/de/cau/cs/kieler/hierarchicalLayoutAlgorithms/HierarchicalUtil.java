@@ -156,4 +156,24 @@ public class HierarchicalUtil {
 		}
 
 	}
+
+	/**
+	 * Retrieve the original node of a copy node. 
+	 * @param parent
+	 * @param successor
+	 * @return
+	 */
+	public static KNode getOriginalNode(KNode parent, KNode successor) {
+		KShapeLayout shapeSuccessor = successor.getData(KShapeLayout.class);
+		Integer successorID = shapeSuccessor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
+		
+		for (KNode child : parent.getChildren()) {
+			KShapeLayout shapeChild = child.getData(KShapeLayout.class);
+			Integer childID = shapeChild.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
+			if (successorID.equals(childID)) {
+				return child;
+			}
+		}
+		return null;
+	}
 }

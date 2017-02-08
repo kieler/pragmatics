@@ -7,9 +7,11 @@ import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
+import org.eclipse.elk.graph.KEdge;
 import org.eclipse.elk.graph.KNode;
 
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalEdgeRouting;
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvider;
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalUtil;
 
 public class RadialLayoutProvider extends AbstractLayoutProvider {
@@ -49,7 +51,8 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		// layerSize.set(0, layerSize.get(0) / 2);
 
 		nodeCounter = 0;
-		radius = findBiggestNodeInGraph(layoutGraph); //averageNodeSize(root) / nodeCounter;
+		radius = findBiggestNodeInGraph(layoutGraph); // averageNodeSize(root) /
+														// nodeCounter;
 
 		calcPos(root, 0, 0, 2 * Math.PI);
 
@@ -58,21 +61,39 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		progressMonitor.done();
 	}
 
-	private void calcPos(KNode node, double currentSize, double minAlpha, double maxAlpha) {
-		double alphaPoint = (minAlpha + maxAlpha) / 2 + 45;
+	double offset = 0;
+
+	private void calcPos(KNode node, double currentRadius, double minAlpha, double maxAlpha) {
+
+		double alphaPoint = (minAlpha + maxAlpha) / 2 + offset;
 
 		KShapeLayout shape = node.getData(KShapeLayout.class);
 		// double size = layerSize.get(layer);
 
 		// x=r*sinθ, y=r*cosθ
-		float xPos = (float) (currentSize * Math.sin(alphaPoint));
-		float yPos = (float) (currentSize * Math.cos(alphaPoint));
+		float xPos = (float) (currentRadius * Math.sin(alphaPoint));
+		float yPos = (float) (currentRadius * Math.cos(alphaPoint));
+
+		// calculate offset according to first surrounding node
+		if (minAlpha == 0.0 && maxAlpha != 2 * Math.PI && offset == 0) {
+			offset = calculateOffset(node, currentRadius, xPos, yPos);
+			alphaPoint = (minAlpha + maxAlpha) / 2 + offset;
+			xPos = (float) (currentRadius * Math.sin(alphaPoint));
+			yPos = (float) (currentRadius * Math.cos(alphaPoint));
+		}
+
+		shape.setXpos(xPos);
+		shape.setYpos(yPos);
+
 		centerNodesOnRadi(shape, xPos, yPos);
 		// shiftClosestEdgeToRadi(shape, xPos, yPos);
 
+		calculateChildrenWedgeByLeafs(node, currentRadius+radius, minAlpha, maxAlpha);
+	}
+
+	private void calculateChildrenWedgeByLeafs(KNode node, double currentRadius, double minAlpha, double maxAlpha) {
 		double numberOfLeafs = HierarchicalUtil.getNumberOfLeafs(node);
-		// double sizeNextLayer = layerSize.get(layer + 1);
-		double tau = 2 * Math.acos(currentSize / currentSize + radius);
+		double tau = 2 * Math.acos(currentRadius / currentRadius + radius);
 		double s;
 		double alpha;
 		if (tau < maxAlpha - minAlpha) {
@@ -86,22 +107,93 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		List<KNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
 		for (KNode child : successors) {
 			int numberOfChildLeafs = HierarchicalUtil.getNumberOfLeafs(child);
-			calcPos(child, currentSize + radius, alpha, alpha + s * numberOfChildLeafs);
+			calcPos(child, currentRadius, alpha, alpha + s * numberOfChildLeafs);
 			alpha += s * numberOfChildLeafs;
 		}
-
 	}
 
-	
+	private void calculateChildrenWedgeBySize(KNode node, double currentRadius, double minAlpha, double maxAlpha) {
+
+		List<KNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
+		for (KNode child : successors) {
+			KShapeLayout shapeNode = child.getData(KShapeLayout.class);
+
+			double minxPos = currentRadius * Math.sin(minAlpha);
+			if (minxPos == 0) {
+				minxPos = currentRadius;
+			}
+			float minyPos = (float) (currentRadius * Math.cos(minAlpha));
+
+			double alpha = 0;
+			if (minAlpha + offset < 0.7854) {// 45°
+				float height = shapeNode.getHeight();
+				minyPos += height;
+				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
+				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(height, 2))
+						/ (2 * distanceToOrigin * currentRadius));
+
+			} else if (minAlpha + offset < 2.3562) {// 135°
+
+				float height = shapeNode.getWidth();
+				minyPos += height;
+				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
+				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(height, 2))
+						/ (2 * distanceToOrigin * currentRadius));
+			} else if (minAlpha + offset < 3.927) {// 225°
+				float height = shapeNode.getHeight();
+				minyPos += height;
+				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
+				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(height, 2))
+						/ (2 * distanceToOrigin * currentRadius));
+
+			} else if (minAlpha + offset < 5.4978) {// 315°
+				float height = shapeNode.getWidth();
+				minyPos += height;
+				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
+				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(height, 2))
+						/ (2 * distanceToOrigin * currentRadius));
+			}
+
+			calcPos(child, currentRadius, minAlpha, minAlpha + alpha);
+			minAlpha += alpha;
+		}
+	}
+
+	private double calculateOffset(KNode node, double currentRadius, float xPos, float yPos) {
+		List<KEdge> edges = node.getIncomingEdges();
+		KNode parent = null;
+		for (KEdge edge : edges) {
+			if (!node.getChildren().contains(edge.getSource())) {
+				parent = edge.getSource();
+			}
+		}
+		KNode innerNode = HierarchicalUtil.getOriginalNode(parent, node);
+
+		// center of the node, as center of the polar coordinates
+		KShapeLayout parentShape = parent.getData(KShapeLayout.class);
+		float centerX = parentShape.getXpos(); // + nodeShape.getWidth()/2;
+		float centerY = parentShape.getYpos(); // + nodeShape.getHeight()/2;
+
+		KShapeLayout shapeInnerNode = innerNode.getData(KShapeLayout.class);
+		float innerX = shapeInnerNode.getXpos() + centerX;
+		float innerY = shapeInnerNode.getYpos() + centerY;
+
+		double distanceOriginToInnerNode = Math.sqrt(innerX * innerX + innerY * innerY);
+
+		float distanceX = xPos - innerX;
+		float distanceY = yPos - innerY;
+		double distanceNodeToInnerNode = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+		double alpha = Math.acos((Math.pow(distanceOriginToInnerNode, 2) + Math.pow(currentRadius, 2)
+				- Math.pow(distanceNodeToInnerNode, 2)) / (2 * distanceOriginToInnerNode * currentRadius));
+
+		return alpha;
+	}
 
 	private void centerNodesOnRadi(KShapeLayout shape, float xPos, float yPos) {
-		if (xPos == 0 && yPos == 0) {
-			xPos = xPos - shape.getWidth() / 2;
-			yPos = yPos - shape.getHeight() / 2;
-		} else {
-			xPos = xPos - shape.getWidth() / 2;
-			yPos = yPos - shape.getHeight() / 2;
-		}
+		xPos = xPos - shape.getWidth() / 2;
+		yPos = yPos - shape.getHeight() / 2;
+
 		shape.setXpos(xPos);
 		shape.setYpos(yPos);
 	}
@@ -150,14 +242,14 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 
 			float width = shape.getWidth();
 			float height = shape.getHeight();
-			float diameter= (float) Math.sqrt(width * width + height * height);
+			float diameter = (float) Math.sqrt(width * width + height * height);
 
 			if (biggestChildSize < diameter) {
 				biggestChildSize = diameter;
 			}
 
 			float biggestChild = findBiggestNodeInGraph(child);
-			if(biggestChild > biggestChildSize){
+			if (biggestChild > biggestChildSize) {
 				biggestChildSize = biggestChild;
 			}
 		}
