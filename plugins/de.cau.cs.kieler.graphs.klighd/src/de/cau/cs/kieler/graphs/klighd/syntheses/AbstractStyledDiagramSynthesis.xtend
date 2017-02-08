@@ -72,6 +72,27 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
         "Style",
         ImmutableList::of(STYLE_BORING, STYLE_STYLISH, STYLE_HELLO_KITTY, STYLE_SPONGEBOB),
         STYLE_STYLISH);
+        
+    private static val HIERARCHICAL_ON = "On"
+    private static val HIERARCHICAL_OFF = "Off"
+    /**
+     * Synthesis option specifying whether Hierarchical view should be used or not.
+     */
+    private static val SynthesisOption HIERARCHICAL = SynthesisOption::createChoiceOption("Hierarchical View",
+        ImmutableList::of(HIERARCHICAL_ON, HIERARCHICAL_OFF), HIERARCHICAL_OFF)
+
+    private static val RADIAL = "Radial"
+    private static val STRESS = "Stress"
+    private static val GRID = "Grid Snap"
+    private static val TREE = "Tree"
+    private static val OVERLAP = "Overlap Removal"
+    private static val H_LAYOUTER = "H-Layouter"
+
+    /**
+     * Synthesis option specifying how the Hierarchical view should be layouted.
+     */
+    private static val SynthesisOption HIERARCHICAL_LAYOUT = SynthesisOption::createChoiceOption("Hierarchical Layout",
+        ImmutableList::of(RADIAL, STRESS, GRID, TREE, OVERLAP, H_LAYOUTER), H_LAYOUTER)
     
     private static val LABELS_NO_LABELS = "No Labels";
     private static val LABELS_TRUNCATE = "Truncate";
@@ -88,6 +109,8 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     override getDisplayedSynthesisOptions() {
         return ImmutableList::of(
             STYLE,
+            HIERARCHICAL,
+            HIERARCHICAL_LAYOUT,
             LABEL_SHORTENING_STRATEGY
         )
     }
@@ -313,6 +336,18 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
                     text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 3
                 }
             ]
+        }
+    }
+    
+    protected def addHierarchicalOptions(KNode kgraph) {
+        switch HIERARCHICAL.objectValue {
+            case HIERARCHICAL_ON: {
+                // TODO fix startup with ON
+//                HierachicalKGraphSynthesis.transform(kgraph, "Tree")
+            }
+            case HIERARCHICAL_OFF: {
+                println("Hallo2")
+            }
         }
     }
     

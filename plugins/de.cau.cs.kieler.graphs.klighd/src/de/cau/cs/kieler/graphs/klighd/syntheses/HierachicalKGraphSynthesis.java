@@ -26,8 +26,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvider;
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
-import de.cau.cs.kieler.klighd.kgraph.impl.KGraphFactoryImpl;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil;
 import de.cau.cs.kieler.klighd.krendering.impl.KRenderingImpl;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 
@@ -41,8 +41,8 @@ public final class HierachicalKGraphSynthesis {
     /**
      * 
      */
-    private HierachicalKGraphSynthesis() {
-        // not available
+    public HierachicalKGraphSynthesis(final KNode diagram, final String layout) {
+        transform(diagram, layout);
     }
 
     /** */
@@ -144,7 +144,8 @@ public final class HierachicalKGraphSynthesis {
 
                 // Remove the actions of the inner nodes so they are not expandable
                 KRenderingImpl rendering = child.getData(KRenderingImpl.class);
-                rendering.getActions().clear();
+                // TODO throws NullPointer?
+//                rendering.getActions().clear();
 
                 // TODO remove the actions of the copy, such that the root children are not
                 // expandable. If we simply remove the action of the copy, we can minimize the
@@ -194,7 +195,7 @@ public final class HierachicalKGraphSynthesis {
             KNode parent = entry.getValue();
 
             // create an edge
-            KEdge edge = KGraphFactoryImpl.eINSTANCE.createKEdge();
+            KEdge edge = KGraphUtil.createInitializedEdge();
 
             edge.setSource(parent);
             edge.setTarget(child);

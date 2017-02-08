@@ -89,27 +89,6 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
     private static val SynthesisOption DEFAULTS = SynthesisOption::createChoiceOption("Default Values",
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
 
-    private static val HIERARCHICAL_ON = "On"
-    private static val HIERARCHICAL_OFF = "Off"
-    /**
-     * Synthesis option specifying whether Hierarchical view should be used or not.
-     */
-    private static val SynthesisOption HIERARCHICAL = SynthesisOption::createChoiceOption("Hierarchical View",
-        ImmutableList::of(HIERARCHICAL_ON, HIERARCHICAL_OFF), HIERARCHICAL_OFF)
-
-    private static val RADIAL = "Radial"
-    private static val STRESS = "Stress"
-    private static val GRID = "Grid Snap"
-    private static val TREE = "Tree"
-    private static val OVERLAP = "Overlap Removal"
-    private static val H_LAYOUTER = "H-Layouter"
-
-    /**
-     * Synthesis option specifying how the Hierarchical view should be layouted.
-     */
-    private static val SynthesisOption HIERARCHICAL_LAYOUT = SynthesisOption::createChoiceOption("Hierarchical Layout",
-        ImmutableList::of(RADIAL, STRESS, GRID, TREE, OVERLAP, H_LAYOUTER), H_LAYOUTER)
-
     /**
      * {@inheritDoc} 
      */
@@ -132,8 +111,6 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
     override getDisplayedSynthesisOptions() {
         return new ImmutableList.Builder()
                 .add(DEFAULTS)
-                .add(HIERARCHICAL)
-                .add(HIERARCHICAL_LAYOUT)
                 .addAll(super.displayedSynthesisOptions)
                 .build();
     }
@@ -169,11 +146,7 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
         // First, this might be the expansion state of nodes. Second, also KRendering elements
         //  may carry persisted entries that have to be parsed before we build the view model.
         KGraphDataUtil.loadDataElements(result, PREDICATE_IS_KGRAPHDATA, KNOWN_PROPS)
-
-        if (HIERARCHICAL.objectValue == HIERARCHICAL_ON) {
-            HierachicalKGraphSynthesis.transform(result, HIERARCHICAL_LAYOUT.objectValue as String);
-        }
-
+        
         // Evaluate the defaults property
         try {
             defaults = graph.getProperty(DEFAULTS_PROPERTY)

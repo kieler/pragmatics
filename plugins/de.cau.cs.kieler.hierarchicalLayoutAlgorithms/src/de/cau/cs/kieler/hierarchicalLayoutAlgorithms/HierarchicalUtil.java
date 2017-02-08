@@ -171,4 +171,27 @@ public class HierarchicalUtil {
 		}
 		return null;
 	}
+	
+	/**
+	 * Calculates the distance of the given node to the root.
+	 * 
+	 * @param node
+	 * @param root
+	 * @return Distance of node to root.
+	 */
+	public static int getDepths(ElkNode node, ElkNode root) {
+		int depth = 0;
+		ElkNode parent = null;
+		while(parent != root) {
+			for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
+				ElkNode source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
+				if (!node.getChildren().contains(source)) {
+					parent = source;
+				}
+			}
+			node = parent;
+			depth++;
+		}
+		return depth;
+	}
 }

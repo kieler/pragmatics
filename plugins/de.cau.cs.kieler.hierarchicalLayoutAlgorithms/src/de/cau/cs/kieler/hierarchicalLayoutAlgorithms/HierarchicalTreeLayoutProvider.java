@@ -10,10 +10,8 @@ import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.alg.layered.properties.FixedAlignment;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.alg.mrtree.TreeLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
@@ -38,6 +36,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 	@Override
 	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
+		System.out.println("Hallo");
 		children.clear();
 		edges.clear();
 		firstRunMap.clear();
