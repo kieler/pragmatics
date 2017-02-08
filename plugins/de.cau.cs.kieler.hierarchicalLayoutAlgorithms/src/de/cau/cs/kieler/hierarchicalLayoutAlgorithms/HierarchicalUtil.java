@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.graph.ElkConnectableShape;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 public class HierarchicalUtil {
 
@@ -16,12 +19,19 @@ public class HierarchicalUtil {
 	 * @param node
 	 * @return List of neighbours with outgoing edges.
 	 */
-	public static List<KNode> getSuccessor(KNode node) {
-		List<KNode> children = new ArrayList<>();
-		for (KEdge outgoingEdge : node.getOutgoingEdges()) {
-			KNode target = outgoingEdge.getTarget();
-			if (!node.getChildren().contains(target)) {
-				children.add(target);
+	public static List<ElkNode> getSuccessor(ElkNode node) {
+		List<ElkNode> children = new ArrayList<>();
+		for (ElkEdge outgoingEdge : ElkGraphUtil.allOutgoingEdges(node)) {
+			ElkNode target;
+			for (ElkConnectableShape shape : outgoingEdge.getTargets()) {
+				if (shape instanceof ElkPort) {
+					target = ((ElkPort) outgoingEdge).getParent();
+				} else {
+					target = (ElkNode) shape;
+				}
+				if (!node.getChildren().contains(target)) {
+					children.add(target);
+				}
 			}
 		}
 		return children;
@@ -33,9 +43,9 @@ public class HierarchicalUtil {
 	 * @param graph
 	 * @return root node of graph.
 	 */
-	public static KNode findRoot(KNode graph) {
-		for (KNode child : graph.getChildren()) {
-			if (child.getIncomingEdges().isEmpty()) {
+	public static ElkNode findRoot(ElkNode graph) {
+		for (ElkNode child : graph.getChildren()) {
+			if (!ElkGraphUtil.allIncomingEdges(child).iterator().hasNext()) {
 				return child;
 			}
 		}
@@ -48,12 +58,12 @@ public class HierarchicalUtil {
 	 * @param node
 	 * @return number of leafs.
 	 */
-	public static int getNumberOfLeafs(KNode node) {
+	public static int getNumberOfLeafs(ElkNode node) {
 		int leafs = 0;
 		if (HierarchicalUtil.getSuccessor(node).isEmpty()) {
 			return 1;
 		} else {
-			for (KNode child : HierarchicalUtil.getSuccessor(node)) {
+			for (ElkNode child : HierarchicalUtil.getSuccessor(node)) {
 				leafs += getNumberOfLeafs(child);
 			}
 		}
@@ -66,24 +76,37 @@ public class HierarchicalUtil {
 	 * @param graph
 	 * @return List of Hierarchical Edges.
 	 */
-	public static List<KEdge> getHierarchicalEdges(KNode graph) {
-		List<KEdge> edges = new ArrayList<KEdge>();
-		for (KNode node : graph.getChildren()) {
-			for (KEdge edge : node.getOutgoingEdges()) {
-				if (graph.getChildren().contains(edge.getTarget())) {
-					edges.add(edge);
+	public static List<ElkEdge> getHierarchicalEdges(ElkNode graph) {
+		List<ElkEdge> edges = new ArrayList<ElkEdge>();
+		for (ElkNode node : graph.getChildren()) {
+			for (ElkEdge outgoingEdge : ElkGraphUtil.allOutgoingEdges(node)) {
+				ElkNode n = null;
+				for (ElkConnectableShape shape : outgoingEdge.getTargets()) {
+					if (shape instanceof ElkPort) {
+						n = ((ElkPort) shape).getParent();
+					} else {
+						n = (ElkNode) shape;
+					}
+					if (graph.getChildren().contains(n)) {
+						edges.add(outgoingEdge);
+					}
 				}
 			}
+//			for (ElkEdge edge : node.getOutgoingEdges()) {
+//				if (graph.getChildren().contains(edge.getTargets())) {
+//					edges.add(edge);
+//				}
+//			}
 		}
 		return edges;
 	}
 
-	public static List<KNode> sortSuccesorsByPolarCoordinate(KNode node) {
-		List<KNode> successors = HierarchicalUtil.getSuccessor(node);
+	public static List<ElkNode> sortSuccesorsByPolarCoordinate(ElkNode node) {
+		List<ElkNode> successors = HierarchicalUtil.getSuccessor(node);
 
 		if (successors.size() > 1) {
-			List<KNode> children = new ArrayList<>();
-			List<KNode> rootChildren = node.getChildren();
+			List<ElkNode> children = new ArrayList<>();
+			List<ElkNode> rootChildren = node.getChildren();
 			boolean isBlueBox = rootChildren.size() == 1 && !rootChildren.get(0).getChildren().isEmpty();
 			// blue boxing
 			if (!isBlueBox) {
@@ -91,29 +114,26 @@ public class HierarchicalUtil {
 			} else {
 				children.addAll(rootChildren.get(0).getChildren());
 			}
-			List<KNode> sortedSuccessors = new ArrayList<>();
+			List<ElkNode> sortedSuccessors = new ArrayList<>();
 
 			// center of the node, as center of the polar coordinates
-			KShapeLayout nodeShape = node.getData(KShapeLayout.class);
-			float centerX = nodeShape.getXpos(); // + nodeShape.getWidth()/2;
-			float centerY = nodeShape.getYpos(); // + nodeShape.getHeight()/2;
+			double centerX = node.getX(); // + nodeShape.getWidth()/2;
+			double centerY = node.getY(); // + nodeShape.getHeight()/2;
 
 			// sort children
-			Comparator<KNode> comparator = new Comparator<KNode>() {
+			Comparator<ElkNode> comparator = new Comparator<ElkNode>() {
 
 				@Override
-				public int compare(KNode child1, KNode child2) {
-					KShapeLayout node1Shape = child1.getData(KShapeLayout.class);
-					float xPos1 = node1Shape.getXpos() + node1Shape.getWidth() / 2 + centerX;
-					float yPos1 = node1Shape.getYpos() + node1Shape.getHeight() / 2 + centerY;
+				public int compare(ElkNode child1, ElkNode child2) {
+					double xPos1 = child1.getX() + child1.getWidth() / 2 + centerX;
+					double yPos1 = child1.getY() + child1.getHeight() / 2 + centerY;
 					double arc1 = Math.atan2(yPos1, xPos1);
 					if (arc1 < 0) {
 						arc1 += 2 * Math.PI;
 					}
 
-					KShapeLayout node2Shape = child2.getData(KShapeLayout.class);
-					float xPos2 = node2Shape.getXpos() + node2Shape.getWidth() / 2 + centerX;
-					float yPos2 = node2Shape.getYpos() + node2Shape.getHeight() / 2 + centerY;
+					double xPos2 = child2.getX() + child2.getWidth() / 2 + centerX;
+					double yPos2 = child2.getY() + child2.getHeight() / 2 + centerY;
 					double arc2 = Math.atan2(yPos2, xPos2);
 					if (arc2 < 0) {
 						arc2 += 2 * Math.PI;
@@ -131,15 +151,13 @@ public class HierarchicalUtil {
 			children.sort(comparator);
 
 			// map child to its successor
-			for (KNode child : children) {
-				KShapeLayout shapeChild = child.getData(KShapeLayout.class);
-				Integer childID = shapeChild.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
+			for (ElkNode child : children) {
+				Integer childID = child.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
 				if (childID != null) {
 
-					KNode removeNode = null;
-					for (KNode successor : successors) {
-						KShapeLayout shapeSuccessor = successor.getData(KShapeLayout.class);
-						Integer successorID = shapeSuccessor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
+					ElkNode removeNode = null;
+					for (ElkNode successor : successors) {
+						Integer successorID = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
 						if (childID.equals(successorID)) {
 							sortedSuccessors.add(successor);
 							removeNode = successor;
@@ -158,18 +176,17 @@ public class HierarchicalUtil {
 	}
 
 	/**
-	 * Retrieve the original node of a copy node. 
+	 * Retrieve the original node of a copy node.
+	 * 
 	 * @param parent
 	 * @param successor
 	 * @return
 	 */
-	public static KNode getOriginalNode(KNode parent, KNode successor) {
-		KShapeLayout shapeSuccessor = successor.getData(KShapeLayout.class);
-		Integer successorID = shapeSuccessor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
-		
-		for (KNode child : parent.getChildren()) {
-			KShapeLayout shapeChild = child.getData(KShapeLayout.class);
-			Integer childID = shapeChild.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
+	public static ElkNode getOriginalNode(ElkNode parent, ElkNode successor) {
+		Integer successorID = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
+
+		for (ElkNode child : parent.getChildren()) {
+			Integer childID = child.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
 			if (successorID.equals(childID)) {
 				return child;
 			}
