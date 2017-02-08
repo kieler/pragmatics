@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.kiml.formats.graphFormats">
+      <handler
+            class="de.cau.cs.kieler.formats.kgraph.KGraphHandler"
+            description="Internally used graph format of the KIELER project. See http://rtsys.informatik.uni-kiel.de/confluence/x/U4EN"
+            extensions="kgx,kgraph"
+            id="de.cau.cs.kieler.kgraph"
+            name="KGraph">
+      </handler>
+   </extension>
+</plugin>

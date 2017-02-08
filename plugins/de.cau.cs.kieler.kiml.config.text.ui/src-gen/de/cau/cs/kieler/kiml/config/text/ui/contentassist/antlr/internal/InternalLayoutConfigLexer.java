@@ -12,19 +12,38 @@ import java.util.ArrayList;
 
 @SuppressWarnings("all")
 public class InternalLayoutConfigLexer extends Lexer {
-    public static final int RULE_TFLOAT=6;
-    public static final int RULE_ID=8;
-    public static final int RULE_WS=11;
-    public static final int RULE_BOOLEAN=4;
-    public static final int RULE_STRING=5;
+    public static final int RULE_STRING=4;
     public static final int RULE_SL_COMMENT=10;
+    public static final int T__19=19;
     public static final int T__15=15;
-    public static final int RULE_NATURAL=7;
-    public static final int RULE_ML_COMMENT=9;
-    public static final int T__12=12;
+    public static final int T__16=16;
+    public static final int T__17=17;
+    public static final int T__18=18;
+    public static final int T__33=33;
+    public static final int T__34=34;
     public static final int T__13=13;
     public static final int T__14=14;
     public static final int EOF=-1;
+    public static final int T__30=30;
+    public static final int T__31=31;
+    public static final int T__32=32;
+    public static final int RULE_ID=7;
+    public static final int RULE_WS=11;
+    public static final int RULE_SIGNED_INT=5;
+    public static final int RULE_ANY_OTHER=12;
+    public static final int T__26=26;
+    public static final int T__27=27;
+    public static final int T__28=28;
+    public static final int RULE_INT=8;
+    public static final int T__29=29;
+    public static final int T__22=22;
+    public static final int RULE_ML_COMMENT=9;
+    public static final int T__23=23;
+    public static final int RULE_FLOAT=6;
+    public static final int T__24=24;
+    public static final int T__25=25;
+    public static final int T__20=20;
+    public static final int T__21=21;
 
     // delegates
     // delegators
@@ -39,35 +58,16 @@ public class InternalLayoutConfigLexer extends Lexer {
     }
     public String getGrammarFileName() { return "InternalLayoutConfig.g"; }
 
-    // $ANTLR start "T__12"
-    public final void mT__12() throws RecognitionException {
-        try {
-            int _type = T__12;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:11:7: ( '{' )
-            // InternalLayoutConfig.g:11:9: '{'
-            {
-            match('{'); 
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "T__12"
-
     // $ANTLR start "T__13"
     public final void mT__13() throws RecognitionException {
         try {
             int _type = T__13;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:12:7: ( '}' )
-            // InternalLayoutConfig.g:12:9: '}'
+            // InternalLayoutConfig.g:11:7: ( 'true' )
+            // InternalLayoutConfig.g:11:9: 'true'
             {
-            match('}'); 
+            match("true"); 
+
 
             }
 
@@ -84,10 +84,11 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = T__14;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:13:7: ( ':' )
-            // InternalLayoutConfig.g:13:9: ':'
+            // InternalLayoutConfig.g:12:7: ( 'false' )
+            // InternalLayoutConfig.g:12:9: 'false'
             {
-            match(':'); 
+            match("false"); 
+
 
             }
 
@@ -104,10 +105,10 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = T__15;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:14:7: ( '.' )
-            // InternalLayoutConfig.g:14:9: '.'
+            // InternalLayoutConfig.g:13:7: ( '{' )
+            // InternalLayoutConfig.g:13:9: '{'
             {
-            match('.'); 
+            match('{'); 
 
             }
 
@@ -119,20 +120,416 @@ public class InternalLayoutConfigLexer extends Lexer {
     }
     // $ANTLR end "T__15"
 
-    // $ANTLR start "RULE_TFLOAT"
-    public final void mRULE_TFLOAT() throws RecognitionException {
+    // $ANTLR start "T__16"
+    public final void mT__16() throws RecognitionException {
         try {
-            int _type = RULE_TFLOAT;
+            int _type = T__16;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:880:13: ( ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ ) )
-            // InternalLayoutConfig.g:880:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
+            // InternalLayoutConfig.g:14:7: ( '}' )
+            // InternalLayoutConfig.g:14:9: '}'
             {
-            // InternalLayoutConfig.g:880:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )
-            int alt24=4;
-            alt24 = dfa24.predict(input);
-            switch (alt24) {
+            match('}'); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__16"
+
+    // $ANTLR start "T__17"
+    public final void mT__17() throws RecognitionException {
+        try {
+            int _type = T__17;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:15:7: ( 'ref' )
+            // InternalLayoutConfig.g:15:9: 'ref'
+            {
+            match("ref"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__17"
+
+    // $ANTLR start "T__18"
+    public final void mT__18() throws RecognitionException {
+        try {
+            int _type = T__18;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:16:7: ( 'label' )
+            // InternalLayoutConfig.g:16:9: 'label'
+            {
+            match("label"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__18"
+
+    // $ANTLR start "T__19"
+    public final void mT__19() throws RecognitionException {
+        try {
+            int _type = T__19;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:17:7: ( ':' )
+            // InternalLayoutConfig.g:17:9: ':'
+            {
+            match(':'); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__19"
+
+    // $ANTLR start "T__20"
+    public final void mT__20() throws RecognitionException {
+        try {
+            int _type = T__20;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:18:7: ( 'layout' )
+            // InternalLayoutConfig.g:18:9: 'layout'
+            {
+            match("layout"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__20"
+
+    // $ANTLR start "T__21"
+    public final void mT__21() throws RecognitionException {
+        try {
+            int _type = T__21;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:19:7: ( '[' )
+            // InternalLayoutConfig.g:19:9: '['
+            {
+            match('['); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__21"
+
+    // $ANTLR start "T__22"
+    public final void mT__22() throws RecognitionException {
+        try {
+            int _type = T__22;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:20:7: ( ']' )
+            // InternalLayoutConfig.g:20:9: ']'
+            {
+            match(']'); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__22"
+
+    // $ANTLR start "T__23"
+    public final void mT__23() throws RecognitionException {
+        try {
+            int _type = T__23;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:21:7: ( 'position' )
+            // InternalLayoutConfig.g:21:9: 'position'
+            {
+            match("position"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__23"
+
+    // $ANTLR start "T__24"
+    public final void mT__24() throws RecognitionException {
+        try {
+            int _type = T__24;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:22:7: ( ',' )
+            // InternalLayoutConfig.g:22:9: ','
+            {
+            match(','); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__24"
+
+    // $ANTLR start "T__25"
+    public final void mT__25() throws RecognitionException {
+        try {
+            int _type = T__25;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:23:7: ( 'size' )
+            // InternalLayoutConfig.g:23:9: 'size'
+            {
+            match("size"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__25"
+
+    // $ANTLR start "T__26"
+    public final void mT__26() throws RecognitionException {
+        try {
+            int _type = T__26;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:24:7: ( 'incoming' )
+            // InternalLayoutConfig.g:24:9: 'incoming'
+            {
+            match("incoming"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__26"
+
+    // $ANTLR start "T__27"
+    public final void mT__27() throws RecognitionException {
+        try {
+            int _type = T__27;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:25:7: ( 'outgoing' )
+            // InternalLayoutConfig.g:25:9: 'outgoing'
+            {
+            match("outgoing"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__27"
+
+    // $ANTLR start "T__28"
+    public final void mT__28() throws RecognitionException {
+        try {
+            int _type = T__28;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:26:7: ( 'start' )
+            // InternalLayoutConfig.g:26:9: 'start'
+            {
+            match("start"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__28"
+
+    // $ANTLR start "T__29"
+    public final void mT__29() throws RecognitionException {
+        try {
+            int _type = T__29;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:27:7: ( 'end' )
+            // InternalLayoutConfig.g:27:9: 'end'
+            {
+            match("end"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__29"
+
+    // $ANTLR start "T__30"
+    public final void mT__30() throws RecognitionException {
+        try {
+            int _type = T__30;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:28:7: ( 'bends' )
+            // InternalLayoutConfig.g:28:9: 'bends'
+            {
+            match("bends"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__30"
+
+    // $ANTLR start "T__31"
+    public final void mT__31() throws RecognitionException {
+        try {
+            int _type = T__31;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:29:7: ( '|' )
+            // InternalLayoutConfig.g:29:9: '|'
+            {
+            match('|'); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__31"
+
+    // $ANTLR start "T__32"
+    public final void mT__32() throws RecognitionException {
+        try {
+            int _type = T__32;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:30:7: ( 'section' )
+            // InternalLayoutConfig.g:30:9: 'section'
+            {
+            match("section"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__32"
+
+    // $ANTLR start "T__33"
+    public final void mT__33() throws RecognitionException {
+        try {
+            int _type = T__33;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:31:7: ( '->' )
+            // InternalLayoutConfig.g:31:9: '->'
+            {
+            match("->"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__33"
+
+    // $ANTLR start "T__34"
+    public final void mT__34() throws RecognitionException {
+        try {
+            int _type = T__34;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:32:7: ( '.' )
+            // InternalLayoutConfig.g:32:9: '.'
+            {
+            match('.'); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__34"
+
+    // $ANTLR start "RULE_SIGNED_INT"
+    public final void mRULE_SIGNED_INT() throws RecognitionException {
+        try {
+            int _type = RULE_SIGNED_INT;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:5563:17: ( ( '+' | '-' )? RULE_INT )
+            // InternalLayoutConfig.g:5563:19: ( '+' | '-' )? RULE_INT
+            {
+            // InternalLayoutConfig.g:5563:19: ( '+' | '-' )?
+            int alt1=2;
+            int LA1_0 = input.LA(1);
+
+            if ( (LA1_0=='+'||LA1_0=='-') ) {
+                alt1=1;
+            }
+            switch (alt1) {
                 case 1 :
-                    // InternalLayoutConfig.g:880:16: ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
+                    // InternalLayoutConfig.g:
                     {
                     if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
                         input.consume();
@@ -143,604 +540,93 @@ public class InternalLayoutConfigLexer extends Lexer {
                         recover(mse);
                         throw mse;}
 
-                    // InternalLayoutConfig.g:880:26: ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? )
-                    int alt11=2;
-                    int LA11_0 = input.LA(1);
 
-                    if ( ((LA11_0>='0' && LA11_0<='9')) ) {
-                        alt11=1;
                     }
-                    else if ( (LA11_0=='.') ) {
-                        alt11=2;
+                    break;
+
+            }
+
+            mRULE_INT(); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "RULE_SIGNED_INT"
+
+    // $ANTLR start "RULE_FLOAT"
+    public final void mRULE_FLOAT() throws RecognitionException {
+        try {
+            int _type = RULE_FLOAT;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:5565:12: ( ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT ) )
+            // InternalLayoutConfig.g:5565:14: ( '+' | '-' )? ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
+            {
+            // InternalLayoutConfig.g:5565:14: ( '+' | '-' )?
+            int alt2=2;
+            int LA2_0 = input.LA(1);
+
+            if ( (LA2_0=='+'||LA2_0=='-') ) {
+                alt2=1;
+            }
+            switch (alt2) {
+                case 1 :
+                    // InternalLayoutConfig.g:
+                    {
+                    if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
+                        input.consume();
+
                     }
                     else {
-                        NoViableAltException nvae =
-                            new NoViableAltException("", 11, 0, input);
+                        MismatchedSetException mse = new MismatchedSetException(null,input);
+                        recover(mse);
+                        throw mse;}
 
-                        throw nvae;
-                    }
-                    switch (alt11) {
-                        case 1 :
-                            // InternalLayoutConfig.g:880:27: ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
-                            {
-                            // InternalLayoutConfig.g:880:27: ( '0' .. '9' )+
-                            int cnt1=0;
-                            loop1:
-                            do {
-                                int alt1=2;
-                                int LA1_0 = input.LA(1);
-
-                                if ( ((LA1_0>='0' && LA1_0<='9')) ) {
-                                    alt1=1;
-                                }
-
-
-                                switch (alt1) {
-                            	case 1 :
-                            	    // InternalLayoutConfig.g:880:28: '0' .. '9'
-                            	    {
-                            	    matchRange('0','9'); 
-
-                            	    }
-                            	    break;
-
-                            	default :
-                            	    if ( cnt1 >= 1 ) break loop1;
-                                        EarlyExitException eee =
-                                            new EarlyExitException(1, input);
-                                        throw eee;
-                                }
-                                cnt1++;
-                            } while (true);
-
-                            // InternalLayoutConfig.g:880:39: ( '.' ( '0' .. '9' )* )?
-                            int alt3=2;
-                            int LA3_0 = input.LA(1);
-
-                            if ( (LA3_0=='.') ) {
-                                alt3=1;
-                            }
-                            switch (alt3) {
-                                case 1 :
-                                    // InternalLayoutConfig.g:880:40: '.' ( '0' .. '9' )*
-                                    {
-                                    match('.'); 
-                                    // InternalLayoutConfig.g:880:44: ( '0' .. '9' )*
-                                    loop2:
-                                    do {
-                                        int alt2=2;
-                                        int LA2_0 = input.LA(1);
-
-                                        if ( ((LA2_0>='0' && LA2_0<='9')) ) {
-                                            alt2=1;
-                                        }
-
-
-                                        switch (alt2) {
-                                    	case 1 :
-                                    	    // InternalLayoutConfig.g:880:45: '0' .. '9'
-                                    	    {
-                                    	    matchRange('0','9'); 
-
-                                    	    }
-                                    	    break;
-
-                                    	default :
-                                    	    break loop2;
-                                        }
-                                    } while (true);
-
-
-                                    }
-                                    break;
-
-                            }
-
-                            // InternalLayoutConfig.g:880:58: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
-                            int alt6=2;
-                            int LA6_0 = input.LA(1);
-
-                            if ( (LA6_0=='E'||LA6_0=='e') ) {
-                                alt6=1;
-                            }
-                            switch (alt6) {
-                                case 1 :
-                                    // InternalLayoutConfig.g:880:59: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
-                                    {
-                                    if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
-                                        input.consume();
-
-                                    }
-                                    else {
-                                        MismatchedSetException mse = new MismatchedSetException(null,input);
-                                        recover(mse);
-                                        throw mse;}
-
-                                    // InternalLayoutConfig.g:880:69: ( '+' | '-' )?
-                                    int alt4=2;
-                                    int LA4_0 = input.LA(1);
-
-                                    if ( (LA4_0=='+'||LA4_0=='-') ) {
-                                        alt4=1;
-                                    }
-                                    switch (alt4) {
-                                        case 1 :
-                                            // InternalLayoutConfig.g:
-                                            {
-                                            if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
-                                                input.consume();
-
-                                            }
-                                            else {
-                                                MismatchedSetException mse = new MismatchedSetException(null,input);
-                                                recover(mse);
-                                                throw mse;}
-
-
-                                            }
-                                            break;
-
-                                    }
-
-                                    // InternalLayoutConfig.g:880:80: ( '0' .. '9' )+
-                                    int cnt5=0;
-                                    loop5:
-                                    do {
-                                        int alt5=2;
-                                        int LA5_0 = input.LA(1);
-
-                                        if ( ((LA5_0>='0' && LA5_0<='9')) ) {
-                                            alt5=1;
-                                        }
-
-
-                                        switch (alt5) {
-                                    	case 1 :
-                                    	    // InternalLayoutConfig.g:880:81: '0' .. '9'
-                                    	    {
-                                    	    matchRange('0','9'); 
-
-                                    	    }
-                                    	    break;
-
-                                    	default :
-                                    	    if ( cnt5 >= 1 ) break loop5;
-                                                EarlyExitException eee =
-                                                    new EarlyExitException(5, input);
-                                                throw eee;
-                                        }
-                                        cnt5++;
-                                    } while (true);
-
-
-                                    }
-                                    break;
-
-                            }
-
-
-                            }
-                            break;
-                        case 2 :
-                            // InternalLayoutConfig.g:880:94: '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
-                            {
-                            match('.'); 
-                            // InternalLayoutConfig.g:880:98: ( '0' .. '9' )+
-                            int cnt7=0;
-                            loop7:
-                            do {
-                                int alt7=2;
-                                int LA7_0 = input.LA(1);
-
-                                if ( ((LA7_0>='0' && LA7_0<='9')) ) {
-                                    alt7=1;
-                                }
-
-
-                                switch (alt7) {
-                            	case 1 :
-                            	    // InternalLayoutConfig.g:880:99: '0' .. '9'
-                            	    {
-                            	    matchRange('0','9'); 
-
-                            	    }
-                            	    break;
-
-                            	default :
-                            	    if ( cnt7 >= 1 ) break loop7;
-                                        EarlyExitException eee =
-                                            new EarlyExitException(7, input);
-                                        throw eee;
-                                }
-                                cnt7++;
-                            } while (true);
-
-                            // InternalLayoutConfig.g:880:110: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
-                            int alt10=2;
-                            int LA10_0 = input.LA(1);
-
-                            if ( (LA10_0=='E'||LA10_0=='e') ) {
-                                alt10=1;
-                            }
-                            switch (alt10) {
-                                case 1 :
-                                    // InternalLayoutConfig.g:880:111: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
-                                    {
-                                    if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
-                                        input.consume();
-
-                                    }
-                                    else {
-                                        MismatchedSetException mse = new MismatchedSetException(null,input);
-                                        recover(mse);
-                                        throw mse;}
-
-                                    // InternalLayoutConfig.g:880:121: ( '+' | '-' )?
-                                    int alt8=2;
-                                    int LA8_0 = input.LA(1);
-
-                                    if ( (LA8_0=='+'||LA8_0=='-') ) {
-                                        alt8=1;
-                                    }
-                                    switch (alt8) {
-                                        case 1 :
-                                            // InternalLayoutConfig.g:
-                                            {
-                                            if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
-                                                input.consume();
-
-                                            }
-                                            else {
-                                                MismatchedSetException mse = new MismatchedSetException(null,input);
-                                                recover(mse);
-                                                throw mse;}
-
-
-                                            }
-                                            break;
-
-                                    }
-
-                                    // InternalLayoutConfig.g:880:132: ( '0' .. '9' )+
-                                    int cnt9=0;
-                                    loop9:
-                                    do {
-                                        int alt9=2;
-                                        int LA9_0 = input.LA(1);
-
-                                        if ( ((LA9_0>='0' && LA9_0<='9')) ) {
-                                            alt9=1;
-                                        }
-
-
-                                        switch (alt9) {
-                                    	case 1 :
-                                    	    // InternalLayoutConfig.g:880:133: '0' .. '9'
-                                    	    {
-                                    	    matchRange('0','9'); 
-
-                                    	    }
-                                    	    break;
-
-                                    	default :
-                                    	    if ( cnt9 >= 1 ) break loop9;
-                                                EarlyExitException eee =
-                                                    new EarlyExitException(9, input);
-                                                throw eee;
-                                        }
-                                        cnt9++;
-                                    } while (true);
-
-
-                                    }
-                                    break;
-
-                            }
-
-
-                            }
-                            break;
 
                     }
+                    break;
 
+            }
+
+            // InternalLayoutConfig.g:5565:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )
+            int alt5=2;
+            alt5 = dfa5.predict(input);
+            switch (alt5) {
+                case 1 :
+                    // InternalLayoutConfig.g:5565:26: RULE_INT '.' RULE_INT
+                    {
+                    mRULE_INT(); 
+                    match('.'); 
+                    mRULE_INT(); 
 
                     }
                     break;
                 case 2 :
-                    // InternalLayoutConfig.g:880:147: ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
+                    // InternalLayoutConfig.g:5565:48: RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT
                     {
-                    // InternalLayoutConfig.g:880:147: ( '0' .. '9' )+
-                    int cnt12=0;
-                    loop12:
-                    do {
-                        int alt12=2;
-                        int LA12_0 = input.LA(1);
+                    mRULE_INT(); 
+                    // InternalLayoutConfig.g:5565:57: ( '.' RULE_INT )?
+                    int alt3=2;
+                    int LA3_0 = input.LA(1);
 
-                        if ( ((LA12_0>='0' && LA12_0<='9')) ) {
-                            alt12=1;
-                        }
-
-
-                        switch (alt12) {
-                    	case 1 :
-                    	    // InternalLayoutConfig.g:880:148: '0' .. '9'
-                    	    {
-                    	    matchRange('0','9'); 
-
-                    	    }
-                    	    break;
-
-                    	default :
-                    	    if ( cnt12 >= 1 ) break loop12;
-                                EarlyExitException eee =
-                                    new EarlyExitException(12, input);
-                                throw eee;
-                        }
-                        cnt12++;
-                    } while (true);
-
-                    match('.'); 
-                    // InternalLayoutConfig.g:880:163: ( '0' .. '9' )*
-                    loop13:
-                    do {
-                        int alt13=2;
-                        int LA13_0 = input.LA(1);
-
-                        if ( ((LA13_0>='0' && LA13_0<='9')) ) {
-                            alt13=1;
-                        }
-
-
-                        switch (alt13) {
-                    	case 1 :
-                    	    // InternalLayoutConfig.g:880:164: '0' .. '9'
-                    	    {
-                    	    matchRange('0','9'); 
-
-                    	    }
-                    	    break;
-
-                    	default :
-                    	    break loop13;
-                        }
-                    } while (true);
-
-                    // InternalLayoutConfig.g:880:175: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
-                    int alt16=2;
-                    int LA16_0 = input.LA(1);
-
-                    if ( (LA16_0=='E'||LA16_0=='e') ) {
-                        alt16=1;
+                    if ( (LA3_0=='.') ) {
+                        alt3=1;
                     }
-                    switch (alt16) {
+                    switch (alt3) {
                         case 1 :
-                            // InternalLayoutConfig.g:880:176: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
+                            // InternalLayoutConfig.g:5565:58: '.' RULE_INT
                             {
-                            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
-                                input.consume();
-
-                            }
-                            else {
-                                MismatchedSetException mse = new MismatchedSetException(null,input);
-                                recover(mse);
-                                throw mse;}
-
-                            // InternalLayoutConfig.g:880:186: ( '+' | '-' )?
-                            int alt14=2;
-                            int LA14_0 = input.LA(1);
-
-                            if ( (LA14_0=='+'||LA14_0=='-') ) {
-                                alt14=1;
-                            }
-                            switch (alt14) {
-                                case 1 :
-                                    // InternalLayoutConfig.g:
-                                    {
-                                    if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
-                                        input.consume();
-
-                                    }
-                                    else {
-                                        MismatchedSetException mse = new MismatchedSetException(null,input);
-                                        recover(mse);
-                                        throw mse;}
-
-
-                                    }
-                                    break;
-
-                            }
-
-                            // InternalLayoutConfig.g:880:197: ( '0' .. '9' )+
-                            int cnt15=0;
-                            loop15:
-                            do {
-                                int alt15=2;
-                                int LA15_0 = input.LA(1);
-
-                                if ( ((LA15_0>='0' && LA15_0<='9')) ) {
-                                    alt15=1;
-                                }
-
-
-                                switch (alt15) {
-                            	case 1 :
-                            	    // InternalLayoutConfig.g:880:198: '0' .. '9'
-                            	    {
-                            	    matchRange('0','9'); 
-
-                            	    }
-                            	    break;
-
-                            	default :
-                            	    if ( cnt15 >= 1 ) break loop15;
-                                        EarlyExitException eee =
-                                            new EarlyExitException(15, input);
-                                        throw eee;
-                                }
-                                cnt15++;
-                            } while (true);
-
+                            match('.'); 
+                            mRULE_INT(); 
 
                             }
                             break;
 
                     }
-
-
-                    }
-                    break;
-                case 3 :
-                    // InternalLayoutConfig.g:880:211: '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
-                    {
-                    match('.'); 
-                    // InternalLayoutConfig.g:880:215: ( '0' .. '9' )+
-                    int cnt17=0;
-                    loop17:
-                    do {
-                        int alt17=2;
-                        int LA17_0 = input.LA(1);
-
-                        if ( ((LA17_0>='0' && LA17_0<='9')) ) {
-                            alt17=1;
-                        }
-
-
-                        switch (alt17) {
-                    	case 1 :
-                    	    // InternalLayoutConfig.g:880:216: '0' .. '9'
-                    	    {
-                    	    matchRange('0','9'); 
-
-                    	    }
-                    	    break;
-
-                    	default :
-                    	    if ( cnt17 >= 1 ) break loop17;
-                                EarlyExitException eee =
-                                    new EarlyExitException(17, input);
-                                throw eee;
-                        }
-                        cnt17++;
-                    } while (true);
-
-                    // InternalLayoutConfig.g:880:227: ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )?
-                    int alt20=2;
-                    int LA20_0 = input.LA(1);
-
-                    if ( (LA20_0=='E'||LA20_0=='e') ) {
-                        alt20=1;
-                    }
-                    switch (alt20) {
-                        case 1 :
-                            // InternalLayoutConfig.g:880:228: ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
-                            {
-                            if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
-                                input.consume();
-
-                            }
-                            else {
-                                MismatchedSetException mse = new MismatchedSetException(null,input);
-                                recover(mse);
-                                throw mse;}
-
-                            // InternalLayoutConfig.g:880:238: ( '+' | '-' )?
-                            int alt18=2;
-                            int LA18_0 = input.LA(1);
-
-                            if ( (LA18_0=='+'||LA18_0=='-') ) {
-                                alt18=1;
-                            }
-                            switch (alt18) {
-                                case 1 :
-                                    // InternalLayoutConfig.g:
-                                    {
-                                    if ( input.LA(1)=='+'||input.LA(1)=='-' ) {
-                                        input.consume();
-
-                                    }
-                                    else {
-                                        MismatchedSetException mse = new MismatchedSetException(null,input);
-                                        recover(mse);
-                                        throw mse;}
-
-
-                                    }
-                                    break;
-
-                            }
-
-                            // InternalLayoutConfig.g:880:249: ( '0' .. '9' )+
-                            int cnt19=0;
-                            loop19:
-                            do {
-                                int alt19=2;
-                                int LA19_0 = input.LA(1);
-
-                                if ( ((LA19_0>='0' && LA19_0<='9')) ) {
-                                    alt19=1;
-                                }
-
-
-                                switch (alt19) {
-                            	case 1 :
-                            	    // InternalLayoutConfig.g:880:250: '0' .. '9'
-                            	    {
-                            	    matchRange('0','9'); 
-
-                            	    }
-                            	    break;
-
-                            	default :
-                            	    if ( cnt19 >= 1 ) break loop19;
-                                        EarlyExitException eee =
-                                            new EarlyExitException(19, input);
-                                        throw eee;
-                                }
-                                cnt19++;
-                            } while (true);
-
-
-                            }
-                            break;
-
-                    }
-
-
-                    }
-                    break;
-                case 4 :
-                    // InternalLayoutConfig.g:880:263: ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+
-                    {
-                    // InternalLayoutConfig.g:880:263: ( '0' .. '9' )+
-                    int cnt21=0;
-                    loop21:
-                    do {
-                        int alt21=2;
-                        int LA21_0 = input.LA(1);
-
-                        if ( ((LA21_0>='0' && LA21_0<='9')) ) {
-                            alt21=1;
-                        }
-
-
-                        switch (alt21) {
-                    	case 1 :
-                    	    // InternalLayoutConfig.g:880:264: '0' .. '9'
-                    	    {
-                    	    matchRange('0','9'); 
-
-                    	    }
-                    	    break;
-
-                    	default :
-                    	    if ( cnt21 >= 1 ) break loop21;
-                                EarlyExitException eee =
-                                    new EarlyExitException(21, input);
-                                throw eee;
-                        }
-                        cnt21++;
-                    } while (true);
 
                     if ( input.LA(1)=='E'||input.LA(1)=='e' ) {
                         input.consume();
@@ -751,14 +637,14 @@ public class InternalLayoutConfigLexer extends Lexer {
                         recover(mse);
                         throw mse;}
 
-                    // InternalLayoutConfig.g:880:285: ( '+' | '-' )?
-                    int alt22=2;
-                    int LA22_0 = input.LA(1);
+                    // InternalLayoutConfig.g:5565:83: ( '+' | '-' )?
+                    int alt4=2;
+                    int LA4_0 = input.LA(1);
 
-                    if ( (LA22_0=='+'||LA22_0=='-') ) {
-                        alt22=1;
+                    if ( (LA4_0=='+'||LA4_0=='-') ) {
+                        alt4=1;
                     }
-                    switch (alt22) {
+                    switch (alt4) {
                         case 1 :
                             // InternalLayoutConfig.g:
                             {
@@ -777,36 +663,7 @@ public class InternalLayoutConfigLexer extends Lexer {
 
                     }
 
-                    // InternalLayoutConfig.g:880:296: ( '0' .. '9' )+
-                    int cnt23=0;
-                    loop23:
-                    do {
-                        int alt23=2;
-                        int LA23_0 = input.LA(1);
-
-                        if ( ((LA23_0>='0' && LA23_0<='9')) ) {
-                            alt23=1;
-                        }
-
-
-                        switch (alt23) {
-                    	case 1 :
-                    	    // InternalLayoutConfig.g:880:297: '0' .. '9'
-                    	    {
-                    	    matchRange('0','9'); 
-
-                    	    }
-                    	    break;
-
-                    	default :
-                    	    if ( cnt23 >= 1 ) break loop23;
-                                EarlyExitException eee =
-                                    new EarlyExitException(23, input);
-                                throw eee;
-                        }
-                        cnt23++;
-                    } while (true);
-
+                    mRULE_INT(); 
 
                     }
                     break;
@@ -822,203 +679,26 @@ public class InternalLayoutConfigLexer extends Lexer {
         finally {
         }
     }
-    // $ANTLR end "RULE_TFLOAT"
-
-    // $ANTLR start "RULE_NATURAL"
-    public final void mRULE_NATURAL() throws RecognitionException {
-        try {
-            int _type = RULE_NATURAL;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:882:14: ( ( '0' .. '9' )+ )
-            // InternalLayoutConfig.g:882:16: ( '0' .. '9' )+
-            {
-            // InternalLayoutConfig.g:882:16: ( '0' .. '9' )+
-            int cnt25=0;
-            loop25:
-            do {
-                int alt25=2;
-                int LA25_0 = input.LA(1);
-
-                if ( ((LA25_0>='0' && LA25_0<='9')) ) {
-                    alt25=1;
-                }
-
-
-                switch (alt25) {
-            	case 1 :
-            	    // InternalLayoutConfig.g:882:17: '0' .. '9'
-            	    {
-            	    matchRange('0','9'); 
-
-            	    }
-            	    break;
-
-            	default :
-            	    if ( cnt25 >= 1 ) break loop25;
-                        EarlyExitException eee =
-                            new EarlyExitException(25, input);
-                        throw eee;
-                }
-                cnt25++;
-            } while (true);
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "RULE_NATURAL"
-
-    // $ANTLR start "RULE_BOOLEAN"
-    public final void mRULE_BOOLEAN() throws RecognitionException {
-        try {
-            int _type = RULE_BOOLEAN;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:884:14: ( ( 'true' | 'false' ) )
-            // InternalLayoutConfig.g:884:16: ( 'true' | 'false' )
-            {
-            // InternalLayoutConfig.g:884:16: ( 'true' | 'false' )
-            int alt26=2;
-            int LA26_0 = input.LA(1);
-
-            if ( (LA26_0=='t') ) {
-                alt26=1;
-            }
-            else if ( (LA26_0=='f') ) {
-                alt26=2;
-            }
-            else {
-                NoViableAltException nvae =
-                    new NoViableAltException("", 26, 0, input);
-
-                throw nvae;
-            }
-            switch (alt26) {
-                case 1 :
-                    // InternalLayoutConfig.g:884:17: 'true'
-                    {
-                    match("true"); 
-
-
-                    }
-                    break;
-                case 2 :
-                    // InternalLayoutConfig.g:884:24: 'false'
-                    {
-                    match("false"); 
-
-
-                    }
-                    break;
-
-            }
-
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "RULE_BOOLEAN"
-
-    // $ANTLR start "RULE_STRING"
-    public final void mRULE_STRING() throws RecognitionException {
-        try {
-            int _type = RULE_STRING;
-            int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:886:13: ( '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"' )
-            // InternalLayoutConfig.g:886:15: '\"' ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
-            {
-            match('\"'); 
-            // InternalLayoutConfig.g:886:19: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' ) | ~ ( ( '\\\\' | '\"' ) ) )*
-            loop27:
-            do {
-                int alt27=3;
-                int LA27_0 = input.LA(1);
-
-                if ( (LA27_0=='\\') ) {
-                    alt27=1;
-                }
-                else if ( ((LA27_0>='\u0000' && LA27_0<='!')||(LA27_0>='#' && LA27_0<='[')||(LA27_0>=']' && LA27_0<='\uFFFF')) ) {
-                    alt27=2;
-                }
-
-
-                switch (alt27) {
-            	case 1 :
-            	    // InternalLayoutConfig.g:886:20: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | 'u' | '\"' | '\\'' | '\\\\' )
-            	    {
-            	    match('\\'); 
-            	    if ( input.LA(1)=='\"'||input.LA(1)=='\''||input.LA(1)=='\\'||input.LA(1)=='b'||input.LA(1)=='f'||input.LA(1)=='n'||input.LA(1)=='r'||(input.LA(1)>='t' && input.LA(1)<='u') ) {
-            	        input.consume();
-
-            	    }
-            	    else {
-            	        MismatchedSetException mse = new MismatchedSetException(null,input);
-            	        recover(mse);
-            	        throw mse;}
-
-
-            	    }
-            	    break;
-            	case 2 :
-            	    // InternalLayoutConfig.g:886:65: ~ ( ( '\\\\' | '\"' ) )
-            	    {
-            	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
-            	        input.consume();
-
-            	    }
-            	    else {
-            	        MismatchedSetException mse = new MismatchedSetException(null,input);
-            	        recover(mse);
-            	        throw mse;}
-
-
-            	    }
-            	    break;
-
-            	default :
-            	    break loop27;
-                }
-            } while (true);
-
-            match('\"'); 
-
-            }
-
-            state.type = _type;
-            state.channel = _channel;
-        }
-        finally {
-        }
-    }
-    // $ANTLR end "RULE_STRING"
+    // $ANTLR end "RULE_FLOAT"
 
     // $ANTLR start "RULE_ID"
     public final void mRULE_ID() throws RecognitionException {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:888:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // InternalLayoutConfig.g:888:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalLayoutConfig.g:5567:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalLayoutConfig.g:5567:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // InternalLayoutConfig.g:888:11: ( '^' )?
-            int alt28=2;
-            int LA28_0 = input.LA(1);
+            // InternalLayoutConfig.g:5567:11: ( '^' )?
+            int alt6=2;
+            int LA6_0 = input.LA(1);
 
-            if ( (LA28_0=='^') ) {
-                alt28=1;
+            if ( (LA6_0=='^') ) {
+                alt6=1;
             }
-            switch (alt28) {
+            switch (alt6) {
                 case 1 :
-                    // InternalLayoutConfig.g:888:11: '^'
+                    // InternalLayoutConfig.g:5567:11: '^'
                     {
                     match('^'); 
 
@@ -1036,18 +716,18 @@ public class InternalLayoutConfigLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // InternalLayoutConfig.g:888:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
-            loop29:
+            // InternalLayoutConfig.g:5567:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            loop7:
             do {
-                int alt29=2;
-                int LA29_0 = input.LA(1);
+                int alt7=2;
+                int LA7_0 = input.LA(1);
 
-                if ( ((LA29_0>='0' && LA29_0<='9')||(LA29_0>='A' && LA29_0<='Z')||LA29_0=='_'||(LA29_0>='a' && LA29_0<='z')) ) {
-                    alt29=1;
+                if ( ((LA7_0>='0' && LA7_0<='9')||(LA7_0>='A' && LA7_0<='Z')||LA7_0=='_'||(LA7_0>='a' && LA7_0<='z')) ) {
+                    alt7=1;
                 }
 
 
-                switch (alt29) {
+                switch (alt7) {
             	case 1 :
             	    // InternalLayoutConfig.g:
             	    {
@@ -1065,7 +745,7 @@ public class InternalLayoutConfigLexer extends Lexer {
             	    break;
 
             	default :
-            	    break loop29;
+            	    break loop7;
                 }
             } while (true);
 
@@ -1080,42 +760,230 @@ public class InternalLayoutConfigLexer extends Lexer {
     }
     // $ANTLR end "RULE_ID"
 
+    // $ANTLR start "RULE_INT"
+    public final void mRULE_INT() throws RecognitionException {
+        try {
+            // InternalLayoutConfig.g:5569:19: ( ( '0' .. '9' )+ )
+            // InternalLayoutConfig.g:5569:21: ( '0' .. '9' )+
+            {
+            // InternalLayoutConfig.g:5569:21: ( '0' .. '9' )+
+            int cnt8=0;
+            loop8:
+            do {
+                int alt8=2;
+                int LA8_0 = input.LA(1);
+
+                if ( ((LA8_0>='0' && LA8_0<='9')) ) {
+                    alt8=1;
+                }
+
+
+                switch (alt8) {
+            	case 1 :
+            	    // InternalLayoutConfig.g:5569:22: '0' .. '9'
+            	    {
+            	    matchRange('0','9'); 
+
+            	    }
+            	    break;
+
+            	default :
+            	    if ( cnt8 >= 1 ) break loop8;
+                        EarlyExitException eee =
+                            new EarlyExitException(8, input);
+                        throw eee;
+                }
+                cnt8++;
+            } while (true);
+
+
+            }
+
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "RULE_INT"
+
+    // $ANTLR start "RULE_STRING"
+    public final void mRULE_STRING() throws RecognitionException {
+        try {
+            int _type = RULE_STRING;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:5571:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // InternalLayoutConfig.g:5571:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            {
+            // InternalLayoutConfig.g:5571:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            int alt11=2;
+            int LA11_0 = input.LA(1);
+
+            if ( (LA11_0=='\"') ) {
+                alt11=1;
+            }
+            else if ( (LA11_0=='\'') ) {
+                alt11=2;
+            }
+            else {
+                NoViableAltException nvae =
+                    new NoViableAltException("", 11, 0, input);
+
+                throw nvae;
+            }
+            switch (alt11) {
+                case 1 :
+                    // InternalLayoutConfig.g:5571:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    {
+                    match('\"'); 
+                    // InternalLayoutConfig.g:5571:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    loop9:
+                    do {
+                        int alt9=3;
+                        int LA9_0 = input.LA(1);
+
+                        if ( (LA9_0=='\\') ) {
+                            alt9=1;
+                        }
+                        else if ( ((LA9_0>='\u0000' && LA9_0<='!')||(LA9_0>='#' && LA9_0<='[')||(LA9_0>=']' && LA9_0<='\uFFFF')) ) {
+                            alt9=2;
+                        }
+
+
+                        switch (alt9) {
+                    	case 1 :
+                    	    // InternalLayoutConfig.g:5571:21: '\\\\' .
+                    	    {
+                    	    match('\\'); 
+                    	    matchAny(); 
+
+                    	    }
+                    	    break;
+                    	case 2 :
+                    	    // InternalLayoutConfig.g:5571:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    {
+                    	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
+                    	        input.consume();
+
+                    	    }
+                    	    else {
+                    	        MismatchedSetException mse = new MismatchedSetException(null,input);
+                    	        recover(mse);
+                    	        throw mse;}
+
+
+                    	    }
+                    	    break;
+
+                    	default :
+                    	    break loop9;
+                        }
+                    } while (true);
+
+                    match('\"'); 
+
+                    }
+                    break;
+                case 2 :
+                    // InternalLayoutConfig.g:5571:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    {
+                    match('\''); 
+                    // InternalLayoutConfig.g:5571:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    loop10:
+                    do {
+                        int alt10=3;
+                        int LA10_0 = input.LA(1);
+
+                        if ( (LA10_0=='\\') ) {
+                            alt10=1;
+                        }
+                        else if ( ((LA10_0>='\u0000' && LA10_0<='&')||(LA10_0>='(' && LA10_0<='[')||(LA10_0>=']' && LA10_0<='\uFFFF')) ) {
+                            alt10=2;
+                        }
+
+
+                        switch (alt10) {
+                    	case 1 :
+                    	    // InternalLayoutConfig.g:5571:54: '\\\\' .
+                    	    {
+                    	    match('\\'); 
+                    	    matchAny(); 
+
+                    	    }
+                    	    break;
+                    	case 2 :
+                    	    // InternalLayoutConfig.g:5571:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    {
+                    	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
+                    	        input.consume();
+
+                    	    }
+                    	    else {
+                    	        MismatchedSetException mse = new MismatchedSetException(null,input);
+                    	        recover(mse);
+                    	        throw mse;}
+
+
+                    	    }
+                    	    break;
+
+                    	default :
+                    	    break loop10;
+                        }
+                    } while (true);
+
+                    match('\''); 
+
+                    }
+                    break;
+
+            }
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "RULE_STRING"
+
     // $ANTLR start "RULE_ML_COMMENT"
     public final void mRULE_ML_COMMENT() throws RecognitionException {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:890:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // InternalLayoutConfig.g:890:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalLayoutConfig.g:5573:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalLayoutConfig.g:5573:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // InternalLayoutConfig.g:890:24: ( options {greedy=false; } : . )*
-            loop30:
+            // InternalLayoutConfig.g:5573:24: ( options {greedy=false; } : . )*
+            loop12:
             do {
-                int alt30=2;
-                int LA30_0 = input.LA(1);
+                int alt12=2;
+                int LA12_0 = input.LA(1);
 
-                if ( (LA30_0=='*') ) {
-                    int LA30_1 = input.LA(2);
+                if ( (LA12_0=='*') ) {
+                    int LA12_1 = input.LA(2);
 
-                    if ( (LA30_1=='/') ) {
-                        alt30=2;
+                    if ( (LA12_1=='/') ) {
+                        alt12=2;
                     }
-                    else if ( ((LA30_1>='\u0000' && LA30_1<='.')||(LA30_1>='0' && LA30_1<='\uFFFF')) ) {
-                        alt30=1;
+                    else if ( ((LA12_1>='\u0000' && LA12_1<='.')||(LA12_1>='0' && LA12_1<='\uFFFF')) ) {
+                        alt12=1;
                     }
 
 
                 }
-                else if ( ((LA30_0>='\u0000' && LA30_0<=')')||(LA30_0>='+' && LA30_0<='\uFFFF')) ) {
-                    alt30=1;
+                else if ( ((LA12_0>='\u0000' && LA12_0<=')')||(LA12_0>='+' && LA12_0<='\uFFFF')) ) {
+                    alt12=1;
                 }
 
 
-                switch (alt30) {
+                switch (alt12) {
             	case 1 :
-            	    // InternalLayoutConfig.g:890:52: .
+            	    // InternalLayoutConfig.g:5573:52: .
             	    {
             	    matchAny(); 
 
@@ -1123,7 +991,7 @@ public class InternalLayoutConfigLexer extends Lexer {
             	    break;
 
             	default :
-            	    break loop30;
+            	    break loop12;
                 }
             } while (true);
 
@@ -1145,25 +1013,25 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:892:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // InternalLayoutConfig.g:892:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalLayoutConfig.g:5575:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalLayoutConfig.g:5575:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // InternalLayoutConfig.g:892:24: (~ ( ( '\\n' | '\\r' ) ) )*
-            loop31:
+            // InternalLayoutConfig.g:5575:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            loop13:
             do {
-                int alt31=2;
-                int LA31_0 = input.LA(1);
+                int alt13=2;
+                int LA13_0 = input.LA(1);
 
-                if ( ((LA31_0>='\u0000' && LA31_0<='\t')||(LA31_0>='\u000B' && LA31_0<='\f')||(LA31_0>='\u000E' && LA31_0<='\uFFFF')) ) {
-                    alt31=1;
+                if ( ((LA13_0>='\u0000' && LA13_0<='\t')||(LA13_0>='\u000B' && LA13_0<='\f')||(LA13_0>='\u000E' && LA13_0<='\uFFFF')) ) {
+                    alt13=1;
                 }
 
 
-                switch (alt31) {
+                switch (alt13) {
             	case 1 :
-            	    // InternalLayoutConfig.g:892:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalLayoutConfig.g:5575:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1179,31 +1047,31 @@ public class InternalLayoutConfigLexer extends Lexer {
             	    break;
 
             	default :
-            	    break loop31;
+            	    break loop13;
                 }
             } while (true);
 
-            // InternalLayoutConfig.g:892:40: ( ( '\\r' )? '\\n' )?
-            int alt33=2;
-            int LA33_0 = input.LA(1);
+            // InternalLayoutConfig.g:5575:40: ( ( '\\r' )? '\\n' )?
+            int alt15=2;
+            int LA15_0 = input.LA(1);
 
-            if ( (LA33_0=='\n'||LA33_0=='\r') ) {
-                alt33=1;
+            if ( (LA15_0=='\n'||LA15_0=='\r') ) {
+                alt15=1;
             }
-            switch (alt33) {
+            switch (alt15) {
                 case 1 :
-                    // InternalLayoutConfig.g:892:41: ( '\\r' )? '\\n'
+                    // InternalLayoutConfig.g:5575:41: ( '\\r' )? '\\n'
                     {
-                    // InternalLayoutConfig.g:892:41: ( '\\r' )?
-                    int alt32=2;
-                    int LA32_0 = input.LA(1);
+                    // InternalLayoutConfig.g:5575:41: ( '\\r' )?
+                    int alt14=2;
+                    int LA14_0 = input.LA(1);
 
-                    if ( (LA32_0=='\r') ) {
-                        alt32=1;
+                    if ( (LA14_0=='\r') ) {
+                        alt14=1;
                     }
-                    switch (alt32) {
+                    switch (alt14) {
                         case 1 :
-                            // InternalLayoutConfig.g:892:41: '\\r'
+                            // InternalLayoutConfig.g:5575:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1235,22 +1103,22 @@ public class InternalLayoutConfigLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLayoutConfig.g:894:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // InternalLayoutConfig.g:894:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalLayoutConfig.g:5577:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalLayoutConfig.g:5577:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // InternalLayoutConfig.g:894:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
-            int cnt34=0;
-            loop34:
+            // InternalLayoutConfig.g:5577:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            int cnt16=0;
+            loop16:
             do {
-                int alt34=2;
-                int LA34_0 = input.LA(1);
+                int alt16=2;
+                int LA16_0 = input.LA(1);
 
-                if ( ((LA34_0>='\t' && LA34_0<='\n')||LA34_0=='\r'||LA34_0==' ') ) {
-                    alt34=1;
+                if ( ((LA16_0>='\t' && LA16_0<='\n')||LA16_0=='\r'||LA16_0==' ') ) {
+                    alt16=1;
                 }
 
 
-                switch (alt34) {
+                switch (alt16) {
             	case 1 :
             	    // InternalLayoutConfig.g:
             	    {
@@ -1268,12 +1136,12 @@ public class InternalLayoutConfigLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt34 >= 1 ) break loop34;
+            	    if ( cnt16 >= 1 ) break loop16;
                         EarlyExitException eee =
-                            new EarlyExitException(34, input);
+                            new EarlyExitException(16, input);
                         throw eee;
                 }
-                cnt34++;
+                cnt16++;
             } while (true);
 
 
@@ -1287,92 +1155,238 @@ public class InternalLayoutConfigLexer extends Lexer {
     }
     // $ANTLR end "RULE_WS"
 
-    public void mTokens() throws RecognitionException {
-        // InternalLayoutConfig.g:1:8: ( T__12 | T__13 | T__14 | T__15 | RULE_TFLOAT | RULE_NATURAL | RULE_BOOLEAN | RULE_STRING | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS )
-        int alt35=12;
-        alt35 = dfa35.predict(input);
-        switch (alt35) {
-            case 1 :
-                // InternalLayoutConfig.g:1:10: T__12
-                {
-                mT__12(); 
+    // $ANTLR start "RULE_ANY_OTHER"
+    public final void mRULE_ANY_OTHER() throws RecognitionException {
+        try {
+            int _type = RULE_ANY_OTHER;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // InternalLayoutConfig.g:5579:16: ( . )
+            // InternalLayoutConfig.g:5579:18: .
+            {
+            matchAny(); 
 
-                }
-                break;
-            case 2 :
-                // InternalLayoutConfig.g:1:16: T__13
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "RULE_ANY_OTHER"
+
+    public void mTokens() throws RecognitionException {
+        // InternalLayoutConfig.g:1:8: ( T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | RULE_SIGNED_INT | RULE_FLOAT | RULE_ID | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER )
+        int alt17=30;
+        alt17 = dfa17.predict(input);
+        switch (alt17) {
+            case 1 :
+                // InternalLayoutConfig.g:1:10: T__13
                 {
                 mT__13(); 
 
                 }
                 break;
-            case 3 :
-                // InternalLayoutConfig.g:1:22: T__14
+            case 2 :
+                // InternalLayoutConfig.g:1:16: T__14
                 {
                 mT__14(); 
 
                 }
                 break;
-            case 4 :
-                // InternalLayoutConfig.g:1:28: T__15
+            case 3 :
+                // InternalLayoutConfig.g:1:22: T__15
                 {
                 mT__15(); 
 
                 }
                 break;
-            case 5 :
-                // InternalLayoutConfig.g:1:34: RULE_TFLOAT
+            case 4 :
+                // InternalLayoutConfig.g:1:28: T__16
                 {
-                mRULE_TFLOAT(); 
+                mT__16(); 
+
+                }
+                break;
+            case 5 :
+                // InternalLayoutConfig.g:1:34: T__17
+                {
+                mT__17(); 
 
                 }
                 break;
             case 6 :
-                // InternalLayoutConfig.g:1:46: RULE_NATURAL
+                // InternalLayoutConfig.g:1:40: T__18
                 {
-                mRULE_NATURAL(); 
+                mT__18(); 
 
                 }
                 break;
             case 7 :
-                // InternalLayoutConfig.g:1:59: RULE_BOOLEAN
+                // InternalLayoutConfig.g:1:46: T__19
                 {
-                mRULE_BOOLEAN(); 
+                mT__19(); 
 
                 }
                 break;
             case 8 :
-                // InternalLayoutConfig.g:1:72: RULE_STRING
+                // InternalLayoutConfig.g:1:52: T__20
                 {
-                mRULE_STRING(); 
+                mT__20(); 
 
                 }
                 break;
             case 9 :
-                // InternalLayoutConfig.g:1:84: RULE_ID
+                // InternalLayoutConfig.g:1:58: T__21
+                {
+                mT__21(); 
+
+                }
+                break;
+            case 10 :
+                // InternalLayoutConfig.g:1:64: T__22
+                {
+                mT__22(); 
+
+                }
+                break;
+            case 11 :
+                // InternalLayoutConfig.g:1:70: T__23
+                {
+                mT__23(); 
+
+                }
+                break;
+            case 12 :
+                // InternalLayoutConfig.g:1:76: T__24
+                {
+                mT__24(); 
+
+                }
+                break;
+            case 13 :
+                // InternalLayoutConfig.g:1:82: T__25
+                {
+                mT__25(); 
+
+                }
+                break;
+            case 14 :
+                // InternalLayoutConfig.g:1:88: T__26
+                {
+                mT__26(); 
+
+                }
+                break;
+            case 15 :
+                // InternalLayoutConfig.g:1:94: T__27
+                {
+                mT__27(); 
+
+                }
+                break;
+            case 16 :
+                // InternalLayoutConfig.g:1:100: T__28
+                {
+                mT__28(); 
+
+                }
+                break;
+            case 17 :
+                // InternalLayoutConfig.g:1:106: T__29
+                {
+                mT__29(); 
+
+                }
+                break;
+            case 18 :
+                // InternalLayoutConfig.g:1:112: T__30
+                {
+                mT__30(); 
+
+                }
+                break;
+            case 19 :
+                // InternalLayoutConfig.g:1:118: T__31
+                {
+                mT__31(); 
+
+                }
+                break;
+            case 20 :
+                // InternalLayoutConfig.g:1:124: T__32
+                {
+                mT__32(); 
+
+                }
+                break;
+            case 21 :
+                // InternalLayoutConfig.g:1:130: T__33
+                {
+                mT__33(); 
+
+                }
+                break;
+            case 22 :
+                // InternalLayoutConfig.g:1:136: T__34
+                {
+                mT__34(); 
+
+                }
+                break;
+            case 23 :
+                // InternalLayoutConfig.g:1:142: RULE_SIGNED_INT
+                {
+                mRULE_SIGNED_INT(); 
+
+                }
+                break;
+            case 24 :
+                // InternalLayoutConfig.g:1:158: RULE_FLOAT
+                {
+                mRULE_FLOAT(); 
+
+                }
+                break;
+            case 25 :
+                // InternalLayoutConfig.g:1:169: RULE_ID
                 {
                 mRULE_ID(); 
 
                 }
                 break;
-            case 10 :
-                // InternalLayoutConfig.g:1:92: RULE_ML_COMMENT
+            case 26 :
+                // InternalLayoutConfig.g:1:177: RULE_STRING
+                {
+                mRULE_STRING(); 
+
+                }
+                break;
+            case 27 :
+                // InternalLayoutConfig.g:1:189: RULE_ML_COMMENT
                 {
                 mRULE_ML_COMMENT(); 
 
                 }
                 break;
-            case 11 :
-                // InternalLayoutConfig.g:1:108: RULE_SL_COMMENT
+            case 28 :
+                // InternalLayoutConfig.g:1:205: RULE_SL_COMMENT
                 {
                 mRULE_SL_COMMENT(); 
 
                 }
                 break;
-            case 12 :
-                // InternalLayoutConfig.g:1:124: RULE_WS
+            case 29 :
+                // InternalLayoutConfig.g:1:221: RULE_WS
                 {
                 mRULE_WS(); 
+
+                }
+                break;
+            case 30 :
+                // InternalLayoutConfig.g:1:229: RULE_ANY_OTHER
+                {
+                mRULE_ANY_OTHER(); 
 
                 }
                 break;
@@ -1382,133 +1396,316 @@ public class InternalLayoutConfigLexer extends Lexer {
     }
 
 
-    protected DFA24 dfa24 = new DFA24(this);
-    protected DFA35 dfa35 = new DFA35(this);
-    static final String DFA24_eotS =
+    protected DFA5 dfa5 = new DFA5(this);
+    protected DFA17 dfa17 = new DFA17(this);
+    static final String DFA5_eotS =
+        "\4\uffff\1\5\1\uffff";
+    static final String DFA5_eofS =
         "\6\uffff";
-    static final String DFA24_eofS =
-        "\6\uffff";
-    static final String DFA24_minS =
-        "\1\53\1\uffff\1\56\3\uffff";
-    static final String DFA24_maxS =
-        "\1\71\1\uffff\1\145\3\uffff";
-    static final String DFA24_acceptS =
-        "\1\uffff\1\1\1\uffff\1\3\1\2\1\4";
-    static final String DFA24_specialS =
+    static final String DFA5_minS =
+        "\1\60\1\56\1\60\1\uffff\1\60\1\uffff";
+    static final String DFA5_maxS =
+        "\1\71\1\145\1\71\1\uffff\1\145\1\uffff";
+    static final String DFA5_acceptS =
+        "\3\uffff\1\2\1\uffff\1\1";
+    static final String DFA5_specialS =
         "\6\uffff}>";
-    static final String[] DFA24_transitionS = {
-            "\1\1\1\uffff\1\1\1\3\1\uffff\12\2",
+    static final String[] DFA5_transitionS = {
+            "\12\1",
+            "\1\2\1\uffff\12\1\13\uffff\1\3\37\uffff\1\3",
+            "\12\4",
             "",
-            "\1\4\1\uffff\12\2\13\uffff\1\5\37\uffff\1\5",
+            "\12\4\13\uffff\1\3\37\uffff\1\3",
+            ""
+    };
+
+    static final short[] DFA5_eot = DFA.unpackEncodedString(DFA5_eotS);
+    static final short[] DFA5_eof = DFA.unpackEncodedString(DFA5_eofS);
+    static final char[] DFA5_min = DFA.unpackEncodedStringToUnsignedChars(DFA5_minS);
+    static final char[] DFA5_max = DFA.unpackEncodedStringToUnsignedChars(DFA5_maxS);
+    static final short[] DFA5_accept = DFA.unpackEncodedString(DFA5_acceptS);
+    static final short[] DFA5_special = DFA.unpackEncodedString(DFA5_specialS);
+    static final short[][] DFA5_transition;
+
+    static {
+        int numStates = DFA5_transitionS.length;
+        DFA5_transition = new short[numStates][];
+        for (int i=0; i<numStates; i++) {
+            DFA5_transition[i] = DFA.unpackEncodedString(DFA5_transitionS[i]);
+        }
+    }
+
+    static class DFA5 extends DFA {
+
+        public DFA5(BaseRecognizer recognizer) {
+            this.recognizer = recognizer;
+            this.decisionNumber = 5;
+            this.eot = DFA5_eot;
+            this.eof = DFA5_eof;
+            this.min = DFA5_min;
+            this.max = DFA5_max;
+            this.accept = DFA5_accept;
+            this.special = DFA5_special;
+            this.transition = DFA5_transition;
+        }
+        public String getDescription() {
+            return "5565:25: ( RULE_INT '.' RULE_INT | RULE_INT ( '.' RULE_INT )? ( 'e' | 'E' ) ( '+' | '-' )? RULE_INT )";
+        }
+    }
+    static final String DFA17_eotS =
+        "\1\uffff\2\36\2\uffff\2\36\3\uffff\1\36\1\uffff\5\36\1\uffff\1\34\1\uffff\1\34\1\64\1\34\1\uffff\3\34\2\uffff\1\36\1\uffff\1\36\2\uffff\2\36\3\uffff\1\36\1\uffff\7\36\2\uffff\1\64\7\uffff\2\36\1\111\10\36\1\122\1\36\1\124\1\36\1\uffff\3\36\1\131\4\36\1\uffff\1\36\1\uffff\1\137\1\140\2\36\1\uffff\1\143\3\36\1\147\2\uffff\1\150\1\36\1\uffff\3\36\2\uffff\1\36\1\156\2\36\1\161\1\uffff\1\162\1\163\3\uffff";
+    static final String DFA17_eofS =
+        "\164\uffff";
+    static final String DFA17_minS =
+        "\1\0\1\162\1\141\2\uffff\1\145\1\141\3\uffff\1\157\1\uffff\1\145\1\156\1\165\1\156\1\145\1\uffff\1\60\1\uffff\1\60\1\56\1\101\1\uffff\2\0\1\52\2\uffff\1\165\1\uffff\1\154\2\uffff\1\146\1\142\3\uffff\1\163\1\uffff\1\172\1\141\2\143\1\164\1\144\1\156\2\uffff\1\56\7\uffff\1\145\1\163\1\60\1\145\1\157\1\151\1\145\1\162\1\164\1\157\1\147\1\60\1\144\1\60\1\145\1\uffff\1\154\1\165\1\164\1\60\1\164\1\151\1\155\1\157\1\uffff\1\163\1\uffff\2\60\1\164\1\151\1\uffff\1\60\1\157\2\151\1\60\2\uffff\1\60\1\157\1\uffff\3\156\2\uffff\1\156\1\60\2\147\1\60\1\uffff\2\60\3\uffff";
+    static final String DFA17_maxS =
+        "\1\uffff\1\162\1\141\2\uffff\1\145\1\141\3\uffff\1\157\1\uffff\1\164\1\156\1\165\1\156\1\145\1\uffff\1\76\1\uffff\1\71\1\145\1\172\1\uffff\2\uffff\1\57\2\uffff\1\165\1\uffff\1\154\2\uffff\1\146\1\171\3\uffff\1\163\1\uffff\1\172\1\141\2\143\1\164\1\144\1\156\2\uffff\1\145\7\uffff\1\145\1\163\1\172\1\145\1\157\1\151\1\145\1\162\1\164\1\157\1\147\1\172\1\144\1\172\1\145\1\uffff\1\154\1\165\1\164\1\172\1\164\1\151\1\155\1\157\1\uffff\1\163\1\uffff\2\172\1\164\1\151\1\uffff\1\172\1\157\2\151\1\172\2\uffff\1\172\1\157\1\uffff\3\156\2\uffff\1\156\1\172\2\147\1\172\1\uffff\2\172\3\uffff";
+    static final String DFA17_acceptS =
+        "\3\uffff\1\3\1\4\2\uffff\1\7\1\11\1\12\1\uffff\1\14\5\uffff\1\23\1\uffff\1\26\3\uffff\1\31\3\uffff\1\35\1\36\1\uffff\1\31\1\uffff\1\3\1\4\2\uffff\1\7\1\11\1\12\1\uffff\1\14\7\uffff\1\23\1\25\1\uffff\1\26\1\27\1\30\1\32\1\33\1\34\1\35\17\uffff\1\5\10\uffff\1\21\1\uffff\1\1\4\uffff\1\15\5\uffff\1\2\1\6\2\uffff\1\20\3\uffff\1\22\1\10\5\uffff\1\24\2\uffff\1\13\1\16\1\17";
+    static final String DFA17_specialS =
+        "\1\1\27\uffff\1\2\1\0\132\uffff}>";
+    static final String[] DFA17_transitionS = {
+            "\11\34\2\33\2\34\1\33\22\34\1\33\1\34\1\30\4\34\1\31\3\34\1\24\1\13\1\22\1\23\1\32\12\25\1\7\6\34\32\27\1\10\1\34\1\11\1\26\1\27\1\34\1\27\1\20\2\27\1\17\1\2\2\27\1\15\2\27\1\6\2\27\1\16\1\12\1\27\1\5\1\14\1\1\6\27\1\3\1\21\1\4\uff82\34",
+            "\1\35",
+            "\1\37",
+            "",
+            "",
+            "\1\42",
+            "\1\43",
+            "",
+            "",
+            "",
+            "\1\47",
+            "",
+            "\1\53\3\uffff\1\51\12\uffff\1\52",
+            "\1\54",
+            "\1\55",
+            "\1\56",
+            "\1\57",
+            "",
+            "\12\62\4\uffff\1\61",
+            "",
+            "\12\62",
+            "\1\65\1\uffff\12\62\13\uffff\1\65\37\uffff\1\65",
+            "\32\36\4\uffff\1\36\1\uffff\32\36",
+            "",
+            "\0\66",
+            "\0\66",
+            "\1\67\4\uffff\1\70",
+            "",
+            "",
+            "\1\72",
+            "",
+            "\1\73",
+            "",
+            "",
+            "\1\74",
+            "\1\75\26\uffff\1\76",
+            "",
+            "",
+            "",
+            "\1\77",
+            "",
+            "\1\100",
+            "\1\101",
+            "\1\102",
+            "\1\103",
+            "\1\104",
+            "\1\105",
+            "\1\106",
+            "",
+            "",
+            "\1\65\1\uffff\12\62\13\uffff\1\65\37\uffff\1\65",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\1\107",
+            "\1\110",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\1\112",
+            "\1\113",
+            "\1\114",
+            "\1\115",
+            "\1\116",
+            "\1\117",
+            "\1\120",
+            "\1\121",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\1\123",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\1\125",
+            "",
+            "\1\126",
+            "\1\127",
+            "\1\130",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\1\132",
+            "\1\133",
+            "\1\134",
+            "\1\135",
+            "",
+            "\1\136",
+            "",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\1\141",
+            "\1\142",
+            "",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\1\144",
+            "\1\145",
+            "\1\146",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "",
+            "",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\1\151",
+            "",
+            "\1\152",
+            "\1\153",
+            "\1\154",
+            "",
+            "",
+            "\1\155",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\1\157",
+            "\1\160",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
+            "\12\36\7\uffff\32\36\4\uffff\1\36\1\uffff\32\36",
             "",
             "",
             ""
     };
 
-    static final short[] DFA24_eot = DFA.unpackEncodedString(DFA24_eotS);
-    static final short[] DFA24_eof = DFA.unpackEncodedString(DFA24_eofS);
-    static final char[] DFA24_min = DFA.unpackEncodedStringToUnsignedChars(DFA24_minS);
-    static final char[] DFA24_max = DFA.unpackEncodedStringToUnsignedChars(DFA24_maxS);
-    static final short[] DFA24_accept = DFA.unpackEncodedString(DFA24_acceptS);
-    static final short[] DFA24_special = DFA.unpackEncodedString(DFA24_specialS);
-    static final short[][] DFA24_transition;
+    static final short[] DFA17_eot = DFA.unpackEncodedString(DFA17_eotS);
+    static final short[] DFA17_eof = DFA.unpackEncodedString(DFA17_eofS);
+    static final char[] DFA17_min = DFA.unpackEncodedStringToUnsignedChars(DFA17_minS);
+    static final char[] DFA17_max = DFA.unpackEncodedStringToUnsignedChars(DFA17_maxS);
+    static final short[] DFA17_accept = DFA.unpackEncodedString(DFA17_acceptS);
+    static final short[] DFA17_special = DFA.unpackEncodedString(DFA17_specialS);
+    static final short[][] DFA17_transition;
 
     static {
-        int numStates = DFA24_transitionS.length;
-        DFA24_transition = new short[numStates][];
+        int numStates = DFA17_transitionS.length;
+        DFA17_transition = new short[numStates][];
         for (int i=0; i<numStates; i++) {
-            DFA24_transition[i] = DFA.unpackEncodedString(DFA24_transitionS[i]);
+            DFA17_transition[i] = DFA.unpackEncodedString(DFA17_transitionS[i]);
         }
     }
 
-    class DFA24 extends DFA {
+    class DFA17 extends DFA {
 
-        public DFA24(BaseRecognizer recognizer) {
+        public DFA17(BaseRecognizer recognizer) {
             this.recognizer = recognizer;
-            this.decisionNumber = 24;
-            this.eot = DFA24_eot;
-            this.eof = DFA24_eof;
-            this.min = DFA24_min;
-            this.max = DFA24_max;
-            this.accept = DFA24_accept;
-            this.special = DFA24_special;
-            this.transition = DFA24_transition;
+            this.decisionNumber = 17;
+            this.eot = DFA17_eot;
+            this.eof = DFA17_eof;
+            this.min = DFA17_min;
+            this.max = DFA17_max;
+            this.accept = DFA17_accept;
+            this.special = DFA17_special;
+            this.transition = DFA17_transition;
         }
         public String getDescription() {
-            return "880:15: ( ( '+' | '-' ) ( ( '0' .. '9' )+ ( '.' ( '0' .. '9' )* )? ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? ) | ( '0' .. '9' )+ '.' ( '0' .. '9' )* ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | '.' ( '0' .. '9' )+ ( ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )? | ( '0' .. '9' )+ ( 'e' | 'E' ) ( '+' | '-' )? ( '0' .. '9' )+ )";
+            return "1:1: Tokens : ( T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | RULE_SIGNED_INT | RULE_FLOAT | RULE_ID | RULE_STRING | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS | RULE_ANY_OTHER );";
         }
-    }
-    static final String DFA35_eotS =
-        "\4\uffff\1\15\1\uffff\1\16\2\12\6\uffff\2\12\2\uffff\2\12\1\27\1\12\1\uffff\1\27";
-    static final String DFA35_eofS =
-        "\31\uffff";
-    static final String DFA35_minS =
-        "\1\11\3\uffff\1\60\1\uffff\1\56\1\162\1\141\2\uffff\1\52\3\uffff\1\165\1\154\2\uffff\1\145\1\163\1\60\1\145\1\uffff\1\60";
-    static final String DFA35_maxS =
-        "\1\175\3\uffff\1\71\1\uffff\1\145\1\162\1\141\2\uffff\1\57\3\uffff\1\165\1\154\2\uffff\1\145\1\163\1\172\1\145\1\uffff\1\172";
-    static final String DFA35_acceptS =
-        "\1\uffff\1\1\1\2\1\3\1\uffff\1\5\3\uffff\1\10\1\11\1\uffff\1\14\1\4\1\6\2\uffff\1\12\1\13\4\uffff\1\7\1\uffff";
-    static final String DFA35_specialS =
-        "\31\uffff}>";
-    static final String[] DFA35_transitionS = {
-            "\2\14\2\uffff\1\14\22\uffff\1\14\1\uffff\1\11\10\uffff\1\5\1\uffff\1\5\1\4\1\13\12\6\1\3\6\uffff\32\12\3\uffff\2\12\1\uffff\5\12\1\10\15\12\1\7\6\12\1\1\1\uffff\1\2",
-            "",
-            "",
-            "",
-            "\12\5",
-            "",
-            "\1\5\1\uffff\12\6\13\uffff\1\5\37\uffff\1\5",
-            "\1\17",
-            "\1\20",
-            "",
-            "",
-            "\1\21\4\uffff\1\22",
-            "",
-            "",
-            "",
-            "\1\23",
-            "\1\24",
-            "",
-            "",
-            "\1\25",
-            "\1\26",
-            "\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\32\12",
-            "\1\30",
-            "",
-            "\12\12\7\uffff\32\12\4\uffff\1\12\1\uffff\32\12"
-    };
+        public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
+            IntStream input = _input;
+        	int _s = s;
+            switch ( s ) {
+                    case 0 : 
+                        int LA17_25 = input.LA(1);
 
-    static final short[] DFA35_eot = DFA.unpackEncodedString(DFA35_eotS);
-    static final short[] DFA35_eof = DFA.unpackEncodedString(DFA35_eofS);
-    static final char[] DFA35_min = DFA.unpackEncodedStringToUnsignedChars(DFA35_minS);
-    static final char[] DFA35_max = DFA.unpackEncodedStringToUnsignedChars(DFA35_maxS);
-    static final short[] DFA35_accept = DFA.unpackEncodedString(DFA35_acceptS);
-    static final short[] DFA35_special = DFA.unpackEncodedString(DFA35_specialS);
-    static final short[][] DFA35_transition;
+                        s = -1;
+                        if ( ((LA17_25>='\u0000' && LA17_25<='\uFFFF')) ) {s = 54;}
 
-    static {
-        int numStates = DFA35_transitionS.length;
-        DFA35_transition = new short[numStates][];
-        for (int i=0; i<numStates; i++) {
-            DFA35_transition[i] = DFA.unpackEncodedString(DFA35_transitionS[i]);
-        }
-    }
+                        else s = 28;
 
-    class DFA35 extends DFA {
+                        if ( s>=0 ) return s;
+                        break;
+                    case 1 : 
+                        int LA17_0 = input.LA(1);
 
-        public DFA35(BaseRecognizer recognizer) {
-            this.recognizer = recognizer;
-            this.decisionNumber = 35;
-            this.eot = DFA35_eot;
-            this.eof = DFA35_eof;
-            this.min = DFA35_min;
-            this.max = DFA35_max;
-            this.accept = DFA35_accept;
-            this.special = DFA35_special;
-            this.transition = DFA35_transition;
-        }
-        public String getDescription() {
-            return "1:1: Tokens : ( T__12 | T__13 | T__14 | T__15 | RULE_TFLOAT | RULE_NATURAL | RULE_BOOLEAN | RULE_STRING | RULE_ID | RULE_ML_COMMENT | RULE_SL_COMMENT | RULE_WS );";
+                        s = -1;
+                        if ( (LA17_0=='t') ) {s = 1;}
+
+                        else if ( (LA17_0=='f') ) {s = 2;}
+
+                        else if ( (LA17_0=='{') ) {s = 3;}
+
+                        else if ( (LA17_0=='}') ) {s = 4;}
+
+                        else if ( (LA17_0=='r') ) {s = 5;}
+
+                        else if ( (LA17_0=='l') ) {s = 6;}
+
+                        else if ( (LA17_0==':') ) {s = 7;}
+
+                        else if ( (LA17_0=='[') ) {s = 8;}
+
+                        else if ( (LA17_0==']') ) {s = 9;}
+
+                        else if ( (LA17_0=='p') ) {s = 10;}
+
+                        else if ( (LA17_0==',') ) {s = 11;}
+
+                        else if ( (LA17_0=='s') ) {s = 12;}
+
+                        else if ( (LA17_0=='i') ) {s = 13;}
+
+                        else if ( (LA17_0=='o') ) {s = 14;}
+
+                        else if ( (LA17_0=='e') ) {s = 15;}
+
+                        else if ( (LA17_0=='b') ) {s = 16;}
+
+                        else if ( (LA17_0=='|') ) {s = 17;}
+
+                        else if ( (LA17_0=='-') ) {s = 18;}
+
+                        else if ( (LA17_0=='.') ) {s = 19;}
+
+                        else if ( (LA17_0=='+') ) {s = 20;}
+
+                        else if ( ((LA17_0>='0' && LA17_0<='9')) ) {s = 21;}
+
+                        else if ( (LA17_0=='^') ) {s = 22;}
+
+                        else if ( ((LA17_0>='A' && LA17_0<='Z')||LA17_0=='_'||LA17_0=='a'||(LA17_0>='c' && LA17_0<='d')||(LA17_0>='g' && LA17_0<='h')||(LA17_0>='j' && LA17_0<='k')||(LA17_0>='m' && LA17_0<='n')||LA17_0=='q'||(LA17_0>='u' && LA17_0<='z')) ) {s = 23;}
+
+                        else if ( (LA17_0=='\"') ) {s = 24;}
+
+                        else if ( (LA17_0=='\'') ) {s = 25;}
+
+                        else if ( (LA17_0=='/') ) {s = 26;}
+
+                        else if ( ((LA17_0>='\t' && LA17_0<='\n')||LA17_0=='\r'||LA17_0==' ') ) {s = 27;}
+
+                        else if ( ((LA17_0>='\u0000' && LA17_0<='\b')||(LA17_0>='\u000B' && LA17_0<='\f')||(LA17_0>='\u000E' && LA17_0<='\u001F')||LA17_0=='!'||(LA17_0>='#' && LA17_0<='&')||(LA17_0>='(' && LA17_0<='*')||(LA17_0>=';' && LA17_0<='@')||LA17_0=='\\'||LA17_0=='`'||(LA17_0>='~' && LA17_0<='\uFFFF')) ) {s = 28;}
+
+                        if ( s>=0 ) return s;
+                        break;
+                    case 2 : 
+                        int LA17_24 = input.LA(1);
+
+                        s = -1;
+                        if ( ((LA17_24>='\u0000' && LA17_24<='\uFFFF')) ) {s = 54;}
+
+                        else s = 28;
+
+                        if ( s>=0 ) return s;
+                        break;
+            }
+            NoViableAltException nvae =
+                new NoViableAltException(getDescription(), 17, _s, input);
+            error(nvae);
+            throw nvae;
         }
     }
  

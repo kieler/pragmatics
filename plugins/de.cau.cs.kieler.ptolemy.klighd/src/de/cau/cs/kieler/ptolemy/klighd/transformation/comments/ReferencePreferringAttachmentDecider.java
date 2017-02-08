@@ -18,7 +18,7 @@ import org.eclipse.elk.core.comments.DistanceHeuristic;
 import org.eclipse.elk.core.comments.IAttachmentDecider;
 import org.eclipse.elk.core.comments.IHeuristic;
 import org.eclipse.elk.core.comments.NodeReferenceHeuristic;
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 
 /**
  * An attachment decider that prefers to attach comments to nodes they mention.
@@ -31,13 +31,13 @@ public class ReferencePreferringAttachmentDecider implements IAttachmentDecider 
      * {@inheritDoc}
      */
     @Override
-    public KGraphElement makeAttachmentDecision(
-            Map<KGraphElement, Map<Class<? extends IHeuristic>, Double>> normalizedHeuristics) {
+    public ElkGraphElement makeAttachmentDecision(
+            Map<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> normalizedHeuristics) {
         
         double bestResult = 0;
-        KGraphElement bestCandidate = null;
+        ElkGraphElement bestCandidate = null;
         
-        for (Map.Entry<KGraphElement, Map<Class<? extends IHeuristic>, Double>> candidate :
+        for (Map.Entry<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> candidate :
             normalizedHeuristics.entrySet()) {
             
             // If the node reference heuristic produced something worthwhile, use this node

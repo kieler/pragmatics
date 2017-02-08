@@ -194,7 +194,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
                     compoundCluster.setMargin(spacing);
                 }
 
-                KInsets kInsets = compoundLayout.getInsets();
+                KInsets kInsets = compoundLayout.getPadding();
                 float borderSpacing =
                         node.getData(KShapeLayout.class).getProperty(CodaflowProperties.BORDER_SPACING);
                 float padding = spacing / 2f + Math.max(borderSpacing, 0);
@@ -464,7 +464,7 @@ public class HierarchicalKGraphImporter implements IGraphImporter<KNode, CGraph>
 
         // resize the parent node
         KNode root = (KNode) graph.getProperty(CGraphProperties.ORIGIN);
-        KInsets insets = root.getData(KShapeLayout.class).getInsets();
+        KInsets insets = root.getData(KShapeLayout.class).getPadding();
         double width = (maxX - minX) + 2 * borderSpacing + insets.getLeft() + insets.getRight();
         double height = (maxY - minY) + 2 * borderSpacing + insets.getTop() + insets.getBottom();
         KimlUtil.resizeNode(root, (float) width, (float) height, false, true);

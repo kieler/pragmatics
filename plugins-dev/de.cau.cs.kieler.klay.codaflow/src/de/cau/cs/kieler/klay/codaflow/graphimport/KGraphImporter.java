@@ -95,7 +95,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
         graph.setProperty(CGraphProperties.ORIGIN, root);
         
         // insets
-        KInsets insets = root.getData(KShapeLayout.class).getInsets();
+        KInsets insets = root.getData(KShapeLayout.class).getPadding();
         graph.insets.left = insets.getLeft();
         graph.insets.top = insets.getTop();
         graph.insets.right = insets.getRight();
@@ -407,7 +407,7 @@ public class KGraphImporter implements IGraphImporter<KNode, CGraph> {
             layout.setYpos((float) (n.getPos().y + offset.y));
 
             // write back insets
-            KInsets insets = layout.getInsets();
+            KInsets insets = layout.getPadding();
             insets.setLeft((float) n.getInsets().left);
             insets.setRight((float) n.getInsets().right);
             insets.setTop((float) n.getInsets().top);

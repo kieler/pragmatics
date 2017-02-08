@@ -16,19 +16,20 @@ package de.cau.cs.kieler.kiml.formats.graphml;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.data.LayoutOptionData;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
-import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.core.util.GraphDataUtil;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 import org.graphdrawing.graphml.DataType;
 import org.graphdrawing.graphml.DocumentRoot;
@@ -57,7 +58,7 @@ import de.cau.cs.kieler.kiml.formats.TransformationData;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
+public class GraphMLImporter implements IGraphTransformer<DocumentRoot, ElkNode> {
     
     /** the data key used for GraphML positions. */
     public static final String POSITION_KEY = "position";
@@ -65,28 +66,28 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
     public static final String ROUTING_KEY = "points";
     
     /** map of GraphML node identifiers to KNodes. */
-    private static final IProperty<Map<String, KNode>> NODE_ID_MAP
-            = new Property<Map<String, KNode>>("graphmlImporter.nodeIdMap");
+    private static final IProperty<Map<String, ElkNode>> NODE_ID_MAP
+            = new Property<>("graphmlImporter.nodeIdMap");
     /** map of GraphML port identifiers to KPorts. */
-    private static final IProperty<Map<Pair<KNode, String>, KPort>> PORT_ID_MAP
-            = new Property<Map<Pair<KNode, String>, KPort>>("graphmlImporter.portIdMap");
+    private static final IProperty<Map<Pair<ElkNode, String>, ElkPort>> PORT_ID_MAP
+            = new Property<>("graphmlImporter.portIdMap");
     /** GraphML node attached to each new KNode. */
     private static final IProperty<NodeType> PROP_NODE
-            = new Property<NodeType>("graphmlImporter.node");
+            = new Property<>("graphmlImporter.node");
     /** GraphML edge attached to each new KEdge. */
     private static final IProperty<EdgeType> PROP_EDGE
-            = new Property<EdgeType>("graphmlImporter.edge");
+            = new Property<>("graphmlImporter.edge");
     
     /**
      * {@inheritDoc}
      */
-    public void transform(final TransformationData<DocumentRoot, KNode> transData) {
+    public void transform(final TransformationData<DocumentRoot, ElkNode> transData) {
         GraphmlType graphml = transData.getSourceGraph().getGraphml();
         for (GraphType graph : graphml.getGraph()) {
-            KNode parent = ElkUtil.createInitializedNode();
-            Map<String, KNode> nodeIdMap = Maps.newHashMap();
+            ElkNode parent = ElkGraphUtil.createGraph();
+            Map<String, ElkNode> nodeIdMap = Maps.newHashMap();
             transData.setProperty(NODE_ID_MAP, nodeIdMap);
-            Map<Pair<KNode, String>, KPort> portIdMap = Maps.newHashMap();
+            Map<Pair<ElkNode, String>, ElkPort> portIdMap = Maps.newHashMap();
             transData.setProperty(PORT_ID_MAP, portIdMap);
             transformGraph(graph, parent, transData);
             transData.getTargetGraphs().add(parent);
@@ -96,7 +97,7 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
     /**
      * {@inheritDoc}
      */
-    public void transferLayout(final TransformationData<DocumentRoot, KNode> transData) {
+    public void transferLayout(final TransformationData<DocumentRoot, ElkNode> transData) {
         GraphmlType graphml = transData.getSourceGraph().getGraphml();
         // make sure there is a data key definition for position and routing
         KeyType positionKey = null, routingKey = null;
@@ -126,7 +127,7 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
         routingKey.setAttrType(KeyTypeType.STRING);
         routingKey.setFor(KeyForType.EDGE);
         
-        for (KNode layoutNode : transData.getTargetGraphs()) {
+        for (ElkNode layoutNode : transData.getTargetGraphs()) {
             applyLayout(layoutNode);
         }
     }
@@ -139,71 +140,73 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
      * @param graph a GraphML graph
      * @param parent the corresponding KNode
      */
-    private void transformGraph(final GraphType graph, final KNode parent,
-            final TransformationData<DocumentRoot, KNode> transData) {
+    private void transformGraph(final GraphType graph, final ElkNode parent,
+            final TransformationData<DocumentRoot, ElkNode> transData) {
+        
         // transform layout options
         for (DataType data : graph.getData()) {
-            GraphDataUtil.setOption(parent.getData(KShapeLayout.class), data.getKey(), getValue(data));
+            setOption(parent, data.getKey(), getValue(data));
         }
         
         // transform nodes
         for (NodeType node : graph.getNode()) {
-            KNode knode = transformNode(node.getId(), parent, transData);
-            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            nodeLayout.setProperty(PROP_NODE, node);
+            ElkNode elknode = transformNode(node.getId(), parent, transData);
+            elknode.setProperty(PROP_NODE, node);
             for (DataType data : node.getData()) {
-                GraphDataUtil.setOption(nodeLayout, data.getKey(), getValue(data));
+                setOption(elknode, data.getKey(), getValue(data));
             }
             // transform ports
             for (PortType port : node.getPort()) {
-                KPort kport = transformPort(port.getName(), knode, transData);
-                KShapeLayout portLayout = kport.getData(KShapeLayout.class);
+                ElkPort elkport = transformPort(port.getName(), elknode, transData);
                 for (DataType data : port.getData()) {
-                    GraphDataUtil.setOption(portLayout, data.getKey(), getValue(data));
+                    setOption(elkport, data.getKey(), getValue(data));
                 }
             }
             // transform subgraph
             if (node.getGraph() != null) {
-                transformGraph(node.getGraph(), knode, transData);
+                transformGraph(node.getGraph(), elknode, transData);
             }
         }
         
         // transform edges
         for (EdgeType edge : graph.getEdge()) {
-            KNode source = transformNode(edge.getSource(), parent, transData);
-            KNode target = transformNode(edge.getTarget(), parent, transData);
-            KEdge kedge = ElkUtil.createInitializedEdge();
-            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-            edgeLayout.setProperty(PROP_EDGE, edge);
-            kedge.setSource(source);
-            kedge.setTarget(target);
+            ElkNode sourceNode = transformNode(edge.getSource(), parent, transData);
+            ElkNode targetNode = transformNode(edge.getTarget(), parent, transData);
+            
+            ElkPort sourcePort = null;
             if (edge.getSourceport() != null) {
-                KPort port = transformPort(edge.getSourceport(), source, transData);
-                kedge.setSourcePort(port);
+                sourcePort = transformPort(edge.getSourceport(), sourceNode, transData);
             }
+            
+            ElkPort targetPort = null;
             if (edge.getTargetport() != null) {
-                KPort port = transformPort(edge.getTargetport(), target, transData);
-                kedge.setTargetPort(port);
+                targetPort = transformPort(edge.getTargetport(), targetNode, transData);
             }
+            
+            ElkEdge elkedge = ElkGraphUtil.createSimpleEdge(
+                    sourcePort != null ? sourcePort : sourceNode,
+                    targetPort != null ? targetPort : targetNode);
+            elkedge.setProperty(PROP_EDGE, edge);
+            
             for (DataType data : edge.getData()) {
-                GraphDataUtil.setOption(edgeLayout, data.getKey(), getValue(data));
+                setOption(elkedge, data.getKey(), getValue(data));
             }
         }
         
         // transform hyperedges
         for (HyperedgeType hyperedge : graph.getHyperedge()) {
-            KNode hypernode = ElkUtil.createInitializedNode();
-            hypernode.setParent(parent);
-            hypernode.getData(KShapeLayout.class).setProperty(CoreOptions.HYPERNODE, true);
+            // MIGRATE At some point we may want to actually create hyperedges here
+            ElkNode hypernode = ElkGraphUtil.createNode(parent);
+            hypernode.setProperty(CoreOptions.HYPERNODE, true);
+            
             for (EndpointType endpoint : hyperedge.getEndpoint()) {
-                KNode epnode = transformNode(endpoint.getNode(), parent, transData);
-                KEdge kedge = ElkUtil.createInitializedEdge();
-                kedge.setSource(epnode);
-                kedge.setTarget(hypernode);
+                ElkNode epnode = transformNode(endpoint.getNode(), parent, transData);
+                ElkPort epport = null;
                 if (endpoint.getPort() != null) {
-                    KPort port = transformPort(endpoint.getPort(), epnode, transData);
-                    kedge.setSourcePort(port);
+                    epport = transformPort(endpoint.getPort(), epnode, transData);
                 }
+                
+                ElkGraphUtil.createSimpleEdge(epport != null ? epport : epnode, hypernode);
             }
         }
     }
@@ -215,20 +218,19 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
      * @param parent the parent where the new KNode is stored
      * @return a KNode instance
      */
-    private KNode transformNode(final String nodeId, final KNode parent,
-            final TransformationData<DocumentRoot, KNode> transData) {
-        Map<String, KNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
-        KNode knode = nodeIdMap.get(nodeId);
-        if (knode == null) {
-            knode = ElkUtil.createInitializedNode();
-            KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
-            nodeLayout.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
-            knode.setParent(parent);
+    private ElkNode transformNode(final String nodeId, final ElkNode parent,
+            final TransformationData<DocumentRoot, ElkNode> transData) {
+        
+        Map<String, ElkNode> nodeIdMap = transData.getProperty(NODE_ID_MAP);
+        ElkNode elknode = nodeIdMap.get(nodeId);
+        if (elknode == null) {
+            elknode = ElkGraphUtil.createNode(parent);
+            elknode.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
             if (nodeId != null) {
-                nodeIdMap.put(nodeId, knode);
+                nodeIdMap.put(nodeId, elknode);
             }
         }
-        return knode;
+        return elknode;
     }
     
     /**
@@ -238,19 +240,19 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
      * @param node the node to which the new KPort belongs
      * @return a KPort instance
      */
-    private KPort transformPort(final String portId, final KNode node,
-            final TransformationData<DocumentRoot, KNode> transData) {
-        Map<Pair<KNode, String>, KPort> portIdMap = transData.getProperty(PORT_ID_MAP);
-        Pair<KNode, String> key = new Pair<KNode, String>(node, portId);
-        KPort kport = portIdMap.get(key);
-        if (kport == null) {
-            kport = ElkUtil.createInitializedPort();
-            kport.setNode(node);
+    private ElkPort transformPort(final String portId, final ElkNode node,
+            final TransformationData<DocumentRoot, ElkNode> transData) {
+        
+        Map<Pair<ElkNode, String>, ElkPort> portIdMap = transData.getProperty(PORT_ID_MAP);
+        Pair<ElkNode, String> key = new Pair<>(node, portId);
+        ElkPort elkport = portIdMap.get(key);
+        if (elkport == null) {
+            elkport = ElkGraphUtil.createPort(node);
             if (portId != null) {
-                portIdMap.put(key, kport);
+                portIdMap.put(key, elkport);
             }
         }
-        return kport;
+        return elkport;
     }
     
     
@@ -261,10 +263,9 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
      * 
      * @param parentNode a parent node
      */
-    private void applyLayout(final KNode parentNode) {
-        for (KNode knode : parentNode.getChildren()) {
-            KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
-            NodeType graphmlNode = knodeLayout.getProperty(PROP_NODE);
+    private void applyLayout(final ElkNode parentNode) {
+        for (ElkNode elknode : parentNode.getChildren()) {
+            NodeType graphmlNode = elknode.getProperty(PROP_NODE);
             if (graphmlNode != null) {
                 // apply node layout
                 DataType posData = null;
@@ -279,13 +280,12 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
                     posData.setKey(POSITION_KEY);
                     graphmlNode.getData().add(posData);
                 }
-                setValue(posData, knodeLayout.getXpos() + "," + knodeLayout.getYpos());
+                setValue(posData, elknode.getX() + "," + elknode.getY());
             }
             
-            for (KEdge kedge : knode.getOutgoingEdges()) {
-                KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
-                EdgeType graphmlEdge = kedgeLayout.getProperty(PROP_EDGE);
-                if (graphmlEdge != null) {
+            for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elknode)) {
+                EdgeType graphmlEdge = elkedge.getProperty(PROP_EDGE);
+                if (graphmlEdge != null && !elkedge.getSections().isEmpty()) {
                     // apply edge layout
                     DataType routeData = null;
                     for (DataType data : graphmlEdge.getData()) {
@@ -294,26 +294,30 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
                             break;
                         }
                     }
+                    
                     if (routeData == null) {
                         routeData = GraphMLFactory.eINSTANCE.createDataType();
                         routeData.setKey(ROUTING_KEY);
                         graphmlEdge.getData().add(routeData);
                     }
+                    
+                    ElkEdgeSection edgeSection = elkedge.getSections().get(0);
+                    
                     StringBuilder routeBuilder = new StringBuilder();
-                    routeBuilder.append(kedgeLayout.getSourcePoint().getX()
-                            + "," + kedgeLayout.getSourcePoint().getY());
-                    for (KPoint point : kedgeLayout.getBendPoints()) {
+                    routeBuilder.append(edgeSection.getStartX()
+                            + "," + edgeSection.getStartY());
+                    for (ElkBendPoint point : edgeSection.getBendPoints()) {
                         routeBuilder.append(" " + point.getX() + "," + point.getY());
                     }
-                    routeBuilder.append(" " + kedgeLayout.getTargetPoint().getX()
-                            + "," + kedgeLayout.getTargetPoint().getY());
+                    routeBuilder.append(" " + edgeSection.getEndX()
+                            + "," + edgeSection.getEndY());
                     setValue(routeData, routeBuilder.toString());
                 }
             }
             
             // apply layout for child nodes
-            if (!knode.getChildren().isEmpty()) {
-                applyLayout(knode);
+            if (!elknode.getChildren().isEmpty()) {
+                applyLayout(elknode);
             }
         }
     }
@@ -344,4 +348,20 @@ public class GraphMLImporter implements IGraphTransformer<DocumentRoot, KNode> {
                 Lists.newArrayList(value));
     }
 
+    /**
+     * Set a layout option using a serialized key / value pair.
+     * 
+     * @param graphElement the graph data instance to modify
+     * @param id the layout option identifier
+     * @param value the value for the layout option
+     */
+    private static void setOption(final ElkGraphElement graphElement, final String id, final String value) {
+        LayoutOptionData optionData = LayoutMetaDataService.getInstance().getOptionData(id);
+        if (optionData != null) {
+            Object obj = optionData.parseValue(value);
+            if (obj != null) {
+                graphElement.setProperty(optionData, obj);
+            }
+        }
+    }
 }

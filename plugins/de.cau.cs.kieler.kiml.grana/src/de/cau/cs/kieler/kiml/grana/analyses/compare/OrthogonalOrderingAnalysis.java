@@ -16,10 +16,9 @@ import static de.cau.cs.kieler.kiml.grana.analyses.compare.PointSetUtils.center;
 
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Function;
@@ -53,13 +52,12 @@ public class OrthogonalOrderingAnalysis implements IComparingAnalysis {
      * {@inheritDoc}
      */
     @Override
-    public Object doAnalysis(final KNode first, final KNode second,
+    public Object doAnalysis(final ElkNode first, final ElkNode second,
             final Map<EObject, EObject> mapping, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Orthogonal Ordering Analysis", 1);
         
-        boolean hierarchy = first.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = first.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         
         // gather results
         Result result = new Result();
@@ -71,21 +69,21 @@ public class OrthogonalOrderingAnalysis implements IComparingAnalysis {
                               result.linearWeighted / (TWO_PI * result.n) }; 
     }
     
-    private void analyzeHierarchy(final KNode parent, final Map<EObject, EObject> mapping,
+    private void analyzeHierarchy(final ElkNode parent, final Map<EObject, EObject> mapping,
             final Result result, final boolean hierarchy) {
 
         int n = parent.getChildren().size();
         for (int i = 0; i < n; i++) {
             for (int j = i + 1; j < n; j++) {
                 
-                KNode n1 = parent.getChildren().get(i);
-                KNode n2 = parent.getChildren().get(j);
+                ElkNode n1 = parent.getChildren().get(i);
+                ElkNode n2 = parent.getChildren().get(j);
         
                 KVector p = center(n1);
-                KVector pPrime = center((KNode) mapping.get(n1));
+                KVector pPrime = center((ElkNode) mapping.get(n1));
 
                 KVector q = center(n2);
-                KVector qPrime = center((KNode) mapping.get(n2));
+                KVector qPrime = center((ElkNode) mapping.get(n2));
             
                 double[] order = getOrthogonalOrder(p, pPrime, q, qPrime);
                 result.constantWeighted += order[INDEX_CONSTANT_WEIGHTED];
@@ -95,7 +93,7 @@ public class OrthogonalOrderingAnalysis implements IComparingAnalysis {
         }
         
         if (hierarchy) {
-            for (KNode child : parent.getChildren()) {
+            for (ElkNode child : parent.getChildren()) {
                 if (!child.getChildren().isEmpty()) {
                     analyzeHierarchy(child, mapping, result, hierarchy);
                 }

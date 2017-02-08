@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.klighd.kivi.effects;
 
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 
 import de.cau.cs.kieler.core.kivi.AbstractEffect;
 import de.cau.cs.kieler.klighd.ui.DiagramViewManager;
@@ -62,12 +62,12 @@ public class KlighdRevealEffect extends AbstractEffect {
         final DiagramViewPart view = DiagramViewManager.getView(viewId);
         if (view != null) {
             // get the diagram element
-            KGraphElement theElement;
+            ElkGraphElement theElement;
             if (isDiagramElement) { // implies element instanceof EObject
-                theElement = (KGraphElement) element;
+                theElement = (ElkGraphElement) element;
             } else {
-                theElement = view.getViewer().getViewContext()
-                        .getTargetElement(element, KGraphElement.class);
+                theElement = view.getViewer().getViewContext().getTargetElement(
+                        element, ElkGraphElement.class);
             }
             // reveal the element
             if (theElement != null) {

@@ -24,22 +24,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KInsets;
-import org.eclipse.elk.core.klayoutdata.KLayoutDataFactory;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeLabelPlacement;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.WrappedException;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.ElkShape;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -78,7 +77,7 @@ import net.ogdf.ogml.util.OgmlResourceFactoryImpl;
 public class OgmlServerCommunicator {
 
     /** default value for border spacing. */
-    public static final float DEF_BORDER_SPACING = 15.0f;
+    public static final double DEF_BORDER_SPACING = 15.0;
 
     /** the input format for the ogdf server. */
     private static final String INPUT_FORMAT = "OGML";
@@ -92,9 +91,9 @@ public class OgmlServerCommunicator {
     /** the current id for the generation of edge ids. */
     private int edgeIdCounter = 0;
     /** map of KNodes to ids. */
-    private Map<KNode, String> node2IdMap = new LinkedHashMap<KNode, String>();
+    private Map<ElkNode, String> node2IdMap = new LinkedHashMap<>();
     /** map of edge ids to KEdges. */
-    private Map<String, KEdge> id2EdgeMap = new LinkedHashMap<String, KEdge>();
+    private Map<String, ElkEdge> id2EdgeMap = new LinkedHashMap<>();
 
     /** the buffer for serialized ogdf options. */
     private List<String> optionBuffer = new LinkedList<String>();
@@ -129,8 +128,9 @@ public class OgmlServerCommunicator {
      * @param ogdfServer
      *            the OGDF server process interface
      */
-    public void requestLayout(final KNode layoutNode, final IElkProgressMonitor progressMonitor,
+    public void requestLayout(final ElkNode layoutNode, final IElkProgressMonitor progressMonitor,
             final OgdfServer ogdfServer) {
+        
         progressMonitor.begin("OGDF Layout", LAYOUT_WORK);
         // if the graph is empty there is no need to layout
         if (layoutNode.getChildren().isEmpty()) {
@@ -202,8 +202,9 @@ public class OgmlServerCommunicator {
      *            the progress monitor
      * @return an OGML graph
      */
-    private DocumentRoot transformGraph(final KNode parentNode,
+    private DocumentRoot transformGraph(final ElkNode parentNode,
             final IElkProgressMonitor progressMonitor) {
+        
         progressMonitor.begin("Transform KGraph to OGML", 1);
         boolean umlGraph = false;
         
@@ -222,7 +223,7 @@ public class OgmlServerCommunicator {
         layout.setStyles(styles);
         
         // transform nodes (only top level)
-        for (KNode node : parentNode.getChildren()) {
+        for (ElkNode node : parentNode.getChildren()) {
             String id = generateId(node);
             NodeType ogmlNode = factory.createNodeType();
             ogmlNode.setId(id);
@@ -234,17 +235,16 @@ public class OgmlServerCommunicator {
             ogmlNode.getLabel().add(label);
             
             // set layout information
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
             NodeLayoutType ogmlNodeLayout = factory.createNodeLayoutType();
             ogmlNodeLayout.setIdRef(id);
             LocationType location = factory.createLocationType();
-            location.setX(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
-            location.setY(nodeLayout.getYpos() + nodeLayout.getHeight() / 2);
+            location.setX(node.getX() + node.getWidth() / 2);
+            location.setY(node.getY() + node.getHeight() / 2);
             ogmlNodeLayout.setLocation(location);
             ElkUtil.resizeNode(node);
             ShapeType1 shape = factory.createShapeType1();
-            shape.setWidth(BigInteger.valueOf(Math.round(nodeLayout.getWidth())));
-            shape.setHeight(BigInteger.valueOf(Math.round(nodeLayout.getHeight())));
+            shape.setWidth(BigInteger.valueOf(Math.round(node.getWidth())));
+            shape.setHeight(BigInteger.valueOf(Math.round(node.getHeight())));
             ogmlNodeLayout.setShape(shape);
             styles.getNodeStyle().add(ogmlNodeLayout);
             
@@ -253,15 +253,13 @@ public class OgmlServerCommunicator {
         }
         
         // transform edges
-        boolean processLabels = parentNode.getData(KShapeLayout.class).getProperty(
-                AlgorithmSetup.PLACE_LABELS);
-        for (KNode sourceNode : parentNode.getChildren()) {
-            for (KEdge edge : sourceNode.getOutgoingEdges()) {
-                KNode targetNode = edge.getTarget();
+        boolean processLabels = parentNode.getProperty(AlgorithmSetup.PLACE_LABELS);
+        for (ElkNode sourceNode : parentNode.getChildren()) {
+            for (ElkEdge edge : sourceNode.getOutgoingEdges()) {
+                ElkNode targetNode = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
                 
                 // ignore cross-hierarchy edges and self-loops
-                if (targetNode.getParent() == parentNode && sourceNode != targetNode) {
-                    KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+                if (!edge.isHierarchical() && !edge.isSelfloop()) {
                     String id = generateId(edge);
                     EdgeType ogmlEdge = factory.createEdgeType();
                     ogmlEdge.setId(id);
@@ -281,10 +279,9 @@ public class OgmlServerCommunicator {
                     // store labels as additional information
                     if (processLabels) {
                         boolean makeMult1 = false, makeMult2 = false;
-                        for (KLabel label : edge.getLabels()) {
-                            KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                        for (ElkLabel label : edge.getLabels()) {
                             EdgeLabelPlacement placement =
-                                    labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
+                                    label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
                             int labelType = OgdfServer.LABEL_TYPE_NAME;
                             switch (placement) {
                             case HEAD:
@@ -305,13 +302,13 @@ public class OgmlServerCommunicator {
                                 break;
                             }
                             addInformation(id + OgdfServer.EDGE_LABEL_SUFFIX + labelType,
-                                    "(" + labelLayout.getWidth() + "," + labelLayout.getHeight() + ")");
+                                    "(" + label.getWidth() + "," + label.getHeight() + ")");
                         }
                     }
                     
                     // detect an uml-graph
                     org.eclipse.elk.core.options.EdgeType edgeType =
-                            edgeLayout.getProperty(CoreOptions.EDGE_TYPE);
+                            edge.getProperty(CoreOptions.EDGE_TYPE);
                     switch (edgeType) {
                     case ASSOCIATION:
                         umlGraph = true;
@@ -348,7 +345,7 @@ public class OgmlServerCommunicator {
      *            the node
      * @return the identifier
      */
-    private String generateId(final KNode node) {
+    private String generateId(final ElkNode node) {
         String id = "n" + nodeIdCounter++;
         node2IdMap.put(node, id);
         return id;
@@ -361,29 +358,10 @@ public class OgmlServerCommunicator {
      *            the edge
      * @return the identifier
      */
-    private String generateId(final KEdge edge) {
+    private String generateId(final ElkEdge edge) {
         String id = "e" + edgeIdCounter++;
         id2EdgeMap.put(id, edge);
         return id;
-    }
-
-    /**
-     * Transforms an ogdf point to a KPoint.
-     * 
-     * @param x
-     *            the x coordinate of the ogdf point
-     * @param y
-     *            the y coordinate of the ogdf point
-     * @param offsetX
-     *            the x offset
-     * @param offsetY
-     *            the y offset
-     * @return the point as KPoint
-     */
-    private KPoint toKPoint(final float x, final float y, final float offsetX, final float offsetY) {
-        KPoint kpoint = KLayoutDataFactory.eINSTANCE.createKPoint();
-        kpoint.setPos(x + offsetX, y + offsetY);
-        return kpoint;
     }
 
     /**
@@ -400,10 +378,11 @@ public class OgmlServerCommunicator {
      * @param height
      *            the height
      */
-    private void toKShape(final KShapeLayout layout, final float x, final float y,
-            final float width, final float height) {
-        layout.setXpos(x - width / 2);
-        layout.setYpos(y - height / 2);
+    private void toKShape(final ElkShape layout, final double x, final double y,
+            final double width, final double height) {
+        
+        layout.setX(x - width / 2);
+        layout.setY(y - height / 2);
     }
 
     /**
@@ -416,23 +395,22 @@ public class OgmlServerCommunicator {
      * @param progressMonitor
      *            the progress monitor
      */
-    private void applyLayout(final KNode parentNode,
+    private void applyLayout(final ElkNode parentNode,
             final Map<String, KVectorChain> layoutInformation,
             final IElkProgressMonitor progressMonitor) {
+        
         progressMonitor.begin("Apply layout", 1);
         
-        // get the border spacing
-        KShapeLayout parentNodeLayout = parentNode.getData(KShapeLayout.class);
-        float borderSpacing = parentNodeLayout.getProperty(CoreOptions.SPACING_BORDER);
-        if (borderSpacing < 0) {
-            borderSpacing = DEF_BORDER_SPACING;
-        }
+        // dem insets!
+        ElkPadding elkPadding = parentNode.getProperty(CoreOptions.PADDING);
         
         // calculate offsets and parent size
         float boundingBoxWidth = Float.NaN;
         float boundingBoxHeight = Float.NaN;
-        float offsetX = borderSpacing;
-        float offsetY = borderSpacing;
+        
+        double offsetX = elkPadding.getLeft();
+        double offsetY = elkPadding.getTop();
+        
         KVectorChain boundingBox = layoutInformation.get("graph");
         if (boundingBox != null && boundingBox.size() == 2) {
             KVector bbShape = boundingBox.getLast();
@@ -448,41 +426,41 @@ public class OgmlServerCommunicator {
         }
 
         // apply node layout
-        for (Map.Entry<KNode, String> entry : node2IdMap.entrySet()) {
-            KShapeLayout nodeLayout = entry.getKey().getData(KShapeLayout.class);
+        for (Map.Entry<ElkNode, String> entry : node2IdMap.entrySet()) {
+            ElkNode node = entry.getKey();
             KVectorChain ogdfNodeLayout = layoutInformation.get(entry.getValue());
             if (ogdfNodeLayout != null && ogdfNodeLayout.size() == 2 && !ogdfNodeLayout.hasNaN()) {
                 KVector location = ogdfNodeLayout.getFirst();
                 KVector shape = ogdfNodeLayout.getLast();
-                toKShape(nodeLayout, (float) location.x + offsetX, (float) location.y + offsetY,
-                        (float) shape.x, (float) shape.y);
+                toKShape(node, location.x + offsetX, location.y + offsetY, shape.x, shape.y);
             }
         }
         
         // apply edge layout
-        boolean processLabels = parentNodeLayout.getProperty(AlgorithmSetup.PLACE_LABELS);
-        boolean adaptPortPositions = parentNodeLayout.getProperty(AlgorithmSetup.ADAPT_PORT_POSITIONS); 
-        for (Map.Entry<String, KEdge> entry : id2EdgeMap.entrySet()) {
-            KEdge kedge = entry.getValue();
-            KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-            EList<KPoint> kbends = edgeLayout.getBendPoints();
-            kbends.clear();
+        boolean processLabels = parentNode.getProperty(AlgorithmSetup.PLACE_LABELS);
+        boolean adaptPortPositions = parentNode.getProperty(AlgorithmSetup.ADAPT_PORT_POSITIONS); 
+        for (Map.Entry<String, ElkEdge> entry : id2EdgeMap.entrySet()) {
+            ElkEdge elkedge = entry.getValue();
+            
+            // Intialize the edge's edge section
+            ElkEdgeSection elkedgeSection = ElkGraphUtil.firstEdgeSection(elkedge, true, true);
             KVectorChain ogdfEdgeLayout = layoutInformation.get(entry.getKey());
+            
             if (ogdfEdgeLayout != null && ogdfEdgeLayout.size() >= 2 && !ogdfEdgeLayout.hasNaN()) {
                 Iterator<KVector> bendIt = ogdfEdgeLayout.iterator();
                 KVector sourceBend = bendIt.next();
                 
                 // set the source point
-                KPoint sourcePoint =
-                        toKPoint((float) sourceBend.x, (float) sourceBend.y, offsetX, offsetY);
-                edgeLayout.setSourcePoint(sourcePoint);
-                if (adaptPortPositions && kedge.getSourcePort() != null) {
-                    KShapeLayout portLayout = kedge.getSourcePort().getData(KShapeLayout.class);
-                    KShapeLayout sourceLayout = kedge.getSource().getData(KShapeLayout.class);
-                    portLayout.setXpos(sourcePoint.getX() - sourceLayout.getXpos()
-                            - portLayout.getWidth() / 2);
-                    portLayout.setYpos(sourcePoint.getY() - sourceLayout.getYpos()
-                            - portLayout.getHeight() / 2);
+                elkedgeSection.setStartLocation(sourceBend.x + offsetX, sourceBend.y + offsetY);
+                
+                if (adaptPortPositions && elkedge.getSources().get(0) instanceof ElkPort) {
+                    ElkPort sourcePort = (ElkPort) elkedge.getSources().get(0);
+                    ElkNode sourceNode = sourcePort.getParent();
+                    
+                    sourcePort.setX(elkedgeSection.getStartX() - sourceNode.getX()
+                            - sourcePort.getWidth() / 2);
+                    sourcePort.setY(elkedgeSection.getStartY() - sourceNode.getY()
+                            - sourcePort.getHeight() / 2);
                 }
                 
                 // set the bend points
@@ -490,38 +468,42 @@ public class OgmlServerCommunicator {
                 while (bendIt.hasNext()) {
                     KVector bend = bendIt.next();
                     if (Math.abs(bend.x - lastBend.x) + Math.abs(bend.y - lastBend.y)
-                            >= MIN_POINT_DIST) { 
+                            >= MIN_POINT_DIST) {
+                        
                         if (bendIt.hasNext()) {
-                            kbends.add(toKPoint((float) bend.x, (float) bend.y, offsetX, offsetY));
+                            ElkGraphUtil.createBendPoint(elkedgeSection,
+                                    bend.x + offsetX, bend.y + offsetY);
                         }
-                    } else if (!bendIt.hasNext() && kbends.size() > 0) {
-                        kbends.remove(kbends.size() - 1);
+                    } else if (!bendIt.hasNext() && elkedgeSection.getBendPoints().size() > 0) {
+                        // the last bend point 
+                        elkedgeSection.getBendPoints().remove(
+                                elkedgeSection.getBendPoints().size() - 1);
                     }
                     lastBend = bend;
                 }
                 
                 // set the target point
-                KPoint targetPoint =
-                        toKPoint((float) lastBend.x, (float) lastBend.y, offsetX, offsetY);
-                edgeLayout.setTargetPoint(targetPoint);
-                if (adaptPortPositions && kedge.getTargetPort() != null) {
-                    KShapeLayout portLayout = kedge.getTargetPort().getData(KShapeLayout.class);
-                    KShapeLayout targetLayout = kedge.getTarget().getData(KShapeLayout.class);
-                    portLayout.setXpos(targetPoint.getX() - targetLayout.getXpos()
-                            - portLayout.getWidth() / 2);
-                    portLayout.setYpos(targetPoint.getY() - targetLayout.getYpos()
-                            - portLayout.getHeight() / 2);
+                elkedgeSection.setEndLocation(lastBend.x + offsetX, lastBend.y + offsetY);
+                
+                if (adaptPortPositions && elkedge.getTargets().get(0) instanceof ElkPort) {
+                    ElkPort targetPort = (ElkPort) elkedge.getTargets().get(0);
+                    ElkNode targetNode = targetPort.getParent();
+                    
+                    targetPort.setX(elkedgeSection.getEndX() - targetNode.getX()
+                            - targetPort.getWidth() / 2);
+                    targetPort.setY(elkedgeSection.getEndY() - targetNode.getY()
+                            - targetPort.getHeight() / 2);
                 }
             }
             
             // set label layout
             if (processLabels) {
                 boolean makeMult1 = false, makeMult2 = false;
-                for (KLabel label : kedge.getLabels()) {
-                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
+                for (ElkLabel label : elkedge.getLabels()) {
                     EdgeLabelPlacement placement =
-                            labelLayout.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
+                            label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
                     int labelType = OgdfServer.LABEL_TYPE_NAME;
+                    
                     switch (placement) {
                     case HEAD:
                         if (makeMult2) {
@@ -540,26 +522,29 @@ public class OgmlServerCommunicator {
                         makeMult1 = !makeMult1;
                         break;
                     }
+                    
                     KVectorChain ogdfLabelLayout = layoutInformation.get(entry.getKey()
                             + OgdfServer.EDGE_LABEL_SUFFIX + labelType);
+                    
                     if (ogdfLabelLayout != null && ogdfLabelLayout.size() == 1
                             && !ogdfLabelLayout.hasNaN()) {
+                        
                         KVector labelPos = ogdfLabelLayout.getFirst();
-                        toKShape(labelLayout, (float) labelPos.x + offsetX, (float) labelPos.y
-                                + offsetY, labelLayout.getWidth(), labelLayout.getHeight());
+                        toKShape(label, labelPos.x + offsetX, labelPos.y + offsetY,
+                                label.getWidth(), label.getHeight());
                     }
                 }
             }
         }
         
-        // get the insets
-        KInsets insets = parentNodeLayout.getInsets();
         // set the width/height of the graph
         if (!(Double.isNaN(boundingBoxWidth) || Double.isNaN(boundingBoxHeight))) {
-            float width = boundingBoxWidth + 2 * borderSpacing + insets.getLeft() + insets.getRight();
-            float height = boundingBoxHeight + 2 * borderSpacing + insets.getTop() + insets.getBottom();
+            double width = boundingBoxWidth + elkPadding.getLeft() + elkPadding.getRight();
+            double height = boundingBoxHeight + elkPadding.getTop() + elkPadding.getBottom();
+            
             ElkUtil.resizeNode(parentNode, width, height, false, true);
         }
+        
         progressMonitor.done();
     }
 

@@ -15,7 +15,7 @@
 package de.cau.cs.kieler.kiml.grana.analyses;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisFailed;
@@ -35,7 +35,7 @@ public class AspectRatioAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Aspect ratio analysis", 1);
         
@@ -49,10 +49,10 @@ public class AspectRatioAnalysis implements IAnalysis {
         
         // Compute the aspect ratio
         Object[] areaResults = (Object[]) o;
-        float width = (Float) areaResults[AreaAnalysis.INDEX_WIDTH];
-        float height = (Float) areaResults[AreaAnalysis.INDEX_HEIGHT];
+        double width = (Float) areaResults[AreaAnalysis.INDEX_WIDTH];
+        double height = (Float) areaResults[AreaAnalysis.INDEX_HEIGHT];
         
-        float aspect = width / height;
+        double aspect = width / height;
         
         // Finish off..
         progressMonitor.done();

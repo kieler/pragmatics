@@ -137,14 +137,13 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      *            progress monitor.
      * @return list of selected source files.
      */
-    public List<IPath> getSourceFiles(final IProgressMonitor monitor) {
+    public List<IFile> getSourceFiles(final IProgressMonitor monitor) {
         List<IResource> selectedResources = this.getResources(monitor);
-        List<IPath> files = new ArrayList<IPath>();
+        List<IFile> files = new ArrayList<>();
 
         for (IResource resource : selectedResources) {
             if (resource instanceof IFile) {
-                IFile iFile = (IFile) resource;
-                files.add(iFile.getFullPath());
+                files.add((IFile) resource);
             }
         }
 

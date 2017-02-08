@@ -12,10 +12,9 @@
  */
 package de.cau.cs.kieler.kiml.grana.analyses.compare;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkShape;
 
 /**
  * This class holds utility methods to align two point sets according to some metric.
@@ -171,21 +170,12 @@ public final class PointSetUtils {
     }
 
     /**
-     * @param sl
-     *            a {@link KShapeLayout}
-     * @return the center point of the bounding box described by {@code sl}.
+     * @param shape
+     *            a shape whose center coordinate to calculate.
+     * @return the center point of the bounding box described by {@code shape}.
      */
-    public static KVector center(final KShapeLayout sl) {
-        return sl.createVector().add(sl.getWidth() / 2f, sl.getHeight() / 2f);
-    }
-
-    /**
-     * @param n
-     *            a node
-     * @return the center of the bounding box of {@code n}.
-     */
-    public static KVector center(final KNode n) {
-        KShapeLayout sl = n.getData(KShapeLayout.class);
-        return sl.createVector().add(sl.getWidth() / 2f, sl.getHeight() / 2f);
+    public static KVector center(final ElkShape shape) {
+        return new KVector(shape.getX(), shape.getY())
+                .add(shape.getWidth() / 2f, shape.getHeight() / 2f);
     }
 }

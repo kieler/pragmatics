@@ -14,7 +14,7 @@
 
 package de.cau.cs.kieler.kiml.formats;
 
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 /**
  * Interface for handlers of graph format transformations.
@@ -35,7 +35,7 @@ public interface IGraphFormatHandler<T> {
      * @param serializedGraph the serialized graph
      * @param transData transformation data for graph import
      */
-    void deserialize(String serializedGraph, TransformationData<T, KNode> transData);
+    void deserialize(String serializedGraph, TransformationData<T, ElkNode> transData);
 
     /**
      * Serialize the target graphs contained in the given transformation data instance using the
@@ -45,7 +45,7 @@ public interface IGraphFormatHandler<T> {
      * @param transData transformation data for graph export
      * @return serialization of the given graph
      */
-    String serialize(TransformationData<KNode, T> transData);
+    String serialize(TransformationData<ElkNode, T> transData);
     
     /**
      * Return a graph transformer for importing graphs into the KGraph format. Such a transformer
@@ -54,7 +54,7 @@ public interface IGraphFormatHandler<T> {
      * 
      * @return a KGraph importer
      */
-    IGraphTransformer<T, KNode> getImporter();
+    IGraphTransformer<T, ElkNode> getImporter();
     
     /**
      * Return a graph transformer for exporting graphs from the KGraph format. Such a transformer
@@ -63,6 +63,6 @@ public interface IGraphFormatHandler<T> {
      * 
      * @return a KGraph exporter
      */
-    IGraphTransformer<KNode, T> getExporter();
+    IGraphTransformer<ElkNode, T> getExporter();
 
 }

@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.kiml.formats.graphml;
 
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -56,7 +56,7 @@ public class GraphMLFormatHandler extends AbstractEmfHandler<DocumentRoot> {
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<DocumentRoot, KNode> getImporter() {
+    public IGraphTransformer<DocumentRoot, ElkNode> getImporter() {
         return importer;
     }
     
@@ -65,7 +65,7 @@ public class GraphMLFormatHandler extends AbstractEmfHandler<DocumentRoot> {
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<KNode, DocumentRoot> getExporter() {
+    public IGraphTransformer<ElkNode, DocumentRoot> getExporter() {
         return exporter;
     }
 

@@ -5,13 +5,12 @@ import java.util.List
 import org.eclipse.elk.core.LayoutConfigurator
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.data.LayoutOptionData
-import org.eclipse.elk.core.klayoutdata.KIdentifier
-import org.eclipse.elk.graph.KGraphElement
-import org.eclipse.elk.graph.KNode
+import org.eclipse.elk.graph.ElkEdge
+import org.eclipse.elk.graph.ElkGraphElement
+import org.eclipse.elk.graph.ElkLabel
+import org.eclipse.elk.graph.ElkNode
+import org.eclipse.elk.graph.ElkPort
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.elk.graph.KEdge
-import org.eclipse.elk.graph.KPort
-import org.eclipse.elk.graph.KLabel
 
 /**
  * Utility class for transformaing textually specified layout configurations
@@ -38,11 +37,16 @@ final class LayoutConfigTransformer {
 
         // these are no actual KNodes, we just use them as containers
         // for the layout options that are specified in the textual config 
-        resource.contents.filter(typeof(KNode)).forEach [ root |
-            
-            // NOTE: by convention we ignore any configuration which's id starts with a _
+        val rootNode = resource.contents?.get(0)
+        if (rootNode != null) {
+
+            // NOTE: by convention we ignore any configuration whose id starts with a _
             // iterate through all configs
-            root.data.filter(typeof(KIdentifier)).filter[println(it.id); !it.id.startsWith("_")].forEach [ cfg |
+            (rootNode as ElkNode)
+              .children
+              .filter[println(it.identifier); !it.identifier.startsWith("_")]
+              .forEach [ cfg |
+                  
                 val currentConfig = cfg.transformConfig
                 
                 volatileConfigs += currentConfig
@@ -54,42 +58,41 @@ final class LayoutConfigTransformer {
                     if (optData != null) {
                         val value = optData.parseValue(opt.value.toString)
                         if (value != null) {
-                            currentConfig.configure(KGraphElement).setProperty(optData, value)
+                            currentConfig.configure(ElkGraphElement).setProperty(optData, value)
                         }
                     }
                 ]
             ]
-        ]
-
+        }
+        
         return volatileConfigs
     }
 
-    def static transformConfig(KIdentifier cfg) {
+    def static transformConfig(ElkNode cfg) {
 
         val currentConfig = new LayoutConfigurator
 
         // add all textually specified layout options
-        cfg.persistentEntries.forEach [ entry |
-            val optData = LayoutMetaDataService.getInstance().getOptionDataBySuffix(entry.key) as LayoutOptionData
+        cfg.properties.forEach [ entry |
+        
+            val optData = LayoutMetaDataService.instance.getOptionDataBySuffix(entry.key.id)
+            
             // if valid, parse its value
-            if (optData != null) {
-                val value = optData.parseValue(entry.value)
-                if (value != null) {
+            val value = optData.parseValue(entry.value.toString)
+            if (value != null) {
+                if (optData.targets.contains(LayoutOptionData.Target.NODES) 
+                    || optData.targets.contains(LayoutOptionData.Target.PARENTS))
+                    currentConfig.configure(ElkNode).setProperty(optData, value)
+                
+                if (optData.targets.contains(LayoutOptionData.Target.EDGES))
+                    currentConfig.configure(ElkEdge).setProperty(optData, value)
                     
-                    if (optData.targets.contains(LayoutOptionData.Target.NODES) 
-                        || optData.targets.contains(LayoutOptionData.Target.PARENTS))
-                        currentConfig.configure(KNode).setProperty(optData, value)
+                if (optData.targets.contains(LayoutOptionData.Target.PORTS))
+                    currentConfig.configure(ElkPort).setProperty(optData, value)
                     
-                    if (optData.targets.contains(LayoutOptionData.Target.EDGES))
-                        currentConfig.configure(KEdge).setProperty(optData, value)
-                        
-                    if (optData.targets.contains(LayoutOptionData.Target.PORTS))
-                        currentConfig.configure(KPort).setProperty(optData, value)
-                        
-                    if (optData.targets.contains(LayoutOptionData.Target.LABELS))
-                        currentConfig.configure(KLabel).setProperty(optData, value)    
-                        
-                }
+                if (optData.targets.contains(LayoutOptionData.Target.LABELS))
+                    currentConfig.configure(ElkLabel).setProperty(optData, value)    
+                    
             }
         ]
         

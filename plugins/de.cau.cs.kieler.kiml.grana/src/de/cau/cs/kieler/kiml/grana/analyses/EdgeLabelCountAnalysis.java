@@ -16,10 +16,10 @@ package de.cau.cs.kieler.kiml.grana.analyses;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.kiml.grana.AnalysisContext;
 import de.cau.cs.kieler.kiml.grana.AnalysisOptions;
@@ -40,22 +40,21 @@ public class EdgeLabelCountAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge label count analysis", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         
         int labelCount = 0;
-        List<KNode> nodeQueue = new LinkedList<KNode>();
+        List<ElkNode> nodeQueue = new LinkedList<>();
         nodeQueue.addAll(parentNode.getChildren());
         while (nodeQueue.size() > 0) {
             // pop first element
-            KNode node = nodeQueue.remove(0);
+            ElkNode node = nodeQueue.remove(0);
             
-            for (KEdge edge : node.getOutgoingEdges()) {
-                if (hierarchy || edge.getTarget().getParent() == parentNode) {
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                if (hierarchy || !edge.isHierarchical()) {
                     labelCount += edge.getLabels().size();
                 }
             }

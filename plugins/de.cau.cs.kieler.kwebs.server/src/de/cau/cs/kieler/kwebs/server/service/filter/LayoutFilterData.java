@@ -16,7 +16,7 @@ package de.cau.cs.kieler.kwebs.server.service.filter;
 
 import java.util.List;
 
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kwebs.server.layout.GraphLayoutOption;
 import de.cau.cs.kieler.kwebs.server.service.Statistics;
@@ -30,7 +30,7 @@ public class LayoutFilterData {
     //////////
     
     /** */
-    private List<KNode> graphs;
+    private List<ElkNode> graphs;
 
     /** */
     private List<GraphLayoutOption> options;
@@ -45,7 +45,7 @@ public class LayoutFilterData {
      * @param graphs
      * @param options
      */
-    public LayoutFilterData(final List<KNode> graphs, final List<GraphLayoutOption> options) {
+    public LayoutFilterData(final List<ElkNode> graphs, final List<GraphLayoutOption> options) {
         this.graphs = graphs;
         this.options = options;
     }
@@ -56,7 +56,7 @@ public class LayoutFilterData {
      * 
      * @return
      */
-    public List<KNode> getGraphs() {
+    public List<ElkNode> getGraphs() {
         return graphs;
     }
 
@@ -64,7 +64,7 @@ public class LayoutFilterData {
      * 
      * @param graphs
      */
-    public void setGraphs(final List<KNode> graphs) {
+    public void setGraphs(final List<ElkNode> graphs) {
         this.graphs = graphs;
     }
 

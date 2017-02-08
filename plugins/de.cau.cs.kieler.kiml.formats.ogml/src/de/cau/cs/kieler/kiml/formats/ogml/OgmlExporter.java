@@ -17,17 +17,17 @@ import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
@@ -55,7 +55,7 @@ import net.ogdf.ogml.StylesType;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
+public class OgmlExporter implements IGraphTransformer<ElkNode, DocumentRoot> {
 
     /** property for node and edge identifiers. */
     private static final IProperty<String> PROP_ID = new Property<String>("ogmlExporter.id");
@@ -63,21 +63,18 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
     /**
      * {@inheritDoc}
      */
-    public void transform(final TransformationData<KNode, DocumentRoot> data) {
+    public void transform(final TransformationData<ElkNode, DocumentRoot> data) {
         // create identifiers for all nodes and edges
-        LinkedList<KNode> nodes = new LinkedList<KNode>();
+        LinkedList<ElkNode> nodes = new LinkedList<>();
         nodes.add(data.getSourceGraph());
         int nodeId = 0, edgeId = 0, labelId = 0;
         do {
-            KNode node = nodes.remove();
-            node.getData(KShapeLayout.class).setProperty(PROP_ID,
-                    "n" + Integer.toString(nodeId++));
-            for (KEdge edge : node.getOutgoingEdges()) {
-                edge.getData(KEdgeLayout.class).setProperty(PROP_ID,
-                        "e" + Integer.toString(edgeId++));
-                for (KLabel label : edge.getLabels()) {
-                    label.getData(KShapeLayout.class).setProperty(PROP_ID,
-                            "l" + Integer.toString(labelId++));
+            ElkNode node = nodes.remove();
+            node.setProperty(PROP_ID, "n" + Integer.toString(nodeId++));
+            for (ElkEdge edge : node.getOutgoingEdges()) {
+                edge.setProperty(PROP_ID, "e" + Integer.toString(edgeId++));
+                for (ElkLabel label : edge.getLabels()) {
+                    label.setProperty(PROP_ID, "l" + Integer.toString(labelId++));
                 }
             }
             nodes.addAll(node.getChildren());
@@ -112,15 +109,15 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
      * @param styles styles object for node layout
      * @param offset offset for node coordinates
      */
-    private void transformNodes(final KNode parentNode, final List<NodeType> nodeList,
+    private void transformNodes(final ElkNode parentNode, final List<NodeType> nodeList,
             final StylesType styles, final KVector offset) {
-        for (KNode knode : parentNode.getChildren()) {
+        
+        for (ElkNode elknode : parentNode.getChildren()) {
             // transform node
-            KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
-            String nodeId = knodeLayout.getProperty(PROP_ID);
+            String nodeId = elknode.getProperty(PROP_ID);
             NodeType ogmlNode = OgmlFactory.eINSTANCE.createNodeType();
             ogmlNode.setId(nodeId);
-            for (KLabel label : knode.getLabels()) {
+            for (ElkLabel label : elknode.getLabels()) {
                 LabelType nodeLabel = OgmlFactory.eINSTANCE.createLabelType();
                 nodeLabel.setContent(label.getText());
                 ogmlNode.getLabel().add(nodeLabel);
@@ -128,32 +125,32 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
             nodeList.add(ogmlNode);
             
             // transform node layout
-            if (!knodeLayout.getProperty(CoreOptions.NO_LAYOUT) && (knodeLayout.getXpos() != 0
-                    || knodeLayout.getYpos() != 0 || knodeLayout.getWidth() != 0
-                    || knodeLayout.getHeight() != 0)) {
+            if (!elknode.getProperty(CoreOptions.NO_LAYOUT) && (elknode.getX() != 0
+                    || elknode.getY() != 0 || elknode.getWidth() != 0
+                    || elknode.getHeight() != 0)) {
+                
                 NodeLayoutType ogmlNodeLayout = OgmlFactory.eINSTANCE.createNodeLayoutType();
                 ogmlNodeLayout.setIdRef(nodeId);
-                if (knodeLayout.getXpos() != 0 || knodeLayout.getYpos() != 0) {
+                if (elknode.getX() != 0 || elknode.getY() != 0) {
                     LocationType location = OgmlFactory.eINSTANCE.createLocationType();
-                    location.setX(knodeLayout.getXpos() + knodeLayout.getWidth() / 2 + offset.x);
-                    location.setY(knodeLayout.getYpos() + knodeLayout.getHeight() / 2 + offset.y);
+                    location.setX(elknode.getX() + elknode.getWidth() / 2 + offset.x);
+                    location.setY(elknode.getY() + elknode.getHeight() / 2 + offset.y);
                     ogmlNodeLayout.setLocation(location);
                 }
-                if (knodeLayout.getWidth() != 0 || knodeLayout.getHeight() != 0) {
+                if (elknode.getWidth() != 0 || elknode.getHeight() != 0) {
                     ShapeType1 shape = OgmlFactory.eINSTANCE.createShapeType1();
-                    shape.setWidth(BigInteger.valueOf(Math.round(knodeLayout.getWidth())));
-                    shape.setHeight(BigInteger.valueOf(Math.round(knodeLayout.getHeight())));
+                    shape.setWidth(BigInteger.valueOf(Math.round(elknode.getWidth())));
+                    shape.setHeight(BigInteger.valueOf(Math.round(elknode.getHeight())));
                     ogmlNodeLayout.setShape(shape);
                 }
                 styles.getNodeStyle().add(ogmlNodeLayout);
             }
             
-            if (!knode.getChildren().isEmpty()) {
+            if (!elknode.getChildren().isEmpty()) {
                 // transform subgraph
                 KVector suboffset = new KVector(offset);
-                suboffset.add(knodeLayout.getXpos() + knodeLayout.getInsets().getLeft(),
-                        knodeLayout.getYpos() + knodeLayout.getInsets().getTop());
-                transformNodes(knode, ogmlNode.getNode(), styles, suboffset);
+                suboffset.add(elknode.getX(), elknode.getY());
+                transformNodes(elknode, ogmlNode.getNode(), styles, suboffset);
             }
         }
     }
@@ -166,68 +163,83 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
      * @param styles styles object for edge layout
      * @param offset offset for edge coordinates
      */
-    private void transformEdges(final KNode parentNode, final List<EdgeType> edgeList,
+    private void transformEdges(final ElkNode parentNode, final List<EdgeType> edgeList,
             final StylesType styles, final KVector offset) {
-        for (KNode knode : parentNode.getChildren()) {
-            for (KEdge kedge : knode.getOutgoingEdges()) {
-                // transform edge
-                KEdgeLayout kedgeLayout = kedge.getData(KEdgeLayout.class);
-                KVector edgeOffset = offset;
-                if (ElkUtil.isDescendant(kedge.getTarget(), knode)) {
-                    KShapeLayout sourceLayout = knode.getData(KShapeLayout.class);
-                    edgeOffset = new KVector(offset).add(sourceLayout.getXpos(),
-                            sourceLayout.getYpos());
+        
+        for (ElkNode elknode : parentNode.getChildren()) {
+            for (ElkEdge elkedge : elknode.getOutgoingEdges()) {
+                // we only transform simple edges
+                if (!elkedge.isConnected() || elkedge.isHyperedge()) {
+                    continue;
                 }
-                String edgeId = kedgeLayout.getProperty(PROP_ID);
+                
+                // all edge coordinates need to be relative to our current parent node
+                KVector edgeOffset = new KVector();
+                ElkUtil.toAbsolute(edgeOffset, elkedge.getContainingNode());
+                ElkUtil.toRelative(edgeOffset, parentNode);
+                edgeOffset.add(offset);
+                
+                // find the edge's source and target nodes
+                ElkNode sourceNode =
+                        ElkGraphUtil.connectableShapeToNode(elkedge.getSources().get(0));
+                ElkNode targetNode =
+                        ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));
+                
+                String edgeId = elkedge.getProperty(PROP_ID);
                 EdgeType ogmlEdge = OgmlFactory.eINSTANCE.createEdgeType();
                 ogmlEdge.setId(edgeId);
-                String sourceId = kedge.getSource().getData(KShapeLayout.class).getProperty(PROP_ID);
+                edgeList.add(ogmlEdge);
+                
+                String sourceId = sourceNode.getProperty(PROP_ID);
                 SourceTargetType source = OgmlFactory.eINSTANCE.createSourceTargetType();
                 source.setIdRef(sourceId);
                 ogmlEdge.getSource().add(source);
-                String targetId = kedge.getTarget().getData(KShapeLayout.class).getProperty(PROP_ID);
+                
+                String targetId = targetNode.getProperty(PROP_ID);
                 SourceTargetType target = OgmlFactory.eINSTANCE.createSourceTargetType();
                 target.setIdRef(targetId);
                 ogmlEdge.getTarget().add(target);
-                edgeList.add(ogmlEdge);
                 
-                // transform edge layout
-                KPoint sourcePoint = kedgeLayout.getSourcePoint();
-                KPoint targetPoint = kedgeLayout.getTargetPoint();
-                if (!kedgeLayout.getProperty(CoreOptions.NO_LAYOUT)
-                        && (kedgeLayout.getBendPoints().size() > 0
-                        || sourcePoint.getX() != 0 || sourcePoint.getY() != 0
-                        || targetPoint.getY() != 0 || targetPoint.getY() != 0)) {
-                    EdgeLayoutType ogmlEdgeLayout = OgmlFactory.eINSTANCE.createEdgeLayoutType();
-                    ogmlEdgeLayout.setIdRef(edgeId);
-                    ogmlEdgeLayout.getPoint().add(
-                            OgmlFormatHandler.createPoint(sourcePoint, edgeOffset));
-                    for (KPoint bendPoint : kedgeLayout.getBendPoints()) {
-                        ogmlEdgeLayout.getPoint().add(
-                                OgmlFormatHandler.createPoint(bendPoint, edgeOffset));
+                // transform edge layout, if there is one
+                if (!elkedge.getProperty(CoreOptions.NO_LAYOUT)
+                        && !elkedge.getSections().isEmpty()) {
+                    
+                    ElkEdgeSection section = elkedge.getSections().get(0);
+                    if (section.getBendPoints().size() > 0 && section.getStartX() != 0
+                            && section.getStartY() != 0 && section.getEndX() != 0
+                            && section.getEndY() != 0) {
+                        
+                        EdgeLayoutType ogmlEdgeLayout =
+                                OgmlFactory.eINSTANCE.createEdgeLayoutType();
+                        ogmlEdgeLayout.setIdRef(edgeId);
+                        ogmlEdgeLayout.getPoint().add(OgmlFormatHandler.createPoint(
+                                section.getStartX(), section.getStartY(), edgeOffset));
+                        for (ElkBendPoint bendPoint : section.getBendPoints()) {
+                            ogmlEdgeLayout.getPoint().add(OgmlFormatHandler.createPoint(
+                                    bendPoint.getX(), bendPoint.getY(), edgeOffset));
+                        }
+                        ogmlEdgeLayout.getPoint().add(OgmlFormatHandler.createPoint(
+                                section.getEndX(), section.getEndY(), edgeOffset));
+                        styles.getEdgeStyle().add(ogmlEdgeLayout);
                     }
-                    ogmlEdgeLayout.getPoint().add(
-                            OgmlFormatHandler.createPoint(targetPoint, edgeOffset));
-                    styles.getEdgeStyle().add(ogmlEdgeLayout);
                 }
                 
                 // transform labels
-                for (KLabel klabel : kedge.getLabels()) {
-                    if (klabel.getText().length() > 0) {
-                        KShapeLayout klabelLayout = klabel.getData(KShapeLayout.class);
-                        String labelId = klabelLayout.getProperty(PROP_ID);
+                for (ElkLabel elklabel : elkedge.getLabels()) {
+                    if (elklabel.getText().length() > 0) {
+                        String labelId = elklabel.getProperty(PROP_ID);
                         LabelType ogmlLabel = OgmlFactory.eINSTANCE.createLabelType();
-                        ogmlLabel.setContent(klabel.getText());
+                        ogmlLabel.setContent(elklabel.getText());
                         ogmlLabel.setId(labelId);
-                        if (klabelLayout.getXpos() != 0 || klabelLayout.getYpos() != 0) {
-                            LabelLayoutType ogmlLabelLayout = OgmlFactory.eINSTANCE
-                                    .createLabelLayoutType();
+                        if (elklabel.getX() != 0 || elklabel.getY() != 0) {
+                            LabelLayoutType ogmlLabelLayout =
+                                    OgmlFactory.eINSTANCE.createLabelLayoutType();
                             ogmlLabelLayout.setIdRef(labelId);
                             LocationType location = OgmlFactory.eINSTANCE.createLocationType();
-                            location.setX(klabelLayout.getXpos() + klabelLayout.getWidth() / 2
-                                    + edgeOffset.x);
-                            location.setY(klabelLayout.getYpos() + klabelLayout.getHeight() / 2
-                                    + edgeOffset.y);
+                            location.setX(
+                                    elklabel.getX() + elklabel.getWidth() / 2 + edgeOffset.x);
+                            location.setY(
+                                    elklabel.getY() + elklabel.getHeight() / 2 + edgeOffset.y);
                             ogmlLabelLayout.setLocation(location);
                             styles.getLabelStyle().add(ogmlLabelLayout);
                         }
@@ -236,12 +248,10 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
                 }
             }
             
-            if (!knode.getChildren().isEmpty()) {
-                KShapeLayout nodeLayout = knode.getData(KShapeLayout.class);
+            if (!elknode.getChildren().isEmpty()) {
                 KVector suboffset = new KVector(offset);
-                suboffset.add(nodeLayout.getXpos() + nodeLayout.getInsets().getLeft(),
-                        nodeLayout.getYpos() + nodeLayout.getInsets().getTop());
-                transformEdges(knode, edgeList, styles, suboffset);
+                suboffset.add(elknode.getX(), elknode.getY());
+                transformEdges(elknode, edgeList, styles, suboffset);
             }
         }
     }
@@ -249,7 +259,7 @@ public class OgmlExporter implements IGraphTransformer<KNode, DocumentRoot> {
     /**
      * {@inheritDoc}
      */
-    public void transferLayout(final TransformationData<KNode, DocumentRoot> data) {
+    public void transferLayout(final TransformationData<ElkNode, DocumentRoot> data) {
         throw new UnsupportedOperationException("Layout transfer is not supported for OGML export.");
     }
 

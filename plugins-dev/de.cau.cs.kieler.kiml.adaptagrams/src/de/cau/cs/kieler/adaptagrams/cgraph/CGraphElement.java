@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.adaptagrams.cgraph;
 
-import de.cau.cs.kieler.core.properties.MapPropertyHolder;
+import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 /**
  * An element of the {@link CGraph}. Every element has an {@code #id} that can be arbitrarily used

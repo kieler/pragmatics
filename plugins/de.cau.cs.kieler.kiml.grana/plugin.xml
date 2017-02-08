@@ -649,6 +649,13 @@
                analysis="de.cau.cs.kieler.kiml.grana.layers">
          </dependency>
       </analysis>
+      <analysis
+            category="de.cau.cs.kieler.kiml.grana.drawing"
+            class="de.cau.cs.kieler.kiml.grana.analyses.BackwardWrappingEdgesAnalysis"
+            description="Number of edges that have forward and backward segments in their path."
+            id="de.cau.cs.kieler.kiml.grana.backwardEdges"
+            name="Number of Backward Wrapping Edges">
+      </analysis>
    </extension>
 
 </plugin>

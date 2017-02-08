@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.util.DefaultFactory;
 import org.eclipse.elk.core.util.IFactory;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -257,8 +257,8 @@ public class GraphFormatsService {
      * @throws IOException if reading the file fails
      * @throws CoreException if accessing the file fails
      */
-    public KNode[] loadKGraph(final IFile file) throws IOException, CoreException {
-        return loadKGraph(file.getContents(), file.getFileExtension());
+    public ElkNode[] loadElkGraph(final IFile file) throws IOException, CoreException {
+        return loadElkGraph(file.getContents(), file.getFileExtension());
     }
 
     /**
@@ -270,7 +270,7 @@ public class GraphFormatsService {
      * @throws IOException if reading the file fails
      * @throws CoreException if accessing the file fails
      */
-    public KNode[] loadKGraph(final InputStream inputStream, final String extension)
+    public ElkNode[] loadElkGraph(final InputStream inputStream, final String extension)
             throws IOException, CoreException {
         for (GraphFormatData formatData : graphFormatMap.values()) {
             for (String fe : formatData.getExtensions()) {
@@ -284,7 +284,7 @@ public class GraphFormatsService {
                     }
                     inputStream.close();
                     try {
-                        return loadKGraph(baos.toString(), formatData.getHandler());
+                        return loadElkGraph(baos.toString(), formatData.getHandler());
                     } catch (TransformationException exception) {
                         if (exception.getCause() instanceof IOException) {
                             throw (IOException) exception.getCause();
@@ -307,7 +307,7 @@ public class GraphFormatsService {
      * @param handler the graph handler
      * @return an array of contained graphs
      */
-    private static <T> KNode[] loadKGraph(final String serializedGraph,
+    private static <T> ElkNode[] loadElkGraph(final String serializedGraph,
             final IGraphFormatHandler<T> handler) {
         Map<String, Boolean> parserFeatures = Maps.newHashMap();
         parserFeatures.put(
@@ -321,12 +321,12 @@ public class GraphFormatsService {
                 Boolean.FALSE);
         Map<Object, Object> xmlOptions = Maps.newHashMap();
         xmlOptions.put(XMLResource.OPTION_PARSER_FEATURES, parserFeatures);
-        TransformationData<T, KNode> transData = new TransformationData<T, KNode>();
+        TransformationData<T, ElkNode> transData = new TransformationData<>();
         transData.setProperty(AbstractEmfHandler.XML_OPTIONS, xmlOptions);
         
         handler.deserialize(serializedGraph, transData);
         handler.getImporter().transform(transData);
-        return transData.getTargetGraphs().toArray(new KNode[transData.getTargetGraphs().size()]);
+        return transData.getTargetGraphs().toArray(new ElkNode[transData.getTargetGraphs().size()]);
     }
 
 }

@@ -13,27 +13,24 @@
  */
 package de.cau.cs.kieler.kiml.grana.ui.batch;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
-import com.google.common.collect.Iterators;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 
@@ -64,7 +61,7 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
     /** the parameter for this batch job. */
     protected T parameter;
     /** the KGraph provider for this batch run. */
-    protected IKGraphProvider<T> kgraphProvider;
+    protected IElkGraphProvider<T> graphProvider;
     /** the containing batch for reference, if any. */
     protected Batch batch = null;
 
@@ -76,9 +73,9 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
      * @param provider
      *            the KGraph provider
      */
-    public BatchJob(final T param, final IKGraphProvider<T> provider) {
+    public BatchJob(final T param, final IElkGraphProvider<T> provider) {
         parameter = param;
-        kgraphProvider = provider;
+        graphProvider = provider;
     }
 
     /**
@@ -104,8 +101,9 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
     @Override
     public BatchJobResult execute(final List<AnalysisData> analyses,
             final IElkProgressMonitor monitor) throws Exception {
+        
         monitor.begin("Executing analysis batch job: " + parameter, WORK);
-        KNode graph = kgraphProvider.getKGraph(parameter, monitor.subTask(WORK_KGRAPH));
+        ElkNode graph = graphProvider.getElkGraph(parameter, monitor.subTask(WORK_KGRAPH));
 
         // Map<String, Double> execResults =
         // graph.getData(KLayoutData.class).getProperty(BatchHandler.EXECUTION_TIME_RESULTS);
@@ -127,8 +125,8 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
      *            the monitor
      * @return the result
      */
-    protected abstract BatchJobResult localExecute(final KNode graph,
-            final List<AnalysisData> analyses, final IElkProgressMonitor monitor);
+    protected abstract BatchJobResult localExecute(ElkNode graph,
+            List<AnalysisData> analyses, IElkProgressMonitor monitor);
 
     // -------------------------------------------------------------------------------
     // - - - - - - - - - - - - - - - - - - SIMPLE - - - - - - - - - - - - - - - - - -
@@ -144,7 +142,7 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
          * @param provider
          *            the KGraph provider
          */
-        public Simple(final T param, final IKGraphProvider<T> provider) {
+        public Simple(final T param, final IElkGraphProvider<T> provider) {
             super(param, provider);
         }
 
@@ -152,8 +150,8 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
          * {@inheritDoc}
          */
         @Override
-        protected BatchJobResult localExecute(final KNode graph, final List<AnalysisData> analyses,
-                final IElkProgressMonitor monitor) {
+        protected BatchJobResult localExecute(final ElkNode graph,
+                final List<AnalysisData> analyses, final IElkProgressMonitor monitor) {
             AnalysisContext context = AnalysisService.getInstance().analyze(graph, analyses,
                     monitor.subTask(WORK_ANALYSIS));
             return new BatchJobResult.Simple(this, context.getResults());
@@ -185,7 +183,7 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
          * @param cfgs
          *            different layout configurations to be applied
          */
-        public Range(final T param, final IKGraphProvider<T> provider,
+        public Range(final T param, final IElkGraphProvider<T> provider,
                 final List<MapPropertyHolder> cfgs) {
             super(param, provider);
             this.rangeConfigurations = cfgs;
@@ -202,8 +200,8 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
          * {@inheritDoc}
          */
         @Override
-        protected BatchJobResult localExecute(final KNode graph, final List<AnalysisData> analyses,
-                final IElkProgressMonitor monitor) {
+        protected BatchJobResult localExecute(final ElkNode graph,
+                final List<AnalysisData> analyses, final IElkProgressMonitor monitor) {
 
             AnalysisContext context = AnalysisService.getInstance().analyze(graph, analyses,
                     monitor.subTask(WORK_ANALYSIS));
@@ -226,7 +224,7 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
 
                 // now layout with the range or whatever it is layout option
                 LayoutConfigurator lc = new LayoutConfigurator();
-                lc.configure(KGraphElement.class).copyProperties(options);
+                lc.configure(ElkGraphElement.class).copyProperties(options);
                 Parameters params = new Parameters();
                 params.addLayoutRun(lc);
                 
@@ -235,8 +233,8 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
                 // for the graph to be analyzed
                 DiagramLayoutEngine.invokeLayout(null, graph, params);
 
-                AnalysisContext rangeContext =
-                        AnalysisService.getInstance().analyze(graph, rangeAnalyses, monitor.subTask(1));
+                AnalysisContext rangeContext = AnalysisService.getInstance().analyze(
+                        graph, rangeAnalyses, monitor.subTask(1));
 
                 rangeResults.put(options, rangeContext.getResults());
             }
@@ -273,7 +271,7 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
          *            the layout configs for the two layout runs to be compared.
          * 
          */
-        public Compare(final T param, final IKGraphProvider<T> provider,
+        public Compare(final T param, final IElkGraphProvider<T> provider,
                 final Pair<LayoutConfigurator, LayoutConfigurator> layoutConfigs) {
             super(param, provider);
             layoutConfigurators = layoutConfigs; 
@@ -283,15 +281,15 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
          * {@inheritDoc}
          */
         @Override
-        protected BatchJobResult localExecute(final KNode graph, final List<AnalysisData> analyses,
-                final IElkProgressMonitor monitor) {
+        protected BatchJobResult localExecute(final ElkNode graph,
+                final List<AnalysisData> analyses, final IElkProgressMonitor monitor) {
             
-            KNode first = graph;
+            ElkNode first = graph;
             
             // #1 create a copy of the graph
             // following three lines copied from EcoreUtils#copy
             Copier copier = new Copier();
-            final KNode second = (KNode) copier.copy(first);
+            final ElkNode second = (ElkNode) copier.copy(first);
             copier.copyReferences();
             Map<EObject, EObject> objectMapping = copier;
             
@@ -300,15 +298,14 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
             if (layoutEngine == null) {
                 layoutEngine = new RecursiveGraphLayoutEngine();
             }
-            applyVisitors(first, layoutConfigurators.getFirst());
+            ElkUtil.applyVisitors(first, layoutConfigurators.getFirst());
             layoutEngine.layout(first, monitor.subTask(1));
-            applyVisitors(second, layoutConfigurators.getSecond());
+            ElkUtil.applyVisitors(second, layoutConfigurators.getSecond());
             layoutEngine.layout(second, monitor.subTask(1));
             
             // #3 create a wrapper node to be passed to the analysis service
-            KNode wrapper = ElkUtil.createInitializedNode();
-            wrapper.getData(KLayoutData.class).setProperty(IComparingAnalysis.ELEMENT_MAPPING,
-                    objectMapping);
+            ElkNode wrapper = ElkGraphUtil.createGraph();
+            wrapper.setProperty(IComparingAnalysis.ELEMENT_MAPPING, objectMapping);
             wrapper.getChildren().add(first);
             wrapper.getChildren().add(second);
             
@@ -322,23 +319,6 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
             
             monitor.done();
             return batchJobResult;
-        }
-        
-        /**
-         * Apply the given graph element visitors to the content of the given graph.
-         */
-        private static void applyVisitors(final KNode graph, final IGraphElementVisitor... visitors) {
-            for (int i = 0; i < visitors.length; i++) {
-                visitors[i].visit(graph);
-            }
-            Iterator<KGraphElement> allElements =
-                    Iterators.filter(graph.eAllContents(), KGraphElement.class);
-            while (allElements.hasNext()) {
-                KGraphElement element = allElements.next();
-                for (int i = 0; i < visitors.length; i++) {
-                    visitors[i].visit(element);
-                }
-            }
         }
     }
     

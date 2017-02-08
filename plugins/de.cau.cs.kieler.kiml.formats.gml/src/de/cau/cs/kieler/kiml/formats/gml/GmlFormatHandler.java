@@ -19,9 +19,8 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
@@ -42,7 +41,7 @@ public class GmlFormatHandler implements IGraphFormatHandler<GMLModel> {
      * {@inheritDoc}
      */
     public void deserialize(final String serializedGraph,
-            final TransformationData<GMLModel, KNode> transData) {
+            final TransformationData<GMLModel, ElkNode> transData) {
         try {
             InputStream is = new ByteArrayInputStream(serializedGraph.getBytes());
             transData.setSourceGraph(GMLParser.parse(is));
@@ -55,7 +54,7 @@ public class GmlFormatHandler implements IGraphFormatHandler<GMLModel> {
     /**
      * {@inheritDoc}
      */
-    public String serialize(final TransformationData<KNode, GMLModel> transData) {
+    public String serialize(final TransformationData<ElkNode, GMLModel> transData) {
         StringBuffer sb = new StringBuffer();
         for (GMLModel gm : transData.getTargetGraphs()) {
             sb.append(GMLSerializer.serialize(gm));
@@ -68,7 +67,7 @@ public class GmlFormatHandler implements IGraphFormatHandler<GMLModel> {
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<GMLModel, KNode> getImporter() {
+    public IGraphTransformer<GMLModel, ElkNode> getImporter() {
         return importer;
     }
 
@@ -76,7 +75,7 @@ public class GmlFormatHandler implements IGraphFormatHandler<GMLModel> {
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<KNode, GMLModel> getExporter() {
+    public IGraphTransformer<ElkNode, GMLModel> getExporter() {
         return exporter;
     }
     
@@ -96,18 +95,19 @@ public class GmlFormatHandler implements IGraphFormatHandler<GMLModel> {
     }
     
     /**
-     * Creates a GML Point for a KPoint.
+     * Creates a GML Point for the given coordinates.
      * 
      * @param parent the parent collection the GML Point is attached to
-     * @param point a KPoint
+     * @param x the x coordinate.
+     * @param y the y coordinate.
      * @return a GML Element with the coordinates of the given point
      */
-    public static Element createPoint(final Element parent, final KPoint point) {
+    public static Element createPoint(final Element parent, final double x, final double y) {
         CollectionElement p = new CollectionElement(parent, "point"); 
-        NumberElement x = new NumberElement(p, "x", point.getX());
-        p.getElements().add(x);
-        NumberElement y = new NumberElement(p, "y", point.getY());
-        p.getElements().add(y);
+        NumberElement xElement = new NumberElement(p, "x", x);
+        p.getElements().add(xElement);
+        NumberElement yElement = new NumberElement(p, "y", y);
+        p.getElements().add(yElement);
         return p;
     }
     
@@ -115,11 +115,11 @@ public class GmlFormatHandler implements IGraphFormatHandler<GMLModel> {
      * Create a GML label for a KLabel.
      * 
      * @param parent the parent collection the GML Label is attached to
-     * @param klabel a KLabel
+     * @param elklabel a KLabel
      * @return a GML element with the label text
      */
-    public static Element createLabel(final Element parent, final KLabel klabel) {
-        StringBuilder text = new StringBuilder(klabel.getText());
+    public static Element createLabel(final Element parent, final ElkLabel elklabel) {
+        StringBuilder text = new StringBuilder(elklabel.getText());
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == '\"') {

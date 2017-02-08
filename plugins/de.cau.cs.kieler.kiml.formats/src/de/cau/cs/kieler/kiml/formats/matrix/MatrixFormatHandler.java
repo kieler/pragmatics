@@ -21,7 +21,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
@@ -59,7 +59,7 @@ public class MatrixFormatHandler implements IGraphFormatHandler<Matrix> {
      * {@inheritDoc}
      */
     public void deserialize(final String serializedGraph,
-            final TransformationData<Matrix, KNode> transData) {
+            final TransformationData<Matrix, ElkNode> transData) {
         int linenr = 0;
         try {
             BufferedReader reader = new BufferedReader(new StringReader(serializedGraph));
@@ -143,7 +143,7 @@ public class MatrixFormatHandler implements IGraphFormatHandler<Matrix> {
     /**
      * {@inheritDoc}
      */
-    public String serialize(final TransformationData<KNode, Matrix> transData) {
+    public String serialize(final TransformationData<ElkNode, Matrix> transData) {
         StringBuilder builder = new StringBuilder();
         for (Matrix matrix : transData.getTargetGraphs()) {
             if (matrix.getLayout() == null) {
@@ -209,7 +209,7 @@ public class MatrixFormatHandler implements IGraphFormatHandler<Matrix> {
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<Matrix, KNode> getImporter() {
+    public IGraphTransformer<Matrix, ElkNode> getImporter() {
         return importer;
     }
     
@@ -218,7 +218,7 @@ public class MatrixFormatHandler implements IGraphFormatHandler<Matrix> {
     /**
      * {@inheritDoc}
      */
-    public IGraphTransformer<KNode, Matrix> getExporter() {
+    public IGraphTransformer<ElkNode, Matrix> getExporter() {
         return exporter;
     }
 

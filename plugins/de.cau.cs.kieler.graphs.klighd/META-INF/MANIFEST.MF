@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Diagram Syntheses For Graphs 
+Bundle-SymbolicName: de.cau.cs.kieler.graphs.klighd;singleton:=true
+Bundle-Version: 0.42.0.qualifier
+Bundle-Activator: de.cau.cs.kieler.graphs.klighd.GraphsPlugin
+Bundle-Vendor: Kiel University
+Require-Bundle: org.eclipse.ui.ide;bundle-version="3.8.0",
+ org.eclipse.xtext;bundle-version="2.3.0",
+ org.eclipse.xtext.ui;bundle-version="2.3.0",
+ org.eclipse.xtext.xbase.lib;bundle-version="2.3.0",
+ de.cau.cs.kieler.klighd,
+ de.cau.cs.kieler.klighd.kgraph,
+ de.cau.cs.kieler.klighd.krendering.extensions,
+ de.cau.cs.kieler.klighd.ui,
+ de.cau.cs.kieler.klighd.ui.view,
+ de.cau.cs.kieler.kiml.formats,
+ de.cau.cs.kieler.kiml.formats.gml,
+ de.cau.cs.kieler.formats.kgraph,
+ org.eclipse.core.expressions,
+ org.eclipse.elk.core,
+ de.cau.cs.kieler.overlapRemoval;bundle-version="1.0.0",
+ de.cau.cs.kieler.hierarchicalLayoutAlgorithms;bundle-version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Export-Package: de.cau.cs.kieler.graphs.klighd,
+ de.cau.cs.kieler.graphs.klighd.syntheses

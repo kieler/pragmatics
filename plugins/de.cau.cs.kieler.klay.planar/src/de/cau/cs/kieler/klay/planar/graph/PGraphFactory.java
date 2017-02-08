@@ -20,14 +20,16 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.klay.planar.PConstants;
 import de.cau.cs.kieler.klay.planar.graph.PNode.NodeType;
@@ -50,13 +52,13 @@ public class PGraphFactory {
     private static final int MIN_DIST = 10;
 
     /** Start position of the horizontal direction. */
-    private static float startX;
+    private static double startX;
 
     /** Start position of the vertical direction. */
-    private static float startY;
+    private static double startY;
 
     /** Spacing between the nodes. */
-    private static float spacing;
+    private static double spacing;
 
     /**
      * Create an empty graph instance. The resulting graph will not contain any edges or nodes.
@@ -186,41 +188,44 @@ public class PGraphFactory {
     /**
      * Create a graph from a {@code KGraph} instance.
      * 
-     * @param kgraph
+     * @param elkgraph
      *            a {@code KNode} to base the graph upon
      * @return a graph corresponding to {@code kgraph}
      */
-    public static PGraph createGraphFromKGraph(final KNode kgraph) {
+    public static PGraph createGraphFromKGraph(final ElkNode elkgraph) {
         PGraph pgraph = new PGraph();
-        HashMap<KNode, PNode> map = new HashMap<KNode, PNode>(kgraph.getChildren().size() * 2);
-        pgraph.copyProperties(kgraph.getData(KShapeLayout.class));
-        pgraph.setProperty(Properties.ORIGIN, kgraph);
+        HashMap<ElkNode, PNode> map = new HashMap<>(elkgraph.getChildren().size() * 2);
+        pgraph.copyProperties(elkgraph);
+        pgraph.setProperty(Properties.ORIGIN, elkgraph);
 
         // Adding Nodes
-        for (KNode knode : kgraph.getChildren()) {
+        for (ElkNode elknode : elkgraph.getChildren()) {
             PNode node = null;
-            if (knode.getChildren().size() > 0) {
+            if (elknode.getChildren().size() > 0) {
                 node = pgraph.addNode(NodeType.COMPOUND);
             } else {
                 node = pgraph.addNode(NodeType.NORMAL);
             }
-            node.setProperty(Properties.ORIGIN, knode);
-            map.put(knode, node);
+            node.setProperty(Properties.ORIGIN, elknode);
+            map.put(elknode, node);
         }
 
         // Adding Edges
-        for (KNode knode : kgraph.getChildren()) {
-            for (KEdge kedge : knode.getOutgoingEdges()) {
-                if (!map.containsKey(kedge.getSource()) || !map.containsKey(kedge.getTarget())) {
+        for (ElkNode elknode : elkgraph.getChildren()) {
+            // It seems we currently only support edges connected directly to a node
+            for (ElkEdge elkedge : elknode.getOutgoingEdges()) {
+                if (!map.containsKey(elkedge.getSources().get(0))
+                        || !map.containsKey(elkedge.getTargets().get(0))) {
+                    
                     throw new InconsistentGraphModelException(
                             "Attempted to link non-existent nodes by an edge.");
                 }
-                PNode source = map.get(kedge.getSource());
-                PNode target = map.get(kedge.getTarget());
+                PNode source = map.get(elkedge.getSources().get(0));
+                PNode target = map.get(elkedge.getTargets().get(0));
 
                 if (!source.isAdjacent(target)) {
                     PEdge edge = pgraph.addEdge(source, target, true);
-                    edge.setProperty(Properties.ORIGIN, kedge);
+                    edge.setProperty(Properties.ORIGIN, elkedge);
                 }
             }
         }
@@ -285,15 +290,14 @@ public class PGraphFactory {
      *            the graph for which layout is applied
      */
     public static void applyLayout(final PGraph pgraph) {
-
         GridRepresentation grid = pgraph.getProperty(Properties.GRID_REPRESENTATION);
-        float borderSpacing = pgraph.getProperty(Properties.BORDER_SPACING);
+        ElkPadding padding = pgraph.getProperty(Properties.PADDING);
         HighDegreeNodeStrategy hdStrategy = pgraph
                 .getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY);
         PGraphFactory.determineSpacing(pgraph);
 
-        PGraphFactory.startX = borderSpacing;
-        PGraphFactory.startY = borderSpacing;
+        PGraphFactory.startX = padding.left;
+        PGraphFactory.startY = padding.top;
 
         // handle high degree nodes!
         PGraphFactory.performHDNodes(pgraph, grid);
@@ -305,16 +309,17 @@ public class PGraphFactory {
                 if (pNode != null) {
                     if (pNode.getProperty(Properties.EXPANSION_CYCLE) == null
                             || hdStrategy == HighDegreeNodeStrategy.QUOD) {
-                        pNode.setPostion(((float) PGraphFactory.mapNodeToRealX(x)),
-                                ((float) PGraphFactory.mapNodeToRealY(y)));
+                        pNode.setPosition(
+                                PGraphFactory.mapNodeToRealX(x),
+                                PGraphFactory.mapNodeToRealY(y));
                     } else if (hdStrategy == HighDegreeNodeStrategy.GIOTTO) {
                         // set position to the middle point.
-                        float xCoordinate = (float) PGraphFactory.mapNodeToRealX(x);
-                        float yCoordinate = (float) PGraphFactory.mapNodeToRealY(y);
-                        KShapeLayout nodeLayout = ((KNode) pNode.getProperty(Properties.ORIGIN))
-                                .getData(KShapeLayout.class);
-                        pNode.setPostion(xCoordinate + nodeLayout.getWidth() / 2, yCoordinate
-                                + nodeLayout.getHeight() / 2);
+                        double xCoordinate = PGraphFactory.mapNodeToRealX(x);
+                        double yCoordinate = PGraphFactory.mapNodeToRealY(y);
+                        ElkNode node = (ElkNode) pNode.getProperty(Properties.ORIGIN);
+                        pNode.setPosition(
+                                xCoordinate + node.getWidth() / 2,
+                                yCoordinate + node.getHeight() / 2);
                     }
 
                 }
@@ -335,21 +340,20 @@ public class PGraphFactory {
                 vec.y = PGraphFactory.mapEdgeToRealY(vec.y);
             }
 
-            KEdge originEdge = (KEdge) edge.getProperty(Properties.ORIGIN);
-            KEdgeLayout edgeLayout = originEdge.getData(KEdgeLayout.class);
             KVectorChain bendPoints = edge.getBendPoints();
 
             // set source and target position
             if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) 
                     == HighDegreeNodeStrategy.GIOTTO) {
+                
                 Pair<Integer, Integer> startPos = edge.getProperty(Properties.START_POSITION);
                 if (startPos != null) {
                     bendPoints.addFirst(
                             PGraphFactory.mapEdgeToRealX(startPos.getFirst().intValue()),
                             PGraphFactory.mapEdgeToRealY(startPos.getSecond().intValue()));
                 } else {
-                    KNode source = (KNode) edge.getSource().getProperty(Properties.ORIGIN);
-                    bendPoints.addFirst(source.getData(KShapeLayout.class).createVector());
+                    ElkNode source = (ElkNode) edge.getSource().getProperty(Properties.ORIGIN);
+                    bendPoints.addFirst(new KVector(source.getX(), source.getY()));
                 }
 
                 Pair<Integer, Integer> targetPos = edge.getProperty(Properties.TARGET_POSITION);
@@ -358,65 +362,66 @@ public class PGraphFactory {
                             PGraphFactory.mapEdgeToRealX(targetPos.getFirst().intValue()),
                             PGraphFactory.mapEdgeToRealY(targetPos.getSecond().intValue()));
                 } else {
-                    KNode target = (KNode) edge.getTarget().getProperty(Properties.ORIGIN);
-                    bendPoints.addLast(target.getData(KShapeLayout.class).createVector());
+                    ElkNode target = (ElkNode) edge.getTarget().getProperty(Properties.ORIGIN);
+                    bendPoints.addFirst(new KVector(target.getX(), target.getY()));
                 }
 
             } else {
-                PNode source = edge.getSource();
-                bendPoints.addFirst(((KNode) source.getProperty(Properties.ORIGIN)).getData(
-                        KShapeLayout.class).createVector());
+                ElkNode source = (ElkNode) edge.getSource().getProperty(Properties.ORIGIN);
+                bendPoints.addFirst(new KVector(source.getX(), source.getY()));
 
-                PNode target = edge.getTarget();
-
-                bendPoints.addLast(((KNode) target.getProperty(Properties.ORIGIN)).getData(
-                        KShapeLayout.class).createVector());
+                ElkNode target = (ElkNode) edge.getTarget().getProperty(Properties.ORIGIN);
+                bendPoints.addFirst(new KVector(target.getX(), target.getY()));
             }
+            
             // apply the bend points
-            edgeLayout.applyVectorChain(bendPoints);
+            ElkEdge originEdge = (ElkEdge) edge.getProperty(Properties.ORIGIN);
+            ElkEdgeSection originEdgeSection =
+                    ElkGraphUtil.firstEdgeSection(originEdge, true, true);
+            ElkUtil.applyVectorChain(bendPoints, originEdgeSection);
         }
+        
         // moves all original nodes to the left/top to let the edges walk to the center
         // of the nodes.
         for (int x = 0; x < grid.getWidth(); x++) {
             for (int y = 0; y < grid.getHeight(); y++) {
                 if (grid.get(x, y) != null) {
                     if (grid.get(x, y).hasProperties()
-                            && grid.get(x, y).getProperty(Properties.ORIGIN) instanceof KNode) {
+                            && grid.get(x, y).getProperty(Properties.ORIGIN) instanceof ElkNode) {
+                        
                         // search for the pnodes that represents a knode.
-                        KShapeLayout nodeLayout = ((KNode) grid.get(x, y).getProperty(
-                                Properties.ORIGIN)).getData(KShapeLayout.class);
-                        nodeLayout.setXpos(((float) PGraphFactory.mapNodeToRealX(x))
-                                - nodeLayout.getWidth() / 2);
-                        nodeLayout.setYpos(((float) PGraphFactory.mapNodeToRealY(y))
-                                - nodeLayout.getHeight() / 2);
+                        ElkNode elknode = ((ElkNode) grid.get(x, y).getProperty(Properties.ORIGIN));
+                        elknode.setX(PGraphFactory.mapNodeToRealX(x) - elknode.getWidth() / 2);
+                        elknode.setY(PGraphFactory.mapNodeToRealY(y) - elknode.getHeight() / 2);
                     }
                 }
             }
         }
 
-        if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY) == HighDegreeNodeStrategy.GIOTTO) {
+        if (pgraph.getProperty(Properties.HIGH_DEGREE_NODE_STRATEGY)
+                == HighDegreeNodeStrategy.GIOTTO) {
+            
             for (PNode node : pgraph.getNodes()) {
                 if (node.getProperty(Properties.EXPANSION_CYCLE) != null
                         && hdStrategy == HighDegreeNodeStrategy.GIOTTO) {
-                    KShapeLayout nodeLayout = ((KNode) node.getProperty(Properties.ORIGIN))
-                            .getData(KShapeLayout.class);
-                    nodeLayout.setXpos(nodeLayout.getXpos() + nodeLayout.getWidth() / 2);
-                    nodeLayout.setYpos(nodeLayout.getYpos() + nodeLayout.getHeight() / 2);
+                    
+                    ElkNode elknode = (ElkNode) node.getProperty(Properties.ORIGIN);
+                    elknode.setX(elknode.getX() + elknode.getWidth() / 2);
+                    elknode.setY(elknode.getY() + elknode.getHeight() / 2);
                 }
             }
         }
 
         if (pgraph.getProperty(CoreOptions.DEBUG_MODE) == Boolean.TRUE) {
             for (PEdge edge : pgraph.getEdges()) {
-                KEdge originEdge = (KEdge) edge.getProperty(Properties.ORIGIN);
-                KEdgeLayout edgeLayout = originEdge.getData(KEdgeLayout.class);
-                System.out.println(edge.toString() + ": " + edgeLayout.toString());
+                ElkEdge originEdge = (ElkEdge) edge.getProperty(Properties.ORIGIN);
+                System.out.println(edge.toString() + ": "
+                        + originEdge.getSections().get(0).toString());
             }
 
             for (PNode node : pgraph.getNodes()) {
-                KShapeLayout nodeLayout = ((KNode) node.getProperty(Properties.ORIGIN))
-                        .getData(KShapeLayout.class);
-                System.out.println(node.toString() + ": " + nodeLayout.toString());
+                ElkNode originNode = (ElkNode) node.getProperty(Properties.ORIGIN);
+                System.out.println(node.toString() + ": " + originNode.toString());
             }
         }
     }
@@ -436,16 +441,13 @@ public class PGraphFactory {
                 // Sets the hdnode to a single position.
                 grid.set(x, y, node);
 
-                KShapeLayout nodeLayout = ((KNode) node.getProperty(Properties.ORIGIN))
-                        .getData(KShapeLayout.class);
-                nodeLayout.setXpos(((float) PGraphFactory.mapNodeToRealX(x))
-                        - nodeLayout.getWidth() / 2);
-                nodeLayout.setYpos(((float) PGraphFactory.mapNodeToRealY(y))
-                        - nodeLayout.getHeight() / 2);
-                float gap = spacing - nodeLayout.getWidth();
-                nodeLayout.setWidth(nodeLayout.getWidth() * widthX + (widthX - 1) * gap);
-                gap = spacing - nodeLayout.getHeight();
-                nodeLayout.setHeight(nodeLayout.getHeight() * heightY + (heightY - 1) * gap);
+                ElkNode elknode = (ElkNode) node.getProperty(Properties.ORIGIN);
+                elknode.setX(PGraphFactory.mapNodeToRealX(x) - elknode.getWidth() / 2);
+                elknode.setY(PGraphFactory.mapNodeToRealY(y) - elknode.getHeight() / 2);
+                double gap = spacing - elknode.getWidth();
+                elknode.setWidth(elknode.getWidth() * widthX + (widthX - 1) * gap);
+                gap = spacing - elknode.getHeight();
+                elknode.setHeight(elknode.getHeight() * heightY + (heightY - 1) * gap);
 
             }
         }
@@ -455,17 +457,16 @@ public class PGraphFactory {
         // check whether minimum spacing is smaller than the size of each node,
         // if so adjust spacing
 
-        Float userSpacing = pgraph.getProperty(Properties.SPACING);
+        Double userSpacing = pgraph.getProperty(Properties.SPACING);
         PGraphFactory.spacing = (userSpacing == null) ? 0 : userSpacing.floatValue();
 
         for (PNode node : pgraph.getNodes()) {
-            KNode knode = (KNode) node.getProperty(Properties.ORIGIN);
-            KShapeLayout data = knode.getData(KShapeLayout.class);
-            if (PGraphFactory.spacing < data.getWidth() + MIN_DIST) {
-                PGraphFactory.spacing = data.getWidth() + MIN_DIST;
+            ElkNode elknode = (ElkNode) node.getProperty(Properties.ORIGIN);
+            if (PGraphFactory.spacing < elknode.getWidth() + MIN_DIST) {
+                PGraphFactory.spacing = elknode.getWidth() + MIN_DIST;
             }
-            if (PGraphFactory.spacing < data.getHeight() + MIN_DIST) {
-                PGraphFactory.spacing = data.getHeight() + MIN_DIST;
+            if (PGraphFactory.spacing < elknode.getHeight() + MIN_DIST) {
+                PGraphFactory.spacing = elknode.getHeight() + MIN_DIST;
             }
         }
     }

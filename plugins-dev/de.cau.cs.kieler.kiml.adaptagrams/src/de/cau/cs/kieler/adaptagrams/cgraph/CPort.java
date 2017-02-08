@@ -17,14 +17,14 @@ import java.util.List;
 
 import org.adaptagrams.ColaEdge;
 import org.adaptagrams.Rectangle;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.PortSide;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.adaptagrams.properties.CGraphProperties;
-import de.cau.cs.kieler.adaptagrams.properties.CoLaProperties;
-import de.cau.cs.kieler.core.math.KVector;
-import de.cau.cs.kieler.kiml.options.PortSide;
+import de.cau.cs.kieler.kiml.adaptagrams.properties.ColaOptions;
 
 /**
  * @author uru
@@ -76,7 +76,7 @@ public class CPort extends CShape {
         
         // should previously assigned positions be considered?
         boolean considerPreviousPositions =
-                graph.getProperty(CoLaProperties.CONSIDER_PREVIOUS_POSITIONS);
+                graph.getProperty(ColaOptions.CONSIDER_PREVIOUS_POSITIONS);
         
         double xPos = 0;
         double yPos = 0;

@@ -2,7 +2,7 @@
  */
 package de.cau.cs.kieler.kiml.grana.text.grana;
 
-import org.eclipse.elk.core.klayoutdata.KIdentifier;
+import org.eclipse.elk.graph.ElkNode;
 
 import org.eclipse.emf.common.util.EList;
 
@@ -75,7 +75,7 @@ public interface Job extends EObject
 
   /**
    * Returns the value of the '<em><b>Layout Options</b></em>' containment reference list.
-   * The list contents are of type {@link org.eclipse.elk.core.klayoutdata.KIdentifier}.
+   * The list contents are of type {@link org.eclipse.elk.graph.ElkNode}.
    * <!-- begin-user-doc -->
    * <p>
    * If the meaning of the '<em>Layout Options</em>' containment reference list isn't clear,
@@ -87,7 +87,7 @@ public interface Job extends EObject
    * @model containment="true"
    * @generated
    */
-  EList<KIdentifier> getLayoutOptions();
+  EList<ElkNode> getLayoutOptions();
 
   /**
    * Returns the value of the '<em><b>Analyses</b></em>' containment reference list.

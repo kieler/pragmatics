@@ -6,12 +6,20 @@
    <extension
          point="de.cau.cs.kieler.kiml.formats.graphFormats">
       <handler
-            class="de.cau.cs.kieler.kiml.formats.KGraphHandler"
-            description="Internally used graph format of the KIELER project. See http://rtsys.informatik.uni-kiel.de/confluence/x/U4EN"
-            extensions="kgraph,kgx,xmi"
-            id="de.cau.cs.kieler.kgraph"
-            name="KGraph">
+            class="de.cau.cs.kieler.kiml.formats.ElkGraphHandler"
+            description="Internally used graph format of ELK."
+            extensions="elkg"
+            id="org.eclipse.elk.graph"
+            name="ELK Graph">
       </handler>
+      <handler
+            class="de.cau.cs.kieler.kiml.formats.ElkGraphHandler"
+            description="Textual version of ELK's graph format. Note that the 'org.eclipse.elk.graph.text' plugin is required for this format to work."
+            extensions="elkt"
+            id="org.eclipse.elk.graph.text"
+            name="ELK Graph Text">
+      </handler>
+      
       <handler
             class="de.cau.cs.kieler.kiml.formats.matrix.MatrixFormatHandler"
             description="The Matrix Market format. See http://math.nist.gov/MatrixMarket/"

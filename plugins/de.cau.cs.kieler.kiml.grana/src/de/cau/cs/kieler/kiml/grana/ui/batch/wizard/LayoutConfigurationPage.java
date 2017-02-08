@@ -28,7 +28,7 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.ui.AlgorithmSelectionDialog;
 import org.eclipse.elk.core.ui.ElkUiPlugin;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -249,7 +249,7 @@ public class LayoutConfigurationPage extends WizardPage {
     public LayoutConfigurator getConfig() {
         LayoutConfigurator config = new LayoutConfigurator();
         for (Pair<LayoutOptionData, Object> pair : optionEntries) {
-            config.configure(KGraphElement.class).setProperty(pair.getFirst(), pair.getSecond());
+            config.configure(ElkGraphElement.class).setProperty(pair.getFirst(), pair.getSecond());
         }
         return config;
     }
@@ -364,7 +364,7 @@ public class LayoutConfigurationPage extends WizardPage {
                     return getChoicesMessage();
                 case INT:
                     return "Expected integer number.";
-                case FLOAT:
+                case DOUBLE:
                     return "Expected real number.";
                 case OBJECT:
                     // We allow null objects if the input string is either null or "null"
@@ -441,8 +441,8 @@ public class LayoutConfigurationPage extends WizardPage {
                     return imageRegistry.get(ElkUiPlugin.IMG_CHOICE);
                 case INT:
                     return imageRegistry.get(ElkUiPlugin.IMG_INT);
-                case FLOAT:
-                    return imageRegistry.get(ElkUiPlugin.IMG_FLOAT);
+                case DOUBLE:
+                    return imageRegistry.get(ElkUiPlugin.IMG_DOUBLE);
                 }
             }
             return null;

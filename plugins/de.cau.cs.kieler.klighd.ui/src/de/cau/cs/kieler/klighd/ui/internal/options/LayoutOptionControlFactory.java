@@ -24,7 +24,7 @@ import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.service.ILayoutConfigurationStore;
 import org.eclipse.elk.core.service.LayoutConfigurationManager;
 import org.eclipse.elk.core.service.LayoutConnectorsService;
-import org.eclipse.elk.graph.KGraphElement;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -213,17 +213,19 @@ public class LayoutOptionControlFactory {
 
                 switch (optionData.getType()) {
                 case INT:
-                case FLOAT: {
+                case DOUBLE: {
                     final Scale slider = (Scale) control;
                     final SliderListener sliderListener = (SliderListener) control.getData(
                             DATA_SELECTION_LISTENER);
                     if (sliderListener != null) {
-                        final float initialValue =
-                                ElkMath.boundf(((Number) defaultValue).floatValue(),
-                                        sliderListener.minFloat, sliderListener.maxFloat);
-                        final int selection = Math.round((initialValue - sliderListener.minFloat)
-                                / (sliderListener.maxFloat - sliderListener.minFloat)
-                                * (slider.getMaximum() - slider.getMinimum())) + slider.getMinimum();
+                        final double initialValue =
+                                ElkMath.boundd(((Number) defaultValue).doubleValue(),
+                                        sliderListener.minVal, sliderListener.maxVal);
+                        final int selection =
+                                (int) Math.round((initialValue - sliderListener.minVal)
+                                / (sliderListener.maxVal - sliderListener.minVal)
+                                * (slider.getMaximum() - slider.getMinimum()))
+                                + slider.getMinimum();
                         slider.setSelection(selection);
                     }
                     break;
@@ -275,7 +277,7 @@ public class LayoutOptionControlFactory {
 
         switch (optionData.getType()) {
         case INT:
-        case FLOAT: {
+        case DOUBLE: {
             final Scale slider = new Scale(parent, SWT.NONE);
             // the following setting is needed on windows
             slider.setBackground(parent.getBackground());
@@ -287,15 +289,15 @@ public class LayoutOptionControlFactory {
             slider.setData(optionData);
             controls.add(slider);
             // set initial value for the slider
-            float initialValue = ((Number) layoutConfigManager.getOptionValue(optionData,
-                    layoutConfigStore)).floatValue();
-            initialValue = ElkMath.boundf(initialValue, sliderListener.minFloat,
-                    sliderListener.maxFloat);
+            double initialValue = ((Number) layoutConfigManager.getOptionValue(optionData,
+                    layoutConfigStore)).doubleValue();
+            initialValue = ElkMath.boundd(initialValue, sliderListener.minVal,
+                    sliderListener.maxVal);
 
             label.setText(optionData.getName() + ": " + initialValue);
 
-            final int selection = Math.round((initialValue - sliderListener.minFloat)
-                    / (sliderListener.maxFloat - sliderListener.minFloat)
+            final int selection = (int) Math.round((initialValue - sliderListener.minVal)
+                    / (sliderListener.maxVal - sliderListener.minVal)
                     * (slider.getMaximum() - slider.getMinimum())) + slider.getMinimum();
             slider.setSelection(selection);
 
@@ -480,35 +482,35 @@ public class LayoutOptionControlFactory {
         /** the layout option that is affected by the slider. */
         private final LayoutOptionData optionData;
         /** the maximal value. */
-        private final float minFloat;
+        private final double minVal;
         /** the minimal value. */
-        private final float maxFloat;
+        private final double maxVal;
 
         /**
          * Create a slider listener.
          * @param textLabel the corresponding name label used updating the selected value
          * @param optionData the layout option that is affected by the slider
-         * @param minFloat the maximal value
-         * @param maxFloat the minimal value
+         * @param minVal the maximal value
+         * @param maxVal the minimal value
          */
         SliderListener(final Label textLabel, final LayoutOptionData optionData,
-                final float minFloat, final Float maxFloat) {
+                final double minVal, final double maxVal) {
             this.correspondingLabel = textLabel;
             this.optionData = optionData;
-            this.minFloat = minFloat;
-            if (maxFloat <= minFloat) {
-                this.maxFloat = minFloat + 1;
+            this.minVal = minVal;
+            if (maxVal <= minVal) {
+                this.maxVal = minVal + 1;
             } else {
-                this.maxFloat = maxFloat;
+                this.maxVal = maxVal;
             }
         }
 
         @Override
         public void widgetSelected(final SelectionEvent event) {
             final Scale slider = (Scale) event.widget;
-            final float sliderValue = (float) (slider.getSelection() - slider.getMinimum())
+            final double sliderValue = slider.getSelection() - slider.getMinimum()
                     / (slider.getMaximum() - slider.getMinimum());
-            final float optionValue = minFloat + sliderValue * (maxFloat - minFloat);
+            final double optionValue = minVal + sliderValue * (maxVal - minVal);
             setOptionValue(optionValue);
             correspondingLabel.setText(optionData.getName() + ": "
                     + MAX_2_DIGITS.matcher(String.valueOf(optionValue)).replaceFirst(FIRST_GROUP));
@@ -524,13 +526,15 @@ public class LayoutOptionControlFactory {
          * @param optionValue the layout option value
          */
         @SuppressWarnings({ "incomplete-switch" })
-        public void setOptionValue(final float optionValue) {
+        public void setOptionValue(final double optionValue) {
             switch (optionData.getType()) {
             case INT:
-                layoutConfig.configure(KGraphElement.class).setProperty(optionData, (int) optionValue);
+                layoutConfig.configure(ElkGraphElement.class).setProperty(
+                        optionData, (int) optionValue);
                 break;
-            case FLOAT:
-                layoutConfig.configure(KGraphElement.class).setProperty(optionData, (float) optionValue);
+            case DOUBLE:
+                layoutConfig.configure(ElkGraphElement.class).setProperty(
+                        optionData, optionValue);
                 break;
             }
         }
@@ -563,7 +567,7 @@ public class LayoutOptionControlFactory {
         @Override
         public void widgetSelected(final SelectionEvent event) {
             if (((Button) event.widget).getSelection()) {
-                layoutConfig.configure(KGraphElement.class).setProperty(optionData, value);
+                layoutConfig.configure(ElkGraphElement.class).setProperty(optionData, value);
                 refreshLayout(true);
             }
         }

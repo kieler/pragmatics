@@ -15,13 +15,13 @@ package de.cau.cs.kieler.kiml.formats.graphml;
 
 import java.util.LinkedList;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.core.UnsupportedGraphException;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.graphdrawing.graphml.DocumentRoot;
 import org.graphdrawing.graphml.EdgeType;
 import org.graphdrawing.graphml.GraphMLFactory;
@@ -40,7 +40,7 @@ import de.cau.cs.kieler.kiml.formats.TransformationData;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow by msp
  */
-public class GraphMLExporter implements IGraphTransformer<KNode, DocumentRoot> {
+public class GraphMLExporter implements IGraphTransformer<ElkNode, DocumentRoot> {
 
     /** property for node, edge, and port identifiers. */
     private static final IProperty<String> PROP_ID = new Property<String>("graphmlExporter.id");
@@ -48,23 +48,20 @@ public class GraphMLExporter implements IGraphTransformer<KNode, DocumentRoot> {
     /**
      * {@inheritDoc}
      */
-    public void transform(final TransformationData<KNode, DocumentRoot> data) {
+    public void transform(final TransformationData<ElkNode, DocumentRoot> data) {
         // create identifiers for all nodes, edges, and ports
-        LinkedList<KNode> nodes = new LinkedList<KNode>();
+        LinkedList<ElkNode> nodes = new LinkedList<>();
         nodes.add(data.getSourceGraph());
         int nodeId = 0, edgeId = 0;
         do {
-            KNode node = nodes.remove();
-            node.getData(KShapeLayout.class).setProperty(PROP_ID,
-                    "n" + Integer.toString(nodeId++));
+            ElkNode node = nodes.remove();
+            node.setProperty(PROP_ID, "n" + Integer.toString(nodeId++));
             int portId = 0;
-            for (KPort port : node.getPorts()) {
-                port.getData(KShapeLayout.class).setProperty(PROP_ID,
-                        "p" + Integer.toString(portId++));
+            for (ElkPort port : node.getPorts()) {
+                port.setProperty(PROP_ID, "p" + Integer.toString(portId++));
             }
-            for (KEdge edge : node.getOutgoingEdges()) {
-                edge.getData(KEdgeLayout.class).setProperty(PROP_ID,
-                        "e" + Integer.toString(edgeId++));
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                edge.setProperty(PROP_ID, "e" + Integer.toString(edgeId++));
             }
             nodes.addAll(node.getChildren());
         } while (!nodes.isEmpty());
@@ -85,51 +82,60 @@ public class GraphMLExporter implements IGraphTransformer<KNode, DocumentRoot> {
      * @param parentNode a parent node
      * @param graph the corresponding GraphML graph
      */
-    public void transform(final KNode parentNode, final GraphType graph) {
-        for (KNode knode : parentNode.getChildren()) {
+    public void transform(final ElkNode parentNode, final GraphType graph) {
+        for (ElkNode elknode : parentNode.getChildren()) {
             // transform node
-            KShapeLayout knodeLayout = knode.getData(KShapeLayout.class);
-            String nodeId = knodeLayout.getProperty(PROP_ID);
+            String nodeId = elknode.getProperty(PROP_ID);
             NodeType graphmlNode = GraphMLFactory.eINSTANCE.createNodeType();
             graphmlNode.setId(nodeId);
             graph.getNode().add(graphmlNode);
             
-            for (KPort kport : knode.getPorts()) {
+            for (ElkPort elkport : elknode.getPorts()) {
                 // transform port
-                KShapeLayout kportLayout = kport.getData(KShapeLayout.class);
-                String portId = kportLayout.getProperty(PROP_ID);
+                String portId = elkport.getProperty(PROP_ID);
                 PortType graphmlPort = GraphMLFactory.eINSTANCE.createPortType();
                 graphmlPort.setName(portId);
                 graphmlNode.getPort().add(graphmlPort);
             }
             
-            for (KEdge kedge : knode.getOutgoingEdges()) {
+            for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elknode)) {
+                // make sure it's a proper edge that we support
+                if (!elkedge.isConnected() || elkedge.isHyperedge()) {
+                    throw new UnsupportedGraphException("Hyperedges are not supported.");
+                }
+                
+                ElkNode sourceNode =
+                        ElkGraphUtil.connectableShapeToNode(elkedge.getSources().get(0));
+                ElkNode targetNode =
+                        ElkGraphUtil.connectableShapeToNode(elkedge.getTargets().get(0));
+                ElkPort sourcePort =
+                        ElkGraphUtil.connectableShapeToPort(elkedge.getSources().get(0));
+                ElkPort targetPort =
+                        ElkGraphUtil.connectableShapeToPort(elkedge.getTargets().get(0));
+                
                 // transform edge
-                KEdgeLayout edgeLayout = kedge.getData(KEdgeLayout.class);
-                String edgeId = edgeLayout.getProperty(PROP_ID);
-                String sourceId = kedge.getSource().getData(KShapeLayout.class).getProperty(PROP_ID);
-                String targetId = kedge.getTarget().getData(KShapeLayout.class).getProperty(PROP_ID);
+                String edgeId = elkedge.getProperty(PROP_ID);
+                String sourceId = sourceNode.getProperty(PROP_ID);
+                String targetId = targetNode.getProperty(PROP_ID);
                 EdgeType graphmlEdge = GraphMLFactory.eINSTANCE.createEdgeType();
                 graphmlEdge.setId(edgeId);
                 graphmlEdge.setSource(sourceId);
                 graphmlEdge.setTarget(targetId);
-                if (kedge.getSourcePort() != null) {
-                    String sourcePortId = kedge.getSourcePort().getData(KShapeLayout.class)
-                            .getProperty(PROP_ID);
+                if (sourcePort != null) {
+                    String sourcePortId = sourcePort.getProperty(PROP_ID);
                     graphmlEdge.setSourceport(sourcePortId);
                 }
-                if (kedge.getTargetPort() != null) {
-                    String targetPortId = kedge.getTargetPort().getData(KShapeLayout.class)
-                            .getProperty(PROP_ID);
+                if (targetPort != null) {
+                    String targetPortId = targetPort.getProperty(PROP_ID);
                     graphmlEdge.setTargetport(targetPortId);
                 }
                 graph.getEdge().add(graphmlEdge);
             }
             
-            if (!knode.getChildren().isEmpty()) {
+            if (!elknode.getChildren().isEmpty()) {
                 // transform subgraph
                 GraphType subgraph = GraphMLFactory.eINSTANCE.createGraphType();
-                transform(knode, subgraph);
+                transform(elknode, subgraph);
                 graphmlNode.setGraph(subgraph);
             }
         }
@@ -138,7 +144,7 @@ public class GraphMLExporter implements IGraphTransformer<KNode, DocumentRoot> {
     /**
      * {@inheritDoc}
      */
-    public void transferLayout(final TransformationData<KNode, DocumentRoot> data) {
+    public void transferLayout(final TransformationData<ElkNode, DocumentRoot> data) {
         throw new UnsupportedOperationException("Layout transfer is not supported for GraphML export.");
     }
 

@@ -17,10 +17,9 @@ import org.adaptagrams.ConnDirFlag;
 import org.adaptagrams.Router;
 import org.adaptagrams.RoutingOption;
 import org.adaptagrams.RoutingParameter;
-
-import de.cau.cs.kieler.core.properties.IProperty;
-import de.cau.cs.kieler.core.properties.IPropertyHolder;
-import de.cau.cs.kieler.core.properties.Property;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.IPropertyHolder;
+import org.eclipse.elk.graph.properties.Property;
 
 /**
  * Specification of layout options for the libavoid {@link Router}.

@@ -14,9 +14,8 @@ package de.cau.cs.kieler.kiml.grana;
 
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.emf.ecore.EObject;
@@ -35,16 +34,15 @@ public interface IComparingAnalysis extends IAnalysis {
     /**
      * {@inheritDoc}
      */
-    default Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    default Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
 
         assert parentNode.getChildren().size() == 2;
 
-        KNode first = parentNode.getChildren().get(0);
-        KNode second = parentNode.getChildren().get(1);
+        ElkNode first = parentNode.getChildren().get(0);
+        ElkNode second = parentNode.getChildren().get(1);
 
-        Map<EObject, EObject> elementMapping =
-                parentNode.getData(KLayoutData.class).getProperty(ELEMENT_MAPPING);
+        Map<EObject, EObject> elementMapping = parentNode.getProperty(ELEMENT_MAPPING);
 
         return doAnalysis(first, second, elementMapping, context, progressMonitor);
     }
@@ -63,9 +61,9 @@ public interface IComparingAnalysis extends IAnalysis {
      * @param progressMonitor
      *            a progress monitor
      * @return the result of
-     *         {@link #doAnalysis(KNode, KNode, AnalysisContext, IKielerProgressMonitor)}
+     *         {@link #doAnalysis(ElkNode, ElkNode, AnalysisContext, IKielerProgressMonitor)}
      */
-    Object doAnalysis(final KNode first, final KNode second, final Map<EObject, EObject> mapping,
-            final AnalysisContext context, final IElkProgressMonitor progressMonitor);
+    Object doAnalysis(ElkNode first, ElkNode second, Map<EObject, EObject> mapping,
+            AnalysisContext context, IElkProgressMonitor progressMonitor);
 
 }

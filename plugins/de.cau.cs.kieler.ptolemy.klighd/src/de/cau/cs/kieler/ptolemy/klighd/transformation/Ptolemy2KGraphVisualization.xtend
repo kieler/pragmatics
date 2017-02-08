@@ -458,20 +458,20 @@ class Ptolemy2KGraphVisualization {
         val index = port.getProperty(CoreOptions::PORT_INDEX)
         switch portSide {
             case PortSide::NORTH: {
-                port.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0f)
+                port.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0.0)
             }
             case PortSide::SOUTH: {
-                port.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0f)
+                port.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0.0)
                 port.setProperty(CoreOptions::PORT_INDEX, -index);
             }
             case PortSide::EAST: {
-                port.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0f)
+                port.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0.0)
                 if (!port.markedAsModalModelPort) {
                     port.setProperty(CoreOptions::PORT_ANCHOR, new KVector(7, 3.5))
                 }
             }
             case PortSide::WEST: {
-                port.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0f)
+                port.setProperty(CoreOptions::PORT_BORDER_OFFSET, 0.0)
                 if (!port.markedAsModalModelPort) {
                     port.setProperty(CoreOptions::PORT_ANCHOR, new KVector(0, 3.5))
                 }

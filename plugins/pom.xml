@@ -22,11 +22,13 @@
     <!--<module>de.cau.cs.kieler.core.kgraph.text</module>-->
     <!--<module>de.cau.cs.kieler.core.kgraph.text.ui</module>-->
     <module>de.cau.cs.kieler.core.kivi</module>
+    <module>de.cau.cs.kieler.formats.kgraph</module>
+    <module>de.cau.cs.kieler.graphs.klighd</module>
     <module>de.cau.cs.kieler.kgraph.text</module>
     <module>de.cau.cs.kieler.kgraph.text.ide</module>
     <module>de.cau.cs.kieler.kgraph.text.ui</module>
-    <module>de.cau.cs.kieler.kiml.config.text</module>
-    <module>de.cau.cs.kieler.kiml.config.text.ui</module>
+    <!-- <module>de.cau.cs.kieler.kiml.config.text</module> -->
+    <!-- <module>de.cau.cs.kieler.kiml.config.text.ui</module> -->
     <module>de.cau.cs.kieler.kiml.export</module>
     <module>de.cau.cs.kieler.kiml.formats</module>
     <module>de.cau.cs.kieler.kiml.formats.dot</module>
@@ -35,15 +37,14 @@
     <module>de.cau.cs.kieler.kiml.formats.json</module>
     <module>de.cau.cs.kieler.kiml.formats.ogml</module>
     <module>de.cau.cs.kieler.kiml.formats.svg</module>
-    <module>de.cau.cs.kieler.kiml.grana</module>
-    <module>de.cau.cs.kieler.kiml.grana.headless</module>
-    <module>de.cau.cs.kieler.kiml.grana.text</module>
-    <module>de.cau.cs.kieler.kiml.grana.text.ui</module>
+    <!-- <module>de.cau.cs.kieler.kiml.grana</module> -->
+    <!-- <module>de.cau.cs.kieler.kiml.grana.text</module> -->
+    <!-- <module>de.cau.cs.kieler.kiml.grana.text.ui</module> -->
     <module>de.cau.cs.kieler.kiml.libavoid</module>
     <module>de.cau.cs.kieler.kiml.ogdf</module>
     <module>de.cau.cs.kieler.klay.planar</module>
     <module>de.cau.cs.kieler.klighd</module>
-    <module>de.cau.cs.kieler.klighd.examples</module>
+    <module>de.cau.cs.kieler.klighd.incremental</module>
     <module>de.cau.cs.kieler.klighd.kivi</module>
     <module>de.cau.cs.kieler.klighd.kgraph</module>
     <module>de.cau.cs.kieler.klighd.krendering</module>
@@ -57,7 +58,6 @@
     <module>de.cau.cs.kieler.klighd.ui.emf</module>
     <module>de.cau.cs.kieler.klighd.ui.view</module>
     <module>de.cau.cs.kieler.klighd.ui.wizard</module>
-    <module>de.cau.cs.kieler.klighd.xtext</module>
     <module>de.cau.cs.kieler.kwebs.server</module>
     <module>de.cau.cs.kieler.ptolemy.klighd</module>
     <module>de.cau.cs.kieler.web.statistics</module>

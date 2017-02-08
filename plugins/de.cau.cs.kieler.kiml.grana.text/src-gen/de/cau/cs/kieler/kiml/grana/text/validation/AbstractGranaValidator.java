@@ -7,14 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.emf.ecore.EPackage;
 
-public class AbstractGranaValidator extends org.eclipse.xtext.validation.AbstractDeclarativeValidator {
+public class AbstractGranaValidator extends org.eclipse.elk.graph.text.validation.ElkGraphValidator {
 
 	@Override
 	protected List<EPackage> getEPackages() {
-	    List<EPackage> result = new ArrayList<EPackage>();
+	    List<EPackage> result = new ArrayList<EPackage>(super.getEPackages());
 	    result.add(de.cau.cs.kieler.kiml.grana.text.grana.GranaPackage.eINSTANCE);
-	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://elk.eclipse.org/KLayoutData"));
-	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://elk.eclipse.org/KGraph"));
+	    result.add(EPackage.Registry.INSTANCE.getEPackage("http://www.eclipse.org/elk/ElkGraph"));
 		return result;
 	}
 }

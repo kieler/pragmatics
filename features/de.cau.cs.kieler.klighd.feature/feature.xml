@@ -2,7 +2,7 @@
 <feature
       id="de.cau.cs.kieler.klighd.feature"
       label="KIELER Lightweight Diagrams Runtime"
-      version="0.11.3.qualifier"
+      version="0.42.0.qualifier"
       provider-name="Kiel University"
       plugin="de.cau.cs.kieler.klighd">
 
@@ -269,6 +269,13 @@ litigation.
 
    <plugin
          id="de.cau.cs.kieler.klighd.krendering.extensions"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="de.cau.cs.kieler.klighd.incremental"
          download-size="0"
          install-size="0"
          version="0.0.0"

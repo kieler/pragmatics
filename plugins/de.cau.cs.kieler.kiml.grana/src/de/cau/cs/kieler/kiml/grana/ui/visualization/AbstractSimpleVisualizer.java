@@ -45,6 +45,5 @@ public abstract class AbstractSimpleVisualizer<S> implements
      *            the analysis result
      * @return the visualization result
      */
-    public abstract S visualize(final AnalysisData analysis,
-            final Object result);
+    public abstract S visualize(AnalysisData analysis, Object result);
 }

@@ -14,24 +14,21 @@
 package de.cau.cs.kieler.kiml.export;
 
 import java.io.IOException;
-import java.util.Collections;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.elk.core.util.WrappedException;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
 import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
 import de.cau.cs.kieler.kiml.formats.TransformationData;
 
 /**
- *  This class is responsible for transforming and exporting graphs from graphical diagrams.
+ * This class is responsible for transforming and exporting graphs from graphical diagrams.
  * 
  * @author wah
  * @author msp
@@ -42,21 +39,22 @@ public class GraphFileHandler {
     /**
      * Perform the actual graph export.
      * 
-     * @param kgraph a graph
+     * @param elkgraph a graph
      * @param transHandler the transformation handler
      * @return the exported graph
      */
-    private static <T> String performExport(final KNode kgraph,
+    private static <T> String performExport(final ElkNode elkgraph,
             final IGraphFormatHandler<T> transHandler) {
-        TransformationData<KNode, T> transData = new TransformationData<KNode, T>();
-        transData.setSourceGraph(kgraph);
-        IGraphTransformer<KNode, T> transformer = transHandler.getExporter();
+        
+        TransformationData<ElkNode, T> transData = new TransformationData<ElkNode, T>();
+        transData.setSourceGraph(elkgraph);
+        IGraphTransformer<ElkNode, T> transformer = transHandler.getExporter();
         transformer.transform(transData);
         return transHandler.serialize(transData);
     }
     
     /** The source file to export.  */
-    private IPath sourceFile;
+    private IFile sourceFile;
     /** The target format to export file into. */
     private GraphFormatData targetFormat;
     /** The target directory to export file into. */
@@ -71,7 +69,7 @@ public class GraphFileHandler {
      * @param targetDirectory
      *            the target directory
      */
-    public GraphFileHandler(final IPath sourceFile, final GraphFormatData targetFormat,
+    public GraphFileHandler(final IFile sourceFile, final GraphFormatData targetFormat,
             final IPath targetDirectory) {
         super();
         this.sourceFile = sourceFile;
@@ -97,7 +95,7 @@ public class GraphFileHandler {
      * @return the Workspace targetIPath
      */
     public IPath getWorkspaceTarget() {
-        String sourceFileName = sourceFile.toFile().getName();
+        String sourceFileName = sourceFile.getFullPath().toFile().getName();
         String extension = targetFormat.getExtensions()[0];
         // get the last dot position
         int dotPos = sourceFileName.lastIndexOf(".");
@@ -111,28 +109,18 @@ public class GraphFileHandler {
     /**
      * Retrieve a graph from the selected file.
      * 
-     * @return the KGraph
+     * @return the ELK Graph
      */
-    private KNode retreiveGraph() {
-        // load the notation diagram element
-        URI uri = URI.createPlatformResourceURI(sourceFile.toString(), true);
-        ResourceSet resourceSet = new ResourceSetImpl();
-        final Resource resource = resourceSet.createResource(uri);
+    private ElkNode retrieveGraph() {
         try {
-            resource.load(Collections.emptyMap());
-        } catch (IOException e) {
+            ElkNode[] graphs = GraphFormatsService.getInstance().loadElkGraph(sourceFile);
+            if (graphs.length == 0) {
+                throw new IllegalArgumentException(
+                        "The selected file does not contain a supported format.");
+            }
+            return graphs[0];
+        } catch (IOException | CoreException e) {
             throw new WrappedException(e);
-        }
-        if (resource.getContents().isEmpty()) {
-            throw new IllegalArgumentException("The selected file is empty.");
-        }
-
-        EObject content = resource.getContents().get(0);
-        if (content instanceof KNode) {
-            return (KNode) content;
-        } else {
-            throw new IllegalArgumentException(
-                    "The selected file does not contain a supported format.");
         }
     }
 
@@ -142,7 +130,7 @@ public class GraphFileHandler {
      * @return the string value from the converted graph
      */
     public String graphToString() {
-        KNode graph = retreiveGraph();
+        ElkNode graph = retrieveGraph();
         return performExport(graph, targetFormat.getHandler());
     }
 
