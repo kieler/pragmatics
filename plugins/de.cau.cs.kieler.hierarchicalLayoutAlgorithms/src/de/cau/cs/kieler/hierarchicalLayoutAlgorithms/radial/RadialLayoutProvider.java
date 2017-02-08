@@ -4,45 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalEdgeRouting;
-import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvider;
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalUtil;
 
 public class RadialLayoutProvider extends AbstractLayoutProvider {
-	/** default value for spacing between nodes. */
-	private static final float DEFAULT_SPACING = 15.0f;
-	// private ArrayList<Float> layerSize;
 	private double radius;
 
 	@Override
-	public void layout(KNode layoutGraph, IElkProgressMonitor progressMonitor) {
+	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		progressMonitor.begin("Simple layouter", 1);
-		KShapeLayout parentLayout = layoutGraph.getData(KShapeLayout.class);
 
-		float objectSpacing = parentLayout.getProperty(CoreOptions.SPACING_NODE);
-		if (objectSpacing < 0) {
-			objectSpacing = DEFAULT_SPACING;
-		}
+		ElkNode root = HierarchicalUtil.findRoot(layoutGraph);
 
-		float borderSpacing = parentLayout.getProperty(CoreOptions.SPACING_BORDER);
-		if (borderSpacing < 0) {
-			borderSpacing = DEFAULT_SPACING;
-		}
-		KNode root = HierarchicalUtil.findRoot(layoutGraph);
-
-		List<KNode> rootLayer = new ArrayList<>();
+		List<ElkNode> rootLayer = new ArrayList<>();
 		rootLayer.add(root);
 
 		// pre-calculate the size of each layer
 		// layerSize = new ArrayList<>();
 		// float size = 0;
-		// for (List<KNode> layer : layers) {
+		// for (List<ElkNode> layer : layers) {
 		// layerSize.add(size);
 		// size += findBiggestNode(layer);
 		// size += objectSpacing;
@@ -63,11 +47,10 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 
 	double offset = 0;
 
-	private void calcPos(KNode node, double currentRadius, double minAlpha, double maxAlpha) {
+	private void calcPos(ElkNode node, double currentRadius, double minAlpha, double maxAlpha) {
 
 		double alphaPoint = (minAlpha + maxAlpha) / 2 + offset;
 
-		KShapeLayout shape = node.getData(KShapeLayout.class);
 		// double size = layerSize.get(layer);
 
 		// x=r*sinθ, y=r*cosθ
@@ -82,16 +65,16 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 			yPos = (float) (currentRadius * Math.cos(alphaPoint));
 		}
 
-		shape.setXpos(xPos);
-		shape.setYpos(yPos);
+		node.setX(xPos);
+		node.setY(yPos);
 
-		centerNodesOnRadi(shape, xPos, yPos);
+		centerNodesOnRadi(node, xPos, yPos);
 		// shiftClosestEdgeToRadi(shape, xPos, yPos);
 
 		calculateChildrenWedgeByLeafs(node, currentRadius+radius, minAlpha, maxAlpha);
 	}
 
-	private void calculateChildrenWedgeByLeafs(KNode node, double currentRadius, double minAlpha, double maxAlpha) {
+	private void calculateChildrenWedgeByLeafs(ElkNode node, double currentRadius, double minAlpha, double maxAlpha) {
 		double numberOfLeafs = HierarchicalUtil.getNumberOfLeafs(node);
 		double tau = 2 * Math.acos(currentRadius / currentRadius + radius);
 		double s;
@@ -104,19 +87,18 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 			s = (maxAlpha - minAlpha) / numberOfLeafs;
 			alpha = minAlpha;
 		}
-		List<KNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
-		for (KNode child : successors) {
+		List<ElkNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
+		for (ElkNode child : successors) {
 			int numberOfChildLeafs = HierarchicalUtil.getNumberOfLeafs(child);
 			calcPos(child, currentRadius, alpha, alpha + s * numberOfChildLeafs);
 			alpha += s * numberOfChildLeafs;
 		}
 	}
 
-	private void calculateChildrenWedgeBySize(KNode node, double currentRadius, double minAlpha, double maxAlpha) {
+	private void calculateChildrenWedgeBySize(ElkNode node, double currentRadius, double minAlpha, double maxAlpha) {
 
-		List<KNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
-		for (KNode child : successors) {
-			KShapeLayout shapeNode = child.getData(KShapeLayout.class);
+		List<ElkNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
+		for (ElkNode child : successors) {
 
 			double minxPos = currentRadius * Math.sin(minAlpha);
 			if (minxPos == 0) {
@@ -126,7 +108,7 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 
 			double alpha = 0;
 			if (minAlpha + offset < 0.7854) {// 45°
-				float height = shapeNode.getHeight();
+				double height = child.getHeight();
 				minyPos += height;
 				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
 				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(height, 2))
@@ -134,20 +116,20 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 
 			} else if (minAlpha + offset < 2.3562) {// 135°
 
-				float height = shapeNode.getWidth();
+				double height = child.getWidth();
 				minyPos += height;
 				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
 				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(height, 2))
 						/ (2 * distanceToOrigin * currentRadius));
 			} else if (minAlpha + offset < 3.927) {// 225°
-				float height = shapeNode.getHeight();
+				double height = child.getHeight();
 				minyPos += height;
 				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
 				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(height, 2))
 						/ (2 * distanceToOrigin * currentRadius));
 
 			} else if (minAlpha + offset < 5.4978) {// 315°
-				float height = shapeNode.getWidth();
+				double height = child.getWidth();
 				minyPos += height;
 				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
 				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(height, 2))
@@ -159,29 +141,27 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		}
 	}
 
-	private double calculateOffset(KNode node, double currentRadius, float xPos, float yPos) {
-		List<KEdge> edges = node.getIncomingEdges();
-		KNode parent = null;
-		for (KEdge edge : edges) {
+	private double calculateOffset(ElkNode node, double currentRadius, float xPos, float yPos) {
+		List<ElkEdge> edges = node.getIncomingEdges();
+		ElkNode parent = null;
+		for (ElkEdge edge : edges) {
 			if (!node.getChildren().contains(edge.getSource())) {
 				parent = edge.getSource();
 			}
 		}
-		KNode innerNode = HierarchicalUtil.getOriginalNode(parent, node);
+		ElkNode innerNode = HierarchicalUtil.getOriginalNode(parent, node);
 
 		// center of the node, as center of the polar coordinates
-		KShapeLayout parentShape = parent.getData(KShapeLayout.class);
-		float centerX = parentShape.getXpos(); // + nodeShape.getWidth()/2;
-		float centerY = parentShape.getYpos(); // + nodeShape.getHeight()/2;
+		double centerX = parent.getX(); // + nodeShape.getWidth()/2;
+		double centerY = parent.getY(); // + nodeShape.getHeight()/2;
 
-		KShapeLayout shapeInnerNode = innerNode.getData(KShapeLayout.class);
-		float innerX = shapeInnerNode.getXpos() + centerX;
-		float innerY = shapeInnerNode.getYpos() + centerY;
+		double innerX = innerNode.getX() + centerX;
+		double innerY = innerNode.getY() + centerY;
 
 		double distanceOriginToInnerNode = Math.sqrt(innerX * innerX + innerY * innerY);
 
-		float distanceX = xPos - innerX;
-		float distanceY = yPos - innerY;
+		double distanceX = xPos - innerX;
+		double distanceY = yPos - innerY;
 		double distanceNodeToInnerNode = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
 
 		double alpha = Math.acos((Math.pow(distanceOriginToInnerNode, 2) + Math.pow(currentRadius, 2)
@@ -190,65 +170,64 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		return alpha;
 	}
 
-	private void centerNodesOnRadi(KShapeLayout shape, float xPos, float yPos) {
-		xPos = xPos - shape.getWidth() / 2;
-		yPos = yPos - shape.getHeight() / 2;
+	private void centerNodesOnRadi(ElkNode node, double xPos, double yPos) {
+		xPos = xPos - node.getWidth() / 2;
+		yPos = yPos - node.getHeight() / 2;
 
-		shape.setXpos(xPos);
-		shape.setYpos(yPos);
+		node.setX(xPos);
+		node.setY(yPos);
 	}
 
-	private void shiftClosestEdgeToRadi(KShapeLayout shape, float xPos, float yPos) {
+	private void shiftClosestEdgeToRadi(ElkNode node, float xPos, float yPos) {
 
 		// center root
 		if (xPos == 0 && yPos == 0) {
-			shape.setXpos(xPos - shape.getWidth() / 2);
-			shape.setYpos(yPos - shape.getHeight() / 2);
+			node.setX(xPos - node.getWidth() / 2);
+			node.setY(yPos - node.getHeight() / 2);
 		} else {
 
 			if (xPos < 0) {
 				if (yPos < 0) {
 					// lower left rectangle
 
-					shape.setXpos(xPos - shape.getWidth());
-					shape.setYpos(yPos);
+					node.setX(xPos - node.getWidth());
+					node.setY(yPos);
 				} else {
 					// upper left rectangle
-					shape.setXpos(xPos - shape.getWidth());
-					shape.setYpos(yPos + shape.getHeight());
+					node.setX(xPos - node.getWidth());
+					node.setY(yPos + node.getHeight());
 				}
 			} else {
 
 				if (yPos < 0) {
 					// lower right rectangle
 
-					shape.setXpos(xPos);
-					shape.setYpos(yPos);
+					node.setX(xPos);
+					node.setY(yPos);
 				} else {
 					// upper right rectangle
 
-					shape.setXpos(xPos);
-					shape.setYpos(yPos + shape.getHeight());
+					node.setX(xPos);
+					node.setY(yPos + node.getHeight());
 				}
 			}
 		}
 	}
 
-	private float findBiggestNodeInGraph(KNode graph) {
-		float biggestChildSize = 0;
+	private double findBiggestNodeInGraph(ElkNode graph) {
+		double biggestChildSize = 0;
 
-		for (KNode child : graph.getChildren()) {
-			KShapeLayout shape = child.getData(KShapeLayout.class);
+		for (ElkNode child : graph.getChildren()) {
 
-			float width = shape.getWidth();
-			float height = shape.getHeight();
-			float diameter = (float) Math.sqrt(width * width + height * height);
+			double width = child.getWidth();
+			double height = child.getHeight();
+			double diameter = (float) Math.sqrt(width * width + height * height);
 
 			if (biggestChildSize < diameter) {
 				biggestChildSize = diameter;
 			}
 
-			float biggestChild = findBiggestNodeInGraph(child);
+			double biggestChild = findBiggestNodeInGraph(child);
 			if (biggestChild > biggestChildSize) {
 				biggestChildSize = biggestChild;
 			}
@@ -258,48 +237,43 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 
 	private int nodeCounter = 0;
 
-	private double averageNodeSize(KNode graph) {
+	private double averageNodeSize(ElkNode graph) {
 		double size = 0;
 		nodeCounter++;
-		KShapeLayout shape = graph.getData(KShapeLayout.class);
-		double width = shape.getWidth();
-		double height = shape.getHeight();
+		double width = graph.getWidth();
+		double height = graph.getHeight();
 		size += (float) Math.sqrt(width * width + height * height);
-		for (KNode node : HierarchicalUtil.getSuccessor(graph)) {
+		for (ElkNode node : HierarchicalUtil.getSuccessor(graph)) {
 			size += averageNodeSize(node);
 		}
 
 		return size;
 	}
 
-	private void postProcess(KNode layoutGraph) {
+	private void postProcess(ElkNode layoutGraph) {
 		// calculate min size
-		KShapeLayout graphData = layoutGraph.getData(KShapeLayout.class);
-		float minHeight = 0;
-		float minXPos = 0;
-		for (KNode node : layoutGraph.getChildren()) {
-			KShapeLayout layoutData = node.getData(KShapeLayout.class);
-			minHeight = Math.min(minHeight, layoutData.getYpos());
-			minXPos = Math.min(minXPos, layoutData.getXpos());
+		double minHeight = 0;
+		double minXPos = 0;
+		for (ElkNode node : layoutGraph.getChildren()) {
+			minHeight = Math.min(minHeight, node.getY());
+			minXPos = Math.min(minXPos, node.getX());
 		}
 
 		// shift graph
-		for (KNode node : layoutGraph.getChildren()) {
-			KShapeLayout layoutData = node.getData(KShapeLayout.class);
-			layoutData.setXpos(layoutData.getXpos() - minXPos);
-			layoutData.setYpos(layoutData.getYpos() - minHeight);
+		for (ElkNode node : layoutGraph.getChildren()) {
+			node.setX(node.getX() - minXPos);
+			node.setY(node.getY() - minHeight);
 		}
 
 		// calculate graph size
-		float height = 0;
-		float width = 0;
-		for (KNode node : layoutGraph.getChildren()) {
-			KShapeLayout layoutData = node.getData(KShapeLayout.class);
-			height = Math.max(height, layoutData.getYpos() + layoutData.getHeight());
-			width = Math.max(width, layoutData.getXpos() + layoutData.getWidth());
+		double height = 0;
+		double width = 0;
+		for (ElkNode node : layoutGraph.getChildren()) {
+			height = Math.max(height, node.getY() + node.getHeight());
+			width = Math.max(width, node.getX() + node.getWidth());
 		}
-		graphData.setHeight(height + 100);
-		graphData.setWidth(width + 100);
+		layoutGraph.setHeight(height + 100);
+		layoutGraph.setWidth(width + 100);
 	}
 
 }

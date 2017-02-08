@@ -10,9 +10,7 @@ bundle {
 algorithm radial(RadialLayoutProvider) {
     label "Radial Layouter"
     metadataClass RadialOptions
- 
-    supports org.eclipse.elk.spacing.border
-    supports org.eclipse.elk.spacing.node
+    
     supports hierarchicalID
 }
 
