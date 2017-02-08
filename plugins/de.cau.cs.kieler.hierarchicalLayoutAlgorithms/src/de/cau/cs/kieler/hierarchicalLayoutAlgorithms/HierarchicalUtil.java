@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 public class HierarchicalUtil {
@@ -21,16 +19,9 @@ public class HierarchicalUtil {
 	public static List<ElkNode> getSuccessor(ElkNode node) {
 		List<ElkNode> children = new ArrayList<>();
 		for (ElkEdge outgoingEdge : ElkGraphUtil.allOutgoingEdges(node)) {
-			ElkNode target;
-			for (ElkConnectableShape shape : outgoingEdge.getTargets()) {
-				if (shape instanceof ElkPort) {
-					target = ((ElkPort) outgoingEdge).getParent();
-				} else {
-					target = (ElkNode) shape;
-				}
-				if (!node.getChildren().contains(target)) {
-					children.add(target);
-				}
+			ElkNode target = ElkGraphUtil.connectableShapeToNode(outgoingEdge.getTargets().get(0));
+			if (!node.getChildren().contains(target)) {
+				children.add(target);
 			}
 		}
 		return children;
@@ -79,23 +70,11 @@ public class HierarchicalUtil {
 		List<ElkEdge> edges = new ArrayList<ElkEdge>();
 		for (ElkNode node : graph.getChildren()) {
 			for (ElkEdge outgoingEdge : ElkGraphUtil.allOutgoingEdges(node)) {
-				ElkNode n = null;
-				for (ElkConnectableShape shape : outgoingEdge.getTargets()) {
-					if (shape instanceof ElkPort) {
-						n = ((ElkPort) shape).getParent();
-					} else {
-						n = (ElkNode) shape;
-					}
-					if (graph.getChildren().contains(n)) {
-						edges.add(outgoingEdge);
-					}
+				ElkNode target = ElkGraphUtil.connectableShapeToNode(outgoingEdge.getTargets().get(0));
+				if (graph.getChildren().contains(target)) {
+					edges.add(outgoingEdge);
 				}
 			}
-//			for (ElkEdge edge : node.getOutgoingEdges()) {
-//				if (graph.getChildren().contains(edge.getTargets())) {
-//					edges.add(edge);
-//				}
-//			}
 		}
 		return edges;
 	}
