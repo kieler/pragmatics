@@ -140,6 +140,7 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="de.cau.cs.kieler.klighd"/>
+      <plugin id="de.cau.cs.kieler.klighd.kgraph"/>
       <plugin id="de.cau.cs.kieler.klighd.krendering"/>
       <plugin id="de.cau.cs.kieler.klighd.krendering.extensions"/>
       <plugin id="de.cau.cs.kieler.klighd.piccolo"/>
@@ -171,7 +172,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.core.expressions"/>
       <plugin id="org.eclipse.core.filebuffers"/>
       <plugin id="org.eclipse.core.filesystem"/>
-      <plugin id="org.eclipse.core.filesystem.java7" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.linux.x86" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.linux.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.filesystem.macosx" fragment="true"/>
@@ -185,7 +185,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
       <plugin id="org.eclipse.core.net.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.core.resources"/>
       <plugin id="org.eclipse.core.runtime"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
       <plugin id="org.eclipse.draw2d"/>
       <plugin id="org.eclipse.e4.core.commands"/>
       <plugin id="org.eclipse.e4.core.contexts"/>
