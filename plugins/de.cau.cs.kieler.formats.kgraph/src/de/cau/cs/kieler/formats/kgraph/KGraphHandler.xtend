@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.formats.kgraph
 
-import de.cau.cs.kieler.kiml.formats.AbstractEmfHandler
+import de.cau.cs.kieler.formats.AbstractEmfHandler
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 

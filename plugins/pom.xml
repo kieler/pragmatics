@@ -30,16 +30,16 @@
     <!-- <module>de.cau.cs.kieler.kiml.config.text</module> -->
     <!-- <module>de.cau.cs.kieler.kiml.config.text.ui</module> -->
     <module>de.cau.cs.kieler.kiml.export</module>
-    <module>de.cau.cs.kieler.kiml.formats</module>
-    <module>de.cau.cs.kieler.kiml.formats.dot</module>
-    <module>de.cau.cs.kieler.kiml.formats.gml</module>
-    <module>de.cau.cs.kieler.kiml.formats.graphml</module>
-    <module>de.cau.cs.kieler.kiml.formats.json</module>
-    <module>de.cau.cs.kieler.kiml.formats.ogml</module>
-    <module>de.cau.cs.kieler.kiml.formats.svg</module>
-    <!-- <module>de.cau.cs.kieler.kiml.grana</module> -->
-    <!-- <module>de.cau.cs.kieler.kiml.grana.text</module> -->
-    <!-- <module>de.cau.cs.kieler.kiml.grana.text.ui</module> -->
+    <module>de.cau.cs.kieler.formats</module>
+    <module>de.cau.cs.kieler.formats.dot</module>
+    <module>de.cau.cs.kieler.formats.gml</module>
+    <module>de.cau.cs.kieler.formats.graphml</module>
+    <module>de.cau.cs.kieler.formats.json</module>
+    <module>de.cau.cs.kieler.formats.ogml</module>
+    <module>de.cau.cs.kieler.formats.svg</module>
+    <!-- <module>de.cau.cs.kieler.grana</module> -->
+    <!-- <module>de.cau.cs.kieler.grana.text</module> -->
+    <!-- <module>de.cau.cs.kieler.grana.text.ui</module> -->
     <module>de.cau.cs.kieler.kiml.libavoid</module>
     <module>de.cau.cs.kieler.kiml.ogdf</module>
     <module>de.cau.cs.kieler.klay.planar</module>

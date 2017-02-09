@@ -21,11 +21,11 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.elk.core.util.WrappedException;
 import org.eclipse.elk.graph.ElkNode;
 
-import de.cau.cs.kieler.kiml.formats.GraphFormatData;
-import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
-import de.cau.cs.kieler.kiml.formats.IGraphFormatHandler;
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer;
-import de.cau.cs.kieler.kiml.formats.TransformationData;
+import de.cau.cs.kieler.formats.GraphFormatData;
+import de.cau.cs.kieler.formats.GraphFormatsService;
+import de.cau.cs.kieler.formats.IGraphFormatHandler;
+import de.cau.cs.kieler.formats.IGraphTransformer;
+import de.cau.cs.kieler.formats.TransformationData;
 
 /**
  * This class is responsible for transforming and exporting graphs from graphical diagrams.

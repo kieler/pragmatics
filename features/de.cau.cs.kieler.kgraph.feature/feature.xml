@@ -257,28 +257,28 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.formats.gml"
+         id="de.cau.cs.kieler.formats.gml"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.formats.json"
+         id="de.cau.cs.kieler.formats.json"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.formats.svg"
+         id="de.cau.cs.kieler.formats.svg"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <!-- <plugin
-         id="de.cau.cs.kieler.kiml.grana"
+         id="de.cau.cs.kieler.grana"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -292,14 +292,14 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.formats.graphml"
+         id="de.cau.cs.kieler.formats.graphml"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.formats.ogml"
+         id="de.cau.cs.kieler.formats.ogml"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -320,14 +320,14 @@ litigation.
          unpack="false"/> -->
 
    <!-- <plugin
-         id="de.cau.cs.kieler.kiml.grana.text"
+         id="de.cau.cs.kieler.grana.text"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/> -->
 
    <!-- <plugin
-         id="de.cau.cs.kieler.kiml.grana.text.ui"
+         id="de.cau.cs.kieler.grana.text.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -362,7 +362,7 @@ litigation.
          unpack="false"/>
 
    <plugin
-         id="de.cau.cs.kieler.kiml.formats"
+         id="de.cau.cs.kieler.formats"
          download-size="0"
          install-size="0"
          version="0.0.0"

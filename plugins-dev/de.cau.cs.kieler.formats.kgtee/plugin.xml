@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.formats.graphFormats">
+      <handler
+            class="de.cau.cs.kieler.formats.kgtee.KGTeeExecutableExtensionFactory:de.cau.cs.kieler.formats.kgtee.KGTeeFormatHandler"
+            extensions="kgtee"
+            id="de.cau.cs.kieler.formats.kgtee"
+            name="KGTee">
+      </handler>
+   </extension>
+
+</plugin>

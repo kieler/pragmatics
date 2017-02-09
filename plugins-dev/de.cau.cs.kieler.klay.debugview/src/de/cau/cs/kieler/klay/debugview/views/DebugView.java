@@ -58,7 +58,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.part.ViewPart;
 
-import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
+import de.cau.cs.kieler.formats.GraphFormatsService;
 import de.cau.cs.kieler.klay.debugview.KlayDebugViewPlugin;
 import de.cau.cs.kieler.klay.debugview.Messages;
 import de.cau.cs.kieler.klay.debugview.provider.FileTableContentProvider;

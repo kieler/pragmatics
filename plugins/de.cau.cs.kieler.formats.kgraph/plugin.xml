@@ -2,7 +2,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         point="de.cau.cs.kieler.kiml.formats.graphFormats">
+         point="de.cau.cs.kieler.formats.graphFormats">
       <handler
             class="de.cau.cs.kieler.formats.kgraph.KGraphHandler"
             description="Internally used graph format of the KIELER project. See http://rtsys.informatik.uni-kiel.de/confluence/x/U4EN"
