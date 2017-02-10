@@ -158,6 +158,11 @@ public class DotFormatHandler extends AbstractEmfHandler<GraphvizModel> {
         public <V> V getProperty(IProperty<V> property) {
             return wrappedData.getProperty(property);
         }
+        
+        @Override
+        public boolean hasProperty(IProperty<?> property) {
+            return wrappedData.hasProperty(property);
+        }
 
         @Override
         public IPropertyHolder copyProperties(IPropertyHolder holder) {
