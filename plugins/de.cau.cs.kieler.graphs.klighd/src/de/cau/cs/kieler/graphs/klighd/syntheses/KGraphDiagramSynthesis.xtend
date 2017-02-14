@@ -147,6 +147,7 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
         //  may carry persisted entries that have to be parsed before we build the view model.
         KGraphDataUtil.loadDataElements(result, PREDICATE_IS_KGRAPHDATA, KNOWN_PROPS)
         
+        
         // Evaluate the defaults property
         try {
             defaults = graph.getProperty(DEFAULTS_PROPERTY)
@@ -155,6 +156,8 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
             //  possibly yielding a class cast exception if neither 'true' nor 'false' are specified
             //  as value.
         }
+        
+        addHierarchicalOptions(result)
 
         // Enable label management
         addLabelManager(result)

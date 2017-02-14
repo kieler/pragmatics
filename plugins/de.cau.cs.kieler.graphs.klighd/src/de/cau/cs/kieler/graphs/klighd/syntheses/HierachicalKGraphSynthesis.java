@@ -58,6 +58,7 @@ public final class HierachicalKGraphSynthesis {
      *            nodes we extracted
      */
     public static void transform(final KNode diagram, final String layout) {
+        System.out.println("Hallo");
         parents = new HashMap<>();
 
         // put the inner nodes onto the highest hierarchy level
@@ -145,7 +146,7 @@ public final class HierachicalKGraphSynthesis {
                 // Remove the actions of the inner nodes so they are not expandable
                 KRenderingImpl rendering = child.getData(KRenderingImpl.class);
                 // TODO throws NullPointer?
-//                rendering.getActions().clear();
+                rendering.getActions().clear();
 
                 // TODO remove the actions of the copy, such that the root children are not
                 // expandable. If we simply remove the action of the copy, we can minimize the
@@ -196,6 +197,7 @@ public final class HierachicalKGraphSynthesis {
 
             // create an edge
             KEdge edge = KGraphUtil.createInitializedEdge();
+//            KEdge edge = KGraphFactoryImpl.eINSTANCE.createKEdge();
 
             edge.setSource(parent);
             edge.setTarget(child);

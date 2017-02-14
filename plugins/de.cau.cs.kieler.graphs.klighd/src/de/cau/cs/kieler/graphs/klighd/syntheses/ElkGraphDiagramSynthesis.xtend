@@ -36,7 +36,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         // Transform everything (don't use 'elkGraph.transform' :))
         val KNode result = exporter.transform(elkGraph)
 
-        addHierarchicalOptions(result)
+//        addHierarchicalOptions(result)
 
         // Enable label management
         addLabelManager(result)

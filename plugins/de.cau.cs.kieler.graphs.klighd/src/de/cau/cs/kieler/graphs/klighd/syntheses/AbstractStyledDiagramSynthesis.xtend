@@ -342,11 +342,30 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     protected def addHierarchicalOptions(KNode kgraph) {
         switch HIERARCHICAL.objectValue {
             case HIERARCHICAL_ON: {
-                // TODO fix startup with ON
-//                HierachicalKGraphSynthesis.transform(kgraph, "Tree")
+                switch HIERARCHICAL_LAYOUT.objectValue {
+                    case RADIAL: {
+                        HierachicalKGraphSynthesis.transform(kgraph, "Radial")
+                    }
+                    case STRESS: {
+                        HierachicalKGraphSynthesis.transform(kgraph, "Stress")
+                    }
+                    case GRID: {
+                        HierachicalKGraphSynthesis.transform(kgraph, "Grid Snap")
+                    }
+                    case TREE: {
+                        HierachicalKGraphSynthesis.transform(kgraph, "Tree")
+                    }
+                    case OVERLAP: {
+                        HierachicalKGraphSynthesis.transform(kgraph, "Overlap Removal")   
+                    }
+                    case H_LAYOUTER: {
+                        HierachicalKGraphSynthesis.transform(kgraph, "H-Layouter")
+                    }
+                }
             }
             case HIERARCHICAL_OFF: {
-                println("Hallo2")
+                // Do nothing
+//                println("Hallo2")
             }
         }
     }
