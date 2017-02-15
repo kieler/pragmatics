@@ -26,7 +26,7 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphTransformation
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphVisualization
 import org.eclipse.elk.alg.layered.options.LayeredOptions
-import org.eclipse.elk.alg.layered.p4nodes.NodePlacementStrategy
+import org.eclipse.elk.alg.layered.options.NodePlacementStrategy
 import org.eclipse.elk.core.labels.LabelManagementOptions
 import org.eclipse.elk.core.options.CoreOptions
 import org.ptolemy.moml.DocumentRoot
