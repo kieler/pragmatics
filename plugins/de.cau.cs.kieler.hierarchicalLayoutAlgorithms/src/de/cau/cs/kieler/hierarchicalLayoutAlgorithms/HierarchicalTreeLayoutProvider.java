@@ -25,22 +25,17 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 	private List<ElkNode> children = new ArrayList<ElkNode>();
 	private static List<ElkEdge> edges = new ArrayList<ElkEdge>();
-	private static Map<ElkNode, ElkNode> firstRunMap = new HashMap<ElkNode, ElkNode>();
-	private static Map<ElkNode, ElkNode> secondRunMap = new HashMap<ElkNode, ElkNode>();
 	private static ElkNode root;
 	private List<ElkNode> secondHierarchyNodes;
 	private int treeseperator;
-	private int maxDepth = 0;
-	private Map<Integer, Integer> firstOffset = new HashMap<Integer, Integer>();
-	private Map<Integer, Integer> secondOffset = new HashMap<Integer, Integer>();
+	private int totalDepth = 0;
+	private Map<ElkNode, Integer> nodeDepth = new HashMap<ElkNode, Integer>();
 
 	@Override
 	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		System.out.println("Hallo");
 		children.clear();
 		edges.clear();
-		firstRunMap.clear();
-		secondRunMap.clear();
 
 		children = layoutGraph.getChildren();
 		edges = HierarchicalUtil.getHierarchicalEdges(layoutGraph);
@@ -117,11 +112,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 		firstRunList.clear();
 		firstRunList.addAll(tempList);
-		for (int x = 0; i < maxDepth; i++) {
-			firstOffset.put(x, 0);
-		}
 
-		maxDepth = 0;
+//		maxDepth = 0;
 		tempList.clear();
 		first = false;
 		for (ElkNode node : secondRunList) {
@@ -130,12 +122,27 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 		secondRunList.clear();
 		secondRunList.addAll(tempList);
-		for (int x = 0; i < maxDepth; i++) {
+		
+		for (ElkNode node : children) {
+			int depth = HierarchicalUtil.getDepths(node, root);
+			if (totalDepth < depth) {
+				totalDepth = depth;
+			}
+			nodeDepth.put(node, depth);
+		}
+		
+		Map<Integer, Integer> firstOffset = new HashMap<Integer, Integer>();
+		for (int x = 0; i < totalDepth; i++) {
+			firstOffset.put(x, 0);
+		}
+		Map<Integer, Integer> secondOffset = new HashMap<Integer, Integer>();
+		for (int x = 0; i < totalDepth; i++) {
 			secondOffset.put(x, 0);
 		}
 		
 		// First run for upward tree
-		ElkNode firstRun = createTree(firstRunList, firstRunMap);
+		Map<ElkNode, ElkNode> firstRunMap = new HashMap<ElkNode, ElkNode>();
+		ElkNode firstRun = createTree(firstRunList, firstRunMap, firstOffset);
 		BasicProgressMonitor firstLayeredRun = new BasicProgressMonitor();
 		LayeredLayoutProvider layered = new LayeredLayoutProvider();
 		firstRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
@@ -150,7 +157,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		float smallestXPos = Float.MAX_VALUE;
 
 		// Second run for downward tree
-		ElkNode secondRun = createTree(secondRunList, secondRunMap);
+		Map<ElkNode, ElkNode> secondRunMap = new HashMap<ElkNode, ElkNode>();
+		ElkNode secondRun = createTree(secondRunList, secondRunMap, secondOffset);
 		BasicProgressMonitor secondLayeredRun = new BasicProgressMonitor();
 		secondRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
 		secondRun.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
@@ -240,24 +248,18 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 	}
 
-	private ElkNode createTree(List<ElkNode> nodes, Map<ElkNode, ElkNode> map) {
+	private ElkNode createTree(List<ElkNode> nodes, Map<ElkNode, ElkNode> map, Map<Integer, Integer> offset) {
 		ElkNode layoutRoot = ElkGraphUtil.createGraph();
 		ElkNode treeRoot = ElkGraphUtil.createNode(layoutRoot);
 		ElkUtil.resizeNode(treeRoot, root.getWidth(), root.getHeight(), false, false);
 		map.put(root, treeRoot);
-		int j = 0;
-		int i = 0;
 		for (ElkNode node : nodes) {
-			// TODO mit getDepth arbeiten
-			if (j <= 0) {
-				i++;
-				j = HierarchicalUtil.getSuccessor(node).size();
-			}
 			ElkNode tempNode = ElkGraphUtil.createNode(layoutRoot);
+			// TODO test
+			int i = offset.get(nodeDepth.get(node));
 			tempNode.setProperty(LayeredOptions.POSITION, new KVector(i, i));
 			ElkUtil.resizeNode(tempNode, node.getWidth(), node.getHeight(), false, false);
 			map.put(node, tempNode);
-			j--;
 		}
 
 		for (ElkNode node : nodes) {
@@ -284,7 +286,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			} else {
 				list.add(n);
 			}
-			// TODO depth
 			buildNodeList(n, list, comp, first);
 		}
 		// for (ElkNode n : HierarchicalUtil.getSuccessor(node)) {
