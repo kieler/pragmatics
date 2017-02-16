@@ -33,7 +33,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 	@Override
 	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
-		System.out.println("Hallo");
+//		System.out.println("Hallo");
 		children.clear();
 		edges.clear();
 
@@ -258,6 +258,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			// TODO test
 			int i = offset.get(nodeDepth.get(node));
 			tempNode.setProperty(LayeredOptions.POSITION, new KVector(i, i));
+			offset.put(nodeDepth.get(node), i + 10);
 			ElkUtil.resizeNode(tempNode, node.getWidth(), node.getHeight(), false, false);
 			map.put(node, tempNode);
 		}
