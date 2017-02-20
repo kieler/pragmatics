@@ -33,7 +33,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 	@Override
 	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
-//		System.out.println("Hallo");
+		// System.out.println("Hallo");
 		children.clear();
 		edges.clear();
 
@@ -113,7 +113,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		firstRunList.clear();
 		firstRunList.addAll(tempList);
 
-//		maxDepth = 0;
+		// maxDepth = 0;
 		tempList.clear();
 		first = false;
 		for (ElkNode node : secondRunList) {
@@ -122,7 +122,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 		secondRunList.clear();
 		secondRunList.addAll(tempList);
-		
+
 		for (ElkNode node : children) {
 			int depth = HierarchicalUtil.getDepths(node, root);
 			if (totalDepth < depth) {
@@ -130,16 +130,18 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			}
 			nodeDepth.put(node, depth);
 		}
-		
+		// System.out.println(nodeDepth);
+
 		Map<Integer, Integer> firstOffset = new HashMap<Integer, Integer>();
-		for (int x = 0; i < totalDepth; i++) {
+		for (int x = 1; x <= totalDepth; x++) {
 			firstOffset.put(x, 0);
 		}
+		// System.out.println("offset: " + firstOffset);
 		Map<Integer, Integer> secondOffset = new HashMap<Integer, Integer>();
-		for (int x = 0; i < totalDepth; i++) {
+		for (int x = 1; x <= totalDepth + 1; x++) {
 			secondOffset.put(x, 0);
 		}
-		
+
 		// First run for upward tree
 		Map<ElkNode, ElkNode> firstRunMap = new HashMap<ElkNode, ElkNode>();
 		ElkNode firstRun = createTree(firstRunList, firstRunMap, firstOffset);
@@ -148,7 +150,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		firstRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
 		firstRun.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
 		firstRun.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
-//		firstRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH, GreedySwitchType.OFF);
+		firstRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
 		firstRun.setProperty(LayeredOptions.DIRECTION, Direction.UP);
 		layered.layout(firstRun, firstLayeredRun);
 
@@ -163,14 +165,14 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		secondRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
 		secondRun.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
 		secondRun.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
-//		secondRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH, GreedySwitchType.OFF);
+		secondRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
 		secondRun.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
-		layered.layout(secondRun, secondLayeredRun);
+//		layered.layout(secondRun, secondLayeredRun);
 
 		float secondWidth = (float) secondRun.getWidth();
 
-		System.out.println("first: " + firstWidth);
-		System.out.println("second: " + secondWidth);
+		// System.out.println("first: " + firstWidth);
+		// System.out.println("second: " + secondWidth);
 
 		// Compute positions for first run
 		float xDisplacement = 0;
@@ -179,8 +181,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			layoutGraph.setWidth(secondWidth);
 		}
 
-		System.out.println("xDisp: " + xDisplacement);
-		System.out.println("smallest: " + smallestXPos);
+		// System.out.println("xDisp: " + xDisplacement);
+		// System.out.println("smallest: " + smallestXPos);
 		for (ElkNode node : children) {
 			if (firstRunMap.containsKey(node)) {
 				ElkNode newLayout = firstRunMap.get(node);
@@ -265,14 +267,26 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 		for (ElkNode node : nodes) {
 			ElkNode source = null;
-			for (ElkEdge edge : node.getIncomingEdges()) {
+			for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
 				if (edges.contains(edge)) {
-					source = map.get(edge.getSources());
+					source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
 					break;
 				}
 			}
+			// TODO funktioniert wahrscheinlich nicht.
 			ElkGraphUtil.createSimpleEdge(source, map.get(node));
 		}
+
+		// for (ElkNode node : nodes) {
+		// ElkNode source = null;
+		// for (ElkEdge edge : node.getIncomingEdges()) {
+		// if (edges.contains(edge)) {
+		// source = map.get(edge.getSources());
+		// break;
+		// }
+		// }
+		// ElkGraphUtil.createSimpleEdge(source, map.get(node));
+		// }
 
 		return layoutRoot;
 	}

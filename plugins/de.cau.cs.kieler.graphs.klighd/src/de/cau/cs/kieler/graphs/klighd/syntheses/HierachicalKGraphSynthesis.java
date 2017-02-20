@@ -58,7 +58,6 @@ public final class HierachicalKGraphSynthesis {
      *            nodes we extracted
      */
     public static void transform(final KNode diagram, final String layout) {
-        System.out.println("Hallo");
         parents = new HashMap<>();
 
         // put the inner nodes onto the highest hierarchy level
@@ -191,6 +190,7 @@ public final class HierachicalKGraphSynthesis {
      * Add the edges representing the Hierarchical connection.
      */
     private static void addHierarchicalEdges() {
+        System.out.println(parents);
         for (Entry<KNode, KNode> entry : parents.entrySet()) {
             KNode child = entry.getKey();
             KNode parent = entry.getValue();

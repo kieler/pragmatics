@@ -182,15 +182,17 @@ public class HierarchicalUtil {
 	public static int getDepths(ElkNode node, ElkNode root) {
 		int depth = 0;
 		ElkNode parent = null;
-		while(parent != root) {
-			for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
-				ElkNode source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
-				if (!node.getChildren().contains(source)) {
-					parent = source;
+		if (node != root) {
+			while (parent != root) {
+				for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
+					ElkNode source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
+					if (!node.getChildren().contains(source)) {
+						parent = source;
+					}
 				}
+				node = parent;
+				depth++;
 			}
-			node = parent;
-			depth++;
 		}
 		return depth;
 	}
