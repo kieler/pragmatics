@@ -85,7 +85,7 @@ public class HierarchicalEdgeRouting {
 							double xPos = root.getX() + child.getX() + child.getWidth() / 2;
 							double yPos = root.getY() + child.getY() + child.getHeight() / 2;
 
-							ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, true, true);
+							ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
 							section.setStartLocation(xPos, yPos);
 
 						}
