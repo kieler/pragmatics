@@ -51,6 +51,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// Compute the two Lists of nodes for the two runs of MrTree.
 		treeseperator = secondHierarchyNodes.size() / 2;
 		int i = 0;
+		// List of nodes that are used in the particular run
 		List<ElkNode> firstRunList = new ArrayList<ElkNode>();
 		List<ElkNode> secondRunList = new ArrayList<ElkNode>();
 		// TODO Secondary sort method according to width
@@ -143,31 +144,37 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 
 		// First run for upward tree
+		// Maps the original node to the temporary node
 		Map<ElkNode, ElkNode> firstRunMap = new HashMap<ElkNode, ElkNode>();
 		ElkNode firstRun = createTree(firstRunList, firstRunMap, firstOffset);
-		BasicProgressMonitor firstLayeredRun = new BasicProgressMonitor();
+		BasicProgressMonitor firstRunMonitor = new BasicProgressMonitor();
 		LayeredLayoutProvider layered = new LayeredLayoutProvider();
 		firstRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
 		firstRun.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
 		firstRun.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
 		firstRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
 		firstRun.setProperty(LayeredOptions.DIRECTION, Direction.UP);
-		layered.layout(firstRun, firstLayeredRun);
+		layered.layout(firstRun, firstRunMonitor);
 
 		// TODO Compute correct displacement for x (maybe fixed)
 		float firstWidth = (float) firstRun.getWidth();
-		float smallestXPos = Float.MAX_VALUE;
 
 		// Second run for downward tree
 		Map<ElkNode, ElkNode> secondRunMap = new HashMap<ElkNode, ElkNode>();
 		ElkNode secondRun = createTree(secondRunList, secondRunMap, secondOffset);
-		BasicProgressMonitor secondLayeredRun = new BasicProgressMonitor();
+		BasicProgressMonitor secondRunMonitor = new BasicProgressMonitor();
 		secondRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
 		secondRun.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
 		secondRun.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
 		secondRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
 		secondRun.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
-//		layered.layout(secondRun, secondLayeredRun);
+		layered.layout(secondRun, secondRunMonitor);
+		
+		ElkNode firstRoot = HierarchicalUtil.findRoot(firstRun);
+		ElkNode secondRoot = HierarchicalUtil.findRoot(secondRun);
+		System.out.println("firstgraph: " + ElkGraphUtil.allOutgoingEdges(firstRoot));
+		System.out.println("secondgraph: " + ElkGraphUtil.allOutgoingEdges(secondRoot));
+		System.out.println("originalgraph: " + ElkGraphUtil.allOutgoingEdges(root));
 
 		float secondWidth = (float) secondRun.getWidth();
 
@@ -250,19 +257,19 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 	}
 
-	private ElkNode createTree(List<ElkNode> nodes, Map<ElkNode, ElkNode> map, Map<Integer, Integer> offset) {
+	private ElkNode createTree(List<ElkNode> nodes, Map<ElkNode, ElkNode> nodeMap, Map<Integer, Integer> offset) {
 		ElkNode layoutRoot = ElkGraphUtil.createGraph();
 		ElkNode treeRoot = ElkGraphUtil.createNode(layoutRoot);
 		ElkUtil.resizeNode(treeRoot, root.getWidth(), root.getHeight(), false, false);
-		map.put(root, treeRoot);
+		nodeMap.put(root, treeRoot);
 		for (ElkNode node : nodes) {
 			ElkNode tempNode = ElkGraphUtil.createNode(layoutRoot);
 			// TODO test
 			int i = offset.get(nodeDepth.get(node));
-			tempNode.setProperty(LayeredOptions.POSITION, new KVector(i, i));
+//			tempNode.setProperty(LayeredOptions.POSITION, new KVector(i, i));
 			offset.put(nodeDepth.get(node), i + 10);
 			ElkUtil.resizeNode(tempNode, node.getWidth(), node.getHeight(), false, false);
-			map.put(node, tempNode);
+			nodeMap.put(node, tempNode);
 		}
 
 		for (ElkNode node : nodes) {
@@ -273,8 +280,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 					break;
 				}
 			}
-			// TODO funktioniert wahrscheinlich nicht.
-			ElkGraphUtil.createSimpleEdge(source, map.get(node));
+			// TODO funktioniert anscheinend nicht mehr.
+			ElkGraphUtil.createSimpleEdge(source, nodeMap.get(node));
 		}
 
 		// for (ElkNode node : nodes) {
