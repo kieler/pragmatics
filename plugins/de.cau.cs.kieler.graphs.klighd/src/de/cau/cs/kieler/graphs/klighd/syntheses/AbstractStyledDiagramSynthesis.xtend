@@ -365,7 +365,6 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
             }
             case HIERARCHICAL_OFF: {
                 // Do nothing
-//                println("Hallo2")
             }
         }
     }
