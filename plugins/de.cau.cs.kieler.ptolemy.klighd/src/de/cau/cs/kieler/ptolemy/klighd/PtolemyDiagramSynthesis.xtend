@@ -77,6 +77,10 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         ImmutableList::of("Smallest distance", "Comment alignment", "Find label name plain", 
                 "Find label name", "Find label name w/o two attached"), "Smallest distance")
                 
+    /** Whether to transform state machines. Currently the option is not exposed to the user 
+     * but can be set programatically as synthesis options, e.g. for batch export. */
+    public static val SynthesisOption TRANSFORM_STATES = SynthesisOption::createCheckOption(
+        "Transform states", true)
                 
     //////////////////////////////////////////////////////////////////////////////////////
     // Transformation
@@ -93,7 +97,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         val options = new Options(this)
         
         // Transform, optimize, and visualize
-        val kgraph = transformation.transform(model, this)
+        val kgraph = transformation.transform(model, this, options)
         optimization.optimize(kgraph, options, if (options.comments) commentsExtractor else null, this)
         visualization.visualize(kgraph, options)
         
@@ -142,7 +146,6 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         )
     }
     
-    
     /**
      * Container class for synthesis options.
      */
@@ -155,6 +158,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         public var boolean attachComments
         public var boolean flatten
         public var int compoundNodeAlpha
+        public var boolean transformStates
         
         new(PtolemyDiagramSynthesis s) {
             comments = s.getBooleanValue(SHOW_COMMENTS)
@@ -166,6 +170,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
             attachComments = s.getBooleanValue(COMMENT_ATTACHMENT_HEURISTIC)
             flatten = s.getBooleanValue(FLATTEN)
             compoundNodeAlpha = s.getIntValue(COMPOUND_NODE_ALPHA)
+            transformStates = s.getBooleanValue(TRANSFORM_STATES)
         }
     }
     

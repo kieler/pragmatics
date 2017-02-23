@@ -22,6 +22,7 @@ import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.ptolemy.klighd.PluginConstants
+import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.Options
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
@@ -85,6 +86,9 @@ class Ptolemy2KGraphTransformation {
     /** Interface to the Ptolemy library. */
     @Inject PtolemyInterface ptolemy
     
+    /** User-specified diagram synthesis options. */
+    private var Options options
+    
     /**
      * Flag indicating whether an instance of this transformation has already transformed something.
      * If so, it cannot be reused due to Xtend restrictions.
@@ -122,12 +126,13 @@ class Ptolemy2KGraphTransformation {
      * @return the transformed KGraph node.
      * @throws IllegalStateException if this class's instance has already been used.
      */
-    def KNode transform(DocumentRoot ptDocumentRoot, AbstractDiagramSynthesis<?> synthesis) {
+    def KNode transform(DocumentRoot ptDocumentRoot, AbstractDiagramSynthesis<?> synthesis, Options opts) {
         if (alreadyUsed) {
             throw new IllegalStateException("Transformations cannot be reused.")
         }
         
-        diagramSynthesis = synthesis
+        this.options = opts
+        this.diagramSynthesis = synthesis
         
         // A Ptolemy document can contain an entity or a class, so transform those and add the
         // transformed objects as the KGraph's children
@@ -168,9 +173,11 @@ class Ptolemy2KGraphTransformation {
             // entities as usual
             kNode.markAsStateMachineContainer()
             
-            kNode.addChildEntities(ptEntity.entity)
-            kNode.addChildRelations(ptEntity.relation)
-            kNode.addChildLinks(ptEntity.link)
+            if (options.transformStates) {
+                kNode.addChildEntities(ptEntity.entity)
+                kNode.addChildRelations(ptEntity.relation)
+                kNode.addChildLinks(ptEntity.link)
+            }
         } else if (ptEntity.class1.equals(ENTITY_CLASS_MODAL_MODEL)
             || ptEntity.class1.equals(ENTITY_CLASS_FSM_MODAL_MODEL)) {
             
@@ -179,7 +186,7 @@ class Ptolemy2KGraphTransformation {
             
             // The actual states are found in the state machine controller
             for (child : ptEntity.entity) {
-                if (child.name.equals(ENTITY_NAME_MODAL_CONTROLLER)) {
+                if (options.transformStates && child.name.equals(ENTITY_NAME_MODAL_CONTROLLER)) {
                     kNode.addChildEntities(child.entity)
                     kNode.addChildRelations(child.relation)
                     kNode.addChildLinks(child.link)
