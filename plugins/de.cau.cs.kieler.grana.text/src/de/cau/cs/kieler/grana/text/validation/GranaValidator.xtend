@@ -3,13 +3,12 @@
  */
 package de.cau.cs.kieler.grana.text.validation
 
-import org.eclipse.xtext.validation.Check
-import de.cau.cs.kieler.grana.text.grana.RangeJob
 import de.cau.cs.kieler.grana.AnalysisService
+import de.cau.cs.kieler.grana.text.grana.Analysis
 import de.cau.cs.kieler.grana.text.grana.GranaPackage
 import de.cau.cs.kieler.grana.text.grana.OutputType
-
-//import org.eclipse.xtext.validation.Check
+import de.cau.cs.kieler.grana.text.grana.RangeJob
+import org.eclipse.xtext.validation.Check
 
 /**
  * Custom validation rules. 
@@ -18,17 +17,12 @@ import de.cau.cs.kieler.grana.text.grana.OutputType
  */
 class GranaValidator extends AbstractGranaValidator {
 
-//  public static val INVALID_NAME = 'invalidName'
-//
-//	@Check
-//	def checkGreetingStartsWithCapital(Greeting greeting) {
-//		if (!Character.isUpperCase(greeting.name.charAt(0))) {
-//			warning('Name should start with a capital', 
-//					MyDslPackage.Literals.GREETING__NAME,
-//					INVALID_NAME)
-//		}
-//	}
-
+    @Check 
+    def checkAnalysisExists(Analysis analysis) {
+        if (AnalysisService.instance.getAnalysis(analysis.name) == null) {
+            error("Unknown analysis: " + analysis, GranaPackage.Literals.ANALYSIS__NAME)
+        }
+    }
 
     @Check
     def checkRangeAnalysisComponentExists(RangeJob job) {
@@ -70,4 +64,5 @@ class GranaValidator extends AbstractGranaValidator {
             
         }
     }
+
 }

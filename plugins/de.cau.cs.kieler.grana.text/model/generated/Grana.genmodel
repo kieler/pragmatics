@@ -4,8 +4,7 @@
     editorDirectory="/de.cau.cs.kieler.grana.text.editor/src" modelPluginID="de.cau.cs.kieler.grana.text"
     forceOverwrite="true" modelName="Grana" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     complianceLevel="6.0" copyrightFields="false" editPluginID="de.cau.cs.kieler.grana.text.edit"
-    editorPluginID="de.cau.cs.kieler.grana.text.editor" runtimeVersion="2.12"
-    usedGenPackages="platform:/resource/org.eclipse.elk.graph/model/elkgraph.genmodel#//graph">
+    editorPluginID="de.cau.cs.kieler.grana.text.editor" runtimeVersion="2.12" usedGenPackages="platform:/resource/org.eclipse.elk.graph/model/elkgraph.genmodel#//graph">
   <genPackages prefix="Grana" basePackage="de.cau.cs.kieler.grana.text" disposableProviderFactory="true"
       fileExtensions="grana" ecorePackage="Grana.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="Grana.ecore#//OutputType">
@@ -64,6 +63,7 @@
     <genClasses ecoreClass="Grana.ecore#//LocalResource">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//LocalResource/path"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//LocalResource/filter"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//LocalResource/recurse"/>
     </genClasses>
     <genClasses ecoreClass="Grana.ecore#//Output"/>
     <genClasses ecoreClass="Grana.ecore#//GlobalOutputRef">

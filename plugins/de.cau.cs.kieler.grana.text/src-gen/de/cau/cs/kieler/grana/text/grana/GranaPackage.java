@@ -738,13 +738,22 @@ public interface GranaPackage extends EPackage
   int LOCAL_RESOURCE__FILTER = RESOURCE_FEATURE_COUNT + 1;
 
   /**
+   * The feature id for the '<em><b>Recurse</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LOCAL_RESOURCE__RECURSE = RESOURCE_FEATURE_COUNT + 2;
+
+  /**
    * The number of structural features of the '<em>Local Resource</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int LOCAL_RESOURCE_FEATURE_COUNT = RESOURCE_FEATURE_COUNT + 2;
+  int LOCAL_RESOURCE_FEATURE_COUNT = RESOURCE_FEATURE_COUNT + 3;
 
   /**
    * The meta object id for the '{@link de.cau.cs.kieler.grana.text.grana.impl.OutputImpl <em>Output</em>}' class.
@@ -1357,6 +1366,17 @@ public interface GranaPackage extends EPackage
   EAttribute getLocalResource_Filter();
 
   /**
+   * Returns the meta object for the attribute '{@link de.cau.cs.kieler.grana.text.grana.LocalResource#isRecurse <em>Recurse</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Recurse</em>'.
+   * @see de.cau.cs.kieler.grana.text.grana.LocalResource#isRecurse()
+   * @see #getLocalResource()
+   * @generated
+   */
+  EAttribute getLocalResource_Recurse();
+
+  /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.grana.text.grana.Output <em>Output</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1865,6 +1885,14 @@ public interface GranaPackage extends EPackage
      * @generated
      */
     EAttribute LOCAL_RESOURCE__FILTER = eINSTANCE.getLocalResource_Filter();
+
+    /**
+     * The meta object literal for the '<em><b>Recurse</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LOCAL_RESOURCE__RECURSE = eINSTANCE.getLocalResource_Recurse();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.grana.text.grana.impl.OutputImpl <em>Output</em>}' class.

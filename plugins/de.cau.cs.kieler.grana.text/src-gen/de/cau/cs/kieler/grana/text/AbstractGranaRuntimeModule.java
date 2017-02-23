@@ -20,7 +20,7 @@ public abstract class AbstractGranaRuntimeModule extends org.eclipse.xtext.commo
 
 	@Override
 	public void configure(Binder binder) {
-		properties = tryBindProperties(binder, "de/cau/cs.kieler.grana/text/Grana.properties");
+		properties = tryBindProperties(binder, "de/cau/cs/kieler/grana/text/Grana.properties");
 		super.configure(binder);
 	}
 	

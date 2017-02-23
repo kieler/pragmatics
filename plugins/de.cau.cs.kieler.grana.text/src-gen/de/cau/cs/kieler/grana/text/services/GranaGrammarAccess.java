@@ -760,12 +760,14 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cFilterKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
 		private final Assignment cFilterAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cFilterSTRINGTerminalRuleCall_1_1_0 = (RuleCall)cFilterAssignment_1_1.eContents().get(0);
+		private final Assignment cRecurseAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final Keyword cRecurseRecurseKeyword_2_0 = (Keyword)cRecurseAssignment_2.eContents().get(0);
 		
 		//LocalResource:
-		//	path=STRING ('filter' filter=STRING);
+		//	path=STRING ('filter' filter=STRING) recurse?='recurse'?;
 		@Override public ParserRule getRule() { return rule; }
 
-		//path=STRING ('filter' filter=STRING)
+		//path=STRING ('filter' filter=STRING) recurse?='recurse'?
 		public Group getGroup() { return cGroup; }
 
 		//path=STRING
@@ -785,6 +787,12 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 		//STRING
 		public RuleCall getFilterSTRINGTerminalRuleCall_1_1_0() { return cFilterSTRINGTerminalRuleCall_1_1_0; }
+
+		//recurse?='recurse'?
+		public Assignment getRecurseAssignment_2() { return cRecurseAssignment_2; }
+
+		//'recurse'
+		public Keyword getRecurseRecurseKeyword_2_0() { return cRecurseRecurseKeyword_2_0; }
 	}
 
 	public class OutputElements extends AbstractParserRuleElementFinder {
@@ -1217,7 +1225,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//LocalResource:
-	//	path=STRING ('filter' filter=STRING);
+	//	path=STRING ('filter' filter=STRING) recurse?='recurse'?;
 	public LocalResourceElements getLocalResourceAccess() {
 		return pLocalResource;
 	}

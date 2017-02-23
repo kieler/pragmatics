@@ -11,6 +11,6 @@ public class GranaAntlrTokenFileProvider implements IAntlrTokenFileProvider {
 	@Override
 	public InputStream getAntlrTokenFile() {
 		ClassLoader classLoader = getClass().getClassLoader();
-    	return classLoader.getResourceAsStream("de/cau/cs.kieler.grana/text/parser/antlr/internal/InternalGrana.tokens");
+    	return classLoader.getResourceAsStream("de/cau/cs/kieler/grana/text/parser/antlr/internal/InternalGrana.tokens");
 	}
 }

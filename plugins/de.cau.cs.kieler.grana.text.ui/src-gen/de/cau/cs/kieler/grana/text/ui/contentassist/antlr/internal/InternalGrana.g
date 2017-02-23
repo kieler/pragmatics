@@ -4007,6 +4007,7 @@ rule__LocalResource__Group__1
     }
 :
 	rule__LocalResource__Group__1__Impl
+	rule__LocalResource__Group__2
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -4027,6 +4028,36 @@ rule__LocalResource__Group__1__Impl
 finally {
 	restoreStackSize(stackSize);
 }
+
+
+rule__LocalResource__Group__2
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+	rule__LocalResource__Group__2__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__LocalResource__Group__2__Impl
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getLocalResourceAccess().getRecurseAssignment_2()); }
+(rule__LocalResource__RecurseAssignment_2)?
+{ after(grammarAccess.getLocalResourceAccess().getRecurseAssignment_2()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
 
 
 
@@ -9928,6 +9959,29 @@ rule__LocalResource__FilterAssignment_1_1
 (
 { before(grammarAccess.getLocalResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0()); }
 	RULE_STRING{ after(grammarAccess.getLocalResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__LocalResource__RecurseAssignment_2
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getLocalResourceAccess().getRecurseRecurseKeyword_2_0()); }
+(
+{ before(grammarAccess.getLocalResourceAccess().getRecurseRecurseKeyword_2_0()); }
+
+	'recurse' 
+
+{ after(grammarAccess.getLocalResourceAccess().getRecurseRecurseKeyword_2_0()); }
+)
+
+{ after(grammarAccess.getLocalResourceAccess().getRecurseRecurseKeyword_2_0()); }
 )
 
 ;

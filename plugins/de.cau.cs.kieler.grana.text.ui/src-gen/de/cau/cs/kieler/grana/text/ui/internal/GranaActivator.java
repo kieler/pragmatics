@@ -23,7 +23,7 @@ import com.google.inject.Module;
  */
 public class GranaActivator extends AbstractUIPlugin {
 	
-	public static final String DE_CAU_CS_KIELER_KIML_GRANA_TEXT_GRANA = "de.cau.cs.kieler.grana.text.Grana";
+	public static final String DE_CAU_CS_KIELER_GRANA_TEXT_GRANA = "de.cau.cs.kieler.grana.text.Grana";
 	
 	private static final Logger logger = Logger.getLogger(GranaActivator.class);
 	
@@ -73,7 +73,7 @@ public class GranaActivator extends AbstractUIPlugin {
 	}
 
 	protected Module getRuntimeModule(String grammar) {
-		if (DE_CAU_CS_KIELER_KIML_GRANA_TEXT_GRANA.equals(grammar)) {
+		if (DE_CAU_CS_KIELER_GRANA_TEXT_GRANA.equals(grammar)) {
 			return new de.cau.cs.kieler.grana.text.GranaRuntimeModule();
 		}
 		
@@ -81,7 +81,7 @@ public class GranaActivator extends AbstractUIPlugin {
 	}
 	
 	protected Module getUiModule(String grammar) {
-		if (DE_CAU_CS_KIELER_KIML_GRANA_TEXT_GRANA.equals(grammar)) {
+		if (DE_CAU_CS_KIELER_GRANA_TEXT_GRANA.equals(grammar)) {
 			return new de.cau.cs.kieler.grana.text.ui.GranaUiModule(this);
 		}
 		

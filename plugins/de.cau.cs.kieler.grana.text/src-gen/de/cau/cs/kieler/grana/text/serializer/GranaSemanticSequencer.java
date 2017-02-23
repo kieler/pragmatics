@@ -313,19 +313,10 @@ public class GranaSemanticSequencer extends ElkGraphSemanticSequencer {
 	 *     LocalResource returns LocalResource
 	 *
 	 * Constraint:
-	 *     (path=STRING filter=STRING)
+	 *     (path=STRING filter=STRING recurse?='recurse'?)
 	 */
 	protected void sequence_LocalResource(ISerializationContext context, LocalResource semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GranaPackage.Literals.LOCAL_RESOURCE__PATH) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GranaPackage.Literals.LOCAL_RESOURCE__PATH));
-			if (transientValues.isValueTransient(semanticObject, GranaPackage.Literals.LOCAL_RESOURCE__FILTER) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GranaPackage.Literals.LOCAL_RESOURCE__FILTER));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getLocalResourceAccess().getPathSTRINGTerminalRuleCall_0_0(), semanticObject.getPath());
-		feeder.accept(grammarAccess.getLocalResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0(), semanticObject.getFilter());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	

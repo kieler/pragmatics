@@ -684,6 +684,16 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getLocalResource_Recurse()
+  {
+    return (EAttribute)localResourceEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getOutput()
   {
     return outputEClass;
@@ -875,6 +885,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     localResourceEClass = createEClass(LOCAL_RESOURCE);
     createEAttribute(localResourceEClass, LOCAL_RESOURCE__PATH);
     createEAttribute(localResourceEClass, LOCAL_RESOURCE__FILTER);
+    createEAttribute(localResourceEClass, LOCAL_RESOURCE__RECURSE);
 
     outputEClass = createEClass(OUTPUT);
 
@@ -996,6 +1007,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     initEClass(localResourceEClass, LocalResource.class, "LocalResource", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getLocalResource_Path(), ecorePackage.getEString(), "path", null, 0, 1, LocalResource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getLocalResource_Filter(), ecorePackage.getEString(), "filter", null, 0, 1, LocalResource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLocalResource_Recurse(), ecorePackage.getEBoolean(), "recurse", null, 0, 1, LocalResource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(outputEClass, Output.class, "Output", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

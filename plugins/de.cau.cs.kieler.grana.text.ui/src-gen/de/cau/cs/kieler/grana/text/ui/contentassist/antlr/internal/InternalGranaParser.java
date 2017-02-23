@@ -22,7 +22,7 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalGranaParser extends AbstractInternalContentAssistParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_SIGNED_INT", "RULE_FLOAT", "RULE_ID", "RULE_INT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'true'", "'false'", "'csv'", "'json'", "'globalResources'", "'globalOutputs'", "'execute'", "'job'", "'resources'", "'layoutoptions'", "'analyses'", "'output'", "'comparejob'", "'rangejob'", "'rangeoption'", "'rangeanalysis'", "'component'", "'rangeanalyses'", "'floatvalues'", "','", "'intvalues'", "'intrange'", "'to'", "'ref'", "'filter'", "'{'", "'}'", "'node'", "'label'", "':'", "'port'", "'layout'", "'['", "']'", "'position'", "'size'", "'edge'", "'->'", "'incoming'", "'outgoing'", "'start'", "'end'", "'bends'", "'|'", "'section'", "'.'", "'parallel'", "'all'", "'layoutBeforeAnalysis'", "'measureExecutionTime'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_SIGNED_INT", "RULE_FLOAT", "RULE_ID", "RULE_INT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'true'", "'false'", "'csv'", "'json'", "'globalResources'", "'globalOutputs'", "'execute'", "'job'", "'resources'", "'layoutoptions'", "'analyses'", "'output'", "'comparejob'", "'rangejob'", "'rangeoption'", "'rangeanalysis'", "'component'", "'rangeanalyses'", "'floatvalues'", "','", "'intvalues'", "'intrange'", "'to'", "'ref'", "'filter'", "'{'", "'}'", "'node'", "'label'", "':'", "'port'", "'layout'", "'['", "']'", "'position'", "'size'", "'edge'", "'->'", "'incoming'", "'outgoing'", "'start'", "'end'", "'bends'", "'|'", "'section'", "'.'", "'parallel'", "'all'", "'layoutBeforeAnalysis'", "'measureExecutionTime'", "'recurse'"
     };
     public static final int T__50=50;
     public static final int T__19=19;
@@ -55,6 +55,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
     public static final int T__24=24;
     public static final int T__25=25;
     public static final int T__62=62;
+    public static final int T__63=63;
     public static final int T__20=20;
     public static final int T__21=21;
     public static final int RULE_STRING=4;
@@ -11251,17 +11252,22 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group__1"
-    // InternalGrana.g:4004:1: rule__LocalResource__Group__1 : rule__LocalResource__Group__1__Impl ;
+    // InternalGrana.g:4004:1: rule__LocalResource__Group__1 : rule__LocalResource__Group__1__Impl rule__LocalResource__Group__2 ;
     public final void rule__LocalResource__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4008:1: ( rule__LocalResource__Group__1__Impl )
-            // InternalGrana.g:4009:2: rule__LocalResource__Group__1__Impl
+            // InternalGrana.g:4008:1: ( rule__LocalResource__Group__1__Impl rule__LocalResource__Group__2 )
+            // InternalGrana.g:4009:2: rule__LocalResource__Group__1__Impl rule__LocalResource__Group__2
             {
-            pushFollow(FOLLOW_2);
+            pushFollow(FOLLOW_29);
             rule__LocalResource__Group__1__Impl();
+
+            state._fsp--;
+
+            pushFollow(FOLLOW_2);
+            rule__LocalResource__Group__2();
 
             state._fsp--;
 
@@ -11284,21 +11290,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group__1__Impl"
-    // InternalGrana.g:4015:1: rule__LocalResource__Group__1__Impl : ( ( rule__LocalResource__Group_1__0 ) ) ;
+    // InternalGrana.g:4016:1: rule__LocalResource__Group__1__Impl : ( ( rule__LocalResource__Group_1__0 ) ) ;
     public final void rule__LocalResource__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4019:1: ( ( ( rule__LocalResource__Group_1__0 ) ) )
-            // InternalGrana.g:4020:1: ( ( rule__LocalResource__Group_1__0 ) )
+            // InternalGrana.g:4020:1: ( ( ( rule__LocalResource__Group_1__0 ) ) )
+            // InternalGrana.g:4021:1: ( ( rule__LocalResource__Group_1__0 ) )
             {
-            // InternalGrana.g:4020:1: ( ( rule__LocalResource__Group_1__0 ) )
-            // InternalGrana.g:4021:1: ( rule__LocalResource__Group_1__0 )
+            // InternalGrana.g:4021:1: ( ( rule__LocalResource__Group_1__0 ) )
+            // InternalGrana.g:4022:1: ( rule__LocalResource__Group_1__0 )
             {
              before(grammarAccess.getLocalResourceAccess().getGroup_1()); 
-            // InternalGrana.g:4022:1: ( rule__LocalResource__Group_1__0 )
-            // InternalGrana.g:4022:2: rule__LocalResource__Group_1__0
+            // InternalGrana.g:4023:1: ( rule__LocalResource__Group_1__0 )
+            // InternalGrana.g:4023:2: rule__LocalResource__Group_1__0
             {
             pushFollow(FOLLOW_2);
             rule__LocalResource__Group_1__0();
@@ -11330,17 +11336,108 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__LocalResource__Group__1__Impl"
 
 
+    // $ANTLR start "rule__LocalResource__Group__2"
+    // InternalGrana.g:4033:1: rule__LocalResource__Group__2 : rule__LocalResource__Group__2__Impl ;
+    public final void rule__LocalResource__Group__2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // InternalGrana.g:4037:1: ( rule__LocalResource__Group__2__Impl )
+            // InternalGrana.g:4038:2: rule__LocalResource__Group__2__Impl
+            {
+            pushFollow(FOLLOW_2);
+            rule__LocalResource__Group__2__Impl();
+
+            state._fsp--;
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__LocalResource__Group__2"
+
+
+    // $ANTLR start "rule__LocalResource__Group__2__Impl"
+    // InternalGrana.g:4044:1: rule__LocalResource__Group__2__Impl : ( ( rule__LocalResource__RecurseAssignment_2 )? ) ;
+    public final void rule__LocalResource__Group__2__Impl() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // InternalGrana.g:4048:1: ( ( ( rule__LocalResource__RecurseAssignment_2 )? ) )
+            // InternalGrana.g:4049:1: ( ( rule__LocalResource__RecurseAssignment_2 )? )
+            {
+            // InternalGrana.g:4049:1: ( ( rule__LocalResource__RecurseAssignment_2 )? )
+            // InternalGrana.g:4050:1: ( rule__LocalResource__RecurseAssignment_2 )?
+            {
+             before(grammarAccess.getLocalResourceAccess().getRecurseAssignment_2()); 
+            // InternalGrana.g:4051:1: ( rule__LocalResource__RecurseAssignment_2 )?
+            int alt42=2;
+            int LA42_0 = input.LA(1);
+
+            if ( (LA42_0==63) ) {
+                alt42=1;
+            }
+            switch (alt42) {
+                case 1 :
+                    // InternalGrana.g:4051:2: rule__LocalResource__RecurseAssignment_2
+                    {
+                    pushFollow(FOLLOW_2);
+                    rule__LocalResource__RecurseAssignment_2();
+
+                    state._fsp--;
+
+
+                    }
+                    break;
+
+            }
+
+             after(grammarAccess.getLocalResourceAccess().getRecurseAssignment_2()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__LocalResource__Group__2__Impl"
+
+
     // $ANTLR start "rule__LocalResource__Group_1__0"
-    // InternalGrana.g:4036:1: rule__LocalResource__Group_1__0 : rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1 ;
+    // InternalGrana.g:4067:1: rule__LocalResource__Group_1__0 : rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1 ;
     public final void rule__LocalResource__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4040:1: ( rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1 )
-            // InternalGrana.g:4041:2: rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1
+            // InternalGrana.g:4071:1: ( rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1 )
+            // InternalGrana.g:4072:2: rule__LocalResource__Group_1__0__Impl rule__LocalResource__Group_1__1
             {
-            pushFollow(FOLLOW_29);
+            pushFollow(FOLLOW_30);
             rule__LocalResource__Group_1__0__Impl();
 
             state._fsp--;
@@ -11369,17 +11466,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group_1__0__Impl"
-    // InternalGrana.g:4048:1: rule__LocalResource__Group_1__0__Impl : ( 'filter' ) ;
+    // InternalGrana.g:4079:1: rule__LocalResource__Group_1__0__Impl : ( 'filter' ) ;
     public final void rule__LocalResource__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4052:1: ( ( 'filter' ) )
-            // InternalGrana.g:4053:1: ( 'filter' )
+            // InternalGrana.g:4083:1: ( ( 'filter' ) )
+            // InternalGrana.g:4084:1: ( 'filter' )
             {
-            // InternalGrana.g:4053:1: ( 'filter' )
-            // InternalGrana.g:4054:1: 'filter'
+            // InternalGrana.g:4084:1: ( 'filter' )
+            // InternalGrana.g:4085:1: 'filter'
             {
              before(grammarAccess.getLocalResourceAccess().getFilterKeyword_1_0()); 
             match(input,37,FOLLOW_2); 
@@ -11406,14 +11503,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group_1__1"
-    // InternalGrana.g:4067:1: rule__LocalResource__Group_1__1 : rule__LocalResource__Group_1__1__Impl ;
+    // InternalGrana.g:4098:1: rule__LocalResource__Group_1__1 : rule__LocalResource__Group_1__1__Impl ;
     public final void rule__LocalResource__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4071:1: ( rule__LocalResource__Group_1__1__Impl )
-            // InternalGrana.g:4072:2: rule__LocalResource__Group_1__1__Impl
+            // InternalGrana.g:4102:1: ( rule__LocalResource__Group_1__1__Impl )
+            // InternalGrana.g:4103:2: rule__LocalResource__Group_1__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__LocalResource__Group_1__1__Impl();
@@ -11439,21 +11536,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__Group_1__1__Impl"
-    // InternalGrana.g:4078:1: rule__LocalResource__Group_1__1__Impl : ( ( rule__LocalResource__FilterAssignment_1_1 ) ) ;
+    // InternalGrana.g:4109:1: rule__LocalResource__Group_1__1__Impl : ( ( rule__LocalResource__FilterAssignment_1_1 ) ) ;
     public final void rule__LocalResource__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4082:1: ( ( ( rule__LocalResource__FilterAssignment_1_1 ) ) )
-            // InternalGrana.g:4083:1: ( ( rule__LocalResource__FilterAssignment_1_1 ) )
+            // InternalGrana.g:4113:1: ( ( ( rule__LocalResource__FilterAssignment_1_1 ) ) )
+            // InternalGrana.g:4114:1: ( ( rule__LocalResource__FilterAssignment_1_1 ) )
             {
-            // InternalGrana.g:4083:1: ( ( rule__LocalResource__FilterAssignment_1_1 ) )
-            // InternalGrana.g:4084:1: ( rule__LocalResource__FilterAssignment_1_1 )
+            // InternalGrana.g:4114:1: ( ( rule__LocalResource__FilterAssignment_1_1 ) )
+            // InternalGrana.g:4115:1: ( rule__LocalResource__FilterAssignment_1_1 )
             {
              before(grammarAccess.getLocalResourceAccess().getFilterAssignment_1_1()); 
-            // InternalGrana.g:4085:1: ( rule__LocalResource__FilterAssignment_1_1 )
-            // InternalGrana.g:4085:2: rule__LocalResource__FilterAssignment_1_1
+            // InternalGrana.g:4116:1: ( rule__LocalResource__FilterAssignment_1_1 )
+            // InternalGrana.g:4116:2: rule__LocalResource__FilterAssignment_1_1
             {
             pushFollow(FOLLOW_2);
             rule__LocalResource__FilterAssignment_1_1();
@@ -11486,14 +11583,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalOutputRef__Group__0"
-    // InternalGrana.g:4099:1: rule__GlobalOutputRef__Group__0 : rule__GlobalOutputRef__Group__0__Impl rule__GlobalOutputRef__Group__1 ;
+    // InternalGrana.g:4130:1: rule__GlobalOutputRef__Group__0 : rule__GlobalOutputRef__Group__0__Impl rule__GlobalOutputRef__Group__1 ;
     public final void rule__GlobalOutputRef__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4103:1: ( rule__GlobalOutputRef__Group__0__Impl rule__GlobalOutputRef__Group__1 )
-            // InternalGrana.g:4104:2: rule__GlobalOutputRef__Group__0__Impl rule__GlobalOutputRef__Group__1
+            // InternalGrana.g:4134:1: ( rule__GlobalOutputRef__Group__0__Impl rule__GlobalOutputRef__Group__1 )
+            // InternalGrana.g:4135:2: rule__GlobalOutputRef__Group__0__Impl rule__GlobalOutputRef__Group__1
             {
             pushFollow(FOLLOW_16);
             rule__GlobalOutputRef__Group__0__Impl();
@@ -11524,21 +11621,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalOutputRef__Group__0__Impl"
-    // InternalGrana.g:4111:1: rule__GlobalOutputRef__Group__0__Impl : ( ( rule__GlobalOutputRef__NameAssignment_0 ) ) ;
+    // InternalGrana.g:4142:1: rule__GlobalOutputRef__Group__0__Impl : ( ( rule__GlobalOutputRef__NameAssignment_0 ) ) ;
     public final void rule__GlobalOutputRef__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4115:1: ( ( ( rule__GlobalOutputRef__NameAssignment_0 ) ) )
-            // InternalGrana.g:4116:1: ( ( rule__GlobalOutputRef__NameAssignment_0 ) )
+            // InternalGrana.g:4146:1: ( ( ( rule__GlobalOutputRef__NameAssignment_0 ) ) )
+            // InternalGrana.g:4147:1: ( ( rule__GlobalOutputRef__NameAssignment_0 ) )
             {
-            // InternalGrana.g:4116:1: ( ( rule__GlobalOutputRef__NameAssignment_0 ) )
-            // InternalGrana.g:4117:1: ( rule__GlobalOutputRef__NameAssignment_0 )
+            // InternalGrana.g:4147:1: ( ( rule__GlobalOutputRef__NameAssignment_0 ) )
+            // InternalGrana.g:4148:1: ( rule__GlobalOutputRef__NameAssignment_0 )
             {
              before(grammarAccess.getGlobalOutputRefAccess().getNameAssignment_0()); 
-            // InternalGrana.g:4118:1: ( rule__GlobalOutputRef__NameAssignment_0 )
-            // InternalGrana.g:4118:2: rule__GlobalOutputRef__NameAssignment_0
+            // InternalGrana.g:4149:1: ( rule__GlobalOutputRef__NameAssignment_0 )
+            // InternalGrana.g:4149:2: rule__GlobalOutputRef__NameAssignment_0
             {
             pushFollow(FOLLOW_2);
             rule__GlobalOutputRef__NameAssignment_0();
@@ -11571,14 +11668,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalOutputRef__Group__1"
-    // InternalGrana.g:4128:1: rule__GlobalOutputRef__Group__1 : rule__GlobalOutputRef__Group__1__Impl ;
+    // InternalGrana.g:4159:1: rule__GlobalOutputRef__Group__1 : rule__GlobalOutputRef__Group__1__Impl ;
     public final void rule__GlobalOutputRef__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4132:1: ( rule__GlobalOutputRef__Group__1__Impl )
-            // InternalGrana.g:4133:2: rule__GlobalOutputRef__Group__1__Impl
+            // InternalGrana.g:4163:1: ( rule__GlobalOutputRef__Group__1__Impl )
+            // InternalGrana.g:4164:2: rule__GlobalOutputRef__Group__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__GlobalOutputRef__Group__1__Impl();
@@ -11604,21 +11701,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalOutputRef__Group__1__Impl"
-    // InternalGrana.g:4139:1: rule__GlobalOutputRef__Group__1__Impl : ( ( rule__GlobalOutputRef__OutputAssignment_1 ) ) ;
+    // InternalGrana.g:4170:1: rule__GlobalOutputRef__Group__1__Impl : ( ( rule__GlobalOutputRef__OutputAssignment_1 ) ) ;
     public final void rule__GlobalOutputRef__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4143:1: ( ( ( rule__GlobalOutputRef__OutputAssignment_1 ) ) )
-            // InternalGrana.g:4144:1: ( ( rule__GlobalOutputRef__OutputAssignment_1 ) )
+            // InternalGrana.g:4174:1: ( ( ( rule__GlobalOutputRef__OutputAssignment_1 ) ) )
+            // InternalGrana.g:4175:1: ( ( rule__GlobalOutputRef__OutputAssignment_1 ) )
             {
-            // InternalGrana.g:4144:1: ( ( rule__GlobalOutputRef__OutputAssignment_1 ) )
-            // InternalGrana.g:4145:1: ( rule__GlobalOutputRef__OutputAssignment_1 )
+            // InternalGrana.g:4175:1: ( ( rule__GlobalOutputRef__OutputAssignment_1 ) )
+            // InternalGrana.g:4176:1: ( rule__GlobalOutputRef__OutputAssignment_1 )
             {
              before(grammarAccess.getGlobalOutputRefAccess().getOutputAssignment_1()); 
-            // InternalGrana.g:4146:1: ( rule__GlobalOutputRef__OutputAssignment_1 )
-            // InternalGrana.g:4146:2: rule__GlobalOutputRef__OutputAssignment_1
+            // InternalGrana.g:4177:1: ( rule__GlobalOutputRef__OutputAssignment_1 )
+            // InternalGrana.g:4177:2: rule__GlobalOutputRef__OutputAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__GlobalOutputRef__OutputAssignment_1();
@@ -11651,14 +11748,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__OutputReference__Group__0"
-    // InternalGrana.g:4160:1: rule__OutputReference__Group__0 : rule__OutputReference__Group__0__Impl rule__OutputReference__Group__1 ;
+    // InternalGrana.g:4191:1: rule__OutputReference__Group__0 : rule__OutputReference__Group__0__Impl rule__OutputReference__Group__1 ;
     public final void rule__OutputReference__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4164:1: ( rule__OutputReference__Group__0__Impl rule__OutputReference__Group__1 )
-            // InternalGrana.g:4165:2: rule__OutputReference__Group__0__Impl rule__OutputReference__Group__1
+            // InternalGrana.g:4195:1: ( rule__OutputReference__Group__0__Impl rule__OutputReference__Group__1 )
+            // InternalGrana.g:4196:2: rule__OutputReference__Group__0__Impl rule__OutputReference__Group__1
             {
             pushFollow(FOLLOW_8);
             rule__OutputReference__Group__0__Impl();
@@ -11689,17 +11786,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__OutputReference__Group__0__Impl"
-    // InternalGrana.g:4172:1: rule__OutputReference__Group__0__Impl : ( 'ref' ) ;
+    // InternalGrana.g:4203:1: rule__OutputReference__Group__0__Impl : ( 'ref' ) ;
     public final void rule__OutputReference__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4176:1: ( ( 'ref' ) )
-            // InternalGrana.g:4177:1: ( 'ref' )
+            // InternalGrana.g:4207:1: ( ( 'ref' ) )
+            // InternalGrana.g:4208:1: ( 'ref' )
             {
-            // InternalGrana.g:4177:1: ( 'ref' )
-            // InternalGrana.g:4178:1: 'ref'
+            // InternalGrana.g:4208:1: ( 'ref' )
+            // InternalGrana.g:4209:1: 'ref'
             {
              before(grammarAccess.getOutputReferenceAccess().getRefKeyword_0()); 
             match(input,36,FOLLOW_2); 
@@ -11726,14 +11823,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__OutputReference__Group__1"
-    // InternalGrana.g:4191:1: rule__OutputReference__Group__1 : rule__OutputReference__Group__1__Impl ;
+    // InternalGrana.g:4222:1: rule__OutputReference__Group__1 : rule__OutputReference__Group__1__Impl ;
     public final void rule__OutputReference__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4195:1: ( rule__OutputReference__Group__1__Impl )
-            // InternalGrana.g:4196:2: rule__OutputReference__Group__1__Impl
+            // InternalGrana.g:4226:1: ( rule__OutputReference__Group__1__Impl )
+            // InternalGrana.g:4227:2: rule__OutputReference__Group__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__OutputReference__Group__1__Impl();
@@ -11759,21 +11856,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__OutputReference__Group__1__Impl"
-    // InternalGrana.g:4202:1: rule__OutputReference__Group__1__Impl : ( ( rule__OutputReference__OutputRefAssignment_1 ) ) ;
+    // InternalGrana.g:4233:1: rule__OutputReference__Group__1__Impl : ( ( rule__OutputReference__OutputRefAssignment_1 ) ) ;
     public final void rule__OutputReference__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4206:1: ( ( ( rule__OutputReference__OutputRefAssignment_1 ) ) )
-            // InternalGrana.g:4207:1: ( ( rule__OutputReference__OutputRefAssignment_1 ) )
+            // InternalGrana.g:4237:1: ( ( ( rule__OutputReference__OutputRefAssignment_1 ) ) )
+            // InternalGrana.g:4238:1: ( ( rule__OutputReference__OutputRefAssignment_1 ) )
             {
-            // InternalGrana.g:4207:1: ( ( rule__OutputReference__OutputRefAssignment_1 ) )
-            // InternalGrana.g:4208:1: ( rule__OutputReference__OutputRefAssignment_1 )
+            // InternalGrana.g:4238:1: ( ( rule__OutputReference__OutputRefAssignment_1 ) )
+            // InternalGrana.g:4239:1: ( rule__OutputReference__OutputRefAssignment_1 )
             {
              before(grammarAccess.getOutputReferenceAccess().getOutputRefAssignment_1()); 
-            // InternalGrana.g:4209:1: ( rule__OutputReference__OutputRefAssignment_1 )
-            // InternalGrana.g:4209:2: rule__OutputReference__OutputRefAssignment_1
+            // InternalGrana.g:4240:1: ( rule__OutputReference__OutputRefAssignment_1 )
+            // InternalGrana.g:4240:2: rule__OutputReference__OutputRefAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__OutputReference__OutputRefAssignment_1();
@@ -11806,16 +11903,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LayoutConfig__Group__0"
-    // InternalGrana.g:4223:1: rule__LayoutConfig__Group__0 : rule__LayoutConfig__Group__0__Impl rule__LayoutConfig__Group__1 ;
+    // InternalGrana.g:4254:1: rule__LayoutConfig__Group__0 : rule__LayoutConfig__Group__0__Impl rule__LayoutConfig__Group__1 ;
     public final void rule__LayoutConfig__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4227:1: ( rule__LayoutConfig__Group__0__Impl rule__LayoutConfig__Group__1 )
-            // InternalGrana.g:4228:2: rule__LayoutConfig__Group__0__Impl rule__LayoutConfig__Group__1
+            // InternalGrana.g:4258:1: ( rule__LayoutConfig__Group__0__Impl rule__LayoutConfig__Group__1 )
+            // InternalGrana.g:4259:2: rule__LayoutConfig__Group__0__Impl rule__LayoutConfig__Group__1
             {
-            pushFollow(FOLLOW_30);
+            pushFollow(FOLLOW_31);
             rule__LayoutConfig__Group__0__Impl();
 
             state._fsp--;
@@ -11844,21 +11941,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LayoutConfig__Group__0__Impl"
-    // InternalGrana.g:4235:1: rule__LayoutConfig__Group__0__Impl : ( ( rule__LayoutConfig__IdentifierAssignment_0 ) ) ;
+    // InternalGrana.g:4266:1: rule__LayoutConfig__Group__0__Impl : ( ( rule__LayoutConfig__IdentifierAssignment_0 ) ) ;
     public final void rule__LayoutConfig__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4239:1: ( ( ( rule__LayoutConfig__IdentifierAssignment_0 ) ) )
-            // InternalGrana.g:4240:1: ( ( rule__LayoutConfig__IdentifierAssignment_0 ) )
+            // InternalGrana.g:4270:1: ( ( ( rule__LayoutConfig__IdentifierAssignment_0 ) ) )
+            // InternalGrana.g:4271:1: ( ( rule__LayoutConfig__IdentifierAssignment_0 ) )
             {
-            // InternalGrana.g:4240:1: ( ( rule__LayoutConfig__IdentifierAssignment_0 ) )
-            // InternalGrana.g:4241:1: ( rule__LayoutConfig__IdentifierAssignment_0 )
+            // InternalGrana.g:4271:1: ( ( rule__LayoutConfig__IdentifierAssignment_0 ) )
+            // InternalGrana.g:4272:1: ( rule__LayoutConfig__IdentifierAssignment_0 )
             {
              before(grammarAccess.getLayoutConfigAccess().getIdentifierAssignment_0()); 
-            // InternalGrana.g:4242:1: ( rule__LayoutConfig__IdentifierAssignment_0 )
-            // InternalGrana.g:4242:2: rule__LayoutConfig__IdentifierAssignment_0
+            // InternalGrana.g:4273:1: ( rule__LayoutConfig__IdentifierAssignment_0 )
+            // InternalGrana.g:4273:2: rule__LayoutConfig__IdentifierAssignment_0
             {
             pushFollow(FOLLOW_2);
             rule__LayoutConfig__IdentifierAssignment_0();
@@ -11891,16 +11988,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LayoutConfig__Group__1"
-    // InternalGrana.g:4252:1: rule__LayoutConfig__Group__1 : rule__LayoutConfig__Group__1__Impl rule__LayoutConfig__Group__2 ;
+    // InternalGrana.g:4283:1: rule__LayoutConfig__Group__1 : rule__LayoutConfig__Group__1__Impl rule__LayoutConfig__Group__2 ;
     public final void rule__LayoutConfig__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4256:1: ( rule__LayoutConfig__Group__1__Impl rule__LayoutConfig__Group__2 )
-            // InternalGrana.g:4257:2: rule__LayoutConfig__Group__1__Impl rule__LayoutConfig__Group__2
+            // InternalGrana.g:4287:1: ( rule__LayoutConfig__Group__1__Impl rule__LayoutConfig__Group__2 )
+            // InternalGrana.g:4288:2: rule__LayoutConfig__Group__1__Impl rule__LayoutConfig__Group__2
             {
-            pushFollow(FOLLOW_31);
+            pushFollow(FOLLOW_32);
             rule__LayoutConfig__Group__1__Impl();
 
             state._fsp--;
@@ -11929,17 +12026,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LayoutConfig__Group__1__Impl"
-    // InternalGrana.g:4264:1: rule__LayoutConfig__Group__1__Impl : ( '{' ) ;
+    // InternalGrana.g:4295:1: rule__LayoutConfig__Group__1__Impl : ( '{' ) ;
     public final void rule__LayoutConfig__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4268:1: ( ( '{' ) )
-            // InternalGrana.g:4269:1: ( '{' )
+            // InternalGrana.g:4299:1: ( ( '{' ) )
+            // InternalGrana.g:4300:1: ( '{' )
             {
-            // InternalGrana.g:4269:1: ( '{' )
-            // InternalGrana.g:4270:1: '{'
+            // InternalGrana.g:4300:1: ( '{' )
+            // InternalGrana.g:4301:1: '{'
             {
              before(grammarAccess.getLayoutConfigAccess().getLeftCurlyBracketKeyword_1()); 
             match(input,38,FOLLOW_2); 
@@ -11966,16 +12063,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LayoutConfig__Group__2"
-    // InternalGrana.g:4283:1: rule__LayoutConfig__Group__2 : rule__LayoutConfig__Group__2__Impl rule__LayoutConfig__Group__3 ;
+    // InternalGrana.g:4314:1: rule__LayoutConfig__Group__2 : rule__LayoutConfig__Group__2__Impl rule__LayoutConfig__Group__3 ;
     public final void rule__LayoutConfig__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4287:1: ( rule__LayoutConfig__Group__2__Impl rule__LayoutConfig__Group__3 )
-            // InternalGrana.g:4288:2: rule__LayoutConfig__Group__2__Impl rule__LayoutConfig__Group__3
+            // InternalGrana.g:4318:1: ( rule__LayoutConfig__Group__2__Impl rule__LayoutConfig__Group__3 )
+            // InternalGrana.g:4319:2: rule__LayoutConfig__Group__2__Impl rule__LayoutConfig__Group__3
             {
-            pushFollow(FOLLOW_31);
+            pushFollow(FOLLOW_32);
             rule__LayoutConfig__Group__2__Impl();
 
             state._fsp--;
@@ -12004,33 +12101,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LayoutConfig__Group__2__Impl"
-    // InternalGrana.g:4295:1: rule__LayoutConfig__Group__2__Impl : ( ( rule__LayoutConfig__PropertiesAssignment_2 )* ) ;
+    // InternalGrana.g:4326:1: rule__LayoutConfig__Group__2__Impl : ( ( rule__LayoutConfig__PropertiesAssignment_2 )* ) ;
     public final void rule__LayoutConfig__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4299:1: ( ( ( rule__LayoutConfig__PropertiesAssignment_2 )* ) )
-            // InternalGrana.g:4300:1: ( ( rule__LayoutConfig__PropertiesAssignment_2 )* )
+            // InternalGrana.g:4330:1: ( ( ( rule__LayoutConfig__PropertiesAssignment_2 )* ) )
+            // InternalGrana.g:4331:1: ( ( rule__LayoutConfig__PropertiesAssignment_2 )* )
             {
-            // InternalGrana.g:4300:1: ( ( rule__LayoutConfig__PropertiesAssignment_2 )* )
-            // InternalGrana.g:4301:1: ( rule__LayoutConfig__PropertiesAssignment_2 )*
+            // InternalGrana.g:4331:1: ( ( rule__LayoutConfig__PropertiesAssignment_2 )* )
+            // InternalGrana.g:4332:1: ( rule__LayoutConfig__PropertiesAssignment_2 )*
             {
              before(grammarAccess.getLayoutConfigAccess().getPropertiesAssignment_2()); 
-            // InternalGrana.g:4302:1: ( rule__LayoutConfig__PropertiesAssignment_2 )*
-            loop42:
+            // InternalGrana.g:4333:1: ( rule__LayoutConfig__PropertiesAssignment_2 )*
+            loop43:
             do {
-                int alt42=2;
-                int LA42_0 = input.LA(1);
+                int alt43=2;
+                int LA43_0 = input.LA(1);
 
-                if ( (LA42_0==RULE_ID) ) {
-                    alt42=1;
+                if ( (LA43_0==RULE_ID) ) {
+                    alt43=1;
                 }
 
 
-                switch (alt42) {
+                switch (alt43) {
             	case 1 :
-            	    // InternalGrana.g:4302:2: rule__LayoutConfig__PropertiesAssignment_2
+            	    // InternalGrana.g:4333:2: rule__LayoutConfig__PropertiesAssignment_2
             	    {
             	    pushFollow(FOLLOW_3);
             	    rule__LayoutConfig__PropertiesAssignment_2();
@@ -12042,7 +12139,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop42;
+            	    break loop43;
                 }
             } while (true);
 
@@ -12069,14 +12166,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LayoutConfig__Group__3"
-    // InternalGrana.g:4312:1: rule__LayoutConfig__Group__3 : rule__LayoutConfig__Group__3__Impl ;
+    // InternalGrana.g:4343:1: rule__LayoutConfig__Group__3 : rule__LayoutConfig__Group__3__Impl ;
     public final void rule__LayoutConfig__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4316:1: ( rule__LayoutConfig__Group__3__Impl )
-            // InternalGrana.g:4317:2: rule__LayoutConfig__Group__3__Impl
+            // InternalGrana.g:4347:1: ( rule__LayoutConfig__Group__3__Impl )
+            // InternalGrana.g:4348:2: rule__LayoutConfig__Group__3__Impl
             {
             pushFollow(FOLLOW_2);
             rule__LayoutConfig__Group__3__Impl();
@@ -12102,17 +12199,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LayoutConfig__Group__3__Impl"
-    // InternalGrana.g:4323:1: rule__LayoutConfig__Group__3__Impl : ( '}' ) ;
+    // InternalGrana.g:4354:1: rule__LayoutConfig__Group__3__Impl : ( '}' ) ;
     public final void rule__LayoutConfig__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4327:1: ( ( '}' ) )
-            // InternalGrana.g:4328:1: ( '}' )
+            // InternalGrana.g:4358:1: ( ( '}' ) )
+            // InternalGrana.g:4359:1: ( '}' )
             {
-            // InternalGrana.g:4328:1: ( '}' )
-            // InternalGrana.g:4329:1: '}'
+            // InternalGrana.g:4359:1: ( '}' )
+            // InternalGrana.g:4360:1: '}'
             {
              before(grammarAccess.getLayoutConfigAccess().getRightCurlyBracketKeyword_3()); 
             match(input,39,FOLLOW_2); 
@@ -12139,14 +12236,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group__0"
-    // InternalGrana.g:4352:1: rule__ElkNode__Group__0 : rule__ElkNode__Group__0__Impl rule__ElkNode__Group__1 ;
+    // InternalGrana.g:4383:1: rule__ElkNode__Group__0 : rule__ElkNode__Group__0__Impl rule__ElkNode__Group__1 ;
     public final void rule__ElkNode__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4356:1: ( rule__ElkNode__Group__0__Impl rule__ElkNode__Group__1 )
-            // InternalGrana.g:4357:2: rule__ElkNode__Group__0__Impl rule__ElkNode__Group__1
+            // InternalGrana.g:4387:1: ( rule__ElkNode__Group__0__Impl rule__ElkNode__Group__1 )
+            // InternalGrana.g:4388:2: rule__ElkNode__Group__0__Impl rule__ElkNode__Group__1
             {
             pushFollow(FOLLOW_8);
             rule__ElkNode__Group__0__Impl();
@@ -12177,17 +12274,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group__0__Impl"
-    // InternalGrana.g:4364:1: rule__ElkNode__Group__0__Impl : ( 'node' ) ;
+    // InternalGrana.g:4395:1: rule__ElkNode__Group__0__Impl : ( 'node' ) ;
     public final void rule__ElkNode__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4368:1: ( ( 'node' ) )
-            // InternalGrana.g:4369:1: ( 'node' )
+            // InternalGrana.g:4399:1: ( ( 'node' ) )
+            // InternalGrana.g:4400:1: ( 'node' )
             {
-            // InternalGrana.g:4369:1: ( 'node' )
-            // InternalGrana.g:4370:1: 'node'
+            // InternalGrana.g:4400:1: ( 'node' )
+            // InternalGrana.g:4401:1: 'node'
             {
              before(grammarAccess.getElkNodeAccess().getNodeKeyword_0()); 
             match(input,40,FOLLOW_2); 
@@ -12214,16 +12311,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group__1"
-    // InternalGrana.g:4383:1: rule__ElkNode__Group__1 : rule__ElkNode__Group__1__Impl rule__ElkNode__Group__2 ;
+    // InternalGrana.g:4414:1: rule__ElkNode__Group__1 : rule__ElkNode__Group__1__Impl rule__ElkNode__Group__2 ;
     public final void rule__ElkNode__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4387:1: ( rule__ElkNode__Group__1__Impl rule__ElkNode__Group__2 )
-            // InternalGrana.g:4388:2: rule__ElkNode__Group__1__Impl rule__ElkNode__Group__2
+            // InternalGrana.g:4418:1: ( rule__ElkNode__Group__1__Impl rule__ElkNode__Group__2 )
+            // InternalGrana.g:4419:2: rule__ElkNode__Group__1__Impl rule__ElkNode__Group__2
             {
-            pushFollow(FOLLOW_30);
+            pushFollow(FOLLOW_31);
             rule__ElkNode__Group__1__Impl();
 
             state._fsp--;
@@ -12252,21 +12349,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group__1__Impl"
-    // InternalGrana.g:4395:1: rule__ElkNode__Group__1__Impl : ( ( rule__ElkNode__IdentifierAssignment_1 ) ) ;
+    // InternalGrana.g:4426:1: rule__ElkNode__Group__1__Impl : ( ( rule__ElkNode__IdentifierAssignment_1 ) ) ;
     public final void rule__ElkNode__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4399:1: ( ( ( rule__ElkNode__IdentifierAssignment_1 ) ) )
-            // InternalGrana.g:4400:1: ( ( rule__ElkNode__IdentifierAssignment_1 ) )
+            // InternalGrana.g:4430:1: ( ( ( rule__ElkNode__IdentifierAssignment_1 ) ) )
+            // InternalGrana.g:4431:1: ( ( rule__ElkNode__IdentifierAssignment_1 ) )
             {
-            // InternalGrana.g:4400:1: ( ( rule__ElkNode__IdentifierAssignment_1 ) )
-            // InternalGrana.g:4401:1: ( rule__ElkNode__IdentifierAssignment_1 )
+            // InternalGrana.g:4431:1: ( ( rule__ElkNode__IdentifierAssignment_1 ) )
+            // InternalGrana.g:4432:1: ( rule__ElkNode__IdentifierAssignment_1 )
             {
              before(grammarAccess.getElkNodeAccess().getIdentifierAssignment_1()); 
-            // InternalGrana.g:4402:1: ( rule__ElkNode__IdentifierAssignment_1 )
-            // InternalGrana.g:4402:2: rule__ElkNode__IdentifierAssignment_1
+            // InternalGrana.g:4433:1: ( rule__ElkNode__IdentifierAssignment_1 )
+            // InternalGrana.g:4433:2: rule__ElkNode__IdentifierAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkNode__IdentifierAssignment_1();
@@ -12299,14 +12396,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group__2"
-    // InternalGrana.g:4412:1: rule__ElkNode__Group__2 : rule__ElkNode__Group__2__Impl ;
+    // InternalGrana.g:4443:1: rule__ElkNode__Group__2 : rule__ElkNode__Group__2__Impl ;
     public final void rule__ElkNode__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4416:1: ( rule__ElkNode__Group__2__Impl )
-            // InternalGrana.g:4417:2: rule__ElkNode__Group__2__Impl
+            // InternalGrana.g:4447:1: ( rule__ElkNode__Group__2__Impl )
+            // InternalGrana.g:4448:2: rule__ElkNode__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkNode__Group__2__Impl();
@@ -12332,29 +12429,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group__2__Impl"
-    // InternalGrana.g:4423:1: rule__ElkNode__Group__2__Impl : ( ( rule__ElkNode__Group_2__0 )? ) ;
+    // InternalGrana.g:4454:1: rule__ElkNode__Group__2__Impl : ( ( rule__ElkNode__Group_2__0 )? ) ;
     public final void rule__ElkNode__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4427:1: ( ( ( rule__ElkNode__Group_2__0 )? ) )
-            // InternalGrana.g:4428:1: ( ( rule__ElkNode__Group_2__0 )? )
+            // InternalGrana.g:4458:1: ( ( ( rule__ElkNode__Group_2__0 )? ) )
+            // InternalGrana.g:4459:1: ( ( rule__ElkNode__Group_2__0 )? )
             {
-            // InternalGrana.g:4428:1: ( ( rule__ElkNode__Group_2__0 )? )
-            // InternalGrana.g:4429:1: ( rule__ElkNode__Group_2__0 )?
+            // InternalGrana.g:4459:1: ( ( rule__ElkNode__Group_2__0 )? )
+            // InternalGrana.g:4460:1: ( rule__ElkNode__Group_2__0 )?
             {
              before(grammarAccess.getElkNodeAccess().getGroup_2()); 
-            // InternalGrana.g:4430:1: ( rule__ElkNode__Group_2__0 )?
-            int alt43=2;
-            int LA43_0 = input.LA(1);
+            // InternalGrana.g:4461:1: ( rule__ElkNode__Group_2__0 )?
+            int alt44=2;
+            int LA44_0 = input.LA(1);
 
-            if ( (LA43_0==38) ) {
-                alt43=1;
+            if ( (LA44_0==38) ) {
+                alt44=1;
             }
-            switch (alt43) {
+            switch (alt44) {
                 case 1 :
-                    // InternalGrana.g:4430:2: rule__ElkNode__Group_2__0
+                    // InternalGrana.g:4461:2: rule__ElkNode__Group_2__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkNode__Group_2__0();
@@ -12390,16 +12487,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group_2__0"
-    // InternalGrana.g:4446:1: rule__ElkNode__Group_2__0 : rule__ElkNode__Group_2__0__Impl rule__ElkNode__Group_2__1 ;
+    // InternalGrana.g:4477:1: rule__ElkNode__Group_2__0 : rule__ElkNode__Group_2__0__Impl rule__ElkNode__Group_2__1 ;
     public final void rule__ElkNode__Group_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4450:1: ( rule__ElkNode__Group_2__0__Impl rule__ElkNode__Group_2__1 )
-            // InternalGrana.g:4451:2: rule__ElkNode__Group_2__0__Impl rule__ElkNode__Group_2__1
+            // InternalGrana.g:4481:1: ( rule__ElkNode__Group_2__0__Impl rule__ElkNode__Group_2__1 )
+            // InternalGrana.g:4482:2: rule__ElkNode__Group_2__0__Impl rule__ElkNode__Group_2__1
             {
-            pushFollow(FOLLOW_32);
+            pushFollow(FOLLOW_33);
             rule__ElkNode__Group_2__0__Impl();
 
             state._fsp--;
@@ -12428,17 +12525,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group_2__0__Impl"
-    // InternalGrana.g:4458:1: rule__ElkNode__Group_2__0__Impl : ( '{' ) ;
+    // InternalGrana.g:4489:1: rule__ElkNode__Group_2__0__Impl : ( '{' ) ;
     public final void rule__ElkNode__Group_2__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4462:1: ( ( '{' ) )
-            // InternalGrana.g:4463:1: ( '{' )
+            // InternalGrana.g:4493:1: ( ( '{' ) )
+            // InternalGrana.g:4494:1: ( '{' )
             {
-            // InternalGrana.g:4463:1: ( '{' )
-            // InternalGrana.g:4464:1: '{'
+            // InternalGrana.g:4494:1: ( '{' )
+            // InternalGrana.g:4495:1: '{'
             {
              before(grammarAccess.getElkNodeAccess().getLeftCurlyBracketKeyword_2_0()); 
             match(input,38,FOLLOW_2); 
@@ -12465,16 +12562,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group_2__1"
-    // InternalGrana.g:4477:1: rule__ElkNode__Group_2__1 : rule__ElkNode__Group_2__1__Impl rule__ElkNode__Group_2__2 ;
+    // InternalGrana.g:4508:1: rule__ElkNode__Group_2__1 : rule__ElkNode__Group_2__1__Impl rule__ElkNode__Group_2__2 ;
     public final void rule__ElkNode__Group_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4481:1: ( rule__ElkNode__Group_2__1__Impl rule__ElkNode__Group_2__2 )
-            // InternalGrana.g:4482:2: rule__ElkNode__Group_2__1__Impl rule__ElkNode__Group_2__2
+            // InternalGrana.g:4512:1: ( rule__ElkNode__Group_2__1__Impl rule__ElkNode__Group_2__2 )
+            // InternalGrana.g:4513:2: rule__ElkNode__Group_2__1__Impl rule__ElkNode__Group_2__2
             {
-            pushFollow(FOLLOW_32);
+            pushFollow(FOLLOW_33);
             rule__ElkNode__Group_2__1__Impl();
 
             state._fsp--;
@@ -12503,29 +12600,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group_2__1__Impl"
-    // InternalGrana.g:4489:1: rule__ElkNode__Group_2__1__Impl : ( ( ruleShapeLayout )? ) ;
+    // InternalGrana.g:4520:1: rule__ElkNode__Group_2__1__Impl : ( ( ruleShapeLayout )? ) ;
     public final void rule__ElkNode__Group_2__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4493:1: ( ( ( ruleShapeLayout )? ) )
-            // InternalGrana.g:4494:1: ( ( ruleShapeLayout )? )
+            // InternalGrana.g:4524:1: ( ( ( ruleShapeLayout )? ) )
+            // InternalGrana.g:4525:1: ( ( ruleShapeLayout )? )
             {
-            // InternalGrana.g:4494:1: ( ( ruleShapeLayout )? )
-            // InternalGrana.g:4495:1: ( ruleShapeLayout )?
+            // InternalGrana.g:4525:1: ( ( ruleShapeLayout )? )
+            // InternalGrana.g:4526:1: ( ruleShapeLayout )?
             {
              before(grammarAccess.getElkNodeAccess().getShapeLayoutParserRuleCall_2_1()); 
-            // InternalGrana.g:4496:1: ( ruleShapeLayout )?
-            int alt44=2;
-            int LA44_0 = input.LA(1);
+            // InternalGrana.g:4527:1: ( ruleShapeLayout )?
+            int alt45=2;
+            int LA45_0 = input.LA(1);
 
-            if ( (LA44_0==44) ) {
-                alt44=1;
+            if ( (LA45_0==44) ) {
+                alt45=1;
             }
-            switch (alt44) {
+            switch (alt45) {
                 case 1 :
-                    // InternalGrana.g:4496:3: ruleShapeLayout
+                    // InternalGrana.g:4527:3: ruleShapeLayout
                     {
                     pushFollow(FOLLOW_2);
                     ruleShapeLayout();
@@ -12561,16 +12658,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group_2__2"
-    // InternalGrana.g:4506:1: rule__ElkNode__Group_2__2 : rule__ElkNode__Group_2__2__Impl rule__ElkNode__Group_2__3 ;
+    // InternalGrana.g:4537:1: rule__ElkNode__Group_2__2 : rule__ElkNode__Group_2__2__Impl rule__ElkNode__Group_2__3 ;
     public final void rule__ElkNode__Group_2__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4510:1: ( rule__ElkNode__Group_2__2__Impl rule__ElkNode__Group_2__3 )
-            // InternalGrana.g:4511:2: rule__ElkNode__Group_2__2__Impl rule__ElkNode__Group_2__3
+            // InternalGrana.g:4541:1: ( rule__ElkNode__Group_2__2__Impl rule__ElkNode__Group_2__3 )
+            // InternalGrana.g:4542:2: rule__ElkNode__Group_2__2__Impl rule__ElkNode__Group_2__3
             {
-            pushFollow(FOLLOW_32);
+            pushFollow(FOLLOW_33);
             rule__ElkNode__Group_2__2__Impl();
 
             state._fsp--;
@@ -12599,33 +12696,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group_2__2__Impl"
-    // InternalGrana.g:4518:1: rule__ElkNode__Group_2__2__Impl : ( ( rule__ElkNode__PropertiesAssignment_2_2 )* ) ;
+    // InternalGrana.g:4549:1: rule__ElkNode__Group_2__2__Impl : ( ( rule__ElkNode__PropertiesAssignment_2_2 )* ) ;
     public final void rule__ElkNode__Group_2__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4522:1: ( ( ( rule__ElkNode__PropertiesAssignment_2_2 )* ) )
-            // InternalGrana.g:4523:1: ( ( rule__ElkNode__PropertiesAssignment_2_2 )* )
+            // InternalGrana.g:4553:1: ( ( ( rule__ElkNode__PropertiesAssignment_2_2 )* ) )
+            // InternalGrana.g:4554:1: ( ( rule__ElkNode__PropertiesAssignment_2_2 )* )
             {
-            // InternalGrana.g:4523:1: ( ( rule__ElkNode__PropertiesAssignment_2_2 )* )
-            // InternalGrana.g:4524:1: ( rule__ElkNode__PropertiesAssignment_2_2 )*
+            // InternalGrana.g:4554:1: ( ( rule__ElkNode__PropertiesAssignment_2_2 )* )
+            // InternalGrana.g:4555:1: ( rule__ElkNode__PropertiesAssignment_2_2 )*
             {
              before(grammarAccess.getElkNodeAccess().getPropertiesAssignment_2_2()); 
-            // InternalGrana.g:4525:1: ( rule__ElkNode__PropertiesAssignment_2_2 )*
-            loop45:
+            // InternalGrana.g:4556:1: ( rule__ElkNode__PropertiesAssignment_2_2 )*
+            loop46:
             do {
-                int alt45=2;
-                int LA45_0 = input.LA(1);
+                int alt46=2;
+                int LA46_0 = input.LA(1);
 
-                if ( (LA45_0==RULE_ID) ) {
-                    alt45=1;
+                if ( (LA46_0==RULE_ID) ) {
+                    alt46=1;
                 }
 
 
-                switch (alt45) {
+                switch (alt46) {
             	case 1 :
-            	    // InternalGrana.g:4525:2: rule__ElkNode__PropertiesAssignment_2_2
+            	    // InternalGrana.g:4556:2: rule__ElkNode__PropertiesAssignment_2_2
             	    {
             	    pushFollow(FOLLOW_3);
             	    rule__ElkNode__PropertiesAssignment_2_2();
@@ -12637,7 +12734,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop45;
+            	    break loop46;
                 }
             } while (true);
 
@@ -12664,16 +12761,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group_2__3"
-    // InternalGrana.g:4535:1: rule__ElkNode__Group_2__3 : rule__ElkNode__Group_2__3__Impl rule__ElkNode__Group_2__4 ;
+    // InternalGrana.g:4566:1: rule__ElkNode__Group_2__3 : rule__ElkNode__Group_2__3__Impl rule__ElkNode__Group_2__4 ;
     public final void rule__ElkNode__Group_2__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4539:1: ( rule__ElkNode__Group_2__3__Impl rule__ElkNode__Group_2__4 )
-            // InternalGrana.g:4540:2: rule__ElkNode__Group_2__3__Impl rule__ElkNode__Group_2__4
+            // InternalGrana.g:4570:1: ( rule__ElkNode__Group_2__3__Impl rule__ElkNode__Group_2__4 )
+            // InternalGrana.g:4571:2: rule__ElkNode__Group_2__3__Impl rule__ElkNode__Group_2__4
             {
-            pushFollow(FOLLOW_32);
+            pushFollow(FOLLOW_33);
             rule__ElkNode__Group_2__3__Impl();
 
             state._fsp--;
@@ -12702,35 +12799,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group_2__3__Impl"
-    // InternalGrana.g:4547:1: rule__ElkNode__Group_2__3__Impl : ( ( rule__ElkNode__Alternatives_2_3 )* ) ;
+    // InternalGrana.g:4578:1: rule__ElkNode__Group_2__3__Impl : ( ( rule__ElkNode__Alternatives_2_3 )* ) ;
     public final void rule__ElkNode__Group_2__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4551:1: ( ( ( rule__ElkNode__Alternatives_2_3 )* ) )
-            // InternalGrana.g:4552:1: ( ( rule__ElkNode__Alternatives_2_3 )* )
+            // InternalGrana.g:4582:1: ( ( ( rule__ElkNode__Alternatives_2_3 )* ) )
+            // InternalGrana.g:4583:1: ( ( rule__ElkNode__Alternatives_2_3 )* )
             {
-            // InternalGrana.g:4552:1: ( ( rule__ElkNode__Alternatives_2_3 )* )
-            // InternalGrana.g:4553:1: ( rule__ElkNode__Alternatives_2_3 )*
+            // InternalGrana.g:4583:1: ( ( rule__ElkNode__Alternatives_2_3 )* )
+            // InternalGrana.g:4584:1: ( rule__ElkNode__Alternatives_2_3 )*
             {
              before(grammarAccess.getElkNodeAccess().getAlternatives_2_3()); 
-            // InternalGrana.g:4554:1: ( rule__ElkNode__Alternatives_2_3 )*
-            loop46:
+            // InternalGrana.g:4585:1: ( rule__ElkNode__Alternatives_2_3 )*
+            loop47:
             do {
-                int alt46=2;
-                int LA46_0 = input.LA(1);
+                int alt47=2;
+                int LA47_0 = input.LA(1);
 
-                if ( ((LA46_0>=40 && LA46_0<=41)||LA46_0==43||LA46_0==49) ) {
-                    alt46=1;
+                if ( ((LA47_0>=40 && LA47_0<=41)||LA47_0==43||LA47_0==49) ) {
+                    alt47=1;
                 }
 
 
-                switch (alt46) {
+                switch (alt47) {
             	case 1 :
-            	    // InternalGrana.g:4554:2: rule__ElkNode__Alternatives_2_3
+            	    // InternalGrana.g:4585:2: rule__ElkNode__Alternatives_2_3
             	    {
-            	    pushFollow(FOLLOW_33);
+            	    pushFollow(FOLLOW_34);
             	    rule__ElkNode__Alternatives_2_3();
 
             	    state._fsp--;
@@ -12740,7 +12837,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop46;
+            	    break loop47;
                 }
             } while (true);
 
@@ -12767,14 +12864,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group_2__4"
-    // InternalGrana.g:4564:1: rule__ElkNode__Group_2__4 : rule__ElkNode__Group_2__4__Impl ;
+    // InternalGrana.g:4595:1: rule__ElkNode__Group_2__4 : rule__ElkNode__Group_2__4__Impl ;
     public final void rule__ElkNode__Group_2__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4568:1: ( rule__ElkNode__Group_2__4__Impl )
-            // InternalGrana.g:4569:2: rule__ElkNode__Group_2__4__Impl
+            // InternalGrana.g:4599:1: ( rule__ElkNode__Group_2__4__Impl )
+            // InternalGrana.g:4600:2: rule__ElkNode__Group_2__4__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkNode__Group_2__4__Impl();
@@ -12800,17 +12897,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__Group_2__4__Impl"
-    // InternalGrana.g:4575:1: rule__ElkNode__Group_2__4__Impl : ( '}' ) ;
+    // InternalGrana.g:4606:1: rule__ElkNode__Group_2__4__Impl : ( '}' ) ;
     public final void rule__ElkNode__Group_2__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4579:1: ( ( '}' ) )
-            // InternalGrana.g:4580:1: ( '}' )
+            // InternalGrana.g:4610:1: ( ( '}' ) )
+            // InternalGrana.g:4611:1: ( '}' )
             {
-            // InternalGrana.g:4580:1: ( '}' )
-            // InternalGrana.g:4581:1: '}'
+            // InternalGrana.g:4611:1: ( '}' )
+            // InternalGrana.g:4612:1: '}'
             {
              before(grammarAccess.getElkNodeAccess().getRightCurlyBracketKeyword_2_4()); 
             match(input,39,FOLLOW_2); 
@@ -12837,16 +12934,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group__0"
-    // InternalGrana.g:4604:1: rule__ElkLabel__Group__0 : rule__ElkLabel__Group__0__Impl rule__ElkLabel__Group__1 ;
+    // InternalGrana.g:4635:1: rule__ElkLabel__Group__0 : rule__ElkLabel__Group__0__Impl rule__ElkLabel__Group__1 ;
     public final void rule__ElkLabel__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4608:1: ( rule__ElkLabel__Group__0__Impl rule__ElkLabel__Group__1 )
-            // InternalGrana.g:4609:2: rule__ElkLabel__Group__0__Impl rule__ElkLabel__Group__1
+            // InternalGrana.g:4639:1: ( rule__ElkLabel__Group__0__Impl rule__ElkLabel__Group__1 )
+            // InternalGrana.g:4640:2: rule__ElkLabel__Group__0__Impl rule__ElkLabel__Group__1
             {
-            pushFollow(FOLLOW_34);
+            pushFollow(FOLLOW_35);
             rule__ElkLabel__Group__0__Impl();
 
             state._fsp--;
@@ -12875,17 +12972,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group__0__Impl"
-    // InternalGrana.g:4616:1: rule__ElkLabel__Group__0__Impl : ( 'label' ) ;
+    // InternalGrana.g:4647:1: rule__ElkLabel__Group__0__Impl : ( 'label' ) ;
     public final void rule__ElkLabel__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4620:1: ( ( 'label' ) )
-            // InternalGrana.g:4621:1: ( 'label' )
+            // InternalGrana.g:4651:1: ( ( 'label' ) )
+            // InternalGrana.g:4652:1: ( 'label' )
             {
-            // InternalGrana.g:4621:1: ( 'label' )
-            // InternalGrana.g:4622:1: 'label'
+            // InternalGrana.g:4652:1: ( 'label' )
+            // InternalGrana.g:4653:1: 'label'
             {
              before(grammarAccess.getElkLabelAccess().getLabelKeyword_0()); 
             match(input,41,FOLLOW_2); 
@@ -12912,16 +13009,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group__1"
-    // InternalGrana.g:4635:1: rule__ElkLabel__Group__1 : rule__ElkLabel__Group__1__Impl rule__ElkLabel__Group__2 ;
+    // InternalGrana.g:4666:1: rule__ElkLabel__Group__1 : rule__ElkLabel__Group__1__Impl rule__ElkLabel__Group__2 ;
     public final void rule__ElkLabel__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4639:1: ( rule__ElkLabel__Group__1__Impl rule__ElkLabel__Group__2 )
-            // InternalGrana.g:4640:2: rule__ElkLabel__Group__1__Impl rule__ElkLabel__Group__2
+            // InternalGrana.g:4670:1: ( rule__ElkLabel__Group__1__Impl rule__ElkLabel__Group__2 )
+            // InternalGrana.g:4671:2: rule__ElkLabel__Group__1__Impl rule__ElkLabel__Group__2
             {
-            pushFollow(FOLLOW_34);
+            pushFollow(FOLLOW_35);
             rule__ElkLabel__Group__1__Impl();
 
             state._fsp--;
@@ -12950,29 +13047,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group__1__Impl"
-    // InternalGrana.g:4647:1: rule__ElkLabel__Group__1__Impl : ( ( rule__ElkLabel__Group_1__0 )? ) ;
+    // InternalGrana.g:4678:1: rule__ElkLabel__Group__1__Impl : ( ( rule__ElkLabel__Group_1__0 )? ) ;
     public final void rule__ElkLabel__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4651:1: ( ( ( rule__ElkLabel__Group_1__0 )? ) )
-            // InternalGrana.g:4652:1: ( ( rule__ElkLabel__Group_1__0 )? )
+            // InternalGrana.g:4682:1: ( ( ( rule__ElkLabel__Group_1__0 )? ) )
+            // InternalGrana.g:4683:1: ( ( rule__ElkLabel__Group_1__0 )? )
             {
-            // InternalGrana.g:4652:1: ( ( rule__ElkLabel__Group_1__0 )? )
-            // InternalGrana.g:4653:1: ( rule__ElkLabel__Group_1__0 )?
+            // InternalGrana.g:4683:1: ( ( rule__ElkLabel__Group_1__0 )? )
+            // InternalGrana.g:4684:1: ( rule__ElkLabel__Group_1__0 )?
             {
              before(grammarAccess.getElkLabelAccess().getGroup_1()); 
-            // InternalGrana.g:4654:1: ( rule__ElkLabel__Group_1__0 )?
-            int alt47=2;
-            int LA47_0 = input.LA(1);
+            // InternalGrana.g:4685:1: ( rule__ElkLabel__Group_1__0 )?
+            int alt48=2;
+            int LA48_0 = input.LA(1);
 
-            if ( (LA47_0==RULE_ID) ) {
-                alt47=1;
+            if ( (LA48_0==RULE_ID) ) {
+                alt48=1;
             }
-            switch (alt47) {
+            switch (alt48) {
                 case 1 :
-                    // InternalGrana.g:4654:2: rule__ElkLabel__Group_1__0
+                    // InternalGrana.g:4685:2: rule__ElkLabel__Group_1__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkLabel__Group_1__0();
@@ -13008,16 +13105,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group__2"
-    // InternalGrana.g:4664:1: rule__ElkLabel__Group__2 : rule__ElkLabel__Group__2__Impl rule__ElkLabel__Group__3 ;
+    // InternalGrana.g:4695:1: rule__ElkLabel__Group__2 : rule__ElkLabel__Group__2__Impl rule__ElkLabel__Group__3 ;
     public final void rule__ElkLabel__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4668:1: ( rule__ElkLabel__Group__2__Impl rule__ElkLabel__Group__3 )
-            // InternalGrana.g:4669:2: rule__ElkLabel__Group__2__Impl rule__ElkLabel__Group__3
+            // InternalGrana.g:4699:1: ( rule__ElkLabel__Group__2__Impl rule__ElkLabel__Group__3 )
+            // InternalGrana.g:4700:2: rule__ElkLabel__Group__2__Impl rule__ElkLabel__Group__3
             {
-            pushFollow(FOLLOW_30);
+            pushFollow(FOLLOW_31);
             rule__ElkLabel__Group__2__Impl();
 
             state._fsp--;
@@ -13046,21 +13143,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group__2__Impl"
-    // InternalGrana.g:4676:1: rule__ElkLabel__Group__2__Impl : ( ( rule__ElkLabel__TextAssignment_2 ) ) ;
+    // InternalGrana.g:4707:1: rule__ElkLabel__Group__2__Impl : ( ( rule__ElkLabel__TextAssignment_2 ) ) ;
     public final void rule__ElkLabel__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4680:1: ( ( ( rule__ElkLabel__TextAssignment_2 ) ) )
-            // InternalGrana.g:4681:1: ( ( rule__ElkLabel__TextAssignment_2 ) )
+            // InternalGrana.g:4711:1: ( ( ( rule__ElkLabel__TextAssignment_2 ) ) )
+            // InternalGrana.g:4712:1: ( ( rule__ElkLabel__TextAssignment_2 ) )
             {
-            // InternalGrana.g:4681:1: ( ( rule__ElkLabel__TextAssignment_2 ) )
-            // InternalGrana.g:4682:1: ( rule__ElkLabel__TextAssignment_2 )
+            // InternalGrana.g:4712:1: ( ( rule__ElkLabel__TextAssignment_2 ) )
+            // InternalGrana.g:4713:1: ( rule__ElkLabel__TextAssignment_2 )
             {
              before(grammarAccess.getElkLabelAccess().getTextAssignment_2()); 
-            // InternalGrana.g:4683:1: ( rule__ElkLabel__TextAssignment_2 )
-            // InternalGrana.g:4683:2: rule__ElkLabel__TextAssignment_2
+            // InternalGrana.g:4714:1: ( rule__ElkLabel__TextAssignment_2 )
+            // InternalGrana.g:4714:2: rule__ElkLabel__TextAssignment_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkLabel__TextAssignment_2();
@@ -13093,14 +13190,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group__3"
-    // InternalGrana.g:4693:1: rule__ElkLabel__Group__3 : rule__ElkLabel__Group__3__Impl ;
+    // InternalGrana.g:4724:1: rule__ElkLabel__Group__3 : rule__ElkLabel__Group__3__Impl ;
     public final void rule__ElkLabel__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4697:1: ( rule__ElkLabel__Group__3__Impl )
-            // InternalGrana.g:4698:2: rule__ElkLabel__Group__3__Impl
+            // InternalGrana.g:4728:1: ( rule__ElkLabel__Group__3__Impl )
+            // InternalGrana.g:4729:2: rule__ElkLabel__Group__3__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkLabel__Group__3__Impl();
@@ -13126,29 +13223,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group__3__Impl"
-    // InternalGrana.g:4704:1: rule__ElkLabel__Group__3__Impl : ( ( rule__ElkLabel__Group_3__0 )? ) ;
+    // InternalGrana.g:4735:1: rule__ElkLabel__Group__3__Impl : ( ( rule__ElkLabel__Group_3__0 )? ) ;
     public final void rule__ElkLabel__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4708:1: ( ( ( rule__ElkLabel__Group_3__0 )? ) )
-            // InternalGrana.g:4709:1: ( ( rule__ElkLabel__Group_3__0 )? )
+            // InternalGrana.g:4739:1: ( ( ( rule__ElkLabel__Group_3__0 )? ) )
+            // InternalGrana.g:4740:1: ( ( rule__ElkLabel__Group_3__0 )? )
             {
-            // InternalGrana.g:4709:1: ( ( rule__ElkLabel__Group_3__0 )? )
-            // InternalGrana.g:4710:1: ( rule__ElkLabel__Group_3__0 )?
+            // InternalGrana.g:4740:1: ( ( rule__ElkLabel__Group_3__0 )? )
+            // InternalGrana.g:4741:1: ( rule__ElkLabel__Group_3__0 )?
             {
              before(grammarAccess.getElkLabelAccess().getGroup_3()); 
-            // InternalGrana.g:4711:1: ( rule__ElkLabel__Group_3__0 )?
-            int alt48=2;
-            int LA48_0 = input.LA(1);
+            // InternalGrana.g:4742:1: ( rule__ElkLabel__Group_3__0 )?
+            int alt49=2;
+            int LA49_0 = input.LA(1);
 
-            if ( (LA48_0==38) ) {
-                alt48=1;
+            if ( (LA49_0==38) ) {
+                alt49=1;
             }
-            switch (alt48) {
+            switch (alt49) {
                 case 1 :
-                    // InternalGrana.g:4711:2: rule__ElkLabel__Group_3__0
+                    // InternalGrana.g:4742:2: rule__ElkLabel__Group_3__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkLabel__Group_3__0();
@@ -13184,16 +13281,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_1__0"
-    // InternalGrana.g:4729:1: rule__ElkLabel__Group_1__0 : rule__ElkLabel__Group_1__0__Impl rule__ElkLabel__Group_1__1 ;
+    // InternalGrana.g:4760:1: rule__ElkLabel__Group_1__0 : rule__ElkLabel__Group_1__0__Impl rule__ElkLabel__Group_1__1 ;
     public final void rule__ElkLabel__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4733:1: ( rule__ElkLabel__Group_1__0__Impl rule__ElkLabel__Group_1__1 )
-            // InternalGrana.g:4734:2: rule__ElkLabel__Group_1__0__Impl rule__ElkLabel__Group_1__1
+            // InternalGrana.g:4764:1: ( rule__ElkLabel__Group_1__0__Impl rule__ElkLabel__Group_1__1 )
+            // InternalGrana.g:4765:2: rule__ElkLabel__Group_1__0__Impl rule__ElkLabel__Group_1__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkLabel__Group_1__0__Impl();
 
             state._fsp--;
@@ -13222,21 +13319,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_1__0__Impl"
-    // InternalGrana.g:4741:1: rule__ElkLabel__Group_1__0__Impl : ( ( rule__ElkLabel__IdentifierAssignment_1_0 ) ) ;
+    // InternalGrana.g:4772:1: rule__ElkLabel__Group_1__0__Impl : ( ( rule__ElkLabel__IdentifierAssignment_1_0 ) ) ;
     public final void rule__ElkLabel__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4745:1: ( ( ( rule__ElkLabel__IdentifierAssignment_1_0 ) ) )
-            // InternalGrana.g:4746:1: ( ( rule__ElkLabel__IdentifierAssignment_1_0 ) )
+            // InternalGrana.g:4776:1: ( ( ( rule__ElkLabel__IdentifierAssignment_1_0 ) ) )
+            // InternalGrana.g:4777:1: ( ( rule__ElkLabel__IdentifierAssignment_1_0 ) )
             {
-            // InternalGrana.g:4746:1: ( ( rule__ElkLabel__IdentifierAssignment_1_0 ) )
-            // InternalGrana.g:4747:1: ( rule__ElkLabel__IdentifierAssignment_1_0 )
+            // InternalGrana.g:4777:1: ( ( rule__ElkLabel__IdentifierAssignment_1_0 ) )
+            // InternalGrana.g:4778:1: ( rule__ElkLabel__IdentifierAssignment_1_0 )
             {
              before(grammarAccess.getElkLabelAccess().getIdentifierAssignment_1_0()); 
-            // InternalGrana.g:4748:1: ( rule__ElkLabel__IdentifierAssignment_1_0 )
-            // InternalGrana.g:4748:2: rule__ElkLabel__IdentifierAssignment_1_0
+            // InternalGrana.g:4779:1: ( rule__ElkLabel__IdentifierAssignment_1_0 )
+            // InternalGrana.g:4779:2: rule__ElkLabel__IdentifierAssignment_1_0
             {
             pushFollow(FOLLOW_2);
             rule__ElkLabel__IdentifierAssignment_1_0();
@@ -13269,14 +13366,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_1__1"
-    // InternalGrana.g:4758:1: rule__ElkLabel__Group_1__1 : rule__ElkLabel__Group_1__1__Impl ;
+    // InternalGrana.g:4789:1: rule__ElkLabel__Group_1__1 : rule__ElkLabel__Group_1__1__Impl ;
     public final void rule__ElkLabel__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4762:1: ( rule__ElkLabel__Group_1__1__Impl )
-            // InternalGrana.g:4763:2: rule__ElkLabel__Group_1__1__Impl
+            // InternalGrana.g:4793:1: ( rule__ElkLabel__Group_1__1__Impl )
+            // InternalGrana.g:4794:2: rule__ElkLabel__Group_1__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkLabel__Group_1__1__Impl();
@@ -13302,17 +13399,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_1__1__Impl"
-    // InternalGrana.g:4769:1: rule__ElkLabel__Group_1__1__Impl : ( ':' ) ;
+    // InternalGrana.g:4800:1: rule__ElkLabel__Group_1__1__Impl : ( ':' ) ;
     public final void rule__ElkLabel__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4773:1: ( ( ':' ) )
-            // InternalGrana.g:4774:1: ( ':' )
+            // InternalGrana.g:4804:1: ( ( ':' ) )
+            // InternalGrana.g:4805:1: ( ':' )
             {
-            // InternalGrana.g:4774:1: ( ':' )
-            // InternalGrana.g:4775:1: ':'
+            // InternalGrana.g:4805:1: ( ':' )
+            // InternalGrana.g:4806:1: ':'
             {
              before(grammarAccess.getElkLabelAccess().getColonKeyword_1_1()); 
             match(input,42,FOLLOW_2); 
@@ -13339,16 +13436,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_3__0"
-    // InternalGrana.g:4792:1: rule__ElkLabel__Group_3__0 : rule__ElkLabel__Group_3__0__Impl rule__ElkLabel__Group_3__1 ;
+    // InternalGrana.g:4823:1: rule__ElkLabel__Group_3__0 : rule__ElkLabel__Group_3__0__Impl rule__ElkLabel__Group_3__1 ;
     public final void rule__ElkLabel__Group_3__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4796:1: ( rule__ElkLabel__Group_3__0__Impl rule__ElkLabel__Group_3__1 )
-            // InternalGrana.g:4797:2: rule__ElkLabel__Group_3__0__Impl rule__ElkLabel__Group_3__1
+            // InternalGrana.g:4827:1: ( rule__ElkLabel__Group_3__0__Impl rule__ElkLabel__Group_3__1 )
+            // InternalGrana.g:4828:2: rule__ElkLabel__Group_3__0__Impl rule__ElkLabel__Group_3__1
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkLabel__Group_3__0__Impl();
 
             state._fsp--;
@@ -13377,17 +13474,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_3__0__Impl"
-    // InternalGrana.g:4804:1: rule__ElkLabel__Group_3__0__Impl : ( '{' ) ;
+    // InternalGrana.g:4835:1: rule__ElkLabel__Group_3__0__Impl : ( '{' ) ;
     public final void rule__ElkLabel__Group_3__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4808:1: ( ( '{' ) )
-            // InternalGrana.g:4809:1: ( '{' )
+            // InternalGrana.g:4839:1: ( ( '{' ) )
+            // InternalGrana.g:4840:1: ( '{' )
             {
-            // InternalGrana.g:4809:1: ( '{' )
-            // InternalGrana.g:4810:1: '{'
+            // InternalGrana.g:4840:1: ( '{' )
+            // InternalGrana.g:4841:1: '{'
             {
              before(grammarAccess.getElkLabelAccess().getLeftCurlyBracketKeyword_3_0()); 
             match(input,38,FOLLOW_2); 
@@ -13414,16 +13511,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_3__1"
-    // InternalGrana.g:4823:1: rule__ElkLabel__Group_3__1 : rule__ElkLabel__Group_3__1__Impl rule__ElkLabel__Group_3__2 ;
+    // InternalGrana.g:4854:1: rule__ElkLabel__Group_3__1 : rule__ElkLabel__Group_3__1__Impl rule__ElkLabel__Group_3__2 ;
     public final void rule__ElkLabel__Group_3__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4827:1: ( rule__ElkLabel__Group_3__1__Impl rule__ElkLabel__Group_3__2 )
-            // InternalGrana.g:4828:2: rule__ElkLabel__Group_3__1__Impl rule__ElkLabel__Group_3__2
+            // InternalGrana.g:4858:1: ( rule__ElkLabel__Group_3__1__Impl rule__ElkLabel__Group_3__2 )
+            // InternalGrana.g:4859:2: rule__ElkLabel__Group_3__1__Impl rule__ElkLabel__Group_3__2
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkLabel__Group_3__1__Impl();
 
             state._fsp--;
@@ -13452,29 +13549,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_3__1__Impl"
-    // InternalGrana.g:4835:1: rule__ElkLabel__Group_3__1__Impl : ( ( ruleShapeLayout )? ) ;
+    // InternalGrana.g:4866:1: rule__ElkLabel__Group_3__1__Impl : ( ( ruleShapeLayout )? ) ;
     public final void rule__ElkLabel__Group_3__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4839:1: ( ( ( ruleShapeLayout )? ) )
-            // InternalGrana.g:4840:1: ( ( ruleShapeLayout )? )
+            // InternalGrana.g:4870:1: ( ( ( ruleShapeLayout )? ) )
+            // InternalGrana.g:4871:1: ( ( ruleShapeLayout )? )
             {
-            // InternalGrana.g:4840:1: ( ( ruleShapeLayout )? )
-            // InternalGrana.g:4841:1: ( ruleShapeLayout )?
+            // InternalGrana.g:4871:1: ( ( ruleShapeLayout )? )
+            // InternalGrana.g:4872:1: ( ruleShapeLayout )?
             {
              before(grammarAccess.getElkLabelAccess().getShapeLayoutParserRuleCall_3_1()); 
-            // InternalGrana.g:4842:1: ( ruleShapeLayout )?
-            int alt49=2;
-            int LA49_0 = input.LA(1);
+            // InternalGrana.g:4873:1: ( ruleShapeLayout )?
+            int alt50=2;
+            int LA50_0 = input.LA(1);
 
-            if ( (LA49_0==44) ) {
-                alt49=1;
+            if ( (LA50_0==44) ) {
+                alt50=1;
             }
-            switch (alt49) {
+            switch (alt50) {
                 case 1 :
-                    // InternalGrana.g:4842:3: ruleShapeLayout
+                    // InternalGrana.g:4873:3: ruleShapeLayout
                     {
                     pushFollow(FOLLOW_2);
                     ruleShapeLayout();
@@ -13510,16 +13607,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_3__2"
-    // InternalGrana.g:4852:1: rule__ElkLabel__Group_3__2 : rule__ElkLabel__Group_3__2__Impl rule__ElkLabel__Group_3__3 ;
+    // InternalGrana.g:4883:1: rule__ElkLabel__Group_3__2 : rule__ElkLabel__Group_3__2__Impl rule__ElkLabel__Group_3__3 ;
     public final void rule__ElkLabel__Group_3__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4856:1: ( rule__ElkLabel__Group_3__2__Impl rule__ElkLabel__Group_3__3 )
-            // InternalGrana.g:4857:2: rule__ElkLabel__Group_3__2__Impl rule__ElkLabel__Group_3__3
+            // InternalGrana.g:4887:1: ( rule__ElkLabel__Group_3__2__Impl rule__ElkLabel__Group_3__3 )
+            // InternalGrana.g:4888:2: rule__ElkLabel__Group_3__2__Impl rule__ElkLabel__Group_3__3
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkLabel__Group_3__2__Impl();
 
             state._fsp--;
@@ -13548,33 +13645,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_3__2__Impl"
-    // InternalGrana.g:4864:1: rule__ElkLabel__Group_3__2__Impl : ( ( rule__ElkLabel__PropertiesAssignment_3_2 )* ) ;
+    // InternalGrana.g:4895:1: rule__ElkLabel__Group_3__2__Impl : ( ( rule__ElkLabel__PropertiesAssignment_3_2 )* ) ;
     public final void rule__ElkLabel__Group_3__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4868:1: ( ( ( rule__ElkLabel__PropertiesAssignment_3_2 )* ) )
-            // InternalGrana.g:4869:1: ( ( rule__ElkLabel__PropertiesAssignment_3_2 )* )
+            // InternalGrana.g:4899:1: ( ( ( rule__ElkLabel__PropertiesAssignment_3_2 )* ) )
+            // InternalGrana.g:4900:1: ( ( rule__ElkLabel__PropertiesAssignment_3_2 )* )
             {
-            // InternalGrana.g:4869:1: ( ( rule__ElkLabel__PropertiesAssignment_3_2 )* )
-            // InternalGrana.g:4870:1: ( rule__ElkLabel__PropertiesAssignment_3_2 )*
+            // InternalGrana.g:4900:1: ( ( rule__ElkLabel__PropertiesAssignment_3_2 )* )
+            // InternalGrana.g:4901:1: ( rule__ElkLabel__PropertiesAssignment_3_2 )*
             {
              before(grammarAccess.getElkLabelAccess().getPropertiesAssignment_3_2()); 
-            // InternalGrana.g:4871:1: ( rule__ElkLabel__PropertiesAssignment_3_2 )*
-            loop50:
+            // InternalGrana.g:4902:1: ( rule__ElkLabel__PropertiesAssignment_3_2 )*
+            loop51:
             do {
-                int alt50=2;
-                int LA50_0 = input.LA(1);
+                int alt51=2;
+                int LA51_0 = input.LA(1);
 
-                if ( (LA50_0==RULE_ID) ) {
-                    alt50=1;
+                if ( (LA51_0==RULE_ID) ) {
+                    alt51=1;
                 }
 
 
-                switch (alt50) {
+                switch (alt51) {
             	case 1 :
-            	    // InternalGrana.g:4871:2: rule__ElkLabel__PropertiesAssignment_3_2
+            	    // InternalGrana.g:4902:2: rule__ElkLabel__PropertiesAssignment_3_2
             	    {
             	    pushFollow(FOLLOW_3);
             	    rule__ElkLabel__PropertiesAssignment_3_2();
@@ -13586,7 +13683,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop50;
+            	    break loop51;
                 }
             } while (true);
 
@@ -13613,16 +13710,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_3__3"
-    // InternalGrana.g:4881:1: rule__ElkLabel__Group_3__3 : rule__ElkLabel__Group_3__3__Impl rule__ElkLabel__Group_3__4 ;
+    // InternalGrana.g:4912:1: rule__ElkLabel__Group_3__3 : rule__ElkLabel__Group_3__3__Impl rule__ElkLabel__Group_3__4 ;
     public final void rule__ElkLabel__Group_3__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4885:1: ( rule__ElkLabel__Group_3__3__Impl rule__ElkLabel__Group_3__4 )
-            // InternalGrana.g:4886:2: rule__ElkLabel__Group_3__3__Impl rule__ElkLabel__Group_3__4
+            // InternalGrana.g:4916:1: ( rule__ElkLabel__Group_3__3__Impl rule__ElkLabel__Group_3__4 )
+            // InternalGrana.g:4917:2: rule__ElkLabel__Group_3__3__Impl rule__ElkLabel__Group_3__4
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkLabel__Group_3__3__Impl();
 
             state._fsp--;
@@ -13651,35 +13748,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_3__3__Impl"
-    // InternalGrana.g:4893:1: rule__ElkLabel__Group_3__3__Impl : ( ( rule__ElkLabel__LabelsAssignment_3_3 )* ) ;
+    // InternalGrana.g:4924:1: rule__ElkLabel__Group_3__3__Impl : ( ( rule__ElkLabel__LabelsAssignment_3_3 )* ) ;
     public final void rule__ElkLabel__Group_3__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4897:1: ( ( ( rule__ElkLabel__LabelsAssignment_3_3 )* ) )
-            // InternalGrana.g:4898:1: ( ( rule__ElkLabel__LabelsAssignment_3_3 )* )
+            // InternalGrana.g:4928:1: ( ( ( rule__ElkLabel__LabelsAssignment_3_3 )* ) )
+            // InternalGrana.g:4929:1: ( ( rule__ElkLabel__LabelsAssignment_3_3 )* )
             {
-            // InternalGrana.g:4898:1: ( ( rule__ElkLabel__LabelsAssignment_3_3 )* )
-            // InternalGrana.g:4899:1: ( rule__ElkLabel__LabelsAssignment_3_3 )*
+            // InternalGrana.g:4929:1: ( ( rule__ElkLabel__LabelsAssignment_3_3 )* )
+            // InternalGrana.g:4930:1: ( rule__ElkLabel__LabelsAssignment_3_3 )*
             {
              before(grammarAccess.getElkLabelAccess().getLabelsAssignment_3_3()); 
-            // InternalGrana.g:4900:1: ( rule__ElkLabel__LabelsAssignment_3_3 )*
-            loop51:
+            // InternalGrana.g:4931:1: ( rule__ElkLabel__LabelsAssignment_3_3 )*
+            loop52:
             do {
-                int alt51=2;
-                int LA51_0 = input.LA(1);
+                int alt52=2;
+                int LA52_0 = input.LA(1);
 
-                if ( (LA51_0==41) ) {
-                    alt51=1;
+                if ( (LA52_0==41) ) {
+                    alt52=1;
                 }
 
 
-                switch (alt51) {
+                switch (alt52) {
             	case 1 :
-            	    // InternalGrana.g:4900:2: rule__ElkLabel__LabelsAssignment_3_3
+            	    // InternalGrana.g:4931:2: rule__ElkLabel__LabelsAssignment_3_3
             	    {
-            	    pushFollow(FOLLOW_37);
+            	    pushFollow(FOLLOW_38);
             	    rule__ElkLabel__LabelsAssignment_3_3();
 
             	    state._fsp--;
@@ -13689,7 +13786,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop51;
+            	    break loop52;
                 }
             } while (true);
 
@@ -13716,14 +13813,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_3__4"
-    // InternalGrana.g:4910:1: rule__ElkLabel__Group_3__4 : rule__ElkLabel__Group_3__4__Impl ;
+    // InternalGrana.g:4941:1: rule__ElkLabel__Group_3__4 : rule__ElkLabel__Group_3__4__Impl ;
     public final void rule__ElkLabel__Group_3__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4914:1: ( rule__ElkLabel__Group_3__4__Impl )
-            // InternalGrana.g:4915:2: rule__ElkLabel__Group_3__4__Impl
+            // InternalGrana.g:4945:1: ( rule__ElkLabel__Group_3__4__Impl )
+            // InternalGrana.g:4946:2: rule__ElkLabel__Group_3__4__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkLabel__Group_3__4__Impl();
@@ -13749,17 +13846,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__Group_3__4__Impl"
-    // InternalGrana.g:4921:1: rule__ElkLabel__Group_3__4__Impl : ( '}' ) ;
+    // InternalGrana.g:4952:1: rule__ElkLabel__Group_3__4__Impl : ( '}' ) ;
     public final void rule__ElkLabel__Group_3__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4925:1: ( ( '}' ) )
-            // InternalGrana.g:4926:1: ( '}' )
+            // InternalGrana.g:4956:1: ( ( '}' ) )
+            // InternalGrana.g:4957:1: ( '}' )
             {
-            // InternalGrana.g:4926:1: ( '}' )
-            // InternalGrana.g:4927:1: '}'
+            // InternalGrana.g:4957:1: ( '}' )
+            // InternalGrana.g:4958:1: '}'
             {
              before(grammarAccess.getElkLabelAccess().getRightCurlyBracketKeyword_3_4()); 
             match(input,39,FOLLOW_2); 
@@ -13786,14 +13883,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group__0"
-    // InternalGrana.g:4950:1: rule__ElkPort__Group__0 : rule__ElkPort__Group__0__Impl rule__ElkPort__Group__1 ;
+    // InternalGrana.g:4981:1: rule__ElkPort__Group__0 : rule__ElkPort__Group__0__Impl rule__ElkPort__Group__1 ;
     public final void rule__ElkPort__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4954:1: ( rule__ElkPort__Group__0__Impl rule__ElkPort__Group__1 )
-            // InternalGrana.g:4955:2: rule__ElkPort__Group__0__Impl rule__ElkPort__Group__1
+            // InternalGrana.g:4985:1: ( rule__ElkPort__Group__0__Impl rule__ElkPort__Group__1 )
+            // InternalGrana.g:4986:2: rule__ElkPort__Group__0__Impl rule__ElkPort__Group__1
             {
             pushFollow(FOLLOW_8);
             rule__ElkPort__Group__0__Impl();
@@ -13824,17 +13921,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group__0__Impl"
-    // InternalGrana.g:4962:1: rule__ElkPort__Group__0__Impl : ( 'port' ) ;
+    // InternalGrana.g:4993:1: rule__ElkPort__Group__0__Impl : ( 'port' ) ;
     public final void rule__ElkPort__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4966:1: ( ( 'port' ) )
-            // InternalGrana.g:4967:1: ( 'port' )
+            // InternalGrana.g:4997:1: ( ( 'port' ) )
+            // InternalGrana.g:4998:1: ( 'port' )
             {
-            // InternalGrana.g:4967:1: ( 'port' )
-            // InternalGrana.g:4968:1: 'port'
+            // InternalGrana.g:4998:1: ( 'port' )
+            // InternalGrana.g:4999:1: 'port'
             {
              before(grammarAccess.getElkPortAccess().getPortKeyword_0()); 
             match(input,43,FOLLOW_2); 
@@ -13861,16 +13958,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group__1"
-    // InternalGrana.g:4981:1: rule__ElkPort__Group__1 : rule__ElkPort__Group__1__Impl rule__ElkPort__Group__2 ;
+    // InternalGrana.g:5012:1: rule__ElkPort__Group__1 : rule__ElkPort__Group__1__Impl rule__ElkPort__Group__2 ;
     public final void rule__ElkPort__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4985:1: ( rule__ElkPort__Group__1__Impl rule__ElkPort__Group__2 )
-            // InternalGrana.g:4986:2: rule__ElkPort__Group__1__Impl rule__ElkPort__Group__2
+            // InternalGrana.g:5016:1: ( rule__ElkPort__Group__1__Impl rule__ElkPort__Group__2 )
+            // InternalGrana.g:5017:2: rule__ElkPort__Group__1__Impl rule__ElkPort__Group__2
             {
-            pushFollow(FOLLOW_30);
+            pushFollow(FOLLOW_31);
             rule__ElkPort__Group__1__Impl();
 
             state._fsp--;
@@ -13899,21 +13996,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group__1__Impl"
-    // InternalGrana.g:4993:1: rule__ElkPort__Group__1__Impl : ( ( rule__ElkPort__IdentifierAssignment_1 ) ) ;
+    // InternalGrana.g:5024:1: rule__ElkPort__Group__1__Impl : ( ( rule__ElkPort__IdentifierAssignment_1 ) ) ;
     public final void rule__ElkPort__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:4997:1: ( ( ( rule__ElkPort__IdentifierAssignment_1 ) ) )
-            // InternalGrana.g:4998:1: ( ( rule__ElkPort__IdentifierAssignment_1 ) )
+            // InternalGrana.g:5028:1: ( ( ( rule__ElkPort__IdentifierAssignment_1 ) ) )
+            // InternalGrana.g:5029:1: ( ( rule__ElkPort__IdentifierAssignment_1 ) )
             {
-            // InternalGrana.g:4998:1: ( ( rule__ElkPort__IdentifierAssignment_1 ) )
-            // InternalGrana.g:4999:1: ( rule__ElkPort__IdentifierAssignment_1 )
+            // InternalGrana.g:5029:1: ( ( rule__ElkPort__IdentifierAssignment_1 ) )
+            // InternalGrana.g:5030:1: ( rule__ElkPort__IdentifierAssignment_1 )
             {
              before(grammarAccess.getElkPortAccess().getIdentifierAssignment_1()); 
-            // InternalGrana.g:5000:1: ( rule__ElkPort__IdentifierAssignment_1 )
-            // InternalGrana.g:5000:2: rule__ElkPort__IdentifierAssignment_1
+            // InternalGrana.g:5031:1: ( rule__ElkPort__IdentifierAssignment_1 )
+            // InternalGrana.g:5031:2: rule__ElkPort__IdentifierAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkPort__IdentifierAssignment_1();
@@ -13946,14 +14043,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group__2"
-    // InternalGrana.g:5010:1: rule__ElkPort__Group__2 : rule__ElkPort__Group__2__Impl ;
+    // InternalGrana.g:5041:1: rule__ElkPort__Group__2 : rule__ElkPort__Group__2__Impl ;
     public final void rule__ElkPort__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5014:1: ( rule__ElkPort__Group__2__Impl )
-            // InternalGrana.g:5015:2: rule__ElkPort__Group__2__Impl
+            // InternalGrana.g:5045:1: ( rule__ElkPort__Group__2__Impl )
+            // InternalGrana.g:5046:2: rule__ElkPort__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkPort__Group__2__Impl();
@@ -13979,29 +14076,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group__2__Impl"
-    // InternalGrana.g:5021:1: rule__ElkPort__Group__2__Impl : ( ( rule__ElkPort__Group_2__0 )? ) ;
+    // InternalGrana.g:5052:1: rule__ElkPort__Group__2__Impl : ( ( rule__ElkPort__Group_2__0 )? ) ;
     public final void rule__ElkPort__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5025:1: ( ( ( rule__ElkPort__Group_2__0 )? ) )
-            // InternalGrana.g:5026:1: ( ( rule__ElkPort__Group_2__0 )? )
+            // InternalGrana.g:5056:1: ( ( ( rule__ElkPort__Group_2__0 )? ) )
+            // InternalGrana.g:5057:1: ( ( rule__ElkPort__Group_2__0 )? )
             {
-            // InternalGrana.g:5026:1: ( ( rule__ElkPort__Group_2__0 )? )
-            // InternalGrana.g:5027:1: ( rule__ElkPort__Group_2__0 )?
+            // InternalGrana.g:5057:1: ( ( rule__ElkPort__Group_2__0 )? )
+            // InternalGrana.g:5058:1: ( rule__ElkPort__Group_2__0 )?
             {
              before(grammarAccess.getElkPortAccess().getGroup_2()); 
-            // InternalGrana.g:5028:1: ( rule__ElkPort__Group_2__0 )?
-            int alt52=2;
-            int LA52_0 = input.LA(1);
+            // InternalGrana.g:5059:1: ( rule__ElkPort__Group_2__0 )?
+            int alt53=2;
+            int LA53_0 = input.LA(1);
 
-            if ( (LA52_0==38) ) {
-                alt52=1;
+            if ( (LA53_0==38) ) {
+                alt53=1;
             }
-            switch (alt52) {
+            switch (alt53) {
                 case 1 :
-                    // InternalGrana.g:5028:2: rule__ElkPort__Group_2__0
+                    // InternalGrana.g:5059:2: rule__ElkPort__Group_2__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkPort__Group_2__0();
@@ -14037,16 +14134,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group_2__0"
-    // InternalGrana.g:5044:1: rule__ElkPort__Group_2__0 : rule__ElkPort__Group_2__0__Impl rule__ElkPort__Group_2__1 ;
+    // InternalGrana.g:5075:1: rule__ElkPort__Group_2__0 : rule__ElkPort__Group_2__0__Impl rule__ElkPort__Group_2__1 ;
     public final void rule__ElkPort__Group_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5048:1: ( rule__ElkPort__Group_2__0__Impl rule__ElkPort__Group_2__1 )
-            // InternalGrana.g:5049:2: rule__ElkPort__Group_2__0__Impl rule__ElkPort__Group_2__1
+            // InternalGrana.g:5079:1: ( rule__ElkPort__Group_2__0__Impl rule__ElkPort__Group_2__1 )
+            // InternalGrana.g:5080:2: rule__ElkPort__Group_2__0__Impl rule__ElkPort__Group_2__1
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkPort__Group_2__0__Impl();
 
             state._fsp--;
@@ -14075,17 +14172,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group_2__0__Impl"
-    // InternalGrana.g:5056:1: rule__ElkPort__Group_2__0__Impl : ( '{' ) ;
+    // InternalGrana.g:5087:1: rule__ElkPort__Group_2__0__Impl : ( '{' ) ;
     public final void rule__ElkPort__Group_2__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5060:1: ( ( '{' ) )
-            // InternalGrana.g:5061:1: ( '{' )
+            // InternalGrana.g:5091:1: ( ( '{' ) )
+            // InternalGrana.g:5092:1: ( '{' )
             {
-            // InternalGrana.g:5061:1: ( '{' )
-            // InternalGrana.g:5062:1: '{'
+            // InternalGrana.g:5092:1: ( '{' )
+            // InternalGrana.g:5093:1: '{'
             {
              before(grammarAccess.getElkPortAccess().getLeftCurlyBracketKeyword_2_0()); 
             match(input,38,FOLLOW_2); 
@@ -14112,16 +14209,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group_2__1"
-    // InternalGrana.g:5075:1: rule__ElkPort__Group_2__1 : rule__ElkPort__Group_2__1__Impl rule__ElkPort__Group_2__2 ;
+    // InternalGrana.g:5106:1: rule__ElkPort__Group_2__1 : rule__ElkPort__Group_2__1__Impl rule__ElkPort__Group_2__2 ;
     public final void rule__ElkPort__Group_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5079:1: ( rule__ElkPort__Group_2__1__Impl rule__ElkPort__Group_2__2 )
-            // InternalGrana.g:5080:2: rule__ElkPort__Group_2__1__Impl rule__ElkPort__Group_2__2
+            // InternalGrana.g:5110:1: ( rule__ElkPort__Group_2__1__Impl rule__ElkPort__Group_2__2 )
+            // InternalGrana.g:5111:2: rule__ElkPort__Group_2__1__Impl rule__ElkPort__Group_2__2
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkPort__Group_2__1__Impl();
 
             state._fsp--;
@@ -14150,29 +14247,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group_2__1__Impl"
-    // InternalGrana.g:5087:1: rule__ElkPort__Group_2__1__Impl : ( ( ruleShapeLayout )? ) ;
+    // InternalGrana.g:5118:1: rule__ElkPort__Group_2__1__Impl : ( ( ruleShapeLayout )? ) ;
     public final void rule__ElkPort__Group_2__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5091:1: ( ( ( ruleShapeLayout )? ) )
-            // InternalGrana.g:5092:1: ( ( ruleShapeLayout )? )
+            // InternalGrana.g:5122:1: ( ( ( ruleShapeLayout )? ) )
+            // InternalGrana.g:5123:1: ( ( ruleShapeLayout )? )
             {
-            // InternalGrana.g:5092:1: ( ( ruleShapeLayout )? )
-            // InternalGrana.g:5093:1: ( ruleShapeLayout )?
+            // InternalGrana.g:5123:1: ( ( ruleShapeLayout )? )
+            // InternalGrana.g:5124:1: ( ruleShapeLayout )?
             {
              before(grammarAccess.getElkPortAccess().getShapeLayoutParserRuleCall_2_1()); 
-            // InternalGrana.g:5094:1: ( ruleShapeLayout )?
-            int alt53=2;
-            int LA53_0 = input.LA(1);
+            // InternalGrana.g:5125:1: ( ruleShapeLayout )?
+            int alt54=2;
+            int LA54_0 = input.LA(1);
 
-            if ( (LA53_0==44) ) {
-                alt53=1;
+            if ( (LA54_0==44) ) {
+                alt54=1;
             }
-            switch (alt53) {
+            switch (alt54) {
                 case 1 :
-                    // InternalGrana.g:5094:3: ruleShapeLayout
+                    // InternalGrana.g:5125:3: ruleShapeLayout
                     {
                     pushFollow(FOLLOW_2);
                     ruleShapeLayout();
@@ -14208,16 +14305,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group_2__2"
-    // InternalGrana.g:5104:1: rule__ElkPort__Group_2__2 : rule__ElkPort__Group_2__2__Impl rule__ElkPort__Group_2__3 ;
+    // InternalGrana.g:5135:1: rule__ElkPort__Group_2__2 : rule__ElkPort__Group_2__2__Impl rule__ElkPort__Group_2__3 ;
     public final void rule__ElkPort__Group_2__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5108:1: ( rule__ElkPort__Group_2__2__Impl rule__ElkPort__Group_2__3 )
-            // InternalGrana.g:5109:2: rule__ElkPort__Group_2__2__Impl rule__ElkPort__Group_2__3
+            // InternalGrana.g:5139:1: ( rule__ElkPort__Group_2__2__Impl rule__ElkPort__Group_2__3 )
+            // InternalGrana.g:5140:2: rule__ElkPort__Group_2__2__Impl rule__ElkPort__Group_2__3
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkPort__Group_2__2__Impl();
 
             state._fsp--;
@@ -14246,33 +14343,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group_2__2__Impl"
-    // InternalGrana.g:5116:1: rule__ElkPort__Group_2__2__Impl : ( ( rule__ElkPort__PropertiesAssignment_2_2 )* ) ;
+    // InternalGrana.g:5147:1: rule__ElkPort__Group_2__2__Impl : ( ( rule__ElkPort__PropertiesAssignment_2_2 )* ) ;
     public final void rule__ElkPort__Group_2__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5120:1: ( ( ( rule__ElkPort__PropertiesAssignment_2_2 )* ) )
-            // InternalGrana.g:5121:1: ( ( rule__ElkPort__PropertiesAssignment_2_2 )* )
+            // InternalGrana.g:5151:1: ( ( ( rule__ElkPort__PropertiesAssignment_2_2 )* ) )
+            // InternalGrana.g:5152:1: ( ( rule__ElkPort__PropertiesAssignment_2_2 )* )
             {
-            // InternalGrana.g:5121:1: ( ( rule__ElkPort__PropertiesAssignment_2_2 )* )
-            // InternalGrana.g:5122:1: ( rule__ElkPort__PropertiesAssignment_2_2 )*
+            // InternalGrana.g:5152:1: ( ( rule__ElkPort__PropertiesAssignment_2_2 )* )
+            // InternalGrana.g:5153:1: ( rule__ElkPort__PropertiesAssignment_2_2 )*
             {
              before(grammarAccess.getElkPortAccess().getPropertiesAssignment_2_2()); 
-            // InternalGrana.g:5123:1: ( rule__ElkPort__PropertiesAssignment_2_2 )*
-            loop54:
+            // InternalGrana.g:5154:1: ( rule__ElkPort__PropertiesAssignment_2_2 )*
+            loop55:
             do {
-                int alt54=2;
-                int LA54_0 = input.LA(1);
+                int alt55=2;
+                int LA55_0 = input.LA(1);
 
-                if ( (LA54_0==RULE_ID) ) {
-                    alt54=1;
+                if ( (LA55_0==RULE_ID) ) {
+                    alt55=1;
                 }
 
 
-                switch (alt54) {
+                switch (alt55) {
             	case 1 :
-            	    // InternalGrana.g:5123:2: rule__ElkPort__PropertiesAssignment_2_2
+            	    // InternalGrana.g:5154:2: rule__ElkPort__PropertiesAssignment_2_2
             	    {
             	    pushFollow(FOLLOW_3);
             	    rule__ElkPort__PropertiesAssignment_2_2();
@@ -14284,7 +14381,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop54;
+            	    break loop55;
                 }
             } while (true);
 
@@ -14311,16 +14408,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group_2__3"
-    // InternalGrana.g:5133:1: rule__ElkPort__Group_2__3 : rule__ElkPort__Group_2__3__Impl rule__ElkPort__Group_2__4 ;
+    // InternalGrana.g:5164:1: rule__ElkPort__Group_2__3 : rule__ElkPort__Group_2__3__Impl rule__ElkPort__Group_2__4 ;
     public final void rule__ElkPort__Group_2__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5137:1: ( rule__ElkPort__Group_2__3__Impl rule__ElkPort__Group_2__4 )
-            // InternalGrana.g:5138:2: rule__ElkPort__Group_2__3__Impl rule__ElkPort__Group_2__4
+            // InternalGrana.g:5168:1: ( rule__ElkPort__Group_2__3__Impl rule__ElkPort__Group_2__4 )
+            // InternalGrana.g:5169:2: rule__ElkPort__Group_2__3__Impl rule__ElkPort__Group_2__4
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkPort__Group_2__3__Impl();
 
             state._fsp--;
@@ -14349,35 +14446,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group_2__3__Impl"
-    // InternalGrana.g:5145:1: rule__ElkPort__Group_2__3__Impl : ( ( rule__ElkPort__LabelsAssignment_2_3 )* ) ;
+    // InternalGrana.g:5176:1: rule__ElkPort__Group_2__3__Impl : ( ( rule__ElkPort__LabelsAssignment_2_3 )* ) ;
     public final void rule__ElkPort__Group_2__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5149:1: ( ( ( rule__ElkPort__LabelsAssignment_2_3 )* ) )
-            // InternalGrana.g:5150:1: ( ( rule__ElkPort__LabelsAssignment_2_3 )* )
+            // InternalGrana.g:5180:1: ( ( ( rule__ElkPort__LabelsAssignment_2_3 )* ) )
+            // InternalGrana.g:5181:1: ( ( rule__ElkPort__LabelsAssignment_2_3 )* )
             {
-            // InternalGrana.g:5150:1: ( ( rule__ElkPort__LabelsAssignment_2_3 )* )
-            // InternalGrana.g:5151:1: ( rule__ElkPort__LabelsAssignment_2_3 )*
+            // InternalGrana.g:5181:1: ( ( rule__ElkPort__LabelsAssignment_2_3 )* )
+            // InternalGrana.g:5182:1: ( rule__ElkPort__LabelsAssignment_2_3 )*
             {
              before(grammarAccess.getElkPortAccess().getLabelsAssignment_2_3()); 
-            // InternalGrana.g:5152:1: ( rule__ElkPort__LabelsAssignment_2_3 )*
-            loop55:
+            // InternalGrana.g:5183:1: ( rule__ElkPort__LabelsAssignment_2_3 )*
+            loop56:
             do {
-                int alt55=2;
-                int LA55_0 = input.LA(1);
+                int alt56=2;
+                int LA56_0 = input.LA(1);
 
-                if ( (LA55_0==41) ) {
-                    alt55=1;
+                if ( (LA56_0==41) ) {
+                    alt56=1;
                 }
 
 
-                switch (alt55) {
+                switch (alt56) {
             	case 1 :
-            	    // InternalGrana.g:5152:2: rule__ElkPort__LabelsAssignment_2_3
+            	    // InternalGrana.g:5183:2: rule__ElkPort__LabelsAssignment_2_3
             	    {
-            	    pushFollow(FOLLOW_37);
+            	    pushFollow(FOLLOW_38);
             	    rule__ElkPort__LabelsAssignment_2_3();
 
             	    state._fsp--;
@@ -14387,7 +14484,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop55;
+            	    break loop56;
                 }
             } while (true);
 
@@ -14414,14 +14511,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group_2__4"
-    // InternalGrana.g:5162:1: rule__ElkPort__Group_2__4 : rule__ElkPort__Group_2__4__Impl ;
+    // InternalGrana.g:5193:1: rule__ElkPort__Group_2__4 : rule__ElkPort__Group_2__4__Impl ;
     public final void rule__ElkPort__Group_2__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5166:1: ( rule__ElkPort__Group_2__4__Impl )
-            // InternalGrana.g:5167:2: rule__ElkPort__Group_2__4__Impl
+            // InternalGrana.g:5197:1: ( rule__ElkPort__Group_2__4__Impl )
+            // InternalGrana.g:5198:2: rule__ElkPort__Group_2__4__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkPort__Group_2__4__Impl();
@@ -14447,17 +14544,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__Group_2__4__Impl"
-    // InternalGrana.g:5173:1: rule__ElkPort__Group_2__4__Impl : ( '}' ) ;
+    // InternalGrana.g:5204:1: rule__ElkPort__Group_2__4__Impl : ( '}' ) ;
     public final void rule__ElkPort__Group_2__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5177:1: ( ( '}' ) )
-            // InternalGrana.g:5178:1: ( '}' )
+            // InternalGrana.g:5208:1: ( ( '}' ) )
+            // InternalGrana.g:5209:1: ( '}' )
             {
-            // InternalGrana.g:5178:1: ( '}' )
-            // InternalGrana.g:5179:1: '}'
+            // InternalGrana.g:5209:1: ( '}' )
+            // InternalGrana.g:5210:1: '}'
             {
              before(grammarAccess.getElkPortAccess().getRightCurlyBracketKeyword_2_4()); 
             match(input,39,FOLLOW_2); 
@@ -14484,16 +14581,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group__0"
-    // InternalGrana.g:5202:1: rule__ShapeLayout__Group__0 : rule__ShapeLayout__Group__0__Impl rule__ShapeLayout__Group__1 ;
+    // InternalGrana.g:5233:1: rule__ShapeLayout__Group__0 : rule__ShapeLayout__Group__0__Impl rule__ShapeLayout__Group__1 ;
     public final void rule__ShapeLayout__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5206:1: ( rule__ShapeLayout__Group__0__Impl rule__ShapeLayout__Group__1 )
-            // InternalGrana.g:5207:2: rule__ShapeLayout__Group__0__Impl rule__ShapeLayout__Group__1
+            // InternalGrana.g:5237:1: ( rule__ShapeLayout__Group__0__Impl rule__ShapeLayout__Group__1 )
+            // InternalGrana.g:5238:2: rule__ShapeLayout__Group__0__Impl rule__ShapeLayout__Group__1
             {
-            pushFollow(FOLLOW_38);
+            pushFollow(FOLLOW_39);
             rule__ShapeLayout__Group__0__Impl();
 
             state._fsp--;
@@ -14522,17 +14619,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group__0__Impl"
-    // InternalGrana.g:5214:1: rule__ShapeLayout__Group__0__Impl : ( 'layout' ) ;
+    // InternalGrana.g:5245:1: rule__ShapeLayout__Group__0__Impl : ( 'layout' ) ;
     public final void rule__ShapeLayout__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5218:1: ( ( 'layout' ) )
-            // InternalGrana.g:5219:1: ( 'layout' )
+            // InternalGrana.g:5249:1: ( ( 'layout' ) )
+            // InternalGrana.g:5250:1: ( 'layout' )
             {
-            // InternalGrana.g:5219:1: ( 'layout' )
-            // InternalGrana.g:5220:1: 'layout'
+            // InternalGrana.g:5250:1: ( 'layout' )
+            // InternalGrana.g:5251:1: 'layout'
             {
              before(grammarAccess.getShapeLayoutAccess().getLayoutKeyword_0()); 
             match(input,44,FOLLOW_2); 
@@ -14559,16 +14656,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group__1"
-    // InternalGrana.g:5233:1: rule__ShapeLayout__Group__1 : rule__ShapeLayout__Group__1__Impl rule__ShapeLayout__Group__2 ;
+    // InternalGrana.g:5264:1: rule__ShapeLayout__Group__1 : rule__ShapeLayout__Group__1__Impl rule__ShapeLayout__Group__2 ;
     public final void rule__ShapeLayout__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5237:1: ( rule__ShapeLayout__Group__1__Impl rule__ShapeLayout__Group__2 )
-            // InternalGrana.g:5238:2: rule__ShapeLayout__Group__1__Impl rule__ShapeLayout__Group__2
+            // InternalGrana.g:5268:1: ( rule__ShapeLayout__Group__1__Impl rule__ShapeLayout__Group__2 )
+            // InternalGrana.g:5269:2: rule__ShapeLayout__Group__1__Impl rule__ShapeLayout__Group__2
             {
-            pushFollow(FOLLOW_39);
+            pushFollow(FOLLOW_40);
             rule__ShapeLayout__Group__1__Impl();
 
             state._fsp--;
@@ -14597,17 +14694,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group__1__Impl"
-    // InternalGrana.g:5245:1: rule__ShapeLayout__Group__1__Impl : ( '[' ) ;
+    // InternalGrana.g:5276:1: rule__ShapeLayout__Group__1__Impl : ( '[' ) ;
     public final void rule__ShapeLayout__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5249:1: ( ( '[' ) )
-            // InternalGrana.g:5250:1: ( '[' )
+            // InternalGrana.g:5280:1: ( ( '[' ) )
+            // InternalGrana.g:5281:1: ( '[' )
             {
-            // InternalGrana.g:5250:1: ( '[' )
-            // InternalGrana.g:5251:1: '['
+            // InternalGrana.g:5281:1: ( '[' )
+            // InternalGrana.g:5282:1: '['
             {
              before(grammarAccess.getShapeLayoutAccess().getLeftSquareBracketKeyword_1()); 
             match(input,45,FOLLOW_2); 
@@ -14634,16 +14731,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group__2"
-    // InternalGrana.g:5264:1: rule__ShapeLayout__Group__2 : rule__ShapeLayout__Group__2__Impl rule__ShapeLayout__Group__3 ;
+    // InternalGrana.g:5295:1: rule__ShapeLayout__Group__2 : rule__ShapeLayout__Group__2__Impl rule__ShapeLayout__Group__3 ;
     public final void rule__ShapeLayout__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5268:1: ( rule__ShapeLayout__Group__2__Impl rule__ShapeLayout__Group__3 )
-            // InternalGrana.g:5269:2: rule__ShapeLayout__Group__2__Impl rule__ShapeLayout__Group__3
+            // InternalGrana.g:5299:1: ( rule__ShapeLayout__Group__2__Impl rule__ShapeLayout__Group__3 )
+            // InternalGrana.g:5300:2: rule__ShapeLayout__Group__2__Impl rule__ShapeLayout__Group__3
             {
-            pushFollow(FOLLOW_40);
+            pushFollow(FOLLOW_41);
             rule__ShapeLayout__Group__2__Impl();
 
             state._fsp--;
@@ -14672,21 +14769,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group__2__Impl"
-    // InternalGrana.g:5276:1: rule__ShapeLayout__Group__2__Impl : ( ( rule__ShapeLayout__UnorderedGroup_2 ) ) ;
+    // InternalGrana.g:5307:1: rule__ShapeLayout__Group__2__Impl : ( ( rule__ShapeLayout__UnorderedGroup_2 ) ) ;
     public final void rule__ShapeLayout__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5280:1: ( ( ( rule__ShapeLayout__UnorderedGroup_2 ) ) )
-            // InternalGrana.g:5281:1: ( ( rule__ShapeLayout__UnorderedGroup_2 ) )
+            // InternalGrana.g:5311:1: ( ( ( rule__ShapeLayout__UnorderedGroup_2 ) ) )
+            // InternalGrana.g:5312:1: ( ( rule__ShapeLayout__UnorderedGroup_2 ) )
             {
-            // InternalGrana.g:5281:1: ( ( rule__ShapeLayout__UnorderedGroup_2 ) )
-            // InternalGrana.g:5282:1: ( rule__ShapeLayout__UnorderedGroup_2 )
+            // InternalGrana.g:5312:1: ( ( rule__ShapeLayout__UnorderedGroup_2 ) )
+            // InternalGrana.g:5313:1: ( rule__ShapeLayout__UnorderedGroup_2 )
             {
              before(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2()); 
-            // InternalGrana.g:5283:1: ( rule__ShapeLayout__UnorderedGroup_2 )
-            // InternalGrana.g:5283:2: rule__ShapeLayout__UnorderedGroup_2
+            // InternalGrana.g:5314:1: ( rule__ShapeLayout__UnorderedGroup_2 )
+            // InternalGrana.g:5314:2: rule__ShapeLayout__UnorderedGroup_2
             {
             pushFollow(FOLLOW_2);
             rule__ShapeLayout__UnorderedGroup_2();
@@ -14719,14 +14816,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group__3"
-    // InternalGrana.g:5293:1: rule__ShapeLayout__Group__3 : rule__ShapeLayout__Group__3__Impl ;
+    // InternalGrana.g:5324:1: rule__ShapeLayout__Group__3 : rule__ShapeLayout__Group__3__Impl ;
     public final void rule__ShapeLayout__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5297:1: ( rule__ShapeLayout__Group__3__Impl )
-            // InternalGrana.g:5298:2: rule__ShapeLayout__Group__3__Impl
+            // InternalGrana.g:5328:1: ( rule__ShapeLayout__Group__3__Impl )
+            // InternalGrana.g:5329:2: rule__ShapeLayout__Group__3__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ShapeLayout__Group__3__Impl();
@@ -14752,17 +14849,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group__3__Impl"
-    // InternalGrana.g:5304:1: rule__ShapeLayout__Group__3__Impl : ( ']' ) ;
+    // InternalGrana.g:5335:1: rule__ShapeLayout__Group__3__Impl : ( ']' ) ;
     public final void rule__ShapeLayout__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5308:1: ( ( ']' ) )
-            // InternalGrana.g:5309:1: ( ']' )
+            // InternalGrana.g:5339:1: ( ( ']' ) )
+            // InternalGrana.g:5340:1: ( ']' )
             {
-            // InternalGrana.g:5309:1: ( ']' )
-            // InternalGrana.g:5310:1: ']'
+            // InternalGrana.g:5340:1: ( ']' )
+            // InternalGrana.g:5341:1: ']'
             {
              before(grammarAccess.getShapeLayoutAccess().getRightSquareBracketKeyword_3()); 
             match(input,46,FOLLOW_2); 
@@ -14789,16 +14886,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_0__0"
-    // InternalGrana.g:5331:1: rule__ShapeLayout__Group_2_0__0 : rule__ShapeLayout__Group_2_0__0__Impl rule__ShapeLayout__Group_2_0__1 ;
+    // InternalGrana.g:5362:1: rule__ShapeLayout__Group_2_0__0 : rule__ShapeLayout__Group_2_0__0__Impl rule__ShapeLayout__Group_2_0__1 ;
     public final void rule__ShapeLayout__Group_2_0__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5335:1: ( rule__ShapeLayout__Group_2_0__0__Impl rule__ShapeLayout__Group_2_0__1 )
-            // InternalGrana.g:5336:2: rule__ShapeLayout__Group_2_0__0__Impl rule__ShapeLayout__Group_2_0__1
+            // InternalGrana.g:5366:1: ( rule__ShapeLayout__Group_2_0__0__Impl rule__ShapeLayout__Group_2_0__1 )
+            // InternalGrana.g:5367:2: rule__ShapeLayout__Group_2_0__0__Impl rule__ShapeLayout__Group_2_0__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ShapeLayout__Group_2_0__0__Impl();
 
             state._fsp--;
@@ -14827,17 +14924,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_0__0__Impl"
-    // InternalGrana.g:5343:1: rule__ShapeLayout__Group_2_0__0__Impl : ( 'position' ) ;
+    // InternalGrana.g:5374:1: rule__ShapeLayout__Group_2_0__0__Impl : ( 'position' ) ;
     public final void rule__ShapeLayout__Group_2_0__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5347:1: ( ( 'position' ) )
-            // InternalGrana.g:5348:1: ( 'position' )
+            // InternalGrana.g:5378:1: ( ( 'position' ) )
+            // InternalGrana.g:5379:1: ( 'position' )
             {
-            // InternalGrana.g:5348:1: ( 'position' )
-            // InternalGrana.g:5349:1: 'position'
+            // InternalGrana.g:5379:1: ( 'position' )
+            // InternalGrana.g:5380:1: 'position'
             {
              before(grammarAccess.getShapeLayoutAccess().getPositionKeyword_2_0_0()); 
             match(input,47,FOLLOW_2); 
@@ -14864,16 +14961,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_0__1"
-    // InternalGrana.g:5362:1: rule__ShapeLayout__Group_2_0__1 : rule__ShapeLayout__Group_2_0__1__Impl rule__ShapeLayout__Group_2_0__2 ;
+    // InternalGrana.g:5393:1: rule__ShapeLayout__Group_2_0__1 : rule__ShapeLayout__Group_2_0__1__Impl rule__ShapeLayout__Group_2_0__2 ;
     public final void rule__ShapeLayout__Group_2_0__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5366:1: ( rule__ShapeLayout__Group_2_0__1__Impl rule__ShapeLayout__Group_2_0__2 )
-            // InternalGrana.g:5367:2: rule__ShapeLayout__Group_2_0__1__Impl rule__ShapeLayout__Group_2_0__2
+            // InternalGrana.g:5397:1: ( rule__ShapeLayout__Group_2_0__1__Impl rule__ShapeLayout__Group_2_0__2 )
+            // InternalGrana.g:5398:2: rule__ShapeLayout__Group_2_0__1__Impl rule__ShapeLayout__Group_2_0__2
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ShapeLayout__Group_2_0__1__Impl();
 
             state._fsp--;
@@ -14902,17 +14999,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_0__1__Impl"
-    // InternalGrana.g:5374:1: rule__ShapeLayout__Group_2_0__1__Impl : ( ':' ) ;
+    // InternalGrana.g:5405:1: rule__ShapeLayout__Group_2_0__1__Impl : ( ':' ) ;
     public final void rule__ShapeLayout__Group_2_0__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5378:1: ( ( ':' ) )
-            // InternalGrana.g:5379:1: ( ':' )
+            // InternalGrana.g:5409:1: ( ( ':' ) )
+            // InternalGrana.g:5410:1: ( ':' )
             {
-            // InternalGrana.g:5379:1: ( ':' )
-            // InternalGrana.g:5380:1: ':'
+            // InternalGrana.g:5410:1: ( ':' )
+            // InternalGrana.g:5411:1: ':'
             {
              before(grammarAccess.getShapeLayoutAccess().getColonKeyword_2_0_1()); 
             match(input,42,FOLLOW_2); 
@@ -14939,14 +15036,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_0__2"
-    // InternalGrana.g:5393:1: rule__ShapeLayout__Group_2_0__2 : rule__ShapeLayout__Group_2_0__2__Impl rule__ShapeLayout__Group_2_0__3 ;
+    // InternalGrana.g:5424:1: rule__ShapeLayout__Group_2_0__2 : rule__ShapeLayout__Group_2_0__2__Impl rule__ShapeLayout__Group_2_0__3 ;
     public final void rule__ShapeLayout__Group_2_0__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5397:1: ( rule__ShapeLayout__Group_2_0__2__Impl rule__ShapeLayout__Group_2_0__3 )
-            // InternalGrana.g:5398:2: rule__ShapeLayout__Group_2_0__2__Impl rule__ShapeLayout__Group_2_0__3
+            // InternalGrana.g:5428:1: ( rule__ShapeLayout__Group_2_0__2__Impl rule__ShapeLayout__Group_2_0__3 )
+            // InternalGrana.g:5429:2: rule__ShapeLayout__Group_2_0__2__Impl rule__ShapeLayout__Group_2_0__3
             {
             pushFollow(FOLLOW_25);
             rule__ShapeLayout__Group_2_0__2__Impl();
@@ -14977,21 +15074,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_0__2__Impl"
-    // InternalGrana.g:5405:1: rule__ShapeLayout__Group_2_0__2__Impl : ( ( rule__ShapeLayout__XAssignment_2_0_2 ) ) ;
+    // InternalGrana.g:5436:1: rule__ShapeLayout__Group_2_0__2__Impl : ( ( rule__ShapeLayout__XAssignment_2_0_2 ) ) ;
     public final void rule__ShapeLayout__Group_2_0__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5409:1: ( ( ( rule__ShapeLayout__XAssignment_2_0_2 ) ) )
-            // InternalGrana.g:5410:1: ( ( rule__ShapeLayout__XAssignment_2_0_2 ) )
+            // InternalGrana.g:5440:1: ( ( ( rule__ShapeLayout__XAssignment_2_0_2 ) ) )
+            // InternalGrana.g:5441:1: ( ( rule__ShapeLayout__XAssignment_2_0_2 ) )
             {
-            // InternalGrana.g:5410:1: ( ( rule__ShapeLayout__XAssignment_2_0_2 ) )
-            // InternalGrana.g:5411:1: ( rule__ShapeLayout__XAssignment_2_0_2 )
+            // InternalGrana.g:5441:1: ( ( rule__ShapeLayout__XAssignment_2_0_2 ) )
+            // InternalGrana.g:5442:1: ( rule__ShapeLayout__XAssignment_2_0_2 )
             {
              before(grammarAccess.getShapeLayoutAccess().getXAssignment_2_0_2()); 
-            // InternalGrana.g:5412:1: ( rule__ShapeLayout__XAssignment_2_0_2 )
-            // InternalGrana.g:5412:2: rule__ShapeLayout__XAssignment_2_0_2
+            // InternalGrana.g:5443:1: ( rule__ShapeLayout__XAssignment_2_0_2 )
+            // InternalGrana.g:5443:2: rule__ShapeLayout__XAssignment_2_0_2
             {
             pushFollow(FOLLOW_2);
             rule__ShapeLayout__XAssignment_2_0_2();
@@ -15024,16 +15121,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_0__3"
-    // InternalGrana.g:5422:1: rule__ShapeLayout__Group_2_0__3 : rule__ShapeLayout__Group_2_0__3__Impl rule__ShapeLayout__Group_2_0__4 ;
+    // InternalGrana.g:5453:1: rule__ShapeLayout__Group_2_0__3 : rule__ShapeLayout__Group_2_0__3__Impl rule__ShapeLayout__Group_2_0__4 ;
     public final void rule__ShapeLayout__Group_2_0__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5426:1: ( rule__ShapeLayout__Group_2_0__3__Impl rule__ShapeLayout__Group_2_0__4 )
-            // InternalGrana.g:5427:2: rule__ShapeLayout__Group_2_0__3__Impl rule__ShapeLayout__Group_2_0__4
+            // InternalGrana.g:5457:1: ( rule__ShapeLayout__Group_2_0__3__Impl rule__ShapeLayout__Group_2_0__4 )
+            // InternalGrana.g:5458:2: rule__ShapeLayout__Group_2_0__3__Impl rule__ShapeLayout__Group_2_0__4
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ShapeLayout__Group_2_0__3__Impl();
 
             state._fsp--;
@@ -15062,17 +15159,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_0__3__Impl"
-    // InternalGrana.g:5434:1: rule__ShapeLayout__Group_2_0__3__Impl : ( ',' ) ;
+    // InternalGrana.g:5465:1: rule__ShapeLayout__Group_2_0__3__Impl : ( ',' ) ;
     public final void rule__ShapeLayout__Group_2_0__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5438:1: ( ( ',' ) )
-            // InternalGrana.g:5439:1: ( ',' )
+            // InternalGrana.g:5469:1: ( ( ',' ) )
+            // InternalGrana.g:5470:1: ( ',' )
             {
-            // InternalGrana.g:5439:1: ( ',' )
-            // InternalGrana.g:5440:1: ','
+            // InternalGrana.g:5470:1: ( ',' )
+            // InternalGrana.g:5471:1: ','
             {
              before(grammarAccess.getShapeLayoutAccess().getCommaKeyword_2_0_3()); 
             match(input,32,FOLLOW_2); 
@@ -15099,14 +15196,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_0__4"
-    // InternalGrana.g:5453:1: rule__ShapeLayout__Group_2_0__4 : rule__ShapeLayout__Group_2_0__4__Impl ;
+    // InternalGrana.g:5484:1: rule__ShapeLayout__Group_2_0__4 : rule__ShapeLayout__Group_2_0__4__Impl ;
     public final void rule__ShapeLayout__Group_2_0__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5457:1: ( rule__ShapeLayout__Group_2_0__4__Impl )
-            // InternalGrana.g:5458:2: rule__ShapeLayout__Group_2_0__4__Impl
+            // InternalGrana.g:5488:1: ( rule__ShapeLayout__Group_2_0__4__Impl )
+            // InternalGrana.g:5489:2: rule__ShapeLayout__Group_2_0__4__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ShapeLayout__Group_2_0__4__Impl();
@@ -15132,21 +15229,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_0__4__Impl"
-    // InternalGrana.g:5464:1: rule__ShapeLayout__Group_2_0__4__Impl : ( ( rule__ShapeLayout__YAssignment_2_0_4 ) ) ;
+    // InternalGrana.g:5495:1: rule__ShapeLayout__Group_2_0__4__Impl : ( ( rule__ShapeLayout__YAssignment_2_0_4 ) ) ;
     public final void rule__ShapeLayout__Group_2_0__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5468:1: ( ( ( rule__ShapeLayout__YAssignment_2_0_4 ) ) )
-            // InternalGrana.g:5469:1: ( ( rule__ShapeLayout__YAssignment_2_0_4 ) )
+            // InternalGrana.g:5499:1: ( ( ( rule__ShapeLayout__YAssignment_2_0_4 ) ) )
+            // InternalGrana.g:5500:1: ( ( rule__ShapeLayout__YAssignment_2_0_4 ) )
             {
-            // InternalGrana.g:5469:1: ( ( rule__ShapeLayout__YAssignment_2_0_4 ) )
-            // InternalGrana.g:5470:1: ( rule__ShapeLayout__YAssignment_2_0_4 )
+            // InternalGrana.g:5500:1: ( ( rule__ShapeLayout__YAssignment_2_0_4 ) )
+            // InternalGrana.g:5501:1: ( rule__ShapeLayout__YAssignment_2_0_4 )
             {
              before(grammarAccess.getShapeLayoutAccess().getYAssignment_2_0_4()); 
-            // InternalGrana.g:5471:1: ( rule__ShapeLayout__YAssignment_2_0_4 )
-            // InternalGrana.g:5471:2: rule__ShapeLayout__YAssignment_2_0_4
+            // InternalGrana.g:5502:1: ( rule__ShapeLayout__YAssignment_2_0_4 )
+            // InternalGrana.g:5502:2: rule__ShapeLayout__YAssignment_2_0_4
             {
             pushFollow(FOLLOW_2);
             rule__ShapeLayout__YAssignment_2_0_4();
@@ -15179,16 +15276,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_1__0"
-    // InternalGrana.g:5491:1: rule__ShapeLayout__Group_2_1__0 : rule__ShapeLayout__Group_2_1__0__Impl rule__ShapeLayout__Group_2_1__1 ;
+    // InternalGrana.g:5522:1: rule__ShapeLayout__Group_2_1__0 : rule__ShapeLayout__Group_2_1__0__Impl rule__ShapeLayout__Group_2_1__1 ;
     public final void rule__ShapeLayout__Group_2_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5495:1: ( rule__ShapeLayout__Group_2_1__0__Impl rule__ShapeLayout__Group_2_1__1 )
-            // InternalGrana.g:5496:2: rule__ShapeLayout__Group_2_1__0__Impl rule__ShapeLayout__Group_2_1__1
+            // InternalGrana.g:5526:1: ( rule__ShapeLayout__Group_2_1__0__Impl rule__ShapeLayout__Group_2_1__1 )
+            // InternalGrana.g:5527:2: rule__ShapeLayout__Group_2_1__0__Impl rule__ShapeLayout__Group_2_1__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ShapeLayout__Group_2_1__0__Impl();
 
             state._fsp--;
@@ -15217,17 +15314,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_1__0__Impl"
-    // InternalGrana.g:5503:1: rule__ShapeLayout__Group_2_1__0__Impl : ( 'size' ) ;
+    // InternalGrana.g:5534:1: rule__ShapeLayout__Group_2_1__0__Impl : ( 'size' ) ;
     public final void rule__ShapeLayout__Group_2_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5507:1: ( ( 'size' ) )
-            // InternalGrana.g:5508:1: ( 'size' )
+            // InternalGrana.g:5538:1: ( ( 'size' ) )
+            // InternalGrana.g:5539:1: ( 'size' )
             {
-            // InternalGrana.g:5508:1: ( 'size' )
-            // InternalGrana.g:5509:1: 'size'
+            // InternalGrana.g:5539:1: ( 'size' )
+            // InternalGrana.g:5540:1: 'size'
             {
              before(grammarAccess.getShapeLayoutAccess().getSizeKeyword_2_1_0()); 
             match(input,48,FOLLOW_2); 
@@ -15254,16 +15351,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_1__1"
-    // InternalGrana.g:5522:1: rule__ShapeLayout__Group_2_1__1 : rule__ShapeLayout__Group_2_1__1__Impl rule__ShapeLayout__Group_2_1__2 ;
+    // InternalGrana.g:5553:1: rule__ShapeLayout__Group_2_1__1 : rule__ShapeLayout__Group_2_1__1__Impl rule__ShapeLayout__Group_2_1__2 ;
     public final void rule__ShapeLayout__Group_2_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5526:1: ( rule__ShapeLayout__Group_2_1__1__Impl rule__ShapeLayout__Group_2_1__2 )
-            // InternalGrana.g:5527:2: rule__ShapeLayout__Group_2_1__1__Impl rule__ShapeLayout__Group_2_1__2
+            // InternalGrana.g:5557:1: ( rule__ShapeLayout__Group_2_1__1__Impl rule__ShapeLayout__Group_2_1__2 )
+            // InternalGrana.g:5558:2: rule__ShapeLayout__Group_2_1__1__Impl rule__ShapeLayout__Group_2_1__2
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ShapeLayout__Group_2_1__1__Impl();
 
             state._fsp--;
@@ -15292,17 +15389,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_1__1__Impl"
-    // InternalGrana.g:5534:1: rule__ShapeLayout__Group_2_1__1__Impl : ( ':' ) ;
+    // InternalGrana.g:5565:1: rule__ShapeLayout__Group_2_1__1__Impl : ( ':' ) ;
     public final void rule__ShapeLayout__Group_2_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5538:1: ( ( ':' ) )
-            // InternalGrana.g:5539:1: ( ':' )
+            // InternalGrana.g:5569:1: ( ( ':' ) )
+            // InternalGrana.g:5570:1: ( ':' )
             {
-            // InternalGrana.g:5539:1: ( ':' )
-            // InternalGrana.g:5540:1: ':'
+            // InternalGrana.g:5570:1: ( ':' )
+            // InternalGrana.g:5571:1: ':'
             {
              before(grammarAccess.getShapeLayoutAccess().getColonKeyword_2_1_1()); 
             match(input,42,FOLLOW_2); 
@@ -15329,14 +15426,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_1__2"
-    // InternalGrana.g:5553:1: rule__ShapeLayout__Group_2_1__2 : rule__ShapeLayout__Group_2_1__2__Impl rule__ShapeLayout__Group_2_1__3 ;
+    // InternalGrana.g:5584:1: rule__ShapeLayout__Group_2_1__2 : rule__ShapeLayout__Group_2_1__2__Impl rule__ShapeLayout__Group_2_1__3 ;
     public final void rule__ShapeLayout__Group_2_1__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5557:1: ( rule__ShapeLayout__Group_2_1__2__Impl rule__ShapeLayout__Group_2_1__3 )
-            // InternalGrana.g:5558:2: rule__ShapeLayout__Group_2_1__2__Impl rule__ShapeLayout__Group_2_1__3
+            // InternalGrana.g:5588:1: ( rule__ShapeLayout__Group_2_1__2__Impl rule__ShapeLayout__Group_2_1__3 )
+            // InternalGrana.g:5589:2: rule__ShapeLayout__Group_2_1__2__Impl rule__ShapeLayout__Group_2_1__3
             {
             pushFollow(FOLLOW_25);
             rule__ShapeLayout__Group_2_1__2__Impl();
@@ -15367,21 +15464,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_1__2__Impl"
-    // InternalGrana.g:5565:1: rule__ShapeLayout__Group_2_1__2__Impl : ( ( rule__ShapeLayout__WidthAssignment_2_1_2 ) ) ;
+    // InternalGrana.g:5596:1: rule__ShapeLayout__Group_2_1__2__Impl : ( ( rule__ShapeLayout__WidthAssignment_2_1_2 ) ) ;
     public final void rule__ShapeLayout__Group_2_1__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5569:1: ( ( ( rule__ShapeLayout__WidthAssignment_2_1_2 ) ) )
-            // InternalGrana.g:5570:1: ( ( rule__ShapeLayout__WidthAssignment_2_1_2 ) )
+            // InternalGrana.g:5600:1: ( ( ( rule__ShapeLayout__WidthAssignment_2_1_2 ) ) )
+            // InternalGrana.g:5601:1: ( ( rule__ShapeLayout__WidthAssignment_2_1_2 ) )
             {
-            // InternalGrana.g:5570:1: ( ( rule__ShapeLayout__WidthAssignment_2_1_2 ) )
-            // InternalGrana.g:5571:1: ( rule__ShapeLayout__WidthAssignment_2_1_2 )
+            // InternalGrana.g:5601:1: ( ( rule__ShapeLayout__WidthAssignment_2_1_2 ) )
+            // InternalGrana.g:5602:1: ( rule__ShapeLayout__WidthAssignment_2_1_2 )
             {
              before(grammarAccess.getShapeLayoutAccess().getWidthAssignment_2_1_2()); 
-            // InternalGrana.g:5572:1: ( rule__ShapeLayout__WidthAssignment_2_1_2 )
-            // InternalGrana.g:5572:2: rule__ShapeLayout__WidthAssignment_2_1_2
+            // InternalGrana.g:5603:1: ( rule__ShapeLayout__WidthAssignment_2_1_2 )
+            // InternalGrana.g:5603:2: rule__ShapeLayout__WidthAssignment_2_1_2
             {
             pushFollow(FOLLOW_2);
             rule__ShapeLayout__WidthAssignment_2_1_2();
@@ -15414,16 +15511,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_1__3"
-    // InternalGrana.g:5582:1: rule__ShapeLayout__Group_2_1__3 : rule__ShapeLayout__Group_2_1__3__Impl rule__ShapeLayout__Group_2_1__4 ;
+    // InternalGrana.g:5613:1: rule__ShapeLayout__Group_2_1__3 : rule__ShapeLayout__Group_2_1__3__Impl rule__ShapeLayout__Group_2_1__4 ;
     public final void rule__ShapeLayout__Group_2_1__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5586:1: ( rule__ShapeLayout__Group_2_1__3__Impl rule__ShapeLayout__Group_2_1__4 )
-            // InternalGrana.g:5587:2: rule__ShapeLayout__Group_2_1__3__Impl rule__ShapeLayout__Group_2_1__4
+            // InternalGrana.g:5617:1: ( rule__ShapeLayout__Group_2_1__3__Impl rule__ShapeLayout__Group_2_1__4 )
+            // InternalGrana.g:5618:2: rule__ShapeLayout__Group_2_1__3__Impl rule__ShapeLayout__Group_2_1__4
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ShapeLayout__Group_2_1__3__Impl();
 
             state._fsp--;
@@ -15452,17 +15549,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_1__3__Impl"
-    // InternalGrana.g:5594:1: rule__ShapeLayout__Group_2_1__3__Impl : ( ',' ) ;
+    // InternalGrana.g:5625:1: rule__ShapeLayout__Group_2_1__3__Impl : ( ',' ) ;
     public final void rule__ShapeLayout__Group_2_1__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5598:1: ( ( ',' ) )
-            // InternalGrana.g:5599:1: ( ',' )
+            // InternalGrana.g:5629:1: ( ( ',' ) )
+            // InternalGrana.g:5630:1: ( ',' )
             {
-            // InternalGrana.g:5599:1: ( ',' )
-            // InternalGrana.g:5600:1: ','
+            // InternalGrana.g:5630:1: ( ',' )
+            // InternalGrana.g:5631:1: ','
             {
              before(grammarAccess.getShapeLayoutAccess().getCommaKeyword_2_1_3()); 
             match(input,32,FOLLOW_2); 
@@ -15489,14 +15586,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_1__4"
-    // InternalGrana.g:5613:1: rule__ShapeLayout__Group_2_1__4 : rule__ShapeLayout__Group_2_1__4__Impl ;
+    // InternalGrana.g:5644:1: rule__ShapeLayout__Group_2_1__4 : rule__ShapeLayout__Group_2_1__4__Impl ;
     public final void rule__ShapeLayout__Group_2_1__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5617:1: ( rule__ShapeLayout__Group_2_1__4__Impl )
-            // InternalGrana.g:5618:2: rule__ShapeLayout__Group_2_1__4__Impl
+            // InternalGrana.g:5648:1: ( rule__ShapeLayout__Group_2_1__4__Impl )
+            // InternalGrana.g:5649:2: rule__ShapeLayout__Group_2_1__4__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ShapeLayout__Group_2_1__4__Impl();
@@ -15522,21 +15619,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__Group_2_1__4__Impl"
-    // InternalGrana.g:5624:1: rule__ShapeLayout__Group_2_1__4__Impl : ( ( rule__ShapeLayout__HeightAssignment_2_1_4 ) ) ;
+    // InternalGrana.g:5655:1: rule__ShapeLayout__Group_2_1__4__Impl : ( ( rule__ShapeLayout__HeightAssignment_2_1_4 ) ) ;
     public final void rule__ShapeLayout__Group_2_1__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5628:1: ( ( ( rule__ShapeLayout__HeightAssignment_2_1_4 ) ) )
-            // InternalGrana.g:5629:1: ( ( rule__ShapeLayout__HeightAssignment_2_1_4 ) )
+            // InternalGrana.g:5659:1: ( ( ( rule__ShapeLayout__HeightAssignment_2_1_4 ) ) )
+            // InternalGrana.g:5660:1: ( ( rule__ShapeLayout__HeightAssignment_2_1_4 ) )
             {
-            // InternalGrana.g:5629:1: ( ( rule__ShapeLayout__HeightAssignment_2_1_4 ) )
-            // InternalGrana.g:5630:1: ( rule__ShapeLayout__HeightAssignment_2_1_4 )
+            // InternalGrana.g:5660:1: ( ( rule__ShapeLayout__HeightAssignment_2_1_4 ) )
+            // InternalGrana.g:5661:1: ( rule__ShapeLayout__HeightAssignment_2_1_4 )
             {
              before(grammarAccess.getShapeLayoutAccess().getHeightAssignment_2_1_4()); 
-            // InternalGrana.g:5631:1: ( rule__ShapeLayout__HeightAssignment_2_1_4 )
-            // InternalGrana.g:5631:2: rule__ShapeLayout__HeightAssignment_2_1_4
+            // InternalGrana.g:5662:1: ( rule__ShapeLayout__HeightAssignment_2_1_4 )
+            // InternalGrana.g:5662:2: rule__ShapeLayout__HeightAssignment_2_1_4
             {
             pushFollow(FOLLOW_2);
             rule__ShapeLayout__HeightAssignment_2_1_4();
@@ -15569,14 +15666,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__0"
-    // InternalGrana.g:5651:1: rule__ElkEdge__Group__0 : rule__ElkEdge__Group__0__Impl rule__ElkEdge__Group__1 ;
+    // InternalGrana.g:5682:1: rule__ElkEdge__Group__0 : rule__ElkEdge__Group__0__Impl rule__ElkEdge__Group__1 ;
     public final void rule__ElkEdge__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5655:1: ( rule__ElkEdge__Group__0__Impl rule__ElkEdge__Group__1 )
-            // InternalGrana.g:5656:2: rule__ElkEdge__Group__0__Impl rule__ElkEdge__Group__1
+            // InternalGrana.g:5686:1: ( rule__ElkEdge__Group__0__Impl rule__ElkEdge__Group__1 )
+            // InternalGrana.g:5687:2: rule__ElkEdge__Group__0__Impl rule__ElkEdge__Group__1
             {
             pushFollow(FOLLOW_8);
             rule__ElkEdge__Group__0__Impl();
@@ -15607,17 +15704,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__0__Impl"
-    // InternalGrana.g:5663:1: rule__ElkEdge__Group__0__Impl : ( 'edge' ) ;
+    // InternalGrana.g:5694:1: rule__ElkEdge__Group__0__Impl : ( 'edge' ) ;
     public final void rule__ElkEdge__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5667:1: ( ( 'edge' ) )
-            // InternalGrana.g:5668:1: ( 'edge' )
+            // InternalGrana.g:5698:1: ( ( 'edge' ) )
+            // InternalGrana.g:5699:1: ( 'edge' )
             {
-            // InternalGrana.g:5668:1: ( 'edge' )
-            // InternalGrana.g:5669:1: 'edge'
+            // InternalGrana.g:5699:1: ( 'edge' )
+            // InternalGrana.g:5700:1: 'edge'
             {
              before(grammarAccess.getElkEdgeAccess().getEdgeKeyword_0()); 
             match(input,49,FOLLOW_2); 
@@ -15644,14 +15741,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__1"
-    // InternalGrana.g:5682:1: rule__ElkEdge__Group__1 : rule__ElkEdge__Group__1__Impl rule__ElkEdge__Group__2 ;
+    // InternalGrana.g:5713:1: rule__ElkEdge__Group__1 : rule__ElkEdge__Group__1__Impl rule__ElkEdge__Group__2 ;
     public final void rule__ElkEdge__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5686:1: ( rule__ElkEdge__Group__1__Impl rule__ElkEdge__Group__2 )
-            // InternalGrana.g:5687:2: rule__ElkEdge__Group__1__Impl rule__ElkEdge__Group__2
+            // InternalGrana.g:5717:1: ( rule__ElkEdge__Group__1__Impl rule__ElkEdge__Group__2 )
+            // InternalGrana.g:5718:2: rule__ElkEdge__Group__1__Impl rule__ElkEdge__Group__2
             {
             pushFollow(FOLLOW_8);
             rule__ElkEdge__Group__1__Impl();
@@ -15682,33 +15779,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__1__Impl"
-    // InternalGrana.g:5694:1: rule__ElkEdge__Group__1__Impl : ( ( rule__ElkEdge__Group_1__0 )? ) ;
+    // InternalGrana.g:5725:1: rule__ElkEdge__Group__1__Impl : ( ( rule__ElkEdge__Group_1__0 )? ) ;
     public final void rule__ElkEdge__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5698:1: ( ( ( rule__ElkEdge__Group_1__0 )? ) )
-            // InternalGrana.g:5699:1: ( ( rule__ElkEdge__Group_1__0 )? )
+            // InternalGrana.g:5729:1: ( ( ( rule__ElkEdge__Group_1__0 )? ) )
+            // InternalGrana.g:5730:1: ( ( rule__ElkEdge__Group_1__0 )? )
             {
-            // InternalGrana.g:5699:1: ( ( rule__ElkEdge__Group_1__0 )? )
-            // InternalGrana.g:5700:1: ( rule__ElkEdge__Group_1__0 )?
+            // InternalGrana.g:5730:1: ( ( rule__ElkEdge__Group_1__0 )? )
+            // InternalGrana.g:5731:1: ( rule__ElkEdge__Group_1__0 )?
             {
              before(grammarAccess.getElkEdgeAccess().getGroup_1()); 
-            // InternalGrana.g:5701:1: ( rule__ElkEdge__Group_1__0 )?
-            int alt56=2;
-            int LA56_0 = input.LA(1);
+            // InternalGrana.g:5732:1: ( rule__ElkEdge__Group_1__0 )?
+            int alt57=2;
+            int LA57_0 = input.LA(1);
 
-            if ( (LA56_0==RULE_ID) ) {
-                int LA56_1 = input.LA(2);
+            if ( (LA57_0==RULE_ID) ) {
+                int LA57_1 = input.LA(2);
 
-                if ( (LA56_1==42) ) {
-                    alt56=1;
+                if ( (LA57_1==42) ) {
+                    alt57=1;
                 }
             }
-            switch (alt56) {
+            switch (alt57) {
                 case 1 :
-                    // InternalGrana.g:5701:2: rule__ElkEdge__Group_1__0
+                    // InternalGrana.g:5732:2: rule__ElkEdge__Group_1__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdge__Group_1__0();
@@ -15744,16 +15841,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__2"
-    // InternalGrana.g:5711:1: rule__ElkEdge__Group__2 : rule__ElkEdge__Group__2__Impl rule__ElkEdge__Group__3 ;
+    // InternalGrana.g:5742:1: rule__ElkEdge__Group__2 : rule__ElkEdge__Group__2__Impl rule__ElkEdge__Group__3 ;
     public final void rule__ElkEdge__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5715:1: ( rule__ElkEdge__Group__2__Impl rule__ElkEdge__Group__3 )
-            // InternalGrana.g:5716:2: rule__ElkEdge__Group__2__Impl rule__ElkEdge__Group__3
+            // InternalGrana.g:5746:1: ( rule__ElkEdge__Group__2__Impl rule__ElkEdge__Group__3 )
+            // InternalGrana.g:5747:2: rule__ElkEdge__Group__2__Impl rule__ElkEdge__Group__3
             {
-            pushFollow(FOLLOW_42);
+            pushFollow(FOLLOW_43);
             rule__ElkEdge__Group__2__Impl();
 
             state._fsp--;
@@ -15782,21 +15879,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__2__Impl"
-    // InternalGrana.g:5723:1: rule__ElkEdge__Group__2__Impl : ( ( rule__ElkEdge__SourcesAssignment_2 ) ) ;
+    // InternalGrana.g:5754:1: rule__ElkEdge__Group__2__Impl : ( ( rule__ElkEdge__SourcesAssignment_2 ) ) ;
     public final void rule__ElkEdge__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5727:1: ( ( ( rule__ElkEdge__SourcesAssignment_2 ) ) )
-            // InternalGrana.g:5728:1: ( ( rule__ElkEdge__SourcesAssignment_2 ) )
+            // InternalGrana.g:5758:1: ( ( ( rule__ElkEdge__SourcesAssignment_2 ) ) )
+            // InternalGrana.g:5759:1: ( ( rule__ElkEdge__SourcesAssignment_2 ) )
             {
-            // InternalGrana.g:5728:1: ( ( rule__ElkEdge__SourcesAssignment_2 ) )
-            // InternalGrana.g:5729:1: ( rule__ElkEdge__SourcesAssignment_2 )
+            // InternalGrana.g:5759:1: ( ( rule__ElkEdge__SourcesAssignment_2 ) )
+            // InternalGrana.g:5760:1: ( rule__ElkEdge__SourcesAssignment_2 )
             {
              before(grammarAccess.getElkEdgeAccess().getSourcesAssignment_2()); 
-            // InternalGrana.g:5730:1: ( rule__ElkEdge__SourcesAssignment_2 )
-            // InternalGrana.g:5730:2: rule__ElkEdge__SourcesAssignment_2
+            // InternalGrana.g:5761:1: ( rule__ElkEdge__SourcesAssignment_2 )
+            // InternalGrana.g:5761:2: rule__ElkEdge__SourcesAssignment_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdge__SourcesAssignment_2();
@@ -15829,16 +15926,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__3"
-    // InternalGrana.g:5740:1: rule__ElkEdge__Group__3 : rule__ElkEdge__Group__3__Impl rule__ElkEdge__Group__4 ;
+    // InternalGrana.g:5771:1: rule__ElkEdge__Group__3 : rule__ElkEdge__Group__3__Impl rule__ElkEdge__Group__4 ;
     public final void rule__ElkEdge__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5744:1: ( rule__ElkEdge__Group__3__Impl rule__ElkEdge__Group__4 )
-            // InternalGrana.g:5745:2: rule__ElkEdge__Group__3__Impl rule__ElkEdge__Group__4
+            // InternalGrana.g:5775:1: ( rule__ElkEdge__Group__3__Impl rule__ElkEdge__Group__4 )
+            // InternalGrana.g:5776:2: rule__ElkEdge__Group__3__Impl rule__ElkEdge__Group__4
             {
-            pushFollow(FOLLOW_42);
+            pushFollow(FOLLOW_43);
             rule__ElkEdge__Group__3__Impl();
 
             state._fsp--;
@@ -15867,33 +15964,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__3__Impl"
-    // InternalGrana.g:5752:1: rule__ElkEdge__Group__3__Impl : ( ( rule__ElkEdge__Group_3__0 )* ) ;
+    // InternalGrana.g:5783:1: rule__ElkEdge__Group__3__Impl : ( ( rule__ElkEdge__Group_3__0 )* ) ;
     public final void rule__ElkEdge__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5756:1: ( ( ( rule__ElkEdge__Group_3__0 )* ) )
-            // InternalGrana.g:5757:1: ( ( rule__ElkEdge__Group_3__0 )* )
+            // InternalGrana.g:5787:1: ( ( ( rule__ElkEdge__Group_3__0 )* ) )
+            // InternalGrana.g:5788:1: ( ( rule__ElkEdge__Group_3__0 )* )
             {
-            // InternalGrana.g:5757:1: ( ( rule__ElkEdge__Group_3__0 )* )
-            // InternalGrana.g:5758:1: ( rule__ElkEdge__Group_3__0 )*
+            // InternalGrana.g:5788:1: ( ( rule__ElkEdge__Group_3__0 )* )
+            // InternalGrana.g:5789:1: ( rule__ElkEdge__Group_3__0 )*
             {
              before(grammarAccess.getElkEdgeAccess().getGroup_3()); 
-            // InternalGrana.g:5759:1: ( rule__ElkEdge__Group_3__0 )*
-            loop57:
+            // InternalGrana.g:5790:1: ( rule__ElkEdge__Group_3__0 )*
+            loop58:
             do {
-                int alt57=2;
-                int LA57_0 = input.LA(1);
+                int alt58=2;
+                int LA58_0 = input.LA(1);
 
-                if ( (LA57_0==32) ) {
-                    alt57=1;
+                if ( (LA58_0==32) ) {
+                    alt58=1;
                 }
 
 
-                switch (alt57) {
+                switch (alt58) {
             	case 1 :
-            	    // InternalGrana.g:5759:2: rule__ElkEdge__Group_3__0
+            	    // InternalGrana.g:5790:2: rule__ElkEdge__Group_3__0
             	    {
             	    pushFollow(FOLLOW_26);
             	    rule__ElkEdge__Group_3__0();
@@ -15905,7 +16002,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop57;
+            	    break loop58;
                 }
             } while (true);
 
@@ -15932,14 +16029,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__4"
-    // InternalGrana.g:5769:1: rule__ElkEdge__Group__4 : rule__ElkEdge__Group__4__Impl rule__ElkEdge__Group__5 ;
+    // InternalGrana.g:5800:1: rule__ElkEdge__Group__4 : rule__ElkEdge__Group__4__Impl rule__ElkEdge__Group__5 ;
     public final void rule__ElkEdge__Group__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5773:1: ( rule__ElkEdge__Group__4__Impl rule__ElkEdge__Group__5 )
-            // InternalGrana.g:5774:2: rule__ElkEdge__Group__4__Impl rule__ElkEdge__Group__5
+            // InternalGrana.g:5804:1: ( rule__ElkEdge__Group__4__Impl rule__ElkEdge__Group__5 )
+            // InternalGrana.g:5805:2: rule__ElkEdge__Group__4__Impl rule__ElkEdge__Group__5
             {
             pushFollow(FOLLOW_8);
             rule__ElkEdge__Group__4__Impl();
@@ -15970,17 +16067,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__4__Impl"
-    // InternalGrana.g:5781:1: rule__ElkEdge__Group__4__Impl : ( '->' ) ;
+    // InternalGrana.g:5812:1: rule__ElkEdge__Group__4__Impl : ( '->' ) ;
     public final void rule__ElkEdge__Group__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5785:1: ( ( '->' ) )
-            // InternalGrana.g:5786:1: ( '->' )
+            // InternalGrana.g:5816:1: ( ( '->' ) )
+            // InternalGrana.g:5817:1: ( '->' )
             {
-            // InternalGrana.g:5786:1: ( '->' )
-            // InternalGrana.g:5787:1: '->'
+            // InternalGrana.g:5817:1: ( '->' )
+            // InternalGrana.g:5818:1: '->'
             {
              before(grammarAccess.getElkEdgeAccess().getHyphenMinusGreaterThanSignKeyword_4()); 
             match(input,50,FOLLOW_2); 
@@ -16007,16 +16104,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__5"
-    // InternalGrana.g:5800:1: rule__ElkEdge__Group__5 : rule__ElkEdge__Group__5__Impl rule__ElkEdge__Group__6 ;
+    // InternalGrana.g:5831:1: rule__ElkEdge__Group__5 : rule__ElkEdge__Group__5__Impl rule__ElkEdge__Group__6 ;
     public final void rule__ElkEdge__Group__5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5804:1: ( rule__ElkEdge__Group__5__Impl rule__ElkEdge__Group__6 )
-            // InternalGrana.g:5805:2: rule__ElkEdge__Group__5__Impl rule__ElkEdge__Group__6
+            // InternalGrana.g:5835:1: ( rule__ElkEdge__Group__5__Impl rule__ElkEdge__Group__6 )
+            // InternalGrana.g:5836:2: rule__ElkEdge__Group__5__Impl rule__ElkEdge__Group__6
             {
-            pushFollow(FOLLOW_43);
+            pushFollow(FOLLOW_44);
             rule__ElkEdge__Group__5__Impl();
 
             state._fsp--;
@@ -16045,21 +16142,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__5__Impl"
-    // InternalGrana.g:5812:1: rule__ElkEdge__Group__5__Impl : ( ( rule__ElkEdge__TargetsAssignment_5 ) ) ;
+    // InternalGrana.g:5843:1: rule__ElkEdge__Group__5__Impl : ( ( rule__ElkEdge__TargetsAssignment_5 ) ) ;
     public final void rule__ElkEdge__Group__5__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5816:1: ( ( ( rule__ElkEdge__TargetsAssignment_5 ) ) )
-            // InternalGrana.g:5817:1: ( ( rule__ElkEdge__TargetsAssignment_5 ) )
+            // InternalGrana.g:5847:1: ( ( ( rule__ElkEdge__TargetsAssignment_5 ) ) )
+            // InternalGrana.g:5848:1: ( ( rule__ElkEdge__TargetsAssignment_5 ) )
             {
-            // InternalGrana.g:5817:1: ( ( rule__ElkEdge__TargetsAssignment_5 ) )
-            // InternalGrana.g:5818:1: ( rule__ElkEdge__TargetsAssignment_5 )
+            // InternalGrana.g:5848:1: ( ( rule__ElkEdge__TargetsAssignment_5 ) )
+            // InternalGrana.g:5849:1: ( rule__ElkEdge__TargetsAssignment_5 )
             {
              before(grammarAccess.getElkEdgeAccess().getTargetsAssignment_5()); 
-            // InternalGrana.g:5819:1: ( rule__ElkEdge__TargetsAssignment_5 )
-            // InternalGrana.g:5819:2: rule__ElkEdge__TargetsAssignment_5
+            // InternalGrana.g:5850:1: ( rule__ElkEdge__TargetsAssignment_5 )
+            // InternalGrana.g:5850:2: rule__ElkEdge__TargetsAssignment_5
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdge__TargetsAssignment_5();
@@ -16092,16 +16189,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__6"
-    // InternalGrana.g:5829:1: rule__ElkEdge__Group__6 : rule__ElkEdge__Group__6__Impl rule__ElkEdge__Group__7 ;
+    // InternalGrana.g:5860:1: rule__ElkEdge__Group__6 : rule__ElkEdge__Group__6__Impl rule__ElkEdge__Group__7 ;
     public final void rule__ElkEdge__Group__6() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5833:1: ( rule__ElkEdge__Group__6__Impl rule__ElkEdge__Group__7 )
-            // InternalGrana.g:5834:2: rule__ElkEdge__Group__6__Impl rule__ElkEdge__Group__7
+            // InternalGrana.g:5864:1: ( rule__ElkEdge__Group__6__Impl rule__ElkEdge__Group__7 )
+            // InternalGrana.g:5865:2: rule__ElkEdge__Group__6__Impl rule__ElkEdge__Group__7
             {
-            pushFollow(FOLLOW_43);
+            pushFollow(FOLLOW_44);
             rule__ElkEdge__Group__6__Impl();
 
             state._fsp--;
@@ -16130,33 +16227,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__6__Impl"
-    // InternalGrana.g:5841:1: rule__ElkEdge__Group__6__Impl : ( ( rule__ElkEdge__Group_6__0 )* ) ;
+    // InternalGrana.g:5872:1: rule__ElkEdge__Group__6__Impl : ( ( rule__ElkEdge__Group_6__0 )* ) ;
     public final void rule__ElkEdge__Group__6__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5845:1: ( ( ( rule__ElkEdge__Group_6__0 )* ) )
-            // InternalGrana.g:5846:1: ( ( rule__ElkEdge__Group_6__0 )* )
+            // InternalGrana.g:5876:1: ( ( ( rule__ElkEdge__Group_6__0 )* ) )
+            // InternalGrana.g:5877:1: ( ( rule__ElkEdge__Group_6__0 )* )
             {
-            // InternalGrana.g:5846:1: ( ( rule__ElkEdge__Group_6__0 )* )
-            // InternalGrana.g:5847:1: ( rule__ElkEdge__Group_6__0 )*
+            // InternalGrana.g:5877:1: ( ( rule__ElkEdge__Group_6__0 )* )
+            // InternalGrana.g:5878:1: ( rule__ElkEdge__Group_6__0 )*
             {
              before(grammarAccess.getElkEdgeAccess().getGroup_6()); 
-            // InternalGrana.g:5848:1: ( rule__ElkEdge__Group_6__0 )*
-            loop58:
+            // InternalGrana.g:5879:1: ( rule__ElkEdge__Group_6__0 )*
+            loop59:
             do {
-                int alt58=2;
-                int LA58_0 = input.LA(1);
+                int alt59=2;
+                int LA59_0 = input.LA(1);
 
-                if ( (LA58_0==32) ) {
-                    alt58=1;
+                if ( (LA59_0==32) ) {
+                    alt59=1;
                 }
 
 
-                switch (alt58) {
+                switch (alt59) {
             	case 1 :
-            	    // InternalGrana.g:5848:2: rule__ElkEdge__Group_6__0
+            	    // InternalGrana.g:5879:2: rule__ElkEdge__Group_6__0
             	    {
             	    pushFollow(FOLLOW_26);
             	    rule__ElkEdge__Group_6__0();
@@ -16168,7 +16265,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop58;
+            	    break loop59;
                 }
             } while (true);
 
@@ -16195,14 +16292,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__7"
-    // InternalGrana.g:5858:1: rule__ElkEdge__Group__7 : rule__ElkEdge__Group__7__Impl ;
+    // InternalGrana.g:5889:1: rule__ElkEdge__Group__7 : rule__ElkEdge__Group__7__Impl ;
     public final void rule__ElkEdge__Group__7() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5862:1: ( rule__ElkEdge__Group__7__Impl )
-            // InternalGrana.g:5863:2: rule__ElkEdge__Group__7__Impl
+            // InternalGrana.g:5893:1: ( rule__ElkEdge__Group__7__Impl )
+            // InternalGrana.g:5894:2: rule__ElkEdge__Group__7__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdge__Group__7__Impl();
@@ -16228,29 +16325,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group__7__Impl"
-    // InternalGrana.g:5869:1: rule__ElkEdge__Group__7__Impl : ( ( rule__ElkEdge__Group_7__0 )? ) ;
+    // InternalGrana.g:5900:1: rule__ElkEdge__Group__7__Impl : ( ( rule__ElkEdge__Group_7__0 )? ) ;
     public final void rule__ElkEdge__Group__7__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5873:1: ( ( ( rule__ElkEdge__Group_7__0 )? ) )
-            // InternalGrana.g:5874:1: ( ( rule__ElkEdge__Group_7__0 )? )
+            // InternalGrana.g:5904:1: ( ( ( rule__ElkEdge__Group_7__0 )? ) )
+            // InternalGrana.g:5905:1: ( ( rule__ElkEdge__Group_7__0 )? )
             {
-            // InternalGrana.g:5874:1: ( ( rule__ElkEdge__Group_7__0 )? )
-            // InternalGrana.g:5875:1: ( rule__ElkEdge__Group_7__0 )?
+            // InternalGrana.g:5905:1: ( ( rule__ElkEdge__Group_7__0 )? )
+            // InternalGrana.g:5906:1: ( rule__ElkEdge__Group_7__0 )?
             {
              before(grammarAccess.getElkEdgeAccess().getGroup_7()); 
-            // InternalGrana.g:5876:1: ( rule__ElkEdge__Group_7__0 )?
-            int alt59=2;
-            int LA59_0 = input.LA(1);
+            // InternalGrana.g:5907:1: ( rule__ElkEdge__Group_7__0 )?
+            int alt60=2;
+            int LA60_0 = input.LA(1);
 
-            if ( (LA59_0==38) ) {
-                alt59=1;
+            if ( (LA60_0==38) ) {
+                alt60=1;
             }
-            switch (alt59) {
+            switch (alt60) {
                 case 1 :
-                    // InternalGrana.g:5876:2: rule__ElkEdge__Group_7__0
+                    // InternalGrana.g:5907:2: rule__ElkEdge__Group_7__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdge__Group_7__0();
@@ -16286,16 +16383,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_1__0"
-    // InternalGrana.g:5902:1: rule__ElkEdge__Group_1__0 : rule__ElkEdge__Group_1__0__Impl rule__ElkEdge__Group_1__1 ;
+    // InternalGrana.g:5933:1: rule__ElkEdge__Group_1__0 : rule__ElkEdge__Group_1__0__Impl rule__ElkEdge__Group_1__1 ;
     public final void rule__ElkEdge__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5906:1: ( rule__ElkEdge__Group_1__0__Impl rule__ElkEdge__Group_1__1 )
-            // InternalGrana.g:5907:2: rule__ElkEdge__Group_1__0__Impl rule__ElkEdge__Group_1__1
+            // InternalGrana.g:5937:1: ( rule__ElkEdge__Group_1__0__Impl rule__ElkEdge__Group_1__1 )
+            // InternalGrana.g:5938:2: rule__ElkEdge__Group_1__0__Impl rule__ElkEdge__Group_1__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkEdge__Group_1__0__Impl();
 
             state._fsp--;
@@ -16324,21 +16421,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_1__0__Impl"
-    // InternalGrana.g:5914:1: rule__ElkEdge__Group_1__0__Impl : ( ( rule__ElkEdge__IdentifierAssignment_1_0 ) ) ;
+    // InternalGrana.g:5945:1: rule__ElkEdge__Group_1__0__Impl : ( ( rule__ElkEdge__IdentifierAssignment_1_0 ) ) ;
     public final void rule__ElkEdge__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5918:1: ( ( ( rule__ElkEdge__IdentifierAssignment_1_0 ) ) )
-            // InternalGrana.g:5919:1: ( ( rule__ElkEdge__IdentifierAssignment_1_0 ) )
+            // InternalGrana.g:5949:1: ( ( ( rule__ElkEdge__IdentifierAssignment_1_0 ) ) )
+            // InternalGrana.g:5950:1: ( ( rule__ElkEdge__IdentifierAssignment_1_0 ) )
             {
-            // InternalGrana.g:5919:1: ( ( rule__ElkEdge__IdentifierAssignment_1_0 ) )
-            // InternalGrana.g:5920:1: ( rule__ElkEdge__IdentifierAssignment_1_0 )
+            // InternalGrana.g:5950:1: ( ( rule__ElkEdge__IdentifierAssignment_1_0 ) )
+            // InternalGrana.g:5951:1: ( rule__ElkEdge__IdentifierAssignment_1_0 )
             {
              before(grammarAccess.getElkEdgeAccess().getIdentifierAssignment_1_0()); 
-            // InternalGrana.g:5921:1: ( rule__ElkEdge__IdentifierAssignment_1_0 )
-            // InternalGrana.g:5921:2: rule__ElkEdge__IdentifierAssignment_1_0
+            // InternalGrana.g:5952:1: ( rule__ElkEdge__IdentifierAssignment_1_0 )
+            // InternalGrana.g:5952:2: rule__ElkEdge__IdentifierAssignment_1_0
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdge__IdentifierAssignment_1_0();
@@ -16371,14 +16468,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_1__1"
-    // InternalGrana.g:5931:1: rule__ElkEdge__Group_1__1 : rule__ElkEdge__Group_1__1__Impl ;
+    // InternalGrana.g:5962:1: rule__ElkEdge__Group_1__1 : rule__ElkEdge__Group_1__1__Impl ;
     public final void rule__ElkEdge__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5935:1: ( rule__ElkEdge__Group_1__1__Impl )
-            // InternalGrana.g:5936:2: rule__ElkEdge__Group_1__1__Impl
+            // InternalGrana.g:5966:1: ( rule__ElkEdge__Group_1__1__Impl )
+            // InternalGrana.g:5967:2: rule__ElkEdge__Group_1__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdge__Group_1__1__Impl();
@@ -16404,17 +16501,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_1__1__Impl"
-    // InternalGrana.g:5942:1: rule__ElkEdge__Group_1__1__Impl : ( ':' ) ;
+    // InternalGrana.g:5973:1: rule__ElkEdge__Group_1__1__Impl : ( ':' ) ;
     public final void rule__ElkEdge__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5946:1: ( ( ':' ) )
-            // InternalGrana.g:5947:1: ( ':' )
+            // InternalGrana.g:5977:1: ( ( ':' ) )
+            // InternalGrana.g:5978:1: ( ':' )
             {
-            // InternalGrana.g:5947:1: ( ':' )
-            // InternalGrana.g:5948:1: ':'
+            // InternalGrana.g:5978:1: ( ':' )
+            // InternalGrana.g:5979:1: ':'
             {
              before(grammarAccess.getElkEdgeAccess().getColonKeyword_1_1()); 
             match(input,42,FOLLOW_2); 
@@ -16441,14 +16538,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_3__0"
-    // InternalGrana.g:5965:1: rule__ElkEdge__Group_3__0 : rule__ElkEdge__Group_3__0__Impl rule__ElkEdge__Group_3__1 ;
+    // InternalGrana.g:5996:1: rule__ElkEdge__Group_3__0 : rule__ElkEdge__Group_3__0__Impl rule__ElkEdge__Group_3__1 ;
     public final void rule__ElkEdge__Group_3__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5969:1: ( rule__ElkEdge__Group_3__0__Impl rule__ElkEdge__Group_3__1 )
-            // InternalGrana.g:5970:2: rule__ElkEdge__Group_3__0__Impl rule__ElkEdge__Group_3__1
+            // InternalGrana.g:6000:1: ( rule__ElkEdge__Group_3__0__Impl rule__ElkEdge__Group_3__1 )
+            // InternalGrana.g:6001:2: rule__ElkEdge__Group_3__0__Impl rule__ElkEdge__Group_3__1
             {
             pushFollow(FOLLOW_8);
             rule__ElkEdge__Group_3__0__Impl();
@@ -16479,17 +16576,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_3__0__Impl"
-    // InternalGrana.g:5977:1: rule__ElkEdge__Group_3__0__Impl : ( ',' ) ;
+    // InternalGrana.g:6008:1: rule__ElkEdge__Group_3__0__Impl : ( ',' ) ;
     public final void rule__ElkEdge__Group_3__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:5981:1: ( ( ',' ) )
-            // InternalGrana.g:5982:1: ( ',' )
+            // InternalGrana.g:6012:1: ( ( ',' ) )
+            // InternalGrana.g:6013:1: ( ',' )
             {
-            // InternalGrana.g:5982:1: ( ',' )
-            // InternalGrana.g:5983:1: ','
+            // InternalGrana.g:6013:1: ( ',' )
+            // InternalGrana.g:6014:1: ','
             {
              before(grammarAccess.getElkEdgeAccess().getCommaKeyword_3_0()); 
             match(input,32,FOLLOW_2); 
@@ -16516,14 +16613,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_3__1"
-    // InternalGrana.g:5996:1: rule__ElkEdge__Group_3__1 : rule__ElkEdge__Group_3__1__Impl ;
+    // InternalGrana.g:6027:1: rule__ElkEdge__Group_3__1 : rule__ElkEdge__Group_3__1__Impl ;
     public final void rule__ElkEdge__Group_3__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6000:1: ( rule__ElkEdge__Group_3__1__Impl )
-            // InternalGrana.g:6001:2: rule__ElkEdge__Group_3__1__Impl
+            // InternalGrana.g:6031:1: ( rule__ElkEdge__Group_3__1__Impl )
+            // InternalGrana.g:6032:2: rule__ElkEdge__Group_3__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdge__Group_3__1__Impl();
@@ -16549,21 +16646,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_3__1__Impl"
-    // InternalGrana.g:6007:1: rule__ElkEdge__Group_3__1__Impl : ( ( rule__ElkEdge__SourcesAssignment_3_1 ) ) ;
+    // InternalGrana.g:6038:1: rule__ElkEdge__Group_3__1__Impl : ( ( rule__ElkEdge__SourcesAssignment_3_1 ) ) ;
     public final void rule__ElkEdge__Group_3__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6011:1: ( ( ( rule__ElkEdge__SourcesAssignment_3_1 ) ) )
-            // InternalGrana.g:6012:1: ( ( rule__ElkEdge__SourcesAssignment_3_1 ) )
+            // InternalGrana.g:6042:1: ( ( ( rule__ElkEdge__SourcesAssignment_3_1 ) ) )
+            // InternalGrana.g:6043:1: ( ( rule__ElkEdge__SourcesAssignment_3_1 ) )
             {
-            // InternalGrana.g:6012:1: ( ( rule__ElkEdge__SourcesAssignment_3_1 ) )
-            // InternalGrana.g:6013:1: ( rule__ElkEdge__SourcesAssignment_3_1 )
+            // InternalGrana.g:6043:1: ( ( rule__ElkEdge__SourcesAssignment_3_1 ) )
+            // InternalGrana.g:6044:1: ( rule__ElkEdge__SourcesAssignment_3_1 )
             {
              before(grammarAccess.getElkEdgeAccess().getSourcesAssignment_3_1()); 
-            // InternalGrana.g:6014:1: ( rule__ElkEdge__SourcesAssignment_3_1 )
-            // InternalGrana.g:6014:2: rule__ElkEdge__SourcesAssignment_3_1
+            // InternalGrana.g:6045:1: ( rule__ElkEdge__SourcesAssignment_3_1 )
+            // InternalGrana.g:6045:2: rule__ElkEdge__SourcesAssignment_3_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdge__SourcesAssignment_3_1();
@@ -16596,14 +16693,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_6__0"
-    // InternalGrana.g:6028:1: rule__ElkEdge__Group_6__0 : rule__ElkEdge__Group_6__0__Impl rule__ElkEdge__Group_6__1 ;
+    // InternalGrana.g:6059:1: rule__ElkEdge__Group_6__0 : rule__ElkEdge__Group_6__0__Impl rule__ElkEdge__Group_6__1 ;
     public final void rule__ElkEdge__Group_6__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6032:1: ( rule__ElkEdge__Group_6__0__Impl rule__ElkEdge__Group_6__1 )
-            // InternalGrana.g:6033:2: rule__ElkEdge__Group_6__0__Impl rule__ElkEdge__Group_6__1
+            // InternalGrana.g:6063:1: ( rule__ElkEdge__Group_6__0__Impl rule__ElkEdge__Group_6__1 )
+            // InternalGrana.g:6064:2: rule__ElkEdge__Group_6__0__Impl rule__ElkEdge__Group_6__1
             {
             pushFollow(FOLLOW_8);
             rule__ElkEdge__Group_6__0__Impl();
@@ -16634,17 +16731,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_6__0__Impl"
-    // InternalGrana.g:6040:1: rule__ElkEdge__Group_6__0__Impl : ( ',' ) ;
+    // InternalGrana.g:6071:1: rule__ElkEdge__Group_6__0__Impl : ( ',' ) ;
     public final void rule__ElkEdge__Group_6__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6044:1: ( ( ',' ) )
-            // InternalGrana.g:6045:1: ( ',' )
+            // InternalGrana.g:6075:1: ( ( ',' ) )
+            // InternalGrana.g:6076:1: ( ',' )
             {
-            // InternalGrana.g:6045:1: ( ',' )
-            // InternalGrana.g:6046:1: ','
+            // InternalGrana.g:6076:1: ( ',' )
+            // InternalGrana.g:6077:1: ','
             {
              before(grammarAccess.getElkEdgeAccess().getCommaKeyword_6_0()); 
             match(input,32,FOLLOW_2); 
@@ -16671,14 +16768,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_6__1"
-    // InternalGrana.g:6059:1: rule__ElkEdge__Group_6__1 : rule__ElkEdge__Group_6__1__Impl ;
+    // InternalGrana.g:6090:1: rule__ElkEdge__Group_6__1 : rule__ElkEdge__Group_6__1__Impl ;
     public final void rule__ElkEdge__Group_6__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6063:1: ( rule__ElkEdge__Group_6__1__Impl )
-            // InternalGrana.g:6064:2: rule__ElkEdge__Group_6__1__Impl
+            // InternalGrana.g:6094:1: ( rule__ElkEdge__Group_6__1__Impl )
+            // InternalGrana.g:6095:2: rule__ElkEdge__Group_6__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdge__Group_6__1__Impl();
@@ -16704,21 +16801,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_6__1__Impl"
-    // InternalGrana.g:6070:1: rule__ElkEdge__Group_6__1__Impl : ( ( rule__ElkEdge__TargetsAssignment_6_1 ) ) ;
+    // InternalGrana.g:6101:1: rule__ElkEdge__Group_6__1__Impl : ( ( rule__ElkEdge__TargetsAssignment_6_1 ) ) ;
     public final void rule__ElkEdge__Group_6__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6074:1: ( ( ( rule__ElkEdge__TargetsAssignment_6_1 ) ) )
-            // InternalGrana.g:6075:1: ( ( rule__ElkEdge__TargetsAssignment_6_1 ) )
+            // InternalGrana.g:6105:1: ( ( ( rule__ElkEdge__TargetsAssignment_6_1 ) ) )
+            // InternalGrana.g:6106:1: ( ( rule__ElkEdge__TargetsAssignment_6_1 ) )
             {
-            // InternalGrana.g:6075:1: ( ( rule__ElkEdge__TargetsAssignment_6_1 ) )
-            // InternalGrana.g:6076:1: ( rule__ElkEdge__TargetsAssignment_6_1 )
+            // InternalGrana.g:6106:1: ( ( rule__ElkEdge__TargetsAssignment_6_1 ) )
+            // InternalGrana.g:6107:1: ( rule__ElkEdge__TargetsAssignment_6_1 )
             {
              before(grammarAccess.getElkEdgeAccess().getTargetsAssignment_6_1()); 
-            // InternalGrana.g:6077:1: ( rule__ElkEdge__TargetsAssignment_6_1 )
-            // InternalGrana.g:6077:2: rule__ElkEdge__TargetsAssignment_6_1
+            // InternalGrana.g:6108:1: ( rule__ElkEdge__TargetsAssignment_6_1 )
+            // InternalGrana.g:6108:2: rule__ElkEdge__TargetsAssignment_6_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdge__TargetsAssignment_6_1();
@@ -16751,16 +16848,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_7__0"
-    // InternalGrana.g:6091:1: rule__ElkEdge__Group_7__0 : rule__ElkEdge__Group_7__0__Impl rule__ElkEdge__Group_7__1 ;
+    // InternalGrana.g:6122:1: rule__ElkEdge__Group_7__0 : rule__ElkEdge__Group_7__0__Impl rule__ElkEdge__Group_7__1 ;
     public final void rule__ElkEdge__Group_7__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6095:1: ( rule__ElkEdge__Group_7__0__Impl rule__ElkEdge__Group_7__1 )
-            // InternalGrana.g:6096:2: rule__ElkEdge__Group_7__0__Impl rule__ElkEdge__Group_7__1
+            // InternalGrana.g:6126:1: ( rule__ElkEdge__Group_7__0__Impl rule__ElkEdge__Group_7__1 )
+            // InternalGrana.g:6127:2: rule__ElkEdge__Group_7__0__Impl rule__ElkEdge__Group_7__1
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkEdge__Group_7__0__Impl();
 
             state._fsp--;
@@ -16789,17 +16886,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_7__0__Impl"
-    // InternalGrana.g:6103:1: rule__ElkEdge__Group_7__0__Impl : ( '{' ) ;
+    // InternalGrana.g:6134:1: rule__ElkEdge__Group_7__0__Impl : ( '{' ) ;
     public final void rule__ElkEdge__Group_7__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6107:1: ( ( '{' ) )
-            // InternalGrana.g:6108:1: ( '{' )
+            // InternalGrana.g:6138:1: ( ( '{' ) )
+            // InternalGrana.g:6139:1: ( '{' )
             {
-            // InternalGrana.g:6108:1: ( '{' )
-            // InternalGrana.g:6109:1: '{'
+            // InternalGrana.g:6139:1: ( '{' )
+            // InternalGrana.g:6140:1: '{'
             {
              before(grammarAccess.getElkEdgeAccess().getLeftCurlyBracketKeyword_7_0()); 
             match(input,38,FOLLOW_2); 
@@ -16826,16 +16923,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_7__1"
-    // InternalGrana.g:6122:1: rule__ElkEdge__Group_7__1 : rule__ElkEdge__Group_7__1__Impl rule__ElkEdge__Group_7__2 ;
+    // InternalGrana.g:6153:1: rule__ElkEdge__Group_7__1 : rule__ElkEdge__Group_7__1__Impl rule__ElkEdge__Group_7__2 ;
     public final void rule__ElkEdge__Group_7__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6126:1: ( rule__ElkEdge__Group_7__1__Impl rule__ElkEdge__Group_7__2 )
-            // InternalGrana.g:6127:2: rule__ElkEdge__Group_7__1__Impl rule__ElkEdge__Group_7__2
+            // InternalGrana.g:6157:1: ( rule__ElkEdge__Group_7__1__Impl rule__ElkEdge__Group_7__2 )
+            // InternalGrana.g:6158:2: rule__ElkEdge__Group_7__1__Impl rule__ElkEdge__Group_7__2
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkEdge__Group_7__1__Impl();
 
             state._fsp--;
@@ -16864,29 +16961,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_7__1__Impl"
-    // InternalGrana.g:6134:1: rule__ElkEdge__Group_7__1__Impl : ( ( ruleEdgeLayout )? ) ;
+    // InternalGrana.g:6165:1: rule__ElkEdge__Group_7__1__Impl : ( ( ruleEdgeLayout )? ) ;
     public final void rule__ElkEdge__Group_7__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6138:1: ( ( ( ruleEdgeLayout )? ) )
-            // InternalGrana.g:6139:1: ( ( ruleEdgeLayout )? )
+            // InternalGrana.g:6169:1: ( ( ( ruleEdgeLayout )? ) )
+            // InternalGrana.g:6170:1: ( ( ruleEdgeLayout )? )
             {
-            // InternalGrana.g:6139:1: ( ( ruleEdgeLayout )? )
-            // InternalGrana.g:6140:1: ( ruleEdgeLayout )?
+            // InternalGrana.g:6170:1: ( ( ruleEdgeLayout )? )
+            // InternalGrana.g:6171:1: ( ruleEdgeLayout )?
             {
              before(grammarAccess.getElkEdgeAccess().getEdgeLayoutParserRuleCall_7_1()); 
-            // InternalGrana.g:6141:1: ( ruleEdgeLayout )?
-            int alt60=2;
-            int LA60_0 = input.LA(1);
+            // InternalGrana.g:6172:1: ( ruleEdgeLayout )?
+            int alt61=2;
+            int LA61_0 = input.LA(1);
 
-            if ( (LA60_0==44) ) {
-                alt60=1;
+            if ( (LA61_0==44) ) {
+                alt61=1;
             }
-            switch (alt60) {
+            switch (alt61) {
                 case 1 :
-                    // InternalGrana.g:6141:3: ruleEdgeLayout
+                    // InternalGrana.g:6172:3: ruleEdgeLayout
                     {
                     pushFollow(FOLLOW_2);
                     ruleEdgeLayout();
@@ -16922,16 +17019,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_7__2"
-    // InternalGrana.g:6151:1: rule__ElkEdge__Group_7__2 : rule__ElkEdge__Group_7__2__Impl rule__ElkEdge__Group_7__3 ;
+    // InternalGrana.g:6182:1: rule__ElkEdge__Group_7__2 : rule__ElkEdge__Group_7__2__Impl rule__ElkEdge__Group_7__3 ;
     public final void rule__ElkEdge__Group_7__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6155:1: ( rule__ElkEdge__Group_7__2__Impl rule__ElkEdge__Group_7__3 )
-            // InternalGrana.g:6156:2: rule__ElkEdge__Group_7__2__Impl rule__ElkEdge__Group_7__3
+            // InternalGrana.g:6186:1: ( rule__ElkEdge__Group_7__2__Impl rule__ElkEdge__Group_7__3 )
+            // InternalGrana.g:6187:2: rule__ElkEdge__Group_7__2__Impl rule__ElkEdge__Group_7__3
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkEdge__Group_7__2__Impl();
 
             state._fsp--;
@@ -16960,33 +17057,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_7__2__Impl"
-    // InternalGrana.g:6163:1: rule__ElkEdge__Group_7__2__Impl : ( ( rule__ElkEdge__PropertiesAssignment_7_2 )* ) ;
+    // InternalGrana.g:6194:1: rule__ElkEdge__Group_7__2__Impl : ( ( rule__ElkEdge__PropertiesAssignment_7_2 )* ) ;
     public final void rule__ElkEdge__Group_7__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6167:1: ( ( ( rule__ElkEdge__PropertiesAssignment_7_2 )* ) )
-            // InternalGrana.g:6168:1: ( ( rule__ElkEdge__PropertiesAssignment_7_2 )* )
+            // InternalGrana.g:6198:1: ( ( ( rule__ElkEdge__PropertiesAssignment_7_2 )* ) )
+            // InternalGrana.g:6199:1: ( ( rule__ElkEdge__PropertiesAssignment_7_2 )* )
             {
-            // InternalGrana.g:6168:1: ( ( rule__ElkEdge__PropertiesAssignment_7_2 )* )
-            // InternalGrana.g:6169:1: ( rule__ElkEdge__PropertiesAssignment_7_2 )*
+            // InternalGrana.g:6199:1: ( ( rule__ElkEdge__PropertiesAssignment_7_2 )* )
+            // InternalGrana.g:6200:1: ( rule__ElkEdge__PropertiesAssignment_7_2 )*
             {
              before(grammarAccess.getElkEdgeAccess().getPropertiesAssignment_7_2()); 
-            // InternalGrana.g:6170:1: ( rule__ElkEdge__PropertiesAssignment_7_2 )*
-            loop61:
+            // InternalGrana.g:6201:1: ( rule__ElkEdge__PropertiesAssignment_7_2 )*
+            loop62:
             do {
-                int alt61=2;
-                int LA61_0 = input.LA(1);
+                int alt62=2;
+                int LA62_0 = input.LA(1);
 
-                if ( (LA61_0==RULE_ID) ) {
-                    alt61=1;
+                if ( (LA62_0==RULE_ID) ) {
+                    alt62=1;
                 }
 
 
-                switch (alt61) {
+                switch (alt62) {
             	case 1 :
-            	    // InternalGrana.g:6170:2: rule__ElkEdge__PropertiesAssignment_7_2
+            	    // InternalGrana.g:6201:2: rule__ElkEdge__PropertiesAssignment_7_2
             	    {
             	    pushFollow(FOLLOW_3);
             	    rule__ElkEdge__PropertiesAssignment_7_2();
@@ -16998,7 +17095,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop61;
+            	    break loop62;
                 }
             } while (true);
 
@@ -17025,16 +17122,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_7__3"
-    // InternalGrana.g:6180:1: rule__ElkEdge__Group_7__3 : rule__ElkEdge__Group_7__3__Impl rule__ElkEdge__Group_7__4 ;
+    // InternalGrana.g:6211:1: rule__ElkEdge__Group_7__3 : rule__ElkEdge__Group_7__3__Impl rule__ElkEdge__Group_7__4 ;
     public final void rule__ElkEdge__Group_7__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6184:1: ( rule__ElkEdge__Group_7__3__Impl rule__ElkEdge__Group_7__4 )
-            // InternalGrana.g:6185:2: rule__ElkEdge__Group_7__3__Impl rule__ElkEdge__Group_7__4
+            // InternalGrana.g:6215:1: ( rule__ElkEdge__Group_7__3__Impl rule__ElkEdge__Group_7__4 )
+            // InternalGrana.g:6216:2: rule__ElkEdge__Group_7__3__Impl rule__ElkEdge__Group_7__4
             {
-            pushFollow(FOLLOW_36);
+            pushFollow(FOLLOW_37);
             rule__ElkEdge__Group_7__3__Impl();
 
             state._fsp--;
@@ -17063,35 +17160,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_7__3__Impl"
-    // InternalGrana.g:6192:1: rule__ElkEdge__Group_7__3__Impl : ( ( rule__ElkEdge__LabelsAssignment_7_3 )* ) ;
+    // InternalGrana.g:6223:1: rule__ElkEdge__Group_7__3__Impl : ( ( rule__ElkEdge__LabelsAssignment_7_3 )* ) ;
     public final void rule__ElkEdge__Group_7__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6196:1: ( ( ( rule__ElkEdge__LabelsAssignment_7_3 )* ) )
-            // InternalGrana.g:6197:1: ( ( rule__ElkEdge__LabelsAssignment_7_3 )* )
+            // InternalGrana.g:6227:1: ( ( ( rule__ElkEdge__LabelsAssignment_7_3 )* ) )
+            // InternalGrana.g:6228:1: ( ( rule__ElkEdge__LabelsAssignment_7_3 )* )
             {
-            // InternalGrana.g:6197:1: ( ( rule__ElkEdge__LabelsAssignment_7_3 )* )
-            // InternalGrana.g:6198:1: ( rule__ElkEdge__LabelsAssignment_7_3 )*
+            // InternalGrana.g:6228:1: ( ( rule__ElkEdge__LabelsAssignment_7_3 )* )
+            // InternalGrana.g:6229:1: ( rule__ElkEdge__LabelsAssignment_7_3 )*
             {
              before(grammarAccess.getElkEdgeAccess().getLabelsAssignment_7_3()); 
-            // InternalGrana.g:6199:1: ( rule__ElkEdge__LabelsAssignment_7_3 )*
-            loop62:
+            // InternalGrana.g:6230:1: ( rule__ElkEdge__LabelsAssignment_7_3 )*
+            loop63:
             do {
-                int alt62=2;
-                int LA62_0 = input.LA(1);
+                int alt63=2;
+                int LA63_0 = input.LA(1);
 
-                if ( (LA62_0==41) ) {
-                    alt62=1;
+                if ( (LA63_0==41) ) {
+                    alt63=1;
                 }
 
 
-                switch (alt62) {
+                switch (alt63) {
             	case 1 :
-            	    // InternalGrana.g:6199:2: rule__ElkEdge__LabelsAssignment_7_3
+            	    // InternalGrana.g:6230:2: rule__ElkEdge__LabelsAssignment_7_3
             	    {
-            	    pushFollow(FOLLOW_37);
+            	    pushFollow(FOLLOW_38);
             	    rule__ElkEdge__LabelsAssignment_7_3();
 
             	    state._fsp--;
@@ -17101,7 +17198,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop62;
+            	    break loop63;
                 }
             } while (true);
 
@@ -17128,14 +17225,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_7__4"
-    // InternalGrana.g:6209:1: rule__ElkEdge__Group_7__4 : rule__ElkEdge__Group_7__4__Impl ;
+    // InternalGrana.g:6240:1: rule__ElkEdge__Group_7__4 : rule__ElkEdge__Group_7__4__Impl ;
     public final void rule__ElkEdge__Group_7__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6213:1: ( rule__ElkEdge__Group_7__4__Impl )
-            // InternalGrana.g:6214:2: rule__ElkEdge__Group_7__4__Impl
+            // InternalGrana.g:6244:1: ( rule__ElkEdge__Group_7__4__Impl )
+            // InternalGrana.g:6245:2: rule__ElkEdge__Group_7__4__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdge__Group_7__4__Impl();
@@ -17161,17 +17258,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__Group_7__4__Impl"
-    // InternalGrana.g:6220:1: rule__ElkEdge__Group_7__4__Impl : ( '}' ) ;
+    // InternalGrana.g:6251:1: rule__ElkEdge__Group_7__4__Impl : ( '}' ) ;
     public final void rule__ElkEdge__Group_7__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6224:1: ( ( '}' ) )
-            // InternalGrana.g:6225:1: ( '}' )
+            // InternalGrana.g:6255:1: ( ( '}' ) )
+            // InternalGrana.g:6256:1: ( '}' )
             {
-            // InternalGrana.g:6225:1: ( '}' )
-            // InternalGrana.g:6226:1: '}'
+            // InternalGrana.g:6256:1: ( '}' )
+            // InternalGrana.g:6257:1: '}'
             {
              before(grammarAccess.getElkEdgeAccess().getRightCurlyBracketKeyword_7_4()); 
             match(input,39,FOLLOW_2); 
@@ -17198,16 +17295,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EdgeLayout__Group__0"
-    // InternalGrana.g:6249:1: rule__EdgeLayout__Group__0 : rule__EdgeLayout__Group__0__Impl rule__EdgeLayout__Group__1 ;
+    // InternalGrana.g:6280:1: rule__EdgeLayout__Group__0 : rule__EdgeLayout__Group__0__Impl rule__EdgeLayout__Group__1 ;
     public final void rule__EdgeLayout__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6253:1: ( rule__EdgeLayout__Group__0__Impl rule__EdgeLayout__Group__1 )
-            // InternalGrana.g:6254:2: rule__EdgeLayout__Group__0__Impl rule__EdgeLayout__Group__1
+            // InternalGrana.g:6284:1: ( rule__EdgeLayout__Group__0__Impl rule__EdgeLayout__Group__1 )
+            // InternalGrana.g:6285:2: rule__EdgeLayout__Group__0__Impl rule__EdgeLayout__Group__1
             {
-            pushFollow(FOLLOW_38);
+            pushFollow(FOLLOW_39);
             rule__EdgeLayout__Group__0__Impl();
 
             state._fsp--;
@@ -17236,17 +17333,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EdgeLayout__Group__0__Impl"
-    // InternalGrana.g:6261:1: rule__EdgeLayout__Group__0__Impl : ( 'layout' ) ;
+    // InternalGrana.g:6292:1: rule__EdgeLayout__Group__0__Impl : ( 'layout' ) ;
     public final void rule__EdgeLayout__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6265:1: ( ( 'layout' ) )
-            // InternalGrana.g:6266:1: ( 'layout' )
+            // InternalGrana.g:6296:1: ( ( 'layout' ) )
+            // InternalGrana.g:6297:1: ( 'layout' )
             {
-            // InternalGrana.g:6266:1: ( 'layout' )
-            // InternalGrana.g:6267:1: 'layout'
+            // InternalGrana.g:6297:1: ( 'layout' )
+            // InternalGrana.g:6298:1: 'layout'
             {
              before(grammarAccess.getEdgeLayoutAccess().getLayoutKeyword_0()); 
             match(input,44,FOLLOW_2); 
@@ -17273,16 +17370,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EdgeLayout__Group__1"
-    // InternalGrana.g:6280:1: rule__EdgeLayout__Group__1 : rule__EdgeLayout__Group__1__Impl rule__EdgeLayout__Group__2 ;
+    // InternalGrana.g:6311:1: rule__EdgeLayout__Group__1 : rule__EdgeLayout__Group__1__Impl rule__EdgeLayout__Group__2 ;
     public final void rule__EdgeLayout__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6284:1: ( rule__EdgeLayout__Group__1__Impl rule__EdgeLayout__Group__2 )
-            // InternalGrana.g:6285:2: rule__EdgeLayout__Group__1__Impl rule__EdgeLayout__Group__2
+            // InternalGrana.g:6315:1: ( rule__EdgeLayout__Group__1__Impl rule__EdgeLayout__Group__2 )
+            // InternalGrana.g:6316:2: rule__EdgeLayout__Group__1__Impl rule__EdgeLayout__Group__2
             {
-            pushFollow(FOLLOW_44);
+            pushFollow(FOLLOW_45);
             rule__EdgeLayout__Group__1__Impl();
 
             state._fsp--;
@@ -17311,17 +17408,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EdgeLayout__Group__1__Impl"
-    // InternalGrana.g:6292:1: rule__EdgeLayout__Group__1__Impl : ( '[' ) ;
+    // InternalGrana.g:6323:1: rule__EdgeLayout__Group__1__Impl : ( '[' ) ;
     public final void rule__EdgeLayout__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6296:1: ( ( '[' ) )
-            // InternalGrana.g:6297:1: ( '[' )
+            // InternalGrana.g:6327:1: ( ( '[' ) )
+            // InternalGrana.g:6328:1: ( '[' )
             {
-            // InternalGrana.g:6297:1: ( '[' )
-            // InternalGrana.g:6298:1: '['
+            // InternalGrana.g:6328:1: ( '[' )
+            // InternalGrana.g:6329:1: '['
             {
              before(grammarAccess.getEdgeLayoutAccess().getLeftSquareBracketKeyword_1()); 
             match(input,45,FOLLOW_2); 
@@ -17348,16 +17445,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EdgeLayout__Group__2"
-    // InternalGrana.g:6311:1: rule__EdgeLayout__Group__2 : rule__EdgeLayout__Group__2__Impl rule__EdgeLayout__Group__3 ;
+    // InternalGrana.g:6342:1: rule__EdgeLayout__Group__2 : rule__EdgeLayout__Group__2__Impl rule__EdgeLayout__Group__3 ;
     public final void rule__EdgeLayout__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6315:1: ( rule__EdgeLayout__Group__2__Impl rule__EdgeLayout__Group__3 )
-            // InternalGrana.g:6316:2: rule__EdgeLayout__Group__2__Impl rule__EdgeLayout__Group__3
+            // InternalGrana.g:6346:1: ( rule__EdgeLayout__Group__2__Impl rule__EdgeLayout__Group__3 )
+            // InternalGrana.g:6347:2: rule__EdgeLayout__Group__2__Impl rule__EdgeLayout__Group__3
             {
-            pushFollow(FOLLOW_40);
+            pushFollow(FOLLOW_41);
             rule__EdgeLayout__Group__2__Impl();
 
             state._fsp--;
@@ -17386,21 +17483,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EdgeLayout__Group__2__Impl"
-    // InternalGrana.g:6323:1: rule__EdgeLayout__Group__2__Impl : ( ( rule__EdgeLayout__Alternatives_2 ) ) ;
+    // InternalGrana.g:6354:1: rule__EdgeLayout__Group__2__Impl : ( ( rule__EdgeLayout__Alternatives_2 ) ) ;
     public final void rule__EdgeLayout__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6327:1: ( ( ( rule__EdgeLayout__Alternatives_2 ) ) )
-            // InternalGrana.g:6328:1: ( ( rule__EdgeLayout__Alternatives_2 ) )
+            // InternalGrana.g:6358:1: ( ( ( rule__EdgeLayout__Alternatives_2 ) ) )
+            // InternalGrana.g:6359:1: ( ( rule__EdgeLayout__Alternatives_2 ) )
             {
-            // InternalGrana.g:6328:1: ( ( rule__EdgeLayout__Alternatives_2 ) )
-            // InternalGrana.g:6329:1: ( rule__EdgeLayout__Alternatives_2 )
+            // InternalGrana.g:6359:1: ( ( rule__EdgeLayout__Alternatives_2 ) )
+            // InternalGrana.g:6360:1: ( rule__EdgeLayout__Alternatives_2 )
             {
              before(grammarAccess.getEdgeLayoutAccess().getAlternatives_2()); 
-            // InternalGrana.g:6330:1: ( rule__EdgeLayout__Alternatives_2 )
-            // InternalGrana.g:6330:2: rule__EdgeLayout__Alternatives_2
+            // InternalGrana.g:6361:1: ( rule__EdgeLayout__Alternatives_2 )
+            // InternalGrana.g:6361:2: rule__EdgeLayout__Alternatives_2
             {
             pushFollow(FOLLOW_2);
             rule__EdgeLayout__Alternatives_2();
@@ -17433,14 +17530,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EdgeLayout__Group__3"
-    // InternalGrana.g:6340:1: rule__EdgeLayout__Group__3 : rule__EdgeLayout__Group__3__Impl ;
+    // InternalGrana.g:6371:1: rule__EdgeLayout__Group__3 : rule__EdgeLayout__Group__3__Impl ;
     public final void rule__EdgeLayout__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6344:1: ( rule__EdgeLayout__Group__3__Impl )
-            // InternalGrana.g:6345:2: rule__EdgeLayout__Group__3__Impl
+            // InternalGrana.g:6375:1: ( rule__EdgeLayout__Group__3__Impl )
+            // InternalGrana.g:6376:2: rule__EdgeLayout__Group__3__Impl
             {
             pushFollow(FOLLOW_2);
             rule__EdgeLayout__Group__3__Impl();
@@ -17466,17 +17563,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EdgeLayout__Group__3__Impl"
-    // InternalGrana.g:6351:1: rule__EdgeLayout__Group__3__Impl : ( ']' ) ;
+    // InternalGrana.g:6382:1: rule__EdgeLayout__Group__3__Impl : ( ']' ) ;
     public final void rule__EdgeLayout__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6355:1: ( ( ']' ) )
-            // InternalGrana.g:6356:1: ( ']' )
+            // InternalGrana.g:6386:1: ( ( ']' ) )
+            // InternalGrana.g:6387:1: ( ']' )
             {
-            // InternalGrana.g:6356:1: ( ']' )
-            // InternalGrana.g:6357:1: ']'
+            // InternalGrana.g:6387:1: ( ']' )
+            // InternalGrana.g:6388:1: ']'
             {
              before(grammarAccess.getEdgeLayoutAccess().getRightSquareBracketKeyword_3()); 
             match(input,46,FOLLOW_2); 
@@ -17503,16 +17600,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group__0"
-    // InternalGrana.g:6378:1: rule__ElkSingleEdgeSection__Group__0 : rule__ElkSingleEdgeSection__Group__0__Impl rule__ElkSingleEdgeSection__Group__1 ;
+    // InternalGrana.g:6409:1: rule__ElkSingleEdgeSection__Group__0 : rule__ElkSingleEdgeSection__Group__0__Impl rule__ElkSingleEdgeSection__Group__1 ;
     public final void rule__ElkSingleEdgeSection__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6382:1: ( rule__ElkSingleEdgeSection__Group__0__Impl rule__ElkSingleEdgeSection__Group__1 )
-            // InternalGrana.g:6383:2: rule__ElkSingleEdgeSection__Group__0__Impl rule__ElkSingleEdgeSection__Group__1
+            // InternalGrana.g:6413:1: ( rule__ElkSingleEdgeSection__Group__0__Impl rule__ElkSingleEdgeSection__Group__1 )
+            // InternalGrana.g:6414:2: rule__ElkSingleEdgeSection__Group__0__Impl rule__ElkSingleEdgeSection__Group__1
             {
-            pushFollow(FOLLOW_45);
+            pushFollow(FOLLOW_46);
             rule__ElkSingleEdgeSection__Group__0__Impl();
 
             state._fsp--;
@@ -17541,21 +17638,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group__0__Impl"
-    // InternalGrana.g:6390:1: rule__ElkSingleEdgeSection__Group__0__Impl : ( () ) ;
+    // InternalGrana.g:6421:1: rule__ElkSingleEdgeSection__Group__0__Impl : ( () ) ;
     public final void rule__ElkSingleEdgeSection__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6394:1: ( ( () ) )
-            // InternalGrana.g:6395:1: ( () )
+            // InternalGrana.g:6425:1: ( ( () ) )
+            // InternalGrana.g:6426:1: ( () )
             {
-            // InternalGrana.g:6395:1: ( () )
-            // InternalGrana.g:6396:1: ()
+            // InternalGrana.g:6426:1: ( () )
+            // InternalGrana.g:6427:1: ()
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getElkEdgeSectionAction_0()); 
-            // InternalGrana.g:6397:1: ()
-            // InternalGrana.g:6399:1: 
+            // InternalGrana.g:6428:1: ()
+            // InternalGrana.g:6430:1: 
             {
             }
 
@@ -17578,14 +17675,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group__1"
-    // InternalGrana.g:6409:1: rule__ElkSingleEdgeSection__Group__1 : rule__ElkSingleEdgeSection__Group__1__Impl ;
+    // InternalGrana.g:6440:1: rule__ElkSingleEdgeSection__Group__1 : rule__ElkSingleEdgeSection__Group__1__Impl ;
     public final void rule__ElkSingleEdgeSection__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6413:1: ( rule__ElkSingleEdgeSection__Group__1__Impl )
-            // InternalGrana.g:6414:2: rule__ElkSingleEdgeSection__Group__1__Impl
+            // InternalGrana.g:6444:1: ( rule__ElkSingleEdgeSection__Group__1__Impl )
+            // InternalGrana.g:6445:2: rule__ElkSingleEdgeSection__Group__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__Group__1__Impl();
@@ -17611,21 +17708,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group__1__Impl"
-    // InternalGrana.g:6420:1: rule__ElkSingleEdgeSection__Group__1__Impl : ( ( rule__ElkSingleEdgeSection__Group_1__0 ) ) ;
+    // InternalGrana.g:6451:1: rule__ElkSingleEdgeSection__Group__1__Impl : ( ( rule__ElkSingleEdgeSection__Group_1__0 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6424:1: ( ( ( rule__ElkSingleEdgeSection__Group_1__0 ) ) )
-            // InternalGrana.g:6425:1: ( ( rule__ElkSingleEdgeSection__Group_1__0 ) )
+            // InternalGrana.g:6455:1: ( ( ( rule__ElkSingleEdgeSection__Group_1__0 ) ) )
+            // InternalGrana.g:6456:1: ( ( rule__ElkSingleEdgeSection__Group_1__0 ) )
             {
-            // InternalGrana.g:6425:1: ( ( rule__ElkSingleEdgeSection__Group_1__0 ) )
-            // InternalGrana.g:6426:1: ( rule__ElkSingleEdgeSection__Group_1__0 )
+            // InternalGrana.g:6456:1: ( ( rule__ElkSingleEdgeSection__Group_1__0 ) )
+            // InternalGrana.g:6457:1: ( rule__ElkSingleEdgeSection__Group_1__0 )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1()); 
-            // InternalGrana.g:6427:1: ( rule__ElkSingleEdgeSection__Group_1__0 )
-            // InternalGrana.g:6427:2: rule__ElkSingleEdgeSection__Group_1__0
+            // InternalGrana.g:6458:1: ( rule__ElkSingleEdgeSection__Group_1__0 )
+            // InternalGrana.g:6458:2: rule__ElkSingleEdgeSection__Group_1__0
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__Group_1__0();
@@ -17658,16 +17755,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__0"
-    // InternalGrana.g:6441:1: rule__ElkSingleEdgeSection__Group_1__0 : rule__ElkSingleEdgeSection__Group_1__0__Impl rule__ElkSingleEdgeSection__Group_1__1 ;
+    // InternalGrana.g:6472:1: rule__ElkSingleEdgeSection__Group_1__0 : rule__ElkSingleEdgeSection__Group_1__0__Impl rule__ElkSingleEdgeSection__Group_1__1 ;
     public final void rule__ElkSingleEdgeSection__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6445:1: ( rule__ElkSingleEdgeSection__Group_1__0__Impl rule__ElkSingleEdgeSection__Group_1__1 )
-            // InternalGrana.g:6446:2: rule__ElkSingleEdgeSection__Group_1__0__Impl rule__ElkSingleEdgeSection__Group_1__1
+            // InternalGrana.g:6476:1: ( rule__ElkSingleEdgeSection__Group_1__0__Impl rule__ElkSingleEdgeSection__Group_1__1 )
+            // InternalGrana.g:6477:2: rule__ElkSingleEdgeSection__Group_1__0__Impl rule__ElkSingleEdgeSection__Group_1__1
             {
-            pushFollow(FOLLOW_46);
+            pushFollow(FOLLOW_47);
             rule__ElkSingleEdgeSection__Group_1__0__Impl();
 
             state._fsp--;
@@ -17696,21 +17793,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__0__Impl"
-    // InternalGrana.g:6453:1: rule__ElkSingleEdgeSection__Group_1__0__Impl : ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) ) ;
+    // InternalGrana.g:6484:1: rule__ElkSingleEdgeSection__Group_1__0__Impl : ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6457:1: ( ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) ) )
-            // InternalGrana.g:6458:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) )
+            // InternalGrana.g:6488:1: ( ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) ) )
+            // InternalGrana.g:6489:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) )
             {
-            // InternalGrana.g:6458:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) )
-            // InternalGrana.g:6459:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 )
+            // InternalGrana.g:6489:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 ) )
+            // InternalGrana.g:6490:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0()); 
-            // InternalGrana.g:6460:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 )
-            // InternalGrana.g:6460:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0
+            // InternalGrana.g:6491:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0 )
+            // InternalGrana.g:6491:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__UnorderedGroup_1_0();
@@ -17743,16 +17840,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__1"
-    // InternalGrana.g:6470:1: rule__ElkSingleEdgeSection__Group_1__1 : rule__ElkSingleEdgeSection__Group_1__1__Impl rule__ElkSingleEdgeSection__Group_1__2 ;
+    // InternalGrana.g:6501:1: rule__ElkSingleEdgeSection__Group_1__1 : rule__ElkSingleEdgeSection__Group_1__1__Impl rule__ElkSingleEdgeSection__Group_1__2 ;
     public final void rule__ElkSingleEdgeSection__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6474:1: ( rule__ElkSingleEdgeSection__Group_1__1__Impl rule__ElkSingleEdgeSection__Group_1__2 )
-            // InternalGrana.g:6475:2: rule__ElkSingleEdgeSection__Group_1__1__Impl rule__ElkSingleEdgeSection__Group_1__2
+            // InternalGrana.g:6505:1: ( rule__ElkSingleEdgeSection__Group_1__1__Impl rule__ElkSingleEdgeSection__Group_1__2 )
+            // InternalGrana.g:6506:2: rule__ElkSingleEdgeSection__Group_1__1__Impl rule__ElkSingleEdgeSection__Group_1__2
             {
-            pushFollow(FOLLOW_46);
+            pushFollow(FOLLOW_47);
             rule__ElkSingleEdgeSection__Group_1__1__Impl();
 
             state._fsp--;
@@ -17781,29 +17878,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__1__Impl"
-    // InternalGrana.g:6482:1: rule__ElkSingleEdgeSection__Group_1__1__Impl : ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? ) ;
+    // InternalGrana.g:6513:1: rule__ElkSingleEdgeSection__Group_1__1__Impl : ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? ) ;
     public final void rule__ElkSingleEdgeSection__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6486:1: ( ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? ) )
-            // InternalGrana.g:6487:1: ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? )
+            // InternalGrana.g:6517:1: ( ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? ) )
+            // InternalGrana.g:6518:1: ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? )
             {
-            // InternalGrana.g:6487:1: ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? )
-            // InternalGrana.g:6488:1: ( rule__ElkSingleEdgeSection__Group_1_1__0 )?
+            // InternalGrana.g:6518:1: ( ( rule__ElkSingleEdgeSection__Group_1_1__0 )? )
+            // InternalGrana.g:6519:1: ( rule__ElkSingleEdgeSection__Group_1_1__0 )?
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_1()); 
-            // InternalGrana.g:6489:1: ( rule__ElkSingleEdgeSection__Group_1_1__0 )?
-            int alt63=2;
-            int LA63_0 = input.LA(1);
+            // InternalGrana.g:6520:1: ( rule__ElkSingleEdgeSection__Group_1_1__0 )?
+            int alt64=2;
+            int LA64_0 = input.LA(1);
 
-            if ( (LA63_0==55) ) {
-                alt63=1;
+            if ( (LA64_0==55) ) {
+                alt64=1;
             }
-            switch (alt63) {
+            switch (alt64) {
                 case 1 :
-                    // InternalGrana.g:6489:2: rule__ElkSingleEdgeSection__Group_1_1__0
+                    // InternalGrana.g:6520:2: rule__ElkSingleEdgeSection__Group_1_1__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkSingleEdgeSection__Group_1_1__0();
@@ -17839,14 +17936,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__2"
-    // InternalGrana.g:6499:1: rule__ElkSingleEdgeSection__Group_1__2 : rule__ElkSingleEdgeSection__Group_1__2__Impl ;
+    // InternalGrana.g:6530:1: rule__ElkSingleEdgeSection__Group_1__2 : rule__ElkSingleEdgeSection__Group_1__2__Impl ;
     public final void rule__ElkSingleEdgeSection__Group_1__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6503:1: ( rule__ElkSingleEdgeSection__Group_1__2__Impl )
-            // InternalGrana.g:6504:2: rule__ElkSingleEdgeSection__Group_1__2__Impl
+            // InternalGrana.g:6534:1: ( rule__ElkSingleEdgeSection__Group_1__2__Impl )
+            // InternalGrana.g:6535:2: rule__ElkSingleEdgeSection__Group_1__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__Group_1__2__Impl();
@@ -17872,33 +17969,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1__2__Impl"
-    // InternalGrana.g:6510:1: rule__ElkSingleEdgeSection__Group_1__2__Impl : ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* ) ;
+    // InternalGrana.g:6541:1: rule__ElkSingleEdgeSection__Group_1__2__Impl : ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* ) ;
     public final void rule__ElkSingleEdgeSection__Group_1__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6514:1: ( ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* ) )
-            // InternalGrana.g:6515:1: ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* )
+            // InternalGrana.g:6545:1: ( ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* ) )
+            // InternalGrana.g:6546:1: ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* )
             {
-            // InternalGrana.g:6515:1: ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* )
-            // InternalGrana.g:6516:1: ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )*
+            // InternalGrana.g:6546:1: ( ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )* )
+            // InternalGrana.g:6547:1: ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )*
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getPropertiesAssignment_1_2()); 
-            // InternalGrana.g:6517:1: ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )*
-            loop64:
+            // InternalGrana.g:6548:1: ( rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 )*
+            loop65:
             do {
-                int alt64=2;
-                int LA64_0 = input.LA(1);
+                int alt65=2;
+                int LA65_0 = input.LA(1);
 
-                if ( (LA64_0==RULE_ID) ) {
-                    alt64=1;
+                if ( (LA65_0==RULE_ID) ) {
+                    alt65=1;
                 }
 
 
-                switch (alt64) {
+                switch (alt65) {
             	case 1 :
-            	    // InternalGrana.g:6517:2: rule__ElkSingleEdgeSection__PropertiesAssignment_1_2
+            	    // InternalGrana.g:6548:2: rule__ElkSingleEdgeSection__PropertiesAssignment_1_2
             	    {
             	    pushFollow(FOLLOW_3);
             	    rule__ElkSingleEdgeSection__PropertiesAssignment_1_2();
@@ -17910,7 +18007,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop64;
+            	    break loop65;
                 }
             } while (true);
 
@@ -17937,16 +18034,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__0"
-    // InternalGrana.g:6533:1: rule__ElkSingleEdgeSection__Group_1_0_0__0 : rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0_0__1 ;
+    // InternalGrana.g:6564:1: rule__ElkSingleEdgeSection__Group_1_0_0__0 : rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0_0__1 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_0__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6537:1: ( rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0_0__1 )
-            // InternalGrana.g:6538:2: rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0_0__1
+            // InternalGrana.g:6568:1: ( rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0_0__1 )
+            // InternalGrana.g:6569:2: rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl rule__ElkSingleEdgeSection__Group_1_0_0__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl();
 
             state._fsp--;
@@ -17975,17 +18072,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl"
-    // InternalGrana.g:6545:1: rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl : ( 'incoming' ) ;
+    // InternalGrana.g:6576:1: rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl : ( 'incoming' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_0__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6549:1: ( ( 'incoming' ) )
-            // InternalGrana.g:6550:1: ( 'incoming' )
+            // InternalGrana.g:6580:1: ( ( 'incoming' ) )
+            // InternalGrana.g:6581:1: ( 'incoming' )
             {
-            // InternalGrana.g:6550:1: ( 'incoming' )
-            // InternalGrana.g:6551:1: 'incoming'
+            // InternalGrana.g:6581:1: ( 'incoming' )
+            // InternalGrana.g:6582:1: 'incoming'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingKeyword_1_0_0_0()); 
             match(input,51,FOLLOW_2); 
@@ -18012,14 +18109,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__1"
-    // InternalGrana.g:6564:1: rule__ElkSingleEdgeSection__Group_1_0_0__1 : rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0_0__2 ;
+    // InternalGrana.g:6595:1: rule__ElkSingleEdgeSection__Group_1_0_0__1 : rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0_0__2 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_0__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6568:1: ( rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0_0__2 )
-            // InternalGrana.g:6569:2: rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0_0__2
+            // InternalGrana.g:6599:1: ( rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0_0__2 )
+            // InternalGrana.g:6600:2: rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl rule__ElkSingleEdgeSection__Group_1_0_0__2
             {
             pushFollow(FOLLOW_8);
             rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl();
@@ -18050,17 +18147,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl"
-    // InternalGrana.g:6576:1: rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl : ( ':' ) ;
+    // InternalGrana.g:6607:1: rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl : ( ':' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_0__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6580:1: ( ( ':' ) )
-            // InternalGrana.g:6581:1: ( ':' )
+            // InternalGrana.g:6611:1: ( ( ':' ) )
+            // InternalGrana.g:6612:1: ( ':' )
             {
-            // InternalGrana.g:6581:1: ( ':' )
-            // InternalGrana.g:6582:1: ':'
+            // InternalGrana.g:6612:1: ( ':' )
+            // InternalGrana.g:6613:1: ':'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_0_1()); 
             match(input,42,FOLLOW_2); 
@@ -18087,14 +18184,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__2"
-    // InternalGrana.g:6595:1: rule__ElkSingleEdgeSection__Group_1_0_0__2 : rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl ;
+    // InternalGrana.g:6626:1: rule__ElkSingleEdgeSection__Group_1_0_0__2 : rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_0__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6599:1: ( rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl )
-            // InternalGrana.g:6600:2: rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl
+            // InternalGrana.g:6630:1: ( rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl )
+            // InternalGrana.g:6631:2: rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl();
@@ -18120,21 +18217,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl"
-    // InternalGrana.g:6606:1: rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl : ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) ) ;
+    // InternalGrana.g:6637:1: rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl : ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_0__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6610:1: ( ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) ) )
-            // InternalGrana.g:6611:1: ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) )
+            // InternalGrana.g:6641:1: ( ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) ) )
+            // InternalGrana.g:6642:1: ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) )
             {
-            // InternalGrana.g:6611:1: ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) )
-            // InternalGrana.g:6612:1: ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 )
+            // InternalGrana.g:6642:1: ( ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 ) )
+            // InternalGrana.g:6643:1: ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeAssignment_1_0_0_2()); 
-            // InternalGrana.g:6613:1: ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 )
-            // InternalGrana.g:6613:2: rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2
+            // InternalGrana.g:6644:1: ( rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 )
+            // InternalGrana.g:6644:2: rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2();
@@ -18167,16 +18264,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__0"
-    // InternalGrana.g:6629:1: rule__ElkSingleEdgeSection__Group_1_0_1__0 : rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl rule__ElkSingleEdgeSection__Group_1_0_1__1 ;
+    // InternalGrana.g:6660:1: rule__ElkSingleEdgeSection__Group_1_0_1__0 : rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl rule__ElkSingleEdgeSection__Group_1_0_1__1 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6633:1: ( rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl rule__ElkSingleEdgeSection__Group_1_0_1__1 )
-            // InternalGrana.g:6634:2: rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl rule__ElkSingleEdgeSection__Group_1_0_1__1
+            // InternalGrana.g:6664:1: ( rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl rule__ElkSingleEdgeSection__Group_1_0_1__1 )
+            // InternalGrana.g:6665:2: rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl rule__ElkSingleEdgeSection__Group_1_0_1__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl();
 
             state._fsp--;
@@ -18205,17 +18302,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl"
-    // InternalGrana.g:6641:1: rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl : ( 'outgoing' ) ;
+    // InternalGrana.g:6672:1: rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl : ( 'outgoing' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6645:1: ( ( 'outgoing' ) )
-            // InternalGrana.g:6646:1: ( 'outgoing' )
+            // InternalGrana.g:6676:1: ( ( 'outgoing' ) )
+            // InternalGrana.g:6677:1: ( 'outgoing' )
             {
-            // InternalGrana.g:6646:1: ( 'outgoing' )
-            // InternalGrana.g:6647:1: 'outgoing'
+            // InternalGrana.g:6677:1: ( 'outgoing' )
+            // InternalGrana.g:6678:1: 'outgoing'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingKeyword_1_0_1_0()); 
             match(input,52,FOLLOW_2); 
@@ -18242,14 +18339,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__1"
-    // InternalGrana.g:6660:1: rule__ElkSingleEdgeSection__Group_1_0_1__1 : rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl rule__ElkSingleEdgeSection__Group_1_0_1__2 ;
+    // InternalGrana.g:6691:1: rule__ElkSingleEdgeSection__Group_1_0_1__1 : rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl rule__ElkSingleEdgeSection__Group_1_0_1__2 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6664:1: ( rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl rule__ElkSingleEdgeSection__Group_1_0_1__2 )
-            // InternalGrana.g:6665:2: rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl rule__ElkSingleEdgeSection__Group_1_0_1__2
+            // InternalGrana.g:6695:1: ( rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl rule__ElkSingleEdgeSection__Group_1_0_1__2 )
+            // InternalGrana.g:6696:2: rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl rule__ElkSingleEdgeSection__Group_1_0_1__2
             {
             pushFollow(FOLLOW_8);
             rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl();
@@ -18280,17 +18377,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl"
-    // InternalGrana.g:6672:1: rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl : ( ':' ) ;
+    // InternalGrana.g:6703:1: rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl : ( ':' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6676:1: ( ( ':' ) )
-            // InternalGrana.g:6677:1: ( ':' )
+            // InternalGrana.g:6707:1: ( ( ':' ) )
+            // InternalGrana.g:6708:1: ( ':' )
             {
-            // InternalGrana.g:6677:1: ( ':' )
-            // InternalGrana.g:6678:1: ':'
+            // InternalGrana.g:6708:1: ( ':' )
+            // InternalGrana.g:6709:1: ':'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_1_1()); 
             match(input,42,FOLLOW_2); 
@@ -18317,14 +18414,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__2"
-    // InternalGrana.g:6691:1: rule__ElkSingleEdgeSection__Group_1_0_1__2 : rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl ;
+    // InternalGrana.g:6722:1: rule__ElkSingleEdgeSection__Group_1_0_1__2 : rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_1__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6695:1: ( rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl )
-            // InternalGrana.g:6696:2: rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl
+            // InternalGrana.g:6726:1: ( rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl )
+            // InternalGrana.g:6727:2: rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl();
@@ -18350,21 +18447,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl"
-    // InternalGrana.g:6702:1: rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl : ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) ) ;
+    // InternalGrana.g:6733:1: rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl : ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_1__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6706:1: ( ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) ) )
-            // InternalGrana.g:6707:1: ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) )
+            // InternalGrana.g:6737:1: ( ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) ) )
+            // InternalGrana.g:6738:1: ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) )
             {
-            // InternalGrana.g:6707:1: ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) )
-            // InternalGrana.g:6708:1: ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 )
+            // InternalGrana.g:6738:1: ( ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 ) )
+            // InternalGrana.g:6739:1: ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeAssignment_1_0_1_2()); 
-            // InternalGrana.g:6709:1: ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 )
-            // InternalGrana.g:6709:2: rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2
+            // InternalGrana.g:6740:1: ( rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 )
+            // InternalGrana.g:6740:2: rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2();
@@ -18397,16 +18494,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__0"
-    // InternalGrana.g:6725:1: rule__ElkSingleEdgeSection__Group_1_0_2__0 : rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl rule__ElkSingleEdgeSection__Group_1_0_2__1 ;
+    // InternalGrana.g:6756:1: rule__ElkSingleEdgeSection__Group_1_0_2__0 : rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl rule__ElkSingleEdgeSection__Group_1_0_2__1 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6729:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl rule__ElkSingleEdgeSection__Group_1_0_2__1 )
-            // InternalGrana.g:6730:2: rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl rule__ElkSingleEdgeSection__Group_1_0_2__1
+            // InternalGrana.g:6760:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl rule__ElkSingleEdgeSection__Group_1_0_2__1 )
+            // InternalGrana.g:6761:2: rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl rule__ElkSingleEdgeSection__Group_1_0_2__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl();
 
             state._fsp--;
@@ -18435,17 +18532,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl"
-    // InternalGrana.g:6737:1: rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl : ( 'start' ) ;
+    // InternalGrana.g:6768:1: rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl : ( 'start' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_2__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6741:1: ( ( 'start' ) )
-            // InternalGrana.g:6742:1: ( 'start' )
+            // InternalGrana.g:6772:1: ( ( 'start' ) )
+            // InternalGrana.g:6773:1: ( 'start' )
             {
-            // InternalGrana.g:6742:1: ( 'start' )
-            // InternalGrana.g:6743:1: 'start'
+            // InternalGrana.g:6773:1: ( 'start' )
+            // InternalGrana.g:6774:1: 'start'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getStartKeyword_1_0_2_0()); 
             match(input,53,FOLLOW_2); 
@@ -18472,16 +18569,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__1"
-    // InternalGrana.g:6756:1: rule__ElkSingleEdgeSection__Group_1_0_2__1 : rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl rule__ElkSingleEdgeSection__Group_1_0_2__2 ;
+    // InternalGrana.g:6787:1: rule__ElkSingleEdgeSection__Group_1_0_2__1 : rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl rule__ElkSingleEdgeSection__Group_1_0_2__2 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6760:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl rule__ElkSingleEdgeSection__Group_1_0_2__2 )
-            // InternalGrana.g:6761:2: rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl rule__ElkSingleEdgeSection__Group_1_0_2__2
+            // InternalGrana.g:6791:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl rule__ElkSingleEdgeSection__Group_1_0_2__2 )
+            // InternalGrana.g:6792:2: rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl rule__ElkSingleEdgeSection__Group_1_0_2__2
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl();
 
             state._fsp--;
@@ -18510,17 +18607,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl"
-    // InternalGrana.g:6768:1: rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl : ( ':' ) ;
+    // InternalGrana.g:6799:1: rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl : ( ':' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_2__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6772:1: ( ( ':' ) )
-            // InternalGrana.g:6773:1: ( ':' )
+            // InternalGrana.g:6803:1: ( ( ':' ) )
+            // InternalGrana.g:6804:1: ( ':' )
             {
-            // InternalGrana.g:6773:1: ( ':' )
-            // InternalGrana.g:6774:1: ':'
+            // InternalGrana.g:6804:1: ( ':' )
+            // InternalGrana.g:6805:1: ':'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_2_1()); 
             match(input,42,FOLLOW_2); 
@@ -18547,14 +18644,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__2"
-    // InternalGrana.g:6787:1: rule__ElkSingleEdgeSection__Group_1_0_2__2 : rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl rule__ElkSingleEdgeSection__Group_1_0_2__3 ;
+    // InternalGrana.g:6818:1: rule__ElkSingleEdgeSection__Group_1_0_2__2 : rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl rule__ElkSingleEdgeSection__Group_1_0_2__3 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_2__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6791:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl rule__ElkSingleEdgeSection__Group_1_0_2__3 )
-            // InternalGrana.g:6792:2: rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl rule__ElkSingleEdgeSection__Group_1_0_2__3
+            // InternalGrana.g:6822:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl rule__ElkSingleEdgeSection__Group_1_0_2__3 )
+            // InternalGrana.g:6823:2: rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl rule__ElkSingleEdgeSection__Group_1_0_2__3
             {
             pushFollow(FOLLOW_25);
             rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl();
@@ -18585,21 +18682,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl"
-    // InternalGrana.g:6799:1: rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl : ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) ) ;
+    // InternalGrana.g:6830:1: rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl : ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_2__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6803:1: ( ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) ) )
-            // InternalGrana.g:6804:1: ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) )
+            // InternalGrana.g:6834:1: ( ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) ) )
+            // InternalGrana.g:6835:1: ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) )
             {
-            // InternalGrana.g:6804:1: ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) )
-            // InternalGrana.g:6805:1: ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 )
+            // InternalGrana.g:6835:1: ( ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 ) )
+            // InternalGrana.g:6836:1: ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getStartXAssignment_1_0_2_2()); 
-            // InternalGrana.g:6806:1: ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 )
-            // InternalGrana.g:6806:2: rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2
+            // InternalGrana.g:6837:1: ( rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 )
+            // InternalGrana.g:6837:2: rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2();
@@ -18632,16 +18729,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__3"
-    // InternalGrana.g:6816:1: rule__ElkSingleEdgeSection__Group_1_0_2__3 : rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl rule__ElkSingleEdgeSection__Group_1_0_2__4 ;
+    // InternalGrana.g:6847:1: rule__ElkSingleEdgeSection__Group_1_0_2__3 : rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl rule__ElkSingleEdgeSection__Group_1_0_2__4 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_2__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6820:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl rule__ElkSingleEdgeSection__Group_1_0_2__4 )
-            // InternalGrana.g:6821:2: rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl rule__ElkSingleEdgeSection__Group_1_0_2__4
+            // InternalGrana.g:6851:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl rule__ElkSingleEdgeSection__Group_1_0_2__4 )
+            // InternalGrana.g:6852:2: rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl rule__ElkSingleEdgeSection__Group_1_0_2__4
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl();
 
             state._fsp--;
@@ -18670,17 +18767,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl"
-    // InternalGrana.g:6828:1: rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl : ( ',' ) ;
+    // InternalGrana.g:6859:1: rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl : ( ',' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_2__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6832:1: ( ( ',' ) )
-            // InternalGrana.g:6833:1: ( ',' )
+            // InternalGrana.g:6863:1: ( ( ',' ) )
+            // InternalGrana.g:6864:1: ( ',' )
             {
-            // InternalGrana.g:6833:1: ( ',' )
-            // InternalGrana.g:6834:1: ','
+            // InternalGrana.g:6864:1: ( ',' )
+            // InternalGrana.g:6865:1: ','
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_0_2_3()); 
             match(input,32,FOLLOW_2); 
@@ -18707,14 +18804,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__4"
-    // InternalGrana.g:6847:1: rule__ElkSingleEdgeSection__Group_1_0_2__4 : rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl ;
+    // InternalGrana.g:6878:1: rule__ElkSingleEdgeSection__Group_1_0_2__4 : rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_2__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6851:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl )
-            // InternalGrana.g:6852:2: rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl
+            // InternalGrana.g:6882:1: ( rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl )
+            // InternalGrana.g:6883:2: rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl();
@@ -18740,21 +18837,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl"
-    // InternalGrana.g:6858:1: rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl : ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) ) ;
+    // InternalGrana.g:6889:1: rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl : ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_2__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6862:1: ( ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) ) )
-            // InternalGrana.g:6863:1: ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) )
+            // InternalGrana.g:6893:1: ( ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) ) )
+            // InternalGrana.g:6894:1: ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) )
             {
-            // InternalGrana.g:6863:1: ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) )
-            // InternalGrana.g:6864:1: ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 )
+            // InternalGrana.g:6894:1: ( ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 ) )
+            // InternalGrana.g:6895:1: ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getStartYAssignment_1_0_2_4()); 
-            // InternalGrana.g:6865:1: ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 )
-            // InternalGrana.g:6865:2: rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4
+            // InternalGrana.g:6896:1: ( rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 )
+            // InternalGrana.g:6896:2: rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4();
@@ -18787,16 +18884,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__0"
-    // InternalGrana.g:6885:1: rule__ElkSingleEdgeSection__Group_1_0_3__0 : rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl rule__ElkSingleEdgeSection__Group_1_0_3__1 ;
+    // InternalGrana.g:6916:1: rule__ElkSingleEdgeSection__Group_1_0_3__0 : rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl rule__ElkSingleEdgeSection__Group_1_0_3__1 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_3__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6889:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl rule__ElkSingleEdgeSection__Group_1_0_3__1 )
-            // InternalGrana.g:6890:2: rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl rule__ElkSingleEdgeSection__Group_1_0_3__1
+            // InternalGrana.g:6920:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl rule__ElkSingleEdgeSection__Group_1_0_3__1 )
+            // InternalGrana.g:6921:2: rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl rule__ElkSingleEdgeSection__Group_1_0_3__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl();
 
             state._fsp--;
@@ -18825,17 +18922,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl"
-    // InternalGrana.g:6897:1: rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl : ( 'end' ) ;
+    // InternalGrana.g:6928:1: rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl : ( 'end' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_3__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6901:1: ( ( 'end' ) )
-            // InternalGrana.g:6902:1: ( 'end' )
+            // InternalGrana.g:6932:1: ( ( 'end' ) )
+            // InternalGrana.g:6933:1: ( 'end' )
             {
-            // InternalGrana.g:6902:1: ( 'end' )
-            // InternalGrana.g:6903:1: 'end'
+            // InternalGrana.g:6933:1: ( 'end' )
+            // InternalGrana.g:6934:1: 'end'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getEndKeyword_1_0_3_0()); 
             match(input,54,FOLLOW_2); 
@@ -18862,16 +18959,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__1"
-    // InternalGrana.g:6916:1: rule__ElkSingleEdgeSection__Group_1_0_3__1 : rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl rule__ElkSingleEdgeSection__Group_1_0_3__2 ;
+    // InternalGrana.g:6947:1: rule__ElkSingleEdgeSection__Group_1_0_3__1 : rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl rule__ElkSingleEdgeSection__Group_1_0_3__2 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_3__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6920:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl rule__ElkSingleEdgeSection__Group_1_0_3__2 )
-            // InternalGrana.g:6921:2: rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl rule__ElkSingleEdgeSection__Group_1_0_3__2
+            // InternalGrana.g:6951:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl rule__ElkSingleEdgeSection__Group_1_0_3__2 )
+            // InternalGrana.g:6952:2: rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl rule__ElkSingleEdgeSection__Group_1_0_3__2
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl();
 
             state._fsp--;
@@ -18900,17 +18997,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl"
-    // InternalGrana.g:6928:1: rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl : ( ':' ) ;
+    // InternalGrana.g:6959:1: rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl : ( ':' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_3__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6932:1: ( ( ':' ) )
-            // InternalGrana.g:6933:1: ( ':' )
+            // InternalGrana.g:6963:1: ( ( ':' ) )
+            // InternalGrana.g:6964:1: ( ':' )
             {
-            // InternalGrana.g:6933:1: ( ':' )
-            // InternalGrana.g:6934:1: ':'
+            // InternalGrana.g:6964:1: ( ':' )
+            // InternalGrana.g:6965:1: ':'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_0_3_1()); 
             match(input,42,FOLLOW_2); 
@@ -18937,14 +19034,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__2"
-    // InternalGrana.g:6947:1: rule__ElkSingleEdgeSection__Group_1_0_3__2 : rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl rule__ElkSingleEdgeSection__Group_1_0_3__3 ;
+    // InternalGrana.g:6978:1: rule__ElkSingleEdgeSection__Group_1_0_3__2 : rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl rule__ElkSingleEdgeSection__Group_1_0_3__3 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_3__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6951:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl rule__ElkSingleEdgeSection__Group_1_0_3__3 )
-            // InternalGrana.g:6952:2: rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl rule__ElkSingleEdgeSection__Group_1_0_3__3
+            // InternalGrana.g:6982:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl rule__ElkSingleEdgeSection__Group_1_0_3__3 )
+            // InternalGrana.g:6983:2: rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl rule__ElkSingleEdgeSection__Group_1_0_3__3
             {
             pushFollow(FOLLOW_25);
             rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl();
@@ -18975,21 +19072,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl"
-    // InternalGrana.g:6959:1: rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl : ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) ) ;
+    // InternalGrana.g:6990:1: rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl : ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_3__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6963:1: ( ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) ) )
-            // InternalGrana.g:6964:1: ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) )
+            // InternalGrana.g:6994:1: ( ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) ) )
+            // InternalGrana.g:6995:1: ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) )
             {
-            // InternalGrana.g:6964:1: ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) )
-            // InternalGrana.g:6965:1: ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 )
+            // InternalGrana.g:6995:1: ( ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 ) )
+            // InternalGrana.g:6996:1: ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getEndXAssignment_1_0_3_2()); 
-            // InternalGrana.g:6966:1: ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 )
-            // InternalGrana.g:6966:2: rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2
+            // InternalGrana.g:6997:1: ( rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 )
+            // InternalGrana.g:6997:2: rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2();
@@ -19022,16 +19119,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__3"
-    // InternalGrana.g:6976:1: rule__ElkSingleEdgeSection__Group_1_0_3__3 : rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl rule__ElkSingleEdgeSection__Group_1_0_3__4 ;
+    // InternalGrana.g:7007:1: rule__ElkSingleEdgeSection__Group_1_0_3__3 : rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl rule__ElkSingleEdgeSection__Group_1_0_3__4 ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_3__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6980:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl rule__ElkSingleEdgeSection__Group_1_0_3__4 )
-            // InternalGrana.g:6981:2: rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl rule__ElkSingleEdgeSection__Group_1_0_3__4
+            // InternalGrana.g:7011:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl rule__ElkSingleEdgeSection__Group_1_0_3__4 )
+            // InternalGrana.g:7012:2: rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl rule__ElkSingleEdgeSection__Group_1_0_3__4
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl();
 
             state._fsp--;
@@ -19060,17 +19157,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl"
-    // InternalGrana.g:6988:1: rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl : ( ',' ) ;
+    // InternalGrana.g:7019:1: rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl : ( ',' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_3__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:6992:1: ( ( ',' ) )
-            // InternalGrana.g:6993:1: ( ',' )
+            // InternalGrana.g:7023:1: ( ( ',' ) )
+            // InternalGrana.g:7024:1: ( ',' )
             {
-            // InternalGrana.g:6993:1: ( ',' )
-            // InternalGrana.g:6994:1: ','
+            // InternalGrana.g:7024:1: ( ',' )
+            // InternalGrana.g:7025:1: ','
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getCommaKeyword_1_0_3_3()); 
             match(input,32,FOLLOW_2); 
@@ -19097,14 +19194,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__4"
-    // InternalGrana.g:7007:1: rule__ElkSingleEdgeSection__Group_1_0_3__4 : rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl ;
+    // InternalGrana.g:7038:1: rule__ElkSingleEdgeSection__Group_1_0_3__4 : rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_3__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7011:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl )
-            // InternalGrana.g:7012:2: rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl
+            // InternalGrana.g:7042:1: ( rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl )
+            // InternalGrana.g:7043:2: rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl();
@@ -19130,21 +19227,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl"
-    // InternalGrana.g:7018:1: rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl : ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) ) ;
+    // InternalGrana.g:7049:1: rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl : ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_0_3__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7022:1: ( ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) ) )
-            // InternalGrana.g:7023:1: ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) )
+            // InternalGrana.g:7053:1: ( ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) ) )
+            // InternalGrana.g:7054:1: ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) )
             {
-            // InternalGrana.g:7023:1: ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) )
-            // InternalGrana.g:7024:1: ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 )
+            // InternalGrana.g:7054:1: ( ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 ) )
+            // InternalGrana.g:7055:1: ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getEndYAssignment_1_0_3_4()); 
-            // InternalGrana.g:7025:1: ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 )
-            // InternalGrana.g:7025:2: rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4
+            // InternalGrana.g:7056:1: ( rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 )
+            // InternalGrana.g:7056:2: rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4();
@@ -19177,16 +19274,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__0"
-    // InternalGrana.g:7045:1: rule__ElkSingleEdgeSection__Group_1_1__0 : rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1 ;
+    // InternalGrana.g:7076:1: rule__ElkSingleEdgeSection__Group_1_1__0 : rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1 ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7049:1: ( rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1 )
-            // InternalGrana.g:7050:2: rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1
+            // InternalGrana.g:7080:1: ( rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1 )
+            // InternalGrana.g:7081:2: rule__ElkSingleEdgeSection__Group_1_1__0__Impl rule__ElkSingleEdgeSection__Group_1_1__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkSingleEdgeSection__Group_1_1__0__Impl();
 
             state._fsp--;
@@ -19215,17 +19312,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__0__Impl"
-    // InternalGrana.g:7057:1: rule__ElkSingleEdgeSection__Group_1_1__0__Impl : ( 'bends' ) ;
+    // InternalGrana.g:7088:1: rule__ElkSingleEdgeSection__Group_1_1__0__Impl : ( 'bends' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7061:1: ( ( 'bends' ) )
-            // InternalGrana.g:7062:1: ( 'bends' )
+            // InternalGrana.g:7092:1: ( ( 'bends' ) )
+            // InternalGrana.g:7093:1: ( 'bends' )
             {
-            // InternalGrana.g:7062:1: ( 'bends' )
-            // InternalGrana.g:7063:1: 'bends'
+            // InternalGrana.g:7093:1: ( 'bends' )
+            // InternalGrana.g:7094:1: 'bends'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getBendsKeyword_1_1_0()); 
             match(input,55,FOLLOW_2); 
@@ -19252,16 +19349,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__1"
-    // InternalGrana.g:7076:1: rule__ElkSingleEdgeSection__Group_1_1__1 : rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2 ;
+    // InternalGrana.g:7107:1: rule__ElkSingleEdgeSection__Group_1_1__1 : rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2 ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7080:1: ( rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2 )
-            // InternalGrana.g:7081:2: rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2
+            // InternalGrana.g:7111:1: ( rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2 )
+            // InternalGrana.g:7112:2: rule__ElkSingleEdgeSection__Group_1_1__1__Impl rule__ElkSingleEdgeSection__Group_1_1__2
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkSingleEdgeSection__Group_1_1__1__Impl();
 
             state._fsp--;
@@ -19290,17 +19387,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__1__Impl"
-    // InternalGrana.g:7088:1: rule__ElkSingleEdgeSection__Group_1_1__1__Impl : ( ':' ) ;
+    // InternalGrana.g:7119:1: rule__ElkSingleEdgeSection__Group_1_1__1__Impl : ( ':' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7092:1: ( ( ':' ) )
-            // InternalGrana.g:7093:1: ( ':' )
+            // InternalGrana.g:7123:1: ( ( ':' ) )
+            // InternalGrana.g:7124:1: ( ':' )
             {
-            // InternalGrana.g:7093:1: ( ':' )
-            // InternalGrana.g:7094:1: ':'
+            // InternalGrana.g:7124:1: ( ':' )
+            // InternalGrana.g:7125:1: ':'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getColonKeyword_1_1_1()); 
             match(input,42,FOLLOW_2); 
@@ -19327,16 +19424,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__2"
-    // InternalGrana.g:7107:1: rule__ElkSingleEdgeSection__Group_1_1__2 : rule__ElkSingleEdgeSection__Group_1_1__2__Impl rule__ElkSingleEdgeSection__Group_1_1__3 ;
+    // InternalGrana.g:7138:1: rule__ElkSingleEdgeSection__Group_1_1__2 : rule__ElkSingleEdgeSection__Group_1_1__2__Impl rule__ElkSingleEdgeSection__Group_1_1__3 ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7111:1: ( rule__ElkSingleEdgeSection__Group_1_1__2__Impl rule__ElkSingleEdgeSection__Group_1_1__3 )
-            // InternalGrana.g:7112:2: rule__ElkSingleEdgeSection__Group_1_1__2__Impl rule__ElkSingleEdgeSection__Group_1_1__3
+            // InternalGrana.g:7142:1: ( rule__ElkSingleEdgeSection__Group_1_1__2__Impl rule__ElkSingleEdgeSection__Group_1_1__3 )
+            // InternalGrana.g:7143:2: rule__ElkSingleEdgeSection__Group_1_1__2__Impl rule__ElkSingleEdgeSection__Group_1_1__3
             {
-            pushFollow(FOLLOW_47);
+            pushFollow(FOLLOW_48);
             rule__ElkSingleEdgeSection__Group_1_1__2__Impl();
 
             state._fsp--;
@@ -19365,21 +19462,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__2__Impl"
-    // InternalGrana.g:7119:1: rule__ElkSingleEdgeSection__Group_1_1__2__Impl : ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) ) ;
+    // InternalGrana.g:7150:1: rule__ElkSingleEdgeSection__Group_1_1__2__Impl : ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7123:1: ( ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) ) )
-            // InternalGrana.g:7124:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) )
+            // InternalGrana.g:7154:1: ( ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) ) )
+            // InternalGrana.g:7155:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) )
             {
-            // InternalGrana.g:7124:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) )
-            // InternalGrana.g:7125:1: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 )
+            // InternalGrana.g:7155:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 ) )
+            // InternalGrana.g:7156:1: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsAssignment_1_1_2()); 
-            // InternalGrana.g:7126:1: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 )
-            // InternalGrana.g:7126:2: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2
+            // InternalGrana.g:7157:1: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 )
+            // InternalGrana.g:7157:2: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2();
@@ -19412,14 +19509,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__3"
-    // InternalGrana.g:7136:1: rule__ElkSingleEdgeSection__Group_1_1__3 : rule__ElkSingleEdgeSection__Group_1_1__3__Impl ;
+    // InternalGrana.g:7167:1: rule__ElkSingleEdgeSection__Group_1_1__3 : rule__ElkSingleEdgeSection__Group_1_1__3__Impl ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7140:1: ( rule__ElkSingleEdgeSection__Group_1_1__3__Impl )
-            // InternalGrana.g:7141:2: rule__ElkSingleEdgeSection__Group_1_1__3__Impl
+            // InternalGrana.g:7171:1: ( rule__ElkSingleEdgeSection__Group_1_1__3__Impl )
+            // InternalGrana.g:7172:2: rule__ElkSingleEdgeSection__Group_1_1__3__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__Group_1_1__3__Impl();
@@ -19445,35 +19542,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1__3__Impl"
-    // InternalGrana.g:7147:1: rule__ElkSingleEdgeSection__Group_1_1__3__Impl : ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* ) ;
+    // InternalGrana.g:7178:1: rule__ElkSingleEdgeSection__Group_1_1__3__Impl : ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_1__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7151:1: ( ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* ) )
-            // InternalGrana.g:7152:1: ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* )
+            // InternalGrana.g:7182:1: ( ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* ) )
+            // InternalGrana.g:7183:1: ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* )
             {
-            // InternalGrana.g:7152:1: ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* )
-            // InternalGrana.g:7153:1: ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )*
+            // InternalGrana.g:7183:1: ( ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )* )
+            // InternalGrana.g:7184:1: ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )*
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_1_3()); 
-            // InternalGrana.g:7154:1: ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )*
-            loop65:
+            // InternalGrana.g:7185:1: ( rule__ElkSingleEdgeSection__Group_1_1_3__0 )*
+            loop66:
             do {
-                int alt65=2;
-                int LA65_0 = input.LA(1);
+                int alt66=2;
+                int LA66_0 = input.LA(1);
 
-                if ( (LA65_0==56) ) {
-                    alt65=1;
+                if ( (LA66_0==56) ) {
+                    alt66=1;
                 }
 
 
-                switch (alt65) {
+                switch (alt66) {
             	case 1 :
-            	    // InternalGrana.g:7154:2: rule__ElkSingleEdgeSection__Group_1_1_3__0
+            	    // InternalGrana.g:7185:2: rule__ElkSingleEdgeSection__Group_1_1_3__0
             	    {
-            	    pushFollow(FOLLOW_48);
+            	    pushFollow(FOLLOW_49);
             	    rule__ElkSingleEdgeSection__Group_1_1_3__0();
 
             	    state._fsp--;
@@ -19483,7 +19580,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop65;
+            	    break loop66;
                 }
             } while (true);
 
@@ -19510,16 +19607,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1_3__0"
-    // InternalGrana.g:7172:1: rule__ElkSingleEdgeSection__Group_1_1_3__0 : rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_1_3__1 ;
+    // InternalGrana.g:7203:1: rule__ElkSingleEdgeSection__Group_1_1_3__0 : rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_1_3__1 ;
     public final void rule__ElkSingleEdgeSection__Group_1_1_3__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7176:1: ( rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_1_3__1 )
-            // InternalGrana.g:7177:2: rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_1_3__1
+            // InternalGrana.g:7207:1: ( rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_1_3__1 )
+            // InternalGrana.g:7208:2: rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl rule__ElkSingleEdgeSection__Group_1_1_3__1
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl();
 
             state._fsp--;
@@ -19548,17 +19645,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl"
-    // InternalGrana.g:7184:1: rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl : ( '|' ) ;
+    // InternalGrana.g:7215:1: rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl : ( '|' ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_1_3__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7188:1: ( ( '|' ) )
-            // InternalGrana.g:7189:1: ( '|' )
+            // InternalGrana.g:7219:1: ( ( '|' ) )
+            // InternalGrana.g:7220:1: ( '|' )
             {
-            // InternalGrana.g:7189:1: ( '|' )
-            // InternalGrana.g:7190:1: '|'
+            // InternalGrana.g:7220:1: ( '|' )
+            // InternalGrana.g:7221:1: '|'
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getVerticalLineKeyword_1_1_3_0()); 
             match(input,56,FOLLOW_2); 
@@ -19585,14 +19682,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1_3__1"
-    // InternalGrana.g:7203:1: rule__ElkSingleEdgeSection__Group_1_1_3__1 : rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl ;
+    // InternalGrana.g:7234:1: rule__ElkSingleEdgeSection__Group_1_1_3__1 : rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl ;
     public final void rule__ElkSingleEdgeSection__Group_1_1_3__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7207:1: ( rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl )
-            // InternalGrana.g:7208:2: rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl
+            // InternalGrana.g:7238:1: ( rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl )
+            // InternalGrana.g:7239:2: rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl();
@@ -19618,21 +19715,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl"
-    // InternalGrana.g:7214:1: rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl : ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) ) ;
+    // InternalGrana.g:7245:1: rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl : ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) ) ;
     public final void rule__ElkSingleEdgeSection__Group_1_1_3__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7218:1: ( ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) ) )
-            // InternalGrana.g:7219:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) )
+            // InternalGrana.g:7249:1: ( ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) ) )
+            // InternalGrana.g:7250:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) )
             {
-            // InternalGrana.g:7219:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) )
-            // InternalGrana.g:7220:1: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 )
+            // InternalGrana.g:7250:1: ( ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 ) )
+            // InternalGrana.g:7251:1: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsAssignment_1_1_3_1()); 
-            // InternalGrana.g:7221:1: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 )
-            // InternalGrana.g:7221:2: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1
+            // InternalGrana.g:7252:1: ( rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 )
+            // InternalGrana.g:7252:2: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1();
@@ -19665,14 +19762,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__0"
-    // InternalGrana.g:7235:1: rule__ElkEdgeSection__Group__0 : rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1 ;
+    // InternalGrana.g:7266:1: rule__ElkEdgeSection__Group__0 : rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1 ;
     public final void rule__ElkEdgeSection__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7239:1: ( rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1 )
-            // InternalGrana.g:7240:2: rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1
+            // InternalGrana.g:7270:1: ( rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1 )
+            // InternalGrana.g:7271:2: rule__ElkEdgeSection__Group__0__Impl rule__ElkEdgeSection__Group__1
             {
             pushFollow(FOLLOW_8);
             rule__ElkEdgeSection__Group__0__Impl();
@@ -19703,17 +19800,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__0__Impl"
-    // InternalGrana.g:7247:1: rule__ElkEdgeSection__Group__0__Impl : ( 'section' ) ;
+    // InternalGrana.g:7278:1: rule__ElkEdgeSection__Group__0__Impl : ( 'section' ) ;
     public final void rule__ElkEdgeSection__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7251:1: ( ( 'section' ) )
-            // InternalGrana.g:7252:1: ( 'section' )
+            // InternalGrana.g:7282:1: ( ( 'section' ) )
+            // InternalGrana.g:7283:1: ( 'section' )
             {
-            // InternalGrana.g:7252:1: ( 'section' )
-            // InternalGrana.g:7253:1: 'section'
+            // InternalGrana.g:7283:1: ( 'section' )
+            // InternalGrana.g:7284:1: 'section'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getSectionKeyword_0()); 
             match(input,57,FOLLOW_2); 
@@ -19740,16 +19837,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__1"
-    // InternalGrana.g:7266:1: rule__ElkEdgeSection__Group__1 : rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2 ;
+    // InternalGrana.g:7297:1: rule__ElkEdgeSection__Group__1 : rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2 ;
     public final void rule__ElkEdgeSection__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7270:1: ( rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2 )
-            // InternalGrana.g:7271:2: rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2
+            // InternalGrana.g:7301:1: ( rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2 )
+            // InternalGrana.g:7302:2: rule__ElkEdgeSection__Group__1__Impl rule__ElkEdgeSection__Group__2
             {
-            pushFollow(FOLLOW_49);
+            pushFollow(FOLLOW_50);
             rule__ElkEdgeSection__Group__1__Impl();
 
             state._fsp--;
@@ -19778,21 +19875,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__1__Impl"
-    // InternalGrana.g:7278:1: rule__ElkEdgeSection__Group__1__Impl : ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) ) ;
+    // InternalGrana.g:7309:1: rule__ElkEdgeSection__Group__1__Impl : ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) ) ;
     public final void rule__ElkEdgeSection__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7282:1: ( ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) ) )
-            // InternalGrana.g:7283:1: ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) )
+            // InternalGrana.g:7313:1: ( ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) ) )
+            // InternalGrana.g:7314:1: ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) )
             {
-            // InternalGrana.g:7283:1: ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) )
-            // InternalGrana.g:7284:1: ( rule__ElkEdgeSection__IdentifierAssignment_1 )
+            // InternalGrana.g:7314:1: ( ( rule__ElkEdgeSection__IdentifierAssignment_1 ) )
+            // InternalGrana.g:7315:1: ( rule__ElkEdgeSection__IdentifierAssignment_1 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getIdentifierAssignment_1()); 
-            // InternalGrana.g:7285:1: ( rule__ElkEdgeSection__IdentifierAssignment_1 )
-            // InternalGrana.g:7285:2: rule__ElkEdgeSection__IdentifierAssignment_1
+            // InternalGrana.g:7316:1: ( rule__ElkEdgeSection__IdentifierAssignment_1 )
+            // InternalGrana.g:7316:2: rule__ElkEdgeSection__IdentifierAssignment_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__IdentifierAssignment_1();
@@ -19825,16 +19922,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__2"
-    // InternalGrana.g:7295:1: rule__ElkEdgeSection__Group__2 : rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3 ;
+    // InternalGrana.g:7326:1: rule__ElkEdgeSection__Group__2 : rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3 ;
     public final void rule__ElkEdgeSection__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7299:1: ( rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3 )
-            // InternalGrana.g:7300:2: rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3
+            // InternalGrana.g:7330:1: ( rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3 )
+            // InternalGrana.g:7331:2: rule__ElkEdgeSection__Group__2__Impl rule__ElkEdgeSection__Group__3
             {
-            pushFollow(FOLLOW_49);
+            pushFollow(FOLLOW_50);
             rule__ElkEdgeSection__Group__2__Impl();
 
             state._fsp--;
@@ -19863,29 +19960,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__2__Impl"
-    // InternalGrana.g:7307:1: rule__ElkEdgeSection__Group__2__Impl : ( ( rule__ElkEdgeSection__Group_2__0 )? ) ;
+    // InternalGrana.g:7338:1: rule__ElkEdgeSection__Group__2__Impl : ( ( rule__ElkEdgeSection__Group_2__0 )? ) ;
     public final void rule__ElkEdgeSection__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7311:1: ( ( ( rule__ElkEdgeSection__Group_2__0 )? ) )
-            // InternalGrana.g:7312:1: ( ( rule__ElkEdgeSection__Group_2__0 )? )
+            // InternalGrana.g:7342:1: ( ( ( rule__ElkEdgeSection__Group_2__0 )? ) )
+            // InternalGrana.g:7343:1: ( ( rule__ElkEdgeSection__Group_2__0 )? )
             {
-            // InternalGrana.g:7312:1: ( ( rule__ElkEdgeSection__Group_2__0 )? )
-            // InternalGrana.g:7313:1: ( rule__ElkEdgeSection__Group_2__0 )?
+            // InternalGrana.g:7343:1: ( ( rule__ElkEdgeSection__Group_2__0 )? )
+            // InternalGrana.g:7344:1: ( rule__ElkEdgeSection__Group_2__0 )?
             {
              before(grammarAccess.getElkEdgeSectionAccess().getGroup_2()); 
-            // InternalGrana.g:7314:1: ( rule__ElkEdgeSection__Group_2__0 )?
-            int alt66=2;
-            int LA66_0 = input.LA(1);
+            // InternalGrana.g:7345:1: ( rule__ElkEdgeSection__Group_2__0 )?
+            int alt67=2;
+            int LA67_0 = input.LA(1);
 
-            if ( (LA66_0==50) ) {
-                alt66=1;
+            if ( (LA67_0==50) ) {
+                alt67=1;
             }
-            switch (alt66) {
+            switch (alt67) {
                 case 1 :
-                    // InternalGrana.g:7314:2: rule__ElkEdgeSection__Group_2__0
+                    // InternalGrana.g:7345:2: rule__ElkEdgeSection__Group_2__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdgeSection__Group_2__0();
@@ -19921,16 +20018,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__3"
-    // InternalGrana.g:7324:1: rule__ElkEdgeSection__Group__3 : rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4 ;
+    // InternalGrana.g:7355:1: rule__ElkEdgeSection__Group__3 : rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4 ;
     public final void rule__ElkEdgeSection__Group__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7328:1: ( rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4 )
-            // InternalGrana.g:7329:2: rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4
+            // InternalGrana.g:7359:1: ( rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4 )
+            // InternalGrana.g:7360:2: rule__ElkEdgeSection__Group__3__Impl rule__ElkEdgeSection__Group__4
             {
-            pushFollow(FOLLOW_45);
+            pushFollow(FOLLOW_46);
             rule__ElkEdgeSection__Group__3__Impl();
 
             state._fsp--;
@@ -19959,17 +20056,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__3__Impl"
-    // InternalGrana.g:7336:1: rule__ElkEdgeSection__Group__3__Impl : ( '[' ) ;
+    // InternalGrana.g:7367:1: rule__ElkEdgeSection__Group__3__Impl : ( '[' ) ;
     public final void rule__ElkEdgeSection__Group__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7340:1: ( ( '[' ) )
-            // InternalGrana.g:7341:1: ( '[' )
+            // InternalGrana.g:7371:1: ( ( '[' ) )
+            // InternalGrana.g:7372:1: ( '[' )
             {
-            // InternalGrana.g:7341:1: ( '[' )
-            // InternalGrana.g:7342:1: '['
+            // InternalGrana.g:7372:1: ( '[' )
+            // InternalGrana.g:7373:1: '['
             {
              before(grammarAccess.getElkEdgeSectionAccess().getLeftSquareBracketKeyword_3()); 
             match(input,45,FOLLOW_2); 
@@ -19996,16 +20093,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__4"
-    // InternalGrana.g:7355:1: rule__ElkEdgeSection__Group__4 : rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5 ;
+    // InternalGrana.g:7386:1: rule__ElkEdgeSection__Group__4 : rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5 ;
     public final void rule__ElkEdgeSection__Group__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7359:1: ( rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5 )
-            // InternalGrana.g:7360:2: rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5
+            // InternalGrana.g:7390:1: ( rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5 )
+            // InternalGrana.g:7391:2: rule__ElkEdgeSection__Group__4__Impl rule__ElkEdgeSection__Group__5
             {
-            pushFollow(FOLLOW_40);
+            pushFollow(FOLLOW_41);
             rule__ElkEdgeSection__Group__4__Impl();
 
             state._fsp--;
@@ -20034,21 +20131,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__4__Impl"
-    // InternalGrana.g:7367:1: rule__ElkEdgeSection__Group__4__Impl : ( ( rule__ElkEdgeSection__Group_4__0 ) ) ;
+    // InternalGrana.g:7398:1: rule__ElkEdgeSection__Group__4__Impl : ( ( rule__ElkEdgeSection__Group_4__0 ) ) ;
     public final void rule__ElkEdgeSection__Group__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7371:1: ( ( ( rule__ElkEdgeSection__Group_4__0 ) ) )
-            // InternalGrana.g:7372:1: ( ( rule__ElkEdgeSection__Group_4__0 ) )
+            // InternalGrana.g:7402:1: ( ( ( rule__ElkEdgeSection__Group_4__0 ) ) )
+            // InternalGrana.g:7403:1: ( ( rule__ElkEdgeSection__Group_4__0 ) )
             {
-            // InternalGrana.g:7372:1: ( ( rule__ElkEdgeSection__Group_4__0 ) )
-            // InternalGrana.g:7373:1: ( rule__ElkEdgeSection__Group_4__0 )
+            // InternalGrana.g:7403:1: ( ( rule__ElkEdgeSection__Group_4__0 ) )
+            // InternalGrana.g:7404:1: ( rule__ElkEdgeSection__Group_4__0 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getGroup_4()); 
-            // InternalGrana.g:7374:1: ( rule__ElkEdgeSection__Group_4__0 )
-            // InternalGrana.g:7374:2: rule__ElkEdgeSection__Group_4__0
+            // InternalGrana.g:7405:1: ( rule__ElkEdgeSection__Group_4__0 )
+            // InternalGrana.g:7405:2: rule__ElkEdgeSection__Group_4__0
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_4__0();
@@ -20081,14 +20178,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__5"
-    // InternalGrana.g:7384:1: rule__ElkEdgeSection__Group__5 : rule__ElkEdgeSection__Group__5__Impl ;
+    // InternalGrana.g:7415:1: rule__ElkEdgeSection__Group__5 : rule__ElkEdgeSection__Group__5__Impl ;
     public final void rule__ElkEdgeSection__Group__5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7388:1: ( rule__ElkEdgeSection__Group__5__Impl )
-            // InternalGrana.g:7389:2: rule__ElkEdgeSection__Group__5__Impl
+            // InternalGrana.g:7419:1: ( rule__ElkEdgeSection__Group__5__Impl )
+            // InternalGrana.g:7420:2: rule__ElkEdgeSection__Group__5__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group__5__Impl();
@@ -20114,17 +20211,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group__5__Impl"
-    // InternalGrana.g:7395:1: rule__ElkEdgeSection__Group__5__Impl : ( ']' ) ;
+    // InternalGrana.g:7426:1: rule__ElkEdgeSection__Group__5__Impl : ( ']' ) ;
     public final void rule__ElkEdgeSection__Group__5__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7399:1: ( ( ']' ) )
-            // InternalGrana.g:7400:1: ( ']' )
+            // InternalGrana.g:7430:1: ( ( ']' ) )
+            // InternalGrana.g:7431:1: ( ']' )
             {
-            // InternalGrana.g:7400:1: ( ']' )
-            // InternalGrana.g:7401:1: ']'
+            // InternalGrana.g:7431:1: ( ']' )
+            // InternalGrana.g:7432:1: ']'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getRightSquareBracketKeyword_5()); 
             match(input,46,FOLLOW_2); 
@@ -20151,14 +20248,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__0"
-    // InternalGrana.g:7426:1: rule__ElkEdgeSection__Group_2__0 : rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1 ;
+    // InternalGrana.g:7457:1: rule__ElkEdgeSection__Group_2__0 : rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1 ;
     public final void rule__ElkEdgeSection__Group_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7430:1: ( rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1 )
-            // InternalGrana.g:7431:2: rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1
+            // InternalGrana.g:7461:1: ( rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1 )
+            // InternalGrana.g:7462:2: rule__ElkEdgeSection__Group_2__0__Impl rule__ElkEdgeSection__Group_2__1
             {
             pushFollow(FOLLOW_8);
             rule__ElkEdgeSection__Group_2__0__Impl();
@@ -20189,17 +20286,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__0__Impl"
-    // InternalGrana.g:7438:1: rule__ElkEdgeSection__Group_2__0__Impl : ( '->' ) ;
+    // InternalGrana.g:7469:1: rule__ElkEdgeSection__Group_2__0__Impl : ( '->' ) ;
     public final void rule__ElkEdgeSection__Group_2__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7442:1: ( ( '->' ) )
-            // InternalGrana.g:7443:1: ( '->' )
+            // InternalGrana.g:7473:1: ( ( '->' ) )
+            // InternalGrana.g:7474:1: ( '->' )
             {
-            // InternalGrana.g:7443:1: ( '->' )
-            // InternalGrana.g:7444:1: '->'
+            // InternalGrana.g:7474:1: ( '->' )
+            // InternalGrana.g:7475:1: '->'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getHyphenMinusGreaterThanSignKeyword_2_0()); 
             match(input,50,FOLLOW_2); 
@@ -20226,14 +20323,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__1"
-    // InternalGrana.g:7457:1: rule__ElkEdgeSection__Group_2__1 : rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2 ;
+    // InternalGrana.g:7488:1: rule__ElkEdgeSection__Group_2__1 : rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2 ;
     public final void rule__ElkEdgeSection__Group_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7461:1: ( rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2 )
-            // InternalGrana.g:7462:2: rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2
+            // InternalGrana.g:7492:1: ( rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2 )
+            // InternalGrana.g:7493:2: rule__ElkEdgeSection__Group_2__1__Impl rule__ElkEdgeSection__Group_2__2
             {
             pushFollow(FOLLOW_25);
             rule__ElkEdgeSection__Group_2__1__Impl();
@@ -20264,21 +20361,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__1__Impl"
-    // InternalGrana.g:7469:1: rule__ElkEdgeSection__Group_2__1__Impl : ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) ) ;
+    // InternalGrana.g:7500:1: rule__ElkEdgeSection__Group_2__1__Impl : ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) ) ;
     public final void rule__ElkEdgeSection__Group_2__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7473:1: ( ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) ) )
-            // InternalGrana.g:7474:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) )
+            // InternalGrana.g:7504:1: ( ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) ) )
+            // InternalGrana.g:7505:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) )
             {
-            // InternalGrana.g:7474:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) )
-            // InternalGrana.g:7475:1: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 )
+            // InternalGrana.g:7505:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 ) )
+            // InternalGrana.g:7506:1: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsAssignment_2_1()); 
-            // InternalGrana.g:7476:1: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 )
-            // InternalGrana.g:7476:2: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1
+            // InternalGrana.g:7507:1: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 )
+            // InternalGrana.g:7507:2: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1();
@@ -20311,14 +20408,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__2"
-    // InternalGrana.g:7486:1: rule__ElkEdgeSection__Group_2__2 : rule__ElkEdgeSection__Group_2__2__Impl ;
+    // InternalGrana.g:7517:1: rule__ElkEdgeSection__Group_2__2 : rule__ElkEdgeSection__Group_2__2__Impl ;
     public final void rule__ElkEdgeSection__Group_2__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7490:1: ( rule__ElkEdgeSection__Group_2__2__Impl )
-            // InternalGrana.g:7491:2: rule__ElkEdgeSection__Group_2__2__Impl
+            // InternalGrana.g:7521:1: ( rule__ElkEdgeSection__Group_2__2__Impl )
+            // InternalGrana.g:7522:2: rule__ElkEdgeSection__Group_2__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_2__2__Impl();
@@ -20344,33 +20441,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2__2__Impl"
-    // InternalGrana.g:7497:1: rule__ElkEdgeSection__Group_2__2__Impl : ( ( rule__ElkEdgeSection__Group_2_2__0 )* ) ;
+    // InternalGrana.g:7528:1: rule__ElkEdgeSection__Group_2__2__Impl : ( ( rule__ElkEdgeSection__Group_2_2__0 )* ) ;
     public final void rule__ElkEdgeSection__Group_2__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7501:1: ( ( ( rule__ElkEdgeSection__Group_2_2__0 )* ) )
-            // InternalGrana.g:7502:1: ( ( rule__ElkEdgeSection__Group_2_2__0 )* )
+            // InternalGrana.g:7532:1: ( ( ( rule__ElkEdgeSection__Group_2_2__0 )* ) )
+            // InternalGrana.g:7533:1: ( ( rule__ElkEdgeSection__Group_2_2__0 )* )
             {
-            // InternalGrana.g:7502:1: ( ( rule__ElkEdgeSection__Group_2_2__0 )* )
-            // InternalGrana.g:7503:1: ( rule__ElkEdgeSection__Group_2_2__0 )*
+            // InternalGrana.g:7533:1: ( ( rule__ElkEdgeSection__Group_2_2__0 )* )
+            // InternalGrana.g:7534:1: ( rule__ElkEdgeSection__Group_2_2__0 )*
             {
              before(grammarAccess.getElkEdgeSectionAccess().getGroup_2_2()); 
-            // InternalGrana.g:7504:1: ( rule__ElkEdgeSection__Group_2_2__0 )*
-            loop67:
+            // InternalGrana.g:7535:1: ( rule__ElkEdgeSection__Group_2_2__0 )*
+            loop68:
             do {
-                int alt67=2;
-                int LA67_0 = input.LA(1);
+                int alt68=2;
+                int LA68_0 = input.LA(1);
 
-                if ( (LA67_0==32) ) {
-                    alt67=1;
+                if ( (LA68_0==32) ) {
+                    alt68=1;
                 }
 
 
-                switch (alt67) {
+                switch (alt68) {
             	case 1 :
-            	    // InternalGrana.g:7504:2: rule__ElkEdgeSection__Group_2_2__0
+            	    // InternalGrana.g:7535:2: rule__ElkEdgeSection__Group_2_2__0
             	    {
             	    pushFollow(FOLLOW_26);
             	    rule__ElkEdgeSection__Group_2_2__0();
@@ -20382,7 +20479,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop67;
+            	    break loop68;
                 }
             } while (true);
 
@@ -20409,14 +20506,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2_2__0"
-    // InternalGrana.g:7520:1: rule__ElkEdgeSection__Group_2_2__0 : rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1 ;
+    // InternalGrana.g:7551:1: rule__ElkEdgeSection__Group_2_2__0 : rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1 ;
     public final void rule__ElkEdgeSection__Group_2_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7524:1: ( rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1 )
-            // InternalGrana.g:7525:2: rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1
+            // InternalGrana.g:7555:1: ( rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1 )
+            // InternalGrana.g:7556:2: rule__ElkEdgeSection__Group_2_2__0__Impl rule__ElkEdgeSection__Group_2_2__1
             {
             pushFollow(FOLLOW_8);
             rule__ElkEdgeSection__Group_2_2__0__Impl();
@@ -20447,17 +20544,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2_2__0__Impl"
-    // InternalGrana.g:7532:1: rule__ElkEdgeSection__Group_2_2__0__Impl : ( ',' ) ;
+    // InternalGrana.g:7563:1: rule__ElkEdgeSection__Group_2_2__0__Impl : ( ',' ) ;
     public final void rule__ElkEdgeSection__Group_2_2__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7536:1: ( ( ',' ) )
-            // InternalGrana.g:7537:1: ( ',' )
+            // InternalGrana.g:7567:1: ( ( ',' ) )
+            // InternalGrana.g:7568:1: ( ',' )
             {
-            // InternalGrana.g:7537:1: ( ',' )
-            // InternalGrana.g:7538:1: ','
+            // InternalGrana.g:7568:1: ( ',' )
+            // InternalGrana.g:7569:1: ','
             {
              before(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_2_2_0()); 
             match(input,32,FOLLOW_2); 
@@ -20484,14 +20581,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2_2__1"
-    // InternalGrana.g:7551:1: rule__ElkEdgeSection__Group_2_2__1 : rule__ElkEdgeSection__Group_2_2__1__Impl ;
+    // InternalGrana.g:7582:1: rule__ElkEdgeSection__Group_2_2__1 : rule__ElkEdgeSection__Group_2_2__1__Impl ;
     public final void rule__ElkEdgeSection__Group_2_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7555:1: ( rule__ElkEdgeSection__Group_2_2__1__Impl )
-            // InternalGrana.g:7556:2: rule__ElkEdgeSection__Group_2_2__1__Impl
+            // InternalGrana.g:7586:1: ( rule__ElkEdgeSection__Group_2_2__1__Impl )
+            // InternalGrana.g:7587:2: rule__ElkEdgeSection__Group_2_2__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_2_2__1__Impl();
@@ -20517,21 +20614,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_2_2__1__Impl"
-    // InternalGrana.g:7562:1: rule__ElkEdgeSection__Group_2_2__1__Impl : ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) ) ;
+    // InternalGrana.g:7593:1: rule__ElkEdgeSection__Group_2_2__1__Impl : ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) ) ;
     public final void rule__ElkEdgeSection__Group_2_2__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7566:1: ( ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) ) )
-            // InternalGrana.g:7567:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) )
+            // InternalGrana.g:7597:1: ( ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) ) )
+            // InternalGrana.g:7598:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) )
             {
-            // InternalGrana.g:7567:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) )
-            // InternalGrana.g:7568:1: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 )
+            // InternalGrana.g:7598:1: ( ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 ) )
+            // InternalGrana.g:7599:1: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsAssignment_2_2_1()); 
-            // InternalGrana.g:7569:1: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 )
-            // InternalGrana.g:7569:2: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1
+            // InternalGrana.g:7600:1: ( rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 )
+            // InternalGrana.g:7600:2: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1();
@@ -20564,16 +20661,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4__0"
-    // InternalGrana.g:7583:1: rule__ElkEdgeSection__Group_4__0 : rule__ElkEdgeSection__Group_4__0__Impl rule__ElkEdgeSection__Group_4__1 ;
+    // InternalGrana.g:7614:1: rule__ElkEdgeSection__Group_4__0 : rule__ElkEdgeSection__Group_4__0__Impl rule__ElkEdgeSection__Group_4__1 ;
     public final void rule__ElkEdgeSection__Group_4__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7587:1: ( rule__ElkEdgeSection__Group_4__0__Impl rule__ElkEdgeSection__Group_4__1 )
-            // InternalGrana.g:7588:2: rule__ElkEdgeSection__Group_4__0__Impl rule__ElkEdgeSection__Group_4__1
+            // InternalGrana.g:7618:1: ( rule__ElkEdgeSection__Group_4__0__Impl rule__ElkEdgeSection__Group_4__1 )
+            // InternalGrana.g:7619:2: rule__ElkEdgeSection__Group_4__0__Impl rule__ElkEdgeSection__Group_4__1
             {
-            pushFollow(FOLLOW_46);
+            pushFollow(FOLLOW_47);
             rule__ElkEdgeSection__Group_4__0__Impl();
 
             state._fsp--;
@@ -20602,21 +20699,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4__0__Impl"
-    // InternalGrana.g:7595:1: rule__ElkEdgeSection__Group_4__0__Impl : ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) ) ;
+    // InternalGrana.g:7626:1: rule__ElkEdgeSection__Group_4__0__Impl : ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) ) ;
     public final void rule__ElkEdgeSection__Group_4__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7599:1: ( ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) ) )
-            // InternalGrana.g:7600:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) )
+            // InternalGrana.g:7630:1: ( ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) ) )
+            // InternalGrana.g:7631:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) )
             {
-            // InternalGrana.g:7600:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) )
-            // InternalGrana.g:7601:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0 )
+            // InternalGrana.g:7631:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4_0 ) )
+            // InternalGrana.g:7632:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0()); 
-            // InternalGrana.g:7602:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0 )
-            // InternalGrana.g:7602:2: rule__ElkEdgeSection__UnorderedGroup_4_0
+            // InternalGrana.g:7633:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0 )
+            // InternalGrana.g:7633:2: rule__ElkEdgeSection__UnorderedGroup_4_0
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__UnorderedGroup_4_0();
@@ -20649,16 +20746,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4__1"
-    // InternalGrana.g:7612:1: rule__ElkEdgeSection__Group_4__1 : rule__ElkEdgeSection__Group_4__1__Impl rule__ElkEdgeSection__Group_4__2 ;
+    // InternalGrana.g:7643:1: rule__ElkEdgeSection__Group_4__1 : rule__ElkEdgeSection__Group_4__1__Impl rule__ElkEdgeSection__Group_4__2 ;
     public final void rule__ElkEdgeSection__Group_4__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7616:1: ( rule__ElkEdgeSection__Group_4__1__Impl rule__ElkEdgeSection__Group_4__2 )
-            // InternalGrana.g:7617:2: rule__ElkEdgeSection__Group_4__1__Impl rule__ElkEdgeSection__Group_4__2
+            // InternalGrana.g:7647:1: ( rule__ElkEdgeSection__Group_4__1__Impl rule__ElkEdgeSection__Group_4__2 )
+            // InternalGrana.g:7648:2: rule__ElkEdgeSection__Group_4__1__Impl rule__ElkEdgeSection__Group_4__2
             {
-            pushFollow(FOLLOW_46);
+            pushFollow(FOLLOW_47);
             rule__ElkEdgeSection__Group_4__1__Impl();
 
             state._fsp--;
@@ -20687,29 +20784,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4__1__Impl"
-    // InternalGrana.g:7624:1: rule__ElkEdgeSection__Group_4__1__Impl : ( ( rule__ElkEdgeSection__Group_4_1__0 )? ) ;
+    // InternalGrana.g:7655:1: rule__ElkEdgeSection__Group_4__1__Impl : ( ( rule__ElkEdgeSection__Group_4_1__0 )? ) ;
     public final void rule__ElkEdgeSection__Group_4__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7628:1: ( ( ( rule__ElkEdgeSection__Group_4_1__0 )? ) )
-            // InternalGrana.g:7629:1: ( ( rule__ElkEdgeSection__Group_4_1__0 )? )
+            // InternalGrana.g:7659:1: ( ( ( rule__ElkEdgeSection__Group_4_1__0 )? ) )
+            // InternalGrana.g:7660:1: ( ( rule__ElkEdgeSection__Group_4_1__0 )? )
             {
-            // InternalGrana.g:7629:1: ( ( rule__ElkEdgeSection__Group_4_1__0 )? )
-            // InternalGrana.g:7630:1: ( rule__ElkEdgeSection__Group_4_1__0 )?
+            // InternalGrana.g:7660:1: ( ( rule__ElkEdgeSection__Group_4_1__0 )? )
+            // InternalGrana.g:7661:1: ( rule__ElkEdgeSection__Group_4_1__0 )?
             {
              before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_1()); 
-            // InternalGrana.g:7631:1: ( rule__ElkEdgeSection__Group_4_1__0 )?
-            int alt68=2;
-            int LA68_0 = input.LA(1);
+            // InternalGrana.g:7662:1: ( rule__ElkEdgeSection__Group_4_1__0 )?
+            int alt69=2;
+            int LA69_0 = input.LA(1);
 
-            if ( (LA68_0==55) ) {
-                alt68=1;
+            if ( (LA69_0==55) ) {
+                alt69=1;
             }
-            switch (alt68) {
+            switch (alt69) {
                 case 1 :
-                    // InternalGrana.g:7631:2: rule__ElkEdgeSection__Group_4_1__0
+                    // InternalGrana.g:7662:2: rule__ElkEdgeSection__Group_4_1__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdgeSection__Group_4_1__0();
@@ -20745,14 +20842,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4__2"
-    // InternalGrana.g:7641:1: rule__ElkEdgeSection__Group_4__2 : rule__ElkEdgeSection__Group_4__2__Impl ;
+    // InternalGrana.g:7672:1: rule__ElkEdgeSection__Group_4__2 : rule__ElkEdgeSection__Group_4__2__Impl ;
     public final void rule__ElkEdgeSection__Group_4__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7645:1: ( rule__ElkEdgeSection__Group_4__2__Impl )
-            // InternalGrana.g:7646:2: rule__ElkEdgeSection__Group_4__2__Impl
+            // InternalGrana.g:7676:1: ( rule__ElkEdgeSection__Group_4__2__Impl )
+            // InternalGrana.g:7677:2: rule__ElkEdgeSection__Group_4__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_4__2__Impl();
@@ -20778,33 +20875,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4__2__Impl"
-    // InternalGrana.g:7652:1: rule__ElkEdgeSection__Group_4__2__Impl : ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* ) ;
+    // InternalGrana.g:7683:1: rule__ElkEdgeSection__Group_4__2__Impl : ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* ) ;
     public final void rule__ElkEdgeSection__Group_4__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7656:1: ( ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* ) )
-            // InternalGrana.g:7657:1: ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* )
+            // InternalGrana.g:7687:1: ( ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* ) )
+            // InternalGrana.g:7688:1: ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* )
             {
-            // InternalGrana.g:7657:1: ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* )
-            // InternalGrana.g:7658:1: ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )*
+            // InternalGrana.g:7688:1: ( ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )* )
+            // InternalGrana.g:7689:1: ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )*
             {
              before(grammarAccess.getElkEdgeSectionAccess().getPropertiesAssignment_4_2()); 
-            // InternalGrana.g:7659:1: ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )*
-            loop69:
+            // InternalGrana.g:7690:1: ( rule__ElkEdgeSection__PropertiesAssignment_4_2 )*
+            loop70:
             do {
-                int alt69=2;
-                int LA69_0 = input.LA(1);
+                int alt70=2;
+                int LA70_0 = input.LA(1);
 
-                if ( (LA69_0==RULE_ID) ) {
-                    alt69=1;
+                if ( (LA70_0==RULE_ID) ) {
+                    alt70=1;
                 }
 
 
-                switch (alt69) {
+                switch (alt70) {
             	case 1 :
-            	    // InternalGrana.g:7659:2: rule__ElkEdgeSection__PropertiesAssignment_4_2
+            	    // InternalGrana.g:7690:2: rule__ElkEdgeSection__PropertiesAssignment_4_2
             	    {
             	    pushFollow(FOLLOW_3);
             	    rule__ElkEdgeSection__PropertiesAssignment_4_2();
@@ -20816,7 +20913,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop69;
+            	    break loop70;
                 }
             } while (true);
 
@@ -20843,16 +20940,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__0"
-    // InternalGrana.g:7675:1: rule__ElkEdgeSection__Group_4_0_0__0 : rule__ElkEdgeSection__Group_4_0_0__0__Impl rule__ElkEdgeSection__Group_4_0_0__1 ;
+    // InternalGrana.g:7706:1: rule__ElkEdgeSection__Group_4_0_0__0 : rule__ElkEdgeSection__Group_4_0_0__0__Impl rule__ElkEdgeSection__Group_4_0_0__1 ;
     public final void rule__ElkEdgeSection__Group_4_0_0__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7679:1: ( rule__ElkEdgeSection__Group_4_0_0__0__Impl rule__ElkEdgeSection__Group_4_0_0__1 )
-            // InternalGrana.g:7680:2: rule__ElkEdgeSection__Group_4_0_0__0__Impl rule__ElkEdgeSection__Group_4_0_0__1
+            // InternalGrana.g:7710:1: ( rule__ElkEdgeSection__Group_4_0_0__0__Impl rule__ElkEdgeSection__Group_4_0_0__1 )
+            // InternalGrana.g:7711:2: rule__ElkEdgeSection__Group_4_0_0__0__Impl rule__ElkEdgeSection__Group_4_0_0__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkEdgeSection__Group_4_0_0__0__Impl();
 
             state._fsp--;
@@ -20881,17 +20978,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__0__Impl"
-    // InternalGrana.g:7687:1: rule__ElkEdgeSection__Group_4_0_0__0__Impl : ( 'incoming' ) ;
+    // InternalGrana.g:7718:1: rule__ElkEdgeSection__Group_4_0_0__0__Impl : ( 'incoming' ) ;
     public final void rule__ElkEdgeSection__Group_4_0_0__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7691:1: ( ( 'incoming' ) )
-            // InternalGrana.g:7692:1: ( 'incoming' )
+            // InternalGrana.g:7722:1: ( ( 'incoming' ) )
+            // InternalGrana.g:7723:1: ( 'incoming' )
             {
-            // InternalGrana.g:7692:1: ( 'incoming' )
-            // InternalGrana.g:7693:1: 'incoming'
+            // InternalGrana.g:7723:1: ( 'incoming' )
+            // InternalGrana.g:7724:1: 'incoming'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getIncomingKeyword_4_0_0_0()); 
             match(input,51,FOLLOW_2); 
@@ -20918,14 +21015,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__1"
-    // InternalGrana.g:7706:1: rule__ElkEdgeSection__Group_4_0_0__1 : rule__ElkEdgeSection__Group_4_0_0__1__Impl rule__ElkEdgeSection__Group_4_0_0__2 ;
+    // InternalGrana.g:7737:1: rule__ElkEdgeSection__Group_4_0_0__1 : rule__ElkEdgeSection__Group_4_0_0__1__Impl rule__ElkEdgeSection__Group_4_0_0__2 ;
     public final void rule__ElkEdgeSection__Group_4_0_0__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7710:1: ( rule__ElkEdgeSection__Group_4_0_0__1__Impl rule__ElkEdgeSection__Group_4_0_0__2 )
-            // InternalGrana.g:7711:2: rule__ElkEdgeSection__Group_4_0_0__1__Impl rule__ElkEdgeSection__Group_4_0_0__2
+            // InternalGrana.g:7741:1: ( rule__ElkEdgeSection__Group_4_0_0__1__Impl rule__ElkEdgeSection__Group_4_0_0__2 )
+            // InternalGrana.g:7742:2: rule__ElkEdgeSection__Group_4_0_0__1__Impl rule__ElkEdgeSection__Group_4_0_0__2
             {
             pushFollow(FOLLOW_8);
             rule__ElkEdgeSection__Group_4_0_0__1__Impl();
@@ -20956,17 +21053,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__1__Impl"
-    // InternalGrana.g:7718:1: rule__ElkEdgeSection__Group_4_0_0__1__Impl : ( ':' ) ;
+    // InternalGrana.g:7749:1: rule__ElkEdgeSection__Group_4_0_0__1__Impl : ( ':' ) ;
     public final void rule__ElkEdgeSection__Group_4_0_0__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7722:1: ( ( ':' ) )
-            // InternalGrana.g:7723:1: ( ':' )
+            // InternalGrana.g:7753:1: ( ( ':' ) )
+            // InternalGrana.g:7754:1: ( ':' )
             {
-            // InternalGrana.g:7723:1: ( ':' )
-            // InternalGrana.g:7724:1: ':'
+            // InternalGrana.g:7754:1: ( ':' )
+            // InternalGrana.g:7755:1: ':'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_0_1()); 
             match(input,42,FOLLOW_2); 
@@ -20993,14 +21090,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__2"
-    // InternalGrana.g:7737:1: rule__ElkEdgeSection__Group_4_0_0__2 : rule__ElkEdgeSection__Group_4_0_0__2__Impl ;
+    // InternalGrana.g:7768:1: rule__ElkEdgeSection__Group_4_0_0__2 : rule__ElkEdgeSection__Group_4_0_0__2__Impl ;
     public final void rule__ElkEdgeSection__Group_4_0_0__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7741:1: ( rule__ElkEdgeSection__Group_4_0_0__2__Impl )
-            // InternalGrana.g:7742:2: rule__ElkEdgeSection__Group_4_0_0__2__Impl
+            // InternalGrana.g:7772:1: ( rule__ElkEdgeSection__Group_4_0_0__2__Impl )
+            // InternalGrana.g:7773:2: rule__ElkEdgeSection__Group_4_0_0__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_4_0_0__2__Impl();
@@ -21026,21 +21123,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_0__2__Impl"
-    // InternalGrana.g:7748:1: rule__ElkEdgeSection__Group_4_0_0__2__Impl : ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) ) ;
+    // InternalGrana.g:7779:1: rule__ElkEdgeSection__Group_4_0_0__2__Impl : ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) ) ;
     public final void rule__ElkEdgeSection__Group_4_0_0__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7752:1: ( ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) ) )
-            // InternalGrana.g:7753:1: ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) )
+            // InternalGrana.g:7783:1: ( ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) ) )
+            // InternalGrana.g:7784:1: ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) )
             {
-            // InternalGrana.g:7753:1: ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) )
-            // InternalGrana.g:7754:1: ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 )
+            // InternalGrana.g:7784:1: ( ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 ) )
+            // InternalGrana.g:7785:1: ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeAssignment_4_0_0_2()); 
-            // InternalGrana.g:7755:1: ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 )
-            // InternalGrana.g:7755:2: rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2
+            // InternalGrana.g:7786:1: ( rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 )
+            // InternalGrana.g:7786:2: rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2();
@@ -21073,16 +21170,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__0"
-    // InternalGrana.g:7771:1: rule__ElkEdgeSection__Group_4_0_1__0 : rule__ElkEdgeSection__Group_4_0_1__0__Impl rule__ElkEdgeSection__Group_4_0_1__1 ;
+    // InternalGrana.g:7802:1: rule__ElkEdgeSection__Group_4_0_1__0 : rule__ElkEdgeSection__Group_4_0_1__0__Impl rule__ElkEdgeSection__Group_4_0_1__1 ;
     public final void rule__ElkEdgeSection__Group_4_0_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7775:1: ( rule__ElkEdgeSection__Group_4_0_1__0__Impl rule__ElkEdgeSection__Group_4_0_1__1 )
-            // InternalGrana.g:7776:2: rule__ElkEdgeSection__Group_4_0_1__0__Impl rule__ElkEdgeSection__Group_4_0_1__1
+            // InternalGrana.g:7806:1: ( rule__ElkEdgeSection__Group_4_0_1__0__Impl rule__ElkEdgeSection__Group_4_0_1__1 )
+            // InternalGrana.g:7807:2: rule__ElkEdgeSection__Group_4_0_1__0__Impl rule__ElkEdgeSection__Group_4_0_1__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkEdgeSection__Group_4_0_1__0__Impl();
 
             state._fsp--;
@@ -21111,17 +21208,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__0__Impl"
-    // InternalGrana.g:7783:1: rule__ElkEdgeSection__Group_4_0_1__0__Impl : ( 'outgoing' ) ;
+    // InternalGrana.g:7814:1: rule__ElkEdgeSection__Group_4_0_1__0__Impl : ( 'outgoing' ) ;
     public final void rule__ElkEdgeSection__Group_4_0_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7787:1: ( ( 'outgoing' ) )
-            // InternalGrana.g:7788:1: ( 'outgoing' )
+            // InternalGrana.g:7818:1: ( ( 'outgoing' ) )
+            // InternalGrana.g:7819:1: ( 'outgoing' )
             {
-            // InternalGrana.g:7788:1: ( 'outgoing' )
-            // InternalGrana.g:7789:1: 'outgoing'
+            // InternalGrana.g:7819:1: ( 'outgoing' )
+            // InternalGrana.g:7820:1: 'outgoing'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingKeyword_4_0_1_0()); 
             match(input,52,FOLLOW_2); 
@@ -21148,14 +21245,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__1"
-    // InternalGrana.g:7802:1: rule__ElkEdgeSection__Group_4_0_1__1 : rule__ElkEdgeSection__Group_4_0_1__1__Impl rule__ElkEdgeSection__Group_4_0_1__2 ;
+    // InternalGrana.g:7833:1: rule__ElkEdgeSection__Group_4_0_1__1 : rule__ElkEdgeSection__Group_4_0_1__1__Impl rule__ElkEdgeSection__Group_4_0_1__2 ;
     public final void rule__ElkEdgeSection__Group_4_0_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7806:1: ( rule__ElkEdgeSection__Group_4_0_1__1__Impl rule__ElkEdgeSection__Group_4_0_1__2 )
-            // InternalGrana.g:7807:2: rule__ElkEdgeSection__Group_4_0_1__1__Impl rule__ElkEdgeSection__Group_4_0_1__2
+            // InternalGrana.g:7837:1: ( rule__ElkEdgeSection__Group_4_0_1__1__Impl rule__ElkEdgeSection__Group_4_0_1__2 )
+            // InternalGrana.g:7838:2: rule__ElkEdgeSection__Group_4_0_1__1__Impl rule__ElkEdgeSection__Group_4_0_1__2
             {
             pushFollow(FOLLOW_8);
             rule__ElkEdgeSection__Group_4_0_1__1__Impl();
@@ -21186,17 +21283,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__1__Impl"
-    // InternalGrana.g:7814:1: rule__ElkEdgeSection__Group_4_0_1__1__Impl : ( ':' ) ;
+    // InternalGrana.g:7845:1: rule__ElkEdgeSection__Group_4_0_1__1__Impl : ( ':' ) ;
     public final void rule__ElkEdgeSection__Group_4_0_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7818:1: ( ( ':' ) )
-            // InternalGrana.g:7819:1: ( ':' )
+            // InternalGrana.g:7849:1: ( ( ':' ) )
+            // InternalGrana.g:7850:1: ( ':' )
             {
-            // InternalGrana.g:7819:1: ( ':' )
-            // InternalGrana.g:7820:1: ':'
+            // InternalGrana.g:7850:1: ( ':' )
+            // InternalGrana.g:7851:1: ':'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_1_1()); 
             match(input,42,FOLLOW_2); 
@@ -21223,14 +21320,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__2"
-    // InternalGrana.g:7833:1: rule__ElkEdgeSection__Group_4_0_1__2 : rule__ElkEdgeSection__Group_4_0_1__2__Impl ;
+    // InternalGrana.g:7864:1: rule__ElkEdgeSection__Group_4_0_1__2 : rule__ElkEdgeSection__Group_4_0_1__2__Impl ;
     public final void rule__ElkEdgeSection__Group_4_0_1__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7837:1: ( rule__ElkEdgeSection__Group_4_0_1__2__Impl )
-            // InternalGrana.g:7838:2: rule__ElkEdgeSection__Group_4_0_1__2__Impl
+            // InternalGrana.g:7868:1: ( rule__ElkEdgeSection__Group_4_0_1__2__Impl )
+            // InternalGrana.g:7869:2: rule__ElkEdgeSection__Group_4_0_1__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_4_0_1__2__Impl();
@@ -21256,21 +21353,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_1__2__Impl"
-    // InternalGrana.g:7844:1: rule__ElkEdgeSection__Group_4_0_1__2__Impl : ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) ) ;
+    // InternalGrana.g:7875:1: rule__ElkEdgeSection__Group_4_0_1__2__Impl : ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) ) ;
     public final void rule__ElkEdgeSection__Group_4_0_1__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7848:1: ( ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) ) )
-            // InternalGrana.g:7849:1: ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) )
+            // InternalGrana.g:7879:1: ( ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) ) )
+            // InternalGrana.g:7880:1: ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) )
             {
-            // InternalGrana.g:7849:1: ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) )
-            // InternalGrana.g:7850:1: ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 )
+            // InternalGrana.g:7880:1: ( ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 ) )
+            // InternalGrana.g:7881:1: ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeAssignment_4_0_1_2()); 
-            // InternalGrana.g:7851:1: ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 )
-            // InternalGrana.g:7851:2: rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2
+            // InternalGrana.g:7882:1: ( rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 )
+            // InternalGrana.g:7882:2: rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2();
@@ -21303,16 +21400,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__0"
-    // InternalGrana.g:7867:1: rule__ElkEdgeSection__Group_4_0_2__0 : rule__ElkEdgeSection__Group_4_0_2__0__Impl rule__ElkEdgeSection__Group_4_0_2__1 ;
+    // InternalGrana.g:7898:1: rule__ElkEdgeSection__Group_4_0_2__0 : rule__ElkEdgeSection__Group_4_0_2__0__Impl rule__ElkEdgeSection__Group_4_0_2__1 ;
     public final void rule__ElkEdgeSection__Group_4_0_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7871:1: ( rule__ElkEdgeSection__Group_4_0_2__0__Impl rule__ElkEdgeSection__Group_4_0_2__1 )
-            // InternalGrana.g:7872:2: rule__ElkEdgeSection__Group_4_0_2__0__Impl rule__ElkEdgeSection__Group_4_0_2__1
+            // InternalGrana.g:7902:1: ( rule__ElkEdgeSection__Group_4_0_2__0__Impl rule__ElkEdgeSection__Group_4_0_2__1 )
+            // InternalGrana.g:7903:2: rule__ElkEdgeSection__Group_4_0_2__0__Impl rule__ElkEdgeSection__Group_4_0_2__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkEdgeSection__Group_4_0_2__0__Impl();
 
             state._fsp--;
@@ -21341,17 +21438,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__0__Impl"
-    // InternalGrana.g:7879:1: rule__ElkEdgeSection__Group_4_0_2__0__Impl : ( 'start' ) ;
+    // InternalGrana.g:7910:1: rule__ElkEdgeSection__Group_4_0_2__0__Impl : ( 'start' ) ;
     public final void rule__ElkEdgeSection__Group_4_0_2__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7883:1: ( ( 'start' ) )
-            // InternalGrana.g:7884:1: ( 'start' )
+            // InternalGrana.g:7914:1: ( ( 'start' ) )
+            // InternalGrana.g:7915:1: ( 'start' )
             {
-            // InternalGrana.g:7884:1: ( 'start' )
-            // InternalGrana.g:7885:1: 'start'
+            // InternalGrana.g:7915:1: ( 'start' )
+            // InternalGrana.g:7916:1: 'start'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getStartKeyword_4_0_2_0()); 
             match(input,53,FOLLOW_2); 
@@ -21378,16 +21475,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__1"
-    // InternalGrana.g:7898:1: rule__ElkEdgeSection__Group_4_0_2__1 : rule__ElkEdgeSection__Group_4_0_2__1__Impl rule__ElkEdgeSection__Group_4_0_2__2 ;
+    // InternalGrana.g:7929:1: rule__ElkEdgeSection__Group_4_0_2__1 : rule__ElkEdgeSection__Group_4_0_2__1__Impl rule__ElkEdgeSection__Group_4_0_2__2 ;
     public final void rule__ElkEdgeSection__Group_4_0_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7902:1: ( rule__ElkEdgeSection__Group_4_0_2__1__Impl rule__ElkEdgeSection__Group_4_0_2__2 )
-            // InternalGrana.g:7903:2: rule__ElkEdgeSection__Group_4_0_2__1__Impl rule__ElkEdgeSection__Group_4_0_2__2
+            // InternalGrana.g:7933:1: ( rule__ElkEdgeSection__Group_4_0_2__1__Impl rule__ElkEdgeSection__Group_4_0_2__2 )
+            // InternalGrana.g:7934:2: rule__ElkEdgeSection__Group_4_0_2__1__Impl rule__ElkEdgeSection__Group_4_0_2__2
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkEdgeSection__Group_4_0_2__1__Impl();
 
             state._fsp--;
@@ -21416,17 +21513,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__1__Impl"
-    // InternalGrana.g:7910:1: rule__ElkEdgeSection__Group_4_0_2__1__Impl : ( ':' ) ;
+    // InternalGrana.g:7941:1: rule__ElkEdgeSection__Group_4_0_2__1__Impl : ( ':' ) ;
     public final void rule__ElkEdgeSection__Group_4_0_2__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7914:1: ( ( ':' ) )
-            // InternalGrana.g:7915:1: ( ':' )
+            // InternalGrana.g:7945:1: ( ( ':' ) )
+            // InternalGrana.g:7946:1: ( ':' )
             {
-            // InternalGrana.g:7915:1: ( ':' )
-            // InternalGrana.g:7916:1: ':'
+            // InternalGrana.g:7946:1: ( ':' )
+            // InternalGrana.g:7947:1: ':'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_2_1()); 
             match(input,42,FOLLOW_2); 
@@ -21453,14 +21550,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__2"
-    // InternalGrana.g:7929:1: rule__ElkEdgeSection__Group_4_0_2__2 : rule__ElkEdgeSection__Group_4_0_2__2__Impl rule__ElkEdgeSection__Group_4_0_2__3 ;
+    // InternalGrana.g:7960:1: rule__ElkEdgeSection__Group_4_0_2__2 : rule__ElkEdgeSection__Group_4_0_2__2__Impl rule__ElkEdgeSection__Group_4_0_2__3 ;
     public final void rule__ElkEdgeSection__Group_4_0_2__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7933:1: ( rule__ElkEdgeSection__Group_4_0_2__2__Impl rule__ElkEdgeSection__Group_4_0_2__3 )
-            // InternalGrana.g:7934:2: rule__ElkEdgeSection__Group_4_0_2__2__Impl rule__ElkEdgeSection__Group_4_0_2__3
+            // InternalGrana.g:7964:1: ( rule__ElkEdgeSection__Group_4_0_2__2__Impl rule__ElkEdgeSection__Group_4_0_2__3 )
+            // InternalGrana.g:7965:2: rule__ElkEdgeSection__Group_4_0_2__2__Impl rule__ElkEdgeSection__Group_4_0_2__3
             {
             pushFollow(FOLLOW_25);
             rule__ElkEdgeSection__Group_4_0_2__2__Impl();
@@ -21491,21 +21588,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__2__Impl"
-    // InternalGrana.g:7941:1: rule__ElkEdgeSection__Group_4_0_2__2__Impl : ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) ) ;
+    // InternalGrana.g:7972:1: rule__ElkEdgeSection__Group_4_0_2__2__Impl : ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) ) ;
     public final void rule__ElkEdgeSection__Group_4_0_2__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7945:1: ( ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) ) )
-            // InternalGrana.g:7946:1: ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) )
+            // InternalGrana.g:7976:1: ( ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) ) )
+            // InternalGrana.g:7977:1: ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) )
             {
-            // InternalGrana.g:7946:1: ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) )
-            // InternalGrana.g:7947:1: ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 )
+            // InternalGrana.g:7977:1: ( ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 ) )
+            // InternalGrana.g:7978:1: ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getStartXAssignment_4_0_2_2()); 
-            // InternalGrana.g:7948:1: ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 )
-            // InternalGrana.g:7948:2: rule__ElkEdgeSection__StartXAssignment_4_0_2_2
+            // InternalGrana.g:7979:1: ( rule__ElkEdgeSection__StartXAssignment_4_0_2_2 )
+            // InternalGrana.g:7979:2: rule__ElkEdgeSection__StartXAssignment_4_0_2_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__StartXAssignment_4_0_2_2();
@@ -21538,16 +21635,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__3"
-    // InternalGrana.g:7958:1: rule__ElkEdgeSection__Group_4_0_2__3 : rule__ElkEdgeSection__Group_4_0_2__3__Impl rule__ElkEdgeSection__Group_4_0_2__4 ;
+    // InternalGrana.g:7989:1: rule__ElkEdgeSection__Group_4_0_2__3 : rule__ElkEdgeSection__Group_4_0_2__3__Impl rule__ElkEdgeSection__Group_4_0_2__4 ;
     public final void rule__ElkEdgeSection__Group_4_0_2__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7962:1: ( rule__ElkEdgeSection__Group_4_0_2__3__Impl rule__ElkEdgeSection__Group_4_0_2__4 )
-            // InternalGrana.g:7963:2: rule__ElkEdgeSection__Group_4_0_2__3__Impl rule__ElkEdgeSection__Group_4_0_2__4
+            // InternalGrana.g:7993:1: ( rule__ElkEdgeSection__Group_4_0_2__3__Impl rule__ElkEdgeSection__Group_4_0_2__4 )
+            // InternalGrana.g:7994:2: rule__ElkEdgeSection__Group_4_0_2__3__Impl rule__ElkEdgeSection__Group_4_0_2__4
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkEdgeSection__Group_4_0_2__3__Impl();
 
             state._fsp--;
@@ -21576,17 +21673,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__3__Impl"
-    // InternalGrana.g:7970:1: rule__ElkEdgeSection__Group_4_0_2__3__Impl : ( ',' ) ;
+    // InternalGrana.g:8001:1: rule__ElkEdgeSection__Group_4_0_2__3__Impl : ( ',' ) ;
     public final void rule__ElkEdgeSection__Group_4_0_2__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7974:1: ( ( ',' ) )
-            // InternalGrana.g:7975:1: ( ',' )
+            // InternalGrana.g:8005:1: ( ( ',' ) )
+            // InternalGrana.g:8006:1: ( ',' )
             {
-            // InternalGrana.g:7975:1: ( ',' )
-            // InternalGrana.g:7976:1: ','
+            // InternalGrana.g:8006:1: ( ',' )
+            // InternalGrana.g:8007:1: ','
             {
              before(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_0_2_3()); 
             match(input,32,FOLLOW_2); 
@@ -21613,14 +21710,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__4"
-    // InternalGrana.g:7989:1: rule__ElkEdgeSection__Group_4_0_2__4 : rule__ElkEdgeSection__Group_4_0_2__4__Impl ;
+    // InternalGrana.g:8020:1: rule__ElkEdgeSection__Group_4_0_2__4 : rule__ElkEdgeSection__Group_4_0_2__4__Impl ;
     public final void rule__ElkEdgeSection__Group_4_0_2__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:7993:1: ( rule__ElkEdgeSection__Group_4_0_2__4__Impl )
-            // InternalGrana.g:7994:2: rule__ElkEdgeSection__Group_4_0_2__4__Impl
+            // InternalGrana.g:8024:1: ( rule__ElkEdgeSection__Group_4_0_2__4__Impl )
+            // InternalGrana.g:8025:2: rule__ElkEdgeSection__Group_4_0_2__4__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_4_0_2__4__Impl();
@@ -21646,21 +21743,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_2__4__Impl"
-    // InternalGrana.g:8000:1: rule__ElkEdgeSection__Group_4_0_2__4__Impl : ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) ) ;
+    // InternalGrana.g:8031:1: rule__ElkEdgeSection__Group_4_0_2__4__Impl : ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) ) ;
     public final void rule__ElkEdgeSection__Group_4_0_2__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8004:1: ( ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) ) )
-            // InternalGrana.g:8005:1: ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) )
+            // InternalGrana.g:8035:1: ( ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) ) )
+            // InternalGrana.g:8036:1: ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) )
             {
-            // InternalGrana.g:8005:1: ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) )
-            // InternalGrana.g:8006:1: ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 )
+            // InternalGrana.g:8036:1: ( ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 ) )
+            // InternalGrana.g:8037:1: ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getStartYAssignment_4_0_2_4()); 
-            // InternalGrana.g:8007:1: ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 )
-            // InternalGrana.g:8007:2: rule__ElkEdgeSection__StartYAssignment_4_0_2_4
+            // InternalGrana.g:8038:1: ( rule__ElkEdgeSection__StartYAssignment_4_0_2_4 )
+            // InternalGrana.g:8038:2: rule__ElkEdgeSection__StartYAssignment_4_0_2_4
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__StartYAssignment_4_0_2_4();
@@ -21693,16 +21790,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__0"
-    // InternalGrana.g:8027:1: rule__ElkEdgeSection__Group_4_0_3__0 : rule__ElkEdgeSection__Group_4_0_3__0__Impl rule__ElkEdgeSection__Group_4_0_3__1 ;
+    // InternalGrana.g:8058:1: rule__ElkEdgeSection__Group_4_0_3__0 : rule__ElkEdgeSection__Group_4_0_3__0__Impl rule__ElkEdgeSection__Group_4_0_3__1 ;
     public final void rule__ElkEdgeSection__Group_4_0_3__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8031:1: ( rule__ElkEdgeSection__Group_4_0_3__0__Impl rule__ElkEdgeSection__Group_4_0_3__1 )
-            // InternalGrana.g:8032:2: rule__ElkEdgeSection__Group_4_0_3__0__Impl rule__ElkEdgeSection__Group_4_0_3__1
+            // InternalGrana.g:8062:1: ( rule__ElkEdgeSection__Group_4_0_3__0__Impl rule__ElkEdgeSection__Group_4_0_3__1 )
+            // InternalGrana.g:8063:2: rule__ElkEdgeSection__Group_4_0_3__0__Impl rule__ElkEdgeSection__Group_4_0_3__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkEdgeSection__Group_4_0_3__0__Impl();
 
             state._fsp--;
@@ -21731,17 +21828,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__0__Impl"
-    // InternalGrana.g:8039:1: rule__ElkEdgeSection__Group_4_0_3__0__Impl : ( 'end' ) ;
+    // InternalGrana.g:8070:1: rule__ElkEdgeSection__Group_4_0_3__0__Impl : ( 'end' ) ;
     public final void rule__ElkEdgeSection__Group_4_0_3__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8043:1: ( ( 'end' ) )
-            // InternalGrana.g:8044:1: ( 'end' )
+            // InternalGrana.g:8074:1: ( ( 'end' ) )
+            // InternalGrana.g:8075:1: ( 'end' )
             {
-            // InternalGrana.g:8044:1: ( 'end' )
-            // InternalGrana.g:8045:1: 'end'
+            // InternalGrana.g:8075:1: ( 'end' )
+            // InternalGrana.g:8076:1: 'end'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getEndKeyword_4_0_3_0()); 
             match(input,54,FOLLOW_2); 
@@ -21768,16 +21865,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__1"
-    // InternalGrana.g:8058:1: rule__ElkEdgeSection__Group_4_0_3__1 : rule__ElkEdgeSection__Group_4_0_3__1__Impl rule__ElkEdgeSection__Group_4_0_3__2 ;
+    // InternalGrana.g:8089:1: rule__ElkEdgeSection__Group_4_0_3__1 : rule__ElkEdgeSection__Group_4_0_3__1__Impl rule__ElkEdgeSection__Group_4_0_3__2 ;
     public final void rule__ElkEdgeSection__Group_4_0_3__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8062:1: ( rule__ElkEdgeSection__Group_4_0_3__1__Impl rule__ElkEdgeSection__Group_4_0_3__2 )
-            // InternalGrana.g:8063:2: rule__ElkEdgeSection__Group_4_0_3__1__Impl rule__ElkEdgeSection__Group_4_0_3__2
+            // InternalGrana.g:8093:1: ( rule__ElkEdgeSection__Group_4_0_3__1__Impl rule__ElkEdgeSection__Group_4_0_3__2 )
+            // InternalGrana.g:8094:2: rule__ElkEdgeSection__Group_4_0_3__1__Impl rule__ElkEdgeSection__Group_4_0_3__2
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkEdgeSection__Group_4_0_3__1__Impl();
 
             state._fsp--;
@@ -21806,17 +21903,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__1__Impl"
-    // InternalGrana.g:8070:1: rule__ElkEdgeSection__Group_4_0_3__1__Impl : ( ':' ) ;
+    // InternalGrana.g:8101:1: rule__ElkEdgeSection__Group_4_0_3__1__Impl : ( ':' ) ;
     public final void rule__ElkEdgeSection__Group_4_0_3__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8074:1: ( ( ':' ) )
-            // InternalGrana.g:8075:1: ( ':' )
+            // InternalGrana.g:8105:1: ( ( ':' ) )
+            // InternalGrana.g:8106:1: ( ':' )
             {
-            // InternalGrana.g:8075:1: ( ':' )
-            // InternalGrana.g:8076:1: ':'
+            // InternalGrana.g:8106:1: ( ':' )
+            // InternalGrana.g:8107:1: ':'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_0_3_1()); 
             match(input,42,FOLLOW_2); 
@@ -21843,14 +21940,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__2"
-    // InternalGrana.g:8089:1: rule__ElkEdgeSection__Group_4_0_3__2 : rule__ElkEdgeSection__Group_4_0_3__2__Impl rule__ElkEdgeSection__Group_4_0_3__3 ;
+    // InternalGrana.g:8120:1: rule__ElkEdgeSection__Group_4_0_3__2 : rule__ElkEdgeSection__Group_4_0_3__2__Impl rule__ElkEdgeSection__Group_4_0_3__3 ;
     public final void rule__ElkEdgeSection__Group_4_0_3__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8093:1: ( rule__ElkEdgeSection__Group_4_0_3__2__Impl rule__ElkEdgeSection__Group_4_0_3__3 )
-            // InternalGrana.g:8094:2: rule__ElkEdgeSection__Group_4_0_3__2__Impl rule__ElkEdgeSection__Group_4_0_3__3
+            // InternalGrana.g:8124:1: ( rule__ElkEdgeSection__Group_4_0_3__2__Impl rule__ElkEdgeSection__Group_4_0_3__3 )
+            // InternalGrana.g:8125:2: rule__ElkEdgeSection__Group_4_0_3__2__Impl rule__ElkEdgeSection__Group_4_0_3__3
             {
             pushFollow(FOLLOW_25);
             rule__ElkEdgeSection__Group_4_0_3__2__Impl();
@@ -21881,21 +21978,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__2__Impl"
-    // InternalGrana.g:8101:1: rule__ElkEdgeSection__Group_4_0_3__2__Impl : ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) ) ;
+    // InternalGrana.g:8132:1: rule__ElkEdgeSection__Group_4_0_3__2__Impl : ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) ) ;
     public final void rule__ElkEdgeSection__Group_4_0_3__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8105:1: ( ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) ) )
-            // InternalGrana.g:8106:1: ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) )
+            // InternalGrana.g:8136:1: ( ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) ) )
+            // InternalGrana.g:8137:1: ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) )
             {
-            // InternalGrana.g:8106:1: ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) )
-            // InternalGrana.g:8107:1: ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 )
+            // InternalGrana.g:8137:1: ( ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 ) )
+            // InternalGrana.g:8138:1: ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getEndXAssignment_4_0_3_2()); 
-            // InternalGrana.g:8108:1: ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 )
-            // InternalGrana.g:8108:2: rule__ElkEdgeSection__EndXAssignment_4_0_3_2
+            // InternalGrana.g:8139:1: ( rule__ElkEdgeSection__EndXAssignment_4_0_3_2 )
+            // InternalGrana.g:8139:2: rule__ElkEdgeSection__EndXAssignment_4_0_3_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__EndXAssignment_4_0_3_2();
@@ -21928,16 +22025,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__3"
-    // InternalGrana.g:8118:1: rule__ElkEdgeSection__Group_4_0_3__3 : rule__ElkEdgeSection__Group_4_0_3__3__Impl rule__ElkEdgeSection__Group_4_0_3__4 ;
+    // InternalGrana.g:8149:1: rule__ElkEdgeSection__Group_4_0_3__3 : rule__ElkEdgeSection__Group_4_0_3__3__Impl rule__ElkEdgeSection__Group_4_0_3__4 ;
     public final void rule__ElkEdgeSection__Group_4_0_3__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8122:1: ( rule__ElkEdgeSection__Group_4_0_3__3__Impl rule__ElkEdgeSection__Group_4_0_3__4 )
-            // InternalGrana.g:8123:2: rule__ElkEdgeSection__Group_4_0_3__3__Impl rule__ElkEdgeSection__Group_4_0_3__4
+            // InternalGrana.g:8153:1: ( rule__ElkEdgeSection__Group_4_0_3__3__Impl rule__ElkEdgeSection__Group_4_0_3__4 )
+            // InternalGrana.g:8154:2: rule__ElkEdgeSection__Group_4_0_3__3__Impl rule__ElkEdgeSection__Group_4_0_3__4
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkEdgeSection__Group_4_0_3__3__Impl();
 
             state._fsp--;
@@ -21966,17 +22063,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__3__Impl"
-    // InternalGrana.g:8130:1: rule__ElkEdgeSection__Group_4_0_3__3__Impl : ( ',' ) ;
+    // InternalGrana.g:8161:1: rule__ElkEdgeSection__Group_4_0_3__3__Impl : ( ',' ) ;
     public final void rule__ElkEdgeSection__Group_4_0_3__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8134:1: ( ( ',' ) )
-            // InternalGrana.g:8135:1: ( ',' )
+            // InternalGrana.g:8165:1: ( ( ',' ) )
+            // InternalGrana.g:8166:1: ( ',' )
             {
-            // InternalGrana.g:8135:1: ( ',' )
-            // InternalGrana.g:8136:1: ','
+            // InternalGrana.g:8166:1: ( ',' )
+            // InternalGrana.g:8167:1: ','
             {
              before(grammarAccess.getElkEdgeSectionAccess().getCommaKeyword_4_0_3_3()); 
             match(input,32,FOLLOW_2); 
@@ -22003,14 +22100,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__4"
-    // InternalGrana.g:8149:1: rule__ElkEdgeSection__Group_4_0_3__4 : rule__ElkEdgeSection__Group_4_0_3__4__Impl ;
+    // InternalGrana.g:8180:1: rule__ElkEdgeSection__Group_4_0_3__4 : rule__ElkEdgeSection__Group_4_0_3__4__Impl ;
     public final void rule__ElkEdgeSection__Group_4_0_3__4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8153:1: ( rule__ElkEdgeSection__Group_4_0_3__4__Impl )
-            // InternalGrana.g:8154:2: rule__ElkEdgeSection__Group_4_0_3__4__Impl
+            // InternalGrana.g:8184:1: ( rule__ElkEdgeSection__Group_4_0_3__4__Impl )
+            // InternalGrana.g:8185:2: rule__ElkEdgeSection__Group_4_0_3__4__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_4_0_3__4__Impl();
@@ -22036,21 +22133,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_0_3__4__Impl"
-    // InternalGrana.g:8160:1: rule__ElkEdgeSection__Group_4_0_3__4__Impl : ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) ) ;
+    // InternalGrana.g:8191:1: rule__ElkEdgeSection__Group_4_0_3__4__Impl : ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) ) ;
     public final void rule__ElkEdgeSection__Group_4_0_3__4__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8164:1: ( ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) ) )
-            // InternalGrana.g:8165:1: ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) )
+            // InternalGrana.g:8195:1: ( ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) ) )
+            // InternalGrana.g:8196:1: ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) )
             {
-            // InternalGrana.g:8165:1: ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) )
-            // InternalGrana.g:8166:1: ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 )
+            // InternalGrana.g:8196:1: ( ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 ) )
+            // InternalGrana.g:8197:1: ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getEndYAssignment_4_0_3_4()); 
-            // InternalGrana.g:8167:1: ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 )
-            // InternalGrana.g:8167:2: rule__ElkEdgeSection__EndYAssignment_4_0_3_4
+            // InternalGrana.g:8198:1: ( rule__ElkEdgeSection__EndYAssignment_4_0_3_4 )
+            // InternalGrana.g:8198:2: rule__ElkEdgeSection__EndYAssignment_4_0_3_4
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__EndYAssignment_4_0_3_4();
@@ -22083,16 +22180,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__0"
-    // InternalGrana.g:8187:1: rule__ElkEdgeSection__Group_4_1__0 : rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1 ;
+    // InternalGrana.g:8218:1: rule__ElkEdgeSection__Group_4_1__0 : rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1 ;
     public final void rule__ElkEdgeSection__Group_4_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8191:1: ( rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1 )
-            // InternalGrana.g:8192:2: rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1
+            // InternalGrana.g:8222:1: ( rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1 )
+            // InternalGrana.g:8223:2: rule__ElkEdgeSection__Group_4_1__0__Impl rule__ElkEdgeSection__Group_4_1__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__ElkEdgeSection__Group_4_1__0__Impl();
 
             state._fsp--;
@@ -22121,17 +22218,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__0__Impl"
-    // InternalGrana.g:8199:1: rule__ElkEdgeSection__Group_4_1__0__Impl : ( 'bends' ) ;
+    // InternalGrana.g:8230:1: rule__ElkEdgeSection__Group_4_1__0__Impl : ( 'bends' ) ;
     public final void rule__ElkEdgeSection__Group_4_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8203:1: ( ( 'bends' ) )
-            // InternalGrana.g:8204:1: ( 'bends' )
+            // InternalGrana.g:8234:1: ( ( 'bends' ) )
+            // InternalGrana.g:8235:1: ( 'bends' )
             {
-            // InternalGrana.g:8204:1: ( 'bends' )
-            // InternalGrana.g:8205:1: 'bends'
+            // InternalGrana.g:8235:1: ( 'bends' )
+            // InternalGrana.g:8236:1: 'bends'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getBendsKeyword_4_1_0()); 
             match(input,55,FOLLOW_2); 
@@ -22158,16 +22255,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__1"
-    // InternalGrana.g:8218:1: rule__ElkEdgeSection__Group_4_1__1 : rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2 ;
+    // InternalGrana.g:8249:1: rule__ElkEdgeSection__Group_4_1__1 : rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2 ;
     public final void rule__ElkEdgeSection__Group_4_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8222:1: ( rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2 )
-            // InternalGrana.g:8223:2: rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2
+            // InternalGrana.g:8253:1: ( rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2 )
+            // InternalGrana.g:8254:2: rule__ElkEdgeSection__Group_4_1__1__Impl rule__ElkEdgeSection__Group_4_1__2
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkEdgeSection__Group_4_1__1__Impl();
 
             state._fsp--;
@@ -22196,17 +22293,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__1__Impl"
-    // InternalGrana.g:8230:1: rule__ElkEdgeSection__Group_4_1__1__Impl : ( ':' ) ;
+    // InternalGrana.g:8261:1: rule__ElkEdgeSection__Group_4_1__1__Impl : ( ':' ) ;
     public final void rule__ElkEdgeSection__Group_4_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8234:1: ( ( ':' ) )
-            // InternalGrana.g:8235:1: ( ':' )
+            // InternalGrana.g:8265:1: ( ( ':' ) )
+            // InternalGrana.g:8266:1: ( ':' )
             {
-            // InternalGrana.g:8235:1: ( ':' )
-            // InternalGrana.g:8236:1: ':'
+            // InternalGrana.g:8266:1: ( ':' )
+            // InternalGrana.g:8267:1: ':'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getColonKeyword_4_1_1()); 
             match(input,42,FOLLOW_2); 
@@ -22233,16 +22330,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__2"
-    // InternalGrana.g:8249:1: rule__ElkEdgeSection__Group_4_1__2 : rule__ElkEdgeSection__Group_4_1__2__Impl rule__ElkEdgeSection__Group_4_1__3 ;
+    // InternalGrana.g:8280:1: rule__ElkEdgeSection__Group_4_1__2 : rule__ElkEdgeSection__Group_4_1__2__Impl rule__ElkEdgeSection__Group_4_1__3 ;
     public final void rule__ElkEdgeSection__Group_4_1__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8253:1: ( rule__ElkEdgeSection__Group_4_1__2__Impl rule__ElkEdgeSection__Group_4_1__3 )
-            // InternalGrana.g:8254:2: rule__ElkEdgeSection__Group_4_1__2__Impl rule__ElkEdgeSection__Group_4_1__3
+            // InternalGrana.g:8284:1: ( rule__ElkEdgeSection__Group_4_1__2__Impl rule__ElkEdgeSection__Group_4_1__3 )
+            // InternalGrana.g:8285:2: rule__ElkEdgeSection__Group_4_1__2__Impl rule__ElkEdgeSection__Group_4_1__3
             {
-            pushFollow(FOLLOW_47);
+            pushFollow(FOLLOW_48);
             rule__ElkEdgeSection__Group_4_1__2__Impl();
 
             state._fsp--;
@@ -22271,21 +22368,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__2__Impl"
-    // InternalGrana.g:8261:1: rule__ElkEdgeSection__Group_4_1__2__Impl : ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) ) ;
+    // InternalGrana.g:8292:1: rule__ElkEdgeSection__Group_4_1__2__Impl : ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) ) ;
     public final void rule__ElkEdgeSection__Group_4_1__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8265:1: ( ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) ) )
-            // InternalGrana.g:8266:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) )
+            // InternalGrana.g:8296:1: ( ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) ) )
+            // InternalGrana.g:8297:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) )
             {
-            // InternalGrana.g:8266:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) )
-            // InternalGrana.g:8267:1: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 )
+            // InternalGrana.g:8297:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 ) )
+            // InternalGrana.g:8298:1: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getBendPointsAssignment_4_1_2()); 
-            // InternalGrana.g:8268:1: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 )
-            // InternalGrana.g:8268:2: rule__ElkEdgeSection__BendPointsAssignment_4_1_2
+            // InternalGrana.g:8299:1: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_2 )
+            // InternalGrana.g:8299:2: rule__ElkEdgeSection__BendPointsAssignment_4_1_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__BendPointsAssignment_4_1_2();
@@ -22318,14 +22415,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__3"
-    // InternalGrana.g:8278:1: rule__ElkEdgeSection__Group_4_1__3 : rule__ElkEdgeSection__Group_4_1__3__Impl ;
+    // InternalGrana.g:8309:1: rule__ElkEdgeSection__Group_4_1__3 : rule__ElkEdgeSection__Group_4_1__3__Impl ;
     public final void rule__ElkEdgeSection__Group_4_1__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8282:1: ( rule__ElkEdgeSection__Group_4_1__3__Impl )
-            // InternalGrana.g:8283:2: rule__ElkEdgeSection__Group_4_1__3__Impl
+            // InternalGrana.g:8313:1: ( rule__ElkEdgeSection__Group_4_1__3__Impl )
+            // InternalGrana.g:8314:2: rule__ElkEdgeSection__Group_4_1__3__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_4_1__3__Impl();
@@ -22351,35 +22448,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1__3__Impl"
-    // InternalGrana.g:8289:1: rule__ElkEdgeSection__Group_4_1__3__Impl : ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* ) ;
+    // InternalGrana.g:8320:1: rule__ElkEdgeSection__Group_4_1__3__Impl : ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* ) ;
     public final void rule__ElkEdgeSection__Group_4_1__3__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8293:1: ( ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* ) )
-            // InternalGrana.g:8294:1: ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* )
+            // InternalGrana.g:8324:1: ( ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* ) )
+            // InternalGrana.g:8325:1: ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* )
             {
-            // InternalGrana.g:8294:1: ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* )
-            // InternalGrana.g:8295:1: ( rule__ElkEdgeSection__Group_4_1_3__0 )*
+            // InternalGrana.g:8325:1: ( ( rule__ElkEdgeSection__Group_4_1_3__0 )* )
+            // InternalGrana.g:8326:1: ( rule__ElkEdgeSection__Group_4_1_3__0 )*
             {
              before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_1_3()); 
-            // InternalGrana.g:8296:1: ( rule__ElkEdgeSection__Group_4_1_3__0 )*
-            loop70:
+            // InternalGrana.g:8327:1: ( rule__ElkEdgeSection__Group_4_1_3__0 )*
+            loop71:
             do {
-                int alt70=2;
-                int LA70_0 = input.LA(1);
+                int alt71=2;
+                int LA71_0 = input.LA(1);
 
-                if ( (LA70_0==56) ) {
-                    alt70=1;
+                if ( (LA71_0==56) ) {
+                    alt71=1;
                 }
 
 
-                switch (alt70) {
+                switch (alt71) {
             	case 1 :
-            	    // InternalGrana.g:8296:2: rule__ElkEdgeSection__Group_4_1_3__0
+            	    // InternalGrana.g:8327:2: rule__ElkEdgeSection__Group_4_1_3__0
             	    {
-            	    pushFollow(FOLLOW_48);
+            	    pushFollow(FOLLOW_49);
             	    rule__ElkEdgeSection__Group_4_1_3__0();
 
             	    state._fsp--;
@@ -22389,7 +22486,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop70;
+            	    break loop71;
                 }
             } while (true);
 
@@ -22416,16 +22513,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1_3__0"
-    // InternalGrana.g:8314:1: rule__ElkEdgeSection__Group_4_1_3__0 : rule__ElkEdgeSection__Group_4_1_3__0__Impl rule__ElkEdgeSection__Group_4_1_3__1 ;
+    // InternalGrana.g:8345:1: rule__ElkEdgeSection__Group_4_1_3__0 : rule__ElkEdgeSection__Group_4_1_3__0__Impl rule__ElkEdgeSection__Group_4_1_3__1 ;
     public final void rule__ElkEdgeSection__Group_4_1_3__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8318:1: ( rule__ElkEdgeSection__Group_4_1_3__0__Impl rule__ElkEdgeSection__Group_4_1_3__1 )
-            // InternalGrana.g:8319:2: rule__ElkEdgeSection__Group_4_1_3__0__Impl rule__ElkEdgeSection__Group_4_1_3__1
+            // InternalGrana.g:8349:1: ( rule__ElkEdgeSection__Group_4_1_3__0__Impl rule__ElkEdgeSection__Group_4_1_3__1 )
+            // InternalGrana.g:8350:2: rule__ElkEdgeSection__Group_4_1_3__0__Impl rule__ElkEdgeSection__Group_4_1_3__1
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkEdgeSection__Group_4_1_3__0__Impl();
 
             state._fsp--;
@@ -22454,17 +22551,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1_3__0__Impl"
-    // InternalGrana.g:8326:1: rule__ElkEdgeSection__Group_4_1_3__0__Impl : ( '|' ) ;
+    // InternalGrana.g:8357:1: rule__ElkEdgeSection__Group_4_1_3__0__Impl : ( '|' ) ;
     public final void rule__ElkEdgeSection__Group_4_1_3__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8330:1: ( ( '|' ) )
-            // InternalGrana.g:8331:1: ( '|' )
+            // InternalGrana.g:8361:1: ( ( '|' ) )
+            // InternalGrana.g:8362:1: ( '|' )
             {
-            // InternalGrana.g:8331:1: ( '|' )
-            // InternalGrana.g:8332:1: '|'
+            // InternalGrana.g:8362:1: ( '|' )
+            // InternalGrana.g:8363:1: '|'
             {
              before(grammarAccess.getElkEdgeSectionAccess().getVerticalLineKeyword_4_1_3_0()); 
             match(input,56,FOLLOW_2); 
@@ -22491,14 +22588,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1_3__1"
-    // InternalGrana.g:8345:1: rule__ElkEdgeSection__Group_4_1_3__1 : rule__ElkEdgeSection__Group_4_1_3__1__Impl ;
+    // InternalGrana.g:8376:1: rule__ElkEdgeSection__Group_4_1_3__1 : rule__ElkEdgeSection__Group_4_1_3__1__Impl ;
     public final void rule__ElkEdgeSection__Group_4_1_3__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8349:1: ( rule__ElkEdgeSection__Group_4_1_3__1__Impl )
-            // InternalGrana.g:8350:2: rule__ElkEdgeSection__Group_4_1_3__1__Impl
+            // InternalGrana.g:8380:1: ( rule__ElkEdgeSection__Group_4_1_3__1__Impl )
+            // InternalGrana.g:8381:2: rule__ElkEdgeSection__Group_4_1_3__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__Group_4_1_3__1__Impl();
@@ -22524,21 +22621,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__Group_4_1_3__1__Impl"
-    // InternalGrana.g:8356:1: rule__ElkEdgeSection__Group_4_1_3__1__Impl : ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) ) ;
+    // InternalGrana.g:8387:1: rule__ElkEdgeSection__Group_4_1_3__1__Impl : ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) ) ;
     public final void rule__ElkEdgeSection__Group_4_1_3__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8360:1: ( ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) ) )
-            // InternalGrana.g:8361:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) )
+            // InternalGrana.g:8391:1: ( ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) ) )
+            // InternalGrana.g:8392:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) )
             {
-            // InternalGrana.g:8361:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) )
-            // InternalGrana.g:8362:1: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 )
+            // InternalGrana.g:8392:1: ( ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 ) )
+            // InternalGrana.g:8393:1: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getBendPointsAssignment_4_1_3_1()); 
-            // InternalGrana.g:8363:1: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 )
-            // InternalGrana.g:8363:2: rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1
+            // InternalGrana.g:8394:1: ( rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 )
+            // InternalGrana.g:8394:2: rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1();
@@ -22571,14 +22668,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__0"
-    // InternalGrana.g:8377:1: rule__ElkBendPoint__Group__0 : rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1 ;
+    // InternalGrana.g:8408:1: rule__ElkBendPoint__Group__0 : rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1 ;
     public final void rule__ElkBendPoint__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8381:1: ( rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1 )
-            // InternalGrana.g:8382:2: rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1
+            // InternalGrana.g:8412:1: ( rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1 )
+            // InternalGrana.g:8413:2: rule__ElkBendPoint__Group__0__Impl rule__ElkBendPoint__Group__1
             {
             pushFollow(FOLLOW_25);
             rule__ElkBendPoint__Group__0__Impl();
@@ -22609,21 +22706,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__0__Impl"
-    // InternalGrana.g:8389:1: rule__ElkBendPoint__Group__0__Impl : ( ( rule__ElkBendPoint__XAssignment_0 ) ) ;
+    // InternalGrana.g:8420:1: rule__ElkBendPoint__Group__0__Impl : ( ( rule__ElkBendPoint__XAssignment_0 ) ) ;
     public final void rule__ElkBendPoint__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8393:1: ( ( ( rule__ElkBendPoint__XAssignment_0 ) ) )
-            // InternalGrana.g:8394:1: ( ( rule__ElkBendPoint__XAssignment_0 ) )
+            // InternalGrana.g:8424:1: ( ( ( rule__ElkBendPoint__XAssignment_0 ) ) )
+            // InternalGrana.g:8425:1: ( ( rule__ElkBendPoint__XAssignment_0 ) )
             {
-            // InternalGrana.g:8394:1: ( ( rule__ElkBendPoint__XAssignment_0 ) )
-            // InternalGrana.g:8395:1: ( rule__ElkBendPoint__XAssignment_0 )
+            // InternalGrana.g:8425:1: ( ( rule__ElkBendPoint__XAssignment_0 ) )
+            // InternalGrana.g:8426:1: ( rule__ElkBendPoint__XAssignment_0 )
             {
              before(grammarAccess.getElkBendPointAccess().getXAssignment_0()); 
-            // InternalGrana.g:8396:1: ( rule__ElkBendPoint__XAssignment_0 )
-            // InternalGrana.g:8396:2: rule__ElkBendPoint__XAssignment_0
+            // InternalGrana.g:8427:1: ( rule__ElkBendPoint__XAssignment_0 )
+            // InternalGrana.g:8427:2: rule__ElkBendPoint__XAssignment_0
             {
             pushFollow(FOLLOW_2);
             rule__ElkBendPoint__XAssignment_0();
@@ -22656,16 +22753,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__1"
-    // InternalGrana.g:8406:1: rule__ElkBendPoint__Group__1 : rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2 ;
+    // InternalGrana.g:8437:1: rule__ElkBendPoint__Group__1 : rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2 ;
     public final void rule__ElkBendPoint__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8410:1: ( rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2 )
-            // InternalGrana.g:8411:2: rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2
+            // InternalGrana.g:8441:1: ( rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2 )
+            // InternalGrana.g:8442:2: rule__ElkBendPoint__Group__1__Impl rule__ElkBendPoint__Group__2
             {
-            pushFollow(FOLLOW_41);
+            pushFollow(FOLLOW_42);
             rule__ElkBendPoint__Group__1__Impl();
 
             state._fsp--;
@@ -22694,17 +22791,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__1__Impl"
-    // InternalGrana.g:8418:1: rule__ElkBendPoint__Group__1__Impl : ( ',' ) ;
+    // InternalGrana.g:8449:1: rule__ElkBendPoint__Group__1__Impl : ( ',' ) ;
     public final void rule__ElkBendPoint__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8422:1: ( ( ',' ) )
-            // InternalGrana.g:8423:1: ( ',' )
+            // InternalGrana.g:8453:1: ( ( ',' ) )
+            // InternalGrana.g:8454:1: ( ',' )
             {
-            // InternalGrana.g:8423:1: ( ',' )
-            // InternalGrana.g:8424:1: ','
+            // InternalGrana.g:8454:1: ( ',' )
+            // InternalGrana.g:8455:1: ','
             {
              before(grammarAccess.getElkBendPointAccess().getCommaKeyword_1()); 
             match(input,32,FOLLOW_2); 
@@ -22731,14 +22828,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__2"
-    // InternalGrana.g:8437:1: rule__ElkBendPoint__Group__2 : rule__ElkBendPoint__Group__2__Impl ;
+    // InternalGrana.g:8468:1: rule__ElkBendPoint__Group__2 : rule__ElkBendPoint__Group__2__Impl ;
     public final void rule__ElkBendPoint__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8441:1: ( rule__ElkBendPoint__Group__2__Impl )
-            // InternalGrana.g:8442:2: rule__ElkBendPoint__Group__2__Impl
+            // InternalGrana.g:8472:1: ( rule__ElkBendPoint__Group__2__Impl )
+            // InternalGrana.g:8473:2: rule__ElkBendPoint__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkBendPoint__Group__2__Impl();
@@ -22764,21 +22861,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkBendPoint__Group__2__Impl"
-    // InternalGrana.g:8448:1: rule__ElkBendPoint__Group__2__Impl : ( ( rule__ElkBendPoint__YAssignment_2 ) ) ;
+    // InternalGrana.g:8479:1: rule__ElkBendPoint__Group__2__Impl : ( ( rule__ElkBendPoint__YAssignment_2 ) ) ;
     public final void rule__ElkBendPoint__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8452:1: ( ( ( rule__ElkBendPoint__YAssignment_2 ) ) )
-            // InternalGrana.g:8453:1: ( ( rule__ElkBendPoint__YAssignment_2 ) )
+            // InternalGrana.g:8483:1: ( ( ( rule__ElkBendPoint__YAssignment_2 ) ) )
+            // InternalGrana.g:8484:1: ( ( rule__ElkBendPoint__YAssignment_2 ) )
             {
-            // InternalGrana.g:8453:1: ( ( rule__ElkBendPoint__YAssignment_2 ) )
-            // InternalGrana.g:8454:1: ( rule__ElkBendPoint__YAssignment_2 )
+            // InternalGrana.g:8484:1: ( ( rule__ElkBendPoint__YAssignment_2 ) )
+            // InternalGrana.g:8485:1: ( rule__ElkBendPoint__YAssignment_2 )
             {
              before(grammarAccess.getElkBendPointAccess().getYAssignment_2()); 
-            // InternalGrana.g:8455:1: ( rule__ElkBendPoint__YAssignment_2 )
-            // InternalGrana.g:8455:2: rule__ElkBendPoint__YAssignment_2
+            // InternalGrana.g:8486:1: ( rule__ElkBendPoint__YAssignment_2 )
+            // InternalGrana.g:8486:2: rule__ElkBendPoint__YAssignment_2
             {
             pushFollow(FOLLOW_2);
             rule__ElkBendPoint__YAssignment_2();
@@ -22811,16 +22908,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedId__Group__0"
-    // InternalGrana.g:8471:1: rule__QualifiedId__Group__0 : rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1 ;
+    // InternalGrana.g:8502:1: rule__QualifiedId__Group__0 : rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1 ;
     public final void rule__QualifiedId__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8475:1: ( rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1 )
-            // InternalGrana.g:8476:2: rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1
+            // InternalGrana.g:8506:1: ( rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1 )
+            // InternalGrana.g:8507:2: rule__QualifiedId__Group__0__Impl rule__QualifiedId__Group__1
             {
-            pushFollow(FOLLOW_50);
+            pushFollow(FOLLOW_51);
             rule__QualifiedId__Group__0__Impl();
 
             state._fsp--;
@@ -22849,17 +22946,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedId__Group__0__Impl"
-    // InternalGrana.g:8483:1: rule__QualifiedId__Group__0__Impl : ( RULE_ID ) ;
+    // InternalGrana.g:8514:1: rule__QualifiedId__Group__0__Impl : ( RULE_ID ) ;
     public final void rule__QualifiedId__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8487:1: ( ( RULE_ID ) )
-            // InternalGrana.g:8488:1: ( RULE_ID )
+            // InternalGrana.g:8518:1: ( ( RULE_ID ) )
+            // InternalGrana.g:8519:1: ( RULE_ID )
             {
-            // InternalGrana.g:8488:1: ( RULE_ID )
-            // InternalGrana.g:8489:1: RULE_ID
+            // InternalGrana.g:8519:1: ( RULE_ID )
+            // InternalGrana.g:8520:1: RULE_ID
             {
              before(grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -22886,14 +22983,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedId__Group__1"
-    // InternalGrana.g:8500:1: rule__QualifiedId__Group__1 : rule__QualifiedId__Group__1__Impl ;
+    // InternalGrana.g:8531:1: rule__QualifiedId__Group__1 : rule__QualifiedId__Group__1__Impl ;
     public final void rule__QualifiedId__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8504:1: ( rule__QualifiedId__Group__1__Impl )
-            // InternalGrana.g:8505:2: rule__QualifiedId__Group__1__Impl
+            // InternalGrana.g:8535:1: ( rule__QualifiedId__Group__1__Impl )
+            // InternalGrana.g:8536:2: rule__QualifiedId__Group__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__QualifiedId__Group__1__Impl();
@@ -22919,35 +23016,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedId__Group__1__Impl"
-    // InternalGrana.g:8511:1: rule__QualifiedId__Group__1__Impl : ( ( rule__QualifiedId__Group_1__0 )* ) ;
+    // InternalGrana.g:8542:1: rule__QualifiedId__Group__1__Impl : ( ( rule__QualifiedId__Group_1__0 )* ) ;
     public final void rule__QualifiedId__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8515:1: ( ( ( rule__QualifiedId__Group_1__0 )* ) )
-            // InternalGrana.g:8516:1: ( ( rule__QualifiedId__Group_1__0 )* )
+            // InternalGrana.g:8546:1: ( ( ( rule__QualifiedId__Group_1__0 )* ) )
+            // InternalGrana.g:8547:1: ( ( rule__QualifiedId__Group_1__0 )* )
             {
-            // InternalGrana.g:8516:1: ( ( rule__QualifiedId__Group_1__0 )* )
-            // InternalGrana.g:8517:1: ( rule__QualifiedId__Group_1__0 )*
+            // InternalGrana.g:8547:1: ( ( rule__QualifiedId__Group_1__0 )* )
+            // InternalGrana.g:8548:1: ( rule__QualifiedId__Group_1__0 )*
             {
              before(grammarAccess.getQualifiedIdAccess().getGroup_1()); 
-            // InternalGrana.g:8518:1: ( rule__QualifiedId__Group_1__0 )*
-            loop71:
+            // InternalGrana.g:8549:1: ( rule__QualifiedId__Group_1__0 )*
+            loop72:
             do {
-                int alt71=2;
-                int LA71_0 = input.LA(1);
+                int alt72=2;
+                int LA72_0 = input.LA(1);
 
-                if ( (LA71_0==58) ) {
-                    alt71=1;
+                if ( (LA72_0==58) ) {
+                    alt72=1;
                 }
 
 
-                switch (alt71) {
+                switch (alt72) {
             	case 1 :
-            	    // InternalGrana.g:8518:2: rule__QualifiedId__Group_1__0
+            	    // InternalGrana.g:8549:2: rule__QualifiedId__Group_1__0
             	    {
-            	    pushFollow(FOLLOW_51);
+            	    pushFollow(FOLLOW_52);
             	    rule__QualifiedId__Group_1__0();
 
             	    state._fsp--;
@@ -22957,7 +23054,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop71;
+            	    break loop72;
                 }
             } while (true);
 
@@ -22984,14 +23081,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedId__Group_1__0"
-    // InternalGrana.g:8532:1: rule__QualifiedId__Group_1__0 : rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1 ;
+    // InternalGrana.g:8563:1: rule__QualifiedId__Group_1__0 : rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1 ;
     public final void rule__QualifiedId__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8536:1: ( rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1 )
-            // InternalGrana.g:8537:2: rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1
+            // InternalGrana.g:8567:1: ( rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1 )
+            // InternalGrana.g:8568:2: rule__QualifiedId__Group_1__0__Impl rule__QualifiedId__Group_1__1
             {
             pushFollow(FOLLOW_8);
             rule__QualifiedId__Group_1__0__Impl();
@@ -23022,17 +23119,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedId__Group_1__0__Impl"
-    // InternalGrana.g:8544:1: rule__QualifiedId__Group_1__0__Impl : ( '.' ) ;
+    // InternalGrana.g:8575:1: rule__QualifiedId__Group_1__0__Impl : ( '.' ) ;
     public final void rule__QualifiedId__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8548:1: ( ( '.' ) )
-            // InternalGrana.g:8549:1: ( '.' )
+            // InternalGrana.g:8579:1: ( ( '.' ) )
+            // InternalGrana.g:8580:1: ( '.' )
             {
-            // InternalGrana.g:8549:1: ( '.' )
-            // InternalGrana.g:8550:1: '.'
+            // InternalGrana.g:8580:1: ( '.' )
+            // InternalGrana.g:8581:1: '.'
             {
              before(grammarAccess.getQualifiedIdAccess().getFullStopKeyword_1_0()); 
             match(input,58,FOLLOW_2); 
@@ -23059,14 +23156,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedId__Group_1__1"
-    // InternalGrana.g:8563:1: rule__QualifiedId__Group_1__1 : rule__QualifiedId__Group_1__1__Impl ;
+    // InternalGrana.g:8594:1: rule__QualifiedId__Group_1__1 : rule__QualifiedId__Group_1__1__Impl ;
     public final void rule__QualifiedId__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8567:1: ( rule__QualifiedId__Group_1__1__Impl )
-            // InternalGrana.g:8568:2: rule__QualifiedId__Group_1__1__Impl
+            // InternalGrana.g:8598:1: ( rule__QualifiedId__Group_1__1__Impl )
+            // InternalGrana.g:8599:2: rule__QualifiedId__Group_1__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__QualifiedId__Group_1__1__Impl();
@@ -23092,17 +23189,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__QualifiedId__Group_1__1__Impl"
-    // InternalGrana.g:8574:1: rule__QualifiedId__Group_1__1__Impl : ( RULE_ID ) ;
+    // InternalGrana.g:8605:1: rule__QualifiedId__Group_1__1__Impl : ( RULE_ID ) ;
     public final void rule__QualifiedId__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8578:1: ( ( RULE_ID ) )
-            // InternalGrana.g:8579:1: ( RULE_ID )
+            // InternalGrana.g:8609:1: ( ( RULE_ID ) )
+            // InternalGrana.g:8610:1: ( RULE_ID )
             {
-            // InternalGrana.g:8579:1: ( RULE_ID )
-            // InternalGrana.g:8580:1: RULE_ID
+            // InternalGrana.g:8610:1: ( RULE_ID )
+            // InternalGrana.g:8611:1: RULE_ID
             {
              before(grammarAccess.getQualifiedIdAccess().getIDTerminalRuleCall_1_1()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -23129,16 +23226,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Property__Group__0"
-    // InternalGrana.g:8595:1: rule__Property__Group__0 : rule__Property__Group__0__Impl rule__Property__Group__1 ;
+    // InternalGrana.g:8626:1: rule__Property__Group__0 : rule__Property__Group__0__Impl rule__Property__Group__1 ;
     public final void rule__Property__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8599:1: ( rule__Property__Group__0__Impl rule__Property__Group__1 )
-            // InternalGrana.g:8600:2: rule__Property__Group__0__Impl rule__Property__Group__1
+            // InternalGrana.g:8630:1: ( rule__Property__Group__0__Impl rule__Property__Group__1 )
+            // InternalGrana.g:8631:2: rule__Property__Group__0__Impl rule__Property__Group__1
             {
-            pushFollow(FOLLOW_35);
+            pushFollow(FOLLOW_36);
             rule__Property__Group__0__Impl();
 
             state._fsp--;
@@ -23167,21 +23264,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Property__Group__0__Impl"
-    // InternalGrana.g:8607:1: rule__Property__Group__0__Impl : ( ( rule__Property__KeyAssignment_0 ) ) ;
+    // InternalGrana.g:8638:1: rule__Property__Group__0__Impl : ( ( rule__Property__KeyAssignment_0 ) ) ;
     public final void rule__Property__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8611:1: ( ( ( rule__Property__KeyAssignment_0 ) ) )
-            // InternalGrana.g:8612:1: ( ( rule__Property__KeyAssignment_0 ) )
+            // InternalGrana.g:8642:1: ( ( ( rule__Property__KeyAssignment_0 ) ) )
+            // InternalGrana.g:8643:1: ( ( rule__Property__KeyAssignment_0 ) )
             {
-            // InternalGrana.g:8612:1: ( ( rule__Property__KeyAssignment_0 ) )
-            // InternalGrana.g:8613:1: ( rule__Property__KeyAssignment_0 )
+            // InternalGrana.g:8643:1: ( ( rule__Property__KeyAssignment_0 ) )
+            // InternalGrana.g:8644:1: ( rule__Property__KeyAssignment_0 )
             {
              before(grammarAccess.getPropertyAccess().getKeyAssignment_0()); 
-            // InternalGrana.g:8614:1: ( rule__Property__KeyAssignment_0 )
-            // InternalGrana.g:8614:2: rule__Property__KeyAssignment_0
+            // InternalGrana.g:8645:1: ( rule__Property__KeyAssignment_0 )
+            // InternalGrana.g:8645:2: rule__Property__KeyAssignment_0
             {
             pushFollow(FOLLOW_2);
             rule__Property__KeyAssignment_0();
@@ -23214,16 +23311,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Property__Group__1"
-    // InternalGrana.g:8624:1: rule__Property__Group__1 : rule__Property__Group__1__Impl rule__Property__Group__2 ;
+    // InternalGrana.g:8655:1: rule__Property__Group__1 : rule__Property__Group__1__Impl rule__Property__Group__2 ;
     public final void rule__Property__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8628:1: ( rule__Property__Group__1__Impl rule__Property__Group__2 )
-            // InternalGrana.g:8629:2: rule__Property__Group__1__Impl rule__Property__Group__2
+            // InternalGrana.g:8659:1: ( rule__Property__Group__1__Impl rule__Property__Group__2 )
+            // InternalGrana.g:8660:2: rule__Property__Group__1__Impl rule__Property__Group__2
             {
-            pushFollow(FOLLOW_52);
+            pushFollow(FOLLOW_53);
             rule__Property__Group__1__Impl();
 
             state._fsp--;
@@ -23252,17 +23349,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Property__Group__1__Impl"
-    // InternalGrana.g:8636:1: rule__Property__Group__1__Impl : ( ':' ) ;
+    // InternalGrana.g:8667:1: rule__Property__Group__1__Impl : ( ':' ) ;
     public final void rule__Property__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8640:1: ( ( ':' ) )
-            // InternalGrana.g:8641:1: ( ':' )
+            // InternalGrana.g:8671:1: ( ( ':' ) )
+            // InternalGrana.g:8672:1: ( ':' )
             {
-            // InternalGrana.g:8641:1: ( ':' )
-            // InternalGrana.g:8642:1: ':'
+            // InternalGrana.g:8672:1: ( ':' )
+            // InternalGrana.g:8673:1: ':'
             {
              before(grammarAccess.getPropertyAccess().getColonKeyword_1()); 
             match(input,42,FOLLOW_2); 
@@ -23289,14 +23386,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Property__Group__2"
-    // InternalGrana.g:8655:1: rule__Property__Group__2 : rule__Property__Group__2__Impl ;
+    // InternalGrana.g:8686:1: rule__Property__Group__2 : rule__Property__Group__2__Impl ;
     public final void rule__Property__Group__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8659:1: ( rule__Property__Group__2__Impl )
-            // InternalGrana.g:8660:2: rule__Property__Group__2__Impl
+            // InternalGrana.g:8690:1: ( rule__Property__Group__2__Impl )
+            // InternalGrana.g:8691:2: rule__Property__Group__2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__Property__Group__2__Impl();
@@ -23322,21 +23419,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Property__Group__2__Impl"
-    // InternalGrana.g:8666:1: rule__Property__Group__2__Impl : ( ( rule__Property__Alternatives_2 ) ) ;
+    // InternalGrana.g:8697:1: rule__Property__Group__2__Impl : ( ( rule__Property__Alternatives_2 ) ) ;
     public final void rule__Property__Group__2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8670:1: ( ( ( rule__Property__Alternatives_2 ) ) )
-            // InternalGrana.g:8671:1: ( ( rule__Property__Alternatives_2 ) )
+            // InternalGrana.g:8701:1: ( ( ( rule__Property__Alternatives_2 ) ) )
+            // InternalGrana.g:8702:1: ( ( rule__Property__Alternatives_2 ) )
             {
-            // InternalGrana.g:8671:1: ( ( rule__Property__Alternatives_2 ) )
-            // InternalGrana.g:8672:1: ( rule__Property__Alternatives_2 )
+            // InternalGrana.g:8702:1: ( ( rule__Property__Alternatives_2 ) )
+            // InternalGrana.g:8703:1: ( rule__Property__Alternatives_2 )
             {
              before(grammarAccess.getPropertyAccess().getAlternatives_2()); 
-            // InternalGrana.g:8673:1: ( rule__Property__Alternatives_2 )
-            // InternalGrana.g:8673:2: rule__Property__Alternatives_2
+            // InternalGrana.g:8704:1: ( rule__Property__Alternatives_2 )
+            // InternalGrana.g:8704:2: rule__Property__Alternatives_2
             {
             pushFollow(FOLLOW_2);
             rule__Property__Alternatives_2();
@@ -23369,16 +23466,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PropertyKey__Group__0"
-    // InternalGrana.g:8689:1: rule__PropertyKey__Group__0 : rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1 ;
+    // InternalGrana.g:8720:1: rule__PropertyKey__Group__0 : rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1 ;
     public final void rule__PropertyKey__Group__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8693:1: ( rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1 )
-            // InternalGrana.g:8694:2: rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1
+            // InternalGrana.g:8724:1: ( rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1 )
+            // InternalGrana.g:8725:2: rule__PropertyKey__Group__0__Impl rule__PropertyKey__Group__1
             {
-            pushFollow(FOLLOW_50);
+            pushFollow(FOLLOW_51);
             rule__PropertyKey__Group__0__Impl();
 
             state._fsp--;
@@ -23407,17 +23504,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PropertyKey__Group__0__Impl"
-    // InternalGrana.g:8701:1: rule__PropertyKey__Group__0__Impl : ( RULE_ID ) ;
+    // InternalGrana.g:8732:1: rule__PropertyKey__Group__0__Impl : ( RULE_ID ) ;
     public final void rule__PropertyKey__Group__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8705:1: ( ( RULE_ID ) )
-            // InternalGrana.g:8706:1: ( RULE_ID )
+            // InternalGrana.g:8736:1: ( ( RULE_ID ) )
+            // InternalGrana.g:8737:1: ( RULE_ID )
             {
-            // InternalGrana.g:8706:1: ( RULE_ID )
-            // InternalGrana.g:8707:1: RULE_ID
+            // InternalGrana.g:8737:1: ( RULE_ID )
+            // InternalGrana.g:8738:1: RULE_ID
             {
              before(grammarAccess.getPropertyKeyAccess().getIDTerminalRuleCall_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -23444,14 +23541,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PropertyKey__Group__1"
-    // InternalGrana.g:8718:1: rule__PropertyKey__Group__1 : rule__PropertyKey__Group__1__Impl ;
+    // InternalGrana.g:8749:1: rule__PropertyKey__Group__1 : rule__PropertyKey__Group__1__Impl ;
     public final void rule__PropertyKey__Group__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8722:1: ( rule__PropertyKey__Group__1__Impl )
-            // InternalGrana.g:8723:2: rule__PropertyKey__Group__1__Impl
+            // InternalGrana.g:8753:1: ( rule__PropertyKey__Group__1__Impl )
+            // InternalGrana.g:8754:2: rule__PropertyKey__Group__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__PropertyKey__Group__1__Impl();
@@ -23477,35 +23574,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PropertyKey__Group__1__Impl"
-    // InternalGrana.g:8729:1: rule__PropertyKey__Group__1__Impl : ( ( rule__PropertyKey__Group_1__0 )* ) ;
+    // InternalGrana.g:8760:1: rule__PropertyKey__Group__1__Impl : ( ( rule__PropertyKey__Group_1__0 )* ) ;
     public final void rule__PropertyKey__Group__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8733:1: ( ( ( rule__PropertyKey__Group_1__0 )* ) )
-            // InternalGrana.g:8734:1: ( ( rule__PropertyKey__Group_1__0 )* )
+            // InternalGrana.g:8764:1: ( ( ( rule__PropertyKey__Group_1__0 )* ) )
+            // InternalGrana.g:8765:1: ( ( rule__PropertyKey__Group_1__0 )* )
             {
-            // InternalGrana.g:8734:1: ( ( rule__PropertyKey__Group_1__0 )* )
-            // InternalGrana.g:8735:1: ( rule__PropertyKey__Group_1__0 )*
+            // InternalGrana.g:8765:1: ( ( rule__PropertyKey__Group_1__0 )* )
+            // InternalGrana.g:8766:1: ( rule__PropertyKey__Group_1__0 )*
             {
              before(grammarAccess.getPropertyKeyAccess().getGroup_1()); 
-            // InternalGrana.g:8736:1: ( rule__PropertyKey__Group_1__0 )*
-            loop72:
+            // InternalGrana.g:8767:1: ( rule__PropertyKey__Group_1__0 )*
+            loop73:
             do {
-                int alt72=2;
-                int LA72_0 = input.LA(1);
+                int alt73=2;
+                int LA73_0 = input.LA(1);
 
-                if ( (LA72_0==58) ) {
-                    alt72=1;
+                if ( (LA73_0==58) ) {
+                    alt73=1;
                 }
 
 
-                switch (alt72) {
+                switch (alt73) {
             	case 1 :
-            	    // InternalGrana.g:8736:2: rule__PropertyKey__Group_1__0
+            	    // InternalGrana.g:8767:2: rule__PropertyKey__Group_1__0
             	    {
-            	    pushFollow(FOLLOW_51);
+            	    pushFollow(FOLLOW_52);
             	    rule__PropertyKey__Group_1__0();
 
             	    state._fsp--;
@@ -23515,7 +23612,7 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
             	    break;
 
             	default :
-            	    break loop72;
+            	    break loop73;
                 }
             } while (true);
 
@@ -23542,14 +23639,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PropertyKey__Group_1__0"
-    // InternalGrana.g:8750:1: rule__PropertyKey__Group_1__0 : rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1 ;
+    // InternalGrana.g:8781:1: rule__PropertyKey__Group_1__0 : rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1 ;
     public final void rule__PropertyKey__Group_1__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8754:1: ( rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1 )
-            // InternalGrana.g:8755:2: rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1
+            // InternalGrana.g:8785:1: ( rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1 )
+            // InternalGrana.g:8786:2: rule__PropertyKey__Group_1__0__Impl rule__PropertyKey__Group_1__1
             {
             pushFollow(FOLLOW_8);
             rule__PropertyKey__Group_1__0__Impl();
@@ -23580,17 +23677,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PropertyKey__Group_1__0__Impl"
-    // InternalGrana.g:8762:1: rule__PropertyKey__Group_1__0__Impl : ( '.' ) ;
+    // InternalGrana.g:8793:1: rule__PropertyKey__Group_1__0__Impl : ( '.' ) ;
     public final void rule__PropertyKey__Group_1__0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8766:1: ( ( '.' ) )
-            // InternalGrana.g:8767:1: ( '.' )
+            // InternalGrana.g:8797:1: ( ( '.' ) )
+            // InternalGrana.g:8798:1: ( '.' )
             {
-            // InternalGrana.g:8767:1: ( '.' )
-            // InternalGrana.g:8768:1: '.'
+            // InternalGrana.g:8798:1: ( '.' )
+            // InternalGrana.g:8799:1: '.'
             {
              before(grammarAccess.getPropertyKeyAccess().getFullStopKeyword_1_0()); 
             match(input,58,FOLLOW_2); 
@@ -23617,14 +23714,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PropertyKey__Group_1__1"
-    // InternalGrana.g:8781:1: rule__PropertyKey__Group_1__1 : rule__PropertyKey__Group_1__1__Impl ;
+    // InternalGrana.g:8812:1: rule__PropertyKey__Group_1__1 : rule__PropertyKey__Group_1__1__Impl ;
     public final void rule__PropertyKey__Group_1__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8785:1: ( rule__PropertyKey__Group_1__1__Impl )
-            // InternalGrana.g:8786:2: rule__PropertyKey__Group_1__1__Impl
+            // InternalGrana.g:8816:1: ( rule__PropertyKey__Group_1__1__Impl )
+            // InternalGrana.g:8817:2: rule__PropertyKey__Group_1__1__Impl
             {
             pushFollow(FOLLOW_2);
             rule__PropertyKey__Group_1__1__Impl();
@@ -23650,17 +23747,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__PropertyKey__Group_1__1__Impl"
-    // InternalGrana.g:8792:1: rule__PropertyKey__Group_1__1__Impl : ( RULE_ID ) ;
+    // InternalGrana.g:8823:1: rule__PropertyKey__Group_1__1__Impl : ( RULE_ID ) ;
     public final void rule__PropertyKey__Group_1__1__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8796:1: ( ( RULE_ID ) )
-            // InternalGrana.g:8797:1: ( RULE_ID )
+            // InternalGrana.g:8827:1: ( ( RULE_ID ) )
+            // InternalGrana.g:8828:1: ( RULE_ID )
             {
-            // InternalGrana.g:8797:1: ( RULE_ID )
-            // InternalGrana.g:8798:1: RULE_ID
+            // InternalGrana.g:8828:1: ( RULE_ID )
+            // InternalGrana.g:8829:1: RULE_ID
             {
              before(grammarAccess.getPropertyKeyAccess().getIDTerminalRuleCall_1_1()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -23687,29 +23784,29 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__UnorderedGroup_2"
-    // InternalGrana.g:8814:1: rule__ShapeLayout__UnorderedGroup_2 : ( rule__ShapeLayout__UnorderedGroup_2__0 )? ;
+    // InternalGrana.g:8845:1: rule__ShapeLayout__UnorderedGroup_2 : ( rule__ShapeLayout__UnorderedGroup_2__0 )? ;
     public final void rule__ShapeLayout__UnorderedGroup_2() throws RecognitionException {
 
             	int stackSize = keepStackSize();
         		getUnorderedGroupHelper().enter(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2());
             
         try {
-            // InternalGrana.g:8819:1: ( ( rule__ShapeLayout__UnorderedGroup_2__0 )? )
-            // InternalGrana.g:8820:2: ( rule__ShapeLayout__UnorderedGroup_2__0 )?
+            // InternalGrana.g:8850:1: ( ( rule__ShapeLayout__UnorderedGroup_2__0 )? )
+            // InternalGrana.g:8851:2: ( rule__ShapeLayout__UnorderedGroup_2__0 )?
             {
-            // InternalGrana.g:8820:2: ( rule__ShapeLayout__UnorderedGroup_2__0 )?
-            int alt73=2;
-            int LA73_0 = input.LA(1);
+            // InternalGrana.g:8851:2: ( rule__ShapeLayout__UnorderedGroup_2__0 )?
+            int alt74=2;
+            int LA74_0 = input.LA(1);
 
-            if ( LA73_0 == 47 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
-                alt73=1;
+            if ( LA74_0 == 47 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
+                alt74=1;
             }
-            else if ( LA73_0 == 48 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
-                alt73=1;
+            else if ( LA74_0 == 48 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
+                alt74=1;
             }
-            switch (alt73) {
+            switch (alt74) {
                 case 1 :
-                    // InternalGrana.g:8820:2: rule__ShapeLayout__UnorderedGroup_2__0
+                    // InternalGrana.g:8851:2: rule__ShapeLayout__UnorderedGroup_2__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ShapeLayout__UnorderedGroup_2__0();
@@ -23742,44 +23839,44 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__UnorderedGroup_2__Impl"
-    // InternalGrana.g:8830:1: rule__ShapeLayout__UnorderedGroup_2__Impl : ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) ) ;
+    // InternalGrana.g:8861:1: rule__ShapeLayout__UnorderedGroup_2__Impl : ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) ) ;
     public final void rule__ShapeLayout__UnorderedGroup_2__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         		boolean selected = false;
             
         try {
-            // InternalGrana.g:8835:1: ( ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) ) )
-            // InternalGrana.g:8836:3: ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) )
+            // InternalGrana.g:8866:1: ( ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) ) )
+            // InternalGrana.g:8867:3: ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) )
             {
-            // InternalGrana.g:8836:3: ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) )
-            int alt74=2;
-            int LA74_0 = input.LA(1);
+            // InternalGrana.g:8867:3: ( ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) ) )
+            int alt75=2;
+            int LA75_0 = input.LA(1);
 
-            if ( LA74_0 == 47 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
-                alt74=1;
+            if ( LA75_0 == 47 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
+                alt75=1;
             }
-            else if ( LA74_0 == 48 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
-                alt74=2;
+            else if ( LA75_0 == 48 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
+                alt75=2;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 74, 0, input);
+                    new NoViableAltException("", 75, 0, input);
 
                 throw nvae;
             }
-            switch (alt74) {
+            switch (alt75) {
                 case 1 :
-                    // InternalGrana.g:8838:4: ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) )
+                    // InternalGrana.g:8869:4: ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) )
                     {
-                    // InternalGrana.g:8838:4: ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) )
-                    // InternalGrana.g:8839:5: {...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) )
+                    // InternalGrana.g:8869:4: ({...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) ) )
+                    // InternalGrana.g:8870:5: {...}? => ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
                         throw new FailedPredicateException(input, "rule__ShapeLayout__UnorderedGroup_2__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0)");
                     }
-                    // InternalGrana.g:8839:108: ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) )
-                    // InternalGrana.g:8840:6: ( ( rule__ShapeLayout__Group_2_0__0 ) )
+                    // InternalGrana.g:8870:108: ( ( ( rule__ShapeLayout__Group_2_0__0 ) ) )
+                    // InternalGrana.g:8871:6: ( ( rule__ShapeLayout__Group_2_0__0 ) )
                     {
                      
                     	 				  getUnorderedGroupHelper().select(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0);
@@ -23787,12 +23884,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
                     	 				  selected = true;
                     	 				
-                    // InternalGrana.g:8846:6: ( ( rule__ShapeLayout__Group_2_0__0 ) )
-                    // InternalGrana.g:8848:7: ( rule__ShapeLayout__Group_2_0__0 )
+                    // InternalGrana.g:8877:6: ( ( rule__ShapeLayout__Group_2_0__0 ) )
+                    // InternalGrana.g:8879:7: ( rule__ShapeLayout__Group_2_0__0 )
                     {
                      before(grammarAccess.getShapeLayoutAccess().getGroup_2_0()); 
-                    // InternalGrana.g:8849:7: ( rule__ShapeLayout__Group_2_0__0 )
-                    // InternalGrana.g:8849:8: rule__ShapeLayout__Group_2_0__0
+                    // InternalGrana.g:8880:7: ( rule__ShapeLayout__Group_2_0__0 )
+                    // InternalGrana.g:8880:8: rule__ShapeLayout__Group_2_0__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ShapeLayout__Group_2_0__0();
@@ -23816,16 +23913,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:8855:4: ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) )
+                    // InternalGrana.g:8886:4: ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) )
                     {
-                    // InternalGrana.g:8855:4: ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) )
-                    // InternalGrana.g:8856:5: {...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) )
+                    // InternalGrana.g:8886:4: ({...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) ) )
+                    // InternalGrana.g:8887:5: {...}? => ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
                         throw new FailedPredicateException(input, "rule__ShapeLayout__UnorderedGroup_2__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1)");
                     }
-                    // InternalGrana.g:8856:108: ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) )
-                    // InternalGrana.g:8857:6: ( ( rule__ShapeLayout__Group_2_1__0 ) )
+                    // InternalGrana.g:8887:108: ( ( ( rule__ShapeLayout__Group_2_1__0 ) ) )
+                    // InternalGrana.g:8888:6: ( ( rule__ShapeLayout__Group_2_1__0 ) )
                     {
                      
                     	 				  getUnorderedGroupHelper().select(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1);
@@ -23833,12 +23930,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
                     	 				  selected = true;
                     	 				
-                    // InternalGrana.g:8863:6: ( ( rule__ShapeLayout__Group_2_1__0 ) )
-                    // InternalGrana.g:8865:7: ( rule__ShapeLayout__Group_2_1__0 )
+                    // InternalGrana.g:8894:6: ( ( rule__ShapeLayout__Group_2_1__0 ) )
+                    // InternalGrana.g:8896:7: ( rule__ShapeLayout__Group_2_1__0 )
                     {
                      before(grammarAccess.getShapeLayoutAccess().getGroup_2_1()); 
-                    // InternalGrana.g:8866:7: ( rule__ShapeLayout__Group_2_1__0 )
-                    // InternalGrana.g:8866:8: rule__ShapeLayout__Group_2_1__0
+                    // InternalGrana.g:8897:7: ( rule__ShapeLayout__Group_2_1__0 )
+                    // InternalGrana.g:8897:8: rule__ShapeLayout__Group_2_1__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ShapeLayout__Group_2_1__0();
@@ -23885,33 +23982,33 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__UnorderedGroup_2__0"
-    // InternalGrana.g:8881:1: rule__ShapeLayout__UnorderedGroup_2__0 : rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )? ;
+    // InternalGrana.g:8912:1: rule__ShapeLayout__UnorderedGroup_2__0 : rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )? ;
     public final void rule__ShapeLayout__UnorderedGroup_2__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8885:1: ( rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )? )
-            // InternalGrana.g:8886:2: rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )?
+            // InternalGrana.g:8916:1: ( rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )? )
+            // InternalGrana.g:8917:2: rule__ShapeLayout__UnorderedGroup_2__Impl ( rule__ShapeLayout__UnorderedGroup_2__1 )?
             {
-            pushFollow(FOLLOW_53);
+            pushFollow(FOLLOW_54);
             rule__ShapeLayout__UnorderedGroup_2__Impl();
 
             state._fsp--;
 
-            // InternalGrana.g:8887:2: ( rule__ShapeLayout__UnorderedGroup_2__1 )?
-            int alt75=2;
-            int LA75_0 = input.LA(1);
+            // InternalGrana.g:8918:2: ( rule__ShapeLayout__UnorderedGroup_2__1 )?
+            int alt76=2;
+            int LA76_0 = input.LA(1);
 
-            if ( LA75_0 == 47 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
-                alt75=1;
+            if ( LA76_0 == 47 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 0) ) {
+                alt76=1;
             }
-            else if ( LA75_0 == 48 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
-                alt75=1;
+            else if ( LA76_0 == 48 && getUnorderedGroupHelper().canSelect(grammarAccess.getShapeLayoutAccess().getUnorderedGroup_2(), 1) ) {
+                alt76=1;
             }
-            switch (alt75) {
+            switch (alt76) {
                 case 1 :
-                    // InternalGrana.g:8887:2: rule__ShapeLayout__UnorderedGroup_2__1
+                    // InternalGrana.g:8918:2: rule__ShapeLayout__UnorderedGroup_2__1
                     {
                     pushFollow(FOLLOW_2);
                     rule__ShapeLayout__UnorderedGroup_2__1();
@@ -23943,14 +24040,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__UnorderedGroup_2__1"
-    // InternalGrana.g:8894:1: rule__ShapeLayout__UnorderedGroup_2__1 : rule__ShapeLayout__UnorderedGroup_2__Impl ;
+    // InternalGrana.g:8925:1: rule__ShapeLayout__UnorderedGroup_2__1 : rule__ShapeLayout__UnorderedGroup_2__Impl ;
     public final void rule__ShapeLayout__UnorderedGroup_2__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:8898:1: ( rule__ShapeLayout__UnorderedGroup_2__Impl )
-            // InternalGrana.g:8899:2: rule__ShapeLayout__UnorderedGroup_2__Impl
+            // InternalGrana.g:8929:1: ( rule__ShapeLayout__UnorderedGroup_2__Impl )
+            // InternalGrana.g:8930:2: rule__ShapeLayout__UnorderedGroup_2__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ShapeLayout__UnorderedGroup_2__Impl();
@@ -23976,35 +24073,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0"
-    // InternalGrana.g:8910:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0 : ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )? ;
+    // InternalGrana.g:8941:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0 : ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )? ;
     public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0() throws RecognitionException {
 
             	int stackSize = keepStackSize();
         		getUnorderedGroupHelper().enter(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0());
             
         try {
-            // InternalGrana.g:8915:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )? )
-            // InternalGrana.g:8916:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )?
+            // InternalGrana.g:8946:1: ( ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )? )
+            // InternalGrana.g:8947:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )?
             {
-            // InternalGrana.g:8916:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )?
-            int alt76=2;
-            int LA76_0 = input.LA(1);
+            // InternalGrana.g:8947:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 )?
+            int alt77=2;
+            int LA77_0 = input.LA(1);
 
-            if ( LA76_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
-                alt76=1;
+            if ( LA77_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+                alt77=1;
             }
-            else if ( LA76_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
-                alt76=1;
+            else if ( LA77_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+                alt77=1;
             }
-            else if ( LA76_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
-                alt76=1;
+            else if ( LA77_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+                alt77=1;
             }
-            else if ( LA76_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
-                alt76=1;
+            else if ( LA77_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+                alt77=1;
             }
-            switch (alt76) {
+            switch (alt77) {
                 case 1 :
-                    // InternalGrana.g:8916:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0
+                    // InternalGrana.g:8947:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0();
@@ -24037,50 +24134,50 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl"
-    // InternalGrana.g:8926:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl : ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) ) ;
+    // InternalGrana.g:8957:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl : ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) ) ;
     public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         		boolean selected = false;
             
         try {
-            // InternalGrana.g:8931:1: ( ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) ) )
-            // InternalGrana.g:8932:3: ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) )
+            // InternalGrana.g:8962:1: ( ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) ) )
+            // InternalGrana.g:8963:3: ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) )
             {
-            // InternalGrana.g:8932:3: ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) )
-            int alt77=4;
-            int LA77_0 = input.LA(1);
+            // InternalGrana.g:8963:3: ( ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) ) )
+            int alt78=4;
+            int LA78_0 = input.LA(1);
 
-            if ( LA77_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
-                alt77=1;
+            if ( LA78_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+                alt78=1;
             }
-            else if ( LA77_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
-                alt77=2;
+            else if ( LA78_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+                alt78=2;
             }
-            else if ( LA77_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
-                alt77=3;
+            else if ( LA78_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+                alt78=3;
             }
-            else if ( LA77_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
-                alt77=4;
+            else if ( LA78_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+                alt78=4;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 77, 0, input);
+                    new NoViableAltException("", 78, 0, input);
 
                 throw nvae;
             }
-            switch (alt77) {
+            switch (alt78) {
                 case 1 :
-                    // InternalGrana.g:8934:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) )
+                    // InternalGrana.g:8965:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) )
                     {
-                    // InternalGrana.g:8934:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) )
-                    // InternalGrana.g:8935:5: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) )
+                    // InternalGrana.g:8965:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) ) )
+                    // InternalGrana.g:8966:5: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
                         throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0)");
                     }
-                    // InternalGrana.g:8935:119: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) )
-                    // InternalGrana.g:8936:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) )
+                    // InternalGrana.g:8966:119: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) ) )
+                    // InternalGrana.g:8967:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) )
                     {
                      
                     	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0);
@@ -24088,12 +24185,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
                     	 				  selected = true;
                     	 				
-                    // InternalGrana.g:8942:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) )
-                    // InternalGrana.g:8944:7: ( rule__ElkSingleEdgeSection__Group_1_0_0__0 )
+                    // InternalGrana.g:8973:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_0__0 ) )
+                    // InternalGrana.g:8975:7: ( rule__ElkSingleEdgeSection__Group_1_0_0__0 )
                     {
                      before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_0()); 
-                    // InternalGrana.g:8945:7: ( rule__ElkSingleEdgeSection__Group_1_0_0__0 )
-                    // InternalGrana.g:8945:8: rule__ElkSingleEdgeSection__Group_1_0_0__0
+                    // InternalGrana.g:8976:7: ( rule__ElkSingleEdgeSection__Group_1_0_0__0 )
+                    // InternalGrana.g:8976:8: rule__ElkSingleEdgeSection__Group_1_0_0__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkSingleEdgeSection__Group_1_0_0__0();
@@ -24117,16 +24214,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:8951:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) )
+                    // InternalGrana.g:8982:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) )
                     {
-                    // InternalGrana.g:8951:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) )
-                    // InternalGrana.g:8952:5: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) )
+                    // InternalGrana.g:8982:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) ) )
+                    // InternalGrana.g:8983:5: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
                         throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1)");
                     }
-                    // InternalGrana.g:8952:119: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) )
-                    // InternalGrana.g:8953:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) )
+                    // InternalGrana.g:8983:119: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) ) )
+                    // InternalGrana.g:8984:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) )
                     {
                      
                     	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1);
@@ -24134,12 +24231,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
                     	 				  selected = true;
                     	 				
-                    // InternalGrana.g:8959:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) )
-                    // InternalGrana.g:8961:7: ( rule__ElkSingleEdgeSection__Group_1_0_1__0 )
+                    // InternalGrana.g:8990:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_1__0 ) )
+                    // InternalGrana.g:8992:7: ( rule__ElkSingleEdgeSection__Group_1_0_1__0 )
                     {
                      before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_1()); 
-                    // InternalGrana.g:8962:7: ( rule__ElkSingleEdgeSection__Group_1_0_1__0 )
-                    // InternalGrana.g:8962:8: rule__ElkSingleEdgeSection__Group_1_0_1__0
+                    // InternalGrana.g:8993:7: ( rule__ElkSingleEdgeSection__Group_1_0_1__0 )
+                    // InternalGrana.g:8993:8: rule__ElkSingleEdgeSection__Group_1_0_1__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkSingleEdgeSection__Group_1_0_1__0();
@@ -24163,16 +24260,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 3 :
-                    // InternalGrana.g:8968:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) )
+                    // InternalGrana.g:8999:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) )
                     {
-                    // InternalGrana.g:8968:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) )
-                    // InternalGrana.g:8969:5: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) )
+                    // InternalGrana.g:8999:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) ) )
+                    // InternalGrana.g:9000:5: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
                         throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2)");
                     }
-                    // InternalGrana.g:8969:119: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) )
-                    // InternalGrana.g:8970:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) )
+                    // InternalGrana.g:9000:119: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) ) )
+                    // InternalGrana.g:9001:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) )
                     {
                      
                     	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2);
@@ -24180,12 +24277,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
                     	 				  selected = true;
                     	 				
-                    // InternalGrana.g:8976:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) )
-                    // InternalGrana.g:8978:7: ( rule__ElkSingleEdgeSection__Group_1_0_2__0 )
+                    // InternalGrana.g:9007:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_2__0 ) )
+                    // InternalGrana.g:9009:7: ( rule__ElkSingleEdgeSection__Group_1_0_2__0 )
                     {
                      before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_2()); 
-                    // InternalGrana.g:8979:7: ( rule__ElkSingleEdgeSection__Group_1_0_2__0 )
-                    // InternalGrana.g:8979:8: rule__ElkSingleEdgeSection__Group_1_0_2__0
+                    // InternalGrana.g:9010:7: ( rule__ElkSingleEdgeSection__Group_1_0_2__0 )
+                    // InternalGrana.g:9010:8: rule__ElkSingleEdgeSection__Group_1_0_2__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkSingleEdgeSection__Group_1_0_2__0();
@@ -24209,16 +24306,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 4 :
-                    // InternalGrana.g:8985:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) )
+                    // InternalGrana.g:9016:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) )
                     {
-                    // InternalGrana.g:8985:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) )
-                    // InternalGrana.g:8986:5: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) )
+                    // InternalGrana.g:9016:4: ({...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) ) )
+                    // InternalGrana.g:9017:5: {...}? => ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
                         throw new FailedPredicateException(input, "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3)");
                     }
-                    // InternalGrana.g:8986:119: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) )
-                    // InternalGrana.g:8987:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) )
+                    // InternalGrana.g:9017:119: ( ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) ) )
+                    // InternalGrana.g:9018:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) )
                     {
                      
                     	 				  getUnorderedGroupHelper().select(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3);
@@ -24226,12 +24323,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
                     	 				  selected = true;
                     	 				
-                    // InternalGrana.g:8993:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) )
-                    // InternalGrana.g:8995:7: ( rule__ElkSingleEdgeSection__Group_1_0_3__0 )
+                    // InternalGrana.g:9024:6: ( ( rule__ElkSingleEdgeSection__Group_1_0_3__0 ) )
+                    // InternalGrana.g:9026:7: ( rule__ElkSingleEdgeSection__Group_1_0_3__0 )
                     {
                      before(grammarAccess.getElkSingleEdgeSectionAccess().getGroup_1_0_3()); 
-                    // InternalGrana.g:8996:7: ( rule__ElkSingleEdgeSection__Group_1_0_3__0 )
-                    // InternalGrana.g:8996:8: rule__ElkSingleEdgeSection__Group_1_0_3__0
+                    // InternalGrana.g:9027:7: ( rule__ElkSingleEdgeSection__Group_1_0_3__0 )
+                    // InternalGrana.g:9027:8: rule__ElkSingleEdgeSection__Group_1_0_3__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkSingleEdgeSection__Group_1_0_3__0();
@@ -24278,39 +24375,39 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0"
-    // InternalGrana.g:9011:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )? ;
+    // InternalGrana.g:9042:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )? ;
     public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9015:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )? )
-            // InternalGrana.g:9016:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )?
+            // InternalGrana.g:9046:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )? )
+            // InternalGrana.g:9047:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )?
             {
-            pushFollow(FOLLOW_54);
+            pushFollow(FOLLOW_55);
             rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl();
 
             state._fsp--;
 
-            // InternalGrana.g:9017:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )?
-            int alt78=2;
-            int LA78_0 = input.LA(1);
+            // InternalGrana.g:9048:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 )?
+            int alt79=2;
+            int LA79_0 = input.LA(1);
 
-            if ( LA78_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
-                alt78=1;
+            if ( LA79_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+                alt79=1;
             }
-            else if ( LA78_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
-                alt78=1;
+            else if ( LA79_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+                alt79=1;
             }
-            else if ( LA78_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
-                alt78=1;
+            else if ( LA79_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+                alt79=1;
             }
-            else if ( LA78_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
-                alt78=1;
+            else if ( LA79_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+                alt79=1;
             }
-            switch (alt78) {
+            switch (alt79) {
                 case 1 :
-                    // InternalGrana.g:9017:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1
+                    // InternalGrana.g:9048:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1();
@@ -24342,39 +24439,39 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1"
-    // InternalGrana.g:9024:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )? ;
+    // InternalGrana.g:9055:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )? ;
     public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9028:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )? )
-            // InternalGrana.g:9029:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )?
+            // InternalGrana.g:9059:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )? )
+            // InternalGrana.g:9060:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )?
             {
-            pushFollow(FOLLOW_54);
+            pushFollow(FOLLOW_55);
             rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl();
 
             state._fsp--;
 
-            // InternalGrana.g:9030:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )?
-            int alt79=2;
-            int LA79_0 = input.LA(1);
+            // InternalGrana.g:9061:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 )?
+            int alt80=2;
+            int LA80_0 = input.LA(1);
 
-            if ( LA79_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
-                alt79=1;
+            if ( LA80_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+                alt80=1;
             }
-            else if ( LA79_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
-                alt79=1;
+            else if ( LA80_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+                alt80=1;
             }
-            else if ( LA79_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
-                alt79=1;
+            else if ( LA80_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+                alt80=1;
             }
-            else if ( LA79_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
-                alt79=1;
+            else if ( LA80_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+                alt80=1;
             }
-            switch (alt79) {
+            switch (alt80) {
                 case 1 :
-                    // InternalGrana.g:9030:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2
+                    // InternalGrana.g:9061:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2();
@@ -24406,39 +24503,39 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2"
-    // InternalGrana.g:9037:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )? ;
+    // InternalGrana.g:9068:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )? ;
     public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9041:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )? )
-            // InternalGrana.g:9042:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )?
+            // InternalGrana.g:9072:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )? )
+            // InternalGrana.g:9073:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )?
             {
-            pushFollow(FOLLOW_54);
+            pushFollow(FOLLOW_55);
             rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl();
 
             state._fsp--;
 
-            // InternalGrana.g:9043:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )?
-            int alt80=2;
-            int LA80_0 = input.LA(1);
+            // InternalGrana.g:9074:2: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 )?
+            int alt81=2;
+            int LA81_0 = input.LA(1);
 
-            if ( LA80_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
-                alt80=1;
+            if ( LA81_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 0) ) {
+                alt81=1;
             }
-            else if ( LA80_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
-                alt80=1;
+            else if ( LA81_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 1) ) {
+                alt81=1;
             }
-            else if ( LA80_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
-                alt80=1;
+            else if ( LA81_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 2) ) {
+                alt81=1;
             }
-            else if ( LA80_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
-                alt80=1;
+            else if ( LA81_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkSingleEdgeSectionAccess().getUnorderedGroup_1_0(), 3) ) {
+                alt81=1;
             }
-            switch (alt80) {
+            switch (alt81) {
                 case 1 :
-                    // InternalGrana.g:9043:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3
+                    // InternalGrana.g:9074:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3();
@@ -24470,14 +24567,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3"
-    // InternalGrana.g:9050:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ;
+    // InternalGrana.g:9081:1: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3 : rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl ;
     public final void rule__ElkSingleEdgeSection__UnorderedGroup_1_0__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9054:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl )
-            // InternalGrana.g:9055:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl
+            // InternalGrana.g:9085:1: ( rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl )
+            // InternalGrana.g:9086:2: rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkSingleEdgeSection__UnorderedGroup_1_0__Impl();
@@ -24503,35 +24600,35 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0"
-    // InternalGrana.g:9070:1: rule__ElkEdgeSection__UnorderedGroup_4_0 : ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )? ;
+    // InternalGrana.g:9101:1: rule__ElkEdgeSection__UnorderedGroup_4_0 : ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )? ;
     public final void rule__ElkEdgeSection__UnorderedGroup_4_0() throws RecognitionException {
 
             	int stackSize = keepStackSize();
         		getUnorderedGroupHelper().enter(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0());
             
         try {
-            // InternalGrana.g:9075:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )? )
-            // InternalGrana.g:9076:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )?
+            // InternalGrana.g:9106:1: ( ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )? )
+            // InternalGrana.g:9107:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )?
             {
-            // InternalGrana.g:9076:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )?
-            int alt81=2;
-            int LA81_0 = input.LA(1);
+            // InternalGrana.g:9107:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__0 )?
+            int alt82=2;
+            int LA82_0 = input.LA(1);
 
-            if ( LA81_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
-                alt81=1;
+            if ( LA82_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+                alt82=1;
             }
-            else if ( LA81_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
-                alt81=1;
+            else if ( LA82_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+                alt82=1;
             }
-            else if ( LA81_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
-                alt81=1;
+            else if ( LA82_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+                alt82=1;
             }
-            else if ( LA81_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
-                alt81=1;
+            else if ( LA82_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+                alt82=1;
             }
-            switch (alt81) {
+            switch (alt82) {
                 case 1 :
-                    // InternalGrana.g:9076:2: rule__ElkEdgeSection__UnorderedGroup_4_0__0
+                    // InternalGrana.g:9107:2: rule__ElkEdgeSection__UnorderedGroup_4_0__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdgeSection__UnorderedGroup_4_0__0();
@@ -24564,50 +24661,50 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0__Impl"
-    // InternalGrana.g:9086:1: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl : ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) ) ;
+    // InternalGrana.g:9117:1: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl : ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) ) ;
     public final void rule__ElkEdgeSection__UnorderedGroup_4_0__Impl() throws RecognitionException {
 
         		int stackSize = keepStackSize();
         		boolean selected = false;
             
         try {
-            // InternalGrana.g:9091:1: ( ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) ) )
-            // InternalGrana.g:9092:3: ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) )
+            // InternalGrana.g:9122:1: ( ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) ) )
+            // InternalGrana.g:9123:3: ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) )
             {
-            // InternalGrana.g:9092:3: ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) )
-            int alt82=4;
-            int LA82_0 = input.LA(1);
+            // InternalGrana.g:9123:3: ( ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) ) | ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) ) )
+            int alt83=4;
+            int LA83_0 = input.LA(1);
 
-            if ( LA82_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
-                alt82=1;
+            if ( LA83_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+                alt83=1;
             }
-            else if ( LA82_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
-                alt82=2;
+            else if ( LA83_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+                alt83=2;
             }
-            else if ( LA82_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
-                alt82=3;
+            else if ( LA83_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+                alt83=3;
             }
-            else if ( LA82_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
-                alt82=4;
+            else if ( LA83_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+                alt83=4;
             }
             else {
                 NoViableAltException nvae =
-                    new NoViableAltException("", 82, 0, input);
+                    new NoViableAltException("", 83, 0, input);
 
                 throw nvae;
             }
-            switch (alt82) {
+            switch (alt83) {
                 case 1 :
-                    // InternalGrana.g:9094:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) )
+                    // InternalGrana.g:9125:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) )
                     {
-                    // InternalGrana.g:9094:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) )
-                    // InternalGrana.g:9095:5: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) )
+                    // InternalGrana.g:9125:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) ) )
+                    // InternalGrana.g:9126:5: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
                         throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0)");
                     }
-                    // InternalGrana.g:9095:113: ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) )
-                    // InternalGrana.g:9096:6: ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) )
+                    // InternalGrana.g:9126:113: ( ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) ) )
+                    // InternalGrana.g:9127:6: ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) )
                     {
                      
                     	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0);
@@ -24615,12 +24712,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
                     	 				  selected = true;
                     	 				
-                    // InternalGrana.g:9102:6: ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) )
-                    // InternalGrana.g:9104:7: ( rule__ElkEdgeSection__Group_4_0_0__0 )
+                    // InternalGrana.g:9133:6: ( ( rule__ElkEdgeSection__Group_4_0_0__0 ) )
+                    // InternalGrana.g:9135:7: ( rule__ElkEdgeSection__Group_4_0_0__0 )
                     {
                      before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_0()); 
-                    // InternalGrana.g:9105:7: ( rule__ElkEdgeSection__Group_4_0_0__0 )
-                    // InternalGrana.g:9105:8: rule__ElkEdgeSection__Group_4_0_0__0
+                    // InternalGrana.g:9136:7: ( rule__ElkEdgeSection__Group_4_0_0__0 )
+                    // InternalGrana.g:9136:8: rule__ElkEdgeSection__Group_4_0_0__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdgeSection__Group_4_0_0__0();
@@ -24644,16 +24741,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:9111:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) )
+                    // InternalGrana.g:9142:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) )
                     {
-                    // InternalGrana.g:9111:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) )
-                    // InternalGrana.g:9112:5: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) )
+                    // InternalGrana.g:9142:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) ) )
+                    // InternalGrana.g:9143:5: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
                         throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1)");
                     }
-                    // InternalGrana.g:9112:113: ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) )
-                    // InternalGrana.g:9113:6: ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) )
+                    // InternalGrana.g:9143:113: ( ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) ) )
+                    // InternalGrana.g:9144:6: ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) )
                     {
                      
                     	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1);
@@ -24661,12 +24758,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
                     	 				  selected = true;
                     	 				
-                    // InternalGrana.g:9119:6: ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) )
-                    // InternalGrana.g:9121:7: ( rule__ElkEdgeSection__Group_4_0_1__0 )
+                    // InternalGrana.g:9150:6: ( ( rule__ElkEdgeSection__Group_4_0_1__0 ) )
+                    // InternalGrana.g:9152:7: ( rule__ElkEdgeSection__Group_4_0_1__0 )
                     {
                      before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_1()); 
-                    // InternalGrana.g:9122:7: ( rule__ElkEdgeSection__Group_4_0_1__0 )
-                    // InternalGrana.g:9122:8: rule__ElkEdgeSection__Group_4_0_1__0
+                    // InternalGrana.g:9153:7: ( rule__ElkEdgeSection__Group_4_0_1__0 )
+                    // InternalGrana.g:9153:8: rule__ElkEdgeSection__Group_4_0_1__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdgeSection__Group_4_0_1__0();
@@ -24690,16 +24787,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 3 :
-                    // InternalGrana.g:9128:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) )
+                    // InternalGrana.g:9159:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) )
                     {
-                    // InternalGrana.g:9128:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) )
-                    // InternalGrana.g:9129:5: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) )
+                    // InternalGrana.g:9159:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) ) )
+                    // InternalGrana.g:9160:5: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
                         throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2)");
                     }
-                    // InternalGrana.g:9129:113: ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) )
-                    // InternalGrana.g:9130:6: ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) )
+                    // InternalGrana.g:9160:113: ( ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) ) )
+                    // InternalGrana.g:9161:6: ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) )
                     {
                      
                     	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2);
@@ -24707,12 +24804,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
                     	 				  selected = true;
                     	 				
-                    // InternalGrana.g:9136:6: ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) )
-                    // InternalGrana.g:9138:7: ( rule__ElkEdgeSection__Group_4_0_2__0 )
+                    // InternalGrana.g:9167:6: ( ( rule__ElkEdgeSection__Group_4_0_2__0 ) )
+                    // InternalGrana.g:9169:7: ( rule__ElkEdgeSection__Group_4_0_2__0 )
                     {
                      before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_2()); 
-                    // InternalGrana.g:9139:7: ( rule__ElkEdgeSection__Group_4_0_2__0 )
-                    // InternalGrana.g:9139:8: rule__ElkEdgeSection__Group_4_0_2__0
+                    // InternalGrana.g:9170:7: ( rule__ElkEdgeSection__Group_4_0_2__0 )
+                    // InternalGrana.g:9170:8: rule__ElkEdgeSection__Group_4_0_2__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdgeSection__Group_4_0_2__0();
@@ -24736,16 +24833,16 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 4 :
-                    // InternalGrana.g:9145:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) )
+                    // InternalGrana.g:9176:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) )
                     {
-                    // InternalGrana.g:9145:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) )
-                    // InternalGrana.g:9146:5: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) )
+                    // InternalGrana.g:9176:4: ({...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) ) )
+                    // InternalGrana.g:9177:5: {...}? => ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) )
                     {
                     if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
                         throw new FailedPredicateException(input, "rule__ElkEdgeSection__UnorderedGroup_4_0__Impl", "getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3)");
                     }
-                    // InternalGrana.g:9146:113: ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) )
-                    // InternalGrana.g:9147:6: ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) )
+                    // InternalGrana.g:9177:113: ( ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) ) )
+                    // InternalGrana.g:9178:6: ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) )
                     {
                      
                     	 				  getUnorderedGroupHelper().select(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3);
@@ -24753,12 +24850,12 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
                     	 				  selected = true;
                     	 				
-                    // InternalGrana.g:9153:6: ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) )
-                    // InternalGrana.g:9155:7: ( rule__ElkEdgeSection__Group_4_0_3__0 )
+                    // InternalGrana.g:9184:6: ( ( rule__ElkEdgeSection__Group_4_0_3__0 ) )
+                    // InternalGrana.g:9186:7: ( rule__ElkEdgeSection__Group_4_0_3__0 )
                     {
                      before(grammarAccess.getElkEdgeSectionAccess().getGroup_4_0_3()); 
-                    // InternalGrana.g:9156:7: ( rule__ElkEdgeSection__Group_4_0_3__0 )
-                    // InternalGrana.g:9156:8: rule__ElkEdgeSection__Group_4_0_3__0
+                    // InternalGrana.g:9187:7: ( rule__ElkEdgeSection__Group_4_0_3__0 )
+                    // InternalGrana.g:9187:8: rule__ElkEdgeSection__Group_4_0_3__0
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdgeSection__Group_4_0_3__0();
@@ -24805,39 +24902,39 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0__0"
-    // InternalGrana.g:9171:1: rule__ElkEdgeSection__UnorderedGroup_4_0__0 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )? ;
+    // InternalGrana.g:9202:1: rule__ElkEdgeSection__UnorderedGroup_4_0__0 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )? ;
     public final void rule__ElkEdgeSection__UnorderedGroup_4_0__0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9175:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )? )
-            // InternalGrana.g:9176:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )?
+            // InternalGrana.g:9206:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )? )
+            // InternalGrana.g:9207:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )?
             {
-            pushFollow(FOLLOW_54);
+            pushFollow(FOLLOW_55);
             rule__ElkEdgeSection__UnorderedGroup_4_0__Impl();
 
             state._fsp--;
 
-            // InternalGrana.g:9177:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )?
-            int alt83=2;
-            int LA83_0 = input.LA(1);
+            // InternalGrana.g:9208:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__1 )?
+            int alt84=2;
+            int LA84_0 = input.LA(1);
 
-            if ( LA83_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
-                alt83=1;
+            if ( LA84_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+                alt84=1;
             }
-            else if ( LA83_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
-                alt83=1;
+            else if ( LA84_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+                alt84=1;
             }
-            else if ( LA83_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
-                alt83=1;
+            else if ( LA84_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+                alt84=1;
             }
-            else if ( LA83_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
-                alt83=1;
+            else if ( LA84_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+                alt84=1;
             }
-            switch (alt83) {
+            switch (alt84) {
                 case 1 :
-                    // InternalGrana.g:9177:2: rule__ElkEdgeSection__UnorderedGroup_4_0__1
+                    // InternalGrana.g:9208:2: rule__ElkEdgeSection__UnorderedGroup_4_0__1
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdgeSection__UnorderedGroup_4_0__1();
@@ -24869,39 +24966,39 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0__1"
-    // InternalGrana.g:9184:1: rule__ElkEdgeSection__UnorderedGroup_4_0__1 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )? ;
+    // InternalGrana.g:9215:1: rule__ElkEdgeSection__UnorderedGroup_4_0__1 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )? ;
     public final void rule__ElkEdgeSection__UnorderedGroup_4_0__1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9188:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )? )
-            // InternalGrana.g:9189:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )?
+            // InternalGrana.g:9219:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )? )
+            // InternalGrana.g:9220:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )?
             {
-            pushFollow(FOLLOW_54);
+            pushFollow(FOLLOW_55);
             rule__ElkEdgeSection__UnorderedGroup_4_0__Impl();
 
             state._fsp--;
 
-            // InternalGrana.g:9190:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )?
-            int alt84=2;
-            int LA84_0 = input.LA(1);
+            // InternalGrana.g:9221:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__2 )?
+            int alt85=2;
+            int LA85_0 = input.LA(1);
 
-            if ( LA84_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
-                alt84=1;
+            if ( LA85_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+                alt85=1;
             }
-            else if ( LA84_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
-                alt84=1;
+            else if ( LA85_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+                alt85=1;
             }
-            else if ( LA84_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
-                alt84=1;
+            else if ( LA85_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+                alt85=1;
             }
-            else if ( LA84_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
-                alt84=1;
+            else if ( LA85_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+                alt85=1;
             }
-            switch (alt84) {
+            switch (alt85) {
                 case 1 :
-                    // InternalGrana.g:9190:2: rule__ElkEdgeSection__UnorderedGroup_4_0__2
+                    // InternalGrana.g:9221:2: rule__ElkEdgeSection__UnorderedGroup_4_0__2
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdgeSection__UnorderedGroup_4_0__2();
@@ -24933,39 +25030,39 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0__2"
-    // InternalGrana.g:9197:1: rule__ElkEdgeSection__UnorderedGroup_4_0__2 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )? ;
+    // InternalGrana.g:9228:1: rule__ElkEdgeSection__UnorderedGroup_4_0__2 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )? ;
     public final void rule__ElkEdgeSection__UnorderedGroup_4_0__2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9201:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )? )
-            // InternalGrana.g:9202:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )?
+            // InternalGrana.g:9232:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )? )
+            // InternalGrana.g:9233:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )?
             {
-            pushFollow(FOLLOW_54);
+            pushFollow(FOLLOW_55);
             rule__ElkEdgeSection__UnorderedGroup_4_0__Impl();
 
             state._fsp--;
 
-            // InternalGrana.g:9203:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )?
-            int alt85=2;
-            int LA85_0 = input.LA(1);
+            // InternalGrana.g:9234:2: ( rule__ElkEdgeSection__UnorderedGroup_4_0__3 )?
+            int alt86=2;
+            int LA86_0 = input.LA(1);
 
-            if ( LA85_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
-                alt85=1;
+            if ( LA86_0 == 51 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 0) ) {
+                alt86=1;
             }
-            else if ( LA85_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
-                alt85=1;
+            else if ( LA86_0 == 52 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 1) ) {
+                alt86=1;
             }
-            else if ( LA85_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
-                alt85=1;
+            else if ( LA86_0 == 53 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 2) ) {
+                alt86=1;
             }
-            else if ( LA85_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
-                alt85=1;
+            else if ( LA86_0 == 54 && getUnorderedGroupHelper().canSelect(grammarAccess.getElkEdgeSectionAccess().getUnorderedGroup_4_0(), 3) ) {
+                alt86=1;
             }
-            switch (alt85) {
+            switch (alt86) {
                 case 1 :
-                    // InternalGrana.g:9203:2: rule__ElkEdgeSection__UnorderedGroup_4_0__3
+                    // InternalGrana.g:9234:2: rule__ElkEdgeSection__UnorderedGroup_4_0__3
                     {
                     pushFollow(FOLLOW_2);
                     rule__ElkEdgeSection__UnorderedGroup_4_0__3();
@@ -24997,14 +25094,14 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__UnorderedGroup_4_0__3"
-    // InternalGrana.g:9210:1: rule__ElkEdgeSection__UnorderedGroup_4_0__3 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ;
+    // InternalGrana.g:9241:1: rule__ElkEdgeSection__UnorderedGroup_4_0__3 : rule__ElkEdgeSection__UnorderedGroup_4_0__Impl ;
     public final void rule__ElkEdgeSection__UnorderedGroup_4_0__3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9214:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl )
-            // InternalGrana.g:9215:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl
+            // InternalGrana.g:9245:1: ( rule__ElkEdgeSection__UnorderedGroup_4_0__Impl )
+            // InternalGrana.g:9246:2: rule__ElkEdgeSection__UnorderedGroup_4_0__Impl
             {
             pushFollow(FOLLOW_2);
             rule__ElkEdgeSection__UnorderedGroup_4_0__Impl();
@@ -25030,17 +25127,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Grana__GlobalResourcesAssignment_0_1"
-    // InternalGrana.g:9230:1: rule__Grana__GlobalResourcesAssignment_0_1 : ( ruleGlobalResourceRef ) ;
+    // InternalGrana.g:9261:1: rule__Grana__GlobalResourcesAssignment_0_1 : ( ruleGlobalResourceRef ) ;
     public final void rule__Grana__GlobalResourcesAssignment_0_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9234:1: ( ( ruleGlobalResourceRef ) )
-            // InternalGrana.g:9235:1: ( ruleGlobalResourceRef )
+            // InternalGrana.g:9265:1: ( ( ruleGlobalResourceRef ) )
+            // InternalGrana.g:9266:1: ( ruleGlobalResourceRef )
             {
-            // InternalGrana.g:9235:1: ( ruleGlobalResourceRef )
-            // InternalGrana.g:9236:1: ruleGlobalResourceRef
+            // InternalGrana.g:9266:1: ( ruleGlobalResourceRef )
+            // InternalGrana.g:9267:1: ruleGlobalResourceRef
             {
              before(grammarAccess.getGranaAccess().getGlobalResourcesGlobalResourceRefParserRuleCall_0_1_0()); 
             pushFollow(FOLLOW_2);
@@ -25071,17 +25168,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Grana__GloobalOutputsAssignment_1_1"
-    // InternalGrana.g:9245:1: rule__Grana__GloobalOutputsAssignment_1_1 : ( ruleGlobalOutputRef ) ;
+    // InternalGrana.g:9276:1: rule__Grana__GloobalOutputsAssignment_1_1 : ( ruleGlobalOutputRef ) ;
     public final void rule__Grana__GloobalOutputsAssignment_1_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9249:1: ( ( ruleGlobalOutputRef ) )
-            // InternalGrana.g:9250:1: ( ruleGlobalOutputRef )
+            // InternalGrana.g:9280:1: ( ( ruleGlobalOutputRef ) )
+            // InternalGrana.g:9281:1: ( ruleGlobalOutputRef )
             {
-            // InternalGrana.g:9250:1: ( ruleGlobalOutputRef )
-            // InternalGrana.g:9251:1: ruleGlobalOutputRef
+            // InternalGrana.g:9281:1: ( ruleGlobalOutputRef )
+            // InternalGrana.g:9282:1: ruleGlobalOutputRef
             {
              before(grammarAccess.getGranaAccess().getGloobalOutputsGlobalOutputRefParserRuleCall_1_1_0()); 
             pushFollow(FOLLOW_2);
@@ -25112,21 +25209,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Grana__ParallelAssignment_2_1"
-    // InternalGrana.g:9260:1: rule__Grana__ParallelAssignment_2_1 : ( ( 'parallel' ) ) ;
+    // InternalGrana.g:9291:1: rule__Grana__ParallelAssignment_2_1 : ( ( 'parallel' ) ) ;
     public final void rule__Grana__ParallelAssignment_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9264:1: ( ( ( 'parallel' ) ) )
-            // InternalGrana.g:9265:1: ( ( 'parallel' ) )
+            // InternalGrana.g:9295:1: ( ( ( 'parallel' ) ) )
+            // InternalGrana.g:9296:1: ( ( 'parallel' ) )
             {
-            // InternalGrana.g:9265:1: ( ( 'parallel' ) )
-            // InternalGrana.g:9266:1: ( 'parallel' )
+            // InternalGrana.g:9296:1: ( ( 'parallel' ) )
+            // InternalGrana.g:9297:1: ( 'parallel' )
             {
              before(grammarAccess.getGranaAccess().getParallelParallelKeyword_2_1_0()); 
-            // InternalGrana.g:9267:1: ( 'parallel' )
-            // InternalGrana.g:9268:1: 'parallel'
+            // InternalGrana.g:9298:1: ( 'parallel' )
+            // InternalGrana.g:9299:1: 'parallel'
             {
              before(grammarAccess.getGranaAccess().getParallelParallelKeyword_2_1_0()); 
             match(input,59,FOLLOW_2); 
@@ -25157,21 +25254,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Grana__ExecuteAllAssignment_2_2_0"
-    // InternalGrana.g:9283:1: rule__Grana__ExecuteAllAssignment_2_2_0 : ( ( 'all' ) ) ;
+    // InternalGrana.g:9314:1: rule__Grana__ExecuteAllAssignment_2_2_0 : ( ( 'all' ) ) ;
     public final void rule__Grana__ExecuteAllAssignment_2_2_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9287:1: ( ( ( 'all' ) ) )
-            // InternalGrana.g:9288:1: ( ( 'all' ) )
+            // InternalGrana.g:9318:1: ( ( ( 'all' ) ) )
+            // InternalGrana.g:9319:1: ( ( 'all' ) )
             {
-            // InternalGrana.g:9288:1: ( ( 'all' ) )
-            // InternalGrana.g:9289:1: ( 'all' )
+            // InternalGrana.g:9319:1: ( ( 'all' ) )
+            // InternalGrana.g:9320:1: ( 'all' )
             {
              before(grammarAccess.getGranaAccess().getExecuteAllAllKeyword_2_2_0_0()); 
-            // InternalGrana.g:9290:1: ( 'all' )
-            // InternalGrana.g:9291:1: 'all'
+            // InternalGrana.g:9321:1: ( 'all' )
+            // InternalGrana.g:9322:1: 'all'
             {
              before(grammarAccess.getGranaAccess().getExecuteAllAllKeyword_2_2_0_0()); 
             match(input,60,FOLLOW_2); 
@@ -25202,21 +25299,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Grana__ExecuteAssignment_2_2_1"
-    // InternalGrana.g:9306:1: rule__Grana__ExecuteAssignment_2_2_1 : ( ( RULE_ID ) ) ;
+    // InternalGrana.g:9337:1: rule__Grana__ExecuteAssignment_2_2_1 : ( ( RULE_ID ) ) ;
     public final void rule__Grana__ExecuteAssignment_2_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9310:1: ( ( ( RULE_ID ) ) )
-            // InternalGrana.g:9311:1: ( ( RULE_ID ) )
+            // InternalGrana.g:9341:1: ( ( ( RULE_ID ) ) )
+            // InternalGrana.g:9342:1: ( ( RULE_ID ) )
             {
-            // InternalGrana.g:9311:1: ( ( RULE_ID ) )
-            // InternalGrana.g:9312:1: ( RULE_ID )
+            // InternalGrana.g:9342:1: ( ( RULE_ID ) )
+            // InternalGrana.g:9343:1: ( RULE_ID )
             {
              before(grammarAccess.getGranaAccess().getExecuteJobCrossReference_2_2_1_0()); 
-            // InternalGrana.g:9313:1: ( RULE_ID )
-            // InternalGrana.g:9314:1: RULE_ID
+            // InternalGrana.g:9344:1: ( RULE_ID )
+            // InternalGrana.g:9345:1: RULE_ID
             {
              before(grammarAccess.getGranaAccess().getExecuteJobIDTerminalRuleCall_2_2_1_0_1()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -25247,17 +25344,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Grana__JobsAssignment_3"
-    // InternalGrana.g:9325:1: rule__Grana__JobsAssignment_3 : ( ruleJob ) ;
+    // InternalGrana.g:9356:1: rule__Grana__JobsAssignment_3 : ( ruleJob ) ;
     public final void rule__Grana__JobsAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9329:1: ( ( ruleJob ) )
-            // InternalGrana.g:9330:1: ( ruleJob )
+            // InternalGrana.g:9360:1: ( ( ruleJob ) )
+            // InternalGrana.g:9361:1: ( ruleJob )
             {
-            // InternalGrana.g:9330:1: ( ruleJob )
-            // InternalGrana.g:9331:1: ruleJob
+            // InternalGrana.g:9361:1: ( ruleJob )
+            // InternalGrana.g:9362:1: ruleJob
             {
              before(grammarAccess.getGranaAccess().getJobsJobParserRuleCall_3_0()); 
             pushFollow(FOLLOW_2);
@@ -25288,17 +25385,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RegularJob__NameAssignment_1"
-    // InternalGrana.g:9340:1: rule__RegularJob__NameAssignment_1 : ( RULE_ID ) ;
+    // InternalGrana.g:9371:1: rule__RegularJob__NameAssignment_1 : ( RULE_ID ) ;
     public final void rule__RegularJob__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9344:1: ( ( RULE_ID ) )
-            // InternalGrana.g:9345:1: ( RULE_ID )
+            // InternalGrana.g:9375:1: ( ( RULE_ID ) )
+            // InternalGrana.g:9376:1: ( RULE_ID )
             {
-            // InternalGrana.g:9345:1: ( RULE_ID )
-            // InternalGrana.g:9346:1: RULE_ID
+            // InternalGrana.g:9376:1: ( RULE_ID )
+            // InternalGrana.g:9377:1: RULE_ID
             {
              before(grammarAccess.getRegularJobAccess().getNameIDTerminalRuleCall_1_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -25325,21 +25422,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RegularJob__LayoutBeforeAnalysisAssignment_2"
-    // InternalGrana.g:9355:1: rule__RegularJob__LayoutBeforeAnalysisAssignment_2 : ( ( 'layoutBeforeAnalysis' ) ) ;
+    // InternalGrana.g:9386:1: rule__RegularJob__LayoutBeforeAnalysisAssignment_2 : ( ( 'layoutBeforeAnalysis' ) ) ;
     public final void rule__RegularJob__LayoutBeforeAnalysisAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9359:1: ( ( ( 'layoutBeforeAnalysis' ) ) )
-            // InternalGrana.g:9360:1: ( ( 'layoutBeforeAnalysis' ) )
+            // InternalGrana.g:9390:1: ( ( ( 'layoutBeforeAnalysis' ) ) )
+            // InternalGrana.g:9391:1: ( ( 'layoutBeforeAnalysis' ) )
             {
-            // InternalGrana.g:9360:1: ( ( 'layoutBeforeAnalysis' ) )
-            // InternalGrana.g:9361:1: ( 'layoutBeforeAnalysis' )
+            // InternalGrana.g:9391:1: ( ( 'layoutBeforeAnalysis' ) )
+            // InternalGrana.g:9392:1: ( 'layoutBeforeAnalysis' )
             {
              before(grammarAccess.getRegularJobAccess().getLayoutBeforeAnalysisLayoutBeforeAnalysisKeyword_2_0()); 
-            // InternalGrana.g:9362:1: ( 'layoutBeforeAnalysis' )
-            // InternalGrana.g:9363:1: 'layoutBeforeAnalysis'
+            // InternalGrana.g:9393:1: ( 'layoutBeforeAnalysis' )
+            // InternalGrana.g:9394:1: 'layoutBeforeAnalysis'
             {
              before(grammarAccess.getRegularJobAccess().getLayoutBeforeAnalysisLayoutBeforeAnalysisKeyword_2_0()); 
             match(input,61,FOLLOW_2); 
@@ -25370,21 +25467,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RegularJob__MeasureExecutionTimeAssignment_3"
-    // InternalGrana.g:9378:1: rule__RegularJob__MeasureExecutionTimeAssignment_3 : ( ( 'measureExecutionTime' ) ) ;
+    // InternalGrana.g:9409:1: rule__RegularJob__MeasureExecutionTimeAssignment_3 : ( ( 'measureExecutionTime' ) ) ;
     public final void rule__RegularJob__MeasureExecutionTimeAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9382:1: ( ( ( 'measureExecutionTime' ) ) )
-            // InternalGrana.g:9383:1: ( ( 'measureExecutionTime' ) )
+            // InternalGrana.g:9413:1: ( ( ( 'measureExecutionTime' ) ) )
+            // InternalGrana.g:9414:1: ( ( 'measureExecutionTime' ) )
             {
-            // InternalGrana.g:9383:1: ( ( 'measureExecutionTime' ) )
-            // InternalGrana.g:9384:1: ( 'measureExecutionTime' )
+            // InternalGrana.g:9414:1: ( ( 'measureExecutionTime' ) )
+            // InternalGrana.g:9415:1: ( 'measureExecutionTime' )
             {
              before(grammarAccess.getRegularJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_3_0()); 
-            // InternalGrana.g:9385:1: ( 'measureExecutionTime' )
-            // InternalGrana.g:9386:1: 'measureExecutionTime'
+            // InternalGrana.g:9416:1: ( 'measureExecutionTime' )
+            // InternalGrana.g:9417:1: 'measureExecutionTime'
             {
              before(grammarAccess.getRegularJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_3_0()); 
             match(input,62,FOLLOW_2); 
@@ -25415,17 +25512,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RegularJob__ResourcesAssignment_5"
-    // InternalGrana.g:9401:1: rule__RegularJob__ResourcesAssignment_5 : ( ruleResource ) ;
+    // InternalGrana.g:9432:1: rule__RegularJob__ResourcesAssignment_5 : ( ruleResource ) ;
     public final void rule__RegularJob__ResourcesAssignment_5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9405:1: ( ( ruleResource ) )
-            // InternalGrana.g:9406:1: ( ruleResource )
+            // InternalGrana.g:9436:1: ( ( ruleResource ) )
+            // InternalGrana.g:9437:1: ( ruleResource )
             {
-            // InternalGrana.g:9406:1: ( ruleResource )
-            // InternalGrana.g:9407:1: ruleResource
+            // InternalGrana.g:9437:1: ( ruleResource )
+            // InternalGrana.g:9438:1: ruleResource
             {
              before(grammarAccess.getRegularJobAccess().getResourcesResourceParserRuleCall_5_0()); 
             pushFollow(FOLLOW_2);
@@ -25456,17 +25553,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RegularJob__LayoutOptionsAssignment_7"
-    // InternalGrana.g:9416:1: rule__RegularJob__LayoutOptionsAssignment_7 : ( ruleLayoutConfig ) ;
+    // InternalGrana.g:9447:1: rule__RegularJob__LayoutOptionsAssignment_7 : ( ruleLayoutConfig ) ;
     public final void rule__RegularJob__LayoutOptionsAssignment_7() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9420:1: ( ( ruleLayoutConfig ) )
-            // InternalGrana.g:9421:1: ( ruleLayoutConfig )
+            // InternalGrana.g:9451:1: ( ( ruleLayoutConfig ) )
+            // InternalGrana.g:9452:1: ( ruleLayoutConfig )
             {
-            // InternalGrana.g:9421:1: ( ruleLayoutConfig )
-            // InternalGrana.g:9422:1: ruleLayoutConfig
+            // InternalGrana.g:9452:1: ( ruleLayoutConfig )
+            // InternalGrana.g:9453:1: ruleLayoutConfig
             {
              before(grammarAccess.getRegularJobAccess().getLayoutOptionsLayoutConfigParserRuleCall_7_0()); 
             pushFollow(FOLLOW_2);
@@ -25497,17 +25594,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RegularJob__AnalysesAssignment_9"
-    // InternalGrana.g:9431:1: rule__RegularJob__AnalysesAssignment_9 : ( ruleAnalysis ) ;
+    // InternalGrana.g:9462:1: rule__RegularJob__AnalysesAssignment_9 : ( ruleAnalysis ) ;
     public final void rule__RegularJob__AnalysesAssignment_9() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9435:1: ( ( ruleAnalysis ) )
-            // InternalGrana.g:9436:1: ( ruleAnalysis )
+            // InternalGrana.g:9466:1: ( ( ruleAnalysis ) )
+            // InternalGrana.g:9467:1: ( ruleAnalysis )
             {
-            // InternalGrana.g:9436:1: ( ruleAnalysis )
-            // InternalGrana.g:9437:1: ruleAnalysis
+            // InternalGrana.g:9467:1: ( ruleAnalysis )
+            // InternalGrana.g:9468:1: ruleAnalysis
             {
              before(grammarAccess.getRegularJobAccess().getAnalysesAnalysisParserRuleCall_9_0()); 
             pushFollow(FOLLOW_2);
@@ -25538,17 +25635,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RegularJob__OutputTypeAssignment_11"
-    // InternalGrana.g:9446:1: rule__RegularJob__OutputTypeAssignment_11 : ( ruleOutputType ) ;
+    // InternalGrana.g:9477:1: rule__RegularJob__OutputTypeAssignment_11 : ( ruleOutputType ) ;
     public final void rule__RegularJob__OutputTypeAssignment_11() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9450:1: ( ( ruleOutputType ) )
-            // InternalGrana.g:9451:1: ( ruleOutputType )
+            // InternalGrana.g:9481:1: ( ( ruleOutputType ) )
+            // InternalGrana.g:9482:1: ( ruleOutputType )
             {
-            // InternalGrana.g:9451:1: ( ruleOutputType )
-            // InternalGrana.g:9452:1: ruleOutputType
+            // InternalGrana.g:9482:1: ( ruleOutputType )
+            // InternalGrana.g:9483:1: ruleOutputType
             {
              before(grammarAccess.getRegularJobAccess().getOutputTypeOutputTypeEnumRuleCall_11_0()); 
             pushFollow(FOLLOW_2);
@@ -25579,17 +25676,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RegularJob__OutputAssignment_12"
-    // InternalGrana.g:9461:1: rule__RegularJob__OutputAssignment_12 : ( ruleOutput ) ;
+    // InternalGrana.g:9492:1: rule__RegularJob__OutputAssignment_12 : ( ruleOutput ) ;
     public final void rule__RegularJob__OutputAssignment_12() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9465:1: ( ( ruleOutput ) )
-            // InternalGrana.g:9466:1: ( ruleOutput )
+            // InternalGrana.g:9496:1: ( ( ruleOutput ) )
+            // InternalGrana.g:9497:1: ( ruleOutput )
             {
-            // InternalGrana.g:9466:1: ( ruleOutput )
-            // InternalGrana.g:9467:1: ruleOutput
+            // InternalGrana.g:9497:1: ( ruleOutput )
+            // InternalGrana.g:9498:1: ruleOutput
             {
              before(grammarAccess.getRegularJobAccess().getOutputOutputParserRuleCall_12_0()); 
             pushFollow(FOLLOW_2);
@@ -25620,17 +25717,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__CompareJob__NameAssignment_1"
-    // InternalGrana.g:9476:1: rule__CompareJob__NameAssignment_1 : ( RULE_ID ) ;
+    // InternalGrana.g:9507:1: rule__CompareJob__NameAssignment_1 : ( RULE_ID ) ;
     public final void rule__CompareJob__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9480:1: ( ( RULE_ID ) )
-            // InternalGrana.g:9481:1: ( RULE_ID )
+            // InternalGrana.g:9511:1: ( ( RULE_ID ) )
+            // InternalGrana.g:9512:1: ( RULE_ID )
             {
-            // InternalGrana.g:9481:1: ( RULE_ID )
-            // InternalGrana.g:9482:1: RULE_ID
+            // InternalGrana.g:9512:1: ( RULE_ID )
+            // InternalGrana.g:9513:1: RULE_ID
             {
              before(grammarAccess.getCompareJobAccess().getNameIDTerminalRuleCall_1_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -25657,17 +25754,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__CompareJob__ResourcesAssignment_3"
-    // InternalGrana.g:9491:1: rule__CompareJob__ResourcesAssignment_3 : ( ruleResource ) ;
+    // InternalGrana.g:9522:1: rule__CompareJob__ResourcesAssignment_3 : ( ruleResource ) ;
     public final void rule__CompareJob__ResourcesAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9495:1: ( ( ruleResource ) )
-            // InternalGrana.g:9496:1: ( ruleResource )
+            // InternalGrana.g:9526:1: ( ( ruleResource ) )
+            // InternalGrana.g:9527:1: ( ruleResource )
             {
-            // InternalGrana.g:9496:1: ( ruleResource )
-            // InternalGrana.g:9497:1: ruleResource
+            // InternalGrana.g:9527:1: ( ruleResource )
+            // InternalGrana.g:9528:1: ruleResource
             {
              before(grammarAccess.getCompareJobAccess().getResourcesResourceParserRuleCall_3_0()); 
             pushFollow(FOLLOW_2);
@@ -25698,17 +25795,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__CompareJob__LayoutOptionsAssignment_5"
-    // InternalGrana.g:9506:1: rule__CompareJob__LayoutOptionsAssignment_5 : ( ruleLayoutConfig ) ;
+    // InternalGrana.g:9537:1: rule__CompareJob__LayoutOptionsAssignment_5 : ( ruleLayoutConfig ) ;
     public final void rule__CompareJob__LayoutOptionsAssignment_5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9510:1: ( ( ruleLayoutConfig ) )
-            // InternalGrana.g:9511:1: ( ruleLayoutConfig )
+            // InternalGrana.g:9541:1: ( ( ruleLayoutConfig ) )
+            // InternalGrana.g:9542:1: ( ruleLayoutConfig )
             {
-            // InternalGrana.g:9511:1: ( ruleLayoutConfig )
-            // InternalGrana.g:9512:1: ruleLayoutConfig
+            // InternalGrana.g:9542:1: ( ruleLayoutConfig )
+            // InternalGrana.g:9543:1: ruleLayoutConfig
             {
              before(grammarAccess.getCompareJobAccess().getLayoutOptionsLayoutConfigParserRuleCall_5_0()); 
             pushFollow(FOLLOW_2);
@@ -25739,17 +25836,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__CompareJob__LayoutOptionsAssignment_6"
-    // InternalGrana.g:9521:1: rule__CompareJob__LayoutOptionsAssignment_6 : ( ruleLayoutConfig ) ;
+    // InternalGrana.g:9552:1: rule__CompareJob__LayoutOptionsAssignment_6 : ( ruleLayoutConfig ) ;
     public final void rule__CompareJob__LayoutOptionsAssignment_6() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9525:1: ( ( ruleLayoutConfig ) )
-            // InternalGrana.g:9526:1: ( ruleLayoutConfig )
+            // InternalGrana.g:9556:1: ( ( ruleLayoutConfig ) )
+            // InternalGrana.g:9557:1: ( ruleLayoutConfig )
             {
-            // InternalGrana.g:9526:1: ( ruleLayoutConfig )
-            // InternalGrana.g:9527:1: ruleLayoutConfig
+            // InternalGrana.g:9557:1: ( ruleLayoutConfig )
+            // InternalGrana.g:9558:1: ruleLayoutConfig
             {
              before(grammarAccess.getCompareJobAccess().getLayoutOptionsLayoutConfigParserRuleCall_6_0()); 
             pushFollow(FOLLOW_2);
@@ -25780,17 +25877,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__CompareJob__AnalysesAssignment_8"
-    // InternalGrana.g:9536:1: rule__CompareJob__AnalysesAssignment_8 : ( ruleAnalysis ) ;
+    // InternalGrana.g:9567:1: rule__CompareJob__AnalysesAssignment_8 : ( ruleAnalysis ) ;
     public final void rule__CompareJob__AnalysesAssignment_8() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9540:1: ( ( ruleAnalysis ) )
-            // InternalGrana.g:9541:1: ( ruleAnalysis )
+            // InternalGrana.g:9571:1: ( ( ruleAnalysis ) )
+            // InternalGrana.g:9572:1: ( ruleAnalysis )
             {
-            // InternalGrana.g:9541:1: ( ruleAnalysis )
-            // InternalGrana.g:9542:1: ruleAnalysis
+            // InternalGrana.g:9572:1: ( ruleAnalysis )
+            // InternalGrana.g:9573:1: ruleAnalysis
             {
              before(grammarAccess.getCompareJobAccess().getAnalysesAnalysisParserRuleCall_8_0()); 
             pushFollow(FOLLOW_2);
@@ -25821,17 +25918,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__CompareJob__OutputTypeAssignment_10"
-    // InternalGrana.g:9551:1: rule__CompareJob__OutputTypeAssignment_10 : ( ruleOutputType ) ;
+    // InternalGrana.g:9582:1: rule__CompareJob__OutputTypeAssignment_10 : ( ruleOutputType ) ;
     public final void rule__CompareJob__OutputTypeAssignment_10() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9555:1: ( ( ruleOutputType ) )
-            // InternalGrana.g:9556:1: ( ruleOutputType )
+            // InternalGrana.g:9586:1: ( ( ruleOutputType ) )
+            // InternalGrana.g:9587:1: ( ruleOutputType )
             {
-            // InternalGrana.g:9556:1: ( ruleOutputType )
-            // InternalGrana.g:9557:1: ruleOutputType
+            // InternalGrana.g:9587:1: ( ruleOutputType )
+            // InternalGrana.g:9588:1: ruleOutputType
             {
              before(grammarAccess.getCompareJobAccess().getOutputTypeOutputTypeEnumRuleCall_10_0()); 
             pushFollow(FOLLOW_2);
@@ -25862,17 +25959,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__CompareJob__OutputAssignment_11"
-    // InternalGrana.g:9566:1: rule__CompareJob__OutputAssignment_11 : ( ruleOutput ) ;
+    // InternalGrana.g:9597:1: rule__CompareJob__OutputAssignment_11 : ( ruleOutput ) ;
     public final void rule__CompareJob__OutputAssignment_11() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9570:1: ( ( ruleOutput ) )
-            // InternalGrana.g:9571:1: ( ruleOutput )
+            // InternalGrana.g:9601:1: ( ( ruleOutput ) )
+            // InternalGrana.g:9602:1: ( ruleOutput )
             {
-            // InternalGrana.g:9571:1: ( ruleOutput )
-            // InternalGrana.g:9572:1: ruleOutput
+            // InternalGrana.g:9602:1: ( ruleOutput )
+            // InternalGrana.g:9603:1: ruleOutput
             {
              before(grammarAccess.getCompareJobAccess().getOutputOutputParserRuleCall_11_0()); 
             pushFollow(FOLLOW_2);
@@ -25903,17 +26000,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__NameAssignment_1"
-    // InternalGrana.g:9581:1: rule__RangeJob__NameAssignment_1 : ( RULE_ID ) ;
+    // InternalGrana.g:9612:1: rule__RangeJob__NameAssignment_1 : ( RULE_ID ) ;
     public final void rule__RangeJob__NameAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9585:1: ( ( RULE_ID ) )
-            // InternalGrana.g:9586:1: ( RULE_ID )
+            // InternalGrana.g:9616:1: ( ( RULE_ID ) )
+            // InternalGrana.g:9617:1: ( RULE_ID )
             {
-            // InternalGrana.g:9586:1: ( RULE_ID )
-            // InternalGrana.g:9587:1: RULE_ID
+            // InternalGrana.g:9617:1: ( RULE_ID )
+            // InternalGrana.g:9618:1: RULE_ID
             {
              before(grammarAccess.getRangeJobAccess().getNameIDTerminalRuleCall_1_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -25940,21 +26037,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__MeasureExecutionTimeAssignment_2"
-    // InternalGrana.g:9596:1: rule__RangeJob__MeasureExecutionTimeAssignment_2 : ( ( 'measureExecutionTime' ) ) ;
+    // InternalGrana.g:9627:1: rule__RangeJob__MeasureExecutionTimeAssignment_2 : ( ( 'measureExecutionTime' ) ) ;
     public final void rule__RangeJob__MeasureExecutionTimeAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9600:1: ( ( ( 'measureExecutionTime' ) ) )
-            // InternalGrana.g:9601:1: ( ( 'measureExecutionTime' ) )
+            // InternalGrana.g:9631:1: ( ( ( 'measureExecutionTime' ) ) )
+            // InternalGrana.g:9632:1: ( ( 'measureExecutionTime' ) )
             {
-            // InternalGrana.g:9601:1: ( ( 'measureExecutionTime' ) )
-            // InternalGrana.g:9602:1: ( 'measureExecutionTime' )
+            // InternalGrana.g:9632:1: ( ( 'measureExecutionTime' ) )
+            // InternalGrana.g:9633:1: ( 'measureExecutionTime' )
             {
              before(grammarAccess.getRangeJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_2_0()); 
-            // InternalGrana.g:9603:1: ( 'measureExecutionTime' )
-            // InternalGrana.g:9604:1: 'measureExecutionTime'
+            // InternalGrana.g:9634:1: ( 'measureExecutionTime' )
+            // InternalGrana.g:9635:1: 'measureExecutionTime'
             {
              before(grammarAccess.getRangeJobAccess().getMeasureExecutionTimeMeasureExecutionTimeKeyword_2_0()); 
             match(input,62,FOLLOW_2); 
@@ -25985,17 +26082,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__ResourcesAssignment_4"
-    // InternalGrana.g:9619:1: rule__RangeJob__ResourcesAssignment_4 : ( ruleResource ) ;
+    // InternalGrana.g:9650:1: rule__RangeJob__ResourcesAssignment_4 : ( ruleResource ) ;
     public final void rule__RangeJob__ResourcesAssignment_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9623:1: ( ( ruleResource ) )
-            // InternalGrana.g:9624:1: ( ruleResource )
+            // InternalGrana.g:9654:1: ( ( ruleResource ) )
+            // InternalGrana.g:9655:1: ( ruleResource )
             {
-            // InternalGrana.g:9624:1: ( ruleResource )
-            // InternalGrana.g:9625:1: ruleResource
+            // InternalGrana.g:9655:1: ( ruleResource )
+            // InternalGrana.g:9656:1: ruleResource
             {
              before(grammarAccess.getRangeJobAccess().getResourcesResourceParserRuleCall_4_0()); 
             pushFollow(FOLLOW_2);
@@ -26026,17 +26123,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__LayoutOptionsAssignment_6"
-    // InternalGrana.g:9634:1: rule__RangeJob__LayoutOptionsAssignment_6 : ( ruleLayoutConfig ) ;
+    // InternalGrana.g:9665:1: rule__RangeJob__LayoutOptionsAssignment_6 : ( ruleLayoutConfig ) ;
     public final void rule__RangeJob__LayoutOptionsAssignment_6() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9638:1: ( ( ruleLayoutConfig ) )
-            // InternalGrana.g:9639:1: ( ruleLayoutConfig )
+            // InternalGrana.g:9669:1: ( ( ruleLayoutConfig ) )
+            // InternalGrana.g:9670:1: ( ruleLayoutConfig )
             {
-            // InternalGrana.g:9639:1: ( ruleLayoutConfig )
-            // InternalGrana.g:9640:1: ruleLayoutConfig
+            // InternalGrana.g:9670:1: ( ruleLayoutConfig )
+            // InternalGrana.g:9671:1: ruleLayoutConfig
             {
              before(grammarAccess.getRangeJobAccess().getLayoutOptionsLayoutConfigParserRuleCall_6_0()); 
             pushFollow(FOLLOW_2);
@@ -26067,17 +26164,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__AnalysesAssignment_8"
-    // InternalGrana.g:9649:1: rule__RangeJob__AnalysesAssignment_8 : ( ruleAnalysis ) ;
+    // InternalGrana.g:9680:1: rule__RangeJob__AnalysesAssignment_8 : ( ruleAnalysis ) ;
     public final void rule__RangeJob__AnalysesAssignment_8() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9653:1: ( ( ruleAnalysis ) )
-            // InternalGrana.g:9654:1: ( ruleAnalysis )
+            // InternalGrana.g:9684:1: ( ( ruleAnalysis ) )
+            // InternalGrana.g:9685:1: ( ruleAnalysis )
             {
-            // InternalGrana.g:9654:1: ( ruleAnalysis )
-            // InternalGrana.g:9655:1: ruleAnalysis
+            // InternalGrana.g:9685:1: ( ruleAnalysis )
+            // InternalGrana.g:9686:1: ruleAnalysis
             {
              before(grammarAccess.getRangeJobAccess().getAnalysesAnalysisParserRuleCall_8_0()); 
             pushFollow(FOLLOW_2);
@@ -26108,17 +26205,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__RangeOptionAssignment_10"
-    // InternalGrana.g:9664:1: rule__RangeJob__RangeOptionAssignment_10 : ( ruleQualifiedId ) ;
+    // InternalGrana.g:9695:1: rule__RangeJob__RangeOptionAssignment_10 : ( ruleQualifiedId ) ;
     public final void rule__RangeJob__RangeOptionAssignment_10() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9668:1: ( ( ruleQualifiedId ) )
-            // InternalGrana.g:9669:1: ( ruleQualifiedId )
+            // InternalGrana.g:9699:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:9700:1: ( ruleQualifiedId )
             {
-            // InternalGrana.g:9669:1: ( ruleQualifiedId )
-            // InternalGrana.g:9670:1: ruleQualifiedId
+            // InternalGrana.g:9700:1: ( ruleQualifiedId )
+            // InternalGrana.g:9701:1: ruleQualifiedId
             {
              before(grammarAccess.getRangeJobAccess().getRangeOptionQualifiedIdParserRuleCall_10_0()); 
             pushFollow(FOLLOW_2);
@@ -26149,17 +26246,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__RangeValuesAssignment_11"
-    // InternalGrana.g:9679:1: rule__RangeJob__RangeValuesAssignment_11 : ( ruleRange ) ;
+    // InternalGrana.g:9710:1: rule__RangeJob__RangeValuesAssignment_11 : ( ruleRange ) ;
     public final void rule__RangeJob__RangeValuesAssignment_11() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9683:1: ( ( ruleRange ) )
-            // InternalGrana.g:9684:1: ( ruleRange )
+            // InternalGrana.g:9714:1: ( ( ruleRange ) )
+            // InternalGrana.g:9715:1: ( ruleRange )
             {
-            // InternalGrana.g:9684:1: ( ruleRange )
-            // InternalGrana.g:9685:1: ruleRange
+            // InternalGrana.g:9715:1: ( ruleRange )
+            // InternalGrana.g:9716:1: ruleRange
             {
              before(grammarAccess.getRangeJobAccess().getRangeValuesRangeParserRuleCall_11_0()); 
             pushFollow(FOLLOW_2);
@@ -26190,17 +26287,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__RangeAnalysisAssignment_12_0_1"
-    // InternalGrana.g:9694:1: rule__RangeJob__RangeAnalysisAssignment_12_0_1 : ( ruleAnalysis ) ;
+    // InternalGrana.g:9725:1: rule__RangeJob__RangeAnalysisAssignment_12_0_1 : ( ruleAnalysis ) ;
     public final void rule__RangeJob__RangeAnalysisAssignment_12_0_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9698:1: ( ( ruleAnalysis ) )
-            // InternalGrana.g:9699:1: ( ruleAnalysis )
+            // InternalGrana.g:9729:1: ( ( ruleAnalysis ) )
+            // InternalGrana.g:9730:1: ( ruleAnalysis )
             {
-            // InternalGrana.g:9699:1: ( ruleAnalysis )
-            // InternalGrana.g:9700:1: ruleAnalysis
+            // InternalGrana.g:9730:1: ( ruleAnalysis )
+            // InternalGrana.g:9731:1: ruleAnalysis
             {
              before(grammarAccess.getRangeJobAccess().getRangeAnalysisAnalysisParserRuleCall_12_0_1_0()); 
             pushFollow(FOLLOW_2);
@@ -26231,17 +26328,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__RangeAnalysisComponentAssignment_12_0_2_1"
-    // InternalGrana.g:9709:1: rule__RangeJob__RangeAnalysisComponentAssignment_12_0_2_1 : ( RULE_SIGNED_INT ) ;
+    // InternalGrana.g:9740:1: rule__RangeJob__RangeAnalysisComponentAssignment_12_0_2_1 : ( RULE_SIGNED_INT ) ;
     public final void rule__RangeJob__RangeAnalysisComponentAssignment_12_0_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9713:1: ( ( RULE_SIGNED_INT ) )
-            // InternalGrana.g:9714:1: ( RULE_SIGNED_INT )
+            // InternalGrana.g:9744:1: ( ( RULE_SIGNED_INT ) )
+            // InternalGrana.g:9745:1: ( RULE_SIGNED_INT )
             {
-            // InternalGrana.g:9714:1: ( RULE_SIGNED_INT )
-            // InternalGrana.g:9715:1: RULE_SIGNED_INT
+            // InternalGrana.g:9745:1: ( RULE_SIGNED_INT )
+            // InternalGrana.g:9746:1: RULE_SIGNED_INT
             {
              before(grammarAccess.getRangeJobAccess().getRangeAnalysisComponentSIGNED_INTTerminalRuleCall_12_0_2_1_0()); 
             match(input,RULE_SIGNED_INT,FOLLOW_2); 
@@ -26268,17 +26365,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__RangeAnalysesAssignment_12_1_1"
-    // InternalGrana.g:9724:1: rule__RangeJob__RangeAnalysesAssignment_12_1_1 : ( ruleAnalysis ) ;
+    // InternalGrana.g:9755:1: rule__RangeJob__RangeAnalysesAssignment_12_1_1 : ( ruleAnalysis ) ;
     public final void rule__RangeJob__RangeAnalysesAssignment_12_1_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9728:1: ( ( ruleAnalysis ) )
-            // InternalGrana.g:9729:1: ( ruleAnalysis )
+            // InternalGrana.g:9759:1: ( ( ruleAnalysis ) )
+            // InternalGrana.g:9760:1: ( ruleAnalysis )
             {
-            // InternalGrana.g:9729:1: ( ruleAnalysis )
-            // InternalGrana.g:9730:1: ruleAnalysis
+            // InternalGrana.g:9760:1: ( ruleAnalysis )
+            // InternalGrana.g:9761:1: ruleAnalysis
             {
              before(grammarAccess.getRangeJobAccess().getRangeAnalysesAnalysisParserRuleCall_12_1_1_0()); 
             pushFollow(FOLLOW_2);
@@ -26309,17 +26406,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__OutputTypeAssignment_14"
-    // InternalGrana.g:9739:1: rule__RangeJob__OutputTypeAssignment_14 : ( ruleOutputType ) ;
+    // InternalGrana.g:9770:1: rule__RangeJob__OutputTypeAssignment_14 : ( ruleOutputType ) ;
     public final void rule__RangeJob__OutputTypeAssignment_14() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9743:1: ( ( ruleOutputType ) )
-            // InternalGrana.g:9744:1: ( ruleOutputType )
+            // InternalGrana.g:9774:1: ( ( ruleOutputType ) )
+            // InternalGrana.g:9775:1: ( ruleOutputType )
             {
-            // InternalGrana.g:9744:1: ( ruleOutputType )
-            // InternalGrana.g:9745:1: ruleOutputType
+            // InternalGrana.g:9775:1: ( ruleOutputType )
+            // InternalGrana.g:9776:1: ruleOutputType
             {
              before(grammarAccess.getRangeJobAccess().getOutputTypeOutputTypeEnumRuleCall_14_0()); 
             pushFollow(FOLLOW_2);
@@ -26350,17 +26447,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__RangeJob__OutputAssignment_15"
-    // InternalGrana.g:9754:1: rule__RangeJob__OutputAssignment_15 : ( ruleOutput ) ;
+    // InternalGrana.g:9785:1: rule__RangeJob__OutputAssignment_15 : ( ruleOutput ) ;
     public final void rule__RangeJob__OutputAssignment_15() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9758:1: ( ( ruleOutput ) )
-            // InternalGrana.g:9759:1: ( ruleOutput )
+            // InternalGrana.g:9789:1: ( ( ruleOutput ) )
+            // InternalGrana.g:9790:1: ( ruleOutput )
             {
-            // InternalGrana.g:9759:1: ( ruleOutput )
-            // InternalGrana.g:9760:1: ruleOutput
+            // InternalGrana.g:9790:1: ( ruleOutput )
+            // InternalGrana.g:9791:1: ruleOutput
             {
              before(grammarAccess.getRangeJobAccess().getOutputOutputParserRuleCall_15_0()); 
             pushFollow(FOLLOW_2);
@@ -26391,17 +26488,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FloatRange__ValuesAssignment_1"
-    // InternalGrana.g:9769:1: rule__FloatRange__ValuesAssignment_1 : ( RULE_FLOAT ) ;
+    // InternalGrana.g:9800:1: rule__FloatRange__ValuesAssignment_1 : ( RULE_FLOAT ) ;
     public final void rule__FloatRange__ValuesAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9773:1: ( ( RULE_FLOAT ) )
-            // InternalGrana.g:9774:1: ( RULE_FLOAT )
+            // InternalGrana.g:9804:1: ( ( RULE_FLOAT ) )
+            // InternalGrana.g:9805:1: ( RULE_FLOAT )
             {
-            // InternalGrana.g:9774:1: ( RULE_FLOAT )
-            // InternalGrana.g:9775:1: RULE_FLOAT
+            // InternalGrana.g:9805:1: ( RULE_FLOAT )
+            // InternalGrana.g:9806:1: RULE_FLOAT
             {
              before(grammarAccess.getFloatRangeAccess().getValuesFLOATTerminalRuleCall_1_0()); 
             match(input,RULE_FLOAT,FOLLOW_2); 
@@ -26428,17 +26525,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__FloatRange__ValuesAssignment_2_1"
-    // InternalGrana.g:9784:1: rule__FloatRange__ValuesAssignment_2_1 : ( RULE_FLOAT ) ;
+    // InternalGrana.g:9815:1: rule__FloatRange__ValuesAssignment_2_1 : ( RULE_FLOAT ) ;
     public final void rule__FloatRange__ValuesAssignment_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9788:1: ( ( RULE_FLOAT ) )
-            // InternalGrana.g:9789:1: ( RULE_FLOAT )
+            // InternalGrana.g:9819:1: ( ( RULE_FLOAT ) )
+            // InternalGrana.g:9820:1: ( RULE_FLOAT )
             {
-            // InternalGrana.g:9789:1: ( RULE_FLOAT )
-            // InternalGrana.g:9790:1: RULE_FLOAT
+            // InternalGrana.g:9820:1: ( RULE_FLOAT )
+            // InternalGrana.g:9821:1: RULE_FLOAT
             {
              before(grammarAccess.getFloatRangeAccess().getValuesFLOATTerminalRuleCall_2_1_0()); 
             match(input,RULE_FLOAT,FOLLOW_2); 
@@ -26465,17 +26562,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__IntRangeValues__ValuesAssignment_1"
-    // InternalGrana.g:9799:1: rule__IntRangeValues__ValuesAssignment_1 : ( RULE_SIGNED_INT ) ;
+    // InternalGrana.g:9830:1: rule__IntRangeValues__ValuesAssignment_1 : ( RULE_SIGNED_INT ) ;
     public final void rule__IntRangeValues__ValuesAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9803:1: ( ( RULE_SIGNED_INT ) )
-            // InternalGrana.g:9804:1: ( RULE_SIGNED_INT )
+            // InternalGrana.g:9834:1: ( ( RULE_SIGNED_INT ) )
+            // InternalGrana.g:9835:1: ( RULE_SIGNED_INT )
             {
-            // InternalGrana.g:9804:1: ( RULE_SIGNED_INT )
-            // InternalGrana.g:9805:1: RULE_SIGNED_INT
+            // InternalGrana.g:9835:1: ( RULE_SIGNED_INT )
+            // InternalGrana.g:9836:1: RULE_SIGNED_INT
             {
              before(grammarAccess.getIntRangeValuesAccess().getValuesSIGNED_INTTerminalRuleCall_1_0()); 
             match(input,RULE_SIGNED_INT,FOLLOW_2); 
@@ -26502,17 +26599,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__IntRangeValues__ValuesAssignment_2_1"
-    // InternalGrana.g:9814:1: rule__IntRangeValues__ValuesAssignment_2_1 : ( RULE_SIGNED_INT ) ;
+    // InternalGrana.g:9845:1: rule__IntRangeValues__ValuesAssignment_2_1 : ( RULE_SIGNED_INT ) ;
     public final void rule__IntRangeValues__ValuesAssignment_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9818:1: ( ( RULE_SIGNED_INT ) )
-            // InternalGrana.g:9819:1: ( RULE_SIGNED_INT )
+            // InternalGrana.g:9849:1: ( ( RULE_SIGNED_INT ) )
+            // InternalGrana.g:9850:1: ( RULE_SIGNED_INT )
             {
-            // InternalGrana.g:9819:1: ( RULE_SIGNED_INT )
-            // InternalGrana.g:9820:1: RULE_SIGNED_INT
+            // InternalGrana.g:9850:1: ( RULE_SIGNED_INT )
+            // InternalGrana.g:9851:1: RULE_SIGNED_INT
             {
              before(grammarAccess.getIntRangeValuesAccess().getValuesSIGNED_INTTerminalRuleCall_2_1_0()); 
             match(input,RULE_SIGNED_INT,FOLLOW_2); 
@@ -26539,17 +26636,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__IntRangeRange__StartAssignment_1"
-    // InternalGrana.g:9829:1: rule__IntRangeRange__StartAssignment_1 : ( RULE_SIGNED_INT ) ;
+    // InternalGrana.g:9860:1: rule__IntRangeRange__StartAssignment_1 : ( RULE_SIGNED_INT ) ;
     public final void rule__IntRangeRange__StartAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9833:1: ( ( RULE_SIGNED_INT ) )
-            // InternalGrana.g:9834:1: ( RULE_SIGNED_INT )
+            // InternalGrana.g:9864:1: ( ( RULE_SIGNED_INT ) )
+            // InternalGrana.g:9865:1: ( RULE_SIGNED_INT )
             {
-            // InternalGrana.g:9834:1: ( RULE_SIGNED_INT )
-            // InternalGrana.g:9835:1: RULE_SIGNED_INT
+            // InternalGrana.g:9865:1: ( RULE_SIGNED_INT )
+            // InternalGrana.g:9866:1: RULE_SIGNED_INT
             {
              before(grammarAccess.getIntRangeRangeAccess().getStartSIGNED_INTTerminalRuleCall_1_0()); 
             match(input,RULE_SIGNED_INT,FOLLOW_2); 
@@ -26576,17 +26673,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__IntRangeRange__EndAssignment_3"
-    // InternalGrana.g:9844:1: rule__IntRangeRange__EndAssignment_3 : ( RULE_SIGNED_INT ) ;
+    // InternalGrana.g:9875:1: rule__IntRangeRange__EndAssignment_3 : ( RULE_SIGNED_INT ) ;
     public final void rule__IntRangeRange__EndAssignment_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9848:1: ( ( RULE_SIGNED_INT ) )
-            // InternalGrana.g:9849:1: ( RULE_SIGNED_INT )
+            // InternalGrana.g:9879:1: ( ( RULE_SIGNED_INT ) )
+            // InternalGrana.g:9880:1: ( RULE_SIGNED_INT )
             {
-            // InternalGrana.g:9849:1: ( RULE_SIGNED_INT )
-            // InternalGrana.g:9850:1: RULE_SIGNED_INT
+            // InternalGrana.g:9880:1: ( RULE_SIGNED_INT )
+            // InternalGrana.g:9881:1: RULE_SIGNED_INT
             {
              before(grammarAccess.getIntRangeRangeAccess().getEndSIGNED_INTTerminalRuleCall_3_0()); 
             match(input,RULE_SIGNED_INT,FOLLOW_2); 
@@ -26613,21 +26710,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ResourceReference__ResourceRefsAssignment_1"
-    // InternalGrana.g:9859:1: rule__ResourceReference__ResourceRefsAssignment_1 : ( ( RULE_ID ) ) ;
+    // InternalGrana.g:9890:1: rule__ResourceReference__ResourceRefsAssignment_1 : ( ( RULE_ID ) ) ;
     public final void rule__ResourceReference__ResourceRefsAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9863:1: ( ( ( RULE_ID ) ) )
-            // InternalGrana.g:9864:1: ( ( RULE_ID ) )
+            // InternalGrana.g:9894:1: ( ( ( RULE_ID ) ) )
+            // InternalGrana.g:9895:1: ( ( RULE_ID ) )
             {
-            // InternalGrana.g:9864:1: ( ( RULE_ID ) )
-            // InternalGrana.g:9865:1: ( RULE_ID )
+            // InternalGrana.g:9895:1: ( ( RULE_ID ) )
+            // InternalGrana.g:9896:1: ( RULE_ID )
             {
              before(grammarAccess.getResourceReferenceAccess().getResourceRefsGlobalResourceRefCrossReference_1_0()); 
-            // InternalGrana.g:9866:1: ( RULE_ID )
-            // InternalGrana.g:9867:1: RULE_ID
+            // InternalGrana.g:9897:1: ( RULE_ID )
+            // InternalGrana.g:9898:1: RULE_ID
             {
              before(grammarAccess.getResourceReferenceAccess().getResourceRefsGlobalResourceRefIDTerminalRuleCall_1_0_1()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -26658,17 +26755,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalResourceRef__NameAssignment_0"
-    // InternalGrana.g:9878:1: rule__GlobalResourceRef__NameAssignment_0 : ( RULE_ID ) ;
+    // InternalGrana.g:9909:1: rule__GlobalResourceRef__NameAssignment_0 : ( RULE_ID ) ;
     public final void rule__GlobalResourceRef__NameAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9882:1: ( ( RULE_ID ) )
-            // InternalGrana.g:9883:1: ( RULE_ID )
+            // InternalGrana.g:9913:1: ( ( RULE_ID ) )
+            // InternalGrana.g:9914:1: ( RULE_ID )
             {
-            // InternalGrana.g:9883:1: ( RULE_ID )
-            // InternalGrana.g:9884:1: RULE_ID
+            // InternalGrana.g:9914:1: ( RULE_ID )
+            // InternalGrana.g:9915:1: RULE_ID
             {
              before(grammarAccess.getGlobalResourceRefAccess().getNameIDTerminalRuleCall_0_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -26695,17 +26792,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalResourceRef__ResourcesAssignment_1"
-    // InternalGrana.g:9893:1: rule__GlobalResourceRef__ResourcesAssignment_1 : ( ruleLocalResource ) ;
+    // InternalGrana.g:9924:1: rule__GlobalResourceRef__ResourcesAssignment_1 : ( ruleLocalResource ) ;
     public final void rule__GlobalResourceRef__ResourcesAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9897:1: ( ( ruleLocalResource ) )
-            // InternalGrana.g:9898:1: ( ruleLocalResource )
+            // InternalGrana.g:9928:1: ( ( ruleLocalResource ) )
+            // InternalGrana.g:9929:1: ( ruleLocalResource )
             {
-            // InternalGrana.g:9898:1: ( ruleLocalResource )
-            // InternalGrana.g:9899:1: ruleLocalResource
+            // InternalGrana.g:9929:1: ( ruleLocalResource )
+            // InternalGrana.g:9930:1: ruleLocalResource
             {
              before(grammarAccess.getGlobalResourceRefAccess().getResourcesLocalResourceParserRuleCall_1_0()); 
             pushFollow(FOLLOW_2);
@@ -26736,17 +26833,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__PathAssignment_0"
-    // InternalGrana.g:9908:1: rule__LocalResource__PathAssignment_0 : ( RULE_STRING ) ;
+    // InternalGrana.g:9939:1: rule__LocalResource__PathAssignment_0 : ( RULE_STRING ) ;
     public final void rule__LocalResource__PathAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9912:1: ( ( RULE_STRING ) )
-            // InternalGrana.g:9913:1: ( RULE_STRING )
+            // InternalGrana.g:9943:1: ( ( RULE_STRING ) )
+            // InternalGrana.g:9944:1: ( RULE_STRING )
             {
-            // InternalGrana.g:9913:1: ( RULE_STRING )
-            // InternalGrana.g:9914:1: RULE_STRING
+            // InternalGrana.g:9944:1: ( RULE_STRING )
+            // InternalGrana.g:9945:1: RULE_STRING
             {
              before(grammarAccess.getLocalResourceAccess().getPathSTRINGTerminalRuleCall_0_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -26773,17 +26870,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalResource__FilterAssignment_1_1"
-    // InternalGrana.g:9923:1: rule__LocalResource__FilterAssignment_1_1 : ( RULE_STRING ) ;
+    // InternalGrana.g:9954:1: rule__LocalResource__FilterAssignment_1_1 : ( RULE_STRING ) ;
     public final void rule__LocalResource__FilterAssignment_1_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9927:1: ( ( RULE_STRING ) )
-            // InternalGrana.g:9928:1: ( RULE_STRING )
+            // InternalGrana.g:9958:1: ( ( RULE_STRING ) )
+            // InternalGrana.g:9959:1: ( RULE_STRING )
             {
-            // InternalGrana.g:9928:1: ( RULE_STRING )
-            // InternalGrana.g:9929:1: RULE_STRING
+            // InternalGrana.g:9959:1: ( RULE_STRING )
+            // InternalGrana.g:9960:1: RULE_STRING
             {
              before(grammarAccess.getLocalResourceAccess().getFilterSTRINGTerminalRuleCall_1_1_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -26809,18 +26906,63 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
     // $ANTLR end "rule__LocalResource__FilterAssignment_1_1"
 
 
+    // $ANTLR start "rule__LocalResource__RecurseAssignment_2"
+    // InternalGrana.g:9969:1: rule__LocalResource__RecurseAssignment_2 : ( ( 'recurse' ) ) ;
+    public final void rule__LocalResource__RecurseAssignment_2() throws RecognitionException {
+
+        		int stackSize = keepStackSize();
+            
+        try {
+            // InternalGrana.g:9973:1: ( ( ( 'recurse' ) ) )
+            // InternalGrana.g:9974:1: ( ( 'recurse' ) )
+            {
+            // InternalGrana.g:9974:1: ( ( 'recurse' ) )
+            // InternalGrana.g:9975:1: ( 'recurse' )
+            {
+             before(grammarAccess.getLocalResourceAccess().getRecurseRecurseKeyword_2_0()); 
+            // InternalGrana.g:9976:1: ( 'recurse' )
+            // InternalGrana.g:9977:1: 'recurse'
+            {
+             before(grammarAccess.getLocalResourceAccess().getRecurseRecurseKeyword_2_0()); 
+            match(input,63,FOLLOW_2); 
+             after(grammarAccess.getLocalResourceAccess().getRecurseRecurseKeyword_2_0()); 
+
+            }
+
+             after(grammarAccess.getLocalResourceAccess().getRecurseRecurseKeyword_2_0()); 
+
+            }
+
+
+            }
+
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+        }
+        finally {
+
+            	restoreStackSize(stackSize);
+
+        }
+        return ;
+    }
+    // $ANTLR end "rule__LocalResource__RecurseAssignment_2"
+
+
     // $ANTLR start "rule__GlobalOutputRef__NameAssignment_0"
-    // InternalGrana.g:9938:1: rule__GlobalOutputRef__NameAssignment_0 : ( RULE_ID ) ;
+    // InternalGrana.g:9992:1: rule__GlobalOutputRef__NameAssignment_0 : ( RULE_ID ) ;
     public final void rule__GlobalOutputRef__NameAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9942:1: ( ( RULE_ID ) )
-            // InternalGrana.g:9943:1: ( RULE_ID )
+            // InternalGrana.g:9996:1: ( ( RULE_ID ) )
+            // InternalGrana.g:9997:1: ( RULE_ID )
             {
-            // InternalGrana.g:9943:1: ( RULE_ID )
-            // InternalGrana.g:9944:1: RULE_ID
+            // InternalGrana.g:9997:1: ( RULE_ID )
+            // InternalGrana.g:9998:1: RULE_ID
             {
              before(grammarAccess.getGlobalOutputRefAccess().getNameIDTerminalRuleCall_0_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -26847,17 +26989,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__GlobalOutputRef__OutputAssignment_1"
-    // InternalGrana.g:9953:1: rule__GlobalOutputRef__OutputAssignment_1 : ( ruleLocalOutput ) ;
+    // InternalGrana.g:10007:1: rule__GlobalOutputRef__OutputAssignment_1 : ( ruleLocalOutput ) ;
     public final void rule__GlobalOutputRef__OutputAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9957:1: ( ( ruleLocalOutput ) )
-            // InternalGrana.g:9958:1: ( ruleLocalOutput )
+            // InternalGrana.g:10011:1: ( ( ruleLocalOutput ) )
+            // InternalGrana.g:10012:1: ( ruleLocalOutput )
             {
-            // InternalGrana.g:9958:1: ( ruleLocalOutput )
-            // InternalGrana.g:9959:1: ruleLocalOutput
+            // InternalGrana.g:10012:1: ( ruleLocalOutput )
+            // InternalGrana.g:10013:1: ruleLocalOutput
             {
              before(grammarAccess.getGlobalOutputRefAccess().getOutputLocalOutputParserRuleCall_1_0()); 
             pushFollow(FOLLOW_2);
@@ -26888,21 +27030,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__OutputReference__OutputRefAssignment_1"
-    // InternalGrana.g:9968:1: rule__OutputReference__OutputRefAssignment_1 : ( ( RULE_ID ) ) ;
+    // InternalGrana.g:10022:1: rule__OutputReference__OutputRefAssignment_1 : ( ( RULE_ID ) ) ;
     public final void rule__OutputReference__OutputRefAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9972:1: ( ( ( RULE_ID ) ) )
-            // InternalGrana.g:9973:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10026:1: ( ( ( RULE_ID ) ) )
+            // InternalGrana.g:10027:1: ( ( RULE_ID ) )
             {
-            // InternalGrana.g:9973:1: ( ( RULE_ID ) )
-            // InternalGrana.g:9974:1: ( RULE_ID )
+            // InternalGrana.g:10027:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10028:1: ( RULE_ID )
             {
              before(grammarAccess.getOutputReferenceAccess().getOutputRefGlobalOutputRefCrossReference_1_0()); 
-            // InternalGrana.g:9975:1: ( RULE_ID )
-            // InternalGrana.g:9976:1: RULE_ID
+            // InternalGrana.g:10029:1: ( RULE_ID )
+            // InternalGrana.g:10030:1: RULE_ID
             {
              before(grammarAccess.getOutputReferenceAccess().getOutputRefGlobalOutputRefIDTerminalRuleCall_1_0_1()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -26933,17 +27075,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LocalOutput__PathAssignment"
-    // InternalGrana.g:9987:1: rule__LocalOutput__PathAssignment : ( RULE_STRING ) ;
+    // InternalGrana.g:10041:1: rule__LocalOutput__PathAssignment : ( RULE_STRING ) ;
     public final void rule__LocalOutput__PathAssignment() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:9991:1: ( ( RULE_STRING ) )
-            // InternalGrana.g:9992:1: ( RULE_STRING )
+            // InternalGrana.g:10045:1: ( ( RULE_STRING ) )
+            // InternalGrana.g:10046:1: ( RULE_STRING )
             {
-            // InternalGrana.g:9992:1: ( RULE_STRING )
-            // InternalGrana.g:9993:1: RULE_STRING
+            // InternalGrana.g:10046:1: ( RULE_STRING )
+            // InternalGrana.g:10047:1: RULE_STRING
             {
              before(grammarAccess.getLocalOutputAccess().getPathSTRINGTerminalRuleCall_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -26970,17 +27112,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Analysis__NameAssignment"
-    // InternalGrana.g:10002:1: rule__Analysis__NameAssignment : ( ruleQualifiedId ) ;
+    // InternalGrana.g:10056:1: rule__Analysis__NameAssignment : ( ruleQualifiedId ) ;
     public final void rule__Analysis__NameAssignment() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10006:1: ( ( ruleQualifiedId ) )
-            // InternalGrana.g:10007:1: ( ruleQualifiedId )
+            // InternalGrana.g:10060:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10061:1: ( ruleQualifiedId )
             {
-            // InternalGrana.g:10007:1: ( ruleQualifiedId )
-            // InternalGrana.g:10008:1: ruleQualifiedId
+            // InternalGrana.g:10061:1: ( ruleQualifiedId )
+            // InternalGrana.g:10062:1: ruleQualifiedId
             {
              before(grammarAccess.getAnalysisAccess().getNameQualifiedIdParserRuleCall_0()); 
             pushFollow(FOLLOW_2);
@@ -27011,17 +27153,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LayoutConfig__IdentifierAssignment_0"
-    // InternalGrana.g:10017:1: rule__LayoutConfig__IdentifierAssignment_0 : ( RULE_ID ) ;
+    // InternalGrana.g:10071:1: rule__LayoutConfig__IdentifierAssignment_0 : ( RULE_ID ) ;
     public final void rule__LayoutConfig__IdentifierAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10021:1: ( ( RULE_ID ) )
-            // InternalGrana.g:10022:1: ( RULE_ID )
+            // InternalGrana.g:10075:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10076:1: ( RULE_ID )
             {
-            // InternalGrana.g:10022:1: ( RULE_ID )
-            // InternalGrana.g:10023:1: RULE_ID
+            // InternalGrana.g:10076:1: ( RULE_ID )
+            // InternalGrana.g:10077:1: RULE_ID
             {
              before(grammarAccess.getLayoutConfigAccess().getIdentifierIDTerminalRuleCall_0_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -27048,17 +27190,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__LayoutConfig__PropertiesAssignment_2"
-    // InternalGrana.g:10032:1: rule__LayoutConfig__PropertiesAssignment_2 : ( ruleProperty ) ;
+    // InternalGrana.g:10086:1: rule__LayoutConfig__PropertiesAssignment_2 : ( ruleProperty ) ;
     public final void rule__LayoutConfig__PropertiesAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10036:1: ( ( ruleProperty ) )
-            // InternalGrana.g:10037:1: ( ruleProperty )
+            // InternalGrana.g:10090:1: ( ( ruleProperty ) )
+            // InternalGrana.g:10091:1: ( ruleProperty )
             {
-            // InternalGrana.g:10037:1: ( ruleProperty )
-            // InternalGrana.g:10038:1: ruleProperty
+            // InternalGrana.g:10091:1: ( ruleProperty )
+            // InternalGrana.g:10092:1: ruleProperty
             {
              before(grammarAccess.getLayoutConfigAccess().getPropertiesPropertyParserRuleCall_2_0()); 
             pushFollow(FOLLOW_2);
@@ -27089,17 +27231,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__IdentifierAssignment_1"
-    // InternalGrana.g:10053:1: rule__ElkNode__IdentifierAssignment_1 : ( RULE_ID ) ;
+    // InternalGrana.g:10107:1: rule__ElkNode__IdentifierAssignment_1 : ( RULE_ID ) ;
     public final void rule__ElkNode__IdentifierAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10057:1: ( ( RULE_ID ) )
-            // InternalGrana.g:10058:1: ( RULE_ID )
+            // InternalGrana.g:10111:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10112:1: ( RULE_ID )
             {
-            // InternalGrana.g:10058:1: ( RULE_ID )
-            // InternalGrana.g:10059:1: RULE_ID
+            // InternalGrana.g:10112:1: ( RULE_ID )
+            // InternalGrana.g:10113:1: RULE_ID
             {
              before(grammarAccess.getElkNodeAccess().getIdentifierIDTerminalRuleCall_1_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -27126,17 +27268,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__PropertiesAssignment_2_2"
-    // InternalGrana.g:10068:1: rule__ElkNode__PropertiesAssignment_2_2 : ( ruleProperty ) ;
+    // InternalGrana.g:10122:1: rule__ElkNode__PropertiesAssignment_2_2 : ( ruleProperty ) ;
     public final void rule__ElkNode__PropertiesAssignment_2_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10072:1: ( ( ruleProperty ) )
-            // InternalGrana.g:10073:1: ( ruleProperty )
+            // InternalGrana.g:10126:1: ( ( ruleProperty ) )
+            // InternalGrana.g:10127:1: ( ruleProperty )
             {
-            // InternalGrana.g:10073:1: ( ruleProperty )
-            // InternalGrana.g:10074:1: ruleProperty
+            // InternalGrana.g:10127:1: ( ruleProperty )
+            // InternalGrana.g:10128:1: ruleProperty
             {
              before(grammarAccess.getElkNodeAccess().getPropertiesPropertyParserRuleCall_2_2_0()); 
             pushFollow(FOLLOW_2);
@@ -27167,17 +27309,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__LabelsAssignment_2_3_0"
-    // InternalGrana.g:10083:1: rule__ElkNode__LabelsAssignment_2_3_0 : ( ruleElkLabel ) ;
+    // InternalGrana.g:10137:1: rule__ElkNode__LabelsAssignment_2_3_0 : ( ruleElkLabel ) ;
     public final void rule__ElkNode__LabelsAssignment_2_3_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10087:1: ( ( ruleElkLabel ) )
-            // InternalGrana.g:10088:1: ( ruleElkLabel )
+            // InternalGrana.g:10141:1: ( ( ruleElkLabel ) )
+            // InternalGrana.g:10142:1: ( ruleElkLabel )
             {
-            // InternalGrana.g:10088:1: ( ruleElkLabel )
-            // InternalGrana.g:10089:1: ruleElkLabel
+            // InternalGrana.g:10142:1: ( ruleElkLabel )
+            // InternalGrana.g:10143:1: ruleElkLabel
             {
              before(grammarAccess.getElkNodeAccess().getLabelsElkLabelParserRuleCall_2_3_0_0()); 
             pushFollow(FOLLOW_2);
@@ -27208,17 +27350,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__PortsAssignment_2_3_1"
-    // InternalGrana.g:10098:1: rule__ElkNode__PortsAssignment_2_3_1 : ( ruleElkPort ) ;
+    // InternalGrana.g:10152:1: rule__ElkNode__PortsAssignment_2_3_1 : ( ruleElkPort ) ;
     public final void rule__ElkNode__PortsAssignment_2_3_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10102:1: ( ( ruleElkPort ) )
-            // InternalGrana.g:10103:1: ( ruleElkPort )
+            // InternalGrana.g:10156:1: ( ( ruleElkPort ) )
+            // InternalGrana.g:10157:1: ( ruleElkPort )
             {
-            // InternalGrana.g:10103:1: ( ruleElkPort )
-            // InternalGrana.g:10104:1: ruleElkPort
+            // InternalGrana.g:10157:1: ( ruleElkPort )
+            // InternalGrana.g:10158:1: ruleElkPort
             {
              before(grammarAccess.getElkNodeAccess().getPortsElkPortParserRuleCall_2_3_1_0()); 
             pushFollow(FOLLOW_2);
@@ -27249,17 +27391,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__ChildrenAssignment_2_3_2"
-    // InternalGrana.g:10113:1: rule__ElkNode__ChildrenAssignment_2_3_2 : ( ruleElkNode ) ;
+    // InternalGrana.g:10167:1: rule__ElkNode__ChildrenAssignment_2_3_2 : ( ruleElkNode ) ;
     public final void rule__ElkNode__ChildrenAssignment_2_3_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10117:1: ( ( ruleElkNode ) )
-            // InternalGrana.g:10118:1: ( ruleElkNode )
+            // InternalGrana.g:10171:1: ( ( ruleElkNode ) )
+            // InternalGrana.g:10172:1: ( ruleElkNode )
             {
-            // InternalGrana.g:10118:1: ( ruleElkNode )
-            // InternalGrana.g:10119:1: ruleElkNode
+            // InternalGrana.g:10172:1: ( ruleElkNode )
+            // InternalGrana.g:10173:1: ruleElkNode
             {
              before(grammarAccess.getElkNodeAccess().getChildrenElkNodeParserRuleCall_2_3_2_0()); 
             pushFollow(FOLLOW_2);
@@ -27290,17 +27432,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkNode__ContainedEdgesAssignment_2_3_3"
-    // InternalGrana.g:10128:1: rule__ElkNode__ContainedEdgesAssignment_2_3_3 : ( ruleElkEdge ) ;
+    // InternalGrana.g:10182:1: rule__ElkNode__ContainedEdgesAssignment_2_3_3 : ( ruleElkEdge ) ;
     public final void rule__ElkNode__ContainedEdgesAssignment_2_3_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10132:1: ( ( ruleElkEdge ) )
-            // InternalGrana.g:10133:1: ( ruleElkEdge )
+            // InternalGrana.g:10186:1: ( ( ruleElkEdge ) )
+            // InternalGrana.g:10187:1: ( ruleElkEdge )
             {
-            // InternalGrana.g:10133:1: ( ruleElkEdge )
-            // InternalGrana.g:10134:1: ruleElkEdge
+            // InternalGrana.g:10187:1: ( ruleElkEdge )
+            // InternalGrana.g:10188:1: ruleElkEdge
             {
              before(grammarAccess.getElkNodeAccess().getContainedEdgesElkEdgeParserRuleCall_2_3_3_0()); 
             pushFollow(FOLLOW_2);
@@ -27331,17 +27473,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__IdentifierAssignment_1_0"
-    // InternalGrana.g:10143:1: rule__ElkLabel__IdentifierAssignment_1_0 : ( RULE_ID ) ;
+    // InternalGrana.g:10197:1: rule__ElkLabel__IdentifierAssignment_1_0 : ( RULE_ID ) ;
     public final void rule__ElkLabel__IdentifierAssignment_1_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10147:1: ( ( RULE_ID ) )
-            // InternalGrana.g:10148:1: ( RULE_ID )
+            // InternalGrana.g:10201:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10202:1: ( RULE_ID )
             {
-            // InternalGrana.g:10148:1: ( RULE_ID )
-            // InternalGrana.g:10149:1: RULE_ID
+            // InternalGrana.g:10202:1: ( RULE_ID )
+            // InternalGrana.g:10203:1: RULE_ID
             {
              before(grammarAccess.getElkLabelAccess().getIdentifierIDTerminalRuleCall_1_0_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -27368,17 +27510,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__TextAssignment_2"
-    // InternalGrana.g:10158:1: rule__ElkLabel__TextAssignment_2 : ( RULE_STRING ) ;
+    // InternalGrana.g:10212:1: rule__ElkLabel__TextAssignment_2 : ( RULE_STRING ) ;
     public final void rule__ElkLabel__TextAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10162:1: ( ( RULE_STRING ) )
-            // InternalGrana.g:10163:1: ( RULE_STRING )
+            // InternalGrana.g:10216:1: ( ( RULE_STRING ) )
+            // InternalGrana.g:10217:1: ( RULE_STRING )
             {
-            // InternalGrana.g:10163:1: ( RULE_STRING )
-            // InternalGrana.g:10164:1: RULE_STRING
+            // InternalGrana.g:10217:1: ( RULE_STRING )
+            // InternalGrana.g:10218:1: RULE_STRING
             {
              before(grammarAccess.getElkLabelAccess().getTextSTRINGTerminalRuleCall_2_0()); 
             match(input,RULE_STRING,FOLLOW_2); 
@@ -27405,17 +27547,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__PropertiesAssignment_3_2"
-    // InternalGrana.g:10173:1: rule__ElkLabel__PropertiesAssignment_3_2 : ( ruleProperty ) ;
+    // InternalGrana.g:10227:1: rule__ElkLabel__PropertiesAssignment_3_2 : ( ruleProperty ) ;
     public final void rule__ElkLabel__PropertiesAssignment_3_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10177:1: ( ( ruleProperty ) )
-            // InternalGrana.g:10178:1: ( ruleProperty )
+            // InternalGrana.g:10231:1: ( ( ruleProperty ) )
+            // InternalGrana.g:10232:1: ( ruleProperty )
             {
-            // InternalGrana.g:10178:1: ( ruleProperty )
-            // InternalGrana.g:10179:1: ruleProperty
+            // InternalGrana.g:10232:1: ( ruleProperty )
+            // InternalGrana.g:10233:1: ruleProperty
             {
              before(grammarAccess.getElkLabelAccess().getPropertiesPropertyParserRuleCall_3_2_0()); 
             pushFollow(FOLLOW_2);
@@ -27446,17 +27588,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkLabel__LabelsAssignment_3_3"
-    // InternalGrana.g:10188:1: rule__ElkLabel__LabelsAssignment_3_3 : ( ruleElkLabel ) ;
+    // InternalGrana.g:10242:1: rule__ElkLabel__LabelsAssignment_3_3 : ( ruleElkLabel ) ;
     public final void rule__ElkLabel__LabelsAssignment_3_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10192:1: ( ( ruleElkLabel ) )
-            // InternalGrana.g:10193:1: ( ruleElkLabel )
+            // InternalGrana.g:10246:1: ( ( ruleElkLabel ) )
+            // InternalGrana.g:10247:1: ( ruleElkLabel )
             {
-            // InternalGrana.g:10193:1: ( ruleElkLabel )
-            // InternalGrana.g:10194:1: ruleElkLabel
+            // InternalGrana.g:10247:1: ( ruleElkLabel )
+            // InternalGrana.g:10248:1: ruleElkLabel
             {
              before(grammarAccess.getElkLabelAccess().getLabelsElkLabelParserRuleCall_3_3_0()); 
             pushFollow(FOLLOW_2);
@@ -27487,17 +27629,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__IdentifierAssignment_1"
-    // InternalGrana.g:10203:1: rule__ElkPort__IdentifierAssignment_1 : ( RULE_ID ) ;
+    // InternalGrana.g:10257:1: rule__ElkPort__IdentifierAssignment_1 : ( RULE_ID ) ;
     public final void rule__ElkPort__IdentifierAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10207:1: ( ( RULE_ID ) )
-            // InternalGrana.g:10208:1: ( RULE_ID )
+            // InternalGrana.g:10261:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10262:1: ( RULE_ID )
             {
-            // InternalGrana.g:10208:1: ( RULE_ID )
-            // InternalGrana.g:10209:1: RULE_ID
+            // InternalGrana.g:10262:1: ( RULE_ID )
+            // InternalGrana.g:10263:1: RULE_ID
             {
              before(grammarAccess.getElkPortAccess().getIdentifierIDTerminalRuleCall_1_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -27524,17 +27666,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__PropertiesAssignment_2_2"
-    // InternalGrana.g:10218:1: rule__ElkPort__PropertiesAssignment_2_2 : ( ruleProperty ) ;
+    // InternalGrana.g:10272:1: rule__ElkPort__PropertiesAssignment_2_2 : ( ruleProperty ) ;
     public final void rule__ElkPort__PropertiesAssignment_2_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10222:1: ( ( ruleProperty ) )
-            // InternalGrana.g:10223:1: ( ruleProperty )
+            // InternalGrana.g:10276:1: ( ( ruleProperty ) )
+            // InternalGrana.g:10277:1: ( ruleProperty )
             {
-            // InternalGrana.g:10223:1: ( ruleProperty )
-            // InternalGrana.g:10224:1: ruleProperty
+            // InternalGrana.g:10277:1: ( ruleProperty )
+            // InternalGrana.g:10278:1: ruleProperty
             {
              before(grammarAccess.getElkPortAccess().getPropertiesPropertyParserRuleCall_2_2_0()); 
             pushFollow(FOLLOW_2);
@@ -27565,17 +27707,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkPort__LabelsAssignment_2_3"
-    // InternalGrana.g:10233:1: rule__ElkPort__LabelsAssignment_2_3 : ( ruleElkLabel ) ;
+    // InternalGrana.g:10287:1: rule__ElkPort__LabelsAssignment_2_3 : ( ruleElkLabel ) ;
     public final void rule__ElkPort__LabelsAssignment_2_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10237:1: ( ( ruleElkLabel ) )
-            // InternalGrana.g:10238:1: ( ruleElkLabel )
+            // InternalGrana.g:10291:1: ( ( ruleElkLabel ) )
+            // InternalGrana.g:10292:1: ( ruleElkLabel )
             {
-            // InternalGrana.g:10238:1: ( ruleElkLabel )
-            // InternalGrana.g:10239:1: ruleElkLabel
+            // InternalGrana.g:10292:1: ( ruleElkLabel )
+            // InternalGrana.g:10293:1: ruleElkLabel
             {
              before(grammarAccess.getElkPortAccess().getLabelsElkLabelParserRuleCall_2_3_0()); 
             pushFollow(FOLLOW_2);
@@ -27606,17 +27748,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__XAssignment_2_0_2"
-    // InternalGrana.g:10248:1: rule__ShapeLayout__XAssignment_2_0_2 : ( ruleNumber ) ;
+    // InternalGrana.g:10302:1: rule__ShapeLayout__XAssignment_2_0_2 : ( ruleNumber ) ;
     public final void rule__ShapeLayout__XAssignment_2_0_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10252:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10253:1: ( ruleNumber )
+            // InternalGrana.g:10306:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10307:1: ( ruleNumber )
             {
-            // InternalGrana.g:10253:1: ( ruleNumber )
-            // InternalGrana.g:10254:1: ruleNumber
+            // InternalGrana.g:10307:1: ( ruleNumber )
+            // InternalGrana.g:10308:1: ruleNumber
             {
              before(grammarAccess.getShapeLayoutAccess().getXNumberParserRuleCall_2_0_2_0()); 
             pushFollow(FOLLOW_2);
@@ -27647,17 +27789,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__YAssignment_2_0_4"
-    // InternalGrana.g:10263:1: rule__ShapeLayout__YAssignment_2_0_4 : ( ruleNumber ) ;
+    // InternalGrana.g:10317:1: rule__ShapeLayout__YAssignment_2_0_4 : ( ruleNumber ) ;
     public final void rule__ShapeLayout__YAssignment_2_0_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10267:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10268:1: ( ruleNumber )
+            // InternalGrana.g:10321:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10322:1: ( ruleNumber )
             {
-            // InternalGrana.g:10268:1: ( ruleNumber )
-            // InternalGrana.g:10269:1: ruleNumber
+            // InternalGrana.g:10322:1: ( ruleNumber )
+            // InternalGrana.g:10323:1: ruleNumber
             {
              before(grammarAccess.getShapeLayoutAccess().getYNumberParserRuleCall_2_0_4_0()); 
             pushFollow(FOLLOW_2);
@@ -27688,17 +27830,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__WidthAssignment_2_1_2"
-    // InternalGrana.g:10278:1: rule__ShapeLayout__WidthAssignment_2_1_2 : ( ruleNumber ) ;
+    // InternalGrana.g:10332:1: rule__ShapeLayout__WidthAssignment_2_1_2 : ( ruleNumber ) ;
     public final void rule__ShapeLayout__WidthAssignment_2_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10282:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10283:1: ( ruleNumber )
+            // InternalGrana.g:10336:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10337:1: ( ruleNumber )
             {
-            // InternalGrana.g:10283:1: ( ruleNumber )
-            // InternalGrana.g:10284:1: ruleNumber
+            // InternalGrana.g:10337:1: ( ruleNumber )
+            // InternalGrana.g:10338:1: ruleNumber
             {
              before(grammarAccess.getShapeLayoutAccess().getWidthNumberParserRuleCall_2_1_2_0()); 
             pushFollow(FOLLOW_2);
@@ -27729,17 +27871,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ShapeLayout__HeightAssignment_2_1_4"
-    // InternalGrana.g:10293:1: rule__ShapeLayout__HeightAssignment_2_1_4 : ( ruleNumber ) ;
+    // InternalGrana.g:10347:1: rule__ShapeLayout__HeightAssignment_2_1_4 : ( ruleNumber ) ;
     public final void rule__ShapeLayout__HeightAssignment_2_1_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10297:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10298:1: ( ruleNumber )
+            // InternalGrana.g:10351:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10352:1: ( ruleNumber )
             {
-            // InternalGrana.g:10298:1: ( ruleNumber )
-            // InternalGrana.g:10299:1: ruleNumber
+            // InternalGrana.g:10352:1: ( ruleNumber )
+            // InternalGrana.g:10353:1: ruleNumber
             {
              before(grammarAccess.getShapeLayoutAccess().getHeightNumberParserRuleCall_2_1_4_0()); 
             pushFollow(FOLLOW_2);
@@ -27770,17 +27912,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__IdentifierAssignment_1_0"
-    // InternalGrana.g:10308:1: rule__ElkEdge__IdentifierAssignment_1_0 : ( RULE_ID ) ;
+    // InternalGrana.g:10362:1: rule__ElkEdge__IdentifierAssignment_1_0 : ( RULE_ID ) ;
     public final void rule__ElkEdge__IdentifierAssignment_1_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10312:1: ( ( RULE_ID ) )
-            // InternalGrana.g:10313:1: ( RULE_ID )
+            // InternalGrana.g:10366:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10367:1: ( RULE_ID )
             {
-            // InternalGrana.g:10313:1: ( RULE_ID )
-            // InternalGrana.g:10314:1: RULE_ID
+            // InternalGrana.g:10367:1: ( RULE_ID )
+            // InternalGrana.g:10368:1: RULE_ID
             {
              before(grammarAccess.getElkEdgeAccess().getIdentifierIDTerminalRuleCall_1_0_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -27807,21 +27949,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__SourcesAssignment_2"
-    // InternalGrana.g:10323:1: rule__ElkEdge__SourcesAssignment_2 : ( ( ruleQualifiedId ) ) ;
+    // InternalGrana.g:10377:1: rule__ElkEdge__SourcesAssignment_2 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkEdge__SourcesAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10327:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalGrana.g:10328:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10381:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalGrana.g:10382:1: ( ( ruleQualifiedId ) )
             {
-            // InternalGrana.g:10328:1: ( ( ruleQualifiedId ) )
-            // InternalGrana.g:10329:1: ( ruleQualifiedId )
+            // InternalGrana.g:10382:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10383:1: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkEdgeAccess().getSourcesElkConnectableShapeCrossReference_2_0()); 
-            // InternalGrana.g:10330:1: ( ruleQualifiedId )
-            // InternalGrana.g:10331:1: ruleQualifiedId
+            // InternalGrana.g:10384:1: ( ruleQualifiedId )
+            // InternalGrana.g:10385:1: ruleQualifiedId
             {
              before(grammarAccess.getElkEdgeAccess().getSourcesElkConnectableShapeQualifiedIdParserRuleCall_2_0_1()); 
             pushFollow(FOLLOW_2);
@@ -27856,21 +27998,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__SourcesAssignment_3_1"
-    // InternalGrana.g:10342:1: rule__ElkEdge__SourcesAssignment_3_1 : ( ( ruleQualifiedId ) ) ;
+    // InternalGrana.g:10396:1: rule__ElkEdge__SourcesAssignment_3_1 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkEdge__SourcesAssignment_3_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10346:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalGrana.g:10347:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10400:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalGrana.g:10401:1: ( ( ruleQualifiedId ) )
             {
-            // InternalGrana.g:10347:1: ( ( ruleQualifiedId ) )
-            // InternalGrana.g:10348:1: ( ruleQualifiedId )
+            // InternalGrana.g:10401:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10402:1: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkEdgeAccess().getSourcesElkConnectableShapeCrossReference_3_1_0()); 
-            // InternalGrana.g:10349:1: ( ruleQualifiedId )
-            // InternalGrana.g:10350:1: ruleQualifiedId
+            // InternalGrana.g:10403:1: ( ruleQualifiedId )
+            // InternalGrana.g:10404:1: ruleQualifiedId
             {
              before(grammarAccess.getElkEdgeAccess().getSourcesElkConnectableShapeQualifiedIdParserRuleCall_3_1_0_1()); 
             pushFollow(FOLLOW_2);
@@ -27905,21 +28047,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__TargetsAssignment_5"
-    // InternalGrana.g:10361:1: rule__ElkEdge__TargetsAssignment_5 : ( ( ruleQualifiedId ) ) ;
+    // InternalGrana.g:10415:1: rule__ElkEdge__TargetsAssignment_5 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkEdge__TargetsAssignment_5() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10365:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalGrana.g:10366:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10419:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalGrana.g:10420:1: ( ( ruleQualifiedId ) )
             {
-            // InternalGrana.g:10366:1: ( ( ruleQualifiedId ) )
-            // InternalGrana.g:10367:1: ( ruleQualifiedId )
+            // InternalGrana.g:10420:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10421:1: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkEdgeAccess().getTargetsElkConnectableShapeCrossReference_5_0()); 
-            // InternalGrana.g:10368:1: ( ruleQualifiedId )
-            // InternalGrana.g:10369:1: ruleQualifiedId
+            // InternalGrana.g:10422:1: ( ruleQualifiedId )
+            // InternalGrana.g:10423:1: ruleQualifiedId
             {
              before(grammarAccess.getElkEdgeAccess().getTargetsElkConnectableShapeQualifiedIdParserRuleCall_5_0_1()); 
             pushFollow(FOLLOW_2);
@@ -27954,21 +28096,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__TargetsAssignment_6_1"
-    // InternalGrana.g:10380:1: rule__ElkEdge__TargetsAssignment_6_1 : ( ( ruleQualifiedId ) ) ;
+    // InternalGrana.g:10434:1: rule__ElkEdge__TargetsAssignment_6_1 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkEdge__TargetsAssignment_6_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10384:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalGrana.g:10385:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10438:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalGrana.g:10439:1: ( ( ruleQualifiedId ) )
             {
-            // InternalGrana.g:10385:1: ( ( ruleQualifiedId ) )
-            // InternalGrana.g:10386:1: ( ruleQualifiedId )
+            // InternalGrana.g:10439:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10440:1: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkEdgeAccess().getTargetsElkConnectableShapeCrossReference_6_1_0()); 
-            // InternalGrana.g:10387:1: ( ruleQualifiedId )
-            // InternalGrana.g:10388:1: ruleQualifiedId
+            // InternalGrana.g:10441:1: ( ruleQualifiedId )
+            // InternalGrana.g:10442:1: ruleQualifiedId
             {
              before(grammarAccess.getElkEdgeAccess().getTargetsElkConnectableShapeQualifiedIdParserRuleCall_6_1_0_1()); 
             pushFollow(FOLLOW_2);
@@ -28003,17 +28145,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__PropertiesAssignment_7_2"
-    // InternalGrana.g:10399:1: rule__ElkEdge__PropertiesAssignment_7_2 : ( ruleProperty ) ;
+    // InternalGrana.g:10453:1: rule__ElkEdge__PropertiesAssignment_7_2 : ( ruleProperty ) ;
     public final void rule__ElkEdge__PropertiesAssignment_7_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10403:1: ( ( ruleProperty ) )
-            // InternalGrana.g:10404:1: ( ruleProperty )
+            // InternalGrana.g:10457:1: ( ( ruleProperty ) )
+            // InternalGrana.g:10458:1: ( ruleProperty )
             {
-            // InternalGrana.g:10404:1: ( ruleProperty )
-            // InternalGrana.g:10405:1: ruleProperty
+            // InternalGrana.g:10458:1: ( ruleProperty )
+            // InternalGrana.g:10459:1: ruleProperty
             {
              before(grammarAccess.getElkEdgeAccess().getPropertiesPropertyParserRuleCall_7_2_0()); 
             pushFollow(FOLLOW_2);
@@ -28044,17 +28186,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdge__LabelsAssignment_7_3"
-    // InternalGrana.g:10414:1: rule__ElkEdge__LabelsAssignment_7_3 : ( ruleElkLabel ) ;
+    // InternalGrana.g:10468:1: rule__ElkEdge__LabelsAssignment_7_3 : ( ruleElkLabel ) ;
     public final void rule__ElkEdge__LabelsAssignment_7_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10418:1: ( ( ruleElkLabel ) )
-            // InternalGrana.g:10419:1: ( ruleElkLabel )
+            // InternalGrana.g:10472:1: ( ( ruleElkLabel ) )
+            // InternalGrana.g:10473:1: ( ruleElkLabel )
             {
-            // InternalGrana.g:10419:1: ( ruleElkLabel )
-            // InternalGrana.g:10420:1: ruleElkLabel
+            // InternalGrana.g:10473:1: ( ruleElkLabel )
+            // InternalGrana.g:10474:1: ruleElkLabel
             {
              before(grammarAccess.getElkEdgeAccess().getLabelsElkLabelParserRuleCall_7_3_0()); 
             pushFollow(FOLLOW_2);
@@ -28085,17 +28227,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EdgeLayout__SectionsAssignment_2_0"
-    // InternalGrana.g:10429:1: rule__EdgeLayout__SectionsAssignment_2_0 : ( ruleElkSingleEdgeSection ) ;
+    // InternalGrana.g:10483:1: rule__EdgeLayout__SectionsAssignment_2_0 : ( ruleElkSingleEdgeSection ) ;
     public final void rule__EdgeLayout__SectionsAssignment_2_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10433:1: ( ( ruleElkSingleEdgeSection ) )
-            // InternalGrana.g:10434:1: ( ruleElkSingleEdgeSection )
+            // InternalGrana.g:10487:1: ( ( ruleElkSingleEdgeSection ) )
+            // InternalGrana.g:10488:1: ( ruleElkSingleEdgeSection )
             {
-            // InternalGrana.g:10434:1: ( ruleElkSingleEdgeSection )
-            // InternalGrana.g:10435:1: ruleElkSingleEdgeSection
+            // InternalGrana.g:10488:1: ( ruleElkSingleEdgeSection )
+            // InternalGrana.g:10489:1: ruleElkSingleEdgeSection
             {
              before(grammarAccess.getEdgeLayoutAccess().getSectionsElkSingleEdgeSectionParserRuleCall_2_0_0()); 
             pushFollow(FOLLOW_2);
@@ -28126,17 +28268,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__EdgeLayout__SectionsAssignment_2_1"
-    // InternalGrana.g:10444:1: rule__EdgeLayout__SectionsAssignment_2_1 : ( ruleElkEdgeSection ) ;
+    // InternalGrana.g:10498:1: rule__EdgeLayout__SectionsAssignment_2_1 : ( ruleElkEdgeSection ) ;
     public final void rule__EdgeLayout__SectionsAssignment_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10448:1: ( ( ruleElkEdgeSection ) )
-            // InternalGrana.g:10449:1: ( ruleElkEdgeSection )
+            // InternalGrana.g:10502:1: ( ( ruleElkEdgeSection ) )
+            // InternalGrana.g:10503:1: ( ruleElkEdgeSection )
             {
-            // InternalGrana.g:10449:1: ( ruleElkEdgeSection )
-            // InternalGrana.g:10450:1: ruleElkEdgeSection
+            // InternalGrana.g:10503:1: ( ruleElkEdgeSection )
+            // InternalGrana.g:10504:1: ruleElkEdgeSection
             {
              before(grammarAccess.getEdgeLayoutAccess().getSectionsElkEdgeSectionParserRuleCall_2_1_0()); 
             pushFollow(FOLLOW_2);
@@ -28167,21 +28309,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2"
-    // InternalGrana.g:10459:1: rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 : ( ( ruleQualifiedId ) ) ;
+    // InternalGrana.g:10513:1: rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkSingleEdgeSection__IncomingShapeAssignment_1_0_0_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10463:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalGrana.g:10464:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10517:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalGrana.g:10518:1: ( ( ruleQualifiedId ) )
             {
-            // InternalGrana.g:10464:1: ( ( ruleQualifiedId ) )
-            // InternalGrana.g:10465:1: ( ruleQualifiedId )
+            // InternalGrana.g:10518:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10519:1: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_1_0_0_2_0()); 
-            // InternalGrana.g:10466:1: ( ruleQualifiedId )
-            // InternalGrana.g:10467:1: ruleQualifiedId
+            // InternalGrana.g:10520:1: ( ruleQualifiedId )
+            // InternalGrana.g:10521:1: ruleQualifiedId
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_0_2_0_1()); 
             pushFollow(FOLLOW_2);
@@ -28216,21 +28358,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2"
-    // InternalGrana.g:10478:1: rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 : ( ( ruleQualifiedId ) ) ;
+    // InternalGrana.g:10532:1: rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkSingleEdgeSection__OutgoingShapeAssignment_1_0_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10482:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalGrana.g:10483:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10536:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalGrana.g:10537:1: ( ( ruleQualifiedId ) )
             {
-            // InternalGrana.g:10483:1: ( ( ruleQualifiedId ) )
-            // InternalGrana.g:10484:1: ( ruleQualifiedId )
+            // InternalGrana.g:10537:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10538:1: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_1_0_1_2_0()); 
-            // InternalGrana.g:10485:1: ( ruleQualifiedId )
-            // InternalGrana.g:10486:1: ruleQualifiedId
+            // InternalGrana.g:10539:1: ( ruleQualifiedId )
+            // InternalGrana.g:10540:1: ruleQualifiedId
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_1_0_1_2_0_1()); 
             pushFollow(FOLLOW_2);
@@ -28265,17 +28407,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2"
-    // InternalGrana.g:10497:1: rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 : ( ruleNumber ) ;
+    // InternalGrana.g:10551:1: rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2 : ( ruleNumber ) ;
     public final void rule__ElkSingleEdgeSection__StartXAssignment_1_0_2_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10501:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10502:1: ( ruleNumber )
+            // InternalGrana.g:10555:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10556:1: ( ruleNumber )
             {
-            // InternalGrana.g:10502:1: ( ruleNumber )
-            // InternalGrana.g:10503:1: ruleNumber
+            // InternalGrana.g:10556:1: ( ruleNumber )
+            // InternalGrana.g:10557:1: ruleNumber
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getStartXNumberParserRuleCall_1_0_2_2_0()); 
             pushFollow(FOLLOW_2);
@@ -28306,17 +28448,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4"
-    // InternalGrana.g:10512:1: rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 : ( ruleNumber ) ;
+    // InternalGrana.g:10566:1: rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4 : ( ruleNumber ) ;
     public final void rule__ElkSingleEdgeSection__StartYAssignment_1_0_2_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10516:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10517:1: ( ruleNumber )
+            // InternalGrana.g:10570:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10571:1: ( ruleNumber )
             {
-            // InternalGrana.g:10517:1: ( ruleNumber )
-            // InternalGrana.g:10518:1: ruleNumber
+            // InternalGrana.g:10571:1: ( ruleNumber )
+            // InternalGrana.g:10572:1: ruleNumber
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getStartYNumberParserRuleCall_1_0_2_4_0()); 
             pushFollow(FOLLOW_2);
@@ -28347,17 +28489,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2"
-    // InternalGrana.g:10527:1: rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 : ( ruleNumber ) ;
+    // InternalGrana.g:10581:1: rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2 : ( ruleNumber ) ;
     public final void rule__ElkSingleEdgeSection__EndXAssignment_1_0_3_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10531:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10532:1: ( ruleNumber )
+            // InternalGrana.g:10585:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10586:1: ( ruleNumber )
             {
-            // InternalGrana.g:10532:1: ( ruleNumber )
-            // InternalGrana.g:10533:1: ruleNumber
+            // InternalGrana.g:10586:1: ( ruleNumber )
+            // InternalGrana.g:10587:1: ruleNumber
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getEndXNumberParserRuleCall_1_0_3_2_0()); 
             pushFollow(FOLLOW_2);
@@ -28388,17 +28530,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4"
-    // InternalGrana.g:10542:1: rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 : ( ruleNumber ) ;
+    // InternalGrana.g:10596:1: rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4 : ( ruleNumber ) ;
     public final void rule__ElkSingleEdgeSection__EndYAssignment_1_0_3_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10546:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10547:1: ( ruleNumber )
+            // InternalGrana.g:10600:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10601:1: ( ruleNumber )
             {
-            // InternalGrana.g:10547:1: ( ruleNumber )
-            // InternalGrana.g:10548:1: ruleNumber
+            // InternalGrana.g:10601:1: ( ruleNumber )
+            // InternalGrana.g:10602:1: ruleNumber
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getEndYNumberParserRuleCall_1_0_3_4_0()); 
             pushFollow(FOLLOW_2);
@@ -28429,17 +28571,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2"
-    // InternalGrana.g:10557:1: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 : ( ruleElkBendPoint ) ;
+    // InternalGrana.g:10611:1: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2 : ( ruleElkBendPoint ) ;
     public final void rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10561:1: ( ( ruleElkBendPoint ) )
-            // InternalGrana.g:10562:1: ( ruleElkBendPoint )
+            // InternalGrana.g:10615:1: ( ( ruleElkBendPoint ) )
+            // InternalGrana.g:10616:1: ( ruleElkBendPoint )
             {
-            // InternalGrana.g:10562:1: ( ruleElkBendPoint )
-            // InternalGrana.g:10563:1: ruleElkBendPoint
+            // InternalGrana.g:10616:1: ( ruleElkBendPoint )
+            // InternalGrana.g:10617:1: ruleElkBendPoint
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_1_2_0()); 
             pushFollow(FOLLOW_2);
@@ -28470,17 +28612,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1"
-    // InternalGrana.g:10572:1: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 : ( ruleElkBendPoint ) ;
+    // InternalGrana.g:10626:1: rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1 : ( ruleElkBendPoint ) ;
     public final void rule__ElkSingleEdgeSection__BendPointsAssignment_1_1_3_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10576:1: ( ( ruleElkBendPoint ) )
-            // InternalGrana.g:10577:1: ( ruleElkBendPoint )
+            // InternalGrana.g:10630:1: ( ( ruleElkBendPoint ) )
+            // InternalGrana.g:10631:1: ( ruleElkBendPoint )
             {
-            // InternalGrana.g:10577:1: ( ruleElkBendPoint )
-            // InternalGrana.g:10578:1: ruleElkBendPoint
+            // InternalGrana.g:10631:1: ( ruleElkBendPoint )
+            // InternalGrana.g:10632:1: ruleElkBendPoint
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_1_1_3_1_0()); 
             pushFollow(FOLLOW_2);
@@ -28511,17 +28653,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkSingleEdgeSection__PropertiesAssignment_1_2"
-    // InternalGrana.g:10587:1: rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 : ( ruleProperty ) ;
+    // InternalGrana.g:10641:1: rule__ElkSingleEdgeSection__PropertiesAssignment_1_2 : ( ruleProperty ) ;
     public final void rule__ElkSingleEdgeSection__PropertiesAssignment_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10591:1: ( ( ruleProperty ) )
-            // InternalGrana.g:10592:1: ( ruleProperty )
+            // InternalGrana.g:10645:1: ( ( ruleProperty ) )
+            // InternalGrana.g:10646:1: ( ruleProperty )
             {
-            // InternalGrana.g:10592:1: ( ruleProperty )
-            // InternalGrana.g:10593:1: ruleProperty
+            // InternalGrana.g:10646:1: ( ruleProperty )
+            // InternalGrana.g:10647:1: ruleProperty
             {
              before(grammarAccess.getElkSingleEdgeSectionAccess().getPropertiesPropertyParserRuleCall_1_2_0()); 
             pushFollow(FOLLOW_2);
@@ -28552,17 +28694,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__IdentifierAssignment_1"
-    // InternalGrana.g:10602:1: rule__ElkEdgeSection__IdentifierAssignment_1 : ( RULE_ID ) ;
+    // InternalGrana.g:10656:1: rule__ElkEdgeSection__IdentifierAssignment_1 : ( RULE_ID ) ;
     public final void rule__ElkEdgeSection__IdentifierAssignment_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10606:1: ( ( RULE_ID ) )
-            // InternalGrana.g:10607:1: ( RULE_ID )
+            // InternalGrana.g:10660:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10661:1: ( RULE_ID )
             {
-            // InternalGrana.g:10607:1: ( RULE_ID )
-            // InternalGrana.g:10608:1: RULE_ID
+            // InternalGrana.g:10661:1: ( RULE_ID )
+            // InternalGrana.g:10662:1: RULE_ID
             {
              before(grammarAccess.getElkEdgeSectionAccess().getIdentifierIDTerminalRuleCall_1_0()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -28589,21 +28731,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1"
-    // InternalGrana.g:10617:1: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 : ( ( RULE_ID ) ) ;
+    // InternalGrana.g:10671:1: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1 : ( ( RULE_ID ) ) ;
     public final void rule__ElkEdgeSection__OutgoingSectionsAssignment_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10621:1: ( ( ( RULE_ID ) ) )
-            // InternalGrana.g:10622:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10675:1: ( ( ( RULE_ID ) ) )
+            // InternalGrana.g:10676:1: ( ( RULE_ID ) )
             {
-            // InternalGrana.g:10622:1: ( ( RULE_ID ) )
-            // InternalGrana.g:10623:1: ( RULE_ID )
+            // InternalGrana.g:10676:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10677:1: ( RULE_ID )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsElkEdgeSectionCrossReference_2_1_0()); 
-            // InternalGrana.g:10624:1: ( RULE_ID )
-            // InternalGrana.g:10625:1: RULE_ID
+            // InternalGrana.g:10678:1: ( RULE_ID )
+            // InternalGrana.g:10679:1: RULE_ID
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsElkEdgeSectionIDTerminalRuleCall_2_1_0_1()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -28634,21 +28776,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1"
-    // InternalGrana.g:10636:1: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 : ( ( RULE_ID ) ) ;
+    // InternalGrana.g:10690:1: rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1 : ( ( RULE_ID ) ) ;
     public final void rule__ElkEdgeSection__OutgoingSectionsAssignment_2_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10640:1: ( ( ( RULE_ID ) ) )
-            // InternalGrana.g:10641:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10694:1: ( ( ( RULE_ID ) ) )
+            // InternalGrana.g:10695:1: ( ( RULE_ID ) )
             {
-            // InternalGrana.g:10641:1: ( ( RULE_ID ) )
-            // InternalGrana.g:10642:1: ( RULE_ID )
+            // InternalGrana.g:10695:1: ( ( RULE_ID ) )
+            // InternalGrana.g:10696:1: ( RULE_ID )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsElkEdgeSectionCrossReference_2_2_1_0()); 
-            // InternalGrana.g:10643:1: ( RULE_ID )
-            // InternalGrana.g:10644:1: RULE_ID
+            // InternalGrana.g:10697:1: ( RULE_ID )
+            // InternalGrana.g:10698:1: RULE_ID
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingSectionsElkEdgeSectionIDTerminalRuleCall_2_2_1_0_1()); 
             match(input,RULE_ID,FOLLOW_2); 
@@ -28679,21 +28821,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2"
-    // InternalGrana.g:10655:1: rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 : ( ( ruleQualifiedId ) ) ;
+    // InternalGrana.g:10709:1: rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkEdgeSection__IncomingShapeAssignment_4_0_0_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10659:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalGrana.g:10660:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10713:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalGrana.g:10714:1: ( ( ruleQualifiedId ) )
             {
-            // InternalGrana.g:10660:1: ( ( ruleQualifiedId ) )
-            // InternalGrana.g:10661:1: ( ruleQualifiedId )
+            // InternalGrana.g:10714:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10715:1: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeCrossReference_4_0_0_2_0()); 
-            // InternalGrana.g:10662:1: ( ruleQualifiedId )
-            // InternalGrana.g:10663:1: ruleQualifiedId
+            // InternalGrana.g:10716:1: ( ruleQualifiedId )
+            // InternalGrana.g:10717:1: ruleQualifiedId
             {
              before(grammarAccess.getElkEdgeSectionAccess().getIncomingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_0_2_0_1()); 
             pushFollow(FOLLOW_2);
@@ -28728,21 +28870,21 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2"
-    // InternalGrana.g:10674:1: rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 : ( ( ruleQualifiedId ) ) ;
+    // InternalGrana.g:10728:1: rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2 : ( ( ruleQualifiedId ) ) ;
     public final void rule__ElkEdgeSection__OutgoingShapeAssignment_4_0_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10678:1: ( ( ( ruleQualifiedId ) ) )
-            // InternalGrana.g:10679:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10732:1: ( ( ( ruleQualifiedId ) ) )
+            // InternalGrana.g:10733:1: ( ( ruleQualifiedId ) )
             {
-            // InternalGrana.g:10679:1: ( ( ruleQualifiedId ) )
-            // InternalGrana.g:10680:1: ( ruleQualifiedId )
+            // InternalGrana.g:10733:1: ( ( ruleQualifiedId ) )
+            // InternalGrana.g:10734:1: ( ruleQualifiedId )
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeCrossReference_4_0_1_2_0()); 
-            // InternalGrana.g:10681:1: ( ruleQualifiedId )
-            // InternalGrana.g:10682:1: ruleQualifiedId
+            // InternalGrana.g:10735:1: ( ruleQualifiedId )
+            // InternalGrana.g:10736:1: ruleQualifiedId
             {
              before(grammarAccess.getElkEdgeSectionAccess().getOutgoingShapeElkConnectableShapeQualifiedIdParserRuleCall_4_0_1_2_0_1()); 
             pushFollow(FOLLOW_2);
@@ -28777,17 +28919,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__StartXAssignment_4_0_2_2"
-    // InternalGrana.g:10693:1: rule__ElkEdgeSection__StartXAssignment_4_0_2_2 : ( ruleNumber ) ;
+    // InternalGrana.g:10747:1: rule__ElkEdgeSection__StartXAssignment_4_0_2_2 : ( ruleNumber ) ;
     public final void rule__ElkEdgeSection__StartXAssignment_4_0_2_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10697:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10698:1: ( ruleNumber )
+            // InternalGrana.g:10751:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10752:1: ( ruleNumber )
             {
-            // InternalGrana.g:10698:1: ( ruleNumber )
-            // InternalGrana.g:10699:1: ruleNumber
+            // InternalGrana.g:10752:1: ( ruleNumber )
+            // InternalGrana.g:10753:1: ruleNumber
             {
              before(grammarAccess.getElkEdgeSectionAccess().getStartXNumberParserRuleCall_4_0_2_2_0()); 
             pushFollow(FOLLOW_2);
@@ -28818,17 +28960,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__StartYAssignment_4_0_2_4"
-    // InternalGrana.g:10708:1: rule__ElkEdgeSection__StartYAssignment_4_0_2_4 : ( ruleNumber ) ;
+    // InternalGrana.g:10762:1: rule__ElkEdgeSection__StartYAssignment_4_0_2_4 : ( ruleNumber ) ;
     public final void rule__ElkEdgeSection__StartYAssignment_4_0_2_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10712:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10713:1: ( ruleNumber )
+            // InternalGrana.g:10766:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10767:1: ( ruleNumber )
             {
-            // InternalGrana.g:10713:1: ( ruleNumber )
-            // InternalGrana.g:10714:1: ruleNumber
+            // InternalGrana.g:10767:1: ( ruleNumber )
+            // InternalGrana.g:10768:1: ruleNumber
             {
              before(grammarAccess.getElkEdgeSectionAccess().getStartYNumberParserRuleCall_4_0_2_4_0()); 
             pushFollow(FOLLOW_2);
@@ -28859,17 +29001,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__EndXAssignment_4_0_3_2"
-    // InternalGrana.g:10723:1: rule__ElkEdgeSection__EndXAssignment_4_0_3_2 : ( ruleNumber ) ;
+    // InternalGrana.g:10777:1: rule__ElkEdgeSection__EndXAssignment_4_0_3_2 : ( ruleNumber ) ;
     public final void rule__ElkEdgeSection__EndXAssignment_4_0_3_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10727:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10728:1: ( ruleNumber )
+            // InternalGrana.g:10781:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10782:1: ( ruleNumber )
             {
-            // InternalGrana.g:10728:1: ( ruleNumber )
-            // InternalGrana.g:10729:1: ruleNumber
+            // InternalGrana.g:10782:1: ( ruleNumber )
+            // InternalGrana.g:10783:1: ruleNumber
             {
              before(grammarAccess.getElkEdgeSectionAccess().getEndXNumberParserRuleCall_4_0_3_2_0()); 
             pushFollow(FOLLOW_2);
@@ -28900,17 +29042,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__EndYAssignment_4_0_3_4"
-    // InternalGrana.g:10738:1: rule__ElkEdgeSection__EndYAssignment_4_0_3_4 : ( ruleNumber ) ;
+    // InternalGrana.g:10792:1: rule__ElkEdgeSection__EndYAssignment_4_0_3_4 : ( ruleNumber ) ;
     public final void rule__ElkEdgeSection__EndYAssignment_4_0_3_4() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10742:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10743:1: ( ruleNumber )
+            // InternalGrana.g:10796:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10797:1: ( ruleNumber )
             {
-            // InternalGrana.g:10743:1: ( ruleNumber )
-            // InternalGrana.g:10744:1: ruleNumber
+            // InternalGrana.g:10797:1: ( ruleNumber )
+            // InternalGrana.g:10798:1: ruleNumber
             {
              before(grammarAccess.getElkEdgeSectionAccess().getEndYNumberParserRuleCall_4_0_3_4_0()); 
             pushFollow(FOLLOW_2);
@@ -28941,17 +29083,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__BendPointsAssignment_4_1_2"
-    // InternalGrana.g:10753:1: rule__ElkEdgeSection__BendPointsAssignment_4_1_2 : ( ruleElkBendPoint ) ;
+    // InternalGrana.g:10807:1: rule__ElkEdgeSection__BendPointsAssignment_4_1_2 : ( ruleElkBendPoint ) ;
     public final void rule__ElkEdgeSection__BendPointsAssignment_4_1_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10757:1: ( ( ruleElkBendPoint ) )
-            // InternalGrana.g:10758:1: ( ruleElkBendPoint )
+            // InternalGrana.g:10811:1: ( ( ruleElkBendPoint ) )
+            // InternalGrana.g:10812:1: ( ruleElkBendPoint )
             {
-            // InternalGrana.g:10758:1: ( ruleElkBendPoint )
-            // InternalGrana.g:10759:1: ruleElkBendPoint
+            // InternalGrana.g:10812:1: ( ruleElkBendPoint )
+            // InternalGrana.g:10813:1: ruleElkBendPoint
             {
              before(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_1_2_0()); 
             pushFollow(FOLLOW_2);
@@ -28982,17 +29124,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1"
-    // InternalGrana.g:10768:1: rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 : ( ruleElkBendPoint ) ;
+    // InternalGrana.g:10822:1: rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1 : ( ruleElkBendPoint ) ;
     public final void rule__ElkEdgeSection__BendPointsAssignment_4_1_3_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10772:1: ( ( ruleElkBendPoint ) )
-            // InternalGrana.g:10773:1: ( ruleElkBendPoint )
+            // InternalGrana.g:10826:1: ( ( ruleElkBendPoint ) )
+            // InternalGrana.g:10827:1: ( ruleElkBendPoint )
             {
-            // InternalGrana.g:10773:1: ( ruleElkBendPoint )
-            // InternalGrana.g:10774:1: ruleElkBendPoint
+            // InternalGrana.g:10827:1: ( ruleElkBendPoint )
+            // InternalGrana.g:10828:1: ruleElkBendPoint
             {
              before(grammarAccess.getElkEdgeSectionAccess().getBendPointsElkBendPointParserRuleCall_4_1_3_1_0()); 
             pushFollow(FOLLOW_2);
@@ -29023,17 +29165,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkEdgeSection__PropertiesAssignment_4_2"
-    // InternalGrana.g:10783:1: rule__ElkEdgeSection__PropertiesAssignment_4_2 : ( ruleProperty ) ;
+    // InternalGrana.g:10837:1: rule__ElkEdgeSection__PropertiesAssignment_4_2 : ( ruleProperty ) ;
     public final void rule__ElkEdgeSection__PropertiesAssignment_4_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10787:1: ( ( ruleProperty ) )
-            // InternalGrana.g:10788:1: ( ruleProperty )
+            // InternalGrana.g:10841:1: ( ( ruleProperty ) )
+            // InternalGrana.g:10842:1: ( ruleProperty )
             {
-            // InternalGrana.g:10788:1: ( ruleProperty )
-            // InternalGrana.g:10789:1: ruleProperty
+            // InternalGrana.g:10842:1: ( ruleProperty )
+            // InternalGrana.g:10843:1: ruleProperty
             {
              before(grammarAccess.getElkEdgeSectionAccess().getPropertiesPropertyParserRuleCall_4_2_0()); 
             pushFollow(FOLLOW_2);
@@ -29064,17 +29206,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkBendPoint__XAssignment_0"
-    // InternalGrana.g:10798:1: rule__ElkBendPoint__XAssignment_0 : ( ruleNumber ) ;
+    // InternalGrana.g:10852:1: rule__ElkBendPoint__XAssignment_0 : ( ruleNumber ) ;
     public final void rule__ElkBendPoint__XAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10802:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10803:1: ( ruleNumber )
+            // InternalGrana.g:10856:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10857:1: ( ruleNumber )
             {
-            // InternalGrana.g:10803:1: ( ruleNumber )
-            // InternalGrana.g:10804:1: ruleNumber
+            // InternalGrana.g:10857:1: ( ruleNumber )
+            // InternalGrana.g:10858:1: ruleNumber
             {
              before(grammarAccess.getElkBendPointAccess().getXNumberParserRuleCall_0_0()); 
             pushFollow(FOLLOW_2);
@@ -29105,17 +29247,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__ElkBendPoint__YAssignment_2"
-    // InternalGrana.g:10813:1: rule__ElkBendPoint__YAssignment_2 : ( ruleNumber ) ;
+    // InternalGrana.g:10867:1: rule__ElkBendPoint__YAssignment_2 : ( ruleNumber ) ;
     public final void rule__ElkBendPoint__YAssignment_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10817:1: ( ( ruleNumber ) )
-            // InternalGrana.g:10818:1: ( ruleNumber )
+            // InternalGrana.g:10871:1: ( ( ruleNumber ) )
+            // InternalGrana.g:10872:1: ( ruleNumber )
             {
-            // InternalGrana.g:10818:1: ( ruleNumber )
-            // InternalGrana.g:10819:1: ruleNumber
+            // InternalGrana.g:10872:1: ( ruleNumber )
+            // InternalGrana.g:10873:1: ruleNumber
             {
              before(grammarAccess.getElkBendPointAccess().getYNumberParserRuleCall_2_0()); 
             pushFollow(FOLLOW_2);
@@ -29146,17 +29288,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Property__KeyAssignment_0"
-    // InternalGrana.g:10828:1: rule__Property__KeyAssignment_0 : ( rulePropertyKey ) ;
+    // InternalGrana.g:10882:1: rule__Property__KeyAssignment_0 : ( rulePropertyKey ) ;
     public final void rule__Property__KeyAssignment_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10832:1: ( ( rulePropertyKey ) )
-            // InternalGrana.g:10833:1: ( rulePropertyKey )
+            // InternalGrana.g:10886:1: ( ( rulePropertyKey ) )
+            // InternalGrana.g:10887:1: ( rulePropertyKey )
             {
-            // InternalGrana.g:10833:1: ( rulePropertyKey )
-            // InternalGrana.g:10834:1: rulePropertyKey
+            // InternalGrana.g:10887:1: ( rulePropertyKey )
+            // InternalGrana.g:10888:1: rulePropertyKey
             {
              before(grammarAccess.getPropertyAccess().getKeyPropertyKeyParserRuleCall_0_0()); 
             pushFollow(FOLLOW_2);
@@ -29187,17 +29329,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Property__ValueAssignment_2_0"
-    // InternalGrana.g:10843:1: rule__Property__ValueAssignment_2_0 : ( ruleStringValue ) ;
+    // InternalGrana.g:10897:1: rule__Property__ValueAssignment_2_0 : ( ruleStringValue ) ;
     public final void rule__Property__ValueAssignment_2_0() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10847:1: ( ( ruleStringValue ) )
-            // InternalGrana.g:10848:1: ( ruleStringValue )
+            // InternalGrana.g:10901:1: ( ( ruleStringValue ) )
+            // InternalGrana.g:10902:1: ( ruleStringValue )
             {
-            // InternalGrana.g:10848:1: ( ruleStringValue )
-            // InternalGrana.g:10849:1: ruleStringValue
+            // InternalGrana.g:10902:1: ( ruleStringValue )
+            // InternalGrana.g:10903:1: ruleStringValue
             {
              before(grammarAccess.getPropertyAccess().getValueStringValueParserRuleCall_2_0_0()); 
             pushFollow(FOLLOW_2);
@@ -29228,17 +29370,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Property__ValueAssignment_2_1"
-    // InternalGrana.g:10858:1: rule__Property__ValueAssignment_2_1 : ( ruleQualifiedIdValue ) ;
+    // InternalGrana.g:10912:1: rule__Property__ValueAssignment_2_1 : ( ruleQualifiedIdValue ) ;
     public final void rule__Property__ValueAssignment_2_1() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10862:1: ( ( ruleQualifiedIdValue ) )
-            // InternalGrana.g:10863:1: ( ruleQualifiedIdValue )
+            // InternalGrana.g:10916:1: ( ( ruleQualifiedIdValue ) )
+            // InternalGrana.g:10917:1: ( ruleQualifiedIdValue )
             {
-            // InternalGrana.g:10863:1: ( ruleQualifiedIdValue )
-            // InternalGrana.g:10864:1: ruleQualifiedIdValue
+            // InternalGrana.g:10917:1: ( ruleQualifiedIdValue )
+            // InternalGrana.g:10918:1: ruleQualifiedIdValue
             {
              before(grammarAccess.getPropertyAccess().getValueQualifiedIdValueParserRuleCall_2_1_0()); 
             pushFollow(FOLLOW_2);
@@ -29269,17 +29411,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Property__ValueAssignment_2_2"
-    // InternalGrana.g:10873:1: rule__Property__ValueAssignment_2_2 : ( ruleNumberValue ) ;
+    // InternalGrana.g:10927:1: rule__Property__ValueAssignment_2_2 : ( ruleNumberValue ) ;
     public final void rule__Property__ValueAssignment_2_2() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10877:1: ( ( ruleNumberValue ) )
-            // InternalGrana.g:10878:1: ( ruleNumberValue )
+            // InternalGrana.g:10931:1: ( ( ruleNumberValue ) )
+            // InternalGrana.g:10932:1: ( ruleNumberValue )
             {
-            // InternalGrana.g:10878:1: ( ruleNumberValue )
-            // InternalGrana.g:10879:1: ruleNumberValue
+            // InternalGrana.g:10932:1: ( ruleNumberValue )
+            // InternalGrana.g:10933:1: ruleNumberValue
             {
              before(grammarAccess.getPropertyAccess().getValueNumberValueParserRuleCall_2_2_0()); 
             pushFollow(FOLLOW_2);
@@ -29310,17 +29452,17 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__Property__ValueAssignment_2_3"
-    // InternalGrana.g:10888:1: rule__Property__ValueAssignment_2_3 : ( ruleBooleanValue ) ;
+    // InternalGrana.g:10942:1: rule__Property__ValueAssignment_2_3 : ( ruleBooleanValue ) ;
     public final void rule__Property__ValueAssignment_2_3() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // InternalGrana.g:10892:1: ( ( ruleBooleanValue ) )
-            // InternalGrana.g:10893:1: ( ruleBooleanValue )
+            // InternalGrana.g:10946:1: ( ( ruleBooleanValue ) )
+            // InternalGrana.g:10947:1: ( ruleBooleanValue )
             {
-            // InternalGrana.g:10893:1: ( ruleBooleanValue )
-            // InternalGrana.g:10894:1: ruleBooleanValue
+            // InternalGrana.g:10947:1: ( ruleBooleanValue )
+            // InternalGrana.g:10948:1: ruleBooleanValue
             {
              before(grammarAccess.getPropertyAccess().getValueBooleanValueParserRuleCall_2_3_0()); 
             pushFollow(FOLLOW_2);
@@ -29382,31 +29524,32 @@ public class InternalGranaParser extends AbstractInternalContentAssistParser {
     public static final BitSet FOLLOW_26 = new BitSet(new long[]{0x0000000100000002L});
     public static final BitSet FOLLOW_27 = new BitSet(new long[]{0x0000000800000000L});
     public static final BitSet FOLLOW_28 = new BitSet(new long[]{0x0000002000000000L});
-    public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x0000000000000010L});
-    public static final BitSet FOLLOW_30 = new BitSet(new long[]{0x0000004000000000L});
-    public static final BitSet FOLLOW_31 = new BitSet(new long[]{0x0000008000000080L});
-    public static final BitSet FOLLOW_32 = new BitSet(new long[]{0x00021B8000000080L});
-    public static final BitSet FOLLOW_33 = new BitSet(new long[]{0x00020B0000000002L});
-    public static final BitSet FOLLOW_34 = new BitSet(new long[]{0x0000000000000090L});
-    public static final BitSet FOLLOW_35 = new BitSet(new long[]{0x0000040000000000L});
-    public static final BitSet FOLLOW_36 = new BitSet(new long[]{0x0000128000000080L});
-    public static final BitSet FOLLOW_37 = new BitSet(new long[]{0x0000020000000002L});
-    public static final BitSet FOLLOW_38 = new BitSet(new long[]{0x0000200000000000L});
-    public static final BitSet FOLLOW_39 = new BitSet(new long[]{0x0001800000000000L});
-    public static final BitSet FOLLOW_40 = new BitSet(new long[]{0x0000400000000000L});
-    public static final BitSet FOLLOW_41 = new BitSet(new long[]{0x0000000000000060L});
-    public static final BitSet FOLLOW_42 = new BitSet(new long[]{0x0004000100000000L});
-    public static final BitSet FOLLOW_43 = new BitSet(new long[]{0x0000004100000000L});
-    public static final BitSet FOLLOW_44 = new BitSet(new long[]{0x0278000000000000L});
-    public static final BitSet FOLLOW_45 = new BitSet(new long[]{0x0078000000000000L});
-    public static final BitSet FOLLOW_46 = new BitSet(new long[]{0x0080000000000080L});
-    public static final BitSet FOLLOW_47 = new BitSet(new long[]{0x0100000000000000L});
-    public static final BitSet FOLLOW_48 = new BitSet(new long[]{0x0100000000000002L});
-    public static final BitSet FOLLOW_49 = new BitSet(new long[]{0x0004200000000000L});
-    public static final BitSet FOLLOW_50 = new BitSet(new long[]{0x0400000000000000L});
-    public static final BitSet FOLLOW_51 = new BitSet(new long[]{0x0400000000000002L});
-    public static final BitSet FOLLOW_52 = new BitSet(new long[]{0x00000000000060F0L});
-    public static final BitSet FOLLOW_53 = new BitSet(new long[]{0x0001800000000002L});
-    public static final BitSet FOLLOW_54 = new BitSet(new long[]{0x0078000000000002L});
+    public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x8000000000000000L});
+    public static final BitSet FOLLOW_30 = new BitSet(new long[]{0x0000000000000010L});
+    public static final BitSet FOLLOW_31 = new BitSet(new long[]{0x0000004000000000L});
+    public static final BitSet FOLLOW_32 = new BitSet(new long[]{0x0000008000000080L});
+    public static final BitSet FOLLOW_33 = new BitSet(new long[]{0x00021B8000000080L});
+    public static final BitSet FOLLOW_34 = new BitSet(new long[]{0x00020B0000000002L});
+    public static final BitSet FOLLOW_35 = new BitSet(new long[]{0x0000000000000090L});
+    public static final BitSet FOLLOW_36 = new BitSet(new long[]{0x0000040000000000L});
+    public static final BitSet FOLLOW_37 = new BitSet(new long[]{0x0000128000000080L});
+    public static final BitSet FOLLOW_38 = new BitSet(new long[]{0x0000020000000002L});
+    public static final BitSet FOLLOW_39 = new BitSet(new long[]{0x0000200000000000L});
+    public static final BitSet FOLLOW_40 = new BitSet(new long[]{0x0001800000000000L});
+    public static final BitSet FOLLOW_41 = new BitSet(new long[]{0x0000400000000000L});
+    public static final BitSet FOLLOW_42 = new BitSet(new long[]{0x0000000000000060L});
+    public static final BitSet FOLLOW_43 = new BitSet(new long[]{0x0004000100000000L});
+    public static final BitSet FOLLOW_44 = new BitSet(new long[]{0x0000004100000000L});
+    public static final BitSet FOLLOW_45 = new BitSet(new long[]{0x0278000000000000L});
+    public static final BitSet FOLLOW_46 = new BitSet(new long[]{0x0078000000000000L});
+    public static final BitSet FOLLOW_47 = new BitSet(new long[]{0x0080000000000080L});
+    public static final BitSet FOLLOW_48 = new BitSet(new long[]{0x0100000000000000L});
+    public static final BitSet FOLLOW_49 = new BitSet(new long[]{0x0100000000000002L});
+    public static final BitSet FOLLOW_50 = new BitSet(new long[]{0x0004200000000000L});
+    public static final BitSet FOLLOW_51 = new BitSet(new long[]{0x0400000000000000L});
+    public static final BitSet FOLLOW_52 = new BitSet(new long[]{0x0400000000000002L});
+    public static final BitSet FOLLOW_53 = new BitSet(new long[]{0x00000000000060F0L});
+    public static final BitSet FOLLOW_54 = new BitSet(new long[]{0x0001800000000002L});
+    public static final BitSet FOLLOW_55 = new BitSet(new long[]{0x0078000000000002L});
 
 }

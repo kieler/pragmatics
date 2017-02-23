@@ -1,5 +1,4 @@
 grammar de.cau.cs.kieler.grana.text.Grana 
-    //with org.eclipse.xtext.common.Terminals
     with org.eclipse.elk.graph.text.ElkGraph
 hidden(WS, ML_COMMENT, SL_COMMENT)
 
@@ -124,7 +123,7 @@ GlobalResourceRef:
 ;
 
 LocalResource:
-    path=STRING ('filter' filter=STRING)
+    path=STRING ('filter' filter=STRING) recurse ?= 'recurse'?
 ;
 
 /*

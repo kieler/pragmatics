@@ -1326,7 +1326,22 @@ ruleLocalResource returns [EObject current=null]
 	    }
 
 )
-)))
+))(
+(
+		lv_recurse_3_0=	'recurse' 
+    {
+        newLeafNode(lv_recurse_3_0, grammarAccess.getLocalResourceAccess().getRecurseRecurseKeyword_2_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getLocalResourceRule());
+	        }
+       		setWithLastConsumed($current, "recurse", true, "recurse");
+	    }
+
+)
+)?)
 ;
 
 

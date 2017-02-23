@@ -23,7 +23,7 @@ public class GranaExecutableExtensionFactory extends AbstractGuiceAwareExecutabl
 	
 	@Override
 	protected Injector getInjector() {
-		return GranaActivator.getInstance().getInjector(GranaActivator.DE_CAU_CS_KIELER_KIML_GRANA_TEXT_GRANA);
+		return GranaActivator.getInstance().getInjector(GranaActivator.DE_CAU_CS_KIELER_GRANA_TEXT_GRANA);
 	}
 	
 }

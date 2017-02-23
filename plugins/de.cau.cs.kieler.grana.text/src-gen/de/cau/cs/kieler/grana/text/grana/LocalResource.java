@@ -14,6 +14,7 @@ package de.cau.cs.kieler.grana.text.grana;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.grana.text.grana.LocalResource#getPath <em>Path</em>}</li>
  *   <li>{@link de.cau.cs.kieler.grana.text.grana.LocalResource#getFilter <em>Filter</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.grana.text.grana.LocalResource#isRecurse <em>Recurse</em>}</li>
  * </ul>
  *
  * @see de.cau.cs.kieler.grana.text.grana.GranaPackage#getLocalResource()
@@ -73,5 +74,31 @@ public interface LocalResource extends Resource
    * @generated
    */
   void setFilter(String value);
+
+  /**
+   * Returns the value of the '<em><b>Recurse</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Recurse</em>' attribute isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Recurse</em>' attribute.
+   * @see #setRecurse(boolean)
+   * @see de.cau.cs.kieler.grana.text.grana.GranaPackage#getLocalResource_Recurse()
+   * @model
+   * @generated
+   */
+  boolean isRecurse();
+
+  /**
+   * Sets the value of the '{@link de.cau.cs.kieler.grana.text.grana.LocalResource#isRecurse <em>Recurse</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Recurse</em>' attribute.
+   * @see #isRecurse()
+   * @generated
+   */
+  void setRecurse(boolean value);
 
 } // LocalResource

@@ -160,6 +160,7 @@ public class GranaParser extends AbstractContentAssistParser {
 					put(grammarAccess.getGlobalResourceRefAccess().getResourcesAssignment_1(), "rule__GlobalResourceRef__ResourcesAssignment_1");
 					put(grammarAccess.getLocalResourceAccess().getPathAssignment_0(), "rule__LocalResource__PathAssignment_0");
 					put(grammarAccess.getLocalResourceAccess().getFilterAssignment_1_1(), "rule__LocalResource__FilterAssignment_1_1");
+					put(grammarAccess.getLocalResourceAccess().getRecurseAssignment_2(), "rule__LocalResource__RecurseAssignment_2");
 					put(grammarAccess.getGlobalOutputRefAccess().getNameAssignment_0(), "rule__GlobalOutputRef__NameAssignment_0");
 					put(grammarAccess.getGlobalOutputRefAccess().getOutputAssignment_1(), "rule__GlobalOutputRef__OutputAssignment_1");
 					put(grammarAccess.getOutputReferenceAccess().getOutputRefAssignment_1(), "rule__OutputReference__OutputRefAssignment_1");

@@ -17,7 +17,6 @@ import com.google.common.collect.ContiguousSet
 import com.google.common.collect.DiscreteDomain
 import com.google.common.collect.Lists
 import com.google.common.collect.Range
-import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer
 import de.cau.cs.kieler.grana.AnalysisService
 import de.cau.cs.kieler.grana.text.grana.CompareJob
 import de.cau.cs.kieler.grana.text.grana.FloatRange
@@ -35,12 +34,15 @@ import de.cau.cs.kieler.grana.ui.batch.Batch
 import de.cau.cs.kieler.grana.ui.batch.BatchJob
 import de.cau.cs.kieler.grana.ui.batch.BatchResult
 import de.cau.cs.kieler.grana.ui.batch.CSVResultSerializer
+import de.cau.cs.kieler.grana.ui.batch.FileElkGraphProvider
 import de.cau.cs.kieler.grana.ui.batch.JsonResultSerializer
+import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
 import java.util.regex.Pattern
 import org.eclipse.core.resources.IContainer
+import org.eclipse.core.resources.IFile
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.IPath
 import org.eclipse.core.runtime.IProgressMonitor
@@ -52,7 +54,6 @@ import org.eclipse.elk.core.util.Pair
 import org.eclipse.elk.graph.properties.MapPropertyHolder
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
-import de.cau.cs.kieler.grana.ui.batch.FileElkGraphProvider
 
 /**
  * Utility class to convert textually specified grana executions to 
@@ -201,40 +202,48 @@ final class GranaTextToBatchJob {
             val filter = if (!resource.filter.nullOrEmpty)
                 Pattern.compile(resource.filter) else null
 
-            try {
-                // first we try to interpret the path as workspace relative
-                val p =  ResourcesPlugin.workspace.root.projects.findFirst[p|resource.path.contains(p.name)]
-                if (p == null) 
-                    throw new IllegalArgumentException("Could not find resource " + resource.path)
-                val wsloc = p.findMember(resource.path.replace(p.name, ""))
-
-                // add all files to the batch job
-                for (file : (wsloc as IContainer).members) {
-                    if (filter == null || filter.matcher(file.name).matches) {
-                        // add the job
-                        addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace
-                val fileURI = URI.createURI(resource.path, true)
-                println(fileURI)
-                val dir = new File(fileURI.toFileString)
-                if (dir == null || !dir.exists) {
-                    throw new IllegalArgumentException("Could not find resource location: '" 
-                        + resource.path + "'")
-                }                       
+            if (!resource.path.startsWith("file://")) {
+                // should be workspace relative
+                val p = ResourcesPlugin.workspace.root.projects.findFirst[p|resource.path.contains(p.name)]
+                val wsloc = p?.findMember(resource.path.replace(p.name, ""))
+                if (p == null || !(wsloc instanceof IContainer)) 
+                    throw new IllegalArgumentException("Invalid resource " + resource.path)
                 
-                for (file : dir.listFiles) {
-                    if (filter == null || filter.matcher(file.name).matches) {
-                        addBatchJob(batch, job, new Path(file.absolutePath))
-                    }
-                }                    
+                (wsloc as IContainer).collectJobsEclipse(batch, job, filter, resource.recurse)
+            } else {
+                // somewhere in the file system ...
+                val fileURI = URI.createURI(resource.path, true)
+                val dir = new File(fileURI.toFileString)
+                if (dir == null || !dir.exists || !dir.isDirectory)
+                    throw new IllegalArgumentException("Could not find resource location: '" + resource.path + "'")
+    
+                dir.collectJobsFilesystem(batch, job, filter, resource.recurse)
             }
         }
         
         monitor.done()
         return batch
+    }
+    
+    def static void collectJobsEclipse(IContainer container, Batch batch, Job job, Pattern filter, boolean recurse) {
+        for (member : container.members) {
+            switch member {
+                IContainer case recurse: member.collectJobsEclipse(batch, job, filter, recurse)
+                IFile case filter == null || filter.matcher(member.name).matches: 
+                    addBatchJob(batch, job, member.fullPath)
+                    //addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
+            }
+        } 
+    }
+    
+    def static void collectJobsFilesystem(File dir, Batch batch, Job job, Pattern filter, boolean recurse) {
+        for (member : dir.listFiles) {
+            switch member {
+                case member.isDirectory && recurse: member.collectJobsFilesystem(batch, job, filter, recurse)
+                case member.isFile && (filter == null || filter.matcher(member.name).matches):
+                    addBatchJob(batch, job, new Path(member.absolutePath))
+            }
+        }
     }
     
     /**

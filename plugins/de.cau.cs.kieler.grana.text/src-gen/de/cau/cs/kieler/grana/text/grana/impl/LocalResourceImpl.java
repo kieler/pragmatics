@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link de.cau.cs.kieler.grana.text.grana.impl.LocalResourceImpl#getPath <em>Path</em>}</li>
  *   <li>{@link de.cau.cs.kieler.grana.text.grana.impl.LocalResourceImpl#getFilter <em>Filter</em>}</li>
+ *   <li>{@link de.cau.cs.kieler.grana.text.grana.impl.LocalResourceImpl#isRecurse <em>Recurse</em>}</li>
  * </ul>
  *
  * @generated
@@ -66,6 +67,26 @@ public class LocalResourceImpl extends ResourceImpl implements LocalResource
    * @ordered
    */
   protected String filter = FILTER_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isRecurse() <em>Recurse</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isRecurse()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean RECURSE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isRecurse() <em>Recurse</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isRecurse()
+   * @generated
+   * @ordered
+   */
+  protected boolean recurse = RECURSE_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -139,6 +160,29 @@ public class LocalResourceImpl extends ResourceImpl implements LocalResource
    * <!-- end-user-doc -->
    * @generated
    */
+  public boolean isRecurse()
+  {
+    return recurse;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setRecurse(boolean newRecurse)
+  {
+    boolean oldRecurse = recurse;
+    recurse = newRecurse;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GranaPackage.LOCAL_RESOURCE__RECURSE, oldRecurse, recurse));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
@@ -148,6 +192,8 @@ public class LocalResourceImpl extends ResourceImpl implements LocalResource
         return getPath();
       case GranaPackage.LOCAL_RESOURCE__FILTER:
         return getFilter();
+      case GranaPackage.LOCAL_RESOURCE__RECURSE:
+        return isRecurse();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -167,6 +213,9 @@ public class LocalResourceImpl extends ResourceImpl implements LocalResource
         return;
       case GranaPackage.LOCAL_RESOURCE__FILTER:
         setFilter((String)newValue);
+        return;
+      case GranaPackage.LOCAL_RESOURCE__RECURSE:
+        setRecurse((Boolean)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -188,6 +237,9 @@ public class LocalResourceImpl extends ResourceImpl implements LocalResource
       case GranaPackage.LOCAL_RESOURCE__FILTER:
         setFilter(FILTER_EDEFAULT);
         return;
+      case GranaPackage.LOCAL_RESOURCE__RECURSE:
+        setRecurse(RECURSE_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -206,6 +258,8 @@ public class LocalResourceImpl extends ResourceImpl implements LocalResource
         return PATH_EDEFAULT == null ? path != null : !PATH_EDEFAULT.equals(path);
       case GranaPackage.LOCAL_RESOURCE__FILTER:
         return FILTER_EDEFAULT == null ? filter != null : !FILTER_EDEFAULT.equals(filter);
+      case GranaPackage.LOCAL_RESOURCE__RECURSE:
+        return recurse != RECURSE_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
@@ -225,6 +279,8 @@ public class LocalResourceImpl extends ResourceImpl implements LocalResource
     result.append(path);
     result.append(", filter: ");
     result.append(filter);
+    result.append(", recurse: ");
+    result.append(recurse);
     result.append(')');
     return result.toString();
   }
