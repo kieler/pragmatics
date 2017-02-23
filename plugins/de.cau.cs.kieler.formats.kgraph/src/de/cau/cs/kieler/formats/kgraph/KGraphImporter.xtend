@@ -104,6 +104,9 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
     }
     
     private def create eLabel : ElkGraphUtil.createLabel(null) transformLabel(KLabel kLabel) {
+        // label text
+        eLabel.text = kLabel.text
+        
         // Structural information
         val parent = kLabel.parent
         eLabel.parent = switch parent {
@@ -161,7 +164,7 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
         target.y = source.ypos;
         target.height = source.height;
         target.width = source.width;
-        println(source.allProperties)
+        
         target.copyProperties(source);
     }
     

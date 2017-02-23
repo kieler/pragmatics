@@ -17,7 +17,9 @@ import de.cau.cs.kieler.formats.AbstractEmfHandler
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
-class KGraphHandler extends AbstractEmfHandler<KNode>  {
+public class KGraphHandler extends AbstractEmfHandler<KNode>  {
+
+    public static val ID = "de.cau.cs.kieler.kgraph"
 
     override protected createResourceSet() { 
         // TODO could be possible that the extensions are not registered ...
