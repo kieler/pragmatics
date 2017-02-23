@@ -10,6 +10,7 @@ import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.alg.layered.properties.FixedAlignment;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.mrtree.TreeLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
@@ -23,30 +24,39 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
-	private List<ElkNode> children = new ArrayList<ElkNode>();
-	private static List<ElkEdge> edges = new ArrayList<ElkEdge>();
+	private List<ElkNode> children;
+	private static List<ElkEdge> edges;
 	private static ElkNode root;
 	private List<ElkNode> secondHierarchyNodes;
 	private int treeseperator;
 	private int totalDepth = 0;
-	private Map<ElkNode, Integer> nodeDepth = new HashMap<ElkNode, Integer>();
+	private Map<ElkNode, Integer> nodeDepth;
 
 	@Override
 	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
-		children.clear();
-		edges.clear();
+		children = new ArrayList<ElkNode>();
+		edges = new ArrayList<ElkEdge>();
+		nodeDepth = new HashMap<ElkNode, Integer>();
 
 		children = layoutGraph.getChildren();
 		edges = HierarchicalUtil.getHierarchicalEdges(layoutGraph);
 		root = HierarchicalUtil.findRoot(layoutGraph);
 		secondHierarchyNodes = HierarchicalUtil.getSuccessor(root);
 
-		layeredLayout(layoutGraph);
+		// mrtreeLayout(layoutGraph);
+		layeredTreeLayout(layoutGraph);
 
 		HierarchicalEdgeRouting.drawExplosionLines(root);
 	}
 
-	private void layeredLayout(ElkNode layoutGraph) {
+	private void mrtreeLayout(ElkNode layoutGraph) {
+		BasicProgressMonitor firstRunMonitor = new BasicProgressMonitor();
+		TreeLayoutProvider tree = new TreeLayoutProvider();
+		tree.layout(layoutGraph, firstRunMonitor);
+	}
+
+	// TODO Bessere Parameter/lieber mrtree erweitern um directions?
+	private void layeredTreeLayout(ElkNode layoutGraph) {
 		// Compute the two Lists of nodes for the two runs of MrTree.
 		treeseperator = secondHierarchyNodes.size() / 2;
 		int i = 0;
@@ -151,10 +161,10 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		firstRun.setProperty(LayeredOptions.DIRECTION, Direction.UP);
 		layered.layout(firstRun, firstRunMonitor);
 
-//		System.out.println("first: " + firstRunList);
+		// System.out.println("first: " + firstRunList);
 
-		// TODO Compute correct displacement for x (maybe fixed)
-		float firstWidth = (float) firstRun.getWidth();
+		// TODO Compute better displacement for x
+		double firstWidth = firstRun.getWidth();
 
 		// Second run for downward tree
 		Map<ElkNode, ElkNode> secondRunMap = new HashMap<ElkNode, ElkNode>();
@@ -167,24 +177,35 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		secondRun.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
 		layered.layout(secondRun, secondRunMonitor);
 
-		float secondWidth = (float) secondRun.getWidth();
+		double secondWidth = secondRun.getWidth();
 
 		// System.out.println("first: " + firstWidth);
 		// System.out.println("second: " + secondWidth);
 
 		// Compute positions for first run
-		float xDisplacement = 0;
+		double xDisplacement = 0;
 		if (firstWidth < secondWidth) {
 			xDisplacement = (secondWidth - firstWidth) / 2;
 			layoutGraph.setWidth(secondWidth);
 		}
 
 		// System.out.println("xDisp: " + xDisplacement);
+		double minX = Double.MAX_VALUE;
+		double maxX = Double.MIN_VALUE;
 		for (ElkNode node : children) {
 			if (firstRunMap.containsKey(node)) {
 				ElkNode newLayout = firstRunMap.get(node);
 				node.setX(newLayout.getX() + xDisplacement);
 				node.setY(newLayout.getY());
+				if (node != root) {
+					if (node.getY() < minX) {
+						minX = node.getY();
+					}
+					if (node.getY() + node.getHeight() > maxX) {
+						maxX = node.getY() + node.getHeight();
+					}
+
+				}
 			}
 		}
 
@@ -195,14 +216,36 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			layoutGraph.setWidth(firstWidth);
 		}
 
-		float yDisplacement = (float) (firstRun.getHeight() - root.getHeight());
+		double firstDistanceToRoot = Double.MAX_VALUE;
+		for (ElkNode node : children) {
+			if (secondRunMap.containsKey(node)) {
+				if (node != root) {
+					if (secondRunMap.get(node).getY() - (secondRunMap.get(root).getY()
+							+ secondRunMap.get(root).getHeight()) < firstDistanceToRoot) {
+						firstDistanceToRoot = secondRunMap.get(node).getY()
+								- (secondRunMap.get(root).getY() + secondRunMap.get(root).getHeight());
+					}
+				}
+			}
+		}
+		
+//		System.out.println(firstDistanceToRoot);
+		double yDisplacement = Math.abs(minX - maxX) + firstRun.getHeight() / 10;
+		double secondDistanceToRoot = secondRunMap.get(root).getY() + yDisplacement - maxX;
+		double distance = firstDistanceToRoot - secondDistanceToRoot;
+//		System.out.println(distance);
 		for (ElkNode node : children) {
 			if (secondRunMap.containsKey(node)) {
 				ElkNode newLayout = secondRunMap.get(node);
 				node.setX(newLayout.getX() + xDisplacement);
-				node.setY(newLayout.getY() + yDisplacement);
+				if (node.equals(root)) {
+					node.setY(newLayout.getY() + yDisplacement);
+				} else {
+					node.setY(newLayout.getY() + yDisplacement - distance);
+				}
 			}
 		}
+		// root.setY(firstRun.getHeight() - root.getHeight());
 
 		layoutGraph.setHeight(yDisplacement + secondRun.getHeight());
 	}
@@ -269,7 +312,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			ElkNode tempNode = ElkGraphUtil.createNode(layoutRoot);
 			int i = offset.get(nodeDepth.get(node));
 			tempNode.setProperty(LayeredOptions.POSITION, new KVector(i, 0));
-			offset.put(nodeDepth.get(node), i + 1000);
+			offset.put(nodeDepth.get(node), (int) (i + node.getWidth() + 100));
 			ElkUtil.resizeNode(tempNode, node.getWidth(), node.getHeight(), false, false);
 			nodeMap.put(node, tempNode);
 		}
