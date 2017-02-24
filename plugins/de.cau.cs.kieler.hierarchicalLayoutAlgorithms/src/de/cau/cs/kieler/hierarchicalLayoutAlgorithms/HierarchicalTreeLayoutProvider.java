@@ -22,6 +22,8 @@ import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+import com.google.common.collect.Lists;
+
 public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 	private List<ElkNode> children;
@@ -101,6 +103,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 		// List<ElkNode> sortedXNodes = sortAxis(root, compX);
 		List<ElkNode> sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root);
+		sortedPolarNodes = Lists.reverse(sortedPolarNodes);
 		List<ElkNode> tempListF = new ArrayList<ElkNode>();
 		List<ElkNode> tempListS = new ArrayList<ElkNode>();
 		for (ElkNode node : sortedPolarNodes) {
@@ -365,6 +368,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// if (!HierarchicalUtil.getSuccessor(node).isEmpty()) {
 		// List<ElkNode> compList = sortAxis(node, comp);
 		List<ElkNode> compList = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
+		compList = Lists.reverse(compList);
+		
 		for (ElkNode n : compList) {
 			list.add(n);
 			buildNodeList(n, list);
