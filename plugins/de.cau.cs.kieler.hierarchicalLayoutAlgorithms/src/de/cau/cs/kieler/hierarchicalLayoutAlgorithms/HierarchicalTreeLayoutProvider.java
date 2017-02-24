@@ -10,6 +10,7 @@ import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.alg.layered.properties.FixedAlignment;
 import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
 import org.eclipse.elk.alg.layered.properties.LayeredOptions;
+import org.eclipse.elk.alg.mrtree.TreeLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Direction;
@@ -23,34 +24,43 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
-	private List<ElkNode> children = new ArrayList<ElkNode>();
-	private static List<ElkEdge> edges = new ArrayList<ElkEdge>();
+	private List<ElkNode> children;
+	private static List<ElkEdge> edges;
 	private static ElkNode root;
 	private List<ElkNode> secondHierarchyNodes;
 	private int treeseperator;
 	private int totalDepth = 0;
-	private Map<ElkNode, Integer> nodeDepth = new HashMap<ElkNode, Integer>();
+	private Map<ElkNode, Integer> nodeDepth;
 
 	@Override
 	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
-		// System.out.println("Hallo");
-		children.clear();
-		edges.clear();
+		children = new ArrayList<ElkNode>();
+		edges = new ArrayList<ElkEdge>();
+		nodeDepth = new HashMap<ElkNode, Integer>();
 
 		children = layoutGraph.getChildren();
 		edges = HierarchicalUtil.getHierarchicalEdges(layoutGraph);
 		root = HierarchicalUtil.findRoot(layoutGraph);
 		secondHierarchyNodes = HierarchicalUtil.getSuccessor(root);
 
-		layeredLayout(layoutGraph);
+		// mrtreeLayout(layoutGraph);
+		layeredTreeLayout(layoutGraph);
 
 		HierarchicalEdgeRouting.drawExplosionLines(root);
 	}
 
-	private void layeredLayout(ElkNode layoutGraph) {
+	private void mrtreeLayout(ElkNode layoutGraph) {
+		BasicProgressMonitor firstRunMonitor = new BasicProgressMonitor();
+		TreeLayoutProvider tree = new TreeLayoutProvider();
+		tree.layout(layoutGraph, firstRunMonitor);
+	}
+
+	// TODO Bessere Parameter/lieber mrtree erweitern um directions?
+	private void layeredTreeLayout(ElkNode layoutGraph) {
 		// Compute the two Lists of nodes for the two runs of MrTree.
 		treeseperator = secondHierarchyNodes.size() / 2;
 		int i = 0;
+		// List of nodes that are used in the particular run
 		List<ElkNode> firstRunList = new ArrayList<ElkNode>();
 		List<ElkNode> secondRunList = new ArrayList<ElkNode>();
 		// TODO Secondary sort method according to width
@@ -76,25 +86,26 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			i++;
 		}
 
-		Comparator<ElkNode> compX = new Comparator<ElkNode>() {
-			@Override
-			public int compare(ElkNode n1, ElkNode n2) {
-				if (n1.getX() < n2.getX()) {
-					return -1;
-				} else if (n1.getX() == n2.getX()) {
-					return 0;
-				} else {
-					return 1;
-				}
-			}
-		};
+		// Comparator<ElkNode> compX = new Comparator<ElkNode>() {
+		// @Override
+		// public int compare(ElkNode n1, ElkNode n2) {
+		// if (n1.getX() < n2.getX()) {
+		// return -1;
+		// } else if (n1.getX() == n2.getX()) {
+		// return 0;
+		// } else {
+		// return 1;
+		// }
+		// }
+		// };
+
 		// List<ElkNode> sortedXNodes = sortAxis(root, compX);
-		List<ElkNode> sortedXNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root);
+		List<ElkNode> sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root);
 		List<ElkNode> tempListF = new ArrayList<ElkNode>();
 		List<ElkNode> tempListS = new ArrayList<ElkNode>();
-		for (ElkNode node : sortedXNodes) {
+		for (ElkNode node : sortedPolarNodes) {
 			if (firstRunList.contains(node)) {
-				tempListF.add(0, node);
+				tempListF.add(node);
 			} else if (secondRunList.contains(node)) {
 				tempListS.add(node);
 			}
@@ -105,20 +116,17 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		secondRunList.addAll(tempListS);
 
 		List<ElkNode> tempList = new ArrayList<ElkNode>();
-		Boolean first = true;
 		for (ElkNode node : firstRunList) {
 			tempList.add(node);
-			buildNodeList(node, tempList, compX, first);
+			buildNodeList(node, tempList);
 		}
 		firstRunList.clear();
 		firstRunList.addAll(tempList);
 
-		// maxDepth = 0;
 		tempList.clear();
-		first = false;
 		for (ElkNode node : secondRunList) {
 			tempList.add(node);
-			buildNodeList(node, tempList, compX, first);
+			buildNodeList(node, tempList);
 		}
 		secondRunList.clear();
 		secondRunList.addAll(tempList);
@@ -130,86 +138,148 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			}
 			nodeDepth.put(node, depth);
 		}
-		// System.out.println(nodeDepth);
 
 		Map<Integer, Integer> firstOffset = new HashMap<Integer, Integer>();
 		for (int x = 1; x <= totalDepth; x++) {
 			firstOffset.put(x, 0);
 		}
-		// System.out.println("offset: " + firstOffset);
 		Map<Integer, Integer> secondOffset = new HashMap<Integer, Integer>();
 		for (int x = 1; x <= totalDepth + 1; x++) {
 			secondOffset.put(x, 0);
 		}
 
 		// First run for upward tree
+		// Maps the original node to the temporary node
 		Map<ElkNode, ElkNode> firstRunMap = new HashMap<ElkNode, ElkNode>();
 		ElkNode firstRun = createTree(firstRunList, firstRunMap, firstOffset);
-		BasicProgressMonitor firstLayeredRun = new BasicProgressMonitor();
+		BasicProgressMonitor firstRunMonitor = new BasicProgressMonitor();
 		LayeredLayoutProvider layered = new LayeredLayoutProvider();
 		firstRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
 		firstRun.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
 		firstRun.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
 		firstRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
 		firstRun.setProperty(LayeredOptions.DIRECTION, Direction.UP);
-		layered.layout(firstRun, firstLayeredRun);
-
-		// TODO Compute correct displacement for x (maybe fixed)
-		float firstWidth = (float) firstRun.getWidth();
-		float smallestXPos = Float.MAX_VALUE;
+		layered.layout(firstRun, firstRunMonitor);
 
 		// Second run for downward tree
 		Map<ElkNode, ElkNode> secondRunMap = new HashMap<ElkNode, ElkNode>();
 		ElkNode secondRun = createTree(secondRunList, secondRunMap, secondOffset);
-		BasicProgressMonitor secondLayeredRun = new BasicProgressMonitor();
+		BasicProgressMonitor secondRunMonitor = new BasicProgressMonitor();
 		secondRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
 		secondRun.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
 		secondRun.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
 		secondRun.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
 		secondRun.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
-//		layered.layout(secondRun, secondLayeredRun);
+		layered.layout(secondRun, secondRunMonitor);
 
-		float secondWidth = (float) secondRun.getWidth();
-
-		// System.out.println("first: " + firstWidth);
-		// System.out.println("second: " + secondWidth);
-
-		// Compute positions for first run
-		float xDisplacement = 0;
-		if (firstWidth < secondWidth) {
-			xDisplacement = (secondWidth - firstWidth) / 2;
-			layoutGraph.setWidth(secondWidth);
-		}
-
-		// System.out.println("xDisp: " + xDisplacement);
-		// System.out.println("smallest: " + smallestXPos);
+		double minY = Double.MAX_VALUE;
+		double minFirstX = Double.MAX_VALUE;
+		double minSecondX = Double.MAX_VALUE;
+		double maxY = Double.MIN_VALUE;
+		double maxFirstX = Double.MIN_VALUE;
+		double maxSecondX = Double.MIN_VALUE;
 		for (ElkNode node : children) {
 			if (firstRunMap.containsKey(node)) {
-				ElkNode newLayout = firstRunMap.get(node);
-				node.setX(newLayout.getX() + xDisplacement);
-				node.setY(newLayout.getY());
+				node = firstRunMap.get(node);
+				if (node.getY() < minY) {
+					minY = node.getY();
+				}
+				if (node.getX() < minFirstX) {
+					minFirstX = node.getX();
+				}
+				if (node.getY() + node.getHeight() > maxY) {
+					maxY = node.getY() + node.getHeight();
+				}
+				if (node.getX() + node.getWidth() > maxFirstX) {
+					maxFirstX = node.getX() + node.getWidth();
+				}
+			} else {
+				node = secondRunMap.get(node);
+				if (node.getX() < minSecondX) {
+					minSecondX = node.getX();
+				}
+				if (node.getX() + node.getWidth() > maxSecondX) {
+					maxSecondX = node.getX() + node.getWidth();
+				}
+			}
+		}
+
+		double firstWidth = maxFirstX - minFirstX;
+		double secondWidth = maxSecondX - minSecondX;
+
+		// Compute positions for first run
+		double xDisplacement = -minFirstX;
+		if (firstWidth < secondWidth) {
+			xDisplacement += (secondWidth - firstWidth) / 2;
+			layoutGraph.setWidth(secondRun.getWidth());
+		}
+
+		for (ElkNode node : children) {
+			if (firstRunMap.containsKey(node)) {
+				if (node != root) {
+					ElkNode newLayout = firstRunMap.get(node);
+					node.setX(newLayout.getX() + xDisplacement);
+					node.setY(newLayout.getY());
+				}
 			}
 		}
 
 		// Compute positions for second run
-		xDisplacement = 0;
+		double yDisplacement = firstRun.getHeight() - minY - root.getHeight();
+		xDisplacement = -minSecondX;
 		if (firstWidth > secondWidth) {
-			xDisplacement = (firstWidth - secondWidth) / 2;
-			layoutGraph.setWidth(firstWidth);
+			xDisplacement += (firstWidth - secondWidth) / 2;
+			layoutGraph.setWidth(firstRun.getWidth());
 		}
+		root.setY(yDisplacement);
+		root.setX(layoutGraph.getWidth() / 2 - root.getWidth() / 2);
 
-		float yDisplacement = (float) (firstRun.getHeight() - root.getHeight());
+		double firstDistanceToRoot = Double.MAX_VALUE;
 		for (ElkNode node : children) {
 			if (secondRunMap.containsKey(node)) {
-				ElkNode newLayout = secondRunMap.get(node);
-				node.setX(newLayout.getX() + xDisplacement);
-				node.setY(newLayout.getY() + yDisplacement);
+				if (node != root) {
+					if (secondRunMap.get(node).getY() - (secondRunMap.get(root).getY()
+							+ secondRunMap.get(root).getHeight()) < firstDistanceToRoot) {
+						firstDistanceToRoot = secondRunMap.get(node).getY()
+								- (secondRunMap.get(root).getY() + secondRunMap.get(root).getHeight());
+					}
+				}
+			}
+		}
+
+		// System.out.println(firstDistanceToRoot);
+		// double yDisplacement = Math.abs(minY - maxY) + firstRun.getHeight() /
+		// 10;
+		// double secondDistanceToRoot = secondRunMap.get(root).getY() +
+		// yDisplacement - maxY;
+		// double distance = firstDistanceToRoot - secondDistanceToRoot;
+		// double yDisplacement = maxY - minY + firstRun.getHeight() / 10;
+		// double secondDistanceToRoot = secondRunMap.get(root).getY() +
+		// yDisplacement;
+		// double distance = firstDistanceToRoot - secondDistanceToRoot;
+		// System.out.println(distance);
+
+		// TODO yDisp beim bigmodel
+		for (ElkNode node : children) {
+			if (secondRunMap.containsKey(node)) {
+				if (node != root) {
+					ElkNode newLayout = secondRunMap.get(node);
+					node.setX(newLayout.getX() + xDisplacement);
+					// node.setY(newLayout.getY() + yDisplacement - distance);
+					node.setY(newLayout.getY() + yDisplacement);
+				}
 			}
 		}
 
 		layoutGraph.setHeight(yDisplacement + secondRun.getHeight());
 	}
 
+	/**
+	 * 
+	 * @param node
+	 * @param comp
+	 * @return
+	 */
 	private List<ElkNode> sortAxis(ElkNode node, Comparator<ElkNode> comp) {
 		List<ElkNode> successors = HierarchicalUtil.getSuccessor(node);
 
@@ -250,64 +320,55 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 	}
 
-	private ElkNode createTree(List<ElkNode> nodes, Map<ElkNode, ElkNode> map, Map<Integer, Integer> offset) {
+	/**
+	 * 
+	 * @param nodes
+	 * @param nodeMap
+	 * @param offset
+	 * @return
+	 */
+	private ElkNode createTree(List<ElkNode> nodes, Map<ElkNode, ElkNode> nodeMap, Map<Integer, Integer> offset) {
 		ElkNode layoutRoot = ElkGraphUtil.createGraph();
 		ElkNode treeRoot = ElkGraphUtil.createNode(layoutRoot);
 		ElkUtil.resizeNode(treeRoot, root.getWidth(), root.getHeight(), false, false);
-		map.put(root, treeRoot);
+		nodeMap.put(root, treeRoot);
 		for (ElkNode node : nodes) {
 			ElkNode tempNode = ElkGraphUtil.createNode(layoutRoot);
-			// TODO test
 			int i = offset.get(nodeDepth.get(node));
-			tempNode.setProperty(LayeredOptions.POSITION, new KVector(i, i));
-			offset.put(nodeDepth.get(node), i + 10);
+			tempNode.setProperty(LayeredOptions.POSITION, new KVector(i, 0));
+			offset.put(nodeDepth.get(node), (int) (i + node.getWidth() + 100));
 			ElkUtil.resizeNode(tempNode, node.getWidth(), node.getHeight(), false, false);
-			map.put(node, tempNode);
+			nodeMap.put(node, tempNode);
 		}
 
 		for (ElkNode node : nodes) {
 			ElkNode source = null;
 			for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
 				if (edges.contains(edge)) {
-					source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
+					source = nodeMap.get(ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)));
 					break;
 				}
 			}
-			// TODO funktioniert wahrscheinlich nicht.
-			ElkGraphUtil.createSimpleEdge(source, map.get(node));
+			ElkGraphUtil.createSimpleEdge(source, nodeMap.get(node));
 		}
-
-		// for (ElkNode node : nodes) {
-		// ElkNode source = null;
-		// for (ElkEdge edge : node.getIncomingEdges()) {
-		// if (edges.contains(edge)) {
-		// source = map.get(edge.getSources());
-		// break;
-		// }
-		// }
-		// ElkGraphUtil.createSimpleEdge(source, map.get(node));
-		// }
 
 		return layoutRoot;
 	}
 
-	private void buildNodeList(ElkNode node, List<ElkNode> list, Comparator<ElkNode> comp, Boolean first) {
+	/**
+	 * 
+	 * @param node
+	 * @param list
+	 * @param comp
+	 */
+	private void buildNodeList(ElkNode node, List<ElkNode> list) {
 		// if (!HierarchicalUtil.getSuccessor(node).isEmpty()) {
 		// List<ElkNode> compList = sortAxis(node, comp);
 		List<ElkNode> compList = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
 		for (ElkNode n : compList) {
-			if (first) {
-				list.add(0, n);
-			} else {
-				list.add(n);
-			}
-			buildNodeList(n, list, comp, first);
+			list.add(n);
+			buildNodeList(n, list);
 		}
-		// for (ElkNode n : HierarchicalUtil.getSuccessor(node)) {
-		// list.add(n);
-		// buildNodeList(n, list);
-		// }
-		// }
 	}
 
 }

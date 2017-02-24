@@ -38,13 +38,6 @@ import de.cau.cs.kieler.klighd.util.KlighdProperties;
  */
 public final class HierachicalKGraphSynthesis {
 
-    /**
-     * 
-     */
-    public HierachicalKGraphSynthesis(final KNode diagram, final String layout) {
-        transform(diagram, layout);
-    }
-
     /** */
     private static Map<KNode, KNode> parents;
 
