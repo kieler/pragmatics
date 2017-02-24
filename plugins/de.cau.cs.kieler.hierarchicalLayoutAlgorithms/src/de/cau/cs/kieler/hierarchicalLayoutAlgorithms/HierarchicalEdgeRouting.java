@@ -52,7 +52,7 @@ public class HierarchicalEdgeRouting {
 	}
 
 	public static void drawExplosionLines(ElkNode root) {
-		routeEdgesCornerToCorner(root);
+		routeEdgesCenterToCenter(root);
 		bendEdgesToExplosionLines(root);
 	}
 
@@ -91,6 +91,7 @@ public class HierarchicalEdgeRouting {
 						}
 					}
 					copiedChildren.remove(childFound);
+					clippTargetOfEdge(edge);
 
 				}
 			}
@@ -98,5 +99,58 @@ public class HierarchicalEdgeRouting {
 			bendEdgesToExplosionLines(successor);
 		}
 
+	}
+
+	private static void clippTargetOfEdge(ElkEdge edge) {
+		ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
+		double startX = section.getStartX();
+		double startY = section.getStartY();
+		double targetX = section.getEndX();
+		double targetY = section.getEndY();
+
+		double m = (targetY - startY) / (targetX - startX);
+		double b = startY - m * startX;
+
+		double targetWidth = edge.getTargets().get(0).getWidth();
+		double targetHeight = edge.getTargets().get(0).getHeight();
+
+		double yPoint;
+		double xPoint;
+		if (startX <= targetX) {
+
+			// lower left
+			if (startY <= targetY) {
+				yPoint = targetY - targetHeight / 2;
+				xPoint = targetX - targetWidth / 2;
+
+			} else {
+				// upper left
+				yPoint = targetY + targetHeight / 2;
+				xPoint = targetX - targetWidth / 2;
+
+			}
+		} else {
+			// lower right
+			if (startY <= targetY) {
+				yPoint = targetY - targetHeight / 2;
+				xPoint = targetX + targetWidth / 2;
+
+			} else {
+				// upper right
+				yPoint = targetY + targetHeight / 2;
+				xPoint = targetX + targetWidth / 2;
+			}
+		}
+
+		double y = yPoint;
+		double x = (y - b) / m;
+		if (x < targetX + targetWidth / 2 && targetX - targetWidth / 2 < x) {
+			section.setEndY(y);
+			section.setEndX(x);
+		} else {
+			y = xPoint * m + b;
+			section.setEndY(y);
+			section.setEndX(xPoint);
+		}
 	}
 }

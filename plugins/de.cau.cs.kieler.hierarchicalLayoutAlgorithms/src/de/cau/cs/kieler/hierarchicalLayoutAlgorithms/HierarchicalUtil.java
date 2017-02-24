@@ -8,13 +8,15 @@ import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+import com.google.common.math.DoubleMath;
+
 public class HierarchicalUtil {
 
 	/**
 	 * Computes a List of nodes that are the neighbours with outgoing edges.
 	 * 
 	 * @param node
-	 * @return List of neighbours with outgoing edges.
+	 * @return List of neighbors with outgoing edges.
 	 */
 	public static List<ElkNode> getSuccessor(ElkNode node) {
 		List<ElkNode> children = new ArrayList<>();
@@ -117,13 +119,7 @@ public class HierarchicalUtil {
 						arc2 += 2 * Math.PI;
 					}
 
-					if (arc1 > arc2) {
-						return -1;
-					} else if (arc1 == arc2) {
-						return 0;
-					} else {
-						return 1;
-					}
+					return DoubleMath.fuzzyCompare(arc1, arc2, 1e-10);
 				}
 			};
 			children.sort(comparator);
@@ -171,7 +167,7 @@ public class HierarchicalUtil {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Calculates the distance of the given node to the root.
 	 * 
