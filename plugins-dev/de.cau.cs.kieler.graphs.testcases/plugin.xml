@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="de.cau.cs.kieler.graphs.testcases.GenerateTestFilesHandler"
+            id="de.cau.cs.kieler.graphs.testcases.generate"
+            name="Generate Test Graphs">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="popup:org.eclipse.ui.popup.any?after=additions">
+         <command
+               commandId="de.cau.cs.kieler.graphs.testcases.generate"
+               label="Generate Test Graphs"
+               style="push">
+         </command>
+      </menuContribution>
+   </extension>
+
+</plugin>
