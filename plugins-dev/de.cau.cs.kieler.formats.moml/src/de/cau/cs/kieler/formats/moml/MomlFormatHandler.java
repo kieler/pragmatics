@@ -13,13 +13,12 @@
  */
 package de.cau.cs.kieler.formats.moml;
 
-import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
 
-import org.eclipse.elk.core.util.ElkUtil;
+import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.XMIResource;
@@ -27,13 +26,20 @@ import org.ptolemy.moml.DocumentRoot;
 import org.ptolemy.moml.MomlPackage;
 import org.ptolemy.moml.util.MomlResourceFactoryImpl;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
+
 import de.cau.cs.kieler.formats.AbstractEmfHandler;
 import de.cau.cs.kieler.formats.GraphFormatData;
 import de.cau.cs.kieler.formats.GraphFormatsService;
 import de.cau.cs.kieler.formats.IGraphTransformer;
 import de.cau.cs.kieler.formats.TransformationData;
 import de.cau.cs.kieler.formats.kgraph.KGraphHandler;
+import de.cau.cs.kieler.graphs.testcases.FiltersAndModifiers;
+import de.cau.cs.kieler.graphs.testcases.ITestCaseGraphProvider;
+import de.cau.cs.kieler.klighd.LightDiagramLayoutConfig;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
+import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis;
@@ -44,12 +50,16 @@ import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis;
  * 
  * @author uru
  */
-public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
+public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> 
+    implements ITestCaseGraphProvider {
 
     /** File extension of MoML files, i.e. Ptolemy models. */
     public static final String MOML_EXTENSION = "moml"; 
    
     private IGraphTransformer<DocumentRoot, ElkNode> importer = new MomlImporter();
+    
+    /** The {@link ViewContext} that has been used by klighd. */
+    private ViewContext viewContext;
     
     /**
      * {@inheritDoc}
@@ -93,6 +103,44 @@ public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
         return resourceset;
     }
 
+    
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+    /*                                   Test Graph Creation                                 */
+    /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+    private static boolean FLATTEN = false;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public Iterable<Predicate<ElkNode>> getGraphFilters() {
+        List<Predicate<ElkNode>> predicates = Lists.newArrayList(
+                FiltersAndModifiers.MINIMUM_NODES.apply(10),
+                FiltersAndModifiers.NO_HYPERNODES);
+        if (FLATTEN) {
+            predicates.add(FiltersAndModifiers.NO_HIERARCHICAL_NODES); 
+        }
+        return predicates;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterable<IGraphElementVisitor> getGraphModifiers() {
+        return Collections.emptyList();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ViewContext getViewContext() {
+        return this.viewContext;
+    }
+
     private class MomlImporter implements IGraphTransformer<DocumentRoot, ElkNode> {
         /**
          * {@inheritDoc}
@@ -107,32 +155,34 @@ public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
 
                 // here we don't want comments
                 props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.SHOW_COMMENTS, false);
-                
+                // or directors, or properties 
                 props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.SHOW_DIRECTORS, false);
                 props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.SHOW_PROPERTIES, false);
                 
                 // some optional options
-                // props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.FLATTEN, true);
                 props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.TRANSFORM_STATES, false);
+                props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.INITIALLY_COLLAPSED, false);
+                props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.SHOW_PORT_LABELS, false);
                 
-                KNode kgraph = LightDiagramServices.translateModel(model, null, props);
+                // flatten the graph?
+                props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.FLATTEN, FLATTEN) ;
                 
+                // invoke the diagram synthesis
+                ViewContext vc = LightDiagramServices.translateModel2(model, null, props);
                 
-                // now make it a elk graph
-                GraphFormatData kgraphFormat =
-                        GraphFormatsService.getInstance().getFormatData(KGraphHandler.ID);
-                @SuppressWarnings("unchecked")
-                IGraphTransformer<KNode, ElkNode> importer =
-                        (IGraphTransformer<KNode, ElkNode>) kgraphFormat.getHandler().getImporter();
-                TransformationData<KNode, ElkNode> td = new TransformationData<>();
-                td.setSourceGraph(kgraph);
-                importer.transform(td);
-                ElkNode elkGraph = td.getTargetGraphs().get(0);
-          
-                exportLayoutGraph(elkGraph);
-
+                // remove isolated nodes
+                KNode kgraph = vc.getViewModel();
+                Lists.newArrayList(Iterators.filter(kgraph.eAllContents(), KNode.class))
+                    .stream().filter(n -> n.getChildren().isEmpty())
+                    .filter(n -> n.getOutgoingEdges().size() + n.getIncomingEdges().size() == 0)
+                    .forEach(n -> n.setParent(null));
+               
+                // convert kgraph to elkgraph
+                ElkNode elkGraph = layoutAndToElkNode(vc);
                 data.getTargetGraphs().clear();
                 data.getTargetGraphs().add(elkGraph);
+                
+                MomlFormatHandler.this.viewContext = vc;
             }
         }
 
@@ -143,38 +193,25 @@ public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
             throw new UnsupportedOperationException(
                     "Applying layout to a MoML file is not supported.");
         }
-    }
-    
-    
-    /**
-     * Export the given layout graph in KGraph format.
-     * 
-     * @param graph the parent node of the layout graph
-     */
-    protected void exportLayoutGraph(final ElkNode graph) {
-        URI exportUri = getExportURI(graph);
-        if (exportUri != null) {
-            // save the graph to a file
-            ResourceSet resourceSet = new ResourceSetImpl();
-            Resource resource = resourceSet.createResource(exportUri);
-            resource.getContents().add(graph);
-            try {
-                resource.save(Collections.emptyMap());
-            } catch (IOException e) {
-                // ignore the exception and abort the layout graph exporting
-            }
+        
+        private ElkNode layoutAndToElkNode(ViewContext vc) {
+            // important! otherwise nodes may not have a proper size
+            new LightDiagramLayoutConfig(vc).performLayout();
+            
+            KNode kgraph = vc.getViewModel();
+            // now make it a elk graph
+            GraphFormatData kgraphFormat =
+                    GraphFormatsService.getInstance().getFormatData(KGraphHandler.ID);
+            @SuppressWarnings("unchecked")
+            IGraphTransformer<KNode, ElkNode> importer =
+                    (IGraphTransformer<KNode, ElkNode>) kgraphFormat.getHandler().getImporter();
+            TransformationData<KNode, ElkNode> td = new TransformationData<>();
+            td.setSourceGraph(kgraph);
+            importer.transform(td);
+            ElkNode elkGraph = td.getTargetGraphs().get(0);
+            
+            return elkGraph;
         }
-    }
-    
-    /**
-     * Return a file URI to use for exporting graphs.
-     * 
-     * @param graph the parent node of the layout graph
-     */
-    protected URI getExportURI(final ElkNode graph) {
-        String path = ElkUtil.debugFolderPath("moml_export")
-                + Integer.toHexString(graph.hashCode()) + ".elkg";
-        return URI.createFileURI(path);
     }
 
 }
