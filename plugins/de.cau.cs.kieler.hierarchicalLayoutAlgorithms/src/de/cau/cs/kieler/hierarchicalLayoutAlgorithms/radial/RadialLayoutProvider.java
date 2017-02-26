@@ -3,8 +3,10 @@ package de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial;
 import java.util.List;
 
 import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
@@ -30,18 +32,27 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 
 		// calculate the positions, starting with the root node
 		ElkNode root = HierarchicalUtil.findRoot(layoutGraph);
-		calcPos(root, 0, 0, 2 * Math.PI);
+		hillClimber(root);
 
 		postProcess(layoutGraph);
 		HierarchicalEdgeRouting.drawExplosionLines(root);
 		progressMonitor.done();
 	}
 
-	// double offset = 0;
+	double offset = 0;
 
-	private void calcPos(ElkNode node, double currentRadius, double minAlpha, double maxAlpha) {
+	/**
+	 * Place a node in the center of an wedge an calculate the wedge for the
+	 * next child.
+	 * 
+	 * @param node
+	 * @param currentRadius
+	 * @param minAlpha
+	 * @param maxAlpha
+	 */
+	private void positionNodes(ElkNode node, double currentRadius, double minAlpha, double maxAlpha) {
 
-		double alphaPoint = (minAlpha + maxAlpha) / 2;// + offset;
+		double alphaPoint = (minAlpha + maxAlpha) / 2 + offset;
 
 		// double size = layerSize.get(layer);
 
@@ -57,14 +68,34 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		// yPos = currentRadius * Math.cos(alphaPoint);
 		// }
 
-		node.setX(xPos);
-		node.setY(yPos);
+		// node.setX(xPos);
+		// node.setY(yPos);
 
 		// shift the nodes, such that the center of each node is on the circle
-		 centerNodesOnRadi(node, xPos, yPos);
-		// shiftClosestEdgeToRadi(shape, xPos, yPos);
+		centerNodesOnRadi(node, xPos, yPos);
 
-		 calculateChildrenWedgeByLeafs(node, currentRadius + radius, minAlpha, maxAlpha);
+		calculateChildrenWedgeBySize(node, currentRadius + radius, minAlpha, maxAlpha);
+	}
+
+	private void calculateChildrenWedgeBySize(ElkNode node, double currentRadius, double minAlpha, double maxAlpha) {
+		double numberOfLeafs = necessarySpace(node);
+		double tau = 2 * Math.acos(currentRadius / currentRadius + radius);
+		double s;
+		double alpha;
+		if (tau < maxAlpha - minAlpha) {
+			s = tau / numberOfLeafs;
+			alpha = (minAlpha + maxAlpha - tau) / 2;
+
+		} else {
+			s = (maxAlpha - minAlpha) / numberOfLeafs;
+			alpha = minAlpha;
+		}
+		List<ElkNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
+		for (ElkNode succesor : successors) {
+			double numberOfChildLeafs = necessarySpace(succesor);
+			positionNodes(succesor, currentRadius, alpha, alpha + s * numberOfChildLeafs);
+			alpha += s * numberOfChildLeafs;
+		}
 	}
 
 	/**
@@ -92,7 +123,7 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 		List<ElkNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
 		for (ElkNode child : successors) {
 			int numberOfChildLeafs = HierarchicalUtil.getNumberOfLeafs(child);
-			calcPos(child, currentRadius, alpha, alpha + s * numberOfChildLeafs);
+			positionNodes(child, currentRadius, alpha, alpha + s * numberOfChildLeafs);
 			alpha += s * numberOfChildLeafs;
 		}
 	}
@@ -108,23 +139,13 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 	 */
 	private void calculateChildrenWedgeBySizeSimple(ElkNode node, double currentRadius, double minAlpha,
 			double maxAlpha) {
-		double numberOfLeafs = necessarySpace(node, 0);
-		double tau = 2 * Math.acos(currentRadius / currentRadius + radius);
-		double s;
-		double alpha;
-		if (tau < maxAlpha - minAlpha) {
-			s = tau / numberOfLeafs;
-			alpha = (minAlpha + maxAlpha - tau) / 2;
-
-		} else {
-			s = (maxAlpha - minAlpha) / numberOfLeafs;
-			alpha = minAlpha;
-		}
 		List<ElkNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
-		for (ElkNode child : successors) {
-			double numberOfChildLeafs = necessarySpace(child, 0);
-			calcPos(child, currentRadius, alpha, alpha + s * numberOfChildLeafs);
-			alpha += s * numberOfChildLeafs;
+		for (int i = 0; i < successors.size(); i++) {
+			ElkNode successor = successors.get(i);
+			double diameter = Math.sqrt(Math.pow(successor.getHeight(), 2) + Math.pow(successor.getWidth(), 2));
+			double alpha = Math.atan(diameter / currentRadius);
+			positionNodes(successor, currentRadius, minAlpha, minAlpha + alpha);
+			minAlpha += alpha;
 		}
 	}
 
@@ -135,60 +156,16 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 	 * @param previousSize
 	 * @return
 	 */
-	private double necessarySpace(ElkNode node, double previousSize) {
+	private double necessarySpace(ElkNode node) {
 		List<ElkNode> successors = HierarchicalUtil.getSuccessor(node);
+		double nodeSize = Math.sqrt(Math.pow(node.getHeight(), 2) + Math.pow(node.getWidth(), 2));
 		double childSpace = 0;
 		for (ElkNode child : successors) {
-			childSpace += necessarySpace(child, previousSize);
+			childSpace += necessarySpace(child);
 		}
 		if (successors.isEmpty()) {
-			previousSize = node.getWidth();
 		}
-		return Math.max(childSpace, previousSize);
-	}
-
-	private void calculateChildrenWedgeBySize(ElkNode node, double currentRadius, double minAlpha, double maxAlpha) {
-		List<ElkNode> successors = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
-
-		for (ElkNode child : successors) {
-
-			double minxPos = currentRadius * Math.cos(minAlpha);
-			double minyPos = currentRadius * Math.sin(minAlpha);
-
-			// Differentiate the different spaces: up, right,down,left
-			double alpha = 0;
-			if (minAlpha < 0.7854) {// 45°
-				double width = child.getHeight();
-				minyPos += width;
-				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
-				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(width, 2))
-						/ (2 * distanceToOrigin * currentRadius));
-
-			} else if (minAlpha < 2.3562) {// 135°
-				double height = child.getWidth();
-				minxPos += height;
-				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
-				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(height, 2))
-						/ (2 * distanceToOrigin * currentRadius));
-
-			} else if (minAlpha < 3.927) {// 225°
-				double width = child.getHeight();
-				minyPos += width;
-				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
-				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(width, 2))
-						/ (2 * distanceToOrigin * currentRadius));
-
-			} else if (minAlpha < 5.4978) {// 315°
-				double height = child.getWidth();
-				minxPos += height;
-				double distanceToOrigin = Math.sqrt(minxPos * minxPos + minyPos * minyPos);
-				alpha = Math.acos((Math.pow(distanceToOrigin, 2) + Math.pow(currentRadius, 2) - Math.pow(height, 2))
-						/ (2 * distanceToOrigin * currentRadius));
-			}
-
-			calcPos(child, currentRadius, minAlpha, minAlpha + alpha);
-			minAlpha += alpha;
-		}
+		return Math.max(childSpace, nodeSize);
 	}
 
 	private double calculateOffset(ElkNode node, double currentRadius, double xPos, double yPos) {
@@ -218,6 +195,68 @@ public class RadialLayoutProvider extends AbstractLayoutProvider {
 				- Math.pow(distanceNodeToInnerNode, 2)) / (2 * distanceOriginToInnerNode * currentRadius));
 
 		return alpha;
+	}
+
+	private void translate(ElkNode node, double currentRadius, double degree) {
+		double xPos = node.getX();
+		double yPos = node.getY();
+		double arc = Math.atan2(yPos, xPos);
+		if (arc < 0) {
+			arc += 2 * Math.PI;
+		}
+
+		arc += degree;
+
+		xPos = currentRadius * Math.cos(arc);
+		yPos = currentRadius * Math.sin(arc);
+
+		node.setX(xPos);
+		node.setY(yPos);
+
+		List<ElkNode> successors = HierarchicalUtil.getSuccessor(node);
+		for (ElkNode successor : successors) {
+			translate(successor, currentRadius + radius, degree);
+		}
+	}
+
+	private void hillClimber(ElkNode root) {
+		positionNodes(root, 0, 0, 2 * Math.PI);
+		HierarchicalEdgeRouting.drawExplosionLines(root);
+		double optimalOffset = 0;
+		double optimalValue = evaluate(root);
+		
+		for (int i = 1; i < 360; i++) {
+			offset = i;
+			positionNodes(root, 0, 0, 2 * Math.PI);
+			HierarchicalEdgeRouting.drawExplosionLines(root);
+			double translatedValue = evaluate(root);
+			if (translatedValue < optimalValue) {
+				optimalOffset = offset;
+				optimalValue = translatedValue;
+			}
+		}
+		offset = optimalOffset;
+		positionNodes(root, 0, 0, 2 * Math.PI);
+		HierarchicalEdgeRouting.drawExplosionLines(root);
+	}
+
+	private double evaluate(ElkNode root) {
+		double edgeLength = 0;
+		for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(root)) {
+			if (!root.getChildren().contains(edge.getTargets().get(0))) {
+				ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
+				double startX = section.getStartX();
+				double startY = section.getStartY();
+				double endX = section.getEndX();
+				double endY = section.getEndY();
+
+				double x = endX - startX;
+				double y = endY - startY;
+
+				edgeLength += Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+			}
+		}
+		return edgeLength;
 	}
 
 	private void centerNodesOnRadi(ElkNode node, double xPos, double yPos) {
