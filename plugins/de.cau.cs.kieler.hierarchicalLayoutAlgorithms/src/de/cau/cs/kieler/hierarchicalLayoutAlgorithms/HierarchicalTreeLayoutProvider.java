@@ -175,7 +175,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		secondRun.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
 		layered.layout(secondRun, secondRunMonitor);
 
-		double minY = Double.MAX_VALUE;
+		// Keep track of actual height and width of the two runs by computing min and max x- and y-values.
+		double minFirstY = Double.MAX_VALUE;
+		double minSecondY = Double.MAX_VALUE;
 		double minFirstX = Double.MAX_VALUE;
 		double minSecondX = Double.MAX_VALUE;
 		double maxY = Double.MIN_VALUE;
@@ -184,8 +186,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		for (ElkNode node : children) {
 			if (firstRunMap.containsKey(node)) {
 				node = firstRunMap.get(node);
-				if (node.getY() < minY) {
-					minY = node.getY();
+				if (node.getY() < minFirstY) {
+					minFirstY = node.getY();
 				}
 				if (node.getX() < minFirstX) {
 					minFirstX = node.getX();
@@ -198,6 +200,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				}
 			} else {
 				node = secondRunMap.get(node);
+				if (node.getY() < minSecondY) {
+					minSecondY= node.getY();
+				}
 				if (node.getX() < minSecondX) {
 					minSecondX = node.getX();
 				}
@@ -228,7 +233,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 
 		// Compute positions for second run
-		double yDisplacement = firstRun.getHeight() - minY - root.getHeight();
+		double yDisplacement = firstRun.getHeight() - minFirstY - root.getHeight();
 		xDisplacement = -minSecondX;
 		if (firstWidth > secondWidth) {
 			xDisplacement += (firstWidth - secondWidth) / 2;
@@ -239,36 +244,24 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 		double firstDistanceToRoot = Double.MAX_VALUE;
 		for (ElkNode node : children) {
-			if (secondRunMap.containsKey(node)) {
+			if (firstRunMap.containsKey(node)) {
 				if (node != root) {
-					if (secondRunMap.get(node).getY() - (secondRunMap.get(root).getY()
-							+ secondRunMap.get(root).getHeight()) < firstDistanceToRoot) {
-						firstDistanceToRoot = secondRunMap.get(node).getY()
-								- (secondRunMap.get(root).getY() + secondRunMap.get(root).getHeight());
+					if (firstRunMap.get(root).getY() - (firstRunMap.get(node).getY()
+							+ firstRunMap.get(node).getHeight()) < firstDistanceToRoot) {
+						firstDistanceToRoot = firstRunMap.get(root).getY()
+								- (firstRunMap.get(node).getY() + firstRunMap.get(node).getHeight());
 					}
 				}
 			}
 		}
+		
+		yDisplacement = yDisplacement - minSecondY + root.getHeight() + firstDistanceToRoot;
 
-		// System.out.println(firstDistanceToRoot);
-		// double yDisplacement = Math.abs(minY - maxY) + firstRun.getHeight() /
-		// 10;
-		// double secondDistanceToRoot = secondRunMap.get(root).getY() +
-		// yDisplacement - maxY;
-		// double distance = firstDistanceToRoot - secondDistanceToRoot;
-		// double yDisplacement = maxY - minY + firstRun.getHeight() / 10;
-		// double secondDistanceToRoot = secondRunMap.get(root).getY() +
-		// yDisplacement;
-		// double distance = firstDistanceToRoot - secondDistanceToRoot;
-		// System.out.println(distance);
-
-		// TODO yDisp beim bigmodel
 		for (ElkNode node : children) {
 			if (secondRunMap.containsKey(node)) {
 				if (node != root) {
 					ElkNode newLayout = secondRunMap.get(node);
 					node.setX(newLayout.getX() + xDisplacement);
-					// node.setY(newLayout.getY() + yDisplacement - distance);
 					node.setY(newLayout.getY() + yDisplacement);
 				}
 			}
@@ -369,7 +362,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// List<ElkNode> compList = sortAxis(node, comp);
 		List<ElkNode> compList = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
 		compList = Lists.reverse(compList);
-		
+
 		for (ElkNode n : compList) {
 			list.add(n);
 			buildNodeList(n, list);
