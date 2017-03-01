@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2013 by
+ * + Kiel University
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
 import java.util.ArrayList;
@@ -8,8 +21,19 @@ import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+/**
+ * Edge routing for Hierarchical diagrams.
+ * 
+ * @author ybl
+ *
+ */
 public class HierarchicalEdgeRouting {
 
+	/**
+	 * Routes the edges from center to center.
+	 * 
+	 * @param graph
+	 */
 	public static void routeEdgesCenterToCenter(ElkNode graph) {
 		for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(graph)) {
 
@@ -31,6 +55,11 @@ public class HierarchicalEdgeRouting {
 		}
 	}
 
+	/**
+	 * Routes the edges from corner to corner.
+	 * 
+	 * @param graph
+	 */
 	public static void routeEdgesCornerToCorner(ElkNode graph) {
 		for (ElkEdge edge : graph.getOutgoingEdges()) {
 			ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
@@ -51,12 +80,22 @@ public class HierarchicalEdgeRouting {
 		}
 	}
 
-	public static void drawExplosionLines(ElkNode root) {
+	/**
+	 * 
+	 * 
+	 * @param root
+	 */
+	public static void drawHierarchicalEdges(ElkNode root) {
 		routeEdgesCenterToCenter(root);
-		bendEdgesToExplosionLines(root);
+		bendEdgesToHierarchicalEdges(root);
 	}
 
-	public static void bendEdgesToExplosionLines(ElkNode root) {
+	/**
+	 * Sets the source for the edge at the corresponding child in the source node.
+	 * 
+	 * @param root
+	 */
+	public static void bendEdgesToHierarchicalEdges(ElkNode root) {
 		List<ElkNode> copiedChildren = new ArrayList<>();
 		List<ElkNode> children = root.getChildren();
 		boolean isBlueBox = children.size() == 1 && !children.get(0).getChildren().isEmpty();
@@ -96,11 +135,16 @@ public class HierarchicalEdgeRouting {
 				}
 			}
 
-			bendEdgesToExplosionLines(successor);
+			bendEdgesToHierarchicalEdges(successor);
 		}
 
 	}
 
+	/**
+	 * Clips the edge when it reaches the border of the target node.
+	 * 
+	 * @param edge
+	 */
 	private static void clippTargetOfEdge(ElkEdge edge) {
 		ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
 		double startX = section.getStartX();

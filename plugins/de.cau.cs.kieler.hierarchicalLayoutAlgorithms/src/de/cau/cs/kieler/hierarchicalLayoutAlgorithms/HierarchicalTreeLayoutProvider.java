@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2013 by
+ * + Kiel University
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
 import java.util.ArrayList;
@@ -28,7 +41,7 @@ import com.google.common.collect.Lists;
  * Layout Provider for a Hierarchical Graph that uses two runs of Elk Layered
  * for a Tree Layout with two directions.
  * 
- * @author Daniel
+ * @author dja
  *
  */
 public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
@@ -60,7 +73,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 		layeredTreeLayout(layoutGraph);
 
-		HierarchicalEdgeRouting.drawExplosionLines(root);
+		HierarchicalEdgeRouting.drawHierarchicalEdges(root);
 	}
 
 	/**
@@ -187,26 +200,14 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		for (ElkNode node : children) {
 			if (firstRunMap.containsKey(node)) {
 				node = firstRunMap.get(node);
-				if (node.getY() < minFirstY) {
-					minFirstY = node.getY();
-				}
-				if (node.getX() < minFirstX) {
-					minFirstX = node.getX();
-				}
-				if (node.getX() + node.getWidth() > maxFirstX) {
-					maxFirstX = node.getX() + node.getWidth();
-				}
+				minFirstY = Math.min(minFirstY, node.getY());
+				minFirstX = Math.min(minFirstX, node.getX());
+				maxFirstX = Math.max(maxFirstX, node.getX() + node.getWidth());
 			} else {
 				node = secondRunMap.get(node);
-				if (node.getY() < minSecondY) {
-					minSecondY = node.getY();
-				}
-				if (node.getX() < minSecondX) {
-					minSecondX = node.getX();
-				}
-				if (node.getX() + node.getWidth() > maxSecondX) {
-					maxSecondX = node.getX() + node.getWidth();
-				}
+				minSecondY = Math.min(minSecondY, node.getY());
+				minSecondX = Math.min(minSecondX, node.getX());
+				maxSecondX = Math.min(maxSecondX, node.getX() + node.getWidth());
 			}
 		}
 
