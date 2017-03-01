@@ -22,6 +22,8 @@ import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+import com.google.common.collect.Lists;
+
 /**
  * 
  * 
@@ -98,7 +100,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// };
 
 		// List<ElkNode> sortedXNodes = sortAxis(root, compX);
-		List<ElkNode> sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root, 0.5 * Math.PI);
+		System.out.println(2*Math.PI);
+		List<ElkNode> sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root, 1.5 * Math.PI);
+		System.out.println("first: " + sortedPolarNodes.toString());
 		// sortedPolarNodes = Lists.reverse(sortedPolarNodes);
 		List<ElkNode> tempListF = new ArrayList<ElkNode>();
 		List<ElkNode> tempListS = new ArrayList<ElkNode>();
@@ -108,7 +112,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			}
 		}
 
-		sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root, 1.5 * Math.PI);
+		sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root, 0.5 * Math.PI);
+//		sortedPolarNodes = Lists.reverse(sortedPolarNodes);
+		System.out.println("second: " + sortedPolarNodes.toString());
 		for (ElkNode node : sortedPolarNodes) {
 			if (secondRunList.contains(node)) {
 				tempListS.add(node);
@@ -123,7 +129,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		List<ElkNode> tempList = new ArrayList<ElkNode>();
 		for (ElkNode node : tempListF) {
 			tempList.add(node);
-			buildNodeList(node, tempList, 0.5 * Math.PI);
+			buildNodeList(node, tempList, 1.5 * Math.PI);
 		}
 		firstRunList.clear();
 		firstRunList.addAll(tempList);
@@ -131,9 +137,10 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		tempList.clear();
 		for (ElkNode node : tempListS) {
 			tempList.add(node);
-			buildNodeList(node, tempList, 1.5 * Math.PI);
+			buildNodeList(node, tempList, 0.5 * Math.PI);
 		}
 		secondRunList.clear();
+		tempList = Lists.reverse(tempList);
 		secondRunList.addAll(tempList);
 
 		for (ElkNode node : children) {

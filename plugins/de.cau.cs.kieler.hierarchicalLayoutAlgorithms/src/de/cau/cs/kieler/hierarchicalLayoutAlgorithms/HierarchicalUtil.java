@@ -112,6 +112,9 @@ public class HierarchicalUtil {
 						arc1 += 2 * Math.PI;
 					}
 					arc1+=offset;
+					if (arc1 > 2 * Math.PI) {
+						arc1 -= 2 * Math.PI;
+					}
 
 					double xPos2 = child2.getX() + child2.getWidth() / 2 - node.getWidth()/2;
 					double yPos2 = child2.getY() + child2.getHeight() / 2 - node.getHeight()/2;
@@ -120,7 +123,10 @@ public class HierarchicalUtil {
 						arc2 += 2 * Math.PI;
 					}
 					arc2+=offset;
-
+					if (arc2 > 2 * Math.PI) {
+						arc2 -= 2 * Math.PI;
+					}
+					
 					return DoubleMath.fuzzyCompare(arc1, arc2, 1e-10);
 				}
 			};
