@@ -67,6 +67,8 @@ public class GranaParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIntRangeValuesAccess().getGroup(), "rule__IntRangeValues__Group__0");
 					put(grammarAccess.getIntRangeValuesAccess().getGroup_2(), "rule__IntRangeValues__Group_2__0");
 					put(grammarAccess.getIntRangeRangeAccess().getGroup(), "rule__IntRangeRange__Group__0");
+					put(grammarAccess.getEnumRangeAccess().getGroup(), "rule__EnumRange__Group__0");
+					put(grammarAccess.getEnumRangeAccess().getGroup_2(), "rule__EnumRange__Group_2__0");
 					put(grammarAccess.getResourceReferenceAccess().getGroup(), "rule__ResourceReference__Group__0");
 					put(grammarAccess.getGlobalResourceRefAccess().getGroup(), "rule__GlobalResourceRef__Group__0");
 					put(grammarAccess.getLocalResourceAccess().getGroup(), "rule__LocalResource__Group__0");
@@ -155,6 +157,8 @@ public class GranaParser extends AbstractContentAssistParser {
 					put(grammarAccess.getIntRangeValuesAccess().getValuesAssignment_2_1(), "rule__IntRangeValues__ValuesAssignment_2_1");
 					put(grammarAccess.getIntRangeRangeAccess().getStartAssignment_1(), "rule__IntRangeRange__StartAssignment_1");
 					put(grammarAccess.getIntRangeRangeAccess().getEndAssignment_3(), "rule__IntRangeRange__EndAssignment_3");
+					put(grammarAccess.getEnumRangeAccess().getValuesAssignment_1(), "rule__EnumRange__ValuesAssignment_1");
+					put(grammarAccess.getEnumRangeAccess().getValuesAssignment_2_1(), "rule__EnumRange__ValuesAssignment_2_1");
 					put(grammarAccess.getResourceReferenceAccess().getResourceRefsAssignment_1(), "rule__ResourceReference__ResourceRefsAssignment_1");
 					put(grammarAccess.getGlobalResourceRefAccess().getNameAssignment_0(), "rule__GlobalResourceRef__NameAssignment_0");
 					put(grammarAccess.getGlobalResourceRefAccess().getResourcesAssignment_1(), "rule__GlobalResourceRef__ResourcesAssignment_1");

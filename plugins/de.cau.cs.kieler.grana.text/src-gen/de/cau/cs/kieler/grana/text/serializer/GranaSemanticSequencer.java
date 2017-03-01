@@ -6,6 +6,7 @@ package de.cau.cs.kieler.grana.text.serializer;
 import com.google.inject.Inject;
 import de.cau.cs.kieler.grana.text.grana.Analysis;
 import de.cau.cs.kieler.grana.text.grana.CompareJob;
+import de.cau.cs.kieler.grana.text.grana.EnumRange;
 import de.cau.cs.kieler.grana.text.grana.FloatRange;
 import de.cau.cs.kieler.grana.text.grana.GlobalOutputRef;
 import de.cau.cs.kieler.grana.text.grana.GlobalResourceRef;
@@ -58,6 +59,9 @@ public class GranaSemanticSequencer extends ElkGraphSemanticSequencer {
 				return; 
 			case GranaPackage.COMPARE_JOB:
 				sequence_CompareJob(context, (CompareJob) semanticObject); 
+				return; 
+			case GranaPackage.ENUM_RANGE:
+				sequence_EnumRange(context, (EnumRange) semanticObject); 
 				return; 
 			case GranaPackage.FLOAT_RANGE:
 				sequence_FloatRange(context, (FloatRange) semanticObject); 
@@ -177,6 +181,19 @@ public class GranaSemanticSequencer extends ElkGraphSemanticSequencer {
 	 *     )
 	 */
 	protected void sequence_CompareJob(ISerializationContext context, CompareJob semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Range returns EnumRange
+	 *     EnumRange returns EnumRange
+	 *
+	 * Constraint:
+	 *     (values+=QualifiedIdValue values+=QualifiedIdValue*)
+	 */
+	protected void sequence_EnumRange(ISerializationContext context, EnumRange semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

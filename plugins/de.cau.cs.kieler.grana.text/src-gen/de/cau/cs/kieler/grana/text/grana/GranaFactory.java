@@ -113,6 +113,15 @@ public interface GranaFactory extends EFactory
   IntRangeRange createIntRangeRange();
 
   /**
+   * Returns a new object of class '<em>Enum Range</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Enum Range</em>'.
+   * @generated
+   */
+  EnumRange createEnumRange();
+
+  /**
    * Returns a new object of class '<em>Resource</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

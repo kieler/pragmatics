@@ -89,7 +89,7 @@ RangeJob:
 ;
 
 Range:
-    FloatRange | IntRange
+    FloatRange | IntRange | EnumRange
 ;
 
 FloatRange:
@@ -107,6 +107,11 @@ IntRangeValues:
 IntRangeRange:
     'intrange' start=SIGNED_INT 'to' end=SIGNED_INT   
 ;
+
+EnumRange:
+    'enumvalues' values+=QualifiedIdValue (',' values+=QualifiedIdValue)*
+;
+
 /*
  * ---- Resources ---- 
  */

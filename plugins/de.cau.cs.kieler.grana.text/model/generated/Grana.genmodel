@@ -52,6 +52,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//IntRangeRange/start"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//IntRangeRange/end"/>
     </genClasses>
+    <genClasses ecoreClass="Grana.ecore#//EnumRange">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Grana.ecore#//EnumRange/values"/>
+    </genClasses>
     <genClasses ecoreClass="Grana.ecore#//Resource"/>
     <genClasses ecoreClass="Grana.ecore#//ResourceReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Grana.ecore#//ResourceReference/resourceRefs"/>

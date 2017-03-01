@@ -4,6 +4,7 @@ package de.cau.cs.kieler.grana.text.grana.impl;
 
 import de.cau.cs.kieler.grana.text.grana.Analysis;
 import de.cau.cs.kieler.grana.text.grana.CompareJob;
+import de.cau.cs.kieler.grana.text.grana.EnumRange;
 import de.cau.cs.kieler.grana.text.grana.FloatRange;
 import de.cau.cs.kieler.grana.text.grana.GlobalOutputRef;
 import de.cau.cs.kieler.grana.text.grana.GlobalResourceRef;
@@ -112,6 +113,13 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * @generated
    */
   private EClass intRangeRangeEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass enumRangeEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -594,6 +602,26 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getEnumRange()
+  {
+    return enumRangeEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getEnumRange_Values()
+  {
+    return (EAttribute)enumRangeEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getResource()
   {
     return resourceEClass;
@@ -873,6 +901,9 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     createEAttribute(intRangeRangeEClass, INT_RANGE_RANGE__START);
     createEAttribute(intRangeRangeEClass, INT_RANGE_RANGE__END);
 
+    enumRangeEClass = createEClass(ENUM_RANGE);
+    createEAttribute(enumRangeEClass, ENUM_RANGE__VALUES);
+
     resourceEClass = createEClass(RESOURCE);
 
     resourceReferenceEClass = createEClass(RESOURCE_REFERENCE);
@@ -945,6 +976,7 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     intRangeEClass.getESuperTypes().add(this.getRange());
     intRangeValuesEClass.getESuperTypes().add(this.getIntRange());
     intRangeRangeEClass.getESuperTypes().add(this.getIntRange());
+    enumRangeEClass.getESuperTypes().add(this.getRange());
     resourceReferenceEClass.getESuperTypes().add(this.getResource());
     localResourceEClass.getESuperTypes().add(this.getResource());
     outputReferenceEClass.getESuperTypes().add(this.getOutput());
@@ -994,6 +1026,9 @@ public class GranaPackageImpl extends EPackageImpl implements GranaPackage
     initEClass(intRangeRangeEClass, IntRangeRange.class, "IntRangeRange", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getIntRangeRange_Start(), ecorePackage.getEInt(), "start", null, 0, 1, IntRangeRange.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getIntRangeRange_End(), ecorePackage.getEInt(), "end", null, 0, 1, IntRangeRange.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(enumRangeEClass, EnumRange.class, "EnumRange", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getEnumRange_Values(), ecorePackage.getEJavaObject(), "values", null, 0, -1, EnumRange.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(resourceEClass, Resource.class, "Resource", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

@@ -626,6 +626,34 @@ public interface GranaPackage extends EPackage
   int INT_RANGE_RANGE_FEATURE_COUNT = INT_RANGE_FEATURE_COUNT + 2;
 
   /**
+   * The meta object id for the '{@link de.cau.cs.kieler.grana.text.grana.impl.EnumRangeImpl <em>Enum Range</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see de.cau.cs.kieler.grana.text.grana.impl.EnumRangeImpl
+   * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getEnumRange()
+   * @generated
+   */
+  int ENUM_RANGE = 10;
+
+  /**
+   * The feature id for the '<em><b>Values</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ENUM_RANGE__VALUES = RANGE_FEATURE_COUNT + 0;
+
+  /**
+   * The number of structural features of the '<em>Enum Range</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ENUM_RANGE_FEATURE_COUNT = RANGE_FEATURE_COUNT + 1;
+
+  /**
    * The meta object id for the '{@link de.cau.cs.kieler.grana.text.grana.impl.ResourceImpl <em>Resource</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -633,7 +661,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getResource()
    * @generated
    */
-  int RESOURCE = 10;
+  int RESOURCE = 11;
 
   /**
    * The number of structural features of the '<em>Resource</em>' class.
@@ -652,7 +680,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getResourceReference()
    * @generated
    */
-  int RESOURCE_REFERENCE = 11;
+  int RESOURCE_REFERENCE = 12;
 
   /**
    * The feature id for the '<em><b>Resource Refs</b></em>' reference list.
@@ -680,7 +708,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getGlobalResourceRef()
    * @generated
    */
-  int GLOBAL_RESOURCE_REF = 12;
+  int GLOBAL_RESOURCE_REF = 13;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -717,7 +745,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getLocalResource()
    * @generated
    */
-  int LOCAL_RESOURCE = 13;
+  int LOCAL_RESOURCE = 14;
 
   /**
    * The feature id for the '<em><b>Path</b></em>' attribute.
@@ -763,7 +791,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getOutput()
    * @generated
    */
-  int OUTPUT = 14;
+  int OUTPUT = 15;
 
   /**
    * The number of structural features of the '<em>Output</em>' class.
@@ -782,7 +810,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getGlobalOutputRef()
    * @generated
    */
-  int GLOBAL_OUTPUT_REF = 15;
+  int GLOBAL_OUTPUT_REF = 16;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -819,7 +847,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getOutputReference()
    * @generated
    */
-  int OUTPUT_REFERENCE = 16;
+  int OUTPUT_REFERENCE = 17;
 
   /**
    * The feature id for the '<em><b>Output Ref</b></em>' reference.
@@ -847,7 +875,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getLocalOutput()
    * @generated
    */
-  int LOCAL_OUTPUT = 17;
+  int LOCAL_OUTPUT = 18;
 
   /**
    * The feature id for the '<em><b>Path</b></em>' attribute.
@@ -875,7 +903,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getAnalysis()
    * @generated
    */
-  int ANALYSIS = 18;
+  int ANALYSIS = 19;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -903,7 +931,7 @@ public interface GranaPackage extends EPackage
    * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getOutputType()
    * @generated
    */
-  int OUTPUT_TYPE = 19;
+  int OUTPUT_TYPE = 20;
 
 
   /**
@@ -1269,6 +1297,27 @@ public interface GranaPackage extends EPackage
    * @generated
    */
   EAttribute getIntRangeRange_End();
+
+  /**
+   * Returns the meta object for class '{@link de.cau.cs.kieler.grana.text.grana.EnumRange <em>Enum Range</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Enum Range</em>'.
+   * @see de.cau.cs.kieler.grana.text.grana.EnumRange
+   * @generated
+   */
+  EClass getEnumRange();
+
+  /**
+   * Returns the meta object for the attribute list '{@link de.cau.cs.kieler.grana.text.grana.EnumRange#getValues <em>Values</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Values</em>'.
+   * @see de.cau.cs.kieler.grana.text.grana.EnumRange#getValues()
+   * @see #getEnumRange()
+   * @generated
+   */
+  EAttribute getEnumRange_Values();
 
   /**
    * Returns the meta object for class '{@link de.cau.cs.kieler.grana.text.grana.Resource <em>Resource</em>}'.
@@ -1805,6 +1854,24 @@ public interface GranaPackage extends EPackage
      * @generated
      */
     EAttribute INT_RANGE_RANGE__END = eINSTANCE.getIntRangeRange_End();
+
+    /**
+     * The meta object literal for the '{@link de.cau.cs.kieler.grana.text.grana.impl.EnumRangeImpl <em>Enum Range</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see de.cau.cs.kieler.grana.text.grana.impl.EnumRangeImpl
+     * @see de.cau.cs.kieler.grana.text.grana.impl.GranaPackageImpl#getEnumRange()
+     * @generated
+     */
+    EClass ENUM_RANGE = eINSTANCE.getEnumRange();
+
+    /**
+     * The meta object literal for the '<em><b>Values</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ENUM_RANGE__VALUES = eINSTANCE.getEnumRange_Values();
 
     /**
      * The meta object literal for the '{@link de.cau.cs.kieler.grana.text.grana.impl.ResourceImpl <em>Resource</em>}' class.

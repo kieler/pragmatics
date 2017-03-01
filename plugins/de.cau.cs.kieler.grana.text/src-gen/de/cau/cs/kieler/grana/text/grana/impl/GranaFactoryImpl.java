@@ -75,6 +75,7 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
       case GranaPackage.INT_RANGE: return createIntRange();
       case GranaPackage.INT_RANGE_VALUES: return createIntRangeValues();
       case GranaPackage.INT_RANGE_RANGE: return createIntRangeRange();
+      case GranaPackage.ENUM_RANGE: return createEnumRange();
       case GranaPackage.RESOURCE: return createResource();
       case GranaPackage.RESOURCE_REFERENCE: return createResourceReference();
       case GranaPackage.GLOBAL_RESOURCE_REF: return createGlobalResourceRef();
@@ -231,6 +232,17 @@ public class GranaFactoryImpl extends EFactoryImpl implements GranaFactory
   {
     IntRangeRangeImpl intRangeRange = new IntRangeRangeImpl();
     return intRangeRange;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EnumRange createEnumRange()
+  {
+    EnumRangeImpl enumRange = new EnumRangeImpl();
+    return enumRange;
   }
 
   /**

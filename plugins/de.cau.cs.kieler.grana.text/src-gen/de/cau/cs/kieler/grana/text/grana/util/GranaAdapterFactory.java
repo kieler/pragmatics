@@ -125,6 +125,11 @@ public class GranaAdapterFactory extends AdapterFactoryImpl
         return createIntRangeRangeAdapter();
       }
       @Override
+      public Adapter caseEnumRange(EnumRange object)
+      {
+        return createEnumRangeAdapter();
+      }
+      @Override
       public Adapter caseResource(Resource object)
       {
         return createResourceAdapter();
@@ -337,6 +342,21 @@ public class GranaAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIntRangeRangeAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link de.cau.cs.kieler.grana.text.grana.EnumRange <em>Enum Range</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see de.cau.cs.kieler.grana.text.grana.EnumRange
+   * @generated
+   */
+  public Adapter createEnumRangeAdapter()
   {
     return null;
   }

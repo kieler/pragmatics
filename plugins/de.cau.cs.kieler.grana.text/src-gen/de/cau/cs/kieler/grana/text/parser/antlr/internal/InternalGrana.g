@@ -895,6 +895,16 @@ ruleRange returns [EObject current=null]
         $current = $this_IntRange_1.current; 
         afterParserOrEnumRuleCall();
     }
+
+    |
+    { 
+        newCompositeNode(grammarAccess.getRangeAccess().getEnumRangeParserRuleCall_2()); 
+    }
+    this_EnumRange_2=ruleEnumRange
+    { 
+        $current = $this_EnumRange_2.current; 
+        afterParserOrEnumRuleCall();
+    }
 )
 ;
 
@@ -1131,6 +1141,71 @@ ruleIntRangeRange returns [EObject current=null]
 
 )
 ))
+;
+
+
+
+
+
+// Entry rule entryRuleEnumRange
+entryRuleEnumRange returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getEnumRangeRule()); }
+	 iv_ruleEnumRange=ruleEnumRange 
+	 { $current=$iv_ruleEnumRange.current; } 
+	 EOF 
+;
+
+// Rule EnumRange
+ruleEnumRange returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+(	otherlv_0='enumvalues' 
+    {
+    	newLeafNode(otherlv_0, grammarAccess.getEnumRangeAccess().getEnumvaluesKeyword_0());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getEnumRangeAccess().getValuesQualifiedIdValueParserRuleCall_1_0()); 
+	    }
+		lv_values_1_0=ruleQualifiedIdValue		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getEnumRangeRule());
+	        }
+       		add(
+       			$current, 
+       			"values",
+        		lv_values_1_0, 
+        		"org.eclipse.elk.graph.text.ElkGraph.QualifiedIdValue");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)(	otherlv_2=',' 
+    {
+    	newLeafNode(otherlv_2, grammarAccess.getEnumRangeAccess().getCommaKeyword_2_0());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getEnumRangeAccess().getValuesQualifiedIdValueParserRuleCall_2_1_0()); 
+	    }
+		lv_values_3_0=ruleQualifiedIdValue		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getEnumRangeRule());
+	        }
+       		add(
+       			$current, 
+       			"values",
+        		lv_values_3_0, 
+        		"org.eclipse.elk.graph.text.ElkGraph.QualifiedIdValue");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))*)
 ;
 
 

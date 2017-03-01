@@ -522,12 +522,13 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final RuleCall cFloatRangeParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cIntRangeParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
+		private final RuleCall cEnumRangeParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		
 		//Range:
-		//	FloatRange | IntRange;
+		//	FloatRange | IntRange | EnumRange;
 		@Override public ParserRule getRule() { return rule; }
 
-		//FloatRange | IntRange
+		//FloatRange | IntRange | EnumRange
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//FloatRange
@@ -535,6 +536,9 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 		//IntRange
 		public RuleCall getIntRangeParserRuleCall_1() { return cIntRangeParserRuleCall_1; }
+
+		//EnumRange
+		public RuleCall getEnumRangeParserRuleCall_2() { return cEnumRangeParserRuleCall_2; }
 	}
 
 	public class FloatRangeElements extends AbstractParserRuleElementFinder {
@@ -671,6 +675,46 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 		//SIGNED_INT
 		public RuleCall getEndSIGNED_INTTerminalRuleCall_3_0() { return cEndSIGNED_INTTerminalRuleCall_3_0; }
+	}
+
+	public class EnumRangeElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "de.cau.cs.kieler.grana.text.Grana.EnumRange");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cEnumvaluesKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cValuesAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cValuesQualifiedIdValueParserRuleCall_1_0 = (RuleCall)cValuesAssignment_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cCommaKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cValuesAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cValuesQualifiedIdValueParserRuleCall_2_1_0 = (RuleCall)cValuesAssignment_2_1.eContents().get(0);
+		
+		//EnumRange:
+		//	'enumvalues' values+=QualifiedIdValue (',' values+=QualifiedIdValue)*;
+		@Override public ParserRule getRule() { return rule; }
+
+		//'enumvalues' values+=QualifiedIdValue (',' values+=QualifiedIdValue)*
+		public Group getGroup() { return cGroup; }
+
+		//'enumvalues'
+		public Keyword getEnumvaluesKeyword_0() { return cEnumvaluesKeyword_0; }
+
+		//values+=QualifiedIdValue
+		public Assignment getValuesAssignment_1() { return cValuesAssignment_1; }
+
+		//QualifiedIdValue
+		public RuleCall getValuesQualifiedIdValueParserRuleCall_1_0() { return cValuesQualifiedIdValueParserRuleCall_1_0; }
+
+		//(',' values+=QualifiedIdValue)*
+		public Group getGroup_2() { return cGroup_2; }
+
+		//','
+		public Keyword getCommaKeyword_2_0() { return cCommaKeyword_2_0; }
+
+		//values+=QualifiedIdValue
+		public Assignment getValuesAssignment_2_1() { return cValuesAssignment_2_1; }
+
+		//QualifiedIdValue
+		public RuleCall getValuesQualifiedIdValueParserRuleCall_2_1_0() { return cValuesQualifiedIdValueParserRuleCall_2_1_0; }
 	}
 
 	public class ResourceElements extends AbstractParserRuleElementFinder {
@@ -983,6 +1027,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	private final IntRangeElements pIntRange;
 	private final IntRangeValuesElements pIntRangeValues;
 	private final IntRangeRangeElements pIntRangeRange;
+	private final EnumRangeElements pEnumRange;
 	private final ResourceElements pResource;
 	private final ResourceReferenceElements pResourceReference;
 	private final GlobalResourceRefElements pGlobalResourceRef;
@@ -1018,6 +1063,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 		this.pIntRange = new IntRangeElements();
 		this.pIntRangeValues = new IntRangeValuesElements();
 		this.pIntRangeRange = new IntRangeRangeElements();
+		this.pEnumRange = new EnumRangeElements();
 		this.pResource = new ResourceElements();
 		this.pResourceReference = new ResourceReferenceElements();
 		this.pGlobalResourceRef = new GlobalResourceRefElements();
@@ -1143,7 +1189,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Range:
-	//	FloatRange | IntRange;
+	//	FloatRange | IntRange | EnumRange;
 	public RangeElements getRangeAccess() {
 		return pRange;
 	}
@@ -1190,6 +1236,16 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getIntRangeRangeRule() {
 		return getIntRangeRangeAccess().getRule();
+	}
+
+	//EnumRange:
+	//	'enumvalues' values+=QualifiedIdValue (',' values+=QualifiedIdValue)*;
+	public EnumRangeElements getEnumRangeAccess() {
+		return pEnumRange;
+	}
+	
+	public ParserRule getEnumRangeRule() {
+		return getEnumRangeAccess().getRule();
 	}
 
 	/// *
