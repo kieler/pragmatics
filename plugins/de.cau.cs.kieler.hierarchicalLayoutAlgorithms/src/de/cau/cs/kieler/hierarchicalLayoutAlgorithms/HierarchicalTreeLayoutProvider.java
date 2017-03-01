@@ -25,19 +25,26 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 import com.google.common.collect.Lists;
 
 /**
- * 
+ * Layout Provider for a Hierarchical Graph that uses two runs of Elk Layered
+ * for a Tree Layout with two directions.
  * 
  * @author Daniel
  *
  */
 public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
-
+	/** List of all nodes in the graph. */
 	private List<ElkNode> children;
+	/** List of all edges that are relevant for this Layouter. */
 	private static List<ElkEdge> edges;
+	/** Root node of the Graph. */
 	private static ElkNode root;
+	/** Nodes that are in the Hierarchical layer after the root node. */
 	private List<ElkNode> secondHierarchyNodes;
+	/** Value where the secondHierarchyNodes will be seperated. */
 	private int treeseperator;
-	private int totalDepth = 0;
+	/** Depth of the Hierarchy nodes. */
+	private int hierarchyDepth = 0;
+	/** Map of nodes with their corresponding depth. */
 	private Map<ElkNode, Integer> nodeDepth;
 
 	@Override
@@ -56,8 +63,14 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		HierarchicalEdgeRouting.drawExplosionLines(root);
 	}
 
+	/**
+	 * Method for the layout computation.
+	 * 
+	 * @param layoutGraph
+	 */
 	private void layeredTreeLayout(ElkNode layoutGraph) {
-		// Compute the two Lists of nodes for the two runs of MrTree.
+		// Compute the two Lists of nodes for the two runs of Elk-Layered with a
+		// Tree representation.
 		treeseperator = secondHierarchyNodes.size() / 2;
 		int i = 0;
 		// List of nodes that are used in the particular run
@@ -76,6 +89,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				}
 			}
 		};
+
 		List<ElkNode> sortedYNodes = sortAxis(root, compY);
 		for (ElkNode node : sortedYNodes) {
 			if (i < treeseperator) {
@@ -86,24 +100,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			i++;
 		}
 
-		// Comparator<ElkNode> compX = new Comparator<ElkNode>() {
-		// @Override
-		// public int compare(ElkNode n1, ElkNode n2) {
-		// if (n1.getX() < n2.getX()) {
-		// return -1;
-		// } else if (n1.getX() == n2.getX()) {
-		// return 0;
-		// } else {
-		// return 1;
-		// }
-		// }
-		// };
-
-		// List<ElkNode> sortedXNodes = sortAxis(root, compX);
-		System.out.println(2*Math.PI);
 		List<ElkNode> sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root, 1.5 * Math.PI);
-		System.out.println("first: " + sortedPolarNodes.toString());
-		// sortedPolarNodes = Lists.reverse(sortedPolarNodes);
 		List<ElkNode> tempListF = new ArrayList<ElkNode>();
 		List<ElkNode> tempListS = new ArrayList<ElkNode>();
 		for (ElkNode node : sortedPolarNodes) {
@@ -113,8 +110,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 
 		sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root, 0.5 * Math.PI);
-//		sortedPolarNodes = Lists.reverse(sortedPolarNodes);
-		System.out.println("second: " + sortedPolarNodes.toString());
 		for (ElkNode node : sortedPolarNodes) {
 			if (secondRunList.contains(node)) {
 				tempListS.add(node);
@@ -140,18 +135,19 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 		for (ElkNode node : children) {
 			int depth = HierarchicalUtil.getDepths(node, root);
-			if (totalDepth < depth) {
-				totalDepth = depth;
+			if (hierarchyDepth < depth) {
+				hierarchyDepth = depth;
 			}
 			nodeDepth.put(node, depth);
 		}
 
+		// Offsets for the Elk Layered Position option. Used for the correct order of nodes when displayed.
 		Map<Integer, Integer> firstOffset = new HashMap<Integer, Integer>();
-		for (int x = 1; x <= totalDepth; x++) {
+		for (int x = 1; x <= hierarchyDepth; x++) {
 			firstOffset.put(x, 0);
 		}
 		Map<Integer, Integer> secondOffset = new HashMap<Integer, Integer>();
-		for (int x = 1; x <= totalDepth + 1; x++) {
+		for (int x = 1; x <= hierarchyDepth + 1; x++) {
 			secondOffset.put(x, 0);
 		}
 
@@ -180,7 +176,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		secondRun.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
 		layered.layout(secondRun, secondRunMonitor);
 
-		// Keep track of actual height and width of the two runs by computing
+		// Keeps track of actual height and width of the two runs by computing
 		// min and max x- and y-values.
 		double minFirstY = Double.MAX_VALUE;
 		double minFirstX = Double.MAX_VALUE;
@@ -217,7 +213,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		double firstWidth = maxFirstX - minFirstX;
 		double secondWidth = maxSecondX - minSecondX;
 
-		// Compute positions for first run
+		// Compute positions of original nodes from first run
 		double xDisplacement = -minFirstX;
 		if (firstWidth < secondWidth) {
 			xDisplacement += (secondWidth - firstWidth) / 2;
@@ -234,7 +230,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			}
 		}
 
-		// Compute positions for second run
+		// Compute positions of original nodes from second run
 		double yDisplacement = firstRun.getHeight() - minFirstY - root.getHeight();
 		xDisplacement = -minSecondX;
 		if (firstWidth > secondWidth) {
@@ -273,6 +269,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	}
 
 	/**
+	 * Sorting method.
 	 * 
 	 * @param node
 	 * @param comp
@@ -319,11 +316,14 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	}
 
 	/**
+	 * Creates a new simple tree that will be used for Elk Layered and the
+	 * computed coordinates will then be applied to the original nodes with
+	 * offsets.
 	 * 
 	 * @param nodes
 	 * @param nodeMap
 	 * @param offset
-	 * @return
+	 * @return New layoutGraph
 	 */
 	private ElkNode createTree(List<ElkNode> nodes, Map<ElkNode, ElkNode> nodeMap, Map<Integer, Integer> offset) {
 		ElkNode layoutRoot = ElkGraphUtil.createGraph();
@@ -355,6 +355,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	}
 
 	/**
+	 * Puts the connected Nodes of the next hierarchy level recursively into the
+	 * List of nodes that are relevant for the corresponding run.
 	 * 
 	 * @param node
 	 * @param list
@@ -362,10 +364,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 */
 	private void buildNodeList(ElkNode node, List<ElkNode> list, double offset) {
 		// if (!HierarchicalUtil.getSuccessor(node).isEmpty()) {
-		// List<ElkNode> compList = sortAxis(node, comp);
 		List<ElkNode> compList = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node, offset);
-		// compList = Lists.reverse(compList);
-
 		for (ElkNode n : compList) {
 			list.add(n);
 			buildNodeList(n, list, offset);
