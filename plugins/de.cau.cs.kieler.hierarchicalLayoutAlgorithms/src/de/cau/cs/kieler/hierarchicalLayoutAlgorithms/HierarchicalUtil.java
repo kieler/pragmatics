@@ -82,6 +82,10 @@ public class HierarchicalUtil {
 	}
 
 	public static List<ElkNode> sortSuccesorsByPolarCoordinate(ElkNode node) {
+		return sortSuccesorsByPolarCoordinate(node,0);
+	}
+	
+	public static List<ElkNode> sortSuccesorsByPolarCoordinate(ElkNode node, double offset) {
 		List<ElkNode> successors = HierarchicalUtil.getSuccessor(node);
 
 		if (successors.size() > 1) {
@@ -107,6 +111,7 @@ public class HierarchicalUtil {
 					if (arc1 < 0) {
 						arc1 += 2 * Math.PI;
 					}
+					arc1+=offset;
 
 					double xPos2 = child2.getX() + child2.getWidth() / 2 - node.getWidth()/2;
 					double yPos2 = child2.getY() + child2.getHeight() / 2 - node.getHeight()/2;
@@ -114,6 +119,7 @@ public class HierarchicalUtil {
 					if (arc2 < 0) {
 						arc2 += 2 * Math.PI;
 					}
+					arc2+=offset;
 
 					return DoubleMath.fuzzyCompare(arc1, arc2, 1e-10);
 				}
