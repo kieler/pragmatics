@@ -207,7 +207,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				node = secondRunMap.get(node);
 				minSecondY = Math.min(minSecondY, node.getY());
 				minSecondX = Math.min(minSecondX, node.getX());
-				maxSecondX = Math.min(maxSecondX, node.getX() + node.getWidth());
+				maxSecondX = Math.max(maxSecondX, node.getX() + node.getWidth());
 			}
 		}
 
