@@ -192,4 +192,65 @@ public class HierarchicalUtil {
 		}
 		return depth;
 	}
+	
+
+	/**
+	 * Search for the biggest diameter of all nodes
+	 * @param graph
+	 * @return
+	 */
+	public static double findBiggestNodeInGraph(ElkNode graph) {
+		double biggestChildSize = 0;
+
+		for (ElkNode child : graph.getChildren()) {
+
+			double width = child.getWidth();
+			double height = child.getHeight();
+			double diameter = Math.sqrt(width * width + height * height);
+
+			if (biggestChildSize < diameter) {
+				biggestChildSize = diameter;
+			}
+
+			double biggestChild = findBiggestNodeInGraph(child);
+			if (biggestChild > biggestChildSize) {
+				biggestChildSize = biggestChild;
+			}
+		}
+		return biggestChildSize;
+	}
+	
+
+	/**
+	 * Calculate the size of the graph, such that it will be drawn in the
+	 * properly on the display
+	 * 
+	 * @param layoutGraph
+	 */
+	public static void postProcess(ElkNode layoutGraph) {
+		// calculate min size
+		double minHeight = 0;
+		double minXPos = 0;
+		for (ElkNode node : layoutGraph.getChildren()) {
+			minHeight = Math.min(minHeight, node.getY());
+			minXPos = Math.min(minXPos, node.getX());
+		}
+
+		// shift graph
+		for (ElkNode node : layoutGraph.getChildren()) {
+			node.setX(node.getX() - minXPos);
+			node.setY(node.getY() - minHeight);
+		}
+
+		// calculate graph size
+		double height = 0;
+		double width = 0;
+		for (ElkNode node : layoutGraph.getChildren()) {
+			height = Math.max(height, node.getY() + node.getHeight());
+			width = Math.max(width, node.getX() + node.getWidth());
+		}
+		layoutGraph.setHeight(height + 100);
+		layoutGraph.setWidth(width + 100);
+	}
+
 }
