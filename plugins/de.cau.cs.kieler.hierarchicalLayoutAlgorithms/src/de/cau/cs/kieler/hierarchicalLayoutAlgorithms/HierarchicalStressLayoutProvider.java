@@ -3,7 +3,7 @@ package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.elk.alg.force.properties.StressOptions;
+import org.eclipse.elk.alg.force.options.StressOptions;
 import org.eclipse.elk.alg.force.stress.StressLayoutProvider;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;

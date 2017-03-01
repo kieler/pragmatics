@@ -7,12 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
-import org.eclipse.elk.alg.layered.properties.FixedAlignment;
-import org.eclipse.elk.alg.layered.properties.GreedySwitchType;
-import org.eclipse.elk.alg.layered.properties.LayeredOptions;
-import org.eclipse.elk.alg.mrtree.TreeLayoutProvider;
+import org.eclipse.elk.alg.layered.options.FixedAlignment;
+import org.eclipse.elk.alg.layered.options.GreedySwitchType;
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
@@ -21,8 +21,6 @@ import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
-
-import com.google.common.collect.Lists;
 
 public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
@@ -94,36 +92,40 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// };
 
 		// List<ElkNode> sortedXNodes = sortAxis(root, compX);
-		// TODO Sorting offset
-		List<ElkNode> sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root);
-//		sortedPolarNodes = Lists.reverse(sortedPolarNodes);
+		List<ElkNode> sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root, 0.5 * Math.PI);
+		// sortedPolarNodes = Lists.reverse(sortedPolarNodes);
 		List<ElkNode> tempListF = new ArrayList<ElkNode>();
 		List<ElkNode> tempListS = new ArrayList<ElkNode>();
 		for (ElkNode node : sortedPolarNodes) {
 			if (firstRunList.contains(node)) {
 				tempListF.add(node);
-			} else if (secondRunList.contains(node)) {
+			}
+		}
+
+		sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root, 1.5 * Math.PI);
+		for (ElkNode node : sortedPolarNodes) {
+			if (secondRunList.contains(node)) {
 				tempListS.add(node);
 			}
 		}
-//		tempListS = Lists.reverse(tempListS);
-		firstRunList.clear();
-		firstRunList.addAll(tempListF);
-		secondRunList.clear();
-		secondRunList.addAll(tempListS);
+		// tempListS = Lists.reverse(tempListS);
+		// firstRunList.clear();
+		// firstRunList.addAll(tempListF);
+		// secondRunList.clear();
+		// secondRunList.addAll(tempListS);
 
 		List<ElkNode> tempList = new ArrayList<ElkNode>();
-		for (ElkNode node : firstRunList) {
+		for (ElkNode node : tempListF) {
 			tempList.add(node);
-			buildNodeList(node, tempList);
+			buildNodeList(node, tempList, 0.5 * Math.PI);
 		}
 		firstRunList.clear();
 		firstRunList.addAll(tempList);
 
 		tempList.clear();
-		for (ElkNode node : secondRunList) {
+		for (ElkNode node : tempListS) {
 			tempList.add(node);
-			buildNodeList(node, tempList);
+			buildNodeList(node, tempList, 1.5 * Math.PI);
 		}
 		secondRunList.clear();
 		secondRunList.addAll(tempList);
@@ -170,13 +172,13 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		secondRun.setProperty(LayeredOptions.DIRECTION, Direction.DOWN);
 		layered.layout(secondRun, secondRunMonitor);
 
-		// Keep track of actual height and width of the two runs by computing min and max x- and y-values.
+		// Keep track of actual height and width of the two runs by computing
+		// min and max x- and y-values.
 		double minFirstY = Double.MAX_VALUE;
-		double minSecondY = Double.MAX_VALUE;
 		double minFirstX = Double.MAX_VALUE;
-		double minSecondX = Double.MAX_VALUE;
-		double maxY = Double.MIN_VALUE;
 		double maxFirstX = Double.MIN_VALUE;
+		double minSecondY = Double.MAX_VALUE;
+		double minSecondX = Double.MAX_VALUE;
 		double maxSecondX = Double.MIN_VALUE;
 		for (ElkNode node : children) {
 			if (firstRunMap.containsKey(node)) {
@@ -187,16 +189,13 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				if (node.getX() < minFirstX) {
 					minFirstX = node.getX();
 				}
-				if (node.getY() + node.getHeight() > maxY) {
-					maxY = node.getY() + node.getHeight();
-				}
 				if (node.getX() + node.getWidth() > maxFirstX) {
 					maxFirstX = node.getX() + node.getWidth();
 				}
 			} else {
 				node = secondRunMap.get(node);
 				if (node.getY() < minSecondY) {
-					minSecondY= node.getY();
+					minSecondY = node.getY();
 				}
 				if (node.getX() < minSecondX) {
 					minSecondX = node.getX();
@@ -223,6 +222,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 					ElkNode newLayout = firstRunMap.get(node);
 					node.setX(newLayout.getX() + xDisplacement);
 					node.setY(newLayout.getY());
+					node.setProperty(LayeredOptions.ALIGNMENT, Alignment.CENTER);
 				}
 			}
 		}
@@ -249,7 +249,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				}
 			}
 		}
-		
+
 		yDisplacement = yDisplacement - minSecondY + root.getHeight() + firstDistanceToRoot;
 
 		for (ElkNode node : children) {
@@ -258,6 +258,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 					ElkNode newLayout = secondRunMap.get(node);
 					node.setX(newLayout.getX() + xDisplacement);
 					node.setY(newLayout.getY() + yDisplacement);
+					node.setProperty(LayeredOptions.ALIGNMENT, Alignment.CENTER);
 				}
 			}
 		}
@@ -352,15 +353,15 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * @param list
 	 * @param comp
 	 */
-	private void buildNodeList(ElkNode node, List<ElkNode> list) {
+	private void buildNodeList(ElkNode node, List<ElkNode> list, double offset) {
 		// if (!HierarchicalUtil.getSuccessor(node).isEmpty()) {
 		// List<ElkNode> compList = sortAxis(node, comp);
-		List<ElkNode> compList = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
-//		compList = Lists.reverse(compList);
+		List<ElkNode> compList = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node, offset);
+		// compList = Lists.reverse(compList);
 
 		for (ElkNode n : compList) {
 			list.add(n);
-			buildNodeList(n, list);
+			buildNodeList(n, list, offset);
 		}
 	}
 

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.alg.force.ForceLayoutProvider;
-import org.eclipse.elk.alg.force.properties.ForceOptions;
+import org.eclipse.elk.alg.force.options.ForceOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
