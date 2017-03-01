@@ -45,19 +45,11 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		root = HierarchicalUtil.findRoot(layoutGraph);
 		secondHierarchyNodes = HierarchicalUtil.getSuccessor(root);
 
-		// mrtreeLayout(layoutGraph);
 		layeredTreeLayout(layoutGraph);
 
 		HierarchicalEdgeRouting.drawExplosionLines(root);
 	}
 
-	private void mrtreeLayout(ElkNode layoutGraph) {
-		BasicProgressMonitor firstRunMonitor = new BasicProgressMonitor();
-		TreeLayoutProvider tree = new TreeLayoutProvider();
-		tree.layout(layoutGraph, firstRunMonitor);
-	}
-
-	// TODO Bessere Parameter/lieber mrtree erweitern um directions?
 	private void layeredTreeLayout(ElkNode layoutGraph) {
 		// Compute the two Lists of nodes for the two runs of MrTree.
 		treeseperator = secondHierarchyNodes.size() / 2;
@@ -65,7 +57,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// List of nodes that are used in the particular run
 		List<ElkNode> firstRunList = new ArrayList<ElkNode>();
 		List<ElkNode> secondRunList = new ArrayList<ElkNode>();
-		// TODO Secondary sort method according to width
+		// TODO Maximale Breite beachten
 		Comparator<ElkNode> compY = new Comparator<ElkNode>() {
 			@Override
 			public int compare(ElkNode n1, ElkNode n2) {
@@ -102,8 +94,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// };
 
 		// List<ElkNode> sortedXNodes = sortAxis(root, compX);
+		// TODO Sorting offset
 		List<ElkNode> sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root);
-		sortedPolarNodes = Lists.reverse(sortedPolarNodes);
+//		sortedPolarNodes = Lists.reverse(sortedPolarNodes);
 		List<ElkNode> tempListF = new ArrayList<ElkNode>();
 		List<ElkNode> tempListS = new ArrayList<ElkNode>();
 		for (ElkNode node : sortedPolarNodes) {
@@ -113,6 +106,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				tempListS.add(node);
 			}
 		}
+//		tempListS = Lists.reverse(tempListS);
 		firstRunList.clear();
 		firstRunList.addAll(tempListF);
 		secondRunList.clear();
@@ -153,6 +147,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 		// First run for upward tree
 		// Maps the original node to the temporary node
+		// TODO node spacing according to width
 		Map<ElkNode, ElkNode> firstRunMap = new HashMap<ElkNode, ElkNode>();
 		ElkNode firstRun = createTree(firstRunList, firstRunMap, firstOffset);
 		BasicProgressMonitor firstRunMonitor = new BasicProgressMonitor();
@@ -361,7 +356,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// if (!HierarchicalUtil.getSuccessor(node).isEmpty()) {
 		// List<ElkNode> compList = sortAxis(node, comp);
 		List<ElkNode> compList = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node);
-		compList = Lists.reverse(compList);
+//		compList = Lists.reverse(compList);
 
 		for (ElkNode n : compList) {
 			list.add(n);
