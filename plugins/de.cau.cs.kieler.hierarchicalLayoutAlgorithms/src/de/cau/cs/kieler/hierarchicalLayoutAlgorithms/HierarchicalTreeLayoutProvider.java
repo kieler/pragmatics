@@ -22,6 +22,12 @@ import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+/**
+ * 
+ * 
+ * @author Daniel
+ *
+ */
 public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 	private List<ElkNode> children;
