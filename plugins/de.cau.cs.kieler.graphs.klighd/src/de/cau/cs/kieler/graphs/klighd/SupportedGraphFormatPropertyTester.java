@@ -16,10 +16,10 @@ package de.cau.cs.kieler.graphs.klighd;
 import org.eclipse.core.expressions.PropertyTester;
 import org.eclipse.core.resources.IFile;
 
-import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
+import de.cau.cs.kieler.formats.GraphFormatsService;
 
 /**
- * Tests for the 'Open General Graphs Handler' whether kiml.formats 
+ * Tests for the 'Open General Graphs Handler' whether kieler.formats 
  * supports the selected graph file, e.g. .gml or .kgx. 
  * 
  * @author uru

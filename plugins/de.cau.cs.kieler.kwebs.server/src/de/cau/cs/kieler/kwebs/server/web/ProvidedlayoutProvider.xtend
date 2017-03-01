@@ -29,7 +29,7 @@ import java.util.Map
 import org.eclipse.elk.core.data.LayoutAlgorithmData
 import org.eclipse.elk.core.data.LayoutMetaDataService
 import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.core.options.GraphFeature
+import org.eclipse.elk.graph.properties.GraphFeature
 
 /**
  * This class implements a web content provider for displaying the service meta data in HTML format.

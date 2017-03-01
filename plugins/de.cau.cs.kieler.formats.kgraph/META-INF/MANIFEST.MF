@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Formats KGraph
 Bundle-SymbolicName: de.cau.cs.kieler.formats.kgraph;singleton:=true
-Bundle-Version: 0.42.0.qualifier
+Bundle-Version: 0.43.0.qualifier
 Bundle-Vendor: Kiel University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava,
@@ -11,7 +11,7 @@ Require-Bundle: com.google.guava,
  org.eclipse.xtend.lib.macro,
  org.eclipse.elk.core,
  org.eclipse.elk.graph,
- de.cau.cs.kieler.kiml.formats,
+ de.cau.cs.kieler.formats,
  de.cau.cs.kieler.klighd.kgraph
 Export-Package: de.cau.cs.kieler.formats.kgraph
 

@@ -13,8 +13,8 @@
  */
 package de.cau.cs.kieler.formats.kgraph
 
-import de.cau.cs.kieler.kiml.formats.IGraphTransformer
-import de.cau.cs.kieler.kiml.formats.TransformationData
+import de.cau.cs.kieler.formats.IGraphTransformer
+import de.cau.cs.kieler.formats.TransformationData
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KEdgeLayout
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement
@@ -104,6 +104,9 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
     }
     
     private def create eLabel : ElkGraphUtil.createLabel(null) transformLabel(KLabel kLabel) {
+        // label text
+        eLabel.text = kLabel.text
+        
         // Structural information
         val parent = kLabel.parent
         eLabel.parent = switch parent {
@@ -161,7 +164,7 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
         target.y = source.ypos;
         target.height = source.height;
         target.width = source.width;
-        println(source.allProperties)
+        
         target.copyProperties(source);
     }
     

@@ -42,7 +42,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.kiml.export.ExportPlugin;
 import de.cau.cs.kieler.kiml.export.GraphFileHandler;
-import de.cau.cs.kieler.kiml.formats.GraphFormatData;
+import de.cau.cs.kieler.formats.GraphFormatData;
 
 /**
  * A wizard for exporting graphs from workspace.

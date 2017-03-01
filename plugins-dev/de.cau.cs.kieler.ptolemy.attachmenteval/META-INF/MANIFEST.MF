@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Ptolemy Comment Attachment Evaluation Infrastructure and Excellent User Interface Plug-in
 Bundle-SymbolicName: de.cau.cs.kieler.ptolemy.attachmenteval;singleton:=true
-Bundle-Version: 0.42.0.qualifier
+Bundle-Version: 0.43.0.qualifier
 Bundle-Activator: de.cau.cs.kieler.ptolemy.attachmenteval.PtolemyAttachmentEvalPlugin
 Bundle-Vendor: Kiel University
 Require-Bundle: org.eclipse.ui,
@@ -19,7 +19,7 @@ Require-Bundle: org.eclipse.ui,
  org.ptolemy.moml,
  de.cau.cs.kieler.ptolemy.klighd,
  org.eclipse.ui.workbench,
- de.cau.cs.kieler.kiml.grana,
+ de.cau.cs.kieler.grana,
  com.google.inject,
  org.eclipse.elk.core,
  org.eclipse.elk.core.service

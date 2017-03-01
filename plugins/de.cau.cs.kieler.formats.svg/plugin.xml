@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.formats.graphFormats">
+      <handler
+            class="de.cau.cs.kieler.formats.svg.SvgHandler"
+            description="Scalable Vector Graphics (for export only)"
+            extensions="svg"
+            id="org.w3.svg"
+            name="SVG">
+      </handler>
+   </extension>
+   <extension
+         point="org.eclipse.elk.core.layoutProviders">
+      <provider
+            class="de.cau.cs.kieler.formats.svg.SvgOptions">
+      </provider>
+   </extension>
+
+</plugin>

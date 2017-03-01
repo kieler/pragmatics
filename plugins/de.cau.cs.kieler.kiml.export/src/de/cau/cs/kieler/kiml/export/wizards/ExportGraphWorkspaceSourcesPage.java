@@ -34,8 +34,8 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import de.cau.cs.kieler.kiml.formats.GraphFormatData;
-import de.cau.cs.kieler.kiml.formats.GraphFormatsService;
+import de.cau.cs.kieler.formats.GraphFormatData;
+import de.cau.cs.kieler.formats.GraphFormatsService;
 
 /**
  * The Export graph wizard page which lets the user select the source files from the workspace and

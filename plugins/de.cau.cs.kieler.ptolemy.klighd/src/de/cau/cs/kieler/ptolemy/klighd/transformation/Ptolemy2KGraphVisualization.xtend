@@ -17,6 +17,12 @@ import com.google.common.base.Strings
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
+import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.KGraphElement
+import de.cau.cs.kieler.klighd.kgraph.KLabeledGraphElement
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.KPort
+import de.cau.cs.kieler.klighd.kgraph.KShapeLayout
 import de.cau.cs.kieler.klighd.krendering.KAreaPlacementData
 import de.cau.cs.kieler.klighd.krendering.KRendering
 import de.cau.cs.kieler.klighd.krendering.KRenderingRef
@@ -35,6 +41,7 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtension
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants
 import java.util.EnumSet
+import org.eclipse.elk.alg.layered.options.LayeredOptions
 import org.eclipse.elk.core.math.KVector
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
@@ -47,13 +54,6 @@ import org.eclipse.elk.core.options.PortSide
 import org.eclipse.elk.core.options.SizeConstraint
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-import org.eclipse.elk.alg.layered.properties.LayeredOptions
-import de.cau.cs.kieler.klighd.kgraph.KNode
-import de.cau.cs.kieler.klighd.kgraph.KEdge
-import de.cau.cs.kieler.klighd.kgraph.KLabeledGraphElement
-import de.cau.cs.kieler.klighd.kgraph.KGraphElement
-import de.cau.cs.kieler.klighd.kgraph.KShapeLayout
-import de.cau.cs.kieler.klighd.kgraph.KPort
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information

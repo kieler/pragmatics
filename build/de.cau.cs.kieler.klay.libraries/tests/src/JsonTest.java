@@ -16,9 +16,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import de.cau.cs.kieler.kiml.formats.json.JsonFormatHandler;
-import de.cau.cs.kieler.kiml.formats.json.JsonImporter;
-import de.cau.cs.kieler.kiml.formats.standalone.StandaloneGraphLayoutEngine;
+import de.cau.cs.kieler.formats.json.JsonFormatHandler;
+import de.cau.cs.kieler.formats.json.JsonImporter;
+import de.cau.cs.kieler.formats.standalone.StandaloneGraphLayoutEngine;
 
 /**
  * Tests for successful layout of a graph given as a JSON-String.
