@@ -120,11 +120,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				tempListS.add(node);
 			}
 		}
-		// tempListS = Lists.reverse(tempListS);
-		// firstRunList.clear();
-		// firstRunList.addAll(tempListF);
-		// secondRunList.clear();
-		// secondRunList.addAll(tempListS);
 
 		List<ElkNode> tempList = new ArrayList<ElkNode>();
 		for (ElkNode node : tempListF) {
@@ -235,7 +230,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 					ElkNode newLayout = firstRunMap.get(node);
 					node.setX(newLayout.getX() + xDisplacement);
 					node.setY(newLayout.getY());
-					node.setProperty(LayeredOptions.ALIGNMENT, Alignment.CENTER);
 				}
 			}
 		}
@@ -271,7 +265,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 					ElkNode newLayout = secondRunMap.get(node);
 					node.setX(newLayout.getX() + xDisplacement);
 					node.setY(newLayout.getY() + yDisplacement);
-					node.setProperty(LayeredOptions.ALIGNMENT, Alignment.CENTER);
 				}
 			}
 		}
@@ -341,6 +334,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			ElkNode tempNode = ElkGraphUtil.createNode(layoutRoot);
 			int i = offset.get(nodeDepth.get(node));
 			tempNode.setProperty(LayeredOptions.POSITION, new KVector(i, 0));
+			tempNode.setProperty(LayeredOptions.ALIGNMENT, Alignment.CENTER);
 			offset.put(nodeDepth.get(node), (int) (i + node.getWidth() + 100));
 			ElkUtil.resizeNode(tempNode, node.getWidth(), node.getHeight(), false, false);
 			nodeMap.put(node, tempNode);
