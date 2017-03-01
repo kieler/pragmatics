@@ -116,8 +116,8 @@ public class CSVResultSerializer implements IBatchResultSerializer {
         }
         // possibly write range analysis headers
         if (batch.getRangeAnalysis() != null) {
-            for (Number n : batch.getRangeValues()) {
-                writer.write(";" + n);
+            for (Object n : batch.getRangeValues()) {
+                writer.write(";" + n.toString());
             }
         }
 

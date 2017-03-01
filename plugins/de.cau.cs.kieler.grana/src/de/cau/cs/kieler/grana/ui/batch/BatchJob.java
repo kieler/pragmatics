@@ -167,6 +167,8 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
 
         /** the containing batch for reference. */
         // private Batch batch;
+        
+        private static IGraphLayoutEngine layoutEngine;
 
         private LinkedListMultimap<MapPropertyHolder, Map<String, Object>> rangeResults =
                 LinkedListMultimap.create();
@@ -231,10 +233,22 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
                 // diagram layout engine is used here
                 // this has some implications, e.g. an IDiagramLayoutConnector must be available 
                 // for the graph to be analyzed
-                DiagramLayoutEngine.invokeLayout(null, graph, params);
+                //DiagramLayoutEngine.invokeLayout(null, graph, params);
+                
+                // #1 create a copy of the graph
+                // following three lines copied from EcoreUtils#copy
+                Copier copier = new Copier();
+                final ElkNode second = (ElkNode) copier.copy(graph);
+                copier.copyReferences();
+
+                ElkUtil.applyVisitors(second, lc);
+                if (layoutEngine == null) {
+                    layoutEngine = new RecursiveGraphLayoutEngine();
+                }
+                layoutEngine.layout(second, monitor.subTask(1));
 
                 AnalysisContext rangeContext = AnalysisService.getInstance().analyze(
-                        graph, rangeAnalyses, monitor.subTask(1));
+                        second, rangeAnalyses, monitor.subTask(1));
 
                 rangeResults.put(options, rangeContext.getResults());
             }

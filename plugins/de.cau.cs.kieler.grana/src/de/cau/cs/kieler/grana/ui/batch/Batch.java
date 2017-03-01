@@ -15,7 +15,6 @@ package de.cau.cs.kieler.grana.ui.batch;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.SortedSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -177,7 +176,7 @@ public abstract class Batch {
         private List<AnalysisData> rangeAnalyses;
 
         private LayoutOptionData rangeOption;
-        private SortedSet<? extends Number> rangeValues;
+        private List<?> rangeValues;
         
         private List<MapPropertyHolder> rangeConfigurations;
         
@@ -247,14 +246,14 @@ public abstract class Batch {
         /**
          * @return the rangeValues
          */
-        public SortedSet<? extends Number> getRangeValues() {
+        public List<?> getRangeValues() {
             return rangeValues;
         }
 
         /**
          * @param rangeValues the rangeValues to set
          */
-        public void setRangeValues(final SortedSet<? extends Number> rangeValues) {
+        public void setRangeValues(final List<?> rangeValues) {
             this.rangeValues = rangeValues;
         }
         

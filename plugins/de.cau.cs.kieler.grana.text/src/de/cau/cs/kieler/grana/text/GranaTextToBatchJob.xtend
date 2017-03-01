@@ -40,6 +40,7 @@ import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
+import java.util.List
 import java.util.regex.Pattern
 import org.eclipse.core.resources.IContainer
 import org.eclipse.core.resources.IFile
@@ -54,6 +55,7 @@ import org.eclipse.elk.core.util.Pair
 import org.eclipse.elk.graph.properties.MapPropertyHolder
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
+import de.cau.cs.kieler.grana.text.grana.EnumRange
 
 /**
  * Utility class to convert textually specified grana executions to 
@@ -165,11 +167,12 @@ final class GranaTextToBatchJob {
                 batch.rangeOption = layOpt
                 
                 val v = job.rangeValues
-                val vals = switch (v) {
+                val List<?> vals = switch (v) {
                   IntRangeRange: ContiguousSet.create(Range.closed(v.start, v.end), DiscreteDomain.integers)
                   IntRangeValues: ContiguousSet.copyOf(v.values)
-                  FloatRange: ContiguousSet.copyOf(v.values)                  
-                }
+                  FloatRange: ContiguousSet.copyOf(v.values)   
+                  EnumRange: v.values
+                }.toList
                 batch.rangeValues = vals
 
                 // assemble layout configs for the range job

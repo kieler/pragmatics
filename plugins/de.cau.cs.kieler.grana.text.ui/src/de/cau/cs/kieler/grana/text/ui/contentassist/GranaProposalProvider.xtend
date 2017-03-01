@@ -24,6 +24,9 @@ import org.eclipse.xtext.Assignment
 import org.eclipse.xtext.RuleCall
 import org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext
 import org.eclipse.xtext.ui.editor.contentassist.ICompletionProposalAcceptor
+import org.eclipse.elk.core.data.LayoutMetaDataService
+import org.eclipse.elk.core.data.LayoutOptionData
+import de.cau.cs.kieler.grana.text.grana.EnumRange
 
 /**
  * see http://www.eclipse.org/Xtext/documentation.html#contentAssist on how to customize content assistant
@@ -205,4 +208,27 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
         }
     }
 
+    override completeEnumRange_Values(EObject model, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+        val job = model.eContainer
+        switch job {
+            RangeJob: {
+                val rangeVals = job.rangeValues
+                val known = switch rangeVals {
+                    EnumRange: rangeVals.values.map[toString].toSet
+                    default: emptySet
+                }
+                val opt = job.rangeOption
+                if (!opt.nullOrEmpty) {
+                    val optData = LayoutMetaDataService.instance.getOptionDataBySuffix(opt)
+                    if (optData.type == LayoutOptionData.Type.ENUM) {
+                        for (e : optData.choices) {
+                            if (!known.contains(e.toString))
+                                acceptor.accept(doCreateProposal(e, new StyledString(e), null, priorityHelper.defaultPriority, context))
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
 }
