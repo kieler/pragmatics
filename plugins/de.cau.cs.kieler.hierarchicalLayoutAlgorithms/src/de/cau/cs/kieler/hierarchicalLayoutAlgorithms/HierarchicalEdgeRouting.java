@@ -34,14 +34,14 @@ public class HierarchicalEdgeRouting {
 	 * 
 	 * @param graph
 	 */
-	public static void routeEdgesCenterToCenter(ElkNode graph) {
-		for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(graph)) {
+	public static void routeEdgesCenterToCenter(ElkNode root) {
+		for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(root)) {
 
 			ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
-			if (!graph.getChildren().contains(target)) {
+			if (!root.getChildren().contains(target)) {
 
-				double sourceX = graph.getX() + graph.getWidth() / 2;
-				double sourceY = graph.getY() + graph.getHeight() / 2;
+				double sourceX = root.getX() + root.getWidth() / 2;
+				double sourceY = root.getY() + root.getHeight() / 2;
 
 				double targetX = target.getX() + target.getWidth() / 2;
 				double targetY = target.getY() + target.getHeight() / 2;
@@ -60,12 +60,12 @@ public class HierarchicalEdgeRouting {
 	 * 
 	 * @param graph
 	 */
-	public static void routeEdgesCornerToCorner(ElkNode graph) {
-		for (ElkEdge edge : graph.getOutgoingEdges()) {
+	public static void routeEdgesCornerToCorner(ElkNode root) {
+		for (ElkEdge edge : root.getOutgoingEdges()) {
 			ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
-			if (!graph.getChildren().contains(target)) {
-				double sourceX = graph.getX();
-				double sourceY = graph.getY();
+			if (!root.getChildren().contains(target)) {
+				double sourceX = root.getX();
+				double sourceY = root.getY();
 
 				double targetX = target.getX();
 				double targetY = target.getY();
