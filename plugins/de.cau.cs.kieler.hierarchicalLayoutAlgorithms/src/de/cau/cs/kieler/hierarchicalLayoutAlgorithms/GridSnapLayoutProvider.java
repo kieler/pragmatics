@@ -15,6 +15,12 @@ import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+/**
+ * Discarded
+ * 
+ * @author dja
+ *
+ */
 public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 
 	/**
@@ -43,7 +49,7 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 
 		minimizingWhitespaceGrid(layoutGraph);
 
-		HierarchicalEdgeRouting.drawExplosionLines(HierarchicalUtil.findRoot(layoutGraph));
+		HierarchicalEdgeRouting.drawHierarchicalEdges(HierarchicalUtil.findRoot(layoutGraph));
 
 		progressMonitor.done();
 	}

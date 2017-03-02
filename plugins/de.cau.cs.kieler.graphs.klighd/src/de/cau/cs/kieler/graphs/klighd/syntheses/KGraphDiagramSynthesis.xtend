@@ -157,6 +157,7 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
             //  as value.
         }
         
+        // Enable Buttons for different hierarchical layout algorithms
         addHierarchicalOptions(result)
 
         // Enable label management

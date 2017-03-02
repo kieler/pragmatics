@@ -21,15 +21,15 @@ algorithm grid(GridSnapLayoutProvider) {
 }
 
 algorithm stress(HierarchicalStressLayoutProvider) {
-    label "Stress Layouter"
+    label "Hierarchical Stress Layouter"
     metadataClass HierarchicalStressOptions
     description "A hierarchical stress layouter."
 }
 
 algorithm tree(HierarchicalTreeLayoutProvider) {
-    label "Tree Layouter"
+    label "Hierarchical Tree Layouter"
     metadataClass HierarchicalTreeOptions
-    description "A tree layouter."
+    description "A hierarchical two-dimension tree layouter."
 }
 
 /////////////////////////////////Options///////////////////////////////

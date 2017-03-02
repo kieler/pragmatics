@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2013 by
+ * + Kiel University
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
 import java.util.ArrayList;
@@ -10,6 +23,13 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.math.DoubleMath;
 
+/**
+ * Util Class that defines often used methods.
+ * 
+ * @author dja
+ * @author ybl
+ *
+ */
 public class HierarchicalUtil {
 
 	/**
@@ -30,7 +50,7 @@ public class HierarchicalUtil {
 	}
 
 	/**
-	 * Computes the root node of the graph.
+	 * Computes the root node of a graph.
 	 * 
 	 * @param graph
 	 * @return root node of graph.
@@ -71,16 +91,25 @@ public class HierarchicalUtil {
 	public static List<ElkEdge> getHierarchicalEdges(ElkNode graph) {
 		List<ElkEdge> edges = new ArrayList<ElkEdge>();
 		for (ElkNode node : graph.getChildren()) {
-			for (ElkEdge outgoingEdge : ElkGraphUtil.allOutgoingEdges(node)) {
-				ElkNode target = ElkGraphUtil.connectableShapeToNode(outgoingEdge.getTargets().get(0));
+			for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+				ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
 				if (graph.getChildren().contains(target)) {
-					edges.add(outgoingEdge);
+					edges.add(edge);
 				}
 			}
 		}
 		return edges;
 	}
 	
+	/**
+	 * Comparator for sorting a node by polar coordinates. Offset is set between
+	 * 0 and 2*Pi. 0 starts the sorting in the right middle of a node and sorts
+	 * clockwise.
+	 * 
+	 * @param node
+	 * @param offset
+	 * @return Comparator for polar sorting.
+	 */
 	public static Comparator<ElkNode> createPolarComparator(ElkNode node, double offset) {
 		Comparator<ElkNode> comparator = new Comparator<ElkNode>() {
 
@@ -93,6 +122,9 @@ public class HierarchicalUtil {
 					arc1 += 2 * Math.PI;
 				}
 				arc1+=offset;
+				if (arc1 > 2 * Math.PI) {
+						arc1 -= 2 * Math.PI;
+				}
 
 				double xPos2 = child2.getX() + child2.getWidth() / 2 - node.getWidth()/2;
 				double yPos2 = child2.getY() + child2.getHeight() / 2 - node.getHeight()/2;
@@ -101,6 +133,9 @@ public class HierarchicalUtil {
 					arc2 += 2 * Math.PI;
 				}
 				arc2+=offset;
+				if (arc2 > 2 * Math.PI) {
+						arc2 -= 2 * Math.PI;
+				}
 
 				return DoubleMath.fuzzyCompare(arc1, arc2, 1e-10);
 			}
@@ -112,6 +147,13 @@ public class HierarchicalUtil {
 //		return sortSuccesorsByPolarCoordinate(node,0);
 //	}
 	
+	/**
+	 * Sorts the children of a node with help of the comparator.
+	 * 
+	 * @param node
+	 * @param comparator
+	 * @return Sorted list of nodes with help of the comparator.
+	 */
 	public static List<ElkNode> sortNode(ElkNode node, Comparator<ElkNode> comparator) {
 		List<ElkNode> successors = HierarchicalUtil.getSuccessor(node);
 
@@ -221,10 +263,10 @@ public class HierarchicalUtil {
 		}
 		return depth;
 	}
-	
 
 	/**
-	 * Search for the biggest diameter of all nodes
+	 * Search for the biggest diameter of all nodes.
+	 * 
 	 * @param graph
 	 * @return
 	 */
@@ -248,11 +290,10 @@ public class HierarchicalUtil {
 		}
 		return biggestChildSize;
 	}
-	
 
 	/**
-	 * Calculate the size of the graph, such that it will be drawn in the
-	 * properly on the display
+	 * Calculate the size of the graph, such that it will be drawn properly on
+	 * the display.
 	 * 
 	 * @param layoutGraph
 	 */
