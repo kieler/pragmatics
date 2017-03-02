@@ -53,7 +53,7 @@ public class HierarchicalUtil {
 	 * Computes the root node of a graph.
 	 * 
 	 * @param graph
-	 * @return root node of graph.
+	 * @return Root node of graph.
 	 */
 	public static ElkNode findRoot(ElkNode graph) {
 		for (ElkNode child : graph.getChildren()) {
@@ -68,7 +68,7 @@ public class HierarchicalUtil {
 	 * Computes the number of Leafs that a node has.
 	 * 
 	 * @param node
-	 * @return number of leafs.
+	 * @return Number of leafs.
 	 */
 	public static int getNumberOfLeafs(ElkNode node) {
 		int leafs = 0;
@@ -160,8 +160,9 @@ public class HierarchicalUtil {
 		if (successors.size() > 1) {
 			List<ElkNode> children = new ArrayList<>();
 			List<ElkNode> rootChildren = node.getChildren();
-			boolean isBlueBox = rootChildren.size() == 1 && !rootChildren.get(0).getChildren().isEmpty();
+
 			// blue boxing
+			boolean isBlueBox = rootChildren.size() == 1 && !rootChildren.get(0).getChildren().isEmpty();
 			if (!isBlueBox) {
 				children.addAll(rootChildren);
 			} else {
@@ -170,29 +171,6 @@ public class HierarchicalUtil {
 			List<ElkNode> sortedSuccessors = new ArrayList<>();
 
 			// sort children
-//			Comparator<ElkNode> comparator = new Comparator<ElkNode>() {
-//
-//				@Override
-//				public int compare(ElkNode child1, ElkNode child2) {
-//					double xPos1 = child1.getX() + child1.getWidth() / 2 - node.getWidth()/2;
-//					double yPos1 = child1.getY() + child1.getHeight() / 2 - node.getHeight()/2;
-//					double arc1 = Math.atan2(yPos1, xPos1);
-//					if (arc1 < 0) {
-//						arc1 += 2 * Math.PI;
-//					}
-//					arc1+=offset;
-//
-//					double xPos2 = child2.getX() + child2.getWidth() / 2 - node.getWidth()/2;
-//					double yPos2 = child2.getY() + child2.getHeight() / 2 - node.getHeight()/2;
-//					double arc2 = Math.atan2(yPos2, xPos2);
-//					if (arc2 < 0) {
-//						arc2 += 2 * Math.PI;
-//					}
-//					arc2+=offset;
-//
-//					return DoubleMath.fuzzyCompare(arc1, arc2, 1e-10);
-//				}
-//			};
 			children.sort(comparator);
 
 			// map child to its successor
@@ -225,7 +203,7 @@ public class HierarchicalUtil {
 	 * 
 	 * @param parent
 	 * @param successor
-	 * @return
+	 * @return Original node of a copy.
 	 */
 	public static ElkNode getOriginalNode(ElkNode parent, ElkNode successor) {
 		Integer successorID = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
@@ -268,7 +246,7 @@ public class HierarchicalUtil {
 	 * Search for the biggest diameter of all nodes.
 	 * 
 	 * @param graph
-	 * @return
+	 * @return Biggest diameter of all nodes.
 	 */
 	public static double findBiggestNodeInGraph(ElkNode graph) {
 		double biggestChildSize = 0;

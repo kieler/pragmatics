@@ -81,7 +81,7 @@ public class HierarchicalEdgeRouting {
 	}
 
 	/**
-	 * 
+	 * Mthod that combines the two steps that are needed to draw hierarchical edges.
 	 * 
 	 * @param root
 	 */

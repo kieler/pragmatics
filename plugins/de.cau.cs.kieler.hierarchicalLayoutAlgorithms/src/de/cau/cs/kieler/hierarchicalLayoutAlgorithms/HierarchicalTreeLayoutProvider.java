@@ -89,7 +89,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// List of nodes that are used in the particular run
 		List<ElkNode> firstRunList = new ArrayList<ElkNode>();
 		List<ElkNode> secondRunList = new ArrayList<ElkNode>();
-		// TODO Maximale Breite beachten
+		// TODO Better distribution of nodes in the two runs for a similar width
+		// in both runs.
 		Comparator<ElkNode> compY = new Comparator<ElkNode>() {
 			@Override
 			public int compare(ElkNode n1, ElkNode n2) {
@@ -103,7 +104,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			}
 		};
 
-		List<ElkNode> sortedYNodes = sortAxis(root, compY);
+		List<ElkNode> sortedYNodes = HierarchicalUtil.sortNode(root, compY);
 		for (ElkNode node : sortedYNodes) {
 			if (i < treeseperator) {
 				firstRunList.add(node);
@@ -156,7 +157,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			nodeDepth.put(node, depth);
 		}
 
-		// Offsets for the Elk Layered Position option. Used for the correct order of nodes when displayed.
+		// Offsets for the Elk Layered Position option. Used for the correct
+		// order of nodes when displayed.
 		Map<Integer, Integer> firstOffset = new HashMap<Integer, Integer>();
 		for (int x = 1; x <= hierarchyDepth; x++) {
 			firstOffset.put(x, 0);
@@ -269,53 +271,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 
 		layoutGraph.setHeight(yDisplacement + secondRun.getHeight());
-	}
-
-	/**
-	 * Sorting method.
-	 * 
-	 * @param node
-	 * @param comp
-	 * @return
-	 */
-	private List<ElkNode> sortAxis(ElkNode node, Comparator<ElkNode> comp) {
-		List<ElkNode> successors = HierarchicalUtil.getSuccessor(node);
-
-		if (successors.size() > 1) {
-			List<ElkNode> sortedNodes = new ArrayList<ElkNode>();
-			List<ElkNode> children = new ArrayList<>();
-			List<ElkNode> nodeChildren = node.getChildren();
-			boolean isBlueBox = nodeChildren.size() == 1 && !nodeChildren.get(0).getChildren().isEmpty();
-			// blue boxing
-			if (!isBlueBox) {
-				children.addAll(nodeChildren);
-			} else {
-				children.addAll(nodeChildren.get(0).getChildren());
-			}
-			children.sort(comp);
-
-			// map sorted nodes
-			for (ElkNode child : children) {
-				Integer childID = child.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
-				if (childID != null) {
-
-					ElkNode removeNode = null;
-					for (ElkNode successor : successors) {
-						Integer successorID = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
-						if (childID.equals(successorID)) {
-							sortedNodes.add(successor);
-							removeNode = successor;
-							break;
-						}
-					}
-					successors.remove(removeNode);
-				}
-			}
-
-			return sortedNodes;
-		} else {
-			return successors;
-		}
 	}
 
 	/**
