@@ -1,12 +1,12 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms
 
-import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial.RadialLayoutProvider
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial.HierarchicalRadialLayoutProvider
 
 bundle {
     label "Hierarchical Layout Algorithms"
     metadataClass HierarchicalMetaDataProvider
 }
-algorithm radial(RadialLayoutProvider) {
+algorithm radial(HierarchicalRadialLayoutProvider) {
     label "Radial Layouter"
     metadataClass RadialOptions
     description "A radial layouter"
