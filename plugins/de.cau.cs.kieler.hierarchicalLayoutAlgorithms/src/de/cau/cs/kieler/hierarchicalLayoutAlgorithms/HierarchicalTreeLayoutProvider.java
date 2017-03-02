@@ -98,7 +98,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// };
 
 		// List<ElkNode> sortedXNodes = sortAxis(root, compX);
-		List<ElkNode> sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root, 0.5 * Math.PI);
+		Comparator<ElkNode> polarComp = HierarchicalUtil.createPolarComparator(root, 0.5 * Math.PI);
+		List<ElkNode> sortedPolarNodes = HierarchicalUtil.sortNode(root, polarComp);
 		// sortedPolarNodes = Lists.reverse(sortedPolarNodes);
 		List<ElkNode> tempListF = new ArrayList<ElkNode>();
 		List<ElkNode> tempListS = new ArrayList<ElkNode>();
@@ -108,7 +109,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			}
 		}
 
-		sortedPolarNodes = HierarchicalUtil.sortSuccesorsByPolarCoordinate(root, 1.5 * Math.PI);
+		polarComp = HierarchicalUtil.createPolarComparator(root, 1.5 * Math.PI);
+		sortedPolarNodes = HierarchicalUtil.sortNode(root, polarComp);
 		for (ElkNode node : sortedPolarNodes) {
 			if (secondRunList.contains(node)) {
 				tempListS.add(node);
@@ -362,7 +364,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	private void buildNodeList(ElkNode node, List<ElkNode> list, double offset) {
 		// if (!HierarchicalUtil.getSuccessor(node).isEmpty()) {
 		// List<ElkNode> compList = sortAxis(node, comp);
-		List<ElkNode> compList = HierarchicalUtil.sortSuccesorsByPolarCoordinate(node, offset);
+		Comparator<ElkNode> polarComp = HierarchicalUtil.createPolarComparator(node, offset);
+		List<ElkNode> compList = HierarchicalUtil.sortNode(node, polarComp);
 		// compList = Lists.reverse(compList);
 
 		for (ElkNode n : compList) {
