@@ -5,6 +5,12 @@ import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalEdgeRouting;
 
+/**
+ * An edge router implementing the interface of the elk radial layouter for edge routing.
+ * It draws the explosion lines of hierarchical edges.
+ * @author Yella Lasch
+ *
+ */
 public class ExplosionLineRouter implements IRadialEdgeRouter {
 
 	@Override

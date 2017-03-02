@@ -6,6 +6,14 @@ import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
+/**
+ * The hierarchical radial layout provider uses the elk radial layout provider
+ * and arguments it with a polar coordinate sorter and explosion line edge
+ * routing.
+ * 
+ * @author lucy
+ *
+ */
 public class HierarchicalRadialLayoutProvider extends AbstractLayoutProvider {
 
 	@Override
