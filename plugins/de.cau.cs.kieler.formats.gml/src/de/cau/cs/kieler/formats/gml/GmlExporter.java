@@ -110,7 +110,7 @@ public class GmlExporter implements IGraphTransformer<ElkNode, GMLModel> {
                 nodeElement.getElements().add(subgraphElement);
             }
             
-            for (ElkEdge elkedge : elknode.getOutgoingEdges()) {
+            for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elknode)) {
                 // We don't support hyperedges
                 if (!(elkedge.isConnected() && elkedge.isHyperedge())) {
                     throw new UnsupportedGraphException("Hyperedges are not supported");
