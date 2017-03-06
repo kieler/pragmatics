@@ -17,8 +17,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
 import de.cau.cs.kieler.grana.IAnalysis;
@@ -27,6 +28,8 @@ import de.cau.cs.kieler.grana.IAnalysis;
  * An analysis for hierarchy level crossing edges in compound graphs. The first returned component
  * is the number of hierarchy crossing edges, the second component is the maximal number of crossed
  * hierarchy levels, the third component is the number of edges incident to compound nodes.
+ *
+ * <b>Warning:</b> Does not work for hyperedges.
  *
  * @author msp
  * @kieler.design proposed by msp
@@ -40,25 +43,27 @@ public class CompoundEdgeAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Compound edge analysis", 1);
 
         int edgeCount = 0, maxLevels = 0, compoundEdges = 0;
-        List<KNode> nodeQueue = new LinkedList<KNode>();
+        List<ElkNode> nodeQueue = new LinkedList<ElkNode>();
         nodeQueue.addAll(parentNode.getChildren());
         while (!nodeQueue.isEmpty()) {
-            KNode node = nodeQueue.remove(0);
-            for (KEdge edge : node.getOutgoingEdges()) {
-                int crossedLevels = crossedLevels(edge.getSource(), edge.getTarget());
+            ElkNode node = nodeQueue.remove(0);
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                ElkNode source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
+                ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
+                int crossedLevels = crossedLevels(source, target);
                 if (crossedLevels > 0) {
                     edgeCount++;
                 }
                 if (crossedLevels > maxLevels) {
                     maxLevels = crossedLevels;
                 }
-                if (!edge.getSource().getChildren().isEmpty()
-                        || !edge.getTarget().getChildren().isEmpty()) {
+                if (!source.getChildren().isEmpty()
+                        || !target.getChildren().isEmpty()) {
                     compoundEdges++;
                 }
             }
@@ -77,16 +82,16 @@ public class CompoundEdgeAnalysis implements IAnalysis {
      * @param node2 the second node
      * @return the number of crossed levels
      */
-    private int crossedLevels(final KNode node1, final KNode node2) {
-        List<KNode> parentList1 = new LinkedList<KNode>();
-        KNode parent1 = node1.getParent();
+    private int crossedLevels(final ElkNode node1, final ElkNode node2) {
+        List<ElkNode> parentList1 = new LinkedList<ElkNode>();
+        ElkNode parent1 = node1.getParent();
         while (parent1 != null) {
             parentList1.add(parent1);
             parent1 = parent1.getParent();
         }
         parentList1.add(null);
         
-        KNode parent2 = node2.getParent();
+        ElkNode parent2 = node2.getParent();
         int levels1 = parentList1.indexOf(parent2);
         int levels2 = 0;
         while (levels1 < 0) {
