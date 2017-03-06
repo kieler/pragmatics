@@ -13,15 +13,18 @@
  */
 package de.cau.cs.kieler.grana.analyses;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Lists;
 
@@ -33,6 +36,8 @@ import de.cau.cs.kieler.grana.IAnalysis;
  * A graph analysis that computes the minimum, average and maximum edge length.
  * It assumes that the edge bend points describe polylines (splines are not
  * supported).
+ * 
+ * <b>Warning:</b> Doesn't work for hyperedges.
  * 
  * @author mri
  * @author uru
@@ -53,47 +58,44 @@ public class EdgeLengthAnalysis implements IAnalysis {
      *            the edge
      * @return the length
      */
-    public static float computeEdgeLength(final KEdge edge) {
-        KEdgeLayout edgeLayout = edge.getData(KEdgeLayout.class);
+    public static float computeEdgeLength(final ElkEdge edge) {
         float edgeLength = 0;
-        KPoint current = edgeLayout.getSourcePoint();
-        for (KPoint point : edgeLayout.getBendPoints()) {
-            float deltaX = current.getX() - point.getX();
-            float deltaY = current.getY() - point.getY();
-            edgeLength += Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            current = point;
+        ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
+        KVectorChain vs = ElkUtil.createVectorChain(section);
+        Iterator<KVector> vsIt = vs.iterator();
+        KVector last = vsIt.next(); // vs guaranteed to contain two points
+        while (vsIt.hasNext()) {
+            KVector current = vsIt.next();
+            edgeLength += last.distance(current);
+            last = current;
         }
-        float deltaX = current.getX() - edgeLayout.getTargetPoint().getX();
-        float deltaY = current.getY() - edgeLayout.getTargetPoint().getY();
-        edgeLength += Math.sqrt(deltaX * deltaX + deltaY * deltaY);
         return edgeLength;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode,
+    public Object doAnalysis(final ElkNode parentNode,
             final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge length analysis", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
 
         int numberOfEdges = 0;
         float overallEdgeLength = 0;
         float minEdgeLength = Float.MAX_VALUE;
         float maxEdgeLength = 0;
         List<Float> edgeLengths = Lists.newLinkedList();
-        List<KNode> nodeQueue = new LinkedList<KNode>();
+        List<ElkNode> nodeQueue = new LinkedList<ElkNode>();
         nodeQueue.addAll(parentNode.getChildren());
         while (nodeQueue.size() > 0) { 
             // pop first element
-            KNode node = nodeQueue.remove(0);
+            ElkNode node = nodeQueue.remove(0);
             
             // compute edge length for all outgoing edges
-            for (KEdge edge : node.getOutgoingEdges()) {
-                if (!hierarchy && edge.getTarget().getParent() != parentNode) {
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                if (!hierarchy && edge.isHierarchical()) {
                     continue;
                 }
                 
