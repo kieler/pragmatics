@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2017 by
+ * + Kiel University
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
 import java.awt.geom.Point2D;
@@ -15,24 +28,14 @@ import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
-/**
- * Discarded
- * 
- * @author dja
- *
- */
+/** Discarded */
 public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 
-	/**
-	 * Our representation of infinity, allow to add two of them without getting
-	 * an int overflow.
-	 */
 	private static final double INFINITY = Double.MAX_VALUE;
 	// TODO make as option
 	private static final double SPACING = 100.0;
 	private static double width;
 	private static double height;
-	/** */
 	private static List<ElkEdge> edges = new ArrayList<ElkEdge>();
 	private static List<ElkNode> children = new ArrayList<ElkNode>();
 	private static double gridwidth;

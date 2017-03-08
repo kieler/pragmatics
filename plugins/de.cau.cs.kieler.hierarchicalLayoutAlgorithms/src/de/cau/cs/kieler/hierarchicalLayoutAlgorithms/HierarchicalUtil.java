@@ -23,13 +23,7 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.math.DoubleMath;
 
-/**
- * Util Class that defines often used methods.
- * 
- * @author dja
- * @author ybl
- *
- */
+/** Util Class that defines often used methods. */
 public class HierarchicalUtil {
 
 	/**
@@ -100,7 +94,7 @@ public class HierarchicalUtil {
 		}
 		return edges;
 	}
-	
+
 	/**
 	 * Comparator for sorting a node by polar coordinates. Offset is set between
 	 * 0 and 2*Pi. 0 starts the sorting in the right middle of a node and sorts
@@ -115,26 +109,26 @@ public class HierarchicalUtil {
 
 			@Override
 			public int compare(ElkNode child1, ElkNode child2) {
-				double xPos1 = child1.getX() + child1.getWidth() / 2 - node.getWidth()/2;
-				double yPos1 = child1.getY() + child1.getHeight() / 2 - node.getHeight()/2;
+				double xPos1 = child1.getX() + child1.getWidth() / 2 - node.getWidth() / 2;
+				double yPos1 = child1.getY() + child1.getHeight() / 2 - node.getHeight() / 2;
 				double arc1 = Math.atan2(yPos1, xPos1);
 				if (arc1 < 0) {
 					arc1 += 2 * Math.PI;
 				}
-				arc1+=offset;
+				arc1 += offset;
 				if (arc1 > 2 * Math.PI) {
-						arc1 -= 2 * Math.PI;
+					arc1 -= 2 * Math.PI;
 				}
 
-				double xPos2 = child2.getX() + child2.getWidth() / 2 - node.getWidth()/2;
-				double yPos2 = child2.getY() + child2.getHeight() / 2 - node.getHeight()/2;
+				double xPos2 = child2.getX() + child2.getWidth() / 2 - node.getWidth() / 2;
+				double yPos2 = child2.getY() + child2.getHeight() / 2 - node.getHeight() / 2;
 				double arc2 = Math.atan2(yPos2, xPos2);
 				if (arc2 < 0) {
 					arc2 += 2 * Math.PI;
 				}
-				arc2+=offset;
+				arc2 += offset;
 				if (arc2 > 2 * Math.PI) {
-						arc2 -= 2 * Math.PI;
+					arc2 -= 2 * Math.PI;
 				}
 
 				return DoubleMath.fuzzyCompare(arc1, arc2, 1e-10);
@@ -143,10 +137,6 @@ public class HierarchicalUtil {
 		return comparator;
 	}
 
-//	public static List<ElkNode> sortSuccesorsByPolarCoordinate(ElkNode node) {
-//		return sortSuccesorsByPolarCoordinate(node,0);
-//	}
-	
 	/**
 	 * Sorts the children of a node with help of the comparator.
 	 * 
@@ -175,12 +165,12 @@ public class HierarchicalUtil {
 
 			// map child to its successor
 			for (ElkNode child : children) {
-				Integer childID = child.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
+				Integer childID = child.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_ID);
 				if (childID != null) {
 
 					ElkNode removeNode = null;
 					for (ElkNode successor : successors) {
-						Integer successorID = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
+						Integer successorID = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_ID);
 						if (childID.equals(successorID)) {
 							sortedSuccessors.add(successor);
 							removeNode = successor;
@@ -206,40 +196,15 @@ public class HierarchicalUtil {
 	 * @return Original node of a copy.
 	 */
 	public static ElkNode getOriginalNode(ElkNode parent, ElkNode successor) {
-		Integer successorID = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
+		Integer successorID = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_ID);
 
 		for (ElkNode child : parent.getChildren()) {
-			Integer childID = child.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
+			Integer childID = child.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_ID);
 			if (successorID.equals(childID)) {
 				return child;
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Calculates the distance of the given node to the root.
-	 * 
-	 * @param node
-	 * @param root
-	 * @return Distance of node to root.
-	 */
-	public static int getDepths(ElkNode node, ElkNode root) {
-		int depth = 0;
-		ElkNode parent = null;
-		if (node != root) {
-			while (parent != root) {
-				for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
-					ElkNode source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
-					if (!node.getChildren().contains(source)) {
-						parent = source;
-					}
-				}
-				node = parent;
-				depth++;
-			}
-		}
-		return depth;
 	}
 
 	/**

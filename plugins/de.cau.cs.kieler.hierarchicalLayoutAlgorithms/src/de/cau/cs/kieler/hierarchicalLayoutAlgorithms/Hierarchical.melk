@@ -10,7 +10,7 @@ algorithm radial(HierarchicalRadialLayoutProvider) {
     label "Radial Layouter"
     metadataClass RadialOptions
     description "A radial layouter"
-    supports hierarchicalID
+    supports hierarchicalId
     supports radius
 }
 
@@ -34,12 +34,12 @@ algorithm tree(HierarchicalTreeLayoutProvider) {
 
 /////////////////////////////////Options///////////////////////////////
 
-programmatic option hierarchicalID:int{
+programmatic option hierarchicalId:int{
     label "Hierarchical ID "
     targets parents
 }
 
-programmatic option hierarchicalParentID:int{
+programmatic option hierarchicalParentId:int{
     label "Hierarchical Parent ID "
     targets parents
 }
@@ -49,6 +49,4 @@ option radius: double {
     description "Change the radius for the radial layouter."
     default=0.0
     targets parents
-} 
- 
-
+}

@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2013 by
+ * Copyright 2017 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -16,25 +16,21 @@ package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
-/**
- * Edge routing for Hierarchical diagrams.
- * 
- * @author ybl
- *
- */
+/** Edge routing for hierarchical diagrams. */
 public class HierarchicalEdgeRouting {
 
 	/**
-	 * Routes the edges from center to center.
+	 * Routes the edges recursively from center to center.
 	 * 
 	 * @param graph
 	 */
-	public static void routeEdgesCenterToCenter(ElkNode root) {
+	public static void routeEdgesCenterToCenter(final ElkNode root) {
 		for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(root)) {
 
 			ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
@@ -56,12 +52,12 @@ public class HierarchicalEdgeRouting {
 	}
 
 	/**
-	 * Routes the edges from corner to corner.
+	 * Routes the edges from top left corner to top left corner.
 	 * 
 	 * @param graph
 	 */
-	public static void routeEdgesCornerToCorner(ElkNode root) {
-		for (ElkEdge edge : root.getOutgoingEdges()) {
+	public static void routeEdgesCornerToCorner(final ElkNode root) {
+		for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(root)) {
 			ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
 			if (!root.getChildren().contains(target)) {
 				double sourceX = root.getX();
@@ -76,26 +72,28 @@ public class HierarchicalEdgeRouting {
 
 				routeEdgesCornerToCorner(target);
 			}
-
 		}
 	}
 
 	/**
-	 * Mthod that combines the two steps that are needed to draw hierarchical edges.
+	 * Method that combines the two steps that are needed to draw hierarchical
+	 * edges. At first the edges are routed center to center and after that the
+	 * corresponding child is chosen from which the edge actually starts.
 	 * 
 	 * @param root
 	 */
-	public static void drawHierarchicalEdges(ElkNode root) {
+	public static void drawHierarchicalEdges(final ElkNode root) {
 		routeEdgesCenterToCenter(root);
 		bendEdgesToHierarchicalEdges(root);
 	}
 
 	/**
-	 * Sets the source for the edge at the corresponding child in the source node.
+	 * Sets the source for the edge at the corresponding child in the source
+	 * node.
 	 * 
 	 * @param root
 	 */
-	public static void bendEdgesToHierarchicalEdges(ElkNode root) {
+	public static void bendEdgesToHierarchicalEdges(final ElkNode root) {
 		List<ElkNode> copiedChildren = new ArrayList<>();
 		List<ElkNode> children = root.getChildren();
 		boolean isBlueBox = children.size() == 1 && !children.get(0).getChildren().isEmpty();
@@ -108,16 +106,16 @@ public class HierarchicalEdgeRouting {
 
 		// take a look at all the successors of the node
 		for (ElkNode successor : HierarchicalUtil.getSuccessor(root)) {
-			Integer id = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D);
+			Integer id = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_ID);
 
 			// look at the incoming edges
-			for (ElkEdge edge : successor.getIncomingEdges()) {
+			for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(successor)) {
 				// only the edge coming from the original node shall be
 				// considered
 				if (edge.getSources().get(0) == root || root.getChildren().contains(edge.getSources().get(0))) {
 					ElkNode childFound = null;
 					for (ElkNode child : copiedChildren) {
-						Integer idParent = child.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D);
+						Integer idParent = child.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_ID);
 
 						if (idParent != null && id.equals(idParent)) {
 							childFound = child;
@@ -145,7 +143,7 @@ public class HierarchicalEdgeRouting {
 	 * 
 	 * @param edge
 	 */
-	private static void clippTargetOfEdge(ElkEdge edge) {
+	private static void clippTargetOfEdge(final ElkEdge edge) {
 		ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
 		double startX = section.getStartX();
 		double startY = section.getStartY();

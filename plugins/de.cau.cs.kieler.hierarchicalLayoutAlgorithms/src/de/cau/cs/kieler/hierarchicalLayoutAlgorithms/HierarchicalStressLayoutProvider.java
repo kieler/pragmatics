@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2013 by
+ * Copyright 2017 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -24,39 +24,49 @@ import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 /**
- * Layout Provider for a Hierarchical Graph that uses Elk Stress to be layouted and a minimal desired edge length.
- * 
- * @author dja
- *
+ * Layout provider for a hierarchical graph that uses elk stress to compute a
+ * layout for the given graph and uses a minimal desired edge length.
  */
 public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
-	
+
 	private static final float SPACING = 100;
-	
+
 	@Override
-	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
+	public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
 		progressMonitor.begin("Stress Layouter", 1);
-		
+
 		StressLayoutProvider stress = new StressLayoutProvider();
 
 		List<ElkEdge> edges = HierarchicalUtil.getHierarchicalEdges(layoutGraph);
 		for (ElkEdge edge : edges) {
 			ElkNode source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
+			double sourceDiagonal = getDiagonalLength(source);
+			
 			ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
-			double width = source.getWidth() / 2;
-			double height = source.getHeight() / 2;
-			double sourcediagonal = Math.sqrt(width*width + height*height);
-			width = target.getWidth();
-			height = target.getHeight();
-			double targetdiagonal = Math.sqrt(width*width + height*height);
-			double edgelength = (sourcediagonal + targetdiagonal + SPACING);
-			edge.setProperty(StressOptions.DESIRED_EDGE_LENGTH, edgelength);
+			double targetDiagonal = getDiagonalLength(target);
+			
+			double edgeLength = (sourceDiagonal + targetDiagonal + SPACING);
+			edge.setProperty(StressOptions.DESIRED_EDGE_LENGTH, edgeLength);
 		}
-		
+
 		stress.layout(layoutGraph, progressMonitor);
 		HierarchicalEdgeRouting.drawHierarchicalEdges(HierarchicalUtil.findRoot(layoutGraph));
 
 		progressMonitor.done();
+	}
+	
+	/**
+	 * Computes the diagonal length from the center to a corner of a given node.
+	 * 
+	 * @param n
+	 * @return Length from center to a corner of a given node.
+	 */
+	private double getDiagonalLength(final ElkNode n) {
+		double width = n.getWidth() / 2;
+		double height = n.getHeight() / 2;
+		double diagonal = Math.sqrt(width * width + height * height);
+		
+		return diagonal;
 	}
 
 }

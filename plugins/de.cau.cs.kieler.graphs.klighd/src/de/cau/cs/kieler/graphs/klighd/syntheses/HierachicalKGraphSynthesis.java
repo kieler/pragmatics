@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeType;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
@@ -28,8 +29,15 @@ import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil;
+import de.cau.cs.kieler.klighd.krendering.KPolyline;
+import de.cau.cs.kieler.klighd.krendering.KRendering;
+import de.cau.cs.kieler.klighd.krendering.KRenderingFactory;
+import de.cau.cs.kieler.klighd.krendering.LineStyle;
+import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions;
+import de.cau.cs.kieler.klighd.krendering.impl.KRenderingFactoryImpl;
 import de.cau.cs.kieler.klighd.krendering.impl.KRenderingImpl;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
+import de.cau.cs.kieler.overlapRemoval.helper.Edge;
 
 /**
  * 
@@ -113,8 +121,8 @@ public final class HierachicalKGraphSynthesis {
 
                 copiedChildren.add(copy);
                 int id = child.hashCode();
-                child.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_I_D, id);
-                copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_I_D, id);
+                child.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_ID, id);
+                copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_ID, id);
 
                 parents.put(copy, parent);
 
@@ -183,15 +191,22 @@ public final class HierachicalKGraphSynthesis {
      * Add the edges representing the Hierarchical connection.
      */
     private static void addHierarchicalEdges() {
-        System.out.println(parents);
         for (Entry<KNode, KNode> entry : parents.entrySet()) {
             KNode child = entry.getKey();
             KNode parent = entry.getValue();
 
             // create an edge
             KEdge edge = KGraphUtil.createInitializedEdge();
-//            KEdge edge = KGraphFactoryImpl.eINSTANCE.createKEdge();
 
+//            KRendering rendering = edge.getData(KRendering.class);
+//            KRendering line = KRenderingFactory.eINSTANCE.createKPolyline();
+//            System.out.println(line);
+//            System.out.println(line.getStyles());
+//            System.out.println("1: " + rendering);
+//            KRenderingExtensions ext = new KRenderingExtensions();
+//            ext.setLineStyle(rendering, LineStyle.DASH);
+//            ext.setProperty(KRenderingExtensions, value)
+//            edge.setProperty(Edge, value)
             edge.setSource(parent);
             edge.setTarget(child);
 
