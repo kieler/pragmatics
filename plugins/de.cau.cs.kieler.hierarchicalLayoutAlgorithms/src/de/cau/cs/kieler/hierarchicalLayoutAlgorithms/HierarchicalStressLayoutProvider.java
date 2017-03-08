@@ -13,10 +13,11 @@
  */
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
-import java.util.List;
+import java.util.HashSet;
 
 import org.eclipse.elk.alg.force.options.StressOptions;
 import org.eclipse.elk.alg.force.stress.StressLayoutProvider;
+import org.eclipse.elk.alg.radial.RadialUtil;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
@@ -37,7 +38,7 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 
 		StressLayoutProvider stress = new StressLayoutProvider();
 
-		List<ElkEdge> edges = HierarchicalUtil.getHierarchicalEdges(layoutGraph);
+		HashSet<ElkEdge> edges = HierarchicalUtil.getHierarchicalEdges(layoutGraph);
 		for (ElkEdge edge : edges) {
 			ElkNode source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
 			double sourceDiagonal = getDiagonalLength(source);
@@ -50,7 +51,7 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 		}
 
 		stress.layout(layoutGraph, progressMonitor);
-		HierarchicalEdgeRouting.drawHierarchicalEdges(HierarchicalUtil.findRoot(layoutGraph));
+		HierarchicalEdgeRouting.drawHierarchicalEdges(RadialUtil.findRoot(layoutGraph));
 
 		progressMonitor.done();
 	}

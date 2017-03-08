@@ -16,7 +16,7 @@ package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.alg.radial.RadialUtil;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
@@ -105,7 +105,7 @@ public class HierarchicalEdgeRouting {
 		}
 
 		// take a look at all the successors of the node
-		for (ElkNode successor : HierarchicalUtil.getSuccessor(root)) {
+		for (ElkNode successor : RadialUtil.getSuccessors(root)) {
 			Integer id = successor.getProperty(HierarchicalMetaDataProvider.HIERARCHICAL_ID);
 
 			// look at the incoming edges

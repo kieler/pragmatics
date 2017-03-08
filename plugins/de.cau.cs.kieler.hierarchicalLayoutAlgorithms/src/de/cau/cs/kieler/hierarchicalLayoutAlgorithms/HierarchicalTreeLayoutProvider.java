@@ -16,6 +16,7 @@ package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,7 @@ import org.eclipse.elk.alg.layered.LayeredLayoutProvider;
 import org.eclipse.elk.alg.layered.options.FixedAlignment;
 import org.eclipse.elk.alg.layered.options.GreedySwitchType;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
+import org.eclipse.elk.alg.radial.RadialUtil;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Alignment;
@@ -45,7 +47,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	/** List of all nodes in the graph. */
 	private List<ElkNode> children;
 	/** List of all edges that are relevant for this layout algorithm. */
-	private List<ElkEdge> edges;
+	private HashSet<ElkEdge> edges;
 	/** Root node of the graph. */
 	private ElkNode root;
 	/** Nodes that are in the hierarchical layer after the root node. */
@@ -55,7 +57,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	/** Depth of the hierarchy nodes. */
 	private int hierarchyDepth = 1;
 	/** Map of nodes with their corresponding depth. */
-	private Map<ElkNode, Integer> nodeDepth;
+	private Map<ElkNode, Integer> nodeHierarchyDepth;
 	/** Comparator according to y-coordinates. */
 	private static final Comparator<ElkNode> COMPY = (n1, n2) -> {
 		if (n1.getY() < n2.getY()) {
@@ -78,11 +80,11 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 	@Override
 	public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
-		nodeDepth = new HashMap<ElkNode, Integer>();
+		nodeHierarchyDepth = new HashMap<ElkNode, Integer>();
 		children = layoutGraph.getChildren();
 		edges = HierarchicalUtil.getHierarchicalEdges(layoutGraph);
-		root = HierarchicalUtil.findRoot(layoutGraph);
-		secondHierarchyNodes = HierarchicalUtil.getSuccessor(root);
+		root = RadialUtil.findRoot(layoutGraph);
+		secondHierarchyNodes = RadialUtil.getSuccessors(root);
 
 		if (secondHierarchyNodes.size() > 0) {
 			layeredTreeLayout(layoutGraph);
@@ -110,7 +112,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// TODO Better distribution of nodes in the two runs for a similar width
 		// in both runs.
 
-		List<ElkNode> sortedYNodes = HierarchicalUtil.sortNode(root, COMPY);
+		List<ElkNode> sortedYNodes = RadialUtil.getSortedHierarchicalNodes(root, COMPY);
 		int i = 0;
 		for (ElkNode node : sortedYNodes) {
 			if (i < treeSeperator) {
@@ -121,8 +123,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			i++;
 		}
 
-		Comparator<ElkNode> polarComp = HierarchicalUtil.createPolarComparator(root, BOTTOM_CIRCLE);
-		List<ElkNode> sortedPolarNodes = HierarchicalUtil.sortNode(root, polarComp);
+		Comparator<ElkNode> polarComp = RadialUtil.createPolarComparator(root, BOTTOM_CIRCLE);
+		List<ElkNode> sortedPolarNodes = RadialUtil.getSortedHierarchicalNodes(root, polarComp);
 		List<ElkNode> tempListF = new ArrayList<ElkNode>();
 		List<ElkNode> tempListS = new ArrayList<ElkNode>();
 		for (ElkNode node : sortedPolarNodes) {
@@ -131,8 +133,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			}
 		}
 
-		polarComp = HierarchicalUtil.createPolarComparator(root, TOP_CIRCLE);
-		sortedPolarNodes = HierarchicalUtil.sortNode(root, polarComp);
+		polarComp = RadialUtil.createPolarComparator(root, TOP_CIRCLE);
+		sortedPolarNodes = RadialUtil.getSortedHierarchicalNodes(root, polarComp);
 		for (ElkNode node : sortedPolarNodes) {
 			if (secondRunList.contains(node)) {
 				tempListS.add(node);
@@ -142,7 +144,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		List<ElkNode> tempList = new ArrayList<ElkNode>();
 		for (ElkNode node : tempListF) {
 			tempList.add(node);
-			nodeDepth.put(node, 1);
+			nodeHierarchyDepth.put(node, 1);
 			buildNodeList(node, tempList, BOTTOM_CIRCLE, 2);
 		}
 		firstRunList.clear();
@@ -151,7 +153,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		tempList.clear();
 		for (ElkNode node : tempListS) {
 			tempList.add(node);
-			nodeDepth.put(node, 1);
+			nodeHierarchyDepth.put(node, 1);
 			buildNodeList(node, tempList, TOP_CIRCLE, 2);
 		}
 		secondRunList.clear();
@@ -275,17 +277,18 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * @param firstOffset
 	 * @return New layoutGraph
 	 */
-	private ElkNode createTree(List<ElkNode> nodes, Map<ElkNode, ElkNode> nodeMap, int[] firstOffset) {
+	private ElkNode createTree(final List<ElkNode> nodes, final Map<ElkNode, ElkNode> nodeMap,
+			final int[] firstOffset) {
 		ElkNode layoutRoot = ElkGraphUtil.createGraph();
 		ElkNode treeRoot = ElkGraphUtil.createNode(layoutRoot);
 		ElkUtil.resizeNode(treeRoot, root.getWidth(), root.getHeight(), false, false);
 		nodeMap.put(root, treeRoot);
 		for (ElkNode node : nodes) {
 			ElkNode tempNode = ElkGraphUtil.createNode(layoutRoot);
-			int i = firstOffset[nodeDepth.get(node) - 1];
+			int i = firstOffset[nodeHierarchyDepth.get(node) - 1];
 			tempNode.setProperty(LayeredOptions.POSITION, new KVector(i, 0));
 			tempNode.setProperty(LayeredOptions.ALIGNMENT, Alignment.CENTER);
-			firstOffset[nodeDepth.get(node) - 1] = (int) (i + node.getWidth() + OFFSET);
+			firstOffset[nodeHierarchyDepth.get(node) - 1] = (int) (i + node.getWidth() + OFFSET);
 			ElkUtil.resizeNode(tempNode, node.getWidth(), node.getHeight(), false, false);
 			nodeMap.put(node, tempNode);
 		}
@@ -293,6 +296,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		for (ElkNode node : nodes) {
 			ElkNode source = null;
 			for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
+				// TODO use isHierarchical?
 				if (edges.contains(edge)) {
 					source = nodeMap.get(ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)));
 					break;
@@ -312,18 +316,23 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * @param list
 	 * @param comp
 	 */
-	private void buildNodeList(ElkNode node, List<ElkNode> list, double offset, int depth) {
-		// if (!HierarchicalUtil.getSuccessor(node).isEmpty()) {
-		Comparator<ElkNode> polarComp = HierarchicalUtil.createPolarComparator(node, offset);
-		List<ElkNode> compList = HierarchicalUtil.sortNode(node, polarComp);
+	private void buildNodeList(final ElkNode node, final List<ElkNode> list, final double offset, final int depth) {
+		Comparator<ElkNode> polarComp = RadialUtil.createPolarComparator(node, offset);
+		List<ElkNode> compList = RadialUtil.getSortedHierarchicalNodes(node, polarComp);
 		for (ElkNode n : compList) {
 			list.add(n);
 			hierarchyDepth = Math.max(depth, hierarchyDepth);
-			nodeDepth.put(n, depth);
+			nodeHierarchyDepth.put(n, depth);
 			buildNodeList(n, list, offset, depth + 1);
 		}
 	}
 
+	/**
+	 * Configures the correct options for elk layered to be executed with.
+	 * 
+	 * @param node
+	 * @param dir
+	 */
 	private void configureTreeLayout(final ElkNode node, final Direction dir) {
 		node.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
 		node.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);

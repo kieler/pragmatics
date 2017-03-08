@@ -3,7 +3,7 @@
  *
  * http://www.informatik.uni-kiel.de/rtsys/kieler/
  * 
- * Copyright 2013 by
+ * Copyright 2017 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.elk.core.options.CoreOptions;
-import org.eclipse.elk.core.options.EdgeType;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
@@ -29,19 +28,10 @@ import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil;
-import de.cau.cs.kieler.klighd.krendering.KPolyline;
-import de.cau.cs.kieler.klighd.krendering.KRendering;
-import de.cau.cs.kieler.klighd.krendering.KRenderingFactory;
-import de.cau.cs.kieler.klighd.krendering.LineStyle;
-import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions;
-import de.cau.cs.kieler.klighd.krendering.impl.KRenderingFactoryImpl;
 import de.cau.cs.kieler.klighd.krendering.impl.KRenderingImpl;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
-import de.cau.cs.kieler.overlapRemoval.helper.Edge;
 
 /**
- * 
- * @author ybl
  *
  */
 public final class HierachicalKGraphSynthesis {
@@ -173,13 +163,6 @@ public final class HierachicalKGraphSynthesis {
             child.getChildren().clear();
             KGraphDataUtil.loadDataElements(child);
             child.setProperty(KlighdProperties.EXPAND, false);
-
-            // if (child.getHeight() == 0) {
-            // child.setHeight(CoreOptions.NODE_SIZE_MIN_HEIGHT.getDefault());
-            // }
-            // if (child.getWidth() == 0) {
-            // child.setWidth(CoreOptions.NODE_SIZE_MIN_WIDTH.getDefault());
-            // }
         }
 
         if (node.getChildren().size() > 0) {
