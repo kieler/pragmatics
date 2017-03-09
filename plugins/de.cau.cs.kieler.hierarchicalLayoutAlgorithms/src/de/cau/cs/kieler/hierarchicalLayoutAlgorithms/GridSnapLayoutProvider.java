@@ -22,6 +22,7 @@ import java.util.Map;
 import org.eclipse.elk.alg.force.ForceLayoutProvider;
 import org.eclipse.elk.alg.force.options.ForceOptions;
 import org.eclipse.elk.alg.radial.RadialUtil;
+import org.eclipse.elk.alg.radial.edgeRouting.ExplosionLineRouter;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -53,7 +54,8 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 
 		minimizingWhitespaceGrid(layoutGraph);
 
-		HierarchicalEdgeRouting.drawHierarchicalEdges(RadialUtil.findRoot(layoutGraph));
+		ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
+		edgeRouter.routeEdges(RadialUtil.findRoot(layoutGraph));
 
 		progressMonitor.done();
 	}

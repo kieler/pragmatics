@@ -85,7 +85,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     private static val STRESS = "Stress"
     private static val GRID = "Grid Snap"
     private static val TREE = "Tree"
-    private static val OVERLAP = "Overlap Removal"
+    private static val OVERLAP = "Radial Original"
     private static val H_LAYOUTER = "H-Layouter"
 
     /**
@@ -356,7 +356,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
                         HierachicalKGraphSynthesis.transform(kgraph, "Tree")
                     }
                     case OVERLAP: {
-                        HierachicalKGraphSynthesis.transform(kgraph, "Overlap Removal")   
+                        HierachicalKGraphSynthesis.transform(kgraph, "Radial Original")   
                     }
                     case H_LAYOUTER: {
                         HierachicalKGraphSynthesis.transform(kgraph, "H-Layouter")

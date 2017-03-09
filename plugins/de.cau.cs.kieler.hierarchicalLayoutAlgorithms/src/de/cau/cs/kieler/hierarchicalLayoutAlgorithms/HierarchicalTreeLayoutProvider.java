@@ -25,6 +25,7 @@ import org.eclipse.elk.alg.layered.options.FixedAlignment;
 import org.eclipse.elk.alg.layered.options.GreedySwitchType;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.radial.RadialUtil;
+import org.eclipse.elk.alg.radial.edgeRouting.ExplosionLineRouter;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Alignment;
@@ -88,8 +89,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 		if (secondHierarchyNodes.size() > 0) {
 			layeredTreeLayout(layoutGraph);
-
-			HierarchicalEdgeRouting.drawHierarchicalEdges(root);
+			
+			ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
+			edgeRouter.routeEdges(RadialUtil.findRoot(layoutGraph));
 		}
 
 	}
@@ -170,6 +172,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// TODO node spacing according to width
 		Map<ElkNode, ElkNode> firstRunMap = new HashMap<ElkNode, ElkNode>();
 		ElkNode firstRun = createTree(firstRunList, firstRunMap, firstOffset);
+		// TODO
+		System.out.println(firstRun);
 		LayeredLayoutProvider layered = new LayeredLayoutProvider();
 		configureTreeLayout(firstRun, Direction.UP);
 		BasicProgressMonitor firstRunMonitor = new BasicProgressMonitor();
@@ -178,6 +182,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// Second run for downward tree
 		Map<ElkNode, ElkNode> secondRunMap = new HashMap<ElkNode, ElkNode>();
 		ElkNode secondRun = createTree(secondRunList, secondRunMap, secondOffset);
+		// TODO
+		System.out.println(secondRun.getChildren());
 		configureTreeLayout(secondRun, Direction.DOWN);
 		BasicProgressMonitor secondRunMonitor = new BasicProgressMonitor();
 		layered.layout(secondRun, secondRunMonitor);
@@ -198,6 +204,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				maxFirstX = Math.max(maxFirstX, node.getX() + node.getWidth());
 			} else {
 				node = secondRunMap.get(node);
+				// TODO
+				System.out.println(node);
 				minSecondY = Math.min(minSecondY, node.getY());
 				minSecondX = Math.min(minSecondX, node.getX());
 				maxSecondX = Math.max(maxSecondX, node.getX() + node.getWidth());

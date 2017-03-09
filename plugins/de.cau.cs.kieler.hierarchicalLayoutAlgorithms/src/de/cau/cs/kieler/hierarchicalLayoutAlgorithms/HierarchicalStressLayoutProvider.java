@@ -18,6 +18,7 @@ import java.util.HashSet;
 import org.eclipse.elk.alg.force.options.StressOptions;
 import org.eclipse.elk.alg.force.stress.StressLayoutProvider;
 import org.eclipse.elk.alg.radial.RadialUtil;
+import org.eclipse.elk.alg.radial.edgeRouting.ExplosionLineRouter;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
@@ -52,7 +53,8 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 		}
 
 		stress.layout(layoutGraph, progressMonitor);
-		HierarchicalEdgeRouting.drawHierarchicalEdges(RadialUtil.findRoot(layoutGraph));
+		ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
+		edgeRouter.routeEdges(RadialUtil.findRoot(layoutGraph));
 
 		progressMonitor.done();
 	}

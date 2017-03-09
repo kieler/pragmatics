@@ -19,11 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.elk.alg.radial.RadialMetaDataProvider;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
-import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvider;
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
@@ -35,6 +35,11 @@ import de.cau.cs.kieler.klighd.util.KlighdProperties;
  *
  */
 public final class HierachicalKGraphSynthesis {
+    
+    /** Constructor should not be public visible. */
+    private HierachicalKGraphSynthesis() {
+        // Do nothing.
+    }
 
     /** */
     private static Map<KNode, KNode> parents;
@@ -45,7 +50,7 @@ public final class HierachicalKGraphSynthesis {
      * @param diagram
      *            the method takes a graph as input.
      * @param layout
-     *            the layoutalgorithm that should be used for the connection of the hierarchical
+     *            the layout algorithm that should be used for the connection of the hierarchical
      *            nodes we extracted
      */
     public static void transform(final KNode diagram, final String layout) {
@@ -71,7 +76,9 @@ public final class HierachicalKGraphSynthesis {
         } else if (layout.equals("Tree")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.tree");
-        } else if (layout.equals("Overlap Removal")) {
+        } else if (layout.equals("Radial Original")) {
+            diagram.setProperty(CoreOptions.ALGORITHM,
+                    "org.eclipse.elk.radial");
 
         } else if (layout.equals("H-Layouter")) {
 
@@ -111,8 +118,8 @@ public final class HierachicalKGraphSynthesis {
 
                 copiedChildren.add(copy);
                 int id = child.hashCode();
-                child.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_PARENT_ID, id);
-                copy.setProperty(HierarchicalMetaDataProvider.HIERARCHICAL_ID, id);
+                child.setProperty(RadialMetaDataProvider.NODE_ID, id);
+                copy.setProperty(RadialMetaDataProvider.PARENT_ID, id);
 
                 parents.put(copy, parent);
 
