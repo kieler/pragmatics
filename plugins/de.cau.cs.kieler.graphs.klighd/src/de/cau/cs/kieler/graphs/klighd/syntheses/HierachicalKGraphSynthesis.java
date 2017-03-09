@@ -28,6 +28,10 @@ import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil;
+import de.cau.cs.kieler.klighd.krendering.KLineStyle;
+import de.cau.cs.kieler.klighd.krendering.KPolyline;
+import de.cau.cs.kieler.klighd.krendering.KRenderingFactory;
+import de.cau.cs.kieler.klighd.krendering.LineStyle;
 import de.cau.cs.kieler.klighd.krendering.impl.KRenderingImpl;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 
@@ -188,15 +192,14 @@ public final class HierachicalKGraphSynthesis {
             // create an edge
             KEdge edge = KGraphUtil.createInitializedEdge();
 
-//            KRendering rendering = edge.getData(KRendering.class);
-//            KRendering line = KRenderingFactory.eINSTANCE.createKPolyline();
-//            System.out.println(line);
-//            System.out.println(line.getStyles());
-//            System.out.println("1: " + rendering);
-//            KRenderingExtensions ext = new KRenderingExtensions();
-//            ext.setLineStyle(rendering, LineStyle.DASH);
-//            ext.setProperty(KRenderingExtensions, value)
-//            edge.setProperty(Edge, value)
+            // Set style for hierarchical edges
+            KPolyline line = KRenderingFactory.eINSTANCE.createKPolyline();
+            KLineStyle ls = KRenderingFactory.eINSTANCE.createKLineStyle();
+            ls.setLineStyle(LineStyle.CUSTOM);
+            ls.getDashPattern().add(10.0f);
+            ls.getDashPattern().add(10.0f);
+            line.getStyles().add(ls);
+            edge.getData().add(line);
             edge.setSource(parent);
             edge.setTarget(child);
 
