@@ -14,26 +14,27 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial;
 
 import org.eclipse.elk.alg.radial.RadialLayoutProvider;
-import org.eclipse.elk.alg.radial.compaction.RadialCompaction;
+import org.eclipse.elk.alg.radial.compaction.EnumCompaction;
+import org.eclipse.elk.alg.radial.edgeRouting.EnumEdgeRouting;
 import org.eclipse.elk.alg.radial.options.RadialOptions;
+import org.eclipse.elk.alg.radial.sorting.EnumSortingAlgorithms;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
  * The hierarchical radial layout provider uses the elk radial layout provider
- * and arguments it with a polar coordinate sorter and explosion line edge
- * routing.
+ * and arguments it with a polar coordinate sorter,explosion line edge
+ * routing and radial compaction.
  */
 public class HierarchicalRadialLayoutProvider extends AbstractLayoutProvider {
 
 	@Override
 	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		RadialLayoutProvider radialLayouter = new RadialLayoutProvider();
-		layoutGraph.setProperty(RadialOptions.COMPACTOR, new RadialCompaction());
-		layoutGraph.setProperty(RadialOptions.SORTER, new PolarCoordinateSorter());
-		layoutGraph.setProperty(RadialOptions.EDGE_ROUTER, new ExplosionLineRouter());
-//		radialLayouter.setEdgeRouter(new ExplosionLineRouter());
+		layoutGraph.setProperty(RadialOptions.COMPACTOR, EnumCompaction.RADIAL_COMPACTION);
+		layoutGraph.setProperty(RadialOptions.SORTER, EnumSortingAlgorithms.POLARCOORDINATE);
+		layoutGraph.setProperty(RadialOptions.EDGE_ROUTER, EnumEdgeRouting.EXPLOSION_LINE);
 		radialLayouter.layout(layoutGraph, progressMonitor);
 	}
 

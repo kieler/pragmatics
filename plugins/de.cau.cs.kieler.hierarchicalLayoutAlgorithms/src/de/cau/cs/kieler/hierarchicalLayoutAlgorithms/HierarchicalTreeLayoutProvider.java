@@ -25,6 +25,7 @@ import org.eclipse.elk.alg.layered.options.FixedAlignment;
 import org.eclipse.elk.alg.layered.options.GreedySwitchType;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.radial.RadialUtil;
+import org.eclipse.elk.alg.radial.edgeRouting.ExplosionLineRouter;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Alignment;
@@ -88,8 +89,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 		if (secondHierarchyNodes.size() > 0) {
 			layeredTreeLayout(layoutGraph);
-
-			HierarchicalEdgeRouting.drawHierarchicalEdges(root);
+			
+			ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
+			edgeRouter.routeEdges(RadialUtil.findRoot(layoutGraph));
 		}
 
 	}
