@@ -18,13 +18,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -74,7 +75,7 @@ import de.cau.cs.kieler.grana.IAnalysis;
  */
 public class StressAnalysis implements IAnalysis {
 
-    private Map<KNode, Integer> nodeMap = Maps.newHashMap();
+    private Map<ElkNode, Integer> nodeMap = Maps.newHashMap();
 
     /** Our representation of infinity, allow to add two of them without getting an int overflow. */
     private static final int INFINITY = (Integer.MAX_VALUE / 2) - 1;
@@ -84,19 +85,17 @@ public class StressAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Stress analysis", 1);
 
-        final boolean hierarchy =
-                parentNode.getData(KShapeLayout.class).getProperty(
-                        AnalysisOptions.ANALYZE_HIERARCHY);
+        final boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
 
         // collect all nodes of the graph
         int index = 1;
-        List<KNode> nodeQueue = Lists.newArrayList();
-        List<KNode> nodes = Lists.newArrayList();
-        List<KEdge> edges = Lists.newArrayList();
+        List<ElkNode> nodeQueue = Lists.newArrayList();
+        List<ElkNode> nodes = Lists.newArrayList();
+        List<ElkEdge> edges = Lists.newArrayList();
         nodeQueue.addAll(parentNode.getChildren());
 
         nodeMap = Maps.newHashMap();
@@ -104,12 +103,12 @@ public class StressAnalysis implements IAnalysis {
         // assign indexes to all child nodes
         while (nodeQueue.size() > 0) {
             // pop first element
-            KNode node = nodeQueue.remove(0);
+            ElkNode node = nodeQueue.remove(0);
 
             if (node.getChildren().isEmpty()) {
                 nodeMap.put(node, index++);
                 nodes.add(node);
-                edges.addAll(node.getOutgoingEdges());
+                Iterables.addAll(edges, ElkGraphUtil.allOutgoingEdges(node));
             }
 
             // collect hierarchical nodes
@@ -174,7 +173,7 @@ public class StressAnalysis implements IAnalysis {
      * @returns an adjacency matrix where index (u,v) contains the length of the shortest path from
      *          node u to node v.
      */
-    private int[][] floydWarshall(final List<KNode> nodes) {
+    private int[][] floydWarshall(final List<ElkNode> nodes) {
 
         // populate the adjacency matrix
         int n = nodes.size();
@@ -189,16 +188,16 @@ public class StressAnalysis implements IAnalysis {
         }
 
         // mark the nodes
-        for (KNode child : nodes) {
+        for (ElkNode child : nodes) {
             int i = nodeMap.get(child);
             matrix[i][i] = 0;
         }
 
         // mark the edges
-        for (KNode child : nodes) {
-            for (KEdge e : child.getOutgoingEdges()) {
-                KNode src = e.getSource();
-                KNode tgt = e.getTarget();
+        for (ElkNode child : nodes) {
+            for (ElkEdge e : ElkGraphUtil.allOutgoingEdges(child)) {
+                ElkNode src = ElkGraphUtil.getSourceNode(e);
+                ElkNode tgt = ElkGraphUtil.getTargetNode(e);
                 Integer u = nodeMap.get(src);
                 Integer v = nodeMap.get(tgt);
                 // handle hierarchy crossing edges
@@ -208,7 +207,7 @@ public class StressAnalysis implements IAnalysis {
                     matrix[v][u] = 1;
                 } else {
                     // mark all possible hierarchy edges
-                    for (KNode hTgt : followHierarchicalEdge(e)) {
+                    for (ElkNode hTgt : followHierarchicalEdge(e)) {
                         Integer hV = nodeMap.get(hTgt);
                         matrix[u][hV] = 1;
                         matrix[hV][u] = 1;
@@ -230,26 +229,28 @@ public class StressAnalysis implements IAnalysis {
     }
 
     /**
-     * Follows an edge that does not end at an atomic node and eventually returns all target KNodes
+     * Follows an edge that does not end at an atomic node and eventually returns all target ElkNodes
      * of a hierarchy crossing edge.
      * 
      * @param edge
      *            for the first call edge must be an outgoing edge of an atomic node.
      */
-    private Iterable<KNode> followHierarchicalEdge(final KEdge edge) {
+    private Iterable<ElkNode> followHierarchicalEdge(final ElkEdge edge) {
 
-        KNode tgt = edge.getTarget();
+        ElkNode tgt = ElkGraphUtil.getTargetNode(edge);
         // does the edge target an atomic node?
         if (tgt.getChildren().isEmpty()) {
             return ImmutableList.of(tgt);
         } else {
             // follow all edges of the target port
-            if (edge.getTargetPort() != null) {
+            if (edge.getTargets().get(0) instanceof ElkPort) {
 
-                List<Iterable<KNode>> targets = Lists.newLinkedList();
+                ElkPort targetPort = ElkGraphUtil.connectableShapeToPort(edge.getTargets().get(0));
+                List<Iterable<ElkNode>> targets = Lists.newLinkedList();
                 // get edges where the current port is source
-                for (KEdge hEdge : edge.getTargetPort().getEdges()) {
-                    if (hEdge.getSource().equals(tgt)) {
+                for (ElkEdge hEdge : ElkGraphUtil.allIncidentEdges(targetPort)) {
+                    ElkNode src = ElkGraphUtil.getSourceNode(hEdge);
+                    if (src.equals(tgt)) {
                         targets.add(followHierarchicalEdge(hEdge));
                     }
                 }
@@ -268,7 +269,7 @@ public class StressAnalysis implements IAnalysis {
      * Calculates the euclidean distance between the two nodes' center points.
      */
     private final DistanceStrategy euclideanCenterToCenterDistance = new DistanceStrategy() {
-        public double dist(final KNode u, final KNode v) {
+        public double dist(final ElkNode u, final ElkNode v) {
             return getNodeCenter(u).distance(getNodeCenter(v));
         }
     };
@@ -278,7 +279,7 @@ public class StressAnalysis implements IAnalysis {
      * clipped at the nodes bounding rectangles.
      */
     private final DistanceStrategy euclideanBorderToBorderDistance = new DistanceStrategy() {
-        public double dist(final KNode u, final KNode v) {
+        public double dist(final ElkNode u, final ElkNode v) {
             return getBoundToBound(u, v);
         }
     };
@@ -288,33 +289,29 @@ public class StressAnalysis implements IAnalysis {
      * euclidean distance.
      */
     private interface DistanceStrategy {
-        double dist(final KNode u, final KNode v);
+        double dist(ElkNode u, ElkNode v);
     }
 
     /**
      * @return the center of the passed node.
      */
-    private KVector getNodeCenter(final KNode n) {
-        KShapeLayout nLayout = n.getData(KShapeLayout.class);
-        KVector pos = nLayout.createVector();
-        pos.add(nLayout.getWidth() / 2f, nLayout.getHeight() / 2f);
+    private KVector getNodeCenter(final ElkNode n) {
+        KVector pos = new KVector(n.getX(), n.getY());
+        pos.add(n.getWidth() / 2d, n.getHeight() / 2d);
 
         return pos;
     }
 
-    private double getBoundToBound(final KNode n1, final KNode n2) {
-        KShapeLayout ul = n1.getData(KShapeLayout.class);
-        KShapeLayout vl = n2.getData(KShapeLayout.class);
-
+    private double getBoundToBound(final ElkNode n1, final ElkNode n2) {
         KVector u = getNodeCenter(n1);
         KVector v = getNodeCenter(n2);
 
         double centerToCenterDist = u.distance(v);
 
-        KVector uToBorder = ElkMath.clipVector(v.clone().sub(u), ul.getWidth(), ul.getHeight());
+        KVector uToBorder = ElkMath.clipVector(v.clone().sub(u), n1.getWidth(), n1.getHeight());
         double uToBorderDist = uToBorder.length();
 
-        KVector vToBorder = ElkMath.clipVector(u.clone().sub(v), vl.getWidth(), vl.getHeight());
+        KVector vToBorder = ElkMath.clipVector(u.clone().sub(v), n2.getWidth(), n2.getHeight());
         double vToBorderDist = vToBorder.length();
 
         double borderToBorderDist = centerToCenterDist - uToBorderDist - vToBorderDist;
@@ -326,19 +323,19 @@ public class StressAnalysis implements IAnalysis {
      * ----------------------- Usual Stress -----------------------
      */
     
-    private double computeStressIdealEdgeLength(final List<KNode> nodes,
+    private double computeStressIdealEdgeLength(final List<ElkNode> nodes,
             final int[][] shortestPaths, final DistanceStrategy strat) {
         // calculate ideal edge length
         double numerator = 0;
         double denominator = 0;
 
         for (int i = 0; i < nodes.size(); ++i) {
-            KNode src = nodes.get(i);
+            ElkNode src = nodes.get(i);
             for (int j = 0; j < nodes.size(); ++j) {
                 if (i == j) {
                     continue;
                 }
-                KNode tgt = nodes.get(j);
+                ElkNode tgt = nodes.get(j);
 
                 double theoDist = shortestPaths[nodeMap.get(src)][nodeMap.get(tgt)];
 
@@ -354,18 +351,18 @@ public class StressAnalysis implements IAnalysis {
         return idealEdgeLength;
     }
 
-    private double computeStress(final List<KNode> nodes, final int[][] shortestPaths,
+    private double computeStress(final List<ElkNode> nodes, final int[][] shortestPaths,
             final double idealEdgeLength, final DistanceStrategy strat) {
 
         // calculate the stress
         double stress = 0;
         for (int i = 0; i < nodes.size(); ++i) {
-            KNode src = nodes.get(i);
+            ElkNode src = nodes.get(i);
             for (int j = 0; j < nodes.size(); ++j) {
                 if (i == j) {
                     continue;
                 }
-                KNode tgt = nodes.get(j);
+                ElkNode tgt = nodes.get(j);
 
                 double theoDist = shortestPaths[nodeMap.get(src)][nodeMap.get(tgt)];
                 if (theoDist < INFINITY) {
@@ -395,15 +392,15 @@ public class StressAnalysis implements IAnalysis {
      * ----------------------- P-stress -----------------------
      */
 
-    private double computePstressIdealEdgeLength(final List<KNode> nodes,
-            final List<KEdge> edges, final int[][] shortestPaths) {
+    private double computePstressIdealEdgeLength(final List<ElkNode> nodes,
+            final List<ElkEdge> edges, final int[][] shortestPaths) {
 
         // CHECKSTYLEOFF VariableName
         // 1. S = { b(u,v) for (u,v) in E }
         List<Double> S = Lists.newArrayListWithCapacity(edges.size());
-        for (KEdge e : edges) {
-            KNode u = e.getSource();
-            KNode v = e.getTarget();
+        for (ElkEdge e : edges) {
+            ElkNode u = ElkGraphUtil.getSourceNode(e);
+            ElkNode v = ElkGraphUtil.getTargetNode(e);
             // handle hierarchy crossing edges
             if (v.getChildren().isEmpty() && u.getParent().equals(v.getParent())) {
                 // add b(u,v) to S
@@ -411,7 +408,7 @@ public class StressAnalysis implements IAnalysis {
                 S.add(dist);
             } else {
                 // follow hierarchical edges and add b(u,v') where v' is the final atomic node
-                for (KNode hV : followHierarchicalEdge(e)) {
+                for (ElkNode hV : followHierarchicalEdge(e)) {
                     // add b(u,v') to S
                     double dist = getBoundToBound(u, hV);
                     S.add(dist);
@@ -426,24 +423,26 @@ public class StressAnalysis implements IAnalysis {
         double P0 = getPStress(nodes, edges, shortestPaths, L0);
 
         // 4. C = { b(u,v)/p_{uv} : u < v ^ (u,v) not in E ^ b(u,v)/p_{uv} < L0 }
-        Set<Pair<KNode, KNode>> nodePairs = Sets.newHashSet();
+        Set<Pair<ElkNode, ElkNode>> nodePairs = Sets.newHashSet();
         for (int i = 0; i < nodes.size(); i++) {
             for (int j = i + 1; j < nodes.size(); j++) {
-                KNode u = nodes.get(i);
-                KNode v = nodes.get(j);
+                ElkNode u = nodes.get(i);
+                ElkNode v = nodes.get(j);
                 nodePairs.add(Pair.of(u, v));
             }
         }
 
         // remove (u,v)s in edges
-        for (KEdge e : edges) {
-            nodePairs.remove(Pair.of(e.getSource(), e.getTarget()));
+        for (ElkEdge e : edges) {
+            ElkNode u = ElkGraphUtil.getSourceNode(e);
+            ElkNode v = ElkGraphUtil.getTargetNode(e);
+            nodePairs.remove(Pair.of(u, v));
             // to achieve u < v, remove the opposite as well
             // FIXME is this enough?
-            nodePairs.remove(Pair.of(e.getTarget(), e.getSource()));
+            nodePairs.remove(Pair.of(v, u));
         }
         List<Double> C = Lists.newArrayList();
-        for (Pair<KNode, KNode> pair : nodePairs) {
+        for (Pair<ElkNode, ElkNode> pair : nodePairs) {
             double buv = getBoundToBound(pair.getFirst(), pair.getSecond());
             double theoDist =
                     shortestPaths[nodeMap.get(pair.getFirst())][nodeMap.get(pair.getSecond())];
@@ -485,13 +484,13 @@ public class StressAnalysis implements IAnalysis {
         return L0;
     }
 
-    private double getPStress(final List<KNode> nodes, final List<KEdge> edges,
+    private double getPStress(final List<ElkNode> nodes, final List<ElkEdge> edges,
             final int[][] shortestPaths, final double idealEdgeLength) {
 
         // for u < v in nodes
         double sum1 = 0;
-        for (KNode u : nodes) {
-            for (KNode v : nodes) {
+        for (ElkNode u : nodes) {
+            for (ElkNode v : nodes) {
                 double theoDist = shortestPaths[nodeMap.get(u)][nodeMap.get(v)];
                 if (u.equals(v) || theoDist >= INFINITY) {
                     continue;
@@ -510,8 +509,10 @@ public class StressAnalysis implements IAnalysis {
 
         // for (u,v) in edges
         double sum2 = 0;
-        for (KEdge e : edges) {
-            double geomDist = getBoundToBound(e.getSource(), e.getTarget());
+        for (ElkEdge e : edges) {
+            ElkNode u = ElkGraphUtil.getSourceNode(e);
+            ElkNode v = ElkGraphUtil.getTargetNode(e);
+            double geomDist = getBoundToBound(u, v);
             double base = Math.max(0, geomDist - idealEdgeLength);
             double term = Math.pow(idealEdgeLength, -1 * 2) * Math.pow(base, 2);
 

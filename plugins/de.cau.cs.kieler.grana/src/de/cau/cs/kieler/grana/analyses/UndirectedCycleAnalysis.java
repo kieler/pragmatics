@@ -18,13 +18,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KGraphElement;
-import org.eclipse.elk.graph.KNode;
-
-import com.google.common.collect.Iterables;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
 import de.cau.cs.kieler.grana.AnalysisOptions;
@@ -44,23 +42,22 @@ public class UndirectedCycleAnalysis implements IAnalysis {
     public static final String ID = "de.cau.cs.kieler.grana.undirectedCycles";
 
     /** map of DFS marks determined by the analysis. */
-    private Map<KGraphElement, Integer> dfsMark = new HashMap<KGraphElement, Integer>();
+    private Map<ElkGraphElement, Integer> dfsMark = new HashMap<ElkGraphElement, Integer>();
     
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Approximate undirected cycle count", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         
         int cycleCount = 0;
-        List<KNode> nodeQueue = new LinkedList<KNode>();
+        List<ElkNode> nodeQueue = new LinkedList<ElkNode>();
         nodeQueue.addAll(parentNode.getChildren());
         while (!nodeQueue.isEmpty()) {
-            KNode node = nodeQueue.remove(0);
+            ElkNode node = nodeQueue.remove(0);
             
             if (!dfsMark.containsKey(node)) {
                 cycleCount += dfs(node, hierarchy);
@@ -84,14 +81,16 @@ public class UndirectedCycleAnalysis implements IAnalysis {
      * @param hierarchy whether hierarchy edges shall be considered
      * @return the number of undirected cycles that were found
      */
-    private int dfs(final KNode node, final boolean hierarchy) {
+    private int dfs(final ElkNode node, final boolean hierarchy) {
         dfsMark.put(node, 1);
         int backEdgeCount = 0;
-        for (KEdge edge : Iterables.concat(node.getOutgoingEdges(), node.getIncomingEdges())) {
+        for (ElkEdge edge : ElkGraphUtil.allIncidentEdges(node)) {
+            ElkNode source = ElkGraphUtil.getSourceNode(edge);
+            ElkNode target = ElkGraphUtil.getTargetNode(edge);
             if (!dfsMark.containsKey(edge)
-                    && (hierarchy || edge.getSource().getParent() == edge.getTarget().getParent())) {
+                    && (hierarchy || source.getParent() == target.getParent())) {
                 dfsMark.put(edge, 1);
-                KNode endpoint = edge.getTarget() == node ? edge.getSource() : edge.getTarget();
+                ElkNode endpoint = target == node ? source : target;
                 Integer mark = dfsMark.get(endpoint);
                 if (mark == null) {
                     // the endpoint has not been visited yet
