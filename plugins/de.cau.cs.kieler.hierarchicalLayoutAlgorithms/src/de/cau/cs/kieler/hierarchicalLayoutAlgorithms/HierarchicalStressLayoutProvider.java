@@ -30,7 +30,8 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
  */
 public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 
-	private static final float SPACING = 100;
+	/** Desired visible length of an edge. */
+	private static final float DESIRED_EDGE_LENGTH = 100;
 
 	@Override
 	public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
@@ -46,7 +47,7 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 			ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
 			double targetDiagonal = getDiagonalLength(target);
 			
-			double edgeLength = (sourceDiagonal + targetDiagonal + SPACING);
+			double edgeLength = (sourceDiagonal + targetDiagonal + DESIRED_EDGE_LENGTH);
 			edge.setProperty(StressOptions.DESIRED_EDGE_LENGTH, edgeLength);
 		}
 

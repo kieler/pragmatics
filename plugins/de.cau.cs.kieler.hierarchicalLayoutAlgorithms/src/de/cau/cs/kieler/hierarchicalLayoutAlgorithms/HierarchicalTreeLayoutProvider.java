@@ -279,12 +279,12 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 */
 	private ElkNode createTree(final List<ElkNode> nodes, final Map<ElkNode, ElkNode> nodeMap,
 			final int[] firstOffset) {
-		ElkNode layoutRoot = ElkGraphUtil.createGraph();
-		ElkNode treeRoot = ElkGraphUtil.createNode(layoutRoot);
+		ElkNode layoutGraph = ElkGraphUtil.createGraph();
+		ElkNode treeRoot = ElkGraphUtil.createNode(layoutGraph);
 		ElkUtil.resizeNode(treeRoot, root.getWidth(), root.getHeight(), false, false);
 		nodeMap.put(root, treeRoot);
 		for (ElkNode node : nodes) {
-			ElkNode tempNode = ElkGraphUtil.createNode(layoutRoot);
+			ElkNode tempNode = ElkGraphUtil.createNode(layoutGraph);
 			int i = firstOffset[nodeHierarchyDepth.get(node) - 1];
 			tempNode.setProperty(LayeredOptions.POSITION, new KVector(i, 0));
 			tempNode.setProperty(LayeredOptions.ALIGNMENT, Alignment.CENTER);
@@ -296,16 +296,17 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		for (ElkNode node : nodes) {
 			ElkNode source = null;
 			for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
-				// TODO use isHierarchical?
+				// TODO Use isHierarchical?
 				if (edges.contains(edge)) {
 					source = nodeMap.get(ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)));
 					break;
 				}
 			}
+			// TODO Use ports for better centering.
 			ElkGraphUtil.createSimpleEdge(source, nodeMap.get(node));
 		}
 
-		return layoutRoot;
+		return layoutGraph;
 	}
 
 	/**
