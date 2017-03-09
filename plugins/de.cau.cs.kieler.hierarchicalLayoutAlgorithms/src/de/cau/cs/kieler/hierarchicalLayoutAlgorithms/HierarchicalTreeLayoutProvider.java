@@ -31,7 +31,6 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Alignment;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
-import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
@@ -81,6 +80,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 	@Override
 	public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
+		progressMonitor.begin("Hierarchical Tree Layout", 1);
 		nodeHierarchyDepth = new HashMap<ElkNode, Integer>();
 		children = layoutGraph.getChildren();
 		edges = HierarchicalUtil.getHierarchicalEdges(layoutGraph);
@@ -88,12 +88,13 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		secondHierarchyNodes = RadialUtil.getSuccessors(root);
 
 		if (secondHierarchyNodes.size() > 0) {
-			layeredTreeLayout(layoutGraph);
-			
+			layeredTreeLayout(layoutGraph, progressMonitor);
+
+			progressMonitor.begin("Edge Routing", 3);
 			ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
 			edgeRouter.routeEdges(RadialUtil.findRoot(layoutGraph));
 		}
-
+		progressMonitor.done();
 	}
 
 	/**
@@ -104,7 +105,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * 
 	 * @param layoutGraph
 	 */
-	private void layeredTreeLayout(final ElkNode layoutGraph) {
+	private void layeredTreeLayout(final ElkNode layoutGraph, IElkProgressMonitor pm) {
 		// Compute the two Lists of nodes for the two runs of Elk-Layered with a
 		// Tree representation.
 		treeSeperator = secondHierarchyNodes.size() / 2;
@@ -172,21 +173,17 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// TODO node spacing according to width
 		Map<ElkNode, ElkNode> firstRunMap = new HashMap<ElkNode, ElkNode>();
 		ElkNode firstRun = createTree(firstRunList, firstRunMap, firstOffset);
-		// TODO
-		System.out.println(firstRun);
 		LayeredLayoutProvider layered = new LayeredLayoutProvider();
 		configureTreeLayout(firstRun, Direction.UP);
-		BasicProgressMonitor firstRunMonitor = new BasicProgressMonitor();
-		layered.layout(firstRun, firstRunMonitor);
+		// TODO sub task numbers
+		pm.begin("Layered Layout", 2);
+		layered.layout(firstRun, pm.subTask(2));
 
 		// Second run for downward tree
 		Map<ElkNode, ElkNode> secondRunMap = new HashMap<ElkNode, ElkNode>();
 		ElkNode secondRun = createTree(secondRunList, secondRunMap, secondOffset);
-		// TODO
-		System.out.println(secondRun.getChildren());
 		configureTreeLayout(secondRun, Direction.DOWN);
-		BasicProgressMonitor secondRunMonitor = new BasicProgressMonitor();
-		layered.layout(secondRun, secondRunMonitor);
+		layered.layout(secondRun, pm.subTask(2));
 
 		// Keeps track of actual height and width of the two runs by computing
 		// min and max x- and y-values.
@@ -204,8 +201,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				maxFirstX = Math.max(maxFirstX, node.getX() + node.getWidth());
 			} else {
 				node = secondRunMap.get(node);
-				// TODO
-				System.out.println(node);
 				minSecondY = Math.min(minSecondY, node.getY());
 				minSecondX = Math.min(minSecondX, node.getX());
 				maxSecondX = Math.max(maxSecondX, node.getX() + node.getWidth());
@@ -300,18 +295,28 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			ElkUtil.resizeNode(tempNode, node.getWidth(), node.getHeight(), false, false);
 			nodeMap.put(node, tempNode);
 		}
+		
+//		for (ElkNode node : nodes) {
+//			ElkNode source = null;
+//			for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
+//				if (edges.contains(edge)) {
+//					source = nodeMap.get(ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)));
+//				}
+//			}
+//			ElkGraphUtil.createSimpleEdge(source, nodeMap.get(node));
+//		}
 
-		for (ElkNode node : nodes) {
-			ElkNode source = null;
-			for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
-				// TODO Use isHierarchical?
-				if (edges.contains(edge)) {
-					source = nodeMap.get(ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)));
-					break;
-				}
+		for (ElkEdge edge : edges) {
+			ElkNode source = nodeMap.get(ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)));
+			ElkNode target = nodeMap.get(ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0)));
+			if ((source != null) && (target != null)) {
+				// TODO Use ports for better centering.
+				ElkGraphUtil.createSimpleEdge(source, target);
+				System.out.println("S: " + ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0)));
+				System.out.println("T: " + ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0)));
+				System.out.println(source);
+				System.out.println(target);
 			}
-			// TODO Use ports for better centering.
-			ElkGraphUtil.createSimpleEdge(source, nodeMap.get(node));
 		}
 
 		return layoutGraph;
