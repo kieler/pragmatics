@@ -31,9 +31,6 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
  */
 public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 
-	/** Desired visible length of an edge. */
-	private static final float DESIRED_EDGE_LENGTH = 100;
-
 	@Override
 	public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
 		progressMonitor.begin("Stress Layouter", 1);
@@ -44,11 +41,12 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 		for (ElkEdge edge : edges) {
 			ElkNode source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
 			double sourceDiagonal = getDiagonalLength(source);
-			
+
 			ElkNode target = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
 			double targetDiagonal = getDiagonalLength(target);
-			
-			double edgeLength = (sourceDiagonal + targetDiagonal + DESIRED_EDGE_LENGTH);
+
+			double edgeLength = (sourceDiagonal + targetDiagonal
+					+ layoutGraph.getProperty(HierarchicalStressOptions.DESIRED_EDGE_LENGTH));
 			edge.setProperty(StressOptions.DESIRED_EDGE_LENGTH, edgeLength);
 		}
 
@@ -58,7 +56,7 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 
 		progressMonitor.done();
 	}
-	
+
 	/**
 	 * Computes the diagonal length from the center to a corner of a given node.
 	 * 
@@ -69,7 +67,7 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 		double width = n.getWidth() / 2;
 		double height = n.getHeight() / 2;
 		double diagonal = Math.sqrt(width * width + height * height);
-		
+
 		return diagonal;
 	}
 

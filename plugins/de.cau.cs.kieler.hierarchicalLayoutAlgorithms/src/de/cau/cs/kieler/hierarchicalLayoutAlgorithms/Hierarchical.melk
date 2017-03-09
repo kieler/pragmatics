@@ -22,10 +22,19 @@ algorithm stress(HierarchicalStressLayoutProvider) {
     label "Hierarchical Stress Layouter"
     metadataClass HierarchicalStressOptions
     description "A hierarchical stress layouter."
+    supports desiredEdgeLength
 }
 
 algorithm tree(HierarchicalTreeLayoutProvider) {
     label "Hierarchical Tree Layouter"
     metadataClass HierarchicalTreeOptions
     description "A hierarchical two-dimension tree layouter."
+}
+
+option desiredEdgeLength: double {
+    label "Desired Edge Length"
+    description 
+        "Specifies the length an edge or all edges should have, if possible."
+    default = 100.0
+    targets edges, parents
 }
