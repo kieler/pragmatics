@@ -19,12 +19,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -50,7 +48,7 @@ public class InlayerWhitespaceAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
 
         // check that the precondition is met
@@ -66,11 +64,10 @@ public class InlayerWhitespaceAnalysis implements IAnalysis {
         return inLayerWhitespace;
     }
     
-    private float analyzeHierarchy(final KNode parent) {
+    private float analyzeHierarchy(final ElkNode parent) {
         
         List<Layer> layers;
-        KLayoutData ld = parent.getData(KLayoutData.class);
-        final Direction direction = ld.getProperty(CoreOptions.DIRECTION);
+        final Direction direction = parent.getProperty(CoreOptions.DIRECTION);
         if (LEFT_TO_RIGHT.contains(direction)) {
             layers = layerAnalysis.getAllVerticalLayers().get(parent);
         } else {
@@ -81,60 +78,55 @@ public class InlayerWhitespaceAnalysis implements IAnalysis {
         
         // Determine whitespace between the nodes in every layer
         for (Layer l : layers) {
-            List<KNode> nodes = l.nodes;
+            List<ElkNode> nodes = l.nodes;
             if (nodes.size() <= 1) {
                 continue;
             }
             // the returned list is not necessarily sorted, so sort it 
             // based on the nodes' positions in proper direction
-            Collections.sort(nodes, new Comparator<KNode>() {
-                public int compare(final KNode o1, final KNode o2) {
-                    KShapeLayout l1 = o1.getData(KShapeLayout.class);
-                    KShapeLayout l2 = o2.getData(KShapeLayout.class);
+            Collections.sort(nodes, new Comparator<ElkNode>() {
+                public int compare(final ElkNode o1, final ElkNode o2) {
                     if (LEFT_TO_RIGHT.contains(direction)) {
-                        return Float.compare(l1.getYpos(), l2.getYpos());
+                        return Double.compare(o1.getY(), o2.getY());
                     } else {
-                        return Float.compare(l1.getXpos(), l2.getXpos());
+                        return Double.compare(o1.getX(), o2.getX());
                     }
                 }
             });
             
             
-            Iterator<KNode> it = nodes.iterator();
+            Iterator<ElkNode> it = nodes.iterator();
             float sumDiffs = 0; // sum of differences between consecutive node's positions
             float sumHeight = 0; // sum of node heights (despite the last node's height)
-            KNode last = it.next();
-            KShapeLayout lastSl = last.getData(KShapeLayout.class);
+            ElkNode last = it.next();
             if (LEFT_TO_RIGHT.contains(direction)) {
-                sumHeight += lastSl.getHeight();
+                sumHeight += last.getHeight();
             } else {
-                sumHeight += lastSl.getWidth();
+                sumHeight += last.getWidth();
             }
             
             while (it.hasNext()) {
-                KNode current = it.next();
-                KShapeLayout currentSl = current.getData(KShapeLayout.class);
+                ElkNode current = it.next();
                 if (LEFT_TO_RIGHT.contains(direction)) {
-                    sumDiffs += currentSl.getYpos() - lastSl.getYpos();
+                    sumDiffs += current.getY() - last.getY();
                     if (it.hasNext()) {
-                        sumHeight += lastSl.getHeight();
+                        sumHeight += last.getHeight();
                     }
                 } else {
-                    sumDiffs += currentSl.getXpos() - lastSl.getXpos();
+                    sumDiffs += current.getX() - last.getX();
                     if (it.hasNext()) {
-                        sumHeight += lastSl.getWidth();
+                        sumHeight += last.getWidth();
                     }
                 }   
                 
                 last = current;
-                lastSl = currentSl;
             }
             
             whitespace += sumDiffs - sumHeight;
         }
         
         // recurse children
-        for (KNode child : parent.getChildren()) {
+        for (ElkNode child : parent.getChildren()) {
             if (!child.getChildren().isEmpty()) {
                 whitespace += analyzeHierarchy(child);
             }

@@ -20,12 +20,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
-
-import com.google.common.collect.Iterables;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
 import de.cau.cs.kieler.grana.AnalysisOptions;
@@ -52,29 +50,28 @@ public class DirectedCycleApproximationAnalysis implements IAnalysis {
     /** mark for the nodes. */
     private int[] mark;
     /** node id map. */
-    private Map<KNode, Integer> idmap = new HashMap<KNode, Integer>();
+    private Map<ElkNode, Integer> idmap = new HashMap<ElkNode, Integer>();
     /** list of source nodes. */
-    private final LinkedList<KNode> sources = new LinkedList<KNode>();
+    private final LinkedList<ElkNode> sources = new LinkedList<ElkNode>();
     /** list of sink nodes. */
-    private final LinkedList<KNode> sinks = new LinkedList<KNode>();
+    private final LinkedList<ElkNode> sinks = new LinkedList<ElkNode>();
     
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Approximate directed cycle count", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         int count;
         
         if (hierarchy) {
-            List<KNode> nodes = new LinkedList<KNode>();
-            LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
+            List<ElkNode> nodes = new LinkedList<ElkNode>();
+            LinkedList<ElkNode> nodeQueue = new LinkedList<ElkNode>();
             nodeQueue.addAll(parentNode.getChildren());
             while (!nodeQueue.isEmpty()) {
-                KNode node = nodeQueue.removeFirst();
+                ElkNode node = nodeQueue.removeFirst();
                 nodes.add(node);
                 nodeQueue.addAll(node.getChildren());
             }
@@ -94,7 +91,7 @@ public class DirectedCycleApproximationAnalysis implements IAnalysis {
      * @param hierarchy whether hierarchy should be processed
      * @return the number of back edges
      */
-    private int process(final List<KNode> nodes, final boolean hierarchy) {
+    private int process(final List<ElkNode> nodes, final boolean hierarchy) {
         // initialize values for the algorithm (sum of priorities of incoming edges and outgoing
         // edges per node, and the "layer" calculated for each node)
         int unprocessedNodes = nodes.size();
@@ -103,20 +100,20 @@ public class DirectedCycleApproximationAnalysis implements IAnalysis {
         mark = new int[unprocessedNodes];
         
         int index = 0;
-        for (KNode node : nodes) {
+        for (ElkNode node : nodes) {
             idmap.put(node, index);
-            for (KEdge edge : node.getIncomingEdges()) {
+            for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
+                ElkNode source = ElkGraphUtil.getSourceNode(edge);
                 // ignore self-loops and hierarchy edges
-                if (edge.getSource() != node && (hierarchy
-                        || edge.getSource().getParent() == node.getParent())) {
+                if (source != node && (hierarchy || source.getParent() == node.getParent())) {
                     indeg[index]++;
                 }
             }
             
-            for (KEdge edge : node.getOutgoingEdges()) {
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                ElkNode target = ElkGraphUtil.getTargetNode(edge);
                 // ignore self-loops and hierarchy edges
-                if (edge.getTarget() != node && (hierarchy
-                        || edge.getTarget().getParent() == node.getParent())) {
+                if (target != node && (hierarchy || target.getParent() == node.getParent())) {
                     outdeg[index]++;
                 }
             }
@@ -137,12 +134,12 @@ public class DirectedCycleApproximationAnalysis implements IAnalysis {
         Random random = new Random(1);
 
         // assign marks to all nodes
-        List<KNode> maxNodes = new ArrayList<KNode>();
+        List<ElkNode> maxNodes = new ArrayList<ElkNode>();
         
         while (unprocessedNodes > 0) {
             // while we have sinks left...
             while (!sinks.isEmpty()) {
-                KNode sink = sinks.removeFirst();
+                ElkNode sink = sinks.removeFirst();
                 mark[idmap.get(sink)] = nextRight--;
                 updateNeighbors(sink);
                 unprocessedNodes--;
@@ -150,7 +147,7 @@ public class DirectedCycleApproximationAnalysis implements IAnalysis {
             
             // while we have sources left...
             while (!sources.isEmpty()) {
-                KNode source = sources.removeFirst();
+                ElkNode source = sources.removeFirst();
                 mark[idmap.get(source)] = nextLeft++;
                 updateNeighbors(source);
                 unprocessedNodes--;
@@ -161,7 +158,7 @@ public class DirectedCycleApproximationAnalysis implements IAnalysis {
                 int maxOutflow = Integer.MIN_VALUE;
                 
                 // find the set of unprocessed node (=> mark == 0), with the largest out flow
-                for (KNode node : nodes) {
+                for (ElkNode node : nodes) {
                     int id = idmap.get(node);
                     if (mark[id] == 0) {
                         int outflow = outdeg[id] - indeg[id];
@@ -176,7 +173,7 @@ public class DirectedCycleApproximationAnalysis implements IAnalysis {
                 }
                 
                 // randomly select a node from the ones with maximal outflow
-                KNode maxNode = maxNodes.get(random.nextInt(maxNodes.size()));
+                ElkNode maxNode = maxNodes.get(random.nextInt(maxNodes.size()));
                 mark[idmap.get(maxNode)] = nextLeft++;
                 updateNeighbors(maxNode);
                 unprocessedNodes--;
@@ -193,11 +190,12 @@ public class DirectedCycleApproximationAnalysis implements IAnalysis {
 
         // count edges that point left
         int backEdgeCount = 0;
-        for (KNode node : nodes) {
+        for (ElkNode node : nodes) {
             int sourceIx = idmap.get(node);
-            for (KEdge edge : node.getOutgoingEdges()) {
-                if (edge.getTarget() != node && idmap.containsKey(edge.getTarget())) {
-                    int targetIx = idmap.get(edge.getTarget());
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                ElkNode target = ElkGraphUtil.getTargetNode(edge);
+                if (target != node && idmap.containsKey(target)) {
+                    int targetIx = idmap.get(target);
                     if (mark[sourceIx] > mark[targetIx]) {
                         backEdgeCount++;
                     }
@@ -228,9 +226,11 @@ public class DirectedCycleApproximationAnalysis implements IAnalysis {
      * 
      * @param node node for which neighbors are updated
      */
-    private void updateNeighbors(final KNode node) {
-        for (KEdge edge : Iterables.concat(node.getOutgoingEdges(), node.getIncomingEdges())) {
-            KNode endpoint = edge.getSource() == node ? edge.getTarget() : edge.getSource();
+    private void updateNeighbors(final ElkNode node) {
+        for (ElkEdge edge : ElkGraphUtil.allIncidentEdges(node)) {
+            ElkNode source = ElkGraphUtil.getSourceNode(edge);
+            ElkNode target = ElkGraphUtil.getTargetNode(edge);
+            ElkNode endpoint = source == node ? target : source;
             
             // exclude self-loops
             if (endpoint.equals(node) || !idmap.containsKey(endpoint)) {
@@ -239,7 +239,7 @@ public class DirectedCycleApproximationAnalysis implements IAnalysis {
             
             int index = idmap.get(endpoint);
             if (mark[index] == 0) {
-                if (edge.getTarget() == endpoint) {
+                if (target == endpoint) {
                     indeg[index]--;
                     if (indeg[index] <= 0 && outdeg[index] > 0) {
                         sources.add(endpoint);
