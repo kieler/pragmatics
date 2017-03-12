@@ -348,7 +348,7 @@ public class LayoutConfigGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Property ElkPropertyToValueMapEntry:
-	//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)
+	//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null')
 	public ElkGraphGrammarAccess.PropertyElements getPropertyAccess() {
 		return gaElkGraph.getPropertyAccess();
 	}

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 @SuppressWarnings("all")
 public class InternalGranaParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_SIGNED_INT", "RULE_FLOAT", "RULE_STRING", "RULE_INT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'globalResources'", "'globalOutputs'", "'execute'", "'parallel'", "'all'", "'job'", "'layoutBeforeAnalysis'", "'measureExecutionTime'", "'resources'", "'layoutoptions'", "'analyses'", "'output'", "'comparejob'", "'rangejob'", "'rangeoption'", "'rangeanalysis'", "'component'", "'rangeanalyses'", "'floatvalues'", "','", "'intvalues'", "'intrange'", "'to'", "'enumvalues'", "'ref'", "'filter'", "'recurse'", "'{'", "'}'", "'node'", "'label'", "':'", "'port'", "'layout'", "'['", "'position'", "'size'", "']'", "'edge'", "'->'", "'incoming'", "'outgoing'", "'start'", "'end'", "'bends'", "'|'", "'section'", "'.'", "'true'", "'false'", "'csv'", "'json'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_SIGNED_INT", "RULE_FLOAT", "RULE_STRING", "RULE_INT", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'globalResources'", "'globalOutputs'", "'execute'", "'parallel'", "'all'", "'job'", "'layoutBeforeAnalysis'", "'measureExecutionTime'", "'resources'", "'layoutoptions'", "'analyses'", "'output'", "'comparejob'", "'rangejob'", "'rangeoption'", "'rangeanalysis'", "'component'", "'rangeanalyses'", "'floatvalues'", "','", "'intvalues'", "'intrange'", "'to'", "'enumvalues'", "'ref'", "'filter'", "'recurse'", "'{'", "'}'", "'node'", "'label'", "':'", "'port'", "'layout'", "'['", "'position'", "'size'", "']'", "'edge'", "'->'", "'incoming'", "'outgoing'", "'start'", "'end'", "'bends'", "'|'", "'section'", "'.'", "'null'", "'true'", "'false'", "'csv'", "'json'"
     };
     public static final int T__50=50;
     public static final int T__19=19;
@@ -59,6 +59,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
     public static final int T__20=20;
     public static final int T__64=64;
     public static final int T__21=21;
+    public static final int T__65=65;
     public static final int RULE_STRING=7;
     public static final int RULE_SL_COMMENT=10;
     public static final int T__37=37;
@@ -1044,7 +1045,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             int alt15=2;
             int LA15_0 = input.LA(1);
 
-            if ( ((LA15_0>=63 && LA15_0<=64)) ) {
+            if ( ((LA15_0>=64 && LA15_0<=65)) ) {
                 alt15=1;
             }
             switch (alt15) {
@@ -1422,7 +1423,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             int alt18=2;
             int LA18_0 = input.LA(1);
 
-            if ( ((LA18_0>=63 && LA18_0<=64)) ) {
+            if ( ((LA18_0>=64 && LA18_0<=65)) ) {
                 alt18=1;
             }
             switch (alt18) {
@@ -2087,7 +2088,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             int alt26=2;
             int LA26_0 = input.LA(1);
 
-            if ( ((LA26_0>=63 && LA26_0<=64)) ) {
+            if ( ((LA26_0>=64 && LA26_0<=65)) ) {
                 alt26=1;
             }
             switch (alt26) {
@@ -8267,11 +8268,12 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleProperty"
-    // InternalGrana.g:3284:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) ;
+    // InternalGrana.g:3284:1: ruleProperty returns [EObject current=null] : ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) | otherlv_6= 'null' ) ) ;
     public final EObject ruleProperty() throws RecognitionException {
         EObject current = null;
 
         Token otherlv_1=null;
+        Token otherlv_6=null;
         AntlrDatatypeRuleToken lv_key_0_0 = null;
 
         AntlrDatatypeRuleToken lv_value_2_0 = null;
@@ -8286,11 +8288,11 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3287:28: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) ) )
-            // InternalGrana.g:3288:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
+            // InternalGrana.g:3287:28: ( ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) | otherlv_6= 'null' ) ) )
+            // InternalGrana.g:3288:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) | otherlv_6= 'null' ) )
             {
-            // InternalGrana.g:3288:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) ) )
-            // InternalGrana.g:3288:2: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
+            // InternalGrana.g:3288:1: ( ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) | otherlv_6= 'null' ) )
+            // InternalGrana.g:3288:2: ( (lv_key_0_0= rulePropertyKey ) ) otherlv_1= ':' ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) | otherlv_6= 'null' )
             {
             // InternalGrana.g:3288:2: ( (lv_key_0_0= rulePropertyKey ) )
             // InternalGrana.g:3289:1: (lv_key_0_0= rulePropertyKey )
@@ -8327,8 +8329,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
                 	newLeafNode(otherlv_1, grammarAccess.getPropertyAccess().getColonKeyword_1());
                 
-            // InternalGrana.g:3310:1: ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) )
-            int alt72=4;
+            // InternalGrana.g:3310:1: ( ( (lv_value_2_0= ruleStringValue ) ) | ( (lv_value_3_0= ruleQualifiedIdValue ) ) | ( (lv_value_4_0= ruleNumberValue ) ) | ( (lv_value_5_0= ruleBooleanValue ) ) | otherlv_6= 'null' )
+            int alt72=5;
             switch ( input.LA(1) ) {
             case RULE_STRING:
                 {
@@ -8346,10 +8348,15 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                 alt72=3;
                 }
                 break;
-            case 61:
             case 62:
+            case 63:
                 {
                 alt72=4;
+                }
+                break;
+            case 61:
+                {
+                alt72=5;
                 }
                 break;
             default:
@@ -8508,6 +8515,16 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
                     }
                     break;
+                case 5 :
+                    // InternalGrana.g:3386:7: otherlv_6= 'null'
+                    {
+                    otherlv_6=(Token)match(input,61,FOLLOW_2); 
+
+                        	newLeafNode(otherlv_6, grammarAccess.getPropertyAccess().getNullKeyword_2_4());
+                        
+
+                    }
+                    break;
 
             }
 
@@ -8532,7 +8549,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRulePropertyKey"
-    // InternalGrana.g:3393:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
+    // InternalGrana.g:3398:1: entryRulePropertyKey returns [String current=null] : iv_rulePropertyKey= rulePropertyKey EOF ;
     public final String entryRulePropertyKey() throws RecognitionException {
         String current = null;
 
@@ -8543,8 +8560,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
         		HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
         	
         try {
-            // InternalGrana.g:3397:2: (iv_rulePropertyKey= rulePropertyKey EOF )
-            // InternalGrana.g:3398:2: iv_rulePropertyKey= rulePropertyKey EOF
+            // InternalGrana.g:3402:2: (iv_rulePropertyKey= rulePropertyKey EOF )
+            // InternalGrana.g:3403:2: iv_rulePropertyKey= rulePropertyKey EOF
             {
              newCompositeNode(grammarAccess.getPropertyKeyRule()); 
             pushFollow(FOLLOW_1);
@@ -8574,7 +8591,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "rulePropertyKey"
-    // InternalGrana.g:3408:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
+    // InternalGrana.g:3413:1: rulePropertyKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) ;
     public final AntlrDatatypeRuleToken rulePropertyKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8586,11 +8603,11 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
         		HiddenTokens myHiddenTokenState = ((XtextTokenStream)input).setHiddenTokens();
             
         try {
-            // InternalGrana.g:3412:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
-            // InternalGrana.g:3413:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalGrana.g:3417:28: ( (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* ) )
+            // InternalGrana.g:3418:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
             {
-            // InternalGrana.g:3413:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
-            // InternalGrana.g:3413:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
+            // InternalGrana.g:3418:1: (this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )* )
+            // InternalGrana.g:3418:6: this_ID_0= RULE_ID (kw= '.' this_ID_2= RULE_ID )*
             {
             this_ID_0=(Token)match(input,RULE_ID,FOLLOW_59); 
 
@@ -8599,7 +8616,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
              
                 newLeafNode(this_ID_0, grammarAccess.getPropertyKeyAccess().getIDTerminalRuleCall_0()); 
                 
-            // InternalGrana.g:3420:1: (kw= '.' this_ID_2= RULE_ID )*
+            // InternalGrana.g:3425:1: (kw= '.' this_ID_2= RULE_ID )*
             loop73:
             do {
                 int alt73=2;
@@ -8612,7 +8629,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
                 switch (alt73) {
             	case 1 :
-            	    // InternalGrana.g:3421:2: kw= '.' this_ID_2= RULE_ID
+            	    // InternalGrana.g:3426:2: kw= '.' this_ID_2= RULE_ID
             	    {
             	    kw=(Token)match(input,60,FOLLOW_10); 
 
@@ -8659,7 +8676,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleStringValue"
-    // InternalGrana.g:3444:1: entryRuleStringValue returns [String current=null] : iv_ruleStringValue= ruleStringValue EOF ;
+    // InternalGrana.g:3449:1: entryRuleStringValue returns [String current=null] : iv_ruleStringValue= ruleStringValue EOF ;
     public final String entryRuleStringValue() throws RecognitionException {
         String current = null;
 
@@ -8667,8 +8684,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3445:2: (iv_ruleStringValue= ruleStringValue EOF )
-            // InternalGrana.g:3446:2: iv_ruleStringValue= ruleStringValue EOF
+            // InternalGrana.g:3450:2: (iv_ruleStringValue= ruleStringValue EOF )
+            // InternalGrana.g:3451:2: iv_ruleStringValue= ruleStringValue EOF
             {
              newCompositeNode(grammarAccess.getStringValueRule()); 
             pushFollow(FOLLOW_1);
@@ -8695,7 +8712,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleStringValue"
-    // InternalGrana.g:3453:1: ruleStringValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_STRING_0= RULE_STRING ;
+    // InternalGrana.g:3458:1: ruleStringValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_STRING_0= RULE_STRING ;
     public final AntlrDatatypeRuleToken ruleStringValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8704,8 +8721,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3456:28: (this_STRING_0= RULE_STRING )
-            // InternalGrana.g:3457:5: this_STRING_0= RULE_STRING
+            // InternalGrana.g:3461:28: (this_STRING_0= RULE_STRING )
+            // InternalGrana.g:3462:5: this_STRING_0= RULE_STRING
             {
             this_STRING_0=(Token)match(input,RULE_STRING,FOLLOW_2); 
 
@@ -8732,7 +8749,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleQualifiedIdValue"
-    // InternalGrana.g:3472:1: entryRuleQualifiedIdValue returns [String current=null] : iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF ;
+    // InternalGrana.g:3477:1: entryRuleQualifiedIdValue returns [String current=null] : iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF ;
     public final String entryRuleQualifiedIdValue() throws RecognitionException {
         String current = null;
 
@@ -8740,8 +8757,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3473:2: (iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF )
-            // InternalGrana.g:3474:2: iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF
+            // InternalGrana.g:3478:2: (iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF )
+            // InternalGrana.g:3479:2: iv_ruleQualifiedIdValue= ruleQualifiedIdValue EOF
             {
              newCompositeNode(grammarAccess.getQualifiedIdValueRule()); 
             pushFollow(FOLLOW_1);
@@ -8768,7 +8785,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleQualifiedIdValue"
-    // InternalGrana.g:3481:1: ruleQualifiedIdValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_QualifiedId_0= ruleQualifiedId ;
+    // InternalGrana.g:3486:1: ruleQualifiedIdValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : this_QualifiedId_0= ruleQualifiedId ;
     public final AntlrDatatypeRuleToken ruleQualifiedIdValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8778,8 +8795,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3484:28: (this_QualifiedId_0= ruleQualifiedId )
-            // InternalGrana.g:3486:5: this_QualifiedId_0= ruleQualifiedId
+            // InternalGrana.g:3489:28: (this_QualifiedId_0= ruleQualifiedId )
+            // InternalGrana.g:3491:5: this_QualifiedId_0= ruleQualifiedId
             {
              
                     newCompositeNode(grammarAccess.getQualifiedIdValueAccess().getQualifiedIdParserRuleCall()); 
@@ -8813,7 +8830,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleNumberValue"
-    // InternalGrana.g:3504:1: entryRuleNumberValue returns [String current=null] : iv_ruleNumberValue= ruleNumberValue EOF ;
+    // InternalGrana.g:3509:1: entryRuleNumberValue returns [String current=null] : iv_ruleNumberValue= ruleNumberValue EOF ;
     public final String entryRuleNumberValue() throws RecognitionException {
         String current = null;
 
@@ -8821,8 +8838,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3505:2: (iv_ruleNumberValue= ruleNumberValue EOF )
-            // InternalGrana.g:3506:2: iv_ruleNumberValue= ruleNumberValue EOF
+            // InternalGrana.g:3510:2: (iv_ruleNumberValue= ruleNumberValue EOF )
+            // InternalGrana.g:3511:2: iv_ruleNumberValue= ruleNumberValue EOF
             {
              newCompositeNode(grammarAccess.getNumberValueRule()); 
             pushFollow(FOLLOW_1);
@@ -8849,7 +8866,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleNumberValue"
-    // InternalGrana.g:3513:1: ruleNumberValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
+    // InternalGrana.g:3518:1: ruleNumberValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) ;
     public final AntlrDatatypeRuleToken ruleNumberValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8859,10 +8876,10 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3516:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
-            // InternalGrana.g:3517:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            // InternalGrana.g:3521:28: ( (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT ) )
+            // InternalGrana.g:3522:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
             {
-            // InternalGrana.g:3517:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
+            // InternalGrana.g:3522:1: (this_SIGNED_INT_0= RULE_SIGNED_INT | this_FLOAT_1= RULE_FLOAT )
             int alt74=2;
             int LA74_0 = input.LA(1);
 
@@ -8880,7 +8897,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             }
             switch (alt74) {
                 case 1 :
-                    // InternalGrana.g:3517:6: this_SIGNED_INT_0= RULE_SIGNED_INT
+                    // InternalGrana.g:3522:6: this_SIGNED_INT_0= RULE_SIGNED_INT
                     {
                     this_SIGNED_INT_0=(Token)match(input,RULE_SIGNED_INT,FOLLOW_2); 
 
@@ -8893,7 +8910,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:3525:10: this_FLOAT_1= RULE_FLOAT
+                    // InternalGrana.g:3530:10: this_FLOAT_1= RULE_FLOAT
                     {
                     this_FLOAT_1=(Token)match(input,RULE_FLOAT,FOLLOW_2); 
 
@@ -8926,7 +8943,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleBooleanValue"
-    // InternalGrana.g:3540:1: entryRuleBooleanValue returns [String current=null] : iv_ruleBooleanValue= ruleBooleanValue EOF ;
+    // InternalGrana.g:3545:1: entryRuleBooleanValue returns [String current=null] : iv_ruleBooleanValue= ruleBooleanValue EOF ;
     public final String entryRuleBooleanValue() throws RecognitionException {
         String current = null;
 
@@ -8934,8 +8951,8 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalGrana.g:3541:2: (iv_ruleBooleanValue= ruleBooleanValue EOF )
-            // InternalGrana.g:3542:2: iv_ruleBooleanValue= ruleBooleanValue EOF
+            // InternalGrana.g:3546:2: (iv_ruleBooleanValue= ruleBooleanValue EOF )
+            // InternalGrana.g:3547:2: iv_ruleBooleanValue= ruleBooleanValue EOF
             {
              newCompositeNode(grammarAccess.getBooleanValueRule()); 
             pushFollow(FOLLOW_1);
@@ -8962,7 +8979,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleBooleanValue"
-    // InternalGrana.g:3549:1: ruleBooleanValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
+    // InternalGrana.g:3554:1: ruleBooleanValue returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'true' | kw= 'false' ) ;
     public final AntlrDatatypeRuleToken ruleBooleanValue() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -8971,17 +8988,17 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // InternalGrana.g:3552:28: ( (kw= 'true' | kw= 'false' ) )
-            // InternalGrana.g:3553:1: (kw= 'true' | kw= 'false' )
+            // InternalGrana.g:3557:28: ( (kw= 'true' | kw= 'false' ) )
+            // InternalGrana.g:3558:1: (kw= 'true' | kw= 'false' )
             {
-            // InternalGrana.g:3553:1: (kw= 'true' | kw= 'false' )
+            // InternalGrana.g:3558:1: (kw= 'true' | kw= 'false' )
             int alt75=2;
             int LA75_0 = input.LA(1);
 
-            if ( (LA75_0==61) ) {
+            if ( (LA75_0==62) ) {
                 alt75=1;
             }
-            else if ( (LA75_0==62) ) {
+            else if ( (LA75_0==63) ) {
                 alt75=2;
             }
             else {
@@ -8992,9 +9009,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             }
             switch (alt75) {
                 case 1 :
-                    // InternalGrana.g:3554:2: kw= 'true'
+                    // InternalGrana.g:3559:2: kw= 'true'
                     {
-                    kw=(Token)match(input,61,FOLLOW_2); 
+                    kw=(Token)match(input,62,FOLLOW_2); 
 
                             current.merge(kw);
                             newLeafNode(kw, grammarAccess.getBooleanValueAccess().getTrueKeyword_0()); 
@@ -9003,9 +9020,9 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:3561:2: kw= 'false'
+                    // InternalGrana.g:3566:2: kw= 'false'
                     {
-                    kw=(Token)match(input,62,FOLLOW_2); 
+                    kw=(Token)match(input,63,FOLLOW_2); 
 
                             current.merge(kw);
                             newLeafNode(kw, grammarAccess.getBooleanValueAccess().getFalseKeyword_1()); 
@@ -9034,7 +9051,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleOutputType"
-    // InternalGrana.g:3574:1: ruleOutputType returns [Enumerator current=null] : ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) ;
+    // InternalGrana.g:3579:1: ruleOutputType returns [Enumerator current=null] : ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) ;
     public final Enumerator ruleOutputType() throws RecognitionException {
         Enumerator current = null;
 
@@ -9043,17 +9060,17 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
 
          enterRule(); 
         try {
-            // InternalGrana.g:3576:28: ( ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) )
-            // InternalGrana.g:3577:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
+            // InternalGrana.g:3581:28: ( ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) ) )
+            // InternalGrana.g:3582:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
             {
-            // InternalGrana.g:3577:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
+            // InternalGrana.g:3582:1: ( (enumLiteral_0= 'csv' ) | (enumLiteral_1= 'json' ) )
             int alt76=2;
             int LA76_0 = input.LA(1);
 
-            if ( (LA76_0==63) ) {
+            if ( (LA76_0==64) ) {
                 alt76=1;
             }
-            else if ( (LA76_0==64) ) {
+            else if ( (LA76_0==65) ) {
                 alt76=2;
             }
             else {
@@ -9064,12 +9081,12 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
             }
             switch (alt76) {
                 case 1 :
-                    // InternalGrana.g:3577:2: (enumLiteral_0= 'csv' )
+                    // InternalGrana.g:3582:2: (enumLiteral_0= 'csv' )
                     {
-                    // InternalGrana.g:3577:2: (enumLiteral_0= 'csv' )
-                    // InternalGrana.g:3577:4: enumLiteral_0= 'csv'
+                    // InternalGrana.g:3582:2: (enumLiteral_0= 'csv' )
+                    // InternalGrana.g:3582:4: enumLiteral_0= 'csv'
                     {
-                    enumLiteral_0=(Token)match(input,63,FOLLOW_2); 
+                    enumLiteral_0=(Token)match(input,64,FOLLOW_2); 
 
                             current = grammarAccess.getOutputTypeAccess().getCsvEnumLiteralDeclaration_0().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_0, grammarAccess.getOutputTypeAccess().getCsvEnumLiteralDeclaration_0()); 
@@ -9081,12 +9098,12 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalGrana.g:3583:6: (enumLiteral_1= 'json' )
+                    // InternalGrana.g:3588:6: (enumLiteral_1= 'json' )
                     {
-                    // InternalGrana.g:3583:6: (enumLiteral_1= 'json' )
-                    // InternalGrana.g:3583:8: enumLiteral_1= 'json'
+                    // InternalGrana.g:3588:6: (enumLiteral_1= 'json' )
+                    // InternalGrana.g:3588:8: enumLiteral_1= 'json'
                     {
-                    enumLiteral_1=(Token)match(input,64,FOLLOW_2); 
+                    enumLiteral_1=(Token)match(input,65,FOLLOW_2); 
 
                             current = grammarAccess.getOutputTypeAccess().getJsonEnumLiteralDeclaration_1().getEnumLiteral().getInstance();
                             newLeafNode(enumLiteral_1, grammarAccess.getOutputTypeAccess().getJsonEnumLiteralDeclaration_1()); 
@@ -9138,7 +9155,7 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_15 = new BitSet(new long[]{0x0000002000400080L});
     public static final BitSet FOLLOW_16 = new BitSet(new long[]{0x0000000000800010L});
     public static final BitSet FOLLOW_17 = new BitSet(new long[]{0x0000000001000010L});
-    public static final BitSet FOLLOW_18 = new BitSet(new long[]{0x8000002000000080L,0x0000000000000001L});
+    public static final BitSet FOLLOW_18 = new BitSet(new long[]{0x0000002000000080L,0x0000000000000003L});
     public static final BitSet FOLLOW_19 = new BitSet(new long[]{0x0000000000800000L});
     public static final BitSet FOLLOW_20 = new BitSet(new long[]{0x0000000008000010L});
     public static final BitSet FOLLOW_21 = new BitSet(new long[]{0x0000001680000000L});
@@ -9180,6 +9197,6 @@ public class InternalGranaParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_57 = new BitSet(new long[]{0x0404000000000010L});
     public static final BitSet FOLLOW_58 = new BitSet(new long[]{0x0004000000000010L});
     public static final BitSet FOLLOW_59 = new BitSet(new long[]{0x1000000000000002L});
-    public static final BitSet FOLLOW_60 = new BitSet(new long[]{0x60000000000000F0L});
+    public static final BitSet FOLLOW_60 = new BitSet(new long[]{0xE0000000000000F0L});
 
 }

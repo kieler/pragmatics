@@ -1422,6 +1422,14 @@ rule__Property__Alternatives_2
 { after(grammarAccess.getPropertyAccess().getValueAssignment_2_3()); }
 )
 
+    |(
+{ before(grammarAccess.getPropertyAccess().getNullKeyword_2_4()); }
+
+	'null' 
+
+{ after(grammarAccess.getPropertyAccess().getNullKeyword_2_4()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);
