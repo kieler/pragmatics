@@ -192,7 +192,7 @@ class Ptolemy2KGraphVisualization {
      * @param node the node to attach the rendering information to.
      */
     def private void addCompoundNodeRendering(KNode node) {
-        node.setProperty(KlighdProperties::EXPAND, false)
+        node.setProperty(KlighdProperties::EXPAND, !options.initiallyCollapsed)
         node.setProperty(CoreOptions::NODE_LABELS_PLACEMENT, EnumSet::of(
             NodeLabelPlacement::OUTSIDE, NodeLabelPlacement::H_LEFT, NodeLabelPlacement::V_TOP))
         ExpansionAwareLayoutOption::setProperty(node, CoreOptions::PORT_CONSTRAINTS,

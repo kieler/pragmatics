@@ -15,8 +15,10 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation.util;
 
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * Contains constants used during the transformations. This class is not to be instantiated.
@@ -92,6 +94,19 @@ public final class TransformationConstants {
 
     /** Class of an entity that is an FSM state machine state. */
     public static final String ENTITY_CLASS_FSM_STATE = "ptolemy.domains.fsm.kernel.State";
+    
+    /** Class of an entity that is an FSM state machine state. */
+    public static final String ENTITY_CLASS_FMV_STATE = "ptolemy.domains.modal.kernel.fmv.FmvState";
+    
+    /** Classes of entities that occur in the models shipping with ptolemy, 
+     *  for which it hasn't been checked what they really are. Most of them are probably states. */
+    public static final Set<String> ENTITY_MAYBE_STATE_NOT_SURE =
+            Sets.newHashSet("ptolemy.domains.modal.kernel.InterfaceAutomaton",
+                    "ptolemy.domains.modal.kernel.ia.InterfaceAutomaton",
+                    "ptolemy.domains.modal.modal.ModalRefinement",
+                    "ptolemy.domains.modal.kernel.fmv.FmvAutomaton",
+                    "ptolemy.domains.modal.modal.TransitionRefinement",
+                    "ptolemy.domains.modal.demo.ABP.Receiver");
     
     /** Class of an entity that is a Const actor. */
     public static final String ENTITY_CLASS_CONST = "ptolemy.actor.lib.Const";

@@ -221,6 +221,13 @@ class Ptolemy2KGraphTransformation {
                     kNode.markAsStateMachineContainer()
                 }
             }
+        } else if (ENTITY_MAYBE_STATE_NOT_SURE.contains(ptEntity.class1)) {
+            kNode.markAsStateMachineContainer
+            if (options.transformStates) {
+                kNode.addChildEntities(ptEntity.entity)
+                kNode.addChildRelations(ptEntity.relation)
+                kNode.addChildLinks(ptEntity.link)
+            }
         } else {
             // Add the required relations, links, and child entities
             actorClasses.addAll(ptEntity.class_.map[c | transform(c)])
