@@ -23,19 +23,14 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.formats.AbstractEmfHandler;
-import de.cau.cs.kieler.formats.GraphFormatData;
-import de.cau.cs.kieler.formats.GraphFormatsService;
 import de.cau.cs.kieler.formats.IGraphTransformer;
 import de.cau.cs.kieler.formats.TransformationData;
-import de.cau.cs.kieler.formats.kgraph.KGraphHandler;
 import de.cau.cs.kieler.graphs.testcases.FiltersAndModifiers;
 import de.cau.cs.kieler.graphs.testcases.ITestCaseGraphProvider;
 import de.cau.cs.kieler.kaom.Entity;
 import de.cau.cs.kieler.kaom.KaomPackage;
-import de.cau.cs.kieler.klighd.LightDiagramLayoutConfig;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
-import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 
 /**
@@ -137,24 +132,6 @@ public class KaotFormatHandler extends AbstractEmfHandler<Entity> implements ITe
                     "Applying layout to a kaot file is not supported.");
         }
         
-        private ElkNode layoutAndToElkNode(ViewContext vc) {
-            // important! otherwise nodes may not have a proper size
-            new LightDiagramLayoutConfig(vc).performLayout();
-            
-            KNode kgraph = vc.getViewModel();
-            // now make it a elk graph
-            GraphFormatData kgraphFormat =
-                    GraphFormatsService.getInstance().getFormatData(KGraphHandler.ID);
-            @SuppressWarnings("unchecked")
-            IGraphTransformer<KNode, ElkNode> importer =
-                    (IGraphTransformer<KNode, ElkNode>) kgraphFormat.getHandler().getImporter();
-            TransformationData<KNode, ElkNode> td = new TransformationData<>();
-            td.setSourceGraph(kgraph);
-            importer.transform(td);
-            ElkNode elkGraph = td.getTargetGraphs().get(0);
-            
-            return elkGraph;
-        }
     }
     
 }

@@ -9,15 +9,16 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.core.resources,
  de.cau.cs.kieler.formats,
- org.eclipse.elk.graph;bundle-version="0.3.0",
- de.cau.cs.kieler.klighd.kgraph;bundle-version="0.43.0",
- de.cau.cs.kieler.klighd;bundle-version="0.43.0",
- org.ptolemy.moml;bundle-version="1.0.1",
+ org.eclipse.elk.graph,
+ de.cau.cs.kieler.klighd.kgraph,
+ de.cau.cs.kieler.klighd,
  com.google.guava,
  org.eclipse.xtext.xbase.lib,
  org.eclipse.xtend.lib,
  org.eclipse.xtend.lib.macro,
- org.eclipse.elk.core
+ org.eclipse.elk.core,
+ de.cau.cs.kieler.formats.kgraph,
+ org.eclipse.emf.ecore.xmi
 Export-Package: de.cau.cs.kieler.graphs.testcases
 Bundle-Vendor: Kiel University
 
