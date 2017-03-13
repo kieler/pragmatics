@@ -1,0 +1,22 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Formats for SCCharts
+Bundle-SymbolicName: de.cau.cs.kieler.formats.sccharts;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Require-Bundle: org.eclipse.elk.core,
+ org.eclipse.elk.graph,
+ de.cau.cs.kieler.formats,
+ de.cau.cs.kieler.kico,
+ de.cau.cs.kieler.sccharts.klighd,
+ de.cau.cs.kieler.circuit.klighd,
+ de.cau.cs.kieler.scg.klighd,
+ de.cau.cs.kieler.klighd,
+ de.cau.cs.kieler.graphs.testcases,
+ de.cau.cs.kieler.sccharts,
+ de.cau.cs.kieler.formats.kgraph,
+ de.cau.cs.kieler.scg,
+ de.cau.cs.kieler.circuit,
+ org.eclipse.elk.alg.layered
+Export-Package: de.cau.cs.kieler.formats.sccharts
+Bundle-Vendor: Kiel University
