@@ -18,12 +18,13 @@ import java.util.HashSet;
 import org.eclipse.elk.alg.force.options.StressOptions;
 import org.eclipse.elk.alg.force.stress.StressLayoutProvider;
 import org.eclipse.elk.alg.radial.RadialUtil;
-import org.eclipse.elk.alg.radial.edgeRouting.ExplosionLineRouter;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
+
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial.ExplosionLineRouter;
 
 /**
  * Layout provider for a hierarchical graph that uses elk stress to compute a

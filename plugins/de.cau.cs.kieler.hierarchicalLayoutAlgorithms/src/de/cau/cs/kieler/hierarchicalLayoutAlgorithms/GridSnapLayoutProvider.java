@@ -22,13 +22,14 @@ import java.util.Map;
 import org.eclipse.elk.alg.force.ForceLayoutProvider;
 import org.eclipse.elk.alg.force.options.ForceOptions;
 import org.eclipse.elk.alg.radial.RadialUtil;
-import org.eclipse.elk.alg.radial.edgeRouting.ExplosionLineRouter;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
+
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial.ExplosionLineRouter;
 
 /** Discarded */
 public class GridSnapLayoutProvider extends AbstractLayoutProvider {

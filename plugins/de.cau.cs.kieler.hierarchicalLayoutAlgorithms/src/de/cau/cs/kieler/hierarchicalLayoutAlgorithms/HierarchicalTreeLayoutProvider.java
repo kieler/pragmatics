@@ -25,8 +25,6 @@ import org.eclipse.elk.alg.layered.options.FixedAlignment;
 import org.eclipse.elk.alg.layered.options.GreedySwitchType;
 import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.alg.radial.RadialUtil;
-import org.eclipse.elk.alg.radial.edgeRouting.ExplosionLineRouter;
-import org.eclipse.elk.alg.radial.options.RadialOptions;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Alignment;
@@ -41,6 +39,8 @@ import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Lists;
+
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial.ExplosionLineRouter;
 
 /**
  * Layout Provider for a hierarchical graph that uses two runs of elk layered to
@@ -88,13 +88,13 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		children = layoutGraph.getChildren();
 		edges = HierarchicalUtil.getHierarchicalEdges(layoutGraph);
 		root = RadialUtil.findRoot(layoutGraph);
-		RadialUtil.initializeOriginalNodeMapping(root);
+		HierarchicalUtil.initializeOriginalNodeMapping(root);
 		secondHierarchyNodes = RadialUtil.getSuccessors(root);
-		polarCompBot = RadialUtil.createPolarComparator(BOTTOM_CIRCLE);
-		polarCompTop = RadialUtil.createPolarComparator(TOP_CIRCLE);
+		polarCompBot = RadialUtil.createPolarComparator(BOTTOM_CIRCLE,0);
+		polarCompTop = RadialUtil.createPolarComparator(TOP_CIRCLE,0);
 		compY = (n1, n2) -> {
-			ElkNode orginalNode1 = n1.getProperty(RadialOptions.ORIGINAL_NODE);
-			ElkNode orginalNode2 = n2.getProperty(RadialOptions.ORIGINAL_NODE);
+			ElkNode orginalNode1 = n1.getProperty(HierarchicalTreeOptions.ORIGINAL_NODE);
+			ElkNode orginalNode2 = n2.getProperty(HierarchicalTreeOptions.ORIGINAL_NODE);
 
 			if (orginalNode1.getY() < orginalNode2.getY()) {
 				return -1;
@@ -330,7 +330,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			ElkNode target = nodeMap.get(targetOriginalNode);
 			if ((source != null) && (target != null)) {
 				// TODO Use ports for better centering.
-				ElkNode n = targetOriginalNode.getProperty(RadialOptions.ORIGINAL_NODE);
+				ElkNode n = targetOriginalNode.getProperty(HierarchicalTreeOptions.ORIGINAL_NODE);
 				// System.out.println(n.toString());
 				// System.out.println("Node: " + n.getX() + n.getWidth() / 2);
 				double portPositionX = n.getX() + n.getWidth() / 2;
