@@ -32,9 +32,9 @@ public class HierarchicalRadialLayoutProvider extends AbstractLayoutProvider {
 	@Override
 	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		RadialLayoutProvider radialLayouter = new RadialLayoutProvider();
-		layoutGraph.setProperty(RadialOptions.COMPACTOR, EnumCompaction.RADIAL_COMPACTION);
+		layoutGraph.setProperty(RadialOptions.COMPACTOR, EnumCompaction.WEDGE_COMPACTION);
 		layoutGraph.setProperty(RadialOptions.SORTER, EnumSortingAlgorithms.POLARCOORDINATE);
-		layoutGraph.setProperty(RadialOptions.EDGE_ROUTER, EnumEdgeRouting.EXPLOSION_LINE);
+		layoutGraph.setProperty(RadialOptions.EDGE_ROUTER, EnumEdgeRouting.STRAIGHT_LINE);
 		radialLayouter.layout(layoutGraph, progressMonitor);
 	}
 

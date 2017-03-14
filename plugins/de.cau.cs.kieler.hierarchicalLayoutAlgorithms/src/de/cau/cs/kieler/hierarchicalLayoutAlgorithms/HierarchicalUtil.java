@@ -14,7 +14,9 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
 import java.util.HashSet;
+import java.util.List;
 
+import org.eclipse.elk.alg.radial.RadialUtil;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
@@ -27,6 +29,31 @@ public final class HierarchicalUtil {
 		// Do nothing
 	}
 
+	
+    /***/
+    public static void initializeOriginalNodeMapping(final ElkNode root) {
+        List<ElkNode> successors = RadialUtil.getSuccessors(root);
+
+        List<ElkNode> children = root.getChildren();
+        for (ElkNode child : children) {
+            Integer childID = child.getProperty(HierarchicalMetaDataProvider.NODE_ID);
+            if (childID != null) {
+
+                ElkNode removeNode = null;
+                for (ElkNode successor : successors) {
+                    Integer successorID = successor.getProperty(HierarchicalMetaDataProvider.PARENT_ID);
+                    if (childID.equals(successorID)) {
+                        successor.setProperty(HierarchicalTreeOptions.ORIGINAL_NODE, child);
+                        removeNode = successor;
+                        break;
+                    }
+                }
+                initializeOriginalNodeMapping(removeNode);
+                successors.remove(removeNode);
+            }
+        }
+    }
+    
 	/**
 	 * Computes a list of edges that are the hierarchical edges of the graph.
 	 * 
