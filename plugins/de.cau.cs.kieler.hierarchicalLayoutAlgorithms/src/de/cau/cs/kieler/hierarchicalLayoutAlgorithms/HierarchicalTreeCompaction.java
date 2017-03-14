@@ -1,45 +1,64 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.alg.layered.p2layers.LongestPathLayerer;
 import org.eclipse.elk.graph.ElkNode;
-import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+/**
+ * 
+ */
 public class HierarchicalTreeCompaction {
 
-	public void compact(List<ElkNode> firstRunList, List<ElkNode> secondRunList, double seperator,
-			Map<ElkNode, Integer> nodeHierarchyDepth) {
+	/**
+	 * 
+	 * @param firstRunList
+	 * @param secondRunList
+	 * @param seperator
+	 * @param nodeHierarchyDepth
+	 */
+	public void compact(final Map<Integer, List<ElkNode>> firstRunDepthNodeList,
+			final Map<Integer, List<ElkNode>> secondRunDepthNodeList, final double seperator,
+			final Map<ElkNode, Integer> nodeHierarchyDepth, final int largestHierarchyDepth) {
 
-		List<ElkNode> leftTopQuarter = new ArrayList<ElkNode>();
-		List<ElkNode> rightTopQuarter = new ArrayList<ElkNode>();
-		List<ElkNode> leftBotQuarter = new ArrayList<ElkNode>();
-		List<ElkNode> rightBotQuarter = new ArrayList<ElkNode>();
+		Map<Integer, List<ElkNode>> leftTopQuarter = new HashMap<Integer, List<ElkNode>>();
+		Map<Integer, List<ElkNode>> rightTopQuarter = new HashMap<Integer, List<ElkNode>>();
+		Map<Integer, List<ElkNode>> leftBotQuarter = new HashMap<Integer, List<ElkNode>>();
+		Map<Integer, List<ElkNode>> rightBotQuarter = new HashMap<Integer, List<ElkNode>>();
 
-		for (ElkNode node : firstRunList) {
-			if (node.getX() < seperator) {
-				leftTopQuarter.add(node);
-			} else {
-				rightTopQuarter.add(node);
+		for (int i = 1; i <= largestHierarchyDepth; i++) {
+			List<ElkNode> leftTempList = new ArrayList<ElkNode>();
+			List<ElkNode> rightTempList = new ArrayList<ElkNode>();
+			if (firstRunDepthNodeList.containsKey(i)) {
+				for (ElkNode node : firstRunDepthNodeList.get(i)) {
+					if (node.getX() < seperator) {
+						leftTempList.add(node);
+					} else {
+						rightTempList.add(node);
+					}
+				}
+				leftTopQuarter.put(i, leftTempList);
+				rightTopQuarter.put(i, rightTempList);
+			}
+			leftTempList.clear();
+			rightTempList.clear();
+			if (secondRunDepthNodeList.containsKey(i)) {
+				for (ElkNode node : secondRunDepthNodeList.get(i)) {
+					if (node.getX() < seperator) {
+						leftTempList.add(node);
+					} else {
+						rightTempList.add(node);
+					}
+				}
+				leftBotQuarter.put(i, leftTempList);
+				rightBotQuarter.put(i, rightTempList);
 			}
 		}
-		for (ElkNode node : secondRunList) {
-			if (node.getX() < seperator) {
-				leftBotQuarter.add(node);
-			} else {
-				rightBotQuarter.add(node);
-			}
-		}
-		// TODO Put correct nodes in blocks / add edges between nodes?
-		for (ElkNode node : leftTopQuarter) {
-			nodeHierarchyDepth.get(node);
-//			ElkGraphUtil.createSimpleEdge(source, target);
-		}
 
-		// TODO Self implementation maybe
-		LongestPathLayerer longestPath = new LongestPathLayerer();
+		// TODO calculate space that can be compacted
+		// TODO actual compaction
 	}
 
 }
