@@ -126,7 +126,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * 
 	 * @param layoutGraph
 	 */
-	private void layeredTreeLayout(final ElkNode layoutGraph, IElkProgressMonitor pm) {
+	private void layeredTreeLayout(final ElkNode layoutGraph, final IElkProgressMonitor pm) {
 		// Compute the two Lists of nodes for the two runs of Elk-Layered with a
 		// Tree representation.
 		treeSeperator = secondHierarchyNodes.size() / 2;
@@ -135,9 +135,45 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		// TODO Better distribution of nodes in the two runs for a similar width
 		// in both runs.
 
+		// TODO calculate max width hierarchy
+		List<ElkNode> tempTreeList = new ArrayList<ElkNode>();
+		tempTreeList.addAll(secondHierarchyNodes);
+		buildNodeList(tempTreeList, polarCompBot);
+		Map<Integer, Double> hierarchyWidth = new HashMap<Integer, Double>();
+		calculateHierarchyWidth(hierarchyWidth, tempTreeList);
+		int depthWithLargestWidth = calculateDepthOfLargestHierarchyWidth(hierarchyWidth);
+
+//		if (firstRunHierarchyWidth.get(firstDepthWithLargestWidth) > secondRunHierarchyWidth
+//				.get(secondDepthWithLargestWidth)) {
+//			double newFirstLargestWidth = firstRunHierarchyWidth.get(firstDepthWithLargestWidth);
+//			double newSecondLargestWidth = secondRunHierarchyWidth.get(firstDepthWithLargestWidth);
+//			double difference = newFirstLargestWidth - newSecondLargestWidth;
+//			for (ElkNode node : firstRunList) {
+//				if (firstDepthWithLargestWidth > 1) {
+//					if (nodeHierarchyDepth.get(node) == firstDepthWithLargestWidth - 1) {
+//						// System.out.println(node);
+//						
+//					}
+//				} else {
+//					if (nodeHierarchyDepth.get(node) == firstDepthWithLargestWidth) {
+//						// System.out.println(node);
+//						// TODO Possible to achieve better differences by
+//						// adding / subtracting more than one node
+//						double tempDifference = (newFirstLargestWidth - node.getWidth())
+//								- (newSecondLargestWidth + node.getWidth());
+//						// System.out.println(tempDifference);
+//						if (difference > Math.abs(tempDifference)) {
+////							 System.out.println(node);
+//						}
+//					}
+//				}
+//			}
+//		} else {
+//			
+//		}
+		
 		List<ElkNode> sortedYNodes = new ArrayList<ElkNode>();
 		sortedYNodes.addAll(secondHierarchyNodes);
-
 		sortedYNodes.sort(compY);
 		int i = 0;
 		for (ElkNode node : sortedYNodes) {
@@ -149,48 +185,12 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			i++;
 		}
 
+		nodeHierarchyDepth.put(root, 0);
 		buildNodeList(firstRunList, polarCompBot);
 		buildNodeList(secondRunList, polarCompTop);
 		secondRunList = Lists.reverse(secondRunList);
 
-		// TODO calculate max width hierarchy
-		Map<Integer, Double> firstRunHierarchyWidth = new HashMap<Integer, Double>();
-		Map<Integer, Double> secondRunHierarchyWidth = new HashMap<Integer, Double>();
-		calculateHierarchyWidth(firstRunHierarchyWidth, firstRunList);
-		calculateHierarchyWidth(secondRunHierarchyWidth, secondRunList);
-		int firstDepthWithLargestWidth = calculateDepthOfLargestHierarchyWidth(firstRunHierarchyWidth);
-		int secondDepthWithLargestWidth = calculateDepthOfLargestHierarchyWidth(secondRunHierarchyWidth);
 
-		// System.out.println(firstRunHierarchyWidth);
-		// System.out.println(secondRunHierarchyWidth);
-		if (firstRunHierarchyWidth.get(firstDepthWithLargestWidth) > secondRunHierarchyWidth
-				.get(secondDepthWithLargestWidth)) {
-			double newFirstLargestWidth = firstRunHierarchyWidth.get(firstDepthWithLargestWidth);
-			double newSecondLargestWidth = secondRunHierarchyWidth.get(firstDepthWithLargestWidth);
-			double difference = newFirstLargestWidth - newSecondLargestWidth;
-			for (ElkNode node : firstRunList) {
-				if (firstDepthWithLargestWidth > 1) {
-					if (nodeHierarchyDepth.get(node) == firstDepthWithLargestWidth - 1) {
-						// System.out.println(node);
-
-					}
-				} else {
-					if (nodeHierarchyDepth.get(node) == firstDepthWithLargestWidth) {
-						// System.out.println(node);
-						// TODO Possible to achieve better differences by
-						// adding / subtracting more than one node
-						double tempDifference = (newFirstLargestWidth - node.getWidth())
-								- (newSecondLargestWidth + node.getWidth());
-						// System.out.println(tempDifference);
-						if (difference > Math.abs(tempDifference)) {
-							// System.out.println("Hallo");
-						}
-					}
-				}
-			}
-		} else {
-
-		}
 
 		// TODO node spacing according to width
 		// First run for upward tree
@@ -318,6 +318,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			int off = offset[nodeHierarchyDepth.get(node) - 1];
 			tempNode.setProperty(LayeredOptions.POSITION, new KVector(off, 0));
 			tempNode.setProperty(LayeredOptions.ALIGNMENT, Alignment.CENTER);
+//			tempNode.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
 			offset[nodeHierarchyDepth.get(node) - 1] = (int) (off + node.getWidth() + OFFSET);
 			ElkUtil.resizeNode(tempNode, node.getWidth(), node.getHeight(), false, false);
 			nodeMap.put(node, tempNode);
@@ -353,7 +354,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * @param runList
 	 * @param comp
 	 */
-	private void buildNodeList(List<ElkNode> runList, Comparator<ElkNode> comp) {
+	private void buildNodeList(final List<ElkNode> runList, final Comparator<ElkNode> comp) {
 		runList.sort(comp);
 		List<ElkNode> tempList = new ArrayList<ElkNode>();
 		for (ElkNode node : runList) {
@@ -390,7 +391,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * @param hierarchyWidth
 	 * @param runList
 	 */
-	private void calculateHierarchyWidth(Map<Integer, Double> hierarchyWidth, List<ElkNode> runList) {
+	private void calculateHierarchyWidth(final Map<Integer, Double> hierarchyWidth, final List<ElkNode> runList) {
 		for (int j = 1; j <= hierarchyDepth; j++) {
 			hierarchyWidth.put(j, 0.0);
 		}
@@ -406,7 +407,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * @param hierarchyWidth
 	 * @return Hierarchy depth with largest width.
 	 */
-	private int calculateDepthOfLargestHierarchyWidth(Map<Integer, Double> hierarchyWidth) {
+	private int calculateDepthOfLargestHierarchyWidth(final Map<Integer, Double> hierarchyWidth) {
 		double largestWidth = 0.0;
 		int depthWithLargestWidth = 0;
 		for (int j = 1; j <= hierarchyDepth; j++) {
