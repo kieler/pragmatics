@@ -317,8 +317,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			int off = offset[nodeHierarchyDepth.get(node) - 1];
 			tempNode.setProperty(LayeredOptions.POSITION, new KVector(off, 0));
 			tempNode.setProperty(LayeredOptions.ALIGNMENT, Alignment.CENTER);
-			// tempNode.setProperty(LayeredOptions.PORT_CONSTRAINTS,
-			// PortConstraints.FIXED_POS);
+			tempNode.setProperty(LayeredOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_POS);
 			offset[nodeHierarchyDepth.get(node) - 1] = (int) (off + node.getWidth() + OFFSET);
 			ElkUtil.resizeNode(tempNode, node.getWidth(), node.getHeight(), false, false);
 			nodeMap.put(node, tempNode);
@@ -333,10 +332,13 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				ElkNode n = targetOriginalNode.getProperty(HierarchicalTreeOptions.ORIGINAL_NODE);
 				// System.out.println(n.toString());
 				// System.out.println("Node: " + n.getX() + n.getWidth() / 2);
-				double portPositionX = n.getX() + n.getWidth() / 2;
+//				double portPositionX = n.getX() + n.getWidth() / 2;
+//				double portPositionX = source.getX() + n.getX();
+				double portPositionX = n.getX();
+				System.out.println(portPositionX);
 				ElkPort port = ElkGraphUtil.createPort(n);
 				source.getPorts().add(port);
-				port.setLocation(portPositionX, source.getY() + source.getHeight());
+				port.setLocation(portPositionX, source.getY());
 				// System.out.println("Port: " + port.getX());
 				ElkGraphUtil.createSimpleEdge(port, target);
 				// ElkGraphUtil.createSimpleEdge(source, target);
