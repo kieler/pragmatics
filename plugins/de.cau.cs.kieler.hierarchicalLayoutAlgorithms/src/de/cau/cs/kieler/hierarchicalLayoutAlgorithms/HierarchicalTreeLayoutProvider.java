@@ -84,7 +84,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 */
 	private Map<Integer, List<ElkNode>> secondRunDepthNodeList;
 	// TODO Option
-	private static final boolean WIDTHHEURISTIC = true;
+	private static final boolean WIDTHHEURISTIC = false;
 
 	@Override
 	public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
@@ -114,7 +114,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 			progressMonitor.begin("Edge Routing", 3);
 			ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
-			edgeRouter.routeEdges(RadialUtil.findRoot(layoutGraph));
+			edgeRouter.routeExplsionLines(RadialUtil.findRoot(layoutGraph));
 
 			progressMonitor.begin("Compaction", 3);
 			HierarchicalTreeCompaction compaction = new HierarchicalTreeCompaction();
@@ -123,7 +123,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			
 //			progressMonitor.begin("Edge Routing", 4);
 //			ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
-//			edgeRouter.routeEdges(RadialUtil.findRoot(layoutGraph));
+//			edgeRouter.routeExplsionLines(RadialUtil.findRoot(layoutGraph));
 		}
 		progressMonitor.done();
 	}
@@ -409,6 +409,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			final double nodeOffset, final int depth, final Map<Integer, List<ElkNode>> depthNodeList) {
 		List<ElkNode> compList = RadialUtil.getSuccessors(node);
 		Comparator<ElkNode> comp = RadialUtil.createPolarComparator(radialOffset, nodeOffset);
+		System.out.println(compList);
 		compList.sort(comp);
 		for (ElkNode n : compList) {
 			tempList.add(n);
