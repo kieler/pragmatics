@@ -56,7 +56,7 @@ public class GridSnapLayoutProvider extends AbstractLayoutProvider {
 		minimizingWhitespaceGrid(layoutGraph);
 
 		ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
-		edgeRouter.routeEdges(RadialUtil.findRoot(layoutGraph));
+		edgeRouter.routeExplsionLines(RadialUtil.findRoot(layoutGraph));
 
 		progressMonitor.done();
 	}

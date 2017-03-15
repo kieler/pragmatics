@@ -15,8 +15,8 @@ package de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial;
 
 import org.eclipse.elk.alg.radial.RadialLayoutProvider;
 import org.eclipse.elk.alg.radial.options.EnumCompaction;
+import org.eclipse.elk.alg.radial.options.EnumSortingAlgorithms;
 import org.eclipse.elk.alg.radial.options.RadialOptions;
-import org.eclipse.elk.alg.radial.sorting.EnumSortingAlgorithms;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -32,7 +32,7 @@ public class HierarchicalRadialLayoutProvider extends AbstractLayoutProvider {
 	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		RadialLayoutProvider radialLayouter = new RadialLayoutProvider();
 		layoutGraph.setProperty(RadialOptions.COMPACTOR, EnumCompaction.RADIAL_COMPACTION);
-		layoutGraph.setProperty(RadialOptions.SORTER, EnumSortingAlgorithms.POLARCOORDINATE);
+		layoutGraph.setProperty(RadialOptions.SORTER, EnumSortingAlgorithms.POLAR_COORDINATE);
 		radialLayouter.layout(layoutGraph, progressMonitor);
 		
 		new ExplosionLineRouter().bendEdgesToHierarchicalEdges(layoutGraph.getProperty(RadialOptions.ROOT_NODE));
