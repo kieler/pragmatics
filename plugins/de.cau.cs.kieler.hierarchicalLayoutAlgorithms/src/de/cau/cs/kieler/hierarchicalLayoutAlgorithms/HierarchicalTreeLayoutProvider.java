@@ -116,9 +116,14 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		secondRunList = new ArrayList<ElkNode>();
 		firstRunDepthNodeList = new HashMap<Integer, List<ElkNode>>();
 		secondRunDepthNodeList = new HashMap<Integer, List<ElkNode>>();
-
-		if (secondHierarchyNodes.size() > 0) {
-			layeredTreeLayout(layoutGraph, progressMonitor);
+		int size = secondHierarchyNodes.size();
+		
+		if (size > 0) {
+			if (size > 1) {
+				layeredTwoDimensionalTreeLayout(layoutGraph, progressMonitor);
+			} else {
+				layeredOneDimensionalTreeLayout(layoutGraph, progressMonitor);
+			}
 
 			progressMonitor.begin("Edge Routing", 3);
 			ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
@@ -144,9 +149,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * 
 	 * @param layoutGraph
 	 */
-	private void layeredTreeLayout(final ElkNode layoutGraph, final IElkProgressMonitor pm) {
-		// TODO secondHierarchy.size == 1
-
+	private void layeredTwoDimensionalTreeLayout(final ElkNode layoutGraph, final IElkProgressMonitor pm) {
 		if (WIDTHHEURISTIC) {
 			List<ElkNode> tempTreeList = new ArrayList<ElkNode>();
 			Map<ElkNode, Double> propagatingWidth = new HashMap<ElkNode, Double>();
@@ -156,7 +159,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			Map<Integer, List<ElkNode>> depthNodeList = new HashMap<Integer, List<ElkNode>>();
 			tempTreeList.addAll(secondHierarchyNodes);
 			buildNodeList(tempTreeList, 0, 0, depthNodeList, false);
-			System.out.println(depthNodeList);
 			Map<Integer, Double> hierarchyWidth = new HashMap<Integer, Double>();
 			calculateHierarchyWidth(hierarchyWidth, tempTreeList);
 			int depthWithLargestWidth = calculateDepthOfLargestHierarchyWidth(hierarchyWidth);
@@ -166,7 +168,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				while (depthWithLargestWidth > 1) {
 					for (ElkNode node : depthNodeList.get(depthWithLargestWidth)) {
 						ElkNode parent = RadialUtil.getTreeParent(node);
-						System.out.println(parent);
 						double width = propagatingWidth.get(parent) + node.getWidth();
 						propagatingWidth.put(parent, width);
 					}
@@ -309,6 +310,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 		// Computes the smallest relative distance from the root to the other
 		// nodes from the first run.
+		// TODO Spacing if firstDistance is very short
 		double firstDistanceToRoot = Double.MAX_VALUE;
 		for (ElkNode node : children) {
 			if (firstRunMap.containsKey(node)) {
@@ -338,6 +340,19 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 
 		layoutGraph.setHeight(yDisplacement + secondRun.getHeight());
+	}
+	
+	/**
+	 * TODO
+	 * 
+	 * @param layoutGraph
+	 * @param pm
+	 */
+	private void layeredOneDimensionalTreeLayout(final ElkNode layoutGraph, final IElkProgressMonitor pm) {
+		System.out.println("Size ist 1");
+		configureTreeLayout(layoutGraph, Direction.DOWN);
+		LayeredLayoutProvider layered = new LayeredLayoutProvider();
+		layered.layout(layoutGraph, pm.subTask(1));
 	}
 
 	/**
@@ -506,12 +521,12 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * @param node
 	 * @param dir
 	 */
-	private void configureTreeLayout(final ElkNode node, final Direction dir) {
-		node.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
-		node.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
-		node.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
-		node.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
-		node.setProperty(LayeredOptions.DIRECTION, dir);
+	private void configureTreeLayout(final ElkNode layoutGraph, final Direction dir) {
+		layoutGraph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_SEMI_INTERACTIVE, true);
+		layoutGraph.setProperty(LayeredOptions.NODE_PLACEMENT_BK_FIXED_ALIGNMENT, FixedAlignment.BALANCED);
+		layoutGraph.setProperty(LayeredOptions.EDGE_ROUTING, EdgeRouting.POLYLINE);
+		layoutGraph.setProperty(LayeredOptions.CROSSING_MINIMIZATION_GREEDY_SWITCH_TYPE, GreedySwitchType.OFF);
+		layoutGraph.setProperty(LayeredOptions.DIRECTION, dir);
 	}
 
 }
