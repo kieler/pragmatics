@@ -3382,7 +3382,12 @@ ruleProperty returns [EObject current=null]
 	    }
 
 )
-)))
+)
+    |	otherlv_6='null' 
+    {
+    	newLeafNode(otherlv_6, grammarAccess.getPropertyAccess().getNullKeyword_2_4());
+    }
+))
 ;
 
 

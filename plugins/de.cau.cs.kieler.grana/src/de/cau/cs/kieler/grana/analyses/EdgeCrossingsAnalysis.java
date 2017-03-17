@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
@@ -27,9 +25,11 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
-import org.eclipse.elk.graph.KPort;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
 import de.cau.cs.kieler.grana.AnalysisOptions;
@@ -129,42 +129,39 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode,
+    public Object doAnalysis(final ElkNode parentNode,
             final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Edge Crossings analysis", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         
         // collect all edges and translate their coordinates to absolute
-        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
-        List<KEdge> edges = new ArrayList<KEdge>();
-        List<KVectorChain> chains = new ArrayList<KVectorChain>();
+        LinkedList<ElkNode> nodeQueue = new LinkedList<>();
+        List<ElkEdge> edges = new ArrayList<>();
+        List<KVectorChain> chains = new ArrayList<>();
         nodeQueue.addAll(parentNode.getChildren());
         while (!nodeQueue.isEmpty()) {
             // poll the first element
-            KNode node = nodeQueue.poll();
+            ElkNode node = nodeQueue.poll();
             
             // collect the outgoing edges
-            for (KEdge edge : node.getOutgoingEdges()) {
-                if (!hierarchy && edge.getTarget().getParent() != parentNode) {
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                if (!hierarchy && edge.isHierarchical()) {
                     continue;
                 }
-                KVectorChain chain = edge.getData(KEdgeLayout.class).createVectorChain();
+                
+                ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
+                KVectorChain chain = ElkUtil.createVectorChain(section);
                 
                 // translate the bend point coordinates to absolute
-                KNode parent = node;
-                if (!ElkUtil.isDescendant(edge.getTarget(), parent)) {
-                    parent = node.getParent();
-                }
+                ElkNode referenceNode = edge.getContainingNode();
                 KVector referencePoint = new KVector();
-                ElkUtil.toAbsolute(referencePoint, parent);
+                ElkUtil.toAbsolute(referencePoint, referenceNode);
                 chain.offset(referencePoint);
                 
                 // transform spline control points to approximated bend points
-                if (edge.getData(KEdgeLayout.class).getProperty(CoreOptions.EDGE_ROUTING)
-                        == EdgeRouting.SPLINES) {
+                if (edge.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
                     chain = ElkMath.approximateBezierSpline(chain);
                 }
                 
@@ -182,29 +179,28 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
         int edgeCount = edges.size();
         int[] crossings = new int[edgeCount];
         for (int i = 0; i < edgeCount; i++) {
-            KEdge edge1 = edges.get(i);
+            ElkEdge edge1 = edges.get(i);
             KVectorChain chain1 = chains.get(i);
-            KNode source1 = edge1.getSource();
-            KNode target1 = edge1.getTarget();
-            KPort sourcePort1 = edge1.getSourcePort();
-            KPort targetPort1 = edge1.getTargetPort();
-            KShapeLayout sourceLayout1 = source1.getData(KShapeLayout.class);
-            KShapeLayout targetLayout1 = target1.getData(KShapeLayout.class);
+            ElkNode source1 = ElkGraphUtil.getSourceNode(edge1);
+            ElkNode target1 = ElkGraphUtil.getTargetNode(edge1);
+            ElkPort sourcePort1 = ElkGraphUtil.getSourcePort(edge1);
+            ElkPort targetPort1 = ElkGraphUtil.getTargetPort(edge1);
+            
             for (int j = i + 1; j < edgeCount; j++) {
-                KEdge edge2 = edges.get(j);
-                KNode source2 = edge2.getSource();
-                KNode target2 = edge2.getTarget();
-                KPort sourcePort2 = edge2.getSourcePort();
-                KPort targetPort2 = edge2.getTargetPort();
+                ElkEdge edge2 = edges.get(j);
+                ElkNode source2 = ElkGraphUtil.getSourceNode(edge2);
+                ElkNode target2 = ElkGraphUtil.getTargetNode(edge2);
+                ElkPort sourcePort2 = ElkGraphUtil.getSourcePort(edge2);
+                ElkPort targetPort2 = ElkGraphUtil.getTargetPort(edge2);
                 
                 boolean samePort = false;
                 samePort |= sourcePort1 != null
                         && (sourcePort1.equals(sourcePort2) || sourcePort1.equals(targetPort2));
                 samePort |= targetPort1 != null
                         && (targetPort1.equals(targetPort2) || targetPort1.equals(sourcePort2));
-                samePort |= sourceLayout1.getProperty(CoreOptions.HYPERNODE)
+                samePort |= source1.getProperty(CoreOptions.HYPERNODE)
                         && (source1.equals(source2) || source1.equals(target2));
-                samePort |= targetLayout1.getProperty(CoreOptions.HYPERNODE)
+                samePort |= target1.getProperty(CoreOptions.HYPERNODE)
                         && (target1.equals(target2) || target1.equals(source2));
                 if (!samePort) {
                     KVectorChain chain2 = chains.get(j);

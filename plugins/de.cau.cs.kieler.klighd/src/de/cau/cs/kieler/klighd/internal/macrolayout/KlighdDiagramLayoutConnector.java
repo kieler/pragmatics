@@ -46,6 +46,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
@@ -61,6 +62,7 @@ import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement;
 import de.cau.cs.kieler.klighd.kgraph.KGraphFactory;
 import de.cau.cs.kieler.klighd.kgraph.KGraphPackage;
+import de.cau.cs.kieler.klighd.kgraph.KIdentifier;
 import de.cau.cs.kieler.klighd.kgraph.KInsets;
 import de.cau.cs.kieler.klighd.kgraph.KLabel;
 import de.cau.cs.kieler.klighd.kgraph.KLayoutData;
@@ -72,7 +74,6 @@ import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil;
 import de.cau.cs.kieler.klighd.krendering.KRendering;
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory;
 import de.cau.cs.kieler.klighd.krendering.KRenderingRef;
-import de.cau.cs.kieler.klighd.labels.KlighdLabelProperties;
 import de.cau.cs.kieler.klighd.labels.LabelManagementResult;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
@@ -273,6 +274,11 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
             final ElkNode layoutParent, final boolean performSizeEstimation) {
         
         final ElkNode layoutNode = ElkGraphUtil.createNode(layoutParent);
+        
+        KIdentifier id = node.getData(KIdentifier.class);
+        if (id != null && !Strings.isNullOrEmpty(id.getId())) {
+            layoutNode.setIdentifier(id.getId());
+        }
 
         // first check whether children of 'node' shall be taken into account at all.
         // note that all KNodes of a view model are set 'POPULATED' except the
@@ -411,6 +417,10 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
             final ElkNode layoutNode, final boolean estimateLabelSizes) {
         
         final ElkPort layoutPort = ElkGraphUtil.createPort(layoutNode);
+        KIdentifier id = port.getData(KIdentifier.class);
+        if (id != null && !Strings.isNullOrEmpty(id.getId())) {
+            layoutPort.setIdentifier(id.getId());
+        }
         shapeLayoutToLayoutGraph(port, layoutPort, false);
 
         mapping.getGraphMap().put(layoutPort, port);
@@ -493,6 +503,11 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
         
         final ElkEdge layoutEdge = ElkGraphUtil.createSimpleEdge(layoutSource, layoutTarget);
 
+        KIdentifier id = edge.getData(KIdentifier.class);
+        if (id != null && !Strings.isNullOrEmpty(id.getId())) {
+            layoutEdge.setIdentifier(id.getId());
+        }
+        
         // set the edge layout
         edgeLayoutToLayoutGraph(edge, layoutEdge);
 
@@ -538,6 +553,11 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
         
         final ElkLabel layoutLabel =
                 ElkGraphUtil.createLabel(label.getText(), layoutLabeledElement);
+        
+        KIdentifier id = label.getData(KIdentifier.class);
+        if (id != null && !Strings.isNullOrEmpty(id.getId())) {
+            layoutLabel.setIdentifier(id.getId());
+        }
 
         shapeLayoutToLayoutGraph(label, layoutLabel, false);
 
@@ -667,11 +687,11 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
                     // if the label's text was changed during layout, remember the new text in a
                     // special property
                     LabelManagementResult managementResult =
-                            layoutLabel.getProperty(KlighdLabelProperties.LABEL_MANAGEMENT_RESULT);
+                            layoutLabel.getProperty(KlighdOptions.LABELS_MANAGEMENT_RESULT);
                     if (managementResult != LabelManagementResult.UNMANAGED) {
                         // TODO: This may in the future set the KText's text instead.
                         // However, doing so now doesn't do anything yet...
-                        label.setProperty(KlighdLabelProperties.LABEL_TEXT_OVERRIDE,
+                        label.setProperty(KlighdOptions.LABELS_TEXT_OVERRIDE,
                                     layoutLabel.getText());
                         String origLabelText = ((KLabel) element).getText();
                         

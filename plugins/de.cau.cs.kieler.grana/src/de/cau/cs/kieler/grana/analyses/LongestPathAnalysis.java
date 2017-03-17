@@ -18,10 +18,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
 import de.cau.cs.kieler.grana.AnalysisOptions;
@@ -45,28 +45,27 @@ public class LongestPathAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Longest path analysis", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
-        Map<KNode, Integer> incomingCount = new HashMap<KNode, Integer>();
-        Map<KNode, Integer> topoNumber = new HashMap<KNode, Integer>();
-        LinkedList<KNode> sources = new LinkedList<KNode>();
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
+        Map<ElkNode, Integer> incomingCount = new HashMap<ElkNode, Integer>();
+        Map<ElkNode, Integer> topoNumber = new HashMap<ElkNode, Integer>();
+        LinkedList<ElkNode> sources = new LinkedList<ElkNode>();
         
-        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
+        LinkedList<ElkNode> nodeQueue = new LinkedList<ElkNode>();
         nodeQueue.addAll(parentNode.getChildren());
         int nodeCount = 0;
         while (nodeQueue.size() > 0) {
             // pop first element
-            KNode node = nodeQueue.removeFirst();
+            ElkNode node = nodeQueue.removeFirst();
             nodeCount++;
             
             // count the number of incoming edges without self-loops
             int ic = 0;
-            for (KEdge edge : node.getIncomingEdges()) {
-                if (edge.getSource() != node) {
+            for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
+                if (ElkGraphUtil.getSourceNode(edge) != node) {
                     ic++;
                 }
             }
@@ -84,23 +83,25 @@ public class LongestPathAnalysis implements IAnalysis {
         int maxNumber = 0;
         while (topoNumber.size() < nodeCount) {
             while (sources.size() > 0) {
-                KNode node = sources.removeFirst();
+                ElkNode node = sources.removeFirst();
                 // assign a number
                 int maxSourceNumber = -1;
-                for (KEdge edge : node.getIncomingEdges()) {
-                    if (topoNumber.get(edge.getSource()) != null) {
-                        maxSourceNumber = Math.max(maxSourceNumber, topoNumber.get(edge.getSource()));
+                for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
+                    ElkNode source = ElkGraphUtil.getSourceNode(edge);
+                    if (topoNumber.get(source) != null) {
+                        maxSourceNumber = Math.max(maxSourceNumber, topoNumber.get(source));
                     }
                 }
                 topoNumber.put(node, maxSourceNumber + 1);
                 maxNumber = Math.max(maxNumber, maxSourceNumber + 1);
                 // remove the node and all incident edges
-                for (KEdge edge : node.getOutgoingEdges()) {
-                    Integer targetIncoming = incomingCount.get(edge.getTarget());
-                    if (edge.getTarget() != node && targetIncoming != null) {
-                        incomingCount.put(edge.getTarget(), targetIncoming - 1);
+                for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                    ElkNode target = ElkGraphUtil.getTargetNode(edge);
+                    Integer targetIncoming = incomingCount.get(target);
+                    if (target != node && targetIncoming != null) {
+                        incomingCount.put(target, targetIncoming - 1);
                         if (targetIncoming - 1 == 0) {
-                            sources.add(edge.getTarget());
+                            sources.add(target);
                         }
                     }
                 }
@@ -108,9 +109,9 @@ public class LongestPathAnalysis implements IAnalysis {
             
             if (topoNumber.size() < nodeCount) {
                 // there are cycles in the graph, break them by finding a node with least incoming
-                KNode chosenNode = null;
+                ElkNode chosenNode = null;
                 int leastic = Integer.MAX_VALUE;
-                for (Map.Entry<KNode, Integer> entry : incomingCount.entrySet()) {
+                for (Map.Entry<ElkNode, Integer> entry : incomingCount.entrySet()) {
                     if (topoNumber.get(entry.getKey()) == null) {
                         if (entry.getValue() < leastic) {
                             chosenNode = entry.getKey();

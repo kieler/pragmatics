@@ -244,7 +244,7 @@ public class GmlImporter implements IGraphTransformer<GMLModel, ElkNode> {
                 GmlFormatHandler.getElements(graphics).add(x);
             }
             
-            for (ElkEdge elkedge : elknode.getOutgoingEdges()) {
+            for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elknode)) {
                 CollectionElement edgeElement = elkedge.getProperty(PROP_COLLECT_ELEM);
                 if (edgeElement != null) {
                     // apply edge layout

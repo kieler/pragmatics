@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.common.util.EList;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
@@ -37,7 +37,7 @@ public class CompoundNodeChildCountAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Compound node child count analysis", 1);
         
@@ -47,14 +47,14 @@ public class CompoundNodeChildCountAnalysis implements IAnalysis {
         int compoundNodes = 0;
         
         // Iterate through the graph using a queue of nodes discovered
-        List<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.addAll(parentNode.getChildren());
+        List<ElkNode> nodeQueue = new LinkedList<ElkNode>();
+        nodeQueue.add(parentNode);
         
         while (nodeQueue.size() > 0) {
-            KNode node = nodeQueue.remove(0);
+            ElkNode node = nodeQueue.remove(0);
             
             // Increase the compound node count if this node has children
-            EList<KNode> children = node.getChildren();
+            EList<ElkNode> children = node.getChildren();
             if (!children.isEmpty()) {
                 compoundNodes++;
                 nodeQueue.addAll(children);
@@ -64,16 +64,16 @@ public class CompoundNodeChildCountAnalysis implements IAnalysis {
                 maximum = Math.max(maximum, children.size());
             }
         }
+
+        // Calculate the average
+        float avg = compoundNodes == 0 ? 0.0f : ((float) childNodes) / compoundNodes;
         
-        // The graph root shouldn't count
+        // The graph root shouldn't count as compound node
         compoundNodes = Math.max(0, compoundNodes - 1);
         if (compoundNodes == 0) {
             minimum = 0;
             maximum = 0;
         }
-        
-        // Calculate the average
-        float avg = compoundNodes == 0 ? 0.0f : ((float) childNodes) / compoundNodes;
         
         progressMonitor.done();
         return new Object[] {minimum, avg, maximum};

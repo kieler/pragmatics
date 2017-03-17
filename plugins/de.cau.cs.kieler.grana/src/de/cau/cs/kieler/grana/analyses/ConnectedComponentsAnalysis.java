@@ -17,10 +17,10 @@ package de.cau.cs.kieler.grana.analyses;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
 import de.cau.cs.kieler.grana.AnalysisOptions;
@@ -28,7 +28,10 @@ import de.cau.cs.kieler.grana.IAnalysis;
 
 /**
  * A graph analysis that finds the number of connected components in a graph. Returns
- * a single-component result of type integer.
+ * a single-component result of type integer. 
+ * 
+ * <b>Warning:</b> 
+ * The content of hierarchical nodes is considered as a separate connected component. 
  * 
  * @author msp
  * @kieler.design proposed by msp
@@ -39,12 +42,11 @@ public class ConnectedComponentsAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Connected Components Analysis", 1);
         
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         
         int count = countComponents(parentNode, hierarchy);
         
@@ -60,9 +62,9 @@ public class ConnectedComponentsAnalysis implements IAnalysis {
      * @param hierarchy whether hierarchy shall be processed recursively
      * @return the number of components that are children of the node
      */
-    private int countComponents(final KNode parent, final boolean hierarchy) {
+    private int countComponents(final ElkNode parent, final boolean hierarchy) {
         int count = 0;
-        for (KNode child : parent.getChildren()) {
+        for (ElkNode child : parent.getChildren()) {
             count += dfs(child);
             if (hierarchy) {
                 count += countComponents(child, true);
@@ -72,7 +74,7 @@ public class ConnectedComponentsAnalysis implements IAnalysis {
     }
     
     /** map of nodes to visited states. */
-    private Map<KNode, Boolean> visitedMap = new HashMap<KNode, Boolean>();
+    private Map<ElkNode, Boolean> visitedMap = new HashMap<ElkNode, Boolean>();
     
     /**
      * Perform a DFS starting with the given node.
@@ -80,18 +82,18 @@ public class ConnectedComponentsAnalysis implements IAnalysis {
      * @param node a node
      * @return 1 if the node is part of a new connected component, 0 otherwise
      */
-    private int dfs(final KNode node) {
+    private int dfs(final ElkNode node) {
         Boolean visited = visitedMap.get(node);
         if (visited == null) {
             visitedMap.put(node, true);
-            for (KEdge edge : node.getOutgoingEdges()) {
-                KNode target = edge.getTarget();
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                ElkNode target = ElkGraphUtil.getTargetNode(edge);
                 if (node.getParent() == target.getParent()) {
                     dfs(target);
                 }
             }
-            for (KEdge edge : node.getIncomingEdges()) {
-                KNode source = edge.getSource();
+            for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(node)) {
+                ElkNode source = ElkGraphUtil.getSourceNode(edge);
                 if (node.getParent() == source.getParent()) {
                     dfs(source);
                 }

@@ -1367,6 +1367,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 
 	//RootNode ElkNode:
 	//	{ElkNode} ('graph' identifier=ID)?
+	//	ShapeLayout?
 	//	properties+=Property* (labels+=ElkLabel | ports+=ElkPort | children+=ElkNode | containedEdges+=ElkEdge)*
 	public ElkGraphGrammarAccess.RootNodeElements getRootNodeAccess() {
 		return gaElkGraph.getRootNodeAccess();
@@ -1514,7 +1515,7 @@ public class GranaGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Property ElkPropertyToValueMapEntry:
-	//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue)
+	//	key=PropertyKey ':' (value=StringValue | value=QualifiedIdValue | value=NumberValue | value=BooleanValue | 'null')
 	public ElkGraphGrammarAccess.PropertyElements getPropertyAccess() {
 		return gaElkGraph.getPropertyAccess();
 	}

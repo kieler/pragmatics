@@ -18,17 +18,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.elk.core.klayoutdata.KEdgeLayout;
-import org.eclipse.elk.core.klayoutdata.KLayoutData;
-import org.eclipse.elk.core.klayoutdata.KPoint;
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
-import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.core.util.Pair;
+import org.eclipse.elk.graph.ElkBendPoint;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.ElkPort;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -67,22 +70,22 @@ public class LayersAnalysis implements IAnalysis {
     
     // we store the determined layers in order for other 
     // analyses to access them
-    private Map<KNode, List<Layer>> allVerticalLayers = Maps.newHashMap();
-    private Map<KNode, List<Layer>> allHorizontalLayers = Maps.newHashMap();
+    private Map<ElkNode, List<Layer>> allVerticalLayers = Maps.newHashMap();
+    private Map<ElkNode, List<Layer>> allHorizontalLayers = Maps.newHashMap();
     
     
     /** a utility class to mark the start and end position of a layer. */
     public static final class Layer {
         /** smalles coordinate of any node in the layer. */
-        public float start; // SUPPRESS CHECKSTYLE NEXT 6 VisibilityModifier
+        public double start; // SUPPRESS CHECKSTYLE NEXT 6 VisibilityModifier
         /** largest coordinate of any node in the layer. */
-        public float end;
+        public double end;
         /** number of nodes in this layer. */
-        public List<KNode> nodes = Lists.newArrayList(); 
+        public List<ElkNode> nodes = Lists.newArrayList(); 
         /** number of dummies for edges spanning this layer. */
         public int dummies = 0;
 
-        private Layer(final float thestart, final float theend) {
+        private Layer(final double thestart, final double theend) {
             this.start = thestart;
             this.end = theend;
         }
@@ -98,8 +101,8 @@ public class LayersAnalysis implements IAnalysis {
      * @param end
      *            the end position of the new segment
      */
-    private static void insert(final List<Layer> layers, final float start,
-            final float end, final KNode node) {
+    private static void insert(final List<Layer> layers, final double start,
+            final double end, final ElkNode node) {
         Layer insertLayer = null;
         Iterator<Layer> layerIter = layers.iterator();
         while (layerIter.hasNext()) {
@@ -133,13 +136,12 @@ public class LayersAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode,
+    public Object doAnalysis(final ElkNode parentNode,
             final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         progressMonitor.begin("Layers Analysis", 1);
 
-        boolean hierarchy = parentNode.getData(KShapeLayout.class).getProperty(
-                AnalysisOptions.ANALYZE_HIERARCHY);
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
         int[] count = countLayers(parentNode, hierarchy);
 
         progressMonitor.done();
@@ -161,55 +163,51 @@ public class LayersAnalysis implements IAnalysis {
      * @param hierarchy whether to process hierarchy recursively
      * @return the number of horizontal / vertical layers, respectively
      */
-    public int[] countLayers(final KNode parentNode, final boolean hierarchy) {
-        // analyze horizontal layers
+    public int[] countLayers(final ElkNode parentNode, final boolean hierarchy) {
+        
+        // analyze horizontal and vertical layers
         List<Layer> horizontalLayers = new LinkedList<Layer>();
-        for (KNode node : parentNode.getChildren()) {
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            float start = nodeLayout.getYpos();
-            float end = start + nodeLayout.getHeight();
-            insert(horizontalLayers, start, end, node);
+        List<Layer> verticalLayers = new LinkedList<Layer>();
+
+        for (ElkNode node : parentNode.getChildren()) {
+            Pair<KVector, KVector> nodeDims = getNodeDimension(node);
+            KVector min = nodeDims.getFirst();
+            KVector max = nodeDims.getSecond();
+                    
+            insert(verticalLayers, min.x, max.x, node);
+            insert(horizontalLayers, min.y, max.y, node);
         }
 
-        // analyze vertical layers
-        List<Layer> verticalLayers = new LinkedList<Layer>();
-        for (KNode node : parentNode.getChildren()) {
-            KShapeLayout nodeLayout = node.getData(KShapeLayout.class);
-            float start = nodeLayout.getXpos();
-            float end = start + nodeLayout.getWidth();
-            insert(verticalLayers, start, end, node);
-        }
-        
         // store the layer information
         allVerticalLayers.put(parentNode, verticalLayers);
         allHorizontalLayers.put(parentNode, horizontalLayers);
         
         // analyze the number of dummy nodes (only valid for a layer-based layout)
         int dummyCount = 0;
-        Direction dir = parentNode.getData(KLayoutData.class).getProperty(CoreOptions.DIRECTION);
+        Direction dir = parentNode.getProperty(CoreOptions.DIRECTION);
         
         // collect the edges we want to check
-        final List<KEdge> edges = Lists.newArrayList();
-        for (KNode node : parentNode.getChildren()) {
-            edges.addAll(node.getOutgoingEdges());
+        final List<ElkEdge> edges = Lists.newArrayList();
+        for (ElkNode node : parentNode.getChildren()) {
+            Iterables.addAll(edges, ElkGraphUtil.allOutgoingEdges(node));
         }
         // edges of the parent's external ports
-        for (KEdge e : parentNode.getOutgoingEdges()) {
-            if (ElkUtil.isDescendant(e.getTarget(), parentNode)) {
+        for (ElkEdge e : ElkGraphUtil.allOutgoingEdges(parentNode)) {
+            ElkNode target = ElkGraphUtil.getTargetNode(e);
+            if (ElkGraphUtil.isDescendant(target, parentNode)) {
                 edges.add(e);
             }
         }
 
-        
         if (dir == Direction.LEFT || dir == Direction.RIGHT 
                 || dir == Direction.UNDEFINED) { // default direction is kindof left-to-right
-            for (KEdge e : edges) {
-                KEdgeLayout el = e.getData(KEdgeLayout.class);
+            for (ElkEdge e : edges) {
+                ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(e, false, false);
                 // edges may be 'against' the main flow
-                float start = Math.min(el.getSourcePoint().getX(), el.getTargetPoint().getX());
-                float end = Math.max(el.getSourcePoint().getX(), el.getTargetPoint().getX());
+                double start = Math.min(section.getStartX(), section.getEndX());
+                double end = Math.max(section.getStartX(), section.getEndX());
                 // cope with inverted ports that might "start" within a layer
-                for (KPoint bend : el.getBendPoints()) {
+                for (ElkBendPoint bend : section.getBendPoints()) {
                     start = Math.min(start, bend.getX());
                     end = Math.max(end, bend.getX());
                 }
@@ -222,13 +220,13 @@ public class LayersAnalysis implements IAnalysis {
                 }
             }
         } else {
-            for (KEdge e : edges) {
-                KEdgeLayout el = e.getData(KEdgeLayout.class);
+            for (ElkEdge e : edges) {
+                ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(e, false, false);
                 // edges may be 'against' the main flow
-                float start = Math.min(el.getSourcePoint().getY(), el.getTargetPoint().getY());
-                float end = Math.max(el.getSourcePoint().getY(), el.getTargetPoint().getY());
+                double start = Math.min(section.getStartY(), section.getEndY());
+                double end = Math.max(section.getStartY(), section.getEndY());
                 // cope with inverted ports that might "start" within a layer
-                for (KPoint bend : el.getBendPoints()) {
+                for (ElkBendPoint bend : section.getBendPoints()) {
                     start = Math.min(start, bend.getY());
                     end = Math.max(end, bend.getY());
                 }
@@ -271,18 +269,18 @@ public class LayersAnalysis implements IAnalysis {
                 || dir == Direction.UNDEFINED) { // default direction is kindof left-to-right
             for (Layer l : verticalLayers) {
                 int layerOutEdges = l.dummies;
-                for (KNode n : l.nodes) {
+                for (ElkNode n : l.nodes) {
                     // out edges targeting higher layer
-                    for (KEdge e : n.getOutgoingEdges()) {
-                        KEdgeLayout el = e.getData(KEdgeLayout.class);
-                        if (el.getSourcePoint().getX() < el.getTargetPoint().getX()) {
+                    for (ElkEdge e : ElkGraphUtil.allOutgoingEdges(n)) {
+                        ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(e, false, false);
+                        if (section.getStartX() < section.getEndX()) {
                             layerOutEdges++;
                         }
                     }
                     // in edges coming from higher layer
-                    for (KEdge e : n.getIncomingEdges()) {
-                        KEdgeLayout el = e.getData(KEdgeLayout.class);
-                        if (el.getSourcePoint().getX() > el.getTargetPoint().getX()) {
+                    for (ElkEdge e : ElkGraphUtil.allIncomingEdges(n)) {
+                        ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(e, false, false);
+                        if (section.getStartX() > section.getEndX()) {
                             layerOutEdges++;
                         }
                     }
@@ -292,18 +290,18 @@ public class LayersAnalysis implements IAnalysis {
         } else {
             for (Layer l : horizontalLayers) {
                 int layerOutEdges = l.dummies;
-                for (KNode n : l.nodes) {
+                for (ElkNode n : l.nodes) {
                     // out edges targeting higher layer
-                    for (KEdge e : n.getOutgoingEdges()) {
-                        KEdgeLayout el = e.getData(KEdgeLayout.class);
-                        if (el.getSourcePoint().getY() < el.getTargetPoint().getY()) {
+                    for (ElkEdge e : ElkGraphUtil.allOutgoingEdges(n)) {
+                        ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(e, false, false);
+                        if (section.getStartY() < section.getEndY()) {
                             layerOutEdges++;
                         }
                     }
                     // in edges coming from higher layer
-                    for (KEdge e : n.getIncomingEdges()) {
-                        KEdgeLayout el = e.getData(KEdgeLayout.class);
-                        if (el.getSourcePoint().getY() > el.getTargetPoint().getY()) {
+                    for (ElkEdge e : ElkGraphUtil.allIncomingEdges(n)) {
+                        ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(e, false, false);
+                        if (section.getStartY() > section.getEndY()) {
                             layerOutEdges++;
                         }
                     }
@@ -318,7 +316,7 @@ public class LayersAnalysis implements IAnalysis {
                         maxNodesPerLayer, maxNodesPerLayerWDummies, maxEdgeDensity };
 
         if (hierarchy) {
-            for (KNode child : parentNode.getChildren()) {
+            for (ElkNode child : parentNode.getChildren()) {
                 if (!child.getChildren().isEmpty()) {
                     int[] childResult = countLayers(child, true);
                     count[INDEX_HORIZONTAL] += childResult[INDEX_HORIZONTAL];
@@ -343,14 +341,41 @@ public class LayersAnalysis implements IAnalysis {
     /**
      * @return the allHorizontalLayers
      */
-    public Map<KNode, List<Layer>> getAllHorizontalLayers() {
+    public Map<ElkNode, List<Layer>> getAllHorizontalLayers() {
         return allHorizontalLayers;
     }
     
     /**
      * @return the allVerticalLayers
      */
-    public Map<KNode, List<Layer>> getAllVerticalLayers() {
+    public Map<ElkNode, List<Layer>> getAllVerticalLayers() {
         return allVerticalLayers;
+    }
+    
+    /**
+     * @return a pair of vectors (minVals, maxVals) of the node's dimensions. Considers the node's
+     *         ports and labels.
+     */
+    private Pair<KVector, KVector> getNodeDimension(final ElkNode n) {
+        double minX = n.getX();
+        double minY = n.getY();
+        double maxX = n.getX() + n.getWidth();
+        double maxY = n.getY() + n.getHeight();
+        
+        for (ElkPort p : n.getPorts()) {
+            minX = Math.min(minX, n.getX() + p.getX());
+            minY = Math.min(minY, n.getY() + p.getY());
+            maxX = Math.max(maxX, n.getX() + p.getX() + p.getWidth());
+            maxY = Math.max(maxY, n.getY() + p.getY() + p.getHeight());
+        }
+        
+        for (ElkLabel l : n.getLabels()) {
+            minX = Math.min(minX, n.getX() + l.getX());
+            minY = Math.min(minY, n.getY() + l.getY());
+            maxX = Math.max(maxX, n.getX() + l.getX() + l.getWidth());
+            maxY = Math.max(maxY, n.getY() + l.getY() + l.getHeight());
+        }
+        
+        return Pair.of(new KVector(minX, minY), new KVector(maxX, maxY));
     }
 }

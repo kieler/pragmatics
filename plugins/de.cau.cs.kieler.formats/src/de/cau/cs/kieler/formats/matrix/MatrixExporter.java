@@ -24,6 +24,9 @@ import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
+
+import com.google.common.collect.Iterables;
 
 import de.cau.cs.kieler.formats.IGraphTransformer;
 import de.cau.cs.kieler.formats.TransformationData;
@@ -51,7 +54,8 @@ public class MatrixExporter implements IGraphTransformer<ElkNode, Matrix> {
         int m = 0, index = 0;
         Map<ElkNode, Integer> nodeIndex = new HashMap<ElkNode, Integer>();
         for (ElkNode node : parentNode.getChildren()) {
-            m += node.getOutgoingEdges().size();
+            Iterable<ElkEdge> allOutgoing = ElkGraphUtil.allOutgoingEdges(node);
+            m += Iterables.size(allOutgoing);
             nodeIndex.put(node, index++);
         }
         
@@ -65,7 +69,7 @@ public class MatrixExporter implements IGraphTransformer<ElkNode, Matrix> {
                 
                 // Note that this ignores edges connected to ports, which are not supported
                 // by the matrix format anyway (we could change that)
-                for (ElkEdge edge : node.getOutgoingEdges()) {
+                for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
                     if (!isDirectSimpleEdgeBetweenNodes(edge)) {
                         // No hyperedges, no edges that connect to ports
                         continue;
@@ -90,7 +94,7 @@ public class MatrixExporter implements IGraphTransformer<ElkNode, Matrix> {
             int[][] x = matrix.createMatrix();
             for (ElkNode node : parentNode.getChildren()) {
                 int sourceIndex = nodeIndex.get(node);
-                for (ElkEdge edge : node.getOutgoingEdges()) {
+                for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
                     if (!isDirectSimpleEdgeBetweenNodes(edge)) {
                         // No hyperedges, no edges that connect to ports
                         continue;
@@ -116,7 +120,7 @@ public class MatrixExporter implements IGraphTransformer<ElkNode, Matrix> {
             
             // remaining lines: coordinates of edge bend points
             for (ElkNode node : parentNode.getChildren()) {
-                for (ElkEdge edge : node.getOutgoingEdges()) {
+                for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
                     if (edge.getSections().isEmpty()) {
                         continue;
                     }

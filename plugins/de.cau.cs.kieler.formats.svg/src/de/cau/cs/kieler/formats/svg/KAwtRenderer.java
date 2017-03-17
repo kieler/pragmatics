@@ -50,6 +50,8 @@ import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+import com.google.common.collect.Iterables;
+
 import de.cau.cs.kieler.formats.TransformationData;
 import de.cau.cs.kieler.klighd.KlighdOptions;
 import de.cau.cs.kieler.klighd.krendering.HorizontalAlignment;
@@ -277,8 +279,7 @@ public class KAwtRenderer {
             graphics.translate(-scale * child.getX(), -scale * child.getY());
 
             // store all incident edges to render them later
-            edgeSet.addAll(child.getIncomingEdges());
-            edgeSet.addAll(child.getOutgoingEdges());
+            Iterables.addAll(edgeSet, ElkGraphUtil.allIncidentEdges(child));
         }
     }
     

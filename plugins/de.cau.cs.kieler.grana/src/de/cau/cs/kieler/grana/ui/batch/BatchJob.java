@@ -19,8 +19,6 @@ import java.util.Map;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
-import org.eclipse.elk.core.service.DiagramLayoutEngine;
-import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
@@ -173,6 +171,7 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
         private LinkedListMultimap<MapPropertyHolder, Map<String, Object>> rangeResults =
                 LinkedListMultimap.create();
 
+        private LayoutConfigurator commonConfig;
         private List<MapPropertyHolder> rangeConfigurations;
 
         /**
@@ -182,12 +181,16 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
          *            the parameter
          * @param provider
          *            the KGraph provider
+         * @param commonCfg
+         *            the config applied during every layout run
          * @param cfgs
-         *            different layout configurations to be applied
+         *            different layout configurations to be applied (a.k.a. range options)
          */
         public Range(final T param, final IElkGraphProvider<T> provider,
+                final LayoutConfigurator commonCfg,
                 final List<MapPropertyHolder> cfgs) {
             super(param, provider);
+            this.commonConfig = commonCfg;
             this.rangeConfigurations = cfgs;
         }
 
@@ -226,29 +229,26 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
 
                 // now layout with the range or whatever it is layout option
                 LayoutConfigurator lc = new LayoutConfigurator();
-                lc.configure(ElkGraphElement.class).copyProperties(options);
-                Parameters params = new Parameters();
-                params.addLayoutRun(lc);
+                lc.overrideWith(commonConfig);
                 
-                // diagram layout engine is used here
-                // this has some implications, e.g. an IDiagramLayoutConnector must be available 
-                // for the graph to be analyzed
-                //DiagramLayoutEngine.invokeLayout(null, graph, params);
+                // FIXME the following two lines are problematic, see ELK bug #153
+                lc.configure(ElkGraphElement.class).copyProperties(options);
+                lc.configure(ElkNode.class).copyProperties(options);
                 
                 // #1 create a copy of the graph
                 // following three lines copied from EcoreUtils#copy
                 Copier copier = new Copier();
-                final ElkNode second = (ElkNode) copier.copy(graph);
+                final ElkNode graphCopy = (ElkNode) copier.copy(graph);
                 copier.copyReferences();
 
-                ElkUtil.applyVisitors(second, lc);
+                ElkUtil.applyVisitors(graphCopy, lc);
                 if (layoutEngine == null) {
                     layoutEngine = new RecursiveGraphLayoutEngine();
                 }
-                layoutEngine.layout(second, monitor.subTask(1));
+                layoutEngine.layout(graphCopy, monitor.subTask(1));
 
                 AnalysisContext rangeContext = AnalysisService.getInstance().analyze(
-                        second, rangeAnalyses, monitor.subTask(1));
+                        graphCopy, rangeAnalyses, monitor.subTask(1));
 
                 rangeResults.put(options, rangeContext.getResults());
             }

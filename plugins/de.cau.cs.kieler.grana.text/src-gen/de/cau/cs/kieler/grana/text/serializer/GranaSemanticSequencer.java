@@ -131,7 +131,7 @@ public class GranaSemanticSequencer extends ElkGraphSemanticSequencer {
 					return; 
 				}
 				else if (rule == grammarAccess.getRootNodeRule()) {
-					sequence_RootNode(context, (ElkNode) semanticObject); 
+					sequence_RootNode_ShapeLayout(context, (ElkNode) semanticObject); 
 					return; 
 				}
 				else break;

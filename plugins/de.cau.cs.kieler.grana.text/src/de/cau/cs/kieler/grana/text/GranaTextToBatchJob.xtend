@@ -208,7 +208,7 @@ final class GranaTextToBatchJob {
             if (!resource.path.startsWith("file://")) {
                 // should be workspace relative
                 val p = ResourcesPlugin.workspace.root.projects.findFirst[p|resource.path.contains(p.name)]
-                val wsloc = p?.findMember(resource.path.replace(p.name, ""))
+                val wsloc = p?.findMember(resource.path.replaceFirst(p.name, ""))
                 if (p == null || !(wsloc instanceof IContainer)) 
                     throw new IllegalArgumentException("Invalid resource " + resource.path)
                 
@@ -308,7 +308,7 @@ final class GranaTextToBatchJob {
                 provider.setExecutionTimeAnalysis(job.measureExecutionTime)
             }
             RangeJob: {
-                provider.setLayoutBeforeAnalysis(true)
+                provider.setLayoutBeforeAnalysis(false)
                 provider.setExecutionTimeAnalysis(job.measureExecutionTime)
             }
             CompareJob: {
@@ -339,9 +339,9 @@ final class GranaTextToBatchJob {
         // the batch executer expects a workspace relative path
         val batchJob = switch (job) {
             RegularJob: new BatchJob.Simple<IPath>(path, provider)
-            RangeJob: {
+            RangeJob: { 
                 val br = batch as Batch.Range
-                new BatchJob.Range<IPath>(path, provider, br.getRangeConfigurations())
+                new BatchJob.Range<IPath>(path, provider, cfgs.head, br.getRangeConfigurations())
             }
             CompareJob: {
                 new BatchJob.Compare(path, provider, Pair.of(cfgs.head, cfgs.last))

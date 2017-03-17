@@ -255,7 +255,7 @@ public class OgmlServerCommunicator {
         // transform edges
         boolean processLabels = parentNode.getProperty(AlgorithmSetup.PLACE_LABELS);
         for (ElkNode sourceNode : parentNode.getChildren()) {
-            for (ElkEdge edge : sourceNode.getOutgoingEdges()) {
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(sourceNode)) {
                 ElkNode targetNode = ElkGraphUtil.connectableShapeToNode(edge.getTargets().get(0));
                 
                 // ignore cross-hierarchy edges and self-loops
