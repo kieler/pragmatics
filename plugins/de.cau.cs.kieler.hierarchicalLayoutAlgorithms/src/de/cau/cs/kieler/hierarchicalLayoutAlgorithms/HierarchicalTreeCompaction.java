@@ -20,6 +20,8 @@ import java.util.Map;
 
 import org.eclipse.elk.graph.ElkNode;
 
+import com.google.common.collect.Lists;
+
 /**
  * 
  */
@@ -37,7 +39,7 @@ public class HierarchicalTreeCompaction {
 	 * @param nodeHierarchyDepth
 	 */
 	public void compact(final Map<Integer, List<ElkNode>> firstRunDepthNodeList,
-			final Map<Integer, List<ElkNode>> secondRunDepthNodeList, final double seperator,
+			final Map<Integer, List<ElkNode>> secondRunDepthNodeList, final double separator,
 			final Map<ElkNode, Integer> nodeHierarchyDepth, final int largestHierarchyDepth) {
 
 		Map<Integer, List<ElkNode>> leftTopQuarter = new HashMap<Integer, List<ElkNode>>();
@@ -52,7 +54,7 @@ public class HierarchicalTreeCompaction {
 			List<ElkNode> rightTopList = new ArrayList<ElkNode>();
 			if (firstRunDepthNodeList.containsKey(i)) {
 				for (ElkNode node : firstRunDepthNodeList.get(i)) {
-					if (node.getX() < seperator) {
+					if (node.getX() < separator) {
 						leftTopList.add(node);
 					} else {
 						rightTopList.add(node);
@@ -66,25 +68,115 @@ public class HierarchicalTreeCompaction {
 			List<ElkNode> rightBotList = new ArrayList<ElkNode>();
 			if (secondRunDepthNodeList.containsKey(i)) {
 				for (ElkNode node : secondRunDepthNodeList.get(i)) {
-					if (node.getX() < seperator) {
+					if (node.getX() < separator) {
 						leftBotList.add(node);
 					} else {
 						rightBotList.add(node);
 					}
 				}
+				leftBotList = Lists.reverse(leftBotList);
+				rightBotList = Lists.reverse(rightBotList);
 				leftBotQuarter.put(i, leftBotList);
 				rightBotQuarter.put(i, rightBotList);
 			}
 		}
+		System.out.println(leftBotQuarter);
+		System.out.println(rightBotQuarter);
 
-		doCompaction(leftBotQuarter, largestHierarchyDepth, false);
-		// doCompaction(rightBotQuarter, largestHierarchyDepth, true);
-		doCompaction(leftTopQuarter, largestHierarchyDepth, false);
-		// doCompaction(rightTopQuarter, largestHierarchyDepth, true);
+		doCompaction(leftBotQuarter, largestHierarchyDepth, separator, false);
+		doCompaction(rightBotQuarter, largestHierarchyDepth, separator, true);
+		doCompaction(leftTopQuarter, largestHierarchyDepth, separator, false);
+		doCompaction(rightTopQuarter, largestHierarchyDepth, separator, true);
 	}
 
+	// private void doCompaction(final Map<Integer, List<ElkNode>> quarter,
+	// final int largestHierarchyDepth,
+	// final boolean right) {
+	// // TODO right side compaction
+	// // Calculate space that can be compacted.
+	// double border = Double.MAX_VALUE;
+	// for (List<ElkNode> list : quarter.values()) {
+	// for (ElkNode node : list) {
+	// double x = node.getX();
+	// // System.out.println("X: " + x);
+	// // System.out.println(node);
+	// if (right) {
+	// x = -node.getX() + node.getWidth();
+	// }
+	// border = Math.min(border, x);
+	// }
+	// }
+	// // System.out.println(border);
+	//
+	// // System.out.println("border: " + border);
+	// double[] availableSpace = new double[largestHierarchyDepth];
+	// for (int i = 1; i <= largestHierarchyDepth; i++) {
+	// double previousX = border;
+	// // System.out.println("i: " + i);
+	// if (quarter.containsKey(i)) {
+	// for (ElkNode node : quarter.get(i)) {
+	// double x = node.getX();
+	// if (right) {
+	// x = -node.getX();
+	// }
+	// // System.out.println(node.getX());
+	// double space = availableSpace[i - 1] + (x - previousX - SPACING);
+	// space = Math.max(space, 0);
+	// // System.out.println("width: " + width);
+	// availableSpace[i - 1] = space;
+	// previousX = x + node.getWidth();
+	// }
+	// }
+	// }
+	//
+	// double lowestAvailableSpace = Double.MAX_VALUE;
+	// for (int i = 1; i <= largestHierarchyDepth; i++) {
+	// if (quarter.containsKey(i)) {
+	// lowestAvailableSpace = Math.min(lowestAvailableSpace, availableSpace[i -
+	// 1]);
+	// }
+	// }
+	// // System.out.println(lowestAvailableWidth);
+	//
+	// // Actual compaction.
+	// double spaceUsed = 0;
+	// for (int i = 1; i <= largestHierarchyDepth; i++) {
+	// double previousX = border;
+	// List<ElkNode> shiftedNodes = new ArrayList<ElkNode>();
+	// if (quarter.containsKey(i)) {
+	// for (ElkNode node : quarter.get(i)) {
+	// // System.out.println(node.getX());
+	// if (lowestAvailableSpace >= spaceUsed - EPSILON) {
+	// double x = node.getX();
+	// if (right) {
+	// x = -node.getX();
+	// }
+	// double shift = x - previousX - SPACING;
+	// shift = Math.max(shift, 0);
+	// if (spaceUsed + shift > lowestAvailableSpace) {
+	// shift = lowestAvailableSpace - spaceUsed;
+	// spaceUsed = lowestAvailableSpace;
+	// for (ElkNode n : shiftedNodes) {
+	// n.setX(n.getX() + shift);
+	// }
+	// } else {
+	// spaceUsed += shift;
+	// for (ElkNode n : shiftedNodes) {
+	// n.setX(n.getX() + shift);
+	// }
+	// // System.out.println("width: " + width);
+	// availableSpace[i - 1] = shift;
+	// previousX = node.getX() + node.getWidth();
+	// shiftedNodes.add(node);
+	// }
+	// }
+	// }
+	// }
+	// }
+	// }
+
 	private void doCompaction(final Map<Integer, List<ElkNode>> quarter, final int largestHierarchyDepth,
-			final boolean right) {
+			final double separator, final boolean right) {
 		// TODO right side compaction
 		// Calculate space that can be compacted.
 		double border = Double.MAX_VALUE;
@@ -94,23 +186,26 @@ public class HierarchicalTreeCompaction {
 				// System.out.println("X: " + x);
 				// System.out.println(node);
 				if (right) {
-					x = -node.getX() + node.getWidth();
+					x = -(node.getX() + node.getWidth());
 				}
 				border = Math.min(border, x);
 			}
 		}
-		// System.out.println(border);
+		System.out.println("Border: " + border);
 
 		// System.out.println("border: " + border);
 		double[] availableSpace = new double[largestHierarchyDepth];
 		for (int i = 1; i <= largestHierarchyDepth; i++) {
 			double previousX = border;
+			// if (right) {
+			// previousX = 0;
+			// }
 			// System.out.println("i: " + i);
 			if (quarter.containsKey(i)) {
 				for (ElkNode node : quarter.get(i)) {
 					double x = node.getX();
 					if (right) {
-						x = -node.getX();
+						x = -(node.getX() + node.getWidth());
 					}
 					// System.out.println(node.getX());
 					double space = availableSpace[i - 1] + (x - previousX - SPACING);
@@ -118,6 +213,14 @@ public class HierarchicalTreeCompaction {
 					// System.out.println("width: " + width);
 					availableSpace[i - 1] = space;
 					previousX = x + node.getWidth();
+					// if (right) {
+					// previousX = x - node.getWidth();
+					// }
+				}
+				if (previousX < separator) {
+					double space = availableSpace[i - 1] + (separator - previousX - SPACING);
+					space = Math.max(space, 0);
+					availableSpace[i - 1] = availableSpace[i - 1] + space;
 				}
 			}
 		}
@@ -125,41 +228,64 @@ public class HierarchicalTreeCompaction {
 		double lowestAvailableSpace = Double.MAX_VALUE;
 		for (int i = 1; i <= largestHierarchyDepth; i++) {
 			if (quarter.containsKey(i)) {
+				System.out.println(availableSpace[i - 1]);
 				lowestAvailableSpace = Math.min(lowestAvailableSpace, availableSpace[i - 1]);
 			}
 		}
-		// System.out.println(lowestAvailableWidth);
 
 		// Actual compaction.
-		double spaceUsed = 0;
-		for (int i = 1; i <= largestHierarchyDepth; i++) {
-			double previousX = border;
-			List<ElkNode> shiftedNodes = new ArrayList<ElkNode>();
-			if (quarter.containsKey(i)) {
-				for (ElkNode node : quarter.get(i)) {
-					// System.out.println(node.getX());
-					if (lowestAvailableSpace >= spaceUsed - EPSILON) {
-						double x = node.getX();
-						if (right) {
-							x = -node.getX();
-						}
-						double shift = x - previousX - SPACING;
-						shift = Math.max(shift, 0);
-						if (spaceUsed + shift > lowestAvailableSpace) {
-							shift = lowestAvailableSpace - spaceUsed;
-							spaceUsed = lowestAvailableSpace;
-							for (ElkNode n : shiftedNodes) {
-								n.setX(n.getX() + shift);
+		if (lowestAvailableSpace > SPACING) {
+			for (int i = 1; i <= largestHierarchyDepth; i++) {
+				System.out.println("Available: " + lowestAvailableSpace);
+				double spaceUsed = 0;
+				double previousX = border;
+				List<ElkNode> shiftedNodes = new ArrayList<ElkNode>();
+				if (quarter.containsKey(i)) {
+					for (ElkNode node : quarter.get(i)) {
+						// System.out.println(node.getX());
+						System.out.println("Used: " + spaceUsed);
+						if (lowestAvailableSpace >= spaceUsed - EPSILON) {
+							double x = node.getX();
+							if (right) {
+								x = -(node.getX() + node.getWidth());
 							}
-						} else {
-							spaceUsed += shift;
-							for (ElkNode n : shiftedNodes) {
-								n.setX(n.getX() + shift);
+							double shift = x - previousX - SPACING;
+							shift = Math.max(shift, 0);
+							if (spaceUsed + shift > lowestAvailableSpace) {
+								shift = lowestAvailableSpace - spaceUsed;
+								spaceUsed = lowestAvailableSpace;
+								for (ElkNode n : shiftedNodes) {
+									if (right) {
+										n.setX(n.getX() - shift);
+									} else {
+										// System.out.println("Before: " +
+										// n.getX());
+										n.setX(n.getX() + shift);
+										// System.out.println("After: " +
+										// n.getX());
+									}
+								}
+							} else {
+								spaceUsed += shift;
+								for (ElkNode n : shiftedNodes) {
+									if (right) {
+										n.setX(n.getX() - shift);
+									} else {
+										// System.out.println("Before: " +
+										// n.getX());
+										n.setX(n.getX() + shift);
+										// System.out.println("After: " +
+										// n.getX());
+									}
+								}
+								// System.out.println("width: " + width);
+								availableSpace[i - 1] = shift;
+								previousX = node.getX() + node.getWidth();
+								// if (right) {
+								// previousX = node.getX();
+								// }
+								shiftedNodes.add(node);
 							}
-							// System.out.println("width: " + width);
-							availableSpace[i - 1] = shift;
-							previousX = node.getX() + node.getWidth();
-							shiftedNodes.add(node);
 						}
 					}
 				}

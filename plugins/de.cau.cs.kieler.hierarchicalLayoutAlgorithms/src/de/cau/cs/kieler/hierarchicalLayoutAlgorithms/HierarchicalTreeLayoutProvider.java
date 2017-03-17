@@ -134,10 +134,10 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
 			edgeRouter.routeExplsionLines(RadialUtil.findRoot(layoutGraph));
 
-			progressMonitor.begin("Compaction", 3);
-			HierarchicalTreeCompaction compaction = new HierarchicalTreeCompaction();
-			compaction.compact(firstRunDepthNodeList, secondRunDepthNodeList, layoutGraph.getWidth() / 2,
-					nodeHierarchyDepth, largestHierarchyDepth);
+//			progressMonitor.begin("Compaction", 3);
+//			HierarchicalTreeCompaction compaction = new HierarchicalTreeCompaction();
+//			compaction.compact(firstRunDepthNodeList, secondRunDepthNodeList, layoutGraph.getWidth() / 2,
+//					nodeHierarchyDepth, largestHierarchyDepth);
 
 			// progressMonitor.begin("Edge Routing", 4);
 			// ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
@@ -362,30 +362,31 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * @param pm
 	 */
 	private void layeredOneDimensionalTreeLayout(final ElkNode layoutGraph, final IElkProgressMonitor pm) {
-		// TODO fix ordering
 		children = layoutGraph.getChildren();
 		root = RadialUtil.findRoot(layoutGraph);
 		ElkNode child = RadialUtil.getSuccessors(root).get(0);
 		List<ElkNode> runList = new ArrayList<ElkNode>();
 		runList.add(child);
-		Map<Integer, List<ElkNode>> depthNodeList = new HashMap<Integer, List<ElkNode>>();
-		buildNodeList(runList, TOP_CIRCLE_START, -root.getHeight() / 2, depthNodeList, !DEBUG);
-		secondRunList = Lists.reverse(secondRunList);
+//		Map<Integer, List<ElkNode>> depthNodeList = new HashMap<Integer, List<ElkNode>>();
+		buildNodeList(runList, TOP_CIRCLE_START, -root.getHeight() / 2, secondRunDepthNodeList, !DEBUG);
+		runList = Lists.reverse(runList);
 		Map<ElkNode, ElkNode> nodeMap = new HashMap<ElkNode, ElkNode>();
 		int[] offset = new int[largestHierarchyDepth];
-		createTree(runList, nodeMap, offset);
-		configureTreeLayout(layoutGraph, Direction.DOWN);
+		ElkNode run = createTree(runList, nodeMap, offset);
+		configureTreeLayout(run, Direction.DOWN);
 		LayeredLayoutProvider layered = new LayeredLayoutProvider();
+		layered.layout(run, pm.subTask(1));
 		for (ElkNode node : children) {
 			ElkNode newLayout = nodeMap.get(node);
-			node.setX(newLayout.getX()); // + xDisplacement);
+			node.setX(newLayout.getX());
 			node.setY(newLayout.getY());
 		}
-		layered.layout(layoutGraph, pm.subTask(1));
 
-		double middle = layoutGraph.getWidth() / 2;
+		double middle = run.getWidth() / 2;
 		root.setX(middle - root.getWidth() / 2);
 		child.setX(middle - child.getWidth() / 2);
+		layoutGraph.setHeight(run.getHeight());
+		layoutGraph.setWidth(run.getWidth());
 	}
 
 
