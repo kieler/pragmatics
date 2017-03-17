@@ -14,9 +14,9 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial;
 
 import org.eclipse.elk.alg.radial.RadialLayoutProvider;
-import org.eclipse.elk.alg.radial.options.EnumCompaction;
-import org.eclipse.elk.alg.radial.options.EnumSortingAlgorithms;
+import org.eclipse.elk.alg.radial.options.CompactionStrategy;
 import org.eclipse.elk.alg.radial.options.RadialOptions;
+import org.eclipse.elk.alg.radial.options.SortingStrategy;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
@@ -31,8 +31,9 @@ public class HierarchicalRadialLayoutProvider extends AbstractLayoutProvider {
 	@Override
 	public void layout(ElkNode layoutGraph, IElkProgressMonitor progressMonitor) {
 		RadialLayoutProvider radialLayouter = new RadialLayoutProvider();
-		layoutGraph.setProperty(RadialOptions.COMPACTOR, EnumCompaction.RADIAL_COMPACTION);
-		layoutGraph.setProperty(RadialOptions.SORTER, EnumSortingAlgorithms.POLAR_COORDINATE);
+		layoutGraph.setProperty(RadialOptions.COMPACTOR, CompactionStrategy.RADIAL_COMPACTION);
+		layoutGraph.setProperty(RadialOptions.SORTER, SortingStrategy.POLAR_COORDINATE);
+//		layoutGraph.setProperty(RadialOptions.OPTIMIZATION_CRITERIA, RadialTranslationStrategy.CROSSING_MINIMIZATION);
 		radialLayouter.layout(layoutGraph, progressMonitor);
 		
 		new ExplosionLineRouter().bendEdgesToHierarchicalEdges(layoutGraph.getProperty(RadialOptions.ROOT_NODE));
