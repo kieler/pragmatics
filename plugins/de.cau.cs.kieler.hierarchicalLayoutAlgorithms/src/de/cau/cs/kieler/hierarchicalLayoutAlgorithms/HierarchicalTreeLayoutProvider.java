@@ -84,6 +84,11 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	private Map<Integer, List<ElkNode>> secondRunDepthNodeList;
 	// TODO Option
 	private static final boolean WIDTHHEURISTIC = true;
+	/**
+	 * Magic divisor for a better distance between the root and nearest other
+	 * nodes in dependence to the complete graph height.
+	 */
+	private static final int DIVISOR = 20;
 	private static final boolean DEBUG = true;
 
 	@Override
@@ -117,7 +122,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		firstRunDepthNodeList = new HashMap<Integer, List<ElkNode>>();
 		secondRunDepthNodeList = new HashMap<Integer, List<ElkNode>>();
 		int size = secondHierarchyNodes.size();
-		
+
 		if (size > 0) {
 			if (size > 1) {
 				layeredTwoDimensionalTreeLayout(layoutGraph, progressMonitor);
@@ -305,12 +310,11 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			xDisplacement += (firstWidth - secondWidth) / 2;
 			layoutGraph.setWidth(firstRun.getWidth());
 		}
-		root.setY(yDisplacement);
 		root.setX(layoutGraph.getWidth() / 2 - root.getWidth() / 2);
+		root.setY(yDisplacement);
 
 		// Computes the smallest relative distance from the root to the other
 		// nodes from the first run.
-		// TODO Spacing if firstDistance is very short
 		double firstDistanceToRoot = Double.MAX_VALUE;
 		for (ElkNode node : children) {
 			if (firstRunMap.containsKey(node)) {
@@ -326,8 +330,16 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 		// Updates the yDisplacement for the second run such that it has the
 		// same smallest relative distance from the root to the nodes than the
-		// firstDistanceToRoot.
+		// firstDistanceToRoot and increases the distance to the root if it is
+		// too short.
 		yDisplacement = yDisplacement - minSecondY + root.getHeight() + firstDistanceToRoot;
+		double height = yDisplacement + secondRun.getHeight();
+		if (firstDistanceToRoot < height / DIVISOR) {
+			firstDistanceToRoot = height / DIVISOR;
+			height += firstDistanceToRoot * 2;
+			yDisplacement += firstDistanceToRoot * 2;
+			root.setY(root.getY() + firstDistanceToRoot);
+		}
 
 		for (ElkNode node : children) {
 			if (secondRunMap.containsKey(node)) {
@@ -339,21 +351,43 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			}
 		}
 
-		layoutGraph.setHeight(yDisplacement + secondRun.getHeight());
+		layoutGraph.setHeight(height);
 	}
-	
+
 	/**
-	 * TODO
+	 * Method for the layout computation if the tree root has only one child.
+	 * Then there need to be a layout that only has one direction.
 	 * 
 	 * @param layoutGraph
 	 * @param pm
 	 */
 	private void layeredOneDimensionalTreeLayout(final ElkNode layoutGraph, final IElkProgressMonitor pm) {
-		System.out.println("Size ist 1");
+		// TODO fix ordering
+		children = layoutGraph.getChildren();
+		root = RadialUtil.findRoot(layoutGraph);
+		ElkNode child = RadialUtil.getSuccessors(root).get(0);
+		List<ElkNode> runList = new ArrayList<ElkNode>();
+		runList.add(child);
+		Map<Integer, List<ElkNode>> depthNodeList = new HashMap<Integer, List<ElkNode>>();
+		buildNodeList(runList, TOP_CIRCLE_START, -root.getHeight() / 2, depthNodeList, !DEBUG);
+		secondRunList = Lists.reverse(secondRunList);
+		Map<ElkNode, ElkNode> nodeMap = new HashMap<ElkNode, ElkNode>();
+		int[] offset = new int[largestHierarchyDepth];
+		createTree(runList, nodeMap, offset);
 		configureTreeLayout(layoutGraph, Direction.DOWN);
 		LayeredLayoutProvider layered = new LayeredLayoutProvider();
+		for (ElkNode node : children) {
+			ElkNode newLayout = nodeMap.get(node);
+			node.setX(newLayout.getX()); // + xDisplacement);
+			node.setY(newLayout.getY());
+		}
 		layered.layout(layoutGraph, pm.subTask(1));
+
+		double middle = layoutGraph.getWidth() / 2;
+		root.setX(middle - root.getWidth() / 2);
+		child.setX(middle - child.getWidth() / 2);
 	}
+
 
 	/**
 	 * Creates a new simple tree that will be used for elk layered and the
@@ -417,7 +451,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * @param comp
 	 */
 	private void buildNodeList(final List<ElkNode> runList, final double radialOffset, final double nodeOffset,
-			final Map<Integer, List<ElkNode>> depthNodeList, boolean sort) {
+			final Map<Integer, List<ElkNode>> depthNodeList, final boolean sort) {
 		nodeHierarchyDepth.put(root, 0);
 		if (sort) {
 			Comparator<ElkNode> comp = RadialUtil.createPolarComparator(radialOffset, nodeOffset);

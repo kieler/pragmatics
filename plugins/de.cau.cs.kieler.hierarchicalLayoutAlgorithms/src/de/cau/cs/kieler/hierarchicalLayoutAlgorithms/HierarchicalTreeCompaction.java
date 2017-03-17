@@ -1,3 +1,16 @@
+/*
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * 
+ * Copyright 2017 by
+ * + Kiel University
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
+ * See the file epl-v10.html for the license text.
+ */
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
 import java.util.ArrayList;
@@ -11,9 +24,9 @@ import org.eclipse.elk.graph.ElkNode;
  * 
  */
 public class HierarchicalTreeCompaction {
-
-	/**  */
+	/** Minimum space between nodes. */
 	private static final double SPACING = 20.0;
+	/** Epsilon for comparison of double values. */
 	private static final double EPSILON = 0.1;
 
 	/**
@@ -48,7 +61,7 @@ public class HierarchicalTreeCompaction {
 				leftTopQuarter.put(i, leftTopList);
 				rightTopQuarter.put(i, rightTopList);
 			}
-			
+
 			List<ElkNode> leftBotList = new ArrayList<ElkNode>();
 			List<ElkNode> rightBotList = new ArrayList<ElkNode>();
 			if (secondRunDepthNodeList.containsKey(i)) {
@@ -63,11 +76,11 @@ public class HierarchicalTreeCompaction {
 				rightBotQuarter.put(i, rightBotList);
 			}
 		}
-		
+
 		doCompaction(leftBotQuarter, largestHierarchyDepth, false);
-//		 doCompaction(rightBotQuarter, largestHierarchyDepth, true);
+		// doCompaction(rightBotQuarter, largestHierarchyDepth, true);
 		doCompaction(leftTopQuarter, largestHierarchyDepth, false);
-//		 doCompaction(rightTopQuarter, largestHierarchyDepth, true);
+		// doCompaction(rightTopQuarter, largestHierarchyDepth, true);
 	}
 
 	private void doCompaction(final Map<Integer, List<ElkNode>> quarter, final int largestHierarchyDepth,
@@ -78,15 +91,15 @@ public class HierarchicalTreeCompaction {
 		for (List<ElkNode> list : quarter.values()) {
 			for (ElkNode node : list) {
 				double x = node.getX();
-//				System.out.println("X: " + x);
-//				System.out.println(node);
+				// System.out.println("X: " + x);
+				// System.out.println(node);
 				if (right) {
 					x = -node.getX() + node.getWidth();
 				}
 				border = Math.min(border, x);
 			}
 		}
-//		System.out.println(border);
+		// System.out.println(border);
 
 		// System.out.println("border: " + border);
 		double[] availableSpace = new double[largestHierarchyDepth];
@@ -151,6 +164,95 @@ public class HierarchicalTreeCompaction {
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	class Node {
+		private double newX;
+		private double width;
+		private double oldX;
+		private ElkNode originalNode;
+
+		/**
+		 * 
+		 * 
+		 * @param newX
+		 * @param width
+		 * @param oldX
+		 * @param originalNode
+		 */
+		Node(final double newX, final double width, final double oldX, final ElkNode originalNode) {
+			this.newX = newX;
+			this.width = width;
+			this.oldX = oldX;
+			this.originalNode = originalNode;
+		}
+
+		/**
+		 * 
+		 * @return
+		 */
+		public double getNewX() {
+			return newX;
+		}
+
+		/**
+		 * 
+		 * @param newX
+		 */
+		public void setNewX(final double newX) {
+			this.newX = newX;
+		}
+
+		/**
+		 * 
+		 * @return
+		 */
+		public double getWidth() {
+			return width;
+		}
+
+		/**
+		 * 
+		 * @param width
+		 */
+		public void setWidth(final double width) {
+			this.width = width;
+		}
+
+		/**
+		 * 
+		 * @return
+		 */
+		public double getOldX() {
+			return oldX;
+		}
+
+		/**
+		 * 
+		 * @param oldX
+		 */
+		public void setOldX(final double oldX) {
+			this.oldX = oldX;
+		}
+
+		/**
+		 * 
+		 * @return
+		 */
+		public ElkNode getOriginalNode() {
+			return originalNode;
+		}
+
+		/**
+		 * 
+		 * @param originalNode
+		 */
+		public void setOriginalNode(final ElkNode originalNode) {
+			this.originalNode = originalNode;
 		}
 	}
 
