@@ -28,6 +28,7 @@ import org.eclipse.elk.alg.radial.RadialUtil;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Alignment;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.ElkUtil;
@@ -89,7 +90,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * nodes in dependence to the complete graph height.
 	 */
 	private static final int DIVISOR = 20;
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 
 	@Override
 	public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
@@ -97,18 +98,19 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		children = layoutGraph.getChildren();
 		edges = HierarchicalUtil.getHierarchicalEdges(layoutGraph);
 		root = RadialUtil.findRoot(layoutGraph);
-		HierarchicalUtil.initializeOriginalNodeMapping(root);
+		//HierarchicalUtil.initializeOriginalNodeMapping(root);
 		secondHierarchyNodes = RadialUtil.getSuccessors(root);
 		largestHierarchyDepth = 1;
 		nodeHierarchyDepth = new HashMap<ElkNode, Integer>();
 		if (!DEBUG) {
 			compY = (n1, n2) -> {
-				ElkNode orginalNode1 = n1.getProperty(HierarchicalTreeOptions.ORIGINAL_NODE);
-				ElkNode orginalNode2 = n2.getProperty(HierarchicalTreeOptions.ORIGINAL_NODE);
+				
+				KVector orginalNode1 = n1.getProperty(CoreOptions.POSITION);//n1.getProperty(HierarchicalTreeOptions.ORIGINAL_NODE);
+				KVector orginalNode2 = n2.getProperty(CoreOptions.POSITION);//n2.getProperty(HierarchicalTreeOptions.ORIGINAL_NODE);
 
-				if (orginalNode1.getY() < orginalNode2.getY()) {
+				if (orginalNode1.y < orginalNode2.y) {
 					return -1;
-				} else if (orginalNode1.getY() == orginalNode2.getY()) {
+				} else if (orginalNode1.y == orginalNode2.y) {
 					return 0;
 				} else {
 					return 1;

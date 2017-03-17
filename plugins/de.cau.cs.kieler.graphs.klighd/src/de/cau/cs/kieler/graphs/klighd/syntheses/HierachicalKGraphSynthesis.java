@@ -127,8 +127,8 @@ public final class HierachicalKGraphSynthesis {
                 child.setProperty(HierarchicalMetaDataProvider.NODE_ID, id);
                 copy.setProperty(HierarchicalMetaDataProvider.PARENT_ID, id);
                 KVector childPosition = new KVector();
-                childPosition.x = child.getXpos() + copy.getWidth() / 2;
-                childPosition.y = child.getYpos() + copy.getHeight() / 2;
+                childPosition.x = child.getXpos() + child.getWidth() / 2 - parent.getWidth() / 2;
+                childPosition.y = child.getYpos() + child.getHeight() / 2 - parent.getHeight() / 2;
                 copy.setProperty(CoreOptions.POSITION, childPosition);
 
                 parents.put(copy, parent);
