@@ -127,18 +127,19 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				layeredOneDimensionalTreeLayout(layoutGraph, progressMonitor);
 			}
 
-			progressMonitor.begin("Edge Routing", 3);
-			ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
-			edgeRouter.routeExplsionLines(RadialUtil.findRoot(layoutGraph));
-
-//			progressMonitor.begin("Compaction", 3);
-//			HierarchicalTreeCompaction compaction = new HierarchicalTreeCompaction();
-//			compaction.compact(firstRunDepthNodeList, secondRunDepthNodeList, layoutGraph.getWidth() / 2,
-//					nodeHierarchyDepth, largestHierarchyDepth);
-
-			// progressMonitor.begin("Edge Routing", 4);
+			// progressMonitor.begin("Edge Routing", 3);
 			// ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
 			// edgeRouter.routeExplsionLines(RadialUtil.findRoot(layoutGraph));
+
+			progressMonitor.begin("Compaction", 3);
+			HierarchicalTreeCompaction compaction = new HierarchicalTreeCompaction();
+			compaction.compact(firstRunDepthNodeList, secondRunDepthNodeList, layoutGraph.getWidth() / 2,
+					nodeHierarchyDepth, largestHierarchyDepth);
+
+			// TODO Edge clipping
+			progressMonitor.begin("Edge Routing", 4);
+			ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
+			edgeRouter.routeExplsionLines(RadialUtil.findRoot(layoutGraph));
 		}
 		progressMonitor.done();
 	}
@@ -231,7 +232,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			}
 		}
 
-		// TODO not working as intended.
 		buildNodeList(firstRunList, BOTTOM_CIRCLE_START, -root.getHeight() / 2, firstRunDepthNodeList, !DEBUG);
 		// firstRunList = Lists.reverse(firstRunList);
 		buildNodeList(secondRunList, TOP_CIRCLE_START, root.getHeight() / 2, secondRunDepthNodeList, !DEBUG);
@@ -364,7 +364,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		ElkNode child = RadialUtil.getSuccessors(root).get(0);
 		List<ElkNode> runList = new ArrayList<ElkNode>();
 		runList.add(child);
-//		Map<Integer, List<ElkNode>> depthNodeList = new HashMap<Integer, List<ElkNode>>();
+		// Map<Integer, List<ElkNode>> depthNodeList = new HashMap<Integer,
+		// List<ElkNode>>();
 		buildNodeList(runList, TOP_CIRCLE_START, root.getHeight() / 2, secondRunDepthNodeList, !DEBUG);
 		runList = Lists.reverse(runList);
 		Map<ElkNode, ElkNode> nodeMap = new HashMap<ElkNode, ElkNode>();
@@ -385,7 +386,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		layoutGraph.setHeight(run.getHeight());
 		layoutGraph.setWidth(run.getWidth());
 	}
-
 
 	/**
 	 * Creates a new simple tree that will be used for elk layered and the
@@ -453,9 +453,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		nodeHierarchyDepth.put(root, 0);
 		if (sort) {
 			Comparator<ElkNode> comp = RadialUtil.createPolarComparator(radialOffset, nodeOffset);
-//			System.out.println(runList);
+			// System.out.println(runList);
 			runList.sort(comp);
-//			System.out.println(runList);
+			// System.out.println(runList);
 		}
 		List<ElkNode> tempList = new ArrayList<ElkNode>();
 		for (ElkNode node : runList) {
@@ -490,9 +490,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		List<ElkNode> compList = RadialUtil.getSuccessors(node);
 		if (sort) {
 			Comparator<ElkNode> comp = RadialUtil.createPolarComparator(radialOffset, nodeOffset);
-//			System.out.println(compList);
+			// System.out.println(compList);
 			compList.sort(comp);
-//			System.out.println(compList);
+			// System.out.println(compList);
 		}
 		for (ElkNode n : compList) {
 			tempList.add(n);
