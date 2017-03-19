@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.elk.alg.radial.RadialUtil;
+import org.eclipse.elk.core.math.ElkMath;
+import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
@@ -46,16 +48,33 @@ public class ExplosionLineRouter {
 				double targetX = target.getX() + target.getWidth() / 2;
 				double targetY = target.getY() + target.getHeight() / 2;
 
+				// Clipping
+				KVector vector = new KVector();
+				vector.x = targetX - sourceX;
+				vector.y = targetY - sourceY;
+				KVector sourceClip = new KVector(vector.x, vector.y);
+				ElkMath.clipVector(sourceClip, node.getWidth(), node.getHeight());
+				vector.x -= sourceClip.x;
+				vector.y -= sourceClip.y;
+
+				sourceX = targetX - vector.x;
+				sourceY = targetY - vector.y;
+
+				KVector targetClip = new KVector(vector.x, vector.y);
+				ElkMath.clipVector(targetClip, target.getWidth(), target.getHeight());
+				vector.x -= targetClip.x;
+				vector.y -= targetClip.y;
+
+				targetX = sourceX + vector.x;
+				targetY = sourceY + vector.y;
+
 				ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, true, true);
 				section.setStartLocation(sourceX, sourceY);
 				section.setEndLocation(targetX, targetY);
-				clipTargetOfEdge(edge);
-				clipSourceOfEdge(edge);
 				routeStraightEdges(target);
 			}
 		}
 	}
-
 
 	/**
 	 * Sets the source for the edge at the corresponding child in the source
@@ -107,7 +126,6 @@ public class ExplosionLineRouter {
 		}
 
 	}
-	
 
 	/**
 	 * Reset the edge end point to the point where the edge enters a node.
