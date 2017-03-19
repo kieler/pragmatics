@@ -1,7 +1,6 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms
 
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial.HierarchicalRadialLayoutProvider
-import org.eclipse.elk.graph.ElkNode
 
 bundle {
     label "Hierarchical Layout Algorithms"
@@ -30,7 +29,8 @@ algorithm tree(HierarchicalTreeLayoutProvider) {
     label "Hierarchical Tree Layouter"
     metadataClass HierarchicalTreeOptions
     description "A hierarchical two-dimension tree layouter."
-    supports originalNode
+    supports nodeSpacing = 20
+    supports widthHeurstic = true
 }
 
 option desiredEdgeLength: double {
@@ -38,23 +38,30 @@ option desiredEdgeLength: double {
     description 
         "Specifies the length an edge or all edges should have, if possible."
     default = 100.0
-    targets edges, parents
+    targets edges, nodes
 }
 
-option nodeId: int{
+option nodeId: int {
     label "Node ID"
     description "Assigns each node a unique ID."
     targets nodes    
 }
 
-option parentId: int{
+option parentId: int {
     label "Parent ID"
     description "The node ID of the parent of the node."
     targets nodes
 }
 
-programmatic option originalNode: ElkNode {
-    label "Orginal Node"
-    description "The original node of node."
+option nodeSpacing: double {
+    label "Node Spacing"
+    description "The spacing between nodes."
+    default = 20.0
     targets nodes
+}
+
+option widthHeurstic: boolean {
+    label "Width Heuristic"
+    description "Heuristic that optimizes the width of the complete graph before the layout is computed."
+    default = true
 }

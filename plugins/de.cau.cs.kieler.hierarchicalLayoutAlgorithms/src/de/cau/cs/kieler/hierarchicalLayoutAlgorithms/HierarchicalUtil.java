@@ -14,11 +14,7 @@
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
 import java.util.HashSet;
-import java.util.List;
 
-import org.eclipse.elk.alg.radial.RadialUtil;
-import org.eclipse.elk.core.math.KVector;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
@@ -28,44 +24,7 @@ public final class HierarchicalUtil {
 
 	/** Constructor should not be public visible. */
 	private HierarchicalUtil() {
-		// Do nothing
-	}
-
-	/***/
-	public static void initializeOriginalNodeMapping(final ElkNode root) {
-		List<ElkNode> successors = RadialUtil.getSuccessors(root);
-
-		List<ElkNode> children = root.getChildren();
-		for (ElkNode child : children) {
-			Integer childID = child.getProperty(HierarchicalMetaDataProvider.NODE_ID);
-			if (childID != null) {
-
-				ElkNode removeNode = null;
-				for (ElkNode successor : successors) {
-
-					List<ElkNode> grandChildren = successor.getChildren();
-					boolean isBlueBox = grandChildren.size() == 1 && !grandChildren.get(0).getChildren().isEmpty();
-					Integer successorID;
-					if (!isBlueBox) {
-						successorID = successor.getProperty(HierarchicalMetaDataProvider.PARENT_ID);
-					} else {
-						successorID = grandChildren.get(0).getProperty(HierarchicalMetaDataProvider.PARENT_ID);
-					}
-
-					// Integer successorID =
-					// successor.getProperty(HierarchicalMetaDataProvider.PARENT_ID);
-					if (childID.equals(successorID)) {
-						successor.setProperty(HierarchicalTreeOptions.ORIGINAL_NODE, child);
-						removeNode = successor;
-						break;
-					}
-				}
-				if (removeNode != null) {
-					initializeOriginalNodeMapping(removeNode);
-					successors.remove(removeNode);
-				}
-			}
-		}
+		// Do nothing.
 	}
 
 	/**
@@ -84,6 +43,7 @@ public final class HierarchicalUtil {
 				}
 			}
 		}
+		
 		return edges;
 	}
 

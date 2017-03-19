@@ -23,17 +23,34 @@ import org.eclipse.elk.graph.ElkNode;
 import com.google.common.collect.Lists;
 
 /**
- * 
+ * Compaction of a tree. Seperates the tree in four quarters which will be
+ * compacted according to the lowest available space in that quarter.
  */
 public class HierarchicalTreeCompaction {
-	/** Minimum space between nodes. */
-	private static final double SPACING = 20.0;
+	
+	/**
+	 * Constructor that uses a given spacing.
+	 * 
+	 * @param spacing
+	 */
+	public HierarchicalTreeCompaction(final double nodeSpacing) {
+		this.nodeSpacing = nodeSpacing;
+	}
+	
+	/** Minimum space between nodes. Default: 20. */
+	private double nodeSpacing = 20.0;
 	/** Epsilon for comparison of double values. */
 	private static final double EPSILON = 0.1;
-	/** TODO */
+	/**
+	 * New separator for the corresponding right side if a node crosses the
+	 * separator with it's width.
+	 */
 	private Map<Integer, Double> newSeparator = new HashMap<Integer, Double>();
 
 	/**
+	 * At first nodes will be sorted in a corresponding quarter and after that
+	 * the actual compaction will take place with help of a border that shifts
+	 * the nodes as much as possible into the corresponding direction.
 	 * 
 	 * @param firstRunList
 	 * @param secondRunList
@@ -49,8 +66,6 @@ public class HierarchicalTreeCompaction {
 		Map<Integer, List<ElkNode>> leftBotQuarter = new HashMap<Integer, List<ElkNode>>();
 		Map<Integer, List<ElkNode>> rightBotQuarter = new HashMap<Integer, List<ElkNode>>();
 
-		// TODO add node that crosses the seperation border to the rightQuarters
-		// as well.
 		for (int i = 1; i <= largestHierarchyDepth; i++) {
 			List<ElkNode> leftTopList = new ArrayList<ElkNode>();
 			List<ElkNode> rightTopList = new ArrayList<ElkNode>();
@@ -65,6 +80,7 @@ public class HierarchicalTreeCompaction {
 						rightTopList.add(node);
 					}
 				}
+				
 				leftTopQuarter.put(i, leftTopList);
 				rightTopList = Lists.reverse(rightTopList);
 				rightTopQuarter.put(i, rightTopList);
@@ -83,6 +99,7 @@ public class HierarchicalTreeCompaction {
 						rightBotList.add(node);
 					}
 				}
+				
 				leftBotList = Lists.reverse(leftBotList);
 				leftBotQuarter.put(i, leftBotList);
 				rightBotQuarter.put(i, rightBotList);
@@ -95,13 +112,24 @@ public class HierarchicalTreeCompaction {
 		doCompaction(rightTopQuarter, largestHierarchyDepth, separator, true);
 	}
 
+	/**
+	 * Compaction of a quarter. Shifts nodes with the border as much as possible
+	 * to the right / left.
+	 * 
+	 * @param quarter
+	 * @param largestHierarchyDepth
+	 * @param sep
+	 * @param right
+	 */
 	private void doCompaction(final Map<Integer, List<ElkNode>> quarter, final int largestHierarchyDepth,
 			final double sep, final boolean right) {
 		double separator = sep;
 		if (right) {
 			separator = -sep;
 		}
-		// Calculate space that can be compacted.
+		
+		// Calculate the border where the compaction starts. The border is the
+		// left- / rightmost position of a node in the complete quarter.
 		double border = Double.MAX_VALUE;
 		for (List<ElkNode> list : quarter.values()) {
 			for (ElkNode node : list) {
@@ -113,6 +141,7 @@ public class HierarchicalTreeCompaction {
 			}
 		}
 
+		// Calculate space that can be compacted.
 		double[] availableSpace = new double[largestHierarchyDepth];
 		for (int i = 1; i <= largestHierarchyDepth; i++) {
 			double previousX = border;
@@ -121,30 +150,34 @@ public class HierarchicalTreeCompaction {
 					separator = newSeparator.get(i);
 				}
 			}
+			
 			if (quarter.containsKey(i)) {
 				for (ElkNode node : quarter.get(i)) {
 					double x = node.getX();
 					if (right) {
 						x = -(node.getX() + node.getWidth());
 					}
-					double space = availableSpace[i - 1] + (x - previousX - SPACING);
+					
+					double space = availableSpace[i - 1] + (x - previousX - nodeSpacing);
 					space = Math.max(space, 0);
 					availableSpace[i - 1] = space;
 					previousX = x + node.getWidth();
 				}
+				
 				boolean bool = previousX < separator;
 				if (right) {
 					bool = previousX > separator;
 				}
 				if (bool) {
-					double space = availableSpace[i - 1] + (separator - previousX - SPACING);
+					double space = availableSpace[i - 1] + (separator - previousX - nodeSpacing);
 					space = Math.max(space, 0);
-					availableSpace[i - 1] = availableSpace[i - 1] + space;
+					availableSpace[i - 1] = space;
 				}
 			}
 			separator = sep;
 		}
 
+		// Calculate the lowest available space in the quarter.
 		double lowestAvailableSpace = Double.MAX_VALUE;
 		for (int i = 1; i <= largestHierarchyDepth; i++) {
 			if (quarter.containsKey(i)) {
@@ -153,23 +186,26 @@ public class HierarchicalTreeCompaction {
 		}
 
 		// Actual compaction.
-		if (lowestAvailableSpace > SPACING) {
+		if (lowestAvailableSpace > nodeSpacing) {
 			for (int i = 1; i <= largestHierarchyDepth; i++) {
-				double spaceUsed = 0;
-				double previousX = border;
-				List<ElkNode> shiftedNodes = new ArrayList<ElkNode>();
 				if (quarter.containsKey(i)) {
+					double spaceUsed = 0;
+					double previousX = border;
+					List<ElkNode> shiftedNodes = new ArrayList<ElkNode>();
+					
 					for (ElkNode node : quarter.get(i)) {
 						if (lowestAvailableSpace >= spaceUsed - EPSILON) {
 							double x = node.getX();
 							if (right) {
 								x = -(node.getX() + node.getWidth());
 							}
-							double shift = x - previousX - SPACING;
+							
+							double shift = x - previousX - nodeSpacing;
 							shift = Math.max(shift, 0);
 							if (spaceUsed + shift > lowestAvailableSpace) {
 								shift = lowestAvailableSpace - spaceUsed;
 								spaceUsed = lowestAvailableSpace;
+								
 								for (ElkNode n : shiftedNodes) {
 									if (right) {
 										n.setX(n.getX() - shift);
@@ -186,11 +222,15 @@ public class HierarchicalTreeCompaction {
 										n.setX(n.getX() + shift);
 									}
 								}
+								
 								previousX = x + node.getWidth();
 								shiftedNodes.add(node);
 							}
 						}
 					}
+
+					// Add the rest of the available space if it is not
+					// completely used yet.
 					if (spaceUsed < lowestAvailableSpace) {
 						double shift = lowestAvailableSpace - spaceUsed;
 						for (ElkNode n : shiftedNodes) {
