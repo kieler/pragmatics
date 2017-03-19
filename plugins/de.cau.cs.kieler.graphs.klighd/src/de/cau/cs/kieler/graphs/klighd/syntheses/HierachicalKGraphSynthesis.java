@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.elk.alg.radial.RadialMetaDataProvider;
-import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
@@ -29,9 +27,7 @@ import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvider;
-import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
-import de.cau.cs.kieler.klighd.kgraph.KGraphFactory;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil;
@@ -40,11 +36,11 @@ import de.cau.cs.kieler.klighd.krendering.KPolyline;
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory;
 import de.cau.cs.kieler.klighd.krendering.LineStyle;
 import de.cau.cs.kieler.klighd.krendering.impl.KRenderingImpl;
-import de.cau.cs.kieler.klighd.syntheses.DiagramLayoutOptions;
 import de.cau.cs.kieler.klighd.util.KlighdProperties;
 
 /**
- *
+ * Modifies the graph such that copies are created that represent the hierarchical nodes and adds
+ * edges between them.
  */
 public final class HierachicalKGraphSynthesis {
 
@@ -53,7 +49,7 @@ public final class HierachicalKGraphSynthesis {
         // Do nothing.
     }
 
-    /** */
+    /** Maps the copy to it's original node. */
     private static Map<KNode, KNode> parents;
 
     /**
@@ -67,13 +63,12 @@ public final class HierachicalKGraphSynthesis {
      */
     public static void transform(final KNode diagram, final String layout) {
         parents = new HashMap<>();
-        
+
         KGraphDataUtil.loadDataElements(diagram);
 
         Parameters params = new Parameters();
         DiagramLayoutEngine.invokeLayout(null, diagram, params);
-        
-        
+
         // put the inner nodes onto the highest hierarchy level
         List<KNode> nodes = recursiveTraversal(diagram);
 
@@ -103,6 +98,7 @@ public final class HierachicalKGraphSynthesis {
     }
 
     /**
+     * Recursively travels through the graph and copies the hierarchical nodes.
      * 
      * @param parent
      * @return
@@ -163,7 +159,6 @@ public final class HierachicalKGraphSynthesis {
 
                 // Remove the actions of the inner nodes so they are not expandable
                 KRenderingImpl rendering = child.getData(KRenderingImpl.class);
-                // TODO throws NullPointer?
                 rendering.getActions().clear();
 
                 // TODO remove the actions of the copy, such that the root children are not
@@ -176,6 +171,7 @@ public final class HierachicalKGraphSynthesis {
     }
 
     /**
+     * Resizes the nodes that have been copied to their non expanded form.
      * 
      * @param node
      */
@@ -186,7 +182,6 @@ public final class HierachicalKGraphSynthesis {
         }
 
         for (KNode child : children) {
-
             // delete the content of the original node
             child.getChildren().clear();
             KGraphDataUtil.loadDataElements(child);
