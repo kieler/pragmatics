@@ -28,6 +28,7 @@ import org.eclipse.elk.alg.radial.RadialUtil;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.Alignment;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
 import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.ElkUtil;
@@ -98,6 +99,12 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	@Override
 	public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
 		progressMonitor.begin("Hierarchical tree layout", 1);
+		
+//        KGraphDataUtil.loadDataElements(layoutGraph);
+
+//        Parameters params = new Parameters();
+//        DiagramLayoutEngine.invokeLayout(null, layoutGraph, params);
+		HierarchicalUtil.initializePositions(layoutGraph);
 		widthheuristic = layoutGraph.getProperty(HierarchicalTreeOptions.WIDTH_HEURSTIC);
 		nodeSpacing = layoutGraph.getProperty(HierarchicalTreeOptions.NODE_SPACING);
 		children = layoutGraph.getChildren();
@@ -106,30 +113,12 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		secondHierarchyNodes = RadialUtil.getSuccessors(root);
 		largestHierarchyDepth = 1;
 		nodeHierarchyDepth = new HashMap<ElkNode, Integer>();
-		HashMap<Integer, ElkNode> original = new HashMap<Integer, ElkNode>();
-
-		for (ElkNode node : children) {
-			for (ElkNode n : node.getChildren()) {
-				Integer prop = n.getProperty(HierarchicalMetaDataProvider.NODE_ID);
-				if (prop != null) {
-					int id = n.getProperty(HierarchicalMetaDataProvider.NODE_ID);
-					original.put(id, n);
-				}
-			}
-		}
 
 		compY = (n1, n2) -> {
-			// KVector originalNode1 = n1.getProperty(CoreOptions.POSITION);
-			// KVector originalNode2 = n2.getProperty(CoreOptions.POSITION);
-			// return DoubleMath.fuzzyCompare(originalNode1.y,
-			// originalNode2.y, EPSILON);
-
-			// CoreOptions.POSITION somehow does not give correct
-			// positions.
-			ElkNode oN1 = original.get(n1.getProperty(HierarchicalMetaDataProvider.PARENT_ID));
-			ElkNode oN2 = original.get(n2.getProperty(HierarchicalMetaDataProvider.PARENT_ID));
-
-			return DoubleMath.fuzzyCompare(oN1.getY(), oN2.getY(), EPSILON);
+			KVector originalNode1 = n1.getProperty(CoreOptions.POSITION);
+			KVector originalNode2 = n2.getProperty(CoreOptions.POSITION);
+			
+			return DoubleMath.fuzzyCompare(originalNode1.y, originalNode2.y, EPSILON);
 		};
 
 		// Compute the two Lists of nodes for the two runs of Elk-Layered with a

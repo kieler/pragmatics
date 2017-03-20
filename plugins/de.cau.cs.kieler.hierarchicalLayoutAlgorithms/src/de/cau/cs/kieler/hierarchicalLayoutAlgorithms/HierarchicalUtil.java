@@ -13,8 +13,12 @@
  */
 package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
+import org.eclipse.elk.core.math.KVector;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
@@ -25,6 +29,35 @@ public final class HierarchicalUtil {
 	/** Constructor should not be public visible. */
 	private HierarchicalUtil() {
 		// Do nothing.
+	}
+
+	/**
+	 * Initializes positions for the original nodes of the copied hierarchical
+	 * nodes, such that the original nodes can be sorted correctly.
+	 * 
+	 * @param layoutGraph
+	 */
+	public static void initializePositions(final ElkNode layoutGraph) {
+		List<ElkNode> children = layoutGraph.getChildren();
+		HashMap<Integer, ElkNode> idMap = new HashMap<Integer, ElkNode>();
+
+		for (ElkNode node : children) {
+			Integer id = node.getProperty(HierarchicalMetaDataProvider.PARENT_ID);
+			idMap.put(id, node);
+		}
+
+		for (ElkNode node : children) {
+			for (ElkNode child : node.getChildren()) {
+				Integer id = child.getProperty(HierarchicalMetaDataProvider.NODE_ID);
+				if (id != null) {
+					ElkNode n = idMap.get(id);
+					KVector childPosition = new KVector();
+					childPosition.x = child.getX() + child.getWidth() / 2 - node.getWidth() / 2;
+					childPosition.y = child.getY() + child.getHeight() / 2 - node.getHeight() / 2;
+					n.setProperty(CoreOptions.POSITION, childPosition);
+				}
+			}
+		}
 	}
 
 	/**
@@ -43,7 +76,7 @@ public final class HierarchicalUtil {
 				}
 			}
 		}
-		
+
 		return edges;
 	}
 
