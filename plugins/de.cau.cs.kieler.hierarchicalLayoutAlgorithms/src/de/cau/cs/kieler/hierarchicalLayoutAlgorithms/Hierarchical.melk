@@ -12,12 +12,6 @@ algorithm radial(HierarchicalRadialLayoutProvider) {
     description "A radial layouter"
 }
 
-algorithm grid(GridSnapLayoutProvider) {
-    label "Grid Snap Layouter"
-    metadataClass GridOptions
-    description "Layouter that uses a force based algorithm and places the nodes in a grid afterwards."
-}
-
 algorithm stress(HierarchicalStressLayoutProvider) {
     label "Hierarchical Stress Layouter"
     metadataClass HierarchicalStressOptions

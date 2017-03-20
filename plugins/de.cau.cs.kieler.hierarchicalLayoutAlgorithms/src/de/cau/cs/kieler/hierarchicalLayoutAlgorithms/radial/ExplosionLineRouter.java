@@ -28,6 +28,12 @@ import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvide
  * routing. It draws the explosion lines of hierarchical edges.
  */
 public class ExplosionLineRouter {
+	/**
+	 * Routes straight edges and transforms them to edges which start from the
+	 * original parent of the hierarchical node.
+	 * 
+	 * @param root
+	 */
 	public void routeExplsionLines(final ElkNode root) {
 		routeStraightEdges(root);
 		bendEdgesToHierarchicalEdges(root);
@@ -86,21 +92,22 @@ public class ExplosionLineRouter {
 		List<ElkNode> copiedChildren = new ArrayList<>();
 		List<ElkNode> children = root.getChildren();
 		boolean isBlueBox = children.size() == 1 && !children.get(0).getChildren().isEmpty();
-		// blue boxing
+		
+		// Take care of blue boxes.
 		if (!isBlueBox) {
 			copiedChildren.addAll(children);
 		} else {
 			copiedChildren.addAll(children.get(0).getChildren());
 		}
 
-		// take a look at all the successors of the node
+		// Take a look at all the successors of the node.
 		for (ElkNode successor : RadialUtil.getSuccessors(root)) {
 			Integer id = successor.getProperty(HierarchicalMetaDataProvider.PARENT_ID);
 
-			// look at the incoming edges
+			// Look at the incoming edges.
 			for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(successor)) {
-				// only the edge coming from the original node shall be
-				// considered
+				// Only the edge coming from the original node shall be
+				// considered.
 				if (edge.getSources().get(0) == root || root.getChildren().contains(edge.getSources().get(0))) {
 					ElkNode childFound = null;
 					for (ElkNode child : copiedChildren) {
@@ -117,130 +124,9 @@ public class ExplosionLineRouter {
 						}
 					}
 					copiedChildren.remove(childFound);
-					// clippTargetOfEdge(edge);
-
 				}
 			}
-
 			bendEdgesToHierarchicalEdges(successor);
 		}
-
 	}
-
-	/**
-	 * Reset the edge end point to the point where the edge enters a node.
-	 * 
-	 * @param edge
-	 */
-	private void clipTargetOfEdge(final ElkEdge edge) {
-		ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
-		double startX = section.getStartX();
-		double startY = section.getStartY();
-		double targetX = section.getEndX();
-		double targetY = section.getEndY();
-
-		double m = (targetY - startY) / (targetX - startX);
-		double b = startY - m * startX;
-
-		double targetWidth = edge.getTargets().get(0).getWidth();
-		double targetHeight = edge.getTargets().get(0).getHeight();
-
-		double yPoint;
-		double xPoint;
-		if (startX <= targetX) {
-
-			// lower left
-			if (startY <= targetY) {
-				yPoint = targetY - targetHeight / 2;
-				xPoint = targetX - targetWidth / 2;
-
-			} else {
-				// upper left
-				yPoint = targetY + targetHeight / 2;
-				xPoint = targetX - targetWidth / 2;
-
-			}
-		} else {
-			// lower right
-			if (startY <= targetY) {
-				yPoint = targetY - targetHeight / 2;
-				xPoint = targetX + targetWidth / 2;
-
-			} else {
-				// upper right
-				yPoint = targetY + targetHeight / 2;
-				xPoint = targetX + targetWidth / 2;
-			}
-		}
-
-		double y = yPoint;
-		double x = (y - b) / m;
-		if (x < targetX + targetWidth / 2 && targetX - targetWidth / 2 < x) {
-			section.setEndY(y);
-			section.setEndX(x);
-		} else {
-			y = xPoint * m + b;
-			section.setEndY(y);
-			section.setEndX(xPoint);
-		}
-	}
-
-	/**
-	 * Reset the edge Start point to the point where the edge leaves a node.
-	 * 
-	 * @param edge
-	 */
-	private void clipSourceOfEdge(final ElkEdge edge) {
-		ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
-		double startX = section.getStartX();
-		double startY = section.getStartY();
-		double targetX = section.getEndX();
-		double targetY = section.getEndY();
-
-		double m = (targetY - startY) / (targetX - startX);
-		double b = startY - m * startX;
-
-		double sourceWidth = edge.getSources().get(0).getWidth();
-		double sourceHeight = edge.getSources().get(0).getHeight();
-
-		double yPoint;
-		double xPoint;
-		if (targetX <= startX) {
-
-			// lower left
-			if (targetY <= startY) {
-				yPoint = startY - sourceHeight / 2;
-				xPoint = startX - sourceWidth / 2;
-
-			} else {
-				// upper left
-				yPoint = startY + sourceHeight / 2;
-				xPoint = startX - sourceWidth / 2;
-
-			}
-		} else {
-			// lower right
-			if (targetY <= startY) {
-				yPoint = startY - sourceHeight / 2;
-				xPoint = startX + sourceWidth / 2;
-
-			} else {
-				// upper right
-				yPoint = startY + sourceHeight / 2;
-				xPoint = startX + sourceWidth / 2;
-			}
-		}
-
-		double y = yPoint;
-		double x = (y - b) / m;
-		if (x < startX + sourceWidth / 2 && startX - sourceWidth / 2 < x) {
-			section.setStartY(y);
-			section.setStartX(x);
-		} else {
-			y = xPoint * m + b;
-			section.setStartY(y);
-			section.setStartX(xPoint);
-		}
-	}
-
 }
