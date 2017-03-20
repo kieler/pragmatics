@@ -47,7 +47,13 @@ public final class HierarchicalUtil {
 		}
 
 		for (ElkNode node : children) {
-			for (ElkNode child : node.getChildren()) {
+			List<ElkNode> grandChildren = node.getChildren();
+			boolean isBlueBox = grandChildren.size() == 1 && !grandChildren.get(0).getChildren().isEmpty();
+			List<ElkNode> iteratorList = grandChildren;
+			if (isBlueBox) {
+				iteratorList = grandChildren.get(0).getChildren();
+			}
+			for (ElkNode child : iteratorList) {
 				Integer id = child.getProperty(HierarchicalMetaDataProvider.NODE_ID);
 				if (id != null) {
 					ElkNode n = idMap.get(id);
