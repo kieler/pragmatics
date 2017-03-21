@@ -24,7 +24,6 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
-import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvider;
@@ -64,11 +63,7 @@ public final class HierachicalKGraphSynthesis {
      */
     public static void transform(final KNode diagram, final String layout) {
         parents = new HashMap<>();
-
         KGraphDataUtil.loadDataElements(diagram);
-
-        Parameters params = new Parameters();
-        DiagramLayoutEngine.invokeLayout(null, diagram, params);
 
         // put the inner nodes onto the highest hierarchy level
         List<KNode> nodes = recursiveTraversal(diagram);
@@ -77,8 +72,8 @@ public final class HierachicalKGraphSynthesis {
         diagram.getChildren().addAll(nodes);
 
         addHierarchicalEdges();
-
-        // TODO test / remove
+        
+        Parameters params = new Parameters();
         DiagramLayoutEngine.invokeLayout(null, diagram, params);
         initializePositions(diagram);
 
@@ -138,12 +133,6 @@ public final class HierachicalKGraphSynthesis {
                 int id = child.hashCode();
                 child.setProperty(HierarchicalMetaDataProvider.NODE_ID, id);
                 copy.setProperty(HierarchicalMetaDataProvider.PARENT_ID, id);
-                // TODO remove
-                KVector childPosition = new KVector();
-                childPosition.x = child.getXpos() + child.getWidth() / 2 - parent.getWidth() / 2;
-                childPosition.y = child.getYpos() + child.getHeight() / 2 - parent.getHeight() / 2;
-                copy.setProperty(CoreOptions.POSITION, childPosition);
-
                 parents.put(copy, parent);
 
                 // if it is a blue box reset the pointer to the parent

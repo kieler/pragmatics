@@ -99,12 +99,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	@Override
 	public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
 		progressMonitor.begin("Hierarchical tree layout", 1);
-		
-//        KGraphDataUtil.loadDataElements(layoutGraph);
-
-//        Parameters params = new Parameters();
-//        DiagramLayoutEngine.invokeLayout(null, layoutGraph, params);
-		HierarchicalUtil.initializePositions(layoutGraph);
 		widthheuristic = layoutGraph.getProperty(HierarchicalTreeOptions.WIDTH_HEURSTIC);
 		nodeSpacing = layoutGraph.getProperty(HierarchicalTreeOptions.NODE_SPACING);
 		children = layoutGraph.getChildren();
