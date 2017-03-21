@@ -146,6 +146,7 @@ public class HierarchicalTreeCompaction {
 		for (int i = 1; i <= largestHierarchyDepth; i++) {
 			double previousX = border;
 			if (right) {
+				System.out.println(i);
 				if (newSeparator.containsKey(i)) {
 					separator = newSeparator.get(i);
 				}
@@ -159,22 +160,35 @@ public class HierarchicalTreeCompaction {
 					}
 					
 					double space = availableSpace[i - 1] + (x - previousX - nodeSpacing);
+					if (right) {
+						System.out.println("A: " + space);
+					}
 					space = Math.max(space, 0);
 					availableSpace[i - 1] = space;
 					previousX = x + node.getWidth();
 				}
 				
+				// TODO trilateration seperation bug
 				boolean bool = previousX < separator;
-				if (right) {
-					bool = previousX > separator;
-				}
+//				if (right) {
+//					System.out.println("prev: " + previousX);
+//					System.out.println("sep: " + separator);
+//					bool = previousX > separator;
+//				}
 				if (bool) {
 					double space = availableSpace[i - 1] + (separator - previousX - nodeSpacing);
+					if (right) {
+						System.out.println("A2: " + space);
+					}
 					space = Math.max(space, 0);
 					availableSpace[i - 1] = space;
 				}
 			}
-			separator = sep;
+			if (right) {
+				separator = -sep;
+			} else {
+				separator = sep;
+			}
 		}
 
 		// Calculate the lowest available space in the quarter.
@@ -183,6 +197,9 @@ public class HierarchicalTreeCompaction {
 			if (quarter.containsKey(i)) {
 				lowestAvailableSpace = Math.min(lowestAvailableSpace, availableSpace[i - 1]);
 			}
+		}
+		if (right) {
+			System.out.println(lowestAvailableSpace);
 		}
 
 		// Actual compaction.
