@@ -24,6 +24,7 @@ import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.PortConstraints;
 import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
+import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
 import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvider;
@@ -76,7 +77,11 @@ public final class HierachicalKGraphSynthesis {
         diagram.getChildren().addAll(nodes);
 
         addHierarchicalEdges();
-
+        
+        // TODO test / remove
+        DiagramLayoutEngine.invokeLayout(null, diagram, params);
+        initializePositions(diagram);
+        
         if (layout.equals("Radial")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial");
@@ -133,6 +138,7 @@ public final class HierachicalKGraphSynthesis {
                 int id = child.hashCode();
                 child.setProperty(HierarchicalMetaDataProvider.NODE_ID, id);
                 copy.setProperty(HierarchicalMetaDataProvider.PARENT_ID, id);
+                // TODO remove
                 KVector childPosition = new KVector();
                 childPosition.x = child.getXpos() + child.getWidth() / 2 - parent.getWidth() / 2;
                 childPosition.y = child.getYpos() + child.getHeight() / 2 - parent.getHeight() / 2;
@@ -216,6 +222,41 @@ public final class HierachicalKGraphSynthesis {
             edge.setTarget(child);
 
             parent.getOutgoingEdges().add(edge);
+        }
+    }
+    
+    /**
+     * Initializes positions for the original nodes of the copied hierarchical
+     * nodes, such that the original nodes can be sorted correctly.
+     * 
+     * @param diagram
+     */
+    public static void initializePositions(final KNode diagram) {
+        List<KNode> children = diagram.getChildren();
+        HashMap<Integer, KNode> idMap = new HashMap<Integer, KNode>();
+
+        for (KNode node : children) {
+            Integer id = node.getProperty(HierarchicalMetaDataProvider.PARENT_ID);
+            idMap.put(id, node);
+        }
+
+        for (KNode node : children) {
+            List<KNode> grandChildren = node.getChildren();
+            boolean isBlueBox = grandChildren.size() == 1 && !grandChildren.get(0).getChildren().isEmpty();
+            List<KNode> iteratorList = grandChildren;
+            if (isBlueBox) {
+                iteratorList = grandChildren.get(0).getChildren();
+            }
+            for (KNode child : iteratorList) {
+                Integer id = child.getProperty(HierarchicalMetaDataProvider.NODE_ID);
+                if (id != null) {
+                    KNode n = idMap.get(id);
+                    KVector childPosition = new KVector();
+                    childPosition.x = child.getXpos() + child.getWidth() / 2 - node.getWidth() / 2;
+                    childPosition.y = child.getYpos() + child.getHeight() / 2 - node.getHeight() / 2;
+                    n.setProperty(CoreOptions.POSITION, childPosition);
+                }
+            }
         }
     }
 
