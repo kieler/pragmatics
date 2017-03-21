@@ -246,7 +246,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
             enrichEdgeRendering(o as KEdge);
         }
         
-        o.eContents.forEach[child | enrichRenderings(child)]
+        o.eContents.filter(KGraphElement).forEach[child | enrichRenderings(child)]
     }
 
     /**
