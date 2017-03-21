@@ -17,6 +17,7 @@ import java.util.HashSet;
 
 import org.eclipse.elk.alg.force.options.StressOptions;
 import org.eclipse.elk.alg.force.stress.StressLayoutProvider;
+import org.eclipse.elk.alg.overlap.OverlapRemovalLayoutProvider;
 import org.eclipse.elk.alg.radial.RadialUtil;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
@@ -51,7 +52,11 @@ public class HierarchicalStressLayoutProvider extends AbstractLayoutProvider {
 			edge.setProperty(StressOptions.DESIRED_EDGE_LENGTH, edgeLength);
 		}
 
-		stress.layout(layoutGraph, progressMonitor);
+		stress.layout(layoutGraph, progressMonitor.subTask(1));
+		
+		OverlapRemovalLayoutProvider removal = new OverlapRemovalLayoutProvider();
+		removal.layout(layoutGraph, progressMonitor.subTask(1));
+		
 		ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
 		edgeRouter.routeExplsionLines(RadialUtil.findRoot(layoutGraph));
 
