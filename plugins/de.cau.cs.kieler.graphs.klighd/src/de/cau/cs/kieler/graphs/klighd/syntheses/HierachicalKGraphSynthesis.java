@@ -186,7 +186,7 @@ public final class HierachicalKGraphSynthesis {
         }
 
         if (node.getChildren().size() > 0) {
-            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
+            node.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_SIDE);
         }
     }
 
