@@ -76,7 +76,7 @@ public final class HierachicalKGraphSynthesis {
         Parameters params = new Parameters();
         DiagramLayoutEngine.invokeLayout(null, diagram, params);
         initializePositions(diagram);
-        
+
         if (layout.equals("Radial")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial");
@@ -154,7 +154,9 @@ public final class HierachicalKGraphSynthesis {
 
                 // Remove the actions of the inner nodes so they are not expandable
                 KRenderingImpl rendering = child.getData(KRenderingImpl.class);
-                rendering.getActions().clear();
+                if (rendering != null && rendering.getActions() != null) {
+                    rendering.getActions().clear();
+                }
 
                 // TODO remove the actions of the copy, such that the root children are not
                 // expandable. If we simply remove the action of the copy, we can minimize the
@@ -213,10 +215,10 @@ public final class HierachicalKGraphSynthesis {
             parent.getOutgoingEdges().add(edge);
         }
     }
-    
+
     /**
-     * Initializes positions for the original nodes of the copied hierarchical
-     * nodes, such that the original nodes can be sorted correctly.
+     * Initializes positions for the original nodes of the copied hierarchical nodes, such that the
+     * original nodes can be sorted correctly.
      * 
      * @param diagram
      */
@@ -231,7 +233,8 @@ public final class HierachicalKGraphSynthesis {
 
         for (KNode node : children) {
             List<KNode> grandChildren = node.getChildren();
-            boolean isBlueBox = grandChildren.size() == 1 && !grandChildren.get(0).getChildren().isEmpty();
+            boolean isBlueBox =
+                    grandChildren.size() == 1 && !grandChildren.get(0).getChildren().isEmpty();
             List<KNode> iteratorList = grandChildren;
             if (isBlueBox) {
                 iteratorList = grandChildren.get(0).getChildren();
@@ -242,7 +245,8 @@ public final class HierachicalKGraphSynthesis {
                     KNode n = idMap.get(id);
                     KVector childPosition = new KVector();
                     childPosition.x = child.getXpos() + child.getWidth() / 2 - node.getWidth() / 2;
-                    childPosition.y = child.getYpos() + child.getHeight() / 2 - node.getHeight() / 2;
+                    childPosition.y =
+                            child.getYpos() + child.getHeight() / 2 - node.getHeight() / 2;
                     n.setProperty(CoreOptions.POSITION, childPosition);
                 }
             }
