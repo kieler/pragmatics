@@ -19,12 +19,11 @@ import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
 import de.cau.cs.kieler.grana.IAnalysis;
@@ -47,20 +46,20 @@ public class WhitespaceAnalysis implements IAnalysis {
     /**
      * {@inheritDoc}
      */
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
 
         progressMonitor.begin("Whitespace Analysis", 1);
 
         // The bounds of the area that is actually used for drawing nodes
-        float minX = Float.POSITIVE_INFINITY;
-        float maxX = Float.NEGATIVE_INFINITY;
-        float minY = Float.POSITIVE_INFINITY;
-        float maxY = Float.NEGATIVE_INFINITY;
+        double minX = Float.POSITIVE_INFINITY;
+        double maxX = Float.NEGATIVE_INFINITY;
+        double minY = Float.POSITIVE_INFINITY;
+        double maxY = Float.NEGATIVE_INFINITY;
 
         // Iterate through the parent node's children
-        for (KNode child : parentNode.getChildren()) {
-            Rectangle2D.Float nodeRect = NodeSizeAnalysis.computeNodeRect(child, true, true, true);
+        for (ElkNode child : parentNode.getChildren()) {
+            Rectangle2D.Double nodeRect = NodeSizeAnalysis.computeNodeRect(child, true, true, true);
 
             // Compute the new bounds of the drawing area
             minX = Math.min(minX, nodeRect.x);
@@ -70,8 +69,8 @@ public class WhitespaceAnalysis implements IAnalysis {
         }
 
         // Rename for our purpos
-        float width = maxX - minX;
-        float height = maxY - minY;
+        double width = maxX - minX;
+        double height = maxY - minY;
         final KVector offset = new KVector(-minX, -minY);
 
         // Prepare the container for the result
@@ -88,7 +87,7 @@ public class WhitespaceAnalysis implements IAnalysis {
             // 1. only top level
 
             // Set every pixel of a node black
-            for (KNode node : parentNode.getChildren()) {
+            for (ElkNode node : parentNode.getChildren()) {
                 drawNode(bi, node, offset);
             }
 
@@ -103,10 +102,10 @@ public class WhitespaceAnalysis implements IAnalysis {
 
             // 2. full hierarchy
             clearImage(bi);
-            final List<KNode> nodeQueue = new LinkedList<KNode>();
+            final List<ElkNode> nodeQueue = new LinkedList<ElkNode>();
             nodeQueue.addAll(parentNode.getChildren());
             while (nodeQueue.size() > 0) {
-                final KNode node = nodeQueue.remove(0);
+                final ElkNode node = nodeQueue.remove(0);
                 if (node.getChildren().isEmpty()) {
                     drawNode(bi, node, offset);
                 } else {
@@ -151,23 +150,21 @@ public class WhitespaceAnalysis implements IAnalysis {
         return whitePixels;
     }
 
-    private void drawNode(final BufferedImage bi, final KNode node, final KVector offset) {
+    private void drawNode(final BufferedImage bi, final ElkNode node, final KVector offset) {
 
-        Rectangle2D.Float rect = NodeSizeAnalysis.computeNodeRect(node, true, true, true);
+        Rectangle2D.Double rect = NodeSizeAnalysis.computeNodeRect(node, true, true, true);
 
         // convert all positions into a global coordinate system
         KVector absoluteOffset = offset.clone();
         if (node.getParent() != null) {
-            KVector pos = node.getData(KShapeLayout.class).createVector();
+            KVector pos = new KVector(node.getX(), node.getY());
             absoluteOffset.sub(pos);
             absoluteOffset.add(ElkUtil.toAbsolute(pos, node.getParent()));
         }
 
         // TODO consider some spacing around the node
-        float spacing = Math.max(0,
-                            node.getParent().getData(KShapeLayout.class)
-                                .getProperty(CoreOptions.SPACING_NODE));
-        
+        double spacing = Math.max(0, node.getParent().getProperty(CoreOptions.SPACING_NODE_NODE));
+
         // assure that we stay within the image's boundaries (the spacing might reach out further)
         int minX = (int) Math.max(0, rect.getMinX() - spacing + absoluteOffset.x);
         int minY = (int) Math.max(0, rect.getMinY() - spacing + absoluteOffset.y);
