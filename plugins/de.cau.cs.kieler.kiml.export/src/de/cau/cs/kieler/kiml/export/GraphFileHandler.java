@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.elk.core.util.WrappedException;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.GraphIdentifierGenerator;
 
 import de.cau.cs.kieler.formats.GraphFormatData;
 import de.cau.cs.kieler.formats.GraphFormatsService;
@@ -36,6 +37,9 @@ import de.cau.cs.kieler.formats.TransformationData;
  */
 public class GraphFileHandler {
 
+    /** textual graph file extension. */
+    private static final String EXT_ELK_TEXT = "elkt";
+    
     /**
      * Perform the actual graph export.
      * 
@@ -43,8 +47,17 @@ public class GraphFileHandler {
      * @param transHandler the transformation handler
      * @return the exported graph
      */
-    private static <T> String performExport(final ElkNode elkgraph,
+    private <T> String performExport(final ElkNode elkgraph,
             final IGraphFormatHandler<T> transHandler) {
+        
+        String extension = targetFormat.getExtensions()[0];
+        if (extension.equals(EXT_ELK_TEXT)) {
+            // we want to convert to the textual format, so write missing identifiers into the graph
+            GraphIdentifierGenerator.forGraph(elkgraph)
+                .assertExists()
+                .assertUnique()
+                .execute();
+        }
         
         TransformationData<ElkNode, T> transData = new TransformationData<ElkNode, T>();
         transData.setSourceGraph(elkgraph);
