@@ -34,7 +34,6 @@ class Flattener {
      * Flatten all composite actors in the given graph.
      */
     def void flatten(KNode node) {
-        println("flatten : " + node)
         val List<KNode> compositeNodes = newArrayList()
         for (child : node.children) {
             if (!child.children.empty && !child.markedAsState && !child.markedAsStateMachineContainer) {
