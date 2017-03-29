@@ -18,7 +18,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.xtend.lib.macro,
  org.eclipse.elk.core,
  de.cau.cs.kieler.formats.kgraph,
- org.eclipse.emf.ecore.xmi
+ org.eclipse.emf.ecore.xmi,
+ org.eclipse.elk.alg.layered
 Export-Package: de.cau.cs.kieler.graphs.testcases
 Bundle-Vendor: Kiel University
 

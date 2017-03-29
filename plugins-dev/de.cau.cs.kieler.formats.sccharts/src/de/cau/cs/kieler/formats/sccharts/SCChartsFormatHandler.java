@@ -14,8 +14,10 @@
 package de.cau.cs.kieler.formats.sccharts;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Predicate;
 
+import org.eclipse.elk.alg.layered.options.LayeredOptions;
 import org.eclipse.elk.core.util.IGraphElementVisitor;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.emf.ecore.EObject;
@@ -30,6 +32,7 @@ import de.cau.cs.kieler.circuit.klighd.CircuitDiagramSynthesis;
 import de.cau.cs.kieler.formats.AbstractEmfHandler;
 import de.cau.cs.kieler.formats.IGraphTransformer;
 import de.cau.cs.kieler.formats.TransformationData;
+import de.cau.cs.kieler.graphs.testcases.FiltersAndModifiers;
 import de.cau.cs.kieler.graphs.testcases.ITestCaseGraphProvider;
 import de.cau.cs.kieler.kico.CompilationResult;
 import de.cau.cs.kieler.kico.KielerCompiler;
@@ -85,6 +88,13 @@ public class SCChartsFormatHandler extends AbstractEmfHandler<State>
         return this.viewContext;
     }
 
+    
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    // !! This is the switch to configure the output graph type
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    private Target target = Target.SCG_SEQUENTIAL;
+    
+    
     /**
      * {@inheritDoc}
      */
@@ -98,7 +108,24 @@ public class SCChartsFormatHandler extends AbstractEmfHandler<State>
      */
     @Override
     public Iterable<IGraphElementVisitor> getGraphModifiers() {
-        return null;
+        List<IGraphElementVisitor> visis = Lists.newArrayList();
+            
+        switch (target) {
+            case SCG:
+            case SCG_BASIC_BLOCK:
+            case SCG_SEQUENTIAL:
+                visis.add(FiltersAndModifiers.REMOVE_UNCONNECTED_PORTS);
+                break;
+        }
+
+        switch (target) {
+            case SCG_SEQUENTIAL:
+                visis.add(
+                    FiltersAndModifiers.REMOVE_PROPERTY.apply(LayeredOptions.NORTH_OR_SOUTH_PORT));
+            break;
+        }
+
+        return visis;
     }
     
     enum Target {
@@ -116,12 +143,7 @@ public class SCChartsFormatHandler extends AbstractEmfHandler<State>
          */
         public void transform(TransformationData<State, ElkNode> data) {
             State model = data.getSourceGraph();
-            
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-            // !! This is the switch to configure the output graph type
-            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-            Target target = Target.CIRCUIT;
-            
+                        
             // the following fall-throughs are intended
             // the order in which the transformations are added doesn't matter, kico figures it out
             CompileChain cc = new CompileChain();

@@ -13,8 +13,9 @@
 package de.cau.cs.kieler.graphs.testcases
 
 import java.util.Set
+import org.eclipse.elk.core.options.BoxLayouterOptions
 import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.core.options.PortConstraints
+import org.eclipse.elk.core.options.SizeConstraint
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkLabel
 import org.eclipse.elk.graph.ElkNode
@@ -24,6 +25,7 @@ import org.eclipse.elk.graph.properties.IPropertyHolder
 import org.eclipse.elk.graph.util.ElkGraphUtil
 
 import static org.eclipse.elk.core.options.CoreOptions.*
+import org.eclipse.elk.alg.layered.options.LayeredOptions
 
 /**
  *
@@ -37,15 +39,23 @@ class GraphCleaner {
         POSITION
     )
     
+    val Set<IProperty<?>> WHITELIST_HIERARCHICAL_NODE = newHashSet(
+        // box layouter specific
+        EXPAND_NODES        
+    )
+    
     val Set<IProperty<?>> WHITELIST_PORT = newHashSet(
         PORT_SIDE,
         PORT_INDEX,
         PORT_LABELS_PLACEMENT,
-        POSITION
+        POSITION,
+        
+        LayeredOptions.NORTH_OR_SOUTH_PORT
     )
     
     val Set<IProperty<?>> WHITELIST_LABEL = newHashSet(
         NODE_LABELS_PLACEMENT,   // can be set on both the node or the label
+        EDGE_LABELS_PLACEMENT,
         POSITION  
     )
     
@@ -68,20 +78,35 @@ class GraphCleaner {
         copy.parent = node.parent.copy
         copy.identifier = node.identifier
         
-        if (node.children.empty) {
+        // if it's a compound node, don't set width and height,
+        if (!node.isHierarchical) {
             copy.width = node.width
             copy.height = node.height
         }
         
-        // TODO if it's a compound node, don't set width and height, 
-        // and be careful with some properties
+        // if the box layouter is configured, remember that
+        if (node.isHierarchical) {
+            if (node.getProperty(CoreOptions.ALGORITHM) == BoxLayouterOptions.ALGORITHM_ID) {
+                copy.setProperty(CoreOptions.ALGORITHM, BoxLayouterOptions.ALGORITHM_ID)
+            }
+        }        
+        
+        // preserve certain props for hierarchical nodes
+        if (node.isHierarchical) {
+            copy.copyProperties(node, WHITELIST_HIERARCHICAL_NODE)
+        }
         
         // preserve certain props
         copy.copyProperties(node, WHITELIST_NODE)
 
-        if (copy.getProperty(CoreOptions.PORT_CONSTRAINTS) == PortConstraints.UNDEFINED)
-            copy.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FREE);
+//        if (copy.getProperty(CoreOptions.PORT_CONSTRAINTS) == PortConstraints.UNDEFINED)
+//            copy.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FREE)
         
+        
+        // somewhat clear default values
+        if (node.getProperty(CoreOptions.NODE_SIZE_CONSTRAINTS) == SizeConstraint.fixed) {
+            node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, null)
+        }
         
         node.ports.forEach[ p | p.cleanCopy ]
         node.labels.forEach[ l | l.cleanCopy ]

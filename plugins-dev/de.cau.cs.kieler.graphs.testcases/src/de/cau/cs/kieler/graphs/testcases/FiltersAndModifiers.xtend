@@ -12,12 +12,13 @@
  */
 package de.cau.cs.kieler.graphs.testcases
 
+import java.util.function.Function
 import java.util.function.Predicate
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.util.IGraphElementVisitor
 import org.eclipse.elk.graph.ElkNode
+import org.eclipse.elk.graph.properties.IProperty
 import org.eclipse.elk.graph.util.ElkGraphUtil
-import java.util.function.Function
 
 /**
  * A collection of graph filters and modifiers that can be re-used during graph test case generation.
@@ -61,6 +62,39 @@ final class FiltersAndModifiers {
                     .filter [ n | n.children.empty ]                        // atomic nodes
                     .filter[ n | ElkGraphUtil.allIncidentEdges(n).isEmpty ] // isolated
                     .forEach[ n | n.parent = null ]                         // remove them
+            }
+        }
+    ]
+    
+    public static val IGraphElementVisitor REMOVE_UNCONNECTED_PORTS = [ node |
+        switch node {
+            ElkNode case node.eContainer == null: {
+                node.allNodes
+                    .toList // avoid concurrent modification
+                    .forEach[ n |
+                        val unconnectedPorts = n.ports.filter[p | ElkGraphUtil.allIncidentEdges(p).empty].toList 
+                        n.ports -= unconnectedPorts    
+                    ]
+            }
+        }
+    ]
+    
+    public static val Function<IProperty, IGraphElementVisitor> REMOVE_PROPERTY = [ prop |
+        [ e |
+           e.setProperty(prop, null) 
+        ]
+    ]
+    
+    public static val IGraphElementVisitor UNSET_NODE_LABEL_PLACEMENT_IF_SPECIFIED_ON_LABELS = [ ele |
+        switch ele {
+            ElkNode: {
+                val specifiedForAllPorts = ele.labels
+                    .map[it.getProperty(CoreOptions.NODE_LABELS_PLACEMENT)]
+                    .filter[it == null]
+                    .empty
+                if (specifiedForAllPorts) {
+                    ele.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, null)
+                }
             }
         }
     ]

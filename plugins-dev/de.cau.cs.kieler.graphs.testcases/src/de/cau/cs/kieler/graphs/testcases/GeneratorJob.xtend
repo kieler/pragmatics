@@ -129,7 +129,7 @@ class GeneratorJob extends Job {
                         return exportStatus
                         
                     val renderStatus = handler.renderDiagram(file)
-                    if (!renderStatus.OK) 
+                    if (renderStatus !== null && !renderStatus.OK) 
                         return renderStatus
                                         
                     return Status.OK_STATUS
@@ -183,6 +183,7 @@ class GeneratorJob extends Job {
                 }
                 val vc = handler.viewContext
                 vc.setProperty(IOffscreenRenderer.OUTPUT_FORMAT, IMAGE_FORMAT);
+                vc.setProperty(IOffscreenRenderer.IMAGE_SCALE, 1)
                 // finally render the diagram and return the result
                 val status = renderer.render(vc, fos, vc)
                 return status

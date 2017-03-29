@@ -83,7 +83,8 @@ public class KaotFormatHandler extends AbstractEmfHandler<Entity> implements ITe
      */
     @Override
     public Iterable<IGraphElementVisitor> getGraphModifiers() {
-        return null;
+        return Lists.newArrayList(
+                FiltersAndModifiers.UNSET_NODE_LABEL_PLACEMENT_IF_SPECIFIED_ON_LABELS);
     }
     
     /**

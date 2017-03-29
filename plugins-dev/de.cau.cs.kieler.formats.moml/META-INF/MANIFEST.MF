@@ -11,4 +11,5 @@ Require-Bundle: de.cau.cs.kieler.klighd,
  org.ptolemy.moml,
  de.cau.cs.kieler.formats.kgraph,
  org.eclipse.elk.core,
- de.cau.cs.kieler.graphs.testcases
+ de.cau.cs.kieler.graphs.testcases,
+ org.eclipse.elk.alg.layered;bundle-version="0.3.0"
