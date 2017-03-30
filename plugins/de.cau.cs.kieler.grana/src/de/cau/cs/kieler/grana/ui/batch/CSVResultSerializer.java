@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
@@ -24,6 +25,8 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import de.cau.cs.kieler.grana.AnalysisData;
 import de.cau.cs.kieler.grana.ui.batch.BatchJobResult.Range;
@@ -68,7 +71,30 @@ public class CSVResultSerializer implements IBatchResultSerializer {
 
     private void handleSimpleBatch(final Batch.Simple batch, final BatchResult batchResult,
             final OutputStreamWriter writer) throws IOException {
+
+        // some pre-processing in case execution times were measured
+        Iterable<BatchJobResult.Simple> simpleSuccesses =
+                FluentIterable.from(batchResult.getJobResults()).filter(Simple.class);
         
+        // different layout executions can use different processors, thus we have to find the 
+        // superset of the processors to be consistent in the csv file
+        Set<String> proccessorSuperSet = Sets.newLinkedHashSet();
+        Map<BatchJobResult.Simple, Map<String, Double>> executionTimeResults = Maps.newHashMap();
+        for (BatchJobResult.Simple r : simpleSuccesses) {
+            Map<String, Double> times = Maps.newHashMap();
+            executionTimeResults.put(r, times);
+            if (r.getFastestExection() != null) {
+                IElkProgressMonitor pm = r.getFastestExection();
+                proccessorSuperSet.add(pm.getTaskName());
+                times.put(pm.getTaskName(), pm.getExecutionTime());
+                for (IElkProgressMonitor subPm : pm.getSubMonitors()) {
+                    proccessorSuperSet.add(subPm.getTaskName());
+                    times.put(subPm.getTaskName(), subPm.getExecutionTime());
+                }
+            }
+        }
+        
+        // header 
         for (AnalysisData analysis : batch.getAnalyses()) {
             if (analysis.getComponents().size() > 0) {
                 for (Pair<String, String> component : analysis.getComponents()) {
@@ -80,11 +106,14 @@ public class CSVResultSerializer implements IBatchResultSerializer {
             }
         }
         
+        // exectime header
+        for (String processor : proccessorSuperSet) {
+            writer.write(";" + processor); 
+        }
+        
         writer.write("\n");
         
         // write the job results
-        Iterable<BatchJobResult.Simple> simpleSuccesses =
-                FluentIterable.from(batchResult.getJobResults()).filter(Simple.class);
         for (BatchJobResult.Simple jobResult : simpleSuccesses) {
             writer.write(jobResult.getJob().getParameter().toString());
             Map<String, Object> results = jobResult.getResults();
@@ -97,6 +126,13 @@ public class CSVResultSerializer implements IBatchResultSerializer {
                 String s = visualization.get(analysis, result);
                 writer.write(";" + s);
             }
+            
+            Map<String, Double> times = executionTimeResults.get(jobResult);
+            for (String processor : proccessorSuperSet) {
+                double time = times.getOrDefault(processor, -1d);
+                writer.write(";" + time);
+            }
+            
             writer.write("\n");
         }
     }

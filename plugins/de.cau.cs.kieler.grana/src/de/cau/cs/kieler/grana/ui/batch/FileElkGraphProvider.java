@@ -17,7 +17,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,6 +25,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.WrappedException;
@@ -35,8 +35,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-
-import com.google.common.collect.Maps;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import de.cau.cs.kieler.formats.GraphFormatsService;
 
@@ -130,34 +129,50 @@ public class FileElkGraphProvider implements IElkGraphProvider<IPath> {
                 // shall we perform execution time analysis?
                 if (executionTimeAnalysis) {
                     // Do a bunch of layout runs and take the one that took the least amount of time
-                    double minTime = Double.MAX_VALUE;
-                    Map<String, Double> minPhaseTimes = Maps.newHashMap();
+                    double minTime = Double.POSITIVE_INFINITY;
+                    IElkProgressMonitor fastest = null;
+                    ElkNode theGraph = graph;
                     for (int j = 0; j < NO_EXEC_TIME_RUNS; j++) {
-                        System.gc();
                         
-                        IElkProgressMonitor recLayoutMonitor = monitor.subTask(1);
-                        layoutEngine.layout(graph, recLayoutMonitor);
-
+                        IElkProgressMonitor recLayoutMonitor = new BasicProgressMonitor();
+                        
+                        Thread t = new Thread() {
+                            public void run() {
+                                Thread.currentThread().setPriority(Thread.MAX_PRIORITY);
+                                // perform layout on a copy of the graph since the 
+                                // layout algorithm may alter the graph's layout options
+                                ElkNode copy = (ElkNode) EcoreUtil.copy(theGraph);
+                                System.gc();
+                                layoutEngine.layout(copy, recLayoutMonitor);
+                                copy = null;
+                                System.gc();
+                            }
+                        };
+                        t.start();
+                        try {
+                            t.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } finally {
+                            t = null;
+                        }
+                        
                         if (!recLayoutMonitor.getSubMonitors().isEmpty()) {
-                            // we are interested in the top level progress monitor of the recursive
-                            // layout engine
+                            // we are interested in the top level progress monitor 
+                            // of the recursive layout engine
                             IElkProgressMonitor layoutMonitor =
                                     recLayoutMonitor.getSubMonitors().get(0);
                             double time = layoutMonitor.getExecutionTime();
-                            
                             if (time < minTime) {
                                 minTime = time;
-                                for (IElkProgressMonitor task : layoutMonitor.getSubMonitors()) {
-                                    minPhaseTimes.put(task.getTaskName(), task.getExecutionTime());
-                                }
+                                fastest = layoutMonitor;
                             }
                         }
                     }
-                    minPhaseTimes.put("Overall Execution Time", minTime);
                     
                     // attach the results to the graph such that the 
                     // execution time analysis can print them
-                    graph.setProperty(BatchHandler.EXECUTION_TIME_RESULTS, minPhaseTimes);
+                    graph.setProperty(BatchHandler.EXECUTION_TIME_RESULTS, fastest);
 
                 } else {
                     // plain layout - no hassle

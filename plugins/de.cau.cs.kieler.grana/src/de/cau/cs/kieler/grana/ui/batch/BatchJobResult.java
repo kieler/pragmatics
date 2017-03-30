@@ -16,6 +16,7 @@ package de.cau.cs.kieler.grana.ui.batch;
 import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 import com.google.common.collect.LinkedListMultimap;
@@ -35,7 +36,9 @@ public abstract class BatchJobResult {
     
     /** results for the basic analyses as returned by {@link Batch#getAnalyses()}. */
     private Map<String, Object> results;
-
+    /** progress monitor of the fastest execution, if 'measureExecutionTime' is active. */
+    private IElkProgressMonitor fastestExection;
+    
     /**
      * Constructs an BatchJobResult using the IBatchJob and the results the job computed.
      * 
@@ -73,6 +76,20 @@ public abstract class BatchJobResult {
      */
     public Map<String, Object> getResults() {
         return results;
+    }
+    
+    /**
+     * @return the fastestExection
+     */
+    public IElkProgressMonitor getFastestExection() {
+        return fastestExection;
+    }
+    
+    /**
+     * @param fastestExection the fastestExection to set
+     */
+    public void setFastestExection(final IElkProgressMonitor fastestExection) {
+        this.fastestExection = fastestExection;
     }
 
     // ------------------------------------------------------------------------------

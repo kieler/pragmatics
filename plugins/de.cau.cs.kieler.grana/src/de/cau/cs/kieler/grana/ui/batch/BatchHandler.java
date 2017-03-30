@@ -16,7 +16,6 @@ package de.cau.cs.kieler.grana.ui.batch;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -70,8 +69,8 @@ public class BatchHandler extends AbstractHandler {
      * Property holding the results of an execution time measurement for a layout run performed
      * prior to other graph analyses.
      */
-    public static final IProperty<Map<String, Double>> EXECUTION_TIME_RESULTS =
-            new Property<Map<String, Double>>("grana.execTimeResults");
+    public static final IProperty<IElkProgressMonitor> EXECUTION_TIME_RESULTS =
+            new Property<>("grana.execTimeResults");
  
     /**
      * {@inheritDoc}

@@ -90,6 +90,14 @@ public class JsonResultSerializer implements IBatchResultSerializer {
 
         // give each batch type the opportunity to add its additional results
         writeResults(batch, result, writer);
+        
+        if (result.getFastestExection() != null) {
+            writer.write(",\n");
+            writer.write(QUOTE + "fastestExecution" + QUOTE + ": ");
+            writer.write("{\n");
+            writeResults(result.getFastestExection(), writer);
+            writer.write("}");
+        }
 
         writer.write("}");
     }
@@ -167,6 +175,26 @@ public class JsonResultSerializer implements IBatchResultSerializer {
         writeResults(analyses, results, writer);
         writer.write("}");
         
+        writer.write("}");
+    }
+
+    private void writeResults(final IElkProgressMonitor monitor, final OutputStreamWriter writer)
+            throws Exception {
+        writer.write(QUOTE + monitor.getTaskName() + QUOTE + ": ");
+        writer.write("{ ");
+        writer.write(QUOTE + "time" + QUOTE + ": " 
+                   + QUOTE + monitor.getExecutionTime() + QUOTE);
+        if (!monitor.getSubMonitors().isEmpty()) {
+            writer.write(",\n");
+        }
+        boolean first = true;
+        for (IElkProgressMonitor subMonitor : monitor.getSubMonitors()) {
+            if (!first) {
+                writer.write(",\n");
+            }
+            first = false;
+            writeResults(subMonitor, writer);
+        }
         writer.write("}");
     }
 }

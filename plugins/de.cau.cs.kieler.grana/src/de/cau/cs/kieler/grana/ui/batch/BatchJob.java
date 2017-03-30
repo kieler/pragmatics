@@ -103,10 +103,9 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
         monitor.begin("Executing analysis batch job: " + parameter, WORK);
         ElkNode graph = graphProvider.getElkGraph(parameter, monitor.subTask(WORK_KGRAPH));
 
-        // Map<String, Double> execResults =
-        // graph.getData(KLayoutData.class).getProperty(BatchHandler.EXECUTION_TIME_RESULTS);
-
         BatchJobResult batchJobResult = localExecute(graph, analyses, monitor);
+        // only present if actual execution time is measured
+        batchJobResult.setFastestExection(graph.getProperty(BatchHandler.EXECUTION_TIME_RESULTS));
 
         monitor.done();
         return batchJobResult;
