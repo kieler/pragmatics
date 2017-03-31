@@ -70,33 +70,45 @@ public final class HierachicalKGraphSynthesis {
         diagram.getChildren().clear();
         diagram.getChildren().addAll(nodes);
 
+        //add inter level edges
         addHierarchicalEdges();
         
+        //make sure every node was layouted
         Parameters params = new Parameters();
         DiagramLayoutEngine.invokeLayout(null, diagram, params);
+        
+        //set the CoreOptions.Position
         initializePositions(diagram);
 
-        if (layout.equals("Radial")) {
+        //apply layout
+        setLayoutAlgorithm(diagram, layout);
+        return diagram;
+    }
+    
+    /**
+     * Add the layout algorithm to the options
+     * @param diagram
+     * @param layoutAlgorithm
+     */
+    private static void setLayoutAlgorithm(final KNode diagram,String layoutAlgorithm){
+        if (layoutAlgorithm.equals("Radial")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial");
-        } else if (layout.equals("Stress")) {
+        } else if (layoutAlgorithm.equals("Stress")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.stress");
-        } else if (layout.equals("Grid Snap")) {
+        } else if (layoutAlgorithm.equals("Grid Snap")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.grid");
-        } else if (layout.equals("Tree")) {
+        } else if (layoutAlgorithm.equals("Tree")) {
             diagram.setProperty(CoreOptions.ALGORITHM,
                     "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.tree");
-        } else if (layout.equals("Radial Original")) {
+        } else if (layoutAlgorithm.equals("Radial Original")) {
             diagram.setProperty(CoreOptions.ALGORITHM, "org.eclipse.elk.radial");
 
-        } else if (layout.equals("H-Layouter")) {
+        } else if (layoutAlgorithm.equals("H-Layouter")) {
 
         }
-        KNode newParent = KGraphUtil.createInitializedNode();
-        newParent.getChildren().add(diagram);
-        return diagram;
     }
 
     /**
@@ -123,50 +135,53 @@ public final class HierachicalKGraphSynthesis {
                 copiedChildren.addAll(recursiveTraversal(child));
             }
 
-            // The child has no children, therefore it is not hierarchical (no copy)
+            // Copy only nodes with more children, otherwise it would not be a hierarchical node
             if (!grandChildren.isEmpty()) {
-
-                // extract/copy content of children
-                Copier copier = new Copier();
-                KNode copy = (KNode) copier.copy(child);
-                copier.copyReferences();
-
-                copiedChildren.add(copy);
-                int id = child.hashCode();
-                child.setProperty(HierarchicalMetaDataProvider.NODE_ID, id);
-                copy.setProperty(HierarchicalMetaDataProvider.PARENT_ID, id);
-                parents.put(copy, parent);
-
-                // if it is a blue box reset the pointer to the parent
-                if (isBlueBox) {
-                    for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
-                        if (savedParent.getValue().equals(child.getChildren().get(0))) {
-                            savedParent.setValue(copy);
-                        }
-                    }
-                }
-                restoreLayout(copy, isBlueBox);
-
-                // keep track of the right parent
-                for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
-                    if (savedParent.getValue().equals(child)) {
-                        savedParent.setValue(copy);
-                    }
-                }
-
-                // Remove the actions of the inner nodes so they are not expandable
-                KRenderingImpl rendering = child.getData(KRenderingImpl.class);
-                if (rendering != null && rendering.getActions() != null) {
-                    rendering.getActions().clear();
-                }
-
-                // TODO remove the actions of the copy, such that the root children are not
-                // expandable. If we simply remove the action of the copy, we can minimize the
-                // node once but can not expand it anymore...
-
+            	KNode copyNode = copyNode(child, isBlueBox);
+            	copiedChildren.add(copyNode);
+                parents.put(copyNode, parent);             
             }
         }
         return copiedChildren;
+    }
+    
+    private static KNode copyNode(KNode child, boolean isBlueBox){
+    	// extract/copy content of children
+        Copier copier = new Copier();
+        KNode copy = (KNode) copier.copy(child);
+        copier.copyReferences();
+
+        int id = child.hashCode();
+        child.setProperty(HierarchicalMetaDataProvider.NODE_ID, id);
+        copy.setProperty(HierarchicalMetaDataProvider.PARENT_ID, id);
+
+        // if it is a blue box reset the pointer to the parent
+        if (isBlueBox) {
+            for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
+                if (savedParent.getValue().equals(child.getChildren().get(0))) {
+                    savedParent.setValue(copy);
+                }
+            }
+        }
+        restoreLayout(copy, isBlueBox);
+
+        // keep track of the right parent
+        for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
+            if (savedParent.getValue().equals(child)) {
+                savedParent.setValue(copy);
+            }
+        }
+
+        // Remove the actions of the inner nodes so they are not expandable
+        KRenderingImpl rendering = child.getData(KRenderingImpl.class);
+        if (rendering != null && rendering.getActions() != null) {
+            rendering.getActions().clear();
+        }
+
+        // TODO remove the actions of the copy, such that the root children are not
+        // expandable. If we simply remove the action of the copy, we can minimize the
+        // node once but can not expand it anymore...
+        return copy;
     }
 
     /**
