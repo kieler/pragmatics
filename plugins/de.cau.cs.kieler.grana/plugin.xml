@@ -457,6 +457,40 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.grana.drawing"
+            class="de.cau.cs.kieler.grana.analyses.NodeDimensionAnalysis"
+            description="The minimum, average and maximum width and height of nodes."
+            id="de.cau.cs.kieler.grana.nodeDimensions"
+            name="Node Dimensions">
+         <component
+               abbreviation="MinW"
+               name="Minimum Width">
+         </component>
+         <component
+               abbreviation="AvgW"
+               name="Average Width">
+         </component>
+         <component
+               abbreviation="MaxW"
+               name="Maximum Width">
+         </component>
+         <component
+               abbreviation="MinH"
+               name="Minimum Height">
+         </component>
+         <component
+               abbreviation="AvgH"
+               name="Average Height">
+         </component>
+         <component
+               abbreviation="MaxH"
+               name="Maximum Height">
+         </component>
+         <component
+               name="Nodes">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.grana.drawing"
             class="de.cau.cs.kieler.grana.analyses.BendsAnalysis"
             description="The number of bendpoints in the graph including hierarchies."
             id="de.cau.cs.kieler.grana.bendpointCount"

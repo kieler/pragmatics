@@ -44,29 +44,27 @@ public class NodeSizeAnalysis implements IAnalysis {
      * 
      * @author cds
      */
-    private static class NodeSizeAnalysisState {
+    static class NodeSizeAnalysisState {
+        // SUPPRESS CHECKSTYLE NEXT 16 Javadoc|VisibilityModifier
         /**
          * The number of nodes analyzed so far.
          */
-        private int nodes = 0;
+        int nodes = 0;
         
-        /**
-         * The maximum node size analyzed so far.
-         */
-        private double maxSize = Double.NEGATIVE_INFINITY;
+        double maxWidth = Double.NEGATIVE_INFINITY;
+        double minWidth = Double.POSITIVE_INFINITY;
+        double sumWidth = 0d;
         
-        /**
-         * The minimum node size analyzed so far.
-         */
-        private double minSize = Double.POSITIVE_INFINITY;
+        double maxHeight = Double.NEGATIVE_INFINITY;
+        double minHeight = Double.POSITIVE_INFINITY;
+        double sumHeight = 0d;
         
-        /**
-         * The sum of the size of all nodes analyzed so far.
-         */
-        private double sumOfSize = 0.0;
+        double maxSize = Double.NEGATIVE_INFINITY;
+        double minSize = Double.POSITIVE_INFINITY;
+        double sumOfSize = 0.0;
     }
     
-
+ 
     // CONSTANTS
     /**
      * ID of this analysis.
@@ -109,11 +107,20 @@ public class NodeSizeAnalysis implements IAnalysis {
         
         progressMonitor.done();
         
-        // Return result (min,avg,max)
+        // Return result (min, avg, max)
+        return returnResult(state);
+    }
+    
+    /**
+     * @param state
+     *            the state object with the analysis results.
+     * @return the result of this analysis
+     */
+    protected Object returnResult(final NodeSizeAnalysisState state) {
         return new Object[] {
-                (int) state.minSize,
+                state.minSize,
                 state.sumOfSize / state.nodes,
-                (int) state.maxSize,
+                state.maxSize,
                 state.nodes
         };
     }
@@ -130,22 +137,38 @@ public class NodeSizeAnalysis implements IAnalysis {
      */
     private void computeNodeSizes(final ElkNode node, final NodeSizeAnalysisState state,
             final boolean hierarchy) {
+        
         if (!hierarchy || node.getChildren().isEmpty()) {
-            // Compute the node size
-            Rectangle2D.Double nodeRect = computeNodeRect(node, true, true, true);
-            double nodeSize = nodeRect.width * nodeRect.height;
-            
-            // Update analysis state
-            state.nodes++;
-            state.minSize = Math.min(state.minSize, nodeSize);
-            state.maxSize = Math.max(state.maxSize, nodeSize);
-            state.sumOfSize += nodeSize;
-        } else {
+            analyseNode(node, state);
+        }
+
+        if (hierarchy) {
             // Analyze the children
             for (ElkNode child : node.getChildren()) {
                 computeNodeSizes(child, state, hierarchy);
             }
         }
+    }
+    
+    private void analyseNode(final ElkNode node, final NodeSizeAnalysisState state) {
+        // Compute the node size
+        Rectangle2D.Double nodeRect = computeNodeRect(node, true, true, true);
+        double nodeSize = nodeRect.width * nodeRect.height;
+        
+        // Update analysis state
+        state.nodes++;
+        
+        state.minWidth = Math.min(state.minWidth, nodeRect.width);
+        state.maxWidth = Math.max(state.maxWidth, nodeRect.width);
+        state.sumWidth += nodeRect.width;
+        
+        state.minHeight = Math.min(state.minHeight, nodeRect.height);
+        state.maxHeight = Math.max(state.maxHeight, nodeRect.height);
+        state.sumHeight += nodeRect.height;
+        
+        state.minSize = Math.min(state.minSize, nodeSize);
+        state.maxSize = Math.max(state.maxSize, nodeSize);
+        state.sumOfSize += nodeSize;
     }
     
     /**
