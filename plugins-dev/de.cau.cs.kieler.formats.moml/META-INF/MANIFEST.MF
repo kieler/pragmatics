@@ -11,3 +11,4 @@ Require-Bundle: de.cau.cs.kieler.klighd,
  org.ptolemy.moml,
  de.cau.cs.kieler.formats.kgraph,
  org.eclipse.elk.core
+Import-Package: de.cau.cs.kieler.hierarchicalLayoutAlgorithms

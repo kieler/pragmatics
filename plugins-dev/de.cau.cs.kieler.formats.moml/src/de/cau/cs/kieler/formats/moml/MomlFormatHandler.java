@@ -33,6 +33,7 @@ import de.cau.cs.kieler.formats.GraphFormatsService;
 import de.cau.cs.kieler.formats.IGraphTransformer;
 import de.cau.cs.kieler.formats.TransformationData;
 import de.cau.cs.kieler.formats.kgraph.KGraphHandler;
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierachicalKGraphSynthesis;
 import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
@@ -47,10 +48,10 @@ import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis;
 public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
 
     /** File extension of MoML files, i.e. Ptolemy models. */
-    public static final String MOML_EXTENSION = "moml"; 
-   
+    public static final String MOML_EXTENSION = "moml";
+
     private IGraphTransformer<DocumentRoot, ElkNode> importer = new MomlImporter();
-    
+
     /**
      * {@inheritDoc}
      */
@@ -79,6 +80,7 @@ public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
 
         super.deserialize(serializedGraph, transData);
     }
+
     /**
      * {@inheritDoc}
      */
@@ -87,8 +89,8 @@ public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
         // create a new resource set and register the moml extension to the
         // EMF resource factory
         ResourceSet resourceset = new ResourceSetImpl();
-        resourceset.getResourceFactoryRegistry().getExtensionToFactoryMap()
-                .put(MOML_EXTENSION, new MomlResourceFactoryImpl());
+        resourceset.getResourceFactoryRegistry().getExtensionToFactoryMap().put(MOML_EXTENSION,
+                new MomlResourceFactoryImpl());
         resourceset.getPackageRegistry().put(MomlPackage.eNS_URI, MomlPackage.eINSTANCE);
         return resourceset;
     }
@@ -101,23 +103,32 @@ public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
             DocumentRoot model = data.getSourceGraph();
             if (model != null) {
                 KlighdSynthesisProperties props = KlighdSynthesisProperties.create();
-                
+
                 // always use ptolemy diagram synthesis
                 props.useDiagramSynthesis(PtolemyDiagramSynthesis.ID);
 
                 // here we don't want comments
                 props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.SHOW_COMMENTS, false);
-                
+                // or directors, or properties
                 props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.SHOW_DIRECTORS, false);
                 props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.SHOW_PROPERTIES, false);
-                
+
+                // some optional options
+                props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.TRANSFORM_STATES,
+                        false);
+                props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.INITIALLY_COLLAPSED,
+                        false);
+                props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.SHOW_PORT_LABELS,
+                        false);
+
                 // some optional options
                 // props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.FLATTEN, true);
-                props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.TRANSFORM_STATES, false);
-                
+                // props.configureSynthesisOptionValue(PtolemyDiagramSynthesis.TRANSFORM_STATES,
+                // false);
+
                 KNode kgraph = LightDiagramServices.translateModel(model, null, props);
-                
-                
+                HierachicalKGraphSynthesis.transform(kgraph, "");
+
                 // now make it a elk graph
                 GraphFormatData kgraphFormat =
                         GraphFormatsService.getInstance().getFormatData(KGraphHandler.ID);
@@ -128,7 +139,7 @@ public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
                 td.setSourceGraph(kgraph);
                 importer.transform(td);
                 ElkNode elkGraph = td.getTargetGraphs().get(0);
-          
+
                 exportLayoutGraph(elkGraph);
 
                 data.getTargetGraphs().clear();
@@ -144,12 +155,12 @@ public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
                     "Applying layout to a MoML file is not supported.");
         }
     }
-    
-    
+
     /**
      * Export the given layout graph in KGraph format.
      * 
-     * @param graph the parent node of the layout graph
+     * @param graph
+     *            the parent node of the layout graph
      */
     protected void exportLayoutGraph(final ElkNode graph) {
         URI exportUri = getExportURI(graph);
@@ -165,15 +176,16 @@ public class MomlFormatHandler extends AbstractEmfHandler<DocumentRoot> {
             }
         }
     }
-    
+
     /**
      * Return a file URI to use for exporting graphs.
      * 
-     * @param graph the parent node of the layout graph
+     * @param graph
+     *            the parent node of the layout graph
      */
     protected URI getExportURI(final ElkNode graph) {
-        String path = ElkUtil.debugFolderPath("moml_export")
-                + Integer.toHexString(graph.hashCode()) + ".elkg";
+        String path = ElkUtil.debugFolderPath("moml_export") + Integer.toHexString(graph.hashCode())
+                + ".elkg";
         return URI.createFileURI(path);
     }
 

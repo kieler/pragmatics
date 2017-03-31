@@ -11,7 +11,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.graphs.klighd.syntheses;
+package de.cau.cs.kieler.hierarchicalLayoutAlgorithms;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +26,6 @@ import org.eclipse.elk.core.service.DiagramLayoutEngine;
 import org.eclipse.elk.core.service.DiagramLayoutEngine.Parameters;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
 
-import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierarchicalMetaDataProvider;
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil;
@@ -61,7 +60,7 @@ public final class HierachicalKGraphSynthesis {
      *            the layout algorithm that should be used for the connection of the hierarchical
      *            nodes we extracted
      */
-    public static void transform(final KNode diagram, final String layout) {
+    public static KNode transform(final KNode diagram, final String layout) {
         parents = new HashMap<>();
         KGraphDataUtil.loadDataElements(diagram);
 
@@ -95,6 +94,9 @@ public final class HierachicalKGraphSynthesis {
         } else if (layout.equals("H-Layouter")) {
 
         }
+        KNode newParent = KGraphUtil.createInitializedNode();
+        newParent.getChildren().add(diagram);
+        return diagram;
     }
 
     /**
