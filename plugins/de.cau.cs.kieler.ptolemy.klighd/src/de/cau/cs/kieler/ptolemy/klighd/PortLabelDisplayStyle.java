@@ -53,7 +53,9 @@ public enum PortLabelDisplayStyle {
                 return style;
             }
         }
-        
+        if (ds.equalsIgnoreCase("false")) {
+            return NONE;
+        }
         return null;
     }
     

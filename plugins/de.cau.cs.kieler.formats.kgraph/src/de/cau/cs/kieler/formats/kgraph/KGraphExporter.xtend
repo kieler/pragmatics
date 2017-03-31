@@ -64,7 +64,10 @@ class KGraphExporter implements IGraphTransformer<ElkNode, KNode> {
     }
     
     private def void transformEdges(ElkNode node) {
-        node.containedEdges.forEach[elkEdge | elkEdge.transformEdge()];
+        node.containedEdges.forEach[elkEdge | 
+            elkEdge.transformEdge
+            elkEdge.labels.forEach[elkLabel | elkLabel.transformLabel]
+        ];
         node.children.forEach[elkNode | elkNode.transformEdges()];
     }
     

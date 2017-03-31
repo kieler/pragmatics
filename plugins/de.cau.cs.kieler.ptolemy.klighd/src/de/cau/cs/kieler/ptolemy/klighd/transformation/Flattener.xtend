@@ -18,7 +18,6 @@ import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
-import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MiscellaneousExtensions
 import java.util.List
 
 /**
@@ -30,8 +29,6 @@ class Flattener {
     
     /** Access to marked nodes. */
     @Inject extension MarkerExtensions
-    /** Miscellaneous stuff to make my life easier. */
-    @Inject extension MiscellaneousExtensions
     
     /**
      * Flatten all composite actors in the given graph.
@@ -57,12 +54,14 @@ class Flattener {
      * @param child the child node
      */
     def void eliminateHierarchy(KNode parent, KNode child) {
+        
         // Check whether the child node has any connections to the inside;
         // if not, we don't want to flatten it
-        if (!(child.incomingEdges.exists([e | e.source.parent == child])
-            || child.outgoingEdges.exists([e | e.target.parent == child]))) {
-            return
-        }
+        // uru: I'm fine with this, re-activate if you dare
+//        if (!(child.incomingEdges.exists([e | e.source.parent == child])
+//            || child.outgoingEdges.exists([e | e.target.parent == child]))) {
+//            return
+//        }
         
         for (port : child.ports) {
             // Gather incoming and outgoing edges from the port
