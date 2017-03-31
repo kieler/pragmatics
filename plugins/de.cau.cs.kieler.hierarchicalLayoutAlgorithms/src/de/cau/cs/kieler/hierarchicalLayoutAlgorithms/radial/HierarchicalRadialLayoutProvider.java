@@ -16,15 +16,17 @@ package de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial;
 import org.eclipse.elk.alg.radial.RadialLayoutProvider;
 import org.eclipse.elk.alg.radial.options.CompactionStrategy;
 import org.eclipse.elk.alg.radial.options.RadialOptions;
+import org.eclipse.elk.alg.radial.options.RadialTranslationStrategy;
 import org.eclipse.elk.alg.radial.options.SortingStrategy;
 import org.eclipse.elk.core.AbstractLayoutProvider;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkNode;
 
 /**
  * The hierarchical radial layout provider uses the elk radial layout provider
- * and arguments it with a polar coordinate sorter,explosion line edge
- * routing and radial compaction.
+ * and arguments it with a polar coordinate sorter,explosion line edge routing
+ * and radial compaction.
  */
 public class HierarchicalRadialLayoutProvider extends AbstractLayoutProvider {
 
@@ -33,10 +35,14 @@ public class HierarchicalRadialLayoutProvider extends AbstractLayoutProvider {
 		RadialLayoutProvider radialLayouter = new RadialLayoutProvider();
 		layoutGraph.setProperty(RadialOptions.COMPACTOR, CompactionStrategy.RADIAL_COMPACTION);
 		layoutGraph.setProperty(RadialOptions.SORTER, SortingStrategy.POLAR_COORDINATE);
-//		layoutGraph.setProperty(RadialOptions.OPTIMIZATION_CRITERIA, RadialTranslationStrategy.CROSSING_MINIMIZATION);
+		layoutGraph.setProperty(RadialOptions.OPTIMIZATION_CRITERIA,
+				RadialTranslationStrategy.EDGE_LENGTH_BY_POSITION);
+		layoutGraph.setProperty(CoreOptions.SPACING_NODE_NODE, 30.0);
 		radialLayouter.layout(layoutGraph, progressMonitor);
-		
-		new ExplosionLineRouter().bendEdgesToHierarchicalEdges(layoutGraph.getProperty(RadialOptions.ROOT_NODE));
+
+		ExplosionLineRouter linerouter = new ExplosionLineRouter();
+		ElkNode node = layoutGraph.getProperty(RadialOptions.ROOT_NODE);
+		linerouter.bendEdgesToHierarchicalEdges(node);
 	}
 
 }
