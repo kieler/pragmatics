@@ -45,6 +45,7 @@ import org.eclipse.elk.core.labels.LabelManagementOptions
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.emf.ecore.EObject
+import de.cau.cs.kieler.hierarchicalLayoutAlgorithms.HierachicalGraphBuilder
 
 /**
  * A base class for transformations that want to apply nice renderings to the diagrams they produce. The
@@ -86,13 +87,13 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     private static val GRID = "Grid Snap"
     private static val TREE = "Tree"
     private static val OVERLAP = "Radial Original"
-    private static val H_LAYOUTER = "H-Layouter"
+    private static val LAYERED = "Elk Layered"
 
     /**
      * Synthesis option specifying how the Hierarchical view should be layouted.
      */
     private static val SynthesisOption HIERARCHICAL_LAYOUT = SynthesisOption::createChoiceOption("Hierarchical Layout",
-        ImmutableList::of(RADIAL, STRESS, GRID, TREE, OVERLAP, H_LAYOUTER), H_LAYOUTER)
+        ImmutableList::of(RADIAL, STRESS, GRID, TREE, OVERLAP, LAYERED), LAYERED)
     
     private static val LABELS_NO_LABELS = "No Labels";
     private static val LABELS_TRUNCATE = "Truncate";
@@ -344,22 +345,22 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
             case HIERARCHICAL_ON: {
                 switch HIERARCHICAL_LAYOUT.objectValue {
                     case RADIAL: {
-                        HierachicalKGraphSynthesis.transform(kgraph, "Radial")
+                        HierachicalGraphBuilder.transform(kgraph, "Radial")
                     }
                     case STRESS: {
-                        HierachicalKGraphSynthesis.transform(kgraph, "Stress")
+                        HierachicalGraphBuilder.transform(kgraph, "Stress")
                     }
                     case GRID: {
-                        HierachicalKGraphSynthesis.transform(kgraph, "Grid Snap")
+                        HierachicalGraphBuilder.transform(kgraph, "Grid Snap")
                     }
                     case TREE: {
-                        HierachicalKGraphSynthesis.transform(kgraph, "Tree")
+                        HierachicalGraphBuilder.transform(kgraph, "Tree")
                     }
                     case OVERLAP: {
-                        HierachicalKGraphSynthesis.transform(kgraph, "Radial Original")   
+                        HierachicalGraphBuilder.transform(kgraph, "Radial Original")   
                     }
-                    case H_LAYOUTER: {
-                        HierachicalKGraphSynthesis.transform(kgraph, "H-Layouter")
+                    case LAYERED: {
+                        HierachicalGraphBuilder.transform(kgraph, "Elk Layered")
                     }
                 }
             }
