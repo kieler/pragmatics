@@ -84,7 +84,10 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * that are in the corresponding hierarchy depth.
 	 */
 	private Map<Integer, List<ElkNode>> secondRunDepthNodeList;
-	/** Heuristic for a better complete width of the graph before a layout is computed. */
+	/**
+	 * Heuristic for a better complete width of the graph before a layout is
+	 * computed.
+	 */
 	private boolean widthheuristic;
 	/**
 	 * Magic divisor for a better distance between the root and nearest other
@@ -111,7 +114,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		compY = (n1, n2) -> {
 			KVector originalNode1 = n1.getProperty(CoreOptions.POSITION);
 			KVector originalNode2 = n2.getProperty(CoreOptions.POSITION);
-			
+
 			return DoubleMath.fuzzyCompare(originalNode1.y, originalNode2.y, EPSILON);
 		};
 
@@ -132,9 +135,9 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 			}
 
 			progressMonitor.begin("Compaction", 3);
-			HierarchicalTreeCompaction compaction = new HierarchicalTreeCompaction(nodeSpacing);
-			compaction.compact(firstRunDepthNodeList, secondRunDepthNodeList, layoutGraph.getWidth() / 2,
-					nodeHierarchyDepth, largestHierarchyDepth);
+			HierarchicalTreeCompaction compaction = new HierarchicalTreeCompaction(firstRunDepthNodeList,
+					secondRunDepthNodeList, layoutGraph.getWidth() / 2, largestHierarchyDepth);
+			compaction.compact(layoutGraph);
 
 			progressMonitor.begin("Edge routing", 4);
 			ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
@@ -235,7 +238,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 		}
 
 		buildNodeList(firstRunList, BOTTOM_CIRCLE_START, -root.getHeight() / 2, firstRunDepthNodeList, true);
-		// firstRunList = Lists.reverse(firstRunList);
 		buildNodeList(secondRunList, TOP_CIRCLE_START, root.getHeight() / 2, secondRunDepthNodeList, true);
 		secondRunList = Lists.reverse(secondRunList);
 
@@ -430,7 +432,10 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	 * method for this.
 	 * 
 	 * @param runList
-	 * @param comp
+	 * @param radialOffset
+	 * @param nodeOffset
+	 * @param depthNodeList
+	 * @param sort
 	 */
 	private void buildNodeList(final List<ElkNode> runList, final double radialOffset, final double nodeOffset,
 			final Map<Integer, List<ElkNode>> depthNodeList, final boolean sort) {
@@ -466,13 +471,18 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	/**
 	 * Puts the connected nodes of the next hierarchy level recursively into the
 	 * list of nodes that are relevant for the corresponding run.
-	 * 
+	 
 	 * @param node
-	 * @param list
-	 * @param comp
+	 * @param tempList
+	 * @param radialOffset
+	 * @param nodeOffset
+	 * @param depth
+	 * @param depthNodeList
+	 * @param sort
 	 */
 	private void buildNodeListRecursive(final ElkNode node, final List<ElkNode> tempList, final double radialOffset,
-			final double nodeOffset, final int depth, final Map<Integer, List<ElkNode>> depthNodeList, boolean sort) {
+			final double nodeOffset, final int depth, final Map<Integer, List<ElkNode>> depthNodeList,
+			final boolean sort) {
 		List<ElkNode> compList = RadialUtil.getSuccessors(node);
 		if (sort) {
 			Comparator<ElkNode> comp = RadialUtil.createPolarComparator(radialOffset, nodeOffset);

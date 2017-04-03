@@ -18,27 +18,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.elk.alg.radial.RadialUtil;
 import org.eclipse.elk.graph.ElkNode;
 
 import com.google.common.collect.Lists;
 
 /**
  * Compaction of a tree. Seperates the tree in four quarters which will be
- * compacted according to the lowest available space in that quarter.
+ * compacted according to the lowest available space in that quarter. This
+ * compaction only works for connected graphs.
  */
 public class HierarchicalTreeCompaction {
-	
-	/**
-	 * Constructor that uses a given spacing.
-	 * 
-	 * @param spacing
-	 */
-	public HierarchicalTreeCompaction(final double nodeSpacing) {
-		this.nodeSpacing = nodeSpacing;
-	}
-	
-	/** Minimum space between nodes. Default: 20. */
-	private double nodeSpacing = 20.0;
+	/** List of nodes of the upward tree. */
+	private List<ElkNode> firstRunList = new ArrayList<ElkNode>();
+	/** List of nodes of the downward tree. */
+	private List<ElkNode> secondRunList = new ArrayList<ElkNode>();
+	/** Boolean if values need to be calculated or not. */
+	private boolean calculateValues = true;
+	/** Minimum space between nodes. */
+	private double nodeSpacing;
 	/** Epsilon for comparison of double values. */
 	private static final double EPSILON = 0.1;
 	/**
@@ -46,26 +44,147 @@ public class HierarchicalTreeCompaction {
 	 * separator with it's width.
 	 */
 	private Map<Integer, Double> newSeparator = new HashMap<Integer, Double>();
+	/**
+	 * Maps the hierarchy depth of the upward tree as integer to a list of
+	 * elknodes in the corresponding depth, starting with depth of one.
+	 */
+	private Map<Integer, List<ElkNode>> firstRunDepthNodeList = new HashMap<Integer, List<ElkNode>>();
+	/**
+	 * Maps the hierarchy depth of the downward tree as integer to a list of
+	 * elknodes in the corresponding depth, starting with depth of one.
+	 */
+	private Map<Integer, List<ElkNode>> secondRunDepthNodeList = new HashMap<Integer, List<ElkNode>>();
+	/** The separator is the half of the graph width. */
+	private double separator;
+	/** Integer value with the largest hierarchy depth. */
+	private int largestHierarchyDepth;
+	/**
+	 * Map of a hierarchy depth with a list of all nodes in that depth of the
+	 * left top quarter.
+	 */
+	private Map<Integer, List<ElkNode>> leftTopQuarter = new HashMap<Integer, List<ElkNode>>();
+	/**
+	 * Map of a hierarchy depth with a list of all nodes in that depth of the
+	 * right top quarter.
+	 */
+	private Map<Integer, List<ElkNode>> rightTopQuarter = new HashMap<Integer, List<ElkNode>>();
+	/**
+	 * Map of a hierarchy depth with a list of all nodes in that depth of the
+	 * left bottom quarter.
+	 */
+	private Map<Integer, List<ElkNode>> leftBotQuarter = new HashMap<Integer, List<ElkNode>>();
+	/**
+	 * Map of a hierarchy depth with a list of all nodes in that depth of the
+	 * right bottom quarter.
+	 */
+	private Map<Integer, List<ElkNode>> rightBotQuarter = new HashMap<Integer, List<ElkNode>>();
+	/** Root of the tree. */
+	private ElkNode root;
 
 	/**
-	 * At first nodes will be sorted in a corresponding quarter and after that
-	 * the actual compaction will take place with help of a border that shifts
-	 * the nodes as much as possible into the corresponding direction.
-	 * 
-	 * @param firstRunList
-	 * @param secondRunList
-	 * @param seperator
-	 * @param nodeHierarchyDepth
+	 * Constructor of one dimensional trees.
 	 */
-	public void compact(final Map<Integer, List<ElkNode>> firstRunDepthNodeList,
+	public HierarchicalTreeCompaction() {
+
+	}
+
+	/**
+	 * Constructor of two dimensional trees.
+	 * 
+	 * @param upwardRunList
+	 * @param downwardRunList
+	 */
+	public HierarchicalTreeCompaction(final List<ElkNode> upwardRunList, final List<ElkNode> downwardRunList) {
+		firstRunList = upwardRunList;
+		secondRunList = downwardRunList;
+	}
+
+	/**
+	 * Constructor for one or two dimensional trees that holds all the values
+	 * needed for the compaction.
+	 * 
+	 * @param firstRunDepthNodeList
+	 *            Maps the hierarchy depth of the upward tree as integer to a
+	 *            list of elknodes in the corresponding depth, starting with
+	 *            depth of one.
+	 * @param secondRunDepthNodeList
+	 *            Maps the hierarchy depth of the downward tree as integer to a
+	 *            list of elknodes in the corresponding depth, starting with
+	 *            depth of one.
+	 * @param separator
+	 *            The separator is the half of the graph width.
+	 * @param largestHierarchyDepth
+	 *            Integer value with the largest hierarchy depth.
+	 */
+	public HierarchicalTreeCompaction(final Map<Integer, List<ElkNode>> firstRunDepthNodeList,
 			final Map<Integer, List<ElkNode>> secondRunDepthNodeList, final double separator,
-			final Map<ElkNode, Integer> nodeHierarchyDepth, final int largestHierarchyDepth) {
+			final int largestHierarchyDepth) {
+		this.firstRunDepthNodeList = firstRunDepthNodeList;
+		this.secondRunDepthNodeList = secondRunDepthNodeList;
+		this.separator = separator;
+		this.largestHierarchyDepth = largestHierarchyDepth;
+		calculateValues = false;
+	}
 
-		Map<Integer, List<ElkNode>> leftTopQuarter = new HashMap<Integer, List<ElkNode>>();
-		Map<Integer, List<ElkNode>> rightTopQuarter = new HashMap<Integer, List<ElkNode>>();
-		Map<Integer, List<ElkNode>> leftBotQuarter = new HashMap<Integer, List<ElkNode>>();
-		Map<Integer, List<ElkNode>> rightBotQuarter = new HashMap<Integer, List<ElkNode>>();
+	/**
+	 * At first nodes will be put in a corresponding quarter and after that the
+	 * actual compaction will take place with help of a border that shifts the
+	 * nodes as much as possible into the corresponding direction.
+	 * 
+	 * @param graph
+	 */
+	public void compact(final ElkNode graph) {
+		nodeSpacing = graph.getProperty(HierarchicalTreeOptions.NODE_SPACING);
+		root = RadialUtil.findRoot(graph);
+		if (calculateValues) {
+			if (secondRunList.isEmpty()) {
+				secondRunList = graph.getChildren();
+			}
+			calculateValues(graph);
+		}
 
+		calculateQuarters();
+		doCompaction(leftBotQuarter, false);
+		doCompaction(rightBotQuarter, true);
+		doCompaction(leftTopQuarter, false);
+		doCompaction(rightTopQuarter, true);
+	}
+
+	/**
+	 * First step of calculating missing values.
+	 */
+	private void calculateValues(final ElkNode graph) {
+		calculateValues(firstRunList, firstRunDepthNodeList);
+		calculateValues(secondRunList, secondRunDepthNodeList);
+		separator = graph.getWidth() / 2;
+	}
+
+	/**
+	 * Actual calculation of missing values.
+	 * 
+	 * @param runList
+	 * @param depthNodeList
+	 */
+	private void calculateValues(final List<ElkNode> runList, final Map<Integer, List<ElkNode>> depthNodeList) {
+//		Set<ElkNode> graphNodes = new HashSet<ElkNode>(runList);
+		for (ElkNode node : runList) {
+			int depth = HierarchicalUtil.getDepths(node, root);
+			largestHierarchyDepth = Math.max(depth, largestHierarchyDepth);
+			List<ElkNode> list;
+			if (depthNodeList.containsKey(depth)) {
+				list = depthNodeList.get(depth);
+			} else {
+				list = new ArrayList<ElkNode>();
+			}
+			list.add(node);
+			depthNodeList.put(depth, list);
+		}
+	}
+
+	/**
+	 * Puts nodes in the corresponding quarter.
+	 */
+	private void calculateQuarters() {
 		for (int i = 1; i <= largestHierarchyDepth; i++) {
 			List<ElkNode> leftTopList = new ArrayList<ElkNode>();
 			List<ElkNode> rightTopList = new ArrayList<ElkNode>();
@@ -80,7 +199,7 @@ public class HierarchicalTreeCompaction {
 						rightTopList.add(node);
 					}
 				}
-				
+
 				leftTopQuarter.put(i, leftTopList);
 				rightTopList = Lists.reverse(rightTopList);
 				rightTopQuarter.put(i, rightTopList);
@@ -99,17 +218,12 @@ public class HierarchicalTreeCompaction {
 						rightBotList.add(node);
 					}
 				}
-				
+
 				leftBotList = Lists.reverse(leftBotList);
 				leftBotQuarter.put(i, leftBotList);
 				rightBotQuarter.put(i, rightBotList);
 			}
 		}
-
-		doCompaction(leftBotQuarter, largestHierarchyDepth, separator, false);
-		doCompaction(rightBotQuarter, largestHierarchyDepth, separator, true);
-		doCompaction(leftTopQuarter, largestHierarchyDepth, separator, false);
-		doCompaction(rightTopQuarter, largestHierarchyDepth, separator, true);
 	}
 
 	/**
@@ -121,13 +235,12 @@ public class HierarchicalTreeCompaction {
 	 * @param sep
 	 * @param right
 	 */
-	private void doCompaction(final Map<Integer, List<ElkNode>> quarter, final int largestHierarchyDepth,
-			final double sep, final boolean right) {
-		double separator = sep;
+	private void doCompaction(final Map<Integer, List<ElkNode>> quarter, final boolean right) {
+		double sep = separator;
 		if (right) {
-			separator = -sep;
+			sep = -separator;
 		}
-		
+
 		// Calculate the border where the compaction starts. The border is the
 		// left- / rightmost position of a node in the complete quarter.
 		double border = Double.MAX_VALUE;
@@ -146,48 +259,35 @@ public class HierarchicalTreeCompaction {
 		for (int i = 1; i <= largestHierarchyDepth; i++) {
 			double previousX = border;
 			if (right) {
-				System.out.println(i);
 				if (newSeparator.containsKey(i)) {
-					separator = newSeparator.get(i);
+					sep = newSeparator.get(i);
 				}
 			}
-			
+
 			if (quarter.containsKey(i)) {
 				for (ElkNode node : quarter.get(i)) {
 					double x = node.getX();
 					if (right) {
 						x = -(node.getX() + node.getWidth());
 					}
-					
+
 					double space = availableSpace[i - 1] + (x - previousX - nodeSpacing);
-					if (right) {
-						System.out.println("A: " + space);
-					}
 					space = Math.max(space, 0);
 					availableSpace[i - 1] = space;
 					previousX = x + node.getWidth();
 				}
-				
-				// TODO trilateration seperation bug
-				boolean bool = previousX < separator;
-//				if (right) {
-//					System.out.println("prev: " + previousX);
-//					System.out.println("sep: " + separator);
-//					bool = previousX > separator;
-//				}
+
+				boolean bool = previousX < sep;
 				if (bool) {
-					double space = availableSpace[i - 1] + (separator - previousX - nodeSpacing);
-					if (right) {
-						System.out.println("A2: " + space);
-					}
+					double space = availableSpace[i - 1] + (sep - previousX - nodeSpacing);
 					space = Math.max(space, 0);
 					availableSpace[i - 1] = space;
 				}
 			}
 			if (right) {
-				separator = -sep;
+				sep = -separator;
 			} else {
-				separator = sep;
+				sep = separator;
 			}
 		}
 
@@ -198,9 +298,6 @@ public class HierarchicalTreeCompaction {
 				lowestAvailableSpace = Math.min(lowestAvailableSpace, availableSpace[i - 1]);
 			}
 		}
-		if (right) {
-			System.out.println(lowestAvailableSpace);
-		}
 
 		// Actual compaction.
 		if (lowestAvailableSpace > nodeSpacing) {
@@ -209,20 +306,20 @@ public class HierarchicalTreeCompaction {
 					double spaceUsed = 0;
 					double previousX = border;
 					List<ElkNode> shiftedNodes = new ArrayList<ElkNode>();
-					
+
 					for (ElkNode node : quarter.get(i)) {
 						if (lowestAvailableSpace >= spaceUsed - EPSILON) {
 							double x = node.getX();
 							if (right) {
 								x = -(node.getX() + node.getWidth());
 							}
-							
+
 							double shift = x - previousX - nodeSpacing;
 							shift = Math.max(shift, 0);
 							if (spaceUsed + shift > lowestAvailableSpace) {
 								shift = lowestAvailableSpace - spaceUsed;
 								spaceUsed = lowestAvailableSpace;
-								
+
 								for (ElkNode n : shiftedNodes) {
 									if (right) {
 										n.setX(n.getX() - shift);
@@ -239,7 +336,7 @@ public class HierarchicalTreeCompaction {
 										n.setX(n.getX() + shift);
 									}
 								}
-								
+
 								previousX = x + node.getWidth();
 								shiftedNodes.add(node);
 							}

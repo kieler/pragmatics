@@ -47,4 +47,34 @@ public final class HierarchicalUtil {
 		return edges;
 	}
 
+
+	/**
+	 * Computes the depth of a node.
+	 * 
+	 * @param node
+	 * @param root
+	 * @return
+	 */
+	public static int getDepths(final ElkNode node, final ElkNode root) {
+		ElkNode n = node;
+		int depth = 0;
+		ElkNode parent = null;
+		if (n != root) {
+			boolean loopBreaker = true;
+			while (parent != root && loopBreaker) {
+				loopBreaker = false;
+				for (ElkEdge edge : ElkGraphUtil.allIncomingEdges(n)) {
+					ElkNode source = ElkGraphUtil.connectableShapeToNode(edge.getSources().get(0));
+					if (!n.getChildren().contains(source)) {
+						parent = source;
+						loopBreaker = true;
+					}
+				}
+				n = parent;
+				depth++;
+			}
+		}
+		return depth;
+	}
+
 }
