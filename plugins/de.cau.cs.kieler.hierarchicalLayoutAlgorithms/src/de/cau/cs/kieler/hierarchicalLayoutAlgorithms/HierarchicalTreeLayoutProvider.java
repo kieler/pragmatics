@@ -363,9 +363,8 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	private void layeredOneDimensionalTreeLayout(final ElkNode layoutGraph, final IElkProgressMonitor pm) {
 		children = layoutGraph.getChildren();
 		root = RadialUtil.findRoot(layoutGraph);
-		ElkNode child = RadialUtil.getSuccessors(root).get(0);
 		List<ElkNode> runList = new ArrayList<ElkNode>();
-		runList.add(child);
+		runList.add(root);
 		buildNodeList(runList, TOP_CIRCLE_START, root.getHeight() / 2, secondRunDepthNodeList, true);
 		runList = Lists.reverse(runList);
 		Map<ElkNode, ElkNode> nodeMap = new HashMap<ElkNode, ElkNode>();
@@ -383,7 +382,6 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 
 		double middle = run.getWidth() / 2;
 		root.setX(middle - root.getWidth() / 2);
-		child.setX(middle - child.getWidth() / 2);
 		layoutGraph.setHeight(run.getHeight());
 		layoutGraph.setWidth(run.getWidth());
 	}

@@ -171,7 +171,6 @@ public class HierarchicalTreeCompaction {
 	 * @param depthNodeList
 	 */
 	private void calculateValues(final List<ElkNode> runList, final Map<Integer, List<ElkNode>> depthNodeList) {
-		// Set<ElkNode> graphNodes = new HashSet<ElkNode>(runList);
 		for (ElkNode node : runList) {
 			int depth = HierarchicalUtil.getDepths(node, root);
 			largestHierarchyDepth = Math.max(depth, largestHierarchyDepth);
