@@ -78,9 +78,13 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
                 "Find label name", "Find label name w/o two attached"), "Smallest distance")
                 
     /** Whether to transform state machines. Currently the option is not exposed to the user 
-     * but can be set programatically as synthesis options, e.g. for batch export. */
+     * but can be set programmatically as synthesis options, e.g. for batch export. */
     public static val SynthesisOption TRANSFORM_STATES = SynthesisOption::createCheckOption(
         "Transform states", true)
+    
+    /** Whether hierarchical nodes should initially be collapsed after transformation. */
+    public static val SynthesisOption INITIALLY_COLLAPSED = SynthesisOption::createCheckOption(
+        "Collapsed Composite Actors", true)
                 
     //////////////////////////////////////////////////////////////////////////////////////
     // Transformation
@@ -130,7 +134,8 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
             SHOW_COMMENTS,
             COMMENT_ATTACHMENT_HEURISTIC,
             SynthesisOption.createSeparator("Hierarchy"),
-            FLATTEN, 
+            FLATTEN,
+            INITIALLY_COLLAPSED,
             COMPOUND_NODE_ALPHA)
     }
     
@@ -159,6 +164,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         public var boolean flatten
         public var int compoundNodeAlpha
         public var boolean transformStates
+        public var boolean initiallyCollapsed
         
         new(PtolemyDiagramSynthesis s) {
             comments = s.getBooleanValue(SHOW_COMMENTS)
@@ -171,6 +177,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
             flatten = s.getBooleanValue(FLATTEN)
             compoundNodeAlpha = s.getIntValue(COMPOUND_NODE_ALPHA)
             transformStates = s.getBooleanValue(TRANSFORM_STATES)
+            initiallyCollapsed = s.getBooleanValue(INITIALLY_COLLAPSED)
         }
     }
     

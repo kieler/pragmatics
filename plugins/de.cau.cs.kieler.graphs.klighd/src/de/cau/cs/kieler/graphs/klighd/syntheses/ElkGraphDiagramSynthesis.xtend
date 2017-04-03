@@ -12,7 +12,9 @@
  */
 package de.cau.cs.kieler.graphs.klighd.syntheses
 
+import com.google.common.collect.ImmutableList
 import de.cau.cs.kieler.formats.kgraph.KGraphExporter
+import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
@@ -31,6 +33,29 @@ import org.eclipse.elk.graph.ElkPort
 class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     
     extension KGraphExporter exporter = new KGraphExporter
+    
+    /*
+     * Synthesis options specifying whether several default values should be used or not. Default values are, eg, node
+     * size if not specified and port ids as labels if no labels exist.
+     */
+    public static val SynthesisOption DEFAULT_NODE_SIZES = SynthesisOption::createCheckOption("Node Sizes", false)
+    public static val SynthesisOption DEFAULT_NODE_LABELS = SynthesisOption::createCheckOption("Node Labels", false)
+    public static val SynthesisOption DEFAULT_PORT_SIZES = SynthesisOption::createCheckOption("Port Sizes", false)
+    public static val SynthesisOption DEFAULT_PORT_LABELS = SynthesisOption::createCheckOption("Port Labels", false)
+    
+    /**
+     * {@inheritDoc} 
+     */
+    override getDisplayedSynthesisOptions() {
+        return new ImmutableList.Builder()
+                .addAll(super.displayedSynthesisOptions)
+                .add(SynthesisOption.createSeparator("Default Values"))
+                .add(DEFAULT_NODE_SIZES)
+                .add(DEFAULT_NODE_LABELS)
+                .add(DEFAULT_PORT_SIZES)
+                .add(DEFAULT_PORT_LABELS)
+                .build();
+    }
     
     override transform(ElkNode elkGraph) {
         // Transform everything (don't use 'elkGraph.transform' :))
@@ -69,8 +94,11 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
      * @param node the node whose rendering to enrich.
      */
     protected def override void enrichNodeRendering(KNode node) {
-        super.enrichNodeRendering(node);
-        KGraphUtil.configureWithDefaultValues(node);
+        super.enrichNodeRendering(node)
+        if (DEFAULT_NODE_LABELS.booleanValue)
+            KGraphUtil.configureWithDefaultLabel(node)
+        if (DEFAULT_NODE_SIZES.booleanValue)
+            KGraphUtil.configurWithDefaultSize(node)
     }
 
     /**
@@ -79,8 +107,11 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
      * @param port the port whose rendering to enrich.
      */
     protected def override void enrichPortRendering(KPort port) {
-        super.enrichPortRendering(port);
-        KGraphUtil.configureWithDefaultValues(port);
+        super.enrichPortRendering(port)
+        if (DEFAULT_PORT_LABELS.booleanValue)
+            KGraphUtil.configureWithDefaultValues(port)
+        if (DEFAULT_PORT_SIZES.booleanValue)
+            KGraphUtil.configurWithDefaultSize(port)
     }
 
     /**
