@@ -82,14 +82,14 @@ public class HierarchicalTreeCompaction {
 	private ElkNode root;
 
 	/**
-	 * Constructor of one dimensional trees.
+	 * Constructor for one dimensional trees.
 	 */
 	public HierarchicalTreeCompaction() {
-
+		// Nothing to do in this case.
 	}
 
 	/**
-	 * Constructor of two dimensional trees.
+	 * Constructor for two dimensional trees.
 	 * 
 	 * @param upwardRunList
 	 * @param downwardRunList

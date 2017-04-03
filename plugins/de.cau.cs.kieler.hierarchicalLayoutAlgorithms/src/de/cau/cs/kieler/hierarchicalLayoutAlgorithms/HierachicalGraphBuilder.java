@@ -50,6 +50,8 @@ public final class HierachicalGraphBuilder {
 
 	/** Maps the copy to it's original node. */
 	private static Map<KNode, KNode> parents;
+	/** Distance of the dashes of the hierarchical edges. */
+	private static final float DASH_DISTANCE = 10.0f;
 
 	/**
 	 * Transform the graph to have the representation we want.
@@ -91,7 +93,7 @@ public final class HierachicalGraphBuilder {
 	 * @param diagram
 	 * @param layoutAlgorithm
 	 */
-	private static void setLayoutAlgorithm(final KNode diagram, String layoutAlgorithm) {
+	private static void setLayoutAlgorithm(final KNode diagram, final String layoutAlgorithm) {
 		if (layoutAlgorithm.equals("Radial")) {
 			diagram.setProperty(CoreOptions.ALGORITHM, "de.cau.cs.kieler.hierarchicalLayoutAlgorithms.radial");
 		} else if (layoutAlgorithm.equals("Stress")) {
@@ -115,13 +117,11 @@ public final class HierachicalGraphBuilder {
 	 */
 	private static List<KNode> recursiveTraversal(final KNode parent) {
 		List<KNode> copiedChildren = new ArrayList<>();
-
 		for (KNode child : parent.getChildren()) {
-
 			List<KNode> grandChildren = child.getChildren();
 			boolean isBlueBox = grandChildren.size() == 1 && !grandChildren.get(0).getChildren().isEmpty();
 
-			// deep search
+			// Deep search.
 			if (isBlueBox) {
 				for (KNode grandChild : grandChildren) {
 					copiedChildren.addAll(recursiveTraversal(grandChild));
@@ -130,8 +130,8 @@ public final class HierachicalGraphBuilder {
 				copiedChildren.addAll(recursiveTraversal(child));
 			}
 
-			// Copy only nodes with more children, otherwise it would not be a
-			// hierarchical node
+			// Copy only nodes with more than one children, otherwise it would
+			// not be a hierarchical node.
 			if (!grandChildren.isEmpty()) {
 				KNode copyNode = copyNode(child, isBlueBox);
 				copiedChildren.add(copyNode);
@@ -141,8 +141,16 @@ public final class HierachicalGraphBuilder {
 		return copiedChildren;
 	}
 
-	private static KNode copyNode(KNode child, boolean isBlueBox) {
-		// extract/copy content of children
+	/**
+	 * Creates a copy of a given node and sets the original node to be not
+	 * expanded and not expandable.
+	 * 
+	 * @param child
+	 * @param isBlueBox
+	 * @return Copied node.
+	 */
+	private static KNode copyNode(final KNode child, final boolean isBlueBox) {
+		// Extract / copy content of children.
 		Copier copier = new Copier();
 		KNode copy = (KNode) copier.copy(child);
 		copier.copyReferences();
@@ -151,7 +159,7 @@ public final class HierachicalGraphBuilder {
 		child.setProperty(HierarchicalMetaDataProvider.NODE_ID, id);
 		copy.setProperty(HierarchicalMetaDataProvider.PARENT_ID, id);
 
-		// if it is a blue box reset the pointer to the parent
+		// If it is a blue box reset the pointer to the parent.
 		if (isBlueBox) {
 			for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
 				if (savedParent.getValue().equals(child.getChildren().get(0))) {
@@ -161,24 +169,24 @@ public final class HierachicalGraphBuilder {
 		}
 		restoreLayout(copy, isBlueBox);
 
-		// keep track of the right parent
+		// Keep track of the right parent.
 		for (Entry<KNode, KNode> savedParent : parents.entrySet()) {
 			if (savedParent.getValue().equals(child)) {
 				savedParent.setValue(copy);
 			}
 		}
 
-		// Remove the actions of the inner nodes so they are not expandable
+		// Remove the actions of the inner nodes so they are not expandable.
 		KRenderingImpl rendering = child.getData(KRenderingImpl.class);
 		if (rendering != null && rendering.getActions() != null) {
+			// TODO Remove the actions of the copy, such that the root children
+			// are
+			// not expandable. If we simply remove the action of the copy, we
+			// can
+			// minimize the node once but can not expand it anymore...
 			rendering.getActions().clear();
 		}
 
-		// TODO remove the actions of the copy, such that the root children are
-		// not
-		// expandable. If we simply remove the action of the copy, we can
-		// minimize the
-		// node once but can not expand it anymore...
 		return copy;
 	}
 
@@ -194,7 +202,7 @@ public final class HierachicalGraphBuilder {
 		}
 
 		for (KNode child : children) {
-			// delete the content of the original node
+			// Delete the content of the original node.
 			child.getChildren().clear();
 			KGraphDataUtil.loadDataElements(child);
 			child.setProperty(KlighdProperties.EXPAND, false);
@@ -213,15 +221,15 @@ public final class HierachicalGraphBuilder {
 			KNode child = entry.getKey();
 			KNode parent = entry.getValue();
 
-			// create an edge
+			// Create an edge.
 			KEdge edge = KGraphUtil.createInitializedEdge();
 
-			// Set style for hierarchical edges
+			// Set style for hierarchical edges.
 			KPolyline line = KRenderingFactory.eINSTANCE.createKPolyline();
 			KLineStyle ls = KRenderingFactory.eINSTANCE.createKLineStyle();
 			ls.setLineStyle(LineStyle.CUSTOM);
-			ls.getDashPattern().add(10.0f);
-			ls.getDashPattern().add(10.0f);
+			ls.getDashPattern().add(DASH_DISTANCE);
+			ls.getDashPattern().add(DASH_DISTANCE);
 			line.getStyles().add(ls);
 			edge.getData().add(line);
 			edge.setSource(parent);
@@ -265,5 +273,4 @@ public final class HierachicalGraphBuilder {
 			}
 		}
 	}
-
 }

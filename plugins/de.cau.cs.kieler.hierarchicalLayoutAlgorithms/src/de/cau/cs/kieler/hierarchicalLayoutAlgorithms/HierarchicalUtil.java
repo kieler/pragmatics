@@ -53,7 +53,7 @@ public final class HierarchicalUtil {
 	 * 
 	 * @param node
 	 * @param root
-	 * @return
+	 * @return Depth of the given node.
 	 */
 	public static int getDepths(final ElkNode node, final ElkNode root) {
 		ElkNode n = node;
