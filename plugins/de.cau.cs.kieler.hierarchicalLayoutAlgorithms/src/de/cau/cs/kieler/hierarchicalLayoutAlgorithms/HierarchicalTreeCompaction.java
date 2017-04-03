@@ -40,10 +40,15 @@ public class HierarchicalTreeCompaction {
 	/** Epsilon for comparison of double values. */
 	private static final double EPSILON = 0.1;
 	/**
-	 * New separator for the corresponding right side if a node crosses the
-	 * separator with it's width.
+	 * New separator for the top right side if a node crosses the separator with
+	 * it's width.
 	 */
-	private Map<Integer, Double> newSeparator = new HashMap<Integer, Double>();
+	private Map<Integer, Double> newSeparatorTop = new HashMap<Integer, Double>();
+	/**
+	 * New separator for the bottom right side if a node crosses the separator
+	 * with it's width.
+	 */
+	private Map<Integer, Double> newSeparatorBot = new HashMap<Integer, Double>();
 	/**
 	 * Maps the hierarchy depth of the upward tree as integer to a list of
 	 * elknodes in the corresponding depth, starting with depth of one.
@@ -144,10 +149,10 @@ public class HierarchicalTreeCompaction {
 		}
 
 		calculateQuarters();
-		doCompaction(leftBotQuarter, false);
-		doCompaction(rightBotQuarter, true);
-		doCompaction(leftTopQuarter, false);
-		doCompaction(rightTopQuarter, true);
+		doCompaction(leftBotQuarter, false, newSeparatorBot);
+		doCompaction(rightBotQuarter, true, newSeparatorBot);
+		doCompaction(leftTopQuarter, false, newSeparatorTop);
+		doCompaction(rightTopQuarter, true, newSeparatorTop);
 	}
 
 	/**
@@ -166,7 +171,7 @@ public class HierarchicalTreeCompaction {
 	 * @param depthNodeList
 	 */
 	private void calculateValues(final List<ElkNode> runList, final Map<Integer, List<ElkNode>> depthNodeList) {
-//		Set<ElkNode> graphNodes = new HashSet<ElkNode>(runList);
+		// Set<ElkNode> graphNodes = new HashSet<ElkNode>(runList);
 		for (ElkNode node : runList) {
 			int depth = HierarchicalUtil.getDepths(node, root);
 			largestHierarchyDepth = Math.max(depth, largestHierarchyDepth);
@@ -193,7 +198,7 @@ public class HierarchicalTreeCompaction {
 					if (node.getX() < separator) {
 						leftTopList.add(node);
 						if (node.getX() + node.getWidth() > separator) {
-							newSeparator.put(i, -(node.getX() + node.getWidth()));
+							newSeparatorTop.put(i, -(node.getX() + node.getWidth()));
 						}
 					} else {
 						rightTopList.add(node);
@@ -212,7 +217,7 @@ public class HierarchicalTreeCompaction {
 					if (node.getX() < separator) {
 						leftBotList.add(node);
 						if (node.getX() + node.getWidth() > separator) {
-							newSeparator.put(i, -(node.getX() + node.getWidth()));
+							newSeparatorBot.put(i, -(node.getX() + node.getWidth()));
 						}
 					} else {
 						rightBotList.add(node);
@@ -235,7 +240,8 @@ public class HierarchicalTreeCompaction {
 	 * @param sep
 	 * @param right
 	 */
-	private void doCompaction(final Map<Integer, List<ElkNode>> quarter, final boolean right) {
+	private void doCompaction(final Map<Integer, List<ElkNode>> quarter, final boolean right,
+			final Map<Integer, Double> newSeparator) {
 		double sep = separator;
 		if (right) {
 			sep = -separator;
