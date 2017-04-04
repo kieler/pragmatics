@@ -98,12 +98,15 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	private static final double EPSILON = 1e-10;
 	/** Spacing between nodes. */
 	private double nodeSpacing;
+	/** Boolean if compaction should be used or not. */
+	private boolean compaction;
 
 	@Override
 	public void layout(final ElkNode layoutGraph, final IElkProgressMonitor progressMonitor) {
 		progressMonitor.begin("Hierarchical tree layout", 1);
 		widthheuristic = layoutGraph.getProperty(HierarchicalTreeOptions.WIDTH_HEURSTIC);
 		nodeSpacing = layoutGraph.getProperty(HierarchicalTreeOptions.NODE_SPACING);
+		compaction = layoutGraph.getProperty(HierarchicalTreeOptions.COMPACTION);
 		children = layoutGraph.getChildren();
 		edges = HierarchicalUtil.getHierarchicalEdges(layoutGraph);
 		root = RadialUtil.findRoot(layoutGraph);
@@ -134,10 +137,12 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 				layeredOneDimensionalTreeLayout(layoutGraph, progressMonitor);
 			}
 
-			progressMonitor.begin("Compaction", 3);
-			HierarchicalTreeCompaction compaction = new HierarchicalTreeCompaction(firstRunDepthNodeList,
-					secondRunDepthNodeList, layoutGraph.getWidth() / 2, largestHierarchyDepth);
-			compaction.compact(layoutGraph);
+			if (compaction) {
+				progressMonitor.begin("Compaction", 3);
+				HierarchicalTreeCompaction compaction = new HierarchicalTreeCompaction(firstRunDepthNodeList,
+						secondRunDepthNodeList, layoutGraph.getWidth() / 2, largestHierarchyDepth);
+				compaction.compact(layoutGraph);
+			}
 
 			progressMonitor.begin("Edge routing", 4);
 			ExplosionLineRouter edgeRouter = new ExplosionLineRouter();
@@ -469,7 +474,7 @@ public class HierarchicalTreeLayoutProvider extends AbstractLayoutProvider {
 	/**
 	 * Puts the connected nodes of the next hierarchy level recursively into the
 	 * list of nodes that are relevant for the corresponding run.
-	 
+	 * 
 	 * @param node
 	 * @param tempList
 	 * @param radialOffset
