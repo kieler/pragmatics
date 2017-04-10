@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KIELER Support for the JSON Format
 Bundle-Vendor: Kiel University
-Bundle-Version: 0.42.0.qualifier
+Bundle-Version: 0.42.1.qualifier
 Bundle-SymbolicName: de.cau.cs.kieler.formats.json;singleton:=true
 Require-Bundle: com.google.guava,
  org.eclipse.core.runtime,
