@@ -45,7 +45,7 @@
                 <!-- Eclipse -->
                 <associateSite>http://download.eclipse.org/releases/mars</associateSite>
                 <!-- Eclipse Layout Kernel -->
-                <associateSite>http://download.eclipse.org/elk/updates/releases/0.2.0/</associateSite>
+                <associateSite>http://download.eclipse.org/elk/updates/releases/0.2.1/</associateSite>
                 <!-- Eclipse Orbit for Apache Batik -->
                 <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20140114142710/repository/</associateSite>
                 <!-- Google Guava -->

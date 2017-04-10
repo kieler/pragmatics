@@ -115,7 +115,7 @@
     <pluginRepository>
       <id>eclipse-elk-meta</id>
       <name>ELK Meta Data Language Compiler Maven Repository</name>
-      <url>http://download.eclipse.org/elk/maven/releases/0.2.0/</url>
+      <url>http://download.eclipse.org/elk/maven/releases/0.2.1/</url>
     </pluginRepository>
   </pluginRepositories>
 
@@ -268,12 +268,12 @@
             <dependency>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.graph</artifactId>
-              <version>0.2.0-SNAPSHOT</version>
+              <version>0.2.1-SNAPSHOT</version>
             </dependency>
             <dependency>
               <groupId>org.eclipse.elk</groupId>
               <artifactId>org.eclipse.elk.core.meta</artifactId>
-              <version>0.2.0-SNAPSHOT</version>
+              <version>0.2.1-SNAPSHOT</version>
             </dependency>
           </dependencies>
         </plugin>
