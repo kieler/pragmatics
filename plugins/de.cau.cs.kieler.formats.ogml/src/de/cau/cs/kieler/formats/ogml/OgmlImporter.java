@@ -387,7 +387,7 @@ public class OgmlImporter implements IGraphTransformer<DocumentRoot, ElkNode> {
                 shape.setHeight(BigInteger.valueOf(Math.round(elknode.getHeight())));
             }
 
-            for (ElkEdge elkedge : elknode.getOutgoingEdges()) {
+            for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elknode)) {
                 // make sure we have an edge section to work with
                 if (elkedge.getSections().isEmpty()) {
                     continue;

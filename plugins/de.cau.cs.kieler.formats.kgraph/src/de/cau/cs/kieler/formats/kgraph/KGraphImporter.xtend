@@ -31,6 +31,11 @@ import org.eclipse.elk.graph.ElkShape
 import org.eclipse.elk.graph.util.ElkGraphUtil
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil
 
+/**
+ * Converts a KGraph into an ELKGraph by simply translating 
+ * the graph elements of the KGraph into the corresponding 
+ * graph elements of the ELKGraph, e.g. {@link KNode} to {@link ElkNode}.
+ */
 class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
     
     override transform(TransformationData<KNode, ElkNode> data) {
@@ -86,9 +91,8 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
             // We're not transforming the graph itself, so we actually do have a parent
             eNode.parent = kNode.parent.transformNode
         }
-        // Id
+        
         kNode.transformId(eNode)
-        // Layout information
         kNode.copyShapeLayoutTo(eNode)
     }
     
@@ -96,10 +100,7 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
         // Structural information
         ePort.parent = kPort.node.transformNode
         
-        // Id
         kPort.transformId(ePort)
-        
-        // Structural information
         kPort.copyShapeLayoutTo(ePort);
     }
     
@@ -117,10 +118,7 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
             }
         }
         
-        // Id
         kLabel.transformId(eLabel)
-        
-        // Structural information
         kLabel.copyShapeLayoutTo(eLabel);
     }
     
@@ -142,10 +140,8 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
         val containingNode = ElkGraphUtil.findBestEdgeContainment(eEdge)
         eEdge.containingNode = containingNode
         
-        // Id 
         kEdge.transformId(eEdge)
-        
-        // Structural information
+        kEdge.labels.forEach[ l | l.transformLabel ]
         kEdge.copyEdgeLayoutTo(eEdge);
     }
     
@@ -175,7 +171,7 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
     }
 
     override transferLayout(TransformationData<KNode, ElkNode> data) {
-        throw new UnsupportedOperationException("TODO: auto-generated method stub")
+        throw new UnsupportedOperationException()
     }
     
 }

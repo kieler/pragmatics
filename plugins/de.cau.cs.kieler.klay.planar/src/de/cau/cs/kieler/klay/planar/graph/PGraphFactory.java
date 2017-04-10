@@ -213,7 +213,7 @@ public class PGraphFactory {
         // Adding Edges
         for (ElkNode elknode : elkgraph.getChildren()) {
             // It seems we currently only support edges connected directly to a node
-            for (ElkEdge elkedge : elknode.getOutgoingEdges()) {
+            for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elknode)) {
                 if (!map.containsKey(elkedge.getSources().get(0))
                         || !map.containsKey(elkedge.getTargets().get(0))) {
                     

@@ -71,7 +71,7 @@ public class OgmlExporter implements IGraphTransformer<ElkNode, DocumentRoot> {
         do {
             ElkNode node = nodes.remove();
             node.setProperty(PROP_ID, "n" + Integer.toString(nodeId++));
-            for (ElkEdge edge : node.getOutgoingEdges()) {
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
                 edge.setProperty(PROP_ID, "e" + Integer.toString(edgeId++));
                 for (ElkLabel label : edge.getLabels()) {
                     label.setProperty(PROP_ID, "l" + Integer.toString(labelId++));
@@ -167,7 +167,7 @@ public class OgmlExporter implements IGraphTransformer<ElkNode, DocumentRoot> {
             final StylesType styles, final KVector offset) {
         
         for (ElkNode elknode : parentNode.getChildren()) {
-            for (ElkEdge elkedge : elknode.getOutgoingEdges()) {
+            for (ElkEdge elkedge : ElkGraphUtil.allOutgoingEdges(elknode)) {
                 // we only transform simple edges
                 if (!elkedge.isConnected() || elkedge.isHyperedge()) {
                     continue;

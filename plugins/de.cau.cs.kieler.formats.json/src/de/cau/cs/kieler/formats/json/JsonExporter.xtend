@@ -29,8 +29,10 @@ import org.eclipse.elk.graph.ElkShape
 import org.json.JSONArray
 import org.json.JSONObject
 
+import static org.eclipse.elk.graph.util.ElkGraphUtil.allOutgoingEdges
+
 /**
- * Exporter from KNode to json.
+ * Exporter from elk graph to json.
  * 
  * @author uru
  */
@@ -128,7 +130,7 @@ class JsonExporter implements IGraphTransformer<ElkNode, JSONObject> {
         val jsonObj = nodeJsonMap.get(node)
         val edges = new JSONArray
         jsonObj.put("edges", edges)
-        node.outgoingEdges.forEach[it.transformEdge(edges)]
+        allOutgoingEdges(node).forEach[it.transformEdge(edges)]
 
         // children
         node.children.forEach[it.transformEdges]
