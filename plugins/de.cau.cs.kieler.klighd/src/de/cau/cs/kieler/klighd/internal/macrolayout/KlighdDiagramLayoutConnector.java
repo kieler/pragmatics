@@ -23,6 +23,7 @@ import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.service.IDiagramLayoutConnector;
 import org.eclipse.elk.core.service.LayoutMapping;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
@@ -46,6 +47,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
@@ -61,6 +63,7 @@ import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement;
 import de.cau.cs.kieler.klighd.kgraph.KGraphFactory;
 import de.cau.cs.kieler.klighd.kgraph.KGraphPackage;
+import de.cau.cs.kieler.klighd.kgraph.KIdentifier;
 import de.cau.cs.kieler.klighd.kgraph.KInsets;
 import de.cau.cs.kieler.klighd.kgraph.KLabel;
 import de.cau.cs.kieler.klighd.kgraph.KLayoutData;
@@ -72,7 +75,6 @@ import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil;
 import de.cau.cs.kieler.klighd.krendering.KRendering;
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory;
 import de.cau.cs.kieler.klighd.krendering.KRenderingRef;
-import de.cau.cs.kieler.klighd.labels.KlighdLabelProperties;
 import de.cau.cs.kieler.klighd.labels.LabelManagementResult;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
@@ -273,6 +275,11 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
             final ElkNode layoutParent, final boolean performSizeEstimation) {
         
         final ElkNode layoutNode = ElkGraphUtil.createNode(layoutParent);
+        
+        KIdentifier id = node.getData(KIdentifier.class);
+        if (id != null && !Strings.isNullOrEmpty(id.getId())) {
+            layoutNode.setIdentifier(id.getId());
+        }
 
         // first check whether children of 'node' shall be taken into account at all.
         // note that all KNodes of a view model are set 'POPULATED' except the
@@ -411,6 +418,10 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
             final ElkNode layoutNode, final boolean estimateLabelSizes) {
         
         final ElkPort layoutPort = ElkGraphUtil.createPort(layoutNode);
+        KIdentifier id = port.getData(KIdentifier.class);
+        if (id != null && !Strings.isNullOrEmpty(id.getId())) {
+            layoutPort.setIdentifier(id.getId());
+        }
         shapeLayoutToLayoutGraph(port, layoutPort, false);
 
         mapping.getGraphMap().put(layoutPort, port);
@@ -493,6 +504,11 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
         
         final ElkEdge layoutEdge = ElkGraphUtil.createSimpleEdge(layoutSource, layoutTarget);
 
+        KIdentifier id = edge.getData(KIdentifier.class);
+        if (id != null && !Strings.isNullOrEmpty(id.getId())) {
+            layoutEdge.setIdentifier(id.getId());
+        }
+        
         // set the edge layout
         edgeLayoutToLayoutGraph(edge, layoutEdge);
 
@@ -538,6 +554,11 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
         
         final ElkLabel layoutLabel =
                 ElkGraphUtil.createLabel(label.getText(), layoutLabeledElement);
+        
+        KIdentifier id = label.getData(KIdentifier.class);
+        if (id != null && !Strings.isNullOrEmpty(id.getId())) {
+            layoutLabel.setIdentifier(id.getId());
+        }
 
         shapeLayoutToLayoutGraph(label, layoutLabel, false);
 
@@ -667,11 +688,11 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
                     // if the label's text was changed during layout, remember the new text in a
                     // special property
                     LabelManagementResult managementResult =
-                            layoutLabel.getProperty(KlighdLabelProperties.LABEL_MANAGEMENT_RESULT);
+                            layoutLabel.getProperty(KlighdOptions.LABELS_MANAGEMENT_RESULT);
                     if (managementResult != LabelManagementResult.UNMANAGED) {
                         // TODO: This may in the future set the KText's text instead.
                         // However, doing so now doesn't do anything yet...
-                        label.setProperty(KlighdLabelProperties.LABEL_TEXT_OVERRIDE,
+                        label.setProperty(KlighdOptions.LABELS_TEXT_OVERRIDE,
                                     layoutLabel.getText());
                         String origLabelText = ((KLabel) element).getText();
                         
@@ -957,6 +978,11 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
         final boolean deliver = viewModelEdge.eDeliver();
         viewModelEdge.eSetDeliver(false);
         
+        // adjust edge endpoints s.t. they touch the border of the node's/port's shape
+        if (adjustments) {
+            adjustEdgeEndpoints(layoutEdge, viewModelEdge);
+        }
+        
         // Find the KNode the view model edge coordinates are relative to
         KNode kgraphEdgeCoordinatesOrigin =
                 KGraphUtil.isDescendant(viewModelEdge.getTarget(), viewModelEdge.getSource())
@@ -977,67 +1003,17 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
         final KVector offset = new KVector();
         
         
-        // SOURCE POINT
-        
-        // We know by construction that there will be exactly one source
-        final ElkNode layoutSourceNode =
-                ElkGraphUtil.connectableShapeToNode(layoutEdge.getSources().get(0));
-        final ElkPort layoutSourcePort =
-                ElkGraphUtil.connectableShapeToPort(layoutEdge.getSources().get(0));
-        
-        final KVector sourceVector = new KVector(
-                layoutEdgeSection.getStartX(), layoutEdgeSection.getStartY());
-        
+        // - - - - - SOURCE POINT - - - - - 
         if (viewModelEdge.getSourcePoint() == null) {
             viewModelEdge.setSourcePoint(KGraphFactory.eINSTANCE.createKPoint());
         }
-
         final boolean sourcePointDeliver = viewModelEdge.getSourcePoint().eDeliver();
         viewModelEdge.getSourcePoint().eSetDeliver(false);
-
-        if (adjustments) {
-            // this flag indicates the requirement of the adjusting the port position
-            // wrt. the scaling factor being associated with the port's parent node
-            final boolean adjustSourcePortPosition;
-            
-            if (KGraphUtil.isDescendant(viewModelEdge.getTarget(), viewModelEdge.getSource())) {
-                adjustSourcePortPosition = true;
-                
-                KInsets sourceInsets = viewModelEdge.getSource().getInsets();
-                offset.x = sourceInsets.getLeft();
-                offset.y = sourceInsets.getTop();
-            } else {
-                adjustSourcePortPosition = false;
-                
-                KVector sourcePositionInsetsAdjusted =
-                        insetsAdjustedPosition(layoutSourceNode, mapping);
-                offset.x = -sourcePositionInsetsAdjusted.x;
-                offset.y = -sourcePositionInsetsAdjusted.y;
-            }
-
-            final KRendering sourcePortRendering = viewModelEdge.getSourcePort() == null
-                    ? null
-                    : viewModelEdge.getSourcePort().getData(KRendering.class);
-            
-            checkAndCopyPoint(
-                    sourceVector,
-                    viewModelEdge.getSourcePoint(),
-                    layoutSourceNode,
-                    layoutSourcePort,
-                    viewModelEdge.getSource().getData(KRendering.class),
-                    sourcePortRendering,
-                    offset,
-                    adjustSourcePortPosition);
-        } else {
-            viewModelEdge.getSourcePoint().setPos(
-                    (float) sourceVector.x,
-                    (float) sourceVector.y);
-        }
+        viewModelEdge.getSourcePoint().setPos((float) layoutEdgeSection.getStartX(),
+                (float) layoutEdgeSection.getStartY());
         viewModelEdge.getSourcePoint().eSetDeliver(sourcePointDeliver);
         
-        
-        // BEND POINTS
-
+        // - - - - - BEND POINTS - - - - - 
         // transfer the bend points, reusing any existing KPoint instances
         final ListIterator<ElkBendPoint> originBendIter =
                 layoutEdgeSection.getBendPoints().listIterator();
@@ -1051,10 +1027,7 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
                 destPoint = KGraphFactory.eINSTANCE.createKPoint();
                 destBendIter.add(destPoint);
             }
-
-            destPoint.setPos(
-                    (float) originPoint.getX(),
-                    (float) originPoint.getY());
+            destPoint.setPos((float) originPoint.getX(), (float) originPoint.getY());
         }
         
         // remove any superfluous points
@@ -1063,70 +1036,14 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
             destBendIter.remove();
         }
         
-        
-        // TARGET POINT
-        
-        // We know by construction that there will be exactly one target
-        final ElkNode layoutTargetNode =
-                ElkGraphUtil.connectableShapeToNode(layoutEdge.getTargets().get(0));
-        final ElkPort layoutTargetPort =
-                ElkGraphUtil.connectableShapeToPort(layoutEdge.getTargets().get(0));
-        
-        final KVector targetVector = new KVector(
-                layoutEdgeSection.getEndX(), layoutEdgeSection.getEndY());
-
+        // - - - - - TARGET POINT - - - - - 
         if (viewModelEdge.getTargetPoint() == null) {
             viewModelEdge.setTargetPoint(KGraphFactory.eINSTANCE.createKPoint());
         }
-
         final boolean targetPointDeliver = viewModelEdge.getTargetPoint().eDeliver();
         viewModelEdge.getTargetPoint().eSetDeliver(false);
-
-        if (adjustments) {
-            // this flag indicates the requirement of the adjusting the port position
-            //  wrt. the scaling factor being associated with the port's parent node
-            final boolean adjustTargetPortPosition;
-            
-            offset.reset();
-            
-            if (KGraphUtil.isSibling(viewModelEdge.getSource(), viewModelEdge.getTarget())) {
-                adjustTargetPortPosition = false;
-                
-            } else if (KGraphUtil.isDescendant(viewModelEdge.getTarget(),
-                    viewModelEdge.getSource())) {
-                
-                adjustTargetPortPosition = true;
-                KInsets sourceInsets = viewModelEdge.getSource().getInsets();
-                offset.x = sourceInsets.getLeft();
-                offset.y = sourceInsets.getTop();
-                
-            } else {
-                adjustTargetPortPosition = false;
-                offset.x = layoutTargetNode.getX();
-                offset.y = layoutTargetNode.getY();
-            }
-            
-            // Adjust offset by the target node position (what is left after applying the offset
-            // to the target point should be the port position relative to the target node)
-            offset.x -= layoutTargetNode.getX();
-            offset.y -= layoutTargetNode.getY();
-
-            final KRendering targetPortRendering = viewModelEdge.getTargetPort() == null
-                    ? null
-                    : viewModelEdge.getTargetPort().getData(KRendering.class);
-
-            checkAndCopyPoint(
-                    targetVector,
-                    viewModelEdge.getTargetPoint(),
-                    layoutTargetNode,
-                    layoutTargetPort,
-                    viewModelEdge.getTarget().getData(KRendering.class),
-                    targetPortRendering,
-                    offset,
-                    adjustTargetPortPosition);
-        } else {
-            viewModelEdge.getTargetPoint().setPos((float) targetVector.x, (float) targetVector.y);
-        }
+        viewModelEdge.getTargetPoint().setPos((float) layoutEdgeSection.getEndX(),
+                (float) layoutEdgeSection.getEndY());
         viewModelEdge.getTargetPoint().eSetDeliver(targetPointDeliver);
 
         // reactivate notifications & fire a notification
@@ -1139,22 +1056,126 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
     }
     
     /**
-     * Returns the node's position not relative to its parent's top left corder, but to the top
-     * left corner of the parent's padding area.
+     * Adjust both endpoints of the passed edge s.t. they touch the border of the node's/port's
+     * shape. The adjustment is done completely in elk's coordinate system. The passed
+     * {@code viewModelEdge} is only used to retrieve the {@link KRendering}s of the source 
+     * and target nodes and ports.
      */
-    private KVector insetsAdjustedPosition(final ElkNode elknode, final LayoutMapping mapping) {
-        KVector result = new KVector(elknode.getX(), elknode.getY());
+    private void adjustEdgeEndpoints(final ElkEdge layoutEdge, final KEdge viewModelEdge) {
+
+        ElkNode containingNode = layoutEdge.getContainingNode();
+        ElkEdgeSection edgeSection = layoutEdge.getSections().get(0);
+
+        assert layoutEdge.getSources().size() == 1 && layoutEdge.getTargets().size() == 1;
+        ElkNode source = ElkGraphUtil.connectableShapeToNode(layoutEdge.getSources().get(0));
+        ElkPort sourcePort = ElkGraphUtil.connectableShapeToPort(layoutEdge.getSources().get(0));
+        ElkNode target = ElkGraphUtil.connectableShapeToNode(layoutEdge.getTargets().get(0));
+        ElkPort targetPort = ElkGraphUtil.connectableShapeToPort(layoutEdge.getTargets().get(0));
         
-        if (elknode.getParent() != null) {
-            KNode parentKNode = (KNode) mapping.getGraphMap().get(elknode.getParent());
-            KInsets parentInsets = parentKNode.getInsets();
-            
-            if (parentInsets != null) {
-                result.sub(parentInsets.getLeft(), parentInsets.getTop());
+        // - - - - - - - - - - - - SOURCE  - - - - - - - - - - - -
+        KVector sourceVector = new KVector(edgeSection.getStartX(), edgeSection.getStartY());
+
+        // compute source vector relative to source node
+        ElkUtil.toAbsolute(sourceVector, containingNode);
+        ElkUtil.toRelative(sourceVector, source);
+
+        KRendering sourceRendering = viewModelEdge.getSource().getData(KRendering.class);
+        KRendering sourcePortRendering = viewModelEdge.getSourcePort() == null 
+                ? null
+                : viewModelEdge.getSourcePort().getData(KRendering.class);
+
+        boolean adjustSourcePortPosition = ElkGraphUtil.isDescendant(target, source);
+        KVector adjustedSource = checkAndCopyPoint(sourceVector, source, 
+                sourcePort,
+                sourceRendering, sourcePortRendering, 
+                adjustSourcePortPosition);
+
+        // back to edge's coordinate system
+        ElkUtil.toAbsolute(adjustedSource, source);
+        ElkUtil.toRelative(adjustedSource, containingNode);
+
+        edgeSection.setStartLocation(adjustedSource.x, adjustedSource.y);
+
+        //  - - - - - - - - - - - - TARGET  - - - - - - - - - - - -
+        KVector targetVector = new KVector(edgeSection.getEndX(), edgeSection.getEndY());
+
+        // compute target vector relative to target node
+        ElkUtil.toAbsolute(targetVector, containingNode);
+        ElkUtil.toRelative(targetVector, target);
+
+        KRendering targetRendering = viewModelEdge.getTarget().getData(KRendering.class);
+        KRendering targetPortRendering = viewModelEdge.getTargetPort() == null 
+                ? null
+                : viewModelEdge.getTargetPort().getData(KRendering.class);
+
+        boolean adjustTargetPortPosition = !adjustSourcePortPosition && !isSibling(source, target);
+        KVector adjustedTarget = checkAndCopyPoint(targetVector, target, 
+                targetPort,
+                targetRendering, targetPortRendering, 
+                adjustTargetPortPosition);
+
+        // back to edge's coordinate system
+        ElkUtil.toAbsolute(adjustedTarget, target);
+        ElkUtil.toRelative(adjustedTarget, containingNode);
+
+        edgeSection.setEndLocation(adjustedTarget.x, adjustedTarget.y);
+    }
+    
+    /**
+     * Determines whether the given two nodes are siblings, that is if they have the same parent
+     * node. If they do not have a parent node they are not considered siblings.
+     * 
+     * @param node1 the first node.
+     * @param node2 the second node.
+     * @return {@code true} if the two nodes have the same non-{@code null} parent.
+     */
+    public static boolean isSibling(final ElkNode node1, final ElkNode node2) {
+        return node1.getParent() == node2.getParent() && node1.getParent() != null;
+    }
+
+    /**
+     * Check whether the given source point lies on the boundary of the corresponding {@code node}
+     * or {@code port} and return a possibly altered point.
+     *
+     * @param originPoint
+     *            the point from which to take the position
+     * @param node
+     *            the corresponding node
+     * @param port
+     *            the corresponding port, or {@code null}
+     * @param nodeRendering
+     *            the rendering of the corresponding node
+     * @param portRendering
+     *            the rendering of the corresponding port, or {@code null}
+     * @param adjustPortPos
+     *            if <code>true</code> the port position will be adjusted by the scale factor
+     *            applied to its parent node
+     * @return a new point that represents {@code originPoint}, possibly altered such that it lies
+     *         on the boundary of {@code node} or {@code port}.
+     */
+    private KVector checkAndCopyPoint(final KVector originPoint,
+            final ElkNode node, final ElkPort port, final KRendering nodeRendering,
+            final KRendering portRendering, final boolean adjustPortPos) {
+
+        // 'p' is relative to the 'node'
+        KVector p = originPoint.clone();
+        final double scale = node.getProperty(CoreOptions.SCALE_FACTOR);
+
+        if (port == null) {
+            p = AnchorUtil.nearestBorderPoint(p, node.getWidth(), node.getHeight(),
+                    nodeRendering, scale);
+            return p;
+        } else {
+            KVector portPos = new KVector(port.getX(), port.getY());
+            if (adjustPortPos) {
+                portPos.scale(1 / scale);
             }
+            // make 'p' relative to the port's top left corner
+            p.sub(portPos);
+            p = AnchorUtil.nearestBorderPoint(p, port.getWidth(), port.getHeight(),
+                    portRendering, scale);
+            return p.add(portPos);
         }
-        
-        return result;
     }
 
     /**
@@ -1216,6 +1237,7 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
     }
 
     /**
+<<<<<<< HEAD
      * Check whether the given source point lies on the boundary of the corresponding node or port
      * and transfer the corrected position to the target point.
      *
@@ -1266,6 +1288,8 @@ public class KlighdDiagramLayoutConnector implements IDiagramLayoutConnector {
     }
 
     /**
+=======
+>>>>>>> 64337ca... klighd: another try at KIPRA-1844
      * Find a point that lies close to the intersection of the direct line from the
      * given center element to the remote element with the center element's border.
      *
