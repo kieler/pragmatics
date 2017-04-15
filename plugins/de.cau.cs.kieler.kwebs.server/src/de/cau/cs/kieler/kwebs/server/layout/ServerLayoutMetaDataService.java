@@ -116,7 +116,7 @@ public final class ServerLayoutMetaDataService {
                     contribAwareRegistry.setContributor(element.getContributor());
 
                     if (provider != null) {
-                        service.registerLayoutMetaDataProvider(provider);
+                        service.registerLayoutMetaDataProviders(provider);
                         provider.apply(contribAwareRegistry);
                     }
                 }
