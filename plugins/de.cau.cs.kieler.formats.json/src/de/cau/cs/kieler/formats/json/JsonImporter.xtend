@@ -153,7 +153,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, ElkNode> {
         val srcNode = nodeIdMap.get(jsonObj.optString("source"))
         val srcPort = portIdMap.get(jsonObj.optString("sourcePort"))
 
-        if (srcPort.parent != srcNode) {
+        if (srcPort != null && srcPort.parent != srcNode) {
             throw new TransformationException(
                 "Invalid JSON graph format, the source port of an edge "
                 + "must be a port of the edge's source node (edge " + jsonObj.optString("id") + ").")
@@ -165,7 +165,7 @@ class JsonImporter implements IGraphTransformer<JSONObject, ElkNode> {
         val tgtNode = nodeIdMap.get(jsonObj.optString("target"))
         val tgtPort = portIdMap.get(jsonObj.optString("targetPort"))
         
-        if (tgtPort.parent != tgtNode) {
+        if (tgtPort != null && tgtPort.parent != tgtNode) {
             throw new TransformationException(
                 "Invalid JSON graph format, the target port of an edge "
                 + "must be a port of the edge's target node (edge " + jsonObj.optString("id") + ").")

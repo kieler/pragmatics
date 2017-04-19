@@ -99,7 +99,7 @@ import de.cau.cs.kieler.formats.TransformationException;
  * <h2>Edges</h2>
  * 
  * <p>There are two types of edges: primitive edges and extended edges.
- * Primitive edges are solely supportedc for legacy models to work. 
+ * Primitive edges are solely supported for legacy models to work. 
  * Exported graphs will always be made up of extended edges</p>
  * 
  * <h3>Primitive Edges</h3>
