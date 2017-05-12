@@ -107,11 +107,13 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     /** Default rendering for nodes. */
     private var KRendering defaultNodeRendering;
 
-    /** Default rendering for polyline edges. */
+    /** Default renderings for polyline edges. */
     private var KRendering defaultPolylineRendering;
+    private var KRendering defaultNoArrowPolylineRendering;
 
-    /** Default rendering for spline edges. */
+    /** Default renderings for spline edges. */
     private var KRendering defaultSplineRendering;
+    private var KRendering defaultNoArrowSplineRendering;
     
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -146,12 +148,27 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
         ];
         library.renderings += defaultPolylineRendering
 
+        // Create a common rendering for polylines without arrowheads
+        defaultNoArrowPolylineRendering = renderingFactory.createKPolyline() => [
+            it.id = "DefaultNoArrowPolylineEdgeRendering"
+            it.addJunctionPointDecorator
+        ];
+        library.renderings += defaultNoArrowPolylineRendering
+
+
         // Create a common rendering for splines
         defaultSplineRendering = renderingFactory.createKSpline => [
             it.id = "SplineEdgeRendering"
             it.addHeadArrowDecorator
         ];
         library.renderings += defaultSplineRendering
+
+        // Create a common rendering for splines without arrowheads
+        defaultNoArrowSplineRendering = renderingFactory.createKSpline => [
+            it.id = "NoArrowSplineEdgeRendering"
+        ];
+        library.renderings += defaultNoArrowSplineRendering
+
     }
 
     private def initBoringFactory(KRenderingLibrary library) {
@@ -275,6 +292,17 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
      * @param edge the edge whose rendering to enrich.
      */
     protected def void enrichEdgeRendering(KEdge edge) {
+        enrichEdgeRendering(edge, true)
+    }
+
+    /**
+     * Possibly adds a proper rendering to the given edge. If no rendering is associated with the edge
+     * yet, a default rendering with or without an arrowhead is added to it.
+     * 
+     * @param edge the edge whose rendering to enrich.
+     * @param addArrowhead whether or not the rendering should have an arrowhead for the edge direction
+     */
+    protected def void enrichEdgeRendering(KEdge edge, boolean addArrowhead) {
         if (!edge.hasRendering) {
             val parent = if (KGraphUtil.isDescendant(edge.target, edge.source))
                     edge.source
@@ -283,15 +311,17 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
             val routing = parent?.getProperty(CoreOptions::EDGE_ROUTING)
             edge.data += renderingFactory.createKRenderingRef => [
                 if (routing != null && routing == EdgeRouting::SPLINES) {
-                    it.rendering = defaultSplineRendering
+                    it.rendering = if(addArrowhead) defaultSplineRendering else defaultNoArrowSplineRendering
                 } else {
-                    it.rendering = defaultPolylineRendering
+                    it.rendering = if(addArrowhead) defaultPolylineRendering else defaultNoArrowPolylineRendering
                 }
-                
+
                 it.addSingleClickAction(FocusAndContextAction.ID)
             ]
         }
     }
+
+
 
     /**
      * Possibly adds a proper rendering to the given label. If no rendering is associated with the label

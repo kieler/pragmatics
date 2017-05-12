@@ -42,6 +42,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     public static val SynthesisOption DEFAULT_NODE_LABELS = SynthesisOption::createCheckOption("Node Labels", false)
     public static val SynthesisOption DEFAULT_PORT_SIZES = SynthesisOption::createCheckOption("Port Sizes", false)
     public static val SynthesisOption DEFAULT_PORT_LABELS = SynthesisOption::createCheckOption("Port Labels", false)
+    public static val SynthesisOption DEFAULT_EDGE_DIRECTIONS = SynthesisOption::createCheckOption("Edge Directions", true)
     
     /**
      * {@inheritDoc} 
@@ -54,6 +55,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
                 .add(DEFAULT_NODE_LABELS)
                 .add(DEFAULT_PORT_SIZES)
                 .add(DEFAULT_PORT_LABELS)
+                .add(DEFAULT_EDGE_DIRECTIONS)
                 .build();
     }
     
@@ -121,8 +123,10 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
      * @param edge the edge whose rendering to enrich.
      */
     protected def override void enrichEdgeRendering(KEdge edge) {
-        super.enrichEdgeRendering(edge);
+        super.enrichEdgeRendering(edge, DEFAULT_EDGE_DIRECTIONS.booleanValue);
         KGraphUtil.configureWithDefaultValues(edge);
     }
+    
+    
     
 }
