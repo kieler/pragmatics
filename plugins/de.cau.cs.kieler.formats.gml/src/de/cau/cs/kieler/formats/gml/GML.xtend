@@ -38,8 +38,8 @@ import org.eclipse.xtend.lib.annotations.Data
   * returns the value in form of a String.
   */
  @Data abstract class Element {
-    Element container 
-    String key
+    public Element container 
+    public String key
     abstract def String getValue()
     
 
