@@ -24,6 +24,7 @@ import org.eclipse.ui.IFileEditorInput;
 import de.cau.cs.kieler.formats.GraphFormatsService;
 import de.cau.cs.kieler.klighd.ui.view.controller.AbstractViewUpdateController;
 import de.cau.cs.kieler.klighd.ui.view.controllers.EditorSaveAdapter;
+import de.cau.cs.kieler.klighd.ui.view.model.ErrorModel;
 
 /**
  * {@link de.cau.cs.kieler.klighd.ui.view.DiagramView DiagramView} controller for opening general
@@ -65,7 +66,7 @@ public class GraphUpdateController extends AbstractViewUpdateController implemen
      */
     @Override
     public void onActivate(final IEditorPart editor) {
-        updateModel(readModel(editor));
+        doUpdate(editor);
         saveAdapter.activate(editor);
     }
 
@@ -86,7 +87,7 @@ public class GraphUpdateController extends AbstractViewUpdateController implemen
     @Override
     public void onEditorSaved(final IEditorPart editor) {
         if (getDiagramView().isLinkedWithActiveEditor()) {
-            updateModel(readModel(editor));
+            doUpdate(editor);
         }
     }
 
@@ -95,7 +96,18 @@ public class GraphUpdateController extends AbstractViewUpdateController implemen
      */
     @Override
     public void refresh() {
-        updateModel(readModel(getEditor()));
+        doUpdate(getEditor());
+    }
+    
+    private void doUpdate(final IEditorPart editor) {
+        
+        try {
+            ElkNode model = readModel(editor);
+            updateModel(model);
+        } catch (IOException | CoreException e) {
+            updateModel(new ErrorModel("Diagram creation failed.", e));
+        }
+        
     }
 
     // -- Utility
@@ -107,23 +119,20 @@ public class GraphUpdateController extends AbstractViewUpdateController implemen
      * @param editor
      *            IEditorPart containing model
      * @return EObject model
+     * 
+     * @throws IOException .
+     * @throws CoreException .
      */
-    protected static ElkNode readModel(final IEditorPart editor) {
+    protected static ElkNode readModel(final IEditorPart editor) throws IOException, CoreException {
         
         final IEditorInput input = editor.getEditorInput();
         if (input instanceof IFileEditorInput) {
             final IFile file = ((IFileEditorInput) input).getFile();
-            
-            try {
-                // if we know how to handle the graph's format, load it
-                ElkNode[] kgraph = GraphFormatsService.getInstance().loadElkGraph(file);
-                return kgraph[0];
-                
-            } catch (IOException | CoreException e) {
-                return null;
-            }
-            
-        } 
+            // if we know how to handle the graph's format, load it
+            ElkNode[] kgraph = GraphFormatsService.getInstance().loadElkGraph(file);
+            return kgraph[0];
+
+        }
 
         return null;
     }
