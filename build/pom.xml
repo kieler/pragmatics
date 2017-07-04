@@ -13,7 +13,7 @@
     <tycho-version>0.21.0</tycho-version>
     <targetJdk>1.8</targetJdk>
     <xtext-version>2.10.0</xtext-version>
-    <elk-version>0.2.1</elk-version>
+    <elk-version>0.2.2</elk-version>
 
     <!-- chsch: copied from https://eclipse.googlesource.com/recommenders/org.eclipse.recommenders/+/3dae4575d3370da2da25a1cbce3dfcff198f0611/features/pom.xml -->
     <!-- Non-breakable space, as normal spaces are trimmed. -->
@@ -117,7 +117,7 @@
     <pluginRepository>
       <id>eclipse-elk-meta</id>
       <name>ELK Meta Data Language Compiler Maven Repository</name>
-      <url>http://download.eclipse.org/elk/maven/releases/0.2.1/</url>
+      <url>http://download.eclipse.org/elk/maven/releases/0.2.2/</url>
     </pluginRepository>
   </pluginRepositories>
 
