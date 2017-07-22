@@ -134,8 +134,13 @@ final class GranaTextToBatchJob {
         
         // collect requested analyses
         val analyses = job.analyses.map[AnalysisService.instance.getAnalysis(it.name)]
+        
+        // the 'batch' is merely the container that holds the actual jobs.
+        // The actual jobs know how to execute themselves
         val Batch batch = switch (job) {
-            RegularJob: new Batch.Simple(job.name, analyses)  
+            RegularJob, CompareJob: 
+                // nothing special required for regular and compare jobs
+                new Batch.Simple(job.name, analyses)  
             RangeJob: {
                 val batch = new Batch.Range(job.name, analyses)
                 
