@@ -88,12 +88,12 @@ class KRenderingFigureProvider {
      */
     def private KRenderingLibrary getLibrary(KNode node) {
         var parent = node
-        while (parent.parent != null) {
+        while (parent.parent !== null) {
             parent = parent.getParent()
         }
         
         var library = parent.getData(typeof(KRenderingLibrary))
-        if (library == null) {
+        if (library === null) {
             library = renderingFactory.createKRenderingLibrary()
             parent.data.add(library)
         }
@@ -112,7 +112,7 @@ class KRenderingFigureProvider {
     def private KRenderingRef getFromLibrary(String id, KRenderingLibrary library) {
         val rendering = library.renderings.findFirst[r | r.id == id] as KRendering
         
-        if (rendering != null) {
+        if (rendering !== null) {
             val ref = renderingFactory.createKRenderingRef()
             ref.rendering = rendering
             return ref
@@ -203,7 +203,7 @@ class KRenderingFigureProvider {
     def KRendering createRelationNodeRendering(KNode node) {
         val library = getLibrary(node)
         val rendering = getFromLibrary("ren_relation", library)
-        if (rendering != null) {
+        if (rendering !== null) {
             return rendering
         }
         
@@ -226,7 +226,7 @@ class KRenderingFigureProvider {
     def KRendering createDirectorNodeRendering(KNode node) {
         val library = getLibrary(node)
         val rendering = getFromLibrary("ren_director", library)
-        if (rendering != null) {
+        if (rendering !== null) {
             return rendering
         }
         
@@ -286,7 +286,7 @@ class KRenderingFigureProvider {
         //look whether the rendering can be found in the library
         val library = getLibrary(node)
         val rendering = getFromLibrary("ren_documentation", library)
-        if (rendering != null) {
+        if (rendering !== null) {
             return rendering
         }
         
@@ -481,7 +481,7 @@ class KRenderingFigureProvider {
         
         val library = getLibrary(node)
         val rendering = getFromLibrary(id, library)
-        if (rendering != null) {
+        if (rendering !== null) {
             return rendering
         }
         
@@ -589,17 +589,17 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createRegularNodeRendering(KNode node) {
-        if (node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) != null) {
+        if (node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS) !== null) {
             val id = "ren_" + node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS).replace('.', '')
             val library = getLibrary(node)
             val rendering = getFromLibrary(id, library)
-            if (rendering != null) {
+            if (rendering !== null) {
                 return rendering
             }
         
             val ptRendering = createPtolemyFigureRendering(
                 node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS))
-            if (ptRendering != null) {
+            if (ptRendering !== null) {
                 return addToLibrary(ptRendering, id, library)
             }
         }
@@ -617,7 +617,7 @@ class KRenderingFigureProvider {
     def KRendering createAccumulatorNodeRendering(KNode node) {
         val library = getLibrary(node)
         val rendering = getFromLibrary("ren_accumulator", library)
-        if (rendering != null) {
+        if (rendering !== null) {
             return rendering
         }
         
@@ -688,7 +688,7 @@ class KRenderingFigureProvider {
     def KRendering createDataFlowRendering(KEdge edge) {
         val library = getLibrary(edge.source)
         var junction = getFromLibrary("ren_junction", library)
-        if (junction == null) {
+        if (junction === null) {
             junction = addToLibrary(renderingFactory.createKPolygon() => [poly |
                 poly.points += createKPosition(4, 0)
                 poly.points += createKPosition(8, 4)
