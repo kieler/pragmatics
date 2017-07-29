@@ -102,7 +102,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     @Inject extension KLibraryExtensions
 
     /** Rendering factory used to create KRendering model instances. */
-    static KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
+    private static KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
 
     /** Default rendering for nodes. */
     private var KRendering defaultNodeRendering;
@@ -126,7 +126,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     protected def initRenderings(KNode graph) {
         // Create a rendering library for reuse of renderings
         var library = graph.getData(typeof(KRenderingLibrary))
-        if (library == null) {
+        if (library === null) {
             library = renderingFactory.createKRenderingLibrary
             graph.data += library
         }
@@ -137,6 +137,9 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
             case STYLE_SPONGEBOB: library.initSpongebobFactory
             default: library.initBoringFactory // boring 
         }
+        
+        // Allow subclasses to mess with the library
+        extendRenderingLibrary(library);
     }
     
     private def initEdgeRenderings(KRenderingLibrary library) {
@@ -154,7 +157,6 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
             it.addJunctionPointDecorator
         ];
         library.renderings += defaultNoArrowPolylineRendering
-
 
         // Create a common rendering for splines
         defaultSplineRendering = renderingFactory.createKSpline => [
@@ -239,6 +241,13 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
         ]
         library.renderings += defaultNodeRendering
     }
+    
+    /**
+     * Override this method to extend an initialized rendering library with additional custom renderings.
+     */
+    protected def void extendRenderingLibrary(KRenderingLibrary library) {
+        // Do nothing by default
+    }
 
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -310,7 +319,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
                     edge.source?.parent
             val routing = parent?.getProperty(CoreOptions::EDGE_ROUTING)
             edge.data += renderingFactory.createKRenderingRef => [
-                if (routing != null && routing == EdgeRouting::SPLINES) {
+                if (routing !== null && routing == EdgeRouting::SPLINES) {
                     it.rendering = if(addArrowhead) defaultSplineRendering else defaultNoArrowSplineRendering
                 } else {
                     it.rendering = if(addArrowhead) defaultPolylineRendering else defaultNoArrowPolylineRendering
@@ -383,7 +392,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
             }
         }
         
-        if (labelManager != null) {
+        if (labelManager !== null) {
             kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager)
         }
     }
