@@ -574,13 +574,13 @@ class Ptolemy2KGraphVisualization {
         for (label : element.labels) {
             // Add empty selectable text rendering
             val ktext = DiagramSyntheses.addRenderingWithStandardSelectionWrapper(label, null)
-                .addText("")
+                .addText(null)
             ktext.cursorSelectable = true
             
             // If we have a modal model port, we need to determine a fixed placement for the label at
             // this point
             if (element.markedAsModalModelPort) {
-                val bounds = PlacementUtil::estimateTextSize(label)
+                val bounds = PlacementUtil::estimateSize(label)
                 
                 label.xpos = 0
                 label.ypos = -(bounds.height + 3.0f)
@@ -605,7 +605,7 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addToolTip(KGraphElement element) {
         val krendering = element.KRendering
-        if (krendering == null) {
+        if (krendering === null) {
             return
         }
         
@@ -663,11 +663,11 @@ class Ptolemy2KGraphVisualization {
             actualRendering = (actualRendering as KRenderingRef).rendering
         }
                 
-        if (actualRendering == null) {
+        if (actualRendering === null) {
             // If we have no rendering in the first place, fix the size
             layout.height = 50
             layout.width = 50
-        } else if (actualRendering.placementData != null
+        } else if (actualRendering.placementData !== null
             && actualRendering.placementData instanceof KAreaPlacementData) {
             
             // We have concrete placement data to infer the size from
