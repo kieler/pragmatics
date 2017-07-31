@@ -15,6 +15,7 @@ package de.cau.cs.kieler.graphs.klighd.syntheses
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
 import de.cau.cs.kieler.formats.kgraph.KGraphExporter
+import de.cau.cs.kieler.graphs.klighd.syntheses.InlineEdgeLabelStyleModifier.Visibility
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
@@ -25,6 +26,7 @@ import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.klighd.krendering.KContainerRendering
 import de.cau.cs.kieler.klighd.krendering.KPolygon
+import de.cau.cs.kieler.klighd.krendering.KRendering
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
@@ -302,8 +304,10 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
             text.addSingleClickAction(FocusAndContextAction.ID)
             
             text.setAreaPlacementData(
-                createKPosition(LEFT, 2, 0, TOP, if (verticalPadding) 2 else 0, 0),
-                createKPosition(RIGHT, 2, 0, BOTTOM, if (verticalPadding) 3 else 0, 0)
+//                createKPosition(LEFT, 2, 0, TOP, if (verticalPadding) 2 else 0, 0),
+//                createKPosition(RIGHT, 2, 0, BOTTOM, if (verticalPadding) 3 else 0, 0)
+                createKPosition(LEFT, 2, 0, TOP, 2, 0),
+                createKPosition(RIGHT, 2, 0, BOTTOM, 3, 0)
             )
         ]
     }
@@ -319,6 +323,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         if (lines || brackets) {
             // Left line / bracket
             container.children += createKPolyline() => [ line |
+                setupVisibility(line, Visibility.SEGMENT_HORIZONTAL)
                 line.setForegroundColor(100, 100, 100);
                 
                 if (brackets) line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
@@ -334,6 +339,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
             
             // Right line / bracket
             container.children += createKPolyline() => [ line |
+                setupVisibility(line, Visibility.SEGMENT_HORIZONTAL)
                 line.setForegroundColor(100, 100, 100);
                 
                 if (brackets) line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
@@ -343,6 +349,38 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
                 
                 line.setAreaPlacementData(
                     createKPosition(RIGHT, 3, 0, TOP, 0, 0),
+                    createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
+                )
+            ]
+            
+            // Top line / bracket
+            container.children += createKPolyline() => [ line |
+                setupVisibility(line, Visibility.SEGMENT_VERTICAL)
+                line.setForegroundColor(100, 100, 100);
+                
+                if (brackets) line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
+                line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
+                line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
+                if (brackets) line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
+                
+                line.setAreaPlacementData(
+                    createKPosition(LEFT, 0, 0, TOP, 0, 0),
+                    createKPosition(RIGHT, 0, 0, TOP, 3, 0)
+                )
+            ]
+            
+            // Bottom line / bracket
+            container.children += createKPolyline() => [ line |
+                setupVisibility(line, Visibility.SEGMENT_VERTICAL)
+                line.setForegroundColor(100, 100, 100);
+                
+                if (brackets) line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
+                line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
+                line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
+                if (brackets) line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
+                
+                line.setAreaPlacementData(
+                    createKPosition(LEFT, 0, 0, BOTTOM, 3, 0),
                     createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
                 )
             ]
@@ -358,41 +396,75 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         
         if (arrows) {
             // Left arrow
-            container.children += createKPolygon() => [ poly |
-                setArrowColors(poly);
+            container.children += createKPolygon() => [ arrow |
+                setupArrowColors(arrow);
+                setupVisibility(arrow, Visibility.DIRECTION_LEFT)
                 
-                poly.addKPosition(RIGHT, 0, 0, TOP, -4, 0.5f)
-                    .addKPosition(RIGHT, 0, 0, TOP, 4, 0.5f)
-                    .addKPosition(LEFT, 0, 0, TOP, 0, 0.5f)
-                    .addKPosition(RIGHT, 0, 0, TOP, -4, 0.5f);
+                arrow.addKPosition(RIGHT, 0, 0, TOP, -4, 0.5f)
+                     .addKPosition(RIGHT, 0, 0, TOP, 4, 0.5f)
+                     .addKPosition(LEFT, 0, 0, TOP, 0, 0.5f)
+                     .addKPosition(RIGHT, 0, 0, TOP, -4, 0.5f);
                 
-                poly.setAreaPlacementData(
+                arrow.setAreaPlacementData(
                     createKPosition(LEFT, -4, 0, TOP, 0, 0),
                     createKPosition(LEFT, 0, 0, BOTTOM, 0, 0)
                 )
             ]
             
             // Right arrow
-            container.children += createKPolygon() => [ poly |
-                setArrowColors(poly);
+            container.children += createKPolygon() => [ arrow |
+                setupArrowColors(arrow);
+                setupVisibility(arrow, Visibility.DIRECTION_RIGHT)
                 
-                poly.addKPosition(LEFT, 0, 0, TOP, -4, 0.5f)
-                    .addKPosition(LEFT, 0, 0, TOP, 4, 0.5f)
-                    .addKPosition(RIGHT, 0, 0, TOP, 0, 0.5f)
-                    .addKPosition(LEFT, 0, 0, TOP, -4, 0.5f);
+                arrow.addKPosition(LEFT, 0, 0, TOP, -4, 0.5f)
+                     .addKPosition(LEFT, 0, 0, TOP, 4, 0.5f)
+                     .addKPosition(RIGHT, 0, 0, TOP, 0, 0.5f)
+                     .addKPosition(LEFT, 0, 0, TOP, -4, 0.5f);
                 
-                poly.setAreaPlacementData(
+                arrow.setAreaPlacementData(
                     createKPosition(RIGHT, 0, 0, TOP, 0, 0),
                     createKPosition(RIGHT, -4, 0, BOTTOM, 0, 0)
+                )
+            ]
+            
+            // Up arrow
+            container.children += createKPolygon() => [ arrow |
+                setupArrowColors(arrow);
+                setupVisibility(arrow, Visibility.DIRECTION_UP)
+                
+                arrow.addKPosition(LEFT, -4, 0.5f, BOTTOM, 0, 0)
+                     .addKPosition(LEFT, 4, 0.5f, BOTTOM, 0, 0)
+                     .addKPosition(RIGHT, 0, 0.5f, TOP, 0, 0)
+                     .addKPosition(LEFT, -4, 0.5f, BOTTOM, 0, 0)
+                
+                arrow.setAreaPlacementData(
+                    createKPosition(LEFT, 0, 0, TOP, -4, 0),
+                    createKPosition(RIGHT, 0, 0, TOP, 0, 0)
+                )
+            ]
+            
+            // Down arrow
+            container.children += createKPolygon() => [ arrow |
+                setupArrowColors(arrow);
+                setupVisibility(arrow, Visibility.DIRECTION_DOWN)
+                
+                arrow.addKPosition(LEFT, -4, 0.5f, TOP, 0, 0)
+                     .addKPosition(LEFT, 4, 0.5f, TOP, 0, 0)
+                     .addKPosition(RIGHT, 0, 0.5f, BOTTOM, 0, 0)
+                     .addKPosition(LEFT, -4, 0.5f, TOP, 0, 0)
+                
+                arrow.setAreaPlacementData(
+                    createKPosition(LEFT, 0, 0, BOTTOM, 0, 0),
+                    createKPosition(RIGHT, 0, 0, BOTTOM, -4, 0)
                 )
             ]
         }
     }
     
     /**
-     * Sets up colors for arrows.
+     * Setup setting for arrows.
      */
-    private def void setArrowColors(KPolygon arrow) {
+    private def void setupArrowColors(KPolygon arrow) {
         val badDesign = INLINE_LABELS_BAD_DESIGN_MODE.booleanValue;
         
         if (badDesign) {
@@ -402,6 +474,12 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
             arrow.setBackgroundColor(100, 100, 100);
             arrow.setForegroundColor(100, 100, 100);
         }
+    }
+    
+    private def setupVisibility(KRendering rendering, Visibility visibility) {
+        rendering.invisible = false;
+        rendering.invisible.setProperty(InlineEdgeLabelStyleModifier.STYLE_VISIBILITY, visibility);
+        rendering.invisible.modifierId = InlineEdgeLabelStyleModifier.ID;
     }
     
 }
