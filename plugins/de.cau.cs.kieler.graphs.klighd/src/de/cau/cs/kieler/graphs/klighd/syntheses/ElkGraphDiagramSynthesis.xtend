@@ -25,6 +25,7 @@ import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.EdgeLabelPlacement
@@ -51,28 +52,42 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     public static val SynthesisOption DEFAULT_EDGE_DIRECTIONS = SynthesisOption.createCheckOption("Edge Directions", true)
     
     // An advanced category for... well... advanced options and experimental things
-    public static val SynthesisOption ADVANCED_CATEGORY = SynthesisOption.createCategory("Here Be Dragons", false)
+    public static val SynthesisOption ADVANCED_CATEGORY = SynthesisOption.createCategory("Danger Zone", false)
     
-    public static val INLINE_LABELS_OFF = "Oh God, no!"
-    public static val INLINE_LABELS_SIMPLE = "Simple"
-    public static val INLINE_LABELS_RECTS = "Rectangles"
-    public static val INLINE_LABELS_RECTS_WITH_EDGE = "Rectangles (edge visible)"
-    public static val SynthesisOption INLINE_LABELS = {
-        // We're using a block expression here because we need to set the category on the option
-        val option = SynthesisOption.createChoiceOption(
-            "Inline Edge Labels",
-            ImmutableList::of(INLINE_LABELS_OFF, INLINE_LABELS_SIMPLE, INLINE_LABELS_RECTS,
-                              INLINE_LABELS_RECTS_WITH_EDGE),
-            INLINE_LABELS_OFF);
+    public static val SynthesisOption INLINE_LABELS_SEPARATOR = {
+        val option = SynthesisOption.createSeparator("Edge Labels");
         option.category = ADVANCED_CATEGORY;
         option;
     }
+    
+    public static val INLINE_LABELS_OFF = "Oh God, no!";
+    public static val INLINE_LABELS_SIMPLE = "Simple";
+    public static val INLINE_LABELS_LINES = "Lines";
+    public static val INLINE_LABELS_BRACKETS = "Brackets";
+    public static val INLINE_LABELS_RECTS = "Rectangles";
+    public static val SynthesisOption INLINE_LABELS = {
+        // We're using a block expression here because we need to set the category on the option
+        val option = SynthesisOption.createChoiceOption(
+            "Display Inline",
+            ImmutableList::of(INLINE_LABELS_OFF, INLINE_LABELS_SIMPLE, INLINE_LABELS_LINES, INLINE_LABELS_BRACKETS,
+                              INLINE_LABELS_RECTS),
+            INLINE_LABELS_OFF);
+        option.category = ADVANCED_CATEGORY;
+        option;
+    };
+    
+    public static val SynthesisOption INLINE_LABELS_EDGE_VISIBLE = {
+        val option = SynthesisOption.createCheckOption("Let Edge Shine Through", true);
+        option.category = ADVANCED_CATEGORY;
+        option;
+    };
     
     // Extensions and rendering stuff
     extension KGraphExporter exporter = new KGraphExporter
     extension KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
     
     @Inject extension KContainerRenderingExtensions
+    @Inject extension KPolylineExtensions
     @Inject extension KRenderingExtensions
     
     
@@ -89,7 +104,9 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
                 .add(DEFAULT_PORT_LABELS)
                 .add(DEFAULT_EDGE_DIRECTIONS)
                 .add(ADVANCED_CATEGORY)
+                .add(INLINE_LABELS_SEPARATOR)
                 .add(INLINE_LABELS)
+                .add(INLINE_LABELS_EDGE_VISIBLE)
                 .build();
     }
     
@@ -166,31 +183,39 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
      * Adds a slightly more complex rendering to center edge labels, if that is necessary. Also sets layout properties.
      */
     protected def override void enrichLabelRendering(KLabel label) {
-        if (specialLabelRenderingApplies(label)) {
+        if (isInlineLabel(label)) {
             // LET'S DO THIS!!!
-            label.setProperty(CoreOptions.EDGE_LABELS_INLINE, true);
-            
-            // The exact rendering is determined by the inline label setting
-            switch INLINE_LABELS.objectValue {
-                case INLINE_LABELS_SIMPLE: 
-                    addRectangleInlineLabelRendering(label, false, true)
-                case INLINE_LABELS_RECTS:
-                    addRectangleInlineLabelRendering(label, true, false)
-                case INLINE_LABELS_RECTS_WITH_EDGE:
-                    addRectangleInlineLabelRendering(label, true, true)
-            }
+            addInlineLabelRendering(label)
         } else {
             super.enrichLabelRendering(label);
         }
     }
     
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // INLINE LABEL RENDERING
+    
+    private def void addInlineLabelRendering(KLabel label) {
+        label.setProperty(CoreOptions.EDGE_LABELS_INLINE, true);
+        
+        // The exact rendering is determined by the inline label setting
+        switch INLINE_LABELS.objectValue {
+            case INLINE_LABELS_SIMPLE:
+                addRectangleInlineLabelRendering(label, false, INLINE_LABELS_EDGE_VISIBLE.booleanValue)
+            case INLINE_LABELS_LINES:
+                addLinesInlineLabelRendering(label, false, INLINE_LABELS_EDGE_VISIBLE.booleanValue)
+            case INLINE_LABELS_BRACKETS:
+                addLinesInlineLabelRendering(label, true, INLINE_LABELS_EDGE_VISIBLE.booleanValue)
+            case INLINE_LABELS_RECTS:
+                addRectangleInlineLabelRendering(label, true, INLINE_LABELS_EDGE_VISIBLE.booleanValue)
+        }
+    }
+    
+    /**
+     * Renders a label such that it is placed in a rectangle.
+     */
     private def void addRectangleInlineLabelRendering(KLabel label, boolean border, boolean edgeVisible) {
         label.data += createKRectangle() => [ rect |
-            val verticalPadding = if (border) 2 else 0;
-            rect.setGridPlacement(1)
-                .from(LEFT, 2, 0, TOP, verticalPadding, 0)
-                .to(RIGHT, 2, 0, BOTTOM, verticalPadding, 0)
-            
             rect.setForegroundColor(100, 100, 100);
             rect.foregroundInvisible = !border;
             rect.setBackgroundColor(255, 255, 255,
@@ -200,6 +225,63 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
             rect.children += createKText() => [ text |
                 text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
                 text.addSingleClickAction(FocusAndContextAction.ID)
+                
+                text.setAreaPlacementData(
+                    createKPosition(LEFT, 2, 0, TOP, if (border) 2 else 0, 0),
+                    createKPosition(RIGHT, 2, 0, BOTTOM, if (border) 3 else 0, 0)
+                )
+            ]
+        ]
+    }
+    
+    /**
+     * Renders a label such that it is surrounded by lines or brackets to its left and right sides.
+     */
+    private def void addLinesInlineLabelRendering(KLabel label, boolean brackets, boolean edgeVisible) {
+        label.data += createKRectangle() => [ rect |
+            rect.foregroundInvisible = true
+            rect.setBackgroundColor(255, 255, 255,
+                if (edgeVisible) 220 else 255
+            );
+            
+            rect.children += createKPolyline() => [ line |
+                line.setForegroundColor(100, 100, 100);
+                
+                if (brackets) line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
+                line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
+                line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
+                if (brackets) line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
+                
+                line.setAreaPlacementData(
+                    createKPosition(LEFT, 0, 0, TOP, 0, 0),
+                    createKPosition(LEFT, 3, 0, BOTTOM, 0, 0)
+                )
+            ]
+            
+            rect.children += createKText() => [ text |
+                text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
+                text.addSingleClickAction(FocusAndContextAction.ID)
+                
+                val horizontalPadding = if (brackets) 4 else 2;
+                text.setAreaPlacementData(
+                    createKPosition(LEFT, horizontalPadding, 0, TOP, 0, 0),
+                    createKPosition(RIGHT, horizontalPadding, 0, BOTTOM, 1, 0
+                    )
+                )
+            ]
+            
+            rect.children += createKPolyline() => [ line |
+                line.setForegroundColor(100, 100, 100);
+                
+                if (brackets) line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
+                line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
+                line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
+                if (brackets) line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
+                
+                line.setAreaPlacementData(
+                    createKPosition(RIGHT, 3, 0, TOP, 0, 0),
+                    createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
+                )
             ]
         ]
     }
@@ -208,7 +290,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
      * Checks whether we need to create a special rendering for the label. That is the case if it is a center edge
      * label, inline labels are active, and the label doesn't already have a rendering.
      */
-    private def boolean specialLabelRenderingApplies(KLabel label) {
+    private def boolean isInlineLabel(KLabel label) {
         // Already has rendering
         if (label.hasRendering()) {
             return false;
