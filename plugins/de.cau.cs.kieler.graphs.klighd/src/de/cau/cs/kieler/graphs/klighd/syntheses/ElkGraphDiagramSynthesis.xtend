@@ -23,8 +23,9 @@ import de.cau.cs.kieler.klighd.kgraph.KLabel
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
+import de.cau.cs.kieler.klighd.krendering.KContainerRendering
+import de.cau.cs.kieler.klighd.krendering.KPolygon
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
-import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import org.eclipse.elk.core.options.CoreOptions
@@ -41,6 +42,9 @@ import org.eclipse.elk.graph.ElkPort
  * <p>Note: The coordinate transformtion here is not correct yet, at least for edges.</p>
  */
 class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // SYNTHESIS OPTIONS
     
     /* Synthesis options specifying whether several default values should be used or not. Default values are, eg, node
      * size if not specified and port ids as labels if no labels exist.
@@ -82,13 +86,17 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         option;
     };
     
-    // Extensions and rendering stuff
-    extension KGraphExporter exporter = new KGraphExporter
-    extension KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
+    public static val SynthesisOption INLINE_LABELS_ARROWS = {
+        val option = SynthesisOption.createCheckOption("Direction Hints", false);
+        option.category = ADVANCED_CATEGORY;
+        option;
+    };
     
-    @Inject extension KContainerRenderingExtensions
-    @Inject extension KPolylineExtensions
-    @Inject extension KRenderingExtensions
+    public static val SynthesisOption INLINE_LABELS_BAD_DESIGN_MODE = {
+        val option = SynthesisOption.createCheckOption("Bad Design Mode", false);
+        option.category = ADVANCED_CATEGORY;
+        option;
+    };
     
     
     /**
@@ -107,8 +115,14 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
                 .add(INLINE_LABELS_SEPARATOR)
                 .add(INLINE_LABELS)
                 .add(INLINE_LABELS_EDGE_VISIBLE)
+                .add(INLINE_LABELS_ARROWS)
+                .add(INLINE_LABELS_BAD_DESIGN_MODE)
                 .build();
     }
+    
+    
+    ///////////////////////////////////////////////////////////////////////////////
+    // TRANSFORMATION
     
     override transform(ElkNode elkGraph) {
         // Transform everything (don't use 'elkGraph.transform' :))
@@ -141,6 +155,13 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     
     ///////////////////////////////////////////////////////////////////////////////
     // RENDERING THINGS
+    
+    // Extensions and rendering stuff
+    extension KGraphExporter exporter = new KGraphExporter
+    extension KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
+    
+    @Inject extension KPolylineExtensions
+    @Inject extension KRenderingExtensions
     
     /**
      * Make sure the node has a valid size and a label (if defaults are switched on).
@@ -195,97 +216,6 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     ///////////////////////////////////////////////////////////////////////////////
     // INLINE LABEL RENDERING
     
-    private def void addInlineLabelRendering(KLabel label) {
-        label.setProperty(CoreOptions.EDGE_LABELS_INLINE, true);
-        
-        // The exact rendering is determined by the inline label setting
-        switch INLINE_LABELS.objectValue {
-            case INLINE_LABELS_SIMPLE:
-                addRectangleInlineLabelRendering(label, false, INLINE_LABELS_EDGE_VISIBLE.booleanValue)
-            case INLINE_LABELS_LINES:
-                addLinesInlineLabelRendering(label, false, INLINE_LABELS_EDGE_VISIBLE.booleanValue)
-            case INLINE_LABELS_BRACKETS:
-                addLinesInlineLabelRendering(label, true, INLINE_LABELS_EDGE_VISIBLE.booleanValue)
-            case INLINE_LABELS_RECTS:
-                addRectangleInlineLabelRendering(label, true, INLINE_LABELS_EDGE_VISIBLE.booleanValue)
-        }
-    }
-    
-    /**
-     * Renders a label such that it is placed in a rectangle.
-     */
-    private def void addRectangleInlineLabelRendering(KLabel label, boolean border, boolean edgeVisible) {
-        label.data += createKRectangle() => [ rect |
-            rect.setForegroundColor(100, 100, 100);
-            rect.foregroundInvisible = !border;
-            rect.setBackgroundColor(255, 255, 255,
-                if (edgeVisible) 220 else 255
-            );
-            
-            rect.children += createKText() => [ text |
-                text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
-                text.addSingleClickAction(FocusAndContextAction.ID)
-                
-                text.setAreaPlacementData(
-                    createKPosition(LEFT, 2, 0, TOP, if (border) 2 else 0, 0),
-                    createKPosition(RIGHT, 2, 0, BOTTOM, if (border) 3 else 0, 0)
-                )
-            ]
-        ]
-    }
-    
-    /**
-     * Renders a label such that it is surrounded by lines or brackets to its left and right sides.
-     */
-    private def void addLinesInlineLabelRendering(KLabel label, boolean brackets, boolean edgeVisible) {
-        label.data += createKRectangle() => [ rect |
-            rect.foregroundInvisible = true
-            rect.setBackgroundColor(255, 255, 255,
-                if (edgeVisible) 220 else 255
-            );
-            
-            rect.children += createKPolyline() => [ line |
-                line.setForegroundColor(100, 100, 100);
-                
-                if (brackets) line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
-                line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
-                line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
-                if (brackets) line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
-                
-                line.setAreaPlacementData(
-                    createKPosition(LEFT, 0, 0, TOP, 0, 0),
-                    createKPosition(LEFT, 3, 0, BOTTOM, 0, 0)
-                )
-            ]
-            
-            rect.children += createKText() => [ text |
-                text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
-                text.addSingleClickAction(FocusAndContextAction.ID)
-                
-                val horizontalPadding = if (brackets) 4 else 2;
-                text.setAreaPlacementData(
-                    createKPosition(LEFT, horizontalPadding, 0, TOP, 0, 0),
-                    createKPosition(RIGHT, horizontalPadding, 0, BOTTOM, 1, 0
-                    )
-                )
-            ]
-            
-            rect.children += createKPolyline() => [ line |
-                line.setForegroundColor(100, 100, 100);
-                
-                if (brackets) line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
-                line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
-                line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
-                if (brackets) line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
-                
-                line.setAreaPlacementData(
-                    createKPosition(RIGHT, 3, 0, TOP, 0, 0),
-                    createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
-                )
-            ]
-        ]
-    }
-    
     /**
      * Checks whether we need to create a special rendering for the label. That is the case if it is a center edge
      * label, inline labels are active, and the label doesn't already have a rendering.
@@ -309,6 +239,169 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         // Center edge label
         val placement = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
         return placement == EdgeLabelPlacement.CENTER || placement == EdgeLabelPlacement.UNDEFINED;
+    }
+    
+    /**
+     * Adds inline edge label rendering things to the given label.
+     */
+    private def void addInlineLabelRendering(KLabel label) {
+        label.setProperty(CoreOptions.EDGE_LABELS_INLINE, true);
+        
+        // The background rectangle is always there
+        val backgroundRectangle = addBackgroundRectangle(label);
+        addDecoration(backgroundRectangle);
+        addArrows(backgroundRectangle);
+        addLabelRendering(backgroundRectangle);
+        
+        label.data += backgroundRectangle;
+    }
+    
+    /**
+     * Creates the background container rectangle for inline edge labels.
+     */
+    private def KContainerRendering addBackgroundRectangle(KLabel label) {
+        // Retrieve settings
+        val border = INLINE_LABELS.objectValue.equals(INLINE_LABELS_RECTS);
+        val translucent = INLINE_LABELS_EDGE_VISIBLE.booleanValue;
+        val badDesign = INLINE_LABELS_BAD_DESIGN_MODE.booleanValue;
+        
+        return createKRectangle() => [ rect |
+            // The rectangle's border
+            if (border) {
+                if (badDesign) {
+                    rect.setForegroundColor(0, 0, 255);
+                } else {
+                    rect.setForegroundColor(100, 100, 100);
+                }
+            } else {
+                rect.foregroundInvisible = true;
+            }
+            
+            // The rectangle's background
+            if (badDesign) {
+                rect.setBackgroundColor(255, 255, 0,
+                    if (translucent) 220 else 255
+                );
+            } else {
+                rect.setBackgroundColor(255, 255, 255,
+                    if (translucent) 220 else 255
+                );
+            }
+        ];
+    }
+    
+    /**
+     * Adds a text rendering to the given container which will display the label text.
+     */
+    private def void addLabelRendering(KContainerRendering container) {
+        // We need a bit of space between the text and the top / bottom container border with certain rendering styles
+        val verticalPadding = INLINE_LABELS.objectValue.equals(INLINE_LABELS_RECTS);
+        
+        container.children += createKText() => [ text |
+            text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
+            text.addSingleClickAction(FocusAndContextAction.ID)
+            
+            text.setAreaPlacementData(
+                createKPosition(LEFT, 2, 0, TOP, if (verticalPadding) 2 else 0, 0),
+                createKPosition(RIGHT, 2, 0, BOTTOM, if (verticalPadding) 3 else 0, 0)
+            )
+        ]
+    }
+    
+    /**
+     * Renders a label such that it is surrounded by lines or brackets to its left and right sides.
+     */
+    private def void addDecoration(KContainerRendering container) {
+        // Retrieve settings
+        val lines = INLINE_LABELS.objectValue.equals(INLINE_LABELS_LINES);
+        val brackets = INLINE_LABELS.objectValue.equals(INLINE_LABELS_BRACKETS);
+        
+        if (lines || brackets) {
+            // Left line / bracket
+            container.children += createKPolyline() => [ line |
+                line.setForegroundColor(100, 100, 100);
+                
+                if (brackets) line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
+                line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
+                line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
+                if (brackets) line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
+                
+                line.setAreaPlacementData(
+                    createKPosition(LEFT, 0, 0, TOP, 0, 0),
+                    createKPosition(LEFT, 3, 0, BOTTOM, 0, 0)
+                )
+            ]
+            
+            // Right line / bracket
+            container.children += createKPolyline() => [ line |
+                line.setForegroundColor(100, 100, 100);
+                
+                if (brackets) line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
+                line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
+                line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
+                if (brackets) line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
+                
+                line.setAreaPlacementData(
+                    createKPosition(RIGHT, 3, 0, TOP, 0, 0),
+                    createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
+                )
+            ]
+        }
+    }
+    
+    /**
+     * Adds directional arrows to the container which can be used to display directional hints.
+     */
+    private def void addArrows(KContainerRendering container) {
+        // Retrieve settings
+        val arrows = INLINE_LABELS_ARROWS.booleanValue;
+        
+        if (arrows) {
+            // Left arrow
+            container.children += createKPolygon() => [ poly |
+                setArrowColors(poly);
+                
+                poly.addKPosition(RIGHT, 0, 0, TOP, -4, 0.5f)
+                    .addKPosition(RIGHT, 0, 0, TOP, 4, 0.5f)
+                    .addKPosition(LEFT, 0, 0, TOP, 0, 0.5f)
+                    .addKPosition(RIGHT, 0, 0, TOP, -4, 0.5f);
+                
+                poly.setAreaPlacementData(
+                    createKPosition(LEFT, -4, 0, TOP, 0, 0),
+                    createKPosition(LEFT, 0, 0, BOTTOM, 0, 0)
+                )
+            ]
+            
+            // Right arrow
+            container.children += createKPolygon() => [ poly |
+                setArrowColors(poly);
+                
+                poly.addKPosition(LEFT, 0, 0, TOP, -4, 0.5f)
+                    .addKPosition(LEFT, 0, 0, TOP, 4, 0.5f)
+                    .addKPosition(RIGHT, 0, 0, TOP, 0, 0.5f)
+                    .addKPosition(LEFT, 0, 0, TOP, -4, 0.5f);
+                
+                poly.setAreaPlacementData(
+                    createKPosition(RIGHT, 0, 0, TOP, 0, 0),
+                    createKPosition(RIGHT, -4, 0, BOTTOM, 0, 0)
+                )
+            ]
+        }
+    }
+    
+    /**
+     * Sets up colors for arrows.
+     */
+    private def void setArrowColors(KPolygon arrow) {
+        val badDesign = INLINE_LABELS_BAD_DESIGN_MODE.booleanValue;
+        
+        if (badDesign) {
+            arrow.setBackgroundColor(0, 0, 255);
+            arrow.setForegroundColor(0, 0, 255);
+        } else {
+            arrow.setBackgroundColor(100, 100, 100);
+            arrow.setForegroundColor(100, 100, 100);
+        }
     }
     
 }
