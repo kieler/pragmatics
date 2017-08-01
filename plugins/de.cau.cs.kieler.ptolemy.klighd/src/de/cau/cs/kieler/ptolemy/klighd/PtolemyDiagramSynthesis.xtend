@@ -16,8 +16,8 @@ package de.cau.cs.kieler.ptolemy.klighd
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.SynthesisOption
-import de.cau.cs.kieler.klighd.labels.ConditionLabelManager
-import de.cau.cs.kieler.klighd.labels.LabelPredicates
+import de.cau.cs.kieler.klighd.labels.management.ConditionLabelManager
+import de.cau.cs.kieler.klighd.labels.management.LabelPredicates
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.cau.cs.kieler.ptolemy.klighd.transformation.CommentsAttachor
