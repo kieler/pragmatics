@@ -18,13 +18,6 @@
       </diagramSynthesis-->
    </extension>
    <extension
-         point="de.cau.cs.kieler.klighd.extensions">
-      <styleModifier
-            class="de.cau.cs.kieler.graphs.klighd.syntheses.InlineEdgeLabelStyleModifier"
-            id="de.cau.cs.kieler.graphs.syntheses.inlineEdgeLabelStyleModifier">
-      </styleModifier>
-   </extension>
-   <extension
          point="de.cau.cs.kieler.klighd.ui.view.editor">
       <editor
             controllerID="de.cau.cs.kieler.klighd.ui.view.controllers.XtextChangeUpdateController"

@@ -15,7 +15,6 @@ package de.cau.cs.kieler.graphs.klighd.syntheses
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
 import de.cau.cs.kieler.formats.kgraph.KGraphExporter
-import de.cau.cs.kieler.graphs.klighd.syntheses.InlineEdgeLabelStyleModifier.Visibility
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.actions.FocusAndContextAction
@@ -25,18 +24,20 @@ import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.klighd.krendering.KContainerRendering
-import de.cau.cs.kieler.klighd.krendering.KPolygon
 import de.cau.cs.kieler.klighd.krendering.KRendering
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
-import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
-import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.core.options.EdgeLabelPlacement
+import de.cau.cs.kieler.klighd.labels.inline.DirectionalArrowsDecorator
+import de.cau.cs.kieler.klighd.labels.inline.InlineLabelConfigurator
+import de.cau.cs.kieler.klighd.labels.inline.LinesDecorator
+import de.cau.cs.kieler.klighd.labels.inline.RectangleDecorator
+import java.awt.Color
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkGraphElement
 import org.eclipse.elk.graph.ElkLabel
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.ElkPort
+import de.cau.cs.kieler.klighd.labels.inline.InlineLabelConfigurator.LayoutMode
 
 /**
  * Turns an ELK graph into a diagram KLighD knows how to display.
@@ -82,20 +83,21 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         option;
     };
     
-    public static val SynthesisOption INLINE_LABELS_EDGE_VISIBLE = {
-        val option = SynthesisOption.createCheckOption("Let Edge Shine Through", true);
+    public static val COLOR_MODE_SOLID = "Solid backgrounds";
+    public static val COLOR_MODE_TRANSLUCENT = "Translucent backgrounds";
+    public static val COLOR_MODE_BAD_DESIGN = "Bad Design Mode";
+    public static val SynthesisOption COLOR_MODE = {
+        // We're using a block expression here because we need to set the category on the option
+        val option = SynthesisOption.createChoiceOption(
+            "Color Mode",
+            ImmutableList::of(COLOR_MODE_SOLID, COLOR_MODE_TRANSLUCENT, COLOR_MODE_BAD_DESIGN),
+            COLOR_MODE_TRANSLUCENT);
         option.category = ADVANCED_CATEGORY;
         option;
     };
     
     public static val SynthesisOption INLINE_LABELS_ARROWS = {
         val option = SynthesisOption.createCheckOption("Direction Hints", false);
-        option.category = ADVANCED_CATEGORY;
-        option;
-    };
-    
-    public static val SynthesisOption INLINE_LABELS_BAD_DESIGN_MODE = {
-        val option = SynthesisOption.createCheckOption("Bad Design Mode", false);
         option.category = ADVANCED_CATEGORY;
         option;
     };
@@ -116,9 +118,8 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
                 .add(ADVANCED_CATEGORY)
                 .add(INLINE_LABELS_SEPARATOR)
                 .add(INLINE_LABELS)
-                .add(INLINE_LABELS_EDGE_VISIBLE)
+                .add(COLOR_MODE)
                 .add(INLINE_LABELS_ARROWS)
-                .add(INLINE_LABELS_BAD_DESIGN_MODE)
                 .build();
     }
     
@@ -138,6 +139,9 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
 
         // Enrich the rendering
         enrichRenderings(result);
+        
+        // Inline label rendering
+        configureInlinelabels(result);
 
         // Associate original objects with transformed objects
         //  note that the 'transformX' methods are contributed by the 
@@ -162,7 +166,6 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     extension KGraphExporter exporter = new KGraphExporter
     extension KRenderingFactory renderingFactory = KRenderingFactory::eINSTANCE
     
-    @Inject extension KPolylineExtensions
     @Inject extension KRenderingExtensions
     
     /**
@@ -206,12 +209,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
      * Adds a slightly more complex rendering to center edge labels, if that is necessary. Also sets layout properties.
      */
     protected def override void enrichLabelRendering(KLabel label) {
-        if (isInlineLabel(label)) {
-            // LET'S DO THIS!!!
-            addInlineLabelRendering(label)
-        } else {
             super.enrichLabelRendering(label);
-        }
     }
     
     
@@ -219,267 +217,80 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     // INLINE LABEL RENDERING
     
     /**
-     * Checks whether we need to create a special rendering for the label. That is the case if it is a center edge
-     * label, inline labels are active, and the label doesn't already have a rendering.
+     * Sets up inline labels for the graph.
      */
-    private def boolean isInlineLabel(KLabel label) {
-        // Already has rendering
-        if (label.hasRendering()) {
-            return false;
+    private def void configureInlinelabels(KNode graph) {
+        // Check if inline labels are active in the first place
+        if (INLINE_LABELS.objectValue.equals(INLINE_LABELS_OFF)) {
+            return;
         }
         
-        // Inline labels are active
-        if (INLINE_LABELS.objectValue == INLINE_LABELS_OFF) {
-            return false;
-        }
+        // Colors to be used
+        var Color background = null;
+        var Color foreground = null;
         
-        // Edge label
-        if (!(label.parent instanceof KEdge)) {
-            return false;
-        }
-        
-        // Center edge label
-        val placement = label.getProperty(CoreOptions.EDGE_LABELS_PLACEMENT);
-        return placement == EdgeLabelPlacement.CENTER || placement == EdgeLabelPlacement.UNDEFINED;
-    }
-    
-    /**
-     * Adds inline edge label rendering things to the given label.
-     */
-    private def void addInlineLabelRendering(KLabel label) {
-        label.setProperty(CoreOptions.EDGE_LABELS_INLINE, true);
-        
-        // The background rectangle is always there
-        val backgroundRectangle = addBackgroundRectangle(label);
-        addDecoration(backgroundRectangle);
-        addArrows(backgroundRectangle);
-        addLabelRendering(backgroundRectangle);
-        
-        label.data += backgroundRectangle;
-    }
-    
-    /**
-     * Creates the background container rectangle for inline edge labels.
-     */
-    private def KContainerRendering addBackgroundRectangle(KLabel label) {
-        // Retrieve settings
-        val border = INLINE_LABELS.objectValue.equals(INLINE_LABELS_RECTS);
-        val translucent = INLINE_LABELS_EDGE_VISIBLE.booleanValue;
-        val badDesign = INLINE_LABELS_BAD_DESIGN_MODE.booleanValue;
-        
-        return createKRectangle() => [ rect |
-            // The rectangle's border
-            if (border) {
-                if (badDesign) {
-                    rect.setForegroundColor(0, 0, 255);
-                } else {
-                    rect.setForegroundColor(100, 100, 100);
-                }
-            } else {
-                rect.foregroundInvisible = true;
+        switch COLOR_MODE.objectValue {
+            case COLOR_MODE_SOLID: {
+                background = new Color(255, 255, 255, 255);
+                foreground = new Color(100, 100, 100, 255);
             }
             
-            // The rectangle's background
-            if (badDesign) {
-                rect.setBackgroundColor(255, 255, 0,
-                    if (translucent) 220 else 255
-                );
-            } else {
-                rect.setBackgroundColor(255, 255, 255,
-                    if (translucent) 220 else 255
-                );
+            case COLOR_MODE_TRANSLUCENT: {
+                background = new Color(255, 255, 255, 220)
+                foreground = new Color(100, 100, 100, 255);
             }
-        ];
+            
+            case COLOR_MODE_BAD_DESIGN: {
+                background = new Color(255, 255, 0, 255)
+                foreground = new Color(0, 0, 255, 255);
+            }
+        }
+        
+        // Setup the configurator
+        val configurator = InlineLabelConfigurator.create()
+            .withLayoutMode(LayoutMode.HORIZONTAL)
+            .withLabelTextRenderingProvider([ container, label | createTextRendering(container, label) ]);
+        
+        val backgroundProvider = RectangleDecorator.create().withBackground(background);
+        configurator.addDecoratorRenderingProvider(backgroundProvider);
+        
+        switch INLINE_LABELS.objectValue {
+            case INLINE_LABELS_BRACKETS:
+                configurator.addDecoratorRenderingProvider(
+                    LinesDecorator.create()
+                        .withColor(foreground)
+                        .withBrackets(true))
+            case INLINE_LABELS_LINES:
+                configurator.addDecoratorRenderingProvider(
+                    LinesDecorator.create()
+                        .withColor(foreground)
+                        .withBrackets(false))
+            case INLINE_LABELS_RECTS:
+                backgroundProvider.withBorder(foreground)
+        }
+        
+        if (INLINE_LABELS_ARROWS.booleanValue) {
+            configurator.addDecoratorRenderingProvider(
+                DirectionalArrowsDecorator.create()
+                    .withColor(foreground))
+        }
+        
+        // Magic
+        configurator.applyToAll(graph, true);
     }
     
     /**
-     * Adds a text rendering to the given container which will display the label text.
+     * Creates a simple label rendering. We cannot use enrichRendering(KLabel) here because at this point
+     * the label already has renderings and that method thus wouldn't do anything.
      */
-    private def void addLabelRendering(KContainerRendering container) {
-        // We need a bit of space between the text and the top / bottom container border with certain rendering styles
-        val verticalPadding = INLINE_LABELS.objectValue.equals(INLINE_LABELS_RECTS);
-        
-        container.children += createKText() => [ text |
+    private def KRendering createTextRendering(KContainerRendering container, KLabel label) {
+        val rendering = createKText() => [ text |
             text.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
             text.addSingleClickAction(FocusAndContextAction.ID)
-            
-            text.setAreaPlacementData(
-//                createKPosition(LEFT, 2, 0, TOP, if (verticalPadding) 2 else 0, 0),
-//                createKPosition(RIGHT, 2, 0, BOTTOM, if (verticalPadding) 3 else 0, 0)
-                createKPosition(LEFT, 2, 0, TOP, 2, 0),
-                createKPosition(RIGHT, 2, 0, BOTTOM, 3, 0)
-            )
-        ]
-    }
-    
-    /**
-     * Renders a label such that it is surrounded by lines or brackets to its left and right sides.
-     */
-    private def void addDecoration(KContainerRendering container) {
-        // Retrieve settings
-        val lines = INLINE_LABELS.objectValue.equals(INLINE_LABELS_LINES);
-        val brackets = INLINE_LABELS.objectValue.equals(INLINE_LABELS_BRACKETS);
+        ];
         
-        if (lines || brackets) {
-            // Left line / bracket
-            container.children += createKPolyline() => [ line |
-                setupVisibility(line, Visibility.SEGMENT_HORIZONTAL)
-                line.setForegroundColor(100, 100, 100);
-                
-                if (brackets) line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
-                line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
-                line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
-                if (brackets) line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
-                
-                line.setAreaPlacementData(
-                    createKPosition(LEFT, 0, 0, TOP, 0, 0),
-                    createKPosition(LEFT, 3, 0, BOTTOM, 0, 0)
-                )
-            ]
-            
-            // Right line / bracket
-            container.children += createKPolyline() => [ line |
-                setupVisibility(line, Visibility.SEGMENT_HORIZONTAL)
-                line.setForegroundColor(100, 100, 100);
-                
-                if (brackets) line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
-                line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
-                line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
-                if (brackets) line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
-                
-                line.setAreaPlacementData(
-                    createKPosition(RIGHT, 3, 0, TOP, 0, 0),
-                    createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
-                )
-            ]
-            
-            // Top line / bracket
-            container.children += createKPolyline() => [ line |
-                setupVisibility(line, Visibility.SEGMENT_VERTICAL)
-                line.setForegroundColor(100, 100, 100);
-                
-                if (brackets) line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
-                line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
-                line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
-                if (brackets) line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
-                
-                line.setAreaPlacementData(
-                    createKPosition(LEFT, 0, 0, TOP, 0, 0),
-                    createKPosition(RIGHT, 0, 0, TOP, 3, 0)
-                )
-            ]
-            
-            // Bottom line / bracket
-            container.children += createKPolyline() => [ line |
-                setupVisibility(line, Visibility.SEGMENT_VERTICAL)
-                line.setForegroundColor(100, 100, 100);
-                
-                if (brackets) line.addKPosition(LEFT, 0, 0, TOP, 0, 0);
-                line.addKPosition(LEFT, 0, 0, BOTTOM, 0, 0);
-                line.addKPosition(RIGHT, 0, 0, BOTTOM, 0, 0);
-                if (brackets) line.addKPosition(RIGHT, 0, 0, TOP, 0, 0);
-                
-                line.setAreaPlacementData(
-                    createKPosition(LEFT, 0, 0, BOTTOM, 3, 0),
-                    createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
-                )
-            ]
-        }
-    }
-    
-    /**
-     * Adds directional arrows to the container which can be used to display directional hints.
-     */
-    private def void addArrows(KContainerRendering container) {
-        // Retrieve settings
-        val arrows = INLINE_LABELS_ARROWS.booleanValue;
-        
-        if (arrows) {
-            // Left arrow
-            container.children += createKPolygon() => [ arrow |
-                setupArrowColors(arrow);
-                setupVisibility(arrow, Visibility.DIRECTION_LEFT)
-                
-                arrow.addKPosition(RIGHT, 0, 0, TOP, -4, 0.5f)
-                     .addKPosition(RIGHT, 0, 0, TOP, 4, 0.5f)
-                     .addKPosition(LEFT, 0, 0, TOP, 0, 0.5f)
-                     .addKPosition(RIGHT, 0, 0, TOP, -4, 0.5f);
-                
-                arrow.setAreaPlacementData(
-                    createKPosition(LEFT, -4, 0, TOP, 0, 0),
-                    createKPosition(LEFT, 0, 0, BOTTOM, 0, 0)
-                )
-            ]
-            
-            // Right arrow
-            container.children += createKPolygon() => [ arrow |
-                setupArrowColors(arrow);
-                setupVisibility(arrow, Visibility.DIRECTION_RIGHT)
-                
-                arrow.addKPosition(LEFT, 0, 0, TOP, -4, 0.5f)
-                     .addKPosition(LEFT, 0, 0, TOP, 4, 0.5f)
-                     .addKPosition(RIGHT, 0, 0, TOP, 0, 0.5f)
-                     .addKPosition(LEFT, 0, 0, TOP, -4, 0.5f);
-                
-                arrow.setAreaPlacementData(
-                    createKPosition(RIGHT, 0, 0, TOP, 0, 0),
-                    createKPosition(RIGHT, -4, 0, BOTTOM, 0, 0)
-                )
-            ]
-            
-            // Up arrow
-            container.children += createKPolygon() => [ arrow |
-                setupArrowColors(arrow);
-                setupVisibility(arrow, Visibility.DIRECTION_UP)
-                
-                arrow.addKPosition(LEFT, -4, 0.5f, BOTTOM, 0, 0)
-                     .addKPosition(LEFT, 4, 0.5f, BOTTOM, 0, 0)
-                     .addKPosition(RIGHT, 0, 0.5f, TOP, 0, 0)
-                     .addKPosition(LEFT, -4, 0.5f, BOTTOM, 0, 0)
-                
-                arrow.setAreaPlacementData(
-                    createKPosition(LEFT, 0, 0, TOP, -4, 0),
-                    createKPosition(RIGHT, 0, 0, TOP, 0, 0)
-                )
-            ]
-            
-            // Down arrow
-            container.children += createKPolygon() => [ arrow |
-                setupArrowColors(arrow);
-                setupVisibility(arrow, Visibility.DIRECTION_DOWN)
-                
-                arrow.addKPosition(LEFT, -4, 0.5f, TOP, 0, 0)
-                     .addKPosition(LEFT, 4, 0.5f, TOP, 0, 0)
-                     .addKPosition(RIGHT, 0, 0.5f, BOTTOM, 0, 0)
-                     .addKPosition(LEFT, -4, 0.5f, TOP, 0, 0)
-                
-                arrow.setAreaPlacementData(
-                    createKPosition(LEFT, 0, 0, BOTTOM, 0, 0),
-                    createKPosition(RIGHT, 0, 0, BOTTOM, -4, 0)
-                )
-            ]
-        }
-    }
-    
-    /**
-     * Setup setting for arrows.
-     */
-    private def void setupArrowColors(KPolygon arrow) {
-        val badDesign = INLINE_LABELS_BAD_DESIGN_MODE.booleanValue;
-        
-        if (badDesign) {
-            arrow.setBackgroundColor(0, 0, 255);
-            arrow.setForegroundColor(0, 0, 255);
-        } else {
-            arrow.setBackgroundColor(100, 100, 100);
-            arrow.setForegroundColor(100, 100, 100);
-        }
-    }
-    
-    private def setupVisibility(KRendering rendering, Visibility visibility) {
-        rendering.invisible = false;
-        rendering.invisible.setProperty(InlineEdgeLabelStyleModifier.STYLE_VISIBILITY, visibility);
-        rendering.invisible.modifierId = InlineEdgeLabelStyleModifier.ID;
+        container.children += rendering;
+        return rendering;
     }
     
 }
