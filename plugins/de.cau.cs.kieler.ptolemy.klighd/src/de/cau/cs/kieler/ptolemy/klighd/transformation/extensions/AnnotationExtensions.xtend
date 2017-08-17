@@ -112,7 +112,7 @@ class AnnotationExtensions {
     def boolean getAnnotationBooleanValue(EObject element, String key) {
         val annotation = getAnnotation(element, key)
         
-        if (annotation == null) {
+        if (annotation === null) {
             return false
         } else {
             return annotation.value.equals("true")
@@ -128,7 +128,7 @@ class AnnotationExtensions {
      * @return {@code true} if such an annotation exists, {@code false} otherwise.
      */
     def boolean hasAnnotation(EObject element, String key) {
-        return getAnnotation(element, key) != null
+        return getAnnotation(element, key) !== null
     }
     
     /**
@@ -209,7 +209,7 @@ class AnnotationExtensions {
     def void removeAnnotation(EObject element, String key) {
         val annotations = getAnnotations(element)
         val annotation = getAnnotation(element, key)
-        if (annotation != null) {
+        if (annotation !== null) {
             annotations.remove(annotation);
         }
     }

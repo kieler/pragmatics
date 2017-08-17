@@ -12,7 +12,7 @@
  * This code is provided under the terms of the Eclipse Public License (EPL).
  * See the file epl-v10.html for the license text.
  */
-package de.cau.cs.kieler.ptolemy.klighd.transformation
+package de.cau.cs.kieler.ptolemy.klighd.transformation.comments
 
 import com.google.common.collect.ArrayListMultimap
 import com.google.common.collect.Multimap
@@ -165,11 +165,11 @@ class CommentsExtractor {
                 // Check if there is an _iconDescription attribute
                 val iconDescription = annotation.getAnnotation("_iconDescription")
                 
-                if (iconDescription != null) {
+                if (iconDescription !== null) {
                     // We may have a shot at retrieving the comment text
                     val commentDetails = restoreCommentTextFromIconDescription(iconDescription)
                     
-                    if (commentDetails != null && commentDetails.first != null) {
+                    if (commentDetails !== null && commentDetails.first !== null) {
                         // We were successful; add a comment node
                         val commentNode = addCommentNode(root, commentDetails.first,
                             extractFontSize(commentDetails.second),
@@ -237,17 +237,17 @@ class CommentsExtractor {
         
         // Check if there are unknown features associated with the <configure> element
         val unknownFeature = xmlResource.EObjectToExtensionMap.get(configureElement)
-        if (unknownFeature == null) {
+        if (unknownFeature === null) {
             return null
         }
         
         val svgElement = findUnknownFeature(unknownFeature.mixed, "svg")
-        if (svgElement == null) {
+        if (svgElement === null) {
             return null
         }
         
         val textElement = findUnknownFeature(svgElement.mixed, "text")
-        if (textElement == null) {
+        if (textElement === null) {
             return null
         }
         

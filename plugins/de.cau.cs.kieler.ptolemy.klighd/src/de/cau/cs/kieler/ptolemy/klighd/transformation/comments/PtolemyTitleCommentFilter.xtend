@@ -13,11 +13,12 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation.comments
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties
-import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
+import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
-import org.eclipse.elk.core.comments.IEligibilityFilter
-import org.eclipse.elk.graph.ElkNode
+import org.eclipse.elk.core.comments.IDataProvider
+import org.eclipse.elk.core.comments.IFilter
+
+import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 
 /**
  * Passes judgement on a comment's eligibility for attachment based on whether it is considered a title
@@ -32,13 +33,12 @@ import org.eclipse.elk.graph.ElkNode
  * comment. And finally, its font size needs to be larger than the default font size.
  * </p>
  */
-final class PtolemyTitleCommentFilter implements IEligibilityFilter {
+final class PtolemyTitleCommentFilter implements IFilter<KNode> {
     
-    @Inject extension AnnotationExtensions
     @Inject extension MarkerExtensions
     
     /** The comment with the largest font size in the current graph. */
-    var ElkNode largestFontSizeComment = null;
+    var KNode largestFontSizeComment = null;
     /** Whether to decide only based on the font size, even if a comment is marked as title. */
     var decideBasedOnFontSizeOnly = false;
     
@@ -56,37 +56,31 @@ final class PtolemyTitleCommentFilter implements IEligibilityFilter {
      * Returns the comment determined by the filter to be the title comment. Can only be non-null
      * between calls to {@code preprocess(...)} and {@code cleanup()}.
      */
-    def ElkNode getChosenComment() {
+    def KNode getChosenComment() {
         return largestFontSizeComment;
     }
     
     
-    /**
-     * {@inheritDoc}
-     */
-    override void preprocess(ElkNode graph, boolean includeHierarchy) {
+    override void preprocess(IDataProvider<KNode, ?> dataProvider, boolean includeHierarchy) {
         // We require title comments to have a font size larger than the default font size
-        var int largestFontSize = PtolemyProperties.COMMENT_FONT_SIZE.^default;
+        var int largestFontSize = COMMENT_FONT_SIZE.^default;
         var int numberOfComments = 0;
         
         // Iterate over all the comments
-        for (node : graph.children) {
+        for (node : dataProvider.provideComments()) {
             // Make sure the node is a comment
-            // TODO Fix this
-//            if (node.layout.getProperty(CoreOptions.COMMENT_BOX)) {
-//                numberOfComments++;
-//                val fontSize = node.layout.getProperty(COMMENT_FONT_SIZE);
-//                
-//                if (fontSize > largestFontSize) {
-//                    // We have a new biggest font size!
-//                    largestFontSize = fontSize;
-//                    largestFontSizeComment = node;
-//                    
-//                } else if (fontSize == largestFontSize) {
-//                    // We don't have a single comment with the biggest font size anymore
-//                    largestFontSizeComment = null;
-//                }
-//            }
+            numberOfComments++;
+            val fontSize = node.getProperty(COMMENT_FONT_SIZE);
+            
+            if (fontSize > largestFontSize) {
+                // We have a new biggest font size!
+                largestFontSize = fontSize;
+                largestFontSizeComment = node;
+                
+            } else if (fontSize == largestFontSize) {
+                // We don't have a single comment with the biggest font size anymore
+                largestFontSizeComment = null;
+            }
         }
         
         // If we only encountered a single comment, we don't consider it a title comment
@@ -95,19 +89,11 @@ final class PtolemyTitleCommentFilter implements IEligibilityFilter {
         }
     }
     
-    /**
-     * {@inheritDoc}
-     */
-    override eligibleForAttachment(ElkNode comment) {
-        // TODO Fix this
-//        return comment != largestFontSizeComment
-//            && (decideBasedOnFontSizeOnly || !comment.markedAsTitleNode);
-        return false;
+    override eligibleForAttachment(KNode comment) {
+        return comment != largestFontSizeComment
+            && (decideBasedOnFontSizeOnly || !comment.markedAsTitleNode);
     }
     
-    /**
-     * {@inheritDoc}
-     */
     override void cleanup() {
         largestFontSizeComment = null;
     }

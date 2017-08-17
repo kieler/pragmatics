@@ -137,12 +137,12 @@ class Ptolemy2KGraphTransformation {
         // A Ptolemy document can contain an entity or a class, so transform those and add the
         // transformed objects as the KGraph's children
         val kEntityNode = ptDocumentRoot.entity?.transform()
-        if (kEntityNode != null) {
+        if (kEntityNode !== null) {
             return kEntityNode
         }
         
         val kClassNode = ptDocumentRoot.class_?.transform()
-        if (kClassNode != null) {
+        if (kClassNode !== null) {
             return kClassNode
         }
         
@@ -198,7 +198,7 @@ class Ptolemy2KGraphTransformation {
             // A modal model state may have refinements
             val refinement = ptEntity.findRefinement()
             
-            if (refinement != null) {
+            if (refinement !== null) {
                 // We have a refinement; transform it (which has possibly already been done) and
                 // copy it; then add its children to our list of children
                 // Note: this code assumes that each refinement is only used once in the model. If
@@ -255,7 +255,7 @@ class Ptolemy2KGraphTransformation {
         
         var extendedClass = ptClass.^extends
         val matchingLocalClass = actorClasses.findFirst[c | c.name == ptClass.^extends]
-        if (matchingLocalClass != null) {
+        if (matchingLocalClass !== null) {
             extendedClass = matchingLocalClass.getAnnotation(ANNOTATION_PTOLEMY_CLASS).value
         }
         kNode.addAnnotation(ANNOTATION_PTOLEMY_CLASS, extendedClass)
@@ -293,7 +293,7 @@ class Ptolemy2KGraphTransformation {
             // A modal model state may have refinements
             val refinement = ptClass.findRefinement()
             
-            if (refinement != null) {
+            if (refinement !== null) {
                 // We have a refinement; transform it (which has possibly already been done) and
                 // copy it; then add its children to our list of children
                 // Note: this code assumes that each refinement is only used once in the model. If
@@ -373,7 +373,7 @@ class Ptolemy2KGraphTransformation {
         val kRelation1 = kParent.children.findFirst(r | r.name.equals(ptLink.relation1))
         val kRelation2 = kParent.children.findFirst(r | r.name.equals(ptLink.relation2))
         val kPort =
-            if (ptLink.port == null) {
+            if (ptLink.port === null) {
                 null
             } else {
                 kParent.getOrCreatePortByName(ptLink.port)
@@ -386,19 +386,19 @@ class Ptolemy2KGraphTransformation {
         // Add the ports and relations that are != null and hope that there's only two of them, leaving
         // the link unconnected if that is not the case (which should never happen, at least not for
         // valid Ptolemy models)
-        if (kRelation != null) {
+        if (kRelation !== null) {
             endpoints.add(kRelation)
         }
         
-        if (kRelation1 != null) {
+        if (kRelation1 !== null) {
             endpoints.add(kRelation1)
         }
         
-        if (kRelation2 != null) {
+        if (kRelation2 !== null) {
             endpoints.add(kRelation2)
         }
         
-        if (kPort != null) {
+        if (kPort !== null) {
             endpoints.add(kPort)
         }
         
@@ -496,7 +496,7 @@ class Ptolemy2KGraphTransformation {
         }
         
         // If the actor is null, raise an error!
-        if (kActor == null) {
+        if (kActor === null) {
             throw new CoreException(new Status(
                 IStatus::ERROR,
                 PluginConstants::PLUGIN_ID,
@@ -510,7 +510,7 @@ class Ptolemy2KGraphTransformation {
         val port = kActor.ports.findFirst(p | p.name.equals(portName))
         
         // If the port is null, create it
-        if (port == null) {
+        if (port === null) {
             createPort(kActor, portName, kActor.ports.size)
         } else {
             port
@@ -626,7 +626,7 @@ class Ptolemy2KGraphTransformation {
             
             // Look for a local class definition that matches the entity class
             val matchingClass = actorClasses.findFirst[c | c.name == ptEntity.class1]
-            if (matchingClass != null) {
+            if (matchingClass !== null) {
                 val copy = EcoreUtil.copy(matchingClass)
                 parent.children.add(copy)
                 diagramSynthesis.associateWith(copy, ptEntity)
@@ -713,7 +713,7 @@ class Ptolemy2KGraphTransformation {
             // Check if a port of the same name already exists
             val existingPort = ports.findFirst(p | p.name.equals(modelPort.name))
             
-            if (existingPort != null) {
+            if (existingPort !== null) {
                 // A port exists; merge the model port's attributes into the existing port's attributes
                 // and set the association
                 existingPort.annotations.addAll(modelPort.annotations)

@@ -33,6 +33,7 @@ import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
+import de.cau.cs.kieler.ptolemy.klighd.transformation.comments.CommentsExtractor
 
 /**
  * Optimizes a KGraph model freshly transformed from a Ptolemy2 model. This is step two of the Ptolemy
@@ -87,7 +88,7 @@ public class Ptolemy2KGraphOptimization {
         this.options = options
         
         // Comment nodes that are created in the extraction process
-        val addComments = commentsExtractor != null;
+        val addComments = commentsExtractor !== null;
         
         // Infer edge directions
         inferEdgeDirections(kGraph)
@@ -251,7 +252,7 @@ public class Ptolemy2KGraphOptimization {
             for (edge : port.edges) {
                 if (port.node.children.contains(edge.source)) {
                     edgesToBeReversed += edge
-                } else if (edge.sourcePort == port && port.node.parent != null
+                } else if (edge.sourcePort == port && port.node.parent !== null
                     && port.node.parent.children.contains(edge.target)) {
                     
                     edgesToBeReversed += edge
@@ -265,7 +266,7 @@ public class Ptolemy2KGraphOptimization {
             for (edge : port.edges) {
                 if (port.node.children.contains(edge.target)) {
                     edgesToBeReversed += edge
-                } else if (edge.targetPort == port && port.node.parent != null
+                } else if (edge.targetPort == port && port.node.parent !== null
                     && port.node.parent.children.contains(edge.source)) {
                     
                     edgesToBeReversed += edge
@@ -320,7 +321,7 @@ public class Ptolemy2KGraphOptimization {
             val directedOutgoingEdge = getFirstDirectedEdge(unknownPort.edges.filter(
                 [e | e.sourcePort == unknownPort]))
             
-            if (directedIncomingEdge != null) {
+            if (directedIncomingEdge !== null) {
                 // The port has an incoming edge of known direction!
                 if (unknownPort.node.children.contains(directedIncomingEdge.source)) {
                     // Connection from the inside -> the port is an output port
@@ -329,7 +330,7 @@ public class Ptolemy2KGraphOptimization {
                     // Connection from the outside -> the port is an input port
                     unknownPort.markAsInputPort(true)
                 }
-            } else if (directedOutgoingEdge != null) {
+            } else if (directedOutgoingEdge !== null) {
                 // The port has an outgoing edge of known direction!
                 if (unknownPort.node.children.contains(directedOutgoingEdge.target)) {
                     // Connection to the inside -> the port is an input port
@@ -702,7 +703,7 @@ public class Ptolemy2KGraphOptimization {
             val annotation = annotationsIterator.next()
             
             // Check if the annotation denotes a Ptolemy director
-            if (annotation.class_ != null && annotation.class_.endsWith("Director")
+            if (annotation.class_ !== null && annotation.class_.endsWith("Director")
                 && options.directors) {
                 
                 // Create a new node for it
@@ -717,7 +718,7 @@ public class Ptolemy2KGraphOptimization {
                 directorNode.markAsFormerAnnotationNode()
                 
                 //Try to retrieve the location from the annotations
-                if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {  
+                if (annotation.getAnnotation(ANNOTATION_LOCATION) !== null) {  
                 directorNode.setProperty(PT_LOCATION, annotation.getAnnotation(ANNOTATION_LOCATION).value)   
                 }
             
@@ -742,7 +743,7 @@ public class Ptolemy2KGraphOptimization {
                 documentationNode.markAsDocumentationNode()
 
                 //Try to retrieve the location from the annotations
-                if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {
+                if (annotation.getAnnotation(ANNOTATION_LOCATION) !== null) {
                     documentationNode.setProperty(PT_LOCATION, annotation.getAnnotation(ANNOTATION_LOCATION).value)
                 }
 
@@ -769,13 +770,13 @@ public class Ptolemy2KGraphOptimization {
                 titleNode.setProperty(COMMENT_TEXT, annotation.value);
                 
                 //Try to retrieve the location from the annotations
-                if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {
+                if (annotation.getAnnotation(ANNOTATION_LOCATION) !== null) {
                     titleNode.setProperty(PT_LOCATION, annotation.getAnnotation(ANNOTATION_LOCATION).value)
                 }
                 
                 //Finds out whether the default font size of titles was changed and if so stores the new
                 //value. Otherwise, the default value is stored.
-                if (annotation.getAnnotation(ANNOTATION_FONT_SIZE) != null) {
+                if (annotation.getAnnotation(ANNOTATION_FONT_SIZE) !== null) {
                     titleNode.setProperty(COMMENT_FONT_SIZE, Integer.parseInt(
                                                  annotation.getAnnotationValue(ANNOTATION_FONT_SIZE)))
                 } else {
@@ -785,7 +786,7 @@ public class Ptolemy2KGraphOptimization {
                 // Add the new node to the root element
                 root.children += titleNode;
                 
-            } else if (annotation.class_ != null && annotation.class_.startsWith(
+            } else if (annotation.class_ !== null && annotation.class_.startsWith(
                 ANNOTATION_TYPE_LATTICE_ONTOLOGY_SOLVER)){
                 
                 //It's a lattice ontology solver
@@ -801,7 +802,7 @@ public class Ptolemy2KGraphOptimization {
                 solverNode.markAsFormerAnnotationNode();
                 
                 //Try to retrieve the location from the annotations
-                if (annotation.getAnnotation(ANNOTATION_LOCATION) != null) {
+                if (annotation.getAnnotation(ANNOTATION_LOCATION) !== null) {
                     solverNode.setProperty(PT_LOCATION, annotation.getAnnotation(ANNOTATION_LOCATION).value)
                 }
                 

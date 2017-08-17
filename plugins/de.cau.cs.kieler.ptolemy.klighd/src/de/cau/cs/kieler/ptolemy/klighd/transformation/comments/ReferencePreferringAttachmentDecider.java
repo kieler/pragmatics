@@ -14,40 +14,38 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation.comments;
 
 import java.util.Map;
 
-import org.eclipse.elk.core.comments.DistanceHeuristic;
-import org.eclipse.elk.core.comments.IAttachmentDecider;
-import org.eclipse.elk.core.comments.IHeuristic;
-import org.eclipse.elk.core.comments.NodeReferenceHeuristic;
-import org.eclipse.elk.graph.ElkGraphElement;
+import org.eclipse.elk.core.comments.DistanceMatcher;
+import org.eclipse.elk.core.comments.IDecider;
+import org.eclipse.elk.core.comments.IMatcher;
+import org.eclipse.elk.core.comments.NodeReferenceMatcher;
+
+import de.cau.cs.kieler.klighd.kgraph.KNode;
 
 /**
  * An attachment decider that prefers to attach comments to nodes they mention.
  * 
  * @author cds
  */
-public class ReferencePreferringAttachmentDecider implements IAttachmentDecider {
+public class ReferencePreferringAttachmentDecider implements IDecider<KNode> {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public ElkGraphElement makeAttachmentDecision(
-            Map<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> normalizedHeuristics) {
+    public KNode makeAttachmentDecision(
+            Map<KNode, Map<Class<? extends IMatcher<?, KNode>>, Double>> normalizedHeuristics) {
         
         double bestResult = 0;
-        ElkGraphElement bestCandidate = null;
+        KNode bestCandidate = null;
         
-        for (Map.Entry<ElkGraphElement, Map<Class<? extends IHeuristic>, Double>> candidate :
+        for (Map.Entry<KNode, Map<Class<? extends IMatcher<?, KNode>>, Double>> candidate :
             normalizedHeuristics.entrySet()) {
             
             // If the node reference heuristic produced something worthwhile, use this node
-            Double referenceValue = candidate.getValue().get(NodeReferenceHeuristic.class);
+            Double referenceValue = candidate.getValue().get(NodeReferenceMatcher.class);
             if (referenceValue != null && referenceValue > 0) {
                 return candidate.getKey();
             }
             
             // Use the distance heuristic
-            referenceValue = candidate.getValue().get(DistanceHeuristic.class);
+            referenceValue = candidate.getValue().get(DistanceMatcher.class);
             if (referenceValue != null && referenceValue > bestResult) {
                 bestResult = referenceValue;
                 bestCandidate = candidate.getKey();

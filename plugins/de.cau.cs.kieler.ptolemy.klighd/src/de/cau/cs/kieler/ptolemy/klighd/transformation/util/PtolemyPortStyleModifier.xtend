@@ -86,7 +86,7 @@ class PtolemyPortStyleModifier implements IStyleModifier {
     private def getPort(KStyle s) {
         var parent = s.eContainer
         var KPort port = null
-        while (parent != null && port == null) {
+        while (parent !== null && port === null) {
             if (parent instanceof KPort) {
                 port = parent as KPort
             }

@@ -168,7 +168,7 @@ class MiscellaneousExtensions {
                         (modalModel as ClassType).entity
                     }
                     
-                    if (childEntities != null) {
+                    if (childEntities !== null) {
                         return childEntities.findFirst([child | child.name.equals(refinementName)])
                     }
                 }

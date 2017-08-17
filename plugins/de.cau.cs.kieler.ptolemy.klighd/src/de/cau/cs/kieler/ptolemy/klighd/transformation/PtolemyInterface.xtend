@@ -88,7 +88,7 @@ class PtolemyInterface {
         ptActor = instantiatePtolemyEntity(entity)
         
         // Add its ports
-        if (ptActor != null) {
+        if (ptActor !== null) {
             var index = 0
             for (port : ptActor.portList) {
                 if (port instanceof IOPort) {
@@ -217,7 +217,7 @@ class PtolemyInterface {
     def private Entity instantiatePtolemyEntityWithCache(String className, String entityName) {
         val cachedEntity = entityCache.get(className)
         
-        if (cachedEntity == null) {
+        if (cachedEntity === null) {
             // The entity is not already in the cache, so try to instantiate it
             try {
                 if (className.equals("ptolemy.domains.modal.kernel.State")) {

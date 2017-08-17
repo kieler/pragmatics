@@ -78,7 +78,7 @@ final class PtolemyFigureInterface {
          */
         
         imageLoadWorker.reset(entity)
-        while (imageLoadWorker.getResult() == null) {
+        while (imageLoadWorker.getResult() === null) {
             EventQueue.invokeAndWait(imageLoadWorker)
         }
         return imageLoadWorker.getResult()
@@ -138,7 +138,7 @@ final class ImageLoadWorker implements Runnable {
      */
     override run() {
         // Check if we have already tried to load our icons
-        if (loadedIcons == null) {
+        if (loadedIcons === null) {
             // We have not -- load them
             loadedIcons = loadIconsForEntity(entity)
             if (loadedIcons.empty) {
@@ -181,12 +181,9 @@ final class ImageLoadWorker implements Runnable {
         
         val graphics = resizedImage.createGraphics()
         graphics.setComposite(AlphaComposite::Src)
-        graphics.setRenderingHint(RenderingHints::KEY_INTERPOLATION,
-            RenderingHints::VALUE_INTERPOLATION_BILINEAR)
-        graphics.setRenderingHint(RenderingHints::KEY_RENDERING,
-            RenderingHints::VALUE_RENDER_QUALITY)
-        graphics.setRenderingHint(RenderingHints::KEY_ANTIALIASING,
-            RenderingHints::VALUE_ANTIALIAS_ON)
+        graphics.setRenderingHint(RenderingHints::KEY_INTERPOLATION, RenderingHints::VALUE_INTERPOLATION_BILINEAR)
+        graphics.setRenderingHint(RenderingHints::KEY_RENDERING, RenderingHints::VALUE_RENDER_QUALITY)
+        graphics.setRenderingHint(RenderingHints::KEY_ANTIALIASING, RenderingHints::VALUE_ANTIALIAS_ON)
         graphics.drawImage(figureImage, 0, 0, null)
         graphics.dispose()
         
@@ -265,11 +262,10 @@ final class ImageLoadWorker implements Runnable {
         if (figure instanceof ImageFigure) {
             // An ImageFigure has an image ready for us to use
             val image = (figure as ImageFigure).image
-            if (image == null) {
+            if (image === null) {
                 return null;
             } else {
-                return image.getScaledInstance(
-                    image.getWidth(null), image.getHeight(null), Image::SCALE_DEFAULT)
+                return image.getScaledInstance(image.getWidth(null), image.getHeight(null), Image::SCALE_DEFAULT)
             }
         } else {
             // It's not an ImageFigure, so try to get some SWT graphics stuff and turn that into
@@ -279,12 +275,10 @@ final class ImageLoadWorker implements Runnable {
             val transform = CanvasUtilities::computeFitTransform(bounds, size)
             figure.transform(transform)
             
-            val image = new BufferedImage(
-                bounds.width as int, bounds.height as int, BufferedImage::TYPE_4BYTE_ABGR)
+            val image = new BufferedImage(bounds.width as int, bounds.height as int, BufferedImage::TYPE_4BYTE_ABGR)
             
             val graphics = image.createGraphics()
-            graphics.setRenderingHint(
-                RenderingHints::KEY_ANTIALIASING, RenderingHints::VALUE_ANTIALIAS_ON)
+            graphics.setRenderingHint(RenderingHints::KEY_ANTIALIASING, RenderingHints::VALUE_ANTIALIAS_ON)
             graphics.setBackground(new Color(255, 255, 255, 255))
             
             graphics.clearRect(0, 0, bounds.width as int, bounds.height as int)

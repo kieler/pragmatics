@@ -13,13 +13,14 @@
 package de.cau.cs.kieler.ptolemy.klighd.transformation.comments
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.klighd.microlayout.Bounds
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.MarkerExtensions
 import java.awt.geom.Rectangle2D
 import org.eclipse.elk.core.comments.IBoundsProvider
-import org.eclipse.elk.graph.ElkNode
 
+import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
 
 /**
@@ -31,16 +32,24 @@ import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.Transformation
  * 
  * @author cds
  */
-final class PtolemyBoundsProvider implements IBoundsProvider {
+final class PtolemyBoundsProvider implements IBoundsProvider<KNode, KNode> {
     
     @Inject extension AnnotationExtensions
     @Inject extension MarkerExtensions
     
     
+    override boundsForComment(KNode comment) {
+        return boundsFor(comment);
+    }
+    
+    override boundsForTarget(KNode target) {
+        return boundsFor(target);
+    }
+    
     /**
-     * {@inheritDoc}
+     * Returns the bounds for the given node, wheter it's a comment or not.
      */
-    override boundsFor(ElkNode node) {
+    private def boundsFor(KNode node) {
         val bounds = new Rectangle2D.Double();
         
         // Initialize point with ridiculous values
@@ -51,10 +60,9 @@ final class PtolemyBoundsProvider implements IBoundsProvider {
         var locationAnnotation = node.getAnnotation(ANNOTATION_LOCATION);
         var String locationAnnotationValue;
 
-        if (locationAnnotation == null) {
-            // TODO Fix this
-            var locationSpecialAnnotation = null //node.layout.getProperty(PT_LOCATION);
-            if (locationSpecialAnnotation == null) {
+        if (locationAnnotation === null) {
+            var locationSpecialAnnotation = node.getProperty(PT_LOCATION);
+            if (locationSpecialAnnotation === null) {
                 return bounds;
             } else {
                 locationAnnotationValue = locationSpecialAnnotation;
@@ -76,10 +84,7 @@ final class PtolemyBoundsProvider implements IBoundsProvider {
                 bounds.y = Double::valueOf(locationArray.get(1));
 
                 // Save the node's size in the bounds as well
-                // TODO Fix
-                //      The problem here is that we need to get our hands at the original KRendering
-//                val estimatedSize = PlacementUtil.estimateSize(node);
-                val estimatedSize = new Bounds(0, 0);
+                val estimatedSize = PlacementUtil.estimateSize(node);
 
                 bounds.width = estimatedSize.width;
                 bounds.height = estimatedSize.height;
@@ -92,8 +97,7 @@ final class PtolemyBoundsProvider implements IBoundsProvider {
         // in the actor is a completely different question and defaults to the actor's center, except
         // for TextAttribute instances, which default to northwest.
         val anchorDefault =
-            // TODO Fix this
-            if (true /*node.markedAsComment*/) {
+            if (node.markedAsComment) {
                 "northwest";
             } else {
                 "center";
