@@ -15,9 +15,9 @@ package de.cau.cs.kieler.ptolemy.attachmenteval.editors.attachment.analyses;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
-import org.eclipse.elk.core.comments.AlignmentHeuristic;
+import org.eclipse.elk.core.comments.AlignmentMatcher;
 import org.eclipse.elk.core.comments.CommentAttacher;
-import org.eclipse.elk.core.comments.DistanceHeuristic;
+import org.eclipse.elk.core.comments.DistanceMatcher;
 import org.eclipse.elk.core.comments.IBoundsProvider;
 import org.eclipse.elk.core.comments.TextPrefixFilter;
 import org.eclipse.elk.graph.KNode;
@@ -126,7 +126,7 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
                     // The comment is not attached to anything
                     KNode bestAlignedNode = findBestAlignedNode(child, false);
                     if  (bestAlignedNode != null) {
-                        double bestAlignment = AlignmentHeuristic.alignment(
+                        double bestAlignment = AlignmentMatcher.alignment(
                                 boundsProvider.boundsFor(child),
                                 boundsProvider.boundsFor(bestAlignedNode));
                         
@@ -141,7 +141,7 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
                     // The comment is attached to a node
                     attachedComments++;
                     
-                    double attachedNodeAlignment = AlignmentHeuristic.alignment(
+                    double attachedNodeAlignment = AlignmentMatcher.alignment(
                             boundsProvider.boundsFor(child),
                             boundsProvider.boundsFor(attachedNode));
                     attachedNodeAlignments.add(attachedNodeAlignment);
@@ -155,7 +155,7 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
                     } else {
                         // The attached node is not the node best aligned to the comment
                         if (bestAlignedNode != null) {
-                            double bestNodeAlignment = AlignmentHeuristic.alignment(
+                            double bestNodeAlignment = AlignmentMatcher.alignment(
                                     boundsProvider.boundsFor(child),
                                     boundsProvider.boundsFor(bestAlignedNode));
                             bestAlignedToAttachedAlignments.add(bestNodeAlignment);
@@ -182,9 +182,9 @@ public class CommentAlignmentAnalysis implements IAttachmentAnalysis {
                 
                 // Make sure the node is in the comment's vicinity
                 if (!upToMaxDistance
-                        || DistanceHeuristic.distance(commentBounds, siblingBounds) <= 20) {
+                        || DistanceMatcher.distance(commentBounds, siblingBounds) <= 20) {
                     
-                    double alignment = AlignmentHeuristic.alignment(commentBounds, siblingBounds);
+                    double alignment = AlignmentMatcher.alignment(commentBounds, siblingBounds);
                     
                     if (alignment >= 0 && alignment < bestAlignment) {
                         bestAlignment = alignment;

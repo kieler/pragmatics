@@ -16,7 +16,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import org.eclipse.elk.core.comments.CommentAttacher;
-import org.eclipse.elk.core.comments.DistanceHeuristic;
+import org.eclipse.elk.core.comments.DistanceMatcher;
 import org.eclipse.elk.core.comments.IBoundsProvider;
 import org.eclipse.elk.core.comments.TextPrefixFilter;
 import org.eclipse.elk.graph.KNode;
@@ -123,7 +123,7 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
             if (CommentAttacher.isComment(child)) {
                 KNode attachedNode = editor.getAttachmentTarget(child);
                 KNode nearestNode = findNearestNode(child);
-                double nearestNodeDistance = DistanceHeuristic.distance(
+                double nearestNodeDistance = DistanceMatcher.distance(
                         boundsProvider.boundsFor(child),
                         boundsProvider.boundsFor(nearestNode));
                 
@@ -141,7 +141,7 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
                     // The comment is attached to a node
                     attachedComments++;
                     
-                    double attachedNodeDistance = DistanceHeuristic.distance(
+                    double attachedNodeDistance = DistanceMatcher.distance(
                             boundsProvider.boundsFor(child),
                             boundsProvider.boundsFor(attachedNode));
                     attachedNodeDistances.add(attachedNodeDistance);
@@ -173,7 +173,7 @@ public class CommentDistanceAnalysis implements IAttachmentAnalysis {
         
         for (KNode sibling : comment.getParent().getChildren()) {
             if (!CommentAttacher.isComment(sibling)) {
-                double distance = DistanceHeuristic.distance(
+                double distance = DistanceMatcher.distance(
                         commentBounds, boundsProvider.boundsFor(sibling));
                 
                 if (distance >= 0 && distance < nearestDistance) {

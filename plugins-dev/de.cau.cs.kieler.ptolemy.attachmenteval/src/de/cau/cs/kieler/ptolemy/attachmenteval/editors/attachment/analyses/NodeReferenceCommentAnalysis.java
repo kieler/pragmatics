@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.core.comments.CommentAttacher;
-import org.eclipse.elk.core.comments.DistanceHeuristic;
+import org.eclipse.elk.core.comments.DistanceMatcher;
 import org.eclipse.elk.core.comments.IBoundsProvider;
-import org.eclipse.elk.core.comments.NodeReferenceHeuristic;
+import org.eclipse.elk.core.comments.NodeReferenceMatcher;
 import org.eclipse.elk.core.klayoutdata.KLayoutData;
 import org.eclipse.elk.graph.KNode;
 
@@ -45,7 +45,7 @@ public class NodeReferenceCommentAnalysis implements IAttachmentAnalysis {
     private static String REFERENCE_DIFFERENT_ATTACHMENT = "H X";
 
     /** The node reference heuristic we'll be putting to the test here. */
-    private NodeReferenceHeuristic referenceHeuristic = null;
+    private NodeReferenceMatcher referenceHeuristic = null;
     /** Bounds provider used to find the node nearest to a comment. */
     private IBoundsProvider boundsProvider = null;
     /** Distances between a comment and its referenced node if the attachment is correct. */
@@ -81,10 +81,10 @@ public class NodeReferenceCommentAnalysis implements IAttachmentAnalysis {
      * Creates a new instance.
      */
     public NodeReferenceCommentAnalysis() {
-        referenceHeuristic = new NodeReferenceHeuristic()
+        referenceHeuristic = new NodeReferenceMatcher()
             .withCommentTextProvider((comment) ->
                 comment.getData(KLayoutData.class).getProperty(PtolemyProperties.COMMENT_TEXT))
-            .withNodeNameProvider((node) ->
+            .withTargetNameProvider((node) ->
                 node.getLabels().isEmpty() ? null : node.getLabels().get(0).getText());
 //            .withFuzzyMatching();
         
@@ -170,7 +170,7 @@ public class NodeReferenceCommentAnalysis implements IAttachmentAnalysis {
                     commentsWithSingleNodeReference++;
                     
                     // Find the distance between comment and node
-                    double referencedNodeDistance = DistanceHeuristic.distance(
+                    double referencedNodeDistance = DistanceMatcher.distance(
                             boundsProvider.boundsFor(child),
                             boundsProvider.boundsFor(heuristicAttachment));
                     
@@ -212,7 +212,7 @@ public class NodeReferenceCommentAnalysis implements IAttachmentAnalysis {
         
         for (KNode sibling : comment.getParent().getChildren()) {
             if (!CommentAttacher.isComment(sibling)) {
-                double distance = DistanceHeuristic.distance(
+                double distance = DistanceMatcher.distance(
                         commentBounds, boundsProvider.boundsFor(sibling));
                 
                 if (distance >= 0 && distance < nearestDistance) {
