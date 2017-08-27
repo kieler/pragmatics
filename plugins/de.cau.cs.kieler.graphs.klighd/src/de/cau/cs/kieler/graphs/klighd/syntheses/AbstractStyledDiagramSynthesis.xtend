@@ -37,7 +37,6 @@ import de.cau.cs.kieler.klighd.krendering.extensions.PositionReferenceY
 import de.cau.cs.kieler.klighd.labels.management.AbstractKlighdLabelManager
 import de.cau.cs.kieler.klighd.labels.management.ConditionLabelManager
 import de.cau.cs.kieler.klighd.labels.management.IdentLabelManager
-import de.cau.cs.kieler.klighd.labels.management.LabelPredicates
 import de.cau.cs.kieler.klighd.labels.management.SoftWrappingLabelManager
 import de.cau.cs.kieler.klighd.labels.management.TruncatingLabelManager
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
@@ -45,6 +44,7 @@ import org.eclipse.elk.core.labels.LabelManagementOptions
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.emf.ecore.EObject
+import de.cau.cs.kieler.klighd.labels.management.LabelConditions
 
 /**
  * A base class for transformations that want to apply nice renderings to the diagrams they produce. The
@@ -372,19 +372,19 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
             case LABELS_NO_LABELS: {
                 labelManager = new ConditionLabelManager(
                     null,
-                    LabelPredicates.matchNone,
+                    LabelConditions.matchNone,
                     true);
             }
             case LABELS_TRUNCATE: {
                 labelManager = new ConditionLabelManager(
                     new TruncatingLabelManager(),
-                    LabelPredicates.centerEdgeLabel,
+                    LabelConditions.centerEdgeLabel,
                     false);
             }
             case LABELS_SOFT_WORD_WRAP: {
                 labelManager = new ConditionLabelManager(
                     new SoftWrappingLabelManager(),
-                    LabelPredicates.centerEdgeLabel,
+                    LabelConditions.centerEdgeLabel,
                     false);
             }
             case LABELS_FULL: {
