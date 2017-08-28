@@ -77,7 +77,7 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
     private def void transformId(KGraphElement kEle, ElkGraphElement elkEle) {
         // Convert the id
         val id = kEle.getData(KIdentifier)
-        if (id != null) {
+        if (id !== null) {
             elkEle.identifier = id.id
         }
     }
@@ -87,7 +87,7 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
     
     private def create eNode : ElkGraphUtil.createNode(null) transformNode(KNode kNode) {
         // Structural information
-        if (kNode.parent != null) {
+        if (kNode.parent !== null) {
             // We're not transforming the graph itself, so we actually do have a parent
             eNode.parent = kNode.parent.transformNode
         }
@@ -128,13 +128,13 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
     private def create eEdge : ElkGraphUtil.createEdge(null) transformEdge(KEdge kEdge) {
 
         // Structural information
-        if (kEdge.sourcePort != null) {
+        if (kEdge.sourcePort !== null) {
             eEdge.sources += kEdge.sourcePort.transformPort 
         } else {
             eEdge.sources += kEdge.source.transformNode
         }
         
-        if (kEdge.targetPort != null) {
+        if (kEdge.targetPort !== null) {
             eEdge.targets += kEdge.targetPort.transformPort
         } else {
             eEdge.targets += kEdge.target.transformNode

@@ -17,6 +17,7 @@ import com.google.common.collect.ContiguousSet
 import com.google.common.collect.DiscreteDomain
 import com.google.common.collect.Lists
 import com.google.common.collect.Range
+import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer
 import de.cau.cs.kieler.grana.AnalysisService
 import de.cau.cs.kieler.grana.text.grana.CompareJob
 import de.cau.cs.kieler.grana.text.grana.FloatRange
@@ -145,9 +146,9 @@ final class GranaTextToBatchJob {
                 val batch = new Batch.Range(job.name, analyses)
                 
                 // gather the range analyses
-                if (job.rangeAnalysis != null) {
+                if (job.rangeAnalysis !== null) {
                     val rangeAnalysis = AnalysisService.instance.getAnalysis(job.rangeAnalysis.name)
-                    if (rangeAnalysis == null) {
+                    if (rangeAnalysis === null) {
                         throw new IllegalArgumentException("Invalid range analysis: " + job.rangeAnalysis.name);
                     }
                     batch.rangeAnalysis = rangeAnalysis
@@ -156,7 +157,7 @@ final class GranaTextToBatchJob {
                 } else {                
                     val tanalyses = job.rangeAnalyses.map[ an |
                         val rangeAnalysis = AnalysisService.instance.getAnalysis(an.name)
-                        if (rangeAnalysis == null) {
+                        if (rangeAnalysis === null) {
                             throw new IllegalArgumentException("Invalid range analysis: " + job.rangeAnalysis.name);
                         }
                         rangeAnalysis
@@ -166,7 +167,7 @@ final class GranaTextToBatchJob {
                 
                 // configure the range option
                 val layOpt = LayoutMetaDataService.getInstance.getOptionDataBySuffix(job.rangeOption)
-                if (layOpt == null) {
+                if (layOpt === null) {
                     throw new IllegalArgumentException("Invalid layout option: " + job.rangeOption);
                 }
                 batch.rangeOption = layOpt
@@ -183,7 +184,7 @@ final class GranaTextToBatchJob {
                 // assemble layout configs for the range job
                 val rangeOptionCfgs = vals.map[ value |
                     val parsed = layOpt.parseValue(value.toString())
-                    if (parsed == null) {
+                    if (parsed === null) {
                         throw new IllegalArgumentException(
                             "Value " + value + " is not valid for layout option " + layOpt);
                     }
@@ -214,7 +215,7 @@ final class GranaTextToBatchJob {
                 // should be workspace relative
                 val p = ResourcesPlugin.workspace.root.projects.findFirst[p|resource.path.contains(p.name)]
                 val wsloc = p?.findMember(resource.path.replaceFirst(p.name, ""))
-                if (p == null || !(wsloc instanceof IContainer)) 
+                if (p === null || !(wsloc instanceof IContainer)) 
                     throw new IllegalArgumentException("Invalid resource " + resource.path)
                 
                 (wsloc as IContainer).collectJobsEclipse(batch, job, filter, resource.recurse)
@@ -222,7 +223,7 @@ final class GranaTextToBatchJob {
                 // somewhere in the file system ...
                 val fileURI = URI.createURI(resource.path, true)
                 val dir = new File(fileURI.toFileString)
-                if (dir == null || !dir.exists || !dir.isDirectory)
+                if (dir === null || !dir.exists || !dir.isDirectory)
                     throw new IllegalArgumentException("Could not find resource location: '" + resource.path + "'")
     
                 dir.collectJobsFilesystem(batch, job, filter, resource.recurse)

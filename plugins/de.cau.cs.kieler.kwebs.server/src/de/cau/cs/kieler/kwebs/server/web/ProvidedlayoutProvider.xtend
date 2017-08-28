@@ -155,11 +155,11 @@ class ProvidedlayoutProvider
     {
         val Map<String, String> params = processingExchange.getParams()
         val String                 id        = params.get(PARAM_ALGORITHM)
-        if (id == null) {
+        if (id === null) {
             return ''''''
         }
         val LayoutAlgorithm algorithm = serviceData.layoutAlgorithms.filter(algorithm | algorithm.id.equals(id)).head
-        if (algorithm == null) {
+        if (algorithm === null) {
             return ''''''
         }
         val List<KnownOption> options = algorithm.knownOptions.sortBy[it.option.name]
@@ -172,7 +172,7 @@ class ProvidedlayoutProvider
         '''
         <h3>«algorithm.category?.name» - «algorithm.name»</h3>
         <p>Identifier: «algorithm.id»<br/></p>
-        «if (algorithm.description != null) {
+        «if (algorithm.description !== null) {
             '''<p>«generateHypertext(algorithm.description)»</p>'''
         }»
         <p>
@@ -197,7 +197,7 @@ class ProvidedlayoutProvider
                                 »";'>«option.option.name»</td>
                                 <td>«option.option.type»</td>
                                 <td>«option.option.id»</td>
-                                <td>«if (option.^default == null) {
+                                <td>«if (option.^default === null) {
                                     option.option.^default
                                 } else {
                                     option.^default
@@ -391,18 +391,18 @@ class ProvidedlayoutProvider
     ) 
     {
         val Map<String, String> params = processingExchange.getParams()
-        val String              id     = if (params.get(PARAM_OPTION) != null) params.get(PARAM_OPTION) else algorithmId
-        if (id == null) {
+        val String              id     = if (params.get(PARAM_OPTION) !== null) params.get(PARAM_OPTION) else algorithmId
+        if (id === null) {
             return ''''''
         }
         val LayoutOption option = serviceData.layoutOptions.filter(option | option.id.equals(id)).head 
-        if (option == null) {
+        if (option === null) {
             return ''''''
         }
         val String type         = option.type
         val String defaultValue =
             if (id.equals(CoreOptions::ALGORITHM.getId())) DEFAULT_ALGORITHM_ID
-            else if (option.^default != null && option.^default.trim.length > 0) option.^default.trim
+            else if (option.^default !== null && option.^default.trim.length > 0) option.^default.trim
             else "&lt;NONE&gt;"
  
         '''
@@ -420,11 +420,11 @@ class ProvidedlayoutProvider
                     '''
                 }»
                 <dt>Default Value:</dt><dd>«defaultValue»</dd>
-                «if (option.appliesTo != null) {
+                «if (option.appliesTo !== null) {
                     '''<dt>Applies To:</dt><dd>«option.appliesTo»</dd>'''
             }»
             </dl>
-            «if (option.description != null) {
+            «if (option.description !== null) {
             '''
             <h4>Description</h4>
             <p>
@@ -455,18 +455,18 @@ class ProvidedlayoutProvider
     {
         val Map<String, String> params = processingExchange.getParams()
         val String                 id     = params.get(PARAM_FORMAT)
-        if (id == null) {
+        if (id === null) {
             return ''''''
         }
         val SupportedFormat format = serviceData.supportedFormats.filter(format | format.id.equals(id)).head
-        if (format == null) {
+        if (format === null) {
             return ''''''
         }
         '''
         <h3>Format Details</h3>
         <p>Name: «format.name»<br/></p>
         <p>Identifier: «format.id»<br/></p>
-        «if (format.description!= null) {
+        «if (format.description!== null) {
             '''
             <h3>Description</h3>
             <p>
@@ -492,14 +492,14 @@ class ProvidedlayoutProvider
     {
         val Map<String, String> params = processingExchange.getParams()
         val String id = params.get(PARAM_PREVIEWIMAGE)
-        if (id == null) {
+        if (id === null) {
             return ''''''
         }
         var byte[] data = ServerLayoutMetaDataService::getInstance().getPreviewImage(id)
-        if (data == null) {
+        if (data === null) {
             data = Resources::readFileOrPluginResourceAsByteArray(Application::PLUGIN_ID, PREVIEWIMAGE_UNAVAILABLE)
         }
-        if (data != null) {
+        if (data !== null) {
             processingExchange.getResourceInformation().setContent(data)
             processingExchange.getResourceInformation().setMimetype(
                 WebContentHandler::guessMimeType(processingExchange.getResource())

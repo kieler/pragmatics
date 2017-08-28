@@ -162,7 +162,7 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
         val prefix = if (sepIndex != -1 && stripped.length > 0) stripped.substring(0, sepIndex + 1) else "/" 
         
         val container = wsRoot.findMember(prefix)
-        if (container != null && container instanceof IContainer) {
+        if (container !== null && container instanceof IContainer) {
             for (member : (container as IContainer).members) {
                 if (acceptFiles || member instanceof IContainer) {
                     val suggestion = member.fullPath.toString
@@ -188,11 +188,11 @@ class GranaProposalProvider extends AbstractGranaProposalProvider {
         super.completeRangeJob_RangeAnalysisComponent(model, assignment, context, acceptor)
         if (model instanceof RangeJob) {
             val analysis = (model as RangeJob).rangeAnalysis
-            if (analysis != null) {
+            if (analysis !== null) {
                 val analysisData = AnalysisService.getInstance.getAnalysis(analysis.name)
-                if (analysisData != null) {
+                if (analysisData !== null) {
                     
-                    if (analysisData == null || analysisData.components.isEmpty) {
+                    if (analysisData === null || analysisData.components.isEmpty) {
                         acceptor.accept(doCreateProposal("0", new StyledString("0"), null, priorityHelper.defaultPriority, context))
                     }
                     

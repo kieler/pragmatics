@@ -298,7 +298,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
         // determine maximal extend of a node in x and y direction
         parent.children.forEach[ n |
             val pos = n.getProperty(CoreOptions::POSITION)
-            if (pos != null) {
+            if (pos !== null) {
                 minX = Math.min(minX, pos.x - n.width / 2)
                 minY = Math.min(minY, pos.y - n.height / 2)
             }
@@ -313,7 +313,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
         parent.children.forEach[ n |
             val pos = n.getProperty(CoreOptions::POSITION)
             
-            if (pos != null) {
+            if (pos !== null) {
                 // gml specifies center positions
                 pos.x = -minX + pos.x - n.width / 2 + padding.left
                 pos.y = -minY + pos.y - n.height / 2 + padding.top
@@ -322,7 +322,7 @@ class GMLDiagramSynthesis extends AbstractDiagramSynthesis<GMLModel> {
             // move all the bend points
             n.outgoingEdges.forEach [ e |
                 val bps = e.getProperty(CoreOptions::BEND_POINTS)
-                if (bps != null) {
+                if (bps !== null) {
                     bps.forEach [ bp |
                         bp.x = bp.x - minX
                         bp.y = bp.y - minY

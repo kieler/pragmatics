@@ -101,7 +101,7 @@ class ServiceinterfaceProvider
             The interface definition is the same either for HTTP or for HTTPS based access.
             We recommend using a web service framework that allows to automatically generate the
             necessary implementation skeletons from the WSDL document. «
-                if (url != null)
+                if (url !== null)
                     '''
                     You can generate the client skeleton code from the service interface definition
                     that is located <a href='«url»'>here</a>.'''
@@ -111,7 +111,7 @@ class ServiceinterfaceProvider
                     HTTP or HTTPS so no location is available to download or display the service interface.'''
             »
         </p>«
-            if (url != null) {
+            if (url !== null) {
                 '''
                 <p>
                     The following listing gives you a first impression of the functionality KWebS provides:
@@ -129,7 +129,7 @@ class ServiceinterfaceProvider
                                 AJAX_OPT_CREATEREQUEST, null, AJAX_GET, "«WSDL_ADAPTER_URL»", null, AJAX_ASYNC,
                                 function(r){
                                     var elem = document.getElementById('interface');
-                                    if (elem != null) {
+                                    if (elem !== null) {
                                         
                                         
                                         ««« This fixes the problem that JAX-WS generates a comment in the WSDL that

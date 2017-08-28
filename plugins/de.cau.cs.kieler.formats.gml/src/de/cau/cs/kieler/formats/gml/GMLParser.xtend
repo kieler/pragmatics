@@ -128,7 +128,7 @@ final class GMLParser {
                 }
 
                 // handle newly created elements
-                if (newElement != null) {
+                if (newElement !== null) {
                     container.elements += newElement
 
                     // push collection element to the stack
