@@ -187,7 +187,7 @@ class HTTPLayoutHandler implements HttpHandler {
      */
     def handleServiceData(HttpExchange http) {
         // get possibly cached service data json
-        val data = if (cachedServiceData == null) {
+        val data = if (cachedServiceData === null) {
             cachedServiceData = serviceDataJson.toString
         } else {
             cachedServiceData
@@ -211,7 +211,7 @@ class HTTPLayoutHandler implements HttpHandler {
             imgPath = imgPath.substring(0, imgPath.indexOf("?"))
         }
         val img = service.getPreviewImage(imgPath)
-        if (img == null) {
+        if (img === null) {
             http.handleError("Could not find the specified image")
         }
 

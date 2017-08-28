@@ -277,7 +277,7 @@ class DownloadsProvider
     throws IOException
     {
         val Bundle                   bundle  = Platform::getBundle(pluginId)
-        if (bundle == null) {
+        if (bundle === null) {
             throw new IOException("No such bundle: " + pluginId)
         }
         val ByteArrayOutputStream bytes   = new ByteArrayOutputStream()

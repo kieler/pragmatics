@@ -83,7 +83,7 @@ class AjaxdomainbridgeProvider
                 delegate = createDelegate(processingExchange)
             } 
             val URLConnection         con    = delegate.getConnection(processingExchange)
-            if (con == null) {
+            if (con === null) {
                 return true
             }
             val BufferedInputStream   in     = new BufferedInputStream(con.getInputStream())

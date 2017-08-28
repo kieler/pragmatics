@@ -124,7 +124,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
     protected def initRenderings(KNode graph) {
         // Create a rendering library for reuse of renderings
         var library = graph.getData(typeof(KRenderingLibrary))
-        if (library == null) {
+        if (library === null) {
             library = renderingFactory.createKRenderingLibrary
             graph.data += library
         }
@@ -282,7 +282,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
                     edge.source?.parent
             val routing = parent?.getProperty(CoreOptions::EDGE_ROUTING)
             edge.data += renderingFactory.createKRenderingRef => [
-                if (routing != null && routing == EdgeRouting::SPLINES) {
+                if (routing !== null && routing == EdgeRouting::SPLINES) {
                     it.rendering = defaultSplineRendering
                 } else {
                     it.rendering = defaultPolylineRendering
@@ -353,7 +353,7 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
             }
         }
         
-        if (labelManager != null) {
+        if (labelManager !== null) {
             kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager)
         }
     }

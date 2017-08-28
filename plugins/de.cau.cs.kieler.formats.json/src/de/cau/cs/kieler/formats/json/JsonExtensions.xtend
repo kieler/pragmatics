@@ -23,7 +23,7 @@ import java.util.Iterator
  */
 class JsonExtensions {
     def <T> Iterator<T> emptyIfNull(Iterator<T> iterator) {
-        if (iterator == null) {
+        if (iterator === null) {
             return Iterators.emptyIterator
         } else {
             iterator
@@ -31,7 +31,7 @@ class JsonExtensions {
     }
     
     def <T> T firstNonNullElement(T element1, T element2) {
-        if (element1 != null) {
+        if (element1 !== null) {
             return element1;
         } else {
             return element2;

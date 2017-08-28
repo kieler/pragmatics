@@ -145,7 +145,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     // the shaperef of the port's node
     val nodeSr = port.owner?.shapeRef
     
-    if (nodeSr == null) {
+    if (nodeSr === null) {
       // this could be an external port, just return  
       return null
     }
@@ -330,7 +330,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     val (Line2D.Double, KVector) => Pair<String, KVector> fun = [ line, chkPoint | 
       
       // when finishing the last segments
-      if (chkPoint == null) {
+      if (chkPoint === null) {
           return "" -> new KVector()
       }
       
@@ -380,7 +380,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     var currentSegment = new KVectorChain(start.toKVector)
     var checkElement = ite.saveNext
 
-    while (points.hasNext || end != null) {
+    while (points.hasNext || end !== null) {
         
         val line = new Line2D.Double(start.x, start.y, 
                                      end.x, end.y)
@@ -426,7 +426,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     }
 
     // potentially finish final route
-    if (end != null) {
+    if (end !== null) {
         currentSegment += end.toKVector    
     }
     segments += currentSegment
@@ -455,7 +455,7 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
    */
   def KVector portMarginAndSizeOffset(CPort port) {
      val offset = new KVector
-     if (port != null) {
+     if (port !== null) {
        val margins = port.owner.margins
        switch (port.side) {
         case WEST: {
@@ -553,15 +553,15 @@ class CGraphAvoidImporter implements IGraphImporter<CGraph, Router> {
     var tgtPin = PIN_ARBITRARY;
 
     // determine the type of the edge, ie, if it involves ports
-    if (edge.srcPort != null && edge.tgtPort != null) {
+    if (edge.srcPort !== null && edge.tgtPort !== null) {
       srcPin = edge.srcPort.cIndex + PORT_ID_START;
       tgtPin = edge.tgtPort.cIndex + PORT_ID_START;
-    } else if (edge.srcPort != null) {
+    } else if (edge.srcPort !== null) {
       srcPin = edge.srcPort.cIndex;
       if (direction != Direction.UNDEFINED) {
         tgtPin = PIN_INCOMING;
       }
-    } else if (edge.tgtPort != null) {
+    } else if (edge.tgtPort !== null) {
       if (direction != Direction.UNDEFINED) {
         srcPin = PIN_OUTGOING;
       }

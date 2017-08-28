@@ -87,7 +87,7 @@ class WsdlDelegate
 			else
 				null
 		// SOAP service is not published so we can not retrieve the service interface
-		if (url == null) {
+		if (url === null) {
 			 processingExchange.setResultCode(HttpURLConnection::HTTP_UNAVAILABLE)
 			 return null;
 		}

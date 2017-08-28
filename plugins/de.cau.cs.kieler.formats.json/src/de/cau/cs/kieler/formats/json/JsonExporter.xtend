@@ -180,12 +180,12 @@ class JsonExporter implements IGraphTransformer<ElkNode, JSONObject> {
         ]
         
         // Incoming shape
-        if (section.incomingShape != null) {
+        if (section.incomingShape !== null) {
             jsonObj.put("incomingShape", idByElement(section.incomingShape))
         }
         
         // Outgoing shape
-        if (section.outgoingShape != null) {
+        if (section.outgoingShape !== null) {
             jsonObj.put("outgoingShape", idByElement(section.outgoingShape))
         }
         
