@@ -16,7 +16,8 @@ package de.cau.cs.kieler.ptolemy.klighd
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.SynthesisOption
-import de.cau.cs.kieler.klighd.labels.management.ConditionLabelManager
+import de.cau.cs.kieler.klighd.labels.management.HidingLabelManager
+import de.cau.cs.kieler.klighd.labels.management.TypeConditionLabelManager
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
@@ -28,7 +29,6 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions
 import org.eclipse.elk.alg.layered.options.NodePlacementStrategy
 import org.eclipse.elk.core.labels.LabelManagementOptions
 import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.graph.ElkPort
 import org.ptolemy.moml.DocumentRoot
 
 /**
@@ -114,10 +114,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         
         // Install a label manager for port labels
         if (SHOW_PORT_LABELS.objectValue.equals("Selected Node")) {
-            val labelManager = new ConditionLabelManager(
-                null,
-                [label | !(label.parent instanceof ElkPort)],
-                true);
+            val labelManager = TypeConditionLabelManager.wrapForPortLabels(new HidingLabelManager());
             kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager);
         }
         
