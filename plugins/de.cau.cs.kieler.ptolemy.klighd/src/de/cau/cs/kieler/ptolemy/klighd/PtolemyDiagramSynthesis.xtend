@@ -28,8 +28,8 @@ import org.eclipse.elk.alg.layered.options.LayeredOptions
 import org.eclipse.elk.alg.layered.options.NodePlacementStrategy
 import org.eclipse.elk.core.labels.LabelManagementOptions
 import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.graph.ElkPort
 import org.ptolemy.moml.DocumentRoot
-import de.cau.cs.kieler.klighd.labels.management.LabelConditions
 
 /**
  * Synthesis for turning Ptolemy models into KGraphs.
@@ -85,6 +85,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     /** Whether hierarchical nodes should initially be collapsed after transformation. */
     public static val SynthesisOption INITIALLY_COLLAPSED = SynthesisOption::createCheckOption(
         "Collapsed Composite Actors", true)
+        
                 
     //////////////////////////////////////////////////////////////////////////////////////
     // Transformation
@@ -114,7 +115,9 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         // Install a label manager for port labels
         if (SHOW_PORT_LABELS.objectValue.equals("Selected Node")) {
             val labelManager = new ConditionLabelManager(
-                null, LabelConditions.portLabel.negate, true);
+                null,
+                [label | !(label.parent instanceof ElkPort)],
+                true);
             kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager);
         }
         
