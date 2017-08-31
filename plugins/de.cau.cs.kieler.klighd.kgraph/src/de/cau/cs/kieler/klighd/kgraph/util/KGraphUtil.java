@@ -15,7 +15,6 @@ package de.cau.cs.kieler.klighd.kgraph.util;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.elk.core.math.ElkPadding;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.options.Direction;
@@ -29,8 +28,12 @@ import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.ElkPort;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
+import org.eclipse.emf.common.util.AbstractTreeIterator;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EContentsEList.FeatureFilter;
+import org.eclipse.emf.ecore.util.EContentsEList.FeatureIteratorImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
@@ -42,6 +45,7 @@ import de.cau.cs.kieler.klighd.kgraph.EMapPropertyHolder;
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement;
 import de.cau.cs.kieler.klighd.kgraph.KGraphFactory;
+import de.cau.cs.kieler.klighd.kgraph.KGraphPackage;
 import de.cau.cs.kieler.klighd.kgraph.KIdentifier;
 import de.cau.cs.kieler.klighd.kgraph.KInsets;
 import de.cau.cs.kieler.klighd.kgraph.KLabel;
@@ -261,13 +265,62 @@ public final class KGraphUtil {
     }
 
     /**
+     * A tree iterator that skips persistent entries of {@link EMapPropertyHolder}s. For an
+     * explanation of why this is necessary, see the implementation of
+     * {@link KGraphDataUtil#loadDataElements()}.
+     */
+    public static class PersistentEntriesSkippingTreeIterator
+            extends AbstractTreeIterator<EObject> {
+        /** Bogus serial version ID. */
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * Creates a tree iterator that skips persistent entries.
+         *
+         * @param object
+         *            The object to start the iteration on. Is expected to be an EObject.
+         * @param includeRoot
+         *            Flag to indicate whether the passed object should be included in the iterator.
+         */
+        public PersistentEntriesSkippingTreeIterator(final Object object,
+                final boolean includeRoot) {
+            super(object, includeRoot);
+        }
+
+        @Override
+        protected Iterator<? extends EObject> getChildren(final Object object) {
+            // We know that the object is an EObject; get an iterator over its content
+            Iterator<EObject> iterator = ((EObject) object).eContents().iterator();
+
+            // The iterator will usually be a FeatureIteratorImpl
+            // that we can set a feature filter on
+            if (iterator instanceof FeatureIteratorImpl) {
+                ((FeatureIteratorImpl<EObject>) iterator).filter(new FeatureFilter() {
+                    public boolean isIncluded(final EStructuralFeature eStructuralFeature) {
+                        // We include everything but persistent entries
+                        if (eStructuralFeature.getContainerClass()
+                                .equals(EMapPropertyHolder.class)) {
+                            return eStructuralFeature.getFeatureID() 
+                                    != KGraphPackage.EMAP_PROPERTY_HOLDER__PERSISTENT_ENTRIES;
+                        } else {
+                            return true;
+                        }
+                    }
+                });
+            }
+
+            return iterator;
+        }
+    }
+
+    /**
      * Persists all {@link EMapPropertyHolder}s of a KGraph by serializing the contained properties
      * into {@link de.cau.cs.kieler.klighd.kgraph.PersistentEntry} tuples.
      *
      * @param graph the root element of the graph to persist elements of.
      */
     public static void persistDataElements(final KNode graph) {
-        TreeIterator<EObject> iterator = graph.eAllContents();
+        TreeIterator<EObject> iterator = new PersistentEntriesSkippingTreeIterator(graph, false);
         while (iterator.hasNext()) {
             EObject eObject = iterator.next();
             if (eObject instanceof EMapPropertyHolder) {
