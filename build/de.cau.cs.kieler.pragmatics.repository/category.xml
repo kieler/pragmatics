@@ -41,19 +41,19 @@
       <category name="kieler-layout"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.kgraph_0.42.1.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature" version="0.42.1.qualifier">
+   <feature url="features/de.cau.cs.kieler.kgraph_0.42.2.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature" version="0.42.2.qualifier">
       <category name="kieler-layout"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.kgraph.source_0.42.1.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.42.1.qualifier">
+   <feature url="features/de.cau.cs.kieler.kgraph.source_0.42.2.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.42.2.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
    <!-- LIGHTWEIGHT DIAGRAMS -->
 
-   <feature url="features/de.cau.cs.kieler.klighd.feature_0.42.4.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.42.4.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.feature_0.42.5.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.42.5.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.42.4.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.42.4.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.42.5.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.42.5.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
@@ -64,24 +64,24 @@
       <category name="kieler-sources"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature_0.42.0.qualifier.jar" id="de.cau.cs.kieler.klighd.draw2d.feature" version="0.42.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature_0.42.1.qualifier.jar" id="de.cau.cs.kieler.klighd.draw2d.feature" version="0.42.1.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature.source_0.42.0.qualifier.jar" id="de.cau.cs.kieler.klighd.draw2d.feature.source" version="0.42.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature.source_0.42.1.qualifier.jar" id="de.cau.cs.kieler.klighd.draw2d.feature.source" version="0.42.1.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature_0.42.1.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature" version="0.42.1.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature_0.42.2.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature" version="0.42.2.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature.source_0.42.1.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature.source" version="0.42.1.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature.source_0.42.2.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature.source" version="0.42.2.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.klighd.view.feature_0.42.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature" version="0.42.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.view.feature_0.42.1.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature" version="0.42.1.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.view.feature.source_0.42.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature.source" version="0.42.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.view.feature.source_0.42.1.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature.source" version="0.42.1.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
