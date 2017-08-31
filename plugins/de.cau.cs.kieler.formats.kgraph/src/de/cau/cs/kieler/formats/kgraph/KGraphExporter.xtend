@@ -82,7 +82,7 @@ class KGraphExporter implements IGraphTransformer<ElkNode, KNode> {
     
     public def create node : createNode() transformNode(ElkNode elkNode) {
         // Structural information
-        if (elkNode.parent != null) {
+        if (elkNode.parent !== null) {
             // We're not transforming the graph itself, so we actually do have a parent
             node.parent = elkNode.parent.transformNode();
         }
@@ -145,11 +145,11 @@ class KGraphExporter implements IGraphTransformer<ElkNode, KNode> {
         edge.source = elkSourceNode.transformNode();
         edge.target = elkTargetNode.transformNode();
         
-        if (elkSourcePort != null) {
+        if (elkSourcePort !== null) {
             edge.sourcePort = elkSourcePort.transformPort();
         }
         
-        if (elkTargetPort != null) {
+        if (elkTargetPort !== null) {
             edge.targetPort = elkTargetPort.transformPort();
         }
         

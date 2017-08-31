@@ -38,7 +38,7 @@ final class LayoutConfigTransformer {
         // these are no actual KNodes, we just use them as containers
         // for the layout options that are specified in the textual config 
         val rootNode = resource.contents?.get(0)
-        if (rootNode != null) {
+        if (rootNode !== null) {
 
             // NOTE: by convention we ignore any configuration whose id starts with a _
             // iterate through all configs
@@ -55,9 +55,9 @@ final class LayoutConfigTransformer {
                   val optData = dataService.getOptionDataBySuffix(opt.key) as LayoutOptionData
                     
                     // if valid, parse its value
-                    if (optData != null) {
+                    if (optData !== null) {
                         val value = optData.parseValue(opt.value.toString)
-                        if (value != null) {
+                        if (value !== null) {
                             currentConfig.configure(ElkGraphElement).setProperty(optData, value)
                         }
                     }
@@ -79,7 +79,7 @@ final class LayoutConfigTransformer {
             
             // if valid, parse its value
             val value = optData.parseValue(entry.value.toString)
-            if (value != null) {
+            if (value !== null) {
                 if (optData.targets.contains(LayoutOptionData.Target.NODES) 
                     || optData.targets.contains(LayoutOptionData.Target.PARENTS))
                     currentConfig.configure(ElkNode).setProperty(optData, value)

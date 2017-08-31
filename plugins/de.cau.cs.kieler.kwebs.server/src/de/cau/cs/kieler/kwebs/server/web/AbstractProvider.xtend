@@ -174,7 +174,7 @@ abstract class AbstractProvider
      * 
      */
     def protected String escapeHtml(String unescaped) {
-        if (unescaped == null) {
+        if (unescaped === null) {
             return null
         }
         val StringBuilder builder  = new StringBuilder()

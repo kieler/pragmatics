@@ -13,7 +13,7 @@
  */
 package de.cau.cs.kieler.formats.json
 
-import com.google.common.collect.Iterators
+import java.util.Collections
 import java.util.Iterator
 
 /**
@@ -23,15 +23,15 @@ import java.util.Iterator
  */
 class JsonExtensions {
     def <T> Iterator<T> emptyIfNull(Iterator<T> iterator) {
-        if (iterator == null) {
-            return Iterators.emptyIterator
+        if (iterator === null) {
+            return Collections.emptyIterator
         } else {
             iterator
         }
     }
     
     def <T> T firstNonNullElement(T element1, T element2) {
-        if (element1 != null) {
+        if (element1 !== null) {
             return element1;
         } else {
             return element2;

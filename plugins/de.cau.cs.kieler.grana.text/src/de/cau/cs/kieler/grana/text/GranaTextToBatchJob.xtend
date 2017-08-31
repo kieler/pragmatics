@@ -137,9 +137,9 @@ final class GranaTextToBatchJob {
                 val batch = new Batch.Range(job.name, analyses)
                 
                 // gather the range analyses
-                if (job.rangeAnalysis != null) {
+                if (job.rangeAnalysis !== null) {
                     val rangeAnalysis = AnalysisService.instance.getAnalysis(job.rangeAnalysis.name)
-                    if (rangeAnalysis == null) {
+                    if (rangeAnalysis === null) {
                         throw new IllegalArgumentException("Invalid range analysis: " + job.rangeAnalysis.name);
                     }
                     batch.rangeAnalysis = rangeAnalysis
@@ -148,7 +148,7 @@ final class GranaTextToBatchJob {
                 } else {                
                     val tanalyses = job.rangeAnalyses.map[ an |
                         val rangeAnalysis = AnalysisService.instance.getAnalysis(an.name)
-                        if (rangeAnalysis == null) {
+                        if (rangeAnalysis === null) {
                             throw new IllegalArgumentException("Invalid range analysis: " + job.rangeAnalysis.name);
                         }
                         rangeAnalysis
@@ -158,7 +158,7 @@ final class GranaTextToBatchJob {
                 
                 // configure the range option
                 val layOpt = LayoutMetaDataService.getInstance.getOptionDataBySuffix(job.rangeOption)
-                if (layOpt == null) {
+                if (layOpt === null) {
                     throw new IllegalArgumentException("Invalid layout option: " + job.rangeOption);
                 }
                 batch.rangeOption = layOpt
@@ -174,7 +174,7 @@ final class GranaTextToBatchJob {
                 // assemble layout configs for the range job
                 val rangeOptionCfgs = vals.map[ value |
                     val parsed = layOpt.parseValue(value.toString())
-                    if (parsed == null) {
+                    if (parsed === null) {
                         throw new IllegalArgumentException(
                             "Value " + value + " is not valid for layout option " + layOpt);
                     }
@@ -204,13 +204,13 @@ final class GranaTextToBatchJob {
             try {
                 // first we try to interpret the path as workspace relative
                 val p =  ResourcesPlugin.workspace.root.projects.findFirst[p|resource.path.contains(p.name)]
-                if (p == null) 
+                if (p === null) 
                     throw new IllegalArgumentException("Could not find resource " + resource.path)
                 val wsloc = p.findMember(resource.path.replace(p.name, ""))
 
                 // add all files to the batch job
                 for (file : (wsloc as IContainer).members) {
-                    if (filter == null || filter.matcher(file.name).matches) {
+                    if (filter === null || filter.matcher(file.name).matches) {
                         // add the job
                         addBatchJob(batch, job, new Path(resource.path + "/" + file.name))
                     }
@@ -220,13 +220,13 @@ final class GranaTextToBatchJob {
                 val fileURI = URI.createURI(resource.path, true)
                 println(fileURI)
                 val dir = new File(fileURI.toFileString)
-                if (dir == null || !dir.exists) {
+                if (dir === null || !dir.exists) {
                     throw new IllegalArgumentException("Could not find resource location: '" 
                         + resource.path + "'")
                 }                       
                 
                 for (file : dir.listFiles) {
-                    if (filter == null || filter.matcher(file.name).matches) {
+                    if (filter === null || filter.matcher(file.name).matches) {
                         addBatchJob(batch, job, new Path(file.absolutePath))
                     }
                 }                    
