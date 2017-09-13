@@ -1,0 +1,68 @@
+package de.cau.cs.kieler.graphs.hierarchicalViews
+
+import de.cau.cs.kieler.graphs.hierarchicalViews.radial.HierarchicalRadialLayoutProvider
+
+bundle {
+    label "Hierarchical Layout Algorithms"
+    metadataClass HierarchicalMetaDataProvider
+}
+algorithm radial(HierarchicalRadialLayoutProvider) {
+    label "Radial Layouter"
+    metadataClass RadialOptions
+    description "A radial layouter"
+}
+
+algorithm stress(HierarchicalStressLayoutProvider) {
+    label "Hierarchical Stress Layouter"
+    metadataClass HierarchicalStressOptions
+    description "A hierarchical stress layouter."
+    supports desiredEdgeLength = 50
+}
+
+algorithm tree(HierarchicalTreeLayoutProvider) {
+    label "Hierarchical Tree Layouter"
+    metadataClass HierarchicalTreeOptions
+    description "A hierarchical two-dimension tree layouter."
+    supports nodeSpacing = 20
+    supports widthHeurstic = true
+    supports compaction = true
+}
+
+option desiredEdgeLength: double {
+    label "Desired Edge Length"
+    description 
+        "Specifies the length an edge or all edges should have, if possible."
+    default = 50.0
+    targets edges, nodes
+}
+
+option nodeId: int {
+    label "Node ID"
+    description "Assigns each node a unique ID."
+    targets nodes    
+}
+
+option parentId: int {
+    label "Parent ID"
+    description "The node ID of the parent of the node."
+    targets nodes
+}
+
+option nodeSpacing: double {
+    label "Node Spacing"
+    description "The spacing between nodes."
+    default = 20.0
+    targets nodes
+}
+
+option widthHeurstic: boolean {
+    label "Width Heuristic"
+    description "Heuristic that optimizes the width of the complete graph before the layout is computed."
+    default = true
+}
+
+option compaction: boolean {
+    label "Compaction"
+    description "Compacts the tree with a border from left and right to the center."
+    default = true
+}
