@@ -16,8 +16,8 @@ package de.cau.cs.kieler.ptolemy.klighd
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.SynthesisOption
-import de.cau.cs.kieler.klighd.labels.management.ConditionLabelManager
-import de.cau.cs.kieler.klighd.labels.management.LabelPredicates
+import de.cau.cs.kieler.klighd.labels.management.HidingLabelManager
+import de.cau.cs.kieler.klighd.labels.management.TypeConditionLabelManager
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.cau.cs.kieler.ptolemy.klighd.transformation.Ptolemy2KGraphOptimization
@@ -43,48 +43,56 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     
     //////////////////////////////////////////////////////////////////////////////////////
     // Transformation Options
-    
-    public static val SynthesisOption SHOW_COMMENTS = SynthesisOption::createCheckOption(
-        "Comments", true)
         
     public static val SynthesisOption SHOW_RELATIONS = SynthesisOption::createCheckOption(
         "Relations", false)
         
-    public static val SynthesisOption SHOW_PORT_LABELS = SynthesisOption::createChoiceOption(
-        "Show Port Labels", ImmutableList::of(
-            PortLabelDisplayStyle.ALL.toString(),
-            PortLabelDisplayStyle.SELECTED_NODE.toString(),
-            PortLabelDisplayStyle.NONE.toString()),
-        PortLabelDisplayStyle.NONE.toString())
+    public static val SynthesisOption SHOW_DIRECTORS = SynthesisOption::createCheckOption(
+        "Directors", true)
         
     public static val SynthesisOption SHOW_PROPERTIES = SynthesisOption::createCheckOption(
         "Parameters", true)
         
-    public static val SynthesisOption SHOW_DIRECTORS = SynthesisOption::createCheckOption(
-        "Directors", true)
+    public static val SynthesisOption SHOW_PORT_LABELS = SynthesisOption::createChoiceOption(
+        "Port Labels", ImmutableList::of(
+            PortLabelDisplayStyle.ALL.toString(),
+            PortLabelDisplayStyle.SELECTED_NODE.toString(),
+            PortLabelDisplayStyle.NONE.toString()),
+        PortLabelDisplayStyle.NONE.toString())
+    
+    private static val SHOW_COMMENTS_ALL = "All";
+    private static val SHOW_COMMENTS_SELECTED = "Selected";
+    private static val SHOW_COMMENTS_NONE = "None";
+    public static val SynthesisOption SHOW_COMMENTS = SynthesisOption::createChoiceOption(
+        "Comments", ImmutableList::of(
+            SHOW_COMMENTS_ALL,
+            SHOW_COMMENTS_SELECTED,
+            SHOW_COMMENTS_NONE),
+        "All")
         
     public static val SynthesisOption COMMENT_ATTACHMENT_HEURISTIC =
-        SynthesisOption::createCheckOption("Comment attachment heuristic", true) 
-        
-    public static val SynthesisOption FLATTEN = SynthesisOption::createCheckOption(
-        "Flatten Composite Actors", false)
-        
-    public static val SynthesisOption COMPOUND_NODE_ALPHA = SynthesisOption::createRangeOption(
-        "Nested model darkness", 0f, 255f, 30f)
+        SynthesisOption::createCheckOption("Attach to nodes", true) 
         
     public static val SynthesisOption ATTACHMENT_HEURISTIC = SynthesisOption::createChoiceOption(
         "Attachment heuristic", 
         ImmutableList::of("Smallest distance", "Comment alignment", "Find label name plain", 
                 "Find label name", "Find label name w/o two attached"), "Smallest distance")
+        
+    public static val SynthesisOption FLATTEN = SynthesisOption::createCheckOption(
+        "Flatten Composite Actors", false)
+    
+    /** Whether hierarchical nodes should initially be collapsed after transformation. */
+    public static val SynthesisOption INITIALLY_COLLAPSED = SynthesisOption::createCheckOption(
+        "Collapse Composite Actors", true)
+        
+    public static val SynthesisOption COMPOUND_NODE_ALPHA = SynthesisOption::createRangeOption(
+        "Nested model darkness", 0f, 255f, 30f)
                 
     /** Whether to transform state machines. Currently the option is not exposed to the user 
      * but can be set programmatically as synthesis options, e.g. for batch export. */
     public static val SynthesisOption TRANSFORM_STATES = SynthesisOption::createCheckOption(
         "Transform states", true)
-    
-    /** Whether hierarchical nodes should initially be collapsed after transformation. */
-    public static val SynthesisOption INITIALLY_COLLAPSED = SynthesisOption::createCheckOption(
-        "Collapsed Composite Actors", true)
+        
                 
     //////////////////////////////////////////////////////////////////////////////////////
     // Transformation
@@ -107,14 +115,13 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         
         // If comments should be shown, we want them to be attached properly. Do that now, because we
         // know the node sizes only after the visualization
-        if (options.attachComments) {
+        if (options.commentsAttach) {
             commentsAttachor.attachComments(kgraph)
         }
         
         // Install a label manager for port labels
-        if (SHOW_PORT_LABELS.objectValue.equals("Selected Node")) {
-            val labelManager = new ConditionLabelManager(
-                null, LabelPredicates.portLabel.negate, true);
+        if (SHOW_PORT_LABELS.objectValue.equals(PortLabelDisplayStyle.SELECTED_NODE.toString())) {
+            val labelManager = TypeConditionLabelManager.wrapForPortLabels(new HidingLabelManager());
             kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager);
         }
         
@@ -126,12 +133,13 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
      */
     override getDisplayedSynthesisOptions() {
         return ImmutableList.of(
+            SynthesisOption.createSeparator("Visible Elements"),
             SHOW_RELATIONS,
-            SHOW_PORT_LABELS,
             SHOW_DIRECTORS,
             SHOW_PROPERTIES,
-            SynthesisOption.createSeparator("Comments"),
+            SHOW_PORT_LABELS,
             SHOW_COMMENTS,
+            SynthesisOption.createSeparator("Comments"),
             COMMENT_ATTACHMENT_HEURISTIC,
             SynthesisOption.createSeparator("Hierarchy"),
             FLATTEN,
@@ -155,29 +163,37 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
      * Container class for synthesis options.
      */
     public static final class Options {
-        public var boolean comments
         public var boolean relations
-        public var PortLabelDisplayStyle portLabels
-        public var boolean properties
         public var boolean directors
-        public var boolean attachComments
+        public var boolean properties
+        public var PortLabelDisplayStyle portLabels
+        public var boolean comments
+        
+        public var boolean commentsLabelManage
+        public var boolean commentsAttach
+        
         public var boolean flatten
-        public var int compoundNodeAlpha
-        public var boolean transformStates
         public var boolean initiallyCollapsed
+        public var int compoundNodeAlpha
+        
+        public var boolean transformStates
         
         new(PtolemyDiagramSynthesis s) {
-            comments = s.getBooleanValue(SHOW_COMMENTS)
             relations = s.getBooleanValue(SHOW_RELATIONS)
+            directors = s.getBooleanValue(SHOW_DIRECTORS)
+            properties = s.getBooleanValue(SHOW_PROPERTIES)
             portLabels = PortLabelDisplayStyle.fromDisplayString(
                 s.getObjectValue(SHOW_PORT_LABELS).toString())
-            properties = s.getBooleanValue(SHOW_PROPERTIES)
-            directors = s.getBooleanValue(SHOW_DIRECTORS)
-            attachComments = s.getBooleanValue(COMMENT_ATTACHMENT_HEURISTIC)
+            comments = s.getObjectValue(SHOW_COMMENTS) != SHOW_COMMENTS_NONE
+            
+            commentsAttach = s.getBooleanValue(COMMENT_ATTACHMENT_HEURISTIC)
+            commentsLabelManage = s.getObjectValue(SHOW_COMMENTS) == SHOW_COMMENTS_SELECTED
+            
             flatten = s.getBooleanValue(FLATTEN)
-            compoundNodeAlpha = s.getIntValue(COMPOUND_NODE_ALPHA)
-            transformStates = s.getBooleanValue(TRANSFORM_STATES)
             initiallyCollapsed = s.getBooleanValue(INITIALLY_COLLAPSED)
+            compoundNodeAlpha = s.getIntValue(COMPOUND_NODE_ALPHA)
+            
+            transformStates = s.getBooleanValue(TRANSFORM_STATES)
         }
     }
     

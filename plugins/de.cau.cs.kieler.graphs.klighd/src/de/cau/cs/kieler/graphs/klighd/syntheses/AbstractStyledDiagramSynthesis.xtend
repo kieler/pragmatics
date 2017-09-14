@@ -37,9 +37,9 @@ import de.cau.cs.kieler.klighd.krendering.extensions.PositionReferenceY
 import de.cau.cs.kieler.klighd.labels.management.AbstractKlighdLabelManager
 import de.cau.cs.kieler.klighd.labels.management.ConditionLabelManager
 import de.cau.cs.kieler.klighd.labels.management.IdentLabelManager
-import de.cau.cs.kieler.klighd.labels.management.LabelPredicates
 import de.cau.cs.kieler.klighd.labels.management.SoftWrappingLabelManager
 import de.cau.cs.kieler.klighd.labels.management.TruncatingLabelManager
+import de.cau.cs.kieler.klighd.labels.management.TypeConditionLabelManager
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import org.eclipse.elk.core.labels.LabelManagementOptions
 import org.eclipse.elk.core.options.CoreOptions
@@ -372,20 +372,18 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
             case LABELS_NO_LABELS: {
                 labelManager = new ConditionLabelManager(
                     null,
-                    LabelPredicates.matchNone,
+                    [label | false],
                     true);
             }
             case LABELS_TRUNCATE: {
-                labelManager = new ConditionLabelManager(
-                    new TruncatingLabelManager(),
-                    LabelPredicates.centerEdgeLabel,
-                    false);
+                labelManager = TypeConditionLabelManager
+                    .wrapForEdgeCenterLabels(new TruncatingLabelManager())
+                    .setLeaveLabelsUntouchedByDefault(true);
             }
             case LABELS_SOFT_WORD_WRAP: {
-                labelManager = new ConditionLabelManager(
-                    new SoftWrappingLabelManager(),
-                    LabelPredicates.centerEdgeLabel,
-                    false);
+                labelManager = TypeConditionLabelManager
+                    .wrapForEdgeCenterLabels(new SoftWrappingLabelManager())
+                    .setLeaveLabelsUntouchedByDefault(true);
             }
             case LABELS_FULL: {
                 labelManager = new IdentLabelManager()
