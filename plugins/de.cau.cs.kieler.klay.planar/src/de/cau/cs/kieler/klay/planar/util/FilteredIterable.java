@@ -19,9 +19,7 @@ import com.google.common.base.Predicate;
 
 /**
  * An iterable object that wraps another iterable. It uses a condition to filter certain elements
- * from the original iterable. This class is inspired by {@code
- * de.cau.cs.kieler.core.util.FilteredIterator}, but works for more general objects and not only
- * lists.
+ * from the original iterable. 
  * 
  * @param <T>
  *            the type of the elements

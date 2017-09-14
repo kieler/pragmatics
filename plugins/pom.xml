@@ -18,10 +18,6 @@
   <modules>
     <module>../build/de.cau.cs.kieler.pragmatics.targetplatform</module>
     <module>../test</module>
-    <!--<module>de.cau.cs.kieler.core.kgraph</module>-->
-    <!--<module>de.cau.cs.kieler.core.kgraph.text</module>-->
-    <!--<module>de.cau.cs.kieler.core.kgraph.text.ui</module>-->
-    <module>de.cau.cs.kieler.core.kivi</module>
     <module>de.cau.cs.kieler.formats.kgraph</module>
     <module>de.cau.cs.kieler.graphs.klighd</module>
     <module>de.cau.cs.kieler.kgraph.text</module>
@@ -45,7 +41,6 @@
     <module>de.cau.cs.kieler.klay.planar</module>
     <module>de.cau.cs.kieler.klighd</module>
     <module>de.cau.cs.kieler.klighd.incremental</module>
-    <module>de.cau.cs.kieler.klighd.kivi</module>
     <module>de.cau.cs.kieler.klighd.kgraph</module>
     <module>de.cau.cs.kieler.klighd.krendering</module>
     <module>de.cau.cs.kieler.klighd.krendering.extensions</module>

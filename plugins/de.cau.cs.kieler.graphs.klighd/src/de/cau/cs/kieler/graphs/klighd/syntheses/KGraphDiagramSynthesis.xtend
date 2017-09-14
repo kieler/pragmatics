@@ -74,7 +74,7 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
     /**
      * Whether the model wants default defaults. This property is no layout option, not registered with
      * KIML, and has to be loaded explicitly by the 
-     * {@link de.cau.cs.kieler.core.kgraph.text.KGraphResource KGraphResource}. 
+     * {@link de.cau.cs.kieler.kgraph.text.KGraphResource KGraphResource}. 
      */
     private static final IProperty<Boolean> DEFAULTS_PROPERTY = new Property<Boolean>(
         "de.cau.cs.kieler.kgraphsynthesis.defaults", false)

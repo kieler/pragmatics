@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: KiVi Test Project
-Bundle-SymbolicName: de.cau.cs.kieler.core.kivi.test
-Bundle-Version: 0.43.0.qualifier
-Bundle-Vendor: Kiel University
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.junit;bundle-version="4.8.0",
- de.cau.cs.kieler.core.kivi
