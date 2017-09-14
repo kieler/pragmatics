@@ -18,7 +18,6 @@
 
   <!-- all plugins need to be listed as module -->
   <modules>
-    <module>de.cau.cs.kieler.core.kivi.test</module>
     <module>de.cau.cs.kieler.core.test</module>
     <!--module>de.cau.cs.kieler.kgraph.text.tests</module-->
 

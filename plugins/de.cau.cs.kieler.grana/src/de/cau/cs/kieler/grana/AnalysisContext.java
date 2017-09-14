@@ -21,8 +21,8 @@ import com.google.common.collect.Maps;
  * Collector object that holds context information during a run of GrAna. When multiple analyses are
  * executed consecutively, later analyses may depend on information gathered or calculated by
  * earlier analyses. The {@link AnalysisContext} is passed to the
- * {@link IAnalysis#doAnalysis(de.cau.cs.kieler.core.kgraph.KNode, AnalysisContext, 
- * de.cau.cs.kieler.core.alg.IKielerProgressMonitor)}
+ * {@link IAnalysis#doAnalysis(de.cau.cs.kieler.klighd.kgraph.KNode, AnalysisContext, 
+ * de.cau.cs.kieler.klighd.alg.IKielerProgressMonitor)}
  * method and can be used to access such information.
  * 
  * The results map may additionally contain information about can cancelled or failed 

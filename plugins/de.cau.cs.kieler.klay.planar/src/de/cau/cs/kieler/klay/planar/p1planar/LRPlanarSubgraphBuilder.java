@@ -894,7 +894,7 @@ public class LRPlanarSubgraphBuilder implements ILayoutPhase {
      * @return {@code true}, if the interval conflicts with the interval, and {@code false}
      *         otherwise
      * 
-     * @see de.cau.cs.kieler.core.util.Pair Pair
+     * @see org.eclipse.elk.core.util.Pair Pair
      */
     private boolean conflicting(final Pair<PEdge, PEdge> interval, final PEdge edge) {
         return ((interval.getFirst() != null || interval.getSecond() != null) && lowpt[interval
@@ -911,7 +911,7 @@ public class LRPlanarSubgraphBuilder implements ILayoutPhase {
      *            the conflict pair to determine its lowpoint
      * @return the lowpoint of the conflict pair
      * 
-     * @see de.cau.cs.kieler.core.util.Pair Pair
+     * @see org.eclipse.elk.core.util.Pair Pair
      */
     private int lowest(final Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> pair) {
 
@@ -931,7 +931,7 @@ public class LRPlanarSubgraphBuilder implements ILayoutPhase {
      * 
      * @return a new empty conflict pair
      * 
-     * @see de.cau.cs.kieler.core.util.Pair Pair
+     * @see org.eclipse.elk.core.util.Pair Pair
      */
     private Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> newConflictPair() {
 
@@ -948,7 +948,7 @@ public class LRPlanarSubgraphBuilder implements ILayoutPhase {
      * @param pair
      *            the conflict pair to swap its elements
      * 
-     * @see de.cau.cs.kieler.core.util.Pair Pair
+     * @see org.eclipse.elk.core.util.Pair Pair
      */
     private void swap(final Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> pair) {
         Pair<PEdge, PEdge> p = pair.getFirst();
@@ -971,7 +971,7 @@ public class LRPlanarSubgraphBuilder implements ILayoutPhase {
      *            the edge to determine all interval edges to delete or {@code null}
      * @return a LinkedList containing all deleted edges
      * 
-     * @see de.cau.cs.kieler.core.util.Pair Pair
+     * @see org.eclipse.elk.core.util.Pair Pair
      */
     private LinkedList<PEdge> removeConflicts(
             final Pair<Pair<PEdge, PEdge>, Pair<PEdge, PEdge>> pair, final PEdge edge) {
