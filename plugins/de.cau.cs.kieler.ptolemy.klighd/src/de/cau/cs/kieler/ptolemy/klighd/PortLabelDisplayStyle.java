@@ -22,7 +22,7 @@ public enum PortLabelDisplayStyle {
     /** Port labels are displayed for all ports. */
     ALL("All"),
     /** Port labels are only displayed for the currently selected node. */
-    SELECTED_NODE("Selected Node"),
+    SELECTED_NODE("Selected"),
     /** No port labels are displayed. */
     NONE("None");
     
