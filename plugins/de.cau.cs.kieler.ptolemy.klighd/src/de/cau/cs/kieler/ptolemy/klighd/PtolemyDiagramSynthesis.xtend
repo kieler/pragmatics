@@ -16,7 +16,11 @@ package de.cau.cs.kieler.ptolemy.klighd
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.SynthesisOption
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.labels.management.AbstractKlighdLabelManager
 import de.cau.cs.kieler.klighd.labels.management.HidingLabelManager
+import de.cau.cs.kieler.klighd.labels.management.ListLabelManager
+import de.cau.cs.kieler.klighd.labels.management.TruncatingLabelManager
 import de.cau.cs.kieler.klighd.labels.management.TypeConditionLabelManager
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
@@ -55,10 +59,10 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
         
     public static val SynthesisOption SHOW_PORT_LABELS = SynthesisOption::createChoiceOption(
         "Port Labels", ImmutableList::of(
-            PortLabelDisplayStyle.ALL.toString(),
-            PortLabelDisplayStyle.SELECTED_NODE.toString(),
-            PortLabelDisplayStyle.NONE.toString()),
-        PortLabelDisplayStyle.NONE.toString())
+            LabelDisplayStyle.ALL.toString(),
+            LabelDisplayStyle.SELECTED.toString(),
+            LabelDisplayStyle.NONE.toString()),
+        LabelDisplayStyle.NONE.toString())
     
     private static val SHOW_COMMENTS_ALL = "All";
     private static val SHOW_COMMENTS_SELECTED = "Selected";
@@ -92,41 +96,7 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
      * but can be set programmatically as synthesis options, e.g. for batch export. */
     public static val SynthesisOption TRANSFORM_STATES = SynthesisOption::createCheckOption(
         "Transform states", true)
-        
-                
-    //////////////////////////////////////////////////////////////////////////////////////
-    // Transformation
     
-    // The parts of our transformation
-    @Inject Ptolemy2KGraphTransformation transformation
-    @Inject Ptolemy2KGraphOptimization optimization
-    @Inject Ptolemy2KGraphVisualization visualization
-    @Inject CommentsExtractor commentsExtractor
-    @Inject CommentsAttachor commentsAttachor
-   
-    override transform(DocumentRoot model) {
-        // Capture options
-        val options = new Options(this)
-        
-        // Transform, optimize, and visualize
-        val kgraph = transformation.transform(model, this, options)
-        optimization.optimize(kgraph, options, if (options.comments) commentsExtractor else null, this)
-        visualization.visualize(kgraph, options)
-        
-        // If comments should be shown, we want them to be attached properly. Do that now, because we
-        // know the node sizes only after the visualization
-        if (options.commentsAttach) {
-            commentsAttachor.attachComments(kgraph)
-        }
-        
-        // Install a label manager for port labels
-        if (SHOW_PORT_LABELS.objectValue.equals(PortLabelDisplayStyle.SELECTED_NODE.toString())) {
-            val labelManager = TypeConditionLabelManager.wrapForPortLabels(new HidingLabelManager());
-            kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager);
-        }
-        
-        return kgraph
-    }
     
     /**
      * Diagram options.
@@ -160,14 +130,14 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     }
     
     /**
-     * Container class for synthesis options.
+     * Container class for easy handling of synthesis options.
      */
     public static final class Options {
         public var boolean relations
         public var boolean directors
         public var boolean properties
-        public var PortLabelDisplayStyle portLabels
-        public var boolean comments
+        public var LabelDisplayStyle portLabels
+        public var LabelDisplayStyle comments
         
         public var boolean commentsLabelManage
         public var boolean commentsAttach
@@ -182,9 +152,10 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
             relations = s.getBooleanValue(SHOW_RELATIONS)
             directors = s.getBooleanValue(SHOW_DIRECTORS)
             properties = s.getBooleanValue(SHOW_PROPERTIES)
-            portLabels = PortLabelDisplayStyle.fromDisplayString(
+            portLabels = LabelDisplayStyle.fromDisplayString(
                 s.getObjectValue(SHOW_PORT_LABELS).toString())
-            comments = s.getObjectValue(SHOW_COMMENTS) != SHOW_COMMENTS_NONE
+            comments = LabelDisplayStyle.fromDisplayString(
+                s.getObjectValue(SHOW_COMMENTS).toString())
             
             commentsAttach = s.getBooleanValue(COMMENT_ATTACHMENT_HEURISTIC)
             commentsLabelManage = s.getObjectValue(SHOW_COMMENTS) == SHOW_COMMENTS_SELECTED
@@ -194,6 +165,68 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
             compoundNodeAlpha = s.getIntValue(COMPOUND_NODE_ALPHA)
             
             transformStates = s.getBooleanValue(TRANSFORM_STATES)
+        }
+    }
+        
+                
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Transformation
+    
+    // The parts of our transformation
+    @Inject Ptolemy2KGraphTransformation transformation
+    @Inject Ptolemy2KGraphOptimization optimization
+    @Inject Ptolemy2KGraphVisualization visualization
+    @Inject CommentsExtractor commentsExtractor
+    @Inject CommentsAttachor commentsAttachor
+   
+    override transform(DocumentRoot model) {
+        // Capture options
+        val options = new Options(this)
+        val extractComments = options.comments != LabelDisplayStyle.NONE;
+        
+        // Transform, optimize, and visualize
+        val kgraph = transformation.transform(model, this, options)
+        optimization.optimize(kgraph, options, if (extractComments) commentsExtractor else null, this)
+        visualization.visualize(kgraph, options)
+        
+        // If comments should be shown, we want them to be attached properly. Do that now, because we
+        // know the node sizes only after the visualization
+        if (options.commentsAttach) {
+            commentsAttachor.attachComments(kgraph)
+        }
+        
+        // Label managers
+        setupLabelManagement(kgraph, options);
+        
+        return kgraph
+    }
+    
+    private def void setupLabelManagement(KNode kgraph, Options options) {
+        var AbstractKlighdLabelManager portLabelManager = null;
+        if (options.portLabels == LabelDisplayStyle.SELECTED) {
+            portLabelManager = TypeConditionLabelManager.wrapForPortLabels(new HidingLabelManager());
+            kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, portLabelManager);
+        }
+        
+        var AbstractKlighdLabelManager commentLabelManager = null;
+        if (options.comments == LabelDisplayStyle.SELECTED) {
+            commentLabelManager = TypeConditionLabelManager.wrapForCommentLabels(new TruncatingLabelManager()
+                .truncateAfterFirstWords(5)
+                .setMode(AbstractKlighdLabelManager.Mode.ALWAYS_ON)
+            )
+        }
+        
+        val labelManager = new ListLabelManager();
+        if (portLabelManager !== null) {
+            labelManager.addLabelManager(portLabelManager);
+        }
+        
+        if (commentLabelManager !== null) {
+            labelManager.addLabelManager(commentLabelManager);
+        }
+        
+        if (!labelManager.labelManagers.isEmpty()) {
+            kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, labelManager);
         }
     }
     

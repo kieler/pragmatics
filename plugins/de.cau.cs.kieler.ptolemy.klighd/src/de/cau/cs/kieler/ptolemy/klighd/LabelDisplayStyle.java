@@ -17,12 +17,12 @@ package de.cau.cs.kieler.ptolemy.klighd;
  * 
  * @author cds
  */
-public enum PortLabelDisplayStyle {
+public enum LabelDisplayStyle {
     
     /** Port labels are displayed for all ports. */
     ALL("All"),
     /** Port labels are only displayed for the currently selected node. */
-    SELECTED_NODE("Selected"),
+    SELECTED("Selected"),
     /** No port labels are displayed. */
     NONE("None");
     
@@ -36,7 +36,7 @@ public enum PortLabelDisplayStyle {
      * 
      * @param s the display string.
      */
-    private PortLabelDisplayStyle(String s) {
+    private LabelDisplayStyle(String s) {
         displayString = s;
     }
 
@@ -47,8 +47,8 @@ public enum PortLabelDisplayStyle {
      * @param ds the display string.
      * @return the port label display style, or {@code null} if none could be found.
      */
-    public static PortLabelDisplayStyle fromDisplayString(String ds) {
-        for (PortLabelDisplayStyle style : PortLabelDisplayStyle.values()) {
+    public static LabelDisplayStyle fromDisplayString(String ds) {
+        for (LabelDisplayStyle style : LabelDisplayStyle.values()) {
             if (style.toString().equalsIgnoreCase(ds)) {
                 return style;
             }

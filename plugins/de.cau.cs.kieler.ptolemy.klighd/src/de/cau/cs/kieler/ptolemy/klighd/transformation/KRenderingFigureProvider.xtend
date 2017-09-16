@@ -15,6 +15,10 @@ package de.cau.cs.kieler.ptolemy.klighd.transformation
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.KlighdConstants
+import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.KLabel
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.krendering.HorizontalAlignment
 import de.cau.cs.kieler.klighd.krendering.KContainerRendering
 import de.cau.cs.kieler.klighd.krendering.KDecoratorPlacementData
@@ -37,9 +41,6 @@ import de.cau.cs.kieler.ptolemy.klighd.transformation.util.GraphicsUtils
 
 import static de.cau.cs.kieler.ptolemy.klighd.PtolemyProperties.*
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
-import de.cau.cs.kieler.klighd.kgraph.KNode
-import de.cau.cs.kieler.klighd.kgraph.KEdge
-import de.cau.cs.kieler.klighd.kgraph.KPort
 
 /**
  * Creates concrete KRendering information for Ptolemy diagram elements.
@@ -247,33 +248,39 @@ class KRenderingFigureProvider {
      * @return the rendering.
      */
     def KRendering createCommentNodeRendering(KNode node) {
-        // TODO this rendering could be put into the library if its text is kept generic
-        val rectangle = renderingFactory.createKRectangle() => [rec |
+        val library = getLibrary(node)
+        val rendering = getFromLibrary("ren_comment", library)
+        if (rendering !== null) {
+            return rendering
+        }
+        
+        return addToLibrary(renderingFactory.createKRectangle() => [rec |
             rec.background = renderingFactory.createKColor() => [col |
                 col.red = 255
                 col.green = 255
                 col.blue = 204
             ]
             rec.setLineWidth(0)
-        ]
-        
+        ], "ren_comment", library)
+    }
+    
+    /**
+     * Creates a rendering for a comment node's text label.
+     * 
+     * @param node the node that represents the comment.
+     * @param label the node's label that contains the comment's text.
+     * @return the rendering.
+     */
+    def KRendering createCommentLabelRendering(KNode node, KLabel label) {
         if(node.markedAsTitleNode){
-            // Add the title's text
-            rectangle.children += renderingFactory.createKText() => [text |
+            return renderingFactory.createKText() => [text |
                 text.fontSize = 18
-                text.text = node.getProperty(COMMENT_TEXT)
-                text.setSurroundingSpace(5, 0)
             ]   
         } else {
-           // Add the comment's text
-            rectangle.children += renderingFactory.createKText() => [text |
+           return renderingFactory.createKText() => [text |
                 text.fontSize = node.getProperty(COMMENT_FONT_SIZE) - 2
-                text.text = node.getProperty(COMMENT_TEXT)
-                text.setSurroundingSpace(5, 0)
             ]
         }
-        
-        return rectangle
     }
     
     /**

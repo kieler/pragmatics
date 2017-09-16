@@ -293,12 +293,15 @@ class CommentsExtractor {
             
         val commentNode = KGraphUtil.createInitializedNode()
         
-        commentNode.setProperty(COMMENT_TEXT, text)
         commentNode.setProperty(COMMENT_FONT_SIZE, Integer.parseInt(fontSize))
         commentNode.markAsComment()
         
         parent.children += commentNode
         createdCommentNodes.put(parent, commentNode)
+        
+        // We'll be using a label to display the comment's text
+        val commentLabel = KGraphUtil.createInitializedLabel(commentNode);
+        commentLabel.text = text;
         
         return commentNode
     }

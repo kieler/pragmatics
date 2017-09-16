@@ -33,7 +33,6 @@ import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.cau.cs.kieler.klighd.util.ExpansionAwareLayoutOption
 import de.cau.cs.kieler.klighd.util.KlighdProperties
-import de.cau.cs.kieler.ptolemy.klighd.PortLabelDisplayStyle
 import de.cau.cs.kieler.ptolemy.klighd.PtolemyDiagramSynthesis.Options
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.AnnotationExtensions
 import de.cau.cs.kieler.ptolemy.klighd.transformation.extensions.LabelExtensions
@@ -54,6 +53,7 @@ import org.eclipse.elk.core.options.PortSide
 import org.eclipse.elk.core.options.SizeConstraint
 
 import static de.cau.cs.kieler.ptolemy.klighd.transformation.util.TransformationConstants.*
+import de.cau.cs.kieler.ptolemy.klighd.LabelDisplayStyle
 
 /**
  * Enriches a KGraph model freshly transformed from a Ptolemy2 model with the KRendering information
@@ -179,7 +179,7 @@ class Ptolemy2KGraphVisualization {
      */
     def private void addRootRendering(KNode node) {
         val rendering = node.createDefaultRendering(false);
-        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+        if (options.portLabels == LabelDisplayStyle.SELECTED) {
             rendering.addSingleClickAction(FocusAndContextAction.ID)
         }
         
@@ -206,7 +206,7 @@ class Ptolemy2KGraphVisualization {
         DiagramSyntheses.addRenderingWithStandardSelectionWrapper(node, collapsedRendering) => [
             it.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
             it.addDoubleClickAction(KlighdConstants::ACTION_COLLAPSE_EXPAND)
-            if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+            if (options.portLabels == LabelDisplayStyle.SELECTED || options.comments == LabelDisplayStyle.SELECTED) {
                 it.addSingleClickAction(FocusAndContextAction.ID)
             }
         ];
@@ -218,7 +218,7 @@ class Ptolemy2KGraphVisualization {
         DiagramSyntheses.addRenderingWithStandardSelectionWrapper(node, expandedRendering) => [
             it.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
             it.addDoubleClickAction(KlighdConstants::ACTION_COLLAPSE_EXPAND)
-            if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+            if (options.portLabels == LabelDisplayStyle.SELECTED || options.comments == LabelDisplayStyle.SELECTED) {
                 it.addSingleClickAction(FocusAndContextAction.ID)
             }
         ];
@@ -243,7 +243,7 @@ class Ptolemy2KGraphVisualization {
             val collapsedRendering = createStateNodeRendering(node)
             collapsedRendering.setProperty(KlighdProperties::COLLAPSED_RENDERING, true)
             collapsedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
-            if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+            if (options.portLabels == LabelDisplayStyle.SELECTED) {
                 collapsedRendering.addSingleClickAction(FocusAndContextAction.ID)
             }
             node.data += collapsedRendering
@@ -252,7 +252,7 @@ class Ptolemy2KGraphVisualization {
             val expandedRendering = createExpandedCompoundNodeRendering(node, options.compoundNodeAlpha)
             expandedRendering.setProperty(KlighdProperties::EXPANDED_RENDERING, true)
             expandedRendering.addAction(Trigger::DOUBLECLICK, KlighdConstants::ACTION_COLLAPSE_EXPAND)
-            if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+            if (options.portLabels == LabelDisplayStyle.SELECTED) {
                 expandedRendering.addSingleClickAction(FocusAndContextAction.ID)
             }
             node.data += expandedRendering
@@ -270,7 +270,7 @@ class Ptolemy2KGraphVisualization {
         
         // Create the rendering
         val rendering = createRelationNodeRendering(node)
-        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+        if (options.portLabels == LabelDisplayStyle.SELECTED) {
             rendering.addSingleClickAction(FocusAndContextAction.ID)
         }
         node.data += rendering
@@ -304,9 +304,23 @@ class Ptolemy2KGraphVisualization {
      * @param node the node to attach the rendering information to.
      */
     def private void addCommentNodeRendering(KNode node) {
-        // Create the rendering
-        val rendering = createCommentNodeRendering(node)
-        node.data += rendering
+        // Create the rendering for the node and its label (which it must have)
+        val nodeRendering = createCommentNodeRendering(node)
+        node.data += nodeRendering
+        
+        val label = node.labels.get(0);
+        val labelRendering = createCommentLabelRendering(node, label);
+        label.data += labelRendering;
+        
+        // The node must have its size calculated for its label
+        node.setProperty(CoreOptions.NODE_LABELS_PLACEMENT, NodeLabelPlacement.insideCenter);
+        node.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.NODE_LABELS));
+        
+        // Support focus and context
+        if (options.comments == LabelDisplayStyle.SELECTED) {
+            nodeRendering.addSingleClickAction(FocusAndContextAction.ID)
+            labelRendering.addSingleClickAction(FocusAndContextAction.ID)
+        }
         
         // The rendering of all the comments edges is also special
         // (note: the current implementation of the comment attachment heuristic only runs after the
@@ -339,7 +353,7 @@ class Ptolemy2KGraphVisualization {
         
         // Create the rendering
         val rendering = createParameterNodeRendering(node)
-        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+        if (options.portLabels == LabelDisplayStyle.SELECTED) {
             rendering.addSingleClickAction(FocusAndContextAction.ID)
         }
         node.data += rendering
@@ -360,7 +374,7 @@ class Ptolemy2KGraphVisualization {
         val className = Strings.nullToEmpty(node.getAnnotationValue(ANNOTATION_PTOLEMY_CLASS))
         val value = node.getAnnotationValue(TransformationConstants.VALUE_DISPLAY_MAP.get(className))
         val rendering = createValueDisplayingNodeRendering(node, value ?: "")
-        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+        if (options.portLabels == LabelDisplayStyle.SELECTED) {
             rendering.addSingleClickAction(FocusAndContextAction.ID)
         }
         node.data += rendering
@@ -380,7 +394,7 @@ class Ptolemy2KGraphVisualization {
         node.setProperty(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
         
         val rendering = createModalModelPortRendering(node)
-        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+        if (options.portLabels == LabelDisplayStyle.SELECTED) {
             rendering.addSingleClickAction(FocusAndContextAction.ID)
         }
         node.data += rendering
@@ -408,7 +422,9 @@ class Ptolemy2KGraphVisualization {
         
         val selRendering = DiagramSyntheses.addRenderingWithStandardSelectionWrapper(node, rendering);
         
-        if (options.portLabels == PortLabelDisplayStyle.SELECTED_NODE) {
+        // We need to enable focus and context if either port labels or comments are set to SELECTED (comments attached
+        // to a node need to be focussed if that node is selected)
+        if (options.portLabels == LabelDisplayStyle.SELECTED || options.comments == LabelDisplayStyle.SELECTED) {
             selRendering.addSingleClickAction(FocusAndContextAction.ID)
         }
         
@@ -504,7 +520,7 @@ class Ptolemy2KGraphVisualization {
         }
         
         // Remove the port's label if necessary
-        if (options.portLabels == PortLabelDisplayStyle.NONE) {
+        if (options.portLabels == LabelDisplayStyle.NONE) {
             port.labels.clear()
         }
     }
