@@ -15,13 +15,13 @@ package de.cau.cs.kieler.grana.analyses;
 
 import java.util.LinkedList;
 
-import org.eclipse.elk.core.klayoutdata.KShapeLayout;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
-import org.eclipse.elk.graph.KEdge;
-import org.eclipse.elk.graph.KLabel;
-import org.eclipse.elk.graph.KNode;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkLabel;
+import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
+import de.cau.cs.kieler.grana.AnalysisOptions;
 import de.cau.cs.kieler.grana.IAnalysis;
 
 /**
@@ -40,7 +40,7 @@ public class EdgeLabelWidthAnalysis implements IAnalysis {
      * {@inheritDoc}
      */
     @Override
-    public Object doAnalysis(final KNode parentNode, final AnalysisContext context,
+    public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
             final IElkProgressMonitor progressMonitor) {
         
         progressMonitor.begin("Label analysis", 1);
@@ -60,32 +60,35 @@ public class EdgeLabelWidthAnalysis implements IAnalysis {
      *            context of analysis
      * @return results of the computation.
      */
-    private Object[] computeLabelSizes(final KNode parentNode, final AnalysisContext context) {
-        LinkedList<KNode> nodeQueue = new LinkedList<KNode>();
-        nodeQueue.addAll(parentNode.getChildren());
+    private Object[] computeLabelSizes(final ElkNode parentNode, final AnalysisContext context) {
+        LinkedList<ElkNode> nodeQueue = new LinkedList<>();
+        nodeQueue.add(parentNode);
+
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
 
         int labelCount = 0;
-        float minWidth = Float.MAX_VALUE;
-        float maxWidth = Float.MIN_VALUE;
-        float sumWidth = 0;
+        double minWidth = Double.MAX_VALUE;
+        double maxWidth = Double.MIN_VALUE;
+        double sumWidth = 0;
         
         while (nodeQueue.size() > 0) {
             // pop first element
-            KNode node = nodeQueue.pop();
+            ElkNode node = nodeQueue.pop();
 
-            // Retrieve width of all edge labels of outgoing edges
-            for (KEdge edge : node.getOutgoingEdges()) {
-                for (KLabel label : edge.getLabels()) {
+            // Retrieve width of all contained edges
+            for (ElkEdge edge : node.getContainedEdges()) {
+                for (ElkLabel label : edge.getLabels()) {
                     labelCount++;
                     
-                    KShapeLayout labelLayout = label.getData(KShapeLayout.class);
-                    minWidth = Math.min(minWidth, labelLayout.getWidth());
-                    maxWidth = Math.max(maxWidth, labelLayout.getWidth());
-                    sumWidth += labelLayout.getWidth();
+                    minWidth = Math.min(minWidth, label.getWidth());
+                    maxWidth = Math.max(maxWidth, label.getWidth());
+                    sumWidth += label.getWidth();
                 }
-
             }
-
+            
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
         }
         
         if (labelCount != 0) {
