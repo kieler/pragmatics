@@ -49,8 +49,8 @@ public class AspectRatioAnalysis implements IAnalysis {
         
         // Compute the aspect ratio
         Object[] areaResults = (Object[]) o;
-        double width = (Float) areaResults[AreaAnalysis.INDEX_WIDTH];
-        double height = (Float) areaResults[AreaAnalysis.INDEX_HEIGHT];
+        double width = (Double) areaResults[AreaAnalysis.INDEX_WIDTH];
+        double height = (Double) areaResults[AreaAnalysis.INDEX_HEIGHT];
         
         double aspect = width / height;
         
