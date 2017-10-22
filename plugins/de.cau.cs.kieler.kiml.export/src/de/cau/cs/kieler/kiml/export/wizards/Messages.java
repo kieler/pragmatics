@@ -40,11 +40,15 @@ public class Messages extends NLS {
     public static String ExportGraphWizard_title;
     public static String ExportDialog_file_format_caption;
     
+    public static String exportDialog_filterEdgelessGraphs_caption;
+    public static String exportDialog_filterSelfLoops_caption;
+    public static String exportDialog_optionsGroup_caption;
     public static String WorkspaceResourcesPage_containerSelectionDialog_message;
     public static String WorkspaceResourcesPage_errors_NoValidDestinationSelected;
     
     public static String ExportGraphWizard_question_createTargetFolder;
     public static String ExportGraphWizard_title_createTargetFolder;
+    public static String ExportDialog_separateHierarchyLevels_caption;
     
     public static String FileSystemResourcesPage_containerSelectionDialog_message;
     public static String FileSystemResourcesPage_containerSelectionDialog_title;

@@ -28,10 +28,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
 import de.cau.cs.kieler.formats.GraphFormatData;
@@ -51,20 +55,22 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      * The wizard page name.
      */
     private static final String PAGE_NAME = "exportDiagramsWorkspaceSourcesPage"; //$NON-NLS-1$
-    /** the preference key for the selected exporter. */
-    private static final String PREFERENCE_EXPORTER = ".exporter"; //$NON-NLS-1$
-    /**
-     * The number of columns used to lay out the default target groups.
-     */
-    private static final int DEFAULT_TARGET_GROUP_COLUMNS = 3;
-    /**
-     * The top margin of the target group combo box.
-     */
-    private static final int DEFAULT_TARGET_GROUP_MARGIN_TOP = 20;
 
-    /** the file format combo. */
+    private static final String PREFERENCE_EXPORTER = ".exporter"; //$NON-NLS-1$
+    private static final String PREFERENCE_SEPARATE_HIERARCHY_LEVELS =
+            ".separate_hierarchy_levels"; //$NON-NLS-1$
+    private static final String PREFERENCE_FILTER_EDGELESS_LEVELS =
+            ".filterEdgelessLevels"; //$NON-NLS-1$
+    private static final String PREFERENCE_FILTER_SELF_LOOPS =
+            ".filterSelfLoops"; //$NON-NLS-1$
+
+    // UI widgets
     private Combo fileFormatCombo;
-    /** the array of available graph format data. */
+    private Button separateHierarchyLevelsCheckbox;
+    private Button filterEdgelessLevelsCheckbox;
+    private Button filterSelfLoopsCheckbox;
+    
+    /** available graph format data. */
     private GraphFormatData[] graphFormatData;
 
     /**
@@ -79,12 +85,19 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         this.setDescription(Messages.ExportGraphWizard_Exporting_workspace_task);
         this.setMessage(Messages.ExportGraphWizard_Exporting_workspace_task);
     }
+    
+    // UI Constants
+    private static final int DEFAULT_TARGET_GROUP_COLUMNS = 3;
+    private static final int DEFAULT_TARGET_GROUP_MARGIN_TOP = 20;
+    private static final int DEFAULT_HORIZONTAL_INDENT = 20;
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected Composite createOptionsGroup(final Composite parent) {
+        GridData layoutData;
+        
         // Composite
         Composite targetGroup = new Composite(parent, SWT.NULL);
         GridLayout gl = new GridLayout(DEFAULT_TARGET_GROUP_COLUMNS, false);
@@ -117,6 +130,48 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         } else {
             fileFormatCombo.setEnabled(false);
         }
+        
+        // Options group
+        Group optionsGroup = new Group(parent, SWT.NULL);
+        optionsGroup.setText(Messages.exportDialog_optionsGroup_caption);
+        optionsGroup.setLayout(new GridLayout());
+        
+        layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        layoutData.horizontalSpan = 2;
+        optionsGroup.setLayoutData(layoutData);
+        
+        // Hierarchy export
+        separateHierarchyLevelsCheckbox = new Button(optionsGroup, SWT.CHECK);
+        separateHierarchyLevelsCheckbox.setText(
+                Messages.ExportDialog_separateHierarchyLevels_caption);
+        separateHierarchyLevelsCheckbox.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(final SelectionEvent e) {
+                updateEnablement();
+            }
+
+            @Override
+            public void widgetDefaultSelected(final SelectionEvent e) {
+                updateEnablement();
+            }
+            
+        });
+        
+        // Filtering options
+        filterEdgelessLevelsCheckbox = new Button(optionsGroup, SWT.CHECK);
+        filterEdgelessLevelsCheckbox.setText(Messages.exportDialog_filterEdgelessGraphs_caption);
+        
+        layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        layoutData.horizontalIndent = DEFAULT_HORIZONTAL_INDENT;
+        filterEdgelessLevelsCheckbox.setLayoutData(layoutData);
+        
+        filterSelfLoopsCheckbox = new Button(optionsGroup, SWT.CHECK);
+        filterSelfLoopsCheckbox.setText(Messages.exportDialog_filterSelfLoops_caption);
+        
+        layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        layoutData.horizontalIndent = DEFAULT_HORIZONTAL_INDENT;
+        filterSelfLoopsCheckbox.setLayoutData(layoutData);
 
         return targetGroup;
     }
@@ -156,8 +211,37 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      * @return target directory
      */
     public IPath getTargetWorkspaceDirectory() {
-
         return getTargetContainerPath();
+    }
+    
+    /**
+     * @return whether or not each level of hierarchy in the processed graphs should be exported in
+     * a separate file.
+     */
+    public boolean getSeparateHierarchyLevels() {
+        return separateHierarchyLevelsCheckbox.getSelection();
+    }
+    
+    /**
+     * @return whether or not graphs without edges should be included in the export.
+     */
+    public boolean getFilterEdgelessLevels() {
+        return filterEdgelessLevelsCheckbox.getSelection();
+    }
+    
+    /**
+     * @return whether or not self loops should be removed from graphs.
+     */
+    public boolean getFilterSelfLoops() {
+        return filterSelfLoopsCheckbox.getSelection();
+    }
+    
+    /**
+     * Enables or disables widgets based on the selection in others.
+     */
+    private void updateEnablement() {
+        filterEdgelessLevelsCheckbox.setEnabled(separateHierarchyLevelsCheckbox.getSelection());
+        filterSelfLoopsCheckbox.setEnabled(separateHierarchyLevelsCheckbox.getSelection());
     }
 
     /**
@@ -194,7 +278,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         // get the selected target path
         IPath targetPath = getTargetContainerPath();
         // get the project name
-        String parentnode = (!targetPath.isEmpty() ? targetPath.segment(0) : "");
+        String parentnode = (!targetPath.isEmpty() ? targetPath.segment(0) : ""); //$NON-NLS-1$
         // compare all projects with the selected project name and return true when
         // the project already exists
         if (workspaceRoot.getProjects().length > 0) {
@@ -234,6 +318,12 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
             return;
         }
         dialogSettings.put(getName() + PREFERENCE_EXPORTER, getTargetFormat().getId());
+        dialogSettings.put(getName() + PREFERENCE_SEPARATE_HIERARCHY_LEVELS,
+                separateHierarchyLevelsCheckbox.getSelection());
+        dialogSettings.put(getName() + PREFERENCE_FILTER_EDGELESS_LEVELS,
+                filterEdgelessLevelsCheckbox.getSelection());
+        dialogSettings.put(getName() + PREFERENCE_FILTER_SELF_LOOPS,
+                        filterSelfLoopsCheckbox.getSelection());
     }
 
     /**
@@ -256,6 +346,15 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
                 fileFormatCombo.select(i);
             }
         }
+        
+        separateHierarchyLevelsCheckbox.setSelection(dialogSettings.getBoolean(
+                getName() + PREFERENCE_SEPARATE_HIERARCHY_LEVELS));
+        filterEdgelessLevelsCheckbox.setSelection(dialogSettings.getBoolean(
+                getName() + PREFERENCE_FILTER_EDGELESS_LEVELS));
+        filterSelfLoopsCheckbox.setSelection(dialogSettings.getBoolean(
+                getName() + PREFERENCE_FILTER_SELF_LOOPS));
+        
+        updateEnablement();
     }
     
 }

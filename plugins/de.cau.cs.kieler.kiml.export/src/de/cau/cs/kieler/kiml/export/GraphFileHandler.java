@@ -14,12 +14,17 @@
 package de.cau.cs.kieler.kiml.export;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.elk.core.util.WrappedException;
+import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.elk.graph.util.GraphIdentifierGenerator;
 
 import de.cau.cs.kieler.formats.GraphFormatData;
@@ -39,32 +44,6 @@ public class GraphFileHandler {
 
     /** textual graph file extension. */
     private static final String EXT_ELK_TEXT = "elkt";
-    
-    /**
-     * Perform the actual graph export.
-     * 
-     * @param elkgraph a graph
-     * @param transHandler the transformation handler
-     * @return the exported graph
-     */
-    private <T> String performExport(final ElkNode elkgraph,
-            final IGraphFormatHandler<T> transHandler) {
-        
-        String extension = targetFormat.getExtensions()[0];
-        if (extension.equals(EXT_ELK_TEXT)) {
-            // we want to convert to the textual format, so write missing identifiers into the graph
-            GraphIdentifierGenerator.forGraph(elkgraph)
-                .assertExists()
-                .assertUnique()
-                .execute();
-        }
-        
-        TransformationData<ElkNode, T> transData = new TransformationData<ElkNode, T>();
-        transData.setSourceGraph(elkgraph);
-        IGraphTransformer<ElkNode, T> transformer = transHandler.getExporter();
-        transformer.transform(transData);
-        return transHandler.serialize(transData);
-    }
     
     /** The source file to export.  */
     private IFile sourceFile;
@@ -89,6 +68,17 @@ public class GraphFileHandler {
         this.targetFormat = targetFormat;
         this.targetDirectory = targetDirectory;
     }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // Getters
+    
+    /**
+     * @return the source file.
+     */
+    public IFile getSourceFile() {
+        return sourceFile;
+    }
 
     /**
      * @return the targetFormat
@@ -103,21 +93,10 @@ public class GraphFileHandler {
     public IPath getWorkspaceTargetDirectory() {
         return targetDirectory;
     }
-
-    /**
-     * @return the Workspace targetIPath
-     */
-    public IPath getWorkspaceTarget() {
-        String sourceFileName = sourceFile.getFullPath().toFile().getName();
-        String extension = targetFormat.getExtensions()[0];
-        // get the last dot position
-        int dotPos = sourceFileName.lastIndexOf(".");
-        if (dotPos < 0) {
-            dotPos = sourceFileName.length();
-        }
-        // replace the file extension with the new one
-        return targetDirectory.append(sourceFileName.substring(0, dotPos) + "." + extension);
-    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // Graph Import and Export
 
     /**
      * Retrieve a graph from the selected file.
@@ -136,15 +115,166 @@ public class GraphFileHandler {
             throw new WrappedException(e);
         }
     }
+    
+    /**
+     * Perform the actual graph export.
+     * 
+     * @param elkgraph a graph
+     * @param transHandler the transformation handler
+     * @return the exported graph
+     */
+    private <T> String performExport(final ElkNode elkgraph,
+            final IGraphFormatHandler<T> transHandler) {
+        
+        TransformationData<ElkNode, T> transData = new TransformationData<ElkNode, T>();
+        transData.setSourceGraph(elkgraph);
+        IGraphTransformer<ElkNode, T> transformer = transHandler.getExporter();
+        transformer.transform(transData);
+        return transHandler.serialize(transData);
+    }
+    
+    /**
+     * Ensures the graph has unique identifiers so that it can be properly serialized into an ELKT
+     * file, if that is in fact our target format.
+     */
+    private void ensureElktCompatibility(final ElkNode graph) {
+        String extension = targetFormat.getExtensions()[0];
+        if (extension.equals(EXT_ELK_TEXT)) {
+            // we want to convert to the textual format, so write missing identifiers into the graph
+            GraphIdentifierGenerator.forGraph(graph)
+                .assertExists()
+                .assertUnique()
+                .execute();
+        }
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // Main Interface Methods
 
     /**
      * Call the performExport() method and return the string value from the graph.
      * 
-     * @return the string value from the converted graph
+     * @return the string that represents the exported graph.
      */
     public String graphToString() {
         ElkNode graph = retrieveGraph();
+        ensureElktCompatibility(graph);
         return performExport(graph, targetFormat.getHandler());
+    }
+    
+    /**
+     * Call the {@link #performExport(ElkNode, IGraphFormatHandler)} method on each hierarchy level
+     * of the graph and return the exported String for each to be saved in separate files.
+     * 
+     * @param filterLevelsWithoutEdges
+     *            if {@code true}, hierarchy levels that only have nodes without any edges
+     *            connecting them are filtered out.
+     * @param filterSelfLoops
+     *            if {@code true}, self loops are removed from the graphs.
+     * @return the strings that represent the exported hierarchy levels.
+     */
+    public String[] hierarchyGraphsToStrings(final boolean filterLevelsWithoutEdges,
+            final boolean filterSelfLoops) {
+        
+        ElkNode graph = retrieveGraph();
+        ensureElktCompatibility(graph);
+        
+        List<String> graphStrings = new ArrayList<>();
+        for (ElkNode level : toHierarchyGraphs(graph)) {
+            if (level.getContainedEdges().isEmpty() && filterLevelsWithoutEdges) {
+                continue;
+            }
+            
+            if (filterSelfLoops) {
+                removeSelfLoops(level);
+            }
+            
+            graphStrings.add(performExport(level, targetFormat.getHandler()));
+        }
+        
+        return graphStrings.toArray(new String[graphStrings.size()]);
+    }
+    
+    
+    //////////////////////////////////////////////////////////////////////////////////////////////
+    // Graph Flattening
+    
+    /**
+     * Splits the given graph into its separate hierarchy levels. Removes any edges that cross
+     * hierarchy levels.
+     */
+    private List<ElkNode> toHierarchyGraphs(final ElkNode graph) {
+        // The current node is a hierarchical node. Copy it and move its children to the copy
+        ElkNode graphCopy = copyGraph(graph);
+        
+        List<ElkNode> result = new ArrayList<>();
+        result.add(graphCopy);
+        
+        // Recurse into children that are compound nodes as well
+        for (ElkNode child : graphCopy.getChildren()) {
+            if (child.isHierarchical()) {
+                result.addAll(toHierarchyGraphs(child));
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Makes a copy of the given graph node. Copies properties and moves child nodes and contained
+     * edges to the copy (the latter only if the edges are not hierarchical).
+     */
+    private ElkNode copyGraph(final ElkNode graph) {
+        ElkNode copy = ElkGraphFactory.eINSTANCE.createElkNode();
+        copy.copyProperties(graph);
+        
+        // Move children over to the copy
+        ElkNode[] children = graph.getChildren().toArray(new ElkNode[0]);
+        for (ElkNode child : children) {
+            child.setParent(copy);
+        }
+        
+        // Move contained edges over as well, but kill them if they are hierarchical
+        ElkEdge[] edges = graph.getContainedEdges().toArray(new ElkEdge[0]);
+        for (ElkEdge edge : edges) {
+            if (edge.isHyperedge()) {
+                killEdge(edge);
+            } else {
+                // Check which graph the source and target are contained in
+                ElkNode srcGraph = ElkGraphUtil.containingGraph(edge.getSources().get(0));
+                ElkNode tgtGraph = ElkGraphUtil.containingGraph(edge.getTargets().get(0));
+                
+                if (srcGraph == tgtGraph && srcGraph == copy) {
+                    edge.setContainingNode(copy);
+                } else {
+                    killEdge(edge);
+                }
+            }
+        }
+        
+        return copy;
+    }
+    
+    /**
+     * Removes the given edge from the graph.
+     */
+    private void killEdge(final ElkEdge edge) {
+        edge.setContainingNode(null);
+        edge.getSources().clear();
+        edge.getTargets().clear();
+    }
+    
+    /**
+     * Removes self loops from the given graph.
+     */
+    private void removeSelfLoops(final ElkNode graph) {
+        ElkEdge[] edges = graph.getContainedEdges().toArray(new ElkEdge[0]);
+        for (ElkEdge edge : edges) {
+            if (edge.isSelfloop()) {
+                killEdge(edge);
+            }
+        }
     }
 
 }
