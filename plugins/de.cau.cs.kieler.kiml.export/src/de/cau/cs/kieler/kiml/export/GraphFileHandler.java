@@ -170,6 +170,8 @@ public class GraphFileHandler {
      * @param filterLevelsWithoutEdges
      *            if {@code true}, hierarchy levels that only have nodes without any edges
      *            connecting them are filtered out.
+     * @param filterLevelsWithoutEdgeLabels
+     *            if {@code true}, hierarchy levels that don't have edge labels are filtered out.
      * @param filterSelfLoops
      *            if {@code true}, self loops are removed from the graphs.
      * @param minNodeCount
@@ -177,7 +179,8 @@ public class GraphFileHandler {
      * @return the strings that represent the exported hierarchy levels.
      */
     public String[] hierarchyGraphsToStrings(final boolean filterLevelsWithoutEdges,
-            final boolean filterSelfLoops, final int minNodeCount) {
+            final boolean filterLevelsWithoutEdgeLabels, final boolean filterSelfLoops,
+            final int minNodeCount) {
         
         ElkNode graph = retrieveGraph();
         ensureElktCompatibility(graph);
@@ -197,10 +200,19 @@ public class GraphFileHandler {
                 continue;
             }
             
+            if (filterLevelsWithoutEdgeLabels && !hasEdgeLabels(level)) {
+                continue;
+            }
+            
             graphStrings.add(performExport(level, targetFormat.getHandler()));
         }
         
         return graphStrings.toArray(new String[graphStrings.size()]);
+    }
+    
+    private boolean hasEdgeLabels(final ElkNode graph) {
+        return graph.getContainedEdges().stream()
+                .anyMatch(edge -> !edge.getLabels().isEmpty());
     }
     
     

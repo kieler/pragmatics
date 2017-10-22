@@ -62,6 +62,8 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
             ".separate_hierarchy_levels"; //$NON-NLS-1$
     private static final String PREFERENCE_FILTER_EDGELESS_LEVELS =
             ".filterEdgelessLevels"; //$NON-NLS-1$
+    private static final String PREFERENCE_FILTER_EDGE_LABELLESS_LEVELS =
+            ".filterEdgeLabellessLevels"; //$NON-NLS-1$
     private static final String PREFERENCE_FILTER_SELF_LOOPS =
             ".filterSelfLoops"; //$NON-NLS-1$
     private static final String PREFERENCE_FILTER_NODE_COUNT =
@@ -71,6 +73,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
     private Combo fileFormatCombo;
     private Button separateHierarchyLevelsCheckbox;
     private Button filterEdgelessLevelsCheckbox;
+    private Button filterEdgeLabellessLevelsCheckbox;
     private Button filterSelfLoopsCheckbox;
     private Spinner minNodeCountSpinner;
     
@@ -170,6 +173,14 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         layoutData.horizontalIndent = DEFAULT_HORIZONTAL_INDENT;
         filterEdgelessLevelsCheckbox.setLayoutData(layoutData);
         
+        filterEdgeLabellessLevelsCheckbox = new Button(optionsGroup, SWT.CHECK);
+        filterEdgeLabellessLevelsCheckbox.setText(
+                Messages.ExportDialog_filterEdgeLabellessLevels_caption);
+        
+        layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        layoutData.horizontalIndent = DEFAULT_HORIZONTAL_INDENT;
+        filterEdgeLabellessLevelsCheckbox.setLayoutData(layoutData);
+        
         filterSelfLoopsCheckbox = new Button(optionsGroup, SWT.CHECK);
         filterSelfLoopsCheckbox.setText(Messages.exportDialog_filterSelfLoops_caption);
         
@@ -190,7 +201,7 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         minNodeCountContainer.setLayoutData(layoutData);
         
         Label minNodeCountLabel = new Label(minNodeCountContainer, SWT.NULL);
-        minNodeCountLabel.setText("Minimum node count:");
+        minNodeCountLabel.setText(Messages.ExportDialog_minNodeCount_caption);
         
         // CHECKSTYLEOFF MagicNumber
         minNodeCountSpinner = new Spinner(minNodeCountContainer, SWT.BORDER);
@@ -257,6 +268,13 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
     }
     
     /**
+     * @return whether or not graphs without edge labels should be included in the export.
+     */
+    public boolean getFilterEdgeLabellessLevels() {
+        return filterEdgeLabellessLevelsCheckbox.getSelection();
+    }
+    
+    /**
      * @return whether or not self loops should be removed from graphs.
      */
     public boolean getFilterSelfLoops() {
@@ -275,6 +293,8 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
      */
     private void updateEnablement() {
         filterEdgelessLevelsCheckbox.setEnabled(separateHierarchyLevelsCheckbox.getSelection());
+        filterEdgeLabellessLevelsCheckbox.setEnabled(
+                separateHierarchyLevelsCheckbox.getSelection());
         filterSelfLoopsCheckbox.setEnabled(separateHierarchyLevelsCheckbox.getSelection());
         minNodeCountSpinner.setEnabled(separateHierarchyLevelsCheckbox.getSelection());
     }
@@ -357,6 +377,8 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
                 separateHierarchyLevelsCheckbox.getSelection());
         dialogSettings.put(getName() + PREFERENCE_FILTER_EDGELESS_LEVELS,
                 filterEdgelessLevelsCheckbox.getSelection());
+        dialogSettings.put(getName() + PREFERENCE_FILTER_EDGE_LABELLESS_LEVELS,
+                filterEdgeLabellessLevelsCheckbox.getSelection());
         dialogSettings.put(getName() + PREFERENCE_FILTER_SELF_LOOPS,
                 filterSelfLoopsCheckbox.getSelection());
         dialogSettings.put(getName() + PREFERENCE_FILTER_NODE_COUNT,
@@ -388,6 +410,8 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
                 getName() + PREFERENCE_SEPARATE_HIERARCHY_LEVELS));
         filterEdgelessLevelsCheckbox.setSelection(dialogSettings.getBoolean(
                 getName() + PREFERENCE_FILTER_EDGELESS_LEVELS));
+        filterEdgeLabellessLevelsCheckbox.setSelection(dialogSettings.getBoolean(
+                getName() + PREFERENCE_FILTER_EDGE_LABELLESS_LEVELS));
         filterSelfLoopsCheckbox.setSelection(dialogSettings.getBoolean(
                 getName() + PREFERENCE_FILTER_SELF_LOOPS));
         try {

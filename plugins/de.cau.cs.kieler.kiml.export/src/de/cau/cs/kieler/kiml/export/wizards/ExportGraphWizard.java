@@ -123,6 +123,8 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
         final IPath targetDirectory = workspaceSourcesPage.getTargetWorkspaceDirectory();
         final boolean exportHierachyLevels = workspaceSourcesPage.getSeparateHierarchyLevels();
         final boolean filterEdgelessLevels = workspaceSourcesPage.getFilterEdgelessLevels();
+        final boolean filterEdgeLabellessLevels =
+                workspaceSourcesPage.getFilterEdgeLabellessLevels();
         final boolean filterSelfLoops = workspaceSourcesPage.getFilterSelfLoops();
         final int minNodeCount = workspaceSourcesPage.getMinNodeCount();
         
@@ -145,7 +147,8 @@ public class ExportGraphWizard extends Wizard implements IExportWizard {
                         // export the graph as a whole or each hierarchy level separately?
                         if (exportHierachyLevels) {
                             String[] graphStrings = graphFileHandler.hierarchyGraphsToStrings(
-                                    filterEdgelessLevels, filterSelfLoops, minNodeCount);
+                                    filterEdgelessLevels, filterEdgeLabellessLevels,
+                                    filterSelfLoops, minNodeCount);
                             exportGraphs(graphFileHandler, graphStrings);
                         } else {
                             exportGraph(graphFileHandler, graphFileHandler.graphToString());
