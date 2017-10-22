@@ -39,6 +39,8 @@ public class Messages extends NLS {
     public static String ExportGraphWizard_Exporting_workspace_task;
     public static String ExportGraphWizard_title;
     public static String ExportDialog_file_format_caption;
+    public static String ExportDialog_filterEdgeLabellessLevels_caption;
+    public static String ExportDialog_minNodeCount_caption;
     
     public static String exportDialog_filterEdgelessGraphs_caption;
     public static String exportDialog_filterSelfLoops_caption;
