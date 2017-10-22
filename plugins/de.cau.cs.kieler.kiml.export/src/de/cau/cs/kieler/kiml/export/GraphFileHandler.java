@@ -172,22 +172,29 @@ public class GraphFileHandler {
      *            connecting them are filtered out.
      * @param filterSelfLoops
      *            if {@code true}, self loops are removed from the graphs.
+     * @param minNodeCount
+     *            the minimum number of nodes a graph must have for it to be exported.
      * @return the strings that represent the exported hierarchy levels.
      */
     public String[] hierarchyGraphsToStrings(final boolean filterLevelsWithoutEdges,
-            final boolean filterSelfLoops) {
+            final boolean filterSelfLoops, final int minNodeCount) {
         
         ElkNode graph = retrieveGraph();
         ensureElktCompatibility(graph);
         
         List<String> graphStrings = new ArrayList<>();
         for (ElkNode level : toHierarchyGraphs(graph)) {
-            if (level.getContainedEdges().isEmpty() && filterLevelsWithoutEdges) {
+            // Check the filter conditions
+            if (level.getChildren().size() < minNodeCount) {
                 continue;
             }
             
             if (filterSelfLoops) {
                 removeSelfLoops(level);
+            }
+            
+            if (level.getContainedEdges().isEmpty() && filterLevelsWithoutEdges) {
+                continue;
             }
             
             graphStrings.add(performExport(level, targetFormat.getHandler()));

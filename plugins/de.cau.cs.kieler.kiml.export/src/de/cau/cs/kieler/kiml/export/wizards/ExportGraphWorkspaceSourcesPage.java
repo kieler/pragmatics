@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Spinner;
 
 import de.cau.cs.kieler.formats.GraphFormatData;
 import de.cau.cs.kieler.formats.GraphFormatsService;
@@ -63,12 +64,15 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
             ".filterEdgelessLevels"; //$NON-NLS-1$
     private static final String PREFERENCE_FILTER_SELF_LOOPS =
             ".filterSelfLoops"; //$NON-NLS-1$
+    private static final String PREFERENCE_FILTER_NODE_COUNT =
+            ".minNodeCount"; //$NON-NLS-1$
 
     // UI widgets
     private Combo fileFormatCombo;
     private Button separateHierarchyLevelsCheckbox;
     private Button filterEdgelessLevelsCheckbox;
     private Button filterSelfLoopsCheckbox;
+    private Spinner minNodeCountSpinner;
     
     /** available graph format data. */
     private GraphFormatData[] graphFormatData;
@@ -172,7 +176,30 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
         layoutData.horizontalIndent = DEFAULT_HORIZONTAL_INDENT;
         filterSelfLoopsCheckbox.setLayoutData(layoutData);
-
+        
+        // Min node count spinner
+        Composite minNodeCountContainer = new Composite(optionsGroup, SWT.NULL);
+        
+        gl = new GridLayout(2, false);
+        gl.marginHeight = 0;
+        gl.marginWidth = 0;
+        minNodeCountContainer.setLayout(gl);
+        
+        layoutData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+        layoutData.horizontalIndent = DEFAULT_HORIZONTAL_INDENT;
+        minNodeCountContainer.setLayoutData(layoutData);
+        
+        Label minNodeCountLabel = new Label(minNodeCountContainer, SWT.NULL);
+        minNodeCountLabel.setText("Minimum node count:");
+        
+        // CHECKSTYLEOFF MagicNumber
+        minNodeCountSpinner = new Spinner(minNodeCountContainer, SWT.BORDER);
+        minNodeCountSpinner.setMinimum(1);
+        minNodeCountSpinner.setMaximum(10_000);
+        minNodeCountSpinner.setIncrement(1);
+        minNodeCountSpinner.setPageIncrement(10);
+        // CHECKSTYLEON MagicNumber
+        
         return targetGroup;
     }
 
@@ -237,11 +264,19 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
     }
     
     /**
+     * @return minimum node count for exported graphs.
+     */
+    public int getMinNodeCount() {
+        return minNodeCountSpinner.getSelection();
+    }
+    
+    /**
      * Enables or disables widgets based on the selection in others.
      */
     private void updateEnablement() {
         filterEdgelessLevelsCheckbox.setEnabled(separateHierarchyLevelsCheckbox.getSelection());
         filterSelfLoopsCheckbox.setEnabled(separateHierarchyLevelsCheckbox.getSelection());
+        minNodeCountSpinner.setEnabled(separateHierarchyLevelsCheckbox.getSelection());
     }
 
     /**
@@ -323,7 +358,9 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
         dialogSettings.put(getName() + PREFERENCE_FILTER_EDGELESS_LEVELS,
                 filterEdgelessLevelsCheckbox.getSelection());
         dialogSettings.put(getName() + PREFERENCE_FILTER_SELF_LOOPS,
-                        filterSelfLoopsCheckbox.getSelection());
+                filterSelfLoopsCheckbox.getSelection());
+        dialogSettings.put(getName() + PREFERENCE_FILTER_NODE_COUNT,
+                minNodeCountSpinner.getSelection());
     }
 
     /**
@@ -353,6 +390,12 @@ public class ExportGraphWorkspaceSourcesPage extends WorkspaceResourcesPage {
                 getName() + PREFERENCE_FILTER_EDGELESS_LEVELS));
         filterSelfLoopsCheckbox.setSelection(dialogSettings.getBoolean(
                 getName() + PREFERENCE_FILTER_SELF_LOOPS));
+        try {
+            minNodeCountSpinner.setSelection(dialogSettings.getInt(
+                    getName() + PREFERENCE_FILTER_NODE_COUNT));
+        } catch (NumberFormatException e) {
+            minNodeCountSpinner.setSelection(1);
+        }
         
         updateEnablement();
     }
