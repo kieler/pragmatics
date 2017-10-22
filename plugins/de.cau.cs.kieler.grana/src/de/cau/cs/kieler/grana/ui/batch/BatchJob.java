@@ -130,7 +130,7 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
             String imgFileName = path.lastSegment();
             imgFileName = imgFileName.substring(0, imgFileName.lastIndexOf("."));
             if (batch != null && !Strings.isNullOrEmpty(batch.getName())) {
-                imgFileName = batch.getName() + "_" + imgFileName;
+                imgFileName = imgFileName + "_" + batch.getName();
             }
             imgFileName += ".png";
             
