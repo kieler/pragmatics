@@ -53,6 +53,13 @@ public abstract class Batch {
     public Batch(final String name) {
         this.name = name;
     }
+    
+    /**
+     * @return the batch job's name.
+     */
+    public String getName() {
+        return name;
+    }
 
     /**
      * @param parallel the parallel to set

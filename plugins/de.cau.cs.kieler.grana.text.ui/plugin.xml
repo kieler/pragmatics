@@ -411,7 +411,7 @@
                   <command
                         commandId="de.cau.cs.kieler.grana.text.grana"
                         icon="icons/menu16/analyzediagram.gif"
-                        label="Execute Analysis Batch ..."
+                        label="Execute Analysis Batch"
                         style="push"
                         tooltip="Executes a textually specified GrAna analysis">
             <visibleWhen
