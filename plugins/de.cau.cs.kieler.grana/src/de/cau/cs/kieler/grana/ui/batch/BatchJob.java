@@ -13,12 +13,20 @@
  */
 package de.cau.cs.kieler.grana.ui.batch;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
+import org.eclipse.elk.core.ui.rendering.GraphRenderer;
+import org.eclipse.elk.core.ui.rendering.GraphRenderingConfigurator;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.Pair;
@@ -28,7 +36,17 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil.Copier;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.progress.UIJob;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
 
@@ -102,6 +120,69 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
         
         monitor.begin("Executing analysis batch job: " + parameter, WORK);
         ElkNode graph = graphProvider.getElkGraph(parameter, monitor.subTask(WORK_KGRAPH));
+        
+        // Uncomment the following lines to have images of the processed graphs stored in some
+        // random folder
+        if (parameter instanceof Path) {
+            Path path = (Path) parameter;
+            
+            // Cobble together the new file name
+            String imgFileName = path.lastSegment();
+            imgFileName = imgFileName.substring(0, imgFileName.lastIndexOf("."));
+            if (batch != null && Strings.isNullOrEmpty(batch.getName())) {
+                imgFileName = batch.getName() + "_" + imgFileName;
+            }
+            imgFileName += ".png";
+            
+            // Make sure a grana folder exists
+            String imgPath = ElkUtil.debugFolderPath("grana");
+            new File(imgPath).mkdirs();
+            
+            String fullImageFileName = imgPath + imgFileName;
+            
+            UIJob saveJob = new UIJob("Export PNG Image") {
+                @Override
+                public IStatus runInUIThread(final IProgressMonitor monitor) {
+                    try {
+                        monitor.beginTask("Export PNG Image", 2);
+
+                        Display display = Display.getCurrent();
+                        
+                        // paint the layout graph
+                        Rectangle area = new Rectangle(0, 0, (int) graph.getWidth() + 1,
+                                (int) graph.getHeight() + 1);
+                        Image image = new Image(display, area.width, area.height);
+                        
+                        GraphRenderer renderer = new GraphRenderer(
+                                new GraphRenderingConfigurator(display));
+                        renderer.markDirty(area);
+                        renderer.render(graph, new GC(image), area);
+                        
+                        monitor.worked(1);
+                        if (monitor.isCanceled()) {
+                            return new Status(
+                                    IStatus.INFO, "grana", 0, "Aborted", null);
+                        }
+
+                        // save the image into the selected file
+                        ImageLoader imageLoader = new ImageLoader();
+                        ImageData[] imageData = new ImageData[] {image.getImageData()};
+                        imageLoader.data = imageData;
+                        imageLoader.save(fullImageFileName, SWT.IMAGE_PNG);
+                        monitor.worked(1);
+
+                        return new Status(IStatus.INFO, "grana", 0, "OK", null);
+                    } catch (SWTException exception) {
+                        return new Status(IStatus.ERROR, "grana",
+                                exception.code, "Could not save the selected PNG file.", exception);
+                    } finally {
+                        monitor.done();
+                    }
+                }
+            };
+            
+            saveJob.run(new NullProgressMonitor());
+        }
 
         BatchJobResult batchJobResult = localExecute(graph, analyses, monitor);
         // only present if actual execution time is measured
