@@ -112,7 +112,7 @@ public class GraphFileHandler {
             }
             return graphs[0];
         } catch (IOException | CoreException e) {
-            throw new WrappedException(e);
+            throw new WrappedException("Error while loading " + sourceFile.getName(), e);
         }
     }
     
