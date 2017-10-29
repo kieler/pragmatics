@@ -25,6 +25,8 @@ import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
 import de.cau.cs.kieler.grana.AnalysisOptions;
@@ -37,6 +39,11 @@ import de.cau.cs.kieler.grana.IAnalysis;
  * layout direction is not horizontal. Note that we don't care about feedback edges or right-to-left
  * layouts; we handle everything the same.
  * 
+ * <p>The analysis only includes labels that have the {@link #INCLUDE_LABEL} property set to
+ * {@code true}. The property will have to be set by ELK Layered, which requires code to be added
+ * to the label dummy switcher (to determine the value the property should be set to) and to the
+ * export code (to apply the property on the original ELK graph label).</p>
+ * 
  * <p>This may not work for many more special cases, but was good enough for when I needed it...</p>
  * 
  * @author cds
@@ -45,6 +52,10 @@ public class EdgeLabelCenterednessAnalysis implements IAnalysis {
 
     /** Analysis ID. */
     public static final String ID = "de.cau.cs.kieler.grana.edgeLabelCenteredness";
+    
+    /** This property must be set to true for a label to be included in the analysis. */
+    public static final IProperty<Boolean> INCLUDE_LABEL =
+            new Property("edgelabelcenterednessanalysis.includelabel", Boolean.FALSE);
     
     @Override
     public Object doAnalysis(final ElkNode parentNode, final AnalysisContext context,
@@ -95,6 +106,10 @@ public class EdgeLabelCenterednessAnalysis implements IAnalysis {
                     continue;
                 }
                 
+                if (!centerLabel.getProperty(INCLUDE_LABEL)) {
+                    continue;
+                }
+                
                 // The edge's horizontal span
                 ElkEdgeSection edgeSection = edge.getSections().get(0);
                 double leftX = edgeSection.getStartX();
@@ -121,12 +136,11 @@ public class EdgeLabelCenterednessAnalysis implements IAnalysis {
         }
         
         progressMonitor.done();
-
-        if (centerLabelCount == 0) {
-            return null;
-        } else {
-            return ratioSum / centerLabelCount;
-        }
+        
+        Double result = centerLabelCount == 0 ? null : ratioSum / centerLabelCount;
+        return new Double[] {
+                (double) centerLabelCount,
+                result};
     }
     
     /**

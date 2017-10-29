@@ -696,6 +696,12 @@
             description="How centered center edge labels really are compared with the horizontal center of their edge."
             id="de.cau.cs.kieler.grana.edgeLabelCenteredness"
             name="Center Edge Label Centeredness">
+         <component
+                name="Label Count">
+         </component>
+         <component
+                name="Avg Centeredness">
+         </component>
       </analysis>
    </extension>
 
