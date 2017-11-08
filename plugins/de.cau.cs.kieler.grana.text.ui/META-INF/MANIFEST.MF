@@ -1,0 +1,35 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: KIELER Graph Analysis Text UI Plugin
+Bundle-Vendor: Kiel University
+Bundle-Version: 0.43.0.qualifier
+Bundle-SymbolicName: de.cau.cs.kieler.grana.text.ui; singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: de.cau.cs.kieler.grana.text,
+ de.cau.cs.kieler.grana.text.ide,
+ org.eclipse.xtext.ui,
+ org.eclipse.xtext.ui.shared,
+ org.eclipse.xtext.ui.codetemplates.ui,
+ org.eclipse.ui.editors;bundle-version="3.5.0",
+ org.eclipse.ui.ide;bundle-version="3.5.0",
+ org.eclipse.ui,
+ org.eclipse.compare,
+ org.eclipse.xtext.builder,
+ org.eclipse.xtend.lib;resolution:=optional,
+ org.eclipse.xtext.xbase.lib,
+ org.eclipse.elk.core,
+ org.eclipse.elk.core.service,
+ org.eclipse.elk.graph,
+ org.eclipse.elk.graph.text,
+ org.eclipse.elk.graph.text.ide,
+ org.eclipse.elk.graph.text.ui,
+ de.cau.cs.kieler.grana,
+ de.cau.cs.kieler.config.text,
+ de.cau.cs.kieler.config.text.ide,
+ de.cau.cs.kieler.config.text.ui
+Import-Package: org.apache.log4j
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.cau.cs.kieler.grana.text.ui.contentassist,
+ de.cau.cs.kieler.grana.text.ui.quickfix,
+ de.cau.cs.kieler.grana.text.ui.internal
+Bundle-Activator: de.cau.cs.kieler.grana.text.ui.GranaTextUiActivator
