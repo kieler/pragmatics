@@ -1,0 +1,21 @@
+grammar de.cau.cs.kieler.config.text.LayoutConfig 
+    with org.eclipse.elk.graph.text.ElkGraph
+
+import "http://www.eclipse.org/elk/ElkGraph"
+
+@Override
+RootNode returns ElkNode:
+    {ElkNode}
+    (children+=ElkNode)+;
+
+@Override
+ElkNode returns ElkNode:
+    identifier=ID '{'
+        properties+=Property* 
+        ('ref' children+=RefElkNode)*    
+    '}';
+
+RefElkNode returns ElkNode:
+    identifier=ID '{'
+        properties+=Property*
+    '}';
