@@ -31,64 +31,64 @@
 
    <!-- LAYOUT -->
 
-   <feature url="features/de.cau.cs.kieler.kiml.ogdf_0.43.0.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.kiml.ogdf_0.44.0.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature" version="0.44.0.qualifier">
       <category name="kieler-layout"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.kiml.ogdf.source_0.43.0.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature.source" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.kiml.ogdf.source_0.44.0.qualifier.jar" id="de.cau.cs.kieler.kiml.ogdf.feature.source" version="0.44.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
    <feature url="features/net.ogdf.bin_2.3.0.qualifier.jar" id="net.ogdf.bin.feature" version="2.3.0.qualifier" os="linux,macosx,solaris,win32" arch="sparc,x86,x86_64">
       <category name="kieler-layout"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.kgraph_0.43.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.kgraph_0.44.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature" version="0.44.0.qualifier">
       <category name="kieler-layout"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.kgraph.source_0.43.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.kgraph.source_0.44.0.qualifier.jar" id="de.cau.cs.kieler.kgraph.feature.source" version="0.44.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
    <!-- LIGHTWEIGHT DIAGRAMS -->
 
-   <feature url="features/de.cau.cs.kieler.klighd.feature_0.43.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.feature_0.44.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.44.0.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.43.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.44.0.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.44.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.klighd.freehep.feature_0.43.0.qualifier.jar" id="de.cau.cs.kieler.klighd.freehep.feature" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.freehep.feature_0.44.0.qualifier.jar" id="de.cau.cs.kieler.klighd.freehep.feature" version="0.44.0.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.freehep.feature.source_0.43.0.qualifier.jar" id="de.cau.cs.kieler.klighd.freehep.feature.source" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.freehep.feature.source_0.44.0.qualifier.jar" id="de.cau.cs.kieler.klighd.freehep.feature.source" version="0.44.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature_0.43.0.qualifier.jar" id="de.cau.cs.kieler.klighd.draw2d.feature" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature_0.44.0.qualifier.jar" id="de.cau.cs.kieler.klighd.draw2d.feature" version="0.44.0.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature.source_0.43.0.qualifier.jar" id="de.cau.cs.kieler.klighd.draw2d.feature.source" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.draw2d.feature.source_0.44.0.qualifier.jar" id="de.cau.cs.kieler.klighd.draw2d.feature.source" version="0.44.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature_0.43.0.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature_0.44.0.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature" version="0.44.0.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature.source_0.43.0.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature.source" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.sdk.feature.source_0.44.0.qualifier.jar" id="de.cau.cs.kieler.klighd.sdk.feature.source" version="0.44.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.klighd.view.feature_0.43.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.view.feature_0.44.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature" version="0.44.0.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.view.feature.source_0.43.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature.source" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.view.feature.source_0.44.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature.source" version="0.44.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
-   <feature url="features/de.cau.cs.kieler.ptview.feature_0.43.0.qualifier.jar" id="de.cau.cs.kieler.ptview.feature" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.ptview.feature_0.44.0.qualifier.jar" id="de.cau.cs.kieler.ptview.feature" version="0.44.0.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.ptview.feature.source_0.43.0.qualifier" id="de.cau.cs.kieler.ptview.feature.source" version="0.43.0.qualifier">
+   <feature url="features/de.cau.cs.kieler.ptview.feature.source_0.44.0.qualifier" id="de.cau.cs.kieler.ptview.feature.source" version="0.44.0.qualifier">
       <category name="kieler-sources"/>
    </feature>
 

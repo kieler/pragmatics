@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Graph Test Framework
 Bundle-SymbolicName: de.cau.cs.kieler.klay.test
-Bundle-Version: 0.43.0.qualifier
+Bundle-Version: 0.44.0.qualifier
 Bundle-Vendor: Kiel University
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.emf.transaction;bundle-version="1.4.0",
