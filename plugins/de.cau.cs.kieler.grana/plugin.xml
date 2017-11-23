@@ -238,6 +238,25 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.grana.basic"
+            class="de.cau.cs.kieler.grana.analyses.HierarchicalEdgeCountAnalysis"
+            description="The number of hierarchical edges (excluding simple edges)."
+            id="de.cau.cs.kieler.grana.edgeCountHierarchical"
+            name="Hierarchical Edge Count">
+         <component
+               abbreviation="Short"
+               name="Short">
+         </component>
+         <component
+               abbreviation="Long"
+               name="Long">
+         </component>
+         <component
+               abbreviation="Total"
+               name="Total">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.grana.basic"
             class="de.cau.cs.kieler.grana.analyses.EdgeLabelCountAnalysis"
             description="The number of edge labels."
             id="de.cau.cs.kieler.grana.edgeLabelCount"
@@ -308,6 +327,28 @@
             description="The minimum, average, and maximum edge length and its variance."
             id="de.cau.cs.kieler.grana.edgeLength"
             name="Edge Length">
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
+         <component
+               name="Variance">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.grana.drawing"
+            class="de.cau.cs.kieler.grana.analyses.ShortHierarchicalEdgeLengthAnalysis"
+            description="The minimum, average, and maximum edge length and its variance of short hierarchical edges."
+            id="de.cau.cs.kieler.grana.edgeLengthShortHierarchical"
+            name="Short Hierarchical Edge Length">
          <component
                abbreviation="Min"
                name="Minimum">
@@ -413,6 +454,32 @@
             description="The number of edge crossings, including hierarchies."
             id="de.cau.cs.kieler.grana.edgeCrossings"
             name="Number of Edge Crossings">
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
+         <component
+               abbreviation="Sum"
+               name="Sum">
+         </component>
+         <component
+               name="Onefold">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.grana.drawing"
+            class="de.cau.cs.kieler.grana.analyses.ShortHierarchicalEdgeCrossingsAnalysis"
+            description="The number of edge crossings between short hierarchical edges only."
+            id="de.cau.cs.kieler.grana.edgeCrossingsShortHierarchical"
+            name="Number of Short Hierarchical Edge Crossings">
          <component
                abbreviation="Min"
                name="Minimum">

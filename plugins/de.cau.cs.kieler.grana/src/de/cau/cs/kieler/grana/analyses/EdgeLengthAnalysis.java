@@ -14,7 +14,6 @@
 package de.cau.cs.kieler.grana.analyses;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.elk.core.math.KVector;
@@ -26,6 +25,7 @@ import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import de.cau.cs.kieler.grana.AnalysisContext;
@@ -51,6 +51,25 @@ public class EdgeLengthAnalysis implements IAnalysis {
      */
     public static final String ID = "de.cau.cs.kieler.grana.edgeLength";
 
+    /** Holder class for results. */
+    public static class EdgeLengthResults {
+        // SUPPRESS CHECKSTYLE NEXT 8 Javadoc|VisibilityModifier
+        public double min = 0;
+        public double max = 0;
+        public double average = 0;
+        public double variance = 0;
+
+        public EdgeLengthResults() { }
+        
+        public EdgeLengthResults(final double min, final double max, 
+                final double average, final double variance) {
+            this.min = min;
+            this.max = max;
+            this.average = average;
+            this.variance = variance;
+        }
+    }
+    
     /**
      * Computes the length of the given edge.
      * 
@@ -73,48 +92,34 @@ public class EdgeLengthAnalysis implements IAnalysis {
     }
 
     /**
-     * {@inheritDoc}
+     * Compute the {@link EdgeLengthResults} for the passed edges.
+     * 
+     * @param edges
+     *            the edges to analyze.
+     * @return computed results.
      */
-    public Object doAnalysis(final ElkNode parentNode,
-            final AnalysisContext context,
-            final IElkProgressMonitor progressMonitor) {
-        progressMonitor.begin("Edge length analysis", 1);
+    public static EdgeLengthResults analyzeEdgeLengths(final Iterable<ElkEdge> edges) {
+        if (Iterables.isEmpty(edges)) {
+            return new EdgeLengthResults();
+        }
         
-        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
-
         int numberOfEdges = 0;
         float overallEdgeLength = 0;
         float minEdgeLength = Float.MAX_VALUE;
         float maxEdgeLength = 0;
         List<Float> edgeLengths = Lists.newLinkedList();
-        List<ElkNode> nodeQueue = new LinkedList<ElkNode>();
-        nodeQueue.addAll(parentNode.getChildren());
-        while (nodeQueue.size() > 0) { 
-            // pop first element
-            ElkNode node = nodeQueue.remove(0);
-            
-            // compute edge length for all outgoing edges
-            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
-                if (!hierarchy && edge.isHierarchical()) {
-                    continue;
-                }
-                
-                numberOfEdges++;
-                float edgeLength = computeEdgeLength(edge);
-                overallEdgeLength += edgeLength;
-                edgeLengths.add(edgeLength);
-                // min edge length
-                if (edgeLength < minEdgeLength) {
-                    minEdgeLength = edgeLength;
-                }
-                // max edge length
-                if (edgeLength > maxEdgeLength) {
-                    maxEdgeLength = edgeLength;
-                }
+        for (ElkEdge edge : edges) {
+            numberOfEdges++;
+            float edgeLength = computeEdgeLength(edge);
+            overallEdgeLength += edgeLength;
+            edgeLengths.add(edgeLength);
+            // min edge length
+            if (edgeLength < minEdgeLength) {
+                minEdgeLength = edgeLength;
             }
-            
-            if (hierarchy) {
-                nodeQueue.addAll(node.getChildren());
+            // max edge length
+            if (edgeLength > maxEdgeLength) {
+                maxEdgeLength = edgeLength;
             }
         }
         
@@ -125,15 +130,42 @@ public class EdgeLengthAnalysis implements IAnalysis {
             variance += Math.pow(l - avg, 2);
         }
         variance *= 1 / (double) (numberOfEdges - 1);
+        
+        return new EdgeLengthResults(minEdgeLength, avg, maxEdgeLength, variance);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object doAnalysis(final ElkNode parentNode,
+            final AnalysisContext context,
+            final IElkProgressMonitor progressMonitor) {
+        progressMonitor.begin("Edge length analysis", 1);
+        
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
 
-        progressMonitor.done();
+        List<ElkEdge> edgesToAnalyze = Lists.newArrayList();
+        List<ElkNode> nodeQueue = Lists.newLinkedList();
+        nodeQueue.addAll(parentNode.getChildren());
+        while (nodeQueue.size() > 0) {
+            // pop first element
+            ElkNode node = nodeQueue.remove(0);
+            // collect all outgoing edges
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                if (!hierarchy && edge.isHierarchical()) {
+                    continue;
+                }
+                edgesToAnalyze.add(edge);
+            }
 
-        if (numberOfEdges > 0) {
-            return new Object[] { minEdgeLength,
-                    avg, maxEdgeLength, variance };
-        } else {
-            return new Object[] { 0, 0.0f, 0, 0.0f };
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
         }
+
+        EdgeLengthResults res = analyzeEdgeLengths(edgesToAnalyze);
+        progressMonitor.done();
+        return new Object[] { res.min, res.average, res.max, res.variance };
     }
 
 }
