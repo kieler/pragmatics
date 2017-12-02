@@ -514,6 +514,9 @@
          <component
                name="Sum Non Unique">
          </component>
+         <component
+               name="Straight Edges">
+         </component>
       </analysis>
       <analysis
             category="de.cau.cs.kieler.grana.drawing"

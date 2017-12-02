@@ -62,6 +62,7 @@ public class BendsAnalysis implements IAnalysis {
     public static final int INDEX_MAX = 2;
     public static final int INDEX_SUM = 3;
     public static final int INDEX_SUM_NON_UNIQUE = 4;
+    public static final int INDEX_STRAIGHT_EDGES = 5;
     
     /**
      * {@inheritDoc}
@@ -80,6 +81,7 @@ public class BendsAnalysis implements IAnalysis {
         int max = 0;
         int nonUniqueSum = 0;
         int edges = 0;
+        int straightEdges = 0;
         int current;
         
         // Iterate through all nodes
@@ -124,6 +126,10 @@ public class BendsAnalysis implements IAnalysis {
                 max = Math.max(max, current);
                 nonUniqueSum += current;
                 edges++;
+                
+                if (current == 0) {
+                    straightEdges++;
+                }
             }
             
             if (hierarchy) {
@@ -140,12 +146,13 @@ public class BendsAnalysis implements IAnalysis {
 
         progressMonitor.done();
         
-        final Object[] result = new Object[5]; // SUPPRESS CHECKSTYLE MagicNumber
+        final Object[] result = new Object[6]; // SUPPRESS CHECKSTYLE MagicNumber
         result[INDEX_MIN] = min;
         result[INDEX_AVG] = avg;
         result[INDEX_MAX] = max;
         result[INDEX_SUM] = uniqueBendPoints.size();
         result[INDEX_SUM_NON_UNIQUE] = nonUniqueSum;
+        result[INDEX_STRAIGHT_EDGES] = straightEdges;
         
         return result;
     }
