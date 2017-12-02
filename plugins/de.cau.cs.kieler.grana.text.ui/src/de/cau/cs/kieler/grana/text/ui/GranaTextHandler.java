@@ -1,15 +1,14 @@
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright 2014 by
+ * Copyright 2017 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.grana.text.ui;
 
@@ -38,15 +37,12 @@ import com.google.common.collect.FluentIterable;
 
 import de.cau.cs.kieler.grana.GranaPlugin;
 import de.cau.cs.kieler.grana.text.GranaStandaloneSetup;
-import de.cau.cs.kieler.grana.text.GranaTextPlugin;
 import de.cau.cs.kieler.grana.text.GranaTextToBatchJob;
 import de.cau.cs.kieler.grana.text.grana.Grana;
 import de.cau.cs.kieler.grana.ui.batch.BatchJobResult;
 import de.cau.cs.kieler.grana.ui.batch.BatchResult;
 
 /**
- * @author uru
- * @kieler.ignore (excluded from review process)
  */
 public class GranaTextHandler extends AbstractHandler {
 
@@ -115,15 +111,16 @@ public class GranaTextHandler extends AbstractHandler {
                 int i = 0;
                 for (BatchJobResult.Failed fail : fails) {
                     stati[i++] =
-                            new Status(IStatus.ERROR, GranaTextPlugin.PLUGIN_ID,
+                            new Status(IStatus.ERROR, GranaTextUiActivator.PLUGIN_ID,
                                     "Failed analysis of " + fail.getJob().getParameter(),
                                     fail.getThrowable());
                 }
                 StatusManager.getManager().handle(
-                        new MultiStatus(GranaTextPlugin.PLUGIN_ID, 0, stati, MESSAGE_BATCH_FAILED,
+                        new MultiStatus(GranaTextUiActivator.PLUGIN_ID, 0, stati, MESSAGE_BATCH_FAILED,
                                 null), StatusManager.SHOW | StatusManager.LOG);
             }
         }
     }
 
 }
+

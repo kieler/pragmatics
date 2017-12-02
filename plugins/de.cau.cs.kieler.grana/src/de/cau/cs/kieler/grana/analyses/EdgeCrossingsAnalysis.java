@@ -58,6 +58,27 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
     /** tolerance for double equality. */
     private static final double TOLERANCE = 1e-4;
 
+    /** Holder class for results. */
+    public static class EdgeCrossingsResult {
+        // SUPPRESS CHECKSTYLE NEXT 10 Javadoc|VisibilityModifier
+        public int min = 0;
+        public int max = 0;
+        public int sum = 0;
+        public double average = 0;
+        public double onefold = 0;
+
+        public EdgeCrossingsResult() { }
+        
+        public EdgeCrossingsResult(final int min, final int max, final int sum,
+                final double average, final double onefold) {
+            this.min = min;
+            this.max = max;
+            this.sum = sum;
+            this.average = average;
+            this.onefold = onefold;
+        }
+    }
+    
     /**
      * Returns whether two line segments have an intersection.
      * 
@@ -127,52 +148,23 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
     }
 
     /**
-     * {@inheritDoc}
+     * Count crossings between the passed edges. The two passed lists must be aligned, 
+     * i.e. {@code chains[i]} must contain the bendpoints of {@code edges[i]}. 
+     * 
+     * @param edges
+     *            the edges
+     * @param chains
+     *            a chain of bendpoints describing each edge's path in <em>absolute</em>
+     *            coordinates.
+     * @return results
      */
-    public Object doAnalysis(final ElkNode parentNode,
-            final AnalysisContext context,
-            final IElkProgressMonitor progressMonitor) {
-        progressMonitor.begin("Edge Crossings analysis", 1);
-        
-        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
-        
-        // collect all edges and translate their coordinates to absolute
-        LinkedList<ElkNode> nodeQueue = new LinkedList<>();
-        List<ElkEdge> edges = new ArrayList<>();
-        List<KVectorChain> chains = new ArrayList<>();
-        nodeQueue.addAll(parentNode.getChildren());
-        while (!nodeQueue.isEmpty()) {
-            // poll the first element
-            ElkNode node = nodeQueue.poll();
-            
-            // collect the outgoing edges
-            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
-                if (!hierarchy && edge.isHierarchical()) {
-                    continue;
-                }
-                
-                ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
-                KVectorChain chain = ElkUtil.createVectorChain(section);
-                
-                // translate the bend point coordinates to absolute
-                ElkNode referenceNode = edge.getContainingNode();
-                KVector referencePoint = new KVector();
-                ElkUtil.toAbsolute(referencePoint, referenceNode);
-                chain.offset(referencePoint);
-                
-                // transform spline control points to approximated bend points
-                if (edge.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
-                    chain = ElkMath.approximateBezierSpline(chain);
-                }
-                
-                edges.add(edge);
-                chains.add(chain);
-            }
-            
-            // enqueue the child nodes
-            if (hierarchy) {
-                nodeQueue.addAll(node.getChildren());
-            }
+    public static EdgeCrossingsResult countCrossings(final List<ElkEdge> edges,
+            final List<KVectorChain> chains) {
+        if (edges.isEmpty()) {
+            return new EdgeCrossingsResult();
+        }
+        if (edges.size() != chains.size()) {
+            throw new IllegalArgumentException("'edges' and 'chains' lists must be aligned.");
         }
         
         // count the number of crossings between all edges of the compound graph
@@ -238,8 +230,63 @@ public class EdgeCrossingsAnalysis implements IAnalysis {
         }
         // normalize
         float onefoldNorm = onefold / (float) edgeCount; 
+        
+        return new EdgeCrossingsResult(min, max, sum, avg, onefoldNorm);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public Object doAnalysis(final ElkNode parentNode,
+            final AnalysisContext context,
+            final IElkProgressMonitor progressMonitor) {
+        progressMonitor.begin("Edge Crossings analysis", 1);
+        
+        boolean hierarchy = parentNode.getProperty(AnalysisOptions.ANALYZE_HIERARCHY);
+        
+        // collect all edges and translate their coordinates to absolute
+        LinkedList<ElkNode> nodeQueue = new LinkedList<>();
+        List<ElkEdge> edges = new ArrayList<>();
+        List<KVectorChain> chains = new ArrayList<>();
+        nodeQueue.addAll(parentNode.getChildren());
+        while (!nodeQueue.isEmpty()) {
+            // poll the first element
+            ElkNode node = nodeQueue.poll();
+            
+            // collect the outgoing edges
+            for (ElkEdge edge : ElkGraphUtil.allOutgoingEdges(node)) {
+                if (!hierarchy && edge.isHierarchical()) {
+                    continue;
+                }
+                
+                ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
+                KVectorChain chain = ElkUtil.createVectorChain(section);
+                
+                // translate the bend point coordinates to absolute
+                ElkNode referenceNode = edge.getContainingNode();
+                KVector referencePoint = new KVector();
+                ElkUtil.toAbsolute(referencePoint, referenceNode);
+                chain.offset(referencePoint);
+                
+                // transform spline control points to approximated bend points
+                if (edge.getProperty(CoreOptions.EDGE_ROUTING) == EdgeRouting.SPLINES) {
+                    chain = ElkMath.approximateBezierSpline(chain);
+                }
+                
+                edges.add(edge);
+                chains.add(chain);
+            }
+            
+            // enqueue the child nodes
+            if (hierarchy) {
+                nodeQueue.addAll(node.getChildren());
+            }
+        }
+       
+        EdgeCrossingsResult results = countCrossings(edges, chains);
 
         progressMonitor.done();
-        return new Object[] {min, avg, max, sum, onefoldNorm};
+        return new Object[] { results.min, results.average, results.max, results.sum,
+                results.onefold };
     }
 }

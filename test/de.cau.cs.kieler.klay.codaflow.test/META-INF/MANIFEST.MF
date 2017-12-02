@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: KLay Codaflow Tests
 Bundle-SymbolicName: de.cau.cs.kieler.klay.codaflow.test
-Bundle-Version: 0.43.0.qualifier
+Bundle-Version: 0.44.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-Vendor: Kiel University
 Require-Bundle: org.junit,

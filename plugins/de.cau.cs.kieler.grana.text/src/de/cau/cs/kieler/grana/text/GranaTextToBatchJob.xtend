@@ -1,15 +1,14 @@
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
- * http://www.informatik.uni-kiel.de/rtsys/kieler/
+ * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright 2014 by
+ * Copyright 2017 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
- * See the file epl-v10.html for the license text.
  */
 package de.cau.cs.kieler.grana.text
 
@@ -17,9 +16,10 @@ import com.google.common.collect.ContiguousSet
 import com.google.common.collect.DiscreteDomain
 import com.google.common.collect.Lists
 import com.google.common.collect.Range
-import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer
+import de.cau.cs.kieler.config.text.LayoutConfigTransformer
 import de.cau.cs.kieler.grana.AnalysisService
 import de.cau.cs.kieler.grana.text.grana.CompareJob
+import de.cau.cs.kieler.grana.text.grana.EnumRange
 import de.cau.cs.kieler.grana.text.grana.FloatRange
 import de.cau.cs.kieler.grana.text.grana.Grana
 import de.cau.cs.kieler.grana.text.grana.IntRangeRange
@@ -37,7 +37,6 @@ import de.cau.cs.kieler.grana.ui.batch.BatchResult
 import de.cau.cs.kieler.grana.ui.batch.CSVResultSerializer
 import de.cau.cs.kieler.grana.ui.batch.FileElkGraphProvider
 import de.cau.cs.kieler.grana.ui.batch.JsonResultSerializer
-import de.cau.cs.kieler.kiml.config.text.LayoutConfigTransformer
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
@@ -56,7 +55,6 @@ import org.eclipse.elk.core.util.Pair
 import org.eclipse.elk.graph.properties.MapPropertyHolder
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ExtensibleURIConverterImpl
-import de.cau.cs.kieler.grana.text.grana.EnumRange
 
 /**
  * Utility class to convert textually specified grana executions to 
@@ -64,9 +62,6 @@ import de.cau.cs.kieler.grana.text.grana.EnumRange
  * 
  * Note that there is a slight difference between grana 'Jobs' and grana.text 'Jobs'.
  * To be precise, a grana.text 'Job' corresponds to a grana 'Batch'. 
- * 
- * @author uru
- * @kieler.ignore (excluded from review process)
  */
 final class GranaTextToBatchJob {
 
