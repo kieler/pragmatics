@@ -121,8 +121,24 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
         monitor.begin("Executing analysis batch job: " + parameter, WORK);
         ElkNode graph = graphProvider.getElkGraph(parameter, monitor.subTask(WORK_KGRAPH));
         
-        // Uncomment the following lines to have images of the processed graphs stored in some
+        // Uncomment the following call to have images of the processed graphs stored in some
         // random folder
+        //saveGraphImage(graph);
+
+        BatchJobResult batchJobResult = localExecute(graph, analyses, monitor);
+        // only present if actual execution time is measured
+        batchJobResult.setFastestExection(graph.getProperty(BatchHandler.EXECUTION_TIME_RESULTS));
+
+        monitor.done();
+        return batchJobResult;
+    }
+
+    /**
+     * Saves an image of the given graph. The graph's name is derived from {@link #parameter}.
+     * 
+     * @param graph the graph whose image to save.
+     */
+    private void saveGraphImage(final ElkNode graph) {
         if (parameter instanceof Path) {
             Path path = (Path) parameter;
             
@@ -183,13 +199,6 @@ public abstract class BatchJob<T> implements IBatchJob<T> {
             
             saveJob.run(new NullProgressMonitor());
         }
-
-        BatchJobResult batchJobResult = localExecute(graph, analyses, monitor);
-        // only present if actual execution time is measured
-        batchJobResult.setFastestExection(graph.getProperty(BatchHandler.EXECUTION_TIME_RESULTS));
-
-        monitor.done();
-        return batchJobResult;
     }
 
     /**
