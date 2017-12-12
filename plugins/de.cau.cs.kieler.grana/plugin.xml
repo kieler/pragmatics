@@ -773,6 +773,28 @@
                 name="Avg Centeredness">
          </component>
       </analysis>
+      <analysis
+            class="de.cau.cs.kieler.grana.analyses.compare.ProcrustesAnalysis"
+            description="analyzes the procrustes distance between two layouts"
+            id="de.cau.cs.kieler.grana.compare.procrustes"
+            name="Procrustes">
+         <component
+               abbreviation="prc"
+               name="procrustes_distance">
+         </component>
+         <component
+               abbreviation="shift"
+               name="relative_shift">
+         </component>
+         <component
+               abbreviation="scale"
+               name="relative_scale">
+         </component>
+         <component
+               abbreviation="rot"
+               name="relative_rotation">
+         </component>
+      </analysis>
    </extension>
 
 </plugin>
