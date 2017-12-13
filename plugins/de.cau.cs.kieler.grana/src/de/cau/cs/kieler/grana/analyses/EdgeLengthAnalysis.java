@@ -131,7 +131,7 @@ public class EdgeLengthAnalysis implements IAnalysis {
         }
         variance *= 1 / (double) (numberOfEdges - 1);
         
-        return new EdgeLengthResults(minEdgeLength, avg, maxEdgeLength, variance);
+        return new EdgeLengthResults(minEdgeLength, maxEdgeLength, avg, variance);
     }
     
     /**
