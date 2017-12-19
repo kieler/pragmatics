@@ -161,17 +161,6 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.grana.drawing"
-            class="de.cau.cs.kieler.grana.analyses.MaxScaleValueAnalysis"
-            description="The max scale value of a graph"
-            id="de.cau.cs.kieler.grana.maxScaleValue"
-            name="Max Scale Value">
-         <dependency
-               analysis="de.cau.cs.kieler.grana.area"
-               weak="false">
-         </dependency>
-      </analysis>
-      <analysis
-            category="de.cau.cs.kieler.grana.drawing"
             class="de.cau.cs.kieler.grana.analyses.AspectRatioAnalysis"
             description="The aspect ratio of the area a graph drawing occupies. (width / height)"
             id="de.cau.cs.kieler.grana.aspectRatio"
