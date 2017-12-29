@@ -118,10 +118,14 @@ public class BatchWizard extends Wizard {
         resultFile = resultFilePage.getResultFile();
         selectedAnalyses = analysisSelectionPage.getAnalyses();
         GranaUtil.setAnalysesSelection(PREFERENCE_SELECTED_ANALYSES, selectedAnalyses);
+        
         LayoutConfigurator batchLayoutConfig = layoutConfigurationPage.getConfig();
         layoutConfig = batchLayoutConfig;
-        GranaUtil.setConfiguration(PREFERENCE_LAYOUT_CONFIG, Pair.fromMap(
-                batchLayoutConfig.getProperties(ElkGraphElement.class).getAllProperties()));
+        if (batchLayoutConfig.getProperties(ElkGraphElement.class) != null) {
+            GranaUtil.setConfiguration(PREFERENCE_LAYOUT_CONFIG, Pair.fromMap(
+                    batchLayoutConfig.getProperties(ElkGraphElement.class).getAllProperties()));
+        }
+        
         return true;
     }
 
