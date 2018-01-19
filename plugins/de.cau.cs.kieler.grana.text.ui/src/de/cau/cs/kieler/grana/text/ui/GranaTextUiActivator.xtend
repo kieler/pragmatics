@@ -17,7 +17,6 @@ import com.google.inject.Module
 import de.cau.cs.kieler.grana.text.ide.GranaIdeModule
 import de.cau.cs.kieler.grana.text.ui.internal.TextActivator
 import org.apache.log4j.Logger
-import org.eclipse.elk.graph.text.ui.ElkGraphTextUiActivator
 import org.eclipse.xtext.util.Modules2
 
 /**
@@ -43,7 +42,7 @@ class GranaTextUiActivator extends TextActivator {
             val mergedModule = Modules2.mixin(runtimeModule, ideModule, sharedStateModule, uiModule)
             return Guice.createInjector(mergedModule)
         } catch (Exception e) {
-            val logger = Logger.getLogger(ElkGraphTextUiActivator)
+            val logger = Logger.getLogger(GranaTextUiActivator)
             logger.error("Failed to create injector for " + language, e)
             throw new RuntimeException("Failed to create injector for " + language, e)
         }

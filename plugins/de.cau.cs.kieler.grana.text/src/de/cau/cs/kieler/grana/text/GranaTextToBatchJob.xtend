@@ -209,7 +209,7 @@ final class GranaTextToBatchJob {
             if (!resource.path.startsWith("file://")) {
                 // should be workspace relative
                 val p = ResourcesPlugin.workspace.root.projects.findFirst[p|resource.path.contains(p.name)]
-                val wsloc = p?.findMember(resource.path.replaceFirst(p.name, ""))
+                val wsloc = p?.findMember(resource.path.replaceFirst(Pattern.quote(p.name), ""))
                 if (p === null || !(wsloc instanceof IContainer)) 
                     throw new IllegalArgumentException("Invalid resource " + resource.path)
                 

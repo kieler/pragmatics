@@ -46,9 +46,10 @@ class GranaIdeProposalProvider extends ElkGraphProposalProvider {
     GranaGrammarAccess grammar
     
     override protected completePropertyKey(ContentAssistContext context, IIdeContentProposalAcceptor acceptor) {
-        val model = context.currentModel
+        var model = context.currentModel
         switch model {
             ElkNode: proposeProperties(model, null /* any layout alg */, null /* any target */, context, acceptor)
+            Job: proposeProperties(null /* any element */, null /* any layout alg */, null /* any target */, context, acceptor)
         } 
     }
     
@@ -68,7 +69,7 @@ class GranaIdeProposalProvider extends ElkGraphProposalProvider {
             case grammar.enumRangeAccess.valuesAssignment_2_1:
                 completeEnumRange_Values(context, acceptor)
             case grammar.rangeJobAccess.rangeOptionAssignment_10:
-                completeAnalysis_Name(context, acceptor)
+                completePropertyKey(context, acceptor)
 
         }
     }

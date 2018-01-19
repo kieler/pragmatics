@@ -68,12 +68,12 @@ import de.cau.cs.kieler.config.text.ui.internal.TextActivator;
 @SuppressWarnings("restriction")
 public class LayoutConfigViewPart extends ViewPart {
     
-    public static final String PLUGIN_ID = "de.cau.ca.kieler.kiml.config.text.ui";
+    public static final String PLUGIN_ID = "de.cau.ca.kieler.config.text.ui";
     
-    public static final String VIEW_ID = "de.cau.cs.kieler.kiml.config.text.ui.LayoutConfigEditor";
+    public static final String VIEW_ID = "de.cau.cs.kieler.config.text.ui.LayoutConfigEditor";
     
     /** Id to store the config text in the preference store. */
-    private static final String CURRENT_CONFIG_TEXT = "de.cau.cs.kieler.kiml.config.text.currentConfigText";
+    private static final String CURRENT_CONFIG_TEXT = "de.cau.cs.kieler.config.text.currentConfigText";
     
     // Embedded Xtext Editor
     private Resource resource;
