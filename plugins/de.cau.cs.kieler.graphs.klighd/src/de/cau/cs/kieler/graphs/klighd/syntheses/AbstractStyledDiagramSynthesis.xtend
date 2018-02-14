@@ -203,40 +203,114 @@ abstract class AbstractStyledDiagramSynthesis<T> extends AbstractDiagramSynthesi
 
     private def initSpongebobFactory(KRenderingLibrary library) {
         library.initEdgeRenderings
-        defaultNodeRendering = renderingFactory.createKRoundedRectangle => [
+        defaultNodeRendering = renderingFactory.createKRectangle => [
             it.id = "DefaultNodeRendering"
-            it.cornerWidth = 5
-            it.cornerHeight = 5
             it.setBackgroundColor(237,249,107)
+            
+            // Pants
+            it.children += renderingFactory.createKPolygon => [
+                it.points += createKPosition(LEFT, 0, 0, BOTTOM, 0, 0.15f)
+                it.points += createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0.15f)
+                it.points += createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0)
+                it.points += createKPosition(LEFT, 0, 0, BOTTOM, 0, 0) 
+
+                it.setBackgroundColor(79, 56, 27)
+            ]
+            
+            // Shirt
+            it.children += renderingFactory.createKPolygon => [
+                it.points += createKPosition(LEFT, 0, 0, BOTTOM, 0, 0.3f)
+                it.points += createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0.3f)
+                it.points += createKPosition(RIGHT, 0, 0, BOTTOM, 0, 0.15f)
+                it.points += createKPosition(LEFT, 0, 0, BOTTOM, 0, 0.15f) 
+
+                it.setBackgroundColor(255, 255, 255)
+            ]
+            
+            // Collar
+            it.children += renderingFactory.createKPolygon => [
+                it.points += createKPosition(LEFT, 0, 0.25f, BOTTOM, 0, 0.3f)
+                it.points += createKPosition(LEFT, 0, 0.47f, BOTTOM, 0, 0.3f)
+                it.points += createKPosition(LEFT, 0, 0.40f, BOTTOM, 0, 0.2f)
+
+                it.setBackgroundColor(213, 234, 254)
+            ]
+            it.children += renderingFactory.createKPolygon => [
+                it.points += createKPosition(RIGHT, 0, 0.25f, BOTTOM, 0, 0.3f)
+                it.points += createKPosition(RIGHT, 0, 0.47f, BOTTOM, 0, 0.3f)
+                it.points += createKPosition(RIGHT, 0, 0.40f, BOTTOM, 0, 0.2f)
+
+                it.setBackgroundColor(213, 234, 254)
+            ]
+
+            // Tie
+            it.children += renderingFactory.createKPolygon => [
+                it.points += createKPosition(LEFT, 0, 0.46f, BOTTOM, 0, 0.3f)
+                it.points += createKPosition(RIGHT, 0, 0.46f, BOTTOM, 0, 0.3f)
+                it.points += createKPosition(RIGHT, 0, 0.48f, BOTTOM, 0, 0.25f)
+                it.points += createKPosition(LEFT, 0, 0.48f, BOTTOM, 0, 0.25f)
+
+                it.setBackgroundColor(255, 0, 0)
+            ]
+            it.children += renderingFactory.createKPolygon => [
+                it.points += createKPosition(LEFT, 0, 0.49f, BOTTOM, 0, 0.25f)
+                it.points += createKPosition(RIGHT, 0, 0.49f, BOTTOM, 0, 0.25f)
+                it.points += createKPosition(RIGHT, 0, 0.44f, BOTTOM, 0, 0.1f)
+                it.points += createKPosition(LEFT, 0, 0.5f, BOTTOM, 0, 0.05f)
+                it.points += createKPosition(LEFT, 0, 0.44f, BOTTOM, 0, 0.1f)
+
+                it.setBackgroundColor(255, 0, 0)
+            ]
+
+            // Eyes            
             it.children += renderingFactory.createKEllipse => [
-                            it.setPointPlacementData(PositionReferenceX.LEFT, 0, 0.1f, PositionReferenceY.TOP, 0, 0.1f,
-                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 20, 20)
-                            it.setBackgroundColor(255,255,255)
+                it.setAreaPlacementData(
+                    createKPosition(LEFT, 0, 0.1f, TOP, 0, 0.1f),
+                    createKPosition(LEFT, 0, 0.45f, TOP, 0, 0.45f)
+                )
+                it.setBackgroundColor(255, 255, 255)
+                it.lineWidth = 0
+                it.children += renderingFactory.createKEllipse => [
+                    it.setAreaPlacementData(
+                        createKPosition(LEFT, 0, 0.3f, TOP, 0, 0.3f),
+                        createKPosition(LEFT, 0, 0.7f, TOP, 0, 0.7f)
+                    )
+                    it.lineWidth = 0
+                    it.setBackgroundColor(153, 234, 254)
+                ]
+                it.children += renderingFactory.createKEllipse => [
+                    it.setAreaPlacementData(
+                        createKPosition(LEFT, 0, 0.4f, TOP, 0, 0.4f),
+                        createKPosition(LEFT, 0, 0.6f, TOP, 0, 0.6f)
+                    )
+                    it.lineWidth = 0
+                    it.setBackgroundColor(0, 0, 0)
+                ]
+                
             ]
             it.children += renderingFactory.createKEllipse => [
-                            it.setPointPlacementData(PositionReferenceX.RIGHT, 0, 0.2f, PositionReferenceY.TOP, 0, 0.15f,
-                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 10, 10)
-                            it.setBackgroundColor(255,255,255)
-            ]
-            it.children += renderingFactory.createKEllipse => [
-                            it.setPointPlacementData(PositionReferenceX.LEFT, 0, 0.05f, PositionReferenceY.TOP, 0, 0.5f,
-                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 10, 10)
-                            it.setBackgroundColor(255,255,255)
-            ]
-            it.children += renderingFactory.createKEllipse => [
-                            it.setPointPlacementData(PositionReferenceX.RIGHT, 0, 0.4f, PositionReferenceY.TOP, 0, 0.5f,
-                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 10, 10)
-                            it.setBackgroundColor(255,255,255)
-            ]
-            it.children += renderingFactory.createKEllipse => [
-                            it.setPointPlacementData(PositionReferenceX.LEFT, 0, 0.15f, PositionReferenceY.BOTTOM, 0, 0.3f,
-                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 23, 23)
-                            it.setBackgroundColor(255,255,255)
-            ]
-            it.children += renderingFactory.createKEllipse => [
-                            it.setPointPlacementData(PositionReferenceX.RIGHT, 0, 0.3f, PositionReferenceY.BOTTOM, 0, 0.4f,
-                                HorizontalAlignment.LEFT, VerticalAlignment.TOP, 0, 0, 20, 20)
-                            it.setBackgroundColor(255,255,255)
+                it.setAreaPlacementData(
+                    createKPosition(RIGHT, 0, 0.45f, TOP, 0, 0.1f),
+                    createKPosition(RIGHT, 0, 0.1f, TOP, 0, 0.45f)
+                )
+                it.setBackgroundColor(255, 255, 255)
+                it.lineWidth = 0
+                it.children += renderingFactory.createKEllipse => [
+                    it.setAreaPlacementData(
+                        createKPosition(LEFT, 0, 0.3f, TOP, 0, 0.3f),
+                        createKPosition(LEFT, 0, 0.7f, TOP, 0, 0.7f)
+                    )
+                    it.lineWidth = 0
+                    it.setBackgroundColor(153, 234, 254)
+                ]
+                it.children += renderingFactory.createKEllipse => [
+                    it.setAreaPlacementData(
+                        createKPosition(LEFT, 0, 0.4f, TOP, 0, 0.4f),
+                        createKPosition(LEFT, 0, 0.6f, TOP, 0, 0.6f)
+                    )
+                    it.lineWidth = 0
+                    it.setBackgroundColor(0, 0, 0)
+                ]
             ]
         ]
         library.renderings += defaultNodeRendering
