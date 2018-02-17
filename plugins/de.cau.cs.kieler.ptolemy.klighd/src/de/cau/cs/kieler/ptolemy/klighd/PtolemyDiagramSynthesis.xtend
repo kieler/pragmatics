@@ -202,26 +202,16 @@ public class PtolemyDiagramSynthesis extends AbstractDiagramSynthesis<DocumentRo
     }
     
     private def void setupLabelManagement(KNode kgraph, Options options) {
-        var AbstractKlighdLabelManager portLabelManager = null;
-        if (options.portLabels == LabelDisplayStyle.SELECTED) {
-            portLabelManager = TypeConditionLabelManager.wrapForPortLabels(new HidingLabelManager());
-            kgraph.setLayoutOption(LabelManagementOptions.LABEL_MANAGER, portLabelManager);
-        }
-        
-        var AbstractKlighdLabelManager commentLabelManager = null;
-        if (options.comments == LabelDisplayStyle.SELECTED) {
-            commentLabelManager = TypeConditionLabelManager.wrapForCommentLabels(new TruncatingLabelManager()
-                .truncateAfterFirstWords(5)
-                .setMode(AbstractKlighdLabelManager.Mode.ALWAYS_ON)
-            )
-        }
-        
         val labelManager = new ListLabelManager();
-        if (portLabelManager !== null) {
-            labelManager.addLabelManager(portLabelManager);
+        
+        if (options.portLabels == LabelDisplayStyle.SELECTED) {
+            labelManager.addLabelManager(TypeConditionLabelManager.wrapForPortLabels(new HidingLabelManager()));
         }
         
-        if (commentLabelManager !== null) {
+        if (options.comments == LabelDisplayStyle.SELECTED) {
+            val commentLabelManager = TypeConditionLabelManager.wrapForCommentLabels(new TruncatingLabelManager()
+                .truncateAfterFirstWords(5)
+                .setMode(AbstractKlighdLabelManager.Mode.ALWAYS_ON))
             labelManager.addLabelManager(commentLabelManager);
         }
         
