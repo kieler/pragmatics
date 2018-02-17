@@ -27,17 +27,17 @@ import de.cau.cs.kieler.klighd.krendering.KContainerRendering
 import de.cau.cs.kieler.klighd.krendering.KRendering
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
-import de.cau.cs.kieler.klighd.labels.inline.DirectionalArrowsDecorator
-import de.cau.cs.kieler.klighd.labels.inline.InlineLabelConfigurator
-import de.cau.cs.kieler.klighd.labels.inline.LinesDecorator
-import de.cau.cs.kieler.klighd.labels.inline.RectangleDecorator
+import de.cau.cs.kieler.klighd.labels.decoration.DirectionalArrowsDecorator
+import de.cau.cs.kieler.klighd.labels.decoration.LabelDecorationConfigurator
+import de.cau.cs.kieler.klighd.labels.decoration.LabelDecorationConfigurator.LayoutMode
+import de.cau.cs.kieler.klighd.labels.decoration.LinesDecorator
+import de.cau.cs.kieler.klighd.labels.decoration.RectangleDecorator
 import java.awt.Color
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkGraphElement
 import org.eclipse.elk.graph.ElkLabel
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.ElkPort
-import de.cau.cs.kieler.klighd.labels.inline.InlineLabelConfigurator.LayoutMode
 
 /**
  * Turns an ELK graph into a diagram KLighD knows how to display.
@@ -59,46 +59,45 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     public static val SynthesisOption DEFAULT_EDGE_DIRECTIONS = SynthesisOption.createCheckOption("Edge Directions", true)
     
     // An advanced category for... well... advanced options and experimental things
-    public static val SynthesisOption ADVANCED_CATEGORY = SynthesisOption.createCategory("Danger Zone", false)
+    public static val SynthesisOption LABEL_DECORATIONS_CATEGORY = SynthesisOption.createCategory("Edge Labels", false);
     
-    public static val SynthesisOption INLINE_LABELS_SEPARATOR = {
-        val option = SynthesisOption.createSeparator("Edge Labels");
-        option.category = ADVANCED_CATEGORY;
-        option;
-    }
-    
-    public static val INLINE_LABELS_OFF = "Oh God, no!";
-    public static val INLINE_LABELS_SIMPLE = "Simple";
-    public static val INLINE_LABELS_LINES = "Lines";
-    public static val INLINE_LABELS_BRACKETS = "Brackets";
-    public static val INLINE_LABELS_RECTS = "Rectangles";
-    public static val SynthesisOption INLINE_LABELS = {
+    public static val LABEL_DECORATIONS_SIMPLE = "Simple";
+    public static val LABEL_DECORATIONS_LINES = "Lines";
+    public static val LABEL_DECORATIONS_BRACKETS = "Brackets";
+    public static val LABEL_DECORATIONS_RECTS = "Rectangles";
+    public static val SynthesisOption LABEL_DECORATIONS = {
         // We're using a block expression here because we need to set the category on the option
         val option = SynthesisOption.createChoiceOption(
-            "Display Inline",
-            ImmutableList::of(INLINE_LABELS_OFF, INLINE_LABELS_SIMPLE, INLINE_LABELS_LINES, INLINE_LABELS_BRACKETS,
-                              INLINE_LABELS_RECTS),
-            INLINE_LABELS_OFF);
-        option.category = ADVANCED_CATEGORY;
+            "Label Decorations",
+            ImmutableList::of(LABEL_DECORATIONS_SIMPLE, LABEL_DECORATIONS_LINES, LABEL_DECORATIONS_BRACKETS,
+                              LABEL_DECORATIONS_RECTS),
+            LABEL_DECORATIONS_SIMPLE);
+        option.category = LABEL_DECORATIONS_CATEGORY;
         option;
     };
     
     public static val COLOR_MODE_SOLID = "Solid backgrounds";
     public static val COLOR_MODE_TRANSLUCENT = "Translucent backgrounds";
-    public static val COLOR_MODE_BAD_DESIGN = "Bad Design Mode";
+    public static val COLOR_MODE_BAD_DESIGN = "Bad design mode";
     public static val SynthesisOption COLOR_MODE = {
         // We're using a block expression here because we need to set the category on the option
         val option = SynthesisOption.createChoiceOption(
             "Color Mode",
             ImmutableList::of(COLOR_MODE_SOLID, COLOR_MODE_TRANSLUCENT, COLOR_MODE_BAD_DESIGN),
             COLOR_MODE_TRANSLUCENT);
-        option.category = ADVANCED_CATEGORY;
+        option.category = LABEL_DECORATIONS_CATEGORY;
         option;
     };
     
-    public static val SynthesisOption INLINE_LABELS_ARROWS = {
+    public static val SynthesisOption INLINE_LABELS = {
+        val option = SynthesisOption.createCheckOption("Inline Labels", false);
+        option.category = LABEL_DECORATIONS_CATEGORY;
+        option;
+    };
+    
+    public static val SynthesisOption DIRECTIONAL_DECORATORS = {
         val option = SynthesisOption.createCheckOption("Direction Hints", false);
-        option.category = ADVANCED_CATEGORY;
+        option.category = LABEL_DECORATIONS_CATEGORY;
         option;
     };
     
@@ -115,11 +114,11 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
                 .add(DEFAULT_PORT_SIZES)
                 .add(DEFAULT_PORT_LABELS)
                 .add(DEFAULT_EDGE_DIRECTIONS)
-                .add(ADVANCED_CATEGORY)
-                .add(INLINE_LABELS_SEPARATOR)
-                .add(INLINE_LABELS)
+                .add(LABEL_DECORATIONS_CATEGORY)
+                .add(LABEL_DECORATIONS)
                 .add(COLOR_MODE)
-                .add(INLINE_LABELS_ARROWS)
+                .add(INLINE_LABELS)
+                .add(DIRECTIONAL_DECORATORS)
                 .build();
     }
     
@@ -140,8 +139,8 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         // Enrich the rendering
         enrichRenderings(result);
         
-        // Inline label rendering
-        configureInlinelabels(result);
+        // Label decorations and inline label rendering
+        configureLabelDecorations(result);
 
         // Associate original objects with transformed objects
         //  note that the 'transformX' methods are contributed by the 
@@ -219,12 +218,7 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
     /**
      * Sets up inline labels for the graph.
      */
-    private def void configureInlinelabels(KNode graph) {
-        // Check if inline labels are active in the first place
-        if (INLINE_LABELS.objectValue.equals(INLINE_LABELS_OFF)) {
-            return;
-        }
-        
+    private def void configureLabelDecorations(KNode graph) {
         // Colors to be used
         var Color background = null;
         var Color foreground = null;
@@ -247,29 +241,30 @@ class ElkGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<ElkNode> {
         }
         
         // Setup the configurator
-        val configurator = InlineLabelConfigurator.create()
+        val configurator = LabelDecorationConfigurator.create()
             .withLayoutMode(LayoutMode.HORIZONTAL)
-            .withLabelTextRenderingProvider([ container, label | createTextRendering(container, label) ]);
+            .withLabelTextRenderingProvider([ container, label | createTextRendering(container, label) ])
+            .withInlineLabels(INLINE_LABELS.booleanValue);
         
         val backgroundProvider = RectangleDecorator.create().withBackground(background);
         configurator.addDecoratorRenderingProvider(backgroundProvider);
         
-        switch INLINE_LABELS.objectValue {
-            case INLINE_LABELS_BRACKETS:
+        switch LABEL_DECORATIONS.objectValue {
+            case LABEL_DECORATIONS_BRACKETS:
                 configurator.addDecoratorRenderingProvider(
                     LinesDecorator.create()
                         .withColor(foreground)
                         .withBrackets(true))
-            case INLINE_LABELS_LINES:
+            case LABEL_DECORATIONS_LINES:
                 configurator.addDecoratorRenderingProvider(
                     LinesDecorator.create()
                         .withColor(foreground)
                         .withBrackets(false))
-            case INLINE_LABELS_RECTS:
+            case LABEL_DECORATIONS_RECTS:
                 backgroundProvider.withBorder(foreground)
         }
         
-        if (INLINE_LABELS_ARROWS.booleanValue) {
+        if (DIRECTIONAL_DECORATORS.booleanValue) {
             configurator.addDecoratorRenderingProvider(
                 DirectionalArrowsDecorator.create()
                     .withColor(foreground))
