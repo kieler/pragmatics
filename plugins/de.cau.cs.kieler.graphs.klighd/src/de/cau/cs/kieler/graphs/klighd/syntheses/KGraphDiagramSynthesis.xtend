@@ -90,6 +90,12 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
         ImmutableList::of(DEFAULTS_AS_IN_MODEL, DEFAULTS_ON, DEFAULTS_OFF), DEFAULTS_AS_IN_MODEL)
 
     /**
+     * Synthesis option to allow edge adjustment by default
+     */
+    private static val SynthesisOption SUPPRESSEDGEADJUSTMENT = SynthesisOption::createCheckOption(
+        "Suppress Edge Adjustement", true)
+
+    /**
      * {@inheritDoc} 
      */
     override getDisplayedLayoutOptions() {
@@ -111,6 +117,7 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
     override getDisplayedSynthesisOptions() {
         return new ImmutableList.Builder()
                 .add(DEFAULTS)
+                .add(SUPPRESSEDGEADJUSTMENT)
                 .addAll(super.displayedSynthesisOptions)
                 .build();
     }
@@ -134,7 +141,7 @@ class KGraphDiagramSynthesis extends AbstractStyledDiagramSynthesis<KNode> {
      * @return the possibly enriched graph.
      */
     override KNode transform(KNode graph) {
-        usedContext.setProperty(KlighdSynthesisProperties.SUPPRESS_EDGE_ADJUSTMENT, true)
+        usedContext.setProperty(KlighdSynthesisProperties.SUPPRESS_EDGE_ADJUSTMENT, SUPPRESSEDGEADJUSTMENT.booleanValue)
 
         // 3 lines are more or less copied from EcoreUtil.copy()
         val copier = new Copier()
