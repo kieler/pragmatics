@@ -213,12 +213,14 @@ class LiveProvider extends AbstractProvider {
 							svg.html(svggraph);
 							
 							// center the graph horizontally
-							var svgRect = $('g#group')[0].getBoundingClientRect();
-							var offset = ($(document).width() - svgRect.width) / 2; 
-							var g = svg.svg('get').getElementById('group');
-							// we put a 1 for the y value as the IE seems to omit 0s 
-							// what breaks our regex in the draggable addon
-							g.setAttribute('transform', 'translate(' + offset + ', 1)');
+							if (oFormat == "org.w3.svg") {
+							  var svgRect = $('g#group')[0].getBoundingClientRect();
+							  var offset = ($(document).width() - svgRect.width) / 2; 
+							  var g = svg.svg('get').getElementById('group');
+							  // we put a 1 for the y value as the IE seems to omit 0s 
+							  // what breaks our regex in the draggable addon
+							  g.setAttribute('transform', 'translate(' + offset + ', 1)');
+							}
 							
 							// show graph section and hide errorDiv
 							$('#resGraph').show();

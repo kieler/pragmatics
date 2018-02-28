@@ -53,8 +53,6 @@ import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilter;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilterData;
 import de.cau.cs.kieler.kwebs.server.service.filter.LayoutFilters;
 import de.cau.cs.kieler.kwebs.server.util.Graphs;
-import de.cau.cs.kieler.statistics.KIELERStatistics;
-import de.cau.cs.kieler.statistics.KIELERStatistics.Granularity;
 
 /**
  * This abstract base class provides the implementation of the layout functionality. Web service
@@ -131,21 +129,6 @@ public abstract class AbstractService {
     private static final String ATTRIBUTE_IMPLEMENTATION
         = "implementation";
 
-    /*
-     * Some constants to collect usage information.
-     */
-    private static final String STATS_OPTION = "kwebs.layout.specifiedoption";
-    private static final String STATS_ALG = "kwebs.layout.algorithm";
-    private static final String STATS_EXECTIME = "kwebs.layout.exectime";
-    private static final String STATS_GRAPH_SIZE = "kwebs.layout.graphsize";
-    private static final String STATS_GRAPH_NODES = "kwebs.layout.nodes";
-    private static final String STATS_GRAPH_EDGES = "kwebs.layout.edges";
-    private static final String STATS_GRAPH_PORTS = "kwebs.layout.ports";
-    private static final String STATS_GRAPH_LABELS = "kwebs.layout.labels";
-    private static final String STATS_INFORMAT = "kwebs.layout.informat";
-    private static final String STATS_OUTFORMAT = "kwebs.layout.outformat";
-    
-    
     /**
      * 
      */
@@ -268,11 +251,6 @@ public abstract class AbstractService {
                     outformatData.getHandler(), options);
         }
         
-        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_INFORMAT, informat,
-                Granularity.MONTH);
-        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_OUTFORMAT, outformat,
-                Granularity.MONTH);
-
         Logger.log(Severity.DEBUG, "Finished layout");
         return serializedResult;
     }
@@ -351,10 +329,6 @@ public abstract class AbstractService {
             }
         }
         
-        // Record usage statistics
-        collectUsageStatistics(inTransData.getTargetGraphs(), options, 
-                serializedGraph.length(), layoutTime);
-
         // Calculate statistical values and annotate graph if it is a KGraph instance.
         // The serialization process can not be included.
         if (inTransData.getSourceGraph() instanceof ElkNode) {
@@ -447,80 +421,6 @@ public abstract class AbstractService {
         statistics.setTimeLayout(layoutTime);
         statistics.setTimeRemoteSupplemental(supplementalTime);
         sourceGraph.setProperty(Statistics.STATISTICS, statistics.toString());
-    }
-    
-    /**
-     * Create statistics for the layout process and logs them to a database.
-     *
-     * @param sourceGraph the source graph to annotate
-     * @param serializedSize the size of the serialized graph
-     * @param layoutTime the time taken for layout
-     */
-    private void collectUsageStatistics(final List<ElkNode> layoutGraphs,
-            final List<GraphLayoutOption> options, final int serializedSize,
-            final double layoutTime) {
-
-        // do this in its own thread to not let it influence response time too much
-        new Thread("RecordStats") {
-            @Override
-            public void run() {
-
-                KIELERStatistics stats = Logger.INSTANCE.getUsageStats();
-
-                // we log all user specified layout options
-                for (GraphLayoutOption opt : options) {
-                    LayoutOptionData data =
-                            LayoutMetaDataService.getInstance().getOptionDataBySuffix(opt.getId());
-                    if (data != null) {
-                        String fullId = data.getId();
-                        stats.incCounter(Logger.STATS_KWEBS, STATS_OPTION, fullId, opt.getValue(),
-                                Granularity.DAY);
-                    }
-                }
-
-                int nodes = 0;
-                int ports = 0;
-                int labels = 0;
-                int edges = 0;
-                
-                // we wanna know which algorithm is used
-                for (ElkNode graph : layoutGraphs) {
-                    String alg = graph.getProperty(CoreOptions.ALGORITHM);
-                    stats.incCounter(Logger.STATS_KWEBS, STATS_ALG,
-                            CoreOptions.ALGORITHM.getId(), alg, Granularity.DAY);
-
-                    // if its klay we wanna know even more :) Just to make everything better!
-                    stats.recordKlayLayeredStats(graph);
-                    
-                    // graph information
-                    for (ElkNode layout : layoutGraphs) {
-                        for (ElkGraphElement element 
-                                : Graphs.getAllElementsOfType(layout, ElkGraphElement.class)) {
-                            if (element instanceof ElkNode) {
-                                nodes++;
-                            } else if (element instanceof ElkPort) {
-                                ports++;
-                            } else if (element instanceof ElkLabel) {
-                                labels++;
-                            } else if (element instanceof ElkEdge) {
-                                edges++;
-                            }
-                        }
-                    }
-                }
-                
-                // number of elements
-                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_NODES, nodes);
-                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_EDGES, edges);
-                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_PORTS, ports);
-                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_LABELS, labels);
-
-                // and log some times
-                stats.recordValue(Logger.STATS_KWEBS, STATS_EXECTIME, layoutTime);
-                stats.recordValue(Logger.STATS_KWEBS, STATS_GRAPH_SIZE, layoutTime);
-
-            };
-        } .start();
     }
     
     /**

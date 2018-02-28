@@ -42,7 +42,7 @@ class ProvidedlayoutProvider
 {
     
     /** The default layout algorithm identifier. */
-    private static String DEFAULT_ALGORITHM_ID = "de.cau.cs.kieler.klay.layered"
+    private static String DEFAULT_ALGORITHM_ID = "org.eclipse.elk.layered"
 
     /** Constant for query parameter 'algorithm'. */
     private static String PARAM_ALGORITHM = "algorithm"

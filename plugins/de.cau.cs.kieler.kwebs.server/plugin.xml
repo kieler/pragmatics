@@ -43,10 +43,6 @@
          </layoutFilter>
       </preFilters>
       <supportHandler
-            implementation="de.cau.cs.kieler.kwebs.server.web.LiveLayoutHandler"
-            path="/live">
-      </supportHandler>
-      <supportHandler
             implementation="de.cau.cs.kieler.kwebs.server.web.HTTPLayoutHandler"
             path="/layout">
       </supportHandler>

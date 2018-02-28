@@ -251,7 +251,7 @@ class HTTPLayoutHandler implements HttpHandler {
         val error = '''
           {
             "message": «text.quote»,
-            "throwable": «t?.message?.quote ?: "undefined"»
+            "throwable": «t?.message?.quote ?: "undefined".quote»
           }'''
 
         // send the response

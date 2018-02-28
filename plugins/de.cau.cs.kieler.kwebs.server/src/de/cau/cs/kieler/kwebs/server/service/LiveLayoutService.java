@@ -20,7 +20,6 @@ import de.cau.cs.kieler.kwebs.server.layout.ServerLayoutMetaDataService;
 import de.cau.cs.kieler.kwebs.server.logging.Logger;
 import de.cau.cs.kieler.kwebs.server.logging.Logger.Severity;
 import de.cau.cs.kieler.kwebs.server.servicedata.ServiceData;
-import de.cau.cs.kieler.statistics.KIELERStatistics.Granularity;
 
 /**
  * Dummy implementation that just forwards the layout request to the {@link AbstractService} class.
@@ -29,8 +28,6 @@ import de.cau.cs.kieler.statistics.KIELERStatistics.Granularity;
  */
 public class LiveLayoutService extends AbstractService {
 
-    private static final String STATS_LIVE_LAYOUT_TRY = "kwebs.livelayout.try";
-    private static final String STATS_LIVE_LAYOUT_SUCC = "kwebs.livelayout.success";
     
     /**
      * @see AbstractService#layout(String, String, String, List)
@@ -49,14 +46,8 @@ public class LiveLayoutService extends AbstractService {
      */
     public String doLayout(final String serializedGraph, final String informat,
             final String outformat, final List<GraphLayoutOption> options) {
-        // log the layout attempt
-        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_LIVE_LAYOUT_TRY, 
-                Granularity.DAY | Granularity.MONTH);
         // perform the actual layout
         String result = layout(serializedGraph, informat, outformat, options);
-        // log the success
-        Logger.INSTANCE.getUsageStats().incCounter(Logger.STATS_KWEBS, STATS_LIVE_LAYOUT_SUCC, 
-                Granularity.DAY | Granularity.MONTH);
         
         return result;
     }

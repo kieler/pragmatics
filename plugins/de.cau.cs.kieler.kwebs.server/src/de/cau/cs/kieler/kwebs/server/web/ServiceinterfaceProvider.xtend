@@ -130,8 +130,6 @@ class ServiceinterfaceProvider
                                 function(r){
                                     var elem = document.getElementById('interface');
                                     if (elem !== null) {
-                                        
-                                        
                                         ««« This fixes the problem that JAX-WS generates a comment in the WSDL that
                                         ««« is not correctly indended
                                         var lines   = escape(r.responseText.replace(/<!-- Published by JAX-WS RI.*-->/, "\n\n")).split("\n");
