@@ -13,14 +13,4 @@
   <version>0.44.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
-  <build>
-    <sourceDirectory>src</sourceDirectory>
-    <plugins>
-      <!-- Compile Xtend code -->
-      <plugin>
-        <groupId>org.eclipse.xtend</groupId>
-        <artifactId>xtend-maven-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
 </project>
