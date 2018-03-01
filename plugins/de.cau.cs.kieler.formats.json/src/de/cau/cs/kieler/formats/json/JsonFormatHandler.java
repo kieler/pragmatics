@@ -17,6 +17,11 @@ import org.eclipse.elk.core.util.Maybe;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.json.ElkGraphJson;
 import org.eclipse.elk.graph.json.JsonImportException;
+import org.eclipse.elk.graph.json.JsonImporter;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 
 import de.cau.cs.kieler.formats.IGraphFormatHandler;
 import de.cau.cs.kieler.formats.IGraphTransformer;
@@ -59,8 +64,7 @@ public class JsonFormatHandler implements IGraphFormatHandler<String> {
     
     private static final IGraphTransformer<String, ElkNode> IMPORTER =
             new IGraphTransformer<String, ElkNode>() {
-                private final Maybe<org.eclipse.elk.graph.json.JsonImporter> importerMaybe =
-                        new Maybe<>();
+                private final Maybe<JsonImporter> importerMaybe = new Maybe<>();
 
                 @Override
                 public void transform(final TransformationData<String, ElkNode> data) {
@@ -78,7 +82,14 @@ public class JsonFormatHandler implements IGraphFormatHandler<String> {
                 public void transferLayout(final TransformationData<String, ElkNode> data) {
                     ElkNode root = data.getTargetGraphs().get(0);
                     importerMaybe.get().transferLayout(root);
+                    JsonObject jsonGraph = (JsonObject) importerMaybe.get().getInputModel();
                     importerMaybe.clear();
+                    // configure the gson builder
+                    GsonBuilder builder = new GsonBuilder();
+                    builder.setPrettyPrinting();
+                    Gson gson = builder.create();
+                    String json = gson.toJson(jsonGraph);
+                    data.setSourceGraph(json);
                 }
             };
 
@@ -95,14 +106,7 @@ public class JsonFormatHandler implements IGraphFormatHandler<String> {
         
         @Override
         public void transform(final TransformationData<ElkNode, String> data) {
-            String json = ElkGraphJson.forGraph(data.getSourceGraph())
-                                      .omitLayout(true)
-                                      .omitZeroDimension(true)
-                                      .omitZeroPositions(true)
-                                      .shortLayoutOptionKeys(true)
-                                      .prettyPrint(true)
-                                      .toJson();
-            data.getTargetGraphs().add(json);
+            data.getTargetGraphs().add(toJsonStringDefault(data.getSourceGraph()));
         }
         
         @Override
@@ -110,5 +114,15 @@ public class JsonFormatHandler implements IGraphFormatHandler<String> {
             throw new UnsupportedOperationException();
         }
     }; 
+ 
+    private static String toJsonStringDefault(final ElkNode node) {
+        return ElkGraphJson.forGraph(node)
+                           .omitLayout(false)
+                           .omitZeroDimension(true)
+                           .omitZeroPositions(true)
+                           .shortLayoutOptionKeys(true)
+                           .prettyPrint(true)
+                           .toJson();
+    }
     
 }
