@@ -302,9 +302,11 @@ public final class ServerLayoutMetaDataService {
                     algorithm.setPreviewImagePath(previewImagePath);
                 } catch (Exception e) {
                     Logger.log(Severity.WARNING,
-                            "Could not load preview image (" + "contributor="
-                                    + contributor.getName() + ", algorithm=" + element.getId()
-                                    + ", preview=" + preview + ")",
+                            "Could not load preview image (" 
+                                + "contributor=" + (contributor != null 
+                                                    ? contributor.getName() : "unknown") 
+                                + ", algorithm=" + element.getId()
+                                + ", preview=" + preview + ")",
                             e);
                 }
             }

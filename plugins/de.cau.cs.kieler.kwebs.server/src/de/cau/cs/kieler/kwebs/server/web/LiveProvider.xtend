@@ -124,7 +124,7 @@ class LiveProvider extends AbstractProvider {
 					<div class="col-md-3 input-group">
 						<span class="input-group-addon">Input Format</span>
 						<select id="inputFormat" class="form-control">
-							«formats.map(f |
+							«formats.sortBy[it.name].map(f |
 								'''<option «if(f.id == DEFAULT_INPUT_FORMAT) '''selected="selected"'''» value="«f.id»">«f.name»</option>'''
 							).join»
 						</select>
@@ -132,7 +132,7 @@ class LiveProvider extends AbstractProvider {
 					<div class=" col-md-3 input-group">
 						<span class="input-group-addon">Output Format</span>
 						<select id="outputFormat" class="form-control">
-							«formats.map(f |
+							«formats.sortBy[it.name].map(f |
 								'''<option «if(f.id == DEFAULT_OUTPUT_FORMAT) '''selected="selected"'''» value="«f.id»">«f.name»</option>'''
 							).join»
 						</select>
@@ -249,9 +249,9 @@ class LiveProvider extends AbstractProvider {
 				});
 				
 				// add initial example data
-				var exGraph = "{\n  id: \"root\",  \n   children: [{\n      id: \"n1\",  \n     labels: [ { text: \"n1\" } ],\n     width: 100, \n      height: 100\n   },{\n       id: \"n2\", \n      labels: [ { text: \"n2\" } ],\n     width: 100,\n       height: 50,\n       ports: [{\n         id: \"n2_p1\",\n            width: 10,\n            height: 10\n        }],\n       children: [{  \n            id: \"n3\",  \n         labels: [ { text: \"n3\" } ],\n         width: 20,\n            height: 20\n        },{\n           id: \"n4\", \n          labels: [ { text: \"n4\" } ],\n         width: 20,\n            height: 20}\n       ],\n        edges: [{\n         id: \"e4\",  \n         source: \"n3\",\n           target: \"n4\"\n        }]\n    },{\n       id: \"n5\",\n       labels: [ { text: \"n5\" } ],\n     width: 100,\n       height: 50\n    }],\n   edges: [{\n     id: \"e1\",  \n     labels: [ { text: \"e1\" } ],\n     source: \"n1\",\n       target: \"n2\",\n       targetPort: \"n2_p1\"\n },{\n       id: \"e2\",  \n     labels: [ { text: \"e2\" } ],\n     source: \"n1\",\n       target: \"n5\"\n    }]\n}";
+				var exGraph = "{\n  id: \"root\",\n  layoutOptions: { 'elk.algorithm': 'layered' },\n  children: [\n    { id: \"n1\", width: 30, height: 30 },\n    { id: \"n2\", width: 30, height: 30 },\n    { id: \"n3\", width: 30, height: 30 }\n  ],\n  edges: [\n    { id: \"e1\", sources: [ \"n1\" ], targets: [ \"n2\" ] },\n    { id: \"e2\", sources: [ \"n1\" ], targets: [ \"n3\" ] } \n  ]\n}";
 				$('#srcArea').val(exGraph);
-				var exConfig = "spacing: 100,\nalgorithm: org.eclipse.elk.alg.layered.layered,\nedgeRouting: ORTHOGONAL";
+				var exConfig = "spacing: 10,\nalgorithm: org.eclipse.elk.layered,\nedgeRouting: ORTHOGONAL";
 				$('#configArea').val(exConfig);
 			});
 			</script>
