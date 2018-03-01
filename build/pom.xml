@@ -70,7 +70,6 @@
 
       <modules>
         <module>de.cau.cs.kieler.pragmatics.targetplatform</module>
-        <module>../plugins/de.cau.cs.kieler.web.statistics</module>
         <module>../plugins/de.cau.cs.kieler.kwebs.server</module>
         <module>../features/de.cau.cs.kieler.kwebs.server.feature</module>
         <module>de.cau.cs.kieler.kwebs.repository</module>
