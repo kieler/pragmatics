@@ -589,8 +589,7 @@ class Ptolemy2KGraphVisualization {
     def private void addLabelRendering(KLabeledGraphElement element) {
         for (label : element.labels) {
             // Add empty selectable text rendering
-            val ktext = DiagramSyntheses.addRenderingWithStandardSelectionWrapper(label, null)
-                .addText(null)
+            val ktext = DiagramSyntheses.addRenderingWithStandardSelectionWrapper(label, null).addText(null)
             ktext.cursorSelectable = true
             
             // If we have a modal model port, we need to determine a fixed placement for the label at
@@ -602,9 +601,11 @@ class Ptolemy2KGraphVisualization {
                 label.ypos = -(bounds.height + 3.0f)
             }
             
-            // Make the text of edge labels a bit smaller
+            // Make the text of edge and port labels a bit smaller
             if (element instanceof KEdge) {
                 ktext.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 2
+            } else if (element instanceof KPort) {
+                ktext.fontSize = KlighdConstants::DEFAULT_FONT_SIZE - 3
             }
         }
     }
