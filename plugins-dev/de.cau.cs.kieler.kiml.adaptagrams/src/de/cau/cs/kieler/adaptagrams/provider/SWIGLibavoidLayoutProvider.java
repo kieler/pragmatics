@@ -13,11 +13,11 @@
  */
 package de.cau.cs.kieler.adaptagrams.provider;
 
+import org.eclipse.elk.alg.common.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.core.AbstractLayoutProvider;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters;
 import org.eclipse.elk.core.util.adapters.ElkGraphAdapters.ElkGraphAdapter;
-import org.eclipse.elk.core.util.nodespacing.NodeDimensionCalculation;
 import org.eclipse.elk.graph.ElkNode;
 
 import de.cau.cs.kieler.adaptagrams.avoid.LibavoidGraph;

@@ -8,7 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: com.google.guava,
  org.adaptagrams,
  org.eclipse.elk.core,
- org.eclipse.elk.graph
+ org.eclipse.elk.graph,
+ org.eclipse.elk.alg.common
 Export-Package: de.cau.cs.kieler.adaptagrams.avoid,
  de.cau.cs.kieler.adaptagrams.cgraph,
  de.cau.cs.kieler.adaptagrams.layouter,
