@@ -36,7 +36,6 @@
     <!-- <module>de.cau.cs.kieler.grana.text.ui</module> -->
     <module>de.cau.cs.kieler.kiml.libavoid</module>
     <module>de.cau.cs.kieler.kiml.ogdf</module>
-    <module>de.cau.cs.kieler.klay.planar</module>
     <module>de.cau.cs.kieler.klighd</module>
     <module>de.cau.cs.kieler.klighd.incremental</module>
     <module>de.cau.cs.kieler.klighd.kgraph</module>
