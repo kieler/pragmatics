@@ -50,10 +50,10 @@
 
    <!-- LIGHTWEIGHT DIAGRAMS -->
 
-   <feature url="features/de.cau.cs.kieler.klighd.feature_0.42.7.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.42.7.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.feature_0.42.8.qualifier.jar" id="de.cau.cs.kieler.klighd.feature" version="0.42.8.qualifier">
       <category name="kieler-klighd"/>
    </feature>
-   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.42.7.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.42.7.qualifier">
+   <feature url="features/de.cau.cs.kieler.klighd.feature.source_0.42.8.qualifier.jar" id="de.cau.cs.kieler.klighd.feature.source" version="0.42.8.qualifier">
       <category name="kieler-sources"/>
    </feature>
 
