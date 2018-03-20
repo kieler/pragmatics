@@ -710,7 +710,14 @@ public class PCamera extends PNode {
             }
         }
 
-        return animateViewToTransform(newTransform, duration);
+        long animationDuration = duration;
+        if (centerBounds.getHeight() == 0 && centerBounds.getWidth() == 0) {
+            // If new bounds do not show anything, then the camera view can be transformed immediately.
+            // Fixes KIPRA-1888
+            animationDuration = 0;
+        }
+
+        return animateViewToTransform(newTransform, animationDuration);
     }
 
     /**
