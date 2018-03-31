@@ -23,13 +23,13 @@ import de.cau.cs.kieler.klighd.kgraph.KLabel
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.KShapeLayout
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil
 import org.eclipse.elk.core.util.ElkUtil
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkGraphElement
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.ElkShape
 import org.eclipse.elk.graph.util.ElkGraphUtil
-import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil
 
 /**
  * Converts a KGraph into an ELKGraph by simply translating 
@@ -123,6 +123,19 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
         
         kLabel.transformId(eLabel)
         kLabel.copyShapeLayoutTo(eLabel);
+        
+        // Uncomment the following to have the label renderings attached to the graph element to be able to run
+        // GrAna analyses that involve label management. Also, add a dependency to klighd.krendering
+//        val IProperty<KRendering> K_RENDERING = new Property<KRendering>(
+//            "de.cau.cs.kieler.klighd.krendering.kRendering");
+//        val KRendering rootRendering = kLabel.getData(typeof(KRendering));
+//        if (rootRendering !== null) {
+//            // attach a reference to the label's root rendering to the label so that our layout
+//            // algorithms know how to estimate text sizes.
+//            val KRenderingRef rootRenderingRef = KRenderingFactory.eINSTANCE.createKRenderingRef();
+//            rootRenderingRef.setRendering(rootRendering);
+//            eLabel.setProperty(K_RENDERING, rootRenderingRef);
+//        }
     }
     
     private def create eEdge : ElkGraphUtil.createEdge(null) transformEdge(KEdge kEdge) {
