@@ -498,6 +498,37 @@
       </analysis>
       <analysis
             category="de.cau.cs.kieler.grana.drawing"
+            class="de.cau.cs.kieler.grana.analyses.MessageLifelineCrossingsAnalysis"
+            description="The number crossings between messages and lifelines in sequence diagrams."
+            id="de.cau.cs.kieler.grana.messageLifelineCrossings"
+            name="Number of Message-Lifeline Crossings (Sequence Diagrams only)">
+         <component
+               abbreviation="LL Count"
+               name="Number of Lifelines">
+         </component>
+         <component
+               abbreviation="Msg Count"
+               name="Number of Messages">
+         </component>
+         <component
+               abbreviation="Min"
+               name="Minimum">
+         </component>
+         <component
+               abbreviation="Avg"
+               name="Average">
+         </component>
+         <component
+               abbreviation="Max"
+               name="Maximum">
+         </component>
+         <component
+               abbreviation="Sum"
+               name="Sum">
+         </component>
+      </analysis>
+      <analysis
+            category="de.cau.cs.kieler.grana.drawing"
             class="de.cau.cs.kieler.grana.analyses.ShortHierarchicalEdgeCrossingsAnalysis"
             description="The number of edge crossings between short hierarchical edges only."
             id="de.cau.cs.kieler.grana.edgeCrossingsShortHierarchical"
