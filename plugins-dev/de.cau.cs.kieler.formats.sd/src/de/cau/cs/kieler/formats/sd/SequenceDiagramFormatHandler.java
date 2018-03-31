@@ -20,7 +20,8 @@ import de.cau.cs.kieler.klighd.LightDiagramServices;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties;
 
-public class SequenceDiagramFormatHandler extends AbstractEmfHandler<Interaction> implements ITestCaseGraphProvider {
+public class SequenceDiagramFormatHandler extends AbstractEmfHandler<Interaction>
+    implements ITestCaseGraphProvider {
 
 	public static final String SD_EXTENSION = "sd";
 
@@ -49,9 +50,6 @@ public class SequenceDiagramFormatHandler extends AbstractEmfHandler<Interaction
 		return this.viewContext;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Iterable<Predicate<ElkNode>> getGraphFilters() {
 		return null;
@@ -73,12 +71,14 @@ public class SequenceDiagramFormatHandler extends AbstractEmfHandler<Interaction
 			// Configure the synthesis
 			KlighdSynthesisProperties props = KlighdSynthesisProperties.create();
 			
-			props.configureSynthesisOptionValue(SequenceDiagramSynthesis.STYLE, SequenceDiagramSynthesis.STYLE_BORING);
+			props.configureSynthesisOptionValue(
+			        SequenceDiagramSynthesis.STYLE, SequenceDiagramSynthesis.STYLE_BORING);
 			props.configureSynthesisOptionValue(
 					SequenceDiagramSynthesis.LLSORT, SequenceDiagramSynthesis.LLSORT_INTERACTIVE);
 			props.configureSynthesisOptionValue(
 					SequenceDiagramSynthesis.LABELS, SequenceDiagramSynthesis.LABELS_CONSISTENT);
-			props.configureSynthesisOptionValue(SequenceDiagramSynthesis.LABEL_MANAGEMENT, false);
+			props.configureSynthesisOptionValue(
+			        SequenceDiagramSynthesis.MANAGEMENT, SequenceDiagramSynthesis.MANAGEMENT_OFF);
 			props.configureSynthesisOptionValue(SequenceDiagramSynthesis.VERTICAL_COMPACTION, true);
 
 			// Translate the model and extract the laid-out ELK graph
@@ -91,7 +91,8 @@ public class SequenceDiagramFormatHandler extends AbstractEmfHandler<Interaction
 
 		@Override
 		public void transferLayout(TransformationData<Interaction, ElkNode> data) {
-			throw new UnsupportedOperationException("Applying layout to a sequence diagram file is not supported.");
+			throw new UnsupportedOperationException(
+			        "Applying layout to a sequence diagram file is not supported.");
 		}
 	}
 
