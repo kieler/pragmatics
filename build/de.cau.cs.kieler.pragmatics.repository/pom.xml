@@ -18,8 +18,8 @@
   <!-- These are a few properties we use for the small update site index.html that is generated. -->
   <properties>
     <update.site.name>KIELER Pragmatics</update.site.name>
-    <update.site.description>Nightly</update.site.description>
-    <update.site.version>2017-11</update.site.version>
+    <update.site.description>Release</update.site.description>
+    <update.site.version>2018-06</update.site.version>
     <target.eclipse.version>4.6 (Neon)</target.eclipse.version>
   </properties>
 
@@ -45,7 +45,7 @@
                 <!-- Eclipse -->
                 <associateSite>http://download.eclipse.org/releases/mars</associateSite>
                 <!-- Eclipse Layout Kernel -->
-                <associateSite>http://build.eclipse.org/modeling/elk/updates/nightly/</associateSite>
+                <associateSite>http://build.eclipse.org/modeling/elk/updates/0.4.0/</associateSite>
                 <!-- <associateSite>http://download.eclipse.org/elk/updates/releases/0.1.0/</associateSite> -->
                 <!-- Eclipse Orbit for Apache Batik -->
                 <associateSite>http://download.eclipse.org/tools/orbit/downloads/drops/R20140114142710/repository/</associateSite>
