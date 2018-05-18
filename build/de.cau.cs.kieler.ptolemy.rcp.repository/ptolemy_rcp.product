@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="KIELER Ptolemy Browser" uid="de.cau.cs.kieler.ptolemy.rcp.product" id="de.cau.cs.kieler.ptolemy.rcp.product" application="org.eclipse.ui.ide.workbench" version="0.44.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="KIELER Ptolemy Browser" uid="de.cau.cs.kieler.ptolemy.rcp.product" id="de.cau.cs.kieler.ptolemy.rcp.product" application="org.eclipse.ui.ide.workbench" version="0.45.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
       <image path="/de.cau.cs.kieler.ptolemy.rcp/icons/about.png"/>
