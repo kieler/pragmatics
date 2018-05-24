@@ -142,6 +142,7 @@ public class GraphFileHandler {
         if (extension.equals(EXT_ELK_TEXT)) {
             // we want to convert to the textual format, so write missing identifiers into the graph
             GraphIdentifierGenerator.forGraph(graph)
+                .assertValid()
                 .assertExists()
                 .assertUnique()
                 .execute();
