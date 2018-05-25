@@ -24,6 +24,7 @@ import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.KShapeLayout
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphDataUtil
+import org.eclipse.elk.core.math.KVectorChain
 import org.eclipse.elk.core.util.ElkUtil
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkGraphElement
@@ -178,12 +179,21 @@ class KGraphImporter implements IGraphTransformer<KNode, ElkNode> {
     }
     
     private def void copyEdgeLayoutTo(KEdgeLayout source, ElkEdge target) {
-        
         val vc = source.createVectorChain
-        val section = ElkGraphUtil.firstEdgeSection(target, true, true)
-        ElkUtil.applyVectorChain(vc, section)
+        if (!vc.empty && realEdgeLayout(vc)) {
+            val section = ElkGraphUtil.firstEdgeSection(target, true, true)
+            ElkUtil.applyVectorChain(vc, section)
+        }
         
         target.copyProperties(source);
+    }
+    
+    /**
+     * @return {@code true} if the edge layout contains meaningful positions. This method is required 
+     * since the source and target point of a KEdge are initialized with KPoint(0, 0). 
+     */
+    private def realEdgeLayout(KVectorChain vc) {
+        return vc.findFirst[ v | v.x != 0.0 || v.y != 0.0 ] !== null
     }
 
     override transferLayout(TransformationData<KNode, ElkNode> data) {
