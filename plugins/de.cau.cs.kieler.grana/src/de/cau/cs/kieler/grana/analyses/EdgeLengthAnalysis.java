@@ -16,8 +16,11 @@ package de.cau.cs.kieler.grana.analyses;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.elk.core.math.ElkMath;
 import org.eclipse.elk.core.math.KVector;
 import org.eclipse.elk.core.math.KVectorChain;
+import org.eclipse.elk.core.options.CoreOptions;
+import org.eclipse.elk.core.options.EdgeRouting;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.core.util.IElkProgressMonitor;
 import org.eclipse.elk.graph.ElkEdge;
@@ -92,6 +95,37 @@ public class EdgeLengthAnalysis implements IAnalysis {
     }
 
     /**
+     * Approximate the length of the given spline edge by approximating the spline by a number
+     * straight segments whose lengths are summed up.
+     * 
+     * @param edge
+     *            the edge
+     * @return the approximated length.
+     */
+    public static float computeEdgeLengthSpline(final ElkEdge edge) {
+        ElkEdgeSection section = ElkGraphUtil.firstEdgeSection(edge, false, false);
+        KVectorChain vs = ElkUtil.createVectorChain(section);
+        float edgeLength = 0;
+        // CHECKSTYLEOFF MagicNumber
+        for (int i = 0; i < vs.size() - 3; i += 3) {
+            List<KVector> segment = vs.subList(i, i + 4);
+            KVector[] approx = ElkMath.approximateBezierSegment(20, segment.toArray(new KVector[4]));
+            
+            KVector last = segment.get(0);
+            for (KVector curr : approx) {
+                edgeLength += last.distance(curr);
+                last = curr;
+            }
+        }
+        
+        int rest = vs.size() % 4;
+        // CHECKSTYLEON MagicNumber
+        for (int i = vs.size() - rest; i < vs.size() - 1; i++) {
+            edgeLength += vs.get(i).distance(vs.get(i + 1));
+        }
+        return edgeLength;
+    }
+    /**
      * Compute the {@link EdgeLengthResults} for the passed edges.
      * 
      * @param edges
@@ -110,7 +144,13 @@ public class EdgeLengthAnalysis implements IAnalysis {
         List<Float> edgeLengths = Lists.newLinkedList();
         for (ElkEdge edge : edges) {
             numberOfEdges++;
-            float edgeLength = computeEdgeLength(edge);
+            float edgeLength;
+            if (getEdgeRoutingStyle(edge) == EdgeRouting.SPLINES) {
+                edgeLength = computeEdgeLengthSpline(edge);
+            } else {
+                edgeLength = computeEdgeLength(edge); 
+            }
+            
             overallEdgeLength += edgeLength;
             edgeLengths.add(edgeLength);
             // min edge length
@@ -132,6 +172,11 @@ public class EdgeLengthAnalysis implements IAnalysis {
         variance *= 1 / (double) (numberOfEdges - 1);
         
         return new EdgeLengthResults(minEdgeLength, maxEdgeLength, avg, variance);
+    }
+    
+    private static EdgeRouting getEdgeRoutingStyle(final ElkEdge edge) {
+        ElkNode container = (ElkNode) edge.eContainer();
+        return container.getProperty(CoreOptions.EDGE_ROUTING);
     }
     
     /**
