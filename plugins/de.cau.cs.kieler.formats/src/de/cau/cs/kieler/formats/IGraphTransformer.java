@@ -23,6 +23,7 @@ package de.cau.cs.kieler.formats;
  * @kieler.design proposed by msp
  * @kieler.rating proposed yellow 2012-07-10 msp
  */
+@FunctionalInterface
 public interface IGraphTransformer<S, T> {
     
     /**
@@ -40,6 +41,6 @@ public interface IGraphTransformer<S, T> {
      * 
      * @param data the transformation data instance
      */
-    void transferLayout(TransformationData<S, T> data);
+    default void transferLayout(TransformationData<S, T> data) { }
 
 }
