@@ -101,6 +101,8 @@ public class PSWTCanvas extends Composite implements PComponent {
     private boolean isButton2Pressed;
     private boolean isButton3Pressed;
 
+    protected Color backgroundColor;
+    
     /**
      * Construct a canvas with the basic scene graph consisting of a root,
      * camera, and layer. Event handlers for zooming and panning are
@@ -112,6 +114,7 @@ public class PSWTCanvas extends Composite implements PComponent {
     public PSWTCanvas(final Composite parent, final int style) {
         super(parent, style | SWT.NO_BACKGROUND | SWT.NO_REDRAW_RESIZE);
 
+        backgroundColor = Color.WHITE;
         CURRENT_CANVAS = this;
         cursorStack = new PStack();
         setCamera(createBasicSceneGraph());
@@ -578,8 +581,8 @@ public class PSWTCanvas extends Composite implements PComponent {
             g2 = getGraphics2D(gc, getDisplay());
         }
 
-        g2.setColor(Color.white);
-        g2.setBackground(Color.white);
+        g2.setColor(backgroundColor);
+        g2.setBackground(backgroundColor);
 
         final Rectangle rect = getBounds();
         g2.fillRect(0, 0, rect.width, rect.height);
