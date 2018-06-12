@@ -27,7 +27,7 @@
 
     <!-- definitions of our repositories -->
     <kieler.pragmatics.nightly>
-      http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/nightly/pragmatics/
+      http://rtsys.informatik.uni-kiel.de/~kieler/updatesite/
     </kieler.pragmatics.nightly>
   </properties>
 
@@ -116,7 +116,7 @@
     <pluginRepository>
       <id>eclipse-elk-meta</id>
       <name>ELK Meta Data Language Compiler Maven Repository</name>
-      <url>http://build.eclipse.org/modeling/elk/maven/meta/0.4.0/</url>
+      <url>http://download.eclipse.org/elk/maven/releases/0.4.0/</url>
     </pluginRepository>
   </pluginRepositories>
 
