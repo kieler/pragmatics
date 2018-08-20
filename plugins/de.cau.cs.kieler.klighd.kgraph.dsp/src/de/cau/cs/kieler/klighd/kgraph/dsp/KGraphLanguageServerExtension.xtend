@@ -33,6 +33,9 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension {
 	}
 	
 	override didClose(String clientId) {
+	    synchronized(diagramState) {
+	        diagramState.remove(clientId)
+	    }
 		super.didClose(clientId)
 		LOG.info("Removed diagram server for " + clientId)
 	}
@@ -49,14 +52,20 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension {
                     server.status = status
                     if (status.severity !== ERROR) {
                         val diagramGenerator = diagramGeneratorProvider.get
-                        val kgraphContext = diagramGenerator.translateModel(context.resource.contents.head)
-                        diagramState.putKGraphContext(context.resource.URI.toString, kgraphContext)
+                        val kgraphContext = KGraphDiagramGenerator.translateModel(context.resource.contents.head)
+                        synchronized(diagramState) {
+                            diagramState.putURIString(server.clientId, context.resource.URI.toString)
+                            diagramState.putKGraphContext(context.resource.URI.toString, kgraphContext)
+                        }
+                        
                         val sgraph = diagramGenerator.generate(
-                            context.resource, kgraphContext.viewModel, server.diagramState, context.cancelChecker
-                        )
-                        diagramState.putElementMapping(context.resource.URI.toString, diagramGenerator.mapping)
-                        diagramState.putTexts(context.resource.URI.toString, diagramGenerator.getModelLabels)
-                        diagramState.putTextMapping(context.resource.URI.toString, diagramGenerator.textMapping)
+                            context.resource.URI.toString, kgraphContext.viewModel, context.cancelChecker)
+                        synchronized(diagramState) {
+                            diagramState.putElementMappingList(context.resource.URI.toString, 
+                                diagramGenerator.getElementMappingList)
+                            diagramState.putTexts(context.resource.URI.toString, diagramGenerator.getModelLabels)
+                            diagramState.putTextMapping(context.resource.URI.toString, diagramGenerator.textMapping)
+                        }
                         sgraph
                     } else {
                         null

@@ -70,7 +70,8 @@ import io.typefox.sprotty.server.json.EnumTypeAdapter
 class KGraphTypeAdapterUtil {
     
     def static GsonBuilder configureGson(GsonBuilder gsonBuilder) {
-        gsonBuilder.registerTypeAdapterFactory(RuntimeTypeAdapterFactory.of(KGraphData)
+        gsonBuilder
+        .registerTypeAdapterFactory(RuntimeTypeAdapterFactory.of(KGraphData)
             .registerSubtype(KGraphDataImpl)
             .registerSubtype(KIdentifierImpl)
             .registerSubtype(KRenderingImpl)
@@ -126,7 +127,11 @@ class KGraphTypeAdapterUtil {
             ]
         )
         .registerTypeAdapterFactory(new EnumTypeAdapter.Factory())
-        .exclusionStrategies = new EObjectFieldExclusionStrategy
+        .registerTypeAdapterFactory(new EMapPropertyHolderTypeAdapterFactory(gsonBuilder))
+        .setExclusionStrategies(
+            new EObjectFieldExclusionStrategy, 
+            new KRenderingRefFieldExclusionStrategy
+        )
         // removed the configureGson call from Sprotty to include two new actions and not register the ActionFactory twice.
         // ActionTypeAdapter.configureGson(gsonBuilder)
     }

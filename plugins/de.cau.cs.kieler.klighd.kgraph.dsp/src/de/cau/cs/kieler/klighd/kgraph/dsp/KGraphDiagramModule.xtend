@@ -9,6 +9,7 @@ package de.cau.cs.kieler.klighd.kgraph.dsp
 import io.typefox.sprotty.server.xtext.IDiagramGenerator
 import io.typefox.sprotty.server.xtext.ide.IdeDiagramModule
 import io.typefox.sprotty.server.xtext.ide.IdeLanguageServerExtension
+import io.typefox.sprotty.server.xtext.tracing.TraceRegionProvider
 
 class KGraphDiagramModule extends IdeDiagramModule {
 	
@@ -35,5 +36,8 @@ class KGraphDiagramModule extends IdeDiagramModule {
 	override bindIDiagramServer() {
         KGraphAwareDiagramServer
     }
-	
+    
+	def Class<? extends TraceRegionProvider> bindTraceRegionProvider() {
+        SimpleTraceRegionProvider
+    }
 }

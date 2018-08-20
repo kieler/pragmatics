@@ -23,31 +23,31 @@ import javax.inject.Singleton
 import org.eclipse.elk.core.util.Pair
 
 /**
- * Singleton class to map a graph id (String) found in SGraphs to their different parts needed for handling KGraph models
+ * Singleton class to map a graph id (String) found in SGraphs to their various parts needed for handling KGraph models
  * @author stu114054
  *
  */
-@Singleton
-class KGraphDiagramState {
-    Map<String, ViewContext> kgraphContexts = new HashMap
-    Map<String, ArrayList<Pair <KGraphElement, SModelElement>>> elementMapping = new HashMap
+@Singleton class KGraphDiagramState {
+    Map<String, ViewContext> kGraphContexts = new HashMap
+    Map<String, ArrayList<Pair <KGraphElement, SModelElement>>> elementMappingList = new HashMap
     Map<String, ArrayList<SKLabel>> labels = new HashMap
     Map<String, Map<String, KText>> textMapping = new HashMap
+    Map<String, String> uriStringMap = new HashMap
     
     def ViewContext getKGraphContext(String key) {
-        kgraphContexts.get(key)
+        kGraphContexts.get(key)
     }
     
     def putKGraphContext(String key, ViewContext value) {
-        kgraphContexts.put(key, value)
+        kGraphContexts.put(key, value)
     }
     
-    def ArrayList<Pair <KGraphElement, SModelElement>> getElementMapping(String key) {
-        elementMapping.get(key)
+    def ArrayList<Pair <KGraphElement, SModelElement>> getElementMappingList(String key) {
+        elementMappingList.get(key)
     }
     
-    def putElementMapping(String key, ArrayList<Pair <KGraphElement, SModelElement>> value) {
-        elementMapping.put(key, value)
+    def putElementMappingList(String key, ArrayList<Pair <KGraphElement, SModelElement>> value) {
+        elementMappingList.put(key, value)
     }
     
     def ArrayList<SKLabel> getTexts(String key) {
@@ -64,6 +64,24 @@ class KGraphDiagramState {
     
     def putTextMapping(String key, Map<String, KText> value) {
         textMapping.put(key, value)
+    }
+    
+    /**
+     * removes this key from all stored maps. Should be called when the diagram view is closed.
+     */
+    def remove(String clientId) {
+        val key = uriStringMap.get(clientId)
+        if (key !== null) {
+            kGraphContexts.remove(key)
+            elementMappingList.remove(key)
+            labels.remove(key)
+            textMapping.remove(key)
+            uriStringMap.remove(clientId)
+        }
+    }
+    
+    def putURIString(String clientId, String uri) {
+        uriStringMap.put(clientId, uri)
     }
     
 }

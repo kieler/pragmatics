@@ -11,28 +11,26 @@ import io.typefox.sprotty.server.xtext.tracing.Traceable
 import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
 
-@Accessors
-class SKNode extends SNode implements Traceable {
+@Accessors class SKNode extends SNode implements Traceable {
     String trace
     List<KGraphData> data
     KInsets insets
 }
-@Accessors
-class SKLabel extends SLabel {
+@Accessors class SKLabel extends SLabel implements Traceable {
+    String trace
     List<KGraphData> data
     KInsets insets
 }
-@Accessors
-class SKEdge extends SEdge {
+@Accessors class SKEdge extends SEdge implements Traceable {
+    String trace
     List<KGraphData> data
 }
-@Accessors
-class SKPort extends SPort {
+@Accessors class SKPort extends SPort implements Traceable {
+    String trace
     List<KGraphData> data
     KInsets insets
 }
-@Accessors
-class SKGraph extends SGraph {
+@Accessors class SKGraph extends SGraph {
     List<KGraphData> data
     KInsets insets
 }
