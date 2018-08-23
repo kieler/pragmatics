@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -21,10 +21,13 @@ import de.cau.cs.kieler.klighd.krendering.KXPosition
 import java.io.IOException
 
 /**
+ * Type adapter to correctly serialize {@link KXPosition}.
+ * {@link KLeftPosition}s are serialized under the key 'left',
+ * {@link KRightPosition}s are serialized under the key 'right'.
+ * 
  * @author stu114054
- *
  */
-class KXPositionTypeAdapter extends TypeAdapter<KXPosition>{
+public class KXPositionTypeAdapter extends TypeAdapter<KXPosition>{
         
     override write(JsonWriter out, KXPosition value) throws IOException {
         if (value === null) {
@@ -42,11 +45,10 @@ class KXPositionTypeAdapter extends TypeAdapter<KXPosition>{
                 out.name("absolute").value(value.absolute)
                 out.name("relative").value(value.relative)
             out.endObject
-        
         out.endObject
     }
 
     override read(JsonReader in) throws IOException {
-        return null; // TODO : do we need this direction? Seems we only need to write this class to JSON
+        return null; // only serialization is needed yet.
     }
 }

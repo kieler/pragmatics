@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -17,12 +17,13 @@ import com.google.gson.FieldAttributes
 import org.eclipse.emf.ecore.EObject
 
 /**
- * @author stu114054
- * A Gson Exclusion Strategy to ignore all 'e[...]' Fields during serialization so that for example no containment 
+ * A gson exclusion strategy to ignore all 'e[...]' fields during serialization so that for example no containment 
  * gets serialized, which would cause possible endless loops.
+ * The other fields are also not needed for diagram generation on client side.
+ * 
+ * @author stu114054
  */
-class EObjectFieldExclusionStrategy implements ExclusionStrategy {
-        
+public class EObjectFieldExclusionStrategy implements ExclusionStrategy { 
     override shouldSkipField(FieldAttributes f) {
         return EObject.isAssignableFrom(f.declaringClass) && (
             f.getName().equals("eContainer") || 
@@ -35,5 +36,4 @@ class EObjectFieldExclusionStrategy implements ExclusionStrategy {
     override shouldSkipClass(Class<?> clazz) {
         return false
     }
-
 }

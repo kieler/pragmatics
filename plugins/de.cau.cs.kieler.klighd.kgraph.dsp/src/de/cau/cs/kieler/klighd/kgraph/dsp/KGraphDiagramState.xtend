@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -20,68 +20,91 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.Map
 import javax.inject.Singleton
-import org.eclipse.elk.core.util.Pair
 
 /**
  * Singleton class to map a graph id (String) found in SGraphs to their various parts needed for handling KGraph models
  * @author stu114054
  *
  */
-@Singleton class KGraphDiagramState {
-    Map<String, ViewContext> kGraphContexts = new HashMap
-    Map<String, ArrayList<Pair <KGraphElement, SModelElement>>> elementMappingList = new HashMap
-    Map<String, ArrayList<SKLabel>> labels = new HashMap
-    Map<String, Map<String, KText>> textMapping = new HashMap
-    Map<String, String> uriStringMap = new HashMap
+@Singleton 
+public class KGraphDiagramState {
     
-    def ViewContext getKGraphContext(String key) {
+    /**
+     * A map mapping the id of a graph to the {@link ViewContext} containing that graph.
+     */
+    private Map<String, ViewContext> kGraphContexts = new HashMap
+    
+    /**
+     * A map that contains a key-value pair for each KGraphElement and its translated SModelElement counterpart.
+     * Convenient for finding a specific key KGraphElement faster.
+     * Mapped by the url this map belongs to.
+     */
+    private Map<String, Map<KGraphElement, SModelElement>> kGraphToSModelElementMap = new HashMap
+    
+    /**
+     * A list containing all texts from the source KGraph in Sprotty labels.
+     * Mapped by the url this map belongs to.
+     */
+    private Map<String, ArrayList<SKLabel>> labels = new HashMap
+    
+    /**
+     * A map containing all KTexts from the source KGraph under the key of their id.
+     * Mapped by the url this map belongs to.
+     */
+    private Map<String, Map<String, KText>> textMapping = new HashMap
+    
+    /**
+     * A map to map the sprotty client id to the uri leading to the resource.
+     */
+    private Map<String, String> uriStringMap = new HashMap
+    
+    public def ViewContext getKGraphContext(String key) {
         kGraphContexts.get(key)
     }
     
-    def putKGraphContext(String key, ViewContext value) {
+    public def putKGraphContext(String key, ViewContext value) {
         kGraphContexts.put(key, value)
     }
     
-    def ArrayList<Pair <KGraphElement, SModelElement>> getElementMappingList(String key) {
-        elementMappingList.get(key)
+    public def Map<KGraphElement, SModelElement> getKGraphToSModelElementMap(String key) {
+        kGraphToSModelElementMap.get(key)
     }
     
-    def putElementMappingList(String key, ArrayList<Pair <KGraphElement, SModelElement>> value) {
-        elementMappingList.put(key, value)
+    public def putKGraphToSModelElementMap(String key, Map<KGraphElement, SModelElement> value) {
+        kGraphToSModelElementMap.put(key, value)
     }
     
-    def ArrayList<SKLabel> getTexts(String key) {
+    public def ArrayList<SKLabel> getTexts(String key) {
         labels.get(key)
     }
     
-    def putTexts(String key, ArrayList<SKLabel> value) {
+    public def putTexts(String key, ArrayList<SKLabel> value) {
         labels.put(key, value)
     }
     
-    def Map<String, KText> getTextMapping(String key) {
+    public def Map<String, KText> getTextMapping(String key) {
         textMapping.get(key)
     }
     
-    def putTextMapping(String key, Map<String, KText> value) {
+    public def putTextMapping(String key, Map<String, KText> value) {
         textMapping.put(key, value)
     }
     
     /**
      * removes this key from all stored maps. Should be called when the diagram view is closed.
      */
-    def remove(String clientId) {
+    public def remove(String clientId) {
         val key = uriStringMap.get(clientId)
         if (key !== null) {
             kGraphContexts.remove(key)
-            elementMappingList.remove(key)
+            kGraphToSModelElementMap.remove(key)
             labels.remove(key)
             textMapping.remove(key)
             uriStringMap.remove(clientId)
         }
     }
     
-    def putURIString(String clientId, String uri) {
+    public def putURIString(String clientId, String uri) {
         uriStringMap.put(clientId, uri)
     }
-    
 }

@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -23,7 +23,6 @@ import org.eclipse.xtend.lib.annotations.ToString
 
 /**
  * @author stu114054
- *
  */
 
 /**
@@ -33,17 +32,17 @@ import org.eclipse.xtend.lib.annotations.ToString
 @Accessors
 @EqualsHashCode
 @ToString(skipNulls = true)
-class RequestTextBoundsAction implements Action {
+public class RequestTextBoundsAction implements Action {
     public static val KIND = 'requestTextBounds'
-    String kind = KIND
+    private String kind = KIND
     
-    SModelRoot textDiagram
+    private SModelRoot textDiagram
     
-    new() {}
-    new(Consumer<RequestTextBoundsAction> initializer) {
+    public new() {}
+    public new(Consumer<RequestTextBoundsAction> initializer) {
         initializer.accept(this)
     }
-    new(SModelRoot textDiagram) {
+    public new(SModelRoot textDiagram) {
         this.textDiagram = textDiagram
     }
 }
@@ -55,15 +54,15 @@ class RequestTextBoundsAction implements Action {
 @Accessors
 @EqualsHashCode
 @ToString(skipNulls = true)
-class ComputedTextBoundsAction implements Action {
+public class ComputedTextBoundsAction implements Action {
     public static val KIND = 'computedTextBounds'
-    String kind = KIND
-    int revision 
+    private String kind = KIND
+    private int revision 
     
-    List<ElementAndBounds> bounds
+    private List<ElementAndBounds> bounds
     
-    new() {}
-    new(Consumer<ComputedTextBoundsAction> initializer) {
+    public new() {}
+    public new(Consumer<ComputedTextBoundsAction> initializer) {
         initializer.accept(this)
     }
 }

@@ -1,8 +1,14 @@
 /*
- * Copyright (C) 2017 TypeFox and others.
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
+ *
+ * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * Copyright 2018 by
+ * + Kiel University
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
  */
 package de.cau.cs.kieler.klighd.kgraph.dsp
 
@@ -17,12 +23,23 @@ import java.util.concurrent.CompletableFuture
 
 import static io.typefox.sprotty.api.ServerStatus.Severity.*
 
+/**
+ * Language server extension that implements functionality for the generation of diagrams and handling of their diagram
+ * servers.
+ * Based on the yang-lsp implementation by TypeFox.
+ * 
+ * @author nir
+ * @see <a href="https://github.com/theia-ide/yang-lsp/blob/master/yang-lsp/io.typefox.yang.diagram/src/main/java/io/typefox/yang/diagram/YangLanguageServerExtension.xtend">
+ *      YangLanguageServerExtension</a>
+ */
 @Singleton
 class KGraphLanguageServerExtension extends IdeLanguageServerExtension {
     
-    @Inject Provider<KGraphDiagramGenerator> diagramGeneratorProvider
+    @Inject
+    Provider<KGraphDiagramGenerator> diagramGeneratorProvider
     
-    @Inject KGraphDiagramState diagramState
+    @Inject
+    KGraphDiagramState diagramState
 	
 	override protected initializeDiagramServer(IDiagramServer server) {
 		super.initializeDiagramServer(server)
@@ -52,21 +69,21 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension {
                     server.status = status
                     if (status.severity !== ERROR) {
                         val diagramGenerator = diagramGeneratorProvider.get
-                        val kgraphContext = KGraphDiagramGenerator.translateModel(context.resource.contents.head)
+                        val kGraphContext = KGraphDiagramGenerator.translateModel(context.resource.contents.head)
                         synchronized(diagramState) {
                             diagramState.putURIString(server.clientId, context.resource.URI.toString)
-                            diagramState.putKGraphContext(context.resource.URI.toString, kgraphContext)
+                            diagramState.putKGraphContext(context.resource.URI.toString, kGraphContext)
                         }
                         
-                        val sgraph = diagramGenerator.generate(
-                            context.resource.URI.toString, kgraphContext.viewModel, context.cancelChecker)
+                        val sGraph = diagramGenerator.toSGraph(
+                            kGraphContext.viewModel, context.resource.URI.toString, context.cancelChecker)
                         synchronized(diagramState) {
-                            diagramState.putElementMappingList(context.resource.URI.toString, 
-                                diagramGenerator.getElementMappingList)
+                            diagramState.putKGraphToSModelElementMap(context.resource.URI.toString,
+                                diagramGenerator.getKGraphToSModelElementMap)
                             diagramState.putTexts(context.resource.URI.toString, diagramGenerator.getModelLabels)
-                            diagramState.putTextMapping(context.resource.URI.toString, diagramGenerator.textMapping)
+                            diagramState.putTextMapping(context.resource.URI.toString, diagramGenerator.getTextMapping)
                         }
-                        sgraph
+                        sGraph
                     } else {
                         null
                     }

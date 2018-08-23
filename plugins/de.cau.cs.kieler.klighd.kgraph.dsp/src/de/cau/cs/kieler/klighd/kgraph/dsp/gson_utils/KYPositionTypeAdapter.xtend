@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -21,10 +21,13 @@ import de.cau.cs.kieler.klighd.krendering.KYPosition
 import java.io.IOException
 
 /**
+ * Type adapter to correctly serialize {@link KYPosition}.
+ * {@link KTopPosition}s are serialized under the key 'top',
+ * {@link KVottomPosition}s are serialized under the key 'bottom'.
+ * 
  * @author stu114054
- *
  */
-class KYPositionTypeAdapter extends TypeAdapter<KYPosition>{
+public class KYPositionTypeAdapter extends TypeAdapter<KYPosition>{
         
     override write(JsonWriter out, KYPosition value) throws IOException {
         if (value === null) {
@@ -42,11 +45,10 @@ class KYPositionTypeAdapter extends TypeAdapter<KYPosition>{
                 out.name("absolute").value(value.absolute)
                 out.name("relative").value(value.relative)
             out.endObject
-        
         out.endObject
     }
 
     override read(JsonReader in) throws IOException {
-        return null; // TODO : do we need this direction? Seems we only need to write this class to JSON
+        return null; // Only serialization is needed yet.
     }
 }

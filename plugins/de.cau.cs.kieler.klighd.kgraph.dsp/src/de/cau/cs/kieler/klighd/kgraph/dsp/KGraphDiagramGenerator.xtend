@@ -1,21 +1,14 @@
-// which of these is now needed? both? just one of them?
 /*
  * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
- */
-/*
- * Copyright (C) 2017 TypeFox and others.
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 package de.cau.cs.kieler.klighd.kgraph.dsp
 
@@ -51,7 +44,6 @@ import java.util.List
 import java.util.Map
 import java.util.Random
 import org.apache.log4j.Logger
-import org.eclipse.elk.core.util.Pair
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.util.EcoreUtil
@@ -59,212 +51,210 @@ import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.util.CancelIndicator
 
 /**
- * A Diagram Generator that can create Sprotty SGraphs from any EObject, that has a registered view synthesis to KGraph
- * for KLighD. 
- * During translation some artifacts for mapping between the source and target element types are generated as well as
- * artifacts for all contained Texts in the Model.
- * @author stu114054
+ * A diagram generator that can create Sprotty {@link SGraph} from any {@link EObject} that has a registered view
+ * synthesis to {@link KNode} for KLighD. 
+ * For translation first call the {@link translateModel} function to translate the EObject to a KNode and then call
+ * {@link generate(KNode, String, CancelIndicator)} with that KNode to translate it to an SGraph.
+ * During translation a map for mapping between the source and target element types is generated as well as
+ * a list of all generated texts in Sprotty and a map to each text in the source model.
+ * The function {@link #generateTextDiagram} can be called after the translation to get a simpler SGraph, that contains
+ * only labels with all texts in the source KNode.
+ * Based on the yang-lsp implementation by TypeFox.
+ * 
+ * @author nir
+ * @see <a href="https://github.com/theia-ide/yang-lsp/blob/master/yang-lsp/io.typefox.yang.diagram/src/main/java/io/typefox/yang/diagram/YangDiagramGenerator.xtend">
+ *      YangDiagramGenerator</a>
  */
-class KGraphDiagramGenerator implements IDiagramGenerator {
-	static val LOG = Logger.getLogger(KGraphDiagramGenerator)
+public class KGraphDiagramGenerator implements IDiagramGenerator {
+	private static val LOG = Logger.getLogger(KGraphDiagramGenerator)
     
     /**
-     * A map that contains a key-value pair for each KGraphElement and its translated SModelElement counterpart.
+     * A map that maps each {@link KGraphElement} to its {@link SModelElement}.
      * Convenient for finding a specific key KGraphElement faster.
+     * @see KGraphDiagramState
+     * @see KGraphLayoutEngine
      */
-    @Accessors(PUBLIC_GETTER) var Map<KGraphElement, SModelElement> kGraphToSModelElementMap
+    @Accessors(PUBLIC_GETTER)
+    private var Map<KGraphElement, SModelElement> kGraphToSModelElementMap
     
     /**
-     * An iterable List containing each KGraphElement and its translated SModelElement counterpart as a Pair.
-     * Convenient for iterating over all element pairs.
+     * A list containing all texts from the source KGraph inside Sprotty labels. Used for the simpler texts-only SGraph 
+     * @see #generateTextDiagram
+     * @see KGraphDiagramState
      */
-    @Accessors(PUBLIC_GETTER) var ArrayList<Pair<KGraphElement, SModelElement>> elementMappingList
+    @Accessors(PUBLIC_GETTER)
+    private var ArrayList<SKLabel> modelLabels
+    
     /**
-     * A list containing all Texts from the source KGraph in Sprotty Labels
+     * A map containing all {@link KText}s from the source KGraph under the key of their ID in the texts-only SGraph.
+     * @see #generateTextDiagram
+     * @see KGraphDiagramState
      */
-    @Accessors(PUBLIC_GETTER) var ArrayList<SKLabel> modelLabels
-    /**
-     * A Map containing all KTexts from the source KGraph under the key of their id.
-     */
-    @Accessors(PUBLIC_GETTER) var Map<String, KText> textMapping
+    @Accessors(PUBLIC_GETTER)
+    private var Map<String, KText> textMapping
 
     /**
-     * The root node of the translated SGraph
+     * The root node of the translated {@link SGraph}.
      */
-	var SGraph diagramRoot
-	
-	@Inject ITraceProvider traceProvider
-    
-    /**
-     * A random offset is used to give elements without identifier an id that different objects at the same position 
-     * can not get the same id over multiple updates (prevents morphing of not matching objects into each other).
-     * Unnamed elements therefore cannot morph on updated models. Name your elements!
-     */
-    int randomOffset
-    
-    /**
-     * Counting how many Labels and Texts are in the graph
-     */
-    int numLabels
-    
-    KGraphElementIDGenerator idGen
-
-    /**
-     * Creates a ViewContext containing the KGraph model for any EObject model with a registered
-     * transformation in KLighD. 
-     */
-    static def ViewContext translateModel(EObject model) {
-        return LightDiagramServices.translateModel2(model, null)
-    }
-
+	private var SGraph diagramRoot
 	
 	/**
-	 * Generates an SGraph from the resource, if its content is a KNode.
+	 * Provides functionality to tag SModelElements.
+	 */
+	@Inject
+	private ITraceProvider traceProvider
+    
+    /**
+     * A random value used to generate unique IDs for elements without a name.
+     * This causes that the same object will get different IDs over multiple updates (prevents morphing of not matching
+     * objects into each other). Unnamed elements therefore cannot morph on updated models. Name your elements!
+     */
+    private int randomOffset // TODO: maybe exchange the random value for the hash of the object
+    
+    /**
+     * Counting how many labels and texts are in the graph.
+     */
+    private int numLabels
+    
+    /**
+     * Generates unique IDs for any KGraphElement.
+     */
+    private KGraphElementIDGenerator idGen
+
+    /**
+     * Creates a {@link ViewContext} containing the KGraph model for any {@link EObject} model with a registered 
+     * transformation in KLighD. 
+     */
+    public static def ViewContext translateModel(EObject model) {
+        return LightDiagramServices.translateModel2(model, null)
+    }
+	
+	/**
+	 * Generates an {@link SGraph} from the resource if its content is a {@link KNode}.
 	 */
 	override generate(Resource resource, IDiagramState state, CancelIndicator cancelIndicator) {
 		val content = resource.contents.head
 		if (content instanceof KNode) {
-			generate(resource.URI.toString, content as KNode, cancelIndicator)
+			toSGraph(content as KNode, resource.URI.toString, cancelIndicator)
 		}
 	}
 	
 	/**
-	 * Generates an SGraph from a KNode pNode that is based on the resource's content. 
-	 * @param identifier 
+	 * Translates a plain {@link KNode} or a KNode translated by {@link translateModel} to an {@link SGraph}. 
+	 * @param parentNode      the KNode that should be translated. This is the parent node containing all elements of the 
+	 *                        graph, that is translated
+	 * @param identifier      The URI of the resource containing this KNode before the translation.
+	 * @param cancelIndicator Indicates, if the action requesting this translation has already been canceled.
 	 */
-	def SGraph generate(String identifier, KNode pNode, CancelIndicator cancelIndicator) {
-	    
+	public def SGraph toSGraph(KNode parentNode, String identifier, CancelIndicator cancelIndicator) {
         LOG.info("Generating diagram for input: '" + identifier + "'")
 	    
         val r = new Random
-        r.seed = System.currentTimeMillis
         randomOffset = r.nextInt
         numLabels = 0
         kGraphToSModelElementMap = new HashMap
-        elementMappingList = new ArrayList
-        textMapping = new HashMap<String, KText>
+        textMapping = new HashMap
         modelLabels = new ArrayList
         idGen = new KGraphElementIDGenerator
         
-        
-        // generate a SGraph root element around the translation of the parent KNode
+        // generate an SGraph root element around the translation of the parent KNode.
         diagramRoot = new SKGraph => [
             type = 'graph'
             id = identifier
-            children = new ArrayList<SModelElement>
+            children = new ArrayList
         ]
         
-        val rootChildren = createNodesAndEdges(#[pNode])
-        diagramRoot.children.addAll(rootChildren)
+        diagramRoot.children.addAll(createNodesAndEdges(#[parentNode]))
         
-        return if (cancelIndicator.canceled) null else diagramRoot
+        return if (cancelIndicator.canceled) 
+                   null 
+               else 
+                   diagramRoot
         // TODO: incorporate the cancelIndicator on more places?
 	}
 
     /**
-     * Translates all nodes and their outgoing edges to SModelElements. Also handles tracing and mapping between
-     * KGraphElements and SModelElements
-     * The edges are translated together with the nodes, because KNodes contain KEdges in the field 'outgoingEdges' 
-     * as children, whereas outgoing SEdges are siblings of their originating SNodes.
+     * Translates all {@code nodes} and their outgoing edges to {@link SModelElement}s. Also handles tracing and
+     * mapping between {@link KGraphElement}s and SModelElements.
+     * The edges are translated together with the nodes, because {@link KNode}s contain {@link KEdge}s in the field 
+     * {@link KNode#getOutgoingEdges} as children, whereas outgoing {@link SEdge}s are siblings of their originating 
+     * {@link SNode}s.
      */
-    protected def List<SModelElement> createNodesAndEdges(List<KNode> nodes) {
-        val nodeAndEdgeElements = new ArrayList()
+    private def List<SModelElement> createNodesAndEdges(List<KNode> nodes) {
+        val nodeAndEdgeElements = new ArrayList
         // add all node children
         for (node : nodes) {
             val SNode nodeElement = generateNode(node)
-            if (nodeElement !== null) {
-                kGraphToSModelElementMap.put(node, nodeElement)
-                elementMappingList.add(new Pair(node, nodeElement))
-                nodeAndEdgeElements.add(nodeElement)
-                nodeElement.trace(node)
-            } else {
-                LOG.error("generateElement did not create an element for node " + node)
-            }
+            nodeAndEdgeElements.add(nodeElement)
+            kGraphToSModelElementMap.put(node, nodeElement)
+            nodeElement.trace(node)
         }
         
-        // after all nodes have been generated, generate their edges as children
+        // after all nodes have been generated, generate their edges as children. The order is important, because the 
+        // edges need to refer to the IDs of their source and target nodes, generated in the lines above.
         for (node : nodes) {
-            for (edge: node.outgoingEdges) {
+            for (edge : node.outgoingEdges) {
                 val SEdge edgeElement = generateEdge(edge)
-                if (edgeElement !== null) {
-                    kGraphToSModelElementMap.put(edge, edgeElement)
-                    elementMappingList.add(new Pair(edge, edgeElement))
-                    nodeAndEdgeElements.add(edgeElement)
-                    edgeElement.trace(edge)
-                } else {
-                    LOG.error("generateElement did not create an element for edge " + edge)
-                }
+                nodeAndEdgeElements.add(edgeElement)
+                kGraphToSModelElementMap.put(edge, edgeElement)
+                edgeElement.trace(edge)
             }
         }
         return nodeAndEdgeElements
     }
     
     /**
-     * Translates all ports to SModelElements. Also handles tracing and mapping between
-     * KGraphElements and SModelElements
+     * Translates all {@code ports} to SModelElements. Also handles tracing and mapping between
+     * KGraphElements and SModelElements.
      */
-    protected def List<SPort> createPorts(List<KPort> ports) {
+    private def List<SPort> createPorts(List<KPort> ports) {
         val List<SPort> portElements = new ArrayList
         for (port : ports) {
             val SPort portElement = generatePort(port)
-            if (portElement !== null) {
-                kGraphToSModelElementMap.put(port, portElement)
-                elementMappingList.add(new Pair(port, portElement))
-                portElements.add(portElement)
-                portElement.trace(port)
-            } else {
-                LOG.error("generateElement did not create an element for port " + port)
-            }
+            portElements.add(portElement)
+            kGraphToSModelElementMap.put(port, portElement)
+            portElement.trace(port)
         }
         return portElements
     }
     
     /**
-     * Translates all labels to SModelElements. Also handles tracing and mapping between
-     * KGraphElements and SModelElements
+     * Translates all {@code labels} to SModelElements. Also handles tracing and mapping between
+     * KGraphElements and SModelElements.
      */
-    protected def List<SLabel> createLabels(List<KLabel> labels) {
+    private def List<SLabel> createLabels(List<KLabel> labels) {
         val List<SLabel> labelElements = new ArrayList
         for (label : labels) {
             val SLabel labelElement = generateLabel(label, true)
-            if (labelElement !== null) {
-                kGraphToSModelElementMap.put(label, labelElement)
-                elementMappingList.add(new Pair(label, labelElement))
-                labelElements.add(labelElement)
-                labelElement.trace(label)
-            } else {
-                LOG.error("generateElement did not create element for label " + label)
-            }
+            labelElements.add(labelElement)
+            kGraphToSModelElementMap.put(label, labelElement)
+            labelElement.trace(label)
         }
         return labelElements
     }
     
     /**
-     * Generates a trace for the kElement's source EObject on the sElement. 
+     * Generates a trace for the {@code kElement}'s source EObject on the {@code sElement}. 
      * The kElement must be synthesized by a KLighD synthesis before and must have its source EObject stored in the 
-     * KlighdInternalProperties.MODEL_ELEMEMT property.
+     * {@link KlighdInternalProperties#MODEL_ELEMEMT} property.
      */
-    protected def void trace(SModelElement sElement, KGraphElement kElement) {
+    private def void trace(SModelElement sElement, KGraphElement kElement) {
         if (sElement instanceof Traceable) {
-            // the real model element that can be traced is the EObject that got synthesized in the translateModel
-            // function. That model element must be stored in the properties during the synthesis. Otherwise the tracing
-            // will can not work
+            // The real model element that can be traced is the EObject that got synthesized in the
+            // {@link translateModel} function. That model element has to be stored in the properties during the 
+            // synthesis. Otherwise the tracing will not work
             val modelKElement = kElement.properties.get(KlighdInternalProperties.MODEL_ELEMEMT)
             if (modelKElement instanceof EObject) {
                 traceProvider.trace(sElement, modelKElement)    
-            } else {
-                LOG.error("the given KGraphElement does not come from a valid synthesis that stores its model element.")
             }
         }
     }
     
     /**
-     * Creates a Sprotty Node corresponding to the given KNode.
+     * Creates a Sprotty Node corresponding to the given {@link KNode}.
      */
-    protected def SKNode generateNode(KNode node) {
-
-        val id = idGen.getId(node, randomOffset)
-        val nodeElement = configSElement(SKNode, id.toString)
+    private def SKNode generateNode(KNode node) {
+        val nodeElement = configSElement(SKNode, idGen.getId(node))
         
         nodeElement.size = new Dimension(node.width, node.height)
         nodeElement.insets = node.insets
@@ -273,40 +263,33 @@ class KGraphDiagramGenerator implements IDiagramGenerator {
         
         modelLabels.addAll(findTextsAndLabels(node.data))
         
-        
-        val children = createNodesAndEdges(node.children)
-        if (!children.isEmpty) {
-            nodeElement.children.addAll(children)
-        }
-        
-        val ports = createPorts(node.ports)
-        if (!ports.isEmpty) {
-            nodeElement.children.addAll(ports)
-        }
-        
-        val labels = createLabels(node.labels)
-        if (!labels.isEmpty) {
-            nodeElement.children.addAll(labels)
-        }
+        nodeElement.children.addAll(createPorts(node.ports))
+        nodeElement.children.addAll(createNodesAndEdges(node.children))
+        nodeElement.children.addAll(createLabels(node.labels))
         return nodeElement 
     }
     
     /**
-     * Creates a Sprotty Edge corresponding to the given KEdge.
+     * Creates a Sprotty Edge corresponding to the given {@link KEdge}.
+     * Assumes, that the source and target nodes or ports of this {@code edge} have already been generated.
      */
-    protected def SKEdge generateEdge(KEdge edge) {
-        val fromElementId = if (edge.sourcePort !== null) {
-            kGraphToSModelElementMap.get(edge.sourcePort).id
-        } else {
-            kGraphToSModelElementMap.get(edge.source).id
-        }
-        val toElementId = if (edge.targetPort !== null) {
-            kGraphToSModelElementMap.get(edge.targetPort).id
-        } else {
-            kGraphToSModelElementMap.get(edge.target).id
-        }
-        val edgeId = idGen.getId(edge, randomOffset) 
-        val SKEdge edgeElement = configSElement(SKEdge, edgeId)
+    private def SKEdge generateEdge(KEdge edge) {
+        // SEdges do not contain a direct reference to their source and target elements, but they contain references to
+        // the unique IDs of their source and target elements.
+        val fromElementId = 
+            /* The source (target) of an edge can be a port or a node. Prefer the port, if available. */
+            if (edge.sourcePort !== null) {
+                kGraphToSModelElementMap.get(edge.sourcePort).id
+            } else {
+                kGraphToSModelElementMap.get(edge.source).id
+            }
+        val toElementId = 
+            if (edge.targetPort !== null) {
+                kGraphToSModelElementMap.get(edge.targetPort).id
+            } else {
+                kGraphToSModelElementMap.get(edge.target).id
+            }
+        val SKEdge edgeElement = configSElement(SKEdge, idGen.getId(edge))
         
         edgeElement.sourceId = fromElementId
         edgeElement.targetId = toElementId
@@ -315,45 +298,39 @@ class KGraphDiagramGenerator implements IDiagramGenerator {
         
         modelLabels.addAll(findTextsAndLabels(edge.data))
         
-        
-        val labels = createLabels(edge.labels)
-        if (!labels.isEmpty) {
-            edgeElement.children.addAll(labels)
-        }
+        edgeElement.children.addAll(createLabels(edge.labels))
+
         return edgeElement
     }
     
     /**
-     * Creates a Sprotty Port corresponding to the given KPort.
+     * Creates a Sprotty Port corresponding to the given {@link KPort}.
      */
-    protected def SKPort generatePort(KPort port) {
-        val portId = idGen.getId(port, randomOffset)
-        val SKPort portElement = configSElement(SKPort, portId)
+    private def SKPort generatePort(KPort port) {
+        val SKPort portElement = configSElement(SKPort, idGen.getId(port))
         portElement.insets = port.insets
         
         portElement.data = port.data
         
         modelLabels.addAll(findTextsAndLabels(port.data))
         
-        val labels = createLabels(port.labels)
-        if (!labels.isEmpty) {
-            portElement.children.addAll(labels)
-        }
+        portElement.children.addAll(createLabels(port.labels))
+
         return portElement
     }
     
     /**
-     * Creates a Sprotty Label corresponding to the given KLabel.
-     * @param main describes, if this is called during main Diagram generation
+     * Creates a Sprotty Label corresponding to the given {@link KLabel}.
+     * 
+     * @param main Describes, if the {@code label} is an element within the model KGraph. This controls, if this label
+     * should be used for the text-only version the KGraph generated by {@link #generateTextDiagram}.
      */
-    protected def SKLabel generateLabel(KLabel label, boolean main) {
-        val labelId = idGen.getId(label, randomOffset)
-        val SKLabel labelElement = configSElement(SKLabel, labelId)
+    private def SKLabel generateLabel(KLabel label, boolean main) {
+        val SKLabel labelElement = configSElement(SKLabel, idGen.getId(label))
         labelElement.text = label.text
         labelElement.insets = label.insets
         
         labelElement.data = label.data
-        
         
         if (main) {
             // remember KLabel element for later size estimation
@@ -363,21 +340,22 @@ class KGraphDiagramGenerator implements IDiagramGenerator {
     }
 
     /**
-     * generates a generic SModelElement with some defaults set.
+     * generates a generic SModelElement with the defaults {@code id}, {@code type} already set and the {@code children}
+     * list already initialized.
      */
-    protected def <E extends SModelElement> E configSElement(Class<E> elementClass, String idStr) {
+    private static def <E extends SModelElement> E configSElement(Class<E> elementClass, String idStr) {
         elementClass.constructor.newInstance => [
             id = idStr
             type = findType(it)
-            children = new ArrayList<SModelElement>
+            children = new ArrayList
         ]
     }
     
     /**
-     * Finds all KText and KLabel Elements within the renderings in dataList and returns them as new Labels.
+     * Finds all KText and KLabel elements within the renderings in dataList and returns them as new labels.
      * Also remembers the mapping to the KText elements from the source model in the textMapping field.
      */
-    protected def List<SKLabel> findTextsAndLabels(List<KGraphData> dataList) {
+    private def List<SKLabel> findTextsAndLabels(List<KGraphData> dataList) {
         val dataTexts = new ArrayList
         for (data : dataList) {
             dataTexts.addAll(findTextsAndLabels(data))
@@ -385,7 +363,11 @@ class KGraphDiagramGenerator implements IDiagramGenerator {
         return dataTexts
     }
     
-    protected def List<SKLabel> findTextsAndLabels(KGraphData data) {
+    /**
+     * Finds all KText and KLabel elements within the renderings in dataList and returns them as new labels.
+     * Also remembers the mapping to the KText elements from the source model in the textMapping field.
+     */
+    private def List<SKLabel> findTextsAndLabels(KGraphData data) {
         val dataLabels = new ArrayList
         if (data instanceof KText) {
             // create a new Label with data as its text
@@ -408,7 +390,6 @@ class KGraphDiagramGenerator implements IDiagramGenerator {
             textMapping.put(sKLabel.id, data)
             numLabels++
             
-            
             dataLabels += sKLabel
         } else if (data instanceof KContainerRendering) {
             for (childData: data.children) {
@@ -416,15 +397,15 @@ class KGraphDiagramGenerator implements IDiagramGenerator {
             }
         } else if (data instanceof KRenderingLibrary) {
             // TODO: add all texts in the KRenderingLibrary and don't add any from KRenderingRefs
-            // I don't have an example of used texts in KTenderingLibraries
+            // I don't have an example of used texts in KRenderingLibraries yet (construct one)
         }
         return dataLabels
     }
     
     /**
-     * returns a String describing the type of the SModelElement.
+     * Returns a String describing the type of the SModelElement.
      */
-    protected def String findType(SModelElement element) {
+    private static def String findType(SModelElement element) {
         switch element {
             SNode: 'node'
             SLabel: 'label'
@@ -436,22 +417,23 @@ class KGraphDiagramGenerator implements IDiagramGenerator {
     }
     
     /**
-     * Generates a simple text-only SGraph for a Graph with only the given labels.
-     * @param labels a List of all Labels, this SGraph should contain
-     * @param parentId the id of the Graph containing all these labels
+     * Generates a simple text-only {@link SGraph} for a Graph with only the given labels.
+     * The {@code label}s are expected to come from the {@code modelLabels} field after the {@link #toSGraph}
+     * translation.
+     * 
+     * @param labels A list of all labels, this SGraph should contain.
+     * @param parentId The ID of the graph containing all these labels.
      */
-    static def SGraph generateTextDiagram(List<SKLabel> labels, String parentId) {
-        
+    public static def SGraph generateTextDiagram(List<SKLabel> labels, String parentId) {
         // equivalent for the SRootElement
         val root = new SKGraph => [
             type = 'graph'
             id = parentId + KGraphElementIDGenerator.ID_SEPARATOR + "texts-only"
-            children = new ArrayList<SModelElement>
+            children = new ArrayList
         ]
         
         root.children = new ArrayList
         root.children += labels
         return root
     }
-    
 }

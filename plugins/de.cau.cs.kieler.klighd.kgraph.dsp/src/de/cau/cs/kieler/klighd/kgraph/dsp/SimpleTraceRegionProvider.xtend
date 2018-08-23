@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -18,11 +18,12 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.util.TextRegion
 
 /**
- * @author stu114054
  * Class to prevent Sprotty from searching the significant region (the name of it) since it can not be found in Objects
  * like KGraph and will cause errors instead.
+ * 
+ * @author stu114054
  */
-class SimpleTraceRegionProvider extends TraceRegionProvider {
+public class SimpleTraceRegionProvider extends TraceRegionProvider {
     /**
      * returns the text region of the entire definition of this EObject
      */

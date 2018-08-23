@@ -1,8 +1,14 @@
 /*
- * Copyright (C) 2017 TypeFox and others.
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * http://rtsys.informatik.uni-kiel.de/kieler
+ * 
+ * Copyright 2018 by
+ * + Kiel University
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
  */
 package de.cau.cs.kieler.klighd.kgraph.dsp
 
@@ -29,11 +35,20 @@ import org.eclipse.xtext.ide.server.ServerModule
 import org.eclipse.xtext.resource.IResourceServiceProvider
 import org.eclipse.xtext.util.Modules2
 
-class RunSocketServer {
-	
+/**
+ * Launches the KGraph server as a standalone program. Has to be started separately and communicates with any client
+ * via the url and port specified below.
+ * 
+ * Based on the yang-lsp implementation by TypeFox.
+ * 
+ * @author nir
+ * @see <a href="https://github.com/theia-ide/yang-lsp/blob/master/yang-lsp/io.typefox.yang.diagram/src/main/java/io/typefox/yang/diagram/RunSocketServer.xtend">
+ *      RunSocketServer</a>
+ */
+public class RunSocketServer {
 	static val LOG = Logger.getLogger(RunSocketServer)
 
-	def static void main(String[] args) throws Exception {
+	public static def void main(String[] args) throws Exception {
 		// Initialize ELK
 		ElkLayoutEngine.initialize(new LayeredMetaDataProvider)
 		Resource.Factory.Registry.INSTANCE.extensionToFactoryMap.put('elkg', new ElkGraphResourceFactory)

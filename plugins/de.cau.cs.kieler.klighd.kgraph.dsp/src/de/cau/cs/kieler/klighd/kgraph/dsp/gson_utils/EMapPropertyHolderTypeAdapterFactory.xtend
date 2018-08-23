@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -19,10 +19,15 @@ import de.cau.cs.kieler.klighd.kgraph.EMapPropertyHolder
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 
 /**
+ * Type adapter that adds fields to EMapPropertyHolder objects during serialization. The added fields are taken from
+ * {@link EMapPropertyHolder#getProperties}, if it contains the properties {@link KlighdProperties.CALCULATED_BOUNDS}
+ * or {@link KlighdProperties.CALCULATED_BOUNDS_MAP}.
+ * These fields should be used on any client as the bounds for their parent element respectively for the element stated
+ * in the map.
+ * 
  * @author stu114054
- *
  */
-class EMapPropertyHolderTypeAdapterFactory extends CustomizedTypeAdapterFactory<EMapPropertyHolder> {
+public class EMapPropertyHolderTypeAdapterFactory extends CustomizedTypeAdapterFactory<EMapPropertyHolder> {
     var GsonBuilder gsonBuilder = null
     new(GsonBuilder gsonBuilder) {
         super(EMapPropertyHolder)

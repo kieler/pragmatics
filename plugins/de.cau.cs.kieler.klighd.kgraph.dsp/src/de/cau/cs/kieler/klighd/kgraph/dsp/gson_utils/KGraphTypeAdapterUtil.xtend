@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -64,12 +64,13 @@ import io.typefox.sprotty.server.json.ActionTypeAdapter
 import io.typefox.sprotty.server.json.EnumTypeAdapter
 
 /**
+ * Static util class to configure needed gson type adapters for KGraph serialization.
+ * 
  * @author stu114054
- * static util class to configure needed Type Adapters for KGraph serialization
  */
-class KGraphTypeAdapterUtil {
+public class KGraphTypeAdapterUtil {
     
-    def static GsonBuilder configureGson(GsonBuilder gsonBuilder) {
+    public def static GsonBuilder configureGson(GsonBuilder gsonBuilder) {
         gsonBuilder
         .registerTypeAdapterFactory(RuntimeTypeAdapterFactory.of(KGraphData)
             .registerSubtype(KGraphDataImpl)

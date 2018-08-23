@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -22,19 +22,19 @@ import io.typefox.sprotty.server.xtext.LanguageAwareDiagramServer
 import org.apache.log4j.Logger
 
 /**
+ * Diagram server implementation adding functionality to special actions needed for handling KGraphs.
+ * 
  * @author stu114054
- *
  */
-class KGraphAwareDiagramServer extends LanguageAwareDiagramServer {
-    static val LOG = Logger.getLogger(KGraphAwareDiagramServer)
+public class KGraphAwareDiagramServer extends LanguageAwareDiagramServer {
+    private static val LOG = Logger.getLogger(KGraphAwareDiagramServer)
     
-    @Inject KGraphDiagramState diagramState
-    // @Inject com.google.inject.Provider<KGraphDiagramGenerator> diagramGeneratorProvider
+    @Inject 
+    protected KGraphDiagramState diagramState
     
-    var SModelRoot currentRoot
+    protected var SModelRoot currentRoot
     
-    
-    def requestTextSizesAndUpdateModel(SModelRoot newRoot) {
+    protected def requestTextSizesAndUpdateModel(SModelRoot newRoot) {
         currentRoot = newRoot
         if (newRoot !== null) {
             val texts = diagramState.getTexts(newRoot.id)
@@ -50,7 +50,6 @@ class KGraphAwareDiagramServer extends LanguageAwareDiagramServer {
         }
     }
     
-    
     override void accept(ActionMessage message) {
         val clientId = getClientId();
         if (clientId !== null && clientId.equals(message.getClientId())) {
@@ -63,7 +62,7 @@ class KGraphAwareDiagramServer extends LanguageAwareDiagramServer {
         }
     }
     
-    def handle(ComputedTextBoundsAction action) {
+    protected def handle(ComputedTextBoundsAction action) {
         // assume the model is still stored in 'currentRoot', since the ComputedTextBoundsAction only gets issued
         // after a RequestTextBoundsAction, where it got stored before.
         
@@ -84,7 +83,6 @@ class KGraphAwareDiagramServer extends LanguageAwareDiagramServer {
             }
             kText.properties.put(KlighdProperties.CALCULATED_TEXT_BOUNDS, newBounds_klighd)
         }
-        
         updateModel(currentRoot)
     }
 }

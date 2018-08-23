@@ -23,7 +23,13 @@ import org.eclipse.emf.ecore.EObject
 
 /**
  * A custom type adapter for KGraphData to map to only primitives and ignore self containment
- * DO NOT USE! TODO: remove this class
+ * 
+ * 
+ * 
+ * ---------------DO NOT USE!------------------- TODO: remove this class after I am done writing about this in the thesis
+ * 
+ * 
+ * 
  * just still here for the purpose of viewing my first try with this
  */
 class KGraphDataTypeAdapter extends TypeAdapter<EObject> {

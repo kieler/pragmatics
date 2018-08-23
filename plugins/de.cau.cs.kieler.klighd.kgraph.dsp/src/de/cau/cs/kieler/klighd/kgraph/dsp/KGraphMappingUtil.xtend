@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -13,31 +13,31 @@
 package de.cau.cs.kieler.klighd.kgraph.dsp
 
 import de.cau.cs.kieler.klighd.kgraph.KEdge
+import de.cau.cs.kieler.klighd.kgraph.KEdgeLayout
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement
 import de.cau.cs.kieler.klighd.kgraph.KLabel
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
+import de.cau.cs.kieler.klighd.kgraph.KShapeLayout
 import io.typefox.sprotty.api.Dimension
 import io.typefox.sprotty.api.Point
+import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SModelElement
+import io.typefox.sprotty.api.SShapeElement
 import java.util.ArrayList
-import java.util.List
-import org.eclipse.elk.core.util.Pair
+import java.util.Map
 
 /**
- * A helper class containing static methods for mapping of KGraph and SGraph bounds and layouts
+ * A helper class containing static methods for mapping of KGraph and SGraph bounds.
+ * 
  * @author stu114054
- *
  */
-class KGraphMappingUtil {    
+public class KGraphMappingUtil {    
     /**
-     * Map the layout of each KGraph element in the map to their corresponding SGraph elements
+     * Map the layout of each KGraph element in the map to their corresponding SGraph elements.
      */
-    static def mapLayout(ArrayList<Pair<KGraphElement, SModelElement>> mapping) {
-        mapping.forEach[pair |
-            var KGraphElement kGraphElement = pair.first
-            var SModelElement sModelElement = pair.second
-            
+    public static def mapLayout(Map<KGraphElement, SModelElement> mapping) {
+        mapping.forEach[kGraphElement, sModelElement |
             // Layout data looks different for different KGraph Element Types
             if (kGraphElement instanceof KNode && sModelElement instanceof SKNode) {
                 mapLayout(kGraphElement as KNode, sModelElement as SKNode)
@@ -48,19 +48,15 @@ class KGraphMappingUtil {
             } else if (kGraphElement instanceof KLabel && sModelElement instanceof SKLabel) {
                 mapLayout(kGraphElement as KLabel, sModelElement as SKLabel)
             } else {
-                throw new IllegalArgumentException("The KGraph and SGraph classes do not map to each other: " + kGraphElement.class + ", " + sModelElement.class)
+                throw new IllegalArgumentException("The KGraph and SGraph classes do not map to each other: " 
+                    + kGraphElement.class + ", " + sModelElement.class)
             }
         ]
     }
     
-    private static def mapLayout(KNode knode, SKNode sknode) {
-        sknode.position = new Point(knode.xpos, knode.ypos)
-        sknode.size = new Dimension(knode.width, knode.height)
-    }
-    
-    private static def mapLayout(KEdge kedge, SKEdge skedge) {
+    private static def mapLayout(KEdgeLayout kedge, SEdge skedge) {
         // copy all routing points
-        var List<Point> routingPoints = new ArrayList<Point>
+        var ArrayList<Point> routingPoints = new ArrayList<Point>
         var sourcePoint = kedge.sourcePoint
         var targetPoint = kedge.targetPoint
         routingPoints.add(new Point(sourcePoint.x, sourcePoint.y))
@@ -71,35 +67,8 @@ class KGraphMappingUtil {
         skedge.routingPoints = routingPoints
     }
     
-    private static def mapLayout(KLabel klabel, SKLabel sklabel) {
-        sklabel.position = new Point(klabel.xpos, klabel.ypos)
-        sklabel.size = new Dimension(klabel.width, klabel.height)
-        //sklabel.alignment = new Point(klabel.)? // TODO alignments? insets?
-    }
-    
-    private static def mapLayout(KPort kport, SKPort skport) {
-        skport.position = new Point(kport.xpos, kport.ypos)
-        skport.size = new Dimension(kport.width, kport.height)
-    }
-    
-    
-    /**
-     * Maps the bounds and alignments of an SGraph element to its corresponding KGraph
-     * TODO probably deprecated
-     */
-    static def mapBounds(ArrayList<Pair<KGraphElement, SModelElement>> mapping) {
-        mapping.forEach[pair | 
-            var KGraphElement kGraphElement = pair.first
-            var SModelElement sModelElement = pair.second
-            if (sModelElement instanceof SKNode) {
-                if (kGraphElement instanceof KNode) {
-                    kGraphElement.height = sModelElement.size.height as float
-                    kGraphElement.width  = sModelElement.size.width  as float
-                    // TODO also map the alignments
-                } else {
-                    throw new IllegalArgumentException("The KGraph and SGraph classes do not map to each other: " + kGraphElement.class + ", " + sModelElement.class)
-                }
-            }
-        ]
+    private static def mapLayout(KShapeLayout kElement, SShapeElement sElement) {
+        sElement.position = new Point(kElement.xpos, kElement.ypos)
+        sElement.size = new Dimension(kElement.width, kElement.height)
     }
 }

@@ -1,19 +1,27 @@
 /*
- * Copyright (C) 2017 TypeFox and others.
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * http://rtsys.informatik.uni-kiel.de/kieler
+ * 
+ * Copyright 2018 by
+ * + Kiel University
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
  */
 package de.cau.cs.kieler.klighd.kgraph.dsp
 
 import com.google.gson.GsonBuilder
 import com.google.inject.Guice
 import com.google.inject.Inject
-import io.typefox.sprotty.layout.ElkLayoutEngine
 import de.cau.cs.kieler.kgraph.text.KGraphRuntimeModule
 import de.cau.cs.kieler.kgraph.text.ide.KGraphIdeModule
 import de.cau.cs.kieler.kgraph.text.ide.KGraphIdeSetup
+import de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils.KGraphTypeAdapterUtil
+import io.typefox.sprotty.layout.ElkLayoutEngine
 import java.util.concurrent.Executors
+import java.util.concurrent.Future
 import java.util.function.Consumer
 import java.util.function.Function
 import org.apache.log4j.AppenderSkeleton
@@ -35,13 +43,18 @@ import org.eclipse.xtext.ide.server.ServerLauncher
 import org.eclipse.xtext.ide.server.ServerModule
 import org.eclipse.xtext.resource.IResourceServiceProvider
 import org.eclipse.xtext.util.Modules2
-import java.util.concurrent.Future
-import de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils.KGraphTypeAdapterUtil
 
+/**
+ * Launches the KGraph server as a standalone program. Has to be started by a client for communication over standard io.
+ * Based on the yang-lsp implementation by TypeFox.
+ * 
+ * @author nir
+ * @see <a href="https://github.com/theia-ide/yang-lsp/blob/master/yang-lsp/io.typefox.yang.diagram/src/main/java/io/typefox/yang/diagram/YangServerLauncher.xtend">
+ *      YangServerLauncher</a>
+ */
 class KGraphServerLauncher extends ServerLauncher {
 	
-	def static void main(String[] args) {
-		
+	public static def void main(String[] args) {
 		// Initialize ELK
 		ElkLayoutEngine.initialize(new LayeredMetaDataProvider)
 
@@ -69,7 +82,8 @@ class KGraphServerLauncher extends ServerLauncher {
 		]))
 	}
 
-	@Inject LanguageServerImpl languageServer
+	@Inject 
+	LanguageServerImpl languageServer
 	
 	override start(LaunchArgs args) {
 		val executorService = Executors.newCachedThreadPool
@@ -110,7 +124,8 @@ class KGraphServerLauncher extends ServerLauncher {
 		]
 	}
 	
-	@Data static class LanguageClientAppender extends AppenderSkeleton {
+	@Data 
+	static class LanguageClientAppender extends AppenderSkeleton {
 		LanguageClient client
 		
 		override protected append(LoggingEvent event) {
@@ -136,6 +151,5 @@ class KGraphServerLauncher extends ServerLauncher {
 		override requiresLayout() {
 			return false
 		}
-		
 	}
 }

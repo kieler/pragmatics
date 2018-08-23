@@ -1,8 +1,14 @@
 /*
- * Copyright (C) 2017 TypeFox and others.
+ * KIELER - Kiel Integrated Environment for Layout Eclipse RichClient
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ * http://rtsys.informatik.uni-kiel.de/kieler
+ * 
+ * Copyright 2018 by
+ * + Kiel University
+ *   + Department of Computer Science
+ *     + Real-Time and Embedded Systems Group
+ * 
+ * This code is provided under the terms of the Eclipse Public License (EPL).
  */
 package de.cau.cs.kieler.klighd.kgraph.dsp
 
@@ -11,9 +17,16 @@ import io.typefox.sprotty.server.xtext.ide.IdeDiagramModule
 import io.typefox.sprotty.server.xtext.ide.IdeLanguageServerExtension
 import io.typefox.sprotty.server.xtext.tracing.TraceRegionProvider
 
-class KGraphDiagramModule extends IdeDiagramModule {
+/**
+ * Binds all needed modules for KGraph diagram generation via Guice.
+ * Based on the yang-lsp implementation by TypeFox.
+ * 
+ * @see <a href="https://github.com/theia-ide/yang-lsp/blob/master/yang-lsp/io.typefox.yang.diagram/src/main/java/io/typefox/yang/diagram/YangDiagramModule.xtend">
+ *      YangDiagramModule</a>
+ */
+public class KGraphDiagramModule extends IdeDiagramModule {
 	
-	def Class<? extends IdeLanguageServerExtension> bindIdeLanguageServerExtension() {
+	public def Class<? extends IdeLanguageServerExtension> bindIdeLanguageServerExtension() {
 		KGraphLanguageServerExtension
 	}
 	
@@ -21,7 +34,7 @@ class KGraphDiagramModule extends IdeDiagramModule {
 		KGraphLayoutEngine
 	}
 	
-	def Class<? extends IDiagramGenerator> bindIDiagramGenerator() {
+	public def Class<? extends IDiagramGenerator> bindIDiagramGenerator() {
 		KGraphDiagramGenerator
 	}
 	
@@ -37,7 +50,7 @@ class KGraphDiagramModule extends IdeDiagramModule {
         KGraphAwareDiagramServer
     }
     
-	def Class<? extends TraceRegionProvider> bindTraceRegionProvider() {
+	public def Class<? extends TraceRegionProvider> bindTraceRegionProvider() {
         SimpleTraceRegionProvider
     }
 }

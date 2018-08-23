@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -24,15 +24,22 @@ import de.cau.cs.kieler.klighd.krendering.KPolyline
 import de.cau.cs.kieler.klighd.krendering.KStyleHolder
 import java.util.HashMap
 import java.util.Map
+import java.util.Random
 
 /**
  * @author stu114054
- * class for generating ids for any KGraphElement. Use a single instance of this and call getId() for all the elements
- * you need ids for.
+ * class for generating unique IDs for any KGraphElement. Use a single instance of this and call getId() for all the 
+ * elements you need IDs for.
  */
-class KGraphElementIDGenerator {
+public class KGraphElementIDGenerator {
+    private Map<KGraphElement, String> idMap
     
-    Map<KGraphElement, String> idMap
+    /**
+     * A random value used to generate unique IDs for elements without a name.
+     * This causes that the same object will get different IDs over multiple updates (prevents morphing of not matching
+     * objects into each other). Unnamed elements therefore cannot morph on updated models. Name your elements!
+     */
+    private int randomOffset // TODO: maybe exchange the random value for the hash of the object
     
     public static final String ID_SEPARATOR = '$'
     public static final String NODE_SEPARATOR = 'N'
@@ -42,12 +49,15 @@ class KGraphElementIDGenerator {
     
     new() {
         idMap = new HashMap
+        
+        val r = new Random
+        randomOffset = r.nextInt
     }
     
     /**
      * generates a new unique ID for any KGraphElement.
      */
-    def String getId(KGraphElement element, int randomOffset) {
+    public def String getId(KGraphElement element) {
         var String id = null
         
         // if the ID was already calculated, use that
@@ -59,10 +69,9 @@ class KGraphElementIDGenerator {
         val parent = element.eContainer as KGraphElement
         var String parentId = null
         if (parent !== null) {
-            parentId = getId(parent, randomOffset)
+            parentId = getId(parent)
         } else {
             return ID_SEPARATOR + 'root'
-            
         }
         
         // use a prefix depending on the class of the element + the identifier as id if an identifier is defined
@@ -116,7 +125,7 @@ class KGraphElementIDGenerator {
     }
 }
 
-class KRenderingIDGenerator {
+public class KRenderingIDGenerator {
     
     public static final String ID_SEPARATOR = '$'
     public static final String RENDERING_SEPERATOR = 'R'
@@ -126,20 +135,18 @@ class KRenderingIDGenerator {
      * generates a new unique ID for all child elements of this rendering (if any) and writes it in its ID field
      * Assumes, that the given rendering already has a unique id not containing the character '$'.
      */
-    static def void generateIdsRecursive(KStyleHolder rendering) {
+    public static def void generateIdsRecursive(KStyleHolder rendering) {
         if (rendering !== null) {
             generateIdsRecursive(rendering, null)
         }
     }
     
-    static def void generateIdsRecursive(KStyleHolder rendering, int renderingNumber) {
+    public static def void generateIdsRecursive(KStyleHolder rendering, int renderingNumber) {
         if (rendering !== null) {
             rendering.id = "rendering" + ID_SEPARATOR + RENDERING_SEPERATOR + renderingNumber
             generateIdsRecursive(rendering, null)
         }
     }
-    
-    
     
     private static def void generateIdsRecursive(KStyleHolder rendering, KContainerRendering parentRendering) {
         if (rendering === null) {
@@ -167,6 +174,4 @@ class KRenderingIDGenerator {
             }
         }
     }
-    
-    
 }

@@ -3,7 +3,7 @@
  *
  * http://rtsys.informatik.uni-kiel.de/kieler
  * 
- * Copyright ${year} by
+ * Copyright 2018 by
  * + Kiel University
  *   + Department of Computer Science
  *     + Real-Time and Embedded Systems Group
@@ -18,16 +18,15 @@ import de.cau.cs.kieler.klighd.krendering.KRenderingRef
 
 /**
  * @author stu114054
- * A Gson Exclusion Strategy to ignore the rendering Field during serialization, since it is already serialized in the
- * {@code KRenderingLibrary}.
+ * A gson exclusion strategy to ignore the {@code rendering} field by {@link KRenderingRef#getRendering} during
+ * serialization, since it is already serialized in the
+ * {@link de.cau.cs.kieler.klighd.krendering.KRenderingLibrary KRenderingLibrary}.
  */
-class KRenderingRefFieldExclusionStrategy implements ExclusionStrategy {
-        
+public class KRenderingRefFieldExclusionStrategy implements ExclusionStrategy {
     override shouldSkipField(FieldAttributes f) {
         return KRenderingRef.isAssignableFrom(f.declaringClass) && (f.getName().equals("rendering"))
     }
     override shouldSkipClass(Class<?> clazz) {
         return false
     }
-
 }
