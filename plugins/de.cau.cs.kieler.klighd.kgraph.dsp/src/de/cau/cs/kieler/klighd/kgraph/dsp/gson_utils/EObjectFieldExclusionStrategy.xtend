@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.EObject
  * gets serialized, which would cause possible endless loops.
  * The other fields are also not needed for diagram generation on client side.
  * 
- * @author stu114054
+ * @author nir
  */
 public class EObjectFieldExclusionStrategy implements ExclusionStrategy { 
     override shouldSkipField(FieldAttributes f) {

@@ -17,7 +17,7 @@ import com.google.gson.FieldAttributes
 import de.cau.cs.kieler.klighd.krendering.KRenderingRef
 
 /**
- * @author stu114054
+ * @author nir
  * A gson exclusion strategy to ignore the {@code rendering} field by {@link KRenderingRef#getRendering} during
  * serialization, since it is already serialized in the
  * {@link de.cau.cs.kieler.klighd.krendering.KRenderingLibrary KRenderingLibrary}.

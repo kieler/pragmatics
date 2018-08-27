@@ -25,7 +25,7 @@ import java.io.IOException
  * {@link KLeftPosition}s are serialized under the key 'left',
  * {@link KRightPosition}s are serialized under the key 'right'.
  * 
- * @author stu114054
+ * @author nir
  */
 public class KXPositionTypeAdapter extends TypeAdapter<KXPosition>{
         

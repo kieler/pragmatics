@@ -22,7 +22,7 @@ import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import org.eclipse.xtend.lib.annotations.ToString
 
 /**
- * @author stu114054
+ * @author nir
  */
 
 /**

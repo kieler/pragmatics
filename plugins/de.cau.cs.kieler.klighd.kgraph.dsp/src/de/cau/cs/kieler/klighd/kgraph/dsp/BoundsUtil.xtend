@@ -42,7 +42,7 @@ import java.util.List
 import java.util.Map
 
 /**
- * @author stu114054
+ * @author nir
  *
  */
 public class BoundsUtil {

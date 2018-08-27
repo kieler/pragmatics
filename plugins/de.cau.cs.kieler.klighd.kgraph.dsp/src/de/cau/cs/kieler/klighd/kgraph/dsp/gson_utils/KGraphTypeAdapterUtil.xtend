@@ -66,7 +66,7 @@ import io.typefox.sprotty.server.json.EnumTypeAdapter
 /**
  * Static util class to configure needed gson type adapters for KGraph serialization.
  * 
- * @author stu114054
+ * @author nir
  */
 public class KGraphTypeAdapterUtil {
     

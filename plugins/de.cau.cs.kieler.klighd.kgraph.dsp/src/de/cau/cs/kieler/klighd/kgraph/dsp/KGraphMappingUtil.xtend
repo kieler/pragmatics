@@ -30,7 +30,7 @@ import java.util.Map
 /**
  * A helper class containing static methods for mapping of KGraph and SGraph bounds.
  * 
- * @author stu114054
+ * @author nir
  */
 public class KGraphMappingUtil {    
     /**

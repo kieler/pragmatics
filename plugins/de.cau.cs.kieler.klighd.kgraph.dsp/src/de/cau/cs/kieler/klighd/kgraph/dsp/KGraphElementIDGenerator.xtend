@@ -27,9 +27,10 @@ import java.util.Map
 import java.util.Random
 
 /**
- * @author stu114054
  * class for generating unique IDs for any KGraphElement. Use a single instance of this and call getId() for all the 
  * elements you need IDs for.
+ * 
+ * @author nir
  */
 public class KGraphElementIDGenerator {
     private Map<KGraphElement, String> idMap

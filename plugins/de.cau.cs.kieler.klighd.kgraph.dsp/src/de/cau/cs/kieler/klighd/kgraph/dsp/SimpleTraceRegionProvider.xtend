@@ -21,7 +21,7 @@ import org.eclipse.xtext.util.TextRegion
  * Class to prevent Sprotty from searching the significant region (the name of it) since it can not be found in Objects
  * like KGraph and will cause errors instead.
  * 
- * @author stu114054
+ * @author nir
  */
 public class SimpleTraceRegionProvider extends TraceRegionProvider {
     /**

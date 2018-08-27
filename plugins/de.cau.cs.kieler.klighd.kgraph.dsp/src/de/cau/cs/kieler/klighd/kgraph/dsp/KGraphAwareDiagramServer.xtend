@@ -24,7 +24,7 @@ import org.apache.log4j.Logger
 /**
  * Diagram server implementation adding functionality to special actions needed for handling KGraphs.
  * 
- * @author stu114054
+ * @author nir
  */
 public class KGraphAwareDiagramServer extends LanguageAwareDiagramServer {
     private static val LOG = Logger.getLogger(KGraphAwareDiagramServer)

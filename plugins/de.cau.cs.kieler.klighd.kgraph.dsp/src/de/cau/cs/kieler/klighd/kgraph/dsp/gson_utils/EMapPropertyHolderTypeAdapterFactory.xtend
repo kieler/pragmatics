@@ -25,7 +25,7 @@ import de.cau.cs.kieler.klighd.util.KlighdProperties
  * These fields should be used on any client as the bounds for their parent element respectively for the element stated
  * in the map.
  * 
- * @author stu114054
+ * @author nir
  */
 public class EMapPropertyHolderTypeAdapterFactory extends CustomizedTypeAdapterFactory<EMapPropertyHolder> {
     var GsonBuilder gsonBuilder = null

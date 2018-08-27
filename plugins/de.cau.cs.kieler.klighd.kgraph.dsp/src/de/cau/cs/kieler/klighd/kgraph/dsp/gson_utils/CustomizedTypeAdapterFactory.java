@@ -27,7 +27,7 @@ import com.google.gson.stream.JsonWriter;
  * adapters translate the objects.
  * Copied from a stackoverflow answer by the user named Jesse Wilson.
  * 
- * @author stu114054
+ * @author nir
  * @see <a href="https://stackoverflow.com/a/11272452">Stackoverflow question</a>
  * @param <C> The class for which the {@code write} and {@code read} methods should be altered.
  */

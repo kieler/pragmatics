@@ -25,7 +25,7 @@ import java.io.IOException
  * {@link KTopPosition}s are serialized under the key 'top',
  * {@link KVottomPosition}s are serialized under the key 'bottom'.
  * 
- * @author stu114054
+ * @author nir
  */
 public class KYPositionTypeAdapter extends TypeAdapter<KYPosition>{
         

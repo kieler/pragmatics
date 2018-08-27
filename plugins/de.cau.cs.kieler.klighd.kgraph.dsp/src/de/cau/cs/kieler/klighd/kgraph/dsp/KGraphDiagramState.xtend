@@ -23,7 +23,7 @@ import javax.inject.Singleton
 
 /**
  * Singleton class to map a graph id (String) found in SGraphs to their various parts needed for handling KGraph models
- * @author stu114054
+ * @author nir
  *
  */
 @Singleton 
