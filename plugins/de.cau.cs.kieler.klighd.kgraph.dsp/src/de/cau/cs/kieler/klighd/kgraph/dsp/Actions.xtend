@@ -22,12 +22,10 @@ import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import org.eclipse.xtend.lib.annotations.ToString
 
 /**
- * @author nir
- */
-
-/**
  * Sent from the server to the client to request bounds for the given texts. The texts are rendered
  * invisibly so the bounds can derived from the DOM. The response is a {@link ComputedTextBoundsAction}.
+ * 
+ * @author nir
  */
 @Accessors
 @EqualsHashCode

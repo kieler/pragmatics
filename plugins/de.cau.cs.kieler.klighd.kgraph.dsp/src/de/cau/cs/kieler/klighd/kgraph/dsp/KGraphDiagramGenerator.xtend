@@ -125,8 +125,8 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
      * Creates a {@link ViewContext} containing the KGraph model for any {@link EObject} model with a registered 
      * transformation in KLighD. 
      */
-    public static def ViewContext translateModel(EObject model) {
-        return LightDiagramServices.translateModel2(model, null)
+    public static def ViewContext translateModel(EObject model, ViewContext oldVC) {
+        return LightDiagramServices.translateModel2(model, oldVC)
     }
 	
 	/**
