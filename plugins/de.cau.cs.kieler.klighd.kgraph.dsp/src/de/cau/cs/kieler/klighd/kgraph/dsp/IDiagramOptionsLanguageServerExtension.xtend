@@ -23,7 +23,7 @@ import org.eclipse.lsp4j.jsonrpc.services.JsonSegment
  * 
  * @author nir
  */
-@JsonSegment('kCharts')
+@JsonSegment('keith')
 public interface IDiagramOptionsLanguageServerExtension {
     
     /**
