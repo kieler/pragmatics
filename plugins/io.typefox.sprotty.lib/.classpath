@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="lib/diagram-api-0.4.0-SNAPSHOT-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/diagram-api-0.4.0-SNAPSHOT-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/diagram-api-0.4.0-SNAPSHOT.jar" sourcepath="lib/diagram-api-0.4.0-SNAPSHOT-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/diagram-layout-engine-0.4.0-SNAPSHOT-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/diagram-layout-engine-0.4.0-SNAPSHOT-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/diagram-layout-engine-0.4.0-SNAPSHOT.jar" sourcepath="/home/stu114054/eclipse-workspace_dsl/de.cau.cs.kieler/io.typefox.sprotty.lib/lib/diagram-layout-engine-0.4.0-SNAPSHOT-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/diagram-server-0.4.0-SNAPSHOT-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/diagram-server-0.4.0-SNAPSHOT-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/diagram-server-0.4.0-SNAPSHOT.jar" sourcepath="lib/diagram-server-0.4.0-SNAPSHOT-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xtext-diagram-0.4.0-SNAPSHOT-javadoc.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xtext-diagram-0.4.0-SNAPSHOT-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xtext-diagram-0.4.0-SNAPSHOT.jar" sourcepath="lib/xtext-diagram-0.4.0-SNAPSHOT-sources.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
