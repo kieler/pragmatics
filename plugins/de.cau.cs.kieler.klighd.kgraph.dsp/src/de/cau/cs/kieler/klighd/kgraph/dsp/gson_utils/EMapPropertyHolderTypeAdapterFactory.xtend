@@ -51,6 +51,14 @@ public class EMapPropertyHolderTypeAdapterFactory extends CustomizedTypeAdapterF
             data.add("calculatedBoundsMap", gson.toJsonTree(
                 source.getProperty(KlighdProperties.CALCULATED_BOUNDS_MAP)))
         }
+        if (source.hasProperty(KlighdProperties.CALCULATED_ROTATION)) {
+            data.add("calculatedRotation", gson.toJsonTree(
+                source.getProperty(KlighdProperties.CALCULATED_ROTATION)))
+        }
+        if (source.hasProperty(KlighdProperties.CALCULATED_ROTATION_MAP)) {
+            data.add("calculatedRotationMap", gson.toJsonTree(
+                source.getProperty(KlighdProperties.CALCULATED_ROTATION_MAP)))
+        }
     }
     
     override protected void afterRead(JsonElement deserialized) {

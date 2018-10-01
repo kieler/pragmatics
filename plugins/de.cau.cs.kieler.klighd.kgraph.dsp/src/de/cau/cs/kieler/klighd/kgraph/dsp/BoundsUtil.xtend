@@ -70,9 +70,12 @@ public class BoundsUtil {
                     // all references to KRenderings need to place a map with the ids of the renderings and their 
                     // sizes in this case in the properties of the reference.
                     var boundsMap = new HashMap<String, Bounds>
-                    handleKRendering(element, data.rendering, boundsMap)
+                    var rotationMap = new HashMap<String, Double>
+                    handleKRendering(element, data.rendering, boundsMap, rotationMap)
                     // add new Property to contain the boundsMap
-                    data.properties.put(KlighdProperties.CALCULATED_BOUNDS_MAP, boundsMap) 
+                    data.properties.put(KlighdProperties.CALCULATED_BOUNDS_MAP, boundsMap)
+                    // and the rotationMap
+                    data.properties.put(KlighdProperties.CALCULATED_ROTATION_MAP, rotationMap)
                     // remember the id of the rendering in the reference
                     data.id = data.rendering.id
                     
@@ -80,7 +83,7 @@ public class BoundsUtil {
                 KRendering: {
                     // every rendering needs an ID, generate it here
                     KRenderingIDGenerator.generateIdsRecursive(data, element.data.indexOf(data))
-                    handleKRendering(element, data, null)
+                    handleKRendering(element, data, null, null)
                 }
             }
         }
@@ -109,7 +112,8 @@ public class BoundsUtil {
      * calculate the size and position of any rendering and store it in the boundsMap or if the boundsMap is null as a
      * property in the rendering itself
      */
-    private static def void handleKRendering(KGraphElement element, KRendering rendering, Map<String, Bounds> boundsMap) {
+    private static def void handleKRendering(KGraphElement element, KRendering rendering, Map<String, Bounds> boundsMap,
+        Map<String, Double> rotationMap) {
         var Bounds bounds
         if (element instanceof KShapeLayout) {
             bounds = new Bounds(element.width, element.height)
@@ -123,23 +127,23 @@ public class BoundsUtil {
             boundsMap.put(rendering.id, bounds)
         }
         if (rendering instanceof KContainerRendering) {
-            handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, element)
+            handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, rotationMap, element)
         }
     }
     
     private static def void handleChildren(List<KRendering> renderings, KPlacement placement, Bounds parentBounds,
-        Map<String, Bounds> boundsMap, KGraphElement element) {
+        Map<String, Bounds> boundsMap, Map<String, Double> rotationMap, KGraphElement element) {
         if (placement instanceof KGridPlacement) {
-            handleGridPlacementRendering(renderings, placement, parentBounds, boundsMap, element)
+            handleGridPlacementRendering(renderings, placement, parentBounds, boundsMap, rotationMap, element)
         } else {
             for (rendering : renderings) {
-                handleAreaAndPointAndDecoratorPlacementRendering(rendering, parentBounds, boundsMap, element)
+                handleAreaAndPointAndDecoratorPlacementRendering(rendering, parentBounds, boundsMap, rotationMap, element)
             }
         }
     }
     
     private static def void handleGridPlacementRendering(List<KRendering> renderings, KGridPlacement gridPlacement, 
-        Bounds parentBounds, Map<String, Bounds> boundsMap, KGraphElement parent) {
+        Bounds parentBounds, Map<String, Bounds> boundsMap, Map<String, Double> rotationMap, KGraphElement parent) {
         
         val Bounds[] elementBounds = GridPlacementUtil.evaluateGridPlacement(gridPlacement, renderings, parentBounds);
         
@@ -152,15 +156,16 @@ public class BoundsUtil {
                 boundsMap.put(rendering.id, bounds)
             }
             if (rendering instanceof KContainerRendering) {
-                handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, parent)
+                handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, rotationMap, parent)
             }
         }
     }
     
     private static def void handleAreaAndPointAndDecoratorPlacementRendering(KRendering rendering, Bounds parentBounds,
-        Map<String, Bounds> boundsMap, KGraphElement parent) {
+        Map<String, Bounds> boundsMap, Map<String, Double> rotationMap, KGraphElement parent) {
         val placementData = rendering.placementData
         var Bounds bounds = parentBounds
+        var double rotation = 0
         
         switch (placementData) {
             KAreaPlacementData: {
@@ -208,15 +213,20 @@ public class BoundsUtil {
                     decoration.bounds.y + decoration.origin.y as float,
                     decoration.bounds.width,
                     decoration.bounds.height)
+                rotation = decoration.rotation
             }
         }
         if (boundsMap === null) {
             rendering.setBounds(bounds)
+            rendering.setRotation(rotation)
         } else {
             boundsMap.put(rendering.id, bounds)
+            if (rotation !== 0) {
+                rotationMap.put(rendering.id, rotation)
+            }
         }
         if (rendering instanceof KContainerRendering) {
-            handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, parent)
+            handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, rotationMap, parent)
         }
     }
     
@@ -255,4 +265,11 @@ public class BoundsUtil {
     public static def setBounds(KRendering rendering, Bounds bounds) {
         rendering.properties.put(KlighdProperties.CALCULATED_BOUNDS, bounds)
     }
+    
+    /**
+     * Convenience method to set the calculated rotation property of the given rendering
+     */
+     public static def setRotation(KRendering rendering, double rotation) {
+         rendering.properties.put(KlighdProperties.CALCULATED_ROTATION, rotation)
+     }
 }
