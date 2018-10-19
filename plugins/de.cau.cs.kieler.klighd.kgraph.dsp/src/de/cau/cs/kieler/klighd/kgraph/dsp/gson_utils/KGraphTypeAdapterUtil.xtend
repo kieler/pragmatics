@@ -62,6 +62,7 @@ import de.cau.cs.kieler.klighd.krendering.impl.KTopPositionImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KVerticalAlignmentImpl
 import io.typefox.sprotty.server.json.ActionTypeAdapter
 import io.typefox.sprotty.server.json.EnumTypeAdapter
+import java.awt.geom.Point2D
 
 /**
  * Static util class to configure needed gson type adapters for KGraph serialization.
@@ -127,6 +128,7 @@ public class KGraphTypeAdapterUtil {
                 addActionKind(ComputedTextBoundsAction.KIND, ComputedTextBoundsAction)
             ]
         )
+        .registerTypeAdapter(Point2D, new Point2DTypeAdapter)
         .registerTypeAdapterFactory(new EnumTypeAdapter.Factory())
         .registerTypeAdapterFactory(new EMapPropertyHolderTypeAdapterFactory(gsonBuilder))
         .setExclusionStrategies(

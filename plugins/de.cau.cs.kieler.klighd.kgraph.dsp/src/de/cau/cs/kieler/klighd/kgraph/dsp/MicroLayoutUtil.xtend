@@ -34,6 +34,7 @@ import de.cau.cs.kieler.klighd.microlayout.GridPlacementUtil
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdPath
 import de.cau.cs.kieler.klighd.piccolo.internal.util.PiccoloPlacementUtil
+import de.cau.cs.kieler.klighd.piccolo.internal.util.PiccoloPlacementUtil.Decoration
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 import java.awt.geom.Point2D
 import java.util.ArrayList
@@ -42,40 +43,46 @@ import java.util.List
 import java.util.Map
 
 /**
+ * Utility class to provide some functionality to persist micro layout bounds data for all {@link KRendering}s of a
+ * {@link KGraphElement}.
+ * 
  * @author nir
- *
  */
-public class BoundsUtil {
+public final class MicroLayoutUtil {
+    /**
+     * Calculates the position, width and height of each rendering of the parameters {@code element} from KLighD's 
+     * micro layout and persists the bounds and in case of a Decorator also the rotation in the properties of the 
+     * rendering.
+     * See {@link #setBounds} and {@link #setRotation}.
+     * In case of a {@link KRenderingRef} the bounds and rotation are persisted for every referenced rendering as a map
+     * inside the properties of the reference.
+     * For example: <id of the rendering in the library: bounds in this instance>
+     * Also for every rendering a unique ID is generated.
+     * 
+     * 
+     * @param element The parent element containing the graph to calculate all rendering bounds for.
+     */
     public static def void calculateAbsoluteBounds(KGraphElement element) {
-        // in case this is a KRenderingRef:
-        // don't put the bounds directly in this rendering, but a map with bounds of the form:
-        // <id of the rendering-tree in the library: bounds in this instance>
-        // ...
-        // <id of some child rendering of a rendering in the library: bounds in this instance>
-        // ..        
-        
-        // maybe copy code from AbstractKGERenderingController handleGridPlacementRendering etc.
-                
         // calculate the sizes of all renderings:
         for (data : element.data) {
             switch(data) {
                 KRenderingLibrary: {
-                    // the library needs to generate ids for all later KRenderingRefs to refer to, but no own bounds,
-                    // since these are generic renderings
+                    // The library needs to generate ids for all later KRenderingRefs to refer to, but no own bounds,
+                    // since these are generic renderings.
                     for (rendering : data.renderings) {
                         KRenderingIDGenerator.generateIdsRecursive(rendering)
                     }
                 }
                 KRenderingRef: {
                     // all references to KRenderings need to place a map with the ids of the renderings and their 
-                    // sizes in this case in the properties of the reference.
+                    // sizes and their rotation in this case in the properties of the reference.
                     var boundsMap = new HashMap<String, Bounds>
-                    var rotationMap = new HashMap<String, Double>
-                    handleKRendering(element, data.rendering, boundsMap, rotationMap)
+                    var decorationMap = new HashMap<String, Decoration>
+                    handleKRendering(element, data.rendering, boundsMap, decorationMap)
                     // add new Property to contain the boundsMap
                     data.properties.put(KlighdProperties.CALCULATED_BOUNDS_MAP, boundsMap)
                     // and the rotationMap
-                    data.properties.put(KlighdProperties.CALCULATED_ROTATION_MAP, rotationMap)
+                    data.properties.put(KlighdProperties.CALCULATED_DECORATION_MAP, decorationMap)
                     // remember the id of the rendering in the reference
                     data.id = data.rendering.id
                     
@@ -88,7 +95,7 @@ public class BoundsUtil {
             }
         }
         
-        // recursively call this method for every child KGraphElement of this
+        // Recursively call this method for every child KGraphElement of this.
         // (all labels, child nodes, outgoing edges and ports)
         
         if (element instanceof KLabeledGraphElement) {
@@ -108,83 +115,132 @@ public class BoundsUtil {
             }
         }
     }
+    
     /**
-     * calculate the size and position of any rendering and store it in the boundsMap or if the boundsMap is null as a
-     * property in the rendering itself
+     * Calculate the size and position of the parent rendering of the element and store it in the boundsMap or if the
+     * boundsMap is null as a property in the rendering itself. 
+     * Also calculated the size, position and rotation for every child rendering.
+     * 
+     * @param element The element that contains the rendering.
+     * @param rendering The rendering to estimate the bounds for. Needs to be the top most rendering of
+     * the element.
+     * @param boundsMap The map to store the bounds in. If it is null, the bounds should be instead stored in the
+     * properties of the {@code rendering} itself.
+     * @param rotationMap The map to store the rotation in. If it is null, the rotation should be instead stored in the
+     * properties of the {@code rendering} itself. Only applies to the child renderings.
      */
     private static def void handleKRendering(KGraphElement element, KRendering rendering, Map<String, Bounds> boundsMap,
-        Map<String, Double> rotationMap) {
+        Map<String, Decoration> decorationMap) {
         var Bounds bounds
         if (element instanceof KShapeLayout) {
+            // The parent rendering inherits its bounds from the element containing the rendering.
             bounds = new Bounds(element.width, element.height)
         } else {
-            // in this case the element is a KEdge.
+            // In this case the element is a KEdge.
             bounds = edgeBounds(element as KEdge)
         }
+        // Decide if the bounds should be put in the boundsMap or in the rendering's properties.
         if (boundsMap === null) {
             rendering.setBounds(bounds)
         } else {
             boundsMap.put(rendering.id, bounds)
         }
+        // Calculate the bounds and rotations of all child renderings.
         if (rendering instanceof KContainerRendering) {
-            handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, rotationMap, element)
+            handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, decorationMap, element)
         }
     }
     
+    /**
+     * Calculate the size and position of all child renderings recursively. The boundsMap and rotationMap again indicate
+     * if is should be stored in them (not null) or in the rendering's properties themselves.
+     * 
+     * @param renderings The child renderings to calculate the sizes and rotations for.
+     * @param placement The defined placement of the child renderings.
+     * @param parentBounds The bounds of the parent rendering. All child renderings have to fit inside these.
+     * @param boundsMap The map to store the bounds in. If it is null, the bounds should be instead stored in the
+     * properties of the {@code rendering} itself.
+     * @param rotationMap The map to store the rotation in. If it is null, the rotation should be instead stored in the
+     * properties of the {@code rendering} itself.
+     * @param parent The parent graph element containing this rendering as one of its children.
+     */
     private static def void handleChildren(List<KRendering> renderings, KPlacement placement, Bounds parentBounds,
-        Map<String, Bounds> boundsMap, Map<String, Double> rotationMap, KGraphElement element) {
+        Map<String, Bounds> boundsMap, Map<String, Decoration> decorationMap, KGraphElement parent) {
         if (placement instanceof KGridPlacement) {
-            handleGridPlacementRendering(renderings, placement, parentBounds, boundsMap, rotationMap, element)
+            handleGridPlacementRendering(renderings, placement, parentBounds, boundsMap, decorationMap, parent)
         } else {
             for (rendering : renderings) {
-                handleAreaAndPointAndDecoratorPlacementRendering(rendering, parentBounds, boundsMap, rotationMap, element)
+                handleAreaAndPointAndDecoratorPlacementRendering(rendering, parentBounds, boundsMap, decorationMap, parent)
             }
         }
     }
     
+    /**
+     * Handles the child renderings, if they should be placed in a grid placement.
+     * 
+     * @see #handleChildren
+     */
     private static def void handleGridPlacementRendering(List<KRendering> renderings, KGridPlacement gridPlacement, 
-        Bounds parentBounds, Map<String, Bounds> boundsMap, Map<String, Double> rotationMap, KGraphElement parent) {
+        Bounds parentBounds, Map<String, Bounds> boundsMap, Map<String, Decoration> decorationMap, KGraphElement parent) {
         
+        // Evaluate the grid placement micro layout with the help of KLighD.
         val Bounds[] elementBounds = GridPlacementUtil.evaluateGridPlacement(gridPlacement, renderings, parentBounds);
         
+        // Apply the element bounds for each rendering.
         for (var i = 0; i < renderings.size; i++) {
             val rendering = renderings.get(i)
             val bounds = elementBounds.get(i)
+            // Decide if the bounds should be put in the boundsMap or in the rendering's properties.
             if (boundsMap === null) {
                 rendering.setBounds(bounds)
             } else {
                 boundsMap.put(rendering.id, bounds)
             }
+            // Calculate the bounds and rotations of all child renderings.
             if (rendering instanceof KContainerRendering) {
-                handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, rotationMap, parent)
+                handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, decorationMap, parent)
             }
         }
     }
     
+    /**
+     * Handles the child renderings, if they should be placed as an area, point or decorator placement.
+     * 
+     * @see #handleChildren
+     */
     private static def void handleAreaAndPointAndDecoratorPlacementRendering(KRendering rendering, Bounds parentBounds,
-        Map<String, Bounds> boundsMap, Map<String, Double> rotationMap, KGraphElement parent) {
+        Map<String, Bounds> boundsMap, Map<String, Decoration> decorationMap, KGraphElement parent) {
         val placementData = rendering.placementData
         var Bounds bounds = parentBounds
-        var double rotation = 0
+        var Decoration decoration = null
         
         switch (placementData) {
             KAreaPlacementData: {
+                // Evaluate the area placement micro layout with the help of KLighD.
                 bounds = PlacementUtil.evaluateAreaPlacement(placementData, parentBounds)
             }
             KPointPlacementData: {
+                // Evaluate the point placement micro layout with the help of KLighD.
                 bounds = PlacementUtil.evaluatePointPlacement(rendering, placementData, parentBounds)
             }
             KDecoratorPlacementData: {
+                // Decorator placements can only be evaluated if the path they should decorate is known.
+                // to call KLighD's PiccoloPlacementUtil#evaluateDecoratorPlacement the path of the parent rendering
+                // has to be stored in a KlighdPath.
                 var path = new KlighdPath(rendering)
                 val parentRendering = rendering.eContainer
                 if (parentRendering instanceof KPolygon) {
+                    // For a KPolygon as the parent rendering the points it have to be evaluated first.
                     var points = newArrayOfSize(parentRendering.points.size)
                     for (var i = 0; i < parentRendering.points.size; i++) {
                         points.set(i, 
                             PlacementUtil.evaluateKPosition(parentRendering.points.get(i), parentBounds, true).toPoint2D)
                     }
+                    // The path is a polygon as the parent rendering indicates.
                     path.setPathToPolygon(points)
                 } else if (parentRendering instanceof KPolyline) {
+                    // For a KPolyline as the parent rendering the points have to be extracted from the parent edge,
+                    // if it is one or the point list of the polyline (preference to the parent's edge points).
                     var List<KPoint> pointList = new ArrayList()
                     if (parent instanceof KEdge) {
                         val edge = parent as KEdge
@@ -200,38 +256,48 @@ public class BoundsUtil {
                             "the pointList of the KPolyline rendering is empty")
                     }
                     
+                    // Convert the point list to a needed point array.
                     var points = newArrayOfSize(pointList.size)
                     for (var i = 0; i < pointList.size; i++) {
                         val point = pointList.get(i)
                         points.set(i, new Point2D.Float(point.x, point.y))
                     }
+                    // The path is a polyline as the parent rendering indicates.
                     path.setPathToPolyline(points)
                 }
                 
-                val decoration = PiccoloPlacementUtil.evaluateDecoratorPlacement(placementData, path)
-                bounds = new Bounds(decoration.bounds.x + decoration.origin.x as float, 
+                // Now evaluate the decorator placement micro layout with the help of KLighD.
+                decoration = PiccoloPlacementUtil.evaluateDecoratorPlacement(placementData, path)
+                /*bounds = new Bounds(decoration.bounds.x + decoration.origin.x as float, 
                     decoration.bounds.y + decoration.origin.y as float,
                     decoration.bounds.width,
-                    decoration.bounds.height)
-                rotation = decoration.rotation
+                    decoration.bounds.height)*/
+                //rotation = decoration.rotation
+                // TODO put the origin together with the rotation, as the decorator is rotated around its origin point,
+                // not it's center, top left corner or similar.
             }
         }
+        // Decide if the bounds and decoration should be put in the boundsMap/decorationMap or in the rendering's
+        // properties.
         if (boundsMap === null) {
             rendering.setBounds(bounds)
-            rendering.setRotation(rotation)
+            if (decoration !== null) {
+                rendering.setDecoration(decoration)
+            }
         } else {
             boundsMap.put(rendering.id, bounds)
-            if (rotation !== 0) {
-                rotationMap.put(rendering.id, rotation)
+            if (decoration !== null) {
+                decorationMap.put(rendering.id, decoration)
             }
         }
+        // Calculate the bounds and rotations of all child renderings.
         if (rendering instanceof KContainerRendering) {
-            handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, rotationMap, parent)
+            handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, decorationMap, parent)
         }
     }
     
     /**
-     * calculates the bounding box of a KEdge
+     * Calculates the bounding box of a KEdge.
      */
     public static def Bounds edgeBounds(KEdge edge) {
         var float minX = Float.MAX_VALUE
@@ -267,9 +333,9 @@ public class BoundsUtil {
     }
     
     /**
-     * Convenience method to set the calculated rotation property of the given rendering
+     * Convenience method to set the calculated decoration property of the given rendering
      */
-     public static def setRotation(KRendering rendering, double rotation) {
-         rendering.properties.put(KlighdProperties.CALCULATED_ROTATION, rotation)
+     public static def setDecoration(KRendering rendering, Decoration decoration) {
+         rendering.properties.put(KlighdProperties.CALCULATED_DECORATION, decoration)
      }
 }

@@ -20,8 +20,9 @@ import de.cau.cs.kieler.klighd.util.KlighdProperties
 
 /**
  * Type adapter that adds fields to EMapPropertyHolder objects during serialization. The added fields are taken from
- * {@link EMapPropertyHolder#getProperties}, if it contains the properties {@link KlighdProperties.CALCULATED_BOUNDS}
- * or {@link KlighdProperties.CALCULATED_BOUNDS_MAP}.
+ * {@link EMapPropertyHolder#getProperties}, if it contains the properties {@link KlighdProperties.CALCULATED_BOUNDS},
+ * {@link KlighdProperties.CALCULATED_BOUNDS_MAP}, {@link KlighdProperties.CALCULATED_ROTATION}, or
+ * {@link KlighdProperties.CALCULATED_ROTATION_MAP}.
  * These fields should be used on any client as the bounds for their parent element respectively for the element stated
  * in the map.
  * 
@@ -51,13 +52,13 @@ public class EMapPropertyHolderTypeAdapterFactory extends CustomizedTypeAdapterF
             data.add("calculatedBoundsMap", gson.toJsonTree(
                 source.getProperty(KlighdProperties.CALCULATED_BOUNDS_MAP)))
         }
-        if (source.hasProperty(KlighdProperties.CALCULATED_ROTATION)) {
-            data.add("calculatedRotation", gson.toJsonTree(
-                source.getProperty(KlighdProperties.CALCULATED_ROTATION)))
+        if (source.hasProperty(KlighdProperties.CALCULATED_DECORATION)) {
+            data.add("calculatedDecoration", gson.toJsonTree(
+                source.getProperty(KlighdProperties.CALCULATED_DECORATION)))
         }
-        if (source.hasProperty(KlighdProperties.CALCULATED_ROTATION_MAP)) {
-            data.add("calculatedRotationMap", gson.toJsonTree(
-                source.getProperty(KlighdProperties.CALCULATED_ROTATION_MAP)))
+        if (source.hasProperty(KlighdProperties.CALCULATED_DECORATION_MAP)) {
+            data.add("calculatedDecorationMap", gson.toJsonTree(
+                source.getProperty(KlighdProperties.CALCULATED_DECORATION_MAP)))
         }
     }
     
