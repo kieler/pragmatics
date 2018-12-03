@@ -28,7 +28,6 @@ import de.cau.cs.kieler.klighd.krendering.KRenderingLibrary
 import de.cau.cs.kieler.klighd.krendering.KText
 import io.typefox.sprotty.api.Dimension
 import io.typefox.sprotty.api.IDiagramState
-import io.typefox.sprotty.api.SButton
 import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SLabel
@@ -134,9 +133,11 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
 	 */
 	override generate(Resource resource, IDiagramState state, CancelIndicator cancelIndicator) {
 		val content = resource.contents.head
+		var SGraph ret = null
 		if (content instanceof KNode) {
-			toSGraph(content as KNode, resource.URI.toString, cancelIndicator)
+			ret = toSGraph(content as KNode, resource.URI.toString, cancelIndicator)
 		}
+		return ret
 	}
 	
 	/**
@@ -147,6 +148,8 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
 	 * @param cancelIndicator Indicates, if the action requesting this translation has already been canceled.
 	 */
 	public def SGraph toSGraph(KNode parentNode, String identifier, CancelIndicator cancelIndicator) {
+//        println("Starting SGraph generation!")
+//        val startTime = System.currentTimeMillis
         LOG.info("Generating diagram for input: '" + identifier + "'")
 	    
         val r = new Random
@@ -165,6 +168,9 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
         ]
         
         diagramRoot.children.addAll(createNodesAndEdges(#[parentNode]))
+        
+//        val endTime = System.currentTimeMillis
+//        println("SGraph generation finished after " + (endTime - startTime) + "ms.")
         
         return if (cancelIndicator.canceled) 
                    null 
@@ -411,7 +417,6 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
             SNode: 'node'
             SLabel: 'label'
             SEdge: 'edge'
-            SButton: 'button'
             SPort: 'port'
             default: 'dontknow'
         }

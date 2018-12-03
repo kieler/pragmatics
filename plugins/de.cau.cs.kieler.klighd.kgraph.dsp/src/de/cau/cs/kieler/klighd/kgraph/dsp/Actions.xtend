@@ -40,6 +40,11 @@ public class RequestTextBoundsAction implements Action {
     public new(Consumer<RequestTextBoundsAction> initializer) {
         initializer.accept(this)
     }
+    
+    /**
+     * Constructor to call when creating this. The {@code textDiagram} should contain a sprotty Diagram with all texts,
+     * whose bounds should be requested.
+     */
     public new(SModelRoot textDiagram) {
         this.textDiagram = textDiagram
     }
@@ -48,6 +53,8 @@ public class RequestTextBoundsAction implements Action {
 /**
  * Sent from the client to the server to transmit the result of text bounds computation as a response
  * to a {@link RequestTextBoundsAction}.
+ * 
+ * @author nir
  */
 @Accessors
 @EqualsHashCode
@@ -55,7 +62,6 @@ public class RequestTextBoundsAction implements Action {
 public class ComputedTextBoundsAction implements Action {
     public static val KIND = 'computedTextBounds'
     private String kind = KIND
-    private int revision 
     
     private List<ElementAndBounds> bounds
     

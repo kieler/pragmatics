@@ -53,6 +53,7 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension
 	}
 	
 	override didClose(String clientId) {
+	    // clear the diagramState of this client id additional to the default use of this method.
 	    synchronized (diagramState) {
 	        diagramState.remove(clientId)
 	    }
@@ -71,17 +72,21 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension
                 server -> {
                     server.status = status
                     if (status.severity !== ERROR) {
-                        val diagramGenerator = diagramGeneratorProvider.get
+                        // retrieve the view context that may contain updated options for the KGraphDiagramGenerator.
                         var ViewContext oldVC = null
                         synchronized(diagramState) {
                             oldVC = diagramState.getKGraphContext(context.resource.URI.toString)    
                         }
+                        // translate the resource to the KGraph model and store it in the diagram state.
                         val kGraphContext = KGraphDiagramGenerator.translateModel(context.resource.contents.head, oldVC)
                         synchronized (diagramState) {
                             diagramState.putURIString(server.clientId, context.resource.URI.toString)
                             diagramState.putKGraphContext(context.resource.URI.toString, kGraphContext)
                         }
                         
+                        // generate the SGraph model from the KGraph model and store every later relevant part in the
+                        // diagram state.
+                        val diagramGenerator = diagramGeneratorProvider.get
                         val sGraph = diagramGenerator.toSGraph(
                             kGraphContext.viewModel, context.resource.URI.toString, context.cancelChecker)
                         synchronized (diagramState) {
@@ -90,6 +95,7 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension
                             diagramState.putTexts(context.resource.URI.toString, diagramGenerator.getModelLabels)
                             diagramState.putTextMapping(context.resource.URI.toString, diagramGenerator.getTextMapping)
                         }
+                        // finally, match the diagram server with the generated SGraph by returning the SGraph.
                         sGraph
                     } else {
                         null
@@ -97,6 +103,7 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension
                 }
             ]
         ].thenAccept [ resultList |
+            // call the text size estimation on the diagram server for which a new diagram got created.
             resultList.filter[value !== null].forEach[key.requestTextSizesAndUpdateModel(value)]
         ].exceptionally [ throwable |
             LOG.error('Error while processing build results', throwable)

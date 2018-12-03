@@ -18,9 +18,10 @@ import io.typefox.sprotty.server.xtext.ide.IdeLanguageServerExtension
 import io.typefox.sprotty.server.xtext.tracing.TraceRegionProvider
 
 /**
- * Binds all needed modules for KGraph diagram generation via Guice.
+ * Allows to bind all needed modules for KGraph diagram generation via Guice.
  * Based on the yang-lsp implementation by TypeFox.
  * 
+ * @author nir
  * @see <a href="https://github.com/theia-ide/yang-lsp/blob/master/yang-lsp/io.typefox.yang.diagram/src/main/java/io/typefox/yang/diagram/YangDiagramModule.xtend">
  *      YangDiagramModule</a>
  */
@@ -36,10 +37,6 @@ public class KGraphDiagramModule extends IdeDiagramModule {
 	
 	public def Class<? extends IDiagramGenerator> bindIDiagramGenerator() {
 		KGraphDiagramGenerator
-	}
-	
-	override bindIPopupModelFactory() {
-		KGraphPopupModelFactory
 	}
 	
 	override bindIDiagramExpansionListener() {

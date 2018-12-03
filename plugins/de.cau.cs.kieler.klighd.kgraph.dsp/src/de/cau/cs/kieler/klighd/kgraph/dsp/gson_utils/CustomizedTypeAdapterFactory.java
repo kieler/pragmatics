@@ -25,10 +25,11 @@ import com.google.gson.stream.JsonWriter;
 /**
  * A google gson type adapter factory that allows to modify the written and read json objects after/before other type
  * adapters translate the objects.
- * Copied from a stackoverflow answer by the user named Jesse Wilson.
+ * Copied from a stackoverflow.com answer by the user named Jesse Wilson.
  * 
  * @author nir
- * @see <a href="https://stackoverflow.com/a/11272452">Stackoverflow question</a>
+ * @see <a href="https://stackoverflow.com/a/11272452">Answer to Stackoverflow question </a>
+ * <a href="https://stackoverflow.com/users/40013/jesse-wilson">by Jesse Wilson</a>
  * @param <C> The class for which the {@code write} and {@code read} methods should be altered.
  */
 public abstract class CustomizedTypeAdapterFactory<C> implements TypeAdapterFactory {

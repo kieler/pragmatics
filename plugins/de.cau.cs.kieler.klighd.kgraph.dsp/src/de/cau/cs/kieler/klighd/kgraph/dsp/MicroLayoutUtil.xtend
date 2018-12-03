@@ -51,10 +51,10 @@ import java.util.Map
 public final class MicroLayoutUtil {
     /**
      * Calculates the position, width and height of each rendering of the parameters {@code element} from KLighD's 
-     * micro layout and persists the bounds and in case of a Decorator also the rotation in the properties of the 
+     * micro layout and persists the bounds and in case of a Decorator the decoration in the properties of the 
      * rendering.
-     * See {@link #setBounds} and {@link #setRotation}.
-     * In case of a {@link KRenderingRef} the bounds and rotation are persisted for every referenced rendering as a map
+     * See {@link #setBounds} and {@link #setDecoration}.
+     * In case of a {@link KRenderingRef} the bounds and decoration are persisted for every referenced rendering as a map
      * inside the properties of the reference.
      * For example: <id of the rendering in the library: bounds in this instance>
      * Also for every rendering a unique ID is generated.
@@ -75,13 +75,13 @@ public final class MicroLayoutUtil {
                 }
                 KRenderingRef: {
                     // all references to KRenderings need to place a map with the ids of the renderings and their 
-                    // sizes and their rotation in this case in the properties of the reference.
+                    // sizes and their decoration in this case in the properties of the reference.
                     var boundsMap = new HashMap<String, Bounds>
                     var decorationMap = new HashMap<String, Decoration>
                     handleKRendering(element, data.rendering, boundsMap, decorationMap)
                     // add new Property to contain the boundsMap
                     data.properties.put(KlighdProperties.CALCULATED_BOUNDS_MAP, boundsMap)
-                    // and the rotationMap
+                    // and the decorationMap
                     data.properties.put(KlighdProperties.CALCULATED_DECORATION_MAP, decorationMap)
                     // remember the id of the rendering in the reference
                     data.id = data.rendering.id
@@ -119,14 +119,14 @@ public final class MicroLayoutUtil {
     /**
      * Calculate the size and position of the parent rendering of the element and store it in the boundsMap or if the
      * boundsMap is null as a property in the rendering itself. 
-     * Also calculated the size, position and rotation for every child rendering.
+     * Also calculated the size, position and decoration for every child rendering.
      * 
      * @param element The element that contains the rendering.
      * @param rendering The rendering to estimate the bounds for. Needs to be the top most rendering of
      * the element.
      * @param boundsMap The map to store the bounds in. If it is null, the bounds should be instead stored in the
      * properties of the {@code rendering} itself.
-     * @param rotationMap The map to store the rotation in. If it is null, the rotation should be instead stored in the
+     * @param decorationMap The map to store the decoration in. If it is null, the decoration should be instead stored in the
      * properties of the {@code rendering} itself. Only applies to the child renderings.
      */
     private static def void handleKRendering(KGraphElement element, KRendering rendering, Map<String, Bounds> boundsMap,
@@ -145,22 +145,22 @@ public final class MicroLayoutUtil {
         } else {
             boundsMap.put(rendering.id, bounds)
         }
-        // Calculate the bounds and rotations of all child renderings.
+        // Calculate the bounds and decorations of all child renderings.
         if (rendering instanceof KContainerRendering) {
             handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, decorationMap, element)
         }
     }
     
     /**
-     * Calculate the size and position of all child renderings recursively. The boundsMap and rotationMap again indicate
+     * Calculate the size and position of all child renderings recursively. The boundsMap and decorationMap again indicate
      * if is should be stored in them (not null) or in the rendering's properties themselves.
      * 
-     * @param renderings The child renderings to calculate the sizes and rotations for.
+     * @param renderings The child renderings to calculate the sizes and decorations for.
      * @param placement The defined placement of the child renderings.
      * @param parentBounds The bounds of the parent rendering. All child renderings have to fit inside these.
      * @param boundsMap The map to store the bounds in. If it is null, the bounds should be instead stored in the
      * properties of the {@code rendering} itself.
-     * @param rotationMap The map to store the rotation in. If it is null, the rotation should be instead stored in the
+     * @param decorationMap The map to store the decoration in. If it is null, the decoration should be instead stored in the
      * properties of the {@code rendering} itself.
      * @param parent The parent graph element containing this rendering as one of its children.
      */
@@ -196,7 +196,7 @@ public final class MicroLayoutUtil {
             } else {
                 boundsMap.put(rendering.id, bounds)
             }
-            // Calculate the bounds and rotations of all child renderings.
+            // Calculate the bounds and decorations of all child renderings.
             if (rendering instanceof KContainerRendering) {
                 handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, decorationMap, parent)
             }
@@ -268,13 +268,6 @@ public final class MicroLayoutUtil {
                 
                 // Now evaluate the decorator placement micro layout with the help of KLighD.
                 decoration = PiccoloPlacementUtil.evaluateDecoratorPlacement(placementData, path)
-                /*bounds = new Bounds(decoration.bounds.x + decoration.origin.x as float, 
-                    decoration.bounds.y + decoration.origin.y as float,
-                    decoration.bounds.width,
-                    decoration.bounds.height)*/
-                //rotation = decoration.rotation
-                // TODO put the origin together with the rotation, as the decorator is rotated around its origin point,
-                // not it's center, top left corner or similar.
             }
         }
         // Decide if the bounds and decoration should be put in the boundsMap/decorationMap or in the rendering's
@@ -290,7 +283,7 @@ public final class MicroLayoutUtil {
                 decorationMap.put(rendering.id, decoration)
             }
         }
-        // Calculate the bounds and rotations of all child renderings.
+        // Calculate the bounds and decorations of all child renderings.
         if (rendering instanceof KContainerRendering) {
             handleChildren(rendering.children, rendering.childPlacement, bounds, boundsMap, decorationMap, parent)
         }

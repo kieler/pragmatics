@@ -24,6 +24,8 @@ import org.eclipse.elk.core.LayoutConfigurator
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
+import com.google.gson.GsonBuilder
+import de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils.KGraphTypeAdapterUtil
 
 /**
  * Handles the server side layout of KGraphs.
@@ -61,12 +63,38 @@ public class KGraphLayoutEngine extends ElkLayoutEngine {
             configurators.add(configurator)
             lightDiagramLayoutConfig.options(configurators)
             
+//            println("Layout started!")
+//            var startTime = System.currentTimeMillis
             lightDiagramLayoutConfig.performLayout
+//            var endTime = System.currentTimeMillis
+//            println("Layout finished after " + (endTime - startTime) + "ms.")
             
-            BoundsUtil.calculateAbsoluteBounds(kGraphContext.viewModel)
+//            println("Micro Layout started!")
+//            startTime = System.currentTimeMillis
+            MicroLayoutUtil.calculateAbsoluteBounds(kGraphContext.viewModel)
+//            endTime = System.currentTimeMillis
+//            println("Micro Layout finished after " + (endTime - startTime) + "ms.")
             
             // map layouted KGraph to SGraph
+//            println("Mapping started!")
+//            startTime = System.currentTimeMillis
             KGraphMappingUtil.mapLayout(diagramState.getKGraphToSModelElementMap(root.id))
+//            endTime = System.currentTimeMillis
+//            println("Mapping finished after " + (endTime - startTime) + "ms.")
+            
+            // additional code for timing and testing the serialization of the final SGraph model
+//            val gsonBuilder = new GsonBuilder
+//            KGraphTypeAdapterUtil.configureGson(gsonBuilder)
+//            val gson = gsonBuilder.create
+//            for (var i = 0; i < 10; i++) {
+//                println("Starting toGson of the Graph!")
+//                startTime = System.currentTimeMillis
+//                val json = gson.toJson(root)
+//                
+//                endTime = System.currentTimeMillis
+//                println("toGson finished after " + (endTime - startTime) + "ms.")
+//                println("The json is " + json.length + " characters long")
+//            }
 	    }
 	}
     

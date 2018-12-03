@@ -22,7 +22,7 @@ import io.typefox.sprotty.server.xtext.LanguageAwareDiagramServer
 import org.apache.log4j.Logger
 
 /**
- * Diagram server implementation adding functionality to special actions needed for handling KGraphs.
+ * Diagram server extension adding functionality to special actions needed for handling KGraphs.
  * 
  * @author nir
  */
@@ -41,7 +41,6 @@ public class KGraphAwareDiagramServer extends LanguageAwareDiagramServer {
             if (texts === null) {
                 throw new NullPointerException("The id of the SGraph was not found in the diagramState")
             }
-            // val diagramGenerator = diagramGeneratorProvider.get
             val textDiagram = KGraphDiagramGenerator.generateTextDiagram(texts, newRoot.id)
             dispatch(new RequestTextBoundsAction(textDiagram))
             // the updateModel is then executed after the client returns with its ComputedTextBoundsAction
@@ -53,6 +52,7 @@ public class KGraphAwareDiagramServer extends LanguageAwareDiagramServer {
     override void accept(ActionMessage message) {
         val clientId = getClientId();
         if (clientId !== null && clientId.equals(message.getClientId())) {
+            // call the handle function for the ComputedTextBoundsAction or forward the call to the super implementation
             val Action action = message.getAction();
             if (action.getKind() === ComputedTextBoundsAction.KIND) {
                 handle(action as ComputedTextBoundsAction)
@@ -62,6 +62,11 @@ public class KGraphAwareDiagramServer extends LanguageAwareDiagramServer {
         }
     }
     
+    /**
+     * Called when a {@link ComputedTextBoundsAction} is received.
+     * Maps the bounds for all texts referenced in the action back to their corresponding {@link KText} elements
+     * and updates the model on the client.
+     */
     protected def handle(ComputedTextBoundsAction action) {
         // assume the model is still stored in 'currentRoot', since the ComputedTextBoundsAction only gets issued
         // after a RequestTextBoundsAction, where it got stored before.

@@ -18,8 +18,8 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.xtext.util.TextRegion
 
 /**
- * Class to prevent Sprotty from searching the significant region (the name of it) since it can not be found in Objects
- * like KGraph and will cause errors instead.
+ * Class to prevent sprotty from searching the significant region (the name of it) since it can not be found in Objects
+ * such as KGraph and will cause errors instead.
  * 
  * @author nir
  */
