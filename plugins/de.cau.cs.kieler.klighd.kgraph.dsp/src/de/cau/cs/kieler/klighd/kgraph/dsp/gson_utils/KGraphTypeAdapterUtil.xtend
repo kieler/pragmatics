@@ -134,6 +134,7 @@ public class KGraphTypeAdapterUtil {
         .setExclusionStrategies(
             new EObjectFieldExclusionStrategy, 
             new KRenderingRefFieldExclusionStrategy,
+            new KRenderingFieldExclusionStrategy,
             new KGraphDataExclusionStrategy, // TODO: with this, Gson will still put a null value if this is contained in
             // a list and then excluded. Remove this null value
             new InsetExclusionStrategy
