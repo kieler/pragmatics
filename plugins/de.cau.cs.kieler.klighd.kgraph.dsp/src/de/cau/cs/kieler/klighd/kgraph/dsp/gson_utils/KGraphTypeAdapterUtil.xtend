@@ -74,11 +74,11 @@ public class KGraphTypeAdapterUtil {
     public def static GsonBuilder configureGson(GsonBuilder gsonBuilder) {
         gsonBuilder
         .registerTypeAdapterFactory(RuntimeTypeAdapterFactory.of(KGraphData)
-            .registerSubtype(KGraphDataImpl)
+//            .registerSubtype(KGraphDataImpl)
             .registerSubtype(KIdentifierImpl)
-            .registerSubtype(KRenderingImpl)
+//            .registerSubtype(KRenderingImpl)
             .registerSubtype(KChildAreaImpl)
-            .registerSubtype(KContainerRenderingImpl)
+//            .registerSubtype(KContainerRenderingImpl)
             .registerSubtype(KArcImpl)
             .registerSubtype(KCustomRenderingImpl)
             .registerSubtype(KEllipseImpl)
@@ -94,7 +94,7 @@ public class KGraphTypeAdapterUtil {
             .registerSubtype(KRenderingLibraryImpl)
         )
         .registerTypeAdapterFactory(RuntimeTypeAdapterFactory.of(KStyle)
-            .registerSubtype(KColoringImpl)
+//            .registerSubtype(KColoringImpl)
             .registerSubtype(KBackgroundImpl)
             .registerSubtype(KForegroundImpl)
             .registerSubtype(KFontBoldImpl)
@@ -133,7 +133,9 @@ public class KGraphTypeAdapterUtil {
         .registerTypeAdapterFactory(new EMapPropertyHolderTypeAdapterFactory(gsonBuilder))
         .setExclusionStrategies(
             new EObjectFieldExclusionStrategy, 
-            new KRenderingRefFieldExclusionStrategy
+            new KRenderingRefFieldExclusionStrategy,
+            new KGraphDataExclusionStrategy // TODO: with this, Gson will still put a null value if this is contained in
+            // a list and then excluded. Remove this null value
         )
         // removed the configureGson call from Sprotty to include two new actions and not register the ActionFactory twice.
         // ActionTypeAdapter.configureGson(gsonBuilder)

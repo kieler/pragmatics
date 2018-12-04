@@ -14,20 +14,21 @@ package de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils
 
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
-import de.cau.cs.kieler.klighd.krendering.KRenderingRef
+import de.cau.cs.kieler.klighd.kgraph.KGraphData
+import de.cau.cs.kieler.klighd.kgraph.KIdentifier
 
 /**
- * A gson exclusion strategy to ignore the {@code rendering} field by {@link KRenderingRef#getRendering} during
- * serialization, since it is already serialized in the
- * {@link de.cau.cs.kieler.klighd.krendering.KRenderingLibrary KRenderingLibrary}.
+ * A Gson exclusion strategy to ignore some {@link KGraphData} subclasses during serialization that are not needed
+ * for the rendering on the client side.
+ * The only unneeded class is the {@link KIdentifier}. 
  * 
  * @author nir
  */
-public class KRenderingRefFieldExclusionStrategy implements ExclusionStrategy {
+public class KGraphDataExclusionStrategy implements ExclusionStrategy {
     override shouldSkipField(FieldAttributes f) {
-        return KRenderingRef.isAssignableFrom(f.declaringClass) && (f.getName().equals("rendering"))
+        return false
     }
     override shouldSkipClass(Class<?> clazz) {
-        return false
+        return KIdentifier.isAssignableFrom(clazz)
     }
 }
