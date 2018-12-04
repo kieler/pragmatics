@@ -134,8 +134,9 @@ public class KGraphTypeAdapterUtil {
         .setExclusionStrategies(
             new EObjectFieldExclusionStrategy, 
             new KRenderingRefFieldExclusionStrategy,
-            new KGraphDataExclusionStrategy // TODO: with this, Gson will still put a null value if this is contained in
+            new KGraphDataExclusionStrategy, // TODO: with this, Gson will still put a null value if this is contained in
             // a list and then excluded. Remove this null value
+            new InsetExclusionStrategy
         )
         // removed the configureGson call from Sprotty to include two new actions and not register the ActionFactory twice.
         // ActionTypeAdapter.configureGson(gsonBuilder)

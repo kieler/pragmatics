@@ -263,7 +263,6 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
         val nodeElement = configSElement(SKNode, idGen.getId(node))
         
         nodeElement.size = new Dimension(node.width, node.height)
-        nodeElement.insets = node.insets
         
         nodeElement.data = node.data
         
@@ -314,7 +313,6 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
      */
     private def SKPort generatePort(KPort port) {
         val SKPort portElement = configSElement(SKPort, idGen.getId(port))
-        portElement.insets = port.insets
         
         portElement.data = port.data
         
@@ -334,7 +332,6 @@ public class KGraphDiagramGenerator implements IDiagramGenerator {
     private def SKLabel generateLabel(KLabel label, boolean main) {
         val SKLabel labelElement = configSElement(SKLabel, idGen.getId(label))
         labelElement.text = label.text
-        labelElement.insets = label.insets
         
         labelElement.data = label.data
         

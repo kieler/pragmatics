@@ -31,7 +31,6 @@ import org.eclipse.xtend.lib.annotations.Accessors
 public class SKNode extends SNode implements Traceable {
     private String trace
     private List<KGraphData> data
-    private KInsets insets
 }
 
 /**
@@ -42,7 +41,6 @@ public class SKNode extends SNode implements Traceable {
 public class SKLabel extends SLabel implements Traceable {
     private String trace
     private List<KGraphData> data
-    private KInsets insets
 }
 
 /**
@@ -63,7 +61,6 @@ public class SKEdge extends SEdge implements Traceable {
 public class SKPort extends SPort implements Traceable {
     private String trace
     private List<KGraphData> data
-    private KInsets insets
 }
 
 /**
@@ -73,5 +70,4 @@ public class SKPort extends SPort implements Traceable {
 @Accessors
 public class SKGraph extends SGraph {
     private List<KGraphData> data
-    private KInsets insets
 }
