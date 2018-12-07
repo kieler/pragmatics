@@ -1,5 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>de.cau.cs.kieler</groupId>
+    <artifactId>plugins</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+
+  <groupId>de.cau.cs.kieler</groupId>
+  <artifactId>de.cau.cs.kieler.klighd.kgraph.dsp</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <packaging>eclipse-plugin</packaging>
+  
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <!-- Generate code from .melk files. -->
+      <plugin>
+        <groupId>org.eclipse.xtext</groupId>
+        <artifactId>xtext-maven-plugin</artifactId>
+        <!-- Workaround for broken build from https://github.com/eclipse/xtext/issues/1231#issuecomment-401125569 -->
+        <dependencies>
+          <dependency>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.equinox.common</artifactId>
+            <version>3.10.0</version>
+          </dependency>
+        </dependencies>
+        <!-- End Workaround -->
+      </plugin>
+    </plugins>
+  </build>
+</project>
+
+<!-- <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -122,7 +157,6 @@
                     <transformers>
                         <transformer
                             implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <!-- <mainClass>org.eclipse.xtext.ide.server.ServerLauncher</mainClass> -->
                             <mainClass>de.cau.cs.kieler.klighd.kgraph.dsp.KGraphServerLauncher</mainClass>
                         </transformer>
                         <transformer
@@ -131,7 +165,7 @@
                         </transformer>
                     </transformers>
                     <artifactSet>
-                        <excludes><!-- avoid duplicate inclusion due to addjars plugin -->
+                        <excludes>
                             <exclude>*:de.cau.cs.kieler.kgraph.text.ide-org.eclipse.lsp4j*</exclude>
                             <exclude>*:de.cau.cs.kieler.kgraph.text.ide-org.eclipse.xtext.xbase.lib*</exclude>
                             <exclude>*:de.cau.cs.kieler.kgraph.text.ide-org.eclipse.xtend.lib*</exclude>
@@ -185,4 +219,4 @@
 			
 		</plugins>
 	</build>
-</project>
+</project> -->
