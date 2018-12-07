@@ -30,7 +30,8 @@ public class EObjectFieldExclusionStrategy implements ExclusionStrategy {
             f.getName().equals("eProperties") ||
             f.getName().equals("eAdapters") ||
             f.getName().equals("eFlags") ||
-            f.getName().equals("eContainerFeatureID")
+            f.getName().equals("eContainerFeatureID") ||
+            f.getName().equals("persistentEntries")
         )
     }
     override shouldSkipClass(Class<?> clazz) {

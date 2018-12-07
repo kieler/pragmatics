@@ -17,6 +17,7 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import de.cau.cs.kieler.klighd.kgraph.EMapPropertyHolder
 import de.cau.cs.kieler.klighd.util.KlighdProperties
+import com.google.gson.JsonNull
 
 /**
  * Type adapter that adds fields to EMapPropertyHolder objects during serialization. The added fields are taken from
@@ -40,6 +41,11 @@ public class EMapPropertyHolderTypeAdapterFactory extends CustomizedTypeAdapterF
             return
         }
         val JsonObject data = toSerialize.asJsonObject
+        
+        // don't serialize persistentEntries. TODO: this is already excluded in the EObjectFieldExclusionStrategy
+        // but still shows up some times objects. Find out why!
+        data.remove("persistentEntries")
+        
         // don't serialize the properties, but pick out what we really need
         data.remove("properties")
         // TODO: rewrite this to not create a new gson object here but rather take main one
