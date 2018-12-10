@@ -36,6 +36,7 @@
       <unit id="org.eclipse.elk.feature.source.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.elk.graphviz.feature.source.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.elk.ui.feature.source.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.elk.alg.layered" version="0.0.0"/>
       <repository location="http://build.eclipse.org/modeling/elk/updates/nightly/"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
