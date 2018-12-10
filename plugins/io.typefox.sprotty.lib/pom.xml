@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>de.cau.cs.kieler</groupId>
-		<artifactId>de.cau.cs.kieler</artifactId>
+		<artifactId>plugins</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
