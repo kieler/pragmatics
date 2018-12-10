@@ -92,4 +92,5 @@
       <category name="kieler-sources"/>
    </feature>
    <bundle id="de.cau.cs.kieler.klighd.kgraph.dsp" version="0.1.0.qualifier"/>
+   <bundle id="io.typefox.sprotty.lib" version="1.0.0.qualifier"/>
 </site>
