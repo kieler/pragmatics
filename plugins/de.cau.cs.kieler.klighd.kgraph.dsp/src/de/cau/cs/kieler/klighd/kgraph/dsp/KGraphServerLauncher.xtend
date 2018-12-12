@@ -19,6 +19,7 @@ import de.cau.cs.kieler.kgraph.text.KGraphRuntimeModule
 import de.cau.cs.kieler.kgraph.text.ide.KGraphIdeModule
 import de.cau.cs.kieler.kgraph.text.ide.KGraphIdeSetup
 import de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils.KGraphTypeAdapterUtil
+import de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils.ReflectiveMessageValidatorExcludingSKGraph
 import io.typefox.sprotty.layout.ElkLayoutEngine
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -34,7 +35,6 @@ import org.eclipse.lsp4j.MessageParams
 import org.eclipse.lsp4j.MessageType
 import org.eclipse.lsp4j.jsonrpc.Launcher
 import org.eclipse.lsp4j.jsonrpc.MessageConsumer
-import org.eclipse.lsp4j.jsonrpc.validation.ReflectiveMessageValidator
 import org.eclipse.lsp4j.services.LanguageClient
 import org.eclipse.xtend.lib.annotations.Data
 import org.eclipse.xtext.ide.server.LanguageServerImpl
@@ -118,7 +118,7 @@ class KGraphServerLauncher extends ServerLauncher {
 				]
 			}
 			if (args.validate) {
-				result = new ReflectiveMessageValidator(result)
+				result = new ReflectiveMessageValidatorExcludingSKGraph(result)
 			}
 			return result
 		]
