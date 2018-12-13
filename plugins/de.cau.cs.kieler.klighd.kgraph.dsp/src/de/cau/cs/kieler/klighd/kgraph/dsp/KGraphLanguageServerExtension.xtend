@@ -84,6 +84,13 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension
                         synchronized (diagramState) {
                             diagramState.putURIString(server.clientId, context.resource.URI.toString)
                             diagramState.putKGraphContext(context.resource.URI.toString, kGraphContext)
+                            val fc1 = "Put new context in the diagramState:\n"
+                            + "diagramState: " + diagramState + "\n"
+                            + "key: " + context.resource.URI.toString + "\n"
+                            + "value: " + kGraphContext
+                            val w1 = new BufferedWriter(new FileWriter("/home/stu114054/output/update_file1.txt"));
+                            w1.write(fc1);
+                            w1.close();   
                         }
                         
                         // generate the SGraph model from the KGraph model and store every later relevant part in the
@@ -151,6 +158,11 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension
                     val writer2_1 = new BufferedWriter(new FileWriter("/home/stu114054/output/file2_1.txt"));
                     writer2_1.write(fileContent2_1);
                     writer2_1.close();
+                    
+                    val fileContent2_1_1 = "Injected diagramState is: " + diagramState
+                    val writer2_1_1 = new BufferedWriter(new FileWriter("/home/stu114054/output/file2_1_1.txt"));
+                    writer2_1_1.write(fileContent2_1_1);
+                    writer2_1_1.close();                    
                     
                     val ViewContext viewContext = diagramState.getKGraphContext(context.resource.URI.toString)
                     
