@@ -19,14 +19,14 @@ import io.typefox.sprotty.api.SModelElement
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Map
-import javax.inject.Singleton
+import com.google.inject.Singleton
 
 /**
  * Singleton class to map a graph id (String) found in SGraphs to their various parts needed for handling KGraph models
  * @author nir
  *
  */
-@Singleton 
+@Singleton
 public class KGraphDiagramState {
     
     /**
