@@ -32,7 +32,7 @@ public class KGraphDiagramState {
     /**
      * A map mapping the id of a graph to the {@link ViewContext} containing that graph.
      */
-    private Map<String, ViewContext> kGraphContexts = new HashMap
+    public Map<String, ViewContext> kGraphContexts = new HashMap
     
     /**
      * A map that contains a key-value pair for each KGraphElement and its translated SModelElement counterpart.
@@ -45,7 +45,7 @@ public class KGraphDiagramState {
      * A list containing all texts from the source KGraph in Sprotty labels.
      * Mapped by the url this map belongs to.
      */
-    private Map<String, ArrayList<SKLabel>> labels = new HashMap
+    private Map<String, ArrayList<SKLabel>> texts = new HashMap
     
     /**
      * A map containing all KTexts from the source KGraph under the key of their id.
@@ -58,53 +58,114 @@ public class KGraphDiagramState {
      */
     private Map<String, String> uriStringMap = new HashMap
     
+    /**
+     * Getter to access the value stored in the kGraphContext map.
+     * 
+     * @param key The key to access the value in the map.
+     */
     public def ViewContext getKGraphContext(String key) {
         kGraphContexts.get(key)
     }
     
+    /**
+     * Put method to put a new value in the kGraphConcext map under the given key.
+     * 
+     * @param key The key to access the map.
+     * @param value The value to be stored in the map.
+     */
     public def putKGraphContext(String key, ViewContext value) {
         kGraphContexts.put(key, value)
     }
     
+    /**
+     * Getter to access the value stored in the kGraphToSModelElement map.
+     * 
+     * @param key The key to access the value in the map.
+     */
     public def Map<KGraphElement, SModelElement> getKGraphToSModelElementMap(String key) {
         kGraphToSModelElementMap.get(key)
     }
     
+    /**
+     * Put method to put a new value in the kGraphToSModelElement map under the given key.
+     * 
+     * @param key The key to access the map.
+     * @param value The value to be stored in the map.
+     */
     public def putKGraphToSModelElementMap(String key, Map<KGraphElement, SModelElement> value) {
         kGraphToSModelElementMap.put(key, value)
     }
     
+    /**
+     * Getter to access the value stored in the texts map.
+     * 
+     * @param key The key to access the value in the map.
+     */
     public def ArrayList<SKLabel> getTexts(String key) {
-        labels.get(key)
+        texts.get(key)
     }
     
+    /**
+     * Put method to put a new value in the texts map under the given key.
+     * 
+     * @param key The key to access the map.
+     * @param value The value to be stored in the map.
+     */
     public def putTexts(String key, ArrayList<SKLabel> value) {
-        labels.put(key, value)
+        texts.put(key, value)
     }
     
+    /**
+     * Getter to access the value stored in the textMapping map.
+     * 
+     * @param key The key to access the value in the map.
+     */
     public def Map<String, KText> getTextMapping(String key) {
         textMapping.get(key)
     }
     
+    /**
+     * Put method to put a new value in the textMapping map under the given key.
+     * 
+     * @param key The key to access the map.
+     * @param value The value to be stored in the map.
+     */
     public def putTextMapping(String key, Map<String, KText> value) {
         textMapping.put(key, value)
     }
     
     /**
-     * removes this key from all stored maps. Should be called when the diagram view is closed.
+     * Getter to access the value stored in the uriString map.
+     * 
+     * @param key The key to access the value in the map.
+     */
+    public def String getURIString(String key) {
+        uriStringMap.get(key)
+    }
+    
+    /**
+     * Put method to put a new value in the uriString map under the given key.
+     * 
+     * @param key The key to access the map.
+     * @param value The value to be stored in the map.
+     */
+    public def putURIString(String clientId, String uri) {
+        uriStringMap.put(clientId, uri)
+    }
+    
+    /**
+     * removes the key for this client ID from all stored maps. Should be called when the diagram view is closed.
+     * 
+     * @param clientId The client ID of the diagram server for that no map should store any data anymore.
      */
     public def remove(String clientId) {
         val key = uriStringMap.get(clientId)
         if (key !== null) {
             kGraphContexts.remove(key)
             kGraphToSModelElementMap.remove(key)
-            labels.remove(key)
+            texts.remove(key)
             textMapping.remove(key)
             uriStringMap.remove(clientId)
         }
-    }
-    
-    public def putURIString(String clientId, String uri) {
-        uriStringMap.put(clientId, uri)
     }
 }

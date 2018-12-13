@@ -141,7 +141,25 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension
                     writer2.write(fileContent2);
                     writer2.close();
                     
+                    var fileContent2_1 = "found context: " + context
+                    if (context !== null) {
+                        fileContent2_1 += ", resource: " + context.resource
+                        if (context.resource !== null) {
+                            fileContent2_1 += ", URI.toString: " + context.resource.URI.toString
+                        }
+                    }
+                    val writer2_1 = new BufferedWriter(new FileWriter("/home/stu114054/output/file2_1.txt"));
+                    writer2_1.write(fileContent2_1);
+                    writer2_1.close();
+                    
                     val ViewContext viewContext = diagramState.getKGraphContext(context.resource.URI.toString)
+                    
+                    diagramState.kGraphContexts.forEach[key, value, index |
+                        val fileContent2_2 = "Available key in the diagramState: " + key
+                        val writer2_2 = new BufferedWriter(new FileWriter("/home/stu114054/output/file2_2_" + index + ".txt"));
+                        writer2_2.write(fileContent2_2);
+                        writer2_2.close();
+                    ]
                     
                     val fileContent3 = "Found a view context: " + viewContext
                     val writer3 = new BufferedWriter(new FileWriter("/home/stu114054/output/file3.txt"));
