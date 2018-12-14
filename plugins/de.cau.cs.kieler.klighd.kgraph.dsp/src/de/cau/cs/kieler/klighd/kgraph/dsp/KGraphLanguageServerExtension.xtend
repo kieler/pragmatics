@@ -24,8 +24,6 @@ import java.util.concurrent.CompletableFuture
 
 import static io.typefox.sprotty.api.ServerStatus.Severity.*
 import de.cau.cs.kieler.klighd.SynthesisOption
-import java.io.BufferedWriter
-import java.io.FileWriter
 
 /**
  * Language server extension that implements functionality for the generation of diagrams and handling of their diagram
@@ -84,13 +82,6 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension
                         synchronized (diagramState) {
                             diagramState.putURIString(server.clientId, context.resource.URI.toString)
                             diagramState.putKGraphContext(context.resource.URI.toString, kGraphContext)
-                            val fc1 = "Put new context in the diagramState:\n"
-                            + "diagramState: " + diagramState + "\n"
-                            + "key: " + context.resource.URI.toString + "\n"
-                            + "value: " + kGraphContext
-                            val w1 = new BufferedWriter(new FileWriter("/home/stu114054/output/update_file1.txt"));
-                            w1.write(fc1);
-                            w1.close();   
                         }
                         
                         // generate the SGraph model from the KGraph model and store every later relevant part in the
@@ -121,18 +112,6 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension
     }
     
     override getOptions(GetOptionParam param) {
-        
-        val fileContent1 = "getOptions got called. Parameters are {uri: " 
-        + param.uri
-        + ", waitForDiagram: "
-        + param.waitForDiagram
-        + "}"
-     
-        val writer = new BufferedWriter(new FileWriter("/home/stu114054/output/file1.txt"));
-        writer.write(fileContent1);
-        writer.close();
-        
-        
         var int numIterations = 1
         if (param.waitForDiagram) {
             numIterations = 10
@@ -143,59 +122,17 @@ class KGraphLanguageServerExtension extends IdeLanguageServerExtension
         for (var i = 0; i < numIterations; i++) {
             synthesisOptionsFeature =  param.uri.doRead [ context |
                 synchronized (diagramState) {
-                    val fileContent2 = "opened File"
-                    val writer2 = new BufferedWriter(new FileWriter("/home/stu114054/output/file2.txt"));
-                    writer2.write(fileContent2);
-                    writer2.close();
-                    
-                    var fileContent2_1 = "found context: " + context
-                    if (context !== null) {
-                        fileContent2_1 += ", resource: " + context.resource
-                        if (context.resource !== null) {
-                            fileContent2_1 += ", URI.toString: " + context.resource.URI.toString
-                        }
-                    }
-                    val writer2_1 = new BufferedWriter(new FileWriter("/home/stu114054/output/file2_1.txt"));
-                    writer2_1.write(fileContent2_1);
-                    writer2_1.close();
-                    
-                    val fileContent2_1_1 = "Injected diagramState is: " + diagramState
-                    val writer2_1_1 = new BufferedWriter(new FileWriter("/home/stu114054/output/file2_1_1.txt"));
-                    writer2_1_1.write(fileContent2_1_1);
-                    writer2_1_1.close();                    
-                    
                     val ViewContext viewContext = diagramState.getKGraphContext(context.resource.URI.toString)
-                    
-                    diagramState.kGraphContexts.forEach[key, value, index |
-                        val fileContent2_2 = "Available key in the diagramState: " + key
-                        val writer2_2 = new BufferedWriter(new FileWriter("/home/stu114054/output/file2_2_" + index + ".txt"));
-                        writer2_2.write(fileContent2_2);
-                        writer2_2.close();
-                    ]
-                    
-                    val fileContent3 = "Found a view context: " + viewContext
-                    val writer3 = new BufferedWriter(new FileWriter("/home/stu114054/output/file3.txt"));
-                    writer3.write(fileContent3);
-                    writer3.close();
-                    
                     if (viewContext === null) {
                         // A diagram for this file is currently not opened, so no options can be shown.
                         return null
                     }
-                    val fileContent4 = "One of the synthesisOptions: " + viewContext.displayedSynthesisOptions.get(0).name
-                    val writer4 = new BufferedWriter(new FileWriter("/home/stu114054/output/file4.txt"));
-                    writer4.write(fileContent4);
-                    writer4.close();
                     return viewContext.displayedSynthesisOptions
                 }
             ]
             // return either if options have been found or the last iteration has been reached. Prevents unnecessary
             // waiting
             if (synthesisOptionsFeature.get !== null || i === numIterations - 1) {
-                val fileContent5 = "Returning synthesisOptions now."
-                val writer5 = new BufferedWriter(new FileWriter("/home/stu114054/output/file5.txt"));
-                writer5.write(fileContent5);
-                writer5.close();
                 return synthesisOptionsFeature
             }
             synchronized(this) {
