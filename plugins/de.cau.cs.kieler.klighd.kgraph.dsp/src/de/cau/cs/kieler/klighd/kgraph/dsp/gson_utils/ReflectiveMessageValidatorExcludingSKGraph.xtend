@@ -12,12 +12,12 @@
  */
 package de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils
 
-import org.eclipse.lsp4j.jsonrpc.validation.ReflectiveMessageValidator
-import java.util.List
-import org.eclipse.lsp4j.jsonrpc.messages.MessageIssue
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKGraph
 import java.util.Deque
-import de.cau.cs.kieler.klighd.kgraph.dsp.SKGraph
+import java.util.List
 import org.eclipse.lsp4j.jsonrpc.MessageConsumer
+import org.eclipse.lsp4j.jsonrpc.messages.MessageIssue
+import org.eclipse.lsp4j.jsonrpc.validation.ReflectiveMessageValidator
 
 /**
  * Extension to the lsp4j {@link ReflectiveMessageValidator} to ignore direct or indirect circular references in sent

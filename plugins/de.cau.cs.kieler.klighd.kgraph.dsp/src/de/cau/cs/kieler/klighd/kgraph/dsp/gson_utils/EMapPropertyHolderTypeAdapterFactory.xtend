@@ -16,7 +16,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import de.cau.cs.kieler.klighd.kgraph.EMapPropertyHolder
-import com.google.gson.JsonNull
+import de.cau.cs.kieler.klighd.kgraph.dsp.utils.BoundsProperties
 
 /**
  * Type adapter that adds fields to EMapPropertyHolder objects during serialization. The added fields are taken from

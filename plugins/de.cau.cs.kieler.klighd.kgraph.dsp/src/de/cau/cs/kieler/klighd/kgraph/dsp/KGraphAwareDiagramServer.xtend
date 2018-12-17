@@ -13,6 +13,10 @@
 package de.cau.cs.kieler.klighd.kgraph.dsp
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.ComputedTextBoundsAction
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.RequestTextBoundsAction
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKGraph
+import de.cau.cs.kieler.klighd.krendering.KText
 import de.cau.cs.kieler.klighd.microlayout.Bounds
 import de.cau.cs.kieler.klighd.util.KlighdProperties
 import io.typefox.sprotty.api.Action

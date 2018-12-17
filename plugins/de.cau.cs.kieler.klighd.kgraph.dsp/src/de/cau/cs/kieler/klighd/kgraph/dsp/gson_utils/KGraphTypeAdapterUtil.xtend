@@ -14,9 +14,8 @@ package de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils
 
 import com.google.gson.GsonBuilder
 import de.cau.cs.kieler.klighd.kgraph.KGraphData
-import de.cau.cs.kieler.klighd.kgraph.dsp.ComputedTextBoundsAction
-import de.cau.cs.kieler.klighd.kgraph.dsp.RequestTextBoundsAction
-import de.cau.cs.kieler.klighd.kgraph.impl.KGraphDataImpl
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.ComputedTextBoundsAction
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.RequestTextBoundsAction
 import de.cau.cs.kieler.klighd.kgraph.impl.KIdentifierImpl
 import de.cau.cs.kieler.klighd.krendering.KStyle
 import de.cau.cs.kieler.klighd.krendering.KXPosition
@@ -25,8 +24,6 @@ import de.cau.cs.kieler.klighd.krendering.impl.KArcImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KBackgroundImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KBottomPositionImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KChildAreaImpl
-import de.cau.cs.kieler.klighd.krendering.impl.KColoringImpl
-import de.cau.cs.kieler.klighd.krendering.impl.KContainerRenderingImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KCustomRenderingImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KEllipseImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KFontBoldImpl
@@ -45,7 +42,6 @@ import de.cau.cs.kieler.klighd.krendering.impl.KLineWidthImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KPolygonImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KPolylineImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KRectangleImpl
-import de.cau.cs.kieler.klighd.krendering.impl.KRenderingImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KRenderingLibraryImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KRenderingRefImpl
 import de.cau.cs.kieler.klighd.krendering.impl.KRightPositionImpl

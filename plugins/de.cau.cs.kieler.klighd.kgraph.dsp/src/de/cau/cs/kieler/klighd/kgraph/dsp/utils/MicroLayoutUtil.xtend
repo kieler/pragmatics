@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klighd.kgraph.dsp
+package de.cau.cs.kieler.klighd.kgraph.dsp.utils
 
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement
@@ -40,7 +40,6 @@ import java.util.ArrayList
 import java.util.HashMap
 import java.util.List
 import java.util.Map
-import de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils.BoundsProperties
 
 /**
  * Utility class to provide some functionality to persist micro layout bounds data for all {@link KRendering}s of a

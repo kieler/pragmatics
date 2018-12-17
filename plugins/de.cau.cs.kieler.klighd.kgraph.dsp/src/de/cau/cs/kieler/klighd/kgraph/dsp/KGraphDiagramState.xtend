@@ -12,14 +12,15 @@
  */
 package de.cau.cs.kieler.klighd.kgraph.dsp
 
+import com.google.inject.Singleton
 import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKLabel
 import de.cau.cs.kieler.klighd.krendering.KText
 import io.typefox.sprotty.api.SModelElement
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Map
-import com.google.inject.Singleton
 
 /**
  * Singleton class to map a graph id (String) found in SGraphs to their various parts needed for handling KGraph models

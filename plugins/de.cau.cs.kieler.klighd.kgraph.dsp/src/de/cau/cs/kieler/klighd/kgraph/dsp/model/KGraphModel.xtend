@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klighd.kgraph.dsp
+package de.cau.cs.kieler.klighd.kgraph.dsp.model
 
 import de.cau.cs.kieler.klighd.kgraph.KGraphData
 import de.cau.cs.kieler.klighd.kgraph.KInsets

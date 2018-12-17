@@ -14,6 +14,8 @@ package de.cau.cs.kieler.klighd.kgraph.dsp
 
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.LightDiagramLayoutConfig
+import de.cau.cs.kieler.klighd.kgraph.dsp.utils.KGraphMappingUtil
+import de.cau.cs.kieler.klighd.kgraph.dsp.utils.MicroLayoutUtil
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.layout.ElkLayoutEngine
@@ -24,8 +26,6 @@ import org.eclipse.elk.core.LayoutConfigurator
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import com.google.gson.GsonBuilder
-import de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils.KGraphTypeAdapterUtil
 
 /**
  * Handles the server side layout of KGraphs.

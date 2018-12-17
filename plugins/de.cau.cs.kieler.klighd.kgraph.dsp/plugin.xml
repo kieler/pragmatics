@@ -9,7 +9,7 @@
             thread="main"
             visible="true">
          <run
-               class="de.cau.cs.kieler.klighd.kgraph.dsp.Application">
+               class="de.cau.cs.kieler.klighd.kgraph.dsp.launcher.Application">
          </run>
       </application>
    </extension>

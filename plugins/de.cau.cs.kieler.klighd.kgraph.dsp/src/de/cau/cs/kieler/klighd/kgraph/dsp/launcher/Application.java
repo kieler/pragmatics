@@ -10,12 +10,14 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klighd.kgraph.dsp;
+package de.cau.cs.kieler.klighd.kgraph.dsp.launcher;
 
 import java.util.Map;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+
+import de.cau.cs.kieler.klighd.kgraph.dsp.launcher.RunSocketServer;
 
 /**
  * This class controls all aspects of the application's execution.

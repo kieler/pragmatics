@@ -15,7 +15,12 @@ package de.cau.cs.kieler.klighd.kgraph.dsp
 import com.google.inject.Inject
 import com.google.inject.Provider
 import com.google.inject.Singleton
+import de.cau.cs.kieler.klighd.SynthesisOption
 import de.cau.cs.kieler.klighd.ViewContext
+import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.GetOptionParam
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKGraph
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SetOptionParam
 import io.typefox.sprotty.api.IDiagramServer
 import io.typefox.sprotty.server.xtext.ILanguageAwareDiagramServer
 import io.typefox.sprotty.server.xtext.ide.IdeLanguageServerExtension
@@ -23,7 +28,6 @@ import java.util.List
 import java.util.concurrent.CompletableFuture
 
 import static io.typefox.sprotty.api.ServerStatus.Severity.*
-import de.cau.cs.kieler.klighd.SynthesisOption
 
 /**
  * Language server extension that implements functionality for the generation of diagrams and handling of their diagram

@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klighd.kgraph.dsp
+package de.cau.cs.kieler.klighd.kgraph.dsp.utils
 
 import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KEdgeLayout
@@ -19,6 +19,10 @@ import de.cau.cs.kieler.klighd.kgraph.KLabel
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.KShapeLayout
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKEdge
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKLabel
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKNode
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKPort
 import io.typefox.sprotty.api.Dimension
 import io.typefox.sprotty.api.Point
 import io.typefox.sprotty.api.SEdge

@@ -23,6 +23,12 @@ import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KLabel
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKEdge
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKGraph
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKLabel
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKNode
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SKPort
+import de.cau.cs.kieler.klighd.kgraph.dsp.utils.KGraphElementIDGenerator
 import de.cau.cs.kieler.klighd.krendering.KContainerRendering
 import de.cau.cs.kieler.klighd.krendering.KRenderingLibrary
 import de.cau.cs.kieler.klighd.krendering.KText

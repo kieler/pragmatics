@@ -12,6 +12,7 @@
  */
 package de.cau.cs.kieler.klighd.kgraph.dsp
 
+import de.cau.cs.kieler.klighd.kgraph.dsp.utils.SimpleTraceRegionProvider
 import io.typefox.sprotty.server.xtext.IDiagramGenerator
 import io.typefox.sprotty.server.xtext.ide.IdeDiagramModule
 import io.typefox.sprotty.server.xtext.ide.IdeLanguageServerExtension

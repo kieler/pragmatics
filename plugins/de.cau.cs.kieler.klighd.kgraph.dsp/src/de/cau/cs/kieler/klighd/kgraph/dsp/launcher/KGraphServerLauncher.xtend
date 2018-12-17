@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klighd.kgraph.dsp
+package de.cau.cs.kieler.klighd.kgraph.dsp.launcher
 
 import com.google.gson.GsonBuilder
 import com.google.inject.Guice
@@ -18,6 +18,7 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.kgraph.text.KGraphRuntimeModule
 import de.cau.cs.kieler.kgraph.text.ide.KGraphIdeModule
 import de.cau.cs.kieler.kgraph.text.ide.KGraphIdeSetup
+import de.cau.cs.kieler.klighd.kgraph.dsp.KGraphDiagramModule
 import de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils.KGraphTypeAdapterUtil
 import de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils.ReflectiveMessageValidatorExcludingSKGraph
 import io.typefox.sprotty.layout.ElkLayoutEngine

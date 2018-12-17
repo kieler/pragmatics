@@ -13,6 +13,8 @@
 package de.cau.cs.kieler.klighd.kgraph.dsp
 
 import de.cau.cs.kieler.klighd.SynthesisOption
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.GetOptionParam
+import de.cau.cs.kieler.klighd.kgraph.dsp.model.SetOptionParam
 import java.util.List
 import java.util.concurrent.CompletableFuture
 import org.eclipse.lsp4j.jsonrpc.services.JsonRequest

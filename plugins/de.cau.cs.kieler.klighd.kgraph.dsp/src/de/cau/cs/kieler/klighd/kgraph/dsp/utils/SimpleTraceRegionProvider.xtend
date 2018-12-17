@@ -10,7 +10,7 @@
  * 
  * This code is provided under the terms of the Eclipse Public License (EPL).
  */
-package de.cau.cs.kieler.klighd.kgraph.dsp
+package de.cau.cs.kieler.klighd.kgraph.dsp.utils
 
 import io.typefox.sprotty.server.xtext.tracing.TraceRegionProvider
 import org.eclipse.emf.ecore.EObject
