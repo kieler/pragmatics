@@ -19,13 +19,13 @@ import org.eclipse.xtext.util.TextRegion
 
 /**
  * Class to prevent sprotty from searching the significant region (the name of it) since it can not be found in Objects
- * such as KGraph and will cause errors instead.
+ * such as {@link KNode} and will cause errors instead.
  * 
  * @author nir
  */
 public class SimpleTraceRegionProvider extends TraceRegionProvider {
     /**
-     * returns the text region of the entire definition of this EObject
+     * Returns the text region of the entire definition of this {@link EObject}.
      */
     override TextRegion getSignificantRegion(EObject element) {
         return NodeModelUtils.findActualNodeFor(element).toTextRegion

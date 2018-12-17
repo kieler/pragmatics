@@ -32,8 +32,17 @@ public class KGraphAwareDiagramServer extends LanguageAwareDiagramServer {
     @Inject 
     protected KGraphDiagramState diagramState
     
+    /**
+     * The current root element of the {@link SKGraph}. Stored here during communication with the client.
+     */
     protected var SModelRoot currentRoot
     
+    /**
+     * requests the calculation of text sizes by the client via the {@link RequestTextBoundsAction}. After receiving
+     * the result back, updates the model with default sprotty behavior via the {@link #updateModel} function.
+     * 
+     * @param newRoot the diagram to request the text sizes for.
+     */
     protected def requestTextSizesAndUpdateModel(SModelRoot newRoot) {
         currentRoot = newRoot
         if (newRoot !== null) {

@@ -36,14 +36,17 @@ import de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils.KGraphTypeAdapterUtil
  *      YangLayoutEngine</a>
  */
 public class KGraphLayoutEngine extends ElkLayoutEngine {
-        
+    /**
+     * Stores data for the generation of diagrams.
+     */
     @Inject KGraphDiagramState diagramState
 	
 	public static val LOG = Logger.getLogger(KGraphLayoutEngine)
 	
 	override layout(SModelRoot root) {
 	    if (root instanceof SGraph) {
-	        
+	        // The layout is executed on the KGraph, not the SGraph. So get the KGraph belonging to this SGraph from
+	        // the KGraphContext.
             val kGraphContext = diagramState.getKGraphContext(root.id)
             
             // layout of KGraph
@@ -63,24 +66,12 @@ public class KGraphLayoutEngine extends ElkLayoutEngine {
             configurators.add(configurator)
             lightDiagramLayoutConfig.options(configurators)
             
-//            println("Layout started!")
-//            var startTime = System.currentTimeMillis
             lightDiagramLayoutConfig.performLayout
-//            var endTime = System.currentTimeMillis
-//            println("Layout finished after " + (endTime - startTime) + "ms.")
             
-//            println("Micro Layout started!")
-//            startTime = System.currentTimeMillis
             MicroLayoutUtil.calculateAbsoluteBounds(kGraphContext.viewModel)
-//            endTime = System.currentTimeMillis
-//            println("Micro Layout finished after " + (endTime - startTime) + "ms.")
             
             // map layouted KGraph to SGraph
-//            println("Mapping started!")
-//            startTime = System.currentTimeMillis
             KGraphMappingUtil.mapLayout(diagramState.getKGraphToSModelElementMap(root.id))
-//            endTime = System.currentTimeMillis
-//            println("Mapping finished after " + (endTime - startTime) + "ms.")
             
             // additional code for timing and testing the serialization of the final SGraph model
 //            val gsonBuilder = new GsonBuilder
@@ -88,10 +79,10 @@ public class KGraphLayoutEngine extends ElkLayoutEngine {
 //            val gson = gsonBuilder.create
 //            for (var i = 0; i < 10; i++) {
 //                println("Starting toGson of the Graph!")
-//                startTime = System.currentTimeMillis
+//                val startTime = System.currentTimeMillis
 //                val json = gson.toJson(root)
 //                
-//                endTime = System.currentTimeMillis
+//                val endTime = System.currentTimeMillis
 //                println("toGson finished after " + (endTime - startTime) + "ms.")
 //                println("The json is " + json.length + " characters long")
 //            }

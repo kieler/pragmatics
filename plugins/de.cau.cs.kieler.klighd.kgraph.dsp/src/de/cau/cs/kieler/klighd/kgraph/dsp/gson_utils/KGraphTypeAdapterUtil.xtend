@@ -74,11 +74,8 @@ public class KGraphTypeAdapterUtil {
     public def static GsonBuilder configureGson(GsonBuilder gsonBuilder) {
         gsonBuilder
         .registerTypeAdapterFactory(RuntimeTypeAdapterFactory.of(KGraphData)
-//            .registerSubtype(KGraphDataImpl)
             .registerSubtype(KIdentifierImpl)
-//            .registerSubtype(KRenderingImpl)
             .registerSubtype(KChildAreaImpl)
-//            .registerSubtype(KContainerRenderingImpl)
             .registerSubtype(KArcImpl)
             .registerSubtype(KCustomRenderingImpl)
             .registerSubtype(KEllipseImpl)
@@ -94,7 +91,6 @@ public class KGraphTypeAdapterUtil {
             .registerSubtype(KRenderingLibraryImpl)
         )
         .registerTypeAdapterFactory(RuntimeTypeAdapterFactory.of(KStyle)
-//            .registerSubtype(KColoringImpl)
             .registerSubtype(KBackgroundImpl)
             .registerSubtype(KForegroundImpl)
             .registerSubtype(KFontBoldImpl)
@@ -139,7 +135,5 @@ public class KGraphTypeAdapterUtil {
             // a list and then excluded. Remove this null value
             new InsetExclusionStrategy
         )
-        // removed the configureGson call from Sprotty to include two new actions and not register the ActionFactory twice.
-        // ActionTypeAdapter.configureGson(gsonBuilder)
     }
 }

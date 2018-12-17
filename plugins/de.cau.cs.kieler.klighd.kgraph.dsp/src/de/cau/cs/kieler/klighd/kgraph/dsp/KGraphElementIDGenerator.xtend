@@ -27,12 +27,15 @@ import java.util.Map
 import java.util.Random
 
 /**
- * class for generating unique IDs for any KGraphElement. Use a single instance of this and call getId() for all the 
- * elements you need IDs for.
+ * Class for generating unique IDs for any KGraphElement. Use a single instance of this and call getId() for all the 
+ * elements you need IDs for to guarantee uniqueness.
  * 
  * @author nir
  */
 public class KGraphElementIDGenerator {
+    /**
+     * Internal map to remember the ID for all {@link KGraphElement}s for that IDs already have been generated.
+     */
     private Map<KGraphElement, String> idMap
     
     /**
@@ -42,11 +45,26 @@ public class KGraphElementIDGenerator {
      */
     private int randomOffset // TODO: maybe exchange the random value for the hash of the object
     
-    public static final String ID_SEPARATOR = '$'
-    public static final String NODE_SEPARATOR = 'N'
-    public static final String EDGE_SEPARATOR = 'E'
-    public static final String PORT_SEPARATOR = 'P'
-    public static final String LABEL_SEPARATOR = 'L'
+    /**
+     * The character used to separate levels of hierarchy in the ID of {@link KGraphElement}s or unnamed elements.
+     */
+    public static final char ID_SEPARATOR = '$'
+    /**
+     * The character used to indicate a {@link KNode} in the ID of a {@link KGraphElement}.
+     */
+    public static final char NODE_SEPARATOR = 'N'
+    /**
+     * The character used to indicate a {@link KEdge} in the ID of a {@link KGraphElement}.
+     */
+    public static final char EDGE_SEPARATOR = 'E'
+    /**
+     * The character used to indicate a {@link KPort} in the ID of a {@link KGraphElement}.
+     */
+    public static final char PORT_SEPARATOR = 'P'
+    /**
+     * The character used to indicate a {@link KLabel} in the ID of a {@link KGraphElement}.
+     */
+    public static final char LABEL_SEPARATOR = 'L'
     
     new() {
         idMap = new HashMap
@@ -56,7 +74,7 @@ public class KGraphElementIDGenerator {
     }
     
     /**
-     * generates a new unique ID for any KGraphElement.
+     * generates a unique ID for any {@link KGraphElement}. Returns the same ID for the element if called a second time.
      */
     public def String getId(KGraphElement element) {
         var String id = null
@@ -75,9 +93,9 @@ public class KGraphElementIDGenerator {
             return ID_SEPARATOR + 'root'
         }
         
-        // use a prefix depending on the class of the element + the identifier as id if an identifier is defined
-        // otherwise make up a new id based on the position in the model hierarchy with a Separator not appearing in 
-        // real identifiers ($)
+        // use a prefix depending on the class of the element + the {@link KIdentifier} as id if an identifier is
+        // defined, otherwise make up a new id based on the position in the model hierarchy with a Separator not
+        // appearing in the {@link KIdentifier} (the ID Separator).
         var String elementId = null
         
         val identifier = element.data.filter(KIdentifier)
@@ -86,7 +104,7 @@ public class KGraphElementIDGenerator {
             KNode: {
                 if (identifier.empty) {
                     val parentOffset = (parent as KNode).children.indexOf(element)
-                    elementId = ID_SEPARATOR + NODE_SEPARATOR + (parentOffset + randomOffset)
+                    elementId = "" + ID_SEPARATOR + NODE_SEPARATOR + (parentOffset + randomOffset)
                 } else {
                     elementId = NODE_SEPARATOR + identifier.head.id
                 }
@@ -94,7 +112,7 @@ public class KGraphElementIDGenerator {
             KEdge: {
                 if (identifier.empty) {
                     val parentOffset = (parent as KNode).outgoingEdges.indexOf(element)
-                    elementId = ID_SEPARATOR + EDGE_SEPARATOR + (parentOffset + randomOffset)
+                    elementId = "" + ID_SEPARATOR + EDGE_SEPARATOR + (parentOffset + randomOffset)
                 } else {
                     elementId = EDGE_SEPARATOR + identifier.head.id
                 }
@@ -102,7 +120,7 @@ public class KGraphElementIDGenerator {
             KLabel: {
                 if (identifier.empty) {
                     val parentOffset = (parent as KLabeledGraphElement).labels.indexOf(element)
-                    elementId = ID_SEPARATOR + LABEL_SEPARATOR + (parentOffset + randomOffset)
+                    elementId = "" + ID_SEPARATOR + LABEL_SEPARATOR + (parentOffset + randomOffset)
                 } else {
                     elementId = LABEL_SEPARATOR + identifier.head.id
                 }
@@ -110,7 +128,7 @@ public class KGraphElementIDGenerator {
             KPort: {
                 if (identifier.empty) {
                     val parentOffset = (parent as KNode).ports.indexOf(element)
-                    elementId = ID_SEPARATOR + PORT_SEPARATOR + (parentOffset + randomOffset)
+                    elementId = "" + ID_SEPARATOR + PORT_SEPARATOR + (parentOffset + randomOffset)
                 } else {
                     elementId = PORT_SEPARATOR + identifier.head.id
                 }
@@ -127,13 +145,21 @@ public class KGraphElementIDGenerator {
 }
 
 public class KRenderingIDGenerator {
-    
-    public static final String ID_SEPARATOR = '$'
-    public static final String RENDERING_SEPERATOR = 'R'
-    public static final String JUNCTION_POINT_SEPARATOR = 'J'
+    /**
+     * The character used to separate levels of hierarchy in the ID of {@link KRendering}s.
+     */
+    public static final char ID_SEPARATOR = '$'
+    /**
+     * The character used to indicate a child {@link KRendering} in the ID of another {@link KRendering}.
+     */
+    public static final char RENDERING_SEPERATOR = 'R'
+    /**
+     * The character used to indicate a junction point rendering in the ID of a {@link KPolyline}.
+     */
+    public static final char JUNCTION_POINT_SEPARATOR = 'J'
     
     /**
-     * generates a new unique ID for all child elements of this rendering (if any) and writes it in its ID field
+     * Generates a new unique ID for all child elements of this rendering (if any) and writes it in their ID fields.
      * Assumes, that the given rendering already has a unique id not containing the character '$'.
      */
     public static def void generateIdsRecursive(KStyleHolder rendering) {
@@ -142,6 +168,10 @@ public class KRenderingIDGenerator {
         }
     }
     
+    /**
+     * Generates a new unique ID for this rendering and all its child renderings and writes it in their ID fields.
+     * Use different {@code renderingNumber}s if an element has multiple {@link KRendering}s.
+     */
     public static def void generateIdsRecursive(KStyleHolder rendering, int renderingNumber) {
         if (rendering !== null) {
             rendering.id = "rendering" + ID_SEPARATOR + RENDERING_SEPERATOR + renderingNumber

@@ -38,9 +38,16 @@ import de.cau.cs.kieler.klighd.SynthesisOption
 class KGraphLanguageServerExtension extends IdeLanguageServerExtension 
     implements IDiagramOptionsLanguageServerExtension {
     
+    /**
+     * The {@link Provider} to call an injected {@link KGraphDiagramGenerator} to generate {@link KNode KGraphs} and 
+     * {@link SKGraph}s from that.
+     */
     @Inject
     Provider<KGraphDiagramGenerator> diagramGeneratorProvider
     
+    /**
+     * Stores data for the generation of diagrams.
+     */
     @Inject
     KGraphDiagramState diagramState
 	

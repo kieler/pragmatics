@@ -20,7 +20,8 @@ import org.eclipse.equinox.app.IApplicationContext;
 /**
  * This class controls all aspects of the application's execution.
  * Executes {@link RunSocketServer#main} as a Eclipse application.
- * Deprecated, since the launcher from the kieler.server.LanguageServer project took this functionality.
+ * Run this class as an Eclipse application to launch a language server with only diagram features
+ * and basic Xtext features.
  */
 public class Application implements IApplication {
 
