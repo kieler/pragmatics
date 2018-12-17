@@ -37,7 +37,7 @@
     <module>de.cau.cs.kieler.kiml.libavoid</module>
     <module>de.cau.cs.kieler.kiml.ogdf</module>
     <module>de.cau.cs.kieler.klighd</module>
-    <module>de.cau.cs.kieler.klighd.kgraph.dsp</module>
+    <module>de.cau.cs.kieler.klighd.lsp</module>
     <module>de.cau.cs.kieler.klighd.incremental</module>
     <module>de.cau.cs.kieler.klighd.kgraph</module>
     <module>de.cau.cs.kieler.klighd.krendering</module>
