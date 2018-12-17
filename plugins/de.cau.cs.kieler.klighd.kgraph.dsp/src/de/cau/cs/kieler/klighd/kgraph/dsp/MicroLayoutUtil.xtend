@@ -35,12 +35,12 @@ import de.cau.cs.kieler.klighd.microlayout.PlacementUtil
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdPath
 import de.cau.cs.kieler.klighd.piccolo.internal.util.PiccoloPlacementUtil
 import de.cau.cs.kieler.klighd.piccolo.internal.util.PiccoloPlacementUtil.Decoration
-import de.cau.cs.kieler.klighd.util.KlighdProperties
 import java.awt.geom.Point2D
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.List
 import java.util.Map
+import de.cau.cs.kieler.klighd.kgraph.dsp.gson_utils.BoundsProperties
 
 /**
  * Utility class to provide some functionality to persist micro layout bounds data for all {@link KRendering}s of a
@@ -80,9 +80,9 @@ public final class MicroLayoutUtil {
                     var decorationMap = new HashMap<String, Decoration>
                     handleKRendering(element, data.rendering, boundsMap, decorationMap)
                     // add new Property to contain the boundsMap
-                    data.properties.put(KlighdProperties.CALCULATED_BOUNDS_MAP, boundsMap)
+                    data.properties.put(BoundsProperties.CALCULATED_BOUNDS_MAP, boundsMap)
                     // and the decorationMap
-                    data.properties.put(KlighdProperties.CALCULATED_DECORATION_MAP, decorationMap)
+                    data.properties.put(BoundsProperties.CALCULATED_DECORATION_MAP, decorationMap)
                     // remember the id of the rendering in the reference
                     data.id = data.rendering.id
                     
@@ -322,13 +322,13 @@ public final class MicroLayoutUtil {
      * Convenience method to set the calculated bounds property of the given rendering
      */
     public static def setBounds(KRendering rendering, Bounds bounds) {
-        rendering.properties.put(KlighdProperties.CALCULATED_BOUNDS, bounds)
+        rendering.properties.put(BoundsProperties.CALCULATED_BOUNDS, bounds)
     }
     
     /**
      * Convenience method to set the calculated decoration property of the given rendering
      */
      public static def setDecoration(KRendering rendering, Decoration decoration) {
-         rendering.properties.put(KlighdProperties.CALCULATED_DECORATION, decoration)
+         rendering.properties.put(BoundsProperties.CALCULATED_DECORATION, decoration)
      }
 }

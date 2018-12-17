@@ -16,7 +16,6 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import de.cau.cs.kieler.klighd.kgraph.EMapPropertyHolder
-import de.cau.cs.kieler.klighd.util.KlighdProperties
 import com.google.gson.JsonNull
 
 /**
@@ -50,21 +49,21 @@ public class EMapPropertyHolderTypeAdapterFactory extends CustomizedTypeAdapterF
         data.remove("properties")
         // TODO: rewrite this to not create a new gson object here but rather take main one
         val gson = gsonBuilder.create
-        if (source.hasProperty(KlighdProperties.CALCULATED_BOUNDS)) {
+        if (source.hasProperty(BoundsProperties.CALCULATED_BOUNDS)) {
             data.add("calculatedBounds", gson.toJsonTree(
-                source.getProperty(KlighdProperties.CALCULATED_BOUNDS)))
+                source.getProperty(BoundsProperties.CALCULATED_BOUNDS)))
         }
-        if (source.hasProperty(KlighdProperties.CALCULATED_BOUNDS_MAP)) {
+        if (source.hasProperty(BoundsProperties.CALCULATED_BOUNDS_MAP)) {
             data.add("calculatedBoundsMap", gson.toJsonTree(
-                source.getProperty(KlighdProperties.CALCULATED_BOUNDS_MAP)))
+                source.getProperty(BoundsProperties.CALCULATED_BOUNDS_MAP)))
         }
-        if (source.hasProperty(KlighdProperties.CALCULATED_DECORATION)) {
+        if (source.hasProperty(BoundsProperties.CALCULATED_DECORATION)) {
             data.add("calculatedDecoration", gson.toJsonTree(
-                source.getProperty(KlighdProperties.CALCULATED_DECORATION)))
+                source.getProperty(BoundsProperties.CALCULATED_DECORATION)))
         }
-        if (source.hasProperty(KlighdProperties.CALCULATED_DECORATION_MAP)) {
+        if (source.hasProperty(BoundsProperties.CALCULATED_DECORATION_MAP)) {
             data.add("calculatedDecorationMap", gson.toJsonTree(
-                source.getProperty(KlighdProperties.CALCULATED_DECORATION_MAP)))
+                source.getProperty(BoundsProperties.CALCULATED_DECORATION_MAP)))
         }
     }
     
