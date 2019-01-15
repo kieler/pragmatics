@@ -16,7 +16,6 @@
       <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.gmf.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.gmf.tooling.runtime.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.graphiti.sdk.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.jst.ws.jaxws.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.uml2.sdk.feature.group" version="0.0.0"/>
@@ -24,13 +23,9 @@
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
       <unit id="org.eclipse.elk.graph.json.feature.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.elk.algorithms.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.elk.graphviz.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.elk.sdk.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.elk.ui.feature.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.elk.feature.source.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.elk.graphviz.feature.source.feature.group" version="0.0.0"/>
-      <unit id="org.eclipse.elk.ui.feature.source.feature.group" version="0.0.0"/>
       <repository location="http://build.eclipse.org/modeling/elk/updates/nightly"/>
     </location>
     <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
