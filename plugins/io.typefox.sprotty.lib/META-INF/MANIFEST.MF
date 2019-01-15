@@ -19,11 +19,11 @@ Bundle-ClassPath: lib/diagram-api-0.4.0-SNAPSHOT.jar,
  lib/xtext-diagram-0.4.0-SNAPSHOT.jar
 Require-Bundle: org.eclipse.elk.graph;bundle-version="0.5.0",
  org.eclipse.elk.core;bundle-version="0.5.0",
- org.eclipse.xtext;bundle-version="2.14.0",
- org.eclipse.xtext.ide;bundle-version="2.14.0",
- org.eclipse.xtext.xbase;bundle-version="2.14.0",
- org.eclipse.xtext.xbase.lib;bundle-version="2.14.0",
+ org.eclipse.xtext;bundle-version="2.16.0",
+ org.eclipse.xtext.ide;bundle-version="2.16.0",
+ org.eclipse.xtext.xbase;bundle-version="2.16.0",
+ org.eclipse.xtext.xbase.lib;bundle-version="2.16.0",
  org.apache.log4j;bundle-version="1.2.15",
  com.google.gson;bundle-version="2.7.0",
- org.eclipse.lsp4j.jsonrpc;bundle-version="0.4.1",
- org.eclipse.lsp4j;bundle-version="0.4.1"
+ org.eclipse.lsp4j.jsonrpc;bundle-version="0.6.0",
+ org.eclipse.lsp4j;bundle-version="0.6.0"
