@@ -7,12 +7,4 @@
             class="de.cau.cs.kieler.graphs.hierarchicalViews.HierarchicalMetaDataProvider">
       </provider>
    </extension>
-   <extension
-         point="de.cau.cs.kieler.klighd.diagramSyntheses">
-      <diagramSynthesis
-            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.cau.cs.kieler.graphs.hierarchicalViews.HierarchicalKGraphDiagramSynthesis"
-            id="de.cau.cs.kieler.graphs.hierarchicalViews.HierarchicalKGraphDiagramSynthesis">
-      </diagramSynthesis>
-   </extension>
-
 </plugin>
