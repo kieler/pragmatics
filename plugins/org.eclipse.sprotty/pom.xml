@@ -10,9 +10,8 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>io.typefox.sprotty</groupId>
-	<artifactId>io.typefox.sprotty.lib</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<groupId>org.eclipse.sprotty</groupId>
+	<artifactId>org.eclipse.sprotty</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
 
@@ -24,4 +23,5 @@
 			</plugin>
 		</plugins>
 	</build>
+	<version>0.6.0</version>
 </project>
