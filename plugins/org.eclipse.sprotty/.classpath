@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.sprotty-0.6.0.jar" sourcepath="/home/nre/.m2/repository/org/eclipse/sprotty/org.eclipse.sprotty/0.6.0/org.eclipse.sprotty-0.6.0-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.sprotty.layout-0.6.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.sprotty.server-0.6.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.sprotty.xtext-0.6.0.jar" sourcepath="/home/nre/.m2/repository/org/eclipse/sprotty/org.eclipse.sprotty.xtext/0.6.0/org.eclipse.sprotty.xtext-0.6.0-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.sprotty-0.6.0.jar" sourcepath="lib/sprotty-server-0.6.0-sources.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.sprotty.layout-0.6.0.jar" sourcepath="lib/sprotty-server-0.6.0-sources.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.sprotty.server-0.6.0.jar" sourcepath="lib/sprotty-server-0.6.0-sources.zip"/>
+	<classpathentry exported="true" kind="lib" path="lib/org.eclipse.sprotty.xtext-0.6.0.jar" sourcepath="lib/sprotty-server-0.6.0-sources.zip"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
 		<attributes>
 			<attribute name="module" value="true"/>
