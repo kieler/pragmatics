@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="de.cau.cs.kieler.klighd.diagramSyntheses">
+      <diagramSynthesis
+            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.scheidtbachmann.osgimodel.visualization.OSGIDiagramSynthesis"
+            id="de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesis">
+      </diagramSynthesis>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.diagramSyntheses">
+      <diagramSynthesis
+            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.scheidtbachmann.osgimodel.visualization.OSGIDiagramSynthesisTest"
+            id="de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesisTest">
+      </diagramSynthesis>
+   </extension>
+
+</plugin>

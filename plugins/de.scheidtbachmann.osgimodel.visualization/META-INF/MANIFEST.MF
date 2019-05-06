@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Visualization
+Bundle-SymbolicName: de.scheidtbachmann.osgimodel.visualization;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Export-Package: de.scheidtbachmann.osgimodel.visualization
+Require-Bundle: de.cau.cs.kieler.klighd;bundle-version="0.45.0",
+ de.scheidtbachmann.osgimodel.model;bundle-version="0.1.0",
+ de.cau.cs.kieler.klighd.krendering.extensions;bundle-version="0.45.0",
+ org.eclipse.elk.core;bundle-version="0.5.0",
+ org.eclipse.xtext.xbase.lib;bundle-version="2.16.0"
