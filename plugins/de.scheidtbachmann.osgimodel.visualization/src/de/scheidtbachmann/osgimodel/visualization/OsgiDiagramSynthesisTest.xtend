@@ -20,7 +20,7 @@ import de.scheidtbachmann.osgimodel.Feature
 import de.scheidtbachmann.osgimodel.Bundle
 import de.cau.cs.kieler.klighd.kgraph.KNode
 
-class OSGIDiagramSynthesisTest extends AbstractDiagramSynthesis<OsgiProject> {
+class OsgiDiagramSynthesisTest extends AbstractDiagramSynthesis<OsgiProject> {
     @Inject extension KNodeExtensions
     @Inject extension KEdgeExtensions
     @Inject extension KPortExtensions
