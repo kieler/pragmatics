@@ -51,7 +51,6 @@
     <module>de.cau.cs.kieler.klighd.ui.view</module>
     <module>de.cau.cs.kieler.klighd.ui.wizard</module>
     <module>de.cau.cs.kieler.kwebs.server</module>
-    <module>de.cau.cs.kieler.ptolemy.klighd</module>
     <module>edu.umd.cs.piccolo</module>
     <module>net.ogdf.bin</module>
     <module>net.ogdf.ogml</module>
