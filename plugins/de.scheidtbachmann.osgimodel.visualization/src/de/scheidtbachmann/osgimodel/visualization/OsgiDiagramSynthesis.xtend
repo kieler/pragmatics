@@ -25,6 +25,8 @@ import java.util.List
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.SizeConstraint
 
+import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
+
 /**
  * Main diagram synthesis for {@link OsgiProject} models.
  * 
@@ -94,12 +96,15 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
                 children += transformServiceInterfacesOverview(model.serviceInterfaces, model)
                 children += transformImportedPackagesOverview(model.importedPackages, model)
                 children += transformBundleCategoriesOverview(model.bundleCategories, model)
+                
+                // remove the padding of the invisible container.
+//                addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0)) // TODO: test this.
             ]
         ]
         return modelNode
     }
     
-    private def transformProductOverview(List<Product> products, OsgiProject model) {
+    def transformProductOverview(List<Product> products, OsgiProject model) {
         return createNode => [
             associateWith(model)
             addOverviewRendering("Products")
@@ -108,7 +113,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     }
     
     // TODO: If cycles are possible, put these transformations in child view contexts and transform them individually.
-    private def transform(Product p) {
+    def transform(Product p) {
         return p.createNode() => [
             associateWith(p)
             addInsideTopCenteredNodeLabel(p.descriptiveName)
@@ -123,18 +128,19 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
         ]
     }
     
-    private def transformFeatureOverview(List<Feature> products, OsgiProject model) {
+    def transformFeatureOverview(List<Feature> features, OsgiProject model) {
         return createNode => [
             associateWith(model)
             addOverviewRendering("Features")
-            children += products.map[ transform ]
+            children += features.map[ transform ]
+            initiallyCollapse
         ]
     }
     
-    private def transform(Feature p) {
-        return p.createNode() => [
-            associateWith(p)
-            addInsideTopCenteredNodeLabel(p.descriptiveName)
+    def transform(Feature f) {
+        return f.createNode() => [
+            associateWith(f)
+            addInsideTopCenteredNodeLabel(f.descriptiveName)
             addLayoutParam(
                 CoreOptions.NODE_SIZE_CONSTRAINTS,
                 EnumSet.of(SizeConstraint.MINIMUM_SIZE, SizeConstraint.NODE_LABELS))
@@ -142,37 +148,38 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
         ]
     }
     
-    private def transformBundleOverview(List<Bundle> products, OsgiProject model) {
+    def transformBundleOverview(List<Bundle> bundles, OsgiProject model) {
         return createNode => [
             associateWith(model)
             addOverviewRendering("Bundles")
-            children += products.map[ transform ]
+            children += bundles.map[ transform ]
+            initiallyCollapse
         ]
     }
     
-    private def transform(Bundle p) {
-        return p.createNode() => [
-            associateWith(p)
-            addInsideTopCenteredNodeLabel(p.descriptiveName)
-            addLayoutParam(
-                CoreOptions.NODE_SIZE_CONSTRAINTS,
-                EnumSet.of(SizeConstraint.MINIMUM_SIZE, SizeConstraint.NODE_LABELS))
-            addProductRendering // TODO: own rendering for stuff other than products
+    def transform(Bundle b) {
+        return b.createNode() => [
+            associateWith(b)
+            initiallyCollapse
+            addCollapsedBundleRendering(b)
+            addExpandedBundleRendering(b)
+            
         ]
     }
     
-    private def transformServiceInterfacesOverview(List<ServiceInterface> products, OsgiProject model) {
+    def transformServiceInterfacesOverview(List<ServiceInterface> serviceInterfaces, OsgiProject model) {
         return createNode => [
             associateWith(model)
             addOverviewRendering("Service Interfaces")
-            children += products.map[ transform ]
+            children += serviceInterfaces.map[ transform ]
+            initiallyCollapse
         ]
     }
     
-    private def transform(ServiceInterface p) {
-        return p.createNode() => [
-            associateWith(p)
-            addInsideTopCenteredNodeLabel(p.name)
+    def transform(ServiceInterface s) {
+        return s.createNode() => [
+            associateWith(s)
+            addInsideTopCenteredNodeLabel(s.name)
             addLayoutParam(
                 CoreOptions.NODE_SIZE_CONSTRAINTS,
                 EnumSet.of(SizeConstraint.MINIMUM_SIZE, SizeConstraint.NODE_LABELS))
@@ -180,15 +187,16 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
         ]
     }
     
-    private def transformImportedPackagesOverview(List<PackageObject> products, OsgiProject model) {
+    def transformImportedPackagesOverview(List<PackageObject> packages, OsgiProject model) {
         return createNode => [
             associateWith(model)
             addOverviewRendering("Imported Packages")
-            children += products.map[ transform ]
+            children += packages.map[ transform ]
+            initiallyCollapse
         ]
     }
     
-    private def transform(PackageObject p) {
+    def transform(PackageObject p) {
         return p.createNode() => [
             associateWith(p)
             addInsideTopCenteredNodeLabel(p.uniqueId)
@@ -199,18 +207,19 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
         ]
     }
     
-    private def transformBundleCategoriesOverview(List<BundleCategory> products, OsgiProject model) {
+    def transformBundleCategoriesOverview(List<BundleCategory> bundleCategory, OsgiProject model) {
         return createNode => [
             associateWith(model)
             addOverviewRendering("Bundle Categories")
-            children += products.map[ transform ]
+            children += bundleCategory.map[ transform ]
+            initiallyCollapse
         ]
     }
     
-    private def transform(BundleCategory p) {
-        return p.createNode() => [
-            associateWith(p)
-            addInsideTopCenteredNodeLabel(p.categoryName)
+    def transform(BundleCategory b) {
+        return b.createNode() => [
+            associateWith(b)
+            addInsideTopCenteredNodeLabel(b.categoryName)
             addLayoutParam(
                 CoreOptions.NODE_SIZE_CONSTRAINTS,
                 EnumSet.of(SizeConstraint.MINIMUM_SIZE, SizeConstraint.NODE_LABELS))

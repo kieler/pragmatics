@@ -3,16 +3,22 @@ package de.scheidtbachmann.osgimodel.visualization
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.actions.CollapseExpandAction
 import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.krendering.KContainerRendering
-import de.cau.cs.kieler.klighd.krendering.KRendering
+import de.cau.cs.kieler.klighd.krendering.KRectangle
+import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import de.cau.cs.kieler.klighd.krendering.KRoundedRectangle
 import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
+import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.Product
-import org.eclipse.elk.core.options.CoreOptions
+import de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExpandAction
+import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
+import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
 
 import static extension de.cau.cs.kieler.klighd.microlayout.PlacementUtil.*
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
@@ -26,8 +32,10 @@ import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 class OsgiStyles {
     @Inject extension KColorExtensions
     @Inject extension KContainerRenderingExtensions
+    @Inject extension KEdgeExtensions
     @Inject extension KPolylineExtensions
     @Inject extension KRenderingExtensions
+    extension KRenderingFactory = KRenderingFactory.eINSTANCE
     
     val ROUNDNESS = 4
     
@@ -37,7 +45,58 @@ class OsgiStyles {
     def KRoundedRectangle addProductRendering(KNode node) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
+            setShadow("black".color, 4, 4)
             // Styles of the surrounding rectangle
+        ]
+    }
+    
+    def KRoundedRectangle addBundleRendering(KNode node, Bundle b) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
+            setGridPlacement(1)
+            addText(b.descriptiveName)
+            addHorizontalSeperatorLine(1, 0)
+            addRectangle => [
+                invisible = true
+                addText("Description: " + b.about)
+            ]
+            addRectangle => [
+                invisible = true
+                addText("ID: " + b.uniqueId)
+            ]
+            setShadow("black".color, 4, 4)
+            addRectangle => [
+                setGridPlacementData => [
+                    minCellHeight = 20
+                    minCellWidth = 20
+                ]
+                invisible = true
+                addChildArea
+            ]
+        ]
+    }
+    
+    def KRectangle addExpandedBundleRendering(KNode node, Bundle b) {
+        node.addRectangle => [
+            setAsExpandedView
+            invisible = true
+            addChildArea
+            addButton("-", ReferencedSynthesisExpandAction::ID)
+        ]
+    }
+    
+    def KRoundedRectangle addCollapsedBundleRendering(KNode node, Bundle b) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setAsCollapsedView
+            setGridPlacement(2)
+            addText(b.descriptiveName)
+            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
+            addButton("+", ReferencedSynthesisExpandAction::ID)
+            setShadow("black".color, 4, 4)
+            setPointPlacementData => [
+                minHeight = 20
+                minWidth = 20
+            ]
         ]
     }
     
@@ -45,7 +104,6 @@ class OsgiStyles {
      * Adds a rendering allowing a container rendering for any context with the given text as its headline.
      */
     def KRoundedRectangle addOverviewRendering(KNode node, String text) {
-        // TODO: make the minimum height so that the corner of the button does not stick out
         // Expanded
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsExpandedView
@@ -54,12 +112,17 @@ class OsgiStyles {
             addText(text)
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
+                setGridPlacementData => [
+                    minCellHeight = 20
+                    minCellWidth = 20
+                ]
                 invisible = true
                 addChildArea
                 val actionId = CollapseExpandAction.ID
-                addExpandedButton(actionId)
-                addDoubleClickAction(actionId)
+                addButton("-", actionId)
+                addSingleOrMultiClickAction(actionId)
             ]
+            setShadow("black".color, 4, 4)
         ]
         
         // Collapsed
@@ -70,36 +133,52 @@ class OsgiStyles {
             addText(text)
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
+                setGridPlacementData => [
+                    minCellHeight = 20
+                    minCellWidth = 20
+                ]
                 invisible = true
                 val actionId = CollapseExpandAction.ID
-                addCollapsedButton(actionId)
-                addDoubleClickAction(actionId)
+                addButton("+", actionId)
+                addSingleOrMultiClickAction(actionId)
+            ]
+            setShadow("black".color, 4, 4)
+        ]
+    }
+    
+    def KRectangle addButton(KContainerRendering container, String text, String actionId) {
+        return container.addRectangle => [
+            setPointPlacementData(RIGHT, 0, 0,  TOP, 0, 0, H_RIGHT, V_TOP, 0, 0, 15, 15)
+            addSingleOrMultiClickAction(actionId)
+            addText(text) => [
+                fontSize = 8
+                fontBold = true
+                val size = estimateTextSize
+                setPointPlacementData(RIGHT, 3f, 0, TOP, 0, 0, H_RIGHT, V_TOP, 0, 0, size.width, size.height)
+                addSingleOrMultiClickAction(actionId)
             ]
         ]
     }
     
-    def KRendering addExpandedButton(KContainerRendering container, String actionId) {
-        return container.addButton("-", actionId)
+    def KRectangle addUsedByBundlesPortRendering(KPort port) {
+        return port.addRectangle => [
+            background = "gray".color
+            setPointPlacementData => [
+                minHeight = 8
+                minWidth = 8
+            ]
+            addSingleClickAction(RevealUsedByBundlesAction::ID)
+        ]
     }
     
-    def KRendering addCollapsedButton(KContainerRendering container, String actionId) {
-        return container.addButton("+", actionId)
-    }
-    
-    def KRendering addButton(KContainerRendering container, String text, String actionId) {
-        val button = container.addPolygon => [
-            addKPosition(RIGHT, 0.5f, 0, TOP, -0.5f, 0)
-            addKPosition(RIGHT, 0.5f, 0, TOP, 19, 0)
-            addKPosition(RIGHT, 18, 0, TOP, -0.5f, 0)
-            addDoubleClickAction(actionId)
+    def KRectangle addRequiredBundlesPortRendering(KPort port) {
+        return port.addRectangle => [
+            background = "gray".color
+            setPointPlacementData => [
+                minHeight = 8
+                minWidth = 8
+            ]
+            addSingleClickAction(RevealRequiredBundlesAction::ID)
         ]
-        container.addText(text) => [
-            fontSize = 8
-            fontBold = true
-            val size = estimateTextSize
-            setPointPlacementData(RIGHT, 3f, 0, TOP, 0, 0, H_RIGHT, V_TOP, 0, 0, size.width, size.height)
-            addDoubleClickAction(actionId)
-        ]
-        return button
     }
 }

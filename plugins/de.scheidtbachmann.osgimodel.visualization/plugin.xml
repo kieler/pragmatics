@@ -7,13 +7,29 @@
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesis"
             id="de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesis">
       </diagramSynthesis>
-   </extension>
-   <extension
-         point="de.cau.cs.kieler.klighd.diagramSyntheses">
       <diagramSynthesis
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesisTest"
             id="de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesisTest">
       </diagramSynthesis>
+      <diagramSynthesis
+            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.scheidtbachmann.osgimodel.visualization.BundleSynthesis"
+            id="de.scheidtbachmann.osgimodel.visualization.BundleSynthesis">
+      </diagramSynthesis>
+   </extension>
+   <extension
+         point="de.cau.cs.kieler.klighd.extensions">
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExpandAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExpandAction">
+      </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction">
+      </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction">
+      </action>
    </extension>
 
 </plugin>
