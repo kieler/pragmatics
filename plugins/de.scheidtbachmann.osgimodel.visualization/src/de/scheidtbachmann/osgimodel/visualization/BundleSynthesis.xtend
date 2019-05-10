@@ -49,15 +49,17 @@ class BundleSynthesis extends AbstractDiagramSynthesis<Bundle> {
                 addBundleRendering(b)
                 ports += createPort(b, "usedByBundles") => [
                     data += createKIdentifier => [ it.id = 'usedByBundles' ]
-                    addLayoutParam(CoreOptions::PORT_SIDE, PortSide::NORTH)
+                    addLayoutParam(CoreOptions::PORT_SIDE, PortSide::WEST)
                     addUsedByBundlesPortRendering
-                    addOutsidePortLabel("Used By ...")
+                    width = 8
+                    height = 8
                 ]
                 ports += createPort(b, "requiredBundles") => [
                     data += createKIdentifier => [ it.id = 'requiredBundles' ]
-                    addLayoutParam(CoreOptions::PORT_SIDE, PortSide::SOUTH)
+                    addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
                     addRequiredBundlesPortRendering
-                    addOutsidePortLabel("Required ...")
+                    width = 8
+                    height = 8
                 ]
             ]
         ]

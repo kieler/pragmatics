@@ -8,6 +8,7 @@ import de.cau.cs.kieler.klighd.krendering.KContainerRendering
 import de.cau.cs.kieler.klighd.krendering.KRectangle
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import de.cau.cs.kieler.klighd.krendering.KRoundedRectangle
+import de.cau.cs.kieler.klighd.krendering.KText
 import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
@@ -16,6 +17,7 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.Product
+import de.scheidtbachmann.osgimodel.visualization.actions.FocusAction
 import de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
@@ -42,10 +44,11 @@ class OsgiStyles {
     /**
      * Adds a rendering for a {@link Product} to the given node.
      */
-    def KRoundedRectangle addProductRendering(KNode node) {
+    def KRoundedRectangle addProductRendering(KNode node, String name) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
             setShadow("black".color, 4, 4)
+            addSimpleLabel(name)
             // Styles of the surrounding rectangle
         ]
     }
@@ -54,11 +57,16 @@ class OsgiStyles {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
             setGridPlacement(1)
-            addText(b.descriptiveName)
+            addRectangle => [
+                setGridPlacement(2)
+                invisible = true
+                addSimpleLabel(b.descriptiveName)
+                addButton("Focus", FocusAction::ID)
+            ]
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
                 invisible = true
-                addText("Description: " + b.about)
+                addText("Description: " + b.about?.substring(0, Math.min(b.about.length, 30)) + "...")
             ]
             addRectangle => [
                 invisible = true
@@ -89,7 +97,7 @@ class OsgiStyles {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsCollapsedView
             setGridPlacement(2)
-            addText(b.descriptiveName)
+            addSimpleLabel(b.descriptiveName)
             setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
             addButton("+", ReferencedSynthesisExpandAction::ID)
             setShadow("black".color, 4, 4)
@@ -103,13 +111,13 @@ class OsgiStyles {
     /**
      * Adds a rendering allowing a container rendering for any context with the given text as its headline.
      */
-    def KRoundedRectangle addOverviewRendering(KNode node, String text) {
+    def void addOverviewRendering(KNode node, String text) {
         // Expanded
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsExpandedView
-            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
+//            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
             setGridPlacement(1)
-            addText(text)
+            addSimpleLabel(text)
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
                 setGridPlacementData => [
@@ -128,9 +136,9 @@ class OsgiStyles {
         // Collapsed
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsCollapsedView
-            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
+//            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
             setGridPlacement(1)
-            addText(text)
+            addSimpleLabel(text)
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
                 setGridPlacementData => [
@@ -163,10 +171,7 @@ class OsgiStyles {
     def KRectangle addUsedByBundlesPortRendering(KPort port) {
         return port.addRectangle => [
             background = "gray".color
-            setPointPlacementData => [
-                minHeight = 8
-                minWidth = 8
-            ]
+            tooltip = "Show bundles used by this bundle."
             addSingleClickAction(RevealUsedByBundlesAction::ID)
         ]
     }
@@ -174,11 +179,15 @@ class OsgiStyles {
     def KRectangle addRequiredBundlesPortRendering(KPort port) {
         return port.addRectangle => [
             background = "gray".color
-            setPointPlacementData => [
-                minHeight = 8
-                minWidth = 8
-            ]
+            tooltip = "Show required bundles."
             addSingleClickAction(RevealRequiredBundlesAction::ID)
+        ]
+    }
+    
+    def KText addSimpleLabel(KContainerRendering rendering, String text) {
+        rendering.addText(text) => [
+            // Add surrounding space
+            setGridPlacementData().from(LEFT, 10, 0, TOP, 8, 0).to(RIGHT, 10, 0, BOTTOM, 8, 0)
         ]
     }
 }

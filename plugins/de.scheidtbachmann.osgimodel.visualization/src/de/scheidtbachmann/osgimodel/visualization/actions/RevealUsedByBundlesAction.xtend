@@ -17,7 +17,7 @@ import de.scheidtbachmann.osgimodel.Bundle
 import java.util.ArrayList
 import org.eclipse.elk.graph.properties.MapPropertyHolder
 
-class RevealUsedByBundlesAction extends SynthesizingAction implements IAction {
+class RevealUsedByBundlesAction extends SynthesizingAction {
     @Inject extension KColorExtensions
     @Inject extension KEdgeExtensions
     @Inject extension KPolylineExtensions
@@ -88,15 +88,16 @@ class RevealUsedByBundlesAction extends SynthesizingAction implements IAction {
         val edge = createEdge(usedByBundleNode, sourceBundleNode) => [
             addPolyline => [
                 addHeadArrowDecorator => [
-                    lineWidth = 1;
+                    lineWidth = 1
                     background = "black".color
+                    foreground = "black".color
                 ]
                 lineStyle = LineStyle.DASH
             ]
-            edge.sourcePort = sourceBundlePort
-            edge.targetPort = targetBundlePort
-            edge.source = usedByBundleNode
-            edge.target = sourceBundleNode
+            sourcePort = sourceBundlePort
+            targetPort = targetBundlePort
+            source = usedByBundleNode
+            target = sourceBundleNode
         ]
         usedByBundleNode.outgoingEdges += edge
     }

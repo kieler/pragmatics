@@ -30,6 +30,14 @@
             class="de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction">
       </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.FocusAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.FocusAction">
+      </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAction">
+      </action>
    </extension>
 
 </plugin>

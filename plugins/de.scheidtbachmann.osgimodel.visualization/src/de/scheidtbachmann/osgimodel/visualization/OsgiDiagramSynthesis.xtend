@@ -1,6 +1,8 @@
 package de.scheidtbachmann.osgimodel.visualization
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.DisplayedActionData
+import de.cau.cs.kieler.klighd.LightDiagramServices
 import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
@@ -12,6 +14,7 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPortExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
+import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.BundleCategory
 import de.scheidtbachmann.osgimodel.Feature
@@ -19,11 +22,14 @@ import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
 import de.scheidtbachmann.osgimodel.ServiceInterface
-import java.util.EnumSet
+import de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAction
+import java.util.ArrayList
 import java.util.LinkedHashSet
 import java.util.List
 import org.eclipse.elk.core.options.CoreOptions
-import org.eclipse.elk.core.options.SizeConstraint
+import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.EdgeRouting
+import org.eclipse.elk.graph.properties.MapPropertyHolder
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 
@@ -50,10 +56,9 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     }
     
     override getDisplayedActions() {
-        val actions = new LinkedHashSet()
-        // TODO: Add action that resets the current focus.
-        
-        return actions.toList
+        val actions = new ArrayList
+        actions.add(DisplayedActionData.create(UnfocusAction.ID, "Unfocus"))
+        return actions
     }
        
     override getDisplayedSynthesisOptions() {
@@ -77,6 +82,21 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             }
             case focusedElement instanceof Feature: {
                 transform(focusedElement as Feature)
+                return modelNode
+            }
+            case focusedElement instanceof Bundle: {
+                val newBundleContainer = LightDiagramServices.translateModel(
+                    focusedElement,
+                    this.
+                    usedContext,
+                    new MapPropertyHolder => [
+                        setProperty(KlighdSynthesisProperties.REQUESTED_DIAGRAM_SYNTHESIS,
+                            "de.scheidtbachmann.osgimodel.visualization.BundleSynthesis"
+                        )
+                    ]
+                )
+                modelNode.children += newBundleContainer.children
+                
                 return modelNode
             }
             // TODO: etc.
@@ -107,30 +127,25 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     def transformProductOverview(List<Product> products, OsgiProject model) {
         return createNode => [
             associateWith(model)
+            setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.box")
+            setLayoutOption(CoreOptions::EXPAND_NODES, true)
             addOverviewRendering("Products")
             children += products.map[ transform ]
         ]
     }
     
-    // TODO: If cycles are possible, put these transformations in child view contexts and transform them individually.
     def transform(Product p) {
         return p.createNode() => [
             associateWith(p)
-            addInsideTopCenteredNodeLabel(p.descriptiveName)
-            addLayoutParam(
-                CoreOptions.NODE_SIZE_CONSTRAINTS,
-                EnumSet.of(SizeConstraint.MINIMUM_SIZE, SizeConstraint.NODE_LABELS))
-            // TODO: Does this need to search for the parent viewContext
-    //        usedContext.setProperty(OsgiSynthesisProperties.MAIN_ELEMENT, p)
-    
-            addProductRendering
-            // TODO: add action on a new focus button that causes this element to focus.
+            addProductRendering(p.descriptiveName)
         ]
     }
     
     def transformFeatureOverview(List<Feature> features, OsgiProject model) {
         return createNode => [
             associateWith(model)
+            setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.box")
+            setLayoutOption(CoreOptions::EXPAND_NODES, true)
             addOverviewRendering("Features")
             children += features.map[ transform ]
             initiallyCollapse
@@ -140,17 +155,15 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     def transform(Feature f) {
         return f.createNode() => [
             associateWith(f)
-            addInsideTopCenteredNodeLabel(f.descriptiveName)
-            addLayoutParam(
-                CoreOptions.NODE_SIZE_CONSTRAINTS,
-                EnumSet.of(SizeConstraint.MINIMUM_SIZE, SizeConstraint.NODE_LABELS))
-            addProductRendering // TODO: own rendering for stuff other than products
+            addProductRendering(f.descriptiveName)
         ]
     }
     
     def transformBundleOverview(List<Bundle> bundles, OsgiProject model) {
         return createNode => [
             associateWith(model)
+            setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.box")
+            setLayoutOption(CoreOptions::EXPAND_NODES, true) // TODO: why does this not work on bundles?
             addOverviewRendering("Bundles")
             children += bundles.map[ transform ]
             initiallyCollapse
@@ -159,17 +172,21 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     
     def transform(Bundle b) {
         return b.createNode() => [
+            setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
+            setLayoutOption(CoreOptions::DIRECTION, Direction.RIGHT)
+            setLayoutOption(CoreOptions::EDGE_ROUTING, EdgeRouting.POLYLINE)
             associateWith(b)
             initiallyCollapse
             addCollapsedBundleRendering(b)
             addExpandedBundleRendering(b)
-            
         ]
     }
     
     def transformServiceInterfacesOverview(List<ServiceInterface> serviceInterfaces, OsgiProject model) {
         return createNode => [
             associateWith(model)
+            setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.box")
+            setLayoutOption(CoreOptions::EXPAND_NODES, true)
             addOverviewRendering("Service Interfaces")
             children += serviceInterfaces.map[ transform ]
             initiallyCollapse
@@ -179,17 +196,15 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     def transform(ServiceInterface s) {
         return s.createNode() => [
             associateWith(s)
-            addInsideTopCenteredNodeLabel(s.name)
-            addLayoutParam(
-                CoreOptions.NODE_SIZE_CONSTRAINTS,
-                EnumSet.of(SizeConstraint.MINIMUM_SIZE, SizeConstraint.NODE_LABELS))
-            addProductRendering // TODO: own rendering for stuff other than products
+            addProductRendering(s.name)
         ]
     }
     
     def transformImportedPackagesOverview(List<PackageObject> packages, OsgiProject model) {
         return createNode => [
             associateWith(model)
+            setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.box")
+            setLayoutOption(CoreOptions::EXPAND_NODES, true)
             addOverviewRendering("Imported Packages")
             children += packages.map[ transform ]
             initiallyCollapse
@@ -199,17 +214,15 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     def transform(PackageObject p) {
         return p.createNode() => [
             associateWith(p)
-            addInsideTopCenteredNodeLabel(p.uniqueId)
-            addLayoutParam(
-                CoreOptions.NODE_SIZE_CONSTRAINTS,
-                EnumSet.of(SizeConstraint.MINIMUM_SIZE, SizeConstraint.NODE_LABELS))
-            addProductRendering // TODO: own rendering for stuff other than products
+            addProductRendering(p.uniqueId)
         ]
     }
     
     def transformBundleCategoriesOverview(List<BundleCategory> bundleCategory, OsgiProject model) {
         return createNode => [
             associateWith(model)
+            setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.box")
+            setLayoutOption(CoreOptions::EXPAND_NODES, true)
             addOverviewRendering("Bundle Categories")
             children += bundleCategory.map[ transform ]
             initiallyCollapse
@@ -219,11 +232,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     def transform(BundleCategory b) {
         return b.createNode() => [
             associateWith(b)
-            addInsideTopCenteredNodeLabel(b.categoryName)
-            addLayoutParam(
-                CoreOptions.NODE_SIZE_CONSTRAINTS,
-                EnumSet.of(SizeConstraint.MINIMUM_SIZE, SizeConstraint.NODE_LABELS))
-            addProductRendering // TODO: own rendering for stuff other than products
+            addProductRendering(b.categoryName)
         ]
     }
 }
