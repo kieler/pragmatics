@@ -1,6 +1,8 @@
 package de.scheidtbachmann.osgimodel.visualization
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.KlighdConstants
+import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.actions.CollapseExpandAction
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
@@ -22,6 +24,8 @@ import de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExp
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
 
+import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
+
 import static extension de.cau.cs.kieler.klighd.microlayout.PlacementUtil.*
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 
@@ -39,10 +43,11 @@ class OsgiStyles {
     @Inject extension KRenderingExtensions
     extension KRenderingFactory = KRenderingFactory.eINSTANCE
     
+    /** The roundness of visualized rounded rectangles. */
     val ROUNDNESS = 4
     
     /**
-     * Adds a rendering for a {@link Product} to the given node.
+     * Adds a simple rendering for a {@link Product} to the given node.
      */
     def KRoundedRectangle addProductRendering(KNode node, String name) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
@@ -53,7 +58,17 @@ class OsgiStyles {
         ]
     }
     
-    def KRoundedRectangle addBundleRendering(KNode node, Bundle b) {
+    /**
+     * Adds a rendering for a {@link Bundle} to the given node.
+     * Contains The name of the bundle, a button to focus this bundle and text for the ID and description of this bundle.
+     * 
+     * @param node The KNode this rendering should be attached to.
+     * @param b The bundle this rendering represents.
+     * @param context The view context used in the synthesis.
+     * 
+     * @return The entire rendering for a bundle.
+     */
+    def KRoundedRectangle addBundleRendering(KNode node, Bundle b, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
             setGridPlacement(1)
@@ -66,11 +81,11 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
                 invisible = true
-                addText("Description: " + b.about?.substring(0, Math.min(b.about.length, 30)) + "...")
+                addSimpleLabel("ID: " + b.uniqueId)
             ]
             addRectangle => [
                 invisible = true
-                addText("ID: " + b.uniqueId)
+                addSimpleLabel("Description: " + descriptionLabel(b, context))
             ]
             setShadow("black".color, 4, 4)
             addRectangle => [
@@ -84,23 +99,43 @@ class OsgiStyles {
         ]
     }
     
-    def KRectangle addExpandedBundleRendering(KNode node, Bundle b) {
+    /**
+     * Returns the descriptive text of a bundle shortened by the {@link OsgiOptions#DESCRIPTION_LENGTH} option.
+     */
+    private def String descriptionLabel(Bundle b, ViewContext context) {
+        val descriptionLabel = b.about
+        val threshold = context.getOptionValue(DESCRIPTION_LENGTH) as Number
+        if (descriptionLabel === null) {
+            return ""
+        }
+        if (descriptionLabel.length <= threshold.intValue) {
+            return descriptionLabel
+        }
+        return descriptionLabel.substring(0, threshold.intValue) + " ..."
+    }
+    
+    /**
+     * Adds a simple rendering for a {@link Bundle} to the given node that can be expanded to call the
+     * {link ReferencedSynthesisExpandAction} to dynamically call the bundle synthesis for the given bundle.
+     */
+    def addBundleInOverviewRendering(KNode node, Bundle b, String label) {
+        // Expanded
         node.addRectangle => [
             setAsExpandedView
             invisible = true
             addChildArea
             addButton("-", ReferencedSynthesisExpandAction::ID)
         ]
-    }
-    
-    def KRoundedRectangle addCollapsedBundleRendering(KNode node, Bundle b) {
+        
+        // Collapsed
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsCollapsedView
             setGridPlacement(2)
-            addSimpleLabel(b.descriptiveName)
+            addSimpleLabel(label)
             setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
             addButton("+", ReferencedSynthesisExpandAction::ID)
             setShadow("black".color, 4, 4)
+            tooltip = b.uniqueId
             setPointPlacementData => [
                 minHeight = 20
                 minWidth = 20
@@ -115,7 +150,6 @@ class OsgiStyles {
         // Expanded
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsExpandedView
-//            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
             setGridPlacement(1)
             addSimpleLabel(text)
             addHorizontalSeperatorLine(1, 0)
@@ -136,7 +170,6 @@ class OsgiStyles {
         // Collapsed
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsCollapsedView
-//            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
             setGridPlacement(1)
             addSimpleLabel(text)
             addHorizontalSeperatorLine(1, 0)
@@ -154,11 +187,19 @@ class OsgiStyles {
         ]
     }
     
+    /**
+     * Adds a button in the top right corner of any container rendering that will cause an action to be called.
+     * 
+     * @param container The parent rendering this button should be added to.
+     * @param text The text that should be displayed on the button.
+     * @param actionId The id of the action that should be called if the button is clicked.
+     */
     def KRectangle addButton(KContainerRendering container, String text, String actionId) {
         return container.addRectangle => [
             setPointPlacementData(RIGHT, 0, 0,  TOP, 0, 0, H_RIGHT, V_TOP, 0, 0, 15, 15)
             addSingleOrMultiClickAction(actionId)
             addText(text) => [
+                suppressSelectability
                 fontSize = 8
                 fontBold = true
                 val size = estimateTextSize
@@ -168,6 +209,10 @@ class OsgiStyles {
         ]
     }
     
+    /**
+     * The rendering of a port that connects the bundles used by this component. Issues the
+     * {@link RevealUsedByBundlesAction} if clicked.
+     */
     def KRectangle addUsedByBundlesPortRendering(KPort port) {
         return port.addRectangle => [
             background = "gray".color
@@ -176,6 +221,10 @@ class OsgiStyles {
         ]
     }
     
+    /**
+     * The rendering of a port that connects the bundles required by this component. Issues the
+     * {@link RevealRequiredBundlesAction} if clicked.
+     */
     def KRectangle addRequiredBundlesPortRendering(KPort port) {
         return port.addRectangle => [
             background = "gray".color
@@ -184,10 +233,16 @@ class OsgiStyles {
         ]
     }
     
+    /**
+     * Adds a simple text label to any rendering with some surrounding space for better readability.
+     */
     def KText addSimpleLabel(KContainerRendering rendering, String text) {
         rendering.addText(text) => [
             // Add surrounding space
             setGridPlacementData().from(LEFT, 10, 0, TOP, 8, 0).to(RIGHT, 10, 0, BOTTOM, 8, 0)
+            // Remove the default bold property on selected texts.
+            selectionFontBold = false
+            selectionBackground = KlighdConstants.DEFAULT_SELECTION_HIGHLIGHTING_BACKGROUND_COLOR
         ]
     }
 }

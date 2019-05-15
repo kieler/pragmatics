@@ -35,6 +35,10 @@
             id="de.scheidtbachmann.osgimodel.visualization.actions.FocusAction">
       </action>
       <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAllAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAllAction">
+      </action>
+      <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAction">
       </action>

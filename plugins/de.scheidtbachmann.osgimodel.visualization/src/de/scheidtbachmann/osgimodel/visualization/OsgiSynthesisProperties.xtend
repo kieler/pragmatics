@@ -1,5 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization
 
+import java.util.ArrayList
+import java.util.List
 import org.eclipse.elk.graph.properties.IProperty
 import org.eclipse.elk.graph.properties.Property
 
@@ -9,6 +11,11 @@ import org.eclipse.elk.graph.properties.Property
  * @author nre
  */
 class OsgiSynthesisProperties {
-    /** Property pointing towards the main element in this model that should be drawn around. */
-    public static final IProperty<Object> MAIN_ELEMENT = new Property<Object>("osgimodel.mainElement")    
+    /** 
+     * Property pointing towards the list of focused elements in this model. The last element of the list is always
+     * the element that should be visualized as the central element during the synthesis.
+     */
+    public static final IProperty<List<Object>> FOCUSED_ELEMENTS = new Property<List<Object>>("osgimodel.mainElement",
+        new ArrayList<Object>
+    )    
 }

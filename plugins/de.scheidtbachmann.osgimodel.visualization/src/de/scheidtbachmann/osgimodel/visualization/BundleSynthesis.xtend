@@ -16,8 +16,11 @@ import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.OsgiProject
 import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.EdgeRouting
 import org.eclipse.elk.core.options.PortConstraints
 import org.eclipse.elk.core.options.PortSide
+import de.cau.cs.kieler.klighd.kgraph.KNode
 
 /**
  * Sub-synthesis of {@link OsgiProject}s that handles expanded {@link Bundle} views.
@@ -37,31 +40,60 @@ class BundleSynthesis extends AbstractDiagramSynthesis<Bundle> {
     @Inject extension OsgiStyles
     extension KRenderingFactory = KRenderingFactory.eINSTANCE
     extension KGraphFactory = KGraphFactory.eINSTANCE
-    
-    // TODO: add option to leave out / shorten description texts
-    
+        
     override transform(Bundle b) {
-        return b.createNode.associateWith(b) => [
-            // This is only the top-level node of this synthesis without 
-            children += createNode() => [
-                addLayoutParam(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
+        // The top level node that is not shown and will be replaced by KLighD.
+        return b.createNode => [
+            associateWith(b)
+            // The Node that contains this bundle and also may contain all additional required and used by bundles.
+            children += createNode => [
+                addInvisibleContainerRendering
                 associateWith(b)
-                addBundleRendering(b)
-                ports += createPort(b, "usedByBundles") => [
-                    data += createKIdentifier => [ it.id = 'usedByBundles' ]
-                    addLayoutParam(CoreOptions::PORT_SIDE, PortSide::WEST)
-                    addUsedByBundlesPortRendering
-                    width = 8
-                    height = 8
-                ]
-                ports += createPort(b, "requiredBundles") => [
-                    data += createKIdentifier => [ it.id = 'requiredBundles' ]
-                    addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
-                    addRequiredBundlesPortRendering
-                    width = 8
-                    height = 8
+                configureBundleLayout
+                children += createNode() => [
+                    addLayoutParam(CoreOptions::PORT_CONSTRAINTS, PortConstraints::FIXED_SIDE)
+                    associateWith(b)
+                    addBundleRendering(b, usedContext)
+                    
+                    // The ports that show the connection to the usedBy / required bundles with actions to add them to
+                    // the view.
+                    if (!b.usedByBundle.empty) {
+                        ports += createPort(b, "usedByBundles") => [
+                            associateWith(b)
+                            // Identifier helps for connecting to this port later.
+                            data += createKIdentifier => [ it.id = 'usedByBundles' ]
+                            // Used by bundles are always shown and expanded to the west against the drawing direction.
+                            addLayoutParam(CoreOptions::PORT_SIDE, PortSide::WEST)
+                            addUsedByBundlesPortRendering
+                            width = 12
+                            height = 12
+                        ]
+                    }
+                    if (!b.requiredBundles.empty) {
+                        ports += createPort(b, "requiredBundles") => [
+                            associateWith(b)
+                            data += createKIdentifier => [ it.id = 'requiredBundles' ]
+                            // Required bundles are always shown and expanded to the east with the drawing direction.
+                            addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
+                            addRequiredBundlesPortRendering
+                            width = 12
+                            height = 12
+                        ]
+                    }
                 ]
             ]
+        ]
+    }
+    
+    /**
+     * Configures the layout on the bundle view for the top level node that shows the connection between required and
+     * used by bundles.
+     */
+    private def configureBundleLayout(KNode node) {
+        node => [
+            setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
+            setLayoutOption(CoreOptions::DIRECTION, Direction.RIGHT)
+            setLayoutOption(CoreOptions::EDGE_ROUTING, EdgeRouting.POLYLINE)
         ]
     }
 }

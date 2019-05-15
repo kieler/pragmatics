@@ -1,7 +1,6 @@
 package de.scheidtbachmann.osgimodel.visualization.actions
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.klighd.IAction
 import de.cau.cs.kieler.klighd.LightDiagramServices
 import de.cau.cs.kieler.klighd.actions.SynthesizingAction
 import de.cau.cs.kieler.klighd.kgraph.KIdentifier
@@ -14,9 +13,15 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import de.scheidtbachmann.osgimodel.Bundle
+import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import java.util.ArrayList
 import org.eclipse.elk.graph.properties.MapPropertyHolder
 
+/**
+ * Reveals and synthesizes the bundles used by any bundle into the KNode surrounding the Bundle node this action
+ * is performed on and connects the new bundles with a connecting edge from this bundle's 'requiredBundles' port to
+ * the new bundle's 'usedByBundles' port. 
+ */
 class RevealUsedByBundlesAction extends SynthesizingAction {
     @Inject extension KColorExtensions
     @Inject extension KEdgeExtensions
@@ -37,7 +42,8 @@ class RevealUsedByBundlesAction extends SynthesizingAction {
         val bundleNode = clickedPort.eContainer as KNode
 
         // The Bundle element itself that was clicked on.
-        val bundle = context.getDomainElement(bundleNode) as Bundle
+//        val bundle = context.getDomainElement(bundleNode) as Bundle
+        val bundle = SynthesisUtils.getDomainElement(context) as Bundle
 
         // The KNode containing the bundle in which the used bundles should be added as well.
         val containingNode = bundleNode.eContainer as KNode
@@ -45,18 +51,21 @@ class RevealUsedByBundlesAction extends SynthesizingAction {
         bundle.usedByBundle.forEach[ usedByBundle |
             // Only add this bundle to the context if it has not been added before.
             val oldBundleNode = containingNode.children.findFirst[ alreadySynthesizedNodes |
-                context.getDomainElement(alreadySynthesizedNodes) === usedByBundle
+//                context.getDomainElement(alreadySynthesizedNodes) === usedByBundle
+                 SynthesisUtils.getDomainElement(context, alreadySynthesizedNodes) === usedByBundle
             ]
             if (oldBundleNode === null) {
+                val requiredSynthesis = SynthesisUtils.requiredSynthesis(usedByBundle)
                 val newBundleContainer = LightDiagramServices.translateModel(
                     usedByBundle,
                     context.viewContext,
                     new MapPropertyHolder => [
-                        setProperty(KlighdSynthesisProperties.REQUESTED_DIAGRAM_SYNTHESIS, "de.scheidtbachmann.osgimodel.visualization.BundleSynthesis")
+                        setProperty(KlighdSynthesisProperties.REQUESTED_DIAGRAM_SYNTHESIS, requiredSynthesis)
                     ]
                 )
                 val newBundleNodes = new ArrayList<KNode>
-                newBundleNodes.addAll(newBundleContainer.children)
+                // The bundle synthesis has an additional surrounding node that should be ignored and thrown away here.
+                newBundleNodes.addAll(newBundleContainer.children.head?.children)
                 newBundleNodes.forEach[ newBundleNode |
                     // If the new bundle node is in fact the representation of the usedBy bundle, look for its
                     // required bundle port and connect an edge to that.
