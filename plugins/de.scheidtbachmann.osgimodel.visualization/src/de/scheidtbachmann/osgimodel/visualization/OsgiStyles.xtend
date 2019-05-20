@@ -216,7 +216,7 @@ class OsgiStyles {
     def KRectangle addUsedByBundlesPortRendering(KPort port) {
         return port.addRectangle => [
             background = "gray".color
-            tooltip = "Show bundles used by this bundle."
+            tooltip = "Show bundles that require this bundle."
             addSingleClickAction(RevealUsedByBundlesAction::ID)
         ]
     }
