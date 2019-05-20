@@ -13,6 +13,8 @@
       <unit id="javax.transaction" version="0.0.0"/>
       <unit id="org.eclipse.emf.mwe2.language.sdk.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.emf.ecore.feature.group" version="0.0.0"/>
+      <unit id="org.eclipse.emf.ecore.xcore.lib.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.gmf.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.graphiti.sdk.feature.feature.group" version="0.0.0"/>
       <unit id="org.eclipse.jst.ws.jaxws.feature.feature.group" version="0.0.0"/>

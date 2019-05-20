@@ -27,6 +27,11 @@
          Source features for features of all other categories.
       </description>
    </category-def>
+   <category-def name="osgi-visualization" label="OSGi Model Visualization">
+      <description>
+         An OSGi model with a KLighD synthesis for visualization of projects.
+      </description>
+   </category-def>
 
 
    <!-- LAYOUT -->
@@ -83,6 +88,12 @@
    </feature>
    <feature url="features/de.cau.cs.kieler.klighd.view.feature.source_0.45.0.qualifier.jar" id="de.cau.cs.kieler.klighd.view.feature.source" version="0.45.0.qualifier">
       <category name="kieler-sources"/>
+   </feature>
+
+   <!-- OSGI MODEL AND VISUALIZATION -->
+
+   <feature url="features/de.scheidtbachmann.osgimodel.feature_0.45.0.qualifier.jar" id="de.scheidtbachmann.osgimodel.feature" version="0.45.0.qualifier">
+      <category name="osgi-visualization"/>
    </feature>
 
 </site>
