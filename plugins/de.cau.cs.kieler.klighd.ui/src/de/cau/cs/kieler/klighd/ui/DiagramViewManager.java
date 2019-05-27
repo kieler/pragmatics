@@ -33,6 +33,7 @@ import com.google.common.collect.Maps;
 import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.LightDiagramLayoutConfig;
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.ui.parts.DiagramEditorPart;
 import de.cau.cs.kieler.klighd.ui.parts.DiagramViewPart;
@@ -314,13 +315,12 @@ public final class DiagramViewManager implements IPartListener {
                 }
 
             } catch (final PartInitException e) {
-                StatusManager.getManager()
-                        .handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, e
+                StatusHandler.handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, e
                                 .getMessage(), e));
 
                 return null;
             } catch (final IllegalArgumentException e) {
-                StatusManager.getManager().handle(
+                StatusHandler.handle(
                         new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, "Invalid KLighD view id:"
                                 + "must not be empty or contain any colons."));
 

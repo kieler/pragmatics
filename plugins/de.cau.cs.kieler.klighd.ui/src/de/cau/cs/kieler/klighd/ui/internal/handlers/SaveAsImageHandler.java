@@ -23,12 +23,12 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.klighd.IDiagramExporter;
 import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.KlighdDataManager;
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.ui.KlighdUIPlugin;
 
 /**
@@ -88,9 +88,8 @@ public class SaveAsImageHandler extends AbstractHandler {
         } else if (res == null) {
             final String msg = "KLighD diagram export: " + exporter.getClass().getCanonicalName()
                     + " must return an IStatus!";
-            StatusManager.getManager().handle(
-                    new Status(IStatus.WARNING, KlighdUIPlugin.PLUGIN_ID, msg),
-                    StatusManager.SHOW);
+            StatusHandler.handle(new Status(IStatus.WARNING, KlighdUIPlugin.PLUGIN_ID, msg),
+                    StatusHandler.SHOW);
 
         } else if (res.getException() instanceof OutOfMemoryError) {
             final String title = "Out of heap memory.";
@@ -99,9 +98,9 @@ public class SaveAsImageHandler extends AbstractHandler {
             MessageDialog.openError(shell, title, msg);
 
         } else {
-            StatusManager.getManager().handle(res,
+            StatusHandler.handle(res,
                     // without logging the status, no stack trace will be available
-                    StatusManager.BLOCK | StatusManager.SHOW | StatusManager.LOG);
+                    StatusHandler.BLOCK | StatusHandler.SHOW | StatusHandler.LOG);
         }
 
         return null;

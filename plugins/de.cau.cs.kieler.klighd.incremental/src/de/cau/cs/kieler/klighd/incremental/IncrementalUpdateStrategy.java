@@ -14,10 +14,10 @@ package de.cau.cs.kieler.klighd.incremental;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.klighd.IUpdateStrategy;
 import de.cau.cs.kieler.klighd.KlighdDataManager;
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.incremental.diff.KComparison;
 import de.cau.cs.kieler.klighd.incremental.merge.KGraphDataFilter;
@@ -88,8 +88,8 @@ public class IncrementalUpdateStrategy implements IUpdateStrategy {
 
         } catch (RuntimeException e) {
             final String msg = "KLighD: Incremental update of diagram failed.";
-            StatusManager.getManager().handle(new Status(IStatus.ERROR, PLUGIN_ID, msg, e),
-                    StatusManager.LOG);
+            StatusHandler.handle(new Status(IStatus.ERROR, PLUGIN_ID, msg, e),
+                    StatusHandler.LOG);
             e.printStackTrace();
 
             // if incremental updating failed, apply the SimpleUpdateStrategy
@@ -98,9 +98,9 @@ public class IncrementalUpdateStrategy implements IUpdateStrategy {
     }
 
     private void logFallback(final int severity, final String reason) {
-        StatusManager.getManager().handle(
+        StatusHandler.handle(
                 new Status(severity, PLUGIN_ID, "Fallback to simple update. Reason: " + reason),
-                StatusManager.LOG);
+                StatusHandler.LOG);
     }
 
     private void fallback(final KNode baseModel, final KNode newModel,

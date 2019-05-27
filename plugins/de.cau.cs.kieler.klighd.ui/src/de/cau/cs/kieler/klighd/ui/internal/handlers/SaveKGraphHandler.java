@@ -33,7 +33,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.collect.Lists;
 
@@ -41,6 +40,7 @@ import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.KlighdTreeSelection;
 import de.cau.cs.kieler.klighd.LightDiagramLayoutConfig;
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.ui.KlighdUIPlugin;
@@ -129,15 +129,15 @@ public class SaveKGraphHandler extends AbstractHandler {
         // So we try to find the graph this node represents
         final ViewContext viewContext = selection.getViewContext();
         if (viewContext == null) {
-            StatusManager.getManager().handle(new Status(IStatus.ERROR, KlighdUIPlugin.PLUGIN_ID,
-                    "Could not determine ViewContext."), StatusManager.SHOW);
+            StatusHandler.handle(new Status(IStatus.ERROR, KlighdUIPlugin.PLUGIN_ID,
+                    "Could not determine ViewContext."), StatusHandler.SHOW);
         }
 
         final KNode subgraph;
         if (selection.isEmpty()) {
             // Nothing is selected, nothing to export
-            StatusManager.getManager().handle(new Status(IStatus.ERROR, KlighdUIPlugin.PLUGIN_ID,
-                    "Please select something to export."), StatusManager.SHOW);
+            StatusHandler.handle(new Status(IStatus.ERROR, KlighdUIPlugin.PLUGIN_ID,
+                    "Please select something to export."), StatusHandler.SHOW);
             return null;
         } else if (selection.size() == 1 && selection.getFirstElement() instanceof KNode) {
             // If exactly one element is selected and it is a knode

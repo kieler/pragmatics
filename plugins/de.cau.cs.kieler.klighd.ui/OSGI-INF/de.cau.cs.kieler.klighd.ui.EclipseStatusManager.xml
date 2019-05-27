@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="de.cau.cs.kieler.klighd.ui.EclipseStatusManager">
+   <service>
+      <provide interface="de.cau.cs.kieler.klighd.IStatusManager"/>
+   </service>
+   <implementation class="de.cau.cs.kieler.klighd.ui.EclipseStatusManager"/>
+</scr:component>

@@ -24,12 +24,12 @@ import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.core.util.Pair;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.base.Function;
 
 import de.cau.cs.kieler.klighd.DisplayedActionData;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.SynthesisOption;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.internal.ISynthesis;
@@ -155,7 +155,7 @@ public abstract class AbstractDiagramSynthesis<S> implements ISynthesis {
                         + "super class." + KlighdPlugin.LINE_SEPARATOR
                         + "Alternatively provide the input data type by overriding "
                         + "\"getInputDataType()\".";
-                StatusManager.getManager().handle(
+                StatusHandler.handle(
                         new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg));
 
                 transformMethod = null;

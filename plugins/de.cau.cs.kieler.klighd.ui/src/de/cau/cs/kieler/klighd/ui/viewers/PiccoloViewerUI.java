@@ -41,6 +41,7 @@ import de.cau.cs.kieler.klighd.IKlighdSelection;
 import de.cau.cs.kieler.klighd.IModelModificationHandler;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.IViewerProvider;
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement;
 import de.cau.cs.kieler.klighd.krendering.KText;
@@ -537,8 +538,7 @@ public class PiccoloViewerUI extends PiccoloViewer {
             final String msg =
                     "KLighD: An error occured while applying the updated string value in "
                             + viewContext.getDiagramWorkbenchPart().getPartId() + "!";
-            StatusManager.getManager().handle(
-                    new Status(IStatus.ERROR, KlighdUIPlugin.PLUGIN_ID, msg, e));
+            StatusHandler.handle(new Status(IStatus.ERROR, KlighdUIPlugin.PLUGIN_ID, msg, e));
         }
     }
 

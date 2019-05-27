@@ -27,6 +27,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import de.cau.cs.kieler.klighd.KlighdPlugin;
+import de.cau.cs.kieler.klighd.StatusHandler;
 
 /**
  * Singleton class that takes care of loading all svg generators from the {@code svgGenerators}
@@ -229,13 +230,12 @@ public final class SVGGeneratorManager {
 
     private static void reportError(final String extensionPoint,
             final IConfigurationElement element, final Exception exception) {
-//        final String message =
-//                "Extension point " + extensionPoint + ": Invalid entry in element "
-//                        + element.getName() + ", contributed by "
-//                        + element.getContributor().getName();
-//        final IStatus status =
-//                new Status(IStatus.WARNING, KlighdPlugin.PLUGIN_ID, 0, message, exception);
-//        final Bundle kp = Platform.getBundle(KlighdPlugin.PLUGIN_ID);
-//        Platform.getLog(kp).log(status); // XXX
+        final String message =
+                "Extension point " + extensionPoint + ": Invalid entry in element "
+                        + element.getName() + ", contributed by "
+                        + element.getContributor().getName();
+        final IStatus status =
+                new Status(IStatus.WARNING, KlighdPlugin.PLUGIN_ID, 0, message, exception);
+        StatusHandler.handle(status);
     }
 }

@@ -135,8 +135,7 @@ public final class LightDiagramServices {
         if (config == null) {
             final String msg = "KlighD LightDiagramServices: Could not perform layout since no"
                     + "configuration has been specified.";
-            StatusManager.getManager()
-                    .handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg));
+            StatusHandler.handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg));
             return;
         }
 
@@ -148,8 +147,7 @@ public final class LightDiagramServices {
                     + "ViewContext could be determined for IDiagramWorkbenchPart "
                     + config.workbenchPart() + ". "
                     + "Is the diagram correctly and completely initialized?";
-            StatusManager.getManager()
-                    .handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg));
+            StatusHandler.handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg));
             return;
         }
 
@@ -380,7 +378,7 @@ public final class LightDiagramServices {
                     + "ViewContext could be determined for IDiagramWorkbenchPart "
                     + workbenchPart + ". "
                     + "Is the diagram correctly and completely initialized?";
-            StatusManager.getManager().handle(
+            StatusHandler.handle(
                     new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg));
             return;
         }

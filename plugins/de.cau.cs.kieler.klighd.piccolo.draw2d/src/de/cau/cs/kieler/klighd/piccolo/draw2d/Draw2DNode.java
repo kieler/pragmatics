@@ -26,9 +26,9 @@ import org.eclipse.draw2d.StackLayout;
 import org.eclipse.draw2d.UpdateManager;
 import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.klighd.KlighdPlugin;
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.krendering.KColor;
 import de.cau.cs.kieler.klighd.piccolo.internal.KlighdSWTGraphicsEx;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KCustomFigureNode;
@@ -251,9 +251,9 @@ public class Draw2DNode extends KCustomFigureNode {
             final String msg =
                     "KLighD: Error occurred while drawing the diagram figure "
                             + this.figure.getChildren().get(0).getClass().getName();
-            StatusManager.getManager().handle(
+            StatusHandler.handle(
                     new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, throwable),
-                    StatusManager.LOG);
+                    StatusHandler.LOG);
         }
 
         // paintContext.popClip(null);

@@ -21,9 +21,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.elk.core.util.WrappedException;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -165,9 +168,9 @@ public final class KlighdDataManager {
         try {
             instance.loadModelTransformationsExtension();
         } catch (final Exception e) {
-//            StatusManager.getManager().handle(
-//                    new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID,
-//                            "KLighD: Unexptected failure while loading registered transformations.", e)); // XXX
+            StatusHandler.handle(
+                    new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID,
+                            "KLighD: Unexptected failure while loading registered transformations.", e));
         }
     }
 
@@ -195,13 +198,13 @@ public final class KlighdDataManager {
     // is currently also used by klighd.piccolo's ExportHooks class
     public static void reportError(final String extensionPoint,
             final IConfigurationElement element, final String attribute, final Exception exception) {
-//        final String message =
-//                "KLighD: Element '" + element.getName() + "' extending extension point '"
-//                        + extensionPoint + "', contributed by '"
-//                        + element.getContributor().getName()
-//                        + "' contains invalid entry in attribute '" + attribute + "'";
-//        StatusManager.getManager().handle(
-//                new Status(IStatus.WARNING, KlighdPlugin.PLUGIN_ID, 0, message, exception)); // XXX
+        final String message =
+                "KLighD: Element '" + element.getName() + "' extending extension point '"
+                        + extensionPoint + "', contributed by '"
+                        + element.getContributor().getName()
+                        + "' contains invalid entry in attribute '" + attribute + "'";
+        StatusHandler.handle(
+                new Status(IStatus.WARNING, KlighdPlugin.PLUGIN_ID, 0, message, exception));
     }
 
 
@@ -317,7 +320,7 @@ public final class KlighdDataManager {
                     }
                 }
             } catch (final CoreException exception) {
-                StatusManager.getManager().handle(exception, KlighdPlugin.PLUGIN_ID);
+                StatusHandler.handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, exception.getMessage()));
             }
         }
     }
@@ -340,25 +343,25 @@ public final class KlighdDataManager {
                             (ISynthesis) element.createExecutableExtension(ATTRIBUTE_CLASS);
 
                 } catch (final CoreException exception) {
-//                    StatusManager.getManager().handle(
-//                            new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID,
-//                                    CORE_EXCEPTION_ERROR_MSG.replace("<<CLAZZ>>",
-//                                            element.getAttribute(ATTRIBUTE_CLASS)), exception)); // XXX
+                    StatusHandler.handle(
+                            new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID,
+                                    CORE_EXCEPTION_ERROR_MSG.replace("<<CLAZZ>>",
+                                            element.getAttribute(ATTRIBUTE_CLASS)), exception));
                 } catch (final NoClassDefFoundError exception) {
-//                    final String msg =
-//                            NO_CLASS_DEF_FOUND_ERROR_MSG.replace("<<CLAZZ>>",
-//                                    element.getAttribute(ATTRIBUTE_CLASS).replaceFirst(
-//                                            GuiceBasedSynthesisFactory.CLASS_NAME + ":", ""));
-//                    StatusManager.getManager().handle(
-//                            new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, exception)); // XXX
+                    final String msg =
+                            NO_CLASS_DEF_FOUND_ERROR_MSG.replace("<<CLAZZ>>",
+                                    element.getAttribute(ATTRIBUTE_CLASS).replaceFirst(
+                                            GuiceBasedSynthesisFactory.CLASS_NAME + ":", ""));
+                    StatusHandler.handle(
+                            new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, exception));
                 } catch (final WrappedException exception) {
-//                    final String msg =
-//                            NO_CLASS_DEF_FOUND_ERROR_MSG.replace("<<CLAZZ>>",
-//                                    element.getAttribute(ATTRIBUTE_CLASS).replaceFirst(
-//                                            GuiceBasedSynthesisFactory.CLASS_NAME + ":", ""));
-//                    StatusManager.getManager().handle(
-//                            new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, exception
-//                                    .getCause())); // XXX
+                    final String msg =
+                            NO_CLASS_DEF_FOUND_ERROR_MSG.replace("<<CLAZZ>>",
+                                    element.getAttribute(ATTRIBUTE_CLASS).replaceFirst(
+                                            GuiceBasedSynthesisFactory.CLASS_NAME + ":", ""));
+                    StatusHandler.handle(
+                            new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, exception
+                                    .getCause()));
                 }
 
                 if (synthesis != null) {
@@ -374,18 +377,18 @@ public final class KlighdDataManager {
                             }
 
                         } catch (final WrappedException exception) {
-//                            StatusManager.getManager().handle(
-//                                    new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, exception
-//                                            .getMessage(), exception.getCause())); // XXX
+                            StatusHandler.handle(
+                                    new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, exception
+                                            .getMessage(), exception.getCause()));
                         } catch (final Exception exception) {
-//                            final String msg =
-//                                    "KLighD: An unexpected exception occured while loading "
-//                                            + "diagram synthesis " + id
-//                                            + ". See attached trace for details." + NEW_LINE
-//                                            + exception.getMessage();
-//                            StatusManager.getManager().handle(
-//                                    new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg,
-//                                            exception.getCause())); // XXX
+                            final String msg =
+                                    "KLighD: An unexpected exception occured while loading "
+                                            + "diagram synthesis " + id
+                                            + ". See attached trace for details." + NEW_LINE
+                                            + exception.getMessage();
+                            StatusHandler.handle(
+                                    new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg,
+                                            exception.getCause()));
                         }
                     }
                 }
@@ -765,7 +768,7 @@ public final class KlighdDataManager {
                         }
                     }
                 } catch (final CoreException exception) {
-                    StatusManager.getManager().handle(exception, KlighdPlugin.PLUGIN_ID);
+                    StatusHandler.handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, exception.getMessage()));
                 }
             }
         }

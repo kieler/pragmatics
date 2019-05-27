@@ -20,10 +20,10 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.collect.Lists;
 
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.kgraph.KEdge;
 import de.cau.cs.kieler.klighd.krendering.KCustomRendering;
 import de.cau.cs.kieler.klighd.krendering.KPolyline;
@@ -116,9 +116,9 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
                         + " must provide a figure object of type KCustomConnectionFigureNode"
                         + " allowing to set the start, end, and bend points, or 'null' letting KLighD"
                         + " trying to load the class provided by its name.";
-                StatusManager.getManager().handle(
+                StatusHandler.handle(
                         new Status(IStatus.ERROR, PLUGIN_ID, msg),
-                        StatusManager.LOG);
+                        StatusHandler.LOG);
                 return null;
             }
 

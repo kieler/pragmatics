@@ -33,6 +33,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.IViewerProvider;
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.ViewChangeType;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.ZoomStyle;
@@ -431,7 +432,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
     public void reveal(final KGraphElement diagramElement, final int duration) {
         final PNode node = getRepresentation(diagramElement);
         if (node == null) {
-            StatusManager.getManager().handle(
+            StatusHandler.handle(
                     new Status(IStatus.WARNING, PLUGIN_ID, new String(
                             NO_DIAGRAM_ELEMENT_REPRESENTATION_ERROR_MSG).replace("XX",
                             diagramElement.toString())));
@@ -446,7 +447,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
                 camera.animateViewToPanToBounds(destBounds, duration);
 
             } else {
-                StatusManager.getManager().handle(
+                StatusHandler.handle(
                         new Status(IStatus.WARNING, PLUGIN_ID, new String(
                                 NOT_IN_CURRENT_CLIP_REVEAL_ERROR_MSG).replace("XX",
                                 diagramElement.toString())));
@@ -463,7 +464,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
     public void centerOn(final KGraphElement diagramElement, final int duration) {
         final PNode node = getRepresentation(diagramElement);
         if (node == null) {
-            StatusManager.getManager().handle(
+            StatusHandler.handle(
                     new Status(IStatus.WARNING, PLUGIN_ID, new String(
                             NO_DIAGRAM_ELEMENT_REPRESENTATION_ERROR_MSG).replace("XX",
                             diagramElement.toString())));
@@ -478,7 +479,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
                 camera.animateViewToCenterBounds(destBounds, false, duration);
 
             } else {
-                StatusManager.getManager().handle(
+                StatusHandler.handle(
                         new Status(IStatus.WARNING, PLUGIN_ID, new String(
                                 NOT_IN_CURRENT_CLIP_CENTER_ON_ERROR_MSG).replace("XX",
                                 diagramElement.toString())));
@@ -496,7 +497,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
     public void panToTopLeftCorner(final KNode diagramElement, final int duration) {
         final PNode node = getRepresentation(diagramElement);
         if (node == null) {
-            StatusManager.getManager().handle(
+            StatusHandler.handle(
                     new Status(IStatus.WARNING, PLUGIN_ID, new String(
                             NO_DIAGRAM_ELEMENT_REPRESENTATION_ERROR_MSG).replace("XX",
                             diagramElement.toString())));
@@ -517,8 +518,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
                 // ... and trigger the change
                 camera.animateViewToTransform(t, duration);
             } else {
-                StatusManager.getManager().handle(
-                        new Status(IStatus.WARNING, PLUGIN_ID, new String(
+                StatusHandler.handle(new Status(IStatus.WARNING, PLUGIN_ID, new String(
                                 NOT_IN_CURRENT_CLIP_TO_TOP_LEFT_ERROR_MSG).replace("XX",
                                 diagramElement.toString())));
             }

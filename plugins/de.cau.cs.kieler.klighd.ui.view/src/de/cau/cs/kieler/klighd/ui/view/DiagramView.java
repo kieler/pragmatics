@@ -62,7 +62,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.progress.UIJob;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -73,6 +72,7 @@ import com.google.common.collect.Sets;
 import de.cau.cs.kieler.klighd.KlighdDataManager;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.LightDiagramLayoutConfig;
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.SynthesisOption;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.internal.ISynthesis;
@@ -550,8 +550,8 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
                 newDiagramView.setEditor(editor);
             }
         } catch (PartInitException e) {
-            StatusManager.getManager().handle(new Status(IStatus.ERROR, KlighdViewPlugin.PLUGIN_ID,
-                    e.getMessage(), e.getCause()), StatusManager.SHOW);
+            StatusHandler.handle(new Status(IStatus.ERROR, KlighdViewPlugin.PLUGIN_ID,
+                    e.getMessage(), e.getCause()), StatusHandler.SHOW);
         }
     }
 
@@ -615,8 +615,8 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
                 }
             }
         } catch (Exception e) {
-            StatusManager.getManager().handle(new Status(IStatus.WARNING,
-                    KlighdViewPlugin.PLUGIN_ID, "Cannot save view state", e), StatusManager.LOG);
+            StatusHandler.handle(new Status(IStatus.WARNING,
+                    KlighdViewPlugin.PLUGIN_ID, "Cannot save view state", e), StatusHandler.LOG);
         }
     }
 
@@ -716,8 +716,8 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
                 }
             }
         } catch (Exception e) {
-            StatusManager.getManager().handle(new Status(IStatus.WARNING,
-                    KlighdViewPlugin.PLUGIN_ID, "Cannot load view state", e), StatusManager.LOG);
+            StatusHandler.handle(new Status(IStatus.WARNING,
+                    KlighdViewPlugin.PLUGIN_ID, "Cannot load view state", e), StatusHandler.LOG);
         }
     }
 
@@ -784,8 +784,8 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
             memento.save(writer);
             KlighdViewPlugin.getDefault().getDialogSettings().put(ID, writer.toString());
         } catch (Exception e) {
-            StatusManager.getManager().handle(new Status(IStatus.WARNING,
-                    KlighdViewPlugin.PLUGIN_ID, "Cannot save view settings", e), StatusManager.LOG);
+            StatusHandler.handle(new Status(IStatus.WARNING,
+                    KlighdViewPlugin.PLUGIN_ID, "Cannot save view settings", e), StatusHandler.LOG);
         }
     }
 
@@ -801,8 +801,8 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
                 loadState(XMLMemento.createReadRoot(new StringReader(settingsString)));
             }
         } catch (Exception e) {
-            StatusManager.getManager().handle(new Status(IStatus.WARNING,
-                    KlighdViewPlugin.PLUGIN_ID, "Cannot save view settings", e), StatusManager.LOG);
+            StatusHandler.handle(new Status(IStatus.WARNING,
+                    KlighdViewPlugin.PLUGIN_ID, "Cannot save view settings", e), StatusHandler.LOG);
         }
     }
 
@@ -1144,9 +1144,9 @@ public final class DiagramView extends DiagramViewPart implements ISelectionChan
                 doUpdateDiagram(new ErrorModel(UPDATE_DIAGRAM_EXCEPTION, e), properties,
                         usedController, sourceEditor, true, true);
             } else {
-                StatusManager.getManager().handle(new Status(IStatus.WARNING,
+                StatusHandler.handle(new Status(IStatus.WARNING,
                         KlighdViewPlugin.PLUGIN_ID, e.getLocalizedMessage(), e),
-                        StatusManager.SHOW);
+                        StatusHandler.SHOW);
             }
 
         }

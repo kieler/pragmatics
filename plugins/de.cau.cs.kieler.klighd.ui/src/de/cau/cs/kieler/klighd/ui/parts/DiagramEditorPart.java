@@ -64,6 +64,7 @@ import de.cau.cs.kieler.klighd.IDiagramWorkbenchPart;
 import de.cau.cs.kieler.klighd.IViewer;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.LightDiagramLayoutConfig;
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.ViewContext;
 import de.cau.cs.kieler.klighd.ZoomStyle;
 import de.cau.cs.kieler.klighd.internal.IDiagramOutlinePage;
@@ -675,7 +676,7 @@ public class DiagramEditorPart extends EditorPart implements
             try {
                 event.getDelta().accept(new DeltaVisitor());
             } catch (final CoreException exception) {
-                StatusManager.getManager().handle(exception, KlighdPlugin.PLUGIN_ID);
+                StatusHandler.handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, exception.getMessage()));
             }
         }
 
@@ -748,8 +749,7 @@ public class DiagramEditorPart extends EditorPart implements
                                         + resource.getURI().toString()
                                         + " after it has been changed.";
 
-                        StatusManager.getManager().handle(
-                                new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, exception));
+                        StatusHandler.handle(new Status(IStatus.ERROR, KlighdPlugin.PLUGIN_ID, msg, exception));
                     }
                 }
             }

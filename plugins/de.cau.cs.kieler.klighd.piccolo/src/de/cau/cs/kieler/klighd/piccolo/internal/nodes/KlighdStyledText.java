@@ -17,11 +17,11 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.base.Strings;
 
 import de.cau.cs.kieler.klighd.KlighdConstants;
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.krendering.KText;
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
 import de.cau.cs.kieler.klighd.piccolo.KlighdNode;
@@ -242,9 +242,9 @@ public class KlighdStyledText extends KlighdNode.KlighdFigureNode<KText> {
      * @param gradient gradient that this node should use drawing the text.
      */
     public void setPenColor(final RGBGradient gradient) {
-        StatusManager.getManager().handle(
+        StatusHandler.handle(
                 new Status(IStatus.WARNING, PLUGIN_ID, TEXT_GRADIENT_MESSAGE),
-                StatusManager.LOG);
+                StatusHandler.LOG);
     }
 
     /**

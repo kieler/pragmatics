@@ -36,6 +36,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import com.google.common.base.Function;
 
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.ui.modifymodel.AbstractKlighdModelModificationHandler;
 import de.cau.cs.kieler.klighd.viewers.ContextViewer;
 
@@ -105,7 +106,7 @@ public class EditingDomainProviderModelModificationHandler extends
             try {
                 m.invoke(classObject, params.toArray());
             } catch (Exception e) {
-                StatusManager.getManager().handle(
+                StatusHandler.handle(
                         new Status(IStatus.ERROR, "de.cau.cs.kieler.klighd.ui.emf",
                                 "An error has occured while trying to execute ksbase method "
                                         + m.getName() + "of class " + classObject.toString(), e));
@@ -119,7 +120,7 @@ public class EditingDomainProviderModelModificationHandler extends
             try {
                 m.invoke(classObject, params.toArray());
             } catch (Exception e) {
-                StatusManager.getManager().handle(
+                StatusHandler.handle(
                         new Status(IStatus.ERROR, "de.cau.cs.kieler.klighd.ui.emf",
                                 "An error has occured while trying to execute ksbase method "
                                         + m.getName() + "of class " + classObject.toString(), e));
@@ -250,7 +251,7 @@ public class EditingDomainProviderModelModificationHandler extends
             try {
                 m.invoke(classObject, params.toArray());
             } catch (Exception e) {
-                StatusManager.getManager().handle(
+                StatusHandler.handle(
                         new Status(IStatus.ERROR, "de.cau.cs.kieler.klighd.ui.emf",
                                 "An error has occured while trying to execute ksbase method "
                                         + m.getName() + "of class " + classObject.toString(), e));

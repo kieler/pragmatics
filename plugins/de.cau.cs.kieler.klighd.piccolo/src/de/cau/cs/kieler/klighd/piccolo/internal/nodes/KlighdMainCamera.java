@@ -20,6 +20,7 @@ import java.util.Stack;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
+import de.cau.cs.kieler.klighd.StatusHandler;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKNodeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.NodeUtil;
@@ -40,6 +41,8 @@ import edu.umd.cs.piccolo.util.PPickPath;
 public class KlighdMainCamera extends PCamera {
 
     private static final long serialVersionUID = -1769999483311436492L;
+    
+    private static final String PLUGIN_ID = "de.cau.cs.kieler.klighd.piccolo";
 
     /**
      * Constructor.
@@ -320,9 +323,8 @@ public class KlighdMainCamera extends PCamera {
             super.fullPaint(paintContext);
 
         } catch (final Throwable t) {
-//            final String msg = "KLighD (MainCamera): Drawing diagram failed due to exception: ";
-//            KlighdPiccoloPlugin.getDefault().getLog()
-//                    .log(new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg, t)); // XXX
+            final String msg = "KLighD (MainCamera): Drawing diagram failed due to exception: ";
+            StatusHandler.handle(new Status(IStatus.ERROR, PLUGIN_ID, msg, t));
         }
     }
 }
