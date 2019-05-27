@@ -26,7 +26,6 @@ import de.cau.cs.kieler.klighd.IDiagramExporter.ExportData;
 import de.cau.cs.kieler.klighd.IDiagramExporter.ExportDataBuilder;
 import de.cau.cs.kieler.klighd.KlighdOptions;
 import de.cau.cs.kieler.klighd.ViewContext;
-import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
 import edu.umd.cs.piccolo.PRoot;
 
@@ -50,6 +49,8 @@ public class SVGOffscreenRenderer extends AbstractOffscreenRenderer {
     public static final IProperty<String> GENERATOR = new Property<String>(
             "de.cau.cs.kieler.klighd.piccolo.svg.generator",
             GENERATOR_SVG_FREEHEP_EXTENDED);
+    
+    private static final String PLUGIN_ID = "de.cau.cs.kieler.klighd.piccolo";
 
     /**
      * {@inheritDoc}
@@ -85,7 +86,7 @@ public class SVGOffscreenRenderer extends AbstractOffscreenRenderer {
             this.buildUpDiagram(viewContext, camera, properties);
 
         } catch (final RuntimeException e) {
-            return new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID,
+            return new Status(IStatus.ERROR, PLUGIN_ID,
                     BUILDING_UP_FIGURES_FAILURE_MSG, e);
         }
 
@@ -101,7 +102,7 @@ public class SVGOffscreenRenderer extends AbstractOffscreenRenderer {
                     .build();
             return new SVGExporter().export(camera, data);
         } catch (final RuntimeException e) {
-            return new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID,
+            return new Status(IStatus.ERROR, PLUGIN_ID,
                     EXPORT_DIAGRAM_FAILURE_MSG, e);
         }
     }

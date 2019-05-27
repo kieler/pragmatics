@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Control;
 
 import de.cau.cs.kieler.klighd.IDiagramExporter;
-import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.internal.KlighdCanvas;
 
 /**
@@ -35,6 +34,8 @@ public abstract class KlighdCanvasExporter extends AbstractDiagramExporter imple
 
     private static final String INVALID_CONTROL_FAILURE =
             "KLighD diagram export: The SWT Control of type ## is not supported by this &&!";
+    
+    private static final String PLUGIN_ID = "de.cau.cs.kieler.klighd.piccolo";
 
     /**
      * {@inheritDoc}
@@ -50,7 +51,7 @@ public abstract class KlighdCanvasExporter extends AbstractDiagramExporter imple
                     .replace("##", control.getClass().getCanonicalName())
                     .replace("&&", this.getClass().getCanonicalName());
 
-            return new Status(IStatus.WARNING, KlighdPiccoloPlugin.PLUGIN_ID, msg);
+            return new Status(IStatus.WARNING, PLUGIN_ID, msg);
         }
     }
 

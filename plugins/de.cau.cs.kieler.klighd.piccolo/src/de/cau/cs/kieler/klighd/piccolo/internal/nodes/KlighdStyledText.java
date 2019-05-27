@@ -25,7 +25,6 @@ import de.cau.cs.kieler.klighd.KlighdConstants;
 import de.cau.cs.kieler.klighd.krendering.KText;
 import de.cau.cs.kieler.klighd.microlayout.PlacementUtil;
 import de.cau.cs.kieler.klighd.piccolo.KlighdNode;
-import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.KlighdPaintContext;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.RGBGradient;
@@ -74,6 +73,8 @@ public class KlighdStyledText extends KlighdNode.KlighdFigureNode<KText> {
     private RGB strikeoutColor = KlighdConstants.BLACK;
 
     private boolean occludedOnMainDiagram = false;
+    
+    private static final String PLUGIN_ID = "de.cau.cs.kieler.klighd.piccolo";
 
     /**
      * Constructor taking the related {@link KText} view model element.
@@ -242,7 +243,7 @@ public class KlighdStyledText extends KlighdNode.KlighdFigureNode<KText> {
      */
     public void setPenColor(final RGBGradient gradient) {
         StatusManager.getManager().handle(
-                new Status(IStatus.WARNING, KlighdPiccoloPlugin.PLUGIN_ID, TEXT_GRADIENT_MESSAGE),
+                new Status(IStatus.WARNING, PLUGIN_ID, TEXT_GRADIENT_MESSAGE),
                 StatusManager.LOG);
     }
 

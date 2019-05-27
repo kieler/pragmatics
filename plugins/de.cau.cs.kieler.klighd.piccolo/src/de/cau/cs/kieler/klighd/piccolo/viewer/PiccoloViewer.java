@@ -41,7 +41,6 @@ import de.cau.cs.kieler.klighd.internal.ILayoutRecorder;
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties;
 import de.cau.cs.kieler.klighd.kgraph.KGraphElement;
 import de.cau.cs.kieler.klighd.kgraph.KNode;
-import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.internal.KlighdCanvas;
 import de.cau.cs.kieler.klighd.piccolo.internal.controller.DiagramController;
 import de.cau.cs.kieler.klighd.piccolo.internal.events.KlighdActionEventHandler;
@@ -71,6 +70,8 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
 
     /** The identifier of this viewer type as specified in the extension. */
     public static final String ID = "de.cau.cs.kieler.klighd.piccolo.viewer.PiccoloViewer";
+    
+    private static final String PLUGIN_ID = "de.cau.cs.kieler.klighd.piccolo";
 
     /**
      * The required corresponding provider class.<br>
@@ -431,7 +432,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
         final PNode node = getRepresentation(diagramElement);
         if (node == null) {
             StatusManager.getManager().handle(
-                    new Status(IStatus.WARNING, KlighdPiccoloPlugin.PLUGIN_ID, new String(
+                    new Status(IStatus.WARNING, PLUGIN_ID, new String(
                             NO_DIAGRAM_ELEMENT_REPRESENTATION_ERROR_MSG).replace("XX",
                             diagramElement.toString())));
         } else {
@@ -446,7 +447,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
 
             } else {
                 StatusManager.getManager().handle(
-                        new Status(IStatus.WARNING, KlighdPiccoloPlugin.PLUGIN_ID, new String(
+                        new Status(IStatus.WARNING, PLUGIN_ID, new String(
                                 NOT_IN_CURRENT_CLIP_REVEAL_ERROR_MSG).replace("XX",
                                 diagramElement.toString())));
             }
@@ -463,7 +464,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
         final PNode node = getRepresentation(diagramElement);
         if (node == null) {
             StatusManager.getManager().handle(
-                    new Status(IStatus.WARNING, KlighdPiccoloPlugin.PLUGIN_ID, new String(
+                    new Status(IStatus.WARNING, PLUGIN_ID, new String(
                             NO_DIAGRAM_ELEMENT_REPRESENTATION_ERROR_MSG).replace("XX",
                             diagramElement.toString())));
         } else {
@@ -478,7 +479,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
 
             } else {
                 StatusManager.getManager().handle(
-                        new Status(IStatus.WARNING, KlighdPiccoloPlugin.PLUGIN_ID, new String(
+                        new Status(IStatus.WARNING, PLUGIN_ID, new String(
                                 NOT_IN_CURRENT_CLIP_CENTER_ON_ERROR_MSG).replace("XX",
                                 diagramElement.toString())));
             }
@@ -496,7 +497,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
         final PNode node = getRepresentation(diagramElement);
         if (node == null) {
             StatusManager.getManager().handle(
-                    new Status(IStatus.WARNING, KlighdPiccoloPlugin.PLUGIN_ID, new String(
+                    new Status(IStatus.WARNING, PLUGIN_ID, new String(
                             NO_DIAGRAM_ELEMENT_REPRESENTATION_ERROR_MSG).replace("XX",
                             diagramElement.toString())));
         } else {
@@ -517,7 +518,7 @@ public class PiccoloViewer extends AbstractViewer implements ILayoutRecorder,
                 camera.animateViewToTransform(t, duration);
             } else {
                 StatusManager.getManager().handle(
-                        new Status(IStatus.WARNING, KlighdPiccoloPlugin.PLUGIN_ID, new String(
+                        new Status(IStatus.WARNING, PLUGIN_ID, new String(
                                 NOT_IN_CURRENT_CLIP_TO_TOP_LEFT_ERROR_MSG).replace("XX",
                                 diagramElement.toString())));
             }

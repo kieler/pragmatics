@@ -26,7 +26,6 @@ import de.cau.cs.kieler.klighd.IExportBranding;
 import de.cau.cs.kieler.klighd.IExportBranding.Trim;
 import de.cau.cs.kieler.klighd.KlighdDataManager;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
-import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.internal.KlighdCanvas;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdMainCamera;
 import edu.umd.cs.piccolo.util.PBounds;
@@ -43,6 +42,8 @@ import edu.umd.cs.piccolo.util.PBounds;
  * @author chsch
  */
 public class SVGExporter extends KlighdCanvasExporter {
+    
+    private static final String PLUGIN_ID = "de.cau.cs.kieler.klighd.piccolo";
 
     /**
      * {@inheritDoc}
@@ -97,7 +98,7 @@ public class SVGExporter extends KlighdCanvasExporter {
 
         } catch (final IllegalArgumentException e) {
             final String msg = "KLighD SVG export: Failed to load SVG exporter backend.";
-            return new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg, e);
+            return new Status(IStatus.ERROR, PLUGIN_ID, msg, e);
         }
 
         // The global clip setting is required as (in PPaintContext) a default one will be set!
@@ -132,7 +133,7 @@ public class SVGExporter extends KlighdCanvasExporter {
                         + stream.getClass().getCanonicalName() + KlighdPlugin.LINE_SEPARATOR
                         + " the stream instance is " + stream.toString();
             }
-            return new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg, e);
+            return new Status(IStatus.ERROR, PLUGIN_ID, msg, e);
         }
     }
 }

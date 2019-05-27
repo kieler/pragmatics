@@ -11,7 +11,6 @@ Require-Bundle: com.google.guava;bundle-version="10.0.0",
  de.cau.cs.kieler.klighd;bundle-version="0.3.0";visibility:=reexport,
  org.eclipse.elk.core.service;bundle-version="0.1.0",
  de.cau.cs.kieler.klighd.kgraph;bundle-version="0.1.0"
-Bundle-Activator: de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin
 Export-Package: de.cau.cs.kieler.klighd.piccolo,
  de.cau.cs.kieler.klighd.piccolo.export,
  de.cau.cs.kieler.klighd.piccolo.internal;

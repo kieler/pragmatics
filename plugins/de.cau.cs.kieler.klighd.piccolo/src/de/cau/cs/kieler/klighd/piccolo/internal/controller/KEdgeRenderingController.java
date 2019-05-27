@@ -36,7 +36,6 @@ import de.cau.cs.kieler.klighd.krendering.KSpline;
 import de.cau.cs.kieler.klighd.krendering.KStyle;
 import de.cau.cs.kieler.klighd.microlayout.Bounds;
 import de.cau.cs.kieler.klighd.piccolo.IKlighdNode.IKlighdFigureNode;
-import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KCustomConnectionFigureNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KEdgeNode;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.KlighdDisposingLayer;
@@ -66,6 +65,8 @@ import edu.umd.cs.piccolo.util.PPickPath;
  */
 public class KEdgeRenderingController extends AbstractKGERenderingController<KEdge, KEdgeNode> {
 
+    private static final String PLUGIN_ID = "de.cau.cs.kieler.klighd.piccolo";
+    
     /**
      * Constructs a rendering controller for an edge.
      *
@@ -116,7 +117,7 @@ public class KEdgeRenderingController extends AbstractKGERenderingController<KEd
                         + " allowing to set the start, end, and bend points, or 'null' letting KLighD"
                         + " trying to load the class provided by its name.";
                 StatusManager.getManager().handle(
-                        new Status(IStatus.ERROR, KlighdPiccoloPlugin.PLUGIN_ID, msg),
+                        new Status(IStatus.ERROR, PLUGIN_ID, msg),
                         StatusManager.LOG);
                 return null;
             }

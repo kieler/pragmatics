@@ -34,7 +34,6 @@ import com.google.common.collect.Lists;
 import de.cau.cs.kieler.klighd.KlighdPlugin;
 import de.cau.cs.kieler.klighd.krendering.KImage;
 import de.cau.cs.kieler.klighd.piccolo.KlighdNode;
-import de.cau.cs.kieler.klighd.piccolo.KlighdPiccoloPlugin;
 import de.cau.cs.kieler.klighd.piccolo.KlighdSWTGraphics;
 import de.cau.cs.kieler.klighd.piccolo.internal.nodes.NodeDisposeListener.IResourceEmployer;
 import de.cau.cs.kieler.klighd.piccolo.internal.util.KlighdPaintContext;
@@ -74,7 +73,7 @@ public class KlighdImage extends KlighdNode.KlighdFigureNode<KImage> implements 
     private static final long serialVersionUID = 7201328608113593385L;
     
     private static final ImageRegistry IMAGE_REGISTRY = 
-            KlighdPiccoloPlugin.getDefault().getImageRegistry();
+            new ImageRegistry();
     
     // These two fields are to be kept consistent,
     //  i.e. both shall denote the same image.
@@ -253,8 +252,7 @@ public class KlighdImage extends KlighdNode.KlighdFigureNode<KImage> implements 
             try {
                 setImage(bundle.getEntry(path).openStream()).close();
 
-                KlighdPiccoloPlugin.getDefault().getImageRegistry()
-                        .put(imageKey, ImageDescriptor.createFromImageData(imageData));
+                IMAGE_REGISTRY.put(imageKey, ImageDescriptor.createFromImageData(imageData));
                 
             } catch (final Exception e) {
                 final String msg =
