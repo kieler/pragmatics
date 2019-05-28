@@ -18,23 +18,21 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.kgraph.text.grandom.GeneratorOptions
 import de.cau.cs.kieler.kgraph.text.grandom.RandGraph
 import de.cau.cs.kieler.kgraph.text.ui.random.GRandomGraphMaker
+import de.cau.cs.kieler.klighd.kgraph.KNode
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.Random
-import org.eclipse.elk.core.klayoutdata.KShapeLayout
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.PortConstraints
 import org.eclipse.elk.core.options.PortSide
-import org.eclipse.elk.graph.KNode
-import org.eclipse.xtext.junit4.InjectWith
-import org.eclipse.xtext.junit4.XtextRunner
-import org.eclipse.xtext.junit4.util.ParseHelper
+import org.eclipse.xtext.testing.InjectWith
+import org.eclipse.xtext.testing.XtextRunner
+import org.eclipse.xtext.testing.util.ParseHelper
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import static org.hamcrest.CoreMatchers.*
 import static org.junit.Assert.*
-
 
 @RunWith(XtextRunner)
 @InjectWith(GRandomInjectorProvider)
@@ -304,8 +302,8 @@ class GRandomParsingTest {
         ''')
         val generator = new GRandomGraphMaker(rdg)
         val generated = generator.genKNode(rdg.configs.head)
-        assertThat(generated.head.children.head.getData(KShapeLayout).width, is(1.0f))
-        assertThat(generated.head.children.head.getData(KShapeLayout).height, is(1.0f))
+        assertThat(generated.head.children.head.width, is(1.0f))
+        assertThat(generated.head.children.head.height, is(1.0f))
     }
     @Test
     def givenPortSize_Check() {
@@ -324,8 +322,8 @@ class GRandomParsingTest {
         val generator = new GRandomGraphMaker(rdg)
         val generated = generator.genKNode(rdg.configs.head)
         val ports = generated.head.children.filter[!ports.empty].map[ports].flatten
-        assertTrue(ports.forall[it.getData(KShapeLayout).height == 1.0f])
-        assertTrue(ports.forall[it.getData(KShapeLayout).width == 2.0f])
+        assertTrue(ports.forall[it.height == 1.0f])
+        assertTrue(ports.forall[it.width == 2.0f])
     }
 
     @Test
@@ -341,7 +339,7 @@ class GRandomParsingTest {
         ''')
         val generator = new GRandomGraphMaker(rdg)
         val generated = generator.genKNode(rdg.configs.head)
-        val constraint = generated.head.children.head.getData(KShapeLayout).getProperty(CoreOptions.PORT_CONSTRAINTS)
+        val constraint = generated.head.children.head.getProperty(CoreOptions.PORT_CONSTRAINTS)
         assertThat(constraint, is(PortConstraints.FIXED_POS))
     }
 
@@ -365,7 +363,7 @@ class GRandomParsingTest {
         assertTrue(edgeSizes.map[it != edgeSizes.head].any)
         val outgoingEdges = generated.head.children.map[outgoingEdges].map[size]
         assertTrue(outgoingEdges.forall[it <= 10 && it >= 1])
-        val nodeSizes = generated.head.children.map[getData(KShapeLayout).width]
+        val nodeSizes = generated.head.children.map[width]
         assertTrue(nodeSizes.map[it != nodeSizes.head].any)
     }
 
@@ -391,7 +389,7 @@ class GRandomParsingTest {
         val generator = new GRandomGraphMaker(rdg)
         val generated = generator.genKNode(rdg.configs.head)
         val ports = generated.head.children.map[ports].flatten
-        assertTrue(ports.forall[getData(KShapeLayout).getProperty(CoreOptions.PORT_SIDE) == PortSide.EAST])
+        assertTrue(ports.forall[getProperty(CoreOptions.PORT_SIDE) == PortSide.EAST])
     }
 
     @Test

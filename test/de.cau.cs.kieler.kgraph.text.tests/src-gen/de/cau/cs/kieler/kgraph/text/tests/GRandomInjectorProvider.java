@@ -7,10 +7,10 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import de.cau.cs.kieler.kgraph.text.GRandomRuntimeModule;
 import de.cau.cs.kieler.kgraph.text.GRandomStandaloneSetup;
-import org.eclipse.xtext.junit4.GlobalRegistries;
-import org.eclipse.xtext.junit4.GlobalRegistries.GlobalStateMemento;
-import org.eclipse.xtext.junit4.IInjectorProvider;
-import org.eclipse.xtext.junit4.IRegistryConfigurator;
+import org.eclipse.xtext.testing.GlobalRegistries;
+import org.eclipse.xtext.testing.GlobalRegistries.GlobalStateMemento;
+import org.eclipse.xtext.testing.IInjectorProvider;
+import org.eclipse.xtext.testing.IRegistryConfigurator;
 
 public class GRandomInjectorProvider implements IInjectorProvider, IRegistryConfigurator {
 
