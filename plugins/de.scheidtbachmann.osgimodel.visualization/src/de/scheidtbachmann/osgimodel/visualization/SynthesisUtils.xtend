@@ -1,10 +1,13 @@
 package de.scheidtbachmann.osgimodel.visualization
 
 import de.cau.cs.kieler.klighd.IAction.ActionContext
+import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
+import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.OsgiProject
-import de.cau.cs.kieler.klighd.kgraph.KNode
+
+import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
 /**
  * Util class that contains some static methods commonly used for the Osgi synthesis.
@@ -50,5 +53,23 @@ class SynthesisUtils {
             element = kNode.getProperty(KlighdInternalProperties.MODEL_ELEMEMT)
         }
         return element
+    }
+    
+    
+    /**
+     * If the id should be truncated by the prefix 'de.scheidtbachmann', this returns a truncated version of the id,
+     * otherwise the id itself.
+     * 
+     * @param id The id that should possibly be truncated.
+     * @return The possibly truncated id.
+     */
+    def static String getId(ViewContext usedContext, String id) {
+        val prefix = "de.scheidtbachmann."
+        if (usedContext.getOptionValue(SHORTEN_BY_DE_SCHEIDTBACHMANN) as Boolean) {
+            if (id.startsWith(prefix)) {
+                return id.substring(prefix.length)
+            }
+        }
+        return id
     }
 }

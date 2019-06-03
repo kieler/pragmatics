@@ -230,7 +230,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             initiallyCollapse
             val label = switch usedContext.getOptionValue(BUNDLE_TEXT) {
                 case BundleTextType.Id: {
-                    getId(b.uniqueId)
+                    SynthesisUtils.getId(usedContext, b.uniqueId)
                 }
                 case BundleTextType.Name: {
                     b.descriptiveName
@@ -239,23 +239,6 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             setLayoutOption(CoreOptions::PRIORITY, priorityOf(label))
             addBundleInOverviewRendering(b, label)
         ]
-    }
-    
-    /**
-     * If the id should be truncated by the prefix 'de.scheidtbachmann', this returns a truncated version of the id,
-     * otherwise the id itself.
-     * 
-     * @param id The id that should possibly be truncated.
-     * @return The possibly truncated id.
-     */
-    private def String getId(String id) {
-        val prefix = "de.scheidtbachmann."
-        if (usedContext.getOptionValue(SHORTEN_BY_DE_SCHEIDTBACHMANN) as Boolean) {
-            if (id.startsWith(prefix)) {
-                return id.substring(prefix.length)
-            }
-        }
-        return id
     }
     
     /**

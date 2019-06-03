@@ -5,6 +5,7 @@ import de.cau.cs.kieler.klighd.actions.SynthesizingAction
 import de.cau.cs.kieler.klighd.kgraph.KIdentifier
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
+import de.cau.cs.kieler.klighd.krendering.KRendering
 import de.cau.cs.kieler.klighd.krendering.LineStyle
 import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
@@ -12,6 +13,8 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
+
+import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
 /**
  * Reveals and synthesizes the bundles used by any bundle into the KNode surrounding the Bundle node this action
@@ -44,11 +47,26 @@ class RevealUsedByBundlesAction extends SynthesizingAction {
         // The KNode containing the bundle in which the used bundles should be added as well.
         val containingNode = bundleNode.eContainer as KNode
         
-        val bundleNodes = GenericRevealActionUtil.revealElements(bundle.usedByBundle, context, containingNode)
-        bundleNodes.forEach [ usedByBundle |
-            connectUsedByEdge(bundleNode, usedByBundle)
+        val filteredUsedByBundles = bundle.usedByBundle.filter[
+            if (context.viewContext.getOptionValue(FILTER_BY_DE_SCHEIDTBACHMANN) as Boolean) {
+                uniqueId.startsWith("de.scheidtbachmann")
+            } else {
+                true
+            }
+        ].toList
+        
+        val bundleNodes = GenericRevealActionUtil.revealElements(filteredUsedByBundles, context, containingNode)
+        bundleNodes.forEach [ usedByBundleNode |
+            connectUsedByEdge(bundleNode, usedByBundleNode)
         ]
-        if (bundle.usedByBundle.empty) {
+        
+        // Change the background color of the clicked node to indicate that all its children are now shown.
+        clickedPort.data.filter(KRendering).forEach [
+            background = "OliveDrab".color
+            selectionBackground = "OliveDrab".color
+        ]
+        
+        if (filteredUsedByBundles.empty) {
             return ActionResult.createResult(false)
         } else {
             return ActionResult.createResult(true)

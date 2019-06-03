@@ -27,7 +27,7 @@ class OsgiOptions {
     
     /** Option for filtering an overview by only bundles starting with 'de.scheidtbachmann' */
     public static final SynthesisOption FILTER_BY_DE_SCHEIDTBACHMANN = SynthesisOption.createCheckOption(
-        "Filter by IDs starting with 'de.scheidtbachmann", false).setCategory(OVERVIEW)
+        "Filter by IDs starting with 'de.scheidtbachmann", false)
         
     /** Option for limiting the length of descriptive texts. */
     public static final SynthesisOption DESCRIPTION_LENGTH = SynthesisOption.createRangeOption(
