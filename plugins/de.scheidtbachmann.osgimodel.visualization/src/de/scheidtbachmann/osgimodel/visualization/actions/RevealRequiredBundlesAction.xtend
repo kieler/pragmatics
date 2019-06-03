@@ -1,7 +1,6 @@
 package de.scheidtbachmann.osgimodel.visualization.actions
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.klighd.LightDiagramServices
 import de.cau.cs.kieler.klighd.actions.SynthesizingAction
 import de.cau.cs.kieler.klighd.kgraph.KIdentifier
 import de.cau.cs.kieler.klighd.kgraph.KNode
@@ -11,11 +10,8 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
-import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
-import java.util.ArrayList
-import org.eclipse.elk.graph.properties.MapPropertyHolder
 
 /**
  * Reveals and synthesizes the required bundles of any bundle into the KNode surrounding the Bundle node this action
@@ -48,36 +44,9 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
         // The KNode containing the bundle in which the used bundles should be added as well.
         val containingNode = bundleNode.eContainer as KNode
         
-        bundle.requiredBundles.forEach[ requiredBundle |
-            // Only add this bundle to the context if it has not been added before.
-            val oldBundleNode = containingNode.children.findFirst[ alreadySynthesizedNodes |
-//                context.getDomainElement(alreadySynthesizedNodes) === usedByBundle
-                 SynthesisUtils.getDomainElement(context, alreadySynthesizedNodes) === requiredBundle
-            ]
-            if (oldBundleNode === null) {
-                val requiredSynthesis = SynthesisUtils.requiredSynthesis(requiredBundle)
-                val newBundleContainer = LightDiagramServices.translateModel(
-                    requiredBundle,
-                    context.viewContext,
-                    new MapPropertyHolder => [
-                        setProperty(KlighdSynthesisProperties.REQUESTED_DIAGRAM_SYNTHESIS, requiredSynthesis)
-                    ]
-                )
-                val newBundleNodes = new ArrayList<KNode>
-                // The bundle synthesis has an additional surrounding node that should be ignored and thrown away here.
-                newBundleNodes.addAll(newBundleContainer.children.head?.children)
-                newBundleNodes.forEach[ newBundleNode |
-                    // If the new bundle node is in fact the representation of the required bundle, look for its
-                    // used by bundle port and connect an edge to that.
-//                        if (context.getDomainElement(newBundleNode) === requiredBundle) {
-                        connectRequiredEdge(bundleNode, newBundleNode)
-//                        }
-                containingNode.children += newBundleNodes
-                ]
-            } else {
-                // Otherwise, just connect the new edge.
-                connectRequiredEdge(bundleNode, oldBundleNode)
-            }
+        val bundleNodes = GenericRevealActionUtil.revealElements(bundle.requiredBundles, context, containingNode)
+        bundleNodes.forEach [ usedByBundle |
+            connectRequiredEdge(bundleNode, usedByBundle)
         ]
         if (bundle.requiredBundles.empty) {
             return ActionResult.createResult(false)
@@ -93,6 +62,12 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
     def connectRequiredEdge(KNode sourceBundleNode, KNode requiredBundleNode) {
         val sourceBundlePort = sourceBundleNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "requiredBundles" ]
         val targetBundlePort = requiredBundleNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "usedByBundles" ]
+        // Do not add this edge, if it is already there.
+        if (sourceBundlePort.node.outgoingEdges.findFirst[edge |
+                edge.target === targetBundlePort.node
+            ] !== null) {
+            return
+        }
         
         val edge = createEdge(sourceBundleNode, requiredBundleNode) => [
             addPolyline => [
@@ -110,5 +85,4 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
         ]
         sourceBundleNode.outgoingEdges += edge
     }
-    
 }
