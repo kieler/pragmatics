@@ -4,8 +4,7 @@ Bundle-Name: OSGi Model Visualization
 Bundle-SymbolicName: de.scheidtbachmann.osgimodel.visualization;singleton:=true
 Bundle-Version: 0.45.0.qualifier
 Export-Package: de.scheidtbachmann.osgimodel.visualization,
- de.scheidtbachmann.osgimodel.visualization.actions,
- de.scheidtbachmann.osgimodel.visualization.properties
+ de.scheidtbachmann.osgimodel.visualization.actions
 Require-Bundle: de.cau.cs.kieler.klighd;bundle-version="0.45.0",
  de.scheidtbachmann.osgimodel.model;bundle-version="0.1.0",
  de.cau.cs.kieler.klighd.krendering.extensions;bundle-version="0.45.0",
