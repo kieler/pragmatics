@@ -1,3 +1,5 @@
+@GenModel(modelDirectory="de.scheidtbachmann.osgimodel.model/src")
+
 package de.scheidtbachmann.osgimodel
 
 
