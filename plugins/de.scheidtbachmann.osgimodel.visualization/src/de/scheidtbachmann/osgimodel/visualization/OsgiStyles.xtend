@@ -81,7 +81,7 @@ class OsgiStyles {
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
                 invisible = true
-                addSimpleLabel("ID: " + SynthesisUtils.getId(context, b.uniqueId))
+                addSimpleLabel("ID: " + SynthesisUtils.getId(b.uniqueId, context))
             ]
             addRectangle => [
                 invisible = true

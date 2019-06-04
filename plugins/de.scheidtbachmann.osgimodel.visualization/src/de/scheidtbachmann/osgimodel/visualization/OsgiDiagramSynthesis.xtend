@@ -207,11 +207,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
         return createNode => [
             configureOverviewLayout
             addOverviewRendering("Bundles")
-            val filteredBundles = if (usedContext.getOptionValue(FILTER_BY_DE_SCHEIDTBACHMANN) as Boolean) {
-                bundles.filter[ it.uniqueId.startsWith("de.scheidtbachmann") ]
-            } else {
-                bundles
-            }
+            val filteredBundles = SynthesisUtils.filteredBundles(bundles, usedContext)
             children += filteredBundles.map[ transform ]
             initiallyCollapse
         ]
@@ -230,7 +226,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             initiallyCollapse
             val label = switch usedContext.getOptionValue(BUNDLE_TEXT) {
                 case BundleTextType.Id: {
-                    SynthesisUtils.getId(usedContext, b.uniqueId)
+                    SynthesisUtils.getId(b.uniqueId, usedContext)
                 }
                 case BundleTextType.Name: {
                     b.descriptiveName

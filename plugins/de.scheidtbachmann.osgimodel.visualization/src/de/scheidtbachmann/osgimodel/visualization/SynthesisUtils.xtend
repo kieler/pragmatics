@@ -6,6 +6,7 @@ import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.OsgiProject
+import java.util.List
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
@@ -14,7 +15,12 @@ import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
  * 
  * @author nre
  */
-class SynthesisUtils {
+final class SynthesisUtils {
+    /**
+     * Utils class can not be instanciated.
+     */
+     private new() {}
+    
     /**
      * Returns the identifying string for the synthesis used by any supported object of the Osgi model.
      */
@@ -63,7 +69,7 @@ class SynthesisUtils {
      * @param id The id that should possibly be truncated.
      * @return The possibly truncated id.
      */
-    def static String getId(ViewContext usedContext, String id) {
+    def static String getId(String id, ViewContext usedContext) {
         val prefix = "de.scheidtbachmann."
         if (usedContext.getOptionValue(SHORTEN_BY_DE_SCHEIDTBACHMANN) as Boolean) {
             if (id.startsWith(prefix)) {
@@ -72,4 +78,21 @@ class SynthesisUtils {
         }
         return id
     }
+    
+    /**
+     * Filters the list of given bundles by the filter options of the diagram options.
+     * 
+     * @param bundles The unfiltered list of all bundles.
+     * @param usedContext The ViewContext used to display the diagram these bundles are shown in.
+     * @return An Iterable of the bundles filtered by the diagram options.
+     */
+    def static Iterable<Bundle> filteredBundles(List<Bundle> bundles, ViewContext usedContext) {
+        val prefix = "de.scheidtbachmann"
+        if (usedContext.getOptionValue(FILTER_BY_DE_SCHEIDTBACHMANN) as Boolean) {
+            bundles.filter[ it.uniqueId.startsWith(prefix) ]
+        } else {
+            bundles
+        }
+    }
+    
 }

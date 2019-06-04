@@ -47,13 +47,7 @@ class RevealUsedByBundlesAction extends SynthesizingAction {
         // The KNode containing the bundle in which the used bundles should be added as well.
         val containingNode = bundleNode.eContainer as KNode
         
-        val filteredUsedByBundles = bundle.usedByBundle.filter[
-            if (context.viewContext.getOptionValue(FILTER_BY_DE_SCHEIDTBACHMANN) as Boolean) {
-                uniqueId.startsWith("de.scheidtbachmann")
-            } else {
-                true
-            }
-        ].toList
+        val filteredUsedByBundles = SynthesisUtils.filteredBundles(bundle.usedByBundle, context.viewContext).toList
         
         val bundleNodes = GenericRevealActionUtil.revealElements(filteredUsedByBundles, context, containingNode)
         bundleNodes.forEach [ usedByBundleNode |
