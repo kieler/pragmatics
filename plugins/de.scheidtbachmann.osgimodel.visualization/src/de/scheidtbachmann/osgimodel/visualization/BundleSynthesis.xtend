@@ -57,25 +57,27 @@ class BundleSynthesis extends AbstractDiagramSynthesis<Bundle> {
                     
                     // The ports that show the connection to the usedBy / required bundles with actions to add them to
                     // the view.
-                    if (!b.usedByBundle.empty) {
+                    val filteredUsedByBundles = SynthesisUtils.filteredBundles(b.usedByBundle, usedContext)
+                    if (!filteredUsedByBundles.empty) {
                         ports += createPort(b, "usedByBundles") => [
                             associateWith(b)
                             // Identifier helps for connecting to this port later.
                             data += createKIdentifier => [ it.id = 'usedByBundles' ]
                             // Used by bundles are always shown and expanded to the west against the drawing direction.
                             addLayoutParam(CoreOptions::PORT_SIDE, PortSide::WEST)
-                            addUsedByBundlesPortRendering
+                            addUsedByBundlesPortRendering(filteredUsedByBundles.size)
                             width = 12
                             height = 12
                         ]
                     }
-                    if (!b.requiredBundles.empty) {
+                    val filteredRequiredBundles = SynthesisUtils.filteredBundles(b.requiredBundles, usedContext)
+                    if (!filteredRequiredBundles.empty) {
                         ports += createPort(b, "requiredBundles") => [
                             associateWith(b)
                             data += createKIdentifier => [ it.id = 'requiredBundles' ]
                             // Required bundles are always shown and expanded to the east with the drawing direction.
                             addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
-                            addRequiredBundlesPortRendering
+                            addRequiredBundlesPortRendering(filteredRequiredBundles.size)
                             width = 12
                             height = 12
                         ]
