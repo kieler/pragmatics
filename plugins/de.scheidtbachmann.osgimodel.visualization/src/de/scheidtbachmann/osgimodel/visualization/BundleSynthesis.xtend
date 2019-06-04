@@ -62,7 +62,7 @@ class BundleSynthesis extends AbstractDiagramSynthesis<Bundle> {
                         ports += createPort(b, "usedByBundles") => [
                             associateWith(b)
                             // Identifier helps for connecting to this port later.
-                            data += createKIdentifier => [ it.id = 'usedByBundles' ]
+                            data += createKIdentifier => [ it.id = "usedByBundles" ]
                             // Used by bundles are always shown and expanded to the west against the drawing direction.
                             addLayoutParam(CoreOptions::PORT_SIDE, PortSide::WEST)
                             addUsedByBundlesPortRendering(filteredUsedByBundles.size)
@@ -74,7 +74,7 @@ class BundleSynthesis extends AbstractDiagramSynthesis<Bundle> {
                     if (!filteredRequiredBundles.empty) {
                         ports += createPort(b, "requiredBundles") => [
                             associateWith(b)
-                            data += createKIdentifier => [ it.id = 'requiredBundles' ]
+                            data += createKIdentifier => [ it.id = "requiredBundles" ]
                             // Required bundles are always shown and expanded to the east with the drawing direction.
                             addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
                             addRequiredBundlesPortRendering(filteredRequiredBundles.size)

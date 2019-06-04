@@ -3,6 +3,7 @@ package de.scheidtbachmann.osgimodel.visualization.actions
 import de.cau.cs.kieler.klighd.IAction.ActionContext
 import de.cau.cs.kieler.klighd.LightDiagramServices
 import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import java.util.ArrayList
@@ -58,6 +59,41 @@ final class GenericRevealActionUtil {
         ]
         
         return revealedElements
+    }
+    
+    /**
+     * Determines whether all KNode representations of the given {@code elements} are contained within the
+     * {@code containingNode} and, if they exist, if they are connected to the {@code sourceTargetNode} via an edge.
+     * 
+     * @param elements The list of elements that should be checked.
+     * @param sourceTargetNode The node for that should be checked, if all element representations are connected to it.
+     * @param isSource If the {@code sourceTargetNode} should be checked if it is the source or the target in the
+     * potential connection.
+     * @param context The action context of the triggered action.
+     * @param containingNode The parent KNode in which the connection status should be checked.
+     */
+    def static boolean allConnected(List<? extends Object> elements, KNode sourceTargetNode, boolean isSource, 
+        ActionContext context, KNode containingNode) {
+        // The KNodes represented by the elements. May contain nulls for elements not represented in the containingNode.
+        val List<KNode> elementNodes = elements.map[ element |
+            containingNode.children.findFirst [childNode | 
+                SynthesisUtils.getDomainElement(context, childNode) === element
+            ]
+        ]
+        // If any element does not have a representation yet, not all elements are connected.
+        if (elementNodes.contains(null)) {
+            return false
+        }
+        
+        // If all elements are represented and there are no unconnected nodes, then all nodes are connected.
+        val allConnected = elementNodes.findFirst[ node |
+            if (isSource) {
+                !KGraphUtil.hasEdge(sourceTargetNode, node)
+            } else {
+                !KGraphUtil.hasEdge(node, sourceTargetNode)
+            }
+        ] === null
+        return allConnected
     }
     
 }
