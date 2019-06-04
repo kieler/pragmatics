@@ -87,7 +87,7 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
         } else {
             val bundleNodes = GenericRevealActionUtil.revealElements(filteredRequiredBundles, context, containingNode)
             bundleNodes.forEach [ requiredBundleNode |
-                connectRequiredEdge(bundleNode, requiredBundleNode)
+                connectRequiredEdge(bundleNode, requiredBundleNode, context)
             ]
             
             // Change the background color of the clicked node to indicate that all its children are now shown.
@@ -108,7 +108,7 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
      * Connects the {@code sourceBundleNode} and the {@code requiredBundleNode} via an arrow in UML style, so
      * [sourceBundleNode] ----- uses -----> [requiredBundleNode]
      */
-    def connectRequiredEdge(KNode sourceBundleNode, KNode requiredBundleNode) {
+    def connectRequiredEdge(KNode sourceBundleNode, KNode requiredBundleNode, ActionContext context) {
         val sourceBundlePort = sourceBundleNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "requiredBundles" ]
         val targetBundlePort = requiredBundleNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "usedByBundles" ]
         // Do not add this edge, if it is already there.
@@ -133,5 +133,15 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
             target = requiredBundleNode
         ]
         sourceBundleNode.outgoingEdges += edge
+        
+        val requiredBundle = SynthesisUtils.getDomainElement(context, requiredBundleNode) as Bundle
+        val filteredUsedByBundles = SynthesisUtils.filteredBundles(requiredBundle.usedByBundle, context.viewContext).toList
+        if (GenericRevealActionUtil.allConnected(filteredUsedByBundles, requiredBundleNode, false, context,
+            sourceBundleNode.parent)) {
+            targetBundlePort.data.filter(KRendering).forEach [
+                background = "OliveDrab".color
+                selectionBackground = "OliveDrab".color
+            ]
+        }
     }
 }

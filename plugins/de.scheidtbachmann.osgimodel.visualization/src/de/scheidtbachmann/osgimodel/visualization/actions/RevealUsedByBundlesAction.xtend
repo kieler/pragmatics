@@ -87,11 +87,11 @@ class RevealUsedByBundlesAction extends SynthesizingAction {
         } else {
             val bundleNodes = GenericRevealActionUtil.revealElements(filteredUsedByBundles, context, containingNode)
             bundleNodes.forEach [ usedByBundleNode |
-                connectUsedByEdge(bundleNode, usedByBundleNode)
+                connectUsedByEdge(bundleNode, usedByBundleNode, context)
             ]
             
             // Change the background color of the clicked node to indicate that all its children are now shown.
-            clickedPort.data.filter(KRendering).forEach [
+            clickedPort.data.filter(KRendering).forEach [ // TODO: make this generic.
                 background = "OliveDrab".color
                 selectionBackground = "OliveDrab".color
             ]
@@ -108,7 +108,7 @@ class RevealUsedByBundlesAction extends SynthesizingAction {
      * Connects the {@code sourceBundleNode} and the {@code usedByBundleNode} via an arrow in UML style, so
      * [usedByBundleNode] ----- uses -----> [sourceBundleNode]
      */
-    def connectUsedByEdge(KNode sourceBundleNode, KNode usedByBundleNode) {
+    def connectUsedByEdge(KNode sourceBundleNode, KNode usedByBundleNode, ActionContext context) {
         val sourceBundlePort = usedByBundleNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "requiredBundles" ]
         val targetBundlePort = sourceBundleNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "usedByBundles" ]
         // Do not add this edge, if it is already there.
@@ -133,5 +133,15 @@ class RevealUsedByBundlesAction extends SynthesizingAction {
             target = sourceBundleNode
         ]
         usedByBundleNode.outgoingEdges += edge
+        
+        val usedByBundle = SynthesisUtils.getDomainElement(context, usedByBundleNode) as Bundle
+        val filteredRequiredBundles = SynthesisUtils.filteredBundles(usedByBundle.requiredBundles, context.viewContext).toList
+        if (GenericRevealActionUtil.allConnected(filteredRequiredBundles, usedByBundleNode, true, context,
+            sourceBundleNode.parent)) {
+            sourceBundlePort.data.filter(KRendering).forEach [
+                background = "OliveDrab".color
+                selectionBackground = "OliveDrab".color
+            ]
+        }
     }
 }
