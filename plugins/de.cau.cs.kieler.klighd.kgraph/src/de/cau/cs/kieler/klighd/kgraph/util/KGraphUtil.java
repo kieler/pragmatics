@@ -13,6 +13,7 @@
 package de.cau.cs.kieler.klighd.kgraph.util;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.elk.core.math.KVector;
@@ -37,6 +38,7 @@ import org.eclipse.emf.ecore.util.EContentsEList.FeatureIteratorImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -769,6 +771,71 @@ public final class KGraphUtil {
      */
     public static boolean isSibling(final KNode node1, final KNode node2) {
         return node1.getParent() == node2.getParent() && node1.getParent() != null;
+    }
+    
+    /**
+     * Determines whether an edge from the {@code sourceNode} to the {@code targetNode} exists, or, in other words,
+     * if the {@code targetNode} is the target of the {@code sourceNode}.
+     * @param sourceNode The source Node.
+     * @param targetNode The potential target Node.
+     * @return {@code true} if an edge from the {@code sourceNode} to the {@code targetNode} exists.
+     */
+    public static boolean hasEdge(final KNode sourceNode, final KNode targetNode) {
+        for (KEdge edge : sourceNode.getOutgoingEdges()) {
+            if (edge.getTarget() == targetNode) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Removes the given element from its KGraph.
+     * This means that any reference to this element from other elements in the graph will be removed. If you are
+     * iterating over a list of elements to remove, this will not work because the given list itself may be modified
+     * and therefore the list containing this element may issue a ConcurrentModificationException when accessing the
+     * next element.
+     * Use a copy of the list when calling this method for multiple elements.
+     * 
+     * @param element The element to remove.
+     */
+    public static void removeElement(final KGraphElement element) {
+        // First, remove all labels of this element.
+        if (element instanceof KLabeledGraphElement) {
+            KLabeledGraphElement labeled = (KLabeledGraphElement) element;
+            List<KLabel> labels = ImmutableList.copyOf(labeled.getLabels());
+            labels.forEach(label -> {
+                removeElement(label);
+            });
+            
+            if (labeled instanceof KEdge) {
+                KEdge edge = (KEdge) labeled;
+                edge.setSource(null);
+                edge.setTarget(null);
+                edge.setSourcePort(null);
+                edge.setTargetPort(null);
+            } else if (labeled instanceof KNode) {
+                KNode node = (KNode) labeled;
+                List<KEdge> outgoingEdges = ImmutableList.copyOf(node.getOutgoingEdges());
+                List<KEdge> incomingEdges = ImmutableList.copyOf(node.getIncomingEdges());
+                List<KPort> ports = ImmutableList.copyOf(node.getPorts());
+                Iterators.concat(outgoingEdges.iterator(), incomingEdges.iterator(), ports.iterator())
+                    .forEachRemaining(reference -> {
+                        removeElement(reference);
+                    });
+                node.setParent(null);
+            } else if (labeled instanceof KPort) {
+                KPort port = (KPort) labeled;
+                List<KEdge> edges = ImmutableList.copyOf(port.getEdges());
+                edges.forEach(edge -> {
+                    removeElement(edge);
+                });
+                port.setNode(null);
+            }
+        } else if (element instanceof KLabel) {
+            KLabel label = (KLabel) element;
+            label.setParent(null);
+        }
     }
 
 }
