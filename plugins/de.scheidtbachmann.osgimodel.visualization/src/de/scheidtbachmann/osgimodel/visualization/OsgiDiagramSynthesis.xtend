@@ -5,15 +5,8 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.DisplayedActionData
 import de.cau.cs.kieler.klighd.LightDiagramServices
 import de.cau.cs.kieler.klighd.kgraph.KNode
-import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
 import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
-import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
-import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
-import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
-import de.cau.cs.kieler.klighd.krendering.extensions.KLabelExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
-import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
-import de.cau.cs.kieler.klighd.krendering.extensions.KPortExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
@@ -45,15 +38,8 @@ import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 @ViewSynthesisShared
 class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     @Inject extension KNodeExtensions
-    @Inject extension KEdgeExtensions
-    @Inject extension KPortExtensions
-    @Inject extension KLabelExtensions
-    @Inject extension KContainerRenderingExtensions
     @Inject extension KRenderingExtensions
-    @Inject extension KPolylineExtensions
-    @Inject extension KColorExtensions
     @Inject extension OsgiStyles
-    extension KRenderingFactory = KRenderingFactory.eINSTANCE
     
     
     override getInputDataType() {
@@ -166,7 +152,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             associateWith(p)
             initiallyCollapse
             val label = p.descriptiveName
-            setLayoutOption(CoreOptions::PRIORITY, priorityOf(label))
+            setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
             addProductInOverviewRendering(p, label)
         ]
     }
@@ -235,38 +221,9 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
                     b.descriptiveName
                 }
             } ?: ""
-            setLayoutOption(CoreOptions::PRIORITY, priorityOf(label))
+            setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
             addBundleInOverviewRendering(b, label)
         ]
-    }
-    
-    /**
-     * Turns any string into an int roughly matching its alphabetical ordering.
-     * It does that by taking the first 6 alphabetical characters as lowercase characters and maps them to ascending
-     * numbers based on those first characters.
-     * 
-     * @param label The string that should be converted.
-     * @return A number for the string that is higher for lexicographic earlier strings and lower for later elements.
-     */
-    private def int priorityOf(String label) {
-        // Take the first 6 alphabetical chars as lowercase chars to limit them to one of 26 values each.
-        // 6 chars are taken, because 26^6 < 2^32 < 26^7, so 6 chars is the limit of what can be represented as a unique
-        // orderable int, which can take 2^32 different values.
-        val alphabeticalChars = label.chars.filter [
-            Character.isAlphabetic(it)
-        ].map [
-            Character.toLowerCase(it)
-        ].limit(6).toArray.toList
-        val numChars = alphabeticalChars.size
-        
-        // Convert the remaining string into a number as if the string would be a base-26 number with 'a' as the lowest
-        // and 'z' as the highest digit for that number. 
-        val number = alphabeticalChars.fold(0, [ prevValue, nextChar |
-            return prevValue * 26 + nextChar - 'a' + 1
-        ])
-        // Always have the *26 happen 6 times, so do the remaining ones here if the fold exited earlier.
-        // Also return the negative value to have the ordering going a->z and not z->a.
-        return -number * Math.toIntExact(Math.round(Math.pow(26, 6 - numChars)))
     }
     
     /**

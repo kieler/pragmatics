@@ -196,11 +196,10 @@ class OsgiStyles {
             setBackgroundGradient("sienna1".color, "sienna2".color, 90)
             setGridPlacement(1)
             addRectangle => [
-                setGridPlacement(3)
+                setGridPlacement(2)
                 invisible = true
                 addSimpleLabel(p.descriptiveName)
                 addButton("Focus", FocusAction::ID)
-                addButton("X", CloseAction::ID)
             ]
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
@@ -211,7 +210,7 @@ class OsgiStyles {
                 invisible = true
                 addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(p.about, context))
             ]
-            setShadow("black".color, 4, 4)
+            addHorizontalSeperatorLine(1, 0)
             addRectangle => [
                 setGridPlacementData => [
                     minCellHeight = 20
@@ -220,6 +219,7 @@ class OsgiStyles {
                 invisible = true
                 addChildArea
             ]
+            setShadow("black".color, 4, 4)
         ]
     }
     
@@ -285,14 +285,6 @@ class OsgiStyles {
                 addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(b.about, context))
             ]
             setShadow("black".color, 4, 4)
-            addRectangle => [
-                setGridPlacementData => [
-                    minCellHeight = 20
-                    minCellWidth = 20
-                ]
-                invisible = true
-                addChildArea
-            ]
         ]
     }
     
