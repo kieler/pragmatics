@@ -42,6 +42,10 @@
             class="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAction">
       </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.CloseAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.CloseAction">
+      </action>
    </extension>
 
 </plugin>

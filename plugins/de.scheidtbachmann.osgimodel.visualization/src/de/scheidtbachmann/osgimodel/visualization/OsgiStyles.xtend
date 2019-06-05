@@ -19,6 +19,7 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.Product
+import de.scheidtbachmann.osgimodel.visualization.actions.CloseAction
 import de.scheidtbachmann.osgimodel.visualization.actions.FocusAction
 import de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
@@ -73,10 +74,11 @@ class OsgiStyles {
             setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
             setGridPlacement(1)
             addRectangle => [
-                setGridPlacement(2)
+                setGridPlacement(3)
                 invisible = true
                 addSimpleLabel(b.descriptiveName)
                 addButton("Focus", FocusAction::ID)
+                addButton("X", CloseAction::ID)
             ]
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [

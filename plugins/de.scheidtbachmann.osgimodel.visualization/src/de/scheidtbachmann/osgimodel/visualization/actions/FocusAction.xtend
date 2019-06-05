@@ -19,7 +19,7 @@ class FocusAction implements IAction {
     public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.FocusAction"
     
     override execute(ActionContext context) {
-        // The Bundle element itself that was clicked on.
+        // The element itself that was clicked on.
         val element = SynthesisUtils.getDomainElement(context)
 //        val element = context.getDomainElement(context.KNode)
         

@@ -790,12 +790,14 @@ public final class KGraphUtil {
     }
     
     /**
-     * Removes the given element from its KGraph.
+     * Removes the given element from its KGraph. Also removes any ports, labels or edges that would be unconnected
+     * after removing this element.
      * This means that any reference to this element from other elements in the graph will be removed. If you are
      * iterating over a list of elements to remove, this will not work because the given list itself may be modified
      * and therefore the list containing this element may issue a ConcurrentModificationException when accessing the
      * next element.
-     * Use a copy of the list when calling this method for multiple elements.
+     * Use a copy of the list when calling this method for multiple elements (for example
+     * {@link ImmutableList#copyOf(java.util.Collection)}).
      * 
      * @param element The element to remove.
      */
