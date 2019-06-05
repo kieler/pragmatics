@@ -6,13 +6,9 @@ import de.cau.cs.kieler.klighd.kgraph.KIdentifier
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
-import de.cau.cs.kieler.klighd.krendering.KRendering
-import de.cau.cs.kieler.klighd.krendering.LineStyle
-import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
-import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
-import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.scheidtbachmann.osgimodel.Bundle
+import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 
 /**
@@ -22,10 +18,8 @@ import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
  * If all required bundles are already shown, this action reverses its functionality and removes all bundles again.
  */
 class RevealRequiredBundlesAction extends SynthesizingAction {
-    @Inject extension KColorExtensions
     @Inject extension KEdgeExtensions
-    @Inject extension KPolylineExtensions
-    @Inject extension KRenderingExtensions
+    @Inject extension OsgiStyles
     
     /**
      * This action's ID.
@@ -71,19 +65,13 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
                         it.data.filter(KIdentifier)?.head?.id === "usedByBundles"
                     ]
                     if (connectedPort !== null) {
-                        connectedPort.data.filter(KRendering).forEach [
-                            background = "gray".color
-                            selectionBackground = "gray".color
-                        ]
+                        connectedPort.unHighlightAllShown
                     }
                 }
             ]
             // Revert the background color of the clicked node to indicate that not all of its children are shown
             // anymore.
-            clickedPort.data.filter(KRendering).forEach [
-                background = "gray".color
-                selectionBackground = "gray".color
-            ]
+            clickedPort.unHighlightAllShown
         } else {
             val bundleNodes = GenericRevealActionUtil.revealElements(filteredRequiredBundles, context, containingNode)
             bundleNodes.forEach [ requiredBundleNode |
@@ -91,10 +79,7 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
             ]
             
             // Change the background color of the clicked node to indicate that all its children are now shown.
-            clickedPort.data.filter(KRendering).forEach [
-                background = "OliveDrab".color
-                selectionBackground = "OliveDrab".color
-            ]
+            clickedPort.highlightAllShown
         }
         
         if (filteredRequiredBundles.empty) {
@@ -119,14 +104,7 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
         }
         
         val edge = createEdge(sourceBundleNode, requiredBundleNode) => [
-            addPolyline => [
-                addHeadArrowDecorator => [
-                    lineWidth = 1
-                    background = "black".color
-                    foreground = "black".color
-                ]
-                lineStyle = LineStyle.DASH
-            ]
+            addRequiredBundleEdgeRendering
             sourcePort = sourceBundlePort
             targetPort = targetBundlePort
             source = sourceBundleNode
@@ -138,10 +116,7 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
         val filteredUsedByBundles = SynthesisUtils.filteredBundles(requiredBundle.usedByBundle, context.viewContext).toList
         if (GenericRevealActionUtil.allConnected(filteredUsedByBundles, requiredBundleNode, false, context,
             sourceBundleNode.parent)) {
-            targetBundlePort.data.filter(KRendering).forEach [
-                background = "OliveDrab".color
-                selectionBackground = "OliveDrab".color
-            ]
+            targetBundlePort.highlightAllShown
         }
     }
 }

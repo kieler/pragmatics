@@ -4,13 +4,15 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.KlighdConstants
 import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.actions.CollapseExpandAction
+import de.cau.cs.kieler.klighd.kgraph.KEdge
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.KPort
 import de.cau.cs.kieler.klighd.krendering.KContainerRendering
 import de.cau.cs.kieler.klighd.krendering.KRectangle
-import de.cau.cs.kieler.klighd.krendering.KRenderingFactory
+import de.cau.cs.kieler.klighd.krendering.KRendering
 import de.cau.cs.kieler.klighd.krendering.KRoundedRectangle
 import de.cau.cs.kieler.klighd.krendering.KText
+import de.cau.cs.kieler.klighd.krendering.LineStyle
 import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
@@ -42,7 +44,6 @@ class OsgiStyles {
     @Inject extension KEdgeExtensions
     @Inject extension KPolylineExtensions
     @Inject extension KRenderingExtensions
-    extension KRenderingFactory = KRenderingFactory.eINSTANCE
     
     /** The roundness of visualized rounded rectangles. */
     val ROUNDNESS = 4
@@ -234,6 +235,42 @@ class OsgiStyles {
             val tooltipText = "Show required bundles (" + numReqBundles + " total)."
             tooltip = tooltipText
             addSingleClickAction(RevealRequiredBundlesAction::ID)
+        ]
+    }
+    
+    /**
+     * Highlight the port that all bundles that should be connected to this port are in displayed.
+     * @param port The port that should be highlighted.
+     */
+    def void highlightAllShown(KPort port) {
+        port.data.filter(KRendering).forEach [
+            background = "OliveDrab".color // A quite nice greenish color.
+            selectionBackground = "OliveDrab".color
+        ]
+    }
+    
+    /**
+     * Remove the highlighting color that showed that all bundles that should be connected to this port were displayed.
+     * @param port The port that should get its original look.
+     */
+    def void unHighlightAllShown(KPort port) {
+        port.data.filter(KRendering).forEach [
+            background = "gray".color
+            selectionBackground = "gray".color
+        ]
+    }
+    
+    /**
+     * Adds the rendering for an edge showing a bundle requirement.
+     */
+    def addRequiredBundleEdgeRendering(KEdge edge) {
+        edge.addPolyline => [
+            addHeadArrowDecorator => [
+                lineWidth = 1
+                background = "black".color
+                foreground = "black".color
+            ]
+            lineStyle = LineStyle.DASH
         ]
     }
     
