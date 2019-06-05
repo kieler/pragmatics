@@ -164,7 +164,10 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     def KNode transform(Product p) {
         return p.createNode() => [
             associateWith(p)
-            addProductRendering(p.descriptiveName)
+            initiallyCollapse
+            val label = p.descriptiveName
+            setLayoutOption(CoreOptions::PRIORITY, priorityOf(label))
+            addProductInOverviewRendering(p, label)
         ]
     }
     
@@ -193,7 +196,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     def KNode transform(Feature f) {
         return f.createNode() => [
             associateWith(f)
-            addProductRendering(f.descriptiveName)
+            addGenericRendering(f.descriptiveName)
         ]
     }
     
@@ -291,7 +294,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     def KNode transform(ServiceInterface s) {
         return s.createNode() => [
             associateWith(s)
-            addProductRendering(s.name)
+            addGenericRendering(s.name)
         ]
     }
     
@@ -320,7 +323,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     def KNode transform(PackageObject p) {
         return p.createNode() => [
             associateWith(p)
-            addProductRendering(p.uniqueId)
+            addGenericRendering(p.uniqueId)
         ]
     }
     
@@ -349,7 +352,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     def KNode transform(BundleCategory b) {
         return b.createNode() => [
             associateWith(b)
-            addProductRendering(b.categoryName)
+            addGenericRendering(b.categoryName)
         ]
     }
     

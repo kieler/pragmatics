@@ -15,6 +15,10 @@
             class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.scheidtbachmann.osgimodel.visualization.BundleSynthesis"
             id="de.scheidtbachmann.osgimodel.visualization.BundleSynthesis">
       </diagramSynthesis>
+      <diagramSynthesis
+            class="de.cau.cs.kieler.klighd.syntheses.GuiceBasedSynthesisFactory:de.scheidtbachmann.osgimodel.visualization.ProductSynthesis"
+            id="de.scheidtbachmann.osgimodel.visualization.ProductSynthesis">
+      </diagramSynthesis>
    </extension>
    <extension
          point="de.cau.cs.kieler.klighd.extensions">

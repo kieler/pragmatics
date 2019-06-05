@@ -27,8 +27,6 @@ import de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExp
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
 
-import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
-
 import static extension de.cau.cs.kieler.klighd.microlayout.PlacementUtil.*
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 
@@ -48,101 +46,16 @@ class OsgiStyles {
     /** The roundness of visualized rounded rectangles. */
     val ROUNDNESS = 4
     
+    // ------------------------------------- Generic renderings -------------------------------------
+    
     /**
-     * Adds a simple rendering for a {@link Product} to the given node.
+     * Adds a simple rendering for any named OSGi element to the given node.
      */
-    def KRoundedRectangle addProductRendering(KNode node, String name) {
+    def KRoundedRectangle addGenericRendering(KNode node, String name) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
             setShadow("black".color, 4, 4)
             addSimpleLabel(name)
             // Styles of the surrounding rectangle
-        ]
-    }
-    
-    /**
-     * Adds a rendering for a {@link Bundle} to the given node.
-     * Contains The name of the bundle, a button to focus this bundle and text for the ID and description of this bundle.
-     * 
-     * @param node The KNode this rendering should be attached to.
-     * @param b The bundle this rendering represents.
-     * @param context The view context used in the synthesis.
-     * 
-     * @return The entire rendering for a bundle.
-     */
-    def KRoundedRectangle addBundleRendering(KNode node, Bundle b, ViewContext context) {
-        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
-            setGridPlacement(1)
-            addRectangle => [
-                setGridPlacement(3)
-                invisible = true
-                addSimpleLabel(b.descriptiveName)
-                addButton("Focus", FocusAction::ID)
-                addButton("X", CloseAction::ID)
-            ]
-            addHorizontalSeperatorLine(1, 0)
-            addRectangle => [
-                invisible = true
-                addSimpleLabel("ID: " + SynthesisUtils.getId(b.uniqueId, context))
-            ]
-            addRectangle => [
-                invisible = true
-                addSimpleLabel("Description: " + descriptionLabel(b, context))
-            ]
-            setShadow("black".color, 4, 4)
-            addRectangle => [
-                setGridPlacementData => [
-                    minCellHeight = 20
-                    minCellWidth = 20
-                ]
-                invisible = true
-                addChildArea
-            ]
-        ]
-    }
-    
-    /**
-     * Returns the descriptive text of a bundle shortened by the {@link OsgiOptions#DESCRIPTION_LENGTH} option.
-     */
-    private def String descriptionLabel(Bundle b, ViewContext context) {
-        val descriptionLabel = b.about
-        val threshold = context.getOptionValue(DESCRIPTION_LENGTH) as Number
-        if (descriptionLabel === null) {
-            return ""
-        }
-        if (descriptionLabel.length <= threshold.intValue) {
-            return descriptionLabel
-        }
-        return descriptionLabel.substring(0, threshold.intValue) + " ..."
-    }
-    
-    /**
-     * Adds a simple rendering for a {@link Bundle} to the given node that can be expanded to call the
-     * {link ReferencedSynthesisExpandAction} to dynamically call the bundle synthesis for the given bundle.
-     */
-    def addBundleInOverviewRendering(KNode node, Bundle b, String label) {
-        // Expanded
-        node.addRectangle => [
-            setAsExpandedView
-            invisible = true
-            addChildArea
-            addButton("-", ReferencedSynthesisExpandAction::ID)
-        ]
-        
-        // Collapsed
-        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setAsCollapsedView
-            setGridPlacement(2)
-            addSimpleLabel(label)
-            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
-            addButton("+", ReferencedSynthesisExpandAction::ID)
-            setShadow("black".color, 4, 4)
-            tooltip = b.uniqueId
-            setPointPlacementData => [
-                minHeight = 20
-                minWidth = 20
-            ]
         ]
     }
     
@@ -213,6 +126,177 @@ class OsgiStyles {
     }
     
     /**
+     * Highlight the port that all elements that should be connected to this port are in displayed.
+     * @param port The port that should be highlighted.
+     */
+    def void highlightAllShown(KPort port) {
+        port.data.filter(KRendering).forEach [
+            background = "OliveDrab".color // A quite nice greenish color.
+            selectionBackground = "OliveDrab".color
+        ]
+    }
+    
+    /**
+     * Remove the highlighting color that showed that all elements that should be connected to this port were displayed.
+     * @param port The port that should get its original look.
+     */
+    def void unHighlightAllShown(KPort port) {
+        port.data.filter(KRendering).forEach [
+            background = "gray".color
+            selectionBackground = "gray".color
+        ]
+    }
+    
+    /**
+     * Adds a simple text label to any rendering with some surrounding space for better readability.
+     */
+    def KText addSimpleLabel(KContainerRendering rendering, String text) {
+        rendering.addText(text) => [
+            // Add surrounding space
+            setGridPlacementData().from(LEFT, 10, 0, TOP, 8, 0).to(RIGHT, 10, 0, BOTTOM, 8, 0)
+            // Remove the default bold property on selected texts.
+            selectionFontBold = false
+            selectionBackground = KlighdConstants.DEFAULT_SELECTION_HIGHLIGHTING_BACKGROUND_COLOR
+        ]
+    }
+    
+    // ------------------------------------- Product renderings -------------------------------------
+    
+    /**
+     * Adds a simple rendering for a {@link Product} to the given node that can be expanded to call the
+     * {link ReferencedSynthesisExpandAction} to dynamically call the product synthesis for the given product.
+     */
+    def KRoundedRectangle addProductInOverviewRendering(KNode node, Product p, String name) {
+        // Expanded
+        node.addRectangle => [
+            setAsExpandedView
+            invisible = true
+            addChildArea
+            addButton("-", ReferencedSynthesisExpandAction::ID)
+        ]
+        
+        // Collapsed
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setAsCollapsedView
+            setGridPlacement(2)
+            addSimpleLabel(name)
+            setBackgroundGradient("sienna1".color, "sienna2".color, 90)
+            addButton("+", ReferencedSynthesisExpandAction::ID)
+            setShadow("black".color, 4, 4)
+            tooltip = p.uniqueId
+            setPointPlacementData => [
+                minHeight = 20
+                minWidth = 20
+            ]
+        ]
+    }
+    
+    def KRoundedRectangle addProductRendering(KNode node, Product p, ViewContext context) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setBackgroundGradient("sienna1".color, "sienna2".color, 90)
+            setGridPlacement(1)
+            addRectangle => [
+                setGridPlacement(3)
+                invisible = true
+                addSimpleLabel(p.descriptiveName)
+                addButton("Focus", FocusAction::ID)
+                addButton("X", CloseAction::ID)
+            ]
+            addHorizontalSeperatorLine(1, 0)
+            addRectangle => [
+                invisible = true
+                addSimpleLabel("ID: " + SynthesisUtils.getId(p.uniqueId, context))
+            ]
+            addRectangle => [
+                invisible = true
+                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(p.about, context))
+            ]
+            setShadow("black".color, 4, 4)
+            addRectangle => [
+                setGridPlacementData => [
+                    minCellHeight = 20
+                    minCellWidth = 20
+                ]
+                invisible = true
+                addChildArea
+            ]
+        ]
+    }
+    
+    // ------------------------------------- Bundle renderings -------------------------------------
+    
+    /**
+     * Adds a simple rendering for a {@link Bundle} to the given node that can be expanded to call the
+     * {link ReferencedSynthesisExpandAction} to dynamically call the bundle synthesis for the given bundle.
+     */
+    def addBundleInOverviewRendering(KNode node, Bundle b, String label) {
+        // Expanded
+        node.addRectangle => [
+            setAsExpandedView
+            invisible = true
+            addChildArea
+            addButton("-", ReferencedSynthesisExpandAction::ID)
+        ]
+        
+        // Collapsed
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setAsCollapsedView
+            setGridPlacement(2)
+            addSimpleLabel(label)
+            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
+            addButton("+", ReferencedSynthesisExpandAction::ID)
+            setShadow("black".color, 4, 4)
+            tooltip = b.uniqueId
+            setPointPlacementData => [
+                minHeight = 20
+                minWidth = 20
+            ]
+        ]
+    }
+    
+    /**
+     * Adds a rendering for a {@link Bundle} to the given node.
+     * Contains The name of the bundle, a button to focus this bundle and text for the ID and description of this bundle.
+     * 
+     * @param node The KNode this rendering should be attached to.
+     * @param b The bundle this rendering represents.
+     * @param context The view context used in the synthesis.
+     * 
+     * @return The entire rendering for a bundle.
+     */
+    def KRoundedRectangle addBundleRendering(KNode node, Bundle b, ViewContext context) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
+            setGridPlacement(1)
+            addRectangle => [
+                setGridPlacement(3)
+                invisible = true
+                addSimpleLabel(b.descriptiveName)
+                addButton("Focus", FocusAction::ID)
+                addButton("X", CloseAction::ID)
+            ]
+            addHorizontalSeperatorLine(1, 0)
+            addRectangle => [
+                invisible = true
+                addSimpleLabel("ID: " + SynthesisUtils.getId(b.uniqueId, context))
+            ]
+            addRectangle => [
+                invisible = true
+                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(b.about, context))
+            ]
+            setShadow("black".color, 4, 4)
+            addRectangle => [
+                setGridPlacementData => [
+                    minCellHeight = 20
+                    minCellWidth = 20
+                ]
+                invisible = true
+                addChildArea
+            ]
+        ]
+    }
+    
+    /**
      * The rendering of a port that connects the bundles used by this component. Issues the
      * {@link RevealUsedByBundlesAction} if clicked.
      */
@@ -239,28 +323,6 @@ class OsgiStyles {
     }
     
     /**
-     * Highlight the port that all bundles that should be connected to this port are in displayed.
-     * @param port The port that should be highlighted.
-     */
-    def void highlightAllShown(KPort port) {
-        port.data.filter(KRendering).forEach [
-            background = "OliveDrab".color // A quite nice greenish color.
-            selectionBackground = "OliveDrab".color
-        ]
-    }
-    
-    /**
-     * Remove the highlighting color that showed that all bundles that should be connected to this port were displayed.
-     * @param port The port that should get its original look.
-     */
-    def void unHighlightAllShown(KPort port) {
-        port.data.filter(KRendering).forEach [
-            background = "gray".color
-            selectionBackground = "gray".color
-        ]
-    }
-    
-    /**
      * Adds the rendering for an edge showing a bundle requirement.
      */
     def addRequiredBundleEdgeRendering(KEdge edge) {
@@ -271,19 +333,6 @@ class OsgiStyles {
                 foreground = "black".color
             ]
             lineStyle = LineStyle.DASH
-        ]
-    }
-    
-    /**
-     * Adds a simple text label to any rendering with some surrounding space for better readability.
-     */
-    def KText addSimpleLabel(KContainerRendering rendering, String text) {
-        rendering.addText(text) => [
-            // Add surrounding space
-            setGridPlacementData().from(LEFT, 10, 0, TOP, 8, 0).to(RIGHT, 10, 0, BOTTOM, 8, 0)
-            // Remove the default bold property on selected texts.
-            selectionFontBold = false
-            selectionBackground = KlighdConstants.DEFAULT_SELECTION_HIGHLIGHTING_BACKGROUND_COLOR
         ]
     }
 }

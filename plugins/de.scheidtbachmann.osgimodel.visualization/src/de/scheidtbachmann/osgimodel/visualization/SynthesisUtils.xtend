@@ -6,6 +6,7 @@ import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.OsgiProject
+import de.scheidtbachmann.osgimodel.Product
 import java.util.List
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
@@ -22,7 +23,8 @@ final class SynthesisUtils {
      private new() {}
     
     /**
-     * Returns the identifying string for the synthesis used by any supported object of the Osgi model.
+     * Returns the identifying string for the synthesis used by any supported object of the OSGi model.
+     * @param model The model that should be synthesized.
      */
     def static String requiredSynthesis(Object model) {
         switch model {
@@ -31,6 +33,9 @@ final class SynthesisUtils {
             }
             case model instanceof Bundle: {
                 return "de.scheidtbachmann.osgimodel.visualization.BundleSynthesis"
+            }
+            case model instanceof Product: {
+                return "de.scheidtbachmann.osgimodel.visualization.ProductSynthesis"
             }
             // TODO: etc.
         }
@@ -93,6 +98,23 @@ final class SynthesisUtils {
         } else {
             bundles
         }
+    }
+    
+    /**
+     * Returns the descriptive text of a label shortened by the {@link OsgiOptions#DESCRIPTION_LENGTH} option.
+     * @param text The text that should be shortened.
+     * @param context The view context used to display the diagram.
+     * @return The given string shortened by the description length option.
+     */
+    def static String descriptionLabel(String text, ViewContext context) {
+        val threshold = context.getOptionValue(DESCRIPTION_LENGTH) as Number
+        if (text === null) {
+            return ""
+        }
+        if (text.length <= threshold.intValue) {
+            return text
+        }
+        return text.substring(0, threshold.intValue) + " ..."
     }
     
 }
