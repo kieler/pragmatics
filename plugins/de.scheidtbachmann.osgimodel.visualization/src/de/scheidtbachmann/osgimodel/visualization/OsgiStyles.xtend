@@ -119,7 +119,7 @@ class OsgiStyles {
                 fontSize = 8
                 fontBold = true
                 val size = estimateTextSize
-                setPointPlacementData(RIGHT, 3f, 0, TOP, 0, 0, H_RIGHT, V_TOP, 0, 0, size.width, size.height)
+                setPointPlacementData(RIGHT, 0, 0.5f, TOP, 0, 0.5f, H_CENTRAL, V_CENTRAL, 4f, 4f, size.width, size.height)
                 addSingleOrMultiClickAction(actionId)
             ]
         ]

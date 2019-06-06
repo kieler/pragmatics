@@ -37,9 +37,10 @@ class ProductSynthesis extends AbstractDiagramSynthesis<Product> {
             children += createNode() => [
                 associateWith(p)
                 val rendering = addProductRendering(p, usedContext)
-                val renderingSize = estimateSize(rendering, new Bounds(0,0))
+//                val renderingSize = estimateSize(rendering, new Bounds(0,0))
                 setLayoutOption(CoreOptions::NODE_SIZE_CONSTRAINTS, EnumSet.of(SizeConstraint.MINIMUM_SIZE))
-                setLayoutOption(CoreOptions::NODE_SIZE_MINIMUM, new KVector(renderingSize.x, renderingSize.y))
+//                setLayoutOption(CoreOptions::NODE_SIZE_MINIMUM, new KVector(renderingSize.x, renderingSize.y))
+//                setLayoutOption(CoreOptions::EXPAND_NODES, true);
                 
                 // Show a bundle overview of all bundles within this product.
                 children += transformBundleOverview(p.features.flatMap[bundles].toList).associateWith(p)
