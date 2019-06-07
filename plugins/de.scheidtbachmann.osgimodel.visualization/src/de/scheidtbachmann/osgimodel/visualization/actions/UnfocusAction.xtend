@@ -1,5 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.actions
 
+import de.cau.cs.kieler.klighd.IAction
+import de.cau.cs.kieler.klighd.KlighdDataManager
 import de.cau.cs.kieler.klighd.LightDiagramServices
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesis
@@ -11,7 +13,7 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder
  * Removes the focus of the top focused element for the {@link OsgiDiagramSynthesis} and gives it to the second element
  * into the focus stack.
  */
-class UnfocusAction extends UnfocusAllAction {
+class UnfocusAction implements IAction {
     /**
      * This action's ID.
      */
@@ -27,7 +29,8 @@ class UnfocusAction extends UnfocusAllAction {
         }
         // If there is only one element in the focus stack currently, this behaves just as the {@link UnfocusAllAction}.
         if (focusedElements.size === 1) {
-            return super.execute(context)
+            val action = KlighdDataManager.getInstance().getActionById(UnfocusAllAction::ID)
+            return action.execute(context)
         }
         // Otherwise, remove the top element and give focus to the second element from the top.
         focusedElements.remove(focusedElements.last)

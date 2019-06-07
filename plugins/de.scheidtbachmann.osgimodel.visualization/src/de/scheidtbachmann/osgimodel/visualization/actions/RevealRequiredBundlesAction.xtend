@@ -74,8 +74,8 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
             clickedPort.unHighlightAllShown
         } else {
             val bundleNodes = GenericRevealActionUtil.revealElements(filteredRequiredBundles, context, containingNode)
-            bundleNodes.forEach [ requiredBundleNode |
-                connectRequiredEdge(bundleNode, requiredBundleNode, context)
+            bundleNodes.forEach [ requiredBundle, requiredBundleNode |
+                connectRequiredEdge(bundleNode, requiredBundleNode, requiredBundle, context)
             ]
             
             // Change the background color of the clicked node to indicate that all its children are now shown.
@@ -93,7 +93,7 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
      * Connects the {@code sourceBundleNode} and the {@code requiredBundleNode} via an arrow in UML style, so
      * [sourceBundleNode] ----- uses -----> [requiredBundleNode]
      */
-    def connectRequiredEdge(KNode sourceBundleNode, KNode requiredBundleNode, ActionContext context) {
+    def connectRequiredEdge(KNode sourceBundleNode, KNode requiredBundleNode, Bundle requiredBundle, ActionContext context) {
         val sourceBundlePort = sourceBundleNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "requiredBundles" ]
         val targetBundlePort = requiredBundleNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "usedByBundles" ]
         // Do not add this edge, if it is already there.
@@ -112,7 +112,6 @@ class RevealRequiredBundlesAction extends SynthesizingAction {
         ]
         sourceBundleNode.outgoingEdges += edge
         
-        val requiredBundle = SynthesisUtils.getDomainElement(context, requiredBundleNode) as Bundle
         val filteredUsedByBundles = SynthesisUtils.filteredBundles(requiredBundle.usedByBundle, context.viewContext).toList
         if (GenericRevealActionUtil.allConnected(filteredUsedByBundles, requiredBundleNode, false, context,
             sourceBundleNode.parent)) {

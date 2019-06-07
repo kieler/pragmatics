@@ -17,15 +17,19 @@ import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KColorExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KContainerRenderingExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KLabelExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KPolylineExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.scheidtbachmann.osgimodel.Bundle
+import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
 import de.scheidtbachmann.osgimodel.visualization.actions.CloseAction
 import de.scheidtbachmann.osgimodel.visualization.actions.FocusAction
 import de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
+import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction
+import java.util.List
 
 import static extension de.cau.cs.kieler.klighd.microlayout.PlacementUtil.*
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
@@ -40,6 +44,7 @@ class OsgiStyles {
     @Inject extension KColorExtensions
     @Inject extension KContainerRenderingExtensions
     @Inject extension KEdgeExtensions
+    @Inject extension KLabelExtensions
     @Inject extension KPolylineExtensions
     @Inject extension KRenderingExtensions
     
@@ -319,12 +324,49 @@ class OsgiStyles {
      */
     def addRequiredBundleEdgeRendering(KEdge edge) {
         edge.addPolyline => [
+            lineWidth = 2
             addHeadArrowDecorator => [
                 lineWidth = 1
                 background = "black".color
                 foreground = "black".color
             ]
             lineStyle = LineStyle.DASH
+        ]
+    }
+    
+    /**
+     * Adds the rendering of a port that connects the bundle to the bundles providing its used packages.
+     */
+    def addUsedPackagesPortRendering(KPort port) {
+        port.addEllipse => [
+            background = "white".color
+            val tooltipText = "Show the used packages."
+            tooltip = tooltipText
+            addSingleClickAction(RevealUsedPackagesAction::ID)
+        ]
+    }
+    
+    // ------------------------------------- Package renderings -------------------------------------
+    
+    /**
+     * Adds the rendering for an edge showing a bundle requirement.
+     */
+    def addInternalUsedPackagesBundleEdgeRendering(KEdge edge, List<PackageObject> packages, Product product, ViewContext context) {
+        val tooltipText = "Packages\n" + packages.map [ SynthesisUtils.getId(it.uniqueId, context) + "\n" ] 
+            + " for product " + SynthesisUtils.getId(product.uniqueId, context)
+        edge.addPolyline => [
+            addHeadArrowDecorator => [
+                lineWidth = 1
+                background = "black".color
+                foreground = "black".color
+            ]
+            lineStyle = LineStyle.DASH
+            tooltip = tooltipText
+        ]
+        edge.createLabel => [
+            configureCenterEdgeLabel(SynthesisUtils.getId(product.uniqueId, context)
+                + " (" + packages.size + " packages)")
+            tooltip = tooltipText
         ]
     }
 }

@@ -50,6 +50,10 @@
             class="de.scheidtbachmann.osgimodel.visualization.actions.CloseAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.CloseAction">
       </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction">
+      </action>
    </extension>
 
 </plugin>

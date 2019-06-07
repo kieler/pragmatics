@@ -15,7 +15,6 @@ class OsgiSynthesisProperties {
      * Property pointing towards the list of focused elements in this model. The last element of the list is always
      * the element that should be visualized as the central element during the synthesis.
      */
-    public static final IProperty<List<Object>> FOCUSED_ELEMENTS = new Property<List<Object>>("osgimodel.mainElement",
-        new ArrayList<Object>
-    )    
+    public static final IProperty<List<Object>> FOCUSED_ELEMENTS = new Property<List<Object>>("osgimodel.focusedElements",
+        new ArrayList<Object>)
 }

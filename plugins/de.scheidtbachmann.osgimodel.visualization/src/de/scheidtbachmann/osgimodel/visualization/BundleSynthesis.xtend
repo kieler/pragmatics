@@ -70,6 +70,18 @@ class BundleSynthesis extends AbstractDiagramSynthesis<Bundle> {
                             height = 12
                         ]
                     }
+                    val importedPackages = b.importedPackages
+                    if (!importedPackages.empty) {
+                        ports += createPort(b, "importedPackages") => [
+                            associateWith(b)
+                            data += createKIdentifier => [ it.id = "importedPackages" ]
+                            // Bundles supporting used packages are always shown and expanded to the east with the drawing direction.
+                            addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
+                            addUsedPackagesPortRendering
+                            width = 12
+                            height = 12
+                        ]
+                    }
                 ]
             ]
         ]

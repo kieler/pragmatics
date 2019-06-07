@@ -27,11 +27,11 @@ class UnfocusAllAction implements IAction {
         // Put an empty list as the main element stack in the view context to reset the main element.
         context.viewContext.setProperty(OsgiSynthesisProperties.FOCUSED_ELEMENTS, new ArrayList<Object>)
         
-        // Get the domain element of the root node, which should be the root OsgiProject.
+        // Get the root OsgiProject.
         val rootNode = context.viewContext.viewModel
-        val osgiProject = context.getDomainElement(rootNode)
+        val osgiProject = context.viewContext.inputModel
         if (!(osgiProject instanceof OsgiProject)) {
-            throw new IllegalStateException("The root node is not associated to a osgi project!")
+            throw new IllegalStateException("The model not associated to an osgi project!")
         }
         
         // Call the synthesis of the root osgi project again and put its result as the new view model.

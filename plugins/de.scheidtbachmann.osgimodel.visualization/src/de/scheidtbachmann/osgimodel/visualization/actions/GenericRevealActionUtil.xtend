@@ -6,8 +6,9 @@ import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.kgraph.util.KGraphUtil
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
-import java.util.ArrayList
+import java.util.HashMap
 import java.util.List
+import java.util.Map
 import org.eclipse.elk.graph.properties.MapPropertyHolder
 
 /**
@@ -29,8 +30,8 @@ final class GenericRevealActionUtil {
      * @param containingNode The KNode into which the elements should be synthesized.
      * @return A list of all representations of the given elements in the containing node. 
      */
-    static def List<KNode> revealElements(List<? extends Object> elements, ActionContext context, KNode containingNode) {
-        val List<KNode> revealedElements = new ArrayList
+    static def <E> Map<E, KNode> revealElements(List<E> elements, ActionContext context, KNode containingNode) {
+        val Map<E, KNode> revealedElements = new HashMap
         elements.forEach[ element |
             // Only add this element to the context if it has not been added before.
             val oldElementNode = containingNode.children.findFirst[ alreadySynthesizedNodes |
@@ -48,13 +49,12 @@ final class GenericRevealActionUtil {
                 )
                 // Every synthesis capable of being revealed has an additional surrounding node that should be ignored
                 // and thrown away here.
-                val newElementNodes = new ArrayList<KNode>
-                newElementNodes.addAll(newBundleContainer.children.head?.children)
-                containingNode.children += newElementNodes
-                revealedElements += newElementNodes
+                val newElementNode = newBundleContainer.children.head.children.head
+                containingNode.children += newElementNode
+                revealedElements.put(element, newElementNode)
             } else {
                 // Otherwise, put the old node in the revealed elements as something on that node should also be changed.
-                revealedElements += oldElementNode
+                revealedElements.put(element, oldElementNode)
             }
         ]
         
