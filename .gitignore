@@ -7,3 +7,7 @@ target/
 *.pdf
 build/workspace
 *.java._trace
+
+build/de\.cau\.cs\.kieler\.ptolemy\.rcp\.repository/\.project
+
+features/de\.cau\.cs\.kieler\.ptview\.feature/\.project
