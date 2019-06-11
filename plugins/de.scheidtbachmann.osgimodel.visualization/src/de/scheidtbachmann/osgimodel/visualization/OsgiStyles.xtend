@@ -136,8 +136,8 @@ class OsgiStyles {
      */
     def void highlightAllShown(KPort port) {
         port.data.filter(KRendering).forEach [
-            background = "OliveDrab".color // A quite nice greenish color.
-            selectionBackground = "OliveDrab".color
+            background = "white".color
+            selectionBackground = "white".color
         ]
     }
     
@@ -147,8 +147,8 @@ class OsgiStyles {
      */
     def void unHighlightAllShown(KPort port) {
         port.data.filter(KRendering).forEach [
-            background = "gray".color
-            selectionBackground = "gray".color
+            background = "black".color
+            selectionBackground = "black".color
         ]
     }
     
@@ -185,8 +185,9 @@ class OsgiStyles {
             setAsCollapsedView
             setGridPlacement(2)
             addSimpleLabel(name)
-            setBackgroundGradient("sienna1".color, "sienna2".color, 90)
+            setBackgroundGradient("#FFEAE0".color, "FFD3BF".color, 90)
             addButton("+", ReferencedSynthesisExpandAction::ID)
+            addDoubleClickAction(ReferencedSynthesisExpandAction::ID)
             setShadow("black".color, 4, 4)
             tooltip = p.uniqueId
             setPointPlacementData => [
@@ -198,7 +199,7 @@ class OsgiStyles {
     
     def KRoundedRectangle addProductRendering(KNode node, Product p, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setBackgroundGradient("sienna1".color, "sienna2".color, 90)
+            setBackgroundGradient("#FFEAE0".color, "#FFD3BF".color, 90)
             setGridPlacement(1)
             addRectangle => [
                 setGridPlacement(2)
@@ -248,8 +249,9 @@ class OsgiStyles {
             setAsCollapsedView
             setGridPlacement(2)
             addSimpleLabel(label)
-            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
+            setBackgroundGradient("#E0F7FF".color, "#BFEFFF".color, 90)
             addButton("+", ReferencedSynthesisExpandAction::ID)
+            addDoubleClickAction(ReferencedSynthesisExpandAction::ID)
             setShadow("black".color, 4, 4)
             tooltip = b.uniqueId
             setPointPlacementData => [
@@ -271,14 +273,37 @@ class OsgiStyles {
      */
     def KRoundedRectangle addBundleRendering(KNode node, Bundle b, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setBackgroundGradient("LightBlue1".color, "LightBlue2".color, 90)
+            setBackgroundGradient("#E0F7FF".color, "#BFEFFF".color, 90)
             setGridPlacement(1)
             addRectangle => [
-                setGridPlacement(3)
+                setGridPlacement(5)
                 invisible = true
-                addSimpleLabel(b.descriptiveName)
-                addButton("Focus", FocusAction::ID)
-                addButton("X", CloseAction::ID)
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel(b.descriptiveName)
+                ]
+                addVerticalLine(RIGHT, 0, 1) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                ]
+                addButton("Focus", FocusAction::ID) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                    lineWidth = 0
+                ]
+                addVerticalLine(RIGHT, 0, 1) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                ]
+                addButton("X", CloseAction::ID) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                    lineWidth = 0
+                ]
             ]
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
@@ -299,7 +324,7 @@ class OsgiStyles {
      */
     def KRectangle addUsedByBundlesPortRendering(KPort port, int numUsedByBundles) {
         return port.addRectangle => [
-            background = "gray".color
+            background = "black".color
             val tooltipText = "Show bundles that require this bundle (" + numUsedByBundles + " total)."
             tooltip = tooltipText
             addSingleClickAction(RevealUsedByBundlesAction::ID)
@@ -312,7 +337,7 @@ class OsgiStyles {
      */
     def KRectangle addRequiredBundlesPortRendering(KPort port, int numReqBundles) {
         return port.addRectangle => [
-            background = "gray".color
+            background = "black".color
             val tooltipText = "Show required bundles (" + numReqBundles + " total)."
             tooltip = tooltipText
             addSingleClickAction(RevealRequiredBundlesAction::ID)
@@ -339,7 +364,7 @@ class OsgiStyles {
      */
     def addUsedPackagesPortRendering(KPort port) {
         port.addEllipse => [
-            background = "white".color
+            background = "black".color
             val tooltipText = "Show the used packages."
             tooltip = tooltipText
             addSingleClickAction(RevealUsedPackagesAction::ID)
