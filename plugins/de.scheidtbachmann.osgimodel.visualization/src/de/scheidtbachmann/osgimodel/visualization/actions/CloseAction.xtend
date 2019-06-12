@@ -21,7 +21,7 @@ class CloseAction extends SynthesizingAction {
         
         // TODO: filter these edges / ports
         val ports = node.incomingEdges.map [ sourcePort ] + node.outgoingEdges.map [ targetPort ]
-        ports.forEach [ unHighlightAllShown ]
+        ports.filterNull.forEach [ unHighlightAllShown ]
         
         // The util function does exactly what this action wants to achieve.
         KGraphUtil.removeElement(node)
