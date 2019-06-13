@@ -10,6 +10,8 @@ import de.scheidtbachmann.osgimodel.Product
 import java.util.List
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
+import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
+import org.eclipse.elk.core.options.CoreOptions
 
 /**
  * Util class that contains some static methods commonly used for the Osgi synthesis.
@@ -145,6 +147,16 @@ final class SynthesisUtils {
         // Always have the *26 happen 6 times, so do the remaining ones here if the fold exited earlier.
         // Also return the negative value to have the ordering going a->z and not z->a.
         return -number * Math.toIntExact(Math.round(Math.pow(26, 6 - numChars)))
+    }
+    
+    /**
+     * Configures the layout of any overview node. Configures the box layout algorithm of elk.
+     */
+    def static void configureOverviewLayout(KNode node) {
+        node => [
+            DiagramSyntheses.setLayoutOption(node, CoreOptions::ALGORITHM, "org.eclipse.elk.box")
+//            setLayoutOption(CoreOptions::EXPAND_NODES, true) // TODO: why does this not work on bundles?
+        ]
     }
     
 }
