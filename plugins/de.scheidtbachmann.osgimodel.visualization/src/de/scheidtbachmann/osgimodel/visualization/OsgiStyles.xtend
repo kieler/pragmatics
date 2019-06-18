@@ -302,9 +302,9 @@ class OsgiStyles {
      * The rendering of a port that connects the bundles used by this component. Issues the
      * {@link RevealUsedByBundlesAction} if clicked.
      */
-    def KRectangle addUsedByBundlesPortRendering(KPort port, int numUsedByBundles) {
+    def KRectangle addUsedByBundlesPortRendering(KPort port, int numUsedByBundles, boolean allShown) {
         return port.addRectangle => [
-            background = "black".color
+            background = if (allShown) "white".color else "black".color
             val tooltipText = "Show bundles that require this bundle (" + numUsedByBundles + " total)."
             tooltip = tooltipText
             addSingleClickAction(RevealUsedByBundlesAction::ID)
@@ -315,9 +315,9 @@ class OsgiStyles {
      * The rendering of a port that connects the bundles required by this component. Issues the
      * {@link RevealRequiredBundlesAction} if clicked.
      */
-    def KRectangle addRequiredBundlesPortRendering(KPort port, int numReqBundles) {
+    def KRectangle addRequiredBundlesPortRendering(KPort port, int numReqBundles, boolean allShown) {
         return port.addRectangle => [
-            background = "black".color
+            background = if (allShown) "white".color else "black".color
             val tooltipText = "Show required bundles (" + numReqBundles + " total)."
             tooltip = tooltipText
             addSingleClickAction(RevealRequiredBundlesAction::ID)

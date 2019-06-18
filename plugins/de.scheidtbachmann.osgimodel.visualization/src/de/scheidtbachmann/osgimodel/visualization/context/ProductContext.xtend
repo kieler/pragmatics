@@ -44,7 +44,7 @@ class ProductContext implements IVisualizationContext {
     }
     
     override initializeChildVisualizationContexts() {
-        bundleOverviewContext = new BundleOverviewContext(product.features.flatMap[bundles].toList, this)
+        bundleOverviewContext = new BundleOverviewContext(product.features.flatMap[bundles].toSet.toList, this)
     }
     
     override deepCopy() {

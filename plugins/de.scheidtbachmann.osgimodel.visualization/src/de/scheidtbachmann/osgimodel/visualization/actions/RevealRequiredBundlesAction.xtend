@@ -19,7 +19,7 @@ class RevealRequiredBundlesAction extends AbstractVisualizationContextChangingAc
     public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction"
     
     override protected changeVisualization(IVisualizationContext modelVisualizationContext) {
-        // TODO: remove items if all are are already shown, handle port highlighting 
+        // TODO: remove items if all are are already shown
         // The BundleContext element for the element that was clicked on.
         val bundleContext = modelVisualizationContext as BundleContext
         

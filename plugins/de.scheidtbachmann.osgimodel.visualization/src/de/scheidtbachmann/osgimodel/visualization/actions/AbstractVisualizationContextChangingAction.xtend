@@ -50,7 +50,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
         context.viewContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, index + 1)
         
         // TODO: create a result that will not only cause a new layout, but a new synthesis!
-        return ActionResult.createResult(true)
+        return ActionResult.createResult(false)
     }
     
     /**

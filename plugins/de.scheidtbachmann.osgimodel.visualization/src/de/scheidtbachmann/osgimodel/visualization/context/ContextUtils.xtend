@@ -68,6 +68,23 @@ class ContextUtils {
         // Only if this edge does not exist yet, add it to the list of required bundle edges.
         if (!parentContext.requiredBundleEdges.exists [ key === requiringContext && value === requiredContext ]) {
             parentContext.requiredBundleEdges += requiringContext -> requiredContext
+            
+            // Check for both the requiring bundle and the required bundle if all connections are now shown in the 
+            // parent context. If they are, remember it in the corresponding bundle context.
+            // Requiring context:
+            if (requiringContext.bundle.requiredBundles.forall [ requiredBundle |
+                !parentContext.bundles.contains(requiredBundle) ||
+                parentContext.requiredBundleEdges.exists [ value.bundle === requiredBundle ]
+            ]) {
+                requiringContext.allRequiredBundlesShown = true
+            }
+            // Required context:
+            if (requiredContext.bundle.usedByBundle.forall [ requiringBundle |
+                !parentContext.bundles.contains(requiringBundle) ||
+                parentContext.requiredBundleEdges.exists [ key.bundle === requiringBundle ]
+            ]) {
+                requiredContext.allRequiringBundlesShown = true
+            }
         }
     }
     

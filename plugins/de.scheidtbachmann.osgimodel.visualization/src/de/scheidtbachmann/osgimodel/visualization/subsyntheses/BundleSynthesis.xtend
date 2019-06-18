@@ -12,6 +12,7 @@ import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
+import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.PortConstraints
 import org.eclipse.elk.core.options.PortSide
@@ -39,7 +40,8 @@ class BundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
                 
                 // The ports that show the connection to the usedBy / required bundles with actions to add them to
                 // the view.
-                val filteredUsedByBundles = SynthesisUtils.filteredBundles(bundle.usedByBundle, usedContext)
+                val filteredUsedByBundles = SynthesisUtils.filteredBundles(bundle.usedByBundle,
+                    bc.parent as BundleOverviewContext, usedContext)
                 if (!filteredUsedByBundles.empty) {
                     ports += createPort(bc, "usedByBundles") => [
                         associateWith(bc)
@@ -47,19 +49,20 @@ class BundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
                         data += createKIdentifier => [ it.id = "usedByBundles" ]
                         // Used by bundles are always shown and expanded to the west against the drawing direction.
                         addLayoutParam(CoreOptions::PORT_SIDE, PortSide::WEST)
-                        addUsedByBundlesPortRendering(filteredUsedByBundles.size)
+                        addUsedByBundlesPortRendering(filteredUsedByBundles.size, bc.allRequiringBundlesShown)
                         width = 12
                         height = 12
                     ]
                 }
-                val filteredRequiredBundles = SynthesisUtils.filteredBundles(bundle.requiredBundles, usedContext)
+                val filteredRequiredBundles = SynthesisUtils.filteredBundles(bundle.requiredBundles,
+                    bc.parent as BundleOverviewContext, usedContext)
                 if (!filteredRequiredBundles.empty) {
                     ports += createPort(bc, "requiredBundles") => [
                         associateWith(bc)
                         data += createKIdentifier => [ it.id = "requiredBundles" ]
                         // Required bundles are always shown and expanded to the east with the drawing direction.
                         addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
-                        addRequiredBundlesPortRendering(filteredRequiredBundles.size)
+                        addRequiredBundlesPortRendering(filteredRequiredBundles.size, bc.allRequiredBundlesShown)
                         width = 12
                         height = 12
                     ]

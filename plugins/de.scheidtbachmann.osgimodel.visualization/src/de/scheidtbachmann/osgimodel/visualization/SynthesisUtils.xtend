@@ -9,6 +9,7 @@ import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.Product
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
+import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
 import java.util.List
 import org.eclipse.elk.core.options.CoreOptions
 
@@ -88,18 +89,23 @@ final class SynthesisUtils {
     }
     
     /**
-     * Filters the list of given bundles by the filter options of the diagram options.
+     * Filters the list of given bundles by the filter options of the diagram options and the overview context they are
+     * shown in.
      * 
      * @param bundles The unfiltered list of all bundles.
+     * @param boc The bundle overview context showing which bundles of the given bundles are relevant
      * @param usedContext The ViewContext used to display the diagram these bundles are shown in.
      * @return An Iterable of the bundles filtered by the diagram options.
      */
-    def static Iterable<Bundle> filteredBundles(List<Bundle> bundles, ViewContext usedContext) {
+    def static Iterable<Bundle> filteredBundles(List<Bundle> bundles, BundleOverviewContext boc, ViewContext usedContext) {
+        val bundlesInContext = bundles.filter [
+            boc.bundles.contains(it)
+        ]
         val prefix = "de.scheidtbachmann"
         if (usedContext.getOptionValue(FILTER_BY_DE_SCHEIDTBACHMANN) as Boolean) {
-            bundles.filter[ it.uniqueId.startsWith(prefix) ]
+            return bundlesInContext.filter[ it.uniqueId.startsWith(prefix) ]
         } else {
-            bundles
+            return bundlesInContext
         }
     }
     
@@ -113,9 +119,9 @@ final class SynthesisUtils {
     def static Iterable<BundleContext> filteredBundleContexts(List<BundleContext> bundleContexts, ViewContext usedContext) {
         val prefix = "de.scheidtbachmann"
         if (usedContext.getOptionValue(FILTER_BY_DE_SCHEIDTBACHMANN) as Boolean) {
-            bundleContexts.filter[ it.bundle.uniqueId.startsWith(prefix) ]
+            return bundleContexts.filter[ it.bundle.uniqueId.startsWith(prefix) ]
         } else {
-            bundleContexts
+            return bundleContexts
         }
     }
     

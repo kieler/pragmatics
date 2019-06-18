@@ -17,7 +17,7 @@ class BundleContext implements IVisualizationContext {
     /**
      * Indicates if all bundles that require this bundle are shown in this context.
      */
-    boolean allRequredByBundlesShown
+    boolean allRequiringBundlesShown
     
     /**
      * The bundle to get the data from when visualizing this context.
@@ -55,7 +55,7 @@ class BundleContext implements IVisualizationContext {
     override deepCopy() {
         val clone = new BundleContext
         clone.allRequiredBundlesShown = allRequiredBundlesShown
-        clone.allRequredByBundlesShown = allRequredByBundlesShown
+        clone.allRequiringBundlesShown = allRequiringBundlesShown
         clone.bundle = bundle
         clone.parent = null
         
