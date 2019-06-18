@@ -2,6 +2,7 @@ package de.scheidtbachmann.osgimodel.visualization.context
 
 import com.google.common.collect.ImmutableList
 import de.scheidtbachmann.osgimodel.Bundle
+import java.util.HashMap
 import java.util.LinkedList
 import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
@@ -83,19 +84,26 @@ class BundleOverviewContext implements IOverviewVisualizationContext {
     
     override deepCopy() {
         val copy = new BundleOverviewContext
-        copy.requiredBundleEdges = requiredBundleEdges.clone
+        // remember the cloned bundle contexts, as they may be used multiple times.
+        val clonedBundleContexts = new HashMap<BundleContext, BundleContext>
         copy.usedPackagesEdges = usedPackagesEdges.clone
         copy.collapsedBundleContexts = new LinkedList
         collapsedBundleContexts.forEach[
             val newBundleContext = deepCopy as BundleContext
+            clonedBundleContexts.put(it, newBundleContext)
             newBundleContext.parent = copy
             copy.collapsedBundleContexts.add(newBundleContext)
         ]
         copy.detailedBundleContexts = new LinkedList
         detailedBundleContexts.forEach[
             val newBundleContext = deepCopy as BundleContext
+            clonedBundleContexts.put(it, newBundleContext)
             newBundleContext.parent = copy
             copy.detailedBundleContexts.add(newBundleContext)
+        ]
+        copy.requiredBundleEdges = new LinkedList<Pair<BundleContext, BundleContext>>
+        requiredBundleEdges.forEach[
+            copy.requiredBundleEdges.add(clonedBundleContexts.get(key) -> clonedBundleContexts.get(value))
         ]
         copy.bundles = bundles.clone
         

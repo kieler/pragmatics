@@ -49,6 +49,10 @@ class ProductContext implements IVisualizationContext {
     
     override deepCopy() {
         val copy = new ProductContext
+        if (bundleOverviewContext !== null) {
+            copy.bundleOverviewContext = bundleOverviewContext.deepCopy as BundleOverviewContext
+            copy.bundleOverviewContext.parent = copy
+        }
         copy.product = product
         
         return copy
