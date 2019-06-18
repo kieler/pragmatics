@@ -39,20 +39,24 @@
             id="de.scheidtbachmann.osgimodel.visualization.actions.FocusAction">
       </action>
       <action
-            class="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAllAction"
-            id="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAllAction">
-      </action>
-      <action
-            class="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAction"
-            id="de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAction">
-      </action>
-      <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.CloseAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.CloseAction">
       </action>
       <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction">
+      </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.UndoAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.UndoAction">
+      </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.RedoAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.RedoAction">
+      </action>
+      <action
+            class="de.scheidtbachmann.osgimodel.visualization.actions.ResetViewAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.ResetViewAction">
       </action>
    </extension>
 

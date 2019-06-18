@@ -22,7 +22,7 @@ class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<List<BundleCa
     override transform(List<BundleCategory> features) {
         return #[
             createNode => [
-                configureOverviewLayout
+                configureBoxLayout
                 addOverviewRendering("Bundle Categories")
                 children += features.flatMap[ simpleBundleCategorySynthesis.transform(it)]
                 initiallyCollapse

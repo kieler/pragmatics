@@ -10,8 +10,11 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
 import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import de.scheidtbachmann.osgimodel.OsgiProject
-import de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAction
-import de.scheidtbachmann.osgimodel.visualization.actions.UnfocusAllAction
+import de.scheidtbachmann.osgimodel.visualization.actions.RedoAction
+import de.scheidtbachmann.osgimodel.visualization.actions.ResetViewAction
+import de.scheidtbachmann.osgimodel.visualization.actions.UndoAction
+import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
+import de.scheidtbachmann.osgimodel.visualization.context.OsgiProjectContext
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.BundleCategoryOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.BundleOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.FeatureOverviewSynthesis
@@ -48,10 +51,12 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     
     override getDisplayedActions() {
         return #[
-            DisplayedActionData.create(UnfocusAction.ID, "Unfocus",
-                "Removes the focus of the current element and returns it to the last focused element"),
-            DisplayedActionData.create(UnfocusAllAction.ID, "Unfocus all",
-                "Returns the focus back to the overview.")
+            DisplayedActionData.create(UndoAction.ID, "Undo",
+                "Undoes the last action performed on the view model."),
+            DisplayedActionData.create(RedoAction.ID, "Redo",
+                "Redoes the last action that was undone on the view model."),
+            DisplayedActionData.create(ResetViewAction.ID, "Reset View",
+                "Resets the view to its default overview state.")
         ]
     }
     
@@ -79,18 +84,77 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
     override transform(OsgiProject model) {
         val modelNode = createNode.associateWith(model)
         
-        // Create a view of the last focused element, otherwise create an overview of the OSGi Project.
-        val focusedElementStack = usedContext.getProperty(OsgiSynthesisProperties.FOCUSED_ELEMENTS)
-        val focusedElement = if (focusedElementStack.empty) {
-                null
-            } else {
-                focusedElementStack.head
-            }
-        if (focusedElement !== null) {
-            val requiredSynthesis = SynthesisUtils.requiredSynthesis(focusedElement)
+        // Create a view with the currently stored visualization context in mind. If there is no current context, create
+        // a new one for the general OSGi model overview and store that for later use.
+        val visualizationContexts = usedContext.getProperty(OsgiSynthesisProperties.VISUALIZATION_CONTEXTS)
+        var index = usedContext.getProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX)
+        var IVisualizationContext visualizationContext = null
+        
+        if (visualizationContexts.empty || index === null) {
+            index = 0
+            usedContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, index)
+            visualizationContext = new OsgiProjectContext(model, null)
+            visualizationContexts.add(visualizationContext)
+            
+        } else {
+            visualizationContext = visualizationContexts.get(index)
+        }
+        // Make this variable final here for later usage in the lambda.
+        val visContext = visualizationContext
+        if (visContext instanceof OsgiProjectContext) {
+            // This synthesis can be used.
+            
+            // The overview of the entire OSGi Project.
+            modelNode.children += createNode => [
+                associateWith(model)
+                addOverviewRendering("Overview")
+                
+                children += createNode => [
+                    associateWith(model)
+                    addInvisibleContainerRendering
+                    
+                    // Product overview
+                    val productOverviewContext = visContext.productOverviewContext
+                    val overviewProductNodes = productOverviewSynthesis.transform(productOverviewContext)
+//                    overviewProductNodes.forEach [ associateWith(model) ]
+                    children += overviewProductNodes
+                    
+                    val overviewFeatureNodes = featureOverviewSynthesis.transform(model.features)
+                    overviewFeatureNodes.forEach [ associateWith(model) ]
+                    children += overviewFeatureNodes
+                    
+                    // Bundle overview
+                    val bundleOverviewContext = visContext.bundleOverviewContext
+                    val overviewBundleNodes = bundleOverviewSynthesis.transform(bundleOverviewContext)
+                    overviewBundleNodes.forEach [ associateWith(model) ]
+                    children += overviewBundleNodes
+                    
+                    val overviewServiceInterfaceNodes = serviceInterfaceOverviewSynthesis.transform(model.serviceInterfaces)
+                    overviewServiceInterfaceNodes.forEach [ associateWith(model) ]
+                    children += overviewServiceInterfaceNodes
+                    
+                    val overviewImportedPackagesNodes = packageObjectOverviewSynthesis.transform(model.importedPackages)
+                    overviewImportedPackagesNodes.forEach [ associateWith(model) ]
+                    children += overviewImportedPackagesNodes
+                    
+                    val overviewBundleCategoryNodes = bundleCategoryOverviewSynthesis.transform(model.bundleCategories)
+                    overviewBundleCategoryNodes.forEach [ associateWith(model) ]
+                    children += overviewBundleCategoryNodes
+                    
+                    // remove the padding of the invisible container.
+    //                addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0)) // TODO: test this.
+                ]
+            ]
+            
+            return modelNode
+            
+        } else {
+            // Delegate the view model generation to another synthesis that can show the requested visualization context.
+            val displayedElement = visualizationContext.modelElement
+            val requiredSynthesis = SynthesisUtils.requiredSynthesis(displayedElement)
             
             val newBundleContainer = LightDiagramServices.translateModel(
-                focusedElement,
+                displayedElement,
                 this.usedContext,
                 new MapPropertyHolder => [
                     setProperty(KlighdSynthesisProperties.REQUESTED_DIAGRAM_SYNTHESIS, requiredSynthesis
@@ -102,46 +166,6 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             
             return modelNode
         }
-        
-        // The overview of the entire OSGi Project.
-        modelNode.children += createNode => [
-            associateWith(model)
-            addOverviewRendering("Overview")
-            
-            children += createNode => [
-                associateWith(model)
-                addInvisibleContainerRendering
-                
-                val overviewProductNodes = productOverviewSynthesis.transform(model.products)
-                overviewProductNodes.forEach [ associateWith(model) ]
-                children += overviewProductNodes
-                
-                val overviewFeatureNodes = featureOverviewSynthesis.transform(model.features)
-                overviewFeatureNodes.forEach [ associateWith(model) ]
-                children += overviewFeatureNodes
-                
-                val overviewBundleNodes = bundleOverviewSynthesis.transform(model.bundles)
-                overviewBundleNodes.forEach [ associateWith(model) ]
-                children += overviewBundleNodes
-                
-                val overviewServiceInterfaceNodes = serviceInterfaceOverviewSynthesis.transform(model.serviceInterfaces)
-                overviewServiceInterfaceNodes.forEach [ associateWith(model) ]
-                children += overviewServiceInterfaceNodes
-                
-                val overviewImportedPackagesNodes = packageObjectOverviewSynthesis.transform(model.importedPackages)
-                overviewImportedPackagesNodes.forEach [ associateWith(model) ]
-                children += overviewImportedPackagesNodes
-                
-                val overviewBundleCategoryNodes = bundleCategoryOverviewSynthesis.transform(model.bundleCategories)
-                overviewBundleCategoryNodes.forEach [ associateWith(model) ]
-                children += overviewBundleCategoryNodes
-                
-                // remove the padding of the invisible container.
-//                addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0)) // TODO: test this.
-            ]
-        ]
-        
-        return modelNode
     }
     
 }

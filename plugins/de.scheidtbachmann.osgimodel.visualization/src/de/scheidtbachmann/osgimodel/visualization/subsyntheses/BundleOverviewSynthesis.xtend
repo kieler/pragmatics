@@ -1,13 +1,20 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KIdentifier
 import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
+import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
-import de.scheidtbachmann.osgimodel.Bundle
+import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
-import java.util.List
+import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
+import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.EdgeRouting
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtils.*
@@ -15,20 +22,121 @@ import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtil
 /**
  * Transformation as an overview of all bundles in the given list of bundles.
  */
-class BundleOverviewSynthesis extends AbstractSubSynthesis<List<Bundle>, KNode> {
+class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext, KNode> {
+    @Inject extension KEdgeExtensions
     @Inject extension KNodeExtensions
+    @Inject extension KRenderingExtensions
     @Inject extension OsgiStyles
     @Inject SimpleBundleSynthesis simpleBundleSynthesis
+    @Inject BundleSynthesis bundleSynthesis
     
-    override transform(List<Bundle> bundles) {
+    override transform(BundleOverviewContext bundleOverviewContext) {
         return #[
             createNode => [
-                configureOverviewLayout
-                addOverviewRendering("Bundles")
-                val filteredBundles = SynthesisUtils.filteredBundles(bundles, usedContext)
-                children += filteredBundles.flatMap[ simpleBundleSynthesis.transform(it) ]
+                associateWith(bundleOverviewContext)
                 initiallyCollapse
+                DiagramSyntheses.setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
+                DiagramSyntheses.setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
+                addOverviewRendering("Bundles")
+                
+                
+                // Add all simple bundle renderings in a first subgraph (top)
+                val filteredCollapsedBundleContexts = SynthesisUtils.filteredBundleContexts(
+                    bundleOverviewContext.collapsedBundleContexts, usedContext)
+                val collapsedOverviewNode = transformCollapsedBundlesOverview(filteredCollapsedBundleContexts, bundleOverviewContext)
+                children += collapsedOverviewNode
+                
+                // Add all detailed bundle renderings and their connections in a second subgraph (bottom)
+                val filteredDetailedBundleContexts = SynthesisUtils.filteredBundleContexts(
+                    bundleOverviewContext.detailedBundleContexts, usedContext)
+                val detailedOverviewNode = transformDetailedBundlesOverview(filteredDetailedBundleContexts, bundleOverviewContext)
+                children += detailedOverviewNode
+                
+                // Put an invisible edge between the collapsed and detailed overviews to guarantee the simple renderings
+                // are above the detailed ones.
+                collapsedOverviewNode.outgoingEdges += createEdge => [
+                    addPolyline => [
+                        invisible = true
+                    ]
+                    target = detailedOverviewNode
+                ]
             ]
+        ]
+    }
+    
+    /**
+     * The top part of the bundle overview rendering containing all collapsed bundle renderings in a box layout.
+     * 
+     * @param filteredCollapsedBundleContexts The bundle contexts for all collapsed bundles that are allowed to be shown
+     * by the option filters.
+     * @param bundleOverviewContext The overview context for all bundles in this subsynthesis.
+     */
+    private def KNode transformCollapsedBundlesOverview(Iterable<BundleContext> filteredCollapsedBundleContexts,
+        BundleOverviewContext bundleOverviewContext) {
+        createNode => [
+            associateWith(bundleOverviewContext)
+            configureBoxLayout
+            addInvisibleContainerRendering
+            
+            children += filteredCollapsedBundleContexts.flatMap[
+                return simpleBundleSynthesis.transform(it)
+            ]
+        ]
+    }
+    
+    /**
+     * The bottom part of the bundle overview rendering containing all detailed bundle renderings and their connections
+     * in a layered layout.
+     * 
+     * @param filteredDetailedBundleContexts The bundle contexts for all detailed bundles that are allowed to be shown
+     * by the option filters.
+     * @param bundleOverviewContext The overview context for all bundles in this subsynthesis.
+     */
+    private def KNode transformDetailedBundlesOverview(Iterable<BundleContext> filteredDetailedBundleContexts,
+        BundleOverviewContext bundleOverviewContext) {
+        createNode => [
+            associateWith(bundleOverviewContext)
+            configureBundleOverviewLayout
+            addInvisibleContainerRendering
+            
+            children += filteredDetailedBundleContexts.flatMap[
+                return bundleSynthesis.transform(it)
+            ]
+            
+            // Add all required bundle edges
+            bundleOverviewContext.requiredBundleEdges.forEach [
+                // Connects the {@code sourceBundleNode} and the {@code usedByBundleNode} via an arrow in UML style,
+                // so [usedByBundleNode] ----- uses -----> [sourceBundleNode]
+                val requiring = key
+                val required = value
+                val requiringNode = requiring.node
+                val requiredNode = required.node
+                val requiringPort = requiringNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "requiredBundles" ]
+                val requiredPort = requiredNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "usedByBundles" ]
+                
+                val edge = createEdge(requiring, required) => [
+                    addRequiredBundleEdgeRendering
+                    sourcePort = requiringPort
+                    targetPort = requiredPort
+                    source = requiringNode
+                    target = requiredNode
+                ]
+                requiringNode.outgoingEdges += edge
+            ]
+        ]
+    }
+    
+    /**
+     * Configures the layout on the bundle view for the top level node that shows the connection between required and
+     * requiring bundles.
+     * 
+     * @param node The node containing the bundle nodes.
+     */
+    private def configureBundleOverviewLayout(KNode node) {
+        node => [
+            setLayoutOption(CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
+            setLayoutOption(CoreOptions::DIRECTION, Direction.RIGHT)
+            setLayoutOption(CoreOptions::EDGE_ROUTING, EdgeRouting.POLYLINE)
         ]
     }
     

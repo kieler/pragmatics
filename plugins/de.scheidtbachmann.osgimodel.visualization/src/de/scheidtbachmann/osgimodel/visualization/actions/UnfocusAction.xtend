@@ -12,6 +12,7 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder
 /**
  * Removes the focus of the top focused element for the {@link OsgiDiagramSynthesis} and gives it to the second element
  * into the focus stack.
+ * @deprecated
  */
 class UnfocusAction implements IAction {
     /**

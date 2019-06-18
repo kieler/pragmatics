@@ -11,6 +11,7 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder
 
 /**
  * Removes the focus of any element for the {@link OsgiDiagramSynthesis}.
+ * @deprecated
  */
 class UnfocusAllAction implements IAction {
     /**

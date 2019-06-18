@@ -22,7 +22,7 @@ class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<List<PackageOb
     override transform(List<PackageObject> features) {
         return #[
             createNode => [
-                configureOverviewLayout
+                configureBoxLayout
                 addOverviewRendering("Imported Packages")
                 children += features.flatMap[ simplePackageObjectSynthesis.transform(it)]
                 initiallyCollapse

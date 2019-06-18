@@ -22,9 +22,9 @@ class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<List<Servic
     override transform(List<ServiceInterface> serviceInterfaces) {
         return #[
             createNode => [
-                configureOverviewLayout
+                configureBoxLayout
                 addOverviewRendering("Service Interfaces")
-                children += serviceInterfaces.flatMap[ simpleServiceInterfaceSynthesis.transform(it)]
+                children += serviceInterfaces.flatMap[ simpleServiceInterfaceSynthesis.transform(it) ]
                 initiallyCollapse
             ]
         ]

@@ -172,17 +172,7 @@ class OsgiStyles {
      * {link ReferencedSynthesisExpandAction} to dynamically call the product synthesis for the given product.
      */
     def KRoundedRectangle addProductInOverviewRendering(KNode node, Product p, String name) {
-        // Expanded
-        node.addRectangle => [
-            setAsExpandedView
-            invisible = true
-            addChildArea
-            addButton("-", ReferencedSynthesisExpandAction::ID)
-        ]
-        
-        // Collapsed
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setAsCollapsedView
             setGridPlacement(2)
             addSimpleLabel(name)
             setBackgroundGradient("#FFEAE0".color, "FFD3BF".color, 90)
@@ -236,17 +226,7 @@ class OsgiStyles {
      * {link ReferencedSynthesisExpandAction} to dynamically call the bundle synthesis for the given bundle.
      */
     def addBundleInOverviewRendering(KNode node, Bundle b, String label) {
-        // Expanded
-        node.addRectangle => [
-            setAsExpandedView
-            invisible = true
-            addChildArea
-            addButton("-", ReferencedSynthesisExpandAction::ID)
-        ]
-        
-        // Collapsed
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setAsCollapsedView
             setGridPlacement(2)
             addSimpleLabel(label)
             setBackgroundGradient("#E0F7FF".color, "#BFEFFF".color, 90)

@@ -22,7 +22,7 @@ class FeatureOverviewSynthesis extends AbstractSubSynthesis<List<Feature>, KNode
     override transform(List<Feature> features) {
         return #[
             createNode => [
-                configureOverviewLayout
+                configureBoxLayout
                 addOverviewRendering("Features")
                 children += features.flatMap[ simpleFeatureSynthesis.transform(it)]
                 initiallyCollapse

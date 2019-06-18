@@ -4,14 +4,15 @@ import de.cau.cs.kieler.klighd.IAction.ActionContext
 import de.cau.cs.kieler.klighd.ViewContext
 import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
 import de.cau.cs.kieler.klighd.kgraph.KNode
+import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.Product
+import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import java.util.List
+import org.eclipse.elk.core.options.CoreOptions
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
-import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
-import org.eclipse.elk.core.options.CoreOptions
 
 /**
  * Util class that contains some static methods commonly used for the Osgi synthesis.
@@ -22,7 +23,7 @@ final class SynthesisUtils {
     /**
      * Utils class can not be instanciated.
      */
-     private new() {}
+    private new() {}
     
     /**
      * Returns the identifying string for the synthesis used by any supported object of the OSGi model.
@@ -34,10 +35,10 @@ final class SynthesisUtils {
                 return "de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesis"
             }
             case model instanceof Bundle: {
-                return "de.scheidtbachmann.osgimodel.visualization.BundleSynthesis"
+                return "de.scheidtbachmann.osgimodel.visualization.subsyntheses.BundleSynthesis"
             }
             case model instanceof Product: {
-                return "de.scheidtbachmann.osgimodel.visualization.ProductSynthesis"
+                return "de.scheidtbachmann.osgimodel.visualization.subsyntheses.ProductSynthesis"
             }
             // TODO: etc.
         }
@@ -103,6 +104,22 @@ final class SynthesisUtils {
     }
     
     /**
+     * Filters the list of given bundle contexts by the filter options of the diagram options.
+     * 
+     * @param bundleContexts The unfiltered list of all bundle contexts.
+     * @param usedContext The ViewContext used to display the diagram these bundles are shown in.
+     * @return An Iterable of the bundle contexts filtered by the diagram options.
+     */
+    def static Iterable<BundleContext> filteredBundleContexts(List<BundleContext> bundleContexts, ViewContext usedContext) {
+        val prefix = "de.scheidtbachmann"
+        if (usedContext.getOptionValue(FILTER_BY_DE_SCHEIDTBACHMANN) as Boolean) {
+            bundleContexts.filter[ it.bundle.uniqueId.startsWith(prefix) ]
+        } else {
+            bundleContexts
+        }
+    }
+    
+    /**
      * Returns the descriptive text of a label shortened by the {@link OsgiOptions#DESCRIPTION_LENGTH} option.
      * @param text The text that should be shortened.
      * @param context The view context used to display the diagram.
@@ -152,7 +169,7 @@ final class SynthesisUtils {
     /**
      * Configures the layout of any overview node. Configures the box layout algorithm of elk.
      */
-    def static void configureOverviewLayout(KNode node) {
+    def static void configureBoxLayout(KNode node) {
         node => [
             DiagramSyntheses.setLayoutOption(node, CoreOptions::ALGORITHM, "org.eclipse.elk.box")
 //            setLayoutOption(CoreOptions::EXPAND_NODES, true) // TODO: why does this not work on bundles?
