@@ -22,7 +22,7 @@ class BundleOverviewContext implements IOverviewVisualizationContext {
     /**
      * All connections for the required packages that should be drawn.
      */
-    List<UsedPackageEdgeConnection> usedPackagesEdges
+    List<UsedPackagesEdgeConnection> usedPackagesEdges
     
     /**
      * The bundle contexts for all bundles in their collapsed form.
@@ -77,7 +77,7 @@ class BundleOverviewContext implements IOverviewVisualizationContext {
     }
     
     override initializeChildVisualizationContexts() {
-        bundles.forEach[
+        bundles.forEach [
             collapsedBundleContexts += new BundleContext(it, this)
         ]
     }
@@ -86,25 +86,32 @@ class BundleOverviewContext implements IOverviewVisualizationContext {
         val copy = new BundleOverviewContext
         // remember the cloned bundle contexts, as they may be used multiple times.
         val clonedBundleContexts = new HashMap<BundleContext, BundleContext>
-        copy.usedPackagesEdges = usedPackagesEdges.clone
         copy.collapsedBundleContexts = new LinkedList
-        collapsedBundleContexts.forEach[
+        collapsedBundleContexts.forEach [
             val newBundleContext = deepCopy as BundleContext
             clonedBundleContexts.put(it, newBundleContext)
             newBundleContext.parent = copy
             copy.collapsedBundleContexts.add(newBundleContext)
         ]
         copy.detailedBundleContexts = new LinkedList
-        detailedBundleContexts.forEach[
+        detailedBundleContexts.forEach [
             val newBundleContext = deepCopy as BundleContext
             clonedBundleContexts.put(it, newBundleContext)
             newBundleContext.parent = copy
             copy.detailedBundleContexts.add(newBundleContext)
         ]
+        
         copy.requiredBundleEdges = new LinkedList<Pair<BundleContext, BundleContext>>
         requiredBundleEdges.forEach[
             copy.requiredBundleEdges.add(clonedBundleContexts.get(key) -> clonedBundleContexts.get(value))
         ]
+        
+        copy.usedPackagesEdges = new LinkedList
+        usedPackagesEdges.forEach [
+            copy.usedPackagesEdges.add(new UsedPackagesEdgeConnection(clonedBundleContexts.get(sourceBundleContext),
+                usedPackages, product, clonedBundleContexts.get(targetBundleContext)))
+        ]
+        
         copy.bundles = bundles.clone
         
         return copy

@@ -18,7 +18,7 @@ class ReferencedSynthesisExpandAction extends AbstractVisualizationContextChangi
      */
     public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExpandAction" 
     
-    override changeVisualization(IVisualizationContext modelVisualizationContext) {
+    override protected changeVisualization(IVisualizationContext modelVisualizationContext, ActionContext actionContext) {
         // This action will always be performed on a child visualization context of a IOverviewVisualizationContext.
         val overviewVisContext = modelVisualizationContext.parentVisualizationContext
         if (!(overviewVisContext instanceof IOverviewVisualizationContext)) {

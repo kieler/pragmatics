@@ -1,6 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KIdentifier
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
@@ -29,6 +30,7 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
     @Inject extension OsgiStyles
     @Inject SimpleBundleSynthesis simpleBundleSynthesis
     @Inject BundleSynthesis bundleSynthesis
+    extension KGraphFactory = KGraphFactory.eINSTANCE
     
     override transform(BundleOverviewContext bundleOverviewContext) {
         return #[
@@ -103,7 +105,7 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
                 return bundleSynthesis.transform(it)
             ]
             
-            // Add all required bundle edges
+            // Add all required bundle edges.
             bundleOverviewContext.requiredBundleEdges.forEach [
                 // Connects the {@code sourceBundleNode} and the {@code usedByBundleNode} via an arrow in UML style,
                 // so [usedByBundleNode] ----- uses -----> [sourceBundleNode]
@@ -122,6 +124,26 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
                     target = requiredNode
                 ]
                 requiringNode.outgoingEdges += edge
+            ]
+            
+            // Add all used packages edges.
+            bundleOverviewContext.usedPackagesEdges.forEach [ connection |
+                val sourceBundleNode = connection.sourceBundleContext.node
+                val sourceBundlePort = sourceBundleNode.ports.findFirst[ data.filter(KIdentifier).head?.id === "importedPackages" ]
+                val targetBundleNode = connection.targetBundleContext.node
+                
+                val edge = createEdge(sourceBundleNode, targetBundleNode, connection.usedPackages, connection.product) => [
+                    addInternalUsedPackagesBundleEdgeRendering(connection.usedPackages, connection.product, usedContext)
+                    sourcePort = sourceBundlePort
+                    source = sourceBundleNode
+                    target = targetBundleNode
+//                    data += createKIdentifier => [ 
+//                        it.id = "usedPackageBy:" + connection.product.uniqueId  + "," + 
+//                            connection.sourceBundleContext.bundle.uniqueId + "," + 
+//                            connection.targetBundleContext.bundle.uniqueId
+//                    ]
+                ]
+                sourceBundleNode.outgoingEdges += edge
             ]
         ]
     }

@@ -42,7 +42,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
         
         // Change the visualization
         
-        changeVisualization(modelVisualizationContext)
+        changeVisualization(modelVisualizationContext, context)
         
         // Put the old context, that will be updated below at the at index + 1 and remember that new index as the
         // current index.
@@ -58,6 +58,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
      * 
      * @param modelVisualizationContext The visualization context of the element that this action is performed on.
      */
-    protected abstract def void changeVisualization(IVisualizationContext modelVisualizationContext)
+    protected abstract def void changeVisualization(IVisualizationContext modelVisualizationContext,
+        ActionContext actionContext)
     
 }

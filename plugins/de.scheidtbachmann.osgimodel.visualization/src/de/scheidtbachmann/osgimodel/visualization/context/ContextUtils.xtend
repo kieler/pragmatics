@@ -1,5 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
+import de.scheidtbachmann.osgimodel.PackageObject
+import de.scheidtbachmann.osgimodel.Product
 import java.util.List
 
 /**
@@ -85,6 +87,33 @@ class ContextUtils {
             ]) {
                 requiredContext.allRequiringBundlesShown = true
             }
+        }
+    }
+    
+    /**
+     * Adds a new edge to the parent bundle context of the source- and target bundle context that indicates which
+     * packages are used by a bundle and by which bundle they are provided in the given product context.
+     * 
+     * @param sourceBundleContext The bundle context where the edge starts.
+     * @param usedPackages The packages required by the source bundle and provided by the target bundle.
+     * @param product The product in that this relation holds.
+     * @param targetBundleContext The bundle context where the edge ends.
+     */
+    def static void addUsedPackagesEdge(BundleContext sourceBundleContext, List<PackageObject> usedPackages,
+        Product product, BundleContext targetBundleContext) {
+        val parentContext = sourceBundleContext.parentVisualizationContext as BundleOverviewContext
+        if (targetBundleContext.parentVisualizationContext !== parentContext) {
+            throw new IllegalArgumentException("The source and target bundle contexts both have to have the same " +
+                "parent context!")
+        }
+        // Only if this edge does not exist yet, add it to the list of used packages edges.
+        if (!parentContext.usedPackagesEdges.exists [
+            it.sourceBundleContext === sourceBundleContext &&
+            it.product === product &&
+            it.targetBundleContext === targetBundleContext
+        ]) {
+            parentContext.usedPackagesEdges += new UsedPackagesEdgeConnection(sourceBundleContext, usedPackages,
+                product, targetBundleContext)
         }
     }
     
