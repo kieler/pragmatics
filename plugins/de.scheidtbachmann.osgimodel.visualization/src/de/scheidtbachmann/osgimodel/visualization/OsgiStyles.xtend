@@ -23,9 +23,8 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
-import de.scheidtbachmann.osgimodel.visualization.actions.CloseAction
+import de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.FocusAction
-import de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction
@@ -72,6 +71,8 @@ class OsgiStyles {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsExpandedView
             setGridPlacement(1)
+            val actionId = CollapseExpandAction.ID
+            addDoubleClickAction(actionId)
             addSimpleLabel(text)
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
@@ -81,7 +82,6 @@ class OsgiStyles {
                 ]
                 invisible = true
                 addChildArea
-                val actionId = CollapseExpandAction.ID
                 addButton("-", actionId)
                 addSingleOrMultiClickAction(actionId)
             ]
@@ -92,6 +92,8 @@ class OsgiStyles {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsCollapsedView
             setGridPlacement(1)
+            val actionId = CollapseExpandAction.ID
+            addDoubleClickAction(actionId)
             addSimpleLabel(text)
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
@@ -100,7 +102,6 @@ class OsgiStyles {
                     minCellWidth = 20
                 ]
                 invisible = true
-                val actionId = CollapseExpandAction.ID
                 addButton("+", actionId)
                 addSingleOrMultiClickAction(actionId)
             ]
@@ -176,8 +177,8 @@ class OsgiStyles {
             setGridPlacement(2)
             addSimpleLabel(name)
             setBackgroundGradient("#FFEAE0".color, "FFD3BF".color, 90)
-            addButton("+", ReferencedSynthesisExpandAction::ID)
-            addDoubleClickAction(ReferencedSynthesisExpandAction::ID)
+            addButton("+", ContextCollapseExpandAction::ID)
+            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
             tooltip = p.uniqueId
             setPointPlacementData => [
@@ -230,8 +231,8 @@ class OsgiStyles {
             setGridPlacement(2)
             addSimpleLabel(label)
             setBackgroundGradient("#E0F7FF".color, "#BFEFFF".color, 90)
-            addButton("+", ReferencedSynthesisExpandAction::ID)
-            addDoubleClickAction(ReferencedSynthesisExpandAction::ID)
+            addButton("+", ContextCollapseExpandAction::ID)
+            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
             tooltip = b.uniqueId
             setPointPlacementData => [
@@ -278,7 +279,7 @@ class OsgiStyles {
                         flexibleWidth = false
                     ]
                 ]
-                addButton("X", CloseAction::ID) => [
+                addButton("-", ContextCollapseExpandAction::ID) => [
                     setGridPlacementData => [
                         flexibleWidth = false
                     ]

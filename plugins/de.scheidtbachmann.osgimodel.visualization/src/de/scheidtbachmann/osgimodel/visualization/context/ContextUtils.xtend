@@ -53,6 +53,24 @@ class ContextUtils {
     }
     
     /**
+     * Collapses the {@code expandedContext} that is an expanded visualization context within {@code overviewContext}
+     * so it is collapsed after this method.
+     * 
+     * @param overviewContext The parent overview context that contains the expanded context in its detailedElements
+     * field.
+     * @param detailedContext The context that is now a detailed element in the parent overview and should be put in
+     * the collapsed elements.
+     */
+    def static void collapse(IOverviewVisualizationContext overviewContext, IVisualizationContext detailedContext) {
+        // this element was previously detailed, so put it in the collapsed list now.
+        overviewContext.detailedElements.remove(detailedContext)
+        // Only this cast will allow to add the context. We know this adding is type-safe, as the collapsed- and
+        // the detailed elements list are always of the same type. If they are not, the collapsed/detailed state
+        // here would not make any sense.
+        (overviewContext.collapsedElements as List<IVisualizationContext>).add(detailedContext)
+    }
+    
+    /**
      * Adds a required bundle edge to the parent bundle overview context of the two given contexts.
      * The direction of the edge indicates that the bundle of the {@code requiringContext} requires the bundle of the
      * {@code requiredContext}.

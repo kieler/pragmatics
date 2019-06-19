@@ -23,8 +23,8 @@
    <extension
          point="de.cau.cs.kieler.klighd.extensions">
       <action
-            class="de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExpandAction"
-            id="de.scheidtbachmann.osgimodel.visualization.actions.ReferencedSynthesisExpandAction">
+            class="de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction"
+            id="de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction">
       </action>
       <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedByBundlesAction"
@@ -37,10 +37,6 @@
       <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.FocusAction"
             id="de.scheidtbachmann.osgimodel.visualization.actions.FocusAction">
-      </action>
-      <action
-            class="de.scheidtbachmann.osgimodel.visualization.actions.CloseAction"
-            id="de.scheidtbachmann.osgimodel.visualization.actions.CloseAction">
       </action>
       <action
             class="de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction"
