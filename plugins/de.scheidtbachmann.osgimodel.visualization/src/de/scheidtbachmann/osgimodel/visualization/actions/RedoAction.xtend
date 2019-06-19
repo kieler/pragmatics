@@ -19,7 +19,7 @@ class RedoAction implements IAction {
         index = Math.min(index + 1, visualizationContexts.size - 1)
         context.viewContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, Integer.valueOf(index))
         
-        return ActionResult.createResult(false)
+        return ActionResult.createResult(true).doSynthesis
     }
     
 }

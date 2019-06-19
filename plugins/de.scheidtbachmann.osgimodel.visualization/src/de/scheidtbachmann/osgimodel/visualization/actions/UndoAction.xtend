@@ -18,7 +18,7 @@ class UndoAction implements IAction {
         index = Math.max(index - 1, 0)
         context.viewContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, Integer.valueOf(index))
         
-        return ActionResult.createResult(false)
+        return ActionResult.createResult(true).doSynthesis
     }
     
 }
