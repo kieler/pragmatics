@@ -9,6 +9,8 @@ import org.eclipse.xtend.lib.annotations.Data
  * Helper data class that contains information about edges that should be visualized for used package associations.
  * This class contains the source bundle, the packages IDs used displayed by the edge, the product they are used in, and
  * the target bundle exporting the package.
+ * 
+ * @author nre
  */
 @Data
 class UsedPackagesEdgeConnection {

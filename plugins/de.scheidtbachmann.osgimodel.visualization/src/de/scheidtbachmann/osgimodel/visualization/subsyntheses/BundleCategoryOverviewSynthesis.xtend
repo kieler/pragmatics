@@ -13,6 +13,8 @@ import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtil
 
 /**
  * Transformation as an overview of all bundle categories in the given list of bundle categories.
+ * 
+ * @author nre
  */
 class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<List<BundleCategory>, KNode> {
     @Inject extension KNodeExtensions

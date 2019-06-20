@@ -10,6 +10,8 @@ import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
  * is performed on and connects the new bundles with a connecting edge from this bundle's 'requiredBundles' port to
  * the new bundle's 'usedByBundles' port.
  * If all used by bundles are already shown, this action reverses its functionality and removes all bundles again.
+ * 
+ * @author nre
  */
 class RevealUsedByBundlesAction extends AbstractVisualizationContextChangingAction {
     

@@ -13,6 +13,8 @@ import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtil
 
 /**
  * Transformation as an overview of all features in the given list of features.
+ * 
+ * @author nre
  */
 class FeatureOverviewSynthesis extends AbstractSubSynthesis<List<Feature>, KNode> {
     @Inject extension KNodeExtensions

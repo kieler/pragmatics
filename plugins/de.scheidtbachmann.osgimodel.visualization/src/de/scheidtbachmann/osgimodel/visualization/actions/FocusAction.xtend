@@ -11,6 +11,8 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder
  * Focuses the element this action is issued on and replaces the view model with a newly synthesized version of the
  * focused element. Uses the {@link OsgiSynthesisProperties#FOCUSED_ELEMENTS} property on the top level element in the
  * view context to persist the focused state.
+ * 
+ * @author nre
  */
 class FocusAction implements IAction {
     /**

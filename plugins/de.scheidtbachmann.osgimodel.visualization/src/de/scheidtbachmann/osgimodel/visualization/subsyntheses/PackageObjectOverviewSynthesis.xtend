@@ -13,6 +13,8 @@ import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtil
 
 /**
  * Transformation as an overview of all imported packages in the given list of imported packages.
+ * 
+ * @author nre
  */
 class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<List<PackageObject>, KNode> {
     @Inject extension KNodeExtensions

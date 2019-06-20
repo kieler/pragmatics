@@ -6,6 +6,8 @@ import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Context for the OSGi synthesis that contains information about {@link Bundle}s.
+ * 
+ * @author nre
  */
 @Accessors
 class BundleContext implements IVisualizationContext<Bundle> {

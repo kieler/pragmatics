@@ -19,6 +19,8 @@ import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
  * Reveals and synthesizes the bundles providing packages used by any bundle into the KNode surrounding the Bundle node
  * this action is performed on and connects the new bundles with a connecting edge from the new bundle to this bundle's
  * 'requiredBundles' port.
+ * 
+ * @author nre
  */
 class RevealUsedPackagesAction extends AbstractVisualizationContextChangingAction {
     

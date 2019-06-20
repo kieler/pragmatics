@@ -10,6 +10,8 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 /**
  * Transformation of a simple view of a feature that provides functionality to be expanded, when the specific 
  * synthesis for features is called.
+ * 
+ * @author nre
  */
 class SimpleFeatureSynthesis extends AbstractSubSynthesis<Feature, KNode> {
     @Inject extension KNodeExtensions

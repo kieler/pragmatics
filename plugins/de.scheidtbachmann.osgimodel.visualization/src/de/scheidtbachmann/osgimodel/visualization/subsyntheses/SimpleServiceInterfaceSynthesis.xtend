@@ -10,6 +10,8 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 /**
  * Transformation of a simple view of a service interface that provides functionality to be expanded, when the
  * specific synthesis for service interfaces is called.
+ * 
+ * @author nre
  */
 class SimpleServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterface, KNode> {
     @Inject extension KNodeExtensions

@@ -10,6 +10,8 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 /**
  * Transformation of a simple view of a packages that provides functionality to be expanded, when the specific
  * synthesis for packages is called.
+ * 
+ * @author nre
  */
 class SimplePackageObjectSynthesis extends AbstractSubSynthesis<PackageObject, KNode> {
     @Inject extension KNodeExtensions

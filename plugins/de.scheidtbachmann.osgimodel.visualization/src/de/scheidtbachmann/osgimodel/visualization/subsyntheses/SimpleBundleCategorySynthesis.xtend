@@ -9,7 +9,9 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 
 /**
  * Transformation of a simple view of a bundle category that provides functionality to be expanded, when the
-     * specific synthesis for bundle categories is called.
+ * specific synthesis for bundle categories is called.
+ * 
+ * @author nre
  */
 class SimpleBundleCategorySynthesis extends AbstractSubSynthesis<BundleCategory, KNode> {
     @Inject extension KNodeExtensions

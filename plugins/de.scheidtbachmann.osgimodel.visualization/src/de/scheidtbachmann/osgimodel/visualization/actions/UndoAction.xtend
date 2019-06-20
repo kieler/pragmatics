@@ -5,6 +5,8 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 
 /**
  * Undoes the last action performed on the view model.
+ * 
+ * @author nre
  */
 class UndoAction implements IAction {
     /**

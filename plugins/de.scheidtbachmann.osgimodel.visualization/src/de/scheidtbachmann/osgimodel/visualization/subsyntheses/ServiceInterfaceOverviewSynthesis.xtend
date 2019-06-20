@@ -13,6 +13,8 @@ import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtil
 
 /**
  * Transformation as an overview of all service interfaces in the given list of service interfaces.
+ * 
+ * @author nre
  */
 class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<List<ServiceInterface>, KNode> {
     @Inject extension KNodeExtensions

@@ -4,6 +4,8 @@ import de.cau.cs.kieler.klighd.SynthesisOption
 
 /**
  * A collection of all options that are used in the OSGi synthesis and their required enums.
+ * 
+ * @author nre
  */
 class OsgiOptions {
     /** The Bundle category */

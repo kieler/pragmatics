@@ -5,6 +5,8 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 
 /**
  * Redoes the last action that was undone on the view model.
+ * 
+ * @author nre
  */
 class RedoAction implements IAction {
     /**

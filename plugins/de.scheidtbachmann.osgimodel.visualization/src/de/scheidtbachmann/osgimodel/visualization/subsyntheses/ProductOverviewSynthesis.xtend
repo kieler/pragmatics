@@ -11,6 +11,8 @@ import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtil
 
 /**
  * Transformation as an overview of all products in the given list of products.
+ * 
+ * @author nre
  */
 class ProductOverviewSynthesis extends AbstractSubSynthesis<ProductOverviewContext, KNode> {
     @Inject extension KNodeExtensions

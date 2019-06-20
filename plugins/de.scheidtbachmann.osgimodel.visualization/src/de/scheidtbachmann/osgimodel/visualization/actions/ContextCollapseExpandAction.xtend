@@ -6,6 +6,8 @@ import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 
 /**
  * An action that collapses or expands an element by making it detailed in an {@link IOverviewVisualizationContext}.
+ * 
+ * @author nre
  */
 class ContextCollapseExpandAction extends AbstractVisualizationContextChangingAction {
     /**

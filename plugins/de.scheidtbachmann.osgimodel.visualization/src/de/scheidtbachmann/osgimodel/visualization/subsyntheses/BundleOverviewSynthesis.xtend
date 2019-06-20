@@ -22,6 +22,8 @@ import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtil
 
 /**
  * Transformation as an overview of all bundles in the given list of bundles.
+ * 
+ * @author nre
  */
 class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext, KNode> {
     @Inject extension KEdgeExtensions

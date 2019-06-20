@@ -5,6 +5,8 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 
 /**
  * Resets the view to its default overview state.
+ * 
+ * @author nre
  */
 class ResetViewAction implements IAction {
     /**

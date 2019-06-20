@@ -14,6 +14,8 @@ import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 /**
  * Transformation of a simple view of a product that provides functionality to be expanded, when the specific 
  * synthesis for products is called.
+ * 
+ * @author nre
  */
 class SimpleProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode> {
     @Inject extension KNodeExtensions

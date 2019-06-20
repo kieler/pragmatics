@@ -13,6 +13,8 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder
 
 /**
  * Utility class to provide methods used by actions that reveal new elements to some pre-existing visualization.
+ * 
+ * @author nre
  */
 final class GenericRevealActionUtil {
     /**

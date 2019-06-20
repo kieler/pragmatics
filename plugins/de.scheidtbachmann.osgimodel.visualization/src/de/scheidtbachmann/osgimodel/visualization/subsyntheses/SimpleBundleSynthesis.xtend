@@ -17,6 +17,8 @@ import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 /**
  * Transformation of a simple view of a bundle that provides functionality to be expanded, when the specific 
  * synthesis for bundles is called.
+ * 
+ * @author nre
  */
 class SimpleBundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
     @Inject extension KNodeExtensions
