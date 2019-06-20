@@ -5,9 +5,11 @@ import de.scheidtbachmann.osgimodel.OsgiProject
 
 /**
  * Context for the OSGi synthesis that contains information about the root project overview.
+ * 
+ * @author nre
  */
 @Accessors
-class OsgiProjectContext implements IVisualizationContext {
+class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
     
     /**
      * The context for the bundle overview.
@@ -27,11 +29,11 @@ class OsgiProjectContext implements IVisualizationContext {
     /**
      * The parent visualization context.
      */
-    IVisualizationContext parent
+    IVisualizationContext<?> parent
     
     private new() {}
     
-    new(OsgiProject project, IVisualizationContext parent) {
+    new(OsgiProject project, IVisualizationContext<?> parent) {
         this.parent = parent
         this.project = project
         initializeChildVisualizationContexts

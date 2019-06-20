@@ -8,9 +8,11 @@ import java.util.LinkedList
 
 /**
  * Context for the OSGi synthesis that contains information about {@link Product} overviews.
+ * 
+ * @author nre
  */
 @Accessors
-class ProductOverviewContext implements IOverviewVisualizationContext {
+class ProductOverviewContext implements IOverviewVisualizationContext<Product> {
     
     /**
      * All products that should be drawn in their detailed form.
@@ -30,11 +32,11 @@ class ProductOverviewContext implements IOverviewVisualizationContext {
     /**
      * The parent visualization context.
      */
-    IVisualizationContext parent
+    IVisualizationContext<?> parent
     
     private new() {}
     
-    new(List<Product> products, IVisualizationContext parent) {
+    new(List<Product> products, IVisualizationContext<?> parent) {
         this.parent = parent
         this.products = products
         detailedProductContexts = new LinkedList

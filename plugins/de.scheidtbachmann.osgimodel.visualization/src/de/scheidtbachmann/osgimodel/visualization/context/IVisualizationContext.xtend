@@ -5,22 +5,26 @@ import java.util.List
 /**
  * Interface for visualization contexts of the OSGi model synthesis. Each context may contain child contexts, where each
  * context will give the synthesis additional information in which state parts of the model should be generated in.
- */ // TODO: make this class generic <ModelElement>
-interface IVisualizationContext extends Cloneable {
+ * 
+ * @param <M> The model element class this visualization context is for.
+ * 
+ * @author nre
+ */
+interface IVisualizationContext<M> {
     /**
      * All contexts that need to be into the view model as children.
      */
-    def List<? extends IVisualizationContext> getChildContexts()
+    def List<? extends IVisualizationContext<?>> getChildContexts()
     
     /**
      * The model element to get the data from for this context.
      */
-    def Object getModelElement()
+    def M getModelElement()
     
     /**
      * The parent visualization context containing this context.
      */
-    def IVisualizationContext getParentVisualizationContext()
+    def IVisualizationContext<?> getParentVisualizationContext()
     
     /**
      * Initializes all child contexts needed for this element, once it is displayed in a detailed fashion.
@@ -35,5 +39,5 @@ interface IVisualizationContext extends Cloneable {
      * Also, any direct references to classes from the osgi model itself are not cloned, they should always refer to the
      * original model.
      */
-    def IVisualizationContext deepCopy()
+    def IVisualizationContext<M> deepCopy()
 }

@@ -20,7 +20,7 @@ class ContextUtils {
      * @param childContext The child context that should be checked if it is contained in the rootContext.
      * @return If {@code rootContext} is a parent of {@code childContext}.
      */
-    def static boolean isChildContext(IVisualizationContext rootContext, IVisualizationContext childContext) {
+    def static boolean isChildContext(IVisualizationContext<?> rootContext, IVisualizationContext<?> childContext) {
         var currentContext = childContext
         while(currentContext !== null) {
             if (currentContext === rootContext) {
@@ -41,14 +41,14 @@ class ContextUtils {
      * @param collapsedContext The context that is now a collapsed element in the parent overview and should be put in
      * the detailed elements as well as be initialized for its child contexts.
      */
-    def static void makeDetailed(IOverviewVisualizationContext overviewContext, IVisualizationContext collapsedContext) {
+    def static <M> void makeDetailed(IOverviewVisualizationContext<M> overviewContext, IVisualizationContext<M> collapsedContext) {
         // this element was previously collapsed, so put it in the detailed list now and initialize its child
         // visualization contexts.
         overviewContext.collapsedElements.remove(collapsedContext)
         // Only this cast will allow to add the context. We know this adding is type-safe, as the collapsed- and
         // the detailed elements list are always of the same type. If they are not, the collapsed/detailed state
         // here would not make any sense.
-        (overviewContext.detailedElements as List<IVisualizationContext>).add(collapsedContext)
+        (overviewContext.detailedElements as List<IVisualizationContext<M>>).add(collapsedContext)
         collapsedContext.initializeChildVisualizationContexts
     }
     
@@ -61,13 +61,13 @@ class ContextUtils {
      * @param detailedContext The context that is now a detailed element in the parent overview and should be put in
      * the collapsed elements.
      */
-    def static void collapse(IOverviewVisualizationContext overviewContext, IVisualizationContext detailedContext) {
+    def static <M> void collapse(IOverviewVisualizationContext<M> overviewContext, IVisualizationContext<M> detailedContext) {
         // this element was previously detailed, so put it in the collapsed list now.
         overviewContext.detailedElements.remove(detailedContext)
         // Only this cast will allow to add the context. We know this adding is type-safe, as the collapsed- and
         // the detailed elements list are always of the same type. If they are not, the collapsed/detailed state
         // here would not make any sense.
-        (overviewContext.collapsedElements as List<IVisualizationContext>).add(detailedContext)
+        (overviewContext.collapsedElements as List<IVisualizationContext<M>>).add(detailedContext)
     }
     
     /**

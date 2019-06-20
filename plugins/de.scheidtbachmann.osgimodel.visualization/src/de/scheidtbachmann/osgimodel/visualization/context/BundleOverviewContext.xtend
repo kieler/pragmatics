@@ -11,7 +11,7 @@ import org.eclipse.xtend.lib.annotations.Accessors
  * Context for the OSGi synthesis that contains information about {@link Bundle} overviews.
  */
 @Accessors
-class BundleOverviewContext implements IOverviewVisualizationContext {
+class BundleOverviewContext implements IOverviewVisualizationContext<Bundle> {
     
     /**
      * All connections for the required bundles hierarchy that should be drawn.
@@ -42,11 +42,11 @@ class BundleOverviewContext implements IOverviewVisualizationContext {
     /**
      * The parent visualization context.
      */
-    IVisualizationContext parent
+    IVisualizationContext<?> parent
     
     private new() {}
     
-    new(List<Bundle> bundles, IVisualizationContext parent) {
+    new(List<Bundle> bundles, IVisualizationContext<?> parent) {
         this.parent = parent
         this.bundles = bundles
         requiredBundleEdges = new LinkedList

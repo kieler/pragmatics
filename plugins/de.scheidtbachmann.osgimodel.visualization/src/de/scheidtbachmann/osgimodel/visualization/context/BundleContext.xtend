@@ -1,14 +1,14 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
-import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
-import org.eclipse.xtend.lib.annotations.Accessors
 import de.scheidtbachmann.osgimodel.Bundle
+import java.util.List
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Context for the OSGi synthesis that contains information about {@link Bundle}s.
  */
 @Accessors
-class BundleContext implements IVisualizationContext {
+class BundleContext implements IVisualizationContext<Bundle> {
     /**
      * Indicates if all required bundles are shown in this context.
      */
@@ -27,11 +27,11 @@ class BundleContext implements IVisualizationContext {
     /**
      * The parent visualization context.
      */
-    IVisualizationContext parent
+    IVisualizationContext<List<Bundle>> parent
     
     private new() {}
     
-    new(Bundle bundle, IVisualizationContext parent) {
+    new(Bundle bundle, IVisualizationContext<List<Bundle>> parent) {
         this.parent = parent
         this.bundle = bundle
     }
