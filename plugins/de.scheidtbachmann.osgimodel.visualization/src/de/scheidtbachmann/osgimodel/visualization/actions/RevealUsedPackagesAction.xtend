@@ -29,7 +29,7 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
      */
     public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction"
     
-    override protected changeVisualization(IVisualizationContext modelVisualizationContext, ActionContext actionContext) {
+    override protected <M> changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         // The BundleContext element for the element that was clicked on.
         val bundleContext = modelVisualizationContext as BundleContext
         

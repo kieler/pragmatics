@@ -34,7 +34,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
         visualizationContexts.add(index, copiedVisualizationContext)
         
         // The visualization context of the element that this action is performed on.
-        val modelVisualizationContext = SynthesisUtils.getDomainElement(context) as IVisualizationContext
+        val modelVisualizationContext = SynthesisUtils.getDomainElement(context) as IVisualizationContext<?>
         if (!ContextUtils.isChildContext(currentVisualizationContext, modelVisualizationContext)) {
             throw new IllegalStateException("This action is performed on an element that is not currently in the " +
                 "currently displayed visualization context")
@@ -58,7 +58,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
      * 
      * @param modelVisualizationContext The visualization context of the element that this action is performed on.
      */
-    protected abstract def void changeVisualization(IVisualizationContext modelVisualizationContext,
+    protected abstract def <M> void changeVisualization(IVisualizationContext<M> modelVisualizationContext,
         ActionContext actionContext)
     
 }

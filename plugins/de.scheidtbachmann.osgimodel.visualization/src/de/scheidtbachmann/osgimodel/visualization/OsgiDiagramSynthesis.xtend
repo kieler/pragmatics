@@ -88,7 +88,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
         // a new one for the general OSGi model overview and store that for later use.
         val visualizationContexts = usedContext.getProperty(OsgiSynthesisProperties.VISUALIZATION_CONTEXTS)
         var index = usedContext.getProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX)
-        var IVisualizationContext visualizationContext = null
+        var IVisualizationContext<?> visualizationContext = null
         
         if (visualizationContexts.empty || index === null) {
             index = 0

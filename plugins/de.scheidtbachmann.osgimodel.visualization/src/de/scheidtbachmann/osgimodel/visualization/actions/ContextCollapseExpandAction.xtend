@@ -15,14 +15,14 @@ class ContextCollapseExpandAction extends AbstractVisualizationContextChangingAc
      */
     public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction" 
     
-    override protected changeVisualization(IVisualizationContext modelVisualizationContext, ActionContext actionContext) {
+    override protected <M> changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         // This action will always be performed on a child visualization context of a IOverviewVisualizationContext.
         val overviewVisContext = modelVisualizationContext.parentVisualizationContext
         if (!(overviewVisContext instanceof IOverviewVisualizationContext)) {
             throw new IllegalStateException("This action is performed on an element that is not inside an overview " +
                 "visualization!")
         }
-        val ovc = (overviewVisContext as IOverviewVisualizationContext)
+        val ovc = (overviewVisContext as IOverviewVisualizationContext<M>)
         
         if (ovc.collapsedElements.contains(modelVisualizationContext)) {
             ContextUtils.makeDetailed(ovc, modelVisualizationContext)

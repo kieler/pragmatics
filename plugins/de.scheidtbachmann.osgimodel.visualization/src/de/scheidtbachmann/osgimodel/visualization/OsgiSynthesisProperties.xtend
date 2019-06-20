@@ -19,9 +19,9 @@ class OsgiSynthesisProperties {
      * Currently does not store a delta between the contexts, but a hard copy of every state used since the beginning
      * default view.
      */
-    public static final IProperty<List<IVisualizationContext>> VISUALIZATION_CONTEXTS
-        = new Property<List<IVisualizationContext>>("osgimodel.visualizationContexts",
-            new LinkedList<IVisualizationContext>)
+    public static final IProperty<List<IVisualizationContext<?>>> VISUALIZATION_CONTEXTS
+        = new Property<List<IVisualizationContext<?>>>("osgimodel.visualizationContexts",
+            new LinkedList<IVisualizationContext<?>>)
     
     /**
      * Property pointing towards which index points towards the currently used visualization context in the
