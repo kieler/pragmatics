@@ -1,7 +1,6 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
-import de.cau.cs.kieler.klighd.kgraph.KGraphFactory
 import de.cau.cs.kieler.klighd.kgraph.KIdentifier
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KEdgeExtensions
@@ -32,7 +31,6 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
     @Inject extension OsgiStyles
     @Inject SimpleBundleSynthesis simpleBundleSynthesis
     @Inject BundleSynthesis bundleSynthesis
-    extension KGraphFactory = KGraphFactory.eINSTANCE
     
     override transform(BundleOverviewContext bundleOverviewContext) {
         return #[

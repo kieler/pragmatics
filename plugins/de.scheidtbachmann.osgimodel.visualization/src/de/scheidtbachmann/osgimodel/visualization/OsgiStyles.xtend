@@ -71,20 +71,39 @@ class OsgiStyles {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsExpandedView
             setGridPlacement(1)
-            val actionId = CollapseExpandAction.ID
-            addDoubleClickAction(actionId)
-            addSimpleLabel(text)
-            addHorizontalSeperatorLine(1, 0)
+            addDoubleClickAction(CollapseExpandAction.ID)
             addRectangle => [
-                setGridPlacementData => [
-                    minCellHeight = 20
-                    minCellWidth = 20
-                ]
+                setGridPlacement(5)
                 invisible = true
-                addChildArea
-                addButton("-", actionId)
-                addSingleOrMultiClickAction(actionId)
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel(text)
+                ]
+                addVerticalLine(RIGHT, 0, 1) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                ]
+                addButton("Focus", FocusAction::ID) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                    lineWidth = 0
+                ]
+                addVerticalLine(RIGHT, 0, 1) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                ]
+                addButton("-", CollapseExpandAction.ID) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                    lineWidth = 0
+                ]
             ]
+            addHorizontalSeperatorLine(1, 0)
+            addChildArea
             setShadow("black".color, 4, 4)
         ]
         
@@ -92,18 +111,36 @@ class OsgiStyles {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setAsCollapsedView
             setGridPlacement(1)
-            val actionId = CollapseExpandAction.ID
-            addDoubleClickAction(actionId)
-            addSimpleLabel(text)
-            addHorizontalSeperatorLine(1, 0)
+            addDoubleClickAction(CollapseExpandAction.ID)
             addRectangle => [
-                setGridPlacementData => [
-                    minCellHeight = 20
-                    minCellWidth = 20
-                ]
+                setGridPlacement(5)
                 invisible = true
-                addButton("+", actionId)
-                addSingleOrMultiClickAction(actionId)
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel(text)
+                ]
+                addVerticalLine(RIGHT, 0, 1) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                ]
+                addButton("Focus", FocusAction::ID) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                    lineWidth = 0
+                ]
+                addVerticalLine(RIGHT, 0, 1) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                ]
+                addButton("+", CollapseExpandAction.ID) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                    lineWidth = 0
+                ]
             ]
             setShadow("black".color, 4, 4)
         ]
@@ -174,17 +211,26 @@ class OsgiStyles {
      */
     def KRoundedRectangle addProductInOverviewRendering(KNode node, Product p, String name) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setGridPlacement(2)
-            addSimpleLabel(name)
+            setGridPlacement(3)
+            addRectangle => [
+                invisible = true
+                addSimpleLabel(name)
+            ]
+            addVerticalLine(RIGHT, 0, 1) => [
+                setGridPlacementData => [
+                    flexibleWidth = false
+                ]
+            ]
+            addButton("+", ContextCollapseExpandAction::ID) => [
+                setGridPlacementData => [
+                    flexibleWidth = false
+                ]
+                lineWidth = 0
+            ]
             setBackgroundGradient("#FFEAE0".color, "FFD3BF".color, 90)
-            addButton("+", ContextCollapseExpandAction::ID)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
             tooltip = p.uniqueId
-            setPointPlacementData => [
-                minHeight = 20
-                minWidth = 20
-            ]
         ]
     }
     
@@ -193,10 +239,23 @@ class OsgiStyles {
             setBackgroundGradient("#FFEAE0".color, "#FFD3BF".color, 90)
             setGridPlacement(1)
             addRectangle => [
-                setGridPlacement(2)
+                setGridPlacement(3)
                 invisible = true
-                addSimpleLabel(p.descriptiveName)
-                addButton("Focus", FocusAction::ID)
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel(p.descriptiveName)
+                ]
+                addVerticalLine(RIGHT, 0, 1) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                ]
+                addButton("-", ContextCollapseExpandAction::ID) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                    lineWidth = 0
+                ]
             ]
             addHorizontalSeperatorLine(1, 0)
             addRectangle => [
@@ -216,6 +275,7 @@ class OsgiStyles {
                 invisible = true
                 addChildArea
             ]
+            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
         ]
     }
@@ -228,10 +288,23 @@ class OsgiStyles {
      */
     def addBundleInOverviewRendering(KNode node, Bundle b, String label) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
-            setGridPlacement(2)
-            addSimpleLabel(label)
+            setGridPlacement(3)
+            addRectangle => [
+                invisible = true
+                addSimpleLabel(label)
+            ]
+            addVerticalLine(RIGHT, 0, 1) => [
+                setGridPlacementData => [
+                    flexibleWidth = false
+                ]
+            ]
+            addButton("+", ContextCollapseExpandAction::ID) => [
+                setGridPlacementData => [
+                    flexibleWidth = false
+                ]
+                lineWidth = 0
+            ]
             setBackgroundGradient("#E0F7FF".color, "#BFEFFF".color, 90)
-            addButton("+", ContextCollapseExpandAction::ID)
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
             tooltip = b.uniqueId
@@ -257,22 +330,11 @@ class OsgiStyles {
             setBackgroundGradient("#E0F7FF".color, "#BFEFFF".color, 90)
             setGridPlacement(1)
             addRectangle => [
-                setGridPlacement(5)
+                setGridPlacement(3)
                 invisible = true
                 addRectangle => [
                     invisible = true
                     addSimpleLabel(b.descriptiveName)
-                ]
-                addVerticalLine(RIGHT, 0, 1) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                ]
-                addButton("Focus", FocusAction::ID) => [
-                    setGridPlacementData => [
-                        flexibleWidth = false
-                    ]
-                    lineWidth = 0
                 ]
                 addVerticalLine(RIGHT, 0, 1) => [
                     setGridPlacementData => [
@@ -295,6 +357,7 @@ class OsgiStyles {
                 invisible = true
                 addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(b.about, context))
             ]
+            addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
         ]
     }
