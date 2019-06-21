@@ -94,18 +94,38 @@ class ContextUtils {
             // Requiring context:
             if (requiringContext.bundle.requiredBundles.forall [ requiredBundle |
                 !parentContext.bundles.contains(requiredBundle) ||
-                parentContext.requiredBundleEdges.exists [ value.bundle === requiredBundle ]
+                parentContext.requiredBundleEdges.exists [ key === requiringContext && value.bundle === requiredBundle ]
             ]) {
                 requiringContext.allRequiredBundlesShown = true
             }
             // Required context:
             if (requiredContext.bundle.usedByBundle.forall [ requiringBundle |
                 !parentContext.bundles.contains(requiringBundle) ||
-                parentContext.requiredBundleEdges.exists [ key.bundle === requiringBundle ]
+                parentContext.requiredBundleEdges.exists [ key.bundle === requiringBundle && value === requiredContext ]
             ]) {
                 requiredContext.allRequiringBundlesShown = true
             }
         }
+    }
+    
+    /**
+     * Removes a required bundle edge of the parent bundle overview context of the two given contexts.
+     * 
+     * @param requiringContext The bundle context with the bundle requiring the other bundle.
+     * @param requiredContext The bundle context with the bundle required by the other bundle.
+     */
+    def static removeRequiredBundleEdge(BundleContext requiringContext, BundleContext requiredContext) {
+        val parentContext = requiringContext.parentVisualizationContext as BundleOverviewContext
+        if (requiredContext.parentVisualizationContext !== parentContext) {
+            throw new IllegalArgumentException("The requiring and the required context both have to have the same " +
+                "parent context!")
+        }
+        parentContext.requiredBundleEdges.removeIf [ key === requiringContext && value === requiredContext ]
+        
+        // Mark for both the requiring bundle and the required bundle that not all connections are shown in the 
+        // parent context anymore. Remember that in the corresponding bundle context.
+        requiringContext.allRequiredBundlesShown = false
+        requiredContext.allRequiringBundlesShown = false
     }
     
     /**
@@ -134,5 +154,31 @@ class ContextUtils {
                 product, targetBundleContext)
         }
     }
+    
+    /**
+     * Determines whether all edges are displayed that could be connected to the clicked port.
+     * 
+     * @param clickedContext The context for that should be checked, if all element representations are connected to it.
+     * @param possiblyConnectedContexts The list of elements that could be connected.
+     * @param overviewContext The parent context in which the connection status should be checked.
+     * @param isSource If the {@code clickedContext} should be checked if it is the source or the target in the
+     * potential connection.
+     */
+    def static boolean allConnected(BundleContext clickedContext, List<BundleContext> possiblyConnectedContexts,
+        BundleOverviewContext overviewContext, boolean isSource) {
+        val conntectedContexts = if (isSource) {
+            overviewContext.requiredBundleEdges.filter [ requiredBundleEdge |
+                requiredBundleEdge.key === clickedContext
+            ].map[it.value].toList
+        } else {
+            overviewContext.requiredBundleEdges.filter [ requiredBundleEdge |
+                requiredBundleEdge.value === clickedContext
+            ].map[it.key].toList
+        }
+        
+        return possiblyConnectedContexts.size === conntectedContexts.size &&
+            possiblyConnectedContexts.containsAll(conntectedContexts)
+    }
+    
     
 }
