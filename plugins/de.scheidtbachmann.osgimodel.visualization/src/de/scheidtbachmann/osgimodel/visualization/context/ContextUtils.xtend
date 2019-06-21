@@ -2,6 +2,7 @@ package de.scheidtbachmann.osgimodel.visualization.context
 
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
+import java.util.Arrays
 import java.util.List
 
 /**
@@ -55,6 +56,7 @@ class ContextUtils {
     /**
      * Collapses the {@code expandedContext} that is an expanded visualization context within {@code overviewContext}
      * so it is collapsed after this method.
+     * Also removes any edges connected to the now collapsed element.
      * 
      * @param overviewContext The parent overview context that contains the expanded context in its detailedElements
      * field.
@@ -68,6 +70,48 @@ class ContextUtils {
         // the detailed elements list are always of the same type. If they are not, the collapsed/detailed state
         // here would not make any sense.
         (overviewContext.collapsedElements as List<IVisualizationContext<M>>).add(detailedContext)
+        
+        // Remove all edges incident to the now collapsed context.
+        removeEdges(overviewContext, detailedContext)
+    }
+    
+    def dispatch static void removeEdges(IOverviewVisualizationContext<?> overviewContext, IVisualizationContext<?> context) {
+        // This is the general case matching for all cases falling through this dispatch method.
+        // It is only explicitly written here, so Xtend does not infer IVisualizationContext<? extends BasicOsgiObject>
+        // as the common super type, as some objects such as PackageObjects are not BasicOsgiObjects and may want to 
+        // use this method as well.
+        // TODO: Remove this method once the dispatch mechanic sees this as the common super type anyway.
+        
+        throw new IllegalArgumentException("Unhandled parameter types: " +
+            Arrays.<Object>asList(overviewContext, context).toString());
+    }
+    
+    /**
+     * Removes all edges incident to the context.
+     * 
+     * @param overviewContext The overview context containing the edge
+     * @param context The context of that all edges should be removed.
+     */
+    def dispatch static void removeEdges(BundleOverviewContext overviewContext, BundleContext context) {
+        val clone = overviewContext.requiredBundleEdges.clone
+        clone.forEach [
+            if (key === context || value === context) {
+                overviewContext.requiredBundleEdges.remove(it)
+                key.allRequiredBundlesShown = false
+                value.allRequiringBundlesShown = false
+            }
+        ]
+        overviewContext.usedPackagesEdges.removeIf [ sourceBundleContext === context || targetBundleContext === context ]
+    }
+    
+    /**
+     * Removes all edges incident to the context.
+     * 
+     * @param overviewContext The overview context containing the edge
+     * @param context The context of that all edges should be removed.
+     */
+    def dispatch static void removeEdges(ProductOverviewContext overviewContext, ProductContext context) {
+        // There are no edges in product overview contexts. So do nothing.
     }
     
     /**
