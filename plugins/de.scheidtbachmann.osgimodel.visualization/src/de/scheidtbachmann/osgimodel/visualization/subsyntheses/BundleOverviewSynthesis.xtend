@@ -12,6 +12,7 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
+import org.eclipse.elk.core.math.ElkPadding
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.EdgeRouting
@@ -40,6 +41,9 @@ class BundleOverviewSynthesis extends AbstractSubSynthesis<BundleOverviewContext
                 DiagramSyntheses.setLayoutOption(it, CoreOptions::ALGORITHM, "org.eclipse.elk.layered")
                 DiagramSyntheses.setLayoutOption(it, CoreOptions::DIRECTION, Direction.DOWN)
                 addOverviewRendering("Bundles")
+                
+                // remove the padding of the invisible container.
+                addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
                 
                 
                 // Add all simple bundle renderings in a first subgraph (top)

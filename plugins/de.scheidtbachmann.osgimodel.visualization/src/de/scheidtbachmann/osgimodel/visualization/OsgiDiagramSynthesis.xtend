@@ -23,6 +23,8 @@ import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ProductOverviewSy
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ServiceInterfaceOverviewSynthesis
 import java.util.LinkedHashSet
 import org.eclipse.elk.alg.layered.options.LayeredOptions
+import org.eclipse.elk.core.math.ElkPadding
+import org.eclipse.elk.core.options.CoreOptions
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
@@ -135,7 +137,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
                     children += overviewBundleCategoryNodes
                     
                     // remove the padding of the invisible container.
-    //                addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0)) // TODO: test this.
+                    addLayoutParam(CoreOptions.PADDING, new ElkPadding(0, 0, 0, 0))
                 ]
             ]
             
