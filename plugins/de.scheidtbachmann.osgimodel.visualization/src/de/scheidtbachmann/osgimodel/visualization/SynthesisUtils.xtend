@@ -51,18 +51,16 @@ final class SynthesisUtils {
     
     
     /**
-     * If the id should be truncated by the prefix 'de.scheidtbachmann', this returns a truncated version of the id,
-     * otherwise the id itself.
+     * If the id should be truncated by the prefix of the {@link OsgiOptions#SHORTEN_BY} option, this returns a
+     * truncated version of the id, otherwise the id itself.
      * 
      * @param id The id that should possibly be truncated.
      * @return The possibly truncated id.
      */
     def static String getId(String id, ViewContext usedContext) {
-        val prefix = "de.scheidtbachmann."
-        if (usedContext.getOptionValue(SHORTEN_BY_DE_SCHEIDTBACHMANN) as Boolean) {
-            if (id.startsWith(prefix)) {
-                return id.substring(prefix.length)
-            }
+        val prefix = usedContext.getOptionValue(SHORTEN_BY) as String
+        if (!prefix.empty && id.startsWith(prefix)) {
+            return id.substring(prefix.length)
         }
         return id
     }
@@ -80,8 +78,8 @@ final class SynthesisUtils {
         val bundlesInContext = bundles.filter [
             boc.bundles.contains(it)
         ]
-        val prefix = "de.scheidtbachmann"
-        if (usedContext.getOptionValue(FILTER_BY_DE_SCHEIDTBACHMANN) as Boolean) {
+        val prefix = usedContext.getOptionValue(FILTER_BY) as String
+        if (prefix !== "") {
             return bundlesInContext.filter[ it.uniqueId.startsWith(prefix) ]
         } else {
             return bundlesInContext
@@ -96,8 +94,8 @@ final class SynthesisUtils {
      * @return An Iterable of the bundle contexts filtered by the diagram options.
      */
     def static Iterable<BundleContext> filteredBundleContexts(List<BundleContext> bundleContexts, ViewContext usedContext) {
-        val prefix = "de.scheidtbachmann"
-        if (usedContext.getOptionValue(FILTER_BY_DE_SCHEIDTBACHMANN) as Boolean) {
+        val prefix = usedContext.getOptionValue(FILTER_BY) as String
+        if (prefix !== "") {
             return bundleContexts.filter[ it.bundle.uniqueId.startsWith(prefix) ]
         } else {
             return bundleContexts
