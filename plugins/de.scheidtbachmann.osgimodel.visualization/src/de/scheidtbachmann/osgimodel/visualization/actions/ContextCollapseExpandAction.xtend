@@ -32,6 +32,7 @@ class ContextCollapseExpandAction extends AbstractVisualizationContextChangingAc
             throw new IllegalStateException("Bug in code detected. This context has to be either contained within " +
                 "the collapsed or the contained elements")
         }
+        return null
     }
     
 }

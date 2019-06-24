@@ -54,6 +54,7 @@ class RevealRequiredBundlesAction extends AbstractVisualizationContextChangingAc
                 ContextUtils.addRequiredBundleEdge(bundleContext, requiredBundleContext)
             ]
         }
+        return null
     }
     
 }

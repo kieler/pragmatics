@@ -139,6 +139,8 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
                 ContextUtils.addUsedPackagesEdge(bundleContext, usedPackages, product, usedPackageBundleContext)
             ]
         ]
+        
+        return null
     }
     
 //    // TODO: Test this!

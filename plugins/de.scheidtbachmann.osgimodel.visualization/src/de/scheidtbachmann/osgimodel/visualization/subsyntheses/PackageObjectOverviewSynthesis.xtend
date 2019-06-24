@@ -21,12 +21,13 @@ class PackageObjectOverviewSynthesis extends AbstractSubSynthesis<List<PackageOb
     @Inject extension OsgiStyles
     @Inject SimplePackageObjectSynthesis simplePackageObjectSynthesis
     
-    override transform(List<PackageObject> features) {
+    override transform(List<PackageObject> packageObjects) {
         return #[
             createNode => [
                 configureBoxLayout
+                associateWith(packageObjects)
                 addOverviewRendering("Imported Packages")
-                children += features.flatMap[ simplePackageObjectSynthesis.transform(it)]
+                children += packageObjects.flatMap[ simplePackageObjectSynthesis.transform(it)]
                 initiallyCollapse
             ]
         ]

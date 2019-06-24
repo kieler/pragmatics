@@ -21,12 +21,13 @@ class BundleCategoryOverviewSynthesis extends AbstractSubSynthesis<List<BundleCa
     @Inject extension OsgiStyles
     @Inject SimpleBundleCategorySynthesis simpleBundleCategorySynthesis
     
-    override transform(List<BundleCategory> features) {
+    override transform(List<BundleCategory> bundleCategories) {
         return #[
             createNode => [
                 configureBoxLayout
+                associateWith(bundleCategories)
                 addOverviewRendering("Bundle Categories")
-                children += features.flatMap[ simpleBundleCategorySynthesis.transform(it)]
+                children += bundleCategories.flatMap[ simpleBundleCategorySynthesis.transform(it)]
                 initiallyCollapse
             ]
         ]

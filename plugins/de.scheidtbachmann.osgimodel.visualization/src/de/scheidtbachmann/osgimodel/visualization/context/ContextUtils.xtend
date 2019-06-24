@@ -14,14 +14,18 @@ import java.util.List
 class ContextUtils {
     
     /**
-     * Returns true if {@code childContext} is a child visualization context contained in the {@code rootContext}.
+     * Returns true if {@code childContext} is a child visualization context contained in the {@code rootContext} or the
+     * contexts are equal.
      * Uses the {@link IVisualizationContext#getParentVisualizationContext()} to find out if it is contained.
      * 
      * @param rootContext The root context that may contain the child context.
      * @param childContext The child context that should be checked if it is contained in the rootContext.
      * @return If {@code rootContext} is a parent of {@code childContext}.
      */
-    def static boolean isChildContext(IVisualizationContext<?> rootContext, IVisualizationContext<?> childContext) {
+    def static boolean isChildContextOrEqual(IVisualizationContext<?> rootContext, IVisualizationContext<?> childContext) {
+        if (rootContext === childContext) {
+            return true
+        }
         var currentContext = childContext
         while(currentContext !== null) {
             if (currentContext === rootContext) {

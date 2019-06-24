@@ -3,18 +3,18 @@ package de.scheidtbachmann.osgimodel.visualization
 import com.google.common.collect.ImmutableList
 import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.DisplayedActionData
-import de.cau.cs.kieler.klighd.LightDiagramServices
 import de.cau.cs.kieler.klighd.krendering.ViewSynthesisShared
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractDiagramSynthesis
-import de.cau.cs.kieler.klighd.util.KlighdSynthesisProperties
 import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.visualization.actions.RedoAction
 import de.scheidtbachmann.osgimodel.visualization.actions.ResetViewAction
 import de.scheidtbachmann.osgimodel.visualization.actions.UndoAction
+import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.OsgiProjectContext
+import de.scheidtbachmann.osgimodel.visualization.context.ProductOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.BundleCategoryOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.BundleOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.FeatureOverviewSynthesis
@@ -23,7 +23,6 @@ import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ProductOverviewSy
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.ServiceInterfaceOverviewSynthesis
 import java.util.LinkedHashSet
 import org.eclipse.elk.alg.layered.options.LayeredOptions
-import org.eclipse.elk.graph.properties.MapPropertyHolder
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
@@ -116,29 +115,23 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
                     // Product overview
                     val productOverviewContext = visContext.productOverviewContext
                     val overviewProductNodes = productOverviewSynthesis.transform(productOverviewContext)
-//                    overviewProductNodes.forEach [ associateWith(model) ]
                     children += overviewProductNodes
                     
                     val overviewFeatureNodes = featureOverviewSynthesis.transform(model.features)
-                    overviewFeatureNodes.forEach [ associateWith(model) ]
                     children += overviewFeatureNodes
                     
                     // Bundle overview
                     val bundleOverviewContext = visContext.bundleOverviewContext
                     val overviewBundleNodes = bundleOverviewSynthesis.transform(bundleOverviewContext)
-                    overviewBundleNodes.forEach [ associateWith(model) ]
                     children += overviewBundleNodes
                     
                     val overviewServiceInterfaceNodes = serviceInterfaceOverviewSynthesis.transform(model.serviceInterfaces)
-                    overviewServiceInterfaceNodes.forEach [ associateWith(model) ]
                     children += overviewServiceInterfaceNodes
                     
                     val overviewImportedPackagesNodes = packageObjectOverviewSynthesis.transform(model.importedPackages)
-                    overviewImportedPackagesNodes.forEach [ associateWith(model) ]
                     children += overviewImportedPackagesNodes
                     
                     val overviewBundleCategoryNodes = bundleCategoryOverviewSynthesis.transform(model.bundleCategories)
-                    overviewBundleCategoryNodes.forEach [ associateWith(model) ]
                     children += overviewBundleCategoryNodes
                     
                     // remove the padding of the invisible container.
@@ -149,22 +142,39 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             return modelNode
             
         } else {
-            // Delegate the view model generation to another synthesis that can show the requested visualization context.
-            val displayedElement = visualizationContext.modelElement
-            val requiredSynthesis = SynthesisUtils.requiredSynthesis(displayedElement)
+            // Delegate the view model generation to another subsynthesis that can show the requested visualization context.
+            val children = transformSubModel(visualizationContext)
             
-            val newBundleContainer = LightDiagramServices.translateModel(
-                displayedElement,
-                this.usedContext,
-                new MapPropertyHolder => [
-                    setProperty(KlighdSynthesisProperties.REQUESTED_DIAGRAM_SYNTHESIS, requiredSynthesis
-                    )
-                ]
-            )
-            
-            modelNode.children += newBundleContainer.children
+            modelNode.children += children
             
             return modelNode
+        }
+    }
+    
+    private def transformSubModel(IVisualizationContext<?> context) {
+        switch (context) {
+//            case context instanceof BundleCategoryOverviewContext: {
+//                return bundleCategoryOverviewSynthesis.transform(context as BundleCategoryOverviewContext)
+//                
+//            }
+            case context instanceof BundleOverviewContext: {
+                return bundleOverviewSynthesis.transform(context as BundleOverviewContext)
+            }
+//            case context instanceof FeatureOverviewContext: {
+//                return featureOverviewSynthesis.transform(context as FeatureOverviewContext)
+//            }
+//            case context instanceof PackageObjectOverviewContext: {
+//                return packageObjectOverviewSynthesis.transform(context as PackageObjectOverviewContext)
+//            }
+            case context instanceof ProductOverviewContext: {
+                return productOverviewSynthesis.transform(context as ProductOverviewContext)
+            }
+//            case context instanceof ServiceInterfaceOverviewContext: {
+//                return serviceInterfaceOverviewSynthesis.transform(context as ServiceInterfaceOverviewContext)
+//            }
+            default: {
+                throw new IllegalArgumentException("The context class has no known subsynthesis: " + context.class)
+            }
         }
     }
     

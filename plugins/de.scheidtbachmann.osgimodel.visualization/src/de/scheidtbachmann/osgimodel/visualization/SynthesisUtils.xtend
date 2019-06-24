@@ -6,8 +6,6 @@ import de.cau.cs.kieler.klighd.internal.util.KlighdInternalProperties
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses
 import de.scheidtbachmann.osgimodel.Bundle
-import de.scheidtbachmann.osgimodel.OsgiProject
-import de.scheidtbachmann.osgimodel.Product
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
 import java.util.List
@@ -25,25 +23,6 @@ final class SynthesisUtils {
      * Utils class can not be instanciated.
      */
     private new() {}
-    
-    /**
-     * Returns the identifying string for the synthesis used by any supported object of the OSGi model.
-     * @param model The model that should be synthesized.
-     */
-    def static String requiredSynthesis(Object model) {
-        switch model {
-            case model instanceof OsgiProject: {
-                return "de.scheidtbachmann.osgimodel.visualization.OsgiDiagramSynthesis"
-            }
-            case model instanceof Bundle: {
-                return "de.scheidtbachmann.osgimodel.visualization.subsyntheses.BundleSynthesis"
-            }
-            case model instanceof Product: {
-                return "de.scheidtbachmann.osgimodel.visualization.subsyntheses.ProductSynthesis"
-            }
-            // TODO: etc.
-        }
-    }
     
     /**
      * Returns the domain element the clicked KNode given its action context.

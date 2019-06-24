@@ -30,26 +30,27 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
         while (visualizationContexts.size > index) {
             visualizationContexts.remove(index)
         }
-        // Put the copy at the old index
+        // Put the copy at the old index.
         visualizationContexts.add(index, copiedVisualizationContext)
         
         // The visualization context of the element that this action is performed on.
         val modelVisualizationContext = SynthesisUtils.getDomainElement(context) as IVisualizationContext<?>
-        if (!ContextUtils.isChildContext(currentVisualizationContext, modelVisualizationContext)) {
+        if (!ContextUtils.isChildContextOrEqual(currentVisualizationContext, modelVisualizationContext)) {
             throw new IllegalStateException("This action is performed on an element that is not currently in the " +
                 "currently displayed visualization context:" + this.class)
         }
         
-        // Change the visualization
-        
-        changeVisualization(modelVisualizationContext, context)
+        // Change the visualization.
+        var newContext = changeVisualization(modelVisualizationContext, context)
+        if (newContext === null) {
+            newContext = currentVisualizationContext
+        }
         
         // Put the old context, that will be updated below at the at index + 1 and remember that new index as the
         // current index.
-        visualizationContexts.add(index + 1, currentVisualizationContext)
+        visualizationContexts.add(index + 1, newContext)
         context.viewContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, index + 1)
         
-        // TODO: create a result that will not only cause a new layout, but a new synthesis!
         return ActionResult.createResult(true).doSynthesis
     }
     
@@ -57,8 +58,10 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
      * Modifies the visualization context towards a state that represents what this action should perform.
      * 
      * @param modelVisualizationContext The visualization context of the element that this action is performed on.
+     * @return The new main visualization context that will be used for the next synthesis or {@code null} if the
+     * visualization focus does not change.
      */
-    protected abstract def <M> void changeVisualization(IVisualizationContext<M> modelVisualizationContext,
+    protected abstract def <M> IVisualizationContext<?> changeVisualization(IVisualizationContext<M> modelVisualizationContext,
         ActionContext actionContext)
     
 }

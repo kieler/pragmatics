@@ -23,6 +23,7 @@ class ProductOverviewSynthesis extends AbstractSubSynthesis<ProductOverviewConte
     override transform(ProductOverviewContext productOverviewContext) {
         return #[
             createNode => [
+                associateWith(productOverviewContext)
                 configureBoxLayout
                 addOverviewRendering("Products")
                 children += productOverviewContext.collapsedProductContexts.flatMap[
