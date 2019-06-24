@@ -406,9 +406,9 @@ class OsgiStyles {
     /**
      * Adds the rendering of a port that connects the bundle to the bundles providing its used packages.
      */
-    def addUsedPackagesPortRendering(KPort port) {
+    def addUsedPackagesPortRendering(KPort port, boolean allShown) {
         port.addEllipse => [
-            background = "black".color
+            background = if (allShown) "white".color else "black".color
             val tooltipText = "Show the used packages."
             tooltip = tooltipText
             addSingleClickAction(RevealUsedPackagesAction::ID)

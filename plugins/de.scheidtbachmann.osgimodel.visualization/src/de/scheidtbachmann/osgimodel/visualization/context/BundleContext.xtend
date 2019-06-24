@@ -12,14 +12,20 @@ import org.eclipse.xtend.lib.annotations.Accessors
 @Accessors
 class BundleContext implements IVisualizationContext<Bundle> {
     /**
-     * Indicates if all required bundles are shown in this context.
+     * Indicates if all required bundles and their connections are shown in this parent's context.
      */
     boolean allRequiredBundlesShown
     
     /**
-     * Indicates if all bundles that require this bundle are shown in this context.
+     * Indicates if all bundles that require this bundle and their connections are shown in this parent's context.
      */
     boolean allRequiringBundlesShown
+    
+    /**
+     * Indicated if all used packages resp. the bundles providing the packages and their connections are shown in this
+     * parent's context.
+     */
+    boolean allUsedPackagesShown
     
     /**
      * The bundle to get the data from when visualizing this context.
@@ -58,6 +64,7 @@ class BundleContext implements IVisualizationContext<Bundle> {
         val clone = new BundleContext
         clone.allRequiredBundlesShown = allRequiredBundlesShown
         clone.allRequiringBundlesShown = allRequiringBundlesShown
+        clone.allUsedPackagesShown = allUsedPackagesShown
         clone.bundle = bundle
         clone.parent = null
         

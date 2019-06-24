@@ -74,7 +74,7 @@ class BundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
                         data += createKIdentifier => [ it.id = "importedPackages" ]
                         // Bundles supporting used packages are always shown and expanded to the east with the drawing direction.
                         addLayoutParam(CoreOptions::PORT_SIDE, PortSide::EAST)
-                        addUsedPackagesPortRendering
+                        addUsedPackagesPortRendering(bc.allUsedPackagesShown)
                         width = 12
                         height = 12
                     ]

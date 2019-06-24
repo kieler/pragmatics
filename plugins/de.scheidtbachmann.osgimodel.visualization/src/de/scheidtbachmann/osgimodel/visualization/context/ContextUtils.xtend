@@ -97,15 +97,21 @@ class ContextUtils {
      * @param context The context of that all edges should be removed.
      */
     def dispatch static void removeEdges(BundleOverviewContext overviewContext, BundleContext context) {
-        val clone = overviewContext.requiredBundleEdges.clone
-        clone.forEach [
+        val requiredBundlesView = overviewContext.requiredBundleEdges.clone
+        requiredBundlesView.forEach [
             if (key === context || value === context) {
                 overviewContext.requiredBundleEdges.remove(it)
                 key.allRequiredBundlesShown = false
                 value.allRequiringBundlesShown = false
             }
         ]
-        overviewContext.usedPackagesEdges.removeIf [ sourceBundleContext === context || targetBundleContext === context ]
+        val usedPackagesView = overviewContext.usedPackagesEdges.clone
+        usedPackagesView.forEach [
+            if (sourceBundleContext === context || targetBundleContext === context) {
+                overviewContext.usedPackagesEdges.remove(it)
+                sourceBundleContext.allUsedPackagesShown = false
+            }
+        ]
     }
     
     /**
