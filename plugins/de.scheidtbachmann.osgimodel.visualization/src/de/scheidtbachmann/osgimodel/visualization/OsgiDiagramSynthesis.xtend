@@ -12,6 +12,7 @@ import de.scheidtbachmann.osgimodel.visualization.actions.RedoAction
 import de.scheidtbachmann.osgimodel.visualization.actions.ResetViewAction
 import de.scheidtbachmann.osgimodel.visualization.actions.UndoAction
 import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
+import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.OsgiProjectContext
 import de.scheidtbachmann.osgimodel.visualization.context.ProductOverviewContext
@@ -91,15 +92,19 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
         var index = usedContext.getProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX)
         var IVisualizationContext<?> visualizationContext = null
         
-        if (visualizationContexts.empty || index === null) {
+        if (!visualizationContexts.empty && index !== null) {
+            visualizationContext = visualizationContexts.get(index)
+        }
+        // If the visualization context is for another model than the model this method was called for or does not exist
+        // yet, reset the contexts.
+        if (visualizationContext === null || !ContextUtils.isRootModel(visualizationContext, model)) {
+            visualizationContexts.removeIf [ true ]
             index = 0
             usedContext.setProperty(OsgiSynthesisProperties.CURRENT_VISUALIZATION_CONTEXT_INDEX, index)
             visualizationContext = new OsgiProjectContext(model, null)
             visualizationContexts.add(visualizationContext)
-            
-        } else {
-            visualizationContext = visualizationContexts.get(index)
         }
+
         // Make this variable final here for later usage in the lambda.
         val visContext = visualizationContext
         if (visContext instanceof OsgiProjectContext) {

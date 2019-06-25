@@ -1,5 +1,6 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
+import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
 import java.util.Arrays
@@ -232,6 +233,21 @@ class ContextUtils {
         
         return possiblyConnectedContexts.size === conntectedContexts.size &&
             possiblyConnectedContexts.containsAll(conntectedContexts)
+    }
+    
+    /**
+     * Determines wheter the {@code project} is the root model this {@code context} comes from.
+     * 
+     * @param context The visualization context in question.
+     * @param project The potential root model.
+     * @return If the context comes from the project.
+     */
+    def static boolean isRootModel(IVisualizationContext<?> context, OsgiProject project) {
+        var IVisualizationContext<?> currentContext = context
+        while(currentContext.parentVisualizationContext !== null) {
+            currentContext = currentContext.parentVisualizationContext
+        }
+        return currentContext.modelElement === project
     }
     
     
