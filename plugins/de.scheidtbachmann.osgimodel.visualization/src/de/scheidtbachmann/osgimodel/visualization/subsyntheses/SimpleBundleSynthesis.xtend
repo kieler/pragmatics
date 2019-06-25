@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
-import de.scheidtbachmann.osgimodel.visualization.OsgiOptions.BundleTextType
+import de.scheidtbachmann.osgimodel.visualization.OsgiOptions.SimpleTextType
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
@@ -29,11 +29,11 @@ class SimpleBundleSynthesis extends AbstractSubSynthesis<BundleContext, KNode> {
         return #[
             bc.createNode() => [
                 associateWith(bc)
-                val label = switch usedContext.getOptionValue(BUNDLE_TEXT) {
-                    case BundleTextType.Id: {
+                val label = switch usedContext.getOptionValue(SIMPLE_TEXT) {
+                    case SimpleTextType.Id: {
                         SynthesisUtils.getId(bundle.uniqueId, usedContext)
                     }
-                    case BundleTextType.Name: {
+                    case SimpleTextType.Name: {
                         bundle.descriptiveName
                     }
                 } ?: ""

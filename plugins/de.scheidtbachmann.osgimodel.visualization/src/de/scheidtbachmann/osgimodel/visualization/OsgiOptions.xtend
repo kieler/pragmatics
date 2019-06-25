@@ -15,13 +15,13 @@ class OsgiOptions {
 //    public static final SynthesisOption OVERVIEW= SynthesisOption.createCategory("Overview Options")
     
     /** The enum holding all possible values for the {@link #BUNDLE_TEXT} option. */
-    enum BundleTextType {
+    enum SimpleTextType {
         Id, Name
     }
     
     /** Option for setting the main text to be shown in unexpanded objects. */
-    public static final SynthesisOption BUNDLE_TEXT = SynthesisOption.createChoiceOption("Shown text",
-        #[BundleTextType.Id, BundleTextType.Name], BundleTextType.Id)
+    public static final SynthesisOption SIMPLE_TEXT = SynthesisOption.createChoiceOption("Shown text",
+        #[SimpleTextType.Id, SimpleTextType.Name], SimpleTextType.Id)
         
     /** Option for shortening all IDs by the prefix in the option. */
     public static final SynthesisOption SHORTEN_BY = SynthesisOption.createTextOption(

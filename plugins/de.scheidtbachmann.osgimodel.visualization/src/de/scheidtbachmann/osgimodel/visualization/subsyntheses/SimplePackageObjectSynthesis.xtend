@@ -6,6 +6,7 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 
 /**
  * Transformation of a simple view of a packages that provides functionality to be expanded, when the specific
@@ -21,7 +22,7 @@ class SimplePackageObjectSynthesis extends AbstractSubSynthesis<PackageObject, K
         return #[
             p.createNode() => [
                 associateWith(p)
-                addGenericRendering(p.uniqueId)
+                addGenericRendering(SynthesisUtils.getId(p.uniqueId, usedContext))
             ]
         ]
     }

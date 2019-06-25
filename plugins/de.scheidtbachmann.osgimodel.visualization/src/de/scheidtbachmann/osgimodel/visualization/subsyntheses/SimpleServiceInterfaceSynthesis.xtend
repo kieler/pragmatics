@@ -6,6 +6,7 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 
 /**
  * Transformation of a simple view of a service interface that provides functionality to be expanded, when the
@@ -21,7 +22,8 @@ class SimpleServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterf
         return #[
             s.createNode() => [
                 associateWith(s)
-                addGenericRendering(s.name)
+                // The 'name' attribute of service interfaces really are their ID.
+                addGenericRendering(SynthesisUtils.getId(s.name, usedContext))
             ]
         ]
     }

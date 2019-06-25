@@ -72,7 +72,7 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
         // TODO: Text filter to white-/blacklist shown features/packages/...
         
         // Add Bundle options
-        options.addAll(BUNDLE_TEXT, DESCRIPTION_LENGTH)
+        options.addAll(SIMPLE_TEXT, DESCRIPTION_LENGTH)
         
         // Add general options
         options.addAll(SHORTEN_BY, FILTER_BY)

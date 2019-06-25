@@ -4,10 +4,13 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
+import de.scheidtbachmann.osgimodel.visualization.OsgiOptions.SimpleTextType
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.ProductContext
 import org.eclipse.elk.core.options.CoreOptions
+
+import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 
@@ -26,7 +29,14 @@ class SimpleProductSynthesis extends AbstractSubSynthesis<ProductContext, KNode>
         return #[
             product.createNode() => [
                 associateWith(pc)
-                val label = product.descriptiveName
+                val label = switch usedContext.getOptionValue(SIMPLE_TEXT) {
+                    case SimpleTextType.Id: {
+                        SynthesisUtils.getId(product.uniqueId, usedContext)
+                    }
+                    case SimpleTextType.Name: {
+                        product.descriptiveName
+                    }
+                } ?: ""
                 setLayoutOption(CoreOptions::PRIORITY, SynthesisUtils.priorityOf(label))
                 addProductInOverviewRendering(product, label)
             ]

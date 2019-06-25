@@ -1,11 +1,14 @@
 package de.scheidtbachmann.osgimodel.visualization.subsyntheses
 
 import com.google.inject.Inject
+import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
 import de.scheidtbachmann.osgimodel.Feature
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
+import de.scheidtbachmann.osgimodel.visualization.OsgiOptions.SimpleTextType
+import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 
 /**
  * Transformation of a simple view of a feature that provides functionality to be expanded, when the specific 
@@ -21,7 +24,15 @@ class SimpleFeatureSynthesis extends AbstractSubSynthesis<Feature, KNode> {
         return #[
             f.createNode() => [
                 associateWith(f)
-                addGenericRendering(f.descriptiveName)
+                val label = switch usedContext.getOptionValue(SIMPLE_TEXT) {
+                    case SimpleTextType.Id: {
+                        SynthesisUtils.getId(f.uniqueId, usedContext)
+                    }
+                    case SimpleTextType.Name: {
+                        f.descriptiveName
+                    }
+                } ?: ""
+                addGenericRendering(label)
             ]
         ]
     }
