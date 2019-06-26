@@ -1,7 +1,7 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
-import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import java.util.List
+import org.eclipse.emf.ecore.EObject
 
 /**
  * Interface for a visualization context for overviews that simply shows a list of elements in collapsed or detailed
@@ -11,7 +11,7 @@ import java.util.List
  * 
  * @author nre
  */
-interface IOverviewVisualizationContext<M> extends IVisualizationContext<List<M>> {
+interface IOverviewVisualizationContext<M extends EObject> extends IVisualizationContext<List<M>> {
     
     /**
      * The visualization contexts of the detailed elements.

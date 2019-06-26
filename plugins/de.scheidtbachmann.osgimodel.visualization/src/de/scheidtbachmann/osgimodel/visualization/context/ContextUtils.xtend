@@ -3,8 +3,8 @@ package de.scheidtbachmann.osgimodel.visualization.context
 import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
-import java.util.Arrays
 import java.util.List
+import org.eclipse.emf.ecore.EObject
 
 /**
  * Util class that contains some static methods commonly used in the OSGi synthesis for modifying the visualization
@@ -47,7 +47,7 @@ class ContextUtils {
      * @param collapsedContext The context that is now a collapsed element in the parent overview and should be put in
      * the detailed elements as well as be initialized for its child contexts.
      */
-    def static <M> void makeDetailed(IOverviewVisualizationContext<M> overviewContext, IVisualizationContext<M> collapsedContext) {
+    def static <M extends EObject> void makeDetailed(IOverviewVisualizationContext<M> overviewContext, IVisualizationContext<M> collapsedContext) {
         // this element was previously collapsed, so put it in the detailed list now and initialize its child
         // visualization contexts.
         overviewContext.collapsedElements.remove(collapsedContext)
@@ -68,7 +68,7 @@ class ContextUtils {
      * @param detailedContext The context that is now a detailed element in the parent overview and should be put in
      * the collapsed elements.
      */
-    def static <M> void collapse(IOverviewVisualizationContext<M> overviewContext, IVisualizationContext<M> detailedContext) {
+    def static <M extends EObject> void collapse(IOverviewVisualizationContext<M> overviewContext, IVisualizationContext<M> detailedContext) {
         // this element was previously detailed, so put it in the collapsed list now.
         overviewContext.detailedElements.remove(detailedContext)
         // Only this cast will allow to add the context. We know this adding is type-safe, as the collapsed- and
@@ -78,17 +78,6 @@ class ContextUtils {
         
         // Remove all edges incident to the now collapsed context.
         removeEdges(overviewContext, detailedContext)
-    }
-    
-    def dispatch static void removeEdges(IOverviewVisualizationContext<?> overviewContext, IVisualizationContext<?> context) {
-        // This is the general case matching for all cases falling through this dispatch method.
-        // It is only explicitly written here, so Xtend does not infer IVisualizationContext<? extends BasicOsgiObject>
-        // as the common super type, as some objects such as PackageObjects are not BasicOsgiObjects and may want to 
-        // use this method as well.
-        // TODO: Remove this method once the dispatch mechanic sees this as the common super type anyway.
-        
-        throw new IllegalArgumentException("Unhandled parameter types: " +
-            Arrays.<Object>asList(overviewContext, context).toString());
     }
     
     /**
@@ -123,6 +112,16 @@ class ContextUtils {
      */
     def dispatch static void removeEdges(ProductOverviewContext overviewContext, ProductContext context) {
         // There are no edges in product overview contexts. So do nothing.
+    }
+    
+    /**
+     * Removes all edges incident to the context.
+     * 
+     * @param overviewContext The overview context containing the edge
+     * @param context The context of that all edges should be removed.
+     */
+    def dispatch static void removeEdges(ServiceInterfaceOverviewContext overviewContext, ServiceInterfaceContext context) {
+        // There are no edges in service interface overview contexts. So do nothing.
     }
     
     /**

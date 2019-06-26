@@ -3,6 +3,7 @@ package de.scheidtbachmann.osgimodel.visualization.actions
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IOverviewVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
+import org.eclipse.emf.ecore.EObject
 
 /**
  * An action that collapses or expands an element by making it detailed in an {@link IOverviewVisualizationContext}.
@@ -15,7 +16,8 @@ class ContextCollapseExpandAction extends AbstractVisualizationContextChangingAc
      */
     public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction" 
     
-    override protected <M> changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
+    override protected <M extends EObject> IVisualizationContext<?>
+    changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         // This action will always be performed on a child visualization context of a IOverviewVisualizationContext.
         val overviewVisContext = modelVisualizationContext.parentVisualizationContext
         if (!(overviewVisContext instanceof IOverviewVisualizationContext)) {

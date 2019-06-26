@@ -5,6 +5,7 @@ import de.scheidtbachmann.osgimodel.visualization.OsgiSynthesisProperties
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
+import org.eclipse.emf.ecore.EObject
 
 /**
  * An abstract action that allows to change the {@link IVisualizationContext} for a model so that the old one is still
@@ -34,7 +35,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
         visualizationContexts.add(index, copiedVisualizationContext)
         
         // The visualization context of the element that this action is performed on.
-        val modelVisualizationContext = SynthesisUtils.getDomainElement(context) as IVisualizationContext<?>
+        val modelVisualizationContext = SynthesisUtils.getDomainElement(context) as IVisualizationContext<? extends EObject>
         if (!ContextUtils.isChildContextOrEqual(currentVisualizationContext, modelVisualizationContext)) {
             throw new IllegalStateException("This action is performed on an element that is not currently in the " +
                 "currently displayed visualization context:" + this.class)
@@ -61,7 +62,7 @@ abstract class AbstractVisualizationContextChangingAction implements IAction {
      * @return The new main visualization context that will be used for the next synthesis or {@code null} if the
      * visualization focus does not change.
      */
-    protected abstract def <M> IVisualizationContext<?> changeVisualization(IVisualizationContext<M> modelVisualizationContext,
+    protected abstract def <M extends EObject> IVisualizationContext<?> changeVisualization(IVisualizationContext<M> modelVisualizationContext,
         ActionContext actionContext)
     
 }

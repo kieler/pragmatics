@@ -4,6 +4,7 @@ import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
+import org.eclipse.emf.ecore.EObject
 
 /**
  * Reveals and synthesizes the required bundles of any bundle into the KNode surrounding the Bundle node this action
@@ -20,7 +21,8 @@ class RevealRequiredBundlesAction extends AbstractVisualizationContextChangingAc
      */
     public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction"
     
-    override protected <M> changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
+    override protected <M extends EObject> IVisualizationContext<?>
+    changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         // The BundleContext element for the element that was clicked on.
         val bundleContext = modelVisualizationContext as BundleContext
         

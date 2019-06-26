@@ -35,7 +35,7 @@ class ProductContext implements IVisualizationContext<Product> {
     }
     
     override getChildContexts() {
-        return #[]
+        return #[bundleOverviewContext]
     }
     
     override getModelElement() {

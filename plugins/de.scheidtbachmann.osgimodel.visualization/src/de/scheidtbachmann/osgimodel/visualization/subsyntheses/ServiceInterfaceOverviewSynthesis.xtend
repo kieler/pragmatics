@@ -4,9 +4,8 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
-import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
-import java.util.List
+import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
 
 import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
 import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtils.*
@@ -16,18 +15,24 @@ import static extension de.scheidtbachmann.osgimodel.visualization.SynthesisUtil
  * 
  * @author nre
  */
-class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<List<ServiceInterface>, KNode> {
+class ServiceInterfaceOverviewSynthesis extends AbstractSubSynthesis<ServiceInterfaceOverviewContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension OsgiStyles
     @Inject SimpleServiceInterfaceSynthesis simpleServiceInterfaceSynthesis
+    @Inject ServiceInterfaceSynthesis serviceInterfaceSynthesis
     
-    override transform(List<ServiceInterface> serviceInterfaces) {
+    override transform(ServiceInterfaceOverviewContext serviceInterfaceOverviewContext) {
         return #[
             createNode => [
                 configureBoxLayout
-                associateWith(serviceInterfaces)
+                associateWith(serviceInterfaceOverviewContext)
                 addOverviewRendering("Service Interfaces")
-                children += serviceInterfaces.flatMap[ simpleServiceInterfaceSynthesis.transform(it) ]
+                children += serviceInterfaceOverviewContext.collapsedServiceInterfaceContexts.flatMap[
+                    return simpleServiceInterfaceSynthesis.transform(it)
+                ]
+                children += serviceInterfaceOverviewContext.detailedServiceInterfaceContexts.flatMap[
+                    return serviceInterfaceSynthesis.transform(it)
+                ]
                 initiallyCollapse
             ]
         ]

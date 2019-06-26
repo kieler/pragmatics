@@ -4,9 +4,9 @@ import com.google.inject.Inject
 import de.cau.cs.kieler.klighd.kgraph.KNode
 import de.cau.cs.kieler.klighd.krendering.extensions.KNodeExtensions
 import de.cau.cs.kieler.klighd.syntheses.AbstractSubSynthesis
-import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.OsgiStyles
 import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
+import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceContext
 
 /**
  * Transformation of a simple view of a service interface that provides functionality to be expanded, when the
@@ -14,16 +14,17 @@ import de.scheidtbachmann.osgimodel.visualization.SynthesisUtils
  * 
  * @author nre
  */
-class SimpleServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterface, KNode> {
+class SimpleServiceInterfaceSynthesis extends AbstractSubSynthesis<ServiceInterfaceContext, KNode> {
     @Inject extension KNodeExtensions
     @Inject extension OsgiStyles
     
-    override transform(ServiceInterface s) {
+    override transform(ServiceInterfaceContext s) {
+        val serviceInterface = s.serviceInterface
         return #[
             s.createNode() => [
                 associateWith(s)
                 // The 'name' attribute of service interfaces really are their ID.
-                addGenericRendering(SynthesisUtils.getId(s.name, usedContext))
+                addServiceInterfaceInOverviewRendering(serviceInterface, SynthesisUtils.getId(serviceInterface.name, usedContext))
             ]
         ]
     }

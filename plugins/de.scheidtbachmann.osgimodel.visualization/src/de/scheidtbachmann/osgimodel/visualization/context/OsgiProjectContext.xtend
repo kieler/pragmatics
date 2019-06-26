@@ -1,7 +1,9 @@
 package de.scheidtbachmann.osgimodel.visualization.context
 
-import org.eclipse.xtend.lib.annotations.Accessors
 import de.scheidtbachmann.osgimodel.OsgiProject
+import java.util.List
+import org.eclipse.emf.ecore.EObject
+import org.eclipse.xtend.lib.annotations.Accessors
 
 /**
  * Context for the OSGi synthesis that contains information about the root project overview.
@@ -22,6 +24,11 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
     ProductOverviewContext productOverviewContext
     
     /**
+     * The context for the service interface overview.
+     */
+    ServiceInterfaceOverviewContext serviceInterfaceOverviewContext
+    
+    /**
      * The OSGi project model to get the data from when visualizing this context.
      */
     OsgiProject project
@@ -40,7 +47,8 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
     }
     
     override getChildContexts() {
-        return #[bundleOverviewContext, productOverviewContext]
+        return #[bundleOverviewContext, productOverviewContext, serviceInterfaceOverviewContext]
+            as List<? extends IVisualizationContext<? extends EObject>>
     }
     
     override getModelElement() {
@@ -54,6 +62,7 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
     override initializeChildVisualizationContexts() {
         productOverviewContext = new ProductOverviewContext(project.products, this)
         bundleOverviewContext = new BundleOverviewContext(project.bundles, this)
+        serviceInterfaceOverviewContext = new ServiceInterfaceOverviewContext(project.serviceInterfaces, this)
     }
     
     override deepCopy() {
@@ -62,6 +71,8 @@ class OsgiProjectContext implements IVisualizationContext<OsgiProject> {
         copy.bundleOverviewContext.parent = copy
         copy.productOverviewContext = productOverviewContext.deepCopy as ProductOverviewContext
         copy.productOverviewContext.parent = copy
+        copy.serviceInterfaceOverviewContext = serviceInterfaceOverviewContext.deepCopy as ServiceInterfaceOverviewContext
+        copy.serviceInterfaceOverviewContext.parent = copy
         copy.project = project
         
         return copy

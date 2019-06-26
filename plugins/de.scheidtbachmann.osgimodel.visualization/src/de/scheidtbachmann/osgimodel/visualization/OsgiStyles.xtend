@@ -23,6 +23,7 @@ import de.cau.cs.kieler.klighd.krendering.extensions.KRenderingExtensions
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
+import de.scheidtbachmann.osgimodel.ServiceInterface
 import de.scheidtbachmann.osgimodel.visualization.actions.ContextCollapseExpandAction
 import de.scheidtbachmann.osgimodel.visualization.actions.FocusAction
 import de.scheidtbachmann.osgimodel.visualization.actions.RevealRequiredBundlesAction
@@ -234,6 +235,16 @@ class OsgiStyles {
         ]
     }
     
+    /**
+     * Adds a rendering for a {@link Product} to the given node.
+     * Contains the name of the product, a button to focus this product and text for the ID and description of this product.
+     * 
+     * @param node The KNode this rendering should be attached to.
+     * @param p The product this rendering represents.
+     * @param context The view context used in the synthesis.
+     * 
+     * @return The entire rendering for a product.
+     */
     def KRoundedRectangle addProductRendering(KNode node, Product p, ViewContext context) {
         node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
             setBackgroundGradient("#FFEAE0".color, "#FFD3BF".color, 90)
@@ -308,16 +319,12 @@ class OsgiStyles {
             addDoubleClickAction(ContextCollapseExpandAction::ID)
             setShadow("black".color, 4, 4)
             tooltip = b.uniqueId
-            setPointPlacementData => [
-                minHeight = 20
-                minWidth = 20
-            ]
         ]
     }
     
     /**
      * Adds a rendering for a {@link Bundle} to the given node.
-     * Contains The name of the bundle, a button to focus this bundle and text for the ID and description of this bundle.
+     * Contains the name of the bundle, a button to focus this bundle and text for the ID and description of this bundle.
      * 
      * @param node The KNode this rendering should be attached to.
      * @param b The bundle this rendering represents.
@@ -438,4 +445,87 @@ class OsgiStyles {
             tooltip = tooltipText
         ]
     }
+    
+    // ------------------------------------- ServiceInterface renderings -------------------------------------
+    
+    /**
+     * Adds a simple rendering for a {@link ServiceInterface} to the given node that can be expanded to call the
+     * {link ReferencedSynthesisExpandAction} to dynamically call the service interface synthesis for the given bundle.
+     */
+    def addServiceInterfaceInOverviewRendering(KNode node, ServiceInterface s, String name) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setGridPlacement(3)
+            addRectangle => [
+                invisible = true
+                addSimpleLabel(name)
+            ]
+            addVerticalLine(RIGHT, 0, 1) => [
+                setGridPlacementData => [
+                    flexibleWidth = false
+                ]
+            ]
+            addButton("+", ContextCollapseExpandAction::ID) => [
+                setGridPlacementData => [
+                    flexibleWidth = false
+                ]
+                lineWidth = 0
+            ]
+            setBackgroundGradient("#FFE0E0".color, "FFBFBF".color, 90)
+            addDoubleClickAction(ContextCollapseExpandAction::ID)
+            setShadow("black".color, 4, 4)
+            tooltip = s.name
+        ]
+    }
+    
+    /**
+     * Adds a rendering for a {@link ServiceInterface} to the given node.
+     * 
+     * @param node The KNode this rendering should be attached to.
+     * @param si The service interface this rendering represents.
+     * @param context The view context used in the synthesis.
+     * 
+     * @return The entire rendering for a service interface.
+     */
+    def KRoundedRectangle addServiceInterfaceRendering(KNode node, ServiceInterface si, ViewContext context) {
+        node.addRoundedRectangle(ROUNDNESS, ROUNDNESS) => [
+            setBackgroundGradient("#FFE0E0".color, "#FFBFBF".color, 90)
+            setGridPlacement(1)
+            addRectangle => [
+                setGridPlacement(3)
+                invisible = true
+                addRectangle => [
+                    invisible = true
+                    addSimpleLabel(si.name)
+                ]
+                addVerticalLine(RIGHT, 0, 1) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                ]
+                addButton("-", ContextCollapseExpandAction::ID) => [
+                    setGridPlacementData => [
+                        flexibleWidth = false
+                    ]
+                    lineWidth = 0
+                ]
+            ]
+            addHorizontalSeperatorLine(1, 0)
+            addRectangle => [
+                invisible = true
+                addSimpleLabel("Description: " + SynthesisUtils.descriptionLabel(si.about, context))
+            ]
+            addHorizontalSeperatorLine(1, 0)
+            addRectangle => [
+                setGridPlacementData => [
+                    minCellHeight = 20
+                    minCellWidth = 20
+                ]
+                invisible = true
+                addChildArea
+            ]
+            addDoubleClickAction(ContextCollapseExpandAction::ID)
+            setShadow("black".color, 4, 4)
+        ]
+    }
+    
 }

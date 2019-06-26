@@ -13,6 +13,8 @@ import org.eclipse.elk.core.options.CoreOptions
 
 import static de.scheidtbachmann.osgimodel.visualization.OsgiOptions.*
 
+//import static extension de.cau.cs.kieler.klighd.syntheses.DiagramSyntheses.*
+
 /**
  * Util class that contains some static methods commonly used for the Osgi synthesis.
  * 
@@ -155,7 +157,7 @@ final class SynthesisUtils {
     def static void configureBoxLayout(KNode node) {
         node => [
             DiagramSyntheses.setLayoutOption(node, CoreOptions::ALGORITHM, "org.eclipse.elk.box")
-//            setLayoutOption(CoreOptions::EXPAND_NODES, true) // TODO: why does this not work on bundles?
+//            setLayoutOption(CoreOptions::EXPAND_NODES, true)
         ]
     }
     

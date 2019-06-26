@@ -1,19 +1,20 @@
 package de.scheidtbachmann.osgimodel.visualization.actions
 
+import com.google.common.collect.Iterables
 import de.scheidtbachmann.osgimodel.Bundle
 import de.scheidtbachmann.osgimodel.OsgiProject
 import de.scheidtbachmann.osgimodel.PackageObject
 import de.scheidtbachmann.osgimodel.Product
 import de.scheidtbachmann.osgimodel.visualization.context.BundleContext
 import de.scheidtbachmann.osgimodel.visualization.context.BundleOverviewContext
+import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.ProductContext
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.List
 import java.util.Map
-import com.google.common.collect.Iterables
-import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
+import org.eclipse.emf.ecore.EObject
 
 /**
  * Reveals and synthesizes the bundles providing packages used by any bundle into the KNode surrounding the Bundle node
@@ -29,7 +30,8 @@ class RevealUsedPackagesAction extends AbstractVisualizationContextChangingActio
      */
     public static val String ID = "de.scheidtbachmann.osgimodel.visualization.actions.RevealUsedPackagesAction"
     
-    override protected <M> changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
+    override protected <M extends EObject> IVisualizationContext<?>
+    changeVisualization(IVisualizationContext<M> modelVisualizationContext, ActionContext actionContext) {
         // The BundleContext element for the element that was clicked on.
         val bundleContext = modelVisualizationContext as BundleContext
         

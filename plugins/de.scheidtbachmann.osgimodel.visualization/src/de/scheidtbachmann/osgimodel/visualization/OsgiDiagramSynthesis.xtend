@@ -16,6 +16,7 @@ import de.scheidtbachmann.osgimodel.visualization.context.ContextUtils
 import de.scheidtbachmann.osgimodel.visualization.context.IVisualizationContext
 import de.scheidtbachmann.osgimodel.visualization.context.OsgiProjectContext
 import de.scheidtbachmann.osgimodel.visualization.context.ProductOverviewContext
+import de.scheidtbachmann.osgimodel.visualization.context.ServiceInterfaceOverviewContext
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.BundleCategoryOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.BundleOverviewSynthesis
 import de.scheidtbachmann.osgimodel.visualization.subsyntheses.FeatureOverviewSynthesis
@@ -70,8 +71,6 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
        
     override getDisplayedSynthesisOptions() {
         val options = new LinkedHashSet()
-        // TODO: Text filter to white-/blacklist shown features/packages/...
-        
         // Add Bundle options
         options.addAll(SIMPLE_TEXT, DESCRIPTION_LENGTH)
         
@@ -127,12 +126,12 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
                     val overviewFeatureNodes = featureOverviewSynthesis.transform(model.features)
                     children += overviewFeatureNodes
                     
-                    // Bundle overview
                     val bundleOverviewContext = visContext.bundleOverviewContext
                     val overviewBundleNodes = bundleOverviewSynthesis.transform(bundleOverviewContext)
                     children += overviewBundleNodes
                     
-                    val overviewServiceInterfaceNodes = serviceInterfaceOverviewSynthesis.transform(model.serviceInterfaces)
+                    val serviceInterfaceOverviewContext = visContext.serviceInterfaceOverviewContext
+                    val overviewServiceInterfaceNodes = serviceInterfaceOverviewSynthesis.transform(serviceInterfaceOverviewContext)
                     children += overviewServiceInterfaceNodes
                     
                     val overviewImportedPackagesNodes = packageObjectOverviewSynthesis.transform(model.importedPackages)
@@ -176,9 +175,9 @@ class OsgiDiagramSynthesis extends AbstractDiagramSynthesis<OsgiProject> {
             case context instanceof ProductOverviewContext: {
                 return productOverviewSynthesis.transform(context as ProductOverviewContext)
             }
-//            case context instanceof ServiceInterfaceOverviewContext: {
-//                return serviceInterfaceOverviewSynthesis.transform(context as ServiceInterfaceOverviewContext)
-//            }
+            case context instanceof ServiceInterfaceOverviewContext: {
+                return serviceInterfaceOverviewSynthesis.transform(context as ServiceInterfaceOverviewContext)
+            }
             default: {
                 throw new IllegalArgumentException("The context class has no known subsynthesis: " + context.class)
             }
